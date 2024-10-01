@@ -24,7 +24,7 @@ require (
 	github.com/karrick/godirwalk v1.17.0
 	github.com/klauspost/cpuid/v2 v2.2.8
 	github.com/leandro-lugaresi/hub v1.1.1
-	github.com/leonelquinteros/gotext v1.6.1
+	github.com/leonelquinteros/gotext v1.7.0
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mandykoh/prism v0.35.3
@@ -70,7 +70,7 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
-	github.com/prometheus/client_golang v1.20.3
+	github.com/prometheus/client_golang v1.20.4
 	github.com/prometheus/common v0.59.1
 )
 
@@ -80,12 +80,12 @@ require golang.org/x/text v0.18.0
 
 require (
 	github.com/davidbyttow/govips/v2 v2.15.0
-	github.com/go-co-op/gocron/v2 v2.11.0
+	github.com/go-co-op/gocron/v2 v2.12.1
 	github.com/pquerna/otp v1.4.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
-	github.com/zitadel/oidc/v3 v3.29.1
+	github.com/zitadel/oidc/v3 v3.30.0
 )
 
 require (
@@ -142,10 +142,10 @@ require (
 	go.opentelemetry.io/otel v1.29.0 // indirect
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
-	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948 // indirect
+	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
-	golang.org/x/tools v0.24.0 // indirect
+	golang.org/x/tools v0.25.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
@@ -166,6 +166,6 @@ require (
 	github.com/tidwall/pretty v1.2.1 // indirect
 )
 
-go 1.22
+go 1.22.0
 
-toolchain go1.22.5
+toolchain go1.22.7
