@@ -690,3 +690,13 @@ func TestMarker_String(t *testing.T) {
 		assert.Equal(t, "Jens Mander", m.String())
 	})
 }
+
+func TestMarker_Matched(t *testing.T) {
+	t.Run("missing markeruid", func(t *testing.T) {
+		m := Marker{FileUID: "DummyValue"}
+		if err := m.Matched(); err != nil {
+			assert.Equal(t, "markeruid required but not provided", err.Error())
+
+		}
+	})
+}

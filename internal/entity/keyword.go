@@ -55,12 +55,12 @@ func getIDInValuesOrZero(values any) (result any) {
 func (m *Keyword) Updates(values interface{}) error {
 	if m.ID == 0 {
 		id := getIDInValuesOrZero(values)
-		if id != 0 {
+		if id != uint(0x0) {
 			return UnscopedDb().Model(m).
 				Where("id = ?", id).
 				UpdateColumns(values).Error
 		} else {
-			return errors.New("PK value not provided")
+			return errors.New("id value required but not provided")
 		}
 	} else {
 		return UnscopedDb().Model(m).UpdateColumns(values).Error
@@ -70,7 +70,7 @@ func (m *Keyword) Updates(values interface{}) error {
 // Update a column in the database.
 func (m *Keyword) Update(attr string, value interface{}) error {
 	if m.ID == 0 {
-		return errors.New("PK value not provided in model")
+		return errors.New("id value required but not provided")
 	} else {
 		return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 	}

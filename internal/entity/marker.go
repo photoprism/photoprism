@@ -588,7 +588,7 @@ func (m *Marker) RefreshPhotos() error {
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimeStamp()
 	if m.MarkerUID == "" {
-		return errors.New("PK not provided for Update")
+		return errors.New("markeruid required but not provided")
 	}
 	return UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"MatchedAt": m.MatchedAt}).Error
 }
