@@ -271,7 +271,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"california-duplicate-2": {
 		ID:               1000010,
-		AlbumUID:         "as6sg6bipotaab19",
+		AlbumUID:         "asjv2cw2eikl3cb3",
 		AlbumSlug:        "california",
 		AlbumPath:        "",
 		AlbumType:        AlbumState,
