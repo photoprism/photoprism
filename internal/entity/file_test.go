@@ -498,26 +498,42 @@ func TestFile_DownloadName(t *testing.T) {
 
 func TestFile_Undelete(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		photo := &Photo{}
+		err := photo.Create()
+		assert.NoError(t, err)
+		file := &File{Photo: photo, FileType: "jpg", FileSize: 500}
+		err = file.Create()
+		assert.NoError(t, err)
 		assert.Equal(t, nil, file.Purge())
 		assert.Equal(t, true, file.FileMissing)
 
-		err := file.Undelete()
+		err = file.Undelete()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+		UnscopedDb().Delete(photo.Details)
+		UnscopedDb().Delete(file)
+		UnscopedDb().Delete(photo)
 	})
 	t.Run("file not missing", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		photo := &Photo{}
+		err := photo.Create()
+		assert.NoError(t, err)
+		file := &File{Photo: photo, FileType: "jpg", FileSize: 500}
+		err = file.Create()
+		assert.NoError(t, err)
 		assert.Equal(t, false, file.FileMissing)
-		err := file.Undelete()
+		err = file.Undelete()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+		UnscopedDb().Delete(photo.Details)
+		UnscopedDb().Delete(file)
+		UnscopedDb().Delete(photo)
 	})
 }
 
@@ -883,5 +899,26 @@ func TestFile_SetOrientation(t *testing.T) {
 		m.SetOrientation(-1, SrcManual)
 		assert.Equal(t, 8, m.Orientation())
 		assert.Equal(t, "", m.FileOrientationSrc)
+	})
+}
+
+func TestFile_MissingPhotoID(t *testing.T) {
+	t.Run("No PhotoID or Photo", func(t *testing.T) {
+		file := File{}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
+	})
+	t.Run("No PhotoID and Photo.ID = 0", func(t *testing.T) {
+		file := File{Photo: &Photo{ID: 0}}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
+	})
+	t.Run("PhotoID = 0 and Photo.ID = 0", func(t *testing.T) {
+		file := File{PhotoID: 0, Photo: &Photo{ID: 0}}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
 	})
 }
