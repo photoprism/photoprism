@@ -9,7 +9,7 @@ var UnknownStateCode = "zz"
 var UnknownCountryCode = "zz"
 var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
 
-// CountryCode tries to find a matching country code for a given string e.g. from a file oder directory name.
+// CountryCode tries to find a matching country code for a given string e.g. from a file or directory name.
 func CountryCode(s string) (code string) {
 	code = UnknownCountryCode
 

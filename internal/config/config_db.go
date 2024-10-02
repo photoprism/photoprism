@@ -41,7 +41,7 @@ func (c *Config) DatabaseDriver() string {
 	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
 		c.options.DatabaseDriver = MySQL
-	case SQLite3, "sqlite", "sqllite", "test", "file", "":
+	case SQLite3, "sqlite", "sqlite", "test", "file", "":
 		c.options.DatabaseDriver = SQLite3
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")

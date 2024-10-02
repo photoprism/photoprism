@@ -121,7 +121,7 @@ func TestPhoto_EstimateLocation(t *testing.T) {
 		assert.Equal(t, "zz", m2.PlaceID)
 		assert.Equal(t, SrcAuto, m2.PlaceSrc)
 	})
-	t.Run("cant estimate - out of scope", func(t *testing.T) {
+	t.Run("can't estimate - out of scope", func(t *testing.T) {
 		m2 := Photo{CameraID: 2, TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 13, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
 		m2.EstimateLocation(true)

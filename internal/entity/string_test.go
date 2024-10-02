@@ -30,7 +30,7 @@ func TestClip(t *testing.T) {
 	})
 	t.Run("ToASCII", func(t *testing.T) {
 		result := Clip(ToASCII(strings.ToLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")), ClipStringType)
-		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
+		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! express", result)
 		assert.Equal(t, 64, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -48,6 +48,6 @@ func TestSanitizeStringType(t *testing.T) {
 
 func TestSanitizeStringTypeLower(t *testing.T) {
 	result := SanitizeStringTypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
-	assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
+	assert.Equal(t, "hanzi are logograms developed for the writing of chinese! express", result)
 	assert.Equal(t, ClipStringType, len(result))
 }

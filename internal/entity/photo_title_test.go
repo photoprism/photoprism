@@ -51,7 +51,7 @@ func TestPhoto_SetTitle(t *testing.T) {
 }
 
 func TestPhoto_UpdateTitle(t *testing.T) {
-	t.Run("wont update title was modified", func(t *testing.T) {
+	t.Run("won't update title was modified", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Black beach", m.PhotoTitle)

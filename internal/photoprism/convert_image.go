@@ -93,7 +93,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		case fs.ExtJPEG:
 			_, err = thumb.Jpeg(f.FileName(), imageName, f.Orientation())
 		default:
-			return nil, fmt.Errorf("convert: unspported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
+			return nil, fmt.Errorf("convert: unsupported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
 		}
 
 		// Check result.
@@ -120,7 +120,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		cmds, useMutex, err = w.JpegConvertCommands(f, imageName, xmpName)
 		expectedMime = fs.MimeTypeJPEG
 	default:
-		return nil, fmt.Errorf("convert: unspported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
+		return nil, fmt.Errorf("convert: unsupported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
 	}
 
 	if err != nil {

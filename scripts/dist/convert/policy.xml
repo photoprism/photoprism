@@ -38,7 +38,7 @@
 
     <policy domain="resource" name="area" value="1GP"/>
 
-  Use the default system font unless overwridden by the application:
+  Use the default system font unless overridden by the application:
 
     <policy domain="system" name="font" value="/usr/share/fonts/favorite.ttf"/>
 

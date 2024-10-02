@@ -15,7 +15,7 @@ This package also provides utilities for importing data and estimating the optim
 
 ## About
 
-This library was built out of necessity for a collection of performant cluster analysis utilities for Golang. Go, thanks to its numerous advantages (single binary distrubution, relative performance, growing community) seems to become an attractive alternative to languages commonly used in statistical computations and machine learning, yet it still lacks crucial tools and libraries. I use the [*floats* package](https://github.com/gonum/gonum/tree/master/floats) from the robust Gonum library to perform optimized vector calculations in tight loops.
+This library was built out of necessity for a collection of performant cluster analysis utilities for Golang. Go, thanks to its numerous advantages (single binary distribution, relative performance, growing community) seems to become an attractive alternative to languages commonly used in statistical computations and machine learning, yet it still lacks crucial tools and libraries. I use the [*floats* package](https://github.com/gonum/gonum/tree/master/floats) from the robust Gonum library to perform optimized vector calculations in tight loops.
 
 ## Installation
 
@@ -54,7 +54,7 @@ for index, number := range c.Guesses() {
 }
 ```
 
-Algorithms currenly supported are KMeans++, DBSCAN and OPTICS.
+Algorithms currently supported are KMeans++, DBSCAN and OPTICS.
 
 Algorithms which support online learning can be trained this way using Online() function, which relies on channel communication to coordinate the process:
 

@@ -322,7 +322,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		}
 
 		if len(photos) != 1 {
-			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
+			t.Logf("exactly one result expected, but %d photos with %d files found", len(photos), count)
 			t.Logf("query results: %#v", photos)
 		}
 
@@ -775,7 +775,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		}
 
 		if len(photos) != 1 {
-			t.Logf("excactly one result expected, but %d photos with %d files found", len(photos), count)
+			t.Logf("exactly one result expected, but %d photos with %d files found", len(photos), count)
 			t.Logf("query results: %#v", photos)
 		}
 

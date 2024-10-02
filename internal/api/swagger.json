@@ -393,7 +393,7 @@
                     "Images",
                     "Albums"
                 ],
-                "summary": "streams the album contents as zip archiv",
+                "summary": "streams the album contents as zip archive",
                 "operationId": "DownloadAlbum",
                 "parameters": [
                     {

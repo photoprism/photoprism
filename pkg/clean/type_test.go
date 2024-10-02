@@ -32,7 +32,7 @@ func TestClip(t *testing.T) {
 	})
 	t.Run("ToASCII", func(t *testing.T) {
 		result := clip.Chars(ASCII(strings.ToLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")), LengthType)
-		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
+		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! express", result)
 		assert.Equal(t, 64, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -56,7 +56,7 @@ func TestType(t *testing.T) {
 func TestTypeLower(t *testing.T) {
 	t.Run("Clip", func(t *testing.T) {
 		result := TypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
-		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
+		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! express", result)
 		assert.Equal(t, LengthType, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
