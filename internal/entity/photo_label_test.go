@@ -24,20 +24,57 @@ func TestPhotoLabel_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoLabel(t *testing.T) {
-	model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
-	result := FirstOrCreatePhotoLabel(&model)
+	t.Run("success path 1", func(t *testing.T) {
+		model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
+		result := FirstOrCreatePhotoLabel(&model)
 
-	if result == nil {
-		t.Fatal("result should not be nil")
-	}
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
 
-	if result.PhotoID != model.PhotoID {
-		t.Errorf("PhotoID should be the same: %d %d", result.PhotoID, model.PhotoID)
-	}
+		assert.NotEqual(t, uint(0x0), model.Label.ID)
+		// Validate Preload
+		assert.NotNil(t, result.Label)
+		if result.Label != nil {
+			// Do this way to prevent SIGSEGV
+			assert.Equal(t, "Flower", result.Label.LabelName)
+		}
 
-	if result.LabelID != model.LabelID {
-		t.Errorf("LabelID should be the same: %d %d", result.LabelID, model.LabelID)
-	}
+		if result.PhotoID != model.PhotoID {
+			t.Errorf("PhotoID should be the same: %d %d", result.PhotoID, model.PhotoID)
+		}
+
+		if result.LabelID != model.LabelID {
+			t.Errorf("LabelID should be the same: %d %d", result.LabelID, model.LabelID)
+		}
+	})
+
+	t.Run("success path 2", func(t *testing.T) {
+		model := LabelFixtures.PhotoLabel(1000000, "flowerz", 38, "image")
+		assert.Equal(t, uint(0x0), model.LabelID)
+		result := FirstOrCreatePhotoLabel(&model)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.NotEqual(t, uint(0x0), model.LabelID)
+		// Validate Preload
+		assert.NotNil(t, result.Label)
+		if result.Label != nil {
+			// Do this way to prevent SIGSEGV
+			assert.Equal(t, "Flowerz", result.Label.LabelName)
+		}
+
+		if result.PhotoID != model.PhotoID {
+			t.Errorf("PhotoID should be the same: %d %d", result.PhotoID, model.PhotoID)
+		}
+
+		if result.LabelID != model.LabelID {
+			t.Errorf("LabelID should be the same: %d %d", result.LabelID, model.LabelID)
+		}
+	})
+
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
