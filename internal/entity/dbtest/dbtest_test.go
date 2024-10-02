@@ -2,6 +2,7 @@ package entity
 
 import (
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -13,6 +14,10 @@ import (
 )
 
 var log = event.Log
+
+// All tests in this suite MUST lock and unlock this mutex or they will fail
+// on SQLite which doesn't support row locking.
+var dbtestMutex = sync.Mutex{}
 
 // Log logs the error if any and keeps quiet otherwise.
 func Log(model, action string, err error) {

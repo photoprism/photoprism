@@ -17,6 +17,8 @@ var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 
 func TestInitDBLengths(t *testing.T) {
+	dbtestMutex.Lock()
+	defer dbtestMutex.Unlock()
 
 	t.Run("PhotoMaxVarLengths", func(t *testing.T) {
 		m := &entity.Photo{}

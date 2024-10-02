@@ -8,6 +8,8 @@ import (
 )
 
 func TestDbtestForeignKey_Validate(t *testing.T) {
+	dbtestMutex.Lock()
+	defer dbtestMutex.Unlock()
 
 	t.Run("Photos_CameraID", func(t *testing.T) {
 		m := &entity.Photo{}

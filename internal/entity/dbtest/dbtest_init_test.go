@@ -8,7 +8,8 @@ import (
 )
 
 func TestInit(t *testing.T) {
-
+	dbtestMutex.Lock()
+	defer dbtestMutex.Unlock()
 	t.Run("UserCounts", func(t *testing.T) {
 		m := &entity.User{}
 		stmt := entity.UnscopedDb()

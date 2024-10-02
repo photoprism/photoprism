@@ -63,8 +63,10 @@ func Update(m interface{}, keyNames ...string) (err error) {
 		// with foreign keys, the error will get caught here if it's an invalid PK in the model.
 		// So check if m could be found by count, and return appropriate errors.
 		counter := int64(0)
-		db.Model(m).Count(&counter)
-		if counter == 0 {
+		result := db.Model(m).Count(&counter)
+		if result.Error != nil {
+			return err // Return the previous error if the count fails.
+		} else if counter == 0 {
 			return fmt.Errorf("record not found")
 		} else {
 			return err
