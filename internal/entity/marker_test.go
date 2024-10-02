@@ -393,7 +393,7 @@ func TestMarker_ClearFace(t *testing.T) {
 
 		updated, err := m.ClearFace()
 
-		assert.ErrorContains(t, err, "PK not provided")
+		assert.ErrorContains(t, err, "markeruid required but not provided")
 		assert.False(t, updated)
 		assert.Empty(t, m.FaceID)
 	})
