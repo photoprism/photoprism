@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
-	"gorm.io/gorm/logger"
 )
 
 type PhotoLabels []PhotoLabel
@@ -82,7 +81,6 @@ func (m *PhotoLabel) Delete() error {
 // FirstOrCreatePhotoLabel returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	result := PhotoLabel{}
-	Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
 	if err := Db().Preload("Label").Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
