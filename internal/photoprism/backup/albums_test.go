@@ -27,7 +27,7 @@ func TestAlbums(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, 31, count) // Fixture duplicate corrected.
+	assert.Equal(t, 31, count)
 
 	count, err = Albums(backupPath, false)
 
