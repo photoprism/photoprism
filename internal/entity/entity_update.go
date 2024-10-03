@@ -55,19 +55,16 @@ func Update(m interface{}, keyNames ...string) (err error) {
 		return fmt.Errorf("record keys missing")
 	}
 
+	// Get the counter before attempting an update as calls after a constraint failure don't work.
+	counter := Count(m, keyNames, keys)
+
 	// Execute update statement.
 	result := db.Model(m).Updates(values)
 
 	// Return an error if the update has failed.
 	if err = result.Error; err != nil {
-		// with foreign keys, the error will get caught here if it's an invalid PK in the model.
-		// So check if m could be found by count, and return appropriate errors.
-		counter := int64(0)
-		result := db.Model(m).Count(&counter)
-		if result.Error != nil {
-			return err // Return the previous error if the count fails.
-		} else if counter == 0 {
-			return fmt.Errorf("record not found")
+		if counter != 1 {
+			return fmt.Errorf("record not found and %v", err)
 		} else {
 			return err
 		}
