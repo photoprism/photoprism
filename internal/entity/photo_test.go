@@ -470,7 +470,7 @@ func TestPhoto_SyncKeywordLabels(t *testing.T) {
 		details := &Details{Keywords: "cow, flower, snake, otter"}
 		photo := Photo{ID: 34567, Details: details}
 
-		err = photo.Create() // Save doesn't work as in Gorm2 it doesn't call BeforeCreate on fall back.
+		err = photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
