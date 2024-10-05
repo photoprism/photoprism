@@ -134,7 +134,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
 	if !fileExists && photoUID != "" {
 		// Find existing photo by UID.
-		photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID)
+		photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", photoUID)
 
 		if photoQuery.Error == nil {
 			// Found.
@@ -147,12 +147,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	} else if !fileExists {
 		// Find existing photo by matching path and name.
-		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
+		if photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
 			// Skip next query.
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = FALSE AND file_missing = FALSE) AND photo_path = ? AND photo_stack > -1", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = FALSE AND file_missing = FALSE) AND photo_path = ? AND photo_stack > -1", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
 		}
@@ -161,7 +161,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if o.Stack {
 			// Same unique ID?
 			if photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
-				photoQuery = entity.UnscopedDb().First(&photo, "uuid <> '' AND uuid = ?", clean.Log(m.MetaData().DocumentID))
+				photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "uuid <> '' AND uuid = ?", clean.Log(m.MetaData().DocumentID))
 
 				if photoQuery.Error == nil {
 					// Found.
@@ -172,7 +172,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Matching location and time metadata?
 			if photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
 				metaData = m.MetaData()
-				photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
+				photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
 				if photoQuery.Error == nil {
 					// Found.
@@ -183,9 +183,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	} else if fileExists {
 		// Find photo by the id or uid assigned to the file.
 		if file.PhotoID > 0 {
-			photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
+			photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "id = ?", file.PhotoID)
 		} else if rnd.IsUID(file.PhotoUID, entity.PhotoUID) {
-			photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", file.PhotoUID)
+			photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", file.PhotoUID)
 		} else {
 			// Should never happen.
 			result.Status = IndexFailed
@@ -201,6 +201,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Found a photo?
 	photoExists = photoQuery.Error == nil
+	if !photoExists {
+		// Preload as an empty photo.
+		photo = entity.NewUserPhoto(o.Stack, userUID)
+	}
 
 	// Detect changes in existing files.
 	if fileExists {
