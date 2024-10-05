@@ -102,7 +102,6 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		assert.Equal(t, "", mediaFile.metaData.Title)
 		assert.Equal(t, "Apple", mediaFile.metaData.CameraMake)
-		log.Debugf("mediaFile.metaData = %v", mediaFile.metaData)
 
 		photo := entity.Photo{}
 		entity.Db().Debug().Model(entity.Photo{}).Preload("Details").Where("original_name = 'beach_sand'").First(&photo)
