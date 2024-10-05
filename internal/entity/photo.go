@@ -1033,3 +1033,50 @@ func (m *Photo) FaceCount() int {
 		return f.ValidFaceCount()
 	}
 }
+
+// UnscopedSearchFirstPhoto populates photo with the results of a Where(query, values) including soft delete records
+func UnscopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (tx *gorm.DB) {
+	photo.Keywords = nil
+	photo.Albums = nil
+	photo.Files = nil
+	// Preload related entities if a matching record is found.
+	stmt := UnscopedDb().
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+		Preload("Labels.Label").
+		Preload("Camera").
+		Preload("Lens").
+		Preload("Details").
+		Preload("Place").
+		Preload("Cell").
+		Preload("Cell.Place")
+
+	tx = stmt.Where(query, values...).First(photo)
+	log.Debugf("UnscopedSearchFirstPhoto photo = %v", photo)
+	if tx.Error != nil {
+		log.Debugf("UnscopedSearchFirstPhoto with query %v and values %v threw error %v", query, values, tx.Error)
+	}
+	return tx
+}
+
+// ScopedSearchFirstPhoto populates photo with the results of a Where(query, values) excluding soft delete records
+func ScopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (tx *gorm.DB) {
+	photo.Keywords = nil
+	photo.Albums = nil
+	photo.Files = nil
+	// Preload related entities if a matching record is found.
+	stmt := Db().
+		Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+		Preload("Labels.Label").
+		Preload("Camera").
+		Preload("Lens").
+		Preload("Details").
+		Preload("Place").
+		Preload("Cell").
+		Preload("Cell.Place")
+
+	return stmt.Where(query, values...).First(photo)
+}
