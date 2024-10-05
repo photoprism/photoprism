@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestSavePhotoForm(t *testing.T) {
@@ -1021,5 +1022,119 @@ func TestPhoto_FaceCount(t *testing.T) {
 	t.Run("Photo04", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.Equal(t, 3, m.FaceCount())
+	})
+}
+
+func TestPhoto_UnscopedSearch(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		Db().Save(&m) // reset back to base
+
+		photo := Photo{}
+		if res := UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", PhotoFixtures.Get("Photo08").PhotoUID); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		photo1 := PhotoFixtures.Get("Photo08")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		for i := 0; i < 3; i++ {
+			assert.Equal(t, photo1.ID, photo.ID)
+			assert.Equal(t, photo1.UUID, photo.UUID)
+			assert.Equal(t, photo1.TakenAt, photo.TakenAt)
+			assert.Equal(t, photo1.TakenSrc, photo.TakenSrc)
+			assert.Equal(t, photo1.PhotoUID, photo.PhotoUID)
+			assert.Equal(t, photo1.PhotoPath, photo.PhotoPath)
+			assert.Equal(t, photo1.Camera, photo.Camera)
+			assert.Equal(t, photo1.CameraID, photo.CameraID)
+			assert.Equal(t, photo1.Lens, photo.Lens)
+			assert.Equal(t, photo1.LensID, photo.LensID)
+			assert.Equal(t, photo1.Place.PlaceLabel, photo.Place.PlaceLabel)
+			assert.Equal(t, photo1.PlaceID, photo.PlaceID)
+			assert.Equal(t, photo1.Cell.CellName, photo.Cell.CellName) // CellName as PhotoCount can cause this to fail
+			assert.Equal(t, photo1.CellID, photo.CellID)
+		}
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		if res = UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		}
+
+		assert.Equal(t, int64(0), res.RowsAffected)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		if res = UnscopedSearchFirstPhoto(&photo, "photo_uids = ?", rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		}
+		assert.Error(t, res.Error)
+		assert.ErrorContains(t, res.Error, "photo_uids")
+		assert.Equal(t, int64(0), res.RowsAffected)
+	})
+}
+
+func TestPhoto_ScopedSearch(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		Db().Save(&m) // reset back to base
+
+		photo := Photo{}
+		if res := ScopedSearchFirstPhoto(&photo, "photo_uid = ?", PhotoFixtures.Get("Photo08").PhotoUID); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		photo1 := PhotoFixtures.Get("Photo08")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, photo1.ID, photo.ID)
+		assert.Equal(t, photo1.UUID, photo.UUID)
+		assert.Equal(t, photo1.TakenAt, photo.TakenAt)
+		assert.Equal(t, photo1.TakenSrc, photo.TakenSrc)
+		assert.Equal(t, photo1.PhotoUID, photo.PhotoUID)
+		assert.Equal(t, photo1.PhotoPath, photo.PhotoPath)
+		assert.Equal(t, photo1.Camera, photo.Camera)
+		assert.Equal(t, photo1.CameraID, photo.CameraID)
+		assert.Equal(t, photo1.Lens, photo.Lens)
+		assert.Equal(t, photo1.LensID, photo.LensID)
+		assert.Equal(t, photo1.Place.PlaceLabel, photo.Place.PlaceLabel)
+		assert.Equal(t, photo1.PlaceID, photo.PlaceID)
+		assert.Equal(t, photo1.Cell.CellName, photo.Cell.CellName) // CellName as PhotoCount can cause this to fail
+		assert.Equal(t, photo1.CellID, photo.CellID)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		if res = ScopedSearchFirstPhoto(&photo, "photo_uid in (?)", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		}
+
+		assert.Equal(t, int64(0), res.RowsAffected)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		if res = ScopedSearchFirstPhoto(&photo, "photo_uids in (?, ?, ?)", rnd.UUID(), rnd.UUID(), rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		}
+		assert.Error(t, res.Error)
+		assert.ErrorContains(t, res.Error, "photo_uids")
+		assert.Equal(t, int64(0), res.RowsAffected)
 	})
 }
