@@ -83,6 +83,16 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		cfg.InitializeTestData()
 
+		// Cleanup before we run as maybe the files have already been loaded.
+		var err error
+		for ok := true; ok; ok = (err == nil) {
+			prephoto := entity.Photo{}
+			err = entity.UnscopedSearchFirstPhoto(&prephoto, "original_name = ? OR (photo_lat = ? AND photo_lng = ?)", "beach_sand", -29.28247777777778, 31.44363611111111).Error
+			if err == nil {
+				DeletePhoto(&prephoto, true, true)
+			}
+		}
+
 		tf := classify.New(cfg.AssetsPath(), cfg.DisableTensorFlow())
 		nd := nsfw.New(cfg.NSFWModelPath())
 		fn := face.NewNet(cfg.FaceNetModelPath(), "", cfg.DisableTensorFlow())
