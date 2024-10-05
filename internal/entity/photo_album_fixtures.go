@@ -113,7 +113,7 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 	},
 	"11": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
-		AlbumUID:  "as6sg6bipotaab19",
+		AlbumUID:  "asjv2cw2eikl3cb3",
 		Hidden:    false,
 		Missing:   false,
 		Order:     0,
