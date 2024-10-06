@@ -98,6 +98,7 @@ func TestPhoto_QualityScore(t *testing.T) {
 		// validate that the QualityScore is correct
 		assert.Equal(t, 3, digikam.QualityScore())
 
+		beforeTimestamp := time.Now().UTC()
 		// Replicate the data scenario for the json file.
 		// As created in UserMediaFile for a non primary file
 		digikam.Camera = &UnknownCamera
@@ -109,6 +110,14 @@ func TestPhoto_QualityScore(t *testing.T) {
 		// Validate that the QualityScore stays the same.
 		assert.Equal(t, 3, digikam.QualityScore())
 
+		// Clear the 3 errors that were created.
+		expectedError := "%threw photo.Save has inconsistent%"
+		if res := Db().Where("error_time > ? AND error_message like ?", beforeTimestamp, expectedError).Delete(&Error{}); res.Error != nil {
+			t.Log(res.Error)
+			t.FailNow()
+		} else {
+			assert.Equal(t, int64(3), res.RowsAffected)
+		}
 	})
 }
 
@@ -131,7 +140,7 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 5, p.PhotoQuality)
-		UnscopedDb().Delete(p)
+		p.DeletePermanently()
 	})
 
 	t.Run("no PK provided", func(t *testing.T) {

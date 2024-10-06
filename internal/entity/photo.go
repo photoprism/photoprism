@@ -142,6 +142,8 @@ func NewUserPhoto(stackable bool, userUid string) Photo {
 // SavePhotoForm saves a model in the database using form data.
 func SavePhotoForm(model Photo, form form.Photo) error {
 	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng || model.PhotoCountry != form.PhotoCountry
+	cameraChanged := model.CameraID != form.CameraID
+	lensChanged := model.LensID != form.LensID
 
 	if err := deepcopier.Copy(&model).From(form); err != nil {
 		return err
@@ -191,6 +193,29 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 
 	if err := model.IndexKeywords(); err != nil {
 		log.Errorf("photo: %s %s while indexing keywords", model.String(), err.Error())
+	}
+
+	if cameraChanged {
+		newCamera := Camera{}
+		if tx := ScopedSearchFirstCamera(&newCamera, "id = ?", model.CameraID); tx.RowsAffected == 0 {
+			log.Errorf("savephotoform: %s CameraID invalid %s", model.String(), model.CameraID)
+			model.Camera = &UnknownCamera
+			model.CameraID = UnknownCamera.ID
+		} else {
+			model.Camera = &newCamera
+		}
+
+	}
+
+	if lensChanged {
+		newLens := Lens{}
+		if tx := ScopedSearchFirstLens(&newLens, "id = ?", model.LensID); tx.RowsAffected == 0 {
+			log.Errorf("savephotoform: %s LensID invalid %s", model.String(), model.CameraID)
+			model.Lens = &UnknownLens
+			model.LensID = UnknownLens.ID
+		} else {
+			model.Lens = &newLens
+		}
 	}
 
 	edited := Now()
@@ -287,6 +312,43 @@ func (m *Photo) Create() error {
 func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
+
+	// Detect data inconsistencies and report as warnings to database.
+	if m.Camera != nil {
+		if m.Camera.ID != m.CameraID {
+			errorString := fmt.Sprintf("Caller %v threw photo.Save has inconsistent Camera.ID %v and CameraID %v", GetCallerFormatted("/photo.go"), m.Camera.ID, m.CameraID)
+			newError := Error{ErrorLevel: "warning", ErrorTime: time.Now().UTC(), ErrorMessage: errorString}
+			Db().Create(&newError)
+			log.Debug(errorString)
+		}
+	}
+
+	if m.Lens != nil {
+		if m.Lens.ID != m.LensID {
+			errorString := fmt.Sprintf("Caller %v threw photo.Save has inconsistent Lens.ID %v and LensID %v", GetCallerFormatted("/photo.go"), m.Lens.ID, m.LensID)
+			newError := Error{ErrorLevel: "warning", ErrorTime: time.Now().UTC(), ErrorMessage: errorString}
+			Db().Create(&newError)
+			log.Debug(errorString)
+		}
+	}
+
+	if m.Place != nil {
+		if m.Place.ID != m.PlaceID {
+			errorString := fmt.Sprintf("Caller %v threw photo.Save has inconsistent Place.ID %v and PlaceID %v", GetCallerFormatted("/photo.go"), m.Place.ID, m.PlaceID)
+			newError := Error{ErrorLevel: "warning", ErrorTime: time.Now().UTC(), ErrorMessage: errorString}
+			Db().Create(&newError)
+			log.Debug(errorString)
+		}
+	}
+
+	if m.Cell != nil {
+		if m.Cell.ID != m.CellID {
+			errorString := fmt.Sprintf("Caller %v threw photo.Save has inconsistent Cell.ID %v and CellID %v", GetCallerFormatted("/photo.go"), m.Cell.ID, m.CellID)
+			newError := Error{ErrorLevel: "warning", ErrorTime: time.Now().UTC(), ErrorMessage: errorString}
+			Db().Create(&newError)
+			log.Debug(errorString)
+		}
+	}
 
 	if err := Save(m, "ID", "PhotoUID"); err != nil {
 		return err
@@ -1036,9 +1098,6 @@ func (m *Photo) FaceCount() int {
 
 // UnscopedSearchFirstPhoto populates photo with the results of a Where(query, values) including soft delete records
 func UnscopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (tx *gorm.DB) {
-	photo.Keywords = nil
-	photo.Albums = nil
-	photo.Files = nil
 	// Preload related entities if a matching record is found.
 	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
@@ -1052,19 +1111,15 @@ func UnscopedSearchFirstPhoto(photo *Photo, query string, values ...interface{})
 		Preload("Cell").
 		Preload("Cell.Place")
 
-	tx = stmt.Where(query, values...).First(photo)
-	log.Debugf("UnscopedSearchFirstPhoto photo = %v", photo)
-	if tx.Error != nil {
-		log.Debugf("UnscopedSearchFirstPhoto with query %v and values %v threw error %v", query, values, tx.Error)
+	tempPhoto := &Photo{}
+	if tx = stmt.Where(query, values...).First(tempPhoto); tx.Error == nil {
+		deepcopier.Copy(tempPhoto).To(photo)
 	}
 	return tx
 }
 
 // ScopedSearchFirstPhoto populates photo with the results of a Where(query, values) excluding soft delete records
 func ScopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (tx *gorm.DB) {
-	photo.Keywords = nil
-	photo.Albums = nil
-	photo.Files = nil
 	// Preload related entities if a matching record is found.
 	stmt := Db().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
@@ -1078,5 +1133,9 @@ func ScopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (
 		Preload("Cell").
 		Preload("Cell.Place")
 
-	return stmt.Where(query, values...).First(photo)
+	tempPhoto := &Photo{}
+	if tx = stmt.Where(query, values...).First(tempPhoto); tx.Error == nil {
+		deepcopier.Copy(tempPhoto).To(photo)
+	}
+	return tx
 }

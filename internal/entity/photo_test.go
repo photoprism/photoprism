@@ -32,7 +32,132 @@ func TestSavePhotoForm(t *testing.T) {
 			PhotoFocalLength: 10,
 			PhotoFNumber:     3.3,
 			PhotoExposure:    "exposure",
+			CameraID:         CameraFixtures.Pointer("apple-iphone-7").ID,
+			CameraSrc:        SrcMeta,
+			LensID:           LensFixtures.Pointer("4.15mm-f/2.2").ID,
+			CellID:           "1234",
+			PlaceSrc:         SrcManual,
+			PlaceID:          "765",
+			PhotoCountry:     "de",
+			Details: form.Details{
+				PhotoID:   uint(1000008),
+				Keywords:  "test cat dog",
+				Subject:   "animals",
+				Artist:    "Bender",
+				Notes:     "notes",
+				Copyright: "copy",
+				License:   "",
+			},
+		}
+
+		m := PhotoFixtures.Get("Photo08")
+
+		if err := SavePhotoForm(m, f); err != nil {
+			t.Fatal(err)
+		}
+
+		Db().First(&m)
+
+		assert.Equal(t, "manual", m.TakenSrc)
+		assert.Equal(t, "test", m.TimeZone)
+		assert.Equal(t, "Pink beach", m.PhotoTitle)
+		assert.Equal(t, "manual", m.TitleSrc)
+		assert.Equal(t, true, m.PhotoFavorite)
+		assert.Equal(t, true, m.PhotoPrivate)
+		assert.Equal(t, "image", m.PhotoType)
+		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)
+		assert.InEpsilon(t, 8.8888, m.PhotoLng, 0.0001)
+		assert.NotNil(t, m.EditedAt)
+		assert.NotEqual(t, UnknownCamera.ID, m.CameraID)
+		assert.NotEqual(t, UnknownLens.ID, m.LensID)
+
+		t.Log(m.GetDetails().Keywords)
+
+		m = PhotoFixtures.Get("Photo08")
+		Db().Save(&m)
+	})
+
+	t.Run("BadCamera", func(t *testing.T) {
+		f := form.Photo{
+			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenSrc:         "manual",
+			TimeZone:         "test",
+			PhotoTitle:       "Pink beach",
+			TitleSrc:         SrcManual,
+			PhotoFavorite:    true,
+			PhotoPrivate:     true,
+			PhotoType:        "image",
+			PhotoLat:         7.9999,
+			PhotoLng:         8.8888,
+			PhotoAltitude:    2,
+			PhotoIso:         5,
+			PhotoFocalLength: 10,
+			PhotoFNumber:     3.3,
+			PhotoExposure:    "exposure",
 			CameraID:         uint(3),
+			CameraSrc:        SrcMeta,
+			LensID:           LensFixtures.Pointer("4.15mm-f/2.2").ID,
+			CellID:           "1234",
+			PlaceSrc:         SrcManual,
+			PlaceID:          "765",
+			PhotoCountry:     "de",
+			Details: form.Details{
+				PhotoID:   uint(1000008),
+				Keywords:  "test cat dog",
+				Subject:   "animals",
+				Artist:    "Bender",
+				Notes:     "notes",
+				Copyright: "copy",
+				License:   "",
+			},
+		}
+
+		m := PhotoFixtures.Get("Photo08")
+
+		if err := SavePhotoForm(m, f); err != nil {
+			t.Fatal(err)
+		}
+
+		Db().First(&m)
+
+		assert.Equal(t, "manual", m.TakenSrc)
+		assert.Equal(t, "test", m.TimeZone)
+		assert.Equal(t, "Pink beach", m.PhotoTitle)
+		assert.Equal(t, "manual", m.TitleSrc)
+		assert.Equal(t, true, m.PhotoFavorite)
+		assert.Equal(t, true, m.PhotoPrivate)
+		assert.Equal(t, "image", m.PhotoType)
+		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)
+		assert.InEpsilon(t, 8.8888, m.PhotoLng, 0.0001)
+		assert.NotNil(t, m.EditedAt)
+		assert.Equal(t, UnknownCamera.ID, m.CameraID)
+		assert.NotEqual(t, UnknownLens.ID, m.LensID)
+
+		t.Log(m.GetDetails().Keywords)
+		m = PhotoFixtures.Get("Photo08")
+		Db().Save(&m)
+	})
+
+	t.Run("BadLens", func(t *testing.T) {
+		f := form.Photo{
+			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenSrc:         "manual",
+			TimeZone:         "test",
+			PhotoTitle:       "Pink beach",
+			TitleSrc:         SrcManual,
+			PhotoFavorite:    true,
+			PhotoPrivate:     true,
+			PhotoType:        "image",
+			PhotoLat:         7.9999,
+			PhotoLng:         8.8888,
+			PhotoAltitude:    2,
+			PhotoIso:         5,
+			PhotoFocalLength: 10,
+			PhotoFNumber:     3.3,
+			PhotoExposure:    "exposure",
+			CameraID:         CameraFixtures.Pointer("apple-iphone-7").ID,
 			CameraSrc:        SrcMeta,
 			LensID:           uint(6),
 			CellID:           "1234",
@@ -68,8 +193,12 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)
 		assert.InEpsilon(t, 8.8888, m.PhotoLng, 0.0001)
 		assert.NotNil(t, m.EditedAt)
+		assert.NotEqual(t, UnknownCamera.ID, m.CameraID)
+		assert.Equal(t, UnknownLens.ID, m.LensID)
 
 		t.Log(m.GetDetails().Keywords)
+		m = PhotoFixtures.Get("Photo08")
+		Db().Save(&m)
 	})
 }
 
@@ -148,7 +277,7 @@ func TestPhoto_GetID(t *testing.T) {
 
 func TestPhoto_ClassifyLabels(t *testing.T) {
 	t.Run("NewPhoto", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo19")
+		m := Photo{}
 		Db().Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
@@ -159,12 +288,13 @@ func TestPhoto_ClassifyLabels(t *testing.T) {
 			Preload("Place").
 			Preload("Cell").
 			Preload("Cell.Place").
-			Model(&m).Find(&m.Labels)
+			Where("photos.id = ?", PhotoFixtures.Get("Photo19").ID).
+			Find(&m)
 		labels := m.ClassifyLabels()
 		assert.Empty(t, labels)
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
-		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		m := Photo{}
 		Db().Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
@@ -175,7 +305,8 @@ func TestPhoto_ClassifyLabels(t *testing.T) {
 			Preload("Place").
 			Preload("Cell").
 			Preload("Cell.Place").
-			Model(&m).Find(&m.Labels)
+			Where("photos.id = ?", PhotoFixtures.Get("19800101_000002_D640C559").ID).
+			Find(&m)
 		labels := m.ClassifyLabels()
 		assert.LessOrEqual(t, 2, labels.Len())
 	})
@@ -395,6 +526,118 @@ func TestPhoto_Save(t *testing.T) {
 		photo := Photo{PhotoUID: "ps6sg6be2lvl0yh0"}
 		assert.Error(t, photo.Save())
 	})
+
+	t.Run("BadCameraID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Camera: CameraFixtures.Pointer("apple-iphone-se"), CameraID: UnknownCamera.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Camera.ID %v and CameraID %v", photo.Camera.ID, photo.CameraID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		// Will this break when running all tests?
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+
+		Db().Where("error_message like ?", errorMessage).Delete(Errors{})
+		photo.DeletePermanently()
+	})
+
+	t.Run("BadCellID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Cell: CellFixtures.Pointer("mexico"), CellID: UnknownPlace.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Cell.ID %v and CellID %v", photo.Cell.ID, photo.CellID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		// Will this break when running all tests?
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+
+		Db().Where("error_message like ?", errorMessage).Delete(Errors{})
+		photo.DeletePermanently()
+	})
+
+	t.Run("BadLensID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Lens: LensFixtures.Pointer("lens-f-380"), LensID: UnknownLens.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Lens.ID %v and LensID %v", photo.Lens.ID, photo.LensID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		// Will this break when running all tests?
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+
+		Db().Where("error_message like ?", errorMessage).Delete(Errors{})
+		photo.DeletePermanently()
+	})
+
+	t.Run("BadPlaceID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Place: PlaceFixtures.Pointer("mexico"), PlaceID: UnknownPlace.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Place.ID %v and PlaceID %v", photo.Place.ID, photo.PlaceID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		// Will this break when running all tests?
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+
+		Db().Where("error_message like ?", errorMessage).Delete(Errors{})
+		photo.DeletePermanently()
+	})
 }
 
 func TestFindPhoto(t *testing.T) {
@@ -489,8 +732,7 @@ func TestPhoto_SyncKeywordLabels(t *testing.T) {
 
 		assert.Equal(t, 25, len(p.Details.Keywords))
 		assert.Equal(t, 3, len(p.Labels))
-		UnscopedDb().Delete(details)
-		UnscopedDb().Delete(p)
+		p.DeletePermanently()
 		UnscopedDb().Delete(labelotter)
 		UnscopedDb().Delete(labelsnake)
 	})
@@ -1028,6 +1270,9 @@ func TestPhoto_FaceCount(t *testing.T) {
 func TestPhoto_UnscopedSearch(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
+		log.Debugf("m.CameraID = %v", m.CameraID)
+		log.Debugf("m.Camera = %v", m.Camera)
+		assert.Equal(t, m.Camera.ID, m.CameraID, "CameraID Check")
 		Db().Save(&m) // reset back to base
 
 		photo := Photo{}
@@ -1035,26 +1280,28 @@ func TestPhoto_UnscopedSearch(t *testing.T) {
 			assert.Nil(t, res.Error)
 			t.FailNow()
 		}
+		log.Debugf("photo.CameraID = %v", photo.CameraID)
+		log.Debugf("photo.Camera = %v", photo.Camera)
 		photo1 := PhotoFixtures.Get("Photo08")
+		log.Debugf("photo1.CameraID = %v", photo1.CameraID)
+		log.Debugf("photo1.Camera = %v", photo1.Camera)
 
 		// Only check items that are preloaded
 		// Except Labels as they are filtered.
-		for i := 0; i < 3; i++ {
-			assert.Equal(t, photo1.ID, photo.ID)
-			assert.Equal(t, photo1.UUID, photo.UUID)
-			assert.Equal(t, photo1.TakenAt, photo.TakenAt)
-			assert.Equal(t, photo1.TakenSrc, photo.TakenSrc)
-			assert.Equal(t, photo1.PhotoUID, photo.PhotoUID)
-			assert.Equal(t, photo1.PhotoPath, photo.PhotoPath)
-			assert.Equal(t, photo1.Camera, photo.Camera)
-			assert.Equal(t, photo1.CameraID, photo.CameraID)
-			assert.Equal(t, photo1.Lens, photo.Lens)
-			assert.Equal(t, photo1.LensID, photo.LensID)
-			assert.Equal(t, photo1.Place.PlaceLabel, photo.Place.PlaceLabel)
-			assert.Equal(t, photo1.PlaceID, photo.PlaceID)
-			assert.Equal(t, photo1.Cell.CellName, photo.Cell.CellName) // CellName as PhotoCount can cause this to fail
-			assert.Equal(t, photo1.CellID, photo.CellID)
-		}
+		assert.Equal(t, photo1.ID, photo.ID)
+		assert.Equal(t, photo1.UUID, photo.UUID)
+		assert.Equal(t, photo1.TakenAt, photo.TakenAt)
+		assert.Equal(t, photo1.TakenSrc, photo.TakenSrc)
+		assert.Equal(t, photo1.PhotoUID, photo.PhotoUID)
+		assert.Equal(t, photo1.PhotoPath, photo.PhotoPath)
+		assert.Equal(t, photo1.Camera, photo.Camera)
+		assert.Equal(t, photo1.CameraID, photo.CameraID)
+		assert.Equal(t, photo1.Lens, photo.Lens)
+		assert.Equal(t, photo1.LensID, photo.LensID)
+		assert.Equal(t, photo1.Place.PlaceLabel, photo.Place.PlaceLabel)
+		assert.Equal(t, photo1.PlaceID, photo.PlaceID)
+		assert.Equal(t, photo1.Cell.CellName, photo.Cell.CellName) // CellName as PhotoCount can cause this to fail
+		assert.Equal(t, photo1.CellID, photo.CellID)
 	})
 
 	t.Run("Nothing Found", func(t *testing.T) {
