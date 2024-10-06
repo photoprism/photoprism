@@ -34,6 +34,7 @@ func TestUserDetails_Updates(t *testing.T) {
 	m := &User{
 		UserUID: "1234",
 		UserDetails: &UserDetails{
+			UserUID:    "1234", // m.UserDetails.Updates fails with WHERE conditions required.
 			BirthYear:  1999,
 			BirthMonth: 3,
 			NameTitle:  "Dr.",
@@ -42,7 +43,7 @@ func TestUserDetails_Updates(t *testing.T) {
 			FamilyName: "Doe",
 		}}
 
-	m.UserDetails.Updates(UserDetails{GivenName: "Jane"})
+	assert.Nil(t, m.UserDetails.Updates(UserDetails{GivenName: "Jane"}))
 	assert.Equal(t, "Jane", m.UserDetails.GivenName)
 }
 

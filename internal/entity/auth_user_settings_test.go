@@ -35,11 +35,12 @@ func TestUserSettings_Updates(t *testing.T) {
 	m := &User{
 		UserUID: "1234",
 		UserSettings: &UserSettings{
+			UserUID:    "1234", // Required to prevent WHERE conditions required error.
 			UITheme:    "carbon",
 			UILanguage: "de",
 		}}
 
-	m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"})
+	assert.Nil(t, m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
 	assert.Equal(t, "vanta", m.UserSettings.UITheme)
 	assert.Equal(t, "en", m.UserSettings.UILanguage)
 }
