@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/ulule/deepcopier"
 	"gorm.io/gorm"
 )
 
@@ -163,4 +164,15 @@ func (m *Camera) Scanner() bool {
 // Unknown returns true if the camera is not a known make or model.
 func (m *Camera) Unknown() bool {
 	return m.CameraSlug == "" || m.CameraSlug == UnknownCamera.CameraSlug
+}
+
+// ScopedSearchFirstCamera populates camera with the results of a Where(query, values) excluding soft delete records
+func ScopedSearchFirstCamera(camera *Camera, query string, values ...interface{}) (tx *gorm.DB) {
+	// Preload related entities if a matching record is found.
+	stmt := Db()
+	tempCamera := &Camera{}
+	if tx = stmt.Where(query, values...).First(tempCamera); tx.Error == nil {
+		deepcopier.Copy(tempCamera).To(camera)
+	}
+	return tx
 }

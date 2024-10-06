@@ -3,6 +3,7 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -84,5 +85,53 @@ func TestFirstOrCreateLens(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 		assert.GreaterOrEqual(t, result.ID, uint(1))
+	})
+}
+
+func TestLens_ScopedSearchFirst(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := LensFixtures.Get("4.15mm-f/2.2")
+		Db().Save(&m) // reset back to base
+
+		lens := Lens{}
+		if res := ScopedSearchFirstLens(&lens, "lens_slug = ?", LensFixtures.Get("4.15mm-f/2.2").LensSlug); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		lens1 := LensFixtures.Get("4.15mm-f/2.2")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, lens1.ID, lens.ID)
+		assert.Equal(t, lens1.LensSlug, lens.LensSlug)
+		assert.Equal(t, lens1.LensName, lens.LensName)
+		assert.Equal(t, lens1.LensMake, lens.LensMake)
+		assert.Equal(t, lens1.LensModel, lens.LensModel)
+		assert.Equal(t, lens1.LensType, lens.LensType)
+		assert.Equal(t, lens1.LensDescription, lens.LensDescription)
+		assert.Equal(t, lens1.LensNotes, lens.LensNotes)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+
+		lens := Lens{}
+		if res := ScopedSearchFirstLens(&lens, "lens_slug = ?", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		} else {
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		lens := Lens{}
+		if res := ScopedSearchFirstLens(&lens, "lens_slugs = ?", rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		} else {
+			assert.Error(t, res.Error)
+			assert.ErrorContains(t, res.Error, "lens_slugs")
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
 	})
 }

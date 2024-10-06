@@ -3,6 +3,7 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -147,5 +148,53 @@ func TestCamera_Scanner(t *testing.T) {
 	t.Run("MSScanner", func(t *testing.T) {
 		camera := NewCamera("", "MS Scanner")
 		assert.True(t, camera.Scanner())
+	})
+}
+
+func TestCamera_ScopedSearchFirst(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := CameraFixtures.Get("apple-iphone-se")
+		Db().Save(&m) // reset back to base
+
+		camera := Camera{}
+		if res := ScopedSearchFirstCamera(&camera, "camera_slug = ?", CameraFixtures.Get("apple-iphone-se").CameraSlug); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		camera1 := CameraFixtures.Get("apple-iphone-se")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, camera1.ID, camera.ID)
+		assert.Equal(t, camera1.CameraSlug, camera.CameraSlug)
+		assert.Equal(t, camera1.CameraName, camera.CameraName)
+		assert.Equal(t, camera1.CameraMake, camera.CameraMake)
+		assert.Equal(t, camera1.CameraModel, camera.CameraModel)
+		assert.Equal(t, camera1.CameraType, camera.CameraType)
+		assert.Equal(t, camera1.CameraDescription, camera.CameraDescription)
+		assert.Equal(t, camera1.CameraNotes, camera.CameraNotes)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+
+		camera := Camera{}
+		if res := ScopedSearchFirstCamera(&camera, "camera_slug = ?", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		} else {
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		camera := Camera{}
+		if res := ScopedSearchFirstCamera(&camera, "camera_slugs = ?", rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		} else {
+			assert.Error(t, res.Error)
+			assert.ErrorContains(t, res.Error, "camera_slugs")
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
 	})
 }
