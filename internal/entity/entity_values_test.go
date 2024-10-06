@@ -252,7 +252,7 @@ func TestModelValuesStructOption(t *testing.T) {
 		assert.Equal(t, original.MatchedAt, m.MatchedAt)
 		assert.Equal(t, original.CreatedAt, m.CreatedAt)
 		assert.Equal(t, original.FaceHidden, m.FaceHidden)
-		assert.NotNil(t, m.EmbeddingJSON)
+		assert.Equal(t, original.EmbeddingJSON, m.EmbeddingJSON)
 
 		values, keys, err = ModelValuesStructOption(m, false, "ID")
 
@@ -267,7 +267,7 @@ func TestModelValuesStructOption(t *testing.T) {
 		assert.Equal(t, original.MatchedAt, m.MatchedAt)
 		assert.Equal(t, original.CreatedAt, m.CreatedAt)
 		assert.Equal(t, original.FaceHidden, m.FaceHidden)
-		assert.Nil(t, m.EmbeddingJSON)
+		assert.Equal(t, original.EmbeddingJSON, m.EmbeddingJSON)
 	})
 
 	t.Run("AllTypes", func(t *testing.T) {
