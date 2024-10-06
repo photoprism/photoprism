@@ -57,6 +57,7 @@ func TestEntity_Update(t *testing.T) {
 	t.Run("Photo01", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
 		updatedAt := m.UpdatedAt
+		camera := PhotoFixtures.Pointer("Photo01").Camera
 
 		// Should be updated without any issues.
 		if err := Update(m, "ID", "PhotoUID"); err != nil {
@@ -80,6 +81,13 @@ func TestEntity_Update(t *testing.T) {
 			t.Logf("(2) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
 			t.Logf("(2) Successfully updated values")
 		}
+
+		// Make sure that a valid Sub Struct wasn't removed
+		assert.Equal(t, camera.ID, m.Camera.ID)
+		assert.Equal(t, camera.CameraDescription, m.Camera.CameraDescription)
+		assert.Equal(t, camera.CameraMake, m.Camera.CameraMake)
+		assert.Equal(t, camera.CameraModel, m.Camera.CameraModel)
+		assert.Equal(t, camera.CameraName, m.Camera.CameraName)
 	})
 	t.Run("NonExistentKeys", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
@@ -120,7 +128,7 @@ func TestEntity_Update(t *testing.T) {
 		assert.Equal(t, PhotoFixtures.Pointer("Photo01").CameraID, m.CameraID)
 		assert.NotNil(t, m.Camera)
 		if m.Camera != nil {
-			assert.NotEqual(t, &UnknownCamera, m.Camera)
+			assert.Equal(t, &UnknownCamera, m.Camera)
 		}
 
 		// Put things back together.

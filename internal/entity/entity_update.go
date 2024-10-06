@@ -3,6 +3,8 @@ package entity
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/ulule/deepcopier"
 )
 
 // Checks if the primary key is populated
@@ -45,8 +47,17 @@ func Update(m interface{}, keyNames ...string) (err error) {
 		}
 	}
 
+	// Create a backup to use as otherwise we are going to remove a bunch of data from m
+	// which may break other things.
+	var backup interface{} = reflect.New(reflect.ValueOf(m).Elem().Type()).Interface()
+	//log.Debugf("backup = %v", backup)
+	if err = deepcopier.Copy(m).To(backup); err != nil {
+		log.Debugf("entity_update deepcopier failed with error %v", err)
+		return err
+	}
+
 	// Extract interface slice with all values including zero.
-	values, keys, err := ModelValues(m, keyNames...)
+	values, keys, err := ModelValuesStructOption(backup, false, keyNames...)
 
 	// Check if the number of keys matches the number of values.
 	if err != nil {
@@ -59,7 +70,13 @@ func Update(m interface{}, keyNames ...string) (err error) {
 	counter := Count(m, keyNames, keys)
 
 	// Execute update statement.
-	result := db.Model(m).Updates(values)
+	result := db.Model(backup).Updates(values)
+
+	// Push the UpdatedAt if found back into the original m
+	if _, found := reflect.ValueOf(backup).Elem().Type().FieldByName("UpdatedAt"); found {
+		updatedAt := reflect.ValueOf(backup).Elem().FieldByName("UpdatedAt")
+		reflect.ValueOf(m).Elem().FieldByName("UpdatedAt").Set(updatedAt)
+	}
 
 	// Return an error if the update has failed.
 	if err = result.Error; err != nil {
