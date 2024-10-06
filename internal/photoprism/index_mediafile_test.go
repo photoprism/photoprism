@@ -114,7 +114,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		assert.Equal(t, "Apple", mediaFile.metaData.CameraMake)
 
 		photo := entity.Photo{}
-		entity.Db().Debug().Model(entity.Photo{}).Preload("Details").Where("original_name = 'beach_sand'").First(&photo)
+		entity.Db().Model(entity.Photo{}).Preload("Details").Where("original_name = 'beach_sand'").First(&photo)
 		assert.Equal(t, "beach_sand", photo.OriginalName)
 		quality := photo.PhotoQuality
 		cameraid := photo.CameraID
