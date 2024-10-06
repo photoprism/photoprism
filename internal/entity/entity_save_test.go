@@ -87,5 +87,6 @@ func TestSave(t *testing.T) {
 		if photo2.Details != nil {
 			assert.Equal(t, details.Keywords, photo2.Details.Keywords)
 		}
+		photo2.DeletePermanently()
 	})
 }
