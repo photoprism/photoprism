@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -56,7 +57,9 @@ func TestMain(m *testing.M) {
 	limiter.Login = limiter.NewLimit(1, 10000)
 
 	// Run unit tests.
+	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 	os.Exit(code)

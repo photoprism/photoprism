@@ -3,6 +3,7 @@ package wellknown
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/testextras"
@@ -24,7 +25,9 @@ func TestMain(m *testing.M) {
 	defer testextras.UnlockDBMutex(dbc.Db())
 
 	// Run unit tests.
+	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 

@@ -420,7 +420,7 @@ func TestFile_Delete(t *testing.T) {
 		err2 := file.Delete(false)
 
 		assert.Nil(t, err2)
-		UnscopedDb().Delete(newPhoto)
+		newPhoto.DeletePermanently()
 	})
 }
 

@@ -3,6 +3,7 @@ package backup
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -32,7 +33,9 @@ func TestMain(m *testing.M) {
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
 
+	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 

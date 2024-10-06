@@ -30,7 +30,9 @@ func TestMain(m *testing.M) {
 	c := TestConfig()
 	defer c.CloseDb()
 
+	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 

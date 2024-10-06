@@ -3,6 +3,7 @@ package entity
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +31,9 @@ func TestMain(m *testing.M) {
 
 	defer db.Close()
 
+	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
