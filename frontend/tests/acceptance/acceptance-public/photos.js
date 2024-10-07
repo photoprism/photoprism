@@ -33,9 +33,24 @@ test.meta("testID", "photos-001").meta({ mode: "public" })("Common: Scroll to to
     .expect(Selector("div.image.clickable").nth(0).visible)
     .ok();
 
+  var i = 0
   await scroll(0, 1400);
-  await scroll(0, 900);
+  while (await t.eval(() => window.scrollY) != 1400) {
+    console.log("retying 1400 scroll")
+    await t
+    .expect(i++).lte(5)
+    await scroll(0, 1400);
+  }
 
+  i = 0
+  await scroll(0, 900);
+  while (await t.eval(() => window.scrollY) != 900) {
+    console.log("retying 900 scroll")
+    await t
+    .expect(i++).lte(5)
+    await scroll(0, 900);
+  }
+  
   await t.click(Selector("button.p-scroll-top")).expect(getcurrentPosition()).eql(0);
 });
 
