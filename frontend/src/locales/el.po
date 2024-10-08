@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-09-13 13:26+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-10-07 21:05+0000\n"
+"Last-Translator: dtsolakis <dtsola@eranet.gr>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1219,7 +1219,7 @@ msgstr "Όνομα"
 
 #: src/page/settings/advanced.vue:18
 msgid "Global Options"
-msgstr "Παγκόσμιες επιλογές"
+msgstr "Καθολικές Ρυθμίσεις"
 
 #: src/options/options.js:448
 msgid "Gold"
