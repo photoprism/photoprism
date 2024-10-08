@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/list"
+	"gorm.io/gorm"
 )
 
 // Status returns the current status of schema migrations.
@@ -17,7 +17,7 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := db.Dialector.Name()
 
 	if name == "" {
 		return status, fmt.Errorf("migrate: failed to determine sql dialect")
@@ -25,7 +25,7 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {

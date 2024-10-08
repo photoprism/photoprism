@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 )
@@ -154,7 +155,7 @@ func TestSubject_Delete(t *testing.T) {
 		assert.False(t, m.Deleted())
 
 		time := Now()
-		m.DeletedAt = &time
+		m.DeletedAt = gorm.DeletedAt{Time: time, Valid: true}
 
 		assert.True(t, m.Deleted())
 
@@ -166,7 +167,7 @@ func TestSubject_Restore(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
-		m := &Subject{DeletedAt: &deleteTime, SubjType: SubjPerson, SubjName: "ToBeRestored"}
+		m := &Subject{DeletedAt: gorm.DeletedAt{Time: deleteTime, Valid: true}, SubjType: SubjPerson, SubjName: "ToBeRestored"}
 		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -180,7 +181,7 @@ func TestSubject_Restore(t *testing.T) {
 		assert.False(t, m.Deleted())
 	})
 	t.Run("SubjectNotDeleted", func(t *testing.T) {
-		m := &Subject{DeletedAt: nil, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
+		m := &Subject{DeletedAt: gorm.DeletedAt{}, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
 		err := m.Restore()
 		if err != nil {
 			t.Fatal(err)
@@ -229,7 +230,7 @@ func TestFindSubjectByName(t *testing.T) {
 		m := NewSubject("Jim Doe", SubjPerson, SrcAuto)
 
 		time := Now()
-		m.DeletedAt = &time
+		m.DeletedAt = gorm.DeletedAt{Time: time, Valid: true}
 
 		err := m.Save()
 		if err != nil {
@@ -290,7 +291,6 @@ func TestSubject_Update(t *testing.T) {
 
 }
 
-// TODO fails on mariadb
 func TestSubject_Updates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)
@@ -299,11 +299,11 @@ func TestSubject_Updates(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "UpdatedType"}); err != nil {
+		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "UpdatedT"}); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, "UpdatedName", m.SubjName)
-			assert.Equal(t, "UpdatedType", m.SubjType)
+			assert.Equal(t, "UpdatedT", m.SubjType)
 		}
 	})
 
@@ -492,7 +492,7 @@ func TestSubject_DeletePermanently(t *testing.T) {
 	assert.Nil(t, m.DeletePermanently())
 
 	time := Now()
-	m.DeletedAt = &time
+	m.DeletedAt = gorm.DeletedAt{Time: time, Valid: true}
 
 	if err := m.Save(); err != nil {
 		t.Fatal(err)

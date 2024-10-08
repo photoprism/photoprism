@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -70,7 +71,12 @@ func (m *Photo) QualityScore() (score int) {
 
 // UpdateQuality updates the photo quality attribute.
 func (m *Photo) UpdateQuality() error {
-	if m.DeletedAt != nil || m.PhotoQuality < 0 {
+
+	if m.ID == 0 {
+		return errors.New("No PK provided on update request")
+	}
+
+	if m.DeletedAt.Valid || m.PhotoQuality < 0 {
 		return nil
 	}
 

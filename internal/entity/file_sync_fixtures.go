@@ -22,9 +22,10 @@ func (m FileSyncMap) Pointer(name string, accountID uint, remoteName string) *Fi
 	return NewFileSync(accountID, remoteName)
 }
 
+var fileID = uint(1000000)
 var FileSyncFixtures = FileSyncMap{
 	"FileSync1": {
-		FileID:     1000000,
+		FileID:     &fileID,
 		ServiceID:  1000000,
 		RemoteName: "/20200706-092527-Landscape-München-2020.jpg",
 		Status:     "uploaded",
@@ -38,7 +39,7 @@ var FileSyncFixtures = FileSyncMap{
 		UpdatedAt:  time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 	},
 	"FileSync2": {
-		FileID:     1000000,
+		FileID:     &fileID,
 		ServiceID:  1000001,
 		RemoteName: "/20200706-092527-Landscape-Hamburg-2020.jpg",
 		Status:     "downloaded",
@@ -52,7 +53,7 @@ var FileSyncFixtures = FileSyncMap{
 		UpdatedAt:  time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 	},
 	"FileSync3": {
-		FileID:     1000000,
+		FileID:     &fileID,
 		ServiceID:  1000000,
 		RemoteName: "/20200706-092527-People-2020.jpg",
 		Status:     "new",

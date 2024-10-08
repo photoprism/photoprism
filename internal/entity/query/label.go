@@ -37,7 +37,7 @@ func LabelThumbBySlug(labelSlug string) (file entity.File, err error) {
 	if err := Db().Where("files.file_primary AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN labels ON labels.label_slug = ?", labelSlug).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = FALSE AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error; err != nil {
 		return file, err
@@ -52,7 +52,7 @@ func LabelThumbByUID(labelUID string) (file entity.File, err error) {
 	err = Db().Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_uid = ?", labelUID).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = FALSE AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error
 
@@ -65,7 +65,7 @@ func LabelThumbByUID(labelUID string) (file entity.File, err error) {
 		Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
 		Joins("JOIN categories c ON photos_labels.label_id = c.label_id").
 		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uid= ?", labelUID).
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = FALSE AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(&file).Error
 
