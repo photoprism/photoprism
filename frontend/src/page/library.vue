@@ -56,7 +56,7 @@ export default {
         label: this.$gettext("Index"),
         class: "",
         path: "/index",
-        icon: "camera_roll",
+        icon: "mdi-film",
         readonly: true,
         demo: true,
       },
@@ -66,13 +66,14 @@ export default {
         label: this.$gettext("Import"),
         class: "",
         path: "/import",
-        icon: "create_new_folder",
+        icon: "mdi-folder-plus",
         readonly: false,
         demo: true,
       },
     ];
 
     if (this.$config.feature("logs")) {
+      // <!-- TODO: change this icon probably to file-document -->
       tabs.push({
         name: "library_logs",
         component: Logs,

@@ -41,7 +41,7 @@
               color="secondary-dark"
               :label="$gettext('Move Files')"
               :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
-              prepend-icon="delete"
+              prepend-icon="mdi-delete"
               persistent-hint
               @change="onChange"
             >
@@ -63,12 +63,12 @@
 
         <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="white--text ml-0 hidden-xs-only action-upload" depressed @click.stop="showUpload()">
           <translate>Upload</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
+          <v-icon :right="!rtl" :left="rtl" dark>mdi-cloud-upload</v-icon>
         </v-btn>
 
         <v-btn :disabled="busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-import" depressed @click.stop="startImport()">
           <translate>Import</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>sync</v-icon>
+          <v-icon :right="!rtl" :left="rtl" dark>mdi-sync</v-icon>
         </v-btn>
       </v-container>
     </v-form>

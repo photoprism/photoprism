@@ -5,6 +5,7 @@
         <v-card-actions v-if="$config.values.restart">
           <v-row align="start">
             <v-col cols="12" class="pa-2 text-xs-left">
+              <!-- TODO: change icon -->
               <v-alert color="primary" icon="info" class="pa-2" type="info" outlined>
                 <a style="color: inherit" href="#restart">
                   <translate>Changes to the advanced settings require a restart to take effect.</translate>
@@ -30,7 +31,7 @@
                 color="secondary-dark"
                 :label="$gettext('Debug Logs')"
                 :hint="$gettext('Enable debug mode to display additional logs and help with troubleshooting.')"
-                prepend-icon="pest_control"
+                prepend-icon="mdi-bug"
                 persistent-hint
                 @change="onChange">
               </v-checkbox>
@@ -44,7 +45,7 @@
                 color="secondary-dark"
                 :label="$gettext('Experimental Features')"
                 :hint="$gettext('Enable new features currently under development.')"
-                prepend-icon="science"
+                prepend-icon="mdi-flask-empty"
                 persistent-hint
                 @change="onChange">
               </v-checkbox>
@@ -58,7 +59,7 @@
                 color="secondary-dark"
                 :label="$gettext('Read-Only Mode')"
                 :hint="$gettext('Disable features that require write permission for the originals folder.')"
-                prepend-icon="do_not_touch"
+                prepend-icon="mdi-hand-back-right-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -73,7 +74,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable Backups')"
                 :hint="$gettext('Prevent database and album backups as well as YAML sidecar files from being created.')"
-                prepend-icon="remove_moderator"
+                prepend-icon="mdi-shield-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -88,7 +89,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable WebDAV')"
                 :hint="$gettext('Prevent other apps from accessing PhotoPrism as a shared network drive.')"
-                prepend-icon="sync_disabled"
+                prepend-icon="mdi-sync-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -103,7 +104,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable Places')"
                 :hint="$gettext('Disable interactive world maps and reverse geocoding.')"
-                prepend-icon="location_off"
+                prepend-icon="mdi-map-marker-off"
                 persistent-hint
                 @change="onChange">
               </v-checkbox>
@@ -117,7 +118,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable ExifTool')"
                 :hint="$gettext('ExifTool is required for full support of XMP metadata, videos and Live Photos.')"
-                prepend-icon="no_photography"
+                prepend-icon="mdi-camera-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -132,7 +133,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable TensorFlow')"
                 :hint="$gettext('TensorFlow is required for image classification, facial recognition, and detecting unsafe content.')"
-                prepend-icon="layers_clear"
+                prepend-icon="mdi-layers-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -158,13 +159,14 @@
                   color="secondary-dark"
                   :label="$gettext('Database Backups')"
                   :hint="$gettext('Create regular backups based on the configured schedule.')"
-                  prepend-icon="history"
+                  prepend-icon="mdi-history"
                   persistent-hint
                   @change="onChange"
                 >
                 </v-checkbox>
               </v-col>
 
+              <!-- TODO: change icon -->
               <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.BackupAlbums"
@@ -180,6 +182,7 @@
                 </v-checkbox>
               </v-col>
 
+              <!-- TODO: change icon -->
               <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.SidecarYaml"
@@ -232,7 +235,7 @@
                 color="secondary-dark"
                 :label="$gettext('Dynamic Previews')"
                 :hint="$gettext('On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices.')"
-                prepend-icon="memory"
+                prepend-icon="mdi-memory"
                 persistent-hint
                 @change="onChange"
               >
@@ -292,7 +295,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable Darktable')"
                 :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
-                prepend-icon="raw_off"
+                prepend-icon="mdi-raw-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -307,13 +310,14 @@
                 color="secondary-dark"
                 :label="$gettext('Disable RawTherapee')"
                 :hint="$gettext('Don\'t use RawTherapee to convert RAW images.')"
-                prepend-icon="raw_off"
+                prepend-icon="mdi-raw-off"
                 persistent-hint
                 @change="onChange"
               >
               </v-checkbox>
             </v-col>
 
+            <!-- TODO: change icon -->
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.RawPresets"
@@ -329,6 +333,7 @@
               </v-checkbox>
             </v-col>
 
+            <!-- TODO: change icon -->
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableImageMagick"
@@ -352,7 +357,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable FFmpeg')"
                 :hint="$gettext('Disables video transcoding and thumbnail extraction.')"
-                prepend-icon="videocam_off"
+                prepend-icon="mdi-video-off"
                 persistent-hint
                 @change="onChange"
               >
@@ -372,7 +377,7 @@
               <a id="restart"></a>
               <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
+                <v-icon :right="!rtl" :left="rtl" dark>mdi-restart</v-icon>
               </v-btn>
             </v-col>
           </v-row>

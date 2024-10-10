@@ -47,8 +47,8 @@ body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__co
 body.dark-theme #photoprism,
 body.dark-theme #photoprism .p-page a,
 body.dark-theme #photoprism .v-datatable a,
-body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panel__container,
-body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
+body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panels__container,
+body.dark-theme #photoprism .theme--light.v-tabs-bar .v-tabs__div,
 body.dark-theme #photoprism .theme--light {
     color: #ffffff;
     caret-color: #ffffff;
@@ -86,8 +86,8 @@ body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__co
 body.dark-theme #photoprism,
 body.dark-theme #photoprism .p-page a,
 body.dark-theme #photoprism .v-datatable a,
-body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panel__container,
-body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
+body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panels__container,
+body.dark-theme #photoprism .theme--light.v-tabs-bar .v-tabs__div,
 body.dark-theme #photoprism .theme--light,
 body.dark-theme #photoprism .theme--light.v-table thead th,
 body.dark-theme .theme--light.v-table thead th,

@@ -31,20 +31,20 @@
         <p v-if="isSuperAdmin" class="text-xs-center my-6">
           <v-btn to="/upgrade" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Upgrade Now</translate>
-            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-            <v-icon v-else right dark>navigate_next</v-icon>
+            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
+            <v-icon v-else right dark>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
         <p v-else class="text-xs-center my-6">
           <v-btn href="https://link.photoprism.app/membership" target="_blank" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Learn more</translate>
-            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-            <v-icon v-else right dark>navigate_next</v-icon>
+            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
+            <v-icon v-else right dark>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
       </template>
       <template v-else-if="isSuperAdmin">
-        <h3 class="subtitle-1 py-2"> <translate>Thank You for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon> </h3>
+        <h3 class="subtitle-1 py-2"> <translate>Thank You for Your Support!</translate> <v-icon size="20" color="primary">mdi-heart</v-icon> </h3>
         <p class="text-selectable">
           <translate>PhotoPrism is 100% self-funded and independent.</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
@@ -53,8 +53,8 @@
         <p class="text-xs-center my-6">
           <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Manage Account</translate>
-            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-            <v-icon v-else right dark>navigate_next</v-icon>
+            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
+            <v-icon v-else right dark>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
       </template>

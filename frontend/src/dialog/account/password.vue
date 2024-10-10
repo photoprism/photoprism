@@ -10,7 +10,7 @@
               </h3>
             </v-col>
             <v-col cols="3" class="text-xs-right">
-              <v-icon size="28" color="primary">lock</v-icon>
+              <v-icon size="28" color="primary">mdi-lock</v-icon>
             </v-col>
           </v-row>
         </v-card-title>

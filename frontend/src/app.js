@@ -31,7 +31,7 @@ import Notify from "common/notify";
 import Scrollbar from "common/scrollbar";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
-import icons from "component/icons";
+import customIcons from "component/icons";
 import Dialogs from "dialog/dialogs";
 import Event from "pubsub-js";
 import GetTextPlugin from "vue-gettext";
@@ -53,6 +53,7 @@ import Hls from "hls.js";
 import "common/maptiler-lang";
 import { T, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
+import '@mdi/font/css/materialdesignicons.css'
 
 config.progress(50);
 
@@ -100,7 +101,18 @@ config.update().finally(() => {
 
   // Register Vuetify.
   Vue.use(Vuetify);
-  const vuetify = new Vuetify({ rtl, icons, theme });
+  const vuetify = new Vuetify(
+    {
+      rtl,
+      icons: {
+        iconfont: 'mdi',
+        values: {
+          ...customIcons,
+        }
+      },
+      theme
+    }
+  );
 
   // Register other VueJS plugins.
   Vue.use(GetTextPlugin, {

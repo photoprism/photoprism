@@ -14,36 +14,36 @@
       <v-spacer></v-spacer>
 
       <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-        <v-icon>refresh</v-icon>
+        <v-icon>mdi-refresh</v-icon>
       </v-btn>
 
       <v-btn v-if="canManage" icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
-        <v-icon>edit</v-icon>
+        <v-icon>mdi-pencil</v-icon>
       </v-btn>
 
       <v-btn v-if="canShare" icon class="action-share" :title="$gettext('Share')" @click.stop="dialog.share = true">
-        <v-icon>share</v-icon>
+        <v-icon>mdi-share-variant</v-icon>
       </v-btn>
 
       <v-btn v-if="canDownload" icon class="action-download" :title="$gettext('Download')" @click.stop="download()">
-        <v-icon>get_app</v-icon>
+        <v-icon>mdi-download</v-icon>
       </v-btn>
 
       <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-        <v-icon>view_comfy</v-icon>
+        <v-icon>mdi-view-comfy</v-icon>
       </v-btn>
       <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
-        <v-icon>view_list</v-icon>
+        <v-icon>mdi-view-list</v-icon>
       </v-btn>
       <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-        <v-icon>view_comfy</v-icon>
+        <v-icon>mdi-view-comfy</v-icon>
       </v-btn>
       <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
-        <v-icon>view_column</v-icon>
+        <v-icon>mdi-view-column</v-icon>
       </v-btn>
 
       <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-        <v-icon>cloud_upload</v-icon>
+        <v-icon>mdi-cloud-upload</v-icon>
       </v-btn>
     </v-toolbar>
 
@@ -123,7 +123,7 @@ export default {
       categories: this.$config.albumCategories(),
       collectionTitle: this.$route.meta?.collectionTitle ? this.$route.meta.collectionTitle : this.$gettext("Albums"),
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
-      navIcon: this.$rtl ? "navigate_before" : "navigate_next",
+      navIcon: this.$rtl ? "mdi-chevron-left" : "mdi-chevron-right",
       searchExpanded: false,
       listView: this.$config.settings()?.search?.listView,
       dialog: {

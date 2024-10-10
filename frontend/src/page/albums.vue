@@ -15,7 +15,7 @@
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          prepend-inner-icon="search"
+          prepend-inner-icon="mdi-magnify"
           color="secondary-dark"
           @change="
             (v) => {
@@ -31,19 +31,19 @@
         ></v-text-field>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-          <v-icon>cloud_upload</v-icon>
+          <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
 
         <v-btn v-if="canManage && staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')" @click.prevent="create()">
-          <v-icon>add</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
 
         <v-btn v-if="canManage && !staticFilter['order']" icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
+          <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
         </v-btn>
       </v-toolbar>
       <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
@@ -123,7 +123,7 @@
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outlined>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>
@@ -155,17 +155,17 @@
                 @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon text absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
-                  <v-icon color="white">share</v-icon>
+                  <v-icon color="white">mdi-share-variant</v-icon>
                 </v-btn>
 
                 <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
                 <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                  <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
+                  <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
 
                 <v-btn
@@ -180,7 +180,7 @@
                   @touchmove.stop.prevent
                   @click.stop.prevent="onEdit($event, index)"
                 >
-                  <v-icon color="white" class="select-on">lock</v-icon>
+                  <v-icon color="white" class="select-on">mdi-lock</v-icon>
                 </v-btn>
               </v-img>
 
@@ -222,13 +222,14 @@
                 </div>
                 <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
+                    <!-- TODO: change this icon -->
                     <v-icon size="14">local_offer</v-icon>
                     {{ album.Category }}
                   </button>
                 </div>
                 <div v-if="album.getLocation() !== ''" class="caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
-                    <v-icon size="14">location_on</v-icon>
+                    <v-icon size="14">mdi-map-marker</v-icon>
                     {{ album.getLocation() }}
                   </button>
                 </div>

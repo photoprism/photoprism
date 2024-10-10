@@ -28,6 +28,7 @@
             </v-col>
 
             <v-col cols="4" md="1" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-autocomplete
                 v-model="model.Day"
                 :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
@@ -47,6 +48,7 @@
               </v-autocomplete>
             </v-col>
             <v-col cols="4" md="1" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-autocomplete
                 v-model="model.Month"
                 :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
@@ -66,6 +68,7 @@
               </v-autocomplete>
             </v-col>
             <v-col cols="4" md="2" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-autocomplete
                 v-model="model.Year"
                 :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
@@ -87,6 +90,7 @@
 
             <v-col cols="6" md="2" class="pa-2">
               <!-- TODO: check property return-masked-value TEST -->
+              <!-- TODO: change this icon -->
               <v-text-field
                 v-model="time"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -110,6 +114,7 @@
               </v-autocomplete>
             </v-col>
 
+            <!-- TODO: change this icon -->
             <v-col cols="12" sm="8" md="4" lg="3" class="pa-2">
               <v-autocomplete
                 v-model="model.Country"
@@ -135,6 +140,7 @@
               <v-text-field v-model="model.Altitude" :disabled="disabled" hide-details flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Altitude (m)')" placeholder="" color="secondary-dark" class="input-altitude"></v-text-field>
             </v-col>
 
+            <!-- TODO: change this icon -->
             <v-col cols="4" sm="6" md="3" lg="2" class="pa-2">
               <v-text-field
                 v-model="model.Lat"
@@ -155,6 +161,7 @@
             </v-col>
 
             <v-col cols="4" sm="6" md="3" lg="2" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-text-field
                 v-model="model.Lng"
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -174,6 +181,7 @@
             </v-col>
 
             <v-col cols="12" sm="6" class="pa-2 p-camera-select">
+              <!-- TODO: change this icon -->
               <v-select
                 v-model="model.CameraID"
                 :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
@@ -202,6 +210,7 @@
             </v-col>
 
             <v-col cols="12" md="6" class="pa-2 p-lens-select">
+              <!-- TODO: change this icon -->
               <v-select
                 v-model="model.LensID"
                 :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
@@ -230,6 +239,7 @@
             </v-col>
 
             <v-col cols="12" md="6" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-text-field
                 v-model="model.Details.Artist"
                 :append-icon="model.Details.ArtistSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -247,6 +257,7 @@
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-text-field
                 v-model="model.Details.Copyright"
                 :append-icon="model.Details.CopyrightSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -264,6 +275,7 @@
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-textarea
                 v-model="model.Details.License"
                 :append-icon="model.Details.LicenseSrc === 'manual' ? 'check' : ''"
@@ -283,6 +295,7 @@
             </v-col>
 
             <v-col cols="12" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-textarea
                 v-model="model.Details.Subject"
                 :append-icon="model.Details.SubjectSrc === 'manual' ? 'check' : ''"
@@ -302,6 +315,7 @@
             </v-col>
 
             <v-col cols="12" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-textarea
                 v-model="model.Description"
                 :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
@@ -320,6 +334,7 @@
             </v-col>
 
             <v-col cols="12" md="8" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-textarea
                 v-model="model.Details.Keywords"
                 :append-icon="model.Details.KeywordsSrc === 'manual' ? 'check' : ''"
@@ -338,6 +353,7 @@
             </v-col>
 
             <v-col cols="12" md="4" class="pa-2">
+              <!-- TODO: change this icon -->
               <v-textarea
                 v-model="model.Details.Notes"
                 :append-icon="model.Details.NotesSrc === 'manual' ? 'check' : ''"

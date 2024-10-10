@@ -18,7 +18,7 @@
                 color="secondary-dark"
                 :label="$gettext('Estimates')"
                 :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
-                prepend-icon="insights"
+                prepend-icon="mdi-chart-timeline-variant-shimmer"
                 persistent-hint
                 @change="onChange"
               >
@@ -33,7 +33,7 @@
                 color="secondary-dark"
                 :label="$gettext('Quality Filter')"
                 :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
-                prepend-icon="remove_red_eye"
+                prepend-icon="mdi-eye"
                 persistent-hint
                 @change="onChange"
               >
@@ -48,7 +48,7 @@
                 color="secondary-dark"
                 :label="$gettext('Preview Images')"
                 :hint="$gettext('Automatically generate thumbnails for files that cannot otherwise be indexed or viewed.')"
-                prepend-icon="image"
+                prepend-icon="mdi-image"
                 persistent-hint
                 @change="onChange"
               >
@@ -75,7 +75,7 @@
                 color="secondary-dark"
                 :label="$gettext('Place & Time')"
                 :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
-                prepend-icon="schedule"
+                prepend-icon="mdi-clock-time-four-outline"
                 persistent-hint
                 @change="onChange"
               >
@@ -90,7 +90,7 @@
                 color="secondary-dark"
                 :label="$gettext('Unique ID')"
                 :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
-                prepend-icon="fingerprint"
+                prepend-icon="mdi-fingerprint"
                 persistent-hint
                 @change="onChange"
               >
@@ -105,7 +105,7 @@
                 color="secondary-dark"
                 :label="$gettext('Sequential Name')"
                 :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
-                prepend-icon="format_list_numbered_rtl"
+                prepend-icon="mdi-format-list-numbered-rtl"
                 persistent-hint
                 @change="onChange"
               >

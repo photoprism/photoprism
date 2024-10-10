@@ -14,7 +14,7 @@
         autocorrect="off"
         autocapitalize="none"
         :label="$gettext('Search')"
-        prepend-inner-icon="search"
+        prepend-inner-icon="mdi-magnify"
         color="secondary-dark"
         @change="
           (v) => {
@@ -30,20 +30,20 @@
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload()">
-        <v-icon>refresh</v-icon>
+        <v-icon>mdi-refresh</v-icon>
       </v-btn>
       <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete()">
-        <v-icon>delete</v-icon>
+        <v-icon>mdi-delete</v-icon>
       </v-btn>
       <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report" :title="$gettext('Troubleshooting Checklists')">
-        <v-icon>bug_report</v-icon>
+        <v-icon>mdi-bug</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
-      <v-list-item v-for="err in errors" :key="err.ID" avatar class="rounded-4" @click="showDetails(err)">
+      <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
         <v-list-item-avatar>
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
         </v-list-item-avatar>
@@ -55,7 +55,7 @@
       </v-list-item>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outlined>
+      <v-alert color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" outlined>
         <p class="body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
@@ -66,7 +66,8 @@
         </p>
       </v-alert>
     </div>
-    <p-confirm-dialog :show="dialog.delete" icon="delete_outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
+    <!-- TODO: change icon -->
+    <p-confirm-dialog :show="dialog.delete" icon="mdi-delete-outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
         <v-card-title class="headline pa-2">

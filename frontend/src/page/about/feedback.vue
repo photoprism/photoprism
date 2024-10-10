@@ -6,7 +6,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
-        <v-icon size="26" color="secondary-dark">chat</v-icon>
+        <v-icon size="26" color="secondary-dark">mdi-message-text</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-6">
@@ -56,7 +56,7 @@
         <v-col cols="12" class="d-flex grow px-2 py-1">
           <v-btn color="primary-button" class="white--text ml-0 flex-grow-1" depressed :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
             <translate>Send</translate>
-            <v-icon :right="!rtl" :left="rtl" dark>send</v-icon>
+            <v-icon :right="!rtl" :left="rtl" dark>mdi-send</v-icon>
           </v-btn>
         </v-col>
       </v-row>

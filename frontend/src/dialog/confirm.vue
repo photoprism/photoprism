@@ -4,6 +4,7 @@
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-row>
           <v-col cols="3" class="text-xs-center">
+            <!-- TODO: change this icon -->
             <v-icon size="54" color="secondary-dark lighten-1">{{ icon }}</v-icon>
           </v-col>
           <v-col cols="9" class="text-xs-left" align-self="center">

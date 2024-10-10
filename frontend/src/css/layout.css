@@ -110,9 +110,9 @@
 .v-alert,
 #photoprism .cards-view .result,
 #photoprism div.v-dialog > div.v-card,
-#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container,
+#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panels__container,
 #photoprism div.v-dialog > form > div.v-card,
-#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panel__container {
+#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panels__container {
     border-radius: 6px;
 }
 

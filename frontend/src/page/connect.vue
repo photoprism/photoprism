@@ -3,8 +3,8 @@
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
         <translate>Membership</translate>
-        <v-icon v-if="rtl">navigate_before</v-icon>
-        <v-icon v-else>navigate_next</v-icon>
+        <v-icon v-if="rtl">mdi-chevron-left</v-icon>
+        <v-icon v-else>mdi-chevron-right</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
@@ -33,6 +33,7 @@
       </v-row>
       <v-row v-else-if="error">
         <v-col cols="12" class="text-sm-left pa-2">
+          <!-- TODO: change this icon -->
           <v-alert color="error" icon="gpp_bad" class="mt-6" outlined>
             {{ error }}
           </v-alert>
@@ -61,12 +62,13 @@
           </v-btn>
           <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0" depressed :disabled="busy" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
+            <!-- TODO: change this icon -->
             <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
           </v-btn>
           <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0" depressed :disabled="busy">
             <translate>Upgrade Now</translate>
-            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-            <v-icon v-else right dark>navigate_next</v-icon>
+            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
+            <v-icon v-else right dark>mdi-chevron-right</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -92,13 +94,13 @@
 
               <v-btn v-if="!form.token.length" color="primary-button" class="white--text ml-0 action-proceed" :block="$vuetify.breakpoint.xsOnly" depressed :disabled="busy" @click.stop="connect">
                 <translate>Register</translate>
-                <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-                <v-icon v-else right dark>navigate_next</v-icon>
+                <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
+                <v-icon v-else right dark>mdi-chevron-right</v-icon>
               </v-btn>
               <v-btn v-else color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0 action-activate" depressed :disabled="busy || form.token.length !== tokenMask.length" @click.stop="activate">
                 <translate>Activate</translate>
-                <v-icon v-if="rtl" left dark>navigate_before</v-icon>
-                <v-icon v-else right dark>navigate_next</v-icon>
+                <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
+                <v-icon v-else right dark>mdi-chevron-right</v-icon>
               </v-btn>
             </div>
           </v-alert>

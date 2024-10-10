@@ -4,6 +4,7 @@
       <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`">
         <template #activator>
           <v-btn fab dark color="accent darken-2" class="action-menu">
+            <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
@@ -19,17 +20,18 @@
                 class="p-label-clipboard-download"
                 :disabled="selection.length !== 1"
         >
+            TODO: change this icon
             <v-icon>cloud_download</v-icon>
         </v-btn -->
         <v-btn fab dark small :title="$gettext('Add to album')" color="album" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
+          <v-icon>mdi-bookmark</v-icon>
         </v-btn>
         <v-btn fab dark small color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
-          <v-icon>delete</v-icon>
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
 
         <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>
     </v-container>

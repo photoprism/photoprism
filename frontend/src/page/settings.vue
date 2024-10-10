@@ -59,7 +59,7 @@ export default {
         label: this.$gettext("General"),
         class: "",
         path: "/settings",
-        icon: "tv",
+        icon: "mdi-television",
         public: true,
         admin: true,
         demo: true,
@@ -71,7 +71,7 @@ export default {
         label: this.$gettext("Library"),
         class: "",
         path: "/settings/media",
-        icon: "camera_roll",
+        icon: "mdi-film",
         public: true,
         admin: true,
         demo: true,
@@ -83,12 +83,13 @@ export default {
         label: this.$gettext("Advanced"),
         class: "",
         path: "/settings/advanced",
-        icon: "build",
+        icon: "mdi-wrench",
         public: false,
         admin: true,
         demo: true,
         show: config.allow("config", "manage"),
       },
+      // TODO: change this icon
       {
         name: "settings_services",
         component: Services,
@@ -101,6 +102,7 @@ export default {
         demo: true,
         show: config.feature("services") && config.allow("services", "manage"),
       },
+      // TODO: change this icon
       {
         name: "settings_account",
         component: Account,

@@ -71,8 +71,8 @@ body.dark-theme.theme-grayscale {
 #photoprism.theme-grayscale,
 #photoprism.theme-grayscale .p-page a,
 #photoprism.theme-grayscale .v-datatable a,
-#photoprism.theme-grayscale .theme--light.v-expansion-panels .v-expansion-panel__container,
-#photoprism.theme-grayscale .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-grayscale .theme--light.v-expansion-panels .v-expansion-panels__container,
+#photoprism.theme-grayscale .theme--light.v-tabs-bar .v-tabs__div,
 #photoprism.theme-grayscale .theme--light {
     color: #fff;
 }

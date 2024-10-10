@@ -10,9 +10,11 @@
               </h3>
             </v-col>
             <v-col cols="2" class="text-xs-right">
+              <!-- TODO: change this icon -->
               <v-icon v-if="page === 'setup'" size="28" color="primary">gpp_maybe</v-icon>
+              <!-- TODO: change this icon -->
               <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
-              <v-icon v-else size="28" color="primary">settings</v-icon>
+              <v-icon v-else size="28" color="primary">mdi-cog</v-icon>
             </v-col>
           </v-row>
         </v-card-title>
@@ -40,7 +42,7 @@
                   autocomplete="current-password"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  prepend-inner-icon="lock"
+                  prepend-inner-icon="mdi-lock"
                   color="secondary-dark"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onSetup"
@@ -82,6 +84,7 @@
                 <pre class="clickable" @click.stop.prevent="copyText(key.Secret)">{{ key.Secret }}</pre>
               </v-col>
               <v-col cols="12" class="pa-2">
+                <!-- TODO: change this icon -->
                 <v-text-field
                   v-model="code"
                   :disabled="busy"
@@ -195,7 +198,7 @@
                   :label="$gettext('Password')"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  prepend-inner-icon="lock"
+                  prepend-inner-icon="mdi-lock"
                   color="secondary-dark"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onDeactivate"

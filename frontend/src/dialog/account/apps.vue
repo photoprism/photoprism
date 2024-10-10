@@ -10,8 +10,10 @@
               </h3>
             </v-col>
             <v-col cols="3" class="text-xs-right">
-              <v-icon v-if="action === 'add'" size="28" color="primary">add</v-icon>
+              <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
+              <!-- TODO: change this icon -->
               <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
+              <!-- TODO: change this icon -->
               <v-icon v-else size="28" color="primary">devices</v-icon>
             </v-col>
           </v-row>
@@ -40,7 +42,7 @@
                   autocomplete="current-password"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  prepend-inner-icon="lock"
+                  prepend-inner-icon="mdi-lock"
                   color="secondary-dark"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
@@ -155,7 +157,7 @@
             <v-row align="start">
               <v-col cols="12" class="pa-2">
                 <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
-                  <template #items="props">
+                  <template #item="props">
                     <tr :data-name="props.item.ClientName">
                       <td class="text-selectable text-xs-left">
                         {{ props.item.ClientName }}
@@ -171,7 +173,7 @@
                       </td>
                       <td class="text-xs-right" nowrap>
                         <v-btn icon small text :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
-                          <v-icon color="secondary-dark">delete</v-icon>
+                          <v-icon color="secondary-dark">mdi-delete</v-icon>
                         </v-btn>
                       </td>
                     </tr>
@@ -195,7 +197,7 @@
         </template>
       </v-card>
     </v-form>
-    <p-confirm-dialog :show="revoke.dialog" icon="delete_outline" @cancel="revoke.dialog = false" @confirm="onRevoked"></p-confirm-dialog>
+    <p-confirm-dialog :show="revoke.dialog" icon="mdi-delete-outline" @cancel="revoke.dialog = false" @confirm="onRevoked"></p-confirm-dialog>
   </v-dialog>
 </template>
 <script>

@@ -10,7 +10,7 @@
           </v-col>
           <v-col cols="4" class="text-xs-right">
             <v-btn icon text dark color="secondary-dark" class="ma-0" @click.stop="setup">
-              <v-icon>cloud</v-icon>
+              <v-icon>mdi-cloud</v-icon>
             </v-btn>
           </v-col>
         </v-row>

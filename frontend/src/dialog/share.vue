@@ -10,7 +10,7 @@
           </v-col>
           <v-col cols="3" :class="rtl ? 'text-xs-left' : 'text-xs-right'">
             <v-btn icon text dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
-              <v-icon>add_link</v-icon>
+              <v-icon>mdi-link-plus</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -20,6 +20,7 @@
           <v-expansion-panel v-for="(link, index) in links" :key="link.UID" class="pa-0 elevation-0 secondary mb-1">
             <template #header>
               <button :class="`text-xs-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none" @click.stop="copyUrl(link)">
+                <!-- TODO: change this icon -->
                 <v-icon size="16" class="pr-1">link</v-icon>
                 /s/<strong v-if="link.Token" style="font-weight: 500"> {{ link.getToken() }} </strong><span v-else>…</span>
               </button>
@@ -52,7 +53,7 @@
                     </v-col -->
                     <v-col cols="6" :class="rtl ? 'text-xs-left' : 'text-xs-right'" class="pa-2">
                       <v-btn small icon text color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
-                        <v-icon>delete</v-icon>
+                        <v-icon>mdi-delete</v-icon>
                       </v-btn>
                     </v-col>
                     <v-col cols="6" :class="rtl ? 'text-xs-left' : 'text-xs-right'" class="pa-2">

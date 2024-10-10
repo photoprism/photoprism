@@ -25,8 +25,8 @@ body.dark-theme.theme-chrome,
 
 body.dark-theme #photoprism.theme-chrome,
 body.dark-theme #photoprism.theme-chrome .v-datatable a,
-body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panels .v-expansion-panel__container,
-body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs__bar .v-tabs__div {
+body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panels .v-expansion-panels__container,
+body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs-bar .v-tabs__div {
     color: #ffffff;
     caret-color: #ffffff;
     stroke: #ffffff;

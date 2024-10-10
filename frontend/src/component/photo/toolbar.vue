@@ -15,7 +15,7 @@
           autocapitalize="none"
           autocomplete="off"
           :label="$gettext('Search')"
-          prepend-inner-icon="search"
+          prepend-inner-icon="mdi-magnify"
           color="secondary-dark"
           @change="
             (v) => {
@@ -31,44 +31,45 @@
         ></v-text-field>
 
         <v-btn v-if="filter.latlng" icon :title="$gettext('Show more')" class="action-clear-location" @click.stop="clearLocation()">
+          <!-- TODO: change this icon -->
           <v-icon>location_off</v-icon>
         </v-btn>
 
         <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-          <v-icon>view_comfy</v-icon>
+          <v-icon>mdi-view-comfy</v-icon>
         </v-btn>
         <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
-          <v-icon>view_list</v-icon>
+          <v-icon>mdi-view-list</v-icon>
         </v-btn>
         <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-          <v-icon>view_comfy</v-icon>
+          <v-icon>mdi-view-comfy</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
-          <v-icon>view_column</v-icon>
+          <v-icon>mdi-view-column</v-icon>
         </v-btn>
-
         <v-btn v-if="canDelete && context === 'archive' && config.count.archived > 0" icon class="hidden-sm-and-down action-delete-all" :title="$gettext('Delete All')" @click.stop="deleteAll()">
-          <v-icon>delete_sweep</v-icon>
+          <v-icon>mdi-delete-sweep</v-icon>
         </v-btn>
         <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-          <v-icon>cloud_upload</v-icon>
+          <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
 
         <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
+          <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
         </v-btn>
       </template>
       <template v-else>
         <v-spacer></v-spacer>
         <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-browse" @click.stop="onBrowse">
+          <!-- TODO: change this icon -->
           <v-icon size="20">tab</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
-          <v-icon>close</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
     </v-toolbar>

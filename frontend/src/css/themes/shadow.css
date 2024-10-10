@@ -71,8 +71,8 @@ body.dark-theme.theme-shadow {
 #photoprism.theme-shadow,
 #photoprism.theme-shadow .p-page a,
 #photoprism.theme-shadow .v-datatable a,
-#photoprism.theme-shadow .theme--light.v-expansion-panels .v-expansion-panel__container,
-#photoprism.theme-shadow .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-shadow .theme--light.v-expansion-panels .v-expansion-panels__container,
+#photoprism.theme-shadow .theme--light.v-tabs-bar .v-tabs__div,
 #photoprism.theme-shadow .theme--light {
     color: #fff;
 }

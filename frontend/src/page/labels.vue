@@ -12,7 +12,7 @@
           validate-on-blur
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
-          prepend-inner-icon="search"
+          prepend-inner-icon="mdi-magnify"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
@@ -31,14 +31,14 @@
         ></v-text-field>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="!filter.all" icon class="action-show-all" :title="$gettext('Show more')" @click.stop="showAll()">
-          <v-icon>unfold_more</v-icon>
+          <v-icon>mdi-unfold-more-horizontal</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-show-important" :title="$gettext('Show less')" @click.stop="showImportant()">
-          <v-icon>unfold_less</v-icon>
+          <v-icon>mdi-unfold-less-horizontal</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
@@ -52,7 +52,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outlined>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No labels found</translate>
           </h3>
@@ -78,13 +78,13 @@
                 @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn v-if="canSelect" :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
                 <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                  <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
+                  <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
               </v-img>
 
@@ -94,7 +94,7 @@
                     {{ label.Name }}
                   </span>
                   <span v-else>
-                    <v-icon>edit</v-icon>
+                    <v-icon>mdi-pencil</v-icon>
                   </span>
                   <template #input>
                     <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>

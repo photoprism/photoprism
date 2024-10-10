@@ -4,43 +4,46 @@
       <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-photo-clipboard`">
         <template #activator>
           <v-btn fab dark color="accent darken-2" class="action-menu">
+            <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
         <v-btn v-if="canShare && context !== 'archive' && context !== 'hidden' && context !== 'review'" fab dark small :title="$gettext('Share')" color="share" :disabled="selection.length === 0 || busy" class="action-share" @click.stop="dialog.share = true">
-          <v-icon>cloud</v-icon>
+          <v-icon>mdi-cloud</v-icon>
         </v-btn>
         <v-btn v-if="canManage && context === 'review'" fab dark small :title="$gettext('Approve')" color="share" :disabled="selection.length === 0 || busy" class="action-approve" @click.stop="batchApprove">
+          <!-- TODO: change this icon -->
           <v-icon>check</v-icon>
         </v-btn>
         <v-btn v-if="canEdit" fab dark small :title="$gettext('Edit')" color="edit" :disabled="selection.length === 0 || busy" class="action-edit" @click.stop="edit">
-          <v-icon>edit</v-icon>
+          <v-icon>mdi-pencil</v-icon>
         </v-btn>
         <v-btn v-if="canTogglePrivate && context !== 'archive' && context !== 'hidden'" fab dark small :title="$gettext('Change private flag')" color="private" :disabled="selection.length === 0 || busy" class="action-private" @click.stop="batchPrivate">
-          <v-icon>lock</v-icon>
+          <v-icon>mdi-lock</v-icon>
         </v-btn>
         <v-btn v-if="canDownload && context !== 'archive'" fab dark small :title="$gettext('Download')" :disabled="busy" color="download" class="action-download" @click.stop="download()">
-          <v-icon>get_app</v-icon>
+          <v-icon>mdi-download</v-icon>
         </v-btn>
         <v-btn v-if="canEditAlbum && context !== 'archive' && context !== 'hidden'" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0 || busy" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
+          <v-icon>mdi-bookmark</v-icon>
         </v-btn>
         <v-btn v-if="canArchive && !isAlbum && context !== 'archive' && context !== 'hidden'" fab dark small color="remove" :title="$gettext('Archive')" :disabled="selection.length === 0 || busy" class="action-archive" @click.stop="archivePhotos">
-          <v-icon>archive</v-icon>
+          <v-icon>mdi-package-down</v-icon>
         </v-btn>
         <v-btn v-if="canArchive && !album && context === 'archive' && context !== 'hidden'" fab dark small color="restore" :title="$gettext('Restore')" :disabled="selection.length === 0 || busy" class="action-restore" @click.stop="batchRestore">
+          <!-- TODO: change this icon -->
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn v-if="canEditAlbum && isAlbum" fab dark small :title="$gettext('Remove from album')" color="remove" :disabled="selection.length === 0 || busy" class="action-remove" @click.stop="removeFromAlbum">
-          <v-icon>eject</v-icon>
+          <v-icon>mdi-eject</v-icon>
         </v-btn>
         <v-btn v-if="canDelete && !album && context === 'archive'" fab dark small :title="$gettext('Delete')" color="remove" :disabled="selection.length === 0 || busy" class="action-delete" @click.stop="deletePhotos">
-          <v-icon>delete</v-icon>
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
         <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>
     </v-container>

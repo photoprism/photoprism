@@ -9,6 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="3" class="text-xs-right">
+            <!-- TODO: change this icon -->
             <v-icon size="28" color="primary">sync_alt</v-icon>
           </v-col>
         </v-row>
@@ -35,6 +36,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
+        <!-- TODO: change this icon -->
         <v-alert color="primary darken-2" icon="info" class="pa-2" type="info" outlined>
           <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>

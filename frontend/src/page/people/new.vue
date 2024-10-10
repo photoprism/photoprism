@@ -6,14 +6,14 @@
         <v-divider vertical></v-divider>
 
         <v-btn icon text depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
-          <v-icon>visibility</v-icon>
+          <v-icon>mdi-eye</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
-          <v-icon>visibility_off</v-icon>
+          <v-icon>mdi-eye-off</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
@@ -25,7 +25,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outlined>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
@@ -40,8 +40,8 @@
               <div class="card-background card"></div>
               <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1 clickable" @click.stop.prevent="onView(model)">
                 <v-btn :ripple="false" :depressed="false" class="input-hidden" icon text small absolute @click.stop.prevent="toggleHidden(model)">
-                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
-                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
               </v-img>
 
@@ -90,7 +90,7 @@
                       open-on-clear
                       hide-no-data
                       append-icon=""
-                      prepend-inner-icon="person_add"
+                      prepend-inner-icon="mdi-account-plus"
                       autocomplete="off"
                       class="input-name pa-0 ma-0"
                       @change="

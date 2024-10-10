@@ -3,7 +3,7 @@
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark @click.stop="cancel">
-          <v-icon>close</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
           <translate key="Upload">Upload</translate>
@@ -45,7 +45,7 @@
                 </template>
                 <template #selection="data">
                   <v-chip :key="JSON.stringify(data.item)" :input-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
-                    <v-icon class="pr-1">bookmark</v-icon>
+                    <v-icon class="pr-1">mdi-bookmark</v-icon>
                     {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
                   </v-chip>
                 </template>
@@ -79,7 +79,7 @@
 
             <v-btn :disabled="busy" color="primary-button" class="white--text ml-0 mt-2 action-upload" depressed @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
-              <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
+              <v-icon :right="!rtl" :left="rtl" dark>mdi-download</v-icon>
             </v-btn>
           </v-container>
         </v-form>

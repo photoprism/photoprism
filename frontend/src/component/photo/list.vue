@@ -1,7 +1,8 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-2">
-      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outlined>
+      <!-- TODO: change this icon -->
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -56,16 +57,17 @@
                   @click.stop.prevent="onClick($event, index)"
                 >
                   <button v-if="selectMode" class="input-select">
-                    <i class="select-on"> check_circle </i>
-                    <i class="select-off"> radio_button_off </i>
+                    <i class="select-on"> mdi-circle-outline </i>
+                    <i class="select-off"> mdi-radiobox-blank </i>
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'" class="input-open" @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                       <icon-live-photo />
                     </i>
-                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> gif </i>
+                    <!-- TODO: change icon and fix them -->
+                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
                     <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> play_arrow </i>
+                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
                   </button>
                 </div>
               </td>
@@ -101,12 +103,12 @@
 
                   <template v-else>
                     <v-btn v-if="hidePrivate" class="input-private" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
-                      <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
-                      <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
+                      <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">mdi-lock</v-icon>
+                      <v-icon v-else color="secondary" class="select-off">mdi-lock-open</v-icon>
                     </v-btn>
                     <v-btn class="input-favorite" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
-                      <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">favorite</v-icon>
-                      <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
+                      <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
+                      <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">mdi-heart-outline</v-icon>
                     </v-btn>
                   </template>
                 </td>

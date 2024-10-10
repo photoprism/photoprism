@@ -13,7 +13,7 @@
           validate-on-blur
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
-          prepend-inner-icon="search"
+          prepend-inner-icon="mdi-magnify"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
@@ -34,15 +34,15 @@
         <v-divider vertical></v-divider>
 
         <v-btn icon text depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <template v-if="canManage">
           <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden()">
-            <v-icon>visibility</v-icon>
+            <v-icon>mdi-eye</v-icon>
           </v-btn>
           <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden()">
-            <v-icon>visibility_off</v-icon>
+            <v-icon>mdi-eye-off</v-icon>
           </v-btn>
         </template>
       </v-toolbar>
@@ -57,7 +57,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outlined>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
@@ -97,17 +97,17 @@
                   @touchmove.stop.prevent
                   @click.stop.prevent="onToggleHidden($event, index)"
                 >
-                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
-                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
                 <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
                 <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                  <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
+                  <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
               </v-img>
 
@@ -117,7 +117,7 @@
                     {{ model.Name }}
                   </span>
                   <span v-else>
-                    <v-icon>edit</v-icon>
+                    <v-icon>mdi-pencil</v-icon>
                   </span>
                   <template #input>
                     <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>

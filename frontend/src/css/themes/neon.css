@@ -61,8 +61,8 @@ body.dark-theme.theme-neon,
 #photoprism.theme-neon,
 #photoprism.theme-neon .p-page a,
 #photoprism.theme-neon .v-datatable a,
-#photoprism.theme-neon .theme--light.v-expansion-panels .v-expansion-panel__container,
-#photoprism.theme-neon .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-neon .theme--light.v-expansion-panels .v-expansion-panels__container,
+#photoprism.theme-neon .theme--light.v-tabs-bar .v-tabs__div,
 #photoprism.theme-neon .theme--light {
     color: #fff;
 }

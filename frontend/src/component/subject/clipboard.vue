@@ -4,21 +4,21 @@
       <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-subject-clipboard`">
         <template #activator>
           <v-btn fab dark color="accent darken-2" class="action-menu">
-            <v-icon v-if="selection.length === 0">menu</v-icon>
+            <v-icon v-if="selection.length === 0">mdi-menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
         <v-btn fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
-          <v-icon>get_app</v-icon>
+          <v-icon>mdi-download</v-icon>
         </v-btn>
 
         <v-btn v-if="canAddAlbums" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
+          <v-icon>mdi-bookmark</v-icon>
         </v-btn>
 
         <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>
     </v-container>

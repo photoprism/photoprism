@@ -13,7 +13,7 @@
             validate-on-blur
             class="input-search pa-0 ma-0"
             :label="$gettext('Search')"
-            prepend-inner-icon="search"
+            prepend-inner-icon="mdi-magnify"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="none"

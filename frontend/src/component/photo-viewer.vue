@@ -19,21 +19,21 @@
           <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
 
           <button v-if="canDownload" class="pswp__button action-download" style="background: none" :title="$gettext('Download')" @click.exact="onDownload">
-            <v-icon size="16" color="white">get_app</v-icon>
+            <v-icon size="16" color="white">mdi-download</v-icon>
           </button>
 
           <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only" style="background: none" :title="$gettext('Edit')" @click.exact="onEdit">
-            <v-icon size="16" color="white">edit</v-icon>
+            <v-icon size="16" color="white">mdi-pencil</v-icon>
           </button>
 
           <button class="pswp__button action-select" style="background: none" :title="$gettext('Select')" @click.exact="onSelect">
-            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
-            <v-icon v-else size="16" color="white">radio_button_off</v-icon>
+            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">mdi-check-circle</v-icon>
+            <v-icon v-else size="16" color="white">mdi-radiobox-blank</v-icon>
           </button>
 
           <button v-if="canLike" class="pswp__button action-like hidden-shared-only" style="background: none" :title="$gettext('Like')" @click.exact="onLike">
-            <v-icon v-if="item.Favorite" size="16" color="white">favorite</v-icon>
-            <v-icon v-else size="16" color="white">favorite_border</v-icon>
+            <v-icon v-if="item.Favorite" size="16" color="white">mdi-heart</v-icon>
+            <v-icon v-else size="16" color="white">mdi-heart-outline</v-icon>
           </button>
 
           <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')"></button>
@@ -41,8 +41,8 @@
           <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 
           <button class="pswp__button action-slideshow" style="background: none" :title="$gettext('Start/Stop Slideshow')" @click.exact="onSlideshow">
-            <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
-            <v-icon v-show="interval" size="16" color="white">pause</v-icon>
+            <v-icon v-show="!interval" size="18" color="white">mdi-play</v-icon>
+            <v-icon v-show="interval" size="16" color="white">mdi-pause</v-icon>
           </button>
 
           <div class="pswp__preloader">

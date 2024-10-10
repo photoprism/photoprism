@@ -9,6 +9,7 @@
           <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
         <v-btn fab dark :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0" @click.stop.prevent="speedDial = true">
+          <!-- TODO: change icon -->
           <v-icon dark>more_vert</v-icon>
         </v-btn>
       </v-toolbar>
@@ -22,6 +23,7 @@
           {{ page.title }}
         </v-toolbar-title>
         <v-btn fab dark :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0" @click.stop.prevent="speedDial = true">
+          <!-- TODO: change icon -->
           <v-icon dark>more_vert</v-icon>
         </v-btn>
       </v-toolbar>
@@ -40,8 +42,8 @@
             </v-list-item-content>
             <v-list-item-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
               <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
-                <v-icon v-if="!rtl">chevron_left</v-icon>
-                <v-icon v-else>chevron_right</v-icon>
+                <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
+                <v-icon v-else>mdi-chevron-right</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -51,14 +53,14 @@
       <v-list class="pt-6 p-flex-menu navigation-menu">
         <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
           <v-list-item-action :title="$gettext('Expand')">
-            <v-icon v-if="!rtl">chevron_right</v-icon>
-            <v-icon v-else>chevron_left</v-icon>
+            <v-icon v-if="!rtl">mdi-chevron-right</v-icon>
+            <v-icon v-else>mdi-chevron-left</v-icon>
           </v-list-item-action>
         </v-list-item>
 
         <v-list-item v-if="isMini && $config.feature('search')" to="/browse" class="nav-browse" @click.stop="">
           <v-list-item-action :title="$gettext('Search')">
-            <v-icon>search</v-icon>
+            <v-icon>mdi-magnify</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -68,7 +70,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-group v-if="!isMini && $config.feature('search')" prepend-icon="search" no-action>
+        <v-list-group v-if="!isMini && $config.feature('search')" prepend-icon="mdi-magnify" no-action>
           <v-list-item slot="activator" to="/browse" class="nav-browse" @click.stop="">
             <v-list-item-content> 
               <v-list-item-title class="p-flex-menuitem">
@@ -147,7 +149,7 @@
 
         <v-list-item v-if="isMini" v-show="$config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">
           <v-list-item-action :title="$gettext('Albums')">
-            <v-icon>bookmark</v-icon>
+            <v-icon>mdi-bookmark</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -157,7 +159,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-group v-if="!isMini" v-show="$config.feature('albums')" prepend-icon="bookmark" no-action>
+        <v-list-group v-if="!isMini" v-show="$config.feature('albums')" prepend-icon="mdi-bookmark" no-action>
           <v-list-item slot="activator" :to="{ name: 'albums' }" class="nav-albums" @click.stop="">
             <v-list-item-content>
               <v-list-item-title class="p-flex-menuitem">
@@ -178,7 +180,7 @@
 
         <v-list-item v-if="isMini && $config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
           <v-list-item-action :title="$gettext('Videos')">
-            <v-icon>play_circle_fill</v-icon>
+            <v-icon>mdi-play-circle</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -188,7 +190,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-group v-if="!isMini && $config.feature('videos')" prepend-icon="play_circle_fill" no-action>
+        <v-list-group v-if="!isMini && $config.feature('videos')" prepend-icon="mdi-play-circle" no-action>
           <v-list-item slot="activator" to="/videos" class="nav-video" @click.stop="">
             <v-list-item-content>
               <v-list-item-title class="p-flex-menuitem">
@@ -210,7 +212,7 @@
 
         <v-list-item v-show="$config.feature('people') && (canManagePeople || config.count.people > 0)" :to="{ name: 'people' }" class="nav-people" @click.stop="">
           <v-list-item-action :title="$gettext('People')">
-            <v-icon>person</v-icon>
+            <v-icon>mdi-account</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -223,7 +225,7 @@
 
         <v-list-item v-show="$config.feature('favorites')" :to="{ name: 'favorites' }" class="nav-favorites" @click.stop="">
           <v-list-item-action :title="$gettext('Favorites')">
-            <v-icon>favorite</v-icon>
+            <v-icon>mdi-heart</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -236,7 +238,7 @@
 
         <v-list-item v-show="$config.feature('moments')" :to="{ name: 'moments' }" class="nav-moments" @click.stop="">
           <v-list-item-action :title="$gettext('Moments')">
-            <v-icon>star</v-icon>
+            <v-icon>mdi-star</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -249,7 +251,7 @@
 
         <v-list-item v-show="$config.feature('moments')" :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
           <v-list-item-action :title="$gettext('Calendar')">
-            <v-icon>date_range</v-icon>
+            <v-icon>mdi-calendar-range</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -262,6 +264,7 @@
 
         <v-list-item v-if="isRestricted" v-show="$config.feature('places')" to="/states" class="nav-states" @click.stop="">
           <v-list-item-action :title="$gettext('States')">
+            <!-- TODO: change the icon -->
             <v-icon>near_me</v-icon>
           </v-list-item-action>
 
@@ -276,7 +279,7 @@
         <template v-if="canSearchPlaces">
           <v-list-item v-if="isMini" v-show="canSearchPlaces && $config.feature('places')" :to="{ name: 'places' }" class="nav-places" @click.stop="">
             <v-list-item-action :title="$gettext('Places')">
-              <v-icon>place</v-icon>
+              <v-icon>mdi-map-marker</v-icon>
             </v-list-item-action>
 
             <v-list-item-content>
@@ -286,7 +289,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-group v-if="!isMini" v-show="canSearchPlaces && $config.feature('places')" prepend-icon="place" no-action>
+          <v-list-group v-if="!isMini" v-show="canSearchPlaces && $config.feature('places')" prepend-icon="mdi-map-marker" no-action>
             <v-list-item slot="activator" to="/places" class="nav-places" @click.stop="">
               <v-list-item-content >
                 <v-list-item-title class="p-flex-menuitem">
@@ -309,7 +312,7 @@
 
         <v-list-item v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
           <v-list-item-action :title="$gettext('Labels')">
-            <v-icon>label</v-icon>
+            <v-icon>mdi-label</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -322,7 +325,7 @@
 
         <v-list-item v-show="$config.feature('folders')" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
           <v-list-item-action :title="$gettext('Folders')">
-            <v-icon>folder</v-icon>
+            <v-icon>mdi-folder</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -335,7 +338,7 @@
 
         <v-list-item v-show="$config.feature('private')" to="/private" class="nav-private" @click.stop="">
           <v-list-item-action :title="$gettext('Private')">
-            <v-icon>lock</v-icon>
+            <v-icon>mdi-lock</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -348,7 +351,7 @@
 
         <v-list-item v-if="isMini && $config.feature('library')" :to="{ name: 'library_index' }" class="nav-library" @click.stop="">
           <v-list-item-action :title="$gettext('Library')">
-            <v-icon>camera_roll</v-icon>
+            <v-icon>mdi-film</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -358,7 +361,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
+        <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="mdi-film" no-action>
           <v-list-item slot="activator" :to="{ name: 'library_index' }" class="nav-library" @click.stop="">
             <v-list-item-content>
               <v-list-item-title class="p-flex-menuitem">
@@ -397,7 +400,7 @@
         <template v-if="!config.disable.settings">
           <v-list-item v-if="isMini" v-show="$config.feature('settings')" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
             <v-list-item-action :title="$gettext('Settings')">
-              <v-icon>settings</v-icon>
+              <v-icon>mdi-cog</v-icon>
             </v-list-item-action>
 
             <v-list-item-content>
@@ -407,7 +410,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-group v-else v-show="$config.feature('settings')" prepend-icon="settings" no-action>
+          <v-list-group v-else v-show="$config.feature('settings')" prepend-icon="mdi-cog" no-action>
             <v-list-item slot="activator" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
               <v-list-item-content>
                 <v-list-item-title>
@@ -460,7 +463,7 @@
 
         <v-list-item v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
           <v-list-item-action :title="$gettext('Login')">
-            <v-icon>lock</v-icon>
+            <v-icon>mdi-lock</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -472,6 +475,7 @@
 
         <v-list-item v-show="featMembership" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
           <v-list-item-action :title="$gettext('Upgrade')">
+            <!-- TODO: change this icons -->
             <v-icon v-if="isPro">verified</v-icon>
             <v-icon v-else>diamond</v-icon>
           </v-list-item-action>
@@ -490,7 +494,7 @@
       <v-list class="p-user-box">
         <v-list-item v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" @click.stop="">
           <v-list-item-action :title="$gettext('Offline')">
-            <v-icon color="warning">wifi_off</v-icon>
+            <v-icon color="warning">mdi-wifi-off</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -512,14 +516,14 @@
 
           <v-list-item-action :title="$gettext('Logout')">
             <v-btn icon @click.stop.prevent="onLogout">
-              <v-icon>power_settings_new</v-icon>
+              <v-icon>mdi-power</v-icon>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
 
         <v-list-item v-show="isMini && auth && !isPublic" class="nav-logout" @click.stop.prevent="onLogout">
           <v-list-item-action :title="$gettext('Logout')">
-            <v-icon>power_settings_new</v-icon>
+            <v-icon>mdi-power</v-icon>
           </v-list-item-action>
 
           <v-list-item-content>
@@ -534,75 +538,79 @@
       <div class="menu-content grow-top-right">
         <div class="menu-icons">
           <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action nav-logout" @click.prevent="onLogout">
-            <v-icon>power_settings_new</v-icon>
+            <v-icon>mdi-power</v-icon>
           </a>
           <a href="#" :title="$gettext('Reload')" class="menu-action nav-reload" @click.prevent="reloadApp">
-            <v-icon>refresh</v-icon>
+            <v-icon>mdi-refresh</v-icon>
           </a>
           <router-link v-if="auth && $config.feature('account')" :to="{ name: 'settings_account' }" :title="$gettext('Account')" class="menu-action nav-account">
+            <!-- TODO: change this icon probably to shield-account -->
             <v-icon>admin_panel_settings</v-icon>
           </router-link>
           <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" :to="{ name: 'settings' }" :title="$gettext('Settings')" class="menu-action nav-settings">
-            <v-icon>settings</v-icon>
+            <v-icon>mdi-cog</v-icon>
           </router-link>
           <a v-if="auth && !config.readonly && $config.feature('upload')" href="#" :title="$gettext('Upload')" class="menu-action nav-upload" @click.prevent="openUpload()">
-            <v-icon>cloud_upload</v-icon>
+            <v-icon>mdi-cloud-upload</v-icon>
           </a>
           <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')" class="menu-action nav-login">
+            <!-- TODO: change this icon -->
             <v-icon>login</v-icon>
           </router-link>
         </div>
         <div class="menu-actions">
           <div v-if="auth && !routeName('browse') && $config.feature('search')" class="menu-action nav-search">
             <router-link to="/browse">
-              <v-icon>search</v-icon>
+              <v-icon>mdi-magnify</v-icon>
               <translate>Search</translate>
             </router-link>
           </div>
           <div v-if="auth && !routeName('albums') && $config.feature('albums')" class="menu-action nav-albums">
             <router-link to="/albums">
-              <v-icon>bookmark</v-icon>
+              <v-icon>mdi-bookmark</v-icon>
               <translate>Albums</translate>
             </router-link>
           </div>
           <div v-if="auth && canManagePeople && !routeName('people') && $config.feature('people')" class="menu-action nav-people">
             <router-link to="/people">
-              <v-icon>person</v-icon>
+              <v-icon>mdi-account</v-icon>
               <translate>People</translate>
             </router-link>
           </div>
           <div v-if="auth && canSearchPlaces && !routeName('places') && $config.feature('places')" class="menu-action nav-places">
             <router-link to="/places">
-              <v-icon>place</v-icon>
+              <v-icon>mdi-map-marker</v-icon>
               <translate>Places</translate>
             </router-link>
           </div>
           <div v-if="auth && !routeName('files') && $config.feature('files') && $config.feature('library')" class="menu-action nav-files">
             <router-link to="/index/files">
-              <v-icon>folder</v-icon>
+              <v-icon>mdi-folder</v-icon>
               <translate>Files</translate>
             </router-link>
           </div>
           <div v-if="auth && !routeName('library_index') && $config.feature('library')" class="menu-action nav-index">
             <router-link :to="{ name: 'library_index' }">
-              <v-icon>camera_roll</v-icon>
+              <v-icon>mdi-film</v-icon>
               <translate>Index</translate>
             </router-link>
           </div>
           <div v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')" class="menu-action nav-logs">
             <router-link :to="{ name: 'library_logs' }">
+              <!-- TODO: change this icon probably to file-document -->
               <v-icon>feed</v-icon>
               <translate>Logs</translate>
             </router-link>
           </div>
           <div class="menu-action nav-manual">
             <a href="https://link.photoprism.app/docs" target="_blank">
-              <v-icon>auto_stories</v-icon>
+              <v-icon>mdi-book-open-page-variant</v-icon>
               <translate>User Guide</translate>
             </a>
           </div>
           <div v-if="featUpgrade" class="menu-action nav-upgrade">
             <router-link :to="{ name: 'upgrade' }">
+              <!-- TODO: change this icon -->
               <v-icon v-if="isPro">verified</v-icon>
               <v-icon v-else>diamond</v-icon>
               <translate>Upgrade</translate>
@@ -610,6 +618,7 @@
           </div>
           <div v-if="config.legalUrl" class="menu-action nav-legal">
             <a :href="config.legalUrl" target="_blank">
+              <!-- TODO: change this icon -->
               <v-icon>info</v-icon>
               <translate>Legal Information</translate>
             </a>

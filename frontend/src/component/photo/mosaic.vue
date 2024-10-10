@@ -1,7 +1,8 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
     <div v-if="photos.length === 0" class="pa-0">
-      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outlined>
+      <!-- TODO: change this icon -->
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -63,18 +64,19 @@
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                 <icon-live-photo />
               </i>
-              <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> play_arrow </i>
-              <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> gif </i>
+              <!-- TODO: change this icon and fx them -->
+              <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
+              <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
               <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-              <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')"> burst_mode </i>
+              <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')"> mdi-camera-burst </i>
             </button>
 
             <button v-if="photo.Type === 'image' && selectMode" class="input-view" :title="$gettext('View')" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onOpen($event, index)" @touchmove.stop.prevent @click.stop.prevent="onOpen($event, index)">
-              <i color="white" class="action-fullscreen"> zoom_in </i>
+              <i color="white" class="action-fullscreen"> mdi-magnify-plus-outline </i>
             </button>
 
             <button v-if="!isSharedView && hidePrivate && photo.Private" class="input-private">
-              <i color="white" class="select-on"> lock </i>
+              <i color="white" class="select-on"> mdi-lock </i>
             </button>
 
             <!--
@@ -88,13 +90,13 @@
               use css to show it when it is being hovered.
             -->
             <button class="input-select" @mousedown.stop.prevent="input.mouseDown($event, index)" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-              <i color="white" class="select-on"> check_circle </i>
-              <i color="white" class="select-off"> radio_button_off </i>
+              <i color="white" class="select-on"> mdi-circle-outline </i>
+              <i color="white" class="select-off"> mdi-radiobox-blank </i>
             </button>
 
             <button v-if="!isSharedView" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-              <i v-if="photo.Favorite"> favorite </i>
-              <i v-else> favorite_border </i>
+              <i v-if="photo.Favorite"> mdi-heart </i>
+              <i v-else>mdi-heart-outline </i>
             </button>
           </div>
         </div>

@@ -45,7 +45,7 @@ export default {
         label: this.$gettext("Recognized"),
         class: "",
         path: "/people",
-        icon: "people_alt",
+        icon: "mdi-account-multiple",
       },
     ];
 
@@ -57,7 +57,7 @@ export default {
         label: this.$gettext("New"),
         class: "",
         path: "/people/new",
-        icon: "person_add",
+        icon: "mdi-account-plus",
         count: 0,
       });
     }

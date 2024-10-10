@@ -17,7 +17,7 @@
                 <v-row class="d-flex align-stretch" align="center" justify="center">
                   <v-col cols="12" class="pa-0 flex-grow-1">
                     <div class="v-table__overflow">
-                      <table class="v-datatable v-table theme--light photo-files">
+                      <table class="v-datatable v-table theme--light photo-files d-flex">
                         <tbody>
                           <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                             <td>
@@ -198,10 +198,10 @@
                                 @change="changeOrientation(file)"
                               >
                                 <template #selection="{ item }">
-                                  <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
+                                  <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
                                 </template>
                                 <template #item="{ item }">
-                                  <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
+                                  <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
                                 </template>
                               </v-select>
                             </td>

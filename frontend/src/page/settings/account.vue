@@ -185,26 +185,31 @@
             <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                 <translate>Change Password</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
+                <v-icon :right="!rtl" :left="rtl" dark>mdi-lock</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                 <translate>2-Factor Authentication</translate>
+                <!-- TODO: change icon -->
                 <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>gpp_good</v-icon>
+                <!-- TODO: change icon -->
                 <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :right="!rtl" :left="rtl" dark>shield</v-icon>
+                <!-- TODO: change icon -->
                 <v-icon v-else :right="!rtl" :left="rtl" dark>gpp_maybe</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-apps-dialog compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
+                <!-- TODO: change icon -->
                 <v-icon :right="!rtl" :left="rtl" dark>devices</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
+                <!-- TODO: change icon -->
                 <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
               </v-btn>
             </v-col>

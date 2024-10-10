@@ -28,6 +28,7 @@
     "@babel/register": "^7.24.6",
     "@babel/runtime": "^7.25.6",
     "@lcdp/offline-plugin": "^5.1.1",
+    "@mdi/font": "^7.4.47",
     "@vvo/tzdb": "^6.145.0",
     "axios": "^1.7.7",
     "axios-mock-adapter": "^2.0.0",
@@ -121,7 +122,6 @@
     ">0.25% and last 2 years"
   ],
   "devDependencies": {
-    "@mdi/font": "^7.4.47",
-    "eslint-plugin-vuetify": "^2.4.0"
+    "eslint-plugin-vuetify": "^1.1.0"
   }
 }

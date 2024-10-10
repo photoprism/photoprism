@@ -32,7 +32,7 @@
           </v-col>
           <v-col cols="2" class="text-xs-right">
             <v-btn icon text :ripple="false" class="action-remove mt-0" @click.stop.prevent="remove()">
-              <v-icon color="secondary-dark">delete</v-icon>
+              <v-icon color="secondary-dark">mdi-delete</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -91,12 +91,14 @@
             <v-select v-model="model.SyncInterval" :disabled="!model.AccSync" :label="$gettext('Interval')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="options.Intervals()"></v-select>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
+            <!-- TODO: change this icon -->
             <v-checkbox v-model="model.SyncDownload" :disabled="!model.AccSync || readonly" hide-details flat color="secondary-dark" on-icon="radio_button_checked" off-icon="radio_button_unchecked" :label="$gettext('Download remote files')" @change="onChangeSync('download')"></v-checkbox>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
             <v-checkbox v-model="model.SyncFilenames" :disabled="!model.AccSync" hide-details flat color="secondary-dark" :label="$gettext('Preserve filenames')"></v-checkbox>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
+            <!-- TODO: change this icon -->
             <v-checkbox v-model="model.SyncUpload" :disabled="!model.AccSync" hide-details flat color="secondary-dark" on-icon="radio_button_checked" off-icon="radio_button_unchecked" :label="$gettext('Upload local files')" @change="onChangeSync('upload')"></v-checkbox>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
