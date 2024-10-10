@@ -42,6 +42,7 @@ var FileFixtures = FileMap{
 		FileCodec:       "jpeg",
 		FileType:        "jpg",
 		FileMime:        "image/jpg",
+		MediaType:       string(media.Image),
 		FilePrimary:     true,
 		FileSidecar:     false,
 		FileVideo:       false,
