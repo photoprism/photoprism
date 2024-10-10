@@ -10,8 +10,11 @@ import (
 
 // altCountryNames defines mapping between different names for the same country
 var altCountryNames = map[string]string{
-	"United States of America": "USA",
-	"United States":            "USA",
+	"us":                       "United States",
+	"usa":                      "United States",
+	"US":                       "United States",
+	"USA":                      "United States",
+	"United States of America": "United States",
 	"":                         "Unknown",
 }
 

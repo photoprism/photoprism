@@ -55,7 +55,7 @@ test.meta("testID", "folders-002").meta({ mode: "public" })(
 
     await t
       .typeText(albumdialog.title, "MyFolder", { replace: true })
-      .typeText(albumdialog.location, "USA", { replace: true })
+      .typeText(albumdialog.location, "United States", { replace: true })
       .typeText(albumdialog.description, "Last holiday")
       .typeText(albumdialog.category, "Mountains")
       .pressKey("enter")
@@ -69,7 +69,7 @@ test.meta("testID", "folders-002").meta({ mode: "public" })(
       .expect(Selector("div.caption").nth(1).innerText)
       .contains("Mountains")
       .expect(Selector("div.caption").nth(2).innerText)
-      .contains("USA");
+      .contains("United States");
 
     await album.openNthAlbum(0);
 
@@ -97,7 +97,7 @@ test.meta("testID", "folders-002").meta({ mode: "public" })(
       .expect(albumdialog.category.value)
       .eql("Mountains")
       .expect(albumdialog.location.value)
-      .eql("USA");
+      .eql("United States");
 
     await t
       .typeText(albumdialog.title, "Kanada", { replace: true })
@@ -120,7 +120,7 @@ test.meta("testID", "folders-002").meta({ mode: "public" })(
       .expect(page.cardDescription.nth(0).innerText)
       .notContains("We went to ski")
       .expect(Selector("div.caption").nth(0).innerText)
-      .notContains("USA");
+      .notContains("United States");
   }
 );
 

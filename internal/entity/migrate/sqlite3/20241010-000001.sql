@@ -1,0 +1,2 @@
+UPDATE countries SET country_name = 'United States' WHERE country_name = 'USA' AND country_slug = 'usa';
+UPDATE albums SET album_location = 'United States' WHERE album_location = 'USA' AND album_type = 'state';
