@@ -42,13 +42,14 @@ func CountUsers(registered, active bool, roles, excludeRoles []string) (count in
 	return count
 }
 
-// Users finds users and returns them.
-func Users(limit, offset int, sortOrder, search string) (result entity.Users, err error) {
+// Users finds user accounts based on the specified parameters.
+func Users(limit, offset int, sortOrder, search string, deleted bool) (result entity.Users, err error) {
 	result = entity.Users{}
-	stmt := Db()
+	stmt := UnscopedDb()
 
 	search = strings.TrimSpace(search)
 
+	// Filter user accounts to be returned.
 	if search == "all" {
 		// Don't filter.
 	} else if id := txt.Int(search); id != 0 {
@@ -61,10 +62,17 @@ func Users(limit, offset int, sortOrder, search string) (result entity.Users, er
 		stmt = stmt.Where("id > 0")
 	}
 
+	// Hide deleted user accounts?
+	if !deleted {
+		stmt = stmt.Where("deleted_at IS NULL")
+	}
+
+	// Set result sort order.
 	if sortOrder == "" {
 		sortOrder = "id"
 	}
 
+	// Limit number of results.
 	if limit > 0 {
 		stmt = stmt.Limit(limit)
 

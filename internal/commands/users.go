@@ -79,3 +79,15 @@ var UserFlags = []cli.Flag{
 		Usage: UserWebDAVUsage,
 	},
 }
+
+// UserTokensFlag is a CLI flag for including security tokens in reports.
+var UserTokensFlag = cli.BoolFlag{
+	Name:  "tokens",
+	Usage: "show user preview and download tokens",
+}
+
+// UsersDeletedFlag is a CLI flag for finding deleted user accounts.
+var UsersDeletedFlag = cli.BoolFlag{
+	Name:  "deleted, d",
+	Usage: "show deleted user accounts",
+}

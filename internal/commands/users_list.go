@@ -15,7 +15,7 @@ import (
 var UsersListCommand = cli.Command{
 	Name:   "ls",
 	Usage:  "Lists registered user accounts",
-	Flags:  append(report.CliFlags, countFlag),
+	Flags:  append(report.CliFlags, CountFlag, UsersDeletedFlag),
 	Action: usersListAction,
 }
 
@@ -26,8 +26,12 @@ func usersListAction(ctx *cli.Context) error {
 
 		cols := []string{"UID", "Username", "Role", "Authentication", "Super Admin", "Web Login", "Last Login", "WebDAV"}
 
+		if ctx.Bool("deleted") {
+			cols = append(cols, "Deleted At")
+		}
+
 		// Fetch users from database.
-		users, err := query.Users(ctx.Int("n"), 0, "", ctx.Args().First())
+		users, err := query.Users(ctx.Int("n"), 0, "", ctx.Args().First(), ctx.Bool("deleted"))
 
 		if err != nil {
 			return err
@@ -42,9 +46,6 @@ func usersListAction(ctx *cli.Context) error {
 
 		rows = make([][]string, len(users))
 
-		// Show log message.
-		log.Infof("found %s", english.Plural(len(users), "user", "users"))
-
 		// Display report.
 		for i, user := range users {
 			rows[i] = []string{
@@ -56,6 +57,10 @@ func usersListAction(ctx *cli.Context) error {
 				report.Bool(user.CanLogIn(), report.Enabled, report.Disabled),
 				report.DateTime(user.LoginAt),
 				report.Bool(user.CanUseWebDAV(), report.Enabled, report.Disabled),
+			}
+
+			if ctx.Bool("deleted") {
+				rows[i] = append(rows[i], report.DateTime(user.DeletedAt))
 			}
 		}
 
