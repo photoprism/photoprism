@@ -298,6 +298,16 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
+		// Check if the GORMv2 sqlite conversion has been done?
+		if db.Dialector.Name() == SQLite3 {
+			version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("Gorm For SQLite", "V2 Upgrade"))
+			if version.NeedsMigration() {
+				if err := migrate.ConvertSQLiteDataTypes(db); err != nil {
+					log.Error("migrate: could not convert sqlite datatypes : ", err)
+				}
+			}
+		}
+
 		// Setup required explicit join tables
 		err := db.SetupJoinTable(&Photo{}, "Albums", &PhotoAlbum{})
 		if err != nil {
