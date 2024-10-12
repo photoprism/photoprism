@@ -15,7 +15,7 @@ import (
 var UsersListCommand = cli.Command{
 	Name:   "ls",
 	Usage:  "Lists registered user accounts",
-	Flags:  append(report.CliFlags, CountFlag, UsersDeletedFlag),
+	Flags:  append(report.CliFlags, CountFlag, UsersLoginFlag, UsersCreatedFlag, UsersDeletedFlag),
 	Action: usersListAction,
 }
 
@@ -24,7 +24,15 @@ func usersListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"UID", "Username", "Role", "Authentication", "Super Admin", "Web Login", "Last Login", "WebDAV"}
+		cols := []string{"UID", "Username", "Role", "Authentication", "Super Admin", "Web Login", "WebDAV"}
+
+		if ctx.Bool("login") {
+			cols = append(cols, "Last Login")
+		}
+
+		if ctx.Bool("created") {
+			cols = append(cols, "Created At")
+		}
 
 		if ctx.Bool("deleted") {
 			cols = append(cols, "Deleted At")
@@ -55,8 +63,15 @@ func usersListAction(ctx *cli.Context) error {
 				user.AuthInfo(),
 				report.Bool(user.SuperAdmin, report.Yes, report.No),
 				report.Bool(user.CanLogIn(), report.Enabled, report.Disabled),
-				report.DateTime(user.LoginAt),
 				report.Bool(user.CanUseWebDAV(), report.Enabled, report.Disabled),
+			}
+
+			if ctx.Bool("login") {
+				rows[i] = append(rows[i], report.DateTime(user.LoginAt))
+			}
+
+			if ctx.Bool("created") {
+				rows[i] = append(rows[i], report.DateTime(&user.CreatedAt))
 			}
 
 			if ctx.Bool("deleted") {

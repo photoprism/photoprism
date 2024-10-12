@@ -80,14 +80,26 @@ var UserFlags = []cli.Flag{
 	},
 }
 
-// UserTokensFlag is a CLI flag for including security tokens in reports.
+// UserTokensFlag is a CLI flag for showing the security tokens in reports.
 var UserTokensFlag = cli.BoolFlag{
 	Name:  "tokens",
 	Usage: "show user preview and download tokens",
 }
 
-// UsersDeletedFlag is a CLI flag for finding deleted user accounts.
+// UsersLoginFlag is a CLI flag for showing the last login timestamp in reports.
+var UsersLoginFlag = cli.BoolFlag{
+	Name:  "login, l",
+	Usage: "show date and time of last login",
+}
+
+// UsersCreatedFlag is a CLI flag for showing the account creation timestamp in reports.
+var UsersCreatedFlag = cli.BoolFlag{
+	Name:  "created, a",
+	Usage: "show account creation timestamp",
+}
+
+// UsersDeletedFlag is a CLI flag for showing deleted user accounts in reports.
 var UsersDeletedFlag = cli.BoolFlag{
-	Name:  "deleted, d",
+	Name:  "deleted, r",
 	Usage: "show deleted user accounts",
 }
