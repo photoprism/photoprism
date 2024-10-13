@@ -304,6 +304,8 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 			if version.NeedsMigration() {
 				if err := migrate.ConvertSQLiteDataTypes(db); err != nil {
 					log.Error("migrate: could not convert sqlite datatypes : ", err)
+				} else {
+					version.Migrated(db)
 				}
 			}
 		}
