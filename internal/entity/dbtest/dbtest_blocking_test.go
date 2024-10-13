@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -103,7 +104,11 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		if err := entity.Update(m, "ID", "PhotoUID"); err != nil {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 			if entity.DbDialect() == entity.SQLite3 {
-				assert.ErrorContains(t, err, "no such table: blockers") // Sql Lite doesn't have wait locking it just throws a missing table message.
+				if strings.Contains(err.Error(), "locked") {
+					assert.ErrorContains(t, err, "database is locked") // if using a file you get a different message.  Gotta love sqlite
+				} else {
+					assert.ErrorContains(t, err, "no such table: blockers") // Sql Lite doesn't have wait locking it just throws a missing table message.
+				}
 			} else {
 				assert.ErrorContains(t, err, "timeout")
 			}
@@ -168,7 +173,11 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		if err := entity.Update(m, "ID", "PhotoUID"); err != nil {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 			if entity.DbDialect() == entity.SQLite3 {
-				assert.ErrorContains(t, err, "no such table: blockers") // Sql Lite doesn't have wait locking it just throws a missing table message.
+				if strings.Contains(err.Error(), "locked") {
+					assert.ErrorContains(t, err, "database is locked") // if using a file you get a different message.  Gotta love sqlite
+				} else {
+					assert.ErrorContains(t, err, "no such table: blockers") // Sql Lite doesn't have wait locking it just throws a missing table message.
+				}
 			} else {
 				assert.ErrorContains(t, err, "timeout")
 			}
