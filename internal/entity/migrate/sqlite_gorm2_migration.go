@@ -31,12 +31,14 @@ func ConvertSQLiteDataTypes(db *gorm.DB) (err error) {
 	}
 
 	reVarchar := regexp.MustCompile(`VARCHAR\([0-9]+\)`)
-	reVarbinary := regexp.MustCompile(`VARBINARY\([0-9]+\)`)
+	reVarbinary := regexp.MustCompile(`VARBINARY\([0-9]+\)|MEDIUMBLOB`)
 	reBigint := regexp.MustCompile(` bigint`)
 	reBool := regexp.MustCompile(` bool`)
-	reCreate := regexp.MustCompile("(CREATE TABLE `[a-z_]+)")
+	reFloat := regexp.MustCompile(` FLOAT`)
+	reCreate := regexp.MustCompile("(CREATE TABLE `[a-z_]+)(` )")
 	reDblQuote := regexp.MustCompile(`"([a-z_]+)"`)
-	reZZorEmpty := regexp.MustCompile("'(|zz)'")
+	reDEFAULTString := regexp.MustCompile(`DEFAULT '([a-z\/]*)'`)
+	reTrailingSpaces := regexp.MustCompile(`([ ]+\))`)
 
 	for _, table := range tables {
 		log.Debugf("We are working on table %s", table.TblName)
@@ -45,14 +47,14 @@ func ConvertSQLiteDataTypes(db *gorm.DB) (err error) {
 		//log.Debugf("%s", createstatement.Sql)
 		if strings.Contains(createstatement.Sql, "VARCHAR") || strings.Contains(createstatement.Sql, "VARBINARY") || strings.Contains(createstatement.Sql, "bigint") {
 			tempStatement := reDblQuote.ReplaceAll([]byte(createstatement.Sql), []byte("`${1}`"))
-			tempStatement = reZZorEmpty.ReplaceAll(tempStatement, []byte(`"${1}"`))
-			//log.Debugf("%s", tempStatement)
+			tempStatement = reDEFAULTString.ReplaceAll(tempStatement, []byte(`DEFAULT "${1}"`))
 			tempStatement = reVarchar.ReplaceAll(tempStatement, []byte("text"))
 			tempStatement = reVarbinary.ReplaceAll(tempStatement, []byte("blob"))
-			tempStatement = reBool.ReplaceAll(tempStatement, []byte("numeric"))
+			tempStatement = reBool.ReplaceAll(tempStatement, []byte(" numeric"))
 			tempStatement = reBigint.ReplaceAll(tempStatement, []byte(" integer"))
-			tempStatement = reCreate.ReplaceAll(tempStatement, []byte("${1}__temp"))
-			//log.Debugf("%s", tempStatement)
+			tempStatement = reFloat.ReplaceAll(tempStatement, []byte(" real"))
+			tempStatement = reCreate.ReplaceAll(tempStatement, []byte("${1}__temp${2} "))
+			tempStatement = reTrailingSpaces.ReplaceAll(tempStatement, []byte(")"))
 			createTempStatement := string(tempStatement)
 			insertTempStatement := fmt.Sprintf("INSERT INTO %s__temp SELECT * FROM %s;", table.TblName, table.TblName)
 			dropTempStatement := fmt.Sprintf("DROP TABLE %s;", table.TblName)
