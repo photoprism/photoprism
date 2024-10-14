@@ -36,7 +36,7 @@ type Album struct {
 	AlbumUID         string         `gorm:"type:bytes;size:42;uniqueIndex;" json:"UID" yaml:"UID"`
 	ParentUID        string         `gorm:"type:bytes;size:42;default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string         `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug"`
-	AlbumPath        string         `gorm:"size:1024;index;" json:"Path,omitempty" yaml:"Path,omitempty"`
+	AlbumPath        string         `gorm:"type:bytes;size:1024;index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string         `gorm:"type:bytes;size:8;default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string         `gorm:"size:160;index;" json:"Title" yaml:"Title"`
 	AlbumLocation    string         `gorm:"size:160;" json:"Location" yaml:"Location,omitempty"`
