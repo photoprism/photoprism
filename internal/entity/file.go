@@ -331,12 +331,14 @@ func (m *File) ReplaceHash(newHash string) error {
 	}
 
 	entities := Tables{
-		"albums": Album{},
-		"labels": Label{},
+		10: {"albums", Album{}},
+		20: {"labels", Label{}},
 	}
 
 	// Search related tables for references and update them.
-	for name, entity := range entities {
+	for _, tableMap := range entities {
+		name := tableMap.TableName
+		entity := tableMap.TableDefinition
 		start := time.Now()
 
 		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {

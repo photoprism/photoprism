@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"time"
 
 	"gorm.io/gorm"
@@ -11,9 +12,59 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-type Tables map[string]interface{}
+type TableMap struct {
+	TableName       string
+	TableDefinition interface{}
+}
+
+type Tables map[int]TableMap
+
+var Entities = Tables{
+	10:   {migrate.Migration{}.TableName(), &migrate.Migration{}},
+	20:   {migrate.Version{}.TableName(), &migrate.Version{}},
+	100:  {Error{}.TableName(), &Error{}},
+	110:  {Password{}.TableName(), &Password{}},
+	120:  {Passcode{}.TableName(), &Passcode{}},
+	130:  {Duplicate{}.TableName(), &Duplicate{}},
+	1000: {Subject{}.TableName(), &Subject{}},
+	1010: {Service{}.TableName(), &Service{}},
+	1020: {Lens{}.TableName(), &Lens{}},
+	1030: {Camera{}.TableName(), &Camera{}},
+	1040: {Place{}.TableName(), &Place{}},
+	1050: {Folder{}.TableName(), &Folder{}},
+	1060: {Label{}.TableName(), &Label{}},
+	1070: {User{}.TableName(), &User{}},
+	1080: {Keyword{}.TableName(), &Keyword{}},
+	2000: {Face{}.TableName(), &Face{}},
+	2010: {Cell{}.TableName(), &Cell{}},
+	2020: {Category{}.TableName(), &Category{}},
+	2030: {UserSettings{}.TableName(), &UserSettings{}},
+	2040: {PhotoUser{}.TableName(), &PhotoUser{}},
+	2050: {Client{}.TableName(), &Client{}},
+	2060: {UserShare{}.TableName(), &UserShare{}},
+	2070: {Reaction{}.TableName(), &Reaction{}},
+	3000: {Country{}.TableName(), &Country{}},
+	3010: {Photo{}.TableName(), &Photo{}},
+	3020: {Country{}.TableName(), &Country{}}, // Deliberate as there is a fk to and from photo.
+	3030: {Session{}.TableName(), &Session{}},
+	3040: {UserDetails{}.TableName(), &UserDetails{}},
+	4000: {PhotoKeyword{}.TableName(), &PhotoKeyword{}},
+	4010: {File{}.TableName(), &File{}},
+	4020: {Details{}.TableName(), &Details{}},
+	4030: {Album{}.TableName(), &Album{}},
+	4040: {PhotoLabel{}.TableName(), &PhotoLabel{}},
+	5000: {Marker{}.TableName(), &Marker{}},
+	5010: {FileSync{}.TableName(), &FileSync{}},
+	5020: {FileShare{}.TableName(), &FileShare{}},
+	5030: {PhotoAlbum{}.TableName(), &PhotoAlbum{}},
+	5040: {AlbumUser{}.TableName(), &AlbumUser{}},
+	6000: {Link{}.TableName(), &Link{}},
+}
+
+//type Tables map[string]interface{}
 
 // Entities contains database entities and their table names.
+/*
 var Entities = Tables{
 	migrate.Migration{}.TableName(): &migrate.Migration{},
 	migrate.Version{}.TableName():   &migrate.Version{},
@@ -53,7 +104,7 @@ var Entities = Tables{
 	Marker{}.TableName():            &Marker{},
 	Reaction{}.TableName():          &Reaction{},
 	UserShare{}.TableName():         &UserShare{},
-}
+} */
 
 // WaitForMigration waits for the database migration to be successful and returns an error otherwise.
 func (list Tables) WaitForMigration(db *gorm.DB) error {
@@ -62,14 +113,14 @@ func (list Tables) WaitForMigration(db *gorm.DB) error {
 	}
 
 	const attempts = 100
-	for name := range list {
+	for _, tables := range list {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
-			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
-				log.Tracef("migrate: %s migrated", clean.Log(name))
+			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", tables.TableName)).Scan(&count).Error; err == nil {
+				log.Tracef("migrate: %s migrated", clean.Log(tables.TableName))
 				break
 			} else {
-				log.Tracef("migrate: waiting for %s migration (%s)", clean.Log(name), err.Error())
+				log.Tracef("migrate: waiting for %s migration (%s)", clean.Log(tables.TableName), err.Error())
 				time.Sleep(100 * time.Millisecond)
 			}
 
@@ -338,8 +389,20 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 			}*/
 
 		var entity interface{}
+		orderedList := make([]int, len(list))
+		i := 0
+		for id, _ := range list {
+			orderedList[i] = id
+			i++
+		}
+		slices.Sort(orderedList)
 
-		for name, entity = range list {
+		var tableMap TableMap
+
+		for _, id := range orderedList {
+			tableMap = list[id]
+			name = tableMap.TableName
+			entity = tableMap.TableDefinition
 			log.Debugf("migrate: auto-migrating %s", name)
 			if err := db.AutoMigrate(entity); err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
