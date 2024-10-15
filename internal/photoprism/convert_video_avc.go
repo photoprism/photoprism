@@ -48,6 +48,7 @@ func (w *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 		// No, transcode video to AVC.
 	} else if mediaFile.IsVideo() {
 		// Yes, return AVC video file.
+		log.Infof("convert: %s is already in AVC format, no conversion needed", clean.Log(mediaFile.RootRelName()))
 		return mediaFile, nil
 	}
 
