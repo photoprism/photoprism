@@ -3,20 +3,20 @@
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-row>
-          <v-col cols="3" class="text-xs-center">
+          <v-col cols="3" class="text-center">
             <!-- TODO: change this icon -->
             <v-icon size="54" color="secondary-dark lighten-1">people</v-icon>
           </v-col>
-          <v-col cols="9" class="text-xs-left" align-self="center">
+          <v-col cols="9" class="text-left" align-self="center">
             <div class="subtitle-1 pr-1">
               {{ prompt }}
             </div>
           </v-col>
-          <v-col cols="12" class="text-xs-right pt-6">
+          <v-col cols="12" class="text-right pt-6">
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="No">No</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm" @click.stop="confirm">
+            <v-btn color="primary-button" depressed theme="dark" class="action-confirm" @click.stop="confirm">
               <translate key="Yes">Yes</translate>
             </v-btn>
           </v-col>

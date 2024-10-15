@@ -8,7 +8,7 @@
               <translate>Support Our Mission</translate>
             </h3>
           </v-col>
-          <v-col cols="2" class="text-xs-right">
+          <v-col cols="2" class="text-right">
             <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
           </v-col>
         </v-row>
@@ -30,7 +30,7 @@
       </v-card-text>
       <v-card-actions class="pt-0 px-2">
         <v-row class="px-2">
-          <v-col cols="12"  class="text-xs-right py-2">
+          <v-col cols="12"  class="text-right py-2">
             <v-btn depressed color="secondary-light" class="action-close compact" @click.stop="close">
               <translate>No thanks</translate>
             </v-btn>

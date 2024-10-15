@@ -130,7 +130,9 @@
 
               <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="model.About" class="caption mb-2" :title="$gettext('About')">
-                  {{ model.About | truncate(100) }}
+                  <!-- TODO: change this filter -->
+                  <!-- {{ model.About | truncate(100) }} -->
+                  {{ model.About }}
                 </div>
 
                 <div class="caption mb-2">

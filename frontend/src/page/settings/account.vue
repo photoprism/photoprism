@@ -127,9 +127,9 @@
           </v-row>
 
           <v-row>
-            <v-col class="pa-2 text-xs-center" cols="4" sm="3" md="2" align-self="center">
-              <v-avatar :size="$vuetify.breakpoint.xsOnly ? 100 : 128" :class="{ clickable: !busy }" @click.stop.prevent="onChangeAvatar()">
-                <img :src="$vuetify.breakpoint.xsOnly ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')" :alt="accountInfo" :title="$gettext('Change Avatar')" />
+            <v-col class="pa-2 text-center" cols="4" sm="3" md="2" align-self="center">
+              <v-avatar :size="$vuetify.display.xs ? 100 : 128" :class="{ clickable: !busy }" @click.stop.prevent="onChangeAvatar()">
+                <img :src="$vuetify.display.xs ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')" :alt="accountInfo" :title="$gettext('Change Avatar')" />
               </v-avatar>
             </v-col>
 

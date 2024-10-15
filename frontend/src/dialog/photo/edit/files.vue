@@ -32,19 +32,19 @@
                               <translate>Actions</translate>
                             </td>
                             <td>
-                              <v-btn v-if="features.download" small depressed dark color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                              <v-btn v-if="features.download" small depressed theme="dark" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                 <translate>Download</translate>
                               </v-btn>
-                              <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed dark color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
+                              <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
                                 <translate>Primary</translate>
                               </v-btn>
-                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small depressed dark color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small depressed theme="dark" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
                                 <translate>Unstack</translate>
                               </v-btn>
-                              <v-btn v-if="features.delete && !file.Primary" small depressed dark color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
+                              <v-btn v-if="features.delete && !file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
                                 <translate>Delete</translate>
                               </v-btn>
-                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed dark color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
+                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
                                 <translate>File Browser</translate>
                               </v-btn>
                             </td>
@@ -316,7 +316,7 @@ export default {
           sortable: false,
           class: "hidden-sm-and-down",
         },
-        { text: this.$gettext("Size"), value: "Size", sortable: false, class: "hidden-xs-only" },
+        { text: this.$gettext("Size"), value: "Size", sortable: false, class: "hidden-xs" },
         { text: this.$gettext("Type"), value: "", sortable: false, align: "left" },
         { text: this.$gettext("Status"), value: "", sortable: false, align: "left" },
       ],

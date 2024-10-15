@@ -3,22 +3,22 @@
     <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`">
         <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
+          <v-btn fab theme="dark" color="accent darken-2" class="action-menu">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="$config.feature('download')" fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="selection.length === 0" @click.stop="download()">
+        <v-btn v-if="$config.feature('download')" fab theme="dark" small :title="$gettext('Download')" color="download" class="action-download" :disabled="selection.length === 0" @click.stop="download()">
           <v-icon>mdi-download</v-icon>
         </v-btn>
 
-        <v-btn v-if="$config.feature('albums')" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true">
+        <v-btn v-if="$config.feature('albums')" fab theme="dark" small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
 
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
+        <v-btn fab theme="dark" small color="accent" class="action-clear" @click.stop="clearClipboard()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>

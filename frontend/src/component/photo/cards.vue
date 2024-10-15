@@ -28,7 +28,9 @@
           <div class="pa-6 card-details">
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
-                {{ photo.Title | truncate(80) }}
+                <!-- TODO: change this filter -->
+                <!-- {{ photo.Title | truncate(80) }} -->
+                {{ photo.Title }}
               </h3>
               <div v-if="photo.Description" class="caption mb-2">
                 {{ photo.Description }}
@@ -128,13 +130,13 @@
 
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-row align="center">
-                <v-col cols="6" class="text-xs-center pa-1">
-                  <v-btn color="card darken-1" small depressed dark block :rounded="false" class="action-archive text-xs-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
+                <v-col cols="6" class="text-center pa-1">
+                  <v-btn color="card darken-1" small depressed theme="dark" block :rounded="false" class="action-archive text-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
                     <v-icon dark>mdi-close</v-icon>
                   </v-btn>
                 </v-col>
-                <v-col cols="6" class="text-xs-center pa-1">
-                  <v-btn color="card darken-1" small depressed dark block :rounded="false" class="action-approve text-xs-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
+                <v-col cols="6" class="text-center pa-1">
+                  <v-btn color="card darken-1" small depressed theme="dark" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
                     <!-- TODO: change this icon -->
                     <v-icon dark>check</v-icon>
                   </v-btn>
@@ -146,7 +148,9 @@
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
-                  {{ photo.Title | truncate(80) }}
+                  <!-- TODO: change this filter -->
+                  <!-- {{ photo.Title | truncate(80) }} -->
+                  {{ photo.Title }}
                 </button>
               </h3>
               <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">

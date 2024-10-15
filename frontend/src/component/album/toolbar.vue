@@ -1,8 +1,8 @@
 <template>
   <v-form ref="form" lazy-validation autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8" @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+    <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
       <v-toolbar-title :title="album.Title">
-        <span class="hidden-xs-only">
+        <span class="hidden-xs">
           <router-link :to="{ name: collectionRoute }">
             {{ T(collectionTitle) }}
           </router-link>
@@ -13,7 +13,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+      <v-btn icon class="hidden-xs action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
 

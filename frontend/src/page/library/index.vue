@@ -1,5 +1,5 @@
 <template>
-  <div class="p-tab p-tab-index">
+<div class="p-tab p-tab-index">
     <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit">
       <v-container fluid>
         <p class="subtitle-1">

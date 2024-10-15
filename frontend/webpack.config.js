@@ -74,7 +74,10 @@ const config = {
     modules: isCustom ? [PATHS.custom, PATHS.src, PATHS.modules] : [PATHS.src, PATHS.modules],
     preferRelative: true,
     alias: {
-      vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
+      // TODO: change it
+      'vue$': 'vue/dist/vue.runtime.esm-bundler.js',
+      // vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
+      vue: '@vue/compat',
     },
   },
   plugins: [
@@ -106,18 +109,13 @@ const config = {
     rules: [
       {
         test: /\.vue$/,
-        include: isCustom ? [PATHS.custom, PATHS.src] : [PATHS.src],
-        use: [
-          {
-            loader: "vue-loader",
-            options: {
-              loaders: {
-                js: "babel-loader",
-                css: "css-loader",
-              },
-            },
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            js: "babel-loader",
+            css: "css-loader",
           },
-        ],
+        },
       },
       {
         test: /\.js$/,

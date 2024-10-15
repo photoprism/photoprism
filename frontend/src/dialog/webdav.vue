@@ -3,12 +3,12 @@
     <v-card class="pa-2">
       <v-card-title class="headline pa-0">
         <v-row class="pa-2">
-          <v-col cols="9" class="text-xs-left">
+          <v-col cols="9" class="text-left">
             <h3 class="headline pa-0">
               <translate>Connect via WebDAV</translate>
             </h3>
           </v-col>
-          <v-col cols="3" class="text-xs-right">
+          <v-col cols="3" class="text-right">
             <!-- TODO: change this icon -->
             <v-icon size="28" color="primary">sync_alt</v-icon>
           </v-col>

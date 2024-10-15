@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-support">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
       <v-toolbar-title>
         <translate>Contact Us</translate>
       </v-toolbar-title>
@@ -10,14 +10,14 @@
       </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-6">
-      <h3 class="title font-weight-bold pt-6 pb-2 text-xs-center">
+      <h3 class="title font-weight-bold pt-6 pb-2 text-center">
         <translate>We appreciate your feedback!</translate>
       </h3>
-      <p class="body-2 py-6 text-xs-center">
+      <p class="body-2 py-6 text-center">
         <translate>Due to the high volume of emails we receive, our team may be unable to get back to you immediately.</translate>
         <translate>We do our best to respond within five business days or less.</translate>
       </p>
-      <p class="mt-6 text-xs-center">
+      <p class="mt-6 text-center">
         <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU" />
       </p>
     </v-container>

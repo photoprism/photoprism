@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-license">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
       <v-toolbar-title>
         <translate>License</translate>
       </v-toolbar-title>

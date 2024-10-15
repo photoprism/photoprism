@@ -1,6 +1,6 @@
 <template>
   <div id="photoprism-help" class="p-page p-page-help">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
       <v-toolbar-title>
         <translate>Help</translate>
       </v-toolbar-title>

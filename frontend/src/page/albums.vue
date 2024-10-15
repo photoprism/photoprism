@@ -1,7 +1,7 @@
 <template>
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery()">
-      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+      <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
           :value="filter.q"
           solo
@@ -188,7 +188,9 @@
                 <div>
                   <h3 class="body-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-                      {{ album.Title | truncate(80) }}
+                      <!-- TODO: change this filter -->
+                      <!-- {{ album.Title | truncate(80) }} -->
+                      {{ album.Title }}
                     </button>
                     <button v-else class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                       {{ album.getDateString() | capitalize }}
@@ -200,7 +202,9 @@
               <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
                   <button @click.exact="edit(album)">
-                    {{ album.Description | truncate(100) }}
+                    <!-- TODO: change this filter -->
+                    <!-- {{ album.Description | truncate(100) }} -->
+                    {{ album.Description }}
                   </button>
                 </div>
 
@@ -217,7 +221,9 @@
                 </div>
                 <div v-else-if="album.Type === 'folder'" class="caption mb-2">
                   <button @click.exact="edit(album)">
-/{{ album.Path | truncate(100) }}
+                    <!-- TODO: change this filter -->
+<!-- /{{ album.Path | truncate(100) }} -->
+/{{ album.Path }}
 </button>
                 </div>
                 <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
@@ -237,7 +243,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
+        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-center my-2">
           <v-btn class="action-add" color="secondary" rounded @click.prevent="create">
             <translate>Add Album</translate>
           </v-btn>

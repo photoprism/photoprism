@@ -61,7 +61,7 @@
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="white--text ml-0 hidden-xs-only action-upload" depressed @click.stop="showUpload()">
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="white--text ml-0 hidden-xs action-upload" depressed @click.stop="showUpload()">
           <translate>Upload</translate>
           <v-icon :right="!rtl" :left="rtl" dark>mdi-cloud-upload</v-icon>
         </v-btn>

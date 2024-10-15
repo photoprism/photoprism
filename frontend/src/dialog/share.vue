@@ -8,8 +8,8 @@
               <translate :translate-params="{ name: model.modelName() }">Share %{name}</translate>
             </h3>
           </v-col>
-          <v-col cols="3" :class="rtl ? 'text-xs-left' : 'text-xs-right'">
-            <v-btn icon text dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
+          <v-col cols="3" :class="rtl ? 'text-left' : 'text-right'">
+            <v-btn icon text theme="dark" color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
               <v-icon>mdi-link-plus</v-icon>
             </v-btn>
           </v-col>
@@ -19,7 +19,7 @@
         <v-expansion-panels class="pa-0 elevation-0">
           <v-expansion-panel v-for="(link, index) in links" :key="link.UID" class="pa-0 elevation-0 secondary mb-1">
             <template #header>
-              <button :class="`text-xs-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none" @click.stop="copyUrl(link)">
+              <button :class="`text-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none" @click.stop="copyUrl(link)">
                 <!-- TODO: change this icon -->
                 <v-icon size="16" class="pr-1">link</v-icon>
                 /s/<strong v-if="link.Token" style="font-weight: 500"> {{ link.getToken() }} </strong><span v-else>…</span>
@@ -51,13 +51,13 @@
                                 @click:append="showPassword = !showPassword"
                         ></v-text-field>
                     </v-col -->
-                    <v-col cols="6" :class="rtl ? 'text-xs-left' : 'text-xs-right'" class="pa-2">
+                    <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
                       <v-btn small icon text color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
                     </v-col>
-                    <v-col cols="6" :class="rtl ? 'text-xs-left' : 'text-xs-right'" class="pa-2">
-                      <v-btn depressed dark color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
+                    <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
+                      <v-btn depressed theme="dark" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
                         <translate>Save</translate>
                       </v-btn>
                     </v-col>
@@ -68,7 +68,7 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <v-container fluid :text-xs-left="!rtl" :text-xs-right="rtl" class="pb-0 pt-6 pr-0 pl-0 caption">
+        <v-container fluid :text-left="!rtl" :text-right="rtl" class="pb-0 pt-6 pr-0 pl-0 caption">
           <translate :translate-params="{ name: model.modelName() }">People you share a link with will be able to view public contents.</translate>
           <translate>A click will copy it to your clipboard.</translate>
           <translate>Any private photos and videos remain private and won't be shared.</translate>
@@ -82,7 +82,7 @@
               <translate>WebDAV Upload</translate>
             </v-btn>
           </v-col>
-          <v-col cols="6" :class="rtl ? 'text-xs-left' : 'text-xs-right'">
+          <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'">
             <v-btn depressed color="secondary-light" class="action-close" @click.stop="confirm">
               <translate>Close</translate>
             </v-btn>

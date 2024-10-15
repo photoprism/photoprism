@@ -10,7 +10,7 @@
 
       <div class="pswp__ui pswp__ui--hidden">
         <div class="pswp__top-bar">
-          <div class="pswp__taken hidden-xs-only">
+          <div class="pswp__taken hidden-xs">
             {{ formatDate(item.TakenAtLocal) }}
           </div>
 

@@ -22,15 +22,15 @@
 
             <v-card-actions class="card-details pa-0">
               <v-row v-if="marker.Invalid" align="center">
-                <v-col cols="12" class="text-xs-center pa-0">
-                  <v-btn color="transparent" :disabled="busy" large depressed block :rounded="false" class="action-undo text-xs-center" :title="$gettext('Undo')" @click.stop="onApprove(marker)">
+                <v-col cols="12" class="text-center pa-0">
+                  <v-btn color="transparent" :disabled="busy" large depressed block :rounded="false" class="action-undo text-center" :title="$gettext('Undo')" @click.stop="onApprove(marker)">
                     <!-- TODO: change this icon -->
                     <v-icon dark>undo</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
               <v-row v-else-if="marker.SubjUID" align="center">
-                <v-col cols="12" class="text-xs-left pa-0">
+                <v-col cols="12" class="text-left pa-0">
                   <v-text-field
                     v-model="marker.Name"
                     :rules="[textRule]"
@@ -51,7 +51,7 @@
                 </v-col>
               </v-row>
               <v-row v-else align="center">
-                <v-col cols="12" class="text-xs-left pa-0">
+                <v-col cols="12" class="text-left pa-0">
                   <!-- TODO: check property allow-overflow TEST -->
                   <v-combobox
                     v-model="marker.Name"

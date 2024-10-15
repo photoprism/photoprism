@@ -17,11 +17,11 @@
                     </template>
                   </v-edit-dialog>
                 </td>
-                <td class="text-xs-left">
+                <td class="text-left">
                   {{ sourceName(props.item.LabelSrc) }}
                 </td>
-                <td class="text-xs-center"> {{ 100 - props.item.Uncertainty }}% </td>
-                <td class="text-xs-center">
+                <td class="text-center"> {{ 100 - props.item.Uncertainty }}% </td>
+                <td class="text-center">
                   <v-btn v-if="disabled" icon small text :ripple="false" class="action-view" title="Search" @click.stop.prevent="searchLabel(props.item.Label)">
                     <v-icon color="secondary-dark">mdi-magnify</v-icon>
                   </v-btn>
@@ -42,11 +42,11 @@
                 <td>
                   <v-text-field v-model="newLabel" :rules="[nameRule]" color="secondary-dark" autocomplete="off" :label="$gettext('Name')" single-line flat solo hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
                 </td>
-                <td class="text-xs-left">
+                <td class="text-left">
                   {{ sourceName("manual") }}
                 </td>
-                <td class="text-xs-center"> 100% </td>
-                <td class="text-xs-center">
+                <td class="text-center"> 100% </td>
+                <td class="text-center">
                   <v-btn icon small text :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
                     <v-icon color="secondary-dark">mdi-plus</v-icon>
                   </v-btn>

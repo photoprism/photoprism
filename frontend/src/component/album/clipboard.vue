@@ -3,29 +3,29 @@
     <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`">
         <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
+          <v-btn fab theme="dark" color="accent darken-2" class="action-menu">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="canShare" fab dark small :title="$gettext('Share')" color="share" :disabled="selection.length !== 1" class="action-share" @click.stop="shareDialog()">
+        <v-btn v-if="canShare" fab theme="dark" small :title="$gettext('Share')" color="share" :disabled="selection.length !== 1" class="action-share" @click.stop="shareDialog()">
           <v-icon>mdi-share-variant</v-icon>
         </v-btn>
-        <v-btn v-if="canManage" fab dark small :title="$gettext('Edit')" color="edit" :disabled="selection.length !== 1" class="action-edit" @click.stop="editDialog()">
+        <v-btn v-if="canManage" fab theme="dark" small :title="$gettext('Edit')" color="edit" :disabled="selection.length !== 1" class="action-edit" @click.stop="editDialog()">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
+        <v-btn fab theme="dark" small :title="$gettext('Download')" color="download" class="action-download" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
           <v-icon>mdi-download</v-icon>
         </v-btn>
-        <v-btn v-if="canManage" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-clone" @click.stop="dialog.album = true">
+        <v-btn v-if="canManage" fab theme="dark" small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-clone" @click.stop="dialog.album = true">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
-        <v-btn v-if="canDelete && deletable.includes(context)" fab dark small color="remove" :title="$gettext('Delete')" :disabled="selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
+        <v-btn v-if="canDelete && deletable.includes(context)" fab theme="dark" small color="remove" :title="$gettext('Delete')" :disabled="selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
+        <v-btn fab theme="dark" small color="accent" class="action-clear" @click.stop="clearClipboard()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>

@@ -73,7 +73,7 @@ export default [
   },
   {
     name: "help",
-    path: "/help*",
+    path: "/help/:pathMatch(.*)*",
     component: Help,
     meta: { title: $gettext("Help & Support"), auth: false },
   },
@@ -94,7 +94,7 @@ export default [
   },
   {
     name: "admin",
-    path: "/admin/*",
+    path: "/admin/:pathMatch(.*)*",
     component: Admin,
     meta: {
       title: $gettext("Settings"),
@@ -298,10 +298,10 @@ export default [
   },
   {
     name: "files",
-    path: "/index/files*",
+    path: "/index/files/:pathMatch(.*)*",
     component: Browse,
     meta: { title: $gettext("File Browser"), auth: true },
-  },
+},
   {
     name: "hidden",
     path: "/hidden",
@@ -463,7 +463,7 @@ export default [
     props: { tab: 3 },
   },
   {
-    path: "*",
+    path: '/:pathMatch(.*)*',
     redirect: "/albums",
   },
 ];

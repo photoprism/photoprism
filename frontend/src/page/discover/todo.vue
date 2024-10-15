@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-discover-todo">
-    <v-container grid-list-xs text-xs-center fluid>
+    <v-container grid-list-xs text-center fluid>
       <p class="subtitle-1 pb-6"> This is a very first draft for a "Discover" area where you can find photos by color, by similarity, by season or just randomly. Feedback and contributions welcome. </p>
     </v-container>
   </div>

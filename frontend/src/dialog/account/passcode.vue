@@ -4,12 +4,12 @@
       <v-card raised elevation="24">
         <v-card-title class="pa-2">
           <v-row class="pa-2">
-            <v-col cols="10" class="text-xs-left">
+            <v-col cols="10" class="text-left">
               <h3 class="headline pa-0">
                 <translate>2-Factor Authentication</translate>
               </h3>
             </v-col>
-            <v-col cols="2" class="text-xs-right">
+            <v-col cols="2" class="text-right">
               <!-- TODO: change this icon -->
               <v-icon v-if="page === 'setup'" size="28" color="primary">gpp_maybe</v-icon>
               <!-- TODO: change this icon -->
@@ -57,7 +57,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
@@ -80,7 +80,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="pa-2 subtitle-1 text-xs-center">
+              <v-col cols="12" class="pa-2 subtitle-1 text-center">
                 <pre class="clickable" @click.stop.prevent="copyText(key.Secret)">{{ key.Secret }}</pre>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -110,7 +110,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
@@ -154,7 +154,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
@@ -208,7 +208,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="primary-button" class="action-deactivate white--text compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
                   <translate>Deactivate</translate>
                 </v-btn>
@@ -230,7 +230,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-close mr-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>

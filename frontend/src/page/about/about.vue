@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-about">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
       <v-toolbar-title> {{ $config.getAbout() }}{{ getMembership() }} </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -28,14 +28,14 @@
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
         </p>
-        <p v-if="isSuperAdmin" class="text-xs-center my-6">
+        <p v-if="isSuperAdmin" class="text-center my-6">
           <v-btn to="/upgrade" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
             <v-icon v-else right dark>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
-        <p v-else class="text-xs-center my-6">
+        <p v-else class="text-center my-6">
           <v-btn href="https://link.photoprism.app/membership" target="_blank" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Learn more</translate>
             <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
@@ -50,7 +50,7 @@
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
         </p>
-        <p class="text-xs-center my-6">
+        <p class="text-center my-6">
           <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Manage Account</translate>
             <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
@@ -111,7 +111,7 @@
         >
       </div>
 
-      <p class="text-xs-center pt-6 ma-0 pb-0">
+      <p class="text-center pt-6 ma-0 pb-0">
         <router-link to="/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width: 100%" />
         </router-link>
@@ -122,7 +122,7 @@
         <a target="_blank" href="https://link.photoprism.app/reddit" rel="nofollow"><img :src="$config.staticUri + '/img/badge-reddit.svg'" alt="Reddit" style="max-width: 100%" /></a>
       </p>
 
-      <p class="caption mt-6 text-xs-center">
+      <p class="caption mt-6 text-center">
         PhotoPrism® is a <a href="https://www.photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>. By using the software and services we provide, you agree to our <a href="https://www.photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
         <a href="https://www.photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and <a href="https://www.photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
       </p>

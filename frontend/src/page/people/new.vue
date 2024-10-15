@@ -47,7 +47,7 @@
 
               <v-card-actions class="card-details pa-0">
                 <v-row v-if="model.SubjUID" align="center">
-                  <v-col cols="12" class="text-xs-left pa-0">
+                  <v-col cols="12" class="text-left pa-0">
                     <v-text-field
                       :value="model.Name"
                       :rules="[textRule]"
@@ -71,7 +71,7 @@
                   </v-col>
                 </v-row>
                 <v-row align="center">
-                  <v-col cols="12" class="text-xs-left pa-0">
+                  <v-col cols="12" class="text-left pa-0">
                     <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox
                       :value="model.Name"
@@ -111,7 +111,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <div class="text-xs-center mt-4 mb-2">
+        <div class="text-center mt-4 mb-2">
           <v-btn color="secondary" rounded depressed :to="{ name: 'all', query: { q: 'face:new' } }">
             <translate>Show all new faces</translate>
           </v-btn>

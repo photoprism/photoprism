@@ -47,32 +47,28 @@ import PAccountAppsDialog from "dialog/account/apps.vue";
 import PAccountPasscodeDialog from "dialog/account/passcode.vue";
 import PAccountPasswordDialog from "dialog/account/password.vue";
 
-const dialogs = {};
-
-dialogs.install = (Vue) => {
-  Vue.component("PServiceAddDialog", PServiceAddDialog);
-  Vue.component("PServiceRemoveDialog", PServiceRemoveDialog);
-  Vue.component("PServiceEditDialog", PServiceEditDialog);
-  Vue.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
-  Vue.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
-  Vue.component("PPhotoEditDialog", PPhotoEditDialog);
-  Vue.component("PPhotoDeleteDialog", PPhotoDeleteDialog);
-  Vue.component("PFileDeleteDialog", PFileDeleteDialog);
-  Vue.component("PAlbumEditDialog", PAlbumEditDialog);
-  Vue.component("PAlbumDeleteDialog", PAlbumDeleteDialog);
-  Vue.component("PLabelDeleteDialog", PLabelDeleteDialog);
-  Vue.component("PPeopleMergeDialog", PPeopleMergeDialog);
-  Vue.component("PUploadDialog", PUploadDialog);
-  Vue.component("PVideoViewer", PVideoViewer);
-  Vue.component("PShareDialog", PShareDialog);
-  Vue.component("PShareUploadDialog", PShareUploadDialog);
-  Vue.component("PWebdavDialog", PWebdavDialog);
-  Vue.component("PReloadDialog", PReloadDialog);
-  Vue.component("PSponsorDialog", PSponsorDialog);
-  Vue.component("PConfirmDialog", PConfirmDialog);
-  Vue.component("PAccountAppsDialog", PAccountAppsDialog);
-  Vue.component("PAccountPasscodeDialog", PAccountPasscodeDialog);
-  Vue.component("PAccountPasswordDialog", PAccountPasswordDialog);
-};
-
-export default dialogs;
+export function installDialogs(app) {
+  app.component("PServiceAddDialog", PServiceAddDialog);
+  app.component("PServiceRemoveDialog", PServiceRemoveDialog);
+  app.component("PServiceEditDialog", PServiceEditDialog);
+  app.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
+  app.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
+  app.component("PPhotoEditDialog", PPhotoEditDialog);
+  app.component("PPhotoDeleteDialog", PPhotoDeleteDialog);
+  app.component("PFileDeleteDialog", PFileDeleteDialog);
+  app.component("PAlbumEditDialog", PAlbumEditDialog);
+  app.component("PAlbumDeleteDialog", PAlbumDeleteDialog);
+  app.component("PLabelDeleteDialog", PLabelDeleteDialog);
+  app.component("PPeopleMergeDialog", PPeopleMergeDialog);
+  app.component("PUploadDialog", PUploadDialog);
+  app.component("PVideoViewer", PVideoViewer);
+  app.component("PShareDialog", PShareDialog);
+  app.component("PShareUploadDialog", PShareUploadDialog);
+  app.component("PWebdavDialog", PWebdavDialog);
+  app.component("PReloadDialog", PReloadDialog);
+  app.component("PSponsorDialog", PSponsorDialog);
+  app.component("PConfirmDialog", PConfirmDialog);
+  app.component("PAccountAppsDialog", PAccountAppsDialog);
+  app.component("PAccountPasscodeDialog", PAccountPasscodeDialog);
+  app.component("PAccountPasswordDialog", PAccountPasswordDialog);
+}

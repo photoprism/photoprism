@@ -44,11 +44,11 @@
         </v-card-text>
         <v-card-actions class="pt-0 px-6">
           <v-row class="pa-2">
-            <v-col cols="12" class="text-xs-right">
+            <v-col cols="12" class="text-right">
               <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn depressed dark color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
+              <v-btn depressed theme="dark" color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
                 <translate>Save</translate>
               </v-btn>
             </v-col>

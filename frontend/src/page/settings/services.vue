@@ -8,13 +8,13 @@
               {{ props.item.AccName }}
             </button>
           </td>
-          <td class="text-xs-center">
+          <td class="text-center">
             <v-btn icon small text :ripple="false" class="action-toggle-share" color="transparent" @click.stop.prevent="editSharing(props.item)">
               <v-icon v-if="props.item.AccShare" color="secondary-dark">mdi-check</v-icon>
               <v-icon v-else color="secondary-dark">mdi-cog</v-icon>
             </v-btn>
           </td>
-          <td class="text-xs-center">
+          <td class="text-center">
             <v-btn icon small text :ripple="false" class="action-toggle-sync" color="transparent" @click.stop.prevent="editSync(props.item)">
               <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">mdi-alert </v-icon>
               <!-- TODO: change icon -->
@@ -26,7 +26,7 @@
           <td class="hidden-sm-and-down">
             {{ formatDate(props.item.SyncDate) }}
           </td>
-          <td class="hidden-xs-only text-xs-right" nowrap>
+          <td class="hidden-xs text-right" nowrap>
             <v-btn icon small text :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="remove(props.item)">
               <v-icon color="secondary-dark">mdi-delete</v-icon>
             </v-btn>
@@ -45,13 +45,13 @@
       </p>
 
       <v-form ref="form" lazy-validation class="p-form-settings mt-2" accept-charset="UTF-8" @submit.prevent="add">
-        <v-btn v-if="user.hasWebDAV()" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.breakpoint.xsOnly" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
+        <v-btn v-if="user.hasWebDAV()" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
           <!-- TODO: change icon -->
           <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
         </v-btn>
 
-        <v-btn color="primary-button" class="white--text compact ml-0 my-2 mr-2" :block="$vuetify.breakpoint.xsOnly" :disabled="isPublic || isDemo" depressed @click.stop="add">
+        <v-btn color="primary-button" class="white--text compact ml-0 my-2 mr-2" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" depressed @click.stop="add">
           <translate>Connect</translate>
           <v-icon :right="!rtl" :left="rtl" dark>mdi-plus</v-icon>
         </v-btn>
@@ -101,7 +101,7 @@ export default {
           class: "hidden-sm-and-down",
           align: "left",
         },
-        { text: "", value: "", sortable: false, class: "hidden-xs-only", align: "right" },
+        { text: "", value: "", sortable: false, class: "hidden-xs", align: "right" },
       ],
       rtl: this.$rtl,
     };

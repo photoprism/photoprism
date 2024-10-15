@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" lazy-validation autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8" :class="{ embedded: embedded }" @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
+    <v-toolbar flat :dense="$vuetify.display.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
       <template v-if="!embedded">
         <v-text-field
           :value="filter.q"
@@ -35,7 +35,7 @@
           <v-icon>location_off</v-icon>
         </v-btn>
 
-        <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+        <v-btn icon class="hidden-xs action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
 

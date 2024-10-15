@@ -1,8 +1,9 @@
 <template>
   <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
-      <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark @click.stop="cancel">
+      <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
+        <v-btn icon theme="dark" @click.stop="cancel">
+          <!-- TODO: check icon -->
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
@@ -46,7 +47,9 @@
                 <template #selection="data">
                   <v-chip :key="JSON.stringify(data.item)" :input-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
                     <v-icon class="pr-1">mdi-bookmark</v-icon>
-                    {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
+                    <!-- TODO: change this filter -->
+                    <!-- {{ data.item.Title ? data.item.Title : data.item | truncate(40) }} -->
+                    {{ data.item.Title ? data.item.Title : data.item }}
                   </v-chip>
                 </template>
               </v-combobox>
@@ -59,7 +62,7 @@
             </p>
 
             <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark" :indeterminate="indexing">
-              <p class="px-2 ma-0 text-xs-right opacity-85"
+              <p class="px-2 ma-0 text-right opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >
             </v-progress-linear>

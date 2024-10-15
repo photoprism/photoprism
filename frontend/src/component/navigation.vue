@@ -1,35 +1,35 @@
 <template>
   <div id="p-navigation" :class="{ 'sidenav-visible': drawer }">
-    <template v-if="visible && $vuetify.breakpoint.smAndDown">
-      <v-toolbar dark fixed flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
+    <template v-if="visible && $vuetify.display.smAndDown">
+      <v-toolbar theme="dark" fixed flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
         <v-avatar class="nav-avatar" tile :size="28" :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="config.name" :class="{ 'animate-hue': indexing }" />
         </v-avatar>
         <v-toolbar-title class="nav-title">
           <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
-        <v-btn fab dark :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0" @click.stop.prevent="speedDial = true">
+        <v-btn fab theme="dark" :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0" @click.stop.prevent="speedDial = true">
           <!-- TODO: change icon -->
           <v-icon dark>more_vert</v-icon>
         </v-btn>
       </v-toolbar>
     </template>
     <template v-else-if="visible && !auth">
-      <v-toolbar dark flat dense color="navigation darken-1" class="nav-small">
+      <v-toolbar theme="dark" flat dense color="navigation darken-1" class="nav-small">
         <v-avatar class="nav-avatar" tile :size="28">
           <img :src="appIcon" :alt="config.name" />
         </v-avatar>
         <v-toolbar-title class="nav-title">
           {{ page.title }}
         </v-toolbar-title>
-        <v-btn fab dark :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0" @click.stop.prevent="speedDial = true">
+        <v-btn fab theme="dark" :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0" @click.stop.prevent="speedDial = true">
           <!-- TODO: change icon -->
           <v-icon dark>more_vert</v-icon>
         </v-btn>
       </v-toolbar>
     </template>
-    <v-navigation-drawer v-if="visible && auth" v-model="drawer" :mini-variant="isMini" :width="270" :mobile-breakpoint="960" :mini-variant-width="80" class="nav-sidebar navigation p-flex-nav" fixed dark app :right="rtl">
-      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown">
+    <v-navigation-drawer v-if="visible && auth" v-model="drawer" :mini-variant="isMini" :width="270" :mobile-breakpoint="960" :mini-variant-width="80" class="nav-sidebar navigation p-flex-nav" fixed theme="dark" app :right="rtl">
+      <v-toolbar flat :dense="$vuetify.display.smAndDown">
         <v-list class="navigation-home">
           <v-list-item class="nav-logo">
             <v-list-item-avatar class="nav-avatar clickable" @click.stop.prevent="goHome">

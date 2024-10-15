@@ -1,8 +1,8 @@
 <template>
   <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
-      <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark class="action-close" @click.stop="close">
+      <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
+        <v-btn icon theme="dark" class="action-close" @click.stop="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title
@@ -22,9 +22,9 @@
           </v-btn>
         </v-toolbar-items>
     </v-toolbar>
-      <v-tabs v-model="active" elevation="0" grow class="form transparent" background-color="secondary" slider-color="primary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+      <v-tabs v-model="active" elevation="0" grow class="form transparent" background-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-pencil</v-icon>
             <translate key="Details">Details</translate>
@@ -32,7 +32,7 @@
         </v-tab>
 
         <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-label</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
@@ -45,7 +45,7 @@
         </v-tab>
 
         <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-account-multiple</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
@@ -58,7 +58,7 @@
         </v-tab>
 
         <v-tab id="tab-files" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-film</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">

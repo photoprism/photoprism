@@ -4,12 +4,12 @@
       <v-card raised elevation="24">
         <v-card-title class="pa-2">
           <v-row class="pa-2">
-            <v-col cols="9" class="text-xs-left">
+            <v-col cols="9" class="text-left">
               <h3 class="headline pa-0">
                 <translate>Apps and Devices</translate>
               </h3>
             </v-col>
-            <v-col cols="3" class="text-xs-right">
+            <v-col cols="3" class="text-right">
               <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
               <!-- TODO: change this icon -->
               <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
@@ -52,7 +52,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-back ml-0" @click.stop="onBack">
                   <translate>Back</translate>
                 </v-btn>
@@ -91,7 +91,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
@@ -140,7 +140,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="onCancel">
                   <translate>Cancel</translate>
                 </v-btn>
@@ -159,19 +159,19 @@
                 <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
                   <template #item="props">
                     <tr :data-name="props.item.ClientName">
-                      <td class="text-selectable text-xs-left">
+                      <td class="text-selectable text-left">
                         {{ props.item.ClientName }}
                       </td>
-                      <td class="text-xs-left hidden-xs-only" nowrap>
+                      <td class="text-left hidden-xs" nowrap>
                         {{ scopeInfo(props.item.AuthScope) }}
                       </td>
-                      <td class="text-xs-left" nowrap>
+                      <td class="text-left" nowrap>
                         {{ formatDateTime(props.item.LastActive) }}
                       </td>
-                      <td class="text-xs-left hidden-sm-and-down" nowrap>
+                      <td class="text-left hidden-sm-and-down" nowrap>
                         {{ formatDate(props.item.Expires) }}
                       </td>
-                      <td class="text-xs-right" nowrap>
+                      <td class="text-right" nowrap>
                         <v-btn icon small text :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
                           <v-icon color="secondary-dark">mdi-delete</v-icon>
                         </v-btn>
@@ -184,7 +184,7 @@
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
-              <v-col cols="12" class="text-xs-right">
+              <v-col cols="12" class="text-right">
                 <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
@@ -249,7 +249,7 @@ export default {
         { text: this.$gettext("Name"), value: "ID", sortable: false, align: "left" },
         {
           text: this.$gettext("Scope"),
-          class: "hidden-xs-only",
+          class: "hidden-xs",
           value: "AuthScope",
           sortable: false,
           align: "left",

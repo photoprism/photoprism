@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     appClass: function () {
-      return [this.$route.meta.background, this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen", this.$route.meta.hideNav ? "hide-nav" : "show-nav"];
+      return [this.$route.meta.background, this.$vuetify.display.smAndDown ? "small-screen" : "large-screen", this.$route.meta.hideNav ? "hide-nav" : "show-nav"];
     },
   },
   created() {

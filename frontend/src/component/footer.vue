@@ -2,7 +2,7 @@
   <v-card flat tile class="application footer">
     <v-card-actions class="footer-actions">
       <v-row align="start" class="pt-6">
-        <v-col cols="12" sm="6" class="px-0 pb-2 body-1 text-selectable text-xs-left">
+        <v-col cols="12" sm="6" class="px-0 pb-2 body-1 text-selectable text-left">
           <strong
             ><router-link to="/about" class="text-link text-selectable">
 {{ about }}{{ getMembership() }}
@@ -13,8 +13,8 @@
           >
         </v-col>
 
-        <v-col cols="12" sm="6" class="px-0 pb-2 body-1 text-xs-center text-sm-right">
-          <div class="hidden-xs-only">
+        <v-col cols="12" sm="6" class="px-0 pb-2 body-1 text-center text-sm-right">
+          <div class="hidden-xs">
             <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE" target="_blank" class="text-link">3rd-party software packages</a>
             <a href="https://www.photoprism.app/about/team/" target="_blank" class="body-link">© 2018-2024 PhotoPrism UG</a>
           </div>

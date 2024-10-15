@@ -93,24 +93,24 @@
                     </v-col>
                   </template>
                   <v-col cols="12" class="px-2 pt-1 pb-0 auth-actions">
-                    <div class="action-buttons auth-buttons text-xs-center">
-                      <v-btn v-if="enterCode" :color="colors.secondary" outlined :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-4 py-2 opacity-80" @click.stop.prevent="onCancel">
+                    <div class="action-buttons auth-buttons text-center">
+                      <v-btn v-if="enterCode" :color="colors.secondary" outlined :block="$vuetify.display.xs" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-4 py-2 opacity-80" @click.stop.prevent="onCancel">
                         <translate>Cancel</translate>
                       </v-btn>
-                      <v-btn v-else-if="registerUri" :color="colors.secondary" outlined :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-register ra-6 px-4 py-2 opacity-80" @click.stop.prevent="onRegister">
+                      <v-btn v-else-if="registerUri" :color="colors.secondary" outlined :block="$vuetify.display.xs" :style="`color: ${colors.link}!important`" class="action-register ra-6 px-4 py-2 opacity-80" @click.stop.prevent="onRegister">
                         <translate>Create Account</translate>
                       </v-btn>
-                      <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.breakpoint.xsOnly" class="white--text action-confirm ra-6 py-2 px-4" @click.stop.prevent="onLogin">
+                      <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.display.xs" class="white--text action-confirm ra-6 py-2 px-4" @click.stop.prevent="onLogin">
                         <translate>Sign in</translate>
                         <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
                         <v-icon v-else right dark>mdi-chevron-right</v-icon>
                       </v-btn>
                     </div>
-                    <div v-if="enterCode" class="auth-links text-xs-center opacity-80">
+                    <div v-if="enterCode" class="auth-links text-center opacity-80">
                       <translate>Can't access your authenticator app or device?</translate>
                       <translate>Use your recovery code or contact an administrator for help.</translate>
                     </div>
-                    <div v-else-if="passwordResetUri" class="auth-links text-xs-center opacity-80">
+                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-80">
                       <a :href="passwordResetUri" class="text-link link--text">
                         <translate>Forgot password?</translate>
                       </a>
@@ -119,7 +119,7 @@
                   <template v-if="config.ext.oidc.enabled && !enterCode">
                     <v-col cols="12" class="px-2 pb-4 oidc-actions">
                       <v-divider :dark="true"></v-divider>
-                      <div class="text-xs-center oidc-buttons pt-6">
+                      <div class="text-center oidc-buttons pt-6">
                         <v-btn :color="colors.primary" depressed :disabled="loading" block class="white--text action-oidc-login ra-6 my-0 py-0 px-4" @click.stop.prevent="onOidcLogin">
                           <img alt="" class="oidc-icon v-icon--left theme--dark" :src="config.ext.oidc.icon" />
                           <translate :translate-params="{ provider: config.ext.oidc.provider }">Continue with %{provider}</translate>

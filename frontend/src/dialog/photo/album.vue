@@ -3,11 +3,11 @@
     <v-card raised elevation="24">
       <v-card-text class="pt-6 px-6">
         <v-row>
-          <v-col cols="3" class="text-xs-left">
+          <v-col cols="3" class="text-left">
             <!-- TODO: change this icon -->
             <v-icon size="60" color="secondary-dark lighten-1">photo_album</v-icon>
           </v-col>
-          <v-col cols="9" class="text-xs-left" align-self="center">
+          <v-col cols="9" class="text-left" align-self="center">
             <v-autocomplete
               ref="input"
               v-model="album"
@@ -33,7 +33,7 @@
       </v-card-text>
       <v-card-actions class="pt-0 pb-6 px-6">
         <v-row class="pa-0">
-          <v-col cols="12" class="text-xs-right">
+          <v-col cols="12" class="text-right">
             <v-btn depressed color="secondary-light" class="action-cancel mx-1" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>

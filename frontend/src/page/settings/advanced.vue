@@ -4,7 +4,7 @@
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-actions v-if="$config.values.restart">
           <v-row align="start">
-            <v-col cols="12" class="pa-2 text-xs-left">
+            <v-col cols="12" class="pa-2 text-left">
               <!-- TODO: change icon -->
               <v-alert color="primary" icon="info" class="pa-2" type="info" outlined>
                 <a style="color: inherit" href="#restart">
@@ -375,7 +375,7 @@
           <v-row align="start">
             <v-col cols="12" class="pa-2">
               <a id="restart"></a>
-              <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
+              <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>mdi-restart</v-icon>
               </v-btn>

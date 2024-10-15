@@ -26,19 +26,19 @@
           <thead>
             <tr>
               <th class="p-col-select" />
-              <th class="text-xs-left">
+              <th class="text-left">
                 {{ $gettext("Title") }}
               </th>
-              <th class="text-xs-left hidden-xs-only">
+              <th class="text-left hidden-xs">
                 {{ $gettext("Taken") }}
               </th>
-              <th class="text-xs-left hidden-sm-and-down">
+              <th class="text-left hidden-sm-and-down">
                 {{ $gettext("Camera") }}
               </th>
-              <th class="text-xs-left hidden-xs-only">
+              <th class="text-left hidden-xs">
                 {{ showName ? $gettext("Name") : $gettext("Location") }}
               </th>
-              <th class="text-xs-center hidden-xs-only" />
+              <th class="text-center hidden-xs" />
             </tr>
           </thead>
           <tbody>
@@ -75,7 +75,7 @@
               <td class="p-photo-desc clickable" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
-              <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
+              <td class="p-photo-desc hidden-xs" :title="photo.getDateString()">
                 <button @click.stop.prevent="openDate(index)">
                   {{ photo.shortDateString() }}
                 </button>
@@ -83,7 +83,7 @@
               <td class="p-photo-desc hidden-sm-and-down">
                 <button @click.stop.prevent="editPhoto(index)">{{ photo.CameraMake }} {{ photo.CameraModel }}</button>
               </td>
-              <td class="p-photo-desc hidden-xs-only">
+              <td class="p-photo-desc hidden-xs">
                 <button v-if="filter.order === 'name'" :title="$gettext('Name')" @click.exact="downloadFile(index)">
                   {{ photo.FileName }}
                 </button>
@@ -95,7 +95,7 @@
                 </span>
               </td>
               <template v-if="!isSharedView">
-                <td class="text-xs-center">
+                <td class="text-center">
                   <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
                     <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
                     <div class="v-btn v-btn--icon v-btn--small" />
