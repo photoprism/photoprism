@@ -45,28 +45,52 @@ func TestCountUsers(t *testing.T) {
 
 func TestUsers(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
-		if results, err := Users(0, 0, "", ""); err != nil {
+		if results, err := Users(0, 0, "", "", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 2, len(results))
 		}
 	})
 	t.Run("Limit", func(t *testing.T) {
-		if results, err := Users(1, 0, "", ""); err != nil {
+		if results, err := Users(1, 0, "", "", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))
 		}
 	})
 	t.Run("Offset", func(t *testing.T) {
-		if results, err := Users(0, 1, "", ""); err != nil {
+		if results, err := Users(2, 1, "", "", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 2, len(results))
 		}
 	})
 	t.Run("SearchAlice", func(t *testing.T) {
-		if results, err := Users(100, 0, "", "alice"); err != nil {
+		if results, err := Users(100, 0, "", "alice", false); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, 5, results[0].ID)
+				assert.Equal(t, "uqxetse3cy5eo9z2", results[0].UserUID)
+				assert.Equal(t, "alice", results[0].UserName)
+			}
+		}
+	})
+	t.Run("SearchAliceByID", func(t *testing.T) {
+		if results, err := Users(100, 0, "", "5", false); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, 5, results[0].ID)
+				assert.Equal(t, "uqxetse3cy5eo9z2", results[0].UserUID)
+				assert.Equal(t, "alice", results[0].UserName)
+			}
+		}
+	})
+	t.Run("SearchAliceByUID", func(t *testing.T) {
+		if results, err := Users(100, 0, "", "uqxetse3cy5eo9z2", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))
@@ -78,17 +102,35 @@ func TestUsers(t *testing.T) {
 		}
 	})
 	t.Run("SortByID", func(t *testing.T) {
-		if results, err := Users(100, 0, "id", ""); err != nil {
+		if results, err := Users(100, 0, "id", "all", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 2, len(results))
 		}
 	})
 	t.Run("SearchAliceSortByID", func(t *testing.T) {
-		if results, err := Users(100, 0, "id", "alice"); err != nil {
+		if results, err := Users(100, 0, "id", "alice", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))
+		}
+	})
+	t.Run("IncludeDeleted", func(t *testing.T) {
+		if results, err := Users(0, 0, "", "deleted", true); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, 10000008, results[0].ID)
+				assert.Equal(t, "deleted", results[0].UserName)
+			}
+		}
+	})
+	t.Run("ExcludeDeleted", func(t *testing.T) {
+		if results, err := Users(0, 0, "", "deleted", false); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, 0, len(results))
 		}
 	})
 }

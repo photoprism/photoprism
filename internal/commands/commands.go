@@ -71,8 +71,8 @@ var PhotoPrism = []cli.Command{
 	ConnectCommand,
 }
 
-// countFlag represents a CLI flag to limit the number of report rows.
-var countFlag = cli.UintFlag{
+// CountFlag represents a CLI flag to limit the number of report rows.
+var CountFlag = cli.UintFlag{
 	Name:  "n",
 	Usage: "`LIMIT` number of results",
 	Value: 100,

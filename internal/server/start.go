@@ -44,10 +44,15 @@ func Start(ctx context.Context, conf *config.Config) {
 		log.Warnf("server: %s", err)
 	}
 
-	// Register recovery and logger middleware.
-	router.Use(Recovery(), Logger())
+	// Register panic recovery middleware.
+	router.Use(Recovery())
 
-	// If enabled, register compression middleware.
+	// Register logger middleware if debug mode is enabled.
+	if conf.Debug() {
+		router.Use(Logger())
+	}
+
+	// Register compression middleware if enabled in the configuration.
 	switch conf.HttpCompression() {
 	case "br", "brotli":
 		log.Infof("server: brotli compression is currently not supported")
@@ -72,6 +77,9 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	// Register security middleware.
 	router.Use(Security(conf))
+
+	// Register robots tag middleware.
+	router.Use(Robots(conf))
 
 	// Create REST API router group.
 	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))

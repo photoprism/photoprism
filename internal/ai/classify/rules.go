@@ -1679,7 +1679,7 @@ var Rules = LabelRules{
 	},
 	"cucumber": {
 		Label:      "vegetables",
-		Threshold:  0.000000,
+		Threshold:  0.300000,
 		Priority:   0,
 		Categories: []string{"food"},
 	},

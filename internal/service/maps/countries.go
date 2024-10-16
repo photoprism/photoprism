@@ -238,7 +238,7 @@ var CountryNames = map[string]string{
 	"ua": "Ukraine",
 	"ae": "United Arab Emirates",
 	"gb": "United Kingdom",
-	"us": "USA",
+	"us": "United States",
 	"um": "US Minor Outlying Islands",
 	"uy": "Uruguay",
 	"uz": "Uzbekistan",
