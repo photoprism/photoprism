@@ -60,7 +60,7 @@ require github.com/google/uuid v1.6.0
 
 require github.com/chzyer/readline v1.5.1 // indirect
 
-require github.com/gabriel-vasile/mimetype v1.4.5
+require github.com/gabriel-vasile/mimetype v1.4.6
 
 require (
 	golang.org/x/sync v0.8.0
@@ -70,7 +70,7 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
-	github.com/prometheus/client_golang v1.20.4
+	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/common v0.60.0
 )
 
