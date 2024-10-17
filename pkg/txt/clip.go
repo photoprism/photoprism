@@ -15,6 +15,7 @@ const (
 	ClipUsername  = 64
 	ClipPassword  = 72
 	ClipSlug      = 80
+	ClipType      = 100
 	ClipCategory  = 100
 	ClipTokenName = 128
 	ClipDefault   = 160

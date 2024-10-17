@@ -26,6 +26,7 @@ var CameraMakes = map[string]string{
 	"Kodak":                       "KODAK",
 	"EASTMAN KODAK":               "KODAK",
 	"EASTMAN KODAK COMPANY":       "KODAK",
+	"GCMC":                        "KODAK",
 	"Leica Camera AG":             "Leica",
 	"LEICA":                       "Leica",
 	"LG Electronics":              "LG",

@@ -51,6 +51,7 @@ func CreateUnknownCamera() {
 func NewCamera(makeName string, modelName string) *Camera {
 	makeName = strings.TrimSpace(makeName)
 	modelName = strings.TrimSpace(modelName)
+	cameraType := CameraTypes[strings.TrimSpace(modelName)]
 
 	if modelName == "" && makeName == "" {
 		return &UnknownCamera
@@ -89,6 +90,7 @@ func NewCamera(makeName string, modelName string) *Camera {
 		CameraName:  txt.Clip(cameraName, txt.ClipName),
 		CameraMake:  txt.Clip(makeName, txt.ClipName),
 		CameraModel: txt.Clip(modelName, txt.ClipName),
+		CameraType:  txt.Clip(cameraType, txt.ClipType),
 	}
 
 	return result
@@ -131,7 +133,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		cameraCache.SetDefault(m.CameraSlug, m)
 
 		return m
-	} else if res := Db().Where("camera_slug = ?", m.CameraSlug).First(&result); res.Error == nil {
+	} else if res = Db().Where("camera_slug = ?", m.CameraSlug).First(&result); res.Error == nil {
 		cameraCache.SetDefault(m.CameraSlug, &result)
 		return &result
 	} else {
@@ -152,7 +154,9 @@ func (m *Camera) String() string {
 
 // Scanner checks whether the model appears to be a scanner.
 func (m *Camera) Scanner() bool {
-	if m.CameraSlug == "" {
+	if m.CameraType == CameraScanner {
+		return true
+	} else if m.CameraSlug == "" {
 		return false
 	}
 
