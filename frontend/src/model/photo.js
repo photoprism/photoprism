@@ -138,6 +138,7 @@ export class Photo extends RestModel {
       CameraID: 0,
       CameraMake: "",
       CameraModel: "",
+      CameraType: "",
       CameraSerial: "",
       CameraSrc: "",
       Lens: {},

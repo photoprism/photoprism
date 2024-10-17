@@ -1,9 +1,25 @@
 package entity
 
+const (
+	ModelNone       = ""
+	ModelUnknown    = "Unknown"
+	ModelSlideNScan = "Slide N Scan"
+	ModelPhotoScan  = "PhotoScan"
+	ModelCanoScan   = "CanoScan"
+	ModelOpticFilm  = "OpticFilm"
+	ModelScanSnap   = "ScanSnap"
+	ModelMSScanner  = "MS Scanner"
+	ModelIPhone     = "iPhone"
+	ModelIPhoneSE   = "iPhone SE"
+	ModelIPad       = "iPad"
+	ModelIPadAir    = "iPad Air"
+	ModelIPadPro    = "iPad Pro"
+)
+
 // CameraModels maps internal model identifiers to normalized names.
 var CameraModels = map[string]string{
 	// Mobile Devices:
-	"Z00AD":                      "ZenFone 2",
+	"Z00AD":                      "Zenfone 2",
 	"AI2302":                     "Zenfone 10",
 	"_AI2302":                    "Zenfone 10",
 	"ASUS_AI2302":                "Zenfone 10",
@@ -15,26 +31,26 @@ var CameraModels = map[string]string{
 	"Blackberry Leap":            "BlackBerry Leap",
 	"Blackberry Classic":         "BlackBerry Classic",
 	"Blackberry Passport":        "BlackBerry Passport",
-	"iPhone SE (1st generation)": "iPhone SE",
-	"iPhone SE (2nd generation)": "iPhone SE",
-	"iPhone SE (3rd generation)": "iPhone SE",
-	"iPhone SE (4th generation)": "iPhone SE",
-	"iPhone SE (5th generation)": "iPhone SE",
-	"iPad (1st generation)":      "iPad",
-	"iPad (2nd generation)":      "iPad",
-	"iPad (3rd generation)":      "iPad",
-	"iPad (4th generation)":      "iPad",
-	"iPad (5th generation)":      "iPad",
-	"iPad Air (1st generation)":  "iPad Air",
-	"iPad Air (2nd generation)":  "iPad Air",
-	"iPad Air (3rd generation)":  "iPad Air",
-	"iPad Air (4th generation)":  "iPad Air",
-	"iPad Air (5th generation)":  "iPad Air",
-	"iPad Pro (1st generation)":  "iPad Pro",
-	"iPad Pro (2nd generation)":  "iPad Pro",
-	"iPad Pro (3rd generation)":  "iPad Pro",
-	"iPad Pro (4th generation)":  "iPad Pro",
-	"iPad Pro (5th generation)":  "iPad Pro",
+	"iPhone SE (1st generation)": ModelIPhoneSE,
+	"iPhone SE (2nd generation)": ModelIPhoneSE,
+	"iPhone SE (3rd generation)": ModelIPhoneSE,
+	"iPhone SE (4th generation)": ModelIPhoneSE,
+	"iPhone SE (5th generation)": ModelIPhoneSE,
+	"iPad (1st generation)":      ModelIPad,
+	"iPad (2nd generation)":      ModelIPad,
+	"iPad (3rd generation)":      ModelIPad,
+	"iPad (4th generation)":      ModelIPad,
+	"iPad (5th generation)":      ModelIPad,
+	"iPad Air (1st generation)":  ModelIPadAir,
+	"iPad Air (2nd generation)":  ModelIPadAir,
+	"iPad Air (3rd generation)":  ModelIPadAir,
+	"iPad Air (4th generation)":  ModelIPadAir,
+	"iPad Air (5th generation)":  ModelIPadAir,
+	"iPad Pro (1st generation)":  ModelIPadPro,
+	"iPad Pro (2nd generation)":  ModelIPadPro,
+	"iPad Pro (3rd generation)":  ModelIPadPro,
+	"iPad Pro (4th generation)":  ModelIPadPro,
+	"iPad Pro (5th generation)":  ModelIPadPro,
 	"GT-I9300":                   "Galaxy S3",
 	"SPH-L720":                   "Galaxy S4",
 	"SM-G920T":                   "Galaxy S6",
@@ -210,12 +226,12 @@ var CameraModels = map[string]string{
 	"ILME-FX6V":  "FX6 Cinema Line",
 	"ILME-FX6VK": "FX6 Cinema Line",
 	// Film Scanners:
-	"170 7472F20EEC14": "PhotoScan",
-	"RODFS40":          "Slide N Scan",
-	"RODFS50":          "Slide N Scan",
-	"RODFS60":          "Slide N Scan",
-	"RODFS70":          "Slide N Scan",
-	"RODFS80":          "Slide N Scan",
-	"RODFS90":          "Slide N Scan",
-	"SLIDE N SCAN":     "Slide N Scan",
+	"170 7472F20EEC14": ModelPhotoScan,
+	"RODFS40":          ModelSlideNScan,
+	"RODFS50":          ModelSlideNScan,
+	"RODFS60":          ModelSlideNScan,
+	"RODFS70":          ModelSlideNScan,
+	"RODFS80":          ModelSlideNScan,
+	"RODFS90":          ModelSlideNScan,
+	"SLIDE N SCAN":     ModelSlideNScan,
 }
