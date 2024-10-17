@@ -8,9 +8,9 @@ At a minimum, your report should include the following:
 - vulnerability description
 - reproduction steps
 
-We will then try to reproduce the problem, determine the impact and get back to you as soon as possible.
-Confirmed vulnerabilities will be fixed within 90 days, depending on the severity and whether third-party
-packages are affected.
+When we receive a meaningful and verifiable vulnerability report from you, we will try to reproduce the issue, determine the impact and get back to you as soon as possible.
+
+We kindly ask you not to send HTML emails for this purpose, but only plain text. Confirmed vulnerabilities will be fixed within 90 days, depending on the severity and whether third-party packages are affected.
 
 ## Responsible Disclosure
 
