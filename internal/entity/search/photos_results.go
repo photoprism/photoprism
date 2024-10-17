@@ -53,6 +53,7 @@ type Photo struct {
 	CameraSerial     string        `json:"CameraSerial,omitempty" select:"photos.camera_serial"`
 	CameraMake       string        `json:"CameraMake,omitempty" select:"cameras.camera_make"`
 	CameraModel      string        `json:"CameraModel,omitempty" select:"cameras.camera_model"`
+	CameraType       string        `json:"CameraType,omitempty" select:"cameras.camera_type"`
 	LensID           uint          `json:"LensID" select:"photos.lens_id"` // Lens
 	LensMake         string        `json:"LensMake,omitempty" select:"lenses.lens_model"`
 	LensModel        string        `json:"LensModel,omitempty" select:"lenses.lens_make"`
