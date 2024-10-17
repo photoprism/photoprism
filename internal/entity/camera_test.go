@@ -148,4 +148,10 @@ func TestCamera_Scanner(t *testing.T) {
 		camera := NewCamera("", "MS Scanner")
 		assert.True(t, camera.Scanner())
 	})
+	t.Run("KODAKSlideNScan", func(t *testing.T) {
+		camera := NewCamera("GCMC", "RODFS50")
+		assert.True(t, camera.Scanner())
+		assert.Equal(t, "KODAK", camera.CameraMake)
+		assert.Equal(t, "Slide N Scan", camera.CameraModel)
+	})
 }

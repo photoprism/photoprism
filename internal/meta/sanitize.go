@@ -18,6 +18,7 @@ var UnwantedDescriptions = map[string]bool{
 	"SAMSUNG CAMERA PICTURES":  true,
 	"<Digimax i5, Samsung #1>": true,
 	"SONY DSC":                 true, // Sony
+	"Scanner":                  true, // KODAK Slide N Scan
 	"rhdr":                     true, // Huawei
 	"hdrpl":                    true,
 	"oznorWO":                  true,
