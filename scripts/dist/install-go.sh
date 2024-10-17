@@ -7,12 +7,6 @@ PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PAT
 
 DESTDIR=$(realpath "${1:-/usr/local}")
 
-# Abort if not executed as root..
-if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run ${0##*/} as root" 1>&2
-  exit 1
-fi
-
 # Query version.
 if [[ -z $GOLANG_VERSION ]]; then
   GOLANG_VERSION=$(curl -fsSL https://go.dev/VERSION?m=text | head -n 1)
@@ -31,7 +25,7 @@ fi
 
 DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
-mkdir -p "$DESTDIR"
+sudo mkdir -p "$DESTDIR"
 
 set -eux;
 
@@ -56,13 +50,13 @@ esac
 
 # Replace current installation in "/usr/local/go".
 echo "Installing Go for ${DESTARCH^^} from \"$URL\". Please wait."
-rm -rf /usr/local/go
-wget --inet4-only -c "$URL" -O - | tar -xz -C /usr/local
+sudo rm -rf /usr/local/go
+wget --inet4-only -c "$URL" -O - | sudo tar -xz -C /usr/local
 
 # Add symlink to go binary.
 echo "Adding symbolic links for go and gofmt."
-ln -sf /usr/local/go/bin/go /usr/local/bin/go
-ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+sudo ln -sf /usr/local/go/bin/go /usr/local/bin/go
+sudo ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
 # Test go command by showing installed Go version. Telemetry in Go >= 1.23 should be set to "off" in
 # ~/.config/go/telemetry, see https://go.dev/doc/telemetry. You can otherwise run "go telemetry off".
