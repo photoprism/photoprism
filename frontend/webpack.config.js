@@ -33,6 +33,7 @@ const isDev = process.env.NODE_ENV !== "production";
 const isCustom = !!process.env.CUSTOM_SRC;
 const appName = process.env.CUSTOM_NAME ? process.env.CUSTOM_NAME : "PhotoPrism";
 const { VueLoaderPlugin } = require("vue-loader");
+const { VuetifyPlugin } = require('webpack-plugin-vuetify')
 
 const PATHS = {
   src: path.join(__dirname, "src"),
@@ -99,6 +100,7 @@ const config = {
         return "/static/build/" + asset;
       },
     }),
+    new VuetifyPlugin({ autoImport: true }),
   ],
   performance: {
     hints: isDev ? false : "warning",

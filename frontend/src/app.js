@@ -105,7 +105,7 @@ config.update().finally(() => {
   // Register Vuetify.
   console.log('app', app);
   const vuetify = createVuetify({ 
-    // rtl,
+    rtl,
     icons: {
       defaultSet: 'mdi',
       aliases,
@@ -117,6 +117,7 @@ config.update().finally(() => {
     theme
    });
    console.log('vuetify', vuetify);
+   app.use(vuetify);
 
   // Register other VueJS plugins.
   const gettext = createGettext({
@@ -169,7 +170,6 @@ config.update().finally(() => {
 
     localStorage.removeItem("lastScrollPosBeforePageHide");
   });
-  app.use(vuetify);
 
   // Configure client-side routing.
   const router = createRouter({
@@ -196,6 +196,8 @@ config.update().finally(() => {
       }
     },
   });
+  console.log('router',router);
+  console.log('app 123',app);
   app.use(router);
 
   router.beforeEach((to, from, next) => {
