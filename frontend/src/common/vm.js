@@ -20,5 +20,5 @@ export function $ngettext(msgid, plural, n) {
 }
 
 export function Mount(app) {
-  app.mount("#photoprism");
+  app.mount("#app");
 }

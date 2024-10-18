@@ -1,7 +1,7 @@
 <template>
-  <v-snackbar id="p-notify" v-model="visible" :color="color" :timeout="-1" :class="textColor" :bottom="true">
+  <v-snackbar id="p-notify" v-model="visible" :color="color" :timeout="-1" :class="textColor" location="bottom">
     <span :dir="!rtl ? 'let' : 'rtl'">{{ text }}</span>
-    <v-btn :class="textColor + ' pr-0'" icon text @click="close">
+    <v-btn :class="textColor + ' pr-0'" icon variant="text" @click="close">
       <v-icon :class="textColor">mdi-close</v-icon>
     </v-btn>
   </v-snackbar>
@@ -27,7 +27,7 @@ export default {
   created() {
     this.subscriptionId = Event.subscribe("notify", this.onNotify);
   },
-  destroyed() {
+  unmounted() {
     Event.unsubscribe(this.subscriptionId);
   },
   methods: {

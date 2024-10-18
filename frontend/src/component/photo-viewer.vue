@@ -118,7 +118,7 @@ export default {
     this.subscriptions["viewer.show"] = Event.subscribe("viewer.show", this.onShow);
     this.subscriptions["viewer.hide"] = Event.subscribe("viewer.hide", this.onHide);
   },
-  destroyed() {
+  unmounted() {
     this.onPause();
 
     for (let i = 0; i < this.subscriptions.length; i++) {

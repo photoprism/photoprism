@@ -85,7 +85,7 @@ nav .v-list__item__title.title {
     color: #000;
 }
 
-#app.small-screen.show-nav main div.v-main__wrap {
+.v-application.small-screen.show-nav main div.v-main__wrap {
     padding-top: 48px;
 }
 

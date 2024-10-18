@@ -22,7 +22,7 @@ import "css/app.css";
 import Event from "pubsub-js";
 
 export default {
-  name: "PhotoPrism",
+  name: "App",
   data() {
     return {
       isRtl: this.$config.rtl(),
@@ -42,7 +42,7 @@ export default {
     this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
     this.$config.setVuetify(this.$vuetify);
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

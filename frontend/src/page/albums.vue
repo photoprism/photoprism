@@ -391,7 +391,7 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

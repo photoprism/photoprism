@@ -109,7 +109,7 @@ export default {
     this.subscriptionId = Event.subscribe("index", this.handleEvent);
     this.load();
   },
-  destroyed() {
+  unmounted() {
     Event.unsubscribe(this.subscriptionId);
   },
   methods: {

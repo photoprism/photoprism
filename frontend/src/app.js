@@ -34,17 +34,17 @@ import { installComponents } from "component/components";
 import { installDialogs } from "dialog/dialogs";
 import customIcons from "component/icons";
 import Event from "pubsub-js";
-import { createGettext } from 'vue3-gettext';
+import { createGettext } from "vue3-gettext";
 import Log from "common/log";
 import PhotoPrism from "app.vue";
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
 import Routes from "app/routes";
 import { config, session } from "app/session";
 import { Settings } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
-import { createApp } from 'vue';
-import { createVuetify } from 'vuetify';
+import { createApp } from "vue";
+import { createVuetify } from "vuetify";
 import VueLuxon from "vue-luxon";
 // import VueFilters from "vue2-filters";
 // import VueFullscreen from "vue-fullscreen";
@@ -53,9 +53,9 @@ import Hls from "hls.js";
 import "common/maptiler-lang";
 import { T, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
-import { aliases, mdi } from 'vuetify/iconsets/mdi';
-import 'vuetify/styles';
-import '@mdi/font/css/materialdesignicons.css';
+import { aliases, mdi } from "vuetify/iconsets/mdi";
+import "vuetify/styles";
+import "@mdi/font/css/materialdesignicons.css";
 
 config.progress(50);
 
@@ -103,21 +103,21 @@ config.update().finally(() => {
   };
 
   // Register Vuetify.
-  console.log('app', app);
-  const vuetify = createVuetify({ 
+  // console.log("app", app);
+  const vuetify = createVuetify({
     rtl,
     icons: {
-      defaultSet: 'mdi',
+      defaultSet: "mdi",
       aliases,
       sets: {
         mdi,
-        ...customIcons
+        ...customIcons,
       },
     },
-    theme
-   });
-   console.log('vuetify', vuetify);
-   app.use(vuetify);
+    theme,
+  });
+  // console.log('vuetify', vuetify);
+  app.use(vuetify);
 
   // Register other VueJS plugins.
   const gettext = createGettext({
@@ -196,8 +196,8 @@ config.update().finally(() => {
       }
     },
   });
-  console.log('router',router);
-  console.log('app 123',app);
+  console.log("router", router);
+  console.log("app 123", app);
   app.use(router);
 
   router.beforeEach((to, from, next) => {
