@@ -1,8 +1,8 @@
 <template>
   <div class="p-tab p-tab-photo-files">
-    <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
+    <v-expansion-panels v-model="state" class="pa-0 elevation-0 secondary">
       <template v-for="file in model.fileModels()">
-        <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
+        <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
           <template #header>
             <div class="caption filename">
               {{ file.baseName(70) }}
@@ -14,10 +14,10 @@
                 <v-alert :value="file.Error" type="error" class="my-0 text-capitalize">
                   {{ file.Error }}
                 </v-alert>
-                <v-layout row wrap fill-height align-center justify-center>
-                  <v-flex xs12 class="pa-0">
+                <v-row class="d-flex align-stretch" align="center" justify="center">
+                  <v-col cols="12" class="pa-0 flex-grow-1">
                     <div class="v-table__overflow">
-                      <table class="v-datatable v-table theme--light photo-files">
+                      <table class="v-datatable v-table theme--light photo-files d-flex">
                         <tbody>
                           <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                             <td>
@@ -32,19 +32,19 @@
                               <translate>Actions</translate>
                             </td>
                             <td>
-                              <v-btn v-if="features.download" small depressed dark color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                              <v-btn v-if="features.download" small depressed theme="dark" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                 <translate>Download</translate>
                               </v-btn>
-                              <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed dark color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
+                              <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
                                 <translate>Primary</translate>
                               </v-btn>
-                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small depressed dark color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small depressed theme="dark" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
                                 <translate>Unstack</translate>
                               </v-btn>
-                              <v-btn v-if="features.delete && !file.Primary" small depressed dark color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
+                              <v-btn v-if="features.delete && !file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
                                 <translate>Delete</translate>
                               </v-btn>
-                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed dark color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
+                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
                                 <translate>File Browser</translate>
                               </v-btn>
                             </td>
@@ -188,7 +188,7 @@
                                 v-model="file.Orientation"
                                 flat
                                 solo
-                                browser-autocomplete="off"
+                                autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 :items="options.Orientations()"
@@ -198,10 +198,10 @@
                                 @change="changeOrientation(file)"
                               >
                                 <template #selection="{ item }">
-                                  <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
+                                  <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
                                 </template>
                                 <template #item="{ item }">
-                                  <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
+                                  <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
                                 </template>
                               </v-select>
                             </td>
@@ -255,14 +255,14 @@
                         </tbody>
                       </table>
                     </div>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
           </v-card>
-        </v-expansion-panel-content>
+        </v-expansion-panel>
       </template>
-    </v-expansion-panel>
+    </v-expansion-panels>
     <p-file-delete-dialog :show="deleteFile.dialog" @cancel="closeDeleteDialog" @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
@@ -288,7 +288,7 @@ export default {
   },
   data() {
     return {
-      state: [true],
+      state: [0],
       deleteFile: {
         dialog: false,
         file: null,
@@ -316,7 +316,7 @@ export default {
           sortable: false,
           class: "hidden-sm-and-down",
         },
-        { text: this.$gettext("Size"), value: "Size", sortable: false, class: "hidden-xs-only" },
+        { text: this.$gettext("Size"), value: "Size", sortable: false, class: "hidden-xs" },
         { text: this.$gettext("Type"), value: "", sortable: false, align: "left" },
         { text: this.$gettext("Status"), value: "", sortable: false, align: "left" },
       ],

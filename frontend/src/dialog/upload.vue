@@ -1,20 +1,22 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
-      <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark @click.stop="cancel">
-          <v-icon>close</v-icon>
+      <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
+        <v-btn icon theme="dark" @click.stop="cancel">
+          <!-- TODO: check icon -->
+          <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
           <translate key="Upload">Upload</translate>
         </v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
-        <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
+        <v-form ref="form" class="p-photo-upload" lazy-validation @submit.prevent="submit">
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
-            <p class="subheading">
+            <p class="subtitle-1">
+              <!-- TODO: check property allow-overflow TEST -->
               <v-combobox
                 v-if="total === 0"
                 v-model="selectedAlbums"
@@ -34,18 +36,20 @@
                 return-object
               >
                 <template #no-data>
-                  <v-list-tile>
-                    <v-list-tile-content>
-                      <v-list-tile-title>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title>
                         <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
-                      </v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
                 </template>
                 <template #selection="data">
-                  <v-chip :key="JSON.stringify(data.item)" :selected="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @input="data.parent.selectItem(data.item)">
-                    <v-icon class="pr-1">bookmark</v-icon>
-                    {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
+                  <v-chip :key="JSON.stringify(data.item)" :input-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
+                    <v-icon class="pr-1">mdi-bookmark</v-icon>
+                    <!-- TODO: change this filter -->
+                    <!-- {{ data.item.Title ? data.item.Title : data.item | truncate(40) }} -->
+                    {{ data.item.Title ? data.item.Title : data.item }}
                   </v-chip>
                 </template>
               </v-combobox>
@@ -58,7 +62,7 @@
             </p>
 
             <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark" :indeterminate="indexing">
-              <p class="px-2 ma-0 text-xs-right opacity-85"
+              <p class="px-2 ma-0 text-right opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >
             </v-progress-linear>
@@ -78,7 +82,7 @@
 
             <v-btn :disabled="busy" color="primary-button" class="white--text ml-0 mt-2 action-upload" depressed @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
-              <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
+              <v-icon :right="!rtl" :left="rtl" dark>mdi-download</v-icon>
             </v-btn>
           </v-container>
         </v-form>

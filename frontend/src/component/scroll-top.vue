@@ -1,7 +1,7 @@
 <template>
   <transition name="fade-transition">
-    <v-btn v-if="show" color="transparent" dark fab fixed class="p-scroll-top" @click.stop="scrollToTop">
-      <v-icon>arrow_upward</v-icon>
+    <v-btn v-if="show" color="transparent" theme="dark" fab fixed class="p-scroll-top" @click.stop="scrollToTop">
+      <v-icon>mdi-arrow-up</v-icon>
     </v-btn>
   </transition>
 </template>
@@ -18,7 +18,7 @@ export default {
   created() {
     window.addEventListener("scroll", this.onScroll);
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("scroll", this.onScroll);
   },
   methods: {

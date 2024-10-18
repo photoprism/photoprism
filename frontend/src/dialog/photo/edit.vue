@@ -1,40 +1,40 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
+  <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
-      <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark class="action-close" @click.stop="close">
-          <v-icon>close</v-icon>
+      <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
+        <v-btn icon theme="dark" class="action-close" @click.stop="close">
+          <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title
           >{{ title }}
-          <v-icon v-if="isPrivate" title="Private">lock</v-icon>
+          <v-icon v-if="isPrivate" title="Private">mdi-lock</v-icon>
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="selection.length > 1">
           <v-btn icon :disabled="selected < 1" class="action-previous" @click.stop="prev">
-            <v-icon v-if="!rtl">navigate_before</v-icon>
-            <v-icon v-else>navigate_next</v-icon>
+            <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
+            <v-icon v-else>mdi-chevron-right</v-icon>
           </v-btn>
 
           <v-btn icon :disabled="selected >= selection.length - 1" class="action-next" @click.stop="next">
-            <v-icon v-if="!rtl">navigate_next</v-icon>
-            <v-icon v-else>navigate_before</v-icon>
+            <v-icon v-if="!rtl">mdi-chevron-right</v-icon>
+            <v-icon v-else>mdi-chevron-left</v-icon>
           </v-btn>
         </v-toolbar-items>
-      </v-toolbar>
-      <v-tabs v-model="active" flat grow class="form" color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+    </v-toolbar>
+      <v-tabs v-model="active" elevation="0" grow class="form transparent" background-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">edit</v-icon>
+            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-pencil</v-icon>
             <translate key="Details">Details</translate>
           </template>
         </v-tab>
 
         <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Labels')">label</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">label</v-icon>
+            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-label</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
               <template #badge>
                 <span v-if="model.Labels.length">{{ model.Labels.length }}</span>
@@ -45,9 +45,9 @@
         </v-tab>
 
         <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('People')">people_alt</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">people_alt</v-icon>
+            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-account-multiple</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
               <template #badge>
                 <span v-if="model.Faces">{{ model.Faces }}</span>
@@ -58,9 +58,9 @@
         </v-tab>
 
         <v-tab id="tab-files" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Files')">camera_roll</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">camera_roll</v-icon>
+            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-film</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
               <template #badge>
                 <span v-if="model.Files.length">{{ model.Files.length }}</span>
@@ -71,27 +71,28 @@
         </v-tab>
 
         <v-tab v-if="$config.feature('edit')" id="tab-info" ripple>
-          <v-icon>settings</v-icon>
+          <v-icon>mdi-cog</v-icon>
         </v-tab>
 
-        <v-tabs-items touchless>
-          <v-tab-item lazy>
+        <!-- TODO: check property touchless TEST -->
+        <v-tabs-items touchless v-model="active">
+          <v-tab-item>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>
 
-          <v-tab-item lazy>
+          <v-tab-item>
             <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
           </v-tab-item>
 
-          <v-tab-item lazy>
+          <v-tab-item>
             <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
           </v-tab-item>
 
-          <v-tab-item lazy>
+          <v-tab-item>
             <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
           </v-tab-item>
 
-          <v-tab-item v-if="$config.feature('edit')" lazy>
+          <v-tab-item v-if="$config.feature('edit')">
             <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
           </v-tab-item>
         </v-tabs-items>
@@ -173,7 +174,7 @@ export default {
   created() {
     this.subscriptions.push(Event.subscribe("photos.updated", (ev, data) => this.onUpdate(ev, data)));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

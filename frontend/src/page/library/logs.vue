@@ -1,15 +1,15 @@
 <template>
   <v-container fluid fill-height class="pa-0 ma-0 p-tab p-tab-logs">
-    <v-layout row wrap fill-height class="pa-0 ma-3">
-      <v-flex grow xs12 class="pa-2 terminal elevation-0 p-logs" style="overflow: auto">
-        <p v-if="logs.length === 0" class="p-log-empty">
+    <v-row class="pa-0 ma-6 d-flex align-stretch">
+      <v-col  cols="12" class="d-flex grow pa-2 terminal elevation-0 p-logs" style="overflow: auto">
+        <p v-if="logs.length === 0" class="p-log-empty flex-grow-1">
           <translate>Nothing to see here yet.</translate>
         </p>
-        <p v-for="(log, index) in logs" :key="index.id" class="p-log-message text-selectable" :class="'p-log-' + log.level">
+        <p v-for="(log, index) in logs" :key="index.id" class="p-log-message text-selectable flex-grow-1" :class="'p-log-' + log.level">
           {{ formatTime(log.time) }} {{ level(log) }} <span>{{ log.message }}</span>
         </p>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+    <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field
         :value="filter.q"
         solo
@@ -10,18 +10,18 @@
         single-line
         validate-on-blur
         class="input-search background-inherit elevation-0"
-        browser-autocomplete="off"
+        autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
         :label="$gettext('Search')"
-        prepend-inner-icon="search"
+        prepend-inner-icon="mdi-magnify"
         color="secondary-dark"
         @change="
           (v) => {
             updateFilter({ q: v });
           }
         "
-        @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+        @keyup.enter="(e) => updateQuery({ q: e.target.value })"
         @click:clear="
           () => {
             updateQuery({ q: '' });
@@ -30,32 +30,32 @@
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload()">
-        <v-icon>refresh</v-icon>
+        <v-icon>mdi-refresh</v-icon>
       </v-btn>
       <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete()">
-        <v-icon>delete</v-icon>
+        <v-icon>mdi-delete</v-icon>
       </v-btn>
       <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report" :title="$gettext('Troubleshooting Checklists')">
-        <v-icon>bug_report</v-icon>
+        <v-icon>mdi-bug</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
-      <v-list-tile v-for="err in errors" :key="err.ID" avatar class="rounded-4" @click="showDetails(err)">
-        <v-list-tile-avatar>
+      <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
+        <v-list-item-avatar>
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
-        </v-list-tile-avatar>
+        </v-list-item-avatar>
 
-        <v-list-tile-content class="text-selectable">
-          <v-list-tile-title>{{ err.Message }}</v-list-tile-title>
-          <v-list-tile-sub-title>{{ formatTime(err.Time) }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
+        <v-list-item-content class="text-selectable">
+          <v-list-item-title>{{ err.Message }}</v-list-item-title>
+          <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert :value="true" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
+      <v-alert color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" outlined>
         <p class="body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
@@ -66,7 +66,8 @@
         </p>
       </v-alert>
     </div>
-    <p-confirm-dialog :show="dialog.delete" icon="delete_outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
+    <!-- TODO: change icon -->
+    <p-confirm-dialog :show="dialog.delete" icon="mdi-delete-outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
         <v-card-title class="headline pa-2">

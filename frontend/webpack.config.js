@@ -33,6 +33,7 @@ const isDev = process.env.NODE_ENV !== "production";
 const isCustom = !!process.env.CUSTOM_SRC;
 const appName = process.env.CUSTOM_NAME ? process.env.CUSTOM_NAME : "PhotoPrism";
 const { VueLoaderPlugin } = require("vue-loader");
+const { VuetifyPlugin } = require('webpack-plugin-vuetify')
 
 const PATHS = {
   src: path.join(__dirname, "src"),
@@ -74,7 +75,10 @@ const config = {
     modules: isCustom ? [PATHS.custom, PATHS.src, PATHS.modules] : [PATHS.src, PATHS.modules],
     preferRelative: true,
     alias: {
-      vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
+      // TODO: change it
+      'vue$': 'vue/dist/vue.runtime.esm-bundler.js',
+      // vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
+      vue: '@vue/compat',
     },
   },
   plugins: [
@@ -96,6 +100,7 @@ const config = {
         return "/static/build/" + asset;
       },
     }),
+    new VuetifyPlugin({ autoImport: true }),
   ],
   performance: {
     hints: isDev ? false : "warning",
@@ -106,18 +111,13 @@ const config = {
     rules: [
       {
         test: /\.vue$/,
-        include: isCustom ? [PATHS.custom, PATHS.src] : [PATHS.src],
-        use: [
-          {
-            loader: "vue-loader",
-            options: {
-              loaders: {
-                js: "babel-loader",
-                css: "css-loader",
-              },
-            },
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            js: "babel-loader",
+            css: "css-loader",
           },
-        ],
+        },
       },
       {
         test: /\.js$/,

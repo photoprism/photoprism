@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-advanced">
-    <v-form ref="form" lazy-validation dense accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" lazy-validation accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
         <table class="v-datatable v-table theme--light">
           <tbody>
@@ -19,10 +19,11 @@
             <tr>
               <td :title="model.TypeSrc">
                 <translate>Type</translate>
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat solo browser-autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
+                <v-select v-model="model.Type" flat solo autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -46,26 +47,30 @@
                 <translate>Original Name</translate>
               </td>
               <td>
-                <v-text-field v-model="model.OriginalName" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
+                <v-text-field v-model="model.OriginalName" flat solo dense hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
               <td :title="sourceName(model.TitleSrc)">
                 <translate>Title</translate>
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td :title="sourceName(model.TitleSrc)">
                 <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{ model.Title }}</span>
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.TitleSrc === 'name'" class="src">insert_drive_file</v-icon>
               </td>
             </tr>
             <tr>
               <td :title="sourceName(model.TakenSrc)">
                 <translate>Taken</translate>
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td :title="sourceName(model.TakenSrc)">
                 {{ model.getDateString() }}
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">insights</v-icon>
               </td>
             </tr>
@@ -146,10 +151,12 @@
             <tr>
               <td :title="sourceName(model.PlaceSrc)">
                 <translate>Place</translate>
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td :title="sourceName(model.PlaceSrc)">
                 {{ model.locationInfo() }}
+                <!-- TODO: change this icon -->
                 <v-icon v-if="model.PlaceSrc === 'estimate'" class="src">insights</v-icon>
               </td>
             </tr>
@@ -180,7 +187,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>

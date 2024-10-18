@@ -1,10 +1,10 @@
 /* Mint Dark Theme */
 
 body.dark-theme.theme-mint,
-.theme-mint .v-content__wrap,
+.theme-mint .v-main__wrap,
 .theme-mint .p-page,
 .theme-mint .form,
-.theme-mint .v-content {
+.theme-mint .v-main {
     background: #121212 !important;
 }
 
@@ -56,7 +56,7 @@ body.dark-theme.theme-mint,
     color: #f6f7e8 !important;
 }
 
-#photoprism.theme-mint .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-mint .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-mint .accent--text {
     color: #2bb14c !important;
 }
@@ -72,7 +72,7 @@ body.dark-theme.theme-mint,
     color: #999 !important;
 }
 
-#photoprism.theme-mint .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-mint .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

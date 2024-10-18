@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-subjects" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery()">
+    <v-form ref="form" class="p-people-search" lazy-validation @submit.prevent="updateQuery()">
       <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
         <v-text-field
           v-if="canSearch"
@@ -13,8 +13,8 @@
           validate-on-blur
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
-          prepend-inner-icon="search"
-          browser-autocomplete="off"
+          prepend-inner-icon="mdi-magnify"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           color="secondary-dark"
@@ -23,7 +23,7 @@
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -33,22 +33,22 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+        <v-btn icon text depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <template v-if="canManage">
           <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden()">
-            <v-icon>visibility</v-icon>
+            <v-icon>mdi-eye</v-icon>
           </v-btn>
           <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden()">
-            <v-icon>visibility_off</v-icon>
+            <v-icon>mdi-eye-off</v-icon>
           </v-btn>
         </template>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
@@ -57,7 +57,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
@@ -67,9 +67,9 @@
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(model, index) in results" :key="model.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="model.UID" style="user-select: none" class="result card" :class="model.classes(selection.includes(model.UID))" :to="model.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(model, index) in results" :key="model.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="model.UID" style="user-select: none" class="result card flex-grow-1" :class="model.classes(selection.includes(model.UID))" :to="model.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="model.thumbnailUrl('tile_320')"
@@ -89,7 +89,7 @@
                   :depressed="false"
                   class="input-hidden"
                   icon
-                  flat
+                  text
                   small
                   absolute
                   @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -97,27 +97,27 @@
                   @touchmove.stop.prevent
                   @click.stop.prevent="onToggleHidden($event, index)"
                 >
-                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
-                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                  <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
+                  <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" lazy class="inline-edit" @save="onSave(model)">
+              <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+                <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" class="inline-edit" @save="onSave(model)">
                   <span v-if="model.Name" class="body-2 ma-0">
                     {{ model.Name }}
                   </span>
                   <span v-else>
-                    <v-icon>edit</v-icon>
+                    <v-icon>mdi-pencil</v-icon>
                   </span>
                   <template #input>
                     <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
@@ -128,9 +128,11 @@
                 </span>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="model.About" class="caption mb-2" :title="$gettext('About')">
-                  {{ model.About | truncate(100) }}
+                  <!-- TODO: change this filter -->
+                  <!-- {{ model.About | truncate(100) }} -->
+                  {{ model.About }}
                 </div>
 
                 <div class="caption mb-2">
@@ -143,11 +145,11 @@
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-container>
-    <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
+    <p-people-merge-dialog :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 
@@ -237,7 +239,7 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

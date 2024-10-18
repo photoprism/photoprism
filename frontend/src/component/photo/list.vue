@@ -1,7 +1,8 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-2">
-      <v-alert :value="true" color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outline>
+      <!-- TODO: change this icon -->
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -25,19 +26,19 @@
           <thead>
             <tr>
               <th class="p-col-select" />
-              <th class="text-xs-left">
+              <th class="text-left">
                 {{ $gettext("Title") }}
               </th>
-              <th class="text-xs-left hidden-xs-only">
+              <th class="text-left hidden-xs">
                 {{ $gettext("Taken") }}
               </th>
-              <th class="text-xs-left hidden-sm-and-down">
+              <th class="text-left hidden-sm-and-down">
                 {{ $gettext("Camera") }}
               </th>
-              <th class="text-xs-left hidden-xs-only">
+              <th class="text-left hidden-xs">
                 {{ showName ? $gettext("Name") : $gettext("Location") }}
               </th>
-              <th class="text-xs-center hidden-xs-only" />
+              <th class="text-center hidden-xs" />
             </tr>
           </thead>
           <tbody>
@@ -56,16 +57,17 @@
                   @click.stop.prevent="onClick($event, index)"
                 >
                   <button v-if="selectMode" class="input-select">
-                    <i class="select-on"> check_circle </i>
-                    <i class="select-off"> radio_button_off </i>
+                    <i class="select-on"> mdi-circle-outline </i>
+                    <i class="select-off"> mdi-radiobox-blank </i>
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'" class="input-open" @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                       <icon-live-photo />
                     </i>
-                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> gif </i>
+                    <!-- TODO: change icon and fix them -->
+                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
                     <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> play_arrow </i>
+                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
                   </button>
                 </div>
               </td>
@@ -73,7 +75,7 @@
               <td class="p-photo-desc clickable" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
-              <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
+              <td class="p-photo-desc hidden-xs" :title="photo.getDateString()">
                 <button @click.stop.prevent="openDate(index)">
                   {{ photo.shortDateString() }}
                 </button>
@@ -81,7 +83,7 @@
               <td class="p-photo-desc hidden-sm-and-down">
                 <button @click.stop.prevent="editPhoto(index)">{{ photo.CameraMake }} {{ photo.CameraModel }}</button>
               </td>
-              <td class="p-photo-desc hidden-xs-only">
+              <td class="p-photo-desc hidden-xs">
                 <button v-if="filter.order === 'name'" :title="$gettext('Name')" @click.exact="downloadFile(index)">
                   {{ photo.FileName }}
                 </button>
@@ -93,20 +95,20 @@
                 </span>
               </td>
               <template v-if="!isSharedView">
-                <td class="text-xs-center">
+                <td class="text-center">
                   <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
                     <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
                     <div class="v-btn v-btn--icon v-btn--small" />
                   </template>
 
                   <template v-else>
-                    <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
-                      <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
-                      <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
+                    <v-btn v-if="hidePrivate" class="input-private" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
+                      <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">mdi-lock</v-icon>
+                      <v-icon v-else color="secondary" class="select-off">mdi-lock-open</v-icon>
                     </v-btn>
-                    <v-btn class="input-favorite" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
-                      <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">favorite</v-icon>
-                      <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
+                    <v-btn class="input-favorite" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                      <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
+                      <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">mdi-heart-outline</v-icon>
                     </v-btn>
                   </template>
                 </td>

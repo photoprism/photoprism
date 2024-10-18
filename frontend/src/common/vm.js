@@ -19,9 +19,6 @@ export function $ngettext(msgid, plural, n) {
   return vm.$ngettext(msgid, plural, n);
 }
 
-export function Mount(Vue, app, router) {
-  vm = new Vue({
-    router,
-    render: (h) => h(app),
-  }).$mount("#photoprism");
+export function Mount(app) {
+  app.mount("#app");
 }

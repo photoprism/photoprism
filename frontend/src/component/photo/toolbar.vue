@@ -1,6 +1,6 @@
 <template>
-  <v-form ref="form" lazy-validation dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8" :class="{ embedded: embedded }" @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
+  <v-form ref="form" lazy-validation autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8" :class="{ embedded: embedded }" @submit.prevent="updateQuery()">
+    <v-toolbar flat :dense="$vuetify.display.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
       <template v-if="!embedded">
         <v-text-field
           :value="filter.q"
@@ -13,16 +13,16 @@
           validate-on-blur
           autocorrect="off"
           autocapitalize="none"
-          browser-autocomplete="off"
+          autocomplete="off"
           :label="$gettext('Search')"
-          prepend-inner-icon="search"
+          prepend-inner-icon="mdi-magnify"
           color="secondary-dark"
           @change="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -31,52 +31,53 @@
         ></v-text-field>
 
         <v-btn v-if="filter.latlng" icon :title="$gettext('Show more')" class="action-clear-location" @click.stop="clearLocation()">
+          <!-- TODO: change this icon -->
           <v-icon>location_off</v-icon>
         </v-btn>
 
-        <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+        <v-btn icon class="hidden-xs action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-          <v-icon>view_comfy</v-icon>
+          <v-icon>mdi-view-comfy</v-icon>
         </v-btn>
         <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
-          <v-icon>view_list</v-icon>
+          <v-icon>mdi-view-list</v-icon>
         </v-btn>
         <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-          <v-icon>view_comfy</v-icon>
+          <v-icon>mdi-view-comfy</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
-          <v-icon>view_column</v-icon>
+          <v-icon>mdi-view-column</v-icon>
         </v-btn>
-
         <v-btn v-if="canDelete && context === 'archive' && config.count.archived > 0" icon class="hidden-sm-and-down action-delete-all" :title="$gettext('Delete All')" @click.stop="deleteAll()">
-          <v-icon>delete_sweep</v-icon>
+          <v-icon>mdi-delete-sweep</v-icon>
         </v-btn>
         <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-          <v-icon>cloud_upload</v-icon>
+          <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
 
         <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
+          <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
         </v-btn>
       </template>
       <template v-else>
         <v-spacer></v-spacer>
         <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-browse" @click.stop="onBrowse">
+          <!-- TODO: change this icon -->
           <v-icon size="20">tab</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
-          <v-icon>close</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
     </v-toolbar>
 
     <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
       <v-card-text>
-        <v-layout row wrap>
-          <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
+        <v-row>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-countries-select">
             <v-select
               :value="filter.country"
               :label="$gettext('Country')"
@@ -97,8 +98,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-camera-select">
             <v-select
               :value="filter.camera"
               :label="$gettext('Camera')"
@@ -118,8 +119,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-view-select">
             <v-select
               id="viewSelect"
               :value="settings.view"
@@ -137,8 +138,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-time-select">
             <v-select
               :value="filter.order"
               :label="$gettext('Sort Order')"
@@ -156,8 +157,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-year-select">
             <v-select
               :value="filter.year"
               :label="$gettext('Year')"
@@ -177,8 +178,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-month-select">
             <v-select
               :value="filter.month"
               :label="$gettext('Month')"
@@ -198,8 +199,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <!-- v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
+          </v-col>
+          <!-- v-col cols="12" sm="6" md="3" class="pa-2 p-lens-select">
               <v-select @change="dropdownChange"
                         :label="labels.lens"
                         flat solo hide-details
@@ -210,8 +211,8 @@
                         v-model="filter.lens"
                         :items="lensOptions">
               </v-select>
-          </v-flex -->
-          <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
+          </v-col -->
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-color-select">
             <v-select
               :value="filter.color"
               :label="$gettext('Color')"
@@ -231,8 +232,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-category-select">
             <v-select
               :value="filter.label"
               :label="$gettext('Category')"
@@ -252,8 +253,8 @@
               "
             >
             </v-select>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
     <p-photo-delete-dialog :show="dialog.delete" :text="$gettext('Are you sure you want to delete all archived pictures?')" :action="$gettext('Delete All')" @cancel="dialog.delete = false" @confirm="batchDelete">

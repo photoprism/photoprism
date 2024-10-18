@@ -1,7 +1,8 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-cards">
     <template v-if="photos.length === 0">
-      <v-alert :value="true" color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outline>
+      <!-- TODO: change this icon -->
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -19,15 +20,17 @@
         </p>
       </v-alert>
     </template>
-    <v-layout row wrap class="search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
+    <v-row class="search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
       <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="flex xs12 sm6 md4 lg3 xlg2 ul1 d-flex">
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result placeholder">
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result placeholder flex-grow-1">
           <div class="card darken-1 image" />
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
-          <div class="pa-3 card-details">
+          <div class="pa-6 card-details">
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
-                {{ photo.Title | truncate(80) }}
+                <!-- TODO: change this filter -->
+                <!-- {{ photo.Title | truncate(80) }} -->
+                {{ photo.Title }}
               </h3>
               <div v-if="photo.Description" class="caption mb-2">
                 {{ photo.Description }}
@@ -57,7 +60,7 @@
             </div>
           </div>
         </div>
-        <div v-else :data-id="photo.ID" :data-uid="photo.UID" class="result card" :class="photo.classes()" @contextmenu.stop="onContextMenu($event, index)">
+        <div v-else :data-id="photo.ID" :data-uid="photo.UID" class="result card flex-grow-1" :class="photo.classes()" @contextmenu.stop="onContextMenu($event, index)">
           <div class="card-background card"></div>
           <div
             :key="photo.Hash"
@@ -71,11 +74,11 @@
             @mouseover="playLive(photo)"
             @mouseleave="pauseLive(photo)"
           >
-            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
+            <v-row v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none" loop muted playsinline>
                 <source :src="photo.videoUrl()" />
               </video>
-            </v-layout>
+            </v-row>
 
             <button
               v-if="photo.Type !== 'image' || photo.isStack()"
@@ -89,18 +92,19 @@
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                 <icon-live-photo />
               </i>
-              <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> play_arrow </i>
-              <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> gif </i>
+              <!-- TODO: change icon and fix them-->
+              <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
+              <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
               <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-              <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')"> burst_mode </i>
+              <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')"> mdi-camera-burst </i>
             </button>
 
             <button v-if="photo.Type === 'image' && selectMode" class="input-view" :title="$gettext('View')" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onOpen($event, index)" @touchmove.stop.prevent @click.stop.prevent="onOpen($event, index)">
-              <i class="action-fullscreen"> zoom_in </i>
+              <i class="action-fullscreen"> mdi-magnify-plus-outline </i>
             </button>
 
             <button v-if="!isSharedView && featPrivate && photo.Private" class="input-private">
-              <i class="select-on"> lock </i>
+              <i class="select-on"> mdi-lock </i>
             </button>
 
             <!--
@@ -114,36 +118,39 @@
               use css to show it when it is being hovered.
             -->
             <button class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-              <i class="select-on"> check_circle </i>
-              <i class="select-off"> radio_button_off </i>
+              <i class="select-on"> mdi-circle-outline </i>
+              <i class="select-off"> mdi-radiobox-blank </i>
             </button>
 
             <button v-if="!isSharedView" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-              <i v-if="photo.Favorite"> favorite </i>
-              <i v-else> favorite_border </i>
+              <i v-if="photo.Favorite"> mdi-heart </i>
+              <i v-else>mdi-heart-outline </i>
             </button>
           </div>
 
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
-            <v-layout row wrap align-center>
-              <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="card darken-1" small depressed dark block :round="false" class="action-archive text-xs-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
-                  <v-icon dark>clear</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="card darken-1" small depressed dark block :round="false" class="action-approve text-xs-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
-                  <v-icon dark>check</v-icon>
-                </v-btn>
-              </v-flex>
-            </v-layout>
+            <v-row align="center">
+                <v-col cols="6" class="text-center pa-1">
+                  <v-btn color="card darken-1" small depressed theme="dark" block :rounded="false" class="action-archive text-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
+                    <v-icon dark>mdi-close</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="6" class="text-center pa-1">
+                  <v-btn color="card darken-1" small depressed theme="dark" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
+                    <!-- TODO: change this icon -->
+                    <v-icon dark>check</v-icon>
+                  </v-btn>
+                </v-col>
+            </v-row>
           </v-card-actions>
 
-          <div class="pa-3 card-details">
+          <div class="pa-6 card-details">
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
-                  {{ photo.Title | truncate(80) }}
+                  <!-- TODO: change this filter -->
+                  <!-- {{ photo.Title | truncate(80) }} -->
+                  {{ photo.Title }}
                 </button>
               </h3>
               <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
@@ -153,20 +160,20 @@
               </div>
               <div class="caption">
                 <button class="action-open-date" :data-uid="photo.UID" @click.exact="openDate(index)">
-                  <i :title="$gettext('Taken')"> date_range </i>
+                  <i :title="$gettext('Taken')"> mdi-calendar-range </i>
                   {{ photo.getDateString(true) }}
                 </button>
                 <br />
                 <button v-if="photo.Type === 'video'" :title="$gettext('Video')" @click.exact="openPhoto(index)">
-                  <i>movie</i>
+                  <i>mdi-movie</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'live'" :title="$gettext('Live')" @click.exact="openPhoto(index)">
-                  <i>play_circle</i>
+                  <i>mdi-play-circle</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated') + ' GIF'" @click.exact="openPhoto(index)">
-                  <i>gif_box</i>
+                  <i>mdi-file-gif-box</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'vector'" :title="$gettext('Vector')" @click.exact="openPhoto(index)">
@@ -174,16 +181,18 @@
                   {{ photo.getVectorInfo() }}
                 </button>
                 <button v-else :title="$gettext('Camera')" class="action-camera-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
-                  <i>photo_camera</i>
+                  <i>mdi-camera</i>
                   {{ photo.getPhotoInfo() }}
                 </button>
                 <button v-if="photo.LensID > 1 || photo.FocalLength" :title="$gettext('Lens')" class="action-lens-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
+                  <!-- TODO: change icon -->
                   <i>camera</i>
                   {{ photo.getLensInfo() }}
                 </button>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
                   <br />
                   <button :title="$gettext('Name')" @click.exact="downloadFile(index)">
+                    <!-- TODO: change icon -->
                     <i>insert_drive_file</i>
                     {{ photo.baseName() }}
                   </button>
@@ -191,7 +200,7 @@
                 <template v-if="featPlaces && photo.Country !== 'zz'">
                   <br />
                   <button :title="$gettext('Location')" class="action-location" :data-uid="photo.UID" @click.exact="openLocation(index)">
-                    <i>location_on</i>
+                    <i>mdi-map-marker</i>
                     {{ photo.locationInfo() }}
                   </button>
                 </template>
@@ -200,7 +209,7 @@
           </div>
         </div>
       </div>
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 <script>

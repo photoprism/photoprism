@@ -1,7 +1,7 @@
 <template>
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery()">
-      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+    <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery()">
+      <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
           :value="filter.q"
           solo
@@ -12,17 +12,17 @@
           validate-on-blur
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
-          browser-autocomplete="off"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          prepend-inner-icon="search"
+          prepend-inner-icon="mdi-magnify"
           color="secondary-dark"
           @change="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -31,25 +31,25 @@
         ></v-text-field>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-          <v-icon>cloud_upload</v-icon>
+          <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
 
         <v-btn v-if="canManage && staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')" @click.prevent="create()">
-          <v-icon>add</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
 
         <v-btn v-if="canManage && !staticFilter['order']" icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
+          <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
         </v-btn>
       </v-toolbar>
       <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
         <v-card-text>
-          <v-layout row wrap>
-            <v-flex xs12 sm4 pa-2 class="p-year-select">
+          <v-row>
+            <v-col cols="12" sm="4" class="pa-2 p-year-select">
               <v-select
                 :value="filter.year"
                 :label="$gettext('Year')"
@@ -70,8 +70,8 @@
                 "
               >
               </v-select>
-            </v-flex>
-            <v-flex xs12 sm4 pa-2 class="p-category-select">
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-2 p-category-select">
               <v-select
                 :value="filter.category"
                 :label="$gettext('Category')"
@@ -89,8 +89,8 @@
                 "
               >
               </v-select>
-            </v-flex>
-            <v-flex xs12 sm4 pa-2 class="p-sort-select">
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-2 p-sort-select">
               <v-select
                 :value="filter.order"
                 :label="$gettext('Sort Order')"
@@ -108,13 +108,13 @@
                 "
               >
               </v-select>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
@@ -123,7 +123,7 @@
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>
@@ -138,9 +138,9 @@
           </p>
         </v-alert>
 
-        <v-layout row wrap class="search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(album, index) in results" :key="album.UID" xs6 sm4 md3 xlg2 xxl1 d-flex>
-            <v-card tile :data-uid="album.UID" style="user-select: none" class="result card" :class="album.classes(selection.includes(album.UID))" :to="album.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(album, index) in results" :key="album.UID" cols="6" sm="4" md="3" xl="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="album.UID" style="user-select: none" class="result card flex-grow-1" :class="album.classes(selection.includes(album.UID))" :to="album.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card" style="user-select: none"></div>
               <v-img
                 :src="album.thumbnailUrl('tile_500')"
@@ -154,25 +154,25 @@
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon flat absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
-                  <v-icon color="white">share</v-icon>
+                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon text absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
+                  <v-icon color="white">mdi-share-variant</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                  <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
+                  <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
 
                 <v-btn
                   v-if="canManage && experimental && featPrivate && album.Private"
                   :ripple="false"
                   icon
-                  flat
+                  text
                   absolute
                   class="input-private"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -180,15 +180,17 @@
                   @touchmove.stop.prevent
                   @click.stop.prevent="onEdit($event, index)"
                 >
-                  <v-icon color="white" class="select-on">lock</v-icon>
+                  <v-icon color="white" class="select-on">mdi-lock</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pl-3 pt-3 pr-3 pb-2 card-details" style="user-select: none">
+              <v-card-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
                   <h3 class="body-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-                      {{ album.Title | truncate(80) }}
+                      <!-- TODO: change this filter -->
+                      <!-- {{ album.Title | truncate(80) }} -->
+                      {{ album.Title }}
                     </button>
                     <button v-else class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                       {{ album.getDateString() | capitalize }}
@@ -197,10 +199,12 @@
                 </div>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
                   <button @click.exact="edit(album)">
-                    {{ album.Description | truncate(100) }}
+                    <!-- TODO: change this filter -->
+                    <!-- {{ album.Description | truncate(100) }} -->
+                    {{ album.Description }}
                   </button>
                 </div>
 
@@ -217,27 +221,30 @@
                 </div>
                 <div v-else-if="album.Type === 'folder'" class="caption mb-2">
                   <button @click.exact="edit(album)">
-/{{ album.Path | truncate(100) }}
+                    <!-- TODO: change this filter -->
+<!-- /{{ album.Path | truncate(100) }} -->
+/{{ album.Path }}
 </button>
                 </div>
                 <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
+                    <!-- TODO: change this icon -->
                     <v-icon size="14">local_offer</v-icon>
                     {{ album.Category }}
                   </button>
                 </div>
                 <div v-if="album.getLocation() !== ''" class="caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
-                    <v-icon size="14">location_on</v-icon>
+                    <v-icon size="14">mdi-map-marker</v-icon>
                     {{ album.getLocation() }}
                   </button>
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
-        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
-          <v-btn class="action-add" color="secondary" round @click.prevent="create">
+          </v-col>
+        </v-row>
+        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-center my-2">
+          <v-btn class="action-add" color="secondary" rounded @click.prevent="create">
             <translate>Add Album</translate>
           </v-btn>
         </div>
@@ -384,7 +391,7 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

@@ -1,15 +1,16 @@
 <template>
   <div :class="$config.aclClasses('library')" class="p-page p-page-library">
-    <v-tabs v-model="active" flat grow color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" class="transparent" grow background-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
-        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
+        <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
           <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
         </template>
       </v-tab>
 
-      <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
+       <!-- TODO: check property touchless TEST -->
+      <v-tabs-items touchless v-model="active">
+        <v-tab-item v-for="(item, index) in tabs" :key="index">
           <component :is="item.component"></component>
         </v-tab-item>
       </v-tabs-items>
@@ -55,7 +56,7 @@ export default {
         label: this.$gettext("Index"),
         class: "",
         path: "/index",
-        icon: "camera_roll",
+        icon: "mdi-film",
         readonly: true,
         demo: true,
       },
@@ -65,13 +66,14 @@ export default {
         label: this.$gettext("Import"),
         class: "",
         path: "/import",
-        icon: "create_new_folder",
+        icon: "mdi-folder-plus",
         readonly: false,
         demo: true,
       },
     ];
 
     if (this.$config.feature("logs")) {
+      // <!-- TODO: change this icon probably to file-document -->
       tabs.push({
         name: "library_logs",
         component: Logs,

@@ -1,16 +1,18 @@
 <template>
   <div class="p-page p-page-settings" :class="$config.aclClasses('settings')">
-    <v-tabs v-model="active" flat grow touchless color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+    <!-- TODO: check property touchless TEST -->
+    <v-tabs v-model="active" elevation="0" class="transparent" grow touchless background-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
-        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
+        <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
           <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon>
           {{ item.label }}
         </template>
       </v-tab>
 
-      <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
+       <!-- TODO: check property touchless TEST -->
+      <v-tabs-items touchless v-model="active">
+        <v-tab-item v-for="(item, index) in tabs" :key="index">
           <component :is="item.component"></component>
         </v-tab-item>
       </v-tabs-items>
@@ -57,7 +59,7 @@ export default {
         label: this.$gettext("General"),
         class: "",
         path: "/settings",
-        icon: "tv",
+        icon: "mdi-television",
         public: true,
         admin: true,
         demo: true,
@@ -69,7 +71,7 @@ export default {
         label: this.$gettext("Library"),
         class: "",
         path: "/settings/media",
-        icon: "camera_roll",
+        icon: "mdi-film",
         public: true,
         admin: true,
         demo: true,
@@ -81,12 +83,13 @@ export default {
         label: this.$gettext("Advanced"),
         class: "",
         path: "/settings/advanced",
-        icon: "build",
+        icon: "mdi-wrench",
         public: false,
         admin: true,
         demo: true,
         show: config.allow("config", "manage"),
       },
+      // TODO: change this icon
       {
         name: "settings_services",
         component: Services,
@@ -99,6 +102,7 @@ export default {
         demo: true,
         show: config.feature("services") && config.allow("services", "manage"),
       },
+      // TODO: change this icon
       {
         name: "settings_account",
         component: Account,

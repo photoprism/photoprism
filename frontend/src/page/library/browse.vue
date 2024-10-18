@@ -1,7 +1,7 @@
 <template>
   <div class="p-page p-page-files">
-    <v-form ref="form" class="p-files-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-form ref="form" class="p-files-search" lazy-validation @submit.prevent="updateQuery">
+      <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
         <v-toolbar-title>
           <router-link to="/index/files">
             <translate key="Originals">Originals</translate>
@@ -16,12 +16,12 @@
         <v-spacer></v-spacer>
 
         <v-btn icon :title="$gettext('Reload')" class="action-reload" @click.stop="refresh">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
@@ -30,7 +30,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No pictures found</translate>
           </h3>
@@ -39,9 +39,9 @@
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results file-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(model, index) in results" :key="model.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="model.UID" class="result card" :class="model.classes(selection.includes(model.UID))" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results file-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(model, index) in results" :key="model.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="model.UID" class="result card flex-grow-1" :class="model.classes(selection.includes(model.UID))" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="model.thumbnailUrl('tile_500')"
@@ -55,13 +55,13 @@
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title v-if="model.isFile()" primary-title class="pa-3 card-details" style="user-select: none">
+              <v-card-title v-if="model.isFile()" class="pa-4 card-details" style="user-select: none">
                 <div>
                   <h3 class="body-2 mb-2" :title="model.Name">
                     <button @click.exact="openFile(index)">
@@ -73,7 +73,7 @@
                   </div>
                 </div>
               </v-card-title>
-              <v-card-title v-else primary-title class="pa-3 card-details">
+              <v-card-title v-else class="pa-4 card-details">
                 <div>
                   <h3 class="body-2 mb-2" :title="model.Title">
                     <button @click.exact="openFile(index)">
@@ -86,8 +86,8 @@
                 </div>
               </v-card-title>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-container>
   </div>
@@ -120,7 +120,7 @@ export default {
 
     return {
       config: this.$config.values,
-      navIcon: this.$rtl ? "navigate_before" : "navigate_next",
+      navIcon: this.$rtl ? "mdi-chevron-left" : "mdi-chevron-right",
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -169,7 +169,7 @@ export default {
     this.subscriptions.push(Event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

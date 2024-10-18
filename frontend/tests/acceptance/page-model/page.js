@@ -19,7 +19,7 @@ const sharedialog = new ShareDialog();
 
 export default class Page {
   constructor() {
-    this.selectOption = Selector("div.v-list__tile__title", { timeout: 15000 });
+    this.selectOption = Selector("div.v-list__item__title", { timeout: 15000 });
     this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
     this.cardDescription = Selector('div[title="Description"]', { timeout: 7000 });
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
