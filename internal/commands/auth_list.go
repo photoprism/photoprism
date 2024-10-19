@@ -16,7 +16,7 @@ var AuthListCommand = cli.Command{
 	Name:      "ls",
 	Usage:     "Lists currently authenticated users and clients",
 	ArgsUsage: "[search]",
-	Flags:     append(report.CliFlags, countFlag, tokensFlag),
+	Flags:     append(report.CliFlags, CountFlag, tokensFlag),
 	Action:    authListAction,
 }
 

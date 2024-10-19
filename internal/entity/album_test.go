@@ -288,7 +288,7 @@ func TestFindAlbumBySlug(t *testing.T) {
 			t.Fatal("album should not be nil")
 		}
 
-		assert.Equal(t, "California / USA", result.AlbumTitle)
+		assert.Equal(t, "California / United States", result.AlbumTitle)
 		assert.Equal(t, "california-usa", result.AlbumSlug)
 	})
 	t.Run("NoResult", func(t *testing.T) {

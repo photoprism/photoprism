@@ -40,8 +40,8 @@ func (Camera) TableName() string {
 var UnknownCamera = Camera{
 	CameraSlug:  UnknownID,
 	CameraName:  "Unknown",
-	CameraMake:  "",
-	CameraModel: "Unknown",
+	CameraMake:  MakeNone,
+	CameraModel: ModelUnknown,
 }
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
@@ -52,7 +52,7 @@ func CreateUnknownCamera() {
 // NewCamera creates a new camera entity from make and model names.
 func NewCamera(makeName string, modelName string) *Camera {
 	makeName = strings.TrimSpace(makeName)
-	modelName = strings.TrimSpace(modelName)
+	modelName = strings.Trim(modelName, " \t\r\n-_")
 
 	if modelName == "" && makeName == "" {
 		return &UnknownCamera
@@ -74,6 +74,9 @@ func NewCamera(makeName string, modelName string) *Camera {
 		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
+	// Determine device type based on make and model.
+	cameraType := GetCameraType(makeName, modelName)
+
 	var name []string
 
 	if makeName != "" {
@@ -91,6 +94,7 @@ func NewCamera(makeName string, modelName string) *Camera {
 		CameraName:  txt.Clip(cameraName, txt.ClipName),
 		CameraMake:  txt.Clip(makeName, txt.ClipName),
 		CameraModel: txt.Clip(modelName, txt.ClipName),
+		CameraType:  cameraType,
 	}
 
 	return result
@@ -133,7 +137,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		cameraCache.SetDefault(m.CameraSlug, m)
 
 		return m
-	} else if res := Db().Where("camera_slug = ?", m.CameraSlug).First(&result); res.Error == nil {
+	} else if res = Db().Where("camera_slug = ?", m.CameraSlug).First(&result); res.Error == nil {
 		cameraCache.SetDefault(m.CameraSlug, &result)
 		return &result
 	} else {
@@ -154,11 +158,26 @@ func (m *Camera) String() string {
 
 // Scanner checks whether the model appears to be a scanner.
 func (m *Camera) Scanner() bool {
+	switch m.CameraType {
+	case CameraTypeFilm, CameraTypeScanner:
+		return true
+	}
+
 	if m.CameraSlug == "" {
 		return false
 	}
 
 	return strings.Contains(m.CameraSlug, "scan")
+}
+
+// Mobile checks whether the model appears to be a mobile device.
+func (m *Camera) Mobile() bool {
+	switch m.CameraType {
+	case CameraTypePhone, CameraTypeTablet:
+		return true
+	default:
+		return false
+	}
 }
 
 // Unknown returns true if the camera is not a known make or model.

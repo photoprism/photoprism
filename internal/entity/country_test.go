@@ -15,8 +15,8 @@ func TestNewCountry(t *testing.T) {
 	t.Run("United States", func(t *testing.T) {
 		country := NewCountry("us", "United States")
 
-		assert.Equal(t, "USA", country.CountryName)
-		assert.Equal(t, "usa", country.CountrySlug)
+		assert.Equal(t, "United States", country.CountryName)
+		assert.Equal(t, "united-states", country.CountrySlug)
 	})
 	t.Run("Germany", func(t *testing.T) {
 		country := NewCountry("de", "Germany")

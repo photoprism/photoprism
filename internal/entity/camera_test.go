@@ -61,8 +61,9 @@ func TestNewCamera(t *testing.T) {
 		expected := &Camera{
 			CameraSlug:  "canon-eos-6d",
 			CameraName:  "Canon EOS 6D",
-			CameraMake:  "Canon",
+			CameraMake:  MakeCanon,
 			CameraModel: "EOS 6D",
+			CameraType:  CameraTypeBody,
 		}
 
 		assert.Equal(t, expected, camera)
@@ -85,7 +86,7 @@ func TestNewCamera(t *testing.T) {
 		expected := &Camera{
 			CameraSlug:  "tg-4",
 			CameraName:  "TG-4",
-			CameraMake:  "",
+			CameraMake:  MakeNone,
 			CameraModel: "TG-4",
 		}
 
@@ -137,6 +138,10 @@ func TestCamera_Scanner(t *testing.T) {
 		camera := NewCamera("", "")
 		assert.False(t, camera.Scanner())
 	})
+	t.Run("Empty", func(t *testing.T) {
+		camera := Camera{}
+		assert.False(t, camera.Scanner())
+	})
 	t.Run("Foo", func(t *testing.T) {
 		camera := NewCamera("foo", "")
 		assert.False(t, camera.Scanner())
@@ -148,6 +153,105 @@ func TestCamera_Scanner(t *testing.T) {
 	t.Run("MSScanner", func(t *testing.T) {
 		camera := NewCamera("", "MS Scanner")
 		assert.True(t, camera.Scanner())
+	})
+	t.Run("KODAKSlideNScan", func(t *testing.T) {
+		camera := NewCamera("GCMC", "RODFS50")
+		assert.Equal(t, MakeKodak+" "+ModelSlideNScan, camera.CameraName)
+		assert.Equal(t, CameraTypeFilm, camera.CameraType)
+		assert.Equal(t, MakeKodak, camera.CameraMake)
+		assert.Equal(t, ModelSlideNScan, camera.CameraModel)
+		assert.True(t, camera.Scanner())
+		assert.False(t, camera.Mobile())
+	})
+}
+
+func TestCamera_Mobile(t *testing.T) {
+	t.Run("CanonEOSD30", func(t *testing.T) {
+		camera := NewCamera(MakeCanon, "EOS D30")
+		assert.Equal(t, CameraTypeBody, camera.CameraType)
+		assert.Equal(t, MakeCanon+" EOS D30", camera.CameraName)
+		assert.Equal(t, MakeCanon, camera.CameraMake)
+		assert.Equal(t, "EOS D30", camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.False(t, camera.Mobile())
+	})
+	t.Run("CanonEOS6D", func(t *testing.T) {
+		camera := NewCamera(MakeCanon, "EOS 6D")
+		assert.Equal(t, CameraTypeBody, camera.CameraType)
+		assert.Equal(t, MakeCanon+" EOS 6D", camera.CameraName)
+		assert.Equal(t, MakeCanon, camera.CameraMake)
+		assert.Equal(t, "EOS 6D", camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.False(t, camera.Mobile())
+	})
+	t.Run("CanonEOSR6", func(t *testing.T) {
+		camera := NewCamera(MakeCanon, "EOS R6")
+		assert.Equal(t, CameraTypeBody, camera.CameraType)
+		assert.Equal(t, MakeCanon+" EOS R6", camera.CameraName)
+		assert.Equal(t, MakeCanon, camera.CameraMake)
+		assert.Equal(t, "EOS R6", camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.False(t, camera.Mobile())
+	})
+	t.Run("CanonCinema", func(t *testing.T) {
+		camera := NewCamera(MakeCanon, "EOS C100 Mark II")
+		assert.Equal(t, CameraTypeVideo, camera.CameraType)
+		assert.Equal(t, MakeCanon+" EOS C100 Mark II", camera.CameraName)
+		assert.Equal(t, MakeCanon, camera.CameraMake)
+		assert.Equal(t, "EOS C100 Mark II", camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.False(t, camera.Mobile())
+	})
+	t.Run("iPhone", func(t *testing.T) {
+		camera := NewCamera(MakeApple, ModelIPhone)
+		assert.Equal(t, CameraTypePhone, camera.CameraType)
+		assert.Equal(t, MakeApple+" "+ModelIPhone, camera.CameraName)
+		assert.Equal(t, MakeApple, camera.CameraMake)
+		assert.Equal(t, ModelIPhone, camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.True(t, camera.Mobile())
+	})
+	t.Run("iPad", func(t *testing.T) {
+		camera := NewCamera(MakeApple, ModelIPad)
+		assert.Equal(t, CameraTypeTablet, camera.CameraType)
+		assert.Equal(t, MakeApple+" "+ModelIPad, camera.CameraName)
+		assert.Equal(t, MakeApple, camera.CameraMake)
+		assert.Equal(t, ModelIPad, camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.True(t, camera.Mobile())
+	})
+	t.Run("iPadAir", func(t *testing.T) {
+		camera := NewCamera(MakeApple, ModelIPadAir)
+		assert.Equal(t, CameraTypeTablet, camera.CameraType)
+		assert.Equal(t, MakeApple, camera.CameraMake)
+		assert.Equal(t, ModelIPadAir, camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.True(t, camera.Mobile())
+	})
+	t.Run("iPadPro", func(t *testing.T) {
+		camera := NewCamera(MakeApple, ModelIPadPro)
+		assert.Equal(t, CameraTypeTablet, camera.CameraType)
+		assert.Equal(t, MakeApple, camera.CameraMake)
+		assert.Equal(t, ModelIPadPro, camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.True(t, camera.Mobile())
+	})
+	t.Run("SamsungGalaxyS21", func(t *testing.T) {
+		camera := NewCamera(MakeSamsung, "Galaxy S21")
+		assert.Equal(t, CameraTypePhone, camera.CameraType)
+		assert.Equal(t, MakeSamsung, camera.CameraMake)
+		assert.Equal(t, "Galaxy S21", camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.True(t, camera.Mobile())
+	})
+	t.Run("SamsungGalaxyTab", func(t *testing.T) {
+		camera := NewCamera(MakeSamsung, "Galaxy Tab")
+		assert.Equal(t, MakeSamsung+" Galaxy Tab", camera.CameraName)
+		assert.Equal(t, CameraTypeTablet, camera.CameraType)
+		assert.Equal(t, MakeSamsung, camera.CameraMake)
+		assert.Equal(t, "Galaxy Tab", camera.CameraModel)
+		assert.False(t, camera.Scanner())
+		assert.True(t, camera.Mobile())
 	})
 }
 

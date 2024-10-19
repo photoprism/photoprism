@@ -16,7 +16,7 @@ var ClientsListCommand = cli.Command{
 	Name:      "ls",
 	Usage:     "Lists registered client applications",
 	ArgsUsage: "[search]",
-	Flags:     append(report.CliFlags, countFlag),
+	Flags:     append(report.CliFlags, CountFlag),
 	Action:    clientsListAction,
 }
 

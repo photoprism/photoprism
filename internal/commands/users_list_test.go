@@ -13,7 +13,7 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls"})
+		ctx := NewTestContext([]string{"ls", "--login", "--created", "--deleted", "-n", "100", "--md"})
 
 		// Run command with test context.
 		output := capture.Output(func() {
@@ -28,11 +28,11 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NotContains(t, output, "Monitoring")
 		assert.NotContains(t, output, "visitor")
 	})
-	t.Run("Friend", func(t *testing.T) {
+	t.Run("LastLogin", func(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "friend"})
+		ctx := NewTestContext([]string{"ls", "-l", "friend"})
 
 		// Run command with test context.
 		output := capture.Output(func() {
@@ -42,7 +42,47 @@ func TestUsersListCommand(t *testing.T) {
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "| Last Login |")
+		assert.Contains(t, output, " Last Login ")
+		assert.Contains(t, output, "friend")
+		assert.NotContains(t, output, "alice")
+		assert.NotContains(t, output, "bob")
+		assert.NotContains(t, output, "visitor")
+	})
+	t.Run("Created", func(t *testing.T) {
+		var err error
+
+		// Create test context with flags and arguments.
+		ctx := NewTestContext([]string{"ls", "-a", "friend"})
+
+		// Run command with test context.
+		output := capture.Output(func() {
+			err = UsersListCommand.Run(ctx)
+		})
+
+		// Check command output for plausibility.
+		// t.Logf(output)
+		assert.NoError(t, err)
+		assert.Contains(t, output, " Created At ")
+		assert.Contains(t, output, "friend")
+		assert.NotContains(t, output, "alice")
+		assert.NotContains(t, output, "bob")
+		assert.NotContains(t, output, "visitor")
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		var err error
+
+		// Create test context with flags and arguments.
+		ctx := NewTestContext([]string{"ls", "-r", "friend"})
+
+		// Run command with test context.
+		output := capture.Output(func() {
+			err = UsersListCommand.Run(ctx)
+		})
+
+		// Check command output for plausibility.
+		// t.Logf(output)
+		assert.NoError(t, err)
+		assert.Contains(t, output, " Deleted At ")
 		assert.Contains(t, output, "friend")
 		assert.NotContains(t, output, "alice")
 		assert.NotContains(t, output, "bob")

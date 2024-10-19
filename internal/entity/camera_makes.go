@@ -1,69 +1,109 @@
 package entity
 
+const (
+	MakeNone           = ""
+	MakeAcer           = "Acer"
+	MakeApple          = "Apple"
+	MakeAsus           = "ASUS"
+	MakeCanon          = "Canon"
+	MakeNikon          = "NIKON"
+	MakeGoogle         = "Google"
+	MakeMotorola       = "Motorola"
+	MakeLG             = "LG"
+	MakeHTC            = "HTC"
+	MakeGoPro          = "GoPro"
+	MakeCasio          = "CASIO"
+	MakeKodak          = "KODAK"
+	MakeLeica          = "Leica"
+	MakeOlympus        = "Olympus"
+	MakeMinolta        = "Minolta"
+	MakeKonicaMinolta  = "Konica Minolta"
+	MakePentax         = "PENTAX"
+	MakeSamsung        = "Samsung"
+	MakeSony           = "SONY"
+	MakeSharp          = "SHARP"
+	MakeHuawei         = "HUAWEI"
+	MakeXiaomi         = "Xiaomi"
+	MakeFuji           = "FUJIFILM"
+	MakeBlackBerry     = "BlackBerry"
+	MakeRaspberryPi    = "Raspberry Pi"
+	MakePolaroid       = "Polaroid"
+	MakeHasselblad     = "Hasselblad"
+	MakeSigma          = "SIGMA"
+	MakeOnePlus        = "OnePlus"
+	MakeHewlettPackard = "HP"
+	MakeGarmin         = "Garmin"
+	MakeRicoh          = "RICOH"
+	MakeReolink        = "Reolink"
+	MakeVenTrade       = "VenTrade"
+)
+
 // CameraMakes maps internal make identifiers to normalized names.
 var CameraMakes = map[string]string{
-	"acer":                        "Acer",
-	"ACER":                        "Acer",
-	"asus":                        "ASUS",
-	"Asus":                        "ASUS",
-	"ASUS_AI2302":                 "ASUS",
-	"apple":                       "Apple",
-	"Casio":                       "CASIO",
-	"CASIO COMPUTER":              "CASIO",
-	"CASIO COMPUTER CO":           "CASIO",
-	"CASIO COMPUTER CO.":          "CASIO",
-	"CASIO COMPUTER CO.,LTD":      "CASIO",
-	"CASIO COMPUTER CO.,LTD.":     "CASIO",
-	"CASIO CORPORATION":           "CASIO",
-	"Fujifilm":                    "FUJIFILM",
-	"FUJIFILM CORPORATION":        "FUJIFILM",
-	"Garmin-Asus":                 "Garmin",
-	"google":                      "Google",
-	"GOOGLE":                      "Google",
-	"U63667E4U111368":             "Google",
-	"Hewlett-Packard":             "HP",
-	"htc":                         "HTC",
-	"Kodak":                       "KODAK",
-	"EASTMAN KODAK":               "KODAK",
-	"EASTMAN KODAK COMPANY":       "KODAK",
-	"Leica Camera AG":             "Leica",
-	"LEICA":                       "Leica",
-	"LG Electronics":              "LG",
-	"LGE":                         "LG",
-	"lge":                         "LG",
-	"Minolta Co., Ltd.":           "Minolta",
-	"MINOLTA CO.,LTD":             "Minolta",
-	"KONICA MINOLTA":              "Konica Minolta",
-	"Motorol":                     "Motorola",
-	"Motorola Mobility":           "Motorola",
-	"motorola":                    "Motorola",
-	"samsung":                     "Samsung",
-	"SAMSUNG":                     "Samsung",
-	"Samsung Electronics":         "Samsung",
-	"SAMSUNG TECHWIN Co.":         "Samsung",
-	"SAMSUNG TECHWIN":             "Samsung",
-	"Samsung Techwin":             "Samsung",
-	"sharp":                       "SHARP",
-	"Sharp":                       "SHARP",
-	"sigma":                       "SIGMA",
-	"Sigma":                       "SIGMA",
-	"OLYMPUS":                     "Olympus",
-	"OLYMPUS CORPORATION":         "Olympus",
-	"OLYMPUS DIGITAL CAMERA":      "Olympus",
-	"OLYMPUS IMAGING CORP.":       "Olympus",
-	"OLYMPUS OPTICAL CO.,LTD":     "Olympus",
-	"ONEPLUS":                     "OnePlus",
-	"Nikon":                       "NIKON",
-	"NIKON CORPORATION":           "NIKON",
-	"Huawei":                      "HUAWEI",
-	"RaspberryPi":                 "Raspberry Pi",
-	"RICOH IMAGING COMPANY, LTD.": "RICOH",
-	"Ricoh":                       "RICOH",
-	"Pentax":                      "PENTAX",
-	"PENTAX Corporation":          "PENTAX",
-	"PENTAX CORPORATION":          "PENTAX",
-	"Blackberry":                  "BlackBerry",
-	"Research In Motion":          "BlackBerry",
-	"Sony":                        "SONY",
-	"VenTrade GmbH, Germany":      "VenTrade",
+	"acer":                        MakeAcer,
+	"ACER":                        MakeAcer,
+	"asus":                        MakeAsus,
+	"Asus":                        MakeAsus,
+	"ASUS_AI2302":                 MakeAsus,
+	"apple":                       MakeApple,
+	"Casio":                       MakeCasio,
+	"CASIO COMPUTER":              MakeCasio,
+	"CASIO COMPUTER CO":           MakeCasio,
+	"CASIO COMPUTER CO.":          MakeCasio,
+	"CASIO COMPUTER CO.,LTD":      MakeCasio,
+	"CASIO COMPUTER CO.,LTD.":     MakeCasio,
+	"CASIO CORPORATION":           MakeCasio,
+	"Fujifilm":                    MakeFuji,
+	"FUJIFILM CORPORATION":        MakeFuji,
+	"Garmin-Asus":                 MakeGarmin,
+	"google":                      MakeGoogle,
+	"GOOGLE":                      MakeGoogle,
+	"U63667E4U111368":             MakeGoogle,
+	"Hewlett-Packard":             MakeHewlettPackard,
+	"htc":                         MakeHTC,
+	"Kodak":                       MakeKodak,
+	"EASTMAN KODAK":               MakeKodak,
+	"EASTMAN KODAK COMPANY":       MakeKodak,
+	"GCMC":                        MakeKodak,
+	"Leica Camera AG":             MakeLeica,
+	"LEICA":                       MakeLeica,
+	"LG Electronics":              MakeLG,
+	"LGE":                         MakeLG,
+	"lge":                         MakeLG,
+	"Minolta Co., Ltd.":           MakeMinolta,
+	"MINOLTA CO.,LTD":             MakeMinolta,
+	"KONICA MINOLTA":              MakeKonicaMinolta,
+	"Motorol":                     MakeMotorola,
+	"Motorola Mobility":           MakeMotorola,
+	"motorola":                    MakeMotorola,
+	"samsung":                     MakeSamsung,
+	"SAMSUNG":                     MakeSamsung,
+	"Samsung Electronics":         MakeSamsung,
+	"SAMSUNG TECHWIN Co.":         MakeSamsung,
+	"SAMSUNG TECHWIN":             MakeSamsung,
+	"Samsung Techwin":             MakeSamsung,
+	"sharp":                       MakeSharp,
+	"Sharp":                       MakeSharp,
+	"sigma":                       MakeSigma,
+	"Sigma":                       MakeSigma,
+	"OLYMPUS":                     MakeOlympus,
+	"OLYMPUS CORPORATION":         MakeOlympus,
+	"OLYMPUS DIGITAL CAMERA":      MakeOlympus,
+	"OLYMPUS IMAGING CORP.":       MakeOlympus,
+	"OLYMPUS OPTICAL CO.,LTD":     MakeOlympus,
+	"ONEPLUS":                     MakeOnePlus,
+	"Nikon":                       MakeNikon,
+	"NIKON CORPORATION":           MakeNikon,
+	"Huawei":                      MakeHuawei,
+	"XIAOMI":                      MakeXiaomi,
+	"RaspberryPi":                 MakeRaspberryPi,
+	"RICOH IMAGING COMPANY, LTD.": MakeRicoh,
+	"Ricoh":                       MakeRicoh,
+	"Pentax":                      MakePentax,
+	"PENTAX Corporation":          MakePentax,
+	"PENTAX CORPORATION":          MakePentax,
+	"Blackberry":                  MakeBlackBerry,
+	"Research In Motion":          MakeBlackBerry,
+	"Sony":                        MakeSony,
+	"VenTrade GmbH, Germany":      MakeVenTrade,
 }

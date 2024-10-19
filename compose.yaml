@@ -168,7 +168,6 @@ services:
   ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:240627
-    container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
@@ -185,7 +184,6 @@ services:
   ## Dummy OIDC Identity Provider
   dummy-oidc:
     image: photoprism/dummy-oidc:240627
-    container_name: dummy-oidc
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
@@ -200,7 +198,6 @@ services:
   ## Docs: https://glauth.github.io/docs/
   dummy-ldap:
     image: glauth/glauth-plugins:latest
-    container_name: dummy-ldap
     ports:
       - "127.0.0.1:389:389"
     labels:
@@ -220,7 +217,6 @@ services:
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
-    container_name: keycloak
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
@@ -252,7 +248,6 @@ services:
   ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
     profiles: ["all", "auth", "prometheus"]
     labels:
       - "traefik.enable=true"

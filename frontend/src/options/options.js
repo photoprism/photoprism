@@ -51,7 +51,7 @@ export const Years = () => {
 
   const currentYear = new Date().getUTCFullYear();
 
-  for (let i = currentYear; i >= 1750; i--) {
+  for (let i = currentYear; i >= 1000; i--) {
     result.push({ value: i, text: i.toString().padStart(4, "0") });
   }
 
