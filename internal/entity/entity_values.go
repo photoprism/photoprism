@@ -5,11 +5,15 @@ import (
 	"reflect"
 )
 
-// Map is an alias for map[string]interface{}.
-type Map = map[string]interface{}
-
 // ModelValues extracts Values from an entity model.
-func ModelValues(m interface{}, omit ...string) (result Map, omitted []interface{}, err error) {
+func ModelValues(m interface{}, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
+	return ModelValuesStructOption(m, true, omit...)
+}
+
+// ModelValuesStructOption extracts Values from an entity model, with the option to includeAll fields like before.
+// When using this for entity Updates includeAll MUST be false, so that GormV2 is forced to behave like GormV1.
+// There are two white lists which need to be maintained if new data types are used, or pointers to existing types are used.
+func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
 		for _, s := range omit {
 			if name == s {
@@ -55,12 +59,51 @@ func ModelValues(m interface{}, omit ...string) (result Map, omitted []interface
 		}
 
 		v := values.Field(i)
+		// log.Debugf("field %v is %v with name %v or string %v and is exported %v", fieldName, v.Kind(), v.Type().Name(), v.Type().String(), field.IsExported())
 
 		switch v.Kind() {
-		case reflect.Slice, reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
+		case reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
+			if v.IsZero() {
+				continue
+			}
+			if !includeAll {
+				v.SetZero()
+			}
 			continue
+		case reflect.Slice:
+			if v.IsZero() {
+				continue
+			}
+			whitelist := false
+			switch v.Type().String() {
+			case "json.RawMessage":
+				whitelist = true
+			}
+			if !whitelist && !includeAll {
+				v.SetZero()
+				continue
+			}
 		case reflect.Struct:
 			if v.IsZero() {
+				continue
+			}
+			whitelist := false
+			switch v.Type().String() {
+			case "sql.NullTime", "time.Time", "time.Duration", "json.RawMessage", "otp.Key":
+				whitelist = true
+			}
+			if !whitelist && !includeAll {
+				v.SetZero()
+				continue
+			}
+		case reflect.Pointer:
+			whitelist := false
+			switch v.Type().String() {
+			case "*time.Time", "*time.Duration", "*bool", "*uint", "*uint64", "*uint32", "*int", "*int64", "*int32", "*string", "*float32", "*float64", "*otp.Key", "*sql.NullTime", "*json.RawMessage":
+				whitelist = true
+			}
+			if !whitelist && !includeAll {
+				v.SetZero()
 				continue
 			}
 		}

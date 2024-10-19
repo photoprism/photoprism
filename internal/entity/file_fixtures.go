@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"gorm.io/gorm"
 )
 
 type FileMap map[string]File
@@ -41,6 +42,7 @@ var FileFixtures = FileMap{
 		FileCodec:       "jpeg",
 		FileType:        "jpg",
 		FileMime:        "image/jpg",
+		MediaType:       string(media.Image),
 		FilePrimary:     true,
 		FileSidecar:     false,
 		FileVideo:       false,
@@ -68,7 +70,7 @@ var FileFixtures = FileMap{
 		CreatedIn: 414671279,
 		UpdatedAt: time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn: 847648638,
-		DeletedAt: nil,
+		DeletedAt: gorm.DeletedAt{Valid: false},
 	},
 	"exampleDNGFile.dng": {
 		ID:              1000001,
@@ -110,7 +112,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       414671279,
 		UpdatedAt:       time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		UpdatedIn:       847648638,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"exampleXmpFile.xmp": {
 		ID:              1000002,
@@ -152,7 +154,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       12361491,
 		UpdatedAt:       time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		UpdatedIn:       9537701,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"bridge.jpg": {
 		ID:              1000003,
@@ -194,7 +196,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       12361491,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       12361490,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"reunion.jpg": {
 		ID:              1000004,
@@ -236,7 +238,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       12361491,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       2361491,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Quality1FavoriteTrue.jpg": {
 		ID:              1000005,
@@ -278,7 +280,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       2361491,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       2361498,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"missing.jpg": {
 		ID:              1000006,
@@ -320,7 +322,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       2361491,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       2361491,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo18.jpg": {
 		ID:              1000007,
@@ -362,7 +364,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       2361491,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       8361491,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Video.mp4": {
 		ID:              1000008,
@@ -404,7 +406,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Video.jpg": {
 		ID:              1000014,
@@ -446,7 +448,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"VideoWithError.mp4": {
 		ID:              1000009,
@@ -488,7 +490,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"bridge1.jpg": {
 		ID:              1000010,
@@ -530,7 +532,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2010, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"bridge2.jpg": {
 		ID:              1000011,
@@ -572,7 +574,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"bridge3.jpg": {
 		ID:              1000012,
@@ -614,7 +616,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"bridge2.mp4": {
 		ID:              1000013,
@@ -656,7 +658,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo19.jpg": {
 		ID:              1000019,
@@ -698,7 +700,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2010, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo25.jpg": {
 		ID:              1000020,
@@ -740,7 +742,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2007, 3, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo25_2.jpg": {
 		ID:              1000021,
@@ -782,7 +784,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo27.jpg": {
 		ID:              1000022,
@@ -824,7 +826,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2011, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo27.mp4": {
 		ID:              1000023,
@@ -866,7 +868,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2011, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo24.jpg": {
 		ID:              1000024,
@@ -908,7 +910,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo24.cr2": {
 		ID:              1000025,
@@ -950,7 +952,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo23.jpg": {
 		ID:              1000026,
@@ -992,7 +994,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo22.jpg": {
 		ID:              1000027,
@@ -1033,7 +1035,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2010, 1, 1, 8, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo22-stack.jpg": {
 		ID:              1000028,
@@ -1074,7 +1076,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2010, 1, 1, 8, 5, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo21.mp4.jpg": {
 		ID:              1000029,
@@ -1115,7 +1117,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo21.mp4": {
 		ID:              1000030,
@@ -1156,11 +1158,11 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"FileWithoutPhoto.mp4": {
 		ID:              1000031,
-		PhotoUID:        "",
+		PhotoUID:        "", // This is NOT valid in MariaDB
 		InstanceID:      "",
 		FileUID:         "fs6sg6bqhhinlpln",
 		FileName:        "FileWithoutPhoto.mp4",
@@ -1195,7 +1197,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo06.png": {
 		ID:              1000032,
@@ -1236,7 +1238,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo06.jpg": {
 		ID:              1000033,
@@ -1277,7 +1279,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo07.heic": {
 		ID:              1000034,
@@ -1318,7 +1320,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo07.heic.jpg": {
 		ID:              1000035,
@@ -1359,7 +1361,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo08.jpg": {
 		ID:              1000036,
@@ -1400,10 +1402,10 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo09.jpg": {
-		ID:              1000036,
+		ID:              10000036, // Was a duplicate PK.
 		Photo:           PhotoFixtures.Pointer("Photo09"),
 		PhotoID:         PhotoFixtures.Pointer("Photo09").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo09").PhotoUID,
@@ -1441,7 +1443,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo09(L).jpg": {
 		ID:              1000037,
@@ -1482,7 +1484,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo11.jpg": {
 		ID:              1000038,
@@ -1523,7 +1525,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo12.jpg": {
 		ID:              1000039,
@@ -1564,7 +1566,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo13.jpg": {
 		ID:              1000040,
@@ -1605,7 +1607,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo14.jpg": {
 		ID:              1000041,
@@ -1646,7 +1648,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo16.jpg": {
 		ID:              1000042,
@@ -1687,7 +1689,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo20.jpg": {
 		ID:              1000043,
@@ -1728,7 +1730,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       9359616,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"%photo28.jpg": {
 		ID:              1000044,
@@ -1769,7 +1771,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo29%.jpg": {
 		ID:              1000045,
@@ -1810,7 +1812,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo%30.jpg": {
 		ID:              1000046,
@@ -1851,7 +1853,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"&photo31.jpg": {
 		ID:              1000047,
@@ -1892,7 +1894,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo&32.jpg": {
 		ID:              1000048,
@@ -1933,7 +1935,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo33&.jpg": {
 		ID:              1000049,
@@ -1974,7 +1976,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"'photo34.jpg": {
 		ID:              1000050,
@@ -2015,7 +2017,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo'35.jpg": {
 		ID:              1000051,
@@ -2056,7 +2058,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo36'.jpg": {
 		ID:              1000052,
@@ -2097,7 +2099,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"*photo37.jpg": {
 		ID:              1000053,
@@ -2138,7 +2140,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo*38.jpg": {
 		ID:              1000054,
@@ -2179,7 +2181,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo39*.jpg": {
 		ID:              1000055,
@@ -2220,7 +2222,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"|photo40.jpg": {
 		ID:              1000056,
@@ -2261,7 +2263,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo|41.jpg": {
 		ID:              1000057,
@@ -2302,7 +2304,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo42|.jpg": {
 		ID:              1000058,
@@ -2343,7 +2345,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"43photo.jpg": {
 		ID:              1000059,
@@ -2384,7 +2386,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"pho44to.jpg": {
 		ID:              1000060,
@@ -2425,7 +2427,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo45.jpg": {
 		ID:              1000061,
@@ -2466,7 +2468,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"\"photo46.jpg": {
 		ID:              1000062,
@@ -2507,7 +2509,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo\"47.jpg": {
 		ID:              1000063,
@@ -2548,7 +2550,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo48\".jpg": {
 		ID:              1000064,
@@ -2590,7 +2592,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	" photo49.jpg": {
 		ID:              1000065,
@@ -2632,7 +2634,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo 50.jpg": {
 		ID:              1000066,
@@ -2674,7 +2676,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo51 .jpg": {
 		ID:              1000067,
@@ -2715,7 +2717,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo52.gif.jpg": {
 		ID:              1000068,
@@ -2756,7 +2758,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"photo52.gif": {
 		ID:              1000069,
@@ -2799,7 +2801,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 }
 

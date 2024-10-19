@@ -376,7 +376,7 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.Empty(t, m.FaceID)
 	})
 	t.Run("empty face id", func(t *testing.T) {
-		m := Marker{FaceID: ""}
+		m := Marker{FaceID: "", MarkerUID: "IShouldntBeInDB"}
 
 		updated, err := m.ClearFace()
 
@@ -384,6 +384,16 @@ func TestMarker_ClearFace(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.False(t, updated)
+		assert.Empty(t, m.FaceID)
+	})
+
+	t.Run("missing markeruid", func(t *testing.T) {
+		m := Marker{FaceID: ""}
+
+		updated, err := m.ClearFace()
+
+		assert.ErrorContains(t, err, "markeruid required but not provided")
 		assert.False(t, updated)
 		assert.Empty(t, m.FaceID)
 	})
@@ -678,5 +688,15 @@ func TestMarker_String(t *testing.T) {
 	t.Run("Name", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-4")
 		assert.Equal(t, "Jens Mander", m.String())
+	})
+}
+
+func TestMarker_Matched(t *testing.T) {
+	t.Run("missing markeruid", func(t *testing.T) {
+		m := Marker{FileUID: "DummyValue"}
+		if err := m.Matched(); err != nil {
+			assert.Equal(t, "markeruid required but not provided", err.Error())
+
+		}
 	})
 }

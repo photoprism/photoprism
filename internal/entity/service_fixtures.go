@@ -2,6 +2,8 @@ package entity
 
 import (
 	"database/sql"
+
+	"gorm.io/gorm"
 )
 
 type ServiceMap map[string]Service
@@ -34,7 +36,7 @@ var ServiceFixtures = ServiceMap{
 		SyncRaw:       true,
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
-		DeletedAt:     nil,
+		DeletedAt:     gorm.DeletedAt{},
 	},
 	"dummy-webdav2": {
 		ID:            1000001,
@@ -63,7 +65,7 @@ var ServiceFixtures = ServiceMap{
 		SyncRaw:       true,
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
-		DeletedAt:     nil,
+		DeletedAt:     gorm.DeletedAt{},
 	},
 }
 

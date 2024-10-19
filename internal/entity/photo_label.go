@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"errors"
+
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
@@ -9,12 +11,12 @@ type PhotoLabels []PhotoLabel
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
-	PhotoID     uint   `gorm:"primary_key;auto_increment:false"`
-	LabelID     uint   `gorm:"primary_key;auto_increment:false;index"`
-	LabelSrc    string `gorm:"type:VARBINARY(8);"`
+	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false"`
+	LabelID     uint   `gorm:"primaryKey;autoIncrement:false"`
+	LabelSrc    string `gorm:"type:bytes;size:8;"`
 	Uncertainty int    `gorm:"type:SMALLINT"`
-	Photo       *Photo `gorm:"PRELOAD:false"`
-	Label       *Label `gorm:"PRELOAD:true"`
+	Photo       *Photo `gorm:"foreignKey:PhotoID;references:ID;" yaml:"-"`
+	Label       *Label `gorm:"foreignKey:LabelID;references:ID;"`
 }
 
 // TableName returns the entity table name.
@@ -47,11 +49,20 @@ func (m *PhotoLabel) Update(attr string, value interface{}) error {
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
+		if m.PhotoID == 0 {
+			m.PhotoID = m.Photo.ID
+		}
 		m.Photo = nil
+	}
+	if m.PhotoID == 0 {
+		return errors.New("PK value not provided")
 	}
 
 	if m.Label != nil {
 		m.Label.SetName(m.Label.LabelName)
+		if err := m.Label.Save(); err != nil {
+			return err
+		}
 	}
 
 	return Db().Save(m).Error
@@ -70,12 +81,11 @@ func (m *PhotoLabel) Delete() error {
 // FirstOrCreatePhotoLabel returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	result := PhotoLabel{}
-
-	if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
+	if err := Db().Preload("Label").Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
+	} else if err := Db().Preload("Label").Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
 		return &result
 	} else {
 		log.Errorf("photo-label: %s (find or create)", createErr)

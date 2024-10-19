@@ -149,7 +149,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			}
 
 			if err := entity.UnscopedDb().Exec(`UPDATE files 
-				SET photo_id = ?, photo_uid = ?, file_name = ?, file_missing = 0
+				SET photo_id = ?, photo_uid = ?, file_name = ?, file_missing = FALSE
 				WHERE file_name = ? AND file_root = ?`,
 				newPhoto.ID, newPhoto.PhotoUID, r.RootRelName(),
 				relName, relRoot).Error; err != nil {

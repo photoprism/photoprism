@@ -36,6 +36,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output2, "John")
 		assert.Contains(t, output2, "admin")
 		assert.Contains(t, output2, "john@test.de")
+		assert.NotContains(t, output2, "DeletedAt")
 
 		//Modify John
 
@@ -61,7 +62,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output4, "Johnny")
 		assert.Contains(t, output4, "admin")
 		assert.Contains(t, output4, "johnnny@test.de")
-		assert.Contains(t, output4, "| DeletedAt     | <nil>")
+		assert.NotContains(t, output4, "DeletedAt")
 
 		//Remove John
 		// Create test context with flags and arguments.
@@ -86,7 +87,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output6, "Johnny")
 		assert.Contains(t, output6, "admin")
 		assert.Contains(t, output6, "johnnny@test.de")
-		assert.Contains(t, output6, "| DeletedAt     | time.Date")
-		assert.NotContains(t, output6, "| DeletedAt     | <nil>")
+		assert.Contains(t, output6, "| DeletedAt     | gorm.DeletedAt{Time:time.Date")
+		assert.NotContains(t, output6, "| DeletedAt     | gorm.DeletedAt{Time:time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), Valid:false}")
 	})
 }

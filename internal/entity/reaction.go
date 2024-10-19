@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/react"
 )
 
 // Reaction represents a human response to content such as photos and albums.
 type Reaction struct {
-	UID       string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"UID,omitempty" yaml:"UID,omitempty"`
-	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
-	Reaction  string     `gorm:"type:VARBINARY(64);primary_key;auto_increment:false" json:"Reaction,omitempty" yaml:"Reaction,omitempty"`
+	UID       string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false" json:"UID,omitempty" yaml:"UID,omitempty"`
+	UserUID   string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	Reaction  string     `gorm:"type:bytes;size:64;primaryKey;autoIncrement:false" json:"Reaction,omitempty" yaml:"Reaction,omitempty"`
 	Reacted   int        `json:"Reacted,omitempty" yaml:"Reacted,omitempty"`
 	ReactedAt *time.Time `sql:"index" json:"ReactedAt,omitempty" yaml:"ReactedAt,omitempty"`
 }
@@ -93,7 +93,7 @@ func (m *Reaction) Save() (err error) {
 
 	reactedAt := TimeStamp()
 
-	values := Map{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
+	values := map[string]interface{}{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
 
 	if err = Db().Model(Reaction{}).
 		Where("uid = ? AND user_uid = ?", m.UID, m.UserUID).

@@ -13,13 +13,13 @@ var placeMutex = sync.Mutex{}
 
 // Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
-	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
-	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
-	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
-	PlaceState    string    `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
-	PlaceCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
-	PlaceKeywords string    `gorm:"type:VARCHAR(300);" json:"Keywords" yaml:"Keywords,omitempty"`
+	ID            string    `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"PlaceID" yaml:"PlaceID"`
+	PlaceLabel    string    `gorm:"size:400;" json:"Label" yaml:"Label"`
+	PlaceDistrict string    `gorm:"size:100;index;" json:"District" yaml:"District,omitempty"`
+	PlaceCity     string    `gorm:"size:100;index;" json:"City" yaml:"City,omitempty"`
+	PlaceState    string    `gorm:"size:100;index;" json:"State" yaml:"State,omitempty"`
+	PlaceCountry  string    `gorm:"type:bytes;size:2;" json:"Country" yaml:"Country,omitempty"`
+	PlaceKeywords string    `gorm:"size:300;" json:"Keywords" yaml:"Keywords,omitempty"`
 	PlaceFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoCount    int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt     time.Time `json:"CreatedAt" yaml:"-"`
@@ -46,7 +46,10 @@ var UnknownPlace = Place{
 
 // CreateUnknownPlace creates the default place if not exists.
 func CreateUnknownPlace() {
-	UnknownPlace = *FirstOrCreatePlace(&UnknownPlace)
+	pRef := FirstOrCreatePlace(&UnknownPlace)
+	if pRef != nil {
+		UnknownPlace = *pRef
+	}
 }
 
 // FindPlace finds a matching place or returns nil.

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -19,16 +20,16 @@ var UpdateFaces = atomic.Bool{}
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID              string          `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
+	ID              string          `gorm:"type:bytes;size:64;primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
+	FaceSrc         string          `gorm:"type:bytes;size:8;" json:"Src" yaml:"Src,omitempty"`
 	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjUID         string          `gorm:"type:bytes;size:42;index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
-	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
+	EmbeddingJSON   json.RawMessage `json:"-" yaml:"EmbeddingJSON,omitempty"`
 	embedding       face.Embedding  `gorm:"-" yaml:"-"`
 	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
@@ -115,7 +116,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
 	m.MatchedAt = TimeStamp()
-	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -197,7 +198,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		m.Collisions++
 		m.CollisionRadius = dist
 		UpdateFaces.Store(true)
-		return true, m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
+		return true, m.Updates(map[string]interface{}{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -205,7 +206,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		UpdateFaces.Store(true)
 	}
 
-	err = m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
+	err = m.Updates(map[string]interface{}{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
 
 	if err != nil {
 		return true, err
@@ -253,7 +254,7 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	var markers Markers
 
 	err := Db().
-		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
+		Where("marker_invalid = FALSE AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
 		Find(&markers).Error
 
 	if err != nil {
@@ -289,7 +290,7 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		UpdateColumns(Map{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
+		UpdateColumns(map[string]interface{}{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -354,7 +355,7 @@ func (m *Face) Delete() error {
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		UpdateColumns(Map{"face_id": "", "face_dist": -1}).Error; err != nil {
+		UpdateColumns(map[string]interface{}{"face_id": "", "face_dist": -1}).Error; err != nil {
 		return err
 	}
 
@@ -433,6 +434,7 @@ func FindFace(id string) *Face {
 
 // ValidFaceCount counts the number of valid face markers for a file uid.
 func ValidFaceCount(fileUid string) (c int) {
+	cValue := int64(0)
 	if !rnd.IsUID(fileUid, FileUID) {
 		return
 	}
@@ -440,10 +442,10 @@ func ValidFaceCount(fileUid string) (c int) {
 	if err := Db().Model(Marker{}).
 		Where("file_uid = ? AND marker_type = ?", fileUid, MarkerFace).
 		Where("marker_invalid = 0").
-		Count(&c).Error; err != nil {
+		Count(&cValue).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)
 		return 0
 	} else {
-		return c
+		return functions.SafeInt64toint(cValue)
 	}
 }

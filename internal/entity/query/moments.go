@@ -201,7 +201,7 @@ func MomentsTime(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("photos.photo_year, photos.photo_month").
@@ -223,7 +223,7 @@ func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("photo_year, photo_country").
@@ -245,7 +245,7 @@ func MomentsStates(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("p.place_country, p.place_state").
@@ -276,7 +276,7 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("l.label_slug").
@@ -306,22 +306,39 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 
 // RemoveDuplicateMoments deletes generated albums with duplicate slug or filter.
 func RemoveDuplicateMoments() (removed int, err error) {
+	removed = 0
 	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid 
 		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type <> ?
-		AND a.album_type = b.album_type AND a.id > b.id
-		WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)
-		GROUP BY a.album_uid)`, entity.AlbumManual); res.Error != nil {
+			AND a.album_type = b.album_type AND a.id > b.id
+			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter))`,
+		entity.AlbumManual); res.Error != nil {
 		return removed, res.Error
+	} else {
+		removed += int(res.RowsAffected)
+	}
+
+	// Remove the child records to prevent foreign key violations
+	if res := UnscopedDb().Model(entity.PhotoAlbum{}).
+		Where("album_uid IN (?)", UnscopedDb().Table("albums AS a").Select("a.album_uid").
+			Joins("JOIN albums as b ON a.album_type = b.album_type AND a.id > b.id").
+			Where("a.album_type <> ?", entity.AlbumManual).
+			Where("a.album_slug = b.album_slug OR a.album_filter = b.album_filter").
+			Order("a.id").
+			Find(&entity.Albums{})).
+		Delete(entity.PhotoAlbum{}); res.Error != nil {
+		return removed, res.Error
+	} else {
+		removed += int(res.RowsAffected)
 	}
 
 	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id 
 		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type <> ?
 			AND a.album_type = b.album_type  AND a.id > b.id
-			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)
-			GROUP BY a.album_uid)`, entity.AlbumManual); res.Error != nil {
+			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter))`,
+		entity.AlbumManual); res.Error != nil {
 		return removed, res.Error
 	} else if res.RowsAffected > 0 {
-		removed = int(res.RowsAffected)
+		removed += int(res.RowsAffected)
 	}
 
 	return removed, nil

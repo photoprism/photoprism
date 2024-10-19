@@ -12,9 +12,6 @@ import (
 
 	"github.com/urfave/cli"
 
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -74,7 +71,7 @@ func NewTestOptions(pkg string) *Options {
 	// Set default database DSN.
 	if driver == SQLite3 {
 		if dsn == "" && pkg != "" {
-			dsn = fmt.Sprintf("file:%s?mode=memory&cache=shared", pkg)
+			dsn = fmt.Sprintf("file:%s?mode=memory&cache=shared&_foreign_keys=on", pkg)
 		} else if dsn == "" {
 			dsn = SQLiteMemoryDSN
 		} else if dsn != SQLiteTestDB {
