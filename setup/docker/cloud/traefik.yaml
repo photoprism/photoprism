@@ -30,7 +30,7 @@ serversTransport:
   rootCAs:
     - "/certs/ca.crt"
 
-# open ports ond protocols (HTTP will be redirected to HTTPS)
+# open ports and protocols (HTTP will be redirected to HTTPS)
 entryPoints:
   web:
     address: ":80"

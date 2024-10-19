@@ -14,7 +14,7 @@ func (m Photos) Photos() []PhotoInterface {
 	return result
 }
 
-// UIDs returns tbe photo UIDs as string slice.
+// UIDs returns the photo UIDs as string slice.
 func (m Photos) UIDs() []string {
 	result := make([]string, len(m))
 
