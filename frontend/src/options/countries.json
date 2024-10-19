@@ -468,6 +468,10 @@
     "Name": "Kiribati"
   },
   {
+    "Code": "xk",
+    "Name": "Kosovo"
+  },
+  {
     "Code": "kp",
     "Name": "North Korea"
   },
@@ -988,12 +992,60 @@
     "Name": "Yemen"
   },
   {
+    "Code": "yo",
+    "Name": "Yugoslavia"
+  },
+  {
     "Code": "zm",
     "Name": "Zambia"
   },
   {
     "Code": "zw",
     "Name": "Zimbabwe"
+  },
+  {
+    "Code": "xf",
+    "Name": "Americas"
+  },
+  {
+    "Code": "xn",
+    "Name": "North America"
+  },
+  {
+    "Code": "xh",
+    "Name": "Central America"
+  },
+  {
+    "Code": "xg",
+    "Name": "South America"
+  },
+  {
+    "Code": "xa",
+    "Name": "Asia"
+  },
+  {
+    "Code": "xp",
+    "Name": "Asia Pacific"
+  },
+  {
+    "Code": "xt",
+    "Name": "Europe"
+  },
+  {
+    "Code": "eu",
+    "Name": "European Union"
+  },
+  {
+    "Code": "xs",
+    "Name": "Scandinavia"
+  },
+  {
+    "Code": "xi",
+    "Name": "International"
+  },
+  {
+    "Code": "xw",
+    "Name": "World Wide"
   },
   {
     "Code": "zz",
