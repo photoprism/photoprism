@@ -16,7 +16,7 @@ func TestPhotoSelection(t *testing.T) {
 
 	folders := form.Selection{Albums: []string{"as6sg6bipogaaba1", "as6sg6bipogaabj8"}}
 
-	states := form.Selection{Albums: []string{"as6sg6bipogaab11", "as6sg6bipotaab12", "as6sg6bipotaab19"}}
+	states := form.Selection{Albums: []string{"as6sg6bipogaab11", "as6sg6bipotaab12", "asjv2cw2eikl3cb3"}}
 
 	t.Run("no items selected", func(t *testing.T) {
 		f := form.Selection{
@@ -79,7 +79,7 @@ func TestPhotoSelection(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(r))
+		assert.Equal(t, 2, len(r))
 		assert.IsType(t, entity.Photos{}, r)
 	})
 }

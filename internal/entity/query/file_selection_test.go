@@ -21,7 +21,7 @@ func TestFileSelection(t *testing.T) {
 
 	folders := form.Selection{Albums: []string{"as6sg6bipogaaba1", "as6sg6bipogaabj8"}}
 
-	states := form.Selection{Albums: []string{"as6sg6bipogaab11", "as6sg6bipotaab12", "as6sg6bipotaab19"}}
+	states := form.Selection{Albums: []string{"as6sg6bipogaab11", "as6sg6bipotaab12", "asjv2cw2eikl3cb3"}}
 
 	many := form.Selection{
 		Files:  []string{"fs6sg6bw45bnlqdw"},

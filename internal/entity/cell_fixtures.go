@@ -112,6 +112,15 @@ var CellFixtures = CellMap{
 		CreatedAt:    Now(),
 		UpdatedAt:    Now(),
 	},
+	"California": {
+		ID:           s2.TokenPrefix + "80dc03fbc914",
+		PlaceID:      PlaceFixtures.Get("California").ID,
+		Place:        PlaceFixtures.Pointer("California"),
+		CellName:     "California Beach",
+		CellCategory: "",
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
+	},
 }
 
 // CreateCellFixtures inserts known entities into the database for testing.
