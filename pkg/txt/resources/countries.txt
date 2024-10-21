@@ -210,6 +210,17 @@ BD:Bangladesh
 JO:Jordan
 SY:Syria
 LB:Lebanon
+LB:لُبْنان
+LB:Beirut
+LB:Dahiyeh
+LB:Dâhiye
+LB:Al-Dahyeh
+LB:Tripoli
+LB:Nabatieh
+LB:Byblos
+LB:Baalbek
+LB:Quobeiyat
+LB:Rafic Hariri
 BG:Bulgaria
 BG:Koprivshtitsa
 BG:Melnik
@@ -263,9 +274,10 @@ UZ:Uzbekistan
 TJ:Tajikistan
 KZ:Kazakhstan
 HR:Croatia
-SI:Ljubljana
 SI:Slovenia
+SI:Ljubljana
 TM:Turkmenistan
+TM:Ashgabat
 BO:Bolivia
 GG:Guernsey
 CN:China
@@ -275,50 +287,148 @@ CN:Peking
 CN:北京市
 CN:Beijing
 VE:Venezuela
+VE:Caracas
 VG:Virgin Island
+VG:Charlotte Amalie
 AR:Argentina
 AR:Argentine
+AR:Buenos Aires
 UY:Uruguay
+UY:Montevideo
 PY:Paraguay
+PY:Asunción
 SR:Suriname
 GY:Guyana
 NI:Nicaragua
+NI:Managua
 CR:Costa Rica
 PA:Panama
 HN:Honduras
+HN:Tegucigalpa
 BZ:Belize
 PE:Peru
+PE:Lima
 PT:Portugal
+PT:Lisboa
+PT:Lisbon
+PT:Lissabon
 ER:Eritrea
 IS:Iceland
 IS:Ísland
+IS:Reykjavík
+IS:Reykjavik
+IS:Keflavík
+IS:Vatnajökull
 AF:Afghanistan
 IN:India
 IN:Indien
+IN:Bhārat Gaṇarājya
+IN:Mumbai
+IN:Muṁbaī
+IN:Bombay
+IN:Maharashtra
+IN:New Delhi
+IN:Naī Dillī
+IN:Bangalore
+IN:Hyderabad
+IN:Ahmedabad
+IN:Chennai
+IN:Kolkata
+IN:Jaipur
+IN:Lucknow
 ID:Indonesia
+ID:Jakarta
+ID:Surabaya
+ID:Bandung
+ID:Balikpapan
+ID:Denpasar
+ID:Bali
 IQ:Iraq
 IQ:Irak
+IQ:Baghdad
+IQ:العراق
+IQ:بَغْدَاد
 IR:Iran
+IR:إيران
+IR:Tehran
+IR:طَهْران
+IR:Isfahan
+IR:اصفهان
+IR:Bushehr
+IR:Būšehr
+IR:Bushire
+IR:Busheer
+IR:Bouchir
+IR:Mashhad
 IR:Persia
 YE:Yemen
+YE:اليمن
+YE:Sana'a
+YE:Sanaa
+YE:سناء
+YE:Al Hudaydah
+YE:Hodeda
+YE:Hodeida
+YE:Hudaida
+YE:Hodeidah
+YE:الْحُدَيْدَة
+YE:الحديدة
 QA:Qatar
+QA:قَطَر
+QA:الدوحة
 KW:Kuwait
 OM:Oman
 TL:East Timor
 PK:Pakistan
+PK:Islamabad
 SA:Saudi Arabia
+SA:Riad
+SA:Riyadh
+SA:الرياض
 KR:South Korea
+KR:Seoul
 AE:United Arab
 AE:UAE
+AE:الإمارات العربية المتحدة
+AE:Dubai
+AE:دبي
+AE:Abu Dhabi
+AE:أبو ظبي
+AE:Al Ain
+AE:العين
+AE:Sharjah
+AE:الشارقة
+AE:Khor Fakkan
+AE:خَوْر فَكَّان
+AE:كَلْبَاء
+AE:Ajman
+AE:Ras Al Khaimah
+AE:Fujairah
+AE:Umm Al Quwain
+AE:Madinat Zayed
+AE:Dibba Al-Fujairah
 CY:Cyprus
+CY:Nicosia
 DM:Dominica
 HT:Haiti
 HT:Hayti
+HT:Port-au-Prince
 CU:Cuba
+CU:Habana
+CU:Guantánamo
+CU:Guantanamo
+CU:Varadero
+CU:Hicacos
+CU:Matanzas
+CU:Gustavo Rizo
+CU:José Martí
+CU:Jose Marti
 PG:New Guinea
 AM:Armenia
+AM:Yerevan
 AZ:Azerbaijan
 MT:Malta
+MT:Valletta
 IT:Como
 IT:Cortina d'Ampezzo
 IT:Italy
@@ -413,6 +523,42 @@ CA:Ontario
 CA:Alberta
 IL:Israel
 IL:Holy Land
+IL:יִשְׂרָאֵל
+IL:Yisra'el
+IL:Yisrael
+IL:Tel Aviv
+IL:תֵּל אָבִיב-יָפוֹ
+IL:Ben Gurion
+IL:Netanya
+IL:קֵיסָרְיָה
+IL:Haifa
+IL:חֵיפָה
+IL:Bethlehem
+IL:بيت لحم
+IL:Nazareth
+IL:النَّاصِرَة
+IL:Jerusalem
+IL:יְרוּשָׁלַיִם
+IL:القُدس
+IL:Al-Quds
+IL:Nhariyya
+IL:Ashdod
+IL:אַשְׁדּוֹד
+IL:Ashkelon
+IL:אשקלון
+IL:Beersheba
+IL:באר שבע
+IL:Rishon LeZion
+IL:Tiberias
+IL:Sderot
+IL:Mefalsim
+IL:Mitspe Ramon
+IL:Kibbutz
+IL:Nahal Oz
+IL:Kfar Aza
+IL:Kfar Maimon
+IL:Kfar Hoshen
+IL:Be'eri
 EG:Egypt
 EG:Ägypten
 EG:Aegypten
@@ -463,6 +609,24 @@ BA:Herzegovina
 NO:Norway
 NO:Norwegen
 MA:Morocco
-PS:Palestine
+PS:State of Palestine
+PS:فلسطين
+PS:Gaza City
+PS:Gaza Strip
+PS:West Bank
+PS:Samaria
+PS:Judea
+PS:Nablus
+PS:Rafah
+PS:Khan Yunis
+PS:Al Mawasi
+PS:Nurseirat
+PS:Jabalia
+PS:Beit Lahia
+PS:Beit Hanoun
+PS:Tal as Sultan
+PS:Tel al-Sultan
+PS:Ramallah
+PS:Hebron
 HM:McDonald Island
 HM:Heard Island
