@@ -5,7 +5,7 @@
         <v-card-title class="pa-2">
           <v-row class="pa-2">
             <v-col cols="9" class="text-left">
-              <h3 class="headline pa-0">
+              <h3 class="text-h5 pa-0">
                 <translate>Apps and Devices</translate>
               </h3>
             </v-col>
@@ -22,7 +22,7 @@
         <template v-if="confirmAction !== ''">
           <v-card-text class="py-0 px-2">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 body-1">
+              <v-col cols="12" class="pa-2 text-body-1">
                 <translate>Enter your password to confirm the action and continue:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -53,10 +53,10 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn depressed color="secondary-light" class="action-back ml-0" @click.stop="onBack">
+                <v-btn variant="flat" color="secondary-light" class="action-back ml-0" @click.stop="onBack">
                   <translate>Back</translate>
                 </v-btn>
-                <v-btn depressed color="primary-button" :disabled="!password || password.length < 4" class="action-confirm white--text compact mr-0" @click.stop="onConfirm">
+                <v-btn variant="flat" color="primary-button" :disabled="!password || password.length < 4" class="action-confirm text-white compact mr-0" @click.stop="onConfirm">
                   <translate>Continue</translate>
                 </v-btn>
               </v-col>
@@ -67,7 +67,7 @@
         <template v-else-if="action === 'copy'">
           <v-card-text class="py-0 px-2">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 body-1">
+              <v-col cols="12" class="pa-2 text-body-1">
                 <translate>Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -92,13 +92,13 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
+                <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn v-if="appPasswordCopied" depressed color="primary-button" :disabled="busy" class="action-done white--text compact mr-0" @click.stop="onDone">
+                <v-btn v-if="appPasswordCopied" variant="flat" color="primary-button" :disabled="busy" class="action-done text-white compact mr-0" @click.stop="onDone">
                   <translate>Done</translate>
                 </v-btn>
-                <v-btn v-else depressed color="primary-button" class="action-copy white--text compact mr-0" @click.stop="onCopyAppPassword">
+                <v-btn v-else variant="flat" color="primary-button" class="action-copy text-white compact mr-0" @click.stop="onCopyAppPassword">
                   <translate>Copy</translate>
                 </v-btn>
               </v-col>
@@ -109,7 +109,7 @@
         <template v-else-if="action === 'add'">
           <v-card-text class="py-0 px-2">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 body-1">
+              <v-col cols="12" class="pa-2 text-body-1">
                 <translate>To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -141,10 +141,10 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="onCancel">
+                <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="onCancel">
                   <translate>Cancel</translate>
                 </v-btn>
-                <v-btn depressed color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate white--text compact mr-0" @click.stop="onGenerate">
+                <v-btn variant="flat" color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate text-white compact mr-0" @click.stop="onGenerate">
                   <translate>Generate</translate>
                 </v-btn>
               </v-col>
@@ -172,7 +172,7 @@
                         {{ formatDate(props.item.Expires) }}
                       </td>
                       <td class="text-right" nowrap>
-                        <v-btn icon small text :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
+                        <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
                           <v-icon color="secondary-dark">mdi-delete</v-icon>
                         </v-btn>
                       </td>
@@ -185,10 +185,10 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
+                <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn depressed color="primary-button" class="action-add white--text compact mr-0" @click.stop="onAdd">
+                <v-btn variant="flat" color="primary-button" class="action-add text-white compact mr-0" @click.stop="onAdd">
                   <translate>Add</translate>
                 </v-btn>
               </v-col>

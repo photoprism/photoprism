@@ -8,15 +8,15 @@
             <v-icon size="54" color="secondary-dark lighten-1">{{ icon }}</v-icon>
           </v-col>
           <v-col cols="9" class="text-left" align-self="center">
-            <div class="subtitle-1 pr-1">
+            <div class="text-subtitle-1 pr-1">
               <translate>Are you sure?</translate>
             </div>
           </v-col>
           <v-col cols="12" class="pt-6 text-right">
-            <v-btn depressed color="secondary-light" class="action-cancel compact" @click.stop="cancel">
+            <v-btn variant="flat" color="secondary-light" class="action-cancel compact" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed theme="dark" class="action-confirm compact" @click.stop="confirm">
+            <v-btn color="primary-button" variant="flat" theme="dark" class="action-confirm compact" @click.stop="confirm">
               <translate key="Delete">Yes</translate>
             </v-btn>
           </v-col>

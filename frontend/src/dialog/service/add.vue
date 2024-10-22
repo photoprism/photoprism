@@ -4,7 +4,7 @@
       <v-card-title class="pa-2">
         <v-row>
           <v-col cols="12" class="pa-2">
-            <h3 class="headline pa-0">
+            <h3 class="text-h5 pa-0">
               <translate>Add Account</translate>
             </h3>
           </v-col>
@@ -43,10 +43,10 @@
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-col>
           <v-col cols="12" class="text-right pt-2">
-            <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
+            <v-btn variant="flat" color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
-            <v-btn depressed theme="dark" color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
+            <v-btn variant="flat" theme="dark" color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>
           </v-col>

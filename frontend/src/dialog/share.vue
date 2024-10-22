@@ -4,12 +4,12 @@
       <v-card-title class="pb-0">
         <v-row>
           <v-col cols="9">
-            <h3 class="headline mb-0">
+            <h3 class="text-h5 mb-0">
               <translate :translate-params="{ name: model.modelName() }">Share %{name}</translate>
             </h3>
           </v-col>
           <v-col cols="3" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn icon text theme="dark" color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
+            <v-btn icon variant="text" theme="dark" color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
               <v-icon>mdi-link-plus</v-icon>
             </v-btn>
           </v-col>
@@ -17,7 +17,7 @@
       </v-card-title>
       <v-card-text>
         <v-expansion-panels class="pa-0 elevation-0">
-          <v-expansion-panel v-for="(link, index) in links" :key="link.UID" class="pa-0 elevation-0 secondary mb-1">
+          <v-expansion-panel v-for="(link, index) in links" :key="link.UID" class="pa-0 elevation-0 bg-secondary mb-1">
             <template #header>
               <button :class="`text-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none" @click.stop="copyUrl(link)">
                 <!-- TODO: change this icon -->
@@ -52,12 +52,12 @@
                         ></v-text-field>
                     </v-col -->
                     <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
-                      <v-btn small icon text color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
+                      <v-btn size="small" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
                     </v-col>
                     <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
-                      <v-btn depressed theme="dark" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
+                      <v-btn variant="flat" theme="dark" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
                         <translate>Save</translate>
                       </v-btn>
                     </v-col>
@@ -78,12 +78,12 @@
       <v-card-actions class="pt-0 px-6">
         <v-row class="pa-2">
           <v-col cols="6">
-            <v-btn depressed color="secondary-light" class="action-webdav" @click.stop="upload">
+            <v-btn variant="flat" color="secondary-light" class="action-webdav" @click.stop="upload">
               <translate>WebDAV Upload</translate>
             </v-btn>
           </v-col>
           <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn depressed color="secondary-light" class="action-close" @click.stop="confirm">
+            <v-btn variant="flat" color="secondary-light" class="action-close" @click.stop="confirm">
               <translate>Close</translate>
             </v-btn>
           </v-col>

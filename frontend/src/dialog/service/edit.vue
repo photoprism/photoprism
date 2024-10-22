@@ -4,7 +4,7 @@
       <v-card-title class="pa-2">
         <v-row v-if="scope === 'sharing'" class="py-2 pr-0 pl-2">
           <v-col cols="9">
-            <h3 class="headline ma-0 pa-0">
+            <h3 class="text-h5 ma-0 pa-0">
               {{ $gettext("Manual Upload") }}
             </h3>
           </v-col>
@@ -15,7 +15,7 @@
         </v-row>
         <v-row v-else-if="scope === 'sync'" class="pa-2">
           <v-col cols="9">
-            <h3 class="headline ma-0 pa-0">
+            <h3 class="text-h5 ma-0 pa-0">
               {{ $gettext("Remote Sync") }}
             </h3>
           </v-col>
@@ -26,12 +26,12 @@
         </v-row>
         <v-row v-else class="pt-2 pr-0 pl-2">
           <v-col cols="10">
-            <h3 class="headline ma-0 pa-0">
+            <h3 class="text-h5 ma-0 pa-0">
               {{ $gettext("Edit Account") }}
             </h3>
           </v-col>
           <v-col cols="2" class="text-right">
-            <v-btn icon text :ripple="false" class="action-remove mt-0" @click.stop.prevent="remove()">
+            <v-btn icon variant="text" :ripple="false" class="action-remove mt-0" @click.stop.prevent="remove()">
               <v-icon color="secondary-dark">mdi-delete</v-icon>
             </v-btn>
           </v-col>
@@ -147,10 +147,10 @@
       <v-card-actions class="pt-0 pb-2 px-2">
         <v-row class="pa-2">
           <v-col cols="12" class="text-right pt-6 pb-0">
-            <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
+            <v-btn variant="flat" color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn depressed theme="dark" color="primary-button" class="action-save compact" @click.stop="save">
+            <v-btn variant="flat" theme="dark" color="primary-button" class="action-save compact" @click.stop="save">
               <translate>Save</translate>
             </v-btn>
           </v-col>

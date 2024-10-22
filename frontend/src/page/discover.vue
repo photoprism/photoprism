@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-discover">
-    <v-tabs v-model="active" elevation="0" grow class="transparent" background-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ?  48 : 64">
+    <v-tabs v-model="active" elevation="0" grow class="bg-transparent" background-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ?  48 : 64">
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>
       </v-tab>
@@ -19,21 +19,21 @@
 
        <!-- TODO: check property touchless TEST -->
       <v-tabs-items touchless v-model="active">
-        <v-tab-item>
+        <v-window-item>
           <p-tab-discover-colors></p-tab-discover-colors>
-        </v-tab-item>
+        </v-window-item>
 
-        <v-tab-item>
+        <v-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-window-item>
 
-        <v-tab-item>
+        <v-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-window-item>
 
-        <v-tab-item>
+        <v-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-window-item>
       </v-tabs-items>
     </v-tabs>
   </div>

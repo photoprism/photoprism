@@ -2,7 +2,7 @@
 <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit">
       <v-container fluid>
-        <p class="subtitle-1">
+        <p class="text-subtitle-1">
           <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
@@ -53,16 +53,16 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-cancel" depressed @click.stop="cancelIndexing()">
+        <v-btn :disabled="!busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-cancel" variant="flat" @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-index" depressed @click.stop="startIndexing()">
+        <v-btn :disabled="busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-index" variant="flat" @click.stop="startIndexing()">
           <translate>Start</translate>
           <v-icon :right="!rtl" :left="rtl" dark>mdi-update</v-icon>
         </v-btn>
 
-        <v-alert v-if="ready && !busy && config.count.hidden > 1" color="error" icon="mdi-exclamation" class="mt-6" outlined>
+        <v-alert v-if="ready && !busy && config.count.hidden > 1" color="error" icon="mdi-exclamation" class="mt-6" variant="outlined">
           <translate :translate-params="{ n: config.count.hidden }">The index currently contains %{n} hidden files.</translate>
           <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>

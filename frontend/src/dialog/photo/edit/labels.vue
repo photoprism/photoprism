@@ -22,16 +22,16 @@
                 </td>
                 <td class="text-center"> {{ 100 - props.item.Uncertainty }}% </td>
                 <td class="text-center">
-                  <v-btn v-if="disabled" icon small text :ripple="false" class="action-view" title="Search" @click.stop.prevent="searchLabel(props.item.Label)">
+                  <v-btn v-if="disabled" icon size="small" variant="text" :ripple="false" class="action-view" title="Search" @click.stop.prevent="searchLabel(props.item.Label)">
                     <v-icon color="secondary-dark">mdi-magnify</v-icon>
                   </v-btn>
-                  <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon small text :ripple="false" class="action-delete" title="Delete" @click.stop.prevent="removeLabel(props.item.Label)">
+                  <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon size="small" variant="text" :ripple="false" class="action-delete" title="Delete" @click.stop.prevent="removeLabel(props.item.Label)">
                     <v-icon color="secondary-dark">mdi-delete</v-icon>
                   </v-btn>
-                  <v-btn v-else-if="props.item.Uncertainty < 100" icon small text :ripple="false" class="action-remove" title="Remove" @click.stop.prevent="removeLabel(props.item.Label)">
+                  <v-btn v-else-if="props.item.Uncertainty < 100" icon size="small" variant="text" :ripple="false" class="action-remove" title="Remove" @click.stop.prevent="removeLabel(props.item.Label)">
                     <v-icon color="secondary-dark">mdi-minus</v-icon>
                   </v-btn>
-                  <v-btn v-else icon small text :ripple="false" class="action-on" title="Activate" @click.stop.prevent="activateLabel(props.item.Label)">
+                  <v-btn v-else icon size="small" variant="text" :ripple="false" class="action-on" title="Activate" @click.stop.prevent="activateLabel(props.item.Label)">
                     <v-icon color="secondary-dark">mdi-plus</v-icon>
                   </v-btn>
                 </td>
@@ -47,7 +47,7 @@
                 </td>
                 <td class="text-center"> 100% </td>
                 <td class="text-center">
-                  <v-btn icon small text :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
+                  <v-btn icon size="small" variant="text" :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
                     <v-icon color="secondary-dark">mdi-plus</v-icon>
                   </v-btn>
                 </td>

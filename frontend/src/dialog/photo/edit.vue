@@ -22,7 +22,7 @@
           </v-btn>
         </v-toolbar-items>
     </v-toolbar>
-      <v-tabs v-model="active" elevation="0" grow class="form transparent" background-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
+      <v-tabs v-model="active" elevation="0" grow class="form bg-transparent" background-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
@@ -35,7 +35,7 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-label</v-icon>
-            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+            <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
               <template #badge>
                 <span v-if="model.Labels.length">{{ model.Labels.length }}</span>
               </template>
@@ -48,7 +48,7 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-account-multiple</v-icon>
-            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+            <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
               <template #badge>
                 <span v-if="model.Faces">{{ model.Faces }}</span>
               </template>
@@ -61,7 +61,7 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
             <v-icon :size="18" :left="!rtl" :right="rtl">mdi-film</v-icon>
-            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+            <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
               <template #badge>
                 <span v-if="model.Files.length">{{ model.Files.length }}</span>
               </template>
@@ -76,25 +76,25 @@
 
         <!-- TODO: check property touchless TEST -->
         <v-tabs-items touchless v-model="active">
-          <v-tab-item>
+          <v-window-item>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
-          </v-tab-item>
+          </v-window-item>
 
-          <v-tab-item>
+          <v-window-item>
             <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
-          </v-tab-item>
+          </v-window-item>
 
-          <v-tab-item>
+          <v-window-item>
             <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
-          </v-tab-item>
+          </v-window-item>
 
-          <v-tab-item>
+          <v-window-item>
             <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
-          </v-tab-item>
+          </v-window-item>
 
-          <v-tab-item v-if="$config.feature('edit')">
+          <v-window-item v-if="$config.feature('edit')">
             <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
-          </v-tab-item>
+          </v-window-item>
         </v-tabs-items>
       </v-tabs>
     </v-card>

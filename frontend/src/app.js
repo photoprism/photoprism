@@ -38,7 +38,7 @@ import { createGettext } from "vue3-gettext";
 import Log from "common/log";
 import PhotoPrism from "app.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import Routes from "app/routes";
+import routes from "app/routes";
 import { config, session } from "app/session";
 import { Settings } from "luxon";
 import Socket from "common/websocket";
@@ -174,7 +174,7 @@ config.update().finally(() => {
   // Configure client-side routing.
   const router = createRouter({
     history: createWebHistory(config.baseUri + "/library/"),
-    routes: Routes,
+    routes: routes,
     scrollBehavior(to, from, savedPosition) {
       let prevScrollPos = savedPosition;
 
@@ -192,7 +192,7 @@ config.update().finally(() => {
           });
         });
       } else {
-        return { x: 0, y: 0 };
+        return { left: 0, top: 0 };
       }
     },
   });
@@ -261,7 +261,7 @@ config.update().finally(() => {
   }
 
   // Start application.
-  Mount(app);
+  Mount(app, router);
   if (config.baseUri === "") {
     offline.install();
   }

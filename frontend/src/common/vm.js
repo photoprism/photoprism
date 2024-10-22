@@ -19,6 +19,7 @@ export function $ngettext(msgid, plural, n) {
   return vm.$ngettext(msgid, plural, n);
 }
 
-export function Mount(app) {
+export function Mount(app, router) {
+  // router.isReady().then(() => app.mount('#app'))
   app.mount("#app");
 }

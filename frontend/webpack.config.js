@@ -33,7 +33,8 @@ const isDev = process.env.NODE_ENV !== "production";
 const isCustom = !!process.env.CUSTOM_SRC;
 const appName = process.env.CUSTOM_NAME ? process.env.CUSTOM_NAME : "PhotoPrism";
 const { VueLoaderPlugin } = require("vue-loader");
-const { VuetifyPlugin } = require('webpack-plugin-vuetify')
+const { VuetifyPlugin } = require("webpack-plugin-vuetify");
+const { DefinePlugin } = require("webpack");
 
 const PATHS = {
   src: path.join(__dirname, "src"),
@@ -78,7 +79,6 @@ const config = {
       // TODO: change it
       'vue$': 'vue/dist/vue.runtime.esm-bundler.js',
       // vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
-      vue: '@vue/compat',
     },
   },
   plugins: [
@@ -101,6 +101,11 @@ const config = {
       },
     }),
     new VuetifyPlugin({ autoImport: true }),
+    new DefinePlugin({
+      __VUE_OPTIONS_API__: JSON.stringify(true), // Change to false as needed
+      __VUE_PROD_DEVTOOLS__: JSON.stringify(false), // Change to true to enable in production
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // Change to true for detailed warnings
+    }),
   ],
   performance: {
     hints: isDev ? false : "warning",

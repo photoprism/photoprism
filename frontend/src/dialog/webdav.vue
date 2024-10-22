@@ -1,10 +1,10 @@
 <template>
   <v-dialog v-model="visible" max-width="500">
     <v-card class="pa-2">
-      <v-card-title class="headline pa-0">
+      <v-card-title class="text-h5 pa-0">
         <v-row class="pa-2">
           <v-col cols="9" class="text-left">
-            <h3 class="headline pa-0">
+            <h3 class="text-h5 pa-0">
               <translate>Connect via WebDAV</translate>
             </h3>
           </v-col>
@@ -15,29 +15,29 @@
         </v-row>
       </v-card-title>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="pa-2 text-body-1">
         <translate>WebDAV clients can connect to PhotoPrism using the following URL:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="pa-2 text-body-1">
         <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line outlined color="secondary-dark" :value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1 clickable" @click="windowsHelp($event)">
+      <v-card-text class="pa-2 text-body-1 clickable" @click="windowsHelp($event)">
         <translate>On Windows, enter the following resource in the connection dialog:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="pa-2 text-body-1">
         <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line outlined color="secondary-dark" :value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="pa-2 text-body-1">
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="pa-2 text-body-1">
         <!-- TODO: change this icon -->
-        <v-alert color="primary darken-2" icon="info" class="pa-2" type="info" outlined>
+        <v-alert color="primary darken-2" icon="info" class="pa-2" type="info" variant="outlined">
           <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>

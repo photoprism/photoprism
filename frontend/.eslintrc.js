@@ -6,7 +6,7 @@ module.exports = {
     node: true,
     mocha: true,
   },
-  extends: ["eslint:recommended", "plugin:vue/recommended", "plugin:prettier/recommended", "plugin:vue/base", "plugin:vuetify/base",],
+  extends: ["eslint:recommended", "plugin:vue/recommended", "plugin:prettier/recommended", "plugin:vue/base", "plugin:vuetify/base"],
 
   settings: {
     "prettier/prettier": {

@@ -176,20 +176,20 @@
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-1">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>Security and Access</translate>
           </h3>
         </v-card-title>
         <v-card-actions>
           <v-row align="start">
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
+              <v-btn block variant="flat" color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                 <translate>Change Password</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>mdi-lock</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
+              <v-btn block variant="flat" color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                 <translate>2-Factor Authentication</translate>
                 <!-- TODO: change icon -->
                 <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>gpp_good</v-icon>
@@ -200,14 +200,14 @@
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-apps-dialog compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
+              <v-btn block variant="flat" color="secondary-light" class="action-apps-dialog compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
                 <!-- TODO: change icon -->
                 <v-icon :right="!rtl" :left="rtl" dark>devices</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
+              <v-btn block variant="flat" color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
                 <!-- TODO: change icon -->
                 <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
@@ -218,7 +218,7 @@
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-1">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>Birth Date</translate>
           </h3>
         </v-card-title>
@@ -238,7 +238,7 @@
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-1">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>Contact Details</translate>
           </h3>
         </v-card-title>

@@ -33,7 +33,7 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon text depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+        <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
@@ -57,11 +57,11 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="text-body-1 mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
             <translate>You may rescan your library to find additional faces.</translate>
             <translate>Recognition starts after indexing has been completed.</translate>
@@ -86,11 +86,10 @@
                 <v-btn
                   v-if="canManage"
                   :ripple="false"
-                  :depressed="false"
                   class="input-hidden"
                   icon
-                  text
-                  small
+                  variant="text"
+                  size="small"
                   absolute
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onToggleHidden($event, index)"
@@ -100,12 +99,12 @@
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
-                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon variant="text" absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
                   <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon variant="text" absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
                   <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
@@ -113,7 +112,7 @@
 
               <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
                 <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" class="inline-edit" @save="onSave(model)">
-                  <span v-if="model.Name" class="body-2 ma-0">
+                  <span v-if="model.Name" class="text-body-2 ma-0">
                     {{ model.Name }}
                   </span>
                   <span v-else>
@@ -123,7 +122,7 @@
                     <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
                   </template>
                 </v-edit-dialog>
-                <span v-else class="body-2 ma-0">
+                <span v-else class="text-body-2 ma-0">
                   {{ model.Name }}
                 </span>
               </v-card-title>

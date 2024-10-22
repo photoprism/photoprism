@@ -123,11 +123,11 @@
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-body-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="text-body-1 mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
             <template v-if="staticFilter.type === 'album'">
               <translate>After selecting pictures from search results, you can add them to an album using the context menu.</translate>
@@ -154,16 +154,27 @@
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon text absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
+                <v-btn
+                  v-if="canShare && album.LinkCount > 0"
+                  :ripple="false"
+                  icon
+                  variant="text"
+                  absolute
+                  class="action-share"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onShare($event, index)"
+                  @touchmove.stop.prevent
+                  @click.stop.prevent="onShare($event, index)"
+                >
                   <v-icon color="white">mdi-share-variant</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon variant="text" absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
                   <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon variant="text" absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
                   <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
@@ -172,7 +183,7 @@
                   v-if="canManage && experimental && featPrivate && album.Private"
                   :ripple="false"
                   icon
-                  text
+                  variant="text"
                   absolute
                   class="input-private"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -186,7 +197,7 @@
 
               <v-card-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
-                  <h3 class="body-2 mb-0">
+                  <h3 class="text-body-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                       <!-- TODO: change this filter -->
                       <!-- {{ album.Title | truncate(80) }} -->

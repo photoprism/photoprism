@@ -4,7 +4,7 @@
     <p>If the connection fails and can't be reestablished, your browser won't receive photo counts, log messages, or metadata updates.</p>
     <p>To fix this issue, please make sure you didn't block WebSocket connections in your browser or firewall and check the configuration of any Web server that is in front of PhotoPrism:</p>
     <v-expansion-panels class="elevation-0">
-      <v-expansion-panel class="secondary mb-1">
+      <v-expansion-panel class="bg-secondary mb-1">
         <template #header>
           <div>How to configure NGINX to proxy WebSockets</div>
         </template>
@@ -36,7 +36,7 @@ http {
           </v-card-text>
         </v-card>
       </v-expansion-panel>
-      <v-expansion-panel class="secondary mb-1">
+      <v-expansion-panel class="bg-secondary mb-1">
         <template #header>
           <div>How to configure Caddy 1 to proxy WebSockets</div>
         </template>
@@ -55,7 +55,7 @@ example.com {
           </v-card-text>
         </v-card>
       </v-expansion-panel>
-      <v-expansion-panel class="secondary mb-1">
+      <v-expansion-panel class="bg-secondary mb-1">
         <template #header>
           <div>How to configure Caddy 2 to proxy WebSockets</div>
         </template>
@@ -72,7 +72,7 @@ example.com {
           </v-card-text>
         </v-card>
       </v-expansion-panel>
-      <v-expansion-panel class="secondary mb-1">
+      <v-expansion-panel class="bg-secondary mb-1">
         <template #header>
           <div>How to reverse proxy WebSockets with Apache 2.4</div>
         </template>

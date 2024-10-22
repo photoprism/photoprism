@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-files">
-    <v-expansion-panels v-model="state" class="pa-0 elevation-0 secondary">
+    <v-expansion-panels v-model="state" class="pa-0 elevation-0 bg-secondary">
       <template v-for="file in model.fileModels()">
         <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
           <template #header>
@@ -32,19 +32,28 @@
                               <translate>Actions</translate>
                             </td>
                             <td>
-                              <v-btn v-if="features.download" small depressed theme="dark" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                              <v-btn v-if="features.download" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                 <translate>Download</translate>
                               </v-btn>
-                              <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
+                              <v-btn
+                                v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
+                                size="small"
+                                variant="flat"
+                                theme="dark"
+                                color="primary-button"
+                                class="btn-action action-primary"
+                                :disabled="busy"
+                                @click.stop.prevent="primaryFile(file)"
+                              >
                                 <translate>Primary</translate>
                               </v-btn>
-                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small depressed theme="dark" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
                                 <translate>Unstack</translate>
                               </v-btn>
-                              <v-btn v-if="features.delete && !file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
+                              <v-btn v-if="features.delete && !file.Primary" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
                                 <translate>Delete</translate>
                               </v-btn>
-                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed theme="dark" color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
+                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
                                 <translate>File Browser</translate>
                               </v-btn>
                             </td>

@@ -13,7 +13,7 @@
       <h3 class="title font-weight-bold pt-6 pb-2 text-center">
         <translate>We appreciate your feedback!</translate>
       </h3>
-      <p class="body-2 py-6 text-center">
+      <p class="text-body-2 py-6 text-center">
         <translate>Due to the high volume of emails we receive, our team may be unable to get back to you immediately.</translate>
         <translate>We do our best to respond within five business days or less.</translate>
       </p>
@@ -54,7 +54,7 @@
         </v-col>
 
         <v-col cols="12" class="d-flex grow px-2 py-1">
-          <v-btn color="primary-button" class="white--text ml-0 flex-grow-1" depressed :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
+          <v-btn color="primary-button" class="text-white ml-0 flex-grow-1" variant="flat" :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
             <translate>Send</translate>
             <v-icon :right="!rtl" :left="rtl" dark>mdi-send</v-icon>
           </v-btn>

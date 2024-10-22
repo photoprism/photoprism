@@ -2,14 +2,14 @@
   <div>
     <div v-if="photos.length === 0" class="pa-2">
       <!-- TODO: change this icon -->
-      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" outlined>
-        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
+        <h3 v-if="filter.order === 'edited'" class="text-body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
-        <h3 v-else class="body-2 ma-0 pa-0">
+        <h3 v-else class="text-body-2 ma-0 pa-0">
           <translate>No pictures found</translate>
         </h3>
-        <p class="body-1 mt-2 mb-0 pa-0">
+        <p class="text-body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
           <template v-if="!isSharedView">
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
@@ -102,11 +102,11 @@
                   </template>
 
                   <template v-else>
-                    <v-btn v-if="hidePrivate" class="input-private" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
+                    <v-btn v-if="hidePrivate" class="input-private" icon size="small" variant="text" :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
                       <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">mdi-lock</v-icon>
                       <v-icon v-else color="secondary" class="select-off">mdi-lock-open</v-icon>
                     </v-btn>
-                    <v-btn class="input-favorite" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                    <v-btn class="input-favorite" icon size="small" variant="text" :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
                       <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
                       <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">mdi-heart-outline</v-icon>
                     </v-btn>
@@ -215,7 +215,7 @@ export default {
       }
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.intersectionObserver.disconnect();
   },
   methods: {

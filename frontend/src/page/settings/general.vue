@@ -3,7 +3,7 @@
     <v-form ref="form" lazy-validation class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-2">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate key="User Interface">User Interface</translate>
           </h3>
         </v-card-title>
@@ -170,7 +170,7 @@
 
       <v-card v-if="settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-2">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate key="Places">Places</translate>
           </h3>
         </v-card-title>
@@ -190,7 +190,7 @@
 
       <v-card v-if="settings.features.download" flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-0">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>Download</translate>
           </h3>
         </v-card-title>

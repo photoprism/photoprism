@@ -372,14 +372,14 @@
             </v-col>
 
             <v-col v-if="!disabled" cols="12" :class="rtl ? 'text-left' : 'text-right'" class="pt-6">
-              <v-btn depressed color="secondary-light" class="compact action-close" @click.stop="close">
+              <v-btn variant="flat" color="secondary-light" class="compact action-close" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
-              <v-btn color="primary-button" depressed theme="dark" class="compact action-apply action-approve" @click.stop="save(false)">
+              <v-btn color="primary-button" variant="flat" theme="dark" class="compact action-apply action-approve" @click.stop="save(false)">
                 <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                 <span v-else><translate>Apply</translate></span>
               </v-btn>
-              <v-btn color="primary-button" depressed theme="dark" class="compact action-done hidden-xs" @click.stop="save(true)">
+              <v-btn color="primary-button" variant="flat" theme="dark" class="compact action-done hidden-xs" @click.stop="save(true)">
                 <translate>Done</translate>
               </v-btn>
             </v-col>

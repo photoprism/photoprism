@@ -4,12 +4,12 @@
       <v-card-title class="pb-0">
         <v-row>
           <v-col cols="8">
-            <h3 class="headline mb-0">
+            <h3 class="text-h5 mb-0">
               <translate>WebDAV Upload</translate>
             </h3>
           </v-col>
           <v-col cols="4" class="text-right">
-            <v-btn icon text theme="dark" color="secondary-dark" class="ma-0" @click.stop="setup">
+            <v-btn icon variant="text" theme="dark" color="secondary-dark" class="ma-0" @click.stop="setup">
               <v-icon>mdi-cloud</v-icon>
             </v-btn>
           </v-col>
@@ -41,13 +41,13 @@
             </v-autocomplete>
           </v-col>
           <v-col cols="12" class="text-right pt-6">
-            <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
+            <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" depressed theme="dark" class="action-setup ma-0" @click.stop="setup">
+            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" theme="dark" class="action-setup ma-0" @click.stop="setup">
               <translate>Setup</translate>
             </v-btn>
-            <v-btn v-else :disabled="noServices" color="primary-button" depressed theme="dark" class="action-upload ma-0" @click.stop="confirm">
+            <v-btn v-else :disabled="noServices" color="primary-button" variant="flat" theme="dark" class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
           </v-col>

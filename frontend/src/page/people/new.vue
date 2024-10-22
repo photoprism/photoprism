@@ -5,7 +5,7 @@
         <v-spacer></v-spacer>
         <v-divider vertical></v-divider>
 
-        <v-btn icon text depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
@@ -25,11 +25,11 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" outlined>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="text-body-1 mt-2 mb-0 pa-0">
             <translate>You may rescan your library to find additional faces.</translate>
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
@@ -39,7 +39,7 @@
             <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card flex-grow-1">
               <div class="card-background card"></div>
               <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1 clickable" @click.stop.prevent="onView(model)">
-                <v-btn :ripple="false" :depressed="false" class="input-hidden" icon text small absolute @click.stop.prevent="toggleHidden(model)">
+                <v-btn :ripple="false" class="input-hidden" icon variant="text" size="small" absolute @click.stop.prevent="toggleHidden(model)">
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
@@ -112,7 +112,7 @@
           </v-col>
         </v-row>
         <div class="text-center mt-4 mb-2">
-          <v-btn color="secondary" rounded depressed :to="{ name: 'all', query: { q: 'face:new' } }">
+          <v-btn color="secondary" rounded variant="flat" :to="{ name: 'all', query: { q: 'face:new' } }">
             <translate>Show all new faces</translate>
           </v-btn>
         </div>

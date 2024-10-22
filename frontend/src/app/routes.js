@@ -301,7 +301,7 @@ export default [
     path: "/index/files/:pathMatch(.*)*",
     component: Browse,
     meta: { title: $gettext("File Browser"), auth: true },
-},
+  },
   {
     name: "hidden",
     path: "/hidden",
@@ -463,7 +463,7 @@ export default [
     props: { tab: 3 },
   },
   {
-    path: '/:pathMatch(.*)*',
+    path: "/:pathMatch(.*)*",
     redirect: "/albums",
   },
 ];

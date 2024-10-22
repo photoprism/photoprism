@@ -1,11 +1,11 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <v-container grid-list-xs fluid class="pa-2 p-faces">
-      <v-alert :value="markers.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
-        <h3 class="body-2 ma-0 pa-0">
+      <v-alert :value="markers.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <h3 class="text-body-2 ma-0 pa-0">
           <translate>No people found</translate>
         </h3>
-        <p class="body-1 mt-2 mb-0 pa-0">
+        <p class="text-body-1 mt-2 mb-0 pa-0">
           <translate>You may rescan your library to find additional faces.</translate>
           <translate>Recognition starts after indexing has been completed.</translate>
         </p>
@@ -15,7 +15,7 @@
           <v-card tile :data-id="marker.UID" style="user-select: none" :class="marker.classes()" class="result card flex-grow-1">
             <div class="card-background card"></div>
             <v-img :src="marker.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1">
-              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject" icon text small absolute :title="$gettext('Remove')" @click.stop.prevent="onReject(marker)">
+              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" class="input-reject" icon variant="text" size="small" absolute :title="$gettext('Remove')" @click.stop.prevent="onReject(marker)">
                 <v-icon color="white" class="action-reject">mdi-close</v-icon>
               </v-btn>
             </v-img>
@@ -23,7 +23,7 @@
             <v-card-actions class="card-details pa-0">
               <v-row v-if="marker.Invalid" align="center">
                 <v-col cols="12" class="text-center pa-0">
-                  <v-btn color="transparent" :disabled="busy" large depressed block :rounded="false" class="action-undo text-center" :title="$gettext('Undo')" @click.stop="onApprove(marker)">
+                  <v-btn color="transparent" :disabled="busy" size="large" variant="flat" block :rounded="false" class="action-undo text-center" :title="$gettext('Undo')" @click.stop="onApprove(marker)">
                     <!-- TODO: change this icon -->
                     <v-icon dark>undo</v-icon>
                   </v-btn>

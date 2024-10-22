@@ -42,21 +42,19 @@
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
+    <v-list v-else-if="errors.length > 0" dense lines="two-line" class="bg-transparent pa-1">
       <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
-        <v-list-item-avatar>
-          <v-icon :color="err.Level">{{ err.Level }}</v-icon>
-        </v-list-item-avatar>
+        <v-list-item :prepend-avatar="err.Level" :color="err.Level">
+          <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->
+        </v-list-item>
 
-        <v-list-item-content class="text-selectable">
-          <v-list-item-title>{{ err.Message }}</v-list-item-title>
-          <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
-        </v-list-item-content>
+        <v-list-item-title>{{ err.Message }}</v-list-item-title>
+        <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
       </v-list-item>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" outlined>
-        <p class="body-1 mt-0 mb-0 pa-0">
+      <v-alert color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <p class="text-body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
           </template>
@@ -70,21 +68,21 @@
     <p-confirm-dialog :show="dialog.delete" icon="mdi-delete-outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
-        <v-card-title class="headline pa-2">
+        <v-card-title class="text-h5 pa-2">
           {{ details.err.Level | capitalize }}
         </v-card-title>
 
-        <v-card-text class="pa-2 body-2">
+        <v-card-text class="pa-2 text-body-2">
           {{ localTime(details.err.Time) }}
         </v-card-text>
 
-        <v-card-text class="pa-2 body-1">
+        <v-card-text class="pa-2 text-body-1">
           {{ details.err.Message }}
         </v-card-text>
 
         <v-card-actions class="pa-2">
           <v-spacer></v-spacer>
-          <v-btn color="secondary-light" depressed class="action-close" @click="details.show = false">
+          <v-btn color="secondary-light" variant="flat" class="action-close" @click="details.show = false">
             <translate>Close</translate>
           </v-btn>
         </v-card-actions>

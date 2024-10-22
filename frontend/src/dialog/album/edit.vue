@@ -5,7 +5,7 @@
         <v-card-title class="pb-0">
           <v-row>
             <v-col cols="12">
-              <h3 class="headline mx-2 mb-0">
+              <h3 class="text-h5 mx-2 mb-0">
                 <translate :translate-params="{ name: model.modelName() }">Edit %{name}</translate>
               </h3>
             </v-col>
@@ -45,10 +45,10 @@
         <v-card-actions class="pt-0 px-6">
           <v-row class="pa-2">
             <v-col cols="12" class="text-right">
-              <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="close">
+              <v-btn variant="flat" color="secondary-light" class="action-cancel" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn depressed theme="dark" color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
+              <v-btn variant="flat" theme="dark" color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
                 <translate>Save</translate>
               </v-btn>
             </v-col>

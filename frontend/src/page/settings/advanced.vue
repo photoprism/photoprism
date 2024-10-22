@@ -6,7 +6,7 @@
           <v-row align="start">
             <v-col cols="12" class="pa-2 text-left">
               <!-- TODO: change icon -->
-              <v-alert color="primary" icon="info" class="pa-2" type="info" outlined>
+              <v-alert color="primary" icon="info" class="pa-2" type="info" variant="outlined">
                 <a style="color: inherit" href="#restart">
                   <translate>Changes to the advanced settings require a restart to take effect.</translate>
                 </a>
@@ -16,7 +16,7 @@
         </v-card-actions>
 
         <v-card-title class="pb-0">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>Global Options</translate>
           </h3>
         </v-card-title>
@@ -144,7 +144,7 @@
 
         <template v-if="!settings.DisableBackups">
           <v-card-title class="pb-0">
-            <h3 class="body-2 mb-0">
+            <h3 class="text-body-2 mb-0">
               <translate>Backup</translate>
             </h3>
           </v-card-title>
@@ -202,7 +202,7 @@
         </template>
 
         <v-card-title class="pb-0">
-          <h3 class="body-2 mb-0" :title="$gettext('Preview Images')">
+          <h3 class="text-body-2 mb-0" :title="$gettext('Preview Images')">
             <translate>Preview Images</translate>
           </h3>
         </v-card-title>
@@ -214,16 +214,16 @@
             </v-col>
 
             <v-col cols="12" lg="4" class="px-2 pb-2">
-              <v-subheader class="pa-0">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
-              </v-subheader>
+              </v-list-subheader>
               <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
-              <v-subheader class="pa-0">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
-              </v-subheader>
+              </v-list-subheader>
               <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
             </v-col>
 
@@ -245,7 +245,7 @@
         </v-card-actions>
 
         <v-card-title class="pb-0">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>Image Quality</translate>
           </h3>
         </v-card-title>
@@ -253,25 +253,25 @@
         <v-card-actions>
           <v-row align="start">
             <v-col cols="12" lg="4" class="px-2 pb-2">
-              <v-subheader class="pa-0">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
-              </v-subheader>
+              </v-list-subheader>
               <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
-              <v-subheader class="pa-0">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
-              </v-subheader>
+              </v-list-subheader>
               <v-col class="pr-6">
                 <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
               </v-col>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
-              <v-subheader class="pa-0">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
-              </v-subheader>
+              </v-list-subheader>
               <v-col class="pr-6">
                 <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
               </v-col>
@@ -280,7 +280,7 @@
         </v-card-actions>
 
         <v-card-title class="pb-0">
-          <h3 class="body-2 mb-0">
+          <h3 class="text-body-2 mb-0">
             <translate>File Conversion</translate>
           </h3>
         </v-card-title>
@@ -375,7 +375,7 @@
           <v-row align="start">
             <v-col cols="12" class="pa-2">
               <a id="restart"></a>
-              <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
+              <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" class="text-white" variant="flat" @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>mdi-restart</v-icon>
               </v-btn>

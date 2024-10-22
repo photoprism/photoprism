@@ -5,7 +5,7 @@
         <v-card-title class="pa-2">
           <v-row class="pa-2">
             <v-col cols="9" class="text-left">
-              <h3 class="headline pa-0">
+              <h3 class="text-h5 pa-0">
                 <translate>Change Password</translate>
               </h3>
             </v-col>
@@ -87,10 +87,10 @@
         <v-card-actions class="pt-1 pb-2 px-2">
           <v-row class="pa-2">
             <v-col cols="12" class="text-right">
-              <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
+              <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
+              <v-btn variant="flat" color="primary-button" class="action-confirm text-white compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
                 <translate>Save</translate>
               </v-btn>
             </v-col>

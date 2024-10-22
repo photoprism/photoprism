@@ -30,11 +30,11 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" outlined>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-body-2 ma-0 pa-0">
             <translate>No pictures found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="text-body-1 mt-2 mb-0 pa-0">
             <translate>Duplicates will be skipped and only appear once.</translate>
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
@@ -55,7 +55,7 @@
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon variant="text" absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
                   <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
@@ -63,7 +63,7 @@
 
               <v-card-title v-if="model.isFile()" class="pa-4 card-details" style="user-select: none">
                 <div>
-                  <h3 class="body-2 mb-2" :title="model.Name">
+                  <h3 class="text-body-2 mb-2" :title="model.Name">
                     <button @click.exact="openFile(index)">
                       {{ model.baseName() }}
                     </button>
@@ -75,7 +75,7 @@
               </v-card-title>
               <v-card-title v-else class="pa-4 card-details">
                 <div>
-                  <h3 class="body-2 mb-2" :title="model.Title">
+                  <h3 class="text-body-2 mb-2" :title="model.Title">
                     <button @click.exact="openFile(index)">
                       {{ model.baseName() }}
                     </button>

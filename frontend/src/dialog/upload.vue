@@ -15,7 +15,7 @@
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
-            <p class="subtitle-1">
+            <p class="text-subtitle-1">
               <!-- TODO: check property allow-overflow TEST -->
               <v-combobox
                 v-if="total === 0"
@@ -37,11 +37,9 @@
               >
                 <template #no-data>
                   <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
-                      </v-list-item-title>
-                    </v-list-item-content>
+                    <v-list-item-title>
+                      <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
+                    </v-list-item-title>
                   </v-list-item>
                 </template>
                 <template #selection="data">
@@ -67,20 +65,20 @@
               >
             </v-progress-linear>
 
-            <p v-if="isDemo" class="body-2">
+            <p v-if="isDemo" class="text-body-2">
               <translate :translate-params="{ n: fileLimit }">You can upload up to %{n} files for test purposes.</translate>
               <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
             </p>
-            <p v-else-if="rejectNSFW" class="body-2">
+            <p v-else-if="rejectNSFW" class="text-body-2">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
-            <p v-if="featReview" class="body-1">
+            <p v-if="featReview" class="text-body-1">
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
-            <v-btn :disabled="busy" color="primary-button" class="white--text ml-0 mt-2 action-upload" depressed @click.stop="onUploadDialog()">
+            <v-btn :disabled="busy" color="primary-button" class="text-white ml-0 mt-2 action-upload" variant="flat" @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
               <v-icon :right="!rtl" :left="rtl" dark>mdi-download</v-icon>
             </v-btn>

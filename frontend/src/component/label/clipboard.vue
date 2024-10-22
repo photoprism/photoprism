@@ -3,7 +3,7 @@
     <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`">
         <template #activator>
-          <v-btn fab theme="dark" color="accent darken-2" class="action-menu">
+          <v-btn theme="dark" color="accent-darken-2 rounded-circle" class="action-menu">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
@@ -11,26 +11,25 @@
         </template>
 
         <!-- v-btn
-                fab
                 dark
                 small
                 :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
-                class="p-label-clipboard-download"
+                class="p-label-clipboard-download rounded-circle"
                 :disabled="selection.length !== 1"
         >
             TODO: change this icon
             <v-icon>cloud_download</v-icon>
         </v-btn -->
-        <v-btn fab theme="dark" small :title="$gettext('Add to album')" color="album" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
+        <v-btn theme="dark" size="small" :title="$gettext('Add to album')" color="album rounded-circle" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
-        <v-btn fab theme="dark" small color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
+        <v-btn theme="dark" size="small" color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
 
-        <v-btn fab theme="dark" small color="accent" class="action-clear" @click.stop="clearClipboard()">
+        <v-btn theme="dark" size="small" color="accent rounded-circle" class="action-clear" @click.stop="clearClipboard()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>

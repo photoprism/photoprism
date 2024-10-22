@@ -2,14 +2,14 @@
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-cards">
     <template v-if="photos.length === 0">
       <!-- TODO: change this icon -->
-      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" outlined>
-        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
+        <h3 v-if="filter.order === 'edited'" class="text-body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
-        <h3 v-else class="body-2 ma-0 pa-0">
+        <h3 v-else class="text-body-2 ma-0 pa-0">
           <translate>No pictures found</translate>
         </h3>
-        <p class="body-1 mt-2 mb-0 pa-0">
+        <p class="text-body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
           <template v-if="!isSharedView">
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
@@ -27,7 +27,7 @@
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
           <div class="pa-6 card-details">
             <div>
-              <h3 class="body-2 mb-2" :title="photo.Title">
+              <h3 class="text-body-2 mb-2" :title="photo.Title">
                 <!-- TODO: change this filter -->
                 <!-- {{ photo.Title | truncate(80) }} -->
                 {{ photo.Title }}
@@ -130,23 +130,23 @@
 
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-row align="center">
-                <v-col cols="6" class="text-center pa-1">
-                  <v-btn color="card darken-1" small depressed theme="dark" block :rounded="false" class="action-archive text-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
-                    <v-icon dark>mdi-close</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col cols="6" class="text-center pa-1">
-                  <v-btn color="card darken-1" small depressed theme="dark" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
-                    <!-- TODO: change this icon -->
-                    <v-icon dark>check</v-icon>
-                  </v-btn>
-                </v-col>
+              <v-col cols="6" class="text-center pa-1">
+                <v-btn color="card darken-1" size="small" variant="flat" theme="dark" block :rounded="false" class="action-archive text-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
+                  <v-icon dark>mdi-close</v-icon>
+                </v-btn>
+              </v-col>
+              <v-col cols="6" class="text-center pa-1">
+                <v-btn color="card darken-1" size="small" variant="flat" theme="dark" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
+                  <!-- TODO: change this icon -->
+                  <v-icon dark>check</v-icon>
+                </v-btn>
+              </v-col>
             </v-row>
           </v-card-actions>
 
           <div class="pa-6 card-details">
             <div>
-              <h3 class="body-2 mb-2" :title="photo.Title">
+              <h3 class="text-body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   <!-- TODO: change this filter -->
                   <!-- {{ photo.Title | truncate(80) }} -->
@@ -299,7 +299,7 @@ export default {
       }
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.intersectionObserver.disconnect();
   },
   methods: {

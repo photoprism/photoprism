@@ -7,21 +7,21 @@
             <v-icon size="54" color="secondary-dark lighten-1">mdi-delete-outline</v-icon>
           </v-col>
           <v-col cols="9" class="text-left" align-self="center">
-            <div v-if="text === ''" class="subtitle-1 pr-1">
+            <div v-if="text === ''" class="text-subtitle-1 pr-1">
               <translate>Are you sure you want to permanently delete these pictures?</translate>
             </div>
-            <div v-else class="subtitle-1 pr-1">
+            <div v-else class="text-subtitle-1 pr-1">
               {{ text }}
             </div>
           </v-col>
           <v-col cols="12" class="text-right pt-6">
-            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
+            <v-btn variant="flat" color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn v-if="action === ''" color="primary-button" depressed theme="dark" class="action-confirm" @click.stop="confirm">
+            <v-btn v-if="action === ''" color="primary-button" variant="flat" theme="dark" class="action-confirm" @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>
-            <v-btn v-else color="primary-button" depressed theme="dark" class="action-confirm" @click.stop="confirm">
+            <v-btn v-else color="primary-button" variant="flat" theme="dark" class="action-confirm" @click.stop="confirm">
               {{ action }}
             </v-btn>
           </v-col>

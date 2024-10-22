@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-import">
     <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit">
       <v-container fluid>
-        <p class="subtitle-1">
+        <p class="text-subtitle-1">
           <span v-if="fileName" class="break-word"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>
           <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
@@ -48,7 +48,7 @@
             </v-checkbox>
           </v-col>
           <v-col cols="12" class="px-2 pb-2 pt-2">
-            <p class="body-1 pt-2">
+            <p class="text-body-1 pt-2">
               <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
               <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
               <translate>Original file names will be stored and indexed.</translate>
@@ -57,16 +57,16 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="primary-button" class="white--text ml-0 action-cancel" depressed @click.stop="cancelImport()">
+        <v-btn :disabled="!busy || !ready" color="primary-button" class="text-white ml-0 action-cancel" variant="flat" @click.stop="cancelImport()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="white--text ml-0 hidden-xs action-upload" depressed @click.stop="showUpload()">
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="text-white ml-0 hidden-xs action-upload" variant="flat" @click.stop="showUpload()">
           <translate>Upload</translate>
           <v-icon :right="!rtl" :left="rtl" dark>mdi-cloud-upload</v-icon>
         </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-import" depressed @click.stop="startImport()">
+        <v-btn :disabled="busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-import" variant="flat" @click.stop="startImport()">
           <translate>Import</translate>
           <v-icon :right="!rtl" :left="rtl" dark>mdi-sync</v-icon>
         </v-btn>
