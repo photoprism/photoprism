@@ -40,24 +40,7 @@ func (m *Photo) QualityScore() (score int) {
 		score++
 	}
 
-	nonPhotographic := false
-
-	details := m.GetDetails()
-
-	if details.Keywords != "" {
-		keywords := txt.Words(details.Keywords)
-
-		for _, w := range keywords {
-			w = strings.ToLower(w)
-
-			if _, ok := NonPhotographicKeywords[w]; ok {
-				nonPhotographic = true
-				break
-			}
-		}
-	}
-
-	if !nonPhotographic {
+	if !m.IsNonPhotographic() {
 		score++
 	}
 
@@ -77,4 +60,28 @@ func (m *Photo) UpdateQuality() error {
 	m.PhotoQuality = m.QualityScore()
 
 	return m.Update("PhotoQuality", m.PhotoQuality)
+}
+
+// IsNonPhotographic checks whether the image appears to be non-photographic.
+func (m *Photo) IsNonPhotographic() (result bool) {
+	if m.PhotoType == MediaUnknown || m.PhotoType == MediaVector || m.PhotoType == MediaAnimated {
+		return true
+	}
+
+	details := m.GetDetails()
+
+	if details.Keywords != "" {
+		keywords := txt.Words(details.Keywords)
+
+		for _, w := range keywords {
+			w = strings.ToLower(w)
+
+			if _, ok := NonPhotographicKeywords[w]; ok {
+				result = true
+				break
+			}
+		}
+	}
+
+	return result
 }

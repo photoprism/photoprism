@@ -52,6 +52,21 @@ func TestCountryCode(t *testing.T) {
 		assert.Equal(t, "us", result)
 	})
 
+	t.Run("Melbourne", func(t *testing.T) {
+		result := CountryCode("The name Narrm is commonly used by the broader Aboriginal community\n\rto refer to the city, \t stemming from the traditional name recorded for the area on which the Melbourne city centre is built.")
+		assert.Equal(t, "au", result)
+	})
+
+	t.Run("ZugspitzeMelbourne", func(t *testing.T) {
+		result := CountryCode("The name Narrm is commonly used by the broader Zugspitze community\n\rto refer to the city, \t stemming from the traditional name recorded for the area on which the Melbourne city centre is built.")
+		assert.Equal(t, "au", result)
+	})
+
+	t.Run("MelbourneZugspitze", func(t *testing.T) {
+		result := CountryCode("The name Narrm is commonly used by the broader Melbourne community\n\rto refer to the city, \t stemming from the traditional name recorded for the area on which the Zugspitze city centre is built.")
+		assert.Equal(t, "de", result)
+	})
+
 	t.Run("StGallen", func(t *testing.T) {
 		result := CountryCode("St.----Gallen")
 		assert.Equal(t, "ch", result)

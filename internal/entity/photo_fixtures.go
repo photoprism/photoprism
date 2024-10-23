@@ -3360,7 +3360,7 @@ var PhotoFixtures = PhotoMap{
 		PhotoStack: 0,
 		PhotoFaces: 0,
 	},
-	"photo52": { //GIF + JPG, Geo from metadata, indexed
+	"Photo52": { //GIF + JPG, Geo from metadata, indexed
 		ID:               1000053,
 		PhotoUID:         "ps6sg6byk7wrbk45",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
@@ -3419,7 +3419,7 @@ var PhotoFixtures = PhotoMap{
 		PhotoStack:       0,
 		PhotoFaces:       0,
 	},
-	"photo53": { //JPG, Geo from metadata, indexed
+	"Photo53": { //JPG, Geo from metadata, indexed
 		ID:               1000054,
 		PhotoUID:         "ps6sg6byk7wrbk46",
 		TakenAt:          time.Date(2023, 11, 13, 9, 7, 18, 0, time.UTC),
@@ -3478,7 +3478,7 @@ var PhotoFixtures = PhotoMap{
 		PhotoStack:       0,
 		PhotoFaces:       0,
 	},
-	"photo54": { //JPG + JPG, Geo from metadata, indexed
+	"Photo54": { //JPG + JPG, Geo from metadata, indexed
 		ID:               1000055,
 		PhotoUID:         "ps6sg6byk7wrbk47",
 		TakenAt:          time.Date(2023, 11, 12, 9, 7, 18, 0, time.UTC),

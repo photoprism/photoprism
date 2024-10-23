@@ -25,7 +25,7 @@ func TestPhoto_QualityScore(t *testing.T) {
 }
 
 func TestPhoto_UpdateQuality(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
+	t.Run("Hidden", func(t *testing.T) {
 		p := &Photo{PhotoQuality: -1}
 		err := p.UpdateQuality()
 		if err != nil {
@@ -33,12 +33,31 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 		}
 		assert.Equal(t, -1, p.PhotoQuality)
 	})
-	t.Run("low quality expected", func(t *testing.T) {
+	t.Run("Favorite", func(t *testing.T) {
 		p := &Photo{PhotoQuality: 0, PhotoFavorite: true}
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 5, p.PhotoQuality)
+		assert.Equal(t, 4, p.PhotoQuality)
+	})
+}
+
+func TestPhoto_IsNonPhotographic(t *testing.T) {
+	t.Run("Raw", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		assert.False(t, m.IsNonPhotographic())
+	})
+	t.Run("Image", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo04")
+		assert.False(t, m.IsNonPhotographic())
+	})
+	t.Run("Video", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo10")
+		assert.False(t, m.IsNonPhotographic())
+	})
+	t.Run("Animated", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo52")
+		assert.True(t, m.IsNonPhotographic())
 	})
 }
