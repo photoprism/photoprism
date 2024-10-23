@@ -85,7 +85,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
-	github.com/zitadel/oidc/v3 v3.30.1
+	github.com/zitadel/oidc/v3 v3.31.0
 )
 
 require (
