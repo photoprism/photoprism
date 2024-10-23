@@ -80,7 +80,7 @@
 
             <v-btn :disabled="busy" color="primary-button" class="text-white ml-0 mt-2 action-upload" variant="flat" @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
-              <v-icon :right="!rtl" :left="rtl" dark>mdi-download</v-icon>
+              <v-icon :end="!rtl" :start="rtl">mdi-download</v-icon>
             </v-btn>
           </v-container>
         </v-form>

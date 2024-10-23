@@ -59,7 +59,7 @@
 
         <v-btn :disabled="busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-index" variant="flat" @click.stop="startIndexing()">
           <translate>Start</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>mdi-update</v-icon>
+          <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
         </v-btn>
 
         <v-alert v-if="ready && !busy && config.count.hidden > 1" color="error" icon="mdi-exclamation" class="mt-6" variant="outlined">

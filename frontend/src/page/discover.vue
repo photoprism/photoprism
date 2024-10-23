@@ -17,24 +17,25 @@
         <translate>Random</translate>
       </v-tab>
 
-       <!-- TODO: check property touchless TEST -->
-      <v-tabs-items touchless v-model="active">
-        <v-window-item>
-          <p-tab-discover-colors></p-tab-discover-colors>
-        </v-window-item>
+      <v-tabs v-model="active">
+        <v-window>
+          <v-window-item>
+            <p-tab-discover-colors></p-tab-discover-colors>
+          </v-window-item>
 
-        <v-window-item>
-          <p-tab-discover-todo></p-tab-discover-todo>
-        </v-window-item>
+          <v-window-item>
+            <p-tab-discover-todo></p-tab-discover-todo>
+          </v-window-item>
 
-        <v-window-item>
-          <p-tab-discover-todo></p-tab-discover-todo>
-        </v-window-item>
+          <v-window-item>
+            <p-tab-discover-todo></p-tab-discover-todo>
+          </v-window-item>
 
-        <v-window-item>
-          <p-tab-discover-todo></p-tab-discover-todo>
-        </v-window-item>
-      </v-tabs-items>
+          <v-window-item>
+            <p-tab-discover-todo></p-tab-discover-todo>
+          </v-window-item>
+        </v-window>
+      </v-tabs>
     </v-tabs>
   </div>
 </template>

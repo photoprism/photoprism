@@ -25,7 +25,7 @@
                 <v-col cols="12" class="text-center pa-0">
                   <v-btn color="transparent" :disabled="busy" size="large" variant="flat" block :rounded="false" class="action-undo text-center" :title="$gettext('Undo')" @click.stop="onApprove(marker)">
                     <!-- TODO: change this icon -->
-                    <v-icon dark>undo</v-icon>
+                    <v-icon>undo</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>

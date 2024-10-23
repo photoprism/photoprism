@@ -6,7 +6,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
-        <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
+        <v-icon size="26" color="secondary-dark">{{ $vuetify.icons.prism }}</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-6 pt-6 pb-1">
@@ -31,15 +31,15 @@
         <p v-if="isSuperAdmin" class="text-center my-6">
           <v-btn to="/upgrade" color="primary-button" class="text-white px-4 py-2 action-membership" rounded variant="flat">
             <translate>Upgrade Now</translate>
-            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
-            <v-icon v-else right dark>mdi-chevron-right</v-icon>
+            <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+            <v-icon v-else end>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
         <p v-else class="text-center my-6">
           <v-btn href="https://link.photoprism.app/membership" target="_blank" color="primary-button" class="text-white px-4 py-2 action-membership" rounded variant="flat">
             <translate>Learn more</translate>
-            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
-            <v-icon v-else right dark>mdi-chevron-right</v-icon>
+            <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+            <v-icon v-else end>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
       </template>
@@ -53,8 +53,8 @@
         <p class="text-center my-6">
           <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button" class="text-white px-4 py-2 action-membership" rounded variant="flat">
             <translate>Manage Account</translate>
-            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
-            <v-icon v-else right dark>mdi-chevron-right</v-icon>
+            <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+            <v-icon v-else end>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
       </template>

@@ -63,12 +63,12 @@
 
         <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="text-white ml-0 hidden-xs action-upload" variant="flat" @click.stop="showUpload()">
           <translate>Upload</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>mdi-cloud-upload</v-icon>
+          <v-icon :end="!rtl" :start="rtl">mdi-cloud-upload</v-icon>
         </v-btn>
 
         <v-btn :disabled="busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-import" variant="flat" @click.stop="startImport()">
           <translate>Import</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>mdi-sync</v-icon>
+          <v-icon :end="!rtl" :start="rtl">mdi-sync</v-icon>
         </v-btn>
       </v-container>
     </v-form>

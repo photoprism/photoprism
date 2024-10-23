@@ -4,16 +4,17 @@
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
+          <v-icon :size="18" :start="!rtl" :end="rtl">{{ item.icon }}</v-icon> {{ item.label }}
         </template>
       </v-tab>
 
-       <!-- TODO: check property touchless TEST -->
-      <v-tabs-items touchless v-model="active">
-        <v-window-item v-for="(item, index) in tabs" :key="index">
-          <component :is="item.component"></component>
-        </v-window-item>
-      </v-tabs-items>
+      <v-tabs v-model="active">
+        <v-window>
+          <v-window-item v-for="(item, index) in tabs" :key="index">
+            <component :is="item.component"></component>
+          </v-window-item>
+        </v-window>
+      </v-tabs>
     </v-tabs>
   </div>
 </template>

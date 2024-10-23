@@ -377,7 +377,7 @@
               <a id="restart"></a>
               <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" class="text-white" variant="flat" @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>mdi-restart</v-icon>
+                <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
               </v-btn>
             </v-col>
           </v-row>

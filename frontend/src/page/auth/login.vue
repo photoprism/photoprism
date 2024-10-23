@@ -102,8 +102,8 @@
                     </v-btn>
                     <v-btn :color="colors.primary" variant="flat" :disabled="loginDisabled" :block="$vuetify.display.xs" class="text-white action-confirm ra-6 py-2 px-4" @click.stop.prevent="onLogin">
                       <translate>Sign in</translate>
-                      <v-icon v-if="rtl" start dark>mdi-chevron-left</v-icon>
-                      <v-icon v-else end dark>mdi-chevron-right</v-icon>
+                      <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+                      <v-icon v-else end>mdi-chevron-right</v-icon>
                     </v-btn>
                   </div>
                   <div v-if="enterCode" class="auth-links text-center opacity-80">

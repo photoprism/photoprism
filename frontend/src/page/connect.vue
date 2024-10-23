@@ -22,7 +22,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade" :title="$gettext('Learn more')">
-        <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
+        <v-icon size="26" color="secondary-dark">{{ $vuetify.icons.prism }}</v-icon>
       </v-btn>
     </v-toolbar>
     <v-form ref="form" v-model="valid" autocomplete="off" class="px-6 pt-6 pb-0" lazy-validation @submit.prevent>
@@ -63,12 +63,12 @@
           <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
             <!-- TODO: change this icon -->
-            <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
+            <v-icon :end="!rtl" :start="rtl">restart_alt</v-icon>
           </v-btn>
           <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy">
             <translate>Upgrade Now</translate>
-            <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
-            <v-icon v-else right dark>mdi-chevron-right</v-icon>
+            <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+            <v-icon v-else end>mdi-chevron-right</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -94,13 +94,13 @@
 
               <v-btn v-if="!form.token.length" color="primary-button" class="text-white ml-0 action-proceed" :block="$vuetify.display.xs" variant="flat" :disabled="busy" @click.stop="connect">
                 <translate>Register</translate>
-                <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
-                <v-icon v-else right dark>mdi-chevron-right</v-icon>
+                <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+                <v-icon v-else end>mdi-chevron-right</v-icon>
               </v-btn>
               <v-btn v-else color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0 action-activate" variant="flat" :disabled="busy || form.token.length !== tokenMask.length" @click.stop="activate">
                 <translate>Activate</translate>
-                <v-icon v-if="rtl" left dark>mdi-chevron-left</v-icon>
-                <v-icon v-else right dark>mdi-chevron-right</v-icon>
+                <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
+                <v-icon v-else end>mdi-chevron-right</v-icon>
               </v-btn>
             </div>
           </v-alert>

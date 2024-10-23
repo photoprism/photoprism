@@ -26,7 +26,7 @@
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-pencil</v-icon>
+            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-pencil</v-icon>
             <translate key="Details">Details</translate>
           </template>
         </v-tab>
@@ -34,7 +34,7 @@
         <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-label</v-icon>
+            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-label</v-icon>
             <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
               <template #badge>
                 <span v-if="model.Labels.length">{{ model.Labels.length }}</span>
@@ -47,7 +47,7 @@
         <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-account-multiple</v-icon>
+            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-account-multiple</v-icon>
             <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
               <template #badge>
                 <span v-if="model.Faces">{{ model.Faces }}</span>
@@ -60,7 +60,7 @@
         <v-tab id="tab-files" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">mdi-film</v-icon>
+            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-film</v-icon>
             <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
               <template #badge>
                 <span v-if="model.Files.length">{{ model.Files.length }}</span>
@@ -74,28 +74,29 @@
           <v-icon>mdi-cog</v-icon>
         </v-tab>
 
-        <!-- TODO: check property touchless TEST -->
-        <v-tabs-items touchless v-model="active">
-          <v-window-item>
-            <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
-          </v-window-item>
+        <v-tabs v-model="active">
+          <v-window>
+            <v-window-item>
+              <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
+            </v-window-item>
 
-          <v-window-item>
-            <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
-          </v-window-item>
+            <v-window-item>
+              <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
+            </v-window-item>
 
-          <v-window-item>
-            <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
-          </v-window-item>
+            <v-window-item>
+              <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
+            </v-window-item>
 
-          <v-window-item>
-            <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
-          </v-window-item>
+            <v-window-item>
+              <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
+            </v-window-item>
 
-          <v-window-item v-if="$config.feature('edit')">
-            <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
-          </v-window-item>
-        </v-tabs-items>
+            <v-window-item v-if="$config.feature('edit')">
+              <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
+            </v-window-item>
+          </v-window>
+        </v-tabs>
       </v-tabs>
     </v-card>
   </v-dialog>
