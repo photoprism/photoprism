@@ -23,7 +23,7 @@ docker compose version
 echo:
 echo Downloading config files...
 
-curl.exe -s -o docker-compose.yml https://dl.photoprism.app/docker/windows/docker-compose.yml
+curl.exe -s -o compose.yaml https://dl.photoprism.app/docker/windows/compose.yaml
 curl.exe -s -o start.bat https://dl.photoprism.app/docker/windows/start.bat
 curl.exe -s -o stop.bat https://dl.photoprism.app/docker/windows/stop.bat
 curl.exe -s -o uninstall.bat https://dl.photoprism.app/docker/windows/uninstall.bat

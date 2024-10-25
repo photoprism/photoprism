@@ -17,7 +17,7 @@ docker compose rm -s -v
 echo:
 echo Removing config files...
 
-del docker-compose.yml
+del compose.yaml
 del start.bat
 del stop.bat
 del install.bat

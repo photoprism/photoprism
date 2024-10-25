@@ -44,7 +44,7 @@ To edit the main config file containing services, storage paths, and basic setti
 
 ```
 cd /opt/photoprism
-nano docker-compose.yml
+nano compose.yaml
 ```
 
 Remember to restart services for changes to take effect:
@@ -62,12 +62,12 @@ To get an official, free HTTPS certificate from Let's Encrypt, your server needs
 
 You may add a static DNS entry (on DigitalOcean go to Networking > Domains) for this, or use a Dynamic DNS service of your choice.
 
-Once your server has a public domain name, please disable the self-signed certificate and enable domain based routing in docker-compose.yml and traefik.yaml (see inline instructions in !! UPPERCASE !!):
+Once your server has a public domain name, please disable the self-signed certificate and enable domain based routing in compose.yaml and traefik.yaml (see inline instructions in !! UPPERCASE !!):
 
 ```
 ssh root@YOUR-SERVER-IP
 cd /opt/photoprism
-nano docker-compose.yml
+nano compose.yaml
 nano traefik.yaml
 ```
 
