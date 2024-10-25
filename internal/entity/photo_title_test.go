@@ -142,7 +142,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Photo / Germany / 2016", m.PhotoTitle)
+		assert.Equal(t, "longlonglonglonglongcity / 2016", m.PhotoTitle)
 	})
 	t.Run("photo with location without loc name and short city", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
@@ -152,7 +152,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Photo / shortcity / 2016", m.PhotoTitle)
+		assert.Equal(t, "shortcity / Germany / 2016", m.PhotoTitle)
 	})
 	t.Run("no location original name", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
@@ -188,7 +188,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if len(m.SubjectNames()) > 0 {
 			assert.Equal(t, "Actress A / 1990", m.PhotoTitle)
 		} else {
-			assert.Equal(t, "Bridge / 1990", m.PhotoTitle)
+			assert.Equal(t, "Bridge1 / 1990", m.PhotoTitle)
 		}
 	})
 	t.Run("no location no labels no takenAt", func(t *testing.T) {
@@ -199,7 +199,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Photo", m.PhotoTitle)
+		assert.Equal(t, "Photo20", m.PhotoTitle)
 	})
 	t.Run("OnePerson", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")

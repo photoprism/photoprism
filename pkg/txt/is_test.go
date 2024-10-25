@@ -68,6 +68,66 @@ func TestIsASCII(t *testing.T) {
 	})
 }
 
+func TestIsNumeric(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsNumeric(""))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.True(t, IsNumeric("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsNumeric("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.True(t, IsNumeric("2024-10-23"))
+	})
+	t.Run("20200102-204030", func(t *testing.T) {
+		assert.True(t, IsNumeric("20200102-204030"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsNumeric("ABC"))
+	})
+}
+
+func TestIsNumber(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsNumber(""))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.True(t, IsNumber("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsNumber("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.False(t, IsNumber("2024-10-23"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsNumber("ABC"))
+	})
+}
+
+func TestIsDateNumber(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsDateNumber(""))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.True(t, IsDateNumber("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsDateNumber("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.True(t, IsDateNumber("2024-10-23"))
+	})
+	t.Run("20200102-204030", func(t *testing.T) {
+		assert.True(t, IsDateNumber("20200102-204030"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsDateNumber("ABC"))
+	})
+}
+
 func TestIsLatin(t *testing.T) {
 	t.Run("The quick brown fox.", func(t *testing.T) {
 		assert.False(t, IsLatin("The quick brown fox."))

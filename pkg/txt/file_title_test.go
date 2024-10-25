@@ -32,10 +32,10 @@ func TestFileTitle(t *testing.T) {
 		assert.Equal(t, "Photo Lover", FileTitle("photo-lover"))
 	})
 	t.Run("nyc", func(t *testing.T) {
-		assert.Equal(t, "Bridge in, or by, NYC", FileTitle("BRIDGE in, or by, nyc"))
+		assert.Equal(t, "BRIDGE in, or by, NYC", FileTitle("BRIDGE in, or by, nyc"))
 	})
 	t.Run("apple", func(t *testing.T) {
-		assert.Equal(t, "Phil Unveils iPhone, iPad, iPod, 'airpods', Airpod, AirPlay, iMac or MacBook", FileTitle("phil unveils iphone, ipad, ipod, 'airpods', airpod, airplay, imac or macbook 11 pro and max"))
+		assert.Equal(t, "Phil Unveils iPhone, iPad, iPod, 'airpods', Airpod, AirPlay, iMac or MacBook Pro and Max", FileTitle("phil unveils iphone, ipad, ipod, 'airpods', airpod, airplay, imac or macbook 11 pro and max"))
 	})
 	t.Run("IMG_4568", func(t *testing.T) {
 		assert.Equal(t, "", FileTitle("IMG_4568"))
@@ -53,7 +53,7 @@ func TestFileTitle(t *testing.T) {
 		assert.Equal(t, "Tim Robbins / TIFF", FileTitle("tim-robbins--tiff-2012_7999233420_o.jpg"))
 	})
 	t.Run("20200102-204030-Berlin-Germany-2020-3h4.jpg", func(t *testing.T) {
-		assert.Equal(t, "Berlin Germany", FileTitle("20200102-204030-Berlin-Germany-2020-3h4.jpg"))
+		assert.Equal(t, "Berlin Germany 2020", FileTitle("20200102-204030-Berlin-Germany-2020-3h4.jpg"))
 	})
 	t.Run("changing-of-the-guard--buckingham-palace_7925318070_o.jpg", func(t *testing.T) {
 		assert.Equal(t, "Changing of the Guard / Buckingham Palace", FileTitle("changing-of-the-guard--buckingham-palace_7925318070_o.jpg"))
@@ -79,10 +79,10 @@ func TestFileTitle(t *testing.T) {
 		assert.Equal(t, "Cyka Swappable Mag", FileTitle("Cyka - swappable mag (82405706) .jpg"))
 	})
 	t.Run("issue_361_d", func(t *testing.T) {
-		assert.Equal(t, "Dishwasher Friedrich the Smol", FileTitle("dishwasher1910 - Friedrich the smol (82201574) 1ページ.jpg"))
+		assert.Equal(t, "Dishwasher1910 Friedrich the Smol", FileTitle("dishwasher1910 - Friedrich the smol (82201574) 1ページ.jpg"))
 	})
 	t.Run("issue_361_e", func(t *testing.T) {
-		assert.Equal(t, "Eaycddvu Aafuur", FileTitle("EaycddvU0AAfuUR.jpg"))
+		assert.Equal(t, "EaycddvU0AAfuUR", FileTitle("EaycddvU0AAfuUR.jpg"))
 	})
 	t.Run("Eigene Bilder 1013/2007/oldies/neumühle", func(t *testing.T) {
 		// TODO: Normalize strings, see https://godoc.org/golang.org/x/text/unicode/norm
@@ -92,9 +92,11 @@ func TestFileTitle(t *testing.T) {
 		assert.Equal(t, "Neumühle", FileTitle("Neumühle"))
 	})
 	t.Run("IQVG4929", func(t *testing.T) {
-		assert.Equal(t, "", FileTitle("IQVG4929.jpg"))
+		assert.Equal(t, "IQVG4929", FileTitle("IQVG4929.jpg"))
 	})
-
+	t.Run("IMG_1234", func(t *testing.T) {
+		assert.Equal(t, "", FileTitle("IMG_1234.jpg"))
+	})
 	t.Run("du,-ich,-er, Sie und es", func(t *testing.T) {
 		assert.Equal(t, "Du, Ich, Er, Sie und Es", FileTitle("du,-ich,-er, Sie und es"))
 	})
@@ -114,7 +116,7 @@ func TestFileTitle(t *testing.T) {
 		assert.Equal(t, "Boston New Year's", FileTitle("boston new year's"))
 	})
 	t.Run("Screenshot", func(t *testing.T) {
-		assert.Equal(t, "Screenshot", FileTitle("Screenshot 2020-05-04 at 14:25:01.jpeg"))
+		assert.Equal(t, "Screenshot 2020 05", FileTitle("Screenshot 2020-05-04 at 14:25:01.jpeg"))
 	})
 	t.Run("HD", func(t *testing.T) {
 		assert.Equal(t, "Desktop Nebula HD Wallpapers", FileTitle("Desktop-Nebula-hd-Wallpapers.jpeg"))
@@ -124,5 +126,26 @@ func TestFileTitle(t *testing.T) {
 	})
 	t.Run("ImgNonCommercialPics", func(t *testing.T) {
 		assert.Equal(t, "Non Commercial Pics", FileTitle("Img Non Commercial Pics"))
+	})
+	t.Run("Birthday", func(t *testing.T) {
+		assert.Equal(t, "40th Birthday in Berlin", FileTitle("2024-10-23 40th Birthday in Berlin.jpg"))
+	})
+	t.Run("February2nd", func(t *testing.T) {
+		assert.Equal(t, "February 2nd", FileTitle("2024-10-23 February 2nd.jpg"))
+	})
+	t.Run("Boeing737", func(t *testing.T) {
+		assert.Equal(t, "Boeing", FileTitle("Boeing 737.jpg"))
+	})
+	t.Run("Boeing747-8F", func(t *testing.T) {
+		assert.Equal(t, "Boeing 747 8F", FileTitle("Boeing 747-8F.jpg"))
+	})
+	t.Run("Boeing747-100SR", func(t *testing.T) {
+		assert.Equal(t, "Boeing 747 100SR", FileTitle("Boeing 747-100SR.jpg"))
+	})
+	t.Run("Apostrophe", func(t *testing.T) {
+		assert.Equal(t, "Ma'am", FileTitle("Ma'am"))
+	})
+	t.Run("Download", func(t *testing.T) {
+		assert.Equal(t, "Tourist Attraction Berlin", FileTitle("20170812-185131-Tourist-Attraction-Berlin-2017.jpg"))
 	})
 }
