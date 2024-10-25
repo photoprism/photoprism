@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-']{1,}")
+var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\d\\-']{1,}")
 
 // UnknownWord returns true if the string does not seem to be a real word.
 func UnknownWord(s string) bool {
@@ -36,7 +36,7 @@ func Words(s string) (results []string) {
 	for _, w := range KeywordsRegexp.FindAllString(s, -1) {
 		w = strings.Trim(w, "- '")
 
-		if w == "" || len(w) < 2 && IsLatin(w) {
+		if w == "" || len(w) < 2 && IsLatin(w) || IsNumeric(w) {
 			continue
 		}
 
