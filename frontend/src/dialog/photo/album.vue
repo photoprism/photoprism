@@ -1,6 +1,6 @@
 <template>
-  <v-dialog :value="show" persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
-    <v-card raised elevation="24">
+  <v-dialog :model-value="show" persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
+    <v-card elevation="24">
       <v-card-text class="pt-6 px-6">
         <v-row>
           <v-col cols="3" class="text-left">
@@ -14,13 +14,13 @@
               autocomplete="off"
               :hint="$gettext('Album Name')"
               :items="items"
-              :search-input.sync="search"
+              :search.sync="search"
               :loading="loading"
               hide-no-data
               hide-details
-              filled
+              variant="filled"
               flat
-              item-text="Title"
+              item-title="Title"
               item-value="UID"
               :label="$gettext('Album Name')"
               color="secondary-dark"

@@ -1,7 +1,7 @@
 <template>
-  <v-dialog :value="show" persistent max-width="500" class="modal-dialog p-account-passcode-dialog" @keydown.esc="close">
+  <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-passcode-dialog" @keydown.esc="close">
     <v-form ref="form" lazy-validation accept-charset="UTF-8" class="form-password" @submit.prevent>
-      <v-card raised elevation="24">
+      <v-card elevation="24">
         <v-card-title class="pa-2">
           <v-row class="pa-2">
             <v-col cols="10" class="text-left">
@@ -35,7 +35,7 @@
                   hide-details
                   required
                   autofocus
-                  solo
+                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -96,7 +96,7 @@
                   inputmode="numeric"
                   hide-details
                   required
-                  solo
+                  variant="solo"
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="one-time-code"
@@ -135,7 +135,7 @@
                   mask="nnn nnn nnn nnn"
                   hide-details
                   readonly
-                  solo
+                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -190,7 +190,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   hide-details
                   required
-                  solo
+                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"

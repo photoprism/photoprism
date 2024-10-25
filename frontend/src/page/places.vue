@@ -5,12 +5,12 @@
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field
             v-model.lazy.trim="filter.q"
-            solo
+            variant="solo"
             hide-details
             clearable
             flat
             single-line
-            validate-on-blur
+            validate-on="blur"
             class="input-search pa-0 ma-0"
             :label="$gettext('Search')"
             prepend-inner-icon="mdi-magnify"

@@ -1,7 +1,7 @@
 <template>
-  <v-dialog :value="show" persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
+  <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
     <v-form ref="form" class="form-password" accept-charset="UTF-8" @submit.prevent>
-      <v-card raised elevation="24">
+      <v-card elevation="24">
         <v-card-title class="pa-2">
           <v-row class="pa-2">
             <v-col cols="9" class="text-left">
@@ -16,7 +16,7 @@
         </v-card-title>
         <v-card-text class="py-0 px-2">
           <v-row align="start">
-            <v-col v-if="oldRequired" cols="12" class="px-2 pb-2 caption">
+            <v-col v-if="oldRequired" cols="12" class="px-2 pb-2 text-caption">
               <translate>Please note that changing your password will log you out on other devices and browsers.</translate>
             </v-col>
             <v-col v-if="oldRequired" cols="12" class="px-2 py-1">
@@ -24,7 +24,7 @@
                 v-model="oldPassword"
                 hide-details
                 required
-                filled
+                variant="filled"
                 flat
                 type="password"
                 autocorrect="off"
@@ -44,7 +44,7 @@
                 required
                 counter
                 persistent-hint
-                filled
+                variant="filled"
                 flat
                 type="password"
                 :disabled="busy"
@@ -66,7 +66,7 @@
                 required
                 counter
                 persistent-hint
-                filled
+                variant="filled"
                 flat
                 type="password"
                 :disabled="busy"

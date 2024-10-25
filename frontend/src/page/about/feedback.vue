@@ -10,7 +10,7 @@
       </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-6">
-      <h3 class="title font-weight-bold pt-6 pb-2 text-center">
+      <h3 class="text-h6 font-weight-bold pt-6 pb-2 text-center">
         <translate>We appreciate your feedback!</translate>
       </h3>
       <p class="text-body-2 py-6 text-center">
@@ -30,9 +30,9 @@
             :items="options.FeedbackCategories()"
             :label="$gettext('Category')"
             color="secondary-dark"
-            background-color="secondary-light"
+            bg-color="secondary-light"
             flat
-            solo
+            variant="solo"
             hide-details
             required
             autocomplete="off"
@@ -42,15 +42,15 @@
         </v-col>
 
         <v-col cols="12" class="pa-2">
-          <v-textarea v-model="form.Message" required auto-grow flat solo hide-details autocomplete="off" rows="10" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('How can we help?')"></v-textarea>
+          <v-textarea v-model="form.Message" required auto-grow flat variant="solo" hide-details autocomplete="off" rows="10" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('How can we help?')"></v-textarea>
         </v-col>
 
         <v-col cols="12" sm="6" class="pa-2">
-          <v-text-field v-model="form.UserName" flat solo hide-details autocomplete="off" color="secondary-dark" background-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
+          <v-text-field v-model="form.UserName" flat variant="solo" hide-details autocomplete="off" color="secondary-dark" bg-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
         </v-col>
 
         <v-col cols="12" sm="6" class="pa-2">
-          <v-text-field v-model="form.UserEmail" flat solo hide-details required autocapitalize="none" color="secondary-dark" :rules="[(v) => !!v || $gettext('Required')]" background-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
+          <v-text-field v-model="form.UserEmail" flat variant="solo" hide-details required autocapitalize="none" color="secondary-dark" :rules="[(v) => !!v || $gettext('Required')]" bg-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
         </v-col>
 
         <v-col cols="12" class="d-flex grow px-2 py-1">

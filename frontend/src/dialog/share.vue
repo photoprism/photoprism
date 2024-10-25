@@ -1,6 +1,6 @@
 <template>
-  <v-dialog :value="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
-    <v-card raised elevation="24">
+  <v-dialog :model-value="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
+    <v-card elevation="24">
       <v-card-title class="pb-0">
         <v-row>
           <v-col cols="9">
@@ -30,27 +30,27 @@
                 <v-container fluid class="pa-0">
                   <v-row>
                     <v-col cols="12" class="pa-2">
-                      <v-text-field :value="link.url()" hide-details filled flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="secondary-dark" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+                      <v-text-field :model-value="link.url()" hide-details variant="filled" flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="secondary-dark" class="input-url" @click.stop="selectText($event)"> </v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" class="pa-2">
-                      <v-select v-model="link.Expires" hide-details filled flat :label="expires(link)" browser-autocomplete="off" color="secondary-dark" item-text="text" item-value="value" :items="options.Expires()" class="input-expires"> </v-select>
+                      <v-select v-model="link.Expires" hide-details variant="filled" flat :label="expires(link)" browser-autocomplete="off" color="secondary-dark" item-title="text" item-value="value" :items="options.Expires()" class="input-expires"> </v-select>
                     </v-col>
                     <v-col cols="12" sm="6" class="pa-2">
-                      <v-text-field v-model="link.Token" hide-details filled flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="secondary-dark" class="input-secret"></v-text-field>
+                      <v-text-field v-model="link.Token" hide-details variant="filled" flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="secondary-dark" class="input-secret"></v-text-field>
                     </v-col>
-                    <!-- v-col cols="12" sm="6" class="pa-2">
-                        <v-text-field
-                                hide-details
-                                autocomplete="off"
-                                :label="label.pass"
-                                :placeholder="link.HasPassword ? '••••••••' : 'optional'"
-                                color="secondary-dark"
-                                v-model="link.Password"
-                                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                :type="showPassword ? 'text' : 'password'"
-                                @click:append="showPassword = !showPassword"
-                        ></v-text-field>
-                    </v-col -->
+                    <!-- <v-col cols="12" sm="6" class="pa-2">
+                      <v-text-field
+                        v-model="link.Password"
+                        hide-details
+                        autocomplete="off"
+                        :label="label.pass"
+                        :placeholder="link.HasPassword ? '••••••••' : 'optional'"
+                        color="secondary-dark"
+                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPassword ? 'text' : 'password'"
+                        @click:append="showPassword = !showPassword"
+                      ></v-text-field>
+                    </v-col> -->
                     <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
                       <v-btn size="small" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>mdi-delete</v-icon>
@@ -68,7 +68,7 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <v-container fluid :text-left="!rtl" :text-right="rtl" class="pb-0 pt-6 pr-0 pl-0 caption">
+        <v-container fluid :text-left="!rtl" :text-right="rtl" class="pb-0 pt-6 pr-0 pl-0 text-caption">
           <translate :translate-params="{ name: model.modelName() }">People you share a link with will be able to view public contents.</translate>
           <translate>A click will copy it to your clipboard.</translate>
           <translate>Any private photos and videos remain private and won't be shared.</translate>

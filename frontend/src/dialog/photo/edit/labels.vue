@@ -7,13 +7,13 @@
         </v-col>
         <v-col class="pa-2-md-and-up ra-4-table-md-and-up" cols="12" md="10" xxl="1">
           <v-data-table v-model="selected" :headers="listColumns" :items="model.Labels" hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">
-            <template #item="props" class="p-file">
-              <tr>
+            <template #item="props">
+              <tr class="p-file">
                 <td>
                   <v-edit-dialog :return-value.sync="props.item.Label.Name" class="p-inline-edit" @save="renameLabel(props.item.Label)">
                     {{ props.item.Label.Name }}
                     <template #input>
-                      <v-text-field v-model="props.item.Label.Name" :rules="[nameRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
+                      <v-text-field v-model="props.item.Label.Name" :rules="[nameRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
                     </template>
                   </v-edit-dialog>
                 </td>
@@ -40,7 +40,7 @@
             <template v-if="!disabled" #footer>
               <tr>
                 <td>
-                  <v-text-field v-model="newLabel" :rules="[nameRule]" color="secondary-dark" autocomplete="off" :label="$gettext('Name')" single-line flat solo hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
+                  <v-text-field v-model="newLabel" :rules="[nameRule]" color="secondary-dark" autocomplete="off" :label="$gettext('Name')" single-line flat variant="solo" hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
                 </td>
                 <td class="text-left">
                   {{ sourceName("manual") }}

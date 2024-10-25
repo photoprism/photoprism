@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
         <v-btn icon theme="dark" @click.stop="cancel">
@@ -21,17 +21,16 @@
                 v-if="total === 0"
                 v-model="selectedAlbums"
                 flat
-                solo
+                variant="solo"
                 hide-details
                 chips
-                deletable-chips
+                closable-chips
                 multiple
                 color="secondary-dark"
                 class="my-0 input-albums"
                 :items="albums"
                 item-value="UID"
-                item-text="Title"
-                :allow-overflow="false"
+                item-title="Title"
                 :label="$gettext('Select albums or create a new one')"
                 return-object
               >
@@ -42,8 +41,8 @@
                     </v-list-item-title>
                   </v-list-item>
                 </template>
-                <template #selection="data">
-                  <v-chip :key="JSON.stringify(data.item)" :input-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
+                <template #chip="data">
+                  <v-chip :key="JSON.stringify(data.item)" :model-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
                     <v-icon class="pr-1">mdi-bookmark</v-icon>
                     <!-- TODO: change this filter -->
                     <!-- {{ data.item.Title ? data.item.Title : data.item | truncate(40) }} -->

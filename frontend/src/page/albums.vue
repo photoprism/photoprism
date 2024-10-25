@@ -3,13 +3,13 @@
     <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
-          :value="filter.q"
-          solo
+          :model-value="filter.q"
+          variant="solo"
           hide-details
           clearable
           overflow
           single-line
-          validate-on-blur
+          validate-on="blur"
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
           autocomplete="off"
@@ -51,19 +51,19 @@
           <v-row>
             <v-col cols="12" sm="4" class="pa-2 p-year-select">
               <v-select
-                :value="filter.year"
+                :model-value="filter.year"
                 :label="$gettext('Year')"
                 :disabled="context === 'state'"
                 :menu-props="{ maxHeight: 346 }"
                 flat
-                solo
+                variant="solo"
                 hide-details
                 color="secondary-dark"
-                background-color="secondary"
+                bg-color="secondary"
                 item-value="value"
-                item-text="text"
+                item-title="text"
                 :items="yearOptions()"
-                @change="
+                @update:model-value="
                   (v) => {
                     updateQuery({ year: v });
                   }
@@ -73,16 +73,16 @@
             </v-col>
             <v-col cols="12" sm="4" class="pa-2 p-category-select">
               <v-select
-                :value="filter.category"
+                :model-value="filter.category"
                 :label="$gettext('Category')"
                 :menu-props="{ maxHeight: 346 }"
                 flat
-                solo
+                variant="solo"
                 hide-details
                 color="secondary-dark"
-                background-color="secondary"
+                bg-color="secondary"
                 :items="categories"
-                @change="
+                @update:model-value="
                   (v) => {
                     updateQuery({ category: v });
                   }
@@ -92,16 +92,16 @@
             </v-col>
             <v-col cols="12" sm="4" class="pa-2 p-sort-select">
               <v-select
-                :value="filter.order"
+                :model-value="filter.order"
                 :label="$gettext('Sort Order')"
                 :menu-props="{ maxHeight: 400 }"
                 flat
-                solo
+                variant="solo"
                 hide-details
                 color="secondary-dark"
-                background-color="secondary"
+                bg-color="secondary"
                 :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
-                @change="
+                @update:model-value="
                   (v) => {
                     updateQuery({ order: v });
                   }
@@ -148,7 +148,7 @@
                 :transition="false"
                 aspect-ratio="1"
                 style="user-select: none"
-                class="card darken-1 clickable"
+                class="card clickable"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
@@ -211,7 +211,7 @@
               </v-card-title>
 
               <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
-                <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
+                <div v-if="album.Description" class="text-caption mb-2" :title="$gettext('Description')">
                   <button @click.exact="edit(album)">
                     <!-- TODO: change this filter -->
                     <!-- {{ album.Description | truncate(100) }} -->
@@ -219,7 +219,7 @@
                   </button>
                 </div>
 
-                <div v-else-if="album.Type === 'album'" class="caption mb-2">
+                <div v-else-if="album.Type === 'album'" class="text-caption mb-2">
                   <button v-if="album.PhotoCount === 1" @click.exact="edit(album)">
                     <translate>Contains one picture.</translate>
                   </button>
@@ -230,21 +230,21 @@
                     <translate>Add pictures from search results by selecting them.</translate>
                   </button>
                 </div>
-                <div v-else-if="album.Type === 'folder'" class="caption mb-2">
+                <div v-else-if="album.Type === 'folder'" class="text-caption mb-2">
                   <button @click.exact="edit(album)">
                     <!-- TODO: change this filter -->
 <!-- /{{ album.Path | truncate(100) }} -->
 /{{ album.Path }}
 </button>
                 </div>
-                <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
+                <div v-if="album.Category !== ''" class="text-caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
                     <!-- TODO: change this icon -->
                     <v-icon size="14">local_offer</v-icon>
                     {{ album.Category }}
                   </button>
                 </div>
-                <div v-if="album.getLocation() !== ''" class="caption mb-2 d-inline-block">
+                <div v-if="album.getLocation() !== ''" class="text-caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
                     <v-icon size="14">mdi-map-marker</v-icon>
                     {{ album.getLocation() }}

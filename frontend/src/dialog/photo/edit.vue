@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
+  <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
       <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
         <v-btn icon theme="dark" class="action-close" @click.stop="close">
@@ -21,8 +21,8 @@
             <v-icon v-else>mdi-chevron-left</v-icon>
           </v-btn>
         </v-toolbar-items>
-    </v-toolbar>
-      <v-tabs v-model="active" elevation="0" grow class="form bg-transparent" background-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
+      </v-toolbar>
+      <v-tabs v-model="active" elevation="0" grow class="form bg-transparent" bg-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>

@@ -33,7 +33,8 @@
                 :hint="$gettext('Enable debug mode to display additional logs and help with troubleshooting.')"
                 prepend-icon="mdi-bug"
                 persistent-hint
-                @change="onChange">
+                @update:model-value="onChange"
+              >
               </v-checkbox>
             </v-col>
 
@@ -47,7 +48,8 @@
                 :hint="$gettext('Enable new features currently under development.')"
                 prepend-icon="mdi-flask-empty"
                 persistent-hint
-                @change="onChange">
+                @update:model-value="onChange"
+              >
               </v-checkbox>
             </v-col>
 
@@ -61,7 +63,7 @@
                 :hint="$gettext('Disable features that require write permission for the originals folder.')"
                 prepend-icon="mdi-hand-back-right-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -76,7 +78,7 @@
                 :hint="$gettext('Prevent database and album backups as well as YAML sidecar files from being created.')"
                 prepend-icon="mdi-shield-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -91,7 +93,7 @@
                 :hint="$gettext('Prevent other apps from accessing PhotoPrism as a shared network drive.')"
                 prepend-icon="mdi-sync-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -106,7 +108,8 @@
                 :hint="$gettext('Disable interactive world maps and reverse geocoding.')"
                 prepend-icon="mdi-map-marker-off"
                 persistent-hint
-                @change="onChange">
+                @update:model-value="onChange"
+              >
               </v-checkbox>
             </v-col>
 
@@ -120,7 +123,7 @@
                 :hint="$gettext('ExifTool is required for full support of XMP metadata, videos and Live Photos.')"
                 prepend-icon="mdi-camera-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -135,7 +138,7 @@
                 :hint="$gettext('TensorFlow is required for image classification, facial recognition, and detecting unsafe content.')"
                 prepend-icon="mdi-layers-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -161,7 +164,7 @@
                   :hint="$gettext('Create regular backups based on the configured schedule.')"
                   prepend-icon="mdi-history"
                   persistent-hint
-                  @change="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-checkbox>
               </v-col>
@@ -177,7 +180,7 @@
                   :hint="$gettext('Create YAML files to back up album metadata.')"
                   prepend-icon="photo_album"
                   persistent-hint
-                  @change="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-checkbox>
               </v-col>
@@ -193,7 +196,7 @@
                   :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
                   prepend-icon="file_present"
                   persistent-hint
-                  @change="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-checkbox>
               </v-col>
@@ -210,21 +213,21 @@
         <v-card-actions>
           <v-row align="start">
             <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="px-2 pb-2">
-              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" background-color="secondary-light" hide-details filled @change="onChange"></v-select>
+              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" bg-color="secondary-light" hide-details variant="filled" @update:model-value="onChange"></v-select>
             </v-col>
 
             <v-col cols="12" lg="4" class="px-2 pb-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
+              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
+              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
@@ -237,7 +240,7 @@
                 :hint="$gettext('On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices.')"
                 prepend-icon="mdi-memory"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -256,7 +259,7 @@
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
+              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
@@ -264,7 +267,7 @@
                 {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
               </v-list-subheader>
               <v-col class="pr-6">
-                <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
+                <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @update:model-value="onChange"></v-slider>
               </v-col>
             </v-col>
 
@@ -273,7 +276,7 @@
                 {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
               </v-list-subheader>
               <v-col class="pr-6">
-                <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
+                <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @update:model-value="onChange"></v-slider>
               </v-col>
             </v-col>
           </v-row>
@@ -297,7 +300,7 @@
                 :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
                 prepend-icon="mdi-raw-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -312,7 +315,7 @@
                 :hint="$gettext('Don\'t use RawTherapee to convert RAW images.')"
                 prepend-icon="mdi-raw-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -328,7 +331,7 @@
                 :hint="$gettext('Enables RAW converter presets. May reduce performance.')"
                 prepend-icon="tonality"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -344,7 +347,7 @@
                 :hint="$gettext('Don\'t use ImageMagick to convert images.')"
                 prepend-icon="auto_fix_off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
@@ -359,13 +362,23 @@
                 :hint="$gettext('Disables video transcoding and thumbnail extraction.')"
                 prepend-icon="mdi-video-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
 
             <v-col v-if="isSponsor" cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.DisableVectors" :disabled="busy" class="ma-0 pa-0 input-disable-vectors" color="secondary-dark" :label="$gettext('Disable Vectors')" :hint="$gettext('Disables vector graphics support.')" prepend-icon="font_download_off" persistent-hint @change="onChange">
+              <v-checkbox
+                v-model="settings.DisableVectors"
+                :disabled="busy"
+                class="ma-0 pa-0 input-disable-vectors"
+                color="secondary-dark"
+                :label="$gettext('Disable Vectors')"
+                :hint="$gettext('Disables vector graphics support.')"
+                prepend-icon="font_download_off"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
             </v-col>
           </v-row>

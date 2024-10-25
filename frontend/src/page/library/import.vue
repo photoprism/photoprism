@@ -16,20 +16,20 @@
           hide-details
           hide-no-data
           flat
-          solo
+          variant="solo"
           autocomplete="off"
           :items="dirs"
           :loading="loading"
           :disabled="busy || !ready"
-          item-text="name"
+          item-title="name"
           item-value="path"
-          @change="onChange"
+          @update:model-value="onChange"
           @focus="onFocus"
         >
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="secondary-dark" height="1.5em" :value="completed" :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear color="secondary-dark" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
         <v-row align="start" class="pb-2">
@@ -43,7 +43,7 @@
               :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
               prepend-icon="mdi-delete"
               persistent-hint
-              @change="onChange"
+              @update:model-value="onChange"
             >
             </v-checkbox>
           </v-col>

@@ -1,7 +1,7 @@
 <template>
-  <v-dialog :value="show" persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
+  <v-dialog :model-value="show" persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
     <v-form ref="form" lazy-validation class="form-password" accept-charset="UTF-8" @submit.prevent>
-      <v-card raised elevation="24">
+      <v-card elevation="24">
         <v-card-title class="pa-2">
           <v-row class="pa-2">
             <v-col cols="9" class="text-left">
@@ -35,7 +35,7 @@
                   hide-details
                   required
                   autofocus
-                  solo
+                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -76,7 +76,7 @@
                   type="text"
                   hide-details
                   readonly
-                  solo
+                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -122,7 +122,7 @@
                   required
                   autofocus
                   hide-details
-                  filled
+                  variant="filled"
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
@@ -131,10 +131,10 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.scope" hide-details filled :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" class="input-scope"></v-select>
+                <v-select v-model="app.scope" hide-details variant="filled" :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" class="input-scope"></v-select>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details filled flat color="secondary-dark" class="input-expires" item-text="text" item-value="value" :items="options.Expires()"></v-select>
+                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details variant="filled" flat color="secondary-dark" class="input-expires" item-title="text" item-value="value" :items="options.Expires()"></v-select>
               </v-col>
             </v-row>
           </v-card-text>

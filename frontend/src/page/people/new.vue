@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-faces-search" lazy-validation @submit.prevent="updateQuery">
       <v-toolbar dense class="page-toolbar" flat color="secondary-light pa-0">
         <v-spacer></v-spacer>
-        <v-divider vertical></v-divider>
+        <v-divider direction="vertical"></v-divider>
 
         <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>mdi-refresh</v-icon>
@@ -38,7 +38,7 @@
           <v-col v-for="model in results" :key="model.ID" cols="12" sm="6" md="4" lg="3" xl="2" xxl="1" class="d-flex">
             <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card flex-grow-1">
               <div class="card-background card"></div>
-              <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1 clickable" @click.stop.prevent="onView(model)">
+              <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card clickable" @click.stop.prevent="onView(model)">
                 <v-btn :ripple="false" class="input-hidden" icon variant="text" size="small" absolute @click.stop.prevent="toggleHidden(model)">
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
@@ -49,14 +49,14 @@
                 <v-row v-if="model.SubjUID" align="center">
                   <v-col cols="12" class="text-left pa-0">
                     <v-text-field
-                      :value="model.Name"
+                      :model-value="model.Name"
                       :rules="[textRule]"
                       :readonly="readonly"
                       autocomplete="off"
                       class="input-name pa-0 ma-0"
                       hide-details
                       single-line
-                      solo-inverted
+                      variant="solo-inverted"
                       @change="
                         (newName) => {
                           onRename(model, newName);
@@ -74,26 +74,25 @@
                   <v-col cols="12" class="text-left pa-0">
                     <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox
-                      :value="model.Name"
+                      :model-value="model.Name"
                       style="z-index: 250"
                       :items="$config.values.people"
                       item-value="Name"
-                      item-text="Name"
+                      item-title="Name"
                       :readonly="readonly"
                       :return-object="false"
                       :menu-props="menuProps"
-                      :allow-overflow="false"
                       :hint="$gettext('Name')"
                       hide-details
                       single-line
-                      solo-inverted
+                      variant="solo-inverted"
                       open-on-clear
                       hide-no-data
                       append-icon=""
                       prepend-inner-icon="mdi-account-plus"
                       autocomplete="off"
                       class="input-name pa-0 ma-0"
-                      @change="
+                      @update:model-value="
                         (newName) => {
                           onRename(model, newName);
                         }

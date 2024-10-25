@@ -2,13 +2,13 @@
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field
-        :value="filter.q"
-        solo
+        :model-value="filter.q"
+        variant="solo"
         hide-details
         clearable
         overflow
         single-line
-        validate-on-blur
+        validate-on="blur"
         class="input-search background-inherit elevation-0"
         autocomplete="off"
         autocorrect="off"
@@ -42,7 +42,7 @@
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list v-else-if="errors.length > 0" dense lines="two-line" class="bg-transparent pa-1">
+    <v-list v-else-if="errors.length > 0" density="compact" lines="two-line" class="bg-transparent pa-1">
       <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
         <v-list-item :prepend-avatar="err.Level" :color="err.Level">
           <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->

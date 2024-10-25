@@ -28,7 +28,6 @@
                       hide-details
                       required
                       variant="solo"
-                      light
                       autofocus
                       autocorrect="off"
                       autocapitalize="none"
@@ -54,8 +53,6 @@
                       hide-details
                       required
                       variant="solo"
-                      light
-                      autofocus
                       autocorrect="off"
                       autocapitalize="none"
                       autocomplete="username"
@@ -78,7 +75,6 @@
                       hide-details
                       required
                       variant="solo"
-                      light
                       autocorrect="off"
                       autocapitalize="none"
                       autocomplete="current-password"

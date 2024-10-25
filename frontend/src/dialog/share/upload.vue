@@ -1,6 +1,6 @@
 <template>
-  <v-dialog :value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
-    <v-card raised elevation="24">
+  <v-dialog :model-value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+    <v-card elevation="24">
       <v-card-title class="pb-0">
         <v-row>
           <v-col cols="8">
@@ -18,7 +18,7 @@
       <v-card-text class="pt-0">
         <v-row>
           <v-col cols="12" class="text-left pt-2">
-            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data filled flat :label="$gettext('Account')" item-text="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @change="onChange"> </v-select>
+            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data variant="filled" flat :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
           </v-col>
           <v-col cols="12" class="text-left pt-2">
             <v-autocomplete
@@ -26,15 +26,15 @@
               color="secondary-dark"
               hide-details
               hide-no-data
-              filled
+              variant="filled"
               flat
               autocomplete="off"
               hint="Folder"
-              :search-input.sync="search"
+              :search.sync="search"
               :items="pathItems"
               :loading="loading"
               :disabled="loading || noServices"
-              item-text="abs"
+              item-title="abs"
               item-value="abs"
               :label="$gettext('Folder')"
             >

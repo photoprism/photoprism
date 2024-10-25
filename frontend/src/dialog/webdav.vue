@@ -20,7 +20,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">
-        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line outlined color="secondary-dark" :value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="secondary-dark" :model-value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1 clickable" @click="windowsHelp($event)">
@@ -28,7 +28,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">
-        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line outlined color="secondary-dark" :value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="secondary-dark" :model-value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">
@@ -37,7 +37,7 @@
 
       <v-card-text class="pa-2 text-body-1">
         <!-- TODO: change this icon -->
-        <v-alert color="primary darken-2" icon="info" class="pa-2" type="info" variant="outlined">
+        <v-alert color="primary-darken-2" icon="info" class="pa-2" type="info" variant="outlined">
           <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>

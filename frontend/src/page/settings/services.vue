@@ -4,7 +4,7 @@
       <template #item="props">
         <tr :data-name="props.item.AccName">
           <td class="p-account">
-            <button class="secondary-dark--text text--lighten-1" @click.stop.prevent="edit(props.item)">
+            <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
               {{ props.item.AccName }}
             </button>
           </td>
@@ -38,7 +38,7 @@
       </template>
     </v-data-table>
     <v-container fluid>
-      <p class="caption pa-0 clickable" @click.stop.prevent="webdavDialog">
+      <p class="text-caption pa-0 clickable" @click.stop.prevent="webdavDialog">
         <translate>Note:</translate>
         <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. </translate>
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. </translate>

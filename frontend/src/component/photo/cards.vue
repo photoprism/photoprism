@@ -23,7 +23,7 @@
     <v-row class="search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
       <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="flex xs12 sm6 md4 lg3 xlg2 ul1 d-flex">
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result placeholder flex-grow-1">
-          <div class="card darken-1 image" />
+          <div class="card image" />
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
           <div class="pa-6 card-details">
             <div>
@@ -32,10 +32,10 @@
                 <!-- {{ photo.Title | truncate(80) }} -->
                 {{ photo.Title }}
               </h3>
-              <div v-if="photo.Description" class="caption mb-2">
+              <div v-if="photo.Description" class="text-caption mb-2">
                 {{ photo.Description }}
               </div>
-              <div class="caption">
+              <div class="text-caption">
                 <i />
                 {{ photo.getDateString(true) }}
                 <br />
@@ -65,7 +65,7 @@
           <div
             :key="photo.Hash"
             :title="photo.Title"
-            class="card darken-1 clickable image"
+            class="card clickable image"
             :style="`background-image: url(${photo.thumbnailUrl('tile_500')})`"
             @touchstart.passive="input.touchStart($event, index)"
             @touchend.stop.prevent="onClick($event, index)"
@@ -153,12 +153,12 @@
                   {{ photo.Title }}
                 </button>
               </h3>
-              <div v-if="photo.Description" class="caption mb-2" :title="$gettext('Description')">
+              <div v-if="photo.Description" class="text-caption mb-2" :title="$gettext('Description')">
                 <button @click.exact="editPhoto(index)">
                   {{ photo.Description }}
                 </button>
               </div>
-              <div class="caption">
+              <div class="text-caption">
                 <button class="action-open-date" :data-uid="photo.UID" @click.exact="openDate(index)">
                   <i :title="$gettext('Taken')"> mdi-calendar-range </i>
                   {{ photo.getDateString(true) }}

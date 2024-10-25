@@ -44,12 +44,12 @@
           <tbody>
             <tr v-for="(photo, index) in photos" :key="photo.ID" ref="items" :data-index="index">
               <td :data-uid="photo.UID" class="result" :class="photo.classes()">
-                <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="image card darken-1"></div>
+                <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="image card"></div>
                 <div
                   v-else
                   :key="photo.Hash"
                   :style="`background-image: url(${photo.thumbnailUrl('tile_50')})`"
-                  class="card darken-1 clickable image"
+                  class="card clickable image"
                   @touchstart="onMouseDown($event, index)"
                   @touchend.stop.prevent="onClick($event, index)"
                   @mousedown="onMouseDown($event, index)"

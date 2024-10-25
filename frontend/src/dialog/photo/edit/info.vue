@@ -23,7 +23,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat solo autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
+                <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @update:model-value="save"> </v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -47,7 +47,7 @@
                 <translate>Original Name</translate>
               </td>
               <td>
-                <v-text-field v-model="model.OriginalName" flat solo dense hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
+                <v-text-field v-model="model.OriginalName" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
@@ -79,7 +79,7 @@
                 <translate>Albums</translate>
               </td>
               <td>
-                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
+                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="text-primary text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
               </td>
             </tr>
             <tr>
@@ -87,7 +87,7 @@
                 <translate>Quality Score</translate>
               </td>
               <td>
-                <v-rating v-model="model.Quality" :length="7" readonly small></v-rating>
+                <v-rating v-model="model.Quality" :length="7" readonly size="small"></v-rating>
               </td>
             </tr>
             <tr>
@@ -113,7 +113,7 @@
                 <translate>Stackable</translate>
               </td>
               <td>
-                <v-switch v-model="model.Stack" hide-details class="input-stackable" :true-value="0" :false-value="-1" :label="model.Stack > -1 ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Stack" hide-details class="input-stackable" :true-value="0" :false-value="-1" :label="model.Stack > -1 ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -121,7 +121,7 @@
                 <translate>Favorite</translate>
               </td>
               <td>
-                <v-switch v-model="model.Favorite" hide-details class="input-favorite" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Favorite" hide-details class="input-favorite" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr v-if="$config.feature('private')">
@@ -129,7 +129,7 @@
                 <translate>Private</translate>
               </td>
               <td>
-                <v-switch v-model="model.Private" hide-details class="input-private" :label="model.Private ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Private" hide-details class="input-private" :label="model.Private ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -137,7 +137,7 @@
                 <translate>Scan</translate>
               </td>
               <td>
-                <v-switch v-model="model.Scan" hide-details class="input-scan" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Scan" hide-details class="input-scan" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -145,7 +145,7 @@
                 <translate>Panorama</translate>
               </td>
               <td>
-                <v-switch v-model="model.Panorama" hide-details class="input-panorama" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Panorama" hide-details class="input-panorama" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -187,7 +187,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>

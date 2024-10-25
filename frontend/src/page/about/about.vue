@@ -122,7 +122,7 @@
         <a target="_blank" href="https://link.photoprism.app/reddit" rel="nofollow"><img :src="$config.staticUri + '/img/badge-reddit.svg'" alt="Reddit" style="max-width: 100%" /></a>
       </p>
 
-      <p class="caption mt-6 text-center">
+      <p class="text-caption mt-6 text-center">
         PhotoPrism® is a <a href="https://www.photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>. By using the software and services we provide, you agree to our <a href="https://www.photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
         <a href="https://www.photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and <a href="https://www.photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
       </p>

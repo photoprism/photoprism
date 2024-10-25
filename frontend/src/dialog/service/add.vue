@@ -1,6 +1,6 @@
 <template>
-  <v-dialog :value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
-    <v-card raised elevation="24">
+  <v-dialog :model-value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
+    <v-card elevation="24">
       <v-card-title class="pa-2">
         <v-row>
           <v-col cols="12" class="pa-2">
@@ -13,16 +13,16 @@
       <v-card-text class="pb-0 pt-0 px-2">
         <v-row>
           <v-col cols="12" class="pa-2">
-            <v-text-field v-model="model.AccURL" hide-details autofocus filled flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+            <v-text-field v-model="model.AccURL" hide-details autofocus variant="filled" flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" class="pa-2">
-            <v-text-field v-model="model.AccUser" hide-details filled flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+            <v-text-field v-model="model.AccUser" hide-details variant="filled" flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" class="pa-2">
             <v-text-field
               v-model="model.AccPass"
               hide-details
-              filled
+              variant="filled"
               flat
               autocomplete="new-password"
               autocapitalize="none"
@@ -38,7 +38,7 @@
       </v-card-text>
       <v-card-actions class="pt-1 pb-2 px-2">
         <v-row class="pa-2">
-          <v-col cols="12" class="text-left caption">
+          <v-col cols="12" class="text-left text-caption">
             <translate>Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.</translate>
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-col>

@@ -17,20 +17,20 @@
           hide-details
           hide-no-data
           flat
-          solo
+          variant="solo"
           autocomplete="off"
           :items="dirs"
           :loading="loading"
           :disabled="busy || !ready"
-          item-text="name"
+          item-title="name"
           item-value="path"
-          @change="onChange"
+          @update:model-value="onChange"
           @focus="onFocus"
         >
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="secondary-dark" height="1.5em" :value="completed" :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear color="secondary-dark" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
         <v-row align="start" class="pb-6">
@@ -44,7 +44,7 @@
               :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
               prepend-icon="mdi-cached"
               persistent-hint
-              @change="onChange"
+              @update:model-value="onChange"
             >
             </v-checkbox>
           </v-col>

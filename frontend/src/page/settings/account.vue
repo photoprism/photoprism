@@ -12,16 +12,16 @@
                     v-model="user.Details.Gender"
                     :label="$gettext('Gender')"
                     hide-details
-                    filled
+                    variant="filled"
                     flat
                     :disabled="busy"
-                    item-text="text"
+                    item-title="text"
                     item-value="value"
                     color="secondary-dark"
                     :items="options.Gender()"
                     class="input-gender"
                     :rules="[(v) => validLength(v, 0, 16) || $gettext('Invalid')]"
-                    @change="onChange"
+                    @update:model-value="onChange"
                   >
                   </v-select>
                 </v-col>
@@ -30,7 +30,7 @@
                     v-model="user.Details.NameTitle"
                     hide-details
                     required
-                    filled
+                    variant="filled"
                     flat
                     :disabled="busy"
                     maxlength="32"
@@ -49,7 +49,7 @@
                     v-model="user.Details.GivenName"
                     hide-details
                     required
-                    filled
+                    variant="filled"
                     flat
                     :disabled="busy"
                     maxlength="64"
@@ -68,7 +68,7 @@
                     v-model="user.Details.FamilyName"
                     hide-details
                     required
-                    filled
+                    variant="filled"
                     flat
                     :disabled="busy"
                     maxlength="64"
@@ -87,7 +87,7 @@
                     v-model="user.DisplayName"
                     hide-details
                     required
-                    filled
+                    variant="filled"
                     flat
                     :disabled="busy"
                     maxlength="200"
@@ -106,9 +106,9 @@
                     v-model="user.Email"
                     hide-details
                     required
-                    filled
+                    variant="filled"
                     flat
-                    validate-on-blur
+                    validate-on="blur"
                     type="email"
                     maxlength="250"
                     :disabled="busy"
@@ -137,7 +137,7 @@
               <v-textarea
                 v-model="user.Details.Bio"
                 auto-grow
-                solo
+                variant="solo"
                 hide-details
                 rows="2"
                 class="input-bio"
@@ -156,7 +156,7 @@
               <v-textarea
                 v-model="user.Details.About"
                 auto-grow
-                solo
+                variant="solo"
                 hide-details
                 rows="2"
                 class="input-about"
@@ -225,13 +225,14 @@
         <v-card-actions>
           <v-row align="start">
             <v-col cols="3" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details filled flat color="secondary-dark" :items="options.Days()" class="input-birth-day" @change="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details variant="filled" flat color="secondary-dark" :items="options.Days()" class="input-birth-day" @update:model-value="onChange"> </v-autocomplete>
             </v-col>
             <v-col cols="3" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details filled flat color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @change="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details variant="filled" flat color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @update:model-value="onChange">
+              </v-autocomplete>
             </v-col>
             <v-col cols="6" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details filled flat color="secondary-dark" :items="options.Years()" class="input-birth-year" @change="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details variant="filled" flat color="secondary-dark" :items="options.Years()" class="input-birth-year" @update:model-value="onChange"> </v-autocomplete>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -249,7 +250,7 @@
                 v-model="user.Details.Location"
                 hide-details
                 required
-                filled
+                variant="filled"
                 flat
                 :disabled="busy"
                 maxlength="500"
@@ -270,16 +271,16 @@
                 :label="$gettext('Country')"
                 hide-no-data
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 color="secondary-dark"
                 item-value="Code"
-                item-text="Name"
+                item-title="Name"
                 :items="countries"
                 class="input-country"
                 :rules="[(v) => validLength(v, 0, 2) || $gettext('Invalid')]"
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-autocomplete>
             </v-col>
@@ -288,7 +289,7 @@
                 v-model="user.Details.Phone"
                 hide-details
                 required
-                filled
+                variant="filled"
                 flat
                 :disabled="busy"
                 maxlength="32"
@@ -307,7 +308,7 @@
                 v-model="user.Details.SiteURL"
                 hide-details
                 required
-                filled
+                variant="filled"
                 flat
                 :disabled="busy"
                 type="url"
@@ -327,7 +328,7 @@
                 v-model="user.Details.FeedURL"
                 hide-details
                 required
-                filled
+                variant="filled"
                 flat
                 :disabled="busy"
                 type="url"

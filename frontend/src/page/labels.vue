@@ -3,13 +3,13 @@
     <v-form ref="form" class="p-labels-search" lazy-validation @submit.stop.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
-          :value="filter.q"
-          solo
+          :model-value="filter.q"
+          variant="solo"
           hide-details
           clearable
           overflow
           single-line
-          validate-on-blur
+          validate-on="blur"
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
@@ -71,7 +71,7 @@
                 :transition="false"
                 aspect-ratio="1"
                 style="user-select: none"
-                class="card darken-1 clickable"
+                class="card clickable"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
@@ -97,7 +97,7 @@
                     <v-icon>mdi-pencil</v-icon>
                   </span>
                   <template #input>
-                    <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
+                    <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
                   </template>
                 </v-edit-dialog>
                 <span v-else class="text-body-2 ma-0">
@@ -106,7 +106,7 @@
               </v-card-title>
 
               <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
-                <div class="caption mb-2">
+                <div class="text-caption mb-2">
                   <button v-if="label.PhotoCount === 1">
                     <translate>Contains one picture.</translate>
                   </button>

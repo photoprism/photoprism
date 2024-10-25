@@ -49,7 +49,7 @@
                 :transition="false"
                 loading="lazy"
                 aspect-ratio="1"
-                class="card darken-1 clickable"
+                class="card clickable"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
@@ -68,7 +68,7 @@
                       {{ model.baseName() }}
                     </button>
                   </h3>
-                  <div class="caption" title="Info">
+                  <div class="text-caption" title="Info">
                     {{ model.getInfo() }}
                   </div>
                 </div>
@@ -80,7 +80,7 @@
                       {{ model.baseName() }}
                     </button>
                   </h3>
-                  <div class="caption" title="Path">
+                  <div class="text-caption" title="Path">
                     <translate key="Folder">Folder</translate>
                   </div>
                 </div>

@@ -4,7 +4,7 @@
       <v-row class="pa-2 d-flex align-stretch" align="start">
         <v-col class="pa-2 p-photo d-flex" cols="12" sm="4" md="2" align-self="stretch">
           <v-card tile class="pa-0 ma-0 elevation-0 flex-grow-1" :title="model.Title">
-            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card darken-1 elevation-0 clickable" @click.exact="openPhoto()">
+            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card elevation-0 clickable" @click.exact="openPhoto()">
 </v-img>
           </v-card>
         </v-col>
@@ -17,7 +17,7 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 :label="$pgettext('Photo', 'Title')"
                 placeholder=""
@@ -37,13 +37,13 @@
                 :label="$gettext('Day')"
                 autocomplete="off"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 hide-no-data
                 color="secondary-dark"
                 :items="options.Days()"
                 class="input-day"
-                @change="updateTime"
+                @update:model-value="updateTime"
               >
               </v-autocomplete>
             </v-col>
@@ -57,13 +57,13 @@
                 :label="$gettext('Month')"
                 autocomplete="off"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 hide-no-data
                 color="secondary-dark"
                 :items="options.MonthsShort()"
                 class="input-month"
-                @change="updateTime"
+                @update:model-value="updateTime"
               >
               </v-autocomplete>
             </v-col>
@@ -77,13 +77,13 @@
                 :label="$gettext('Year')"
                 autocomplete="off"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 hide-no-data
                 color="secondary-dark"
                 :items="options.Years()"
                 class="input-year"
-                @change="updateTime"
+                @update:model-value="updateTime"
               >
               </v-autocomplete>
             </v-col>
@@ -100,7 +100,7 @@
                 autocorrect="off"
                 autocapitalize="none"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 return-masked-value
                 mask="##:##:##"
@@ -110,8 +110,7 @@
             </v-col>
 
             <v-col cols="6" sm="6" md="6" lg="3" class="pa-2">
-              <v-autocomplete v-model="model.TimeZone" :disabled="disabled" :label="$gettext('Time Zone')" hide-details flat hide-no-data color="secondary-dark" item-value="ID" item-text="Name" :items="options.TimeZones()" class="input-timezone" @change="updateTime">
-              </v-autocomplete>
+              <v-autocomplete v-model="model.TimeZone" :disabled="disabled" :label="$gettext('Time Zone')" hide-details flat hide-no-data color="secondary-dark" item-value="ID" item-title="Name" :items="options.TimeZones()" class="input-timezone" @update:model-value="updateTime"> </v-autocomplete>
             </v-col>
 
             <!-- TODO: change this icon -->
@@ -123,13 +122,13 @@
                 :readonly="!!(model.Lat || model.Lng)"
                 :label="$gettext('Country')"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 hide-no-data
                 autocomplete="off"
                 color="secondary-dark"
                 item-value="Code"
-                item-text="Name"
+                item-title="Name"
                 :items="countries"
                 class="input-country"
               >
@@ -147,7 +146,7 @@
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 autocorrect="off"
@@ -167,7 +166,7 @@
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 autocorrect="off"
@@ -190,11 +189,11 @@
                 :menu-props="{ maxHeight: 346 }"
                 autocomplete="off"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 color="secondary-dark"
                 item-value="ID"
-                item-text="Name"
+                item-title="Name"
                 :items="cameraOptions"
                 class="input-camera"
               >
@@ -202,11 +201,11 @@
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.Iso" :disabled="disabled" hide-details filled flat autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" color="secondary-dark" class="input-iso"></v-text-field>
+              <v-text-field v-model="model.Iso" :disabled="disabled" hide-details variant="filled" flat autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" color="secondary-dark" class="input-iso"></v-text-field>
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details filled flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" color="secondary-dark" class="input-exposure"></v-text-field>
+              <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details variant="filled" flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" color="secondary-dark" class="input-exposure"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6" class="pa-2 p-lens-select">
@@ -219,11 +218,11 @@
                 :menu-props="{ maxHeight: 346 }"
                 autocomplete="off"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 color="secondary-dark"
                 item-value="ID"
-                item-text="Name"
+                item-title="Name"
                 :items="lensOptions"
                 class="input-lens"
               >
@@ -231,11 +230,11 @@
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details filled flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" color="secondary-dark" class="input-fnumber"></v-text-field>
+              <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details variant="filled" flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" color="secondary-dark" class="input-fnumber"></v-text-field>
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details filled flat autocomplete="off" :label="$gettext('Focal Length')" placeholder="" color="secondary-dark" class="input-focal-length"></v-text-field>
+              <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details variant="filled" flat autocomplete="off" :label="$gettext('Focal Length')" placeholder="" color="secondary-dark" class="input-focal-length"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6" class="pa-2">
@@ -246,7 +245,7 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 :label="$gettext('Artist')"
@@ -264,7 +263,7 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 :label="$gettext('Copyright')"
@@ -282,7 +281,7 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 auto-grow
@@ -302,7 +301,7 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 auto-grow
@@ -321,7 +320,7 @@
                 :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 auto-grow
@@ -340,7 +339,7 @@
                 :append-icon="model.Details.KeywordsSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 auto-grow
@@ -359,7 +358,7 @@
                 :append-icon="model.Details.NotesSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 hide-details
-                filled
+                variant="filled"
                 flat
                 autocomplete="off"
                 auto-grow

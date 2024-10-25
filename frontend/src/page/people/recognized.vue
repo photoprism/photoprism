@@ -31,7 +31,7 @@
           "
         ></v-text-field>
 
-        <v-divider vertical></v-divider>
+        <v-divider direction="vertical"></v-divider>
 
         <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>mdi-refresh</v-icon>

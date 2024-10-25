@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-settings" :class="$config.aclClasses('settings')">
-    <v-tabs v-model="active" elevation="0" class="bg-transparent" grow background-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" class="bg-transparent" grow bg-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
@@ -8,15 +8,13 @@
           {{ item.label }}
         </template>
       </v-tab>
-
-      <v-tabs v-model="active">
-        <v-window>
-          <v-window-item v-for="(item, index) in tabs" :key="index">
-            <component :is="item.component"></component>
-          </v-window-item>
-        </v-window>
-      </v-tabs>
     </v-tabs>
+
+    <v-window v-model="active">
+      <v-window-item v-for="(item, index) in tabs" :key="index">
+        <component :is="item.component"></component>
+      </v-window-item>
+    </v-window>
   </div>
 </template>
 
@@ -27,6 +25,7 @@ import Advanced from "page/settings/advanced.vue";
 import Services from "page/settings/services.vue";
 import Account from "page/settings/account.vue";
 import { config } from "app/session";
+import { markRaw } from "vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -55,7 +54,7 @@ export default {
     const tabs = [
       {
         name: "settings_general",
-        component: General,
+        component: markRaw(General),
         label: this.$gettext("General"),
         class: "",
         path: "/settings",
@@ -67,7 +66,7 @@ export default {
       },
       {
         name: "settings_media",
-        component: Library,
+        component: markRaw(Library),
         label: this.$gettext("Library"),
         class: "",
         path: "/settings/media",
@@ -79,7 +78,7 @@ export default {
       },
       {
         name: "settings_advanced",
-        component: Advanced,
+        component: markRaw(Advanced),
         label: this.$gettext("Advanced"),
         class: "",
         path: "/settings/advanced",
@@ -92,7 +91,7 @@ export default {
       // TODO: change this icon
       {
         name: "settings_services",
-        component: Services,
+        component: markRaw(Services),
         label: this.$gettext("Services"),
         class: "",
         path: "/settings/services",
@@ -105,7 +104,7 @@ export default {
       // TODO: change this icon
       {
         name: "settings_account",
-        component: Account,
+        component: markRaw(Account),
         label: this.$gettext("Account"),
         class: "",
         path: "/settings/account",

@@ -3,14 +3,14 @@
     <v-toolbar flat :dense="$vuetify.display.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
       <template v-if="!embedded">
         <v-text-field
-          :value="filter.q"
+          :model-value="filter.q"
           class="input-search background-inherit elevation-0"
-          solo
+          variant="solo"
           hide-details
           clearable
           overflow
           single-line
-          validate-on-blur
+          validate-on="blur"
           autocorrect="off"
           autocapitalize="none"
           autocomplete="off"
@@ -79,19 +79,19 @@
         <v-row>
           <v-col cols="12" sm="6" md="3" class="pa-2 p-countries-select">
             <v-select
-              :value="filter.country"
+              :model-value="filter.country"
               :label="$gettext('Country')"
               :menu-props="{ maxHeight: 346 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               item-value="ID"
-              item-text="Name"
+              item-title="Name"
               :items="countryOptions"
               class="input-countries"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ country: v });
                 }
@@ -101,18 +101,18 @@
           </v-col>
           <v-col cols="12" sm="6" md="3" class="pa-2 p-camera-select">
             <v-select
-              :value="filter.camera"
+              :model-value="filter.camera"
               :label="$gettext('Camera')"
               :menu-props="{ maxHeight: 346 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               item-value="ID"
-              item-text="Name"
+              item-title="Name"
               :items="cameraOptions"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ camera: v });
                 }
@@ -123,15 +123,15 @@
           <v-col cols="12" sm="6" md="3" class="pa-2 p-view-select">
             <v-select
               id="viewSelect"
-              :value="settings.view"
+              :model-value="settings.view"
               :label="$gettext('View')"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               :items="viewOptions"
-              @change="
+              @update:model-value="
                 (v) => {
                   setView(v);
                 }
@@ -141,16 +141,16 @@
           </v-col>
           <v-col cols="12" sm="6" md="3" class="pa-2 p-time-select">
             <v-select
-              :value="filter.order"
+              :model-value="filter.order"
               :label="$gettext('Sort Order')"
               :menu-props="{ maxHeight: 400 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               :items="sortOptions"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ order: v });
                 }
@@ -160,18 +160,18 @@
           </v-col>
           <v-col cols="12" sm="6" md="3" class="pa-2 p-year-select">
             <v-select
-              :value="filter.year"
+              :model-value="filter.year"
               :label="$gettext('Year')"
               :menu-props="{ maxHeight: 346 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               item-value="value"
-              item-text="text"
+              item-title="text"
               :items="yearOptions()"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ year: v });
                 }
@@ -181,18 +181,18 @@
           </v-col>
           <v-col cols="12" sm="6" md="3" class="pa-2 p-month-select">
             <v-select
-              :value="filter.month"
+              :model-value="filter.month"
               :label="$gettext('Month')"
               :menu-props="{ maxHeight: 346 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               item-value="value"
-              item-text="text"
+              item-title="text"
               :items="monthOptions()"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ month: v });
                 }
@@ -214,18 +214,18 @@
           </v-col -->
           <v-col cols="12" sm="6" md="3" class="pa-2 p-color-select">
             <v-select
-              :value="filter.color"
+              :model-value="filter.color"
               :label="$gettext('Color')"
               :menu-props="{ maxHeight: 346 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               item-value="Slug"
-              item-text="Name"
+              item-title="Name"
               :items="colorOptions()"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ color: v });
                 }
@@ -235,18 +235,18 @@
           </v-col>
           <v-col cols="12" sm="6" md="3" class="pa-2 p-category-select">
             <v-select
-              :value="filter.label"
+              :model-value="filter.label"
               :label="$gettext('Category')"
               :menu-props="{ maxHeight: 346 }"
               flat
-              solo
+              variant="solo"
               hide-details
               color="secondary-dark"
-              background-color="secondary"
+              bg-color="secondary"
               item-value="Slug"
-              item-text="Name"
+              item-title="Name"
               :items="categoryOptions"
-              @change="
+              @update:model-value="
                 (v) => {
                   updateQuery({ label: v });
                 }

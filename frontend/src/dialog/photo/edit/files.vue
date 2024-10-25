@@ -4,12 +4,12 @@
       <template v-for="file in model.fileModels()">
         <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
           <template #header>
-            <div class="caption filename">
+            <div class="text-caption filename">
               {{ file.baseName(70) }}
             </div>
           </template>
           <v-card>
-            <v-card-text class="white pa-0">
+            <v-card-text class="bg-white pa-0">
               <v-container fluid class="pa-0">
                 <v-alert :value="file.Error" type="error" class="my-0 text-capitalize">
                   {{ file.Error }}
@@ -24,7 +24,7 @@
                               <translate>Preview</translate>
                             </td>
                             <td>
-                              <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" class="card darken-1 elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
+                              <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" class="card elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
                             </td>
                           </tr>
                           <tr>
@@ -196,7 +196,7 @@
                               <v-select
                                 v-model="file.Orientation"
                                 flat
-                                solo
+                                variant="solo"
                                 autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
@@ -204,7 +204,7 @@
                                 :readonly="readonly || !features.edit || file.Error || (file.Frames && file.Frames > 1) || (file.Duration && file.Duration > 1) || (file.FileType !== 'jpg' && file.FileType !== 'png')"
                                 :disabled="busy"
                                 class="input-orientation"
-                                @change="changeOrientation(file)"
+                                @update:model-value="changeOrientation(file)"
                               >
                                 <template #selection="{ item }">
                                   <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
@@ -231,7 +231,7 @@
                             <td>
                               <translate>Chroma</translate>
                             </td>
-                            <td><v-progress-linear :value="file.Chroma" style="max-width: 300px" :title="`${file.Chroma}%`"></v-progress-linear></td>
+                            <td><v-progress-linear :model-value="file.Chroma" style="max-width: 300px" :title="`${file.Chroma}%`"></v-progress-linear></td>
                           </tr>
                           <tr v-if="file.Missing">
                             <td>

@@ -14,7 +14,7 @@
         <v-col v-for="(marker, index) in markers" :key="index" cols="12" sm="6" md="3" xl="2" class="d-flex">
           <v-card tile :data-id="marker.UID" style="user-select: none" :class="marker.classes()" class="result card flex-grow-1">
             <div class="card-background card"></div>
-            <v-img :src="marker.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1">
+            <v-img :src="marker.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card">
               <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" class="input-reject" icon variant="text" size="small" absolute :title="$gettext('Remove')" @click.stop.prevent="onReject(marker)">
                 <v-icon color="white" class="action-reject">mdi-close</v-icon>
               </v-btn>
@@ -41,7 +41,7 @@
                     class="input-name pa-0 ma-0"
                     hide-details
                     single-line
-                    solo-inverted
+                    variant="solo-inverted"
                     clearable
                     clear-icon="mdi-eject"
                     @click:clear="onClearSubject(marker)"
@@ -58,22 +58,21 @@
                     style="z-index: 250"
                     :items="$config.values.people"
                     item-value="Name"
-                    item-text="Name"
+                    item-title="Name"
                     :disabled="busy"
                     :return-object="false"
                     :menu-props="menuProps"
-                    :allow-overflow="false"
                     :hint="$gettext('Name')"
                     hide-details
                     single-line
-                    solo-inverted
+                    variant="solo-inverted"
                     open-on-clear
                     hide-no-data
                     append-icon=""
                     prepend-inner-icon="mdi-account-plus"
                     autocomplete="off"
                     class="input-name pa-0 ma-0"
-                    @change="onRename(marker)"
+                    @update:model-value="onRename(marker)"
                     @keyup.enter.native="onRename(marker)"
                   >
                   </v-combobox>
