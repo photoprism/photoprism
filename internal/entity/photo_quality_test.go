@@ -153,3 +153,22 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 		assert.ErrorContains(t, err, "No PK provided")
 	})
 }
+
+func TestPhoto_IsNonPhotographic(t *testing.T) {
+	t.Run("Raw", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		assert.False(t, m.IsNonPhotographic())
+	})
+	t.Run("Image", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo04")
+		assert.False(t, m.IsNonPhotographic())
+	})
+	t.Run("Video", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo10")
+		assert.False(t, m.IsNonPhotographic())
+	})
+	t.Run("Animated", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo52")
+		assert.True(t, m.IsNonPhotographic())
+	})
+}
