@@ -43,7 +43,6 @@ var FileFixtures = FileMap{
 		FileType:        "jpg",
 		MediaType:       media.Image.String(),
 		FileMime:        "image/jpg",
-		MediaType:       string(media.Image),
 		FilePrimary:     true,
 		FileSidecar:     false,
 		FileVideo:       false,
@@ -2884,7 +2883,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2023, 11, 13, 9, 7, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"photo54.jpg": {
 		ID:              1000071,
@@ -2926,7 +2925,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2023, 11, 12, 9, 7, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"photo54 (1).jpg": {
 		ID:              1000072,
@@ -2968,7 +2967,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2023, 11, 12, 9, 7, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 }
 

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"math/rand/v2"
 	"testing"
 	"time"
 
@@ -128,7 +129,8 @@ func TestPhoto_QualityScore(t *testing.T) {
 
 func TestPhoto_UpdateQuality(t *testing.T) {
 	t.Run("Hidden", func(t *testing.T) {
-		p := &Photo{PhotoQuality: -1} // ToDo: Does this need ID: 1,?
+		pID := uint(rand.Uint32()) // Cast as not high enough go version
+		p := &Photo{ID: pID, PhotoQuality: -1}
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
@@ -136,13 +138,8 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 		assert.Equal(t, -1, p.PhotoQuality)
 	})
 	t.Run("Favorite", func(t *testing.T) {
-		p := &Photo{PhotoQuality: 0, PhotoFavorite: true}
-		/*
-			p := &Photo{ID: 1, PhotoQuality: 0, PhotoFavorite: true}
-			Db().Create(p)
-			// Make it look like the gorm1 tests as they aren't updated by BeforeCreate
-			p.TakenAt = time.Date(0000, 1, 1, 0, 0, 0, 0, time.UTC)
-		*/
+		pID := uint(rand.Uint32()) // Cast as not high enough go version
+		p := &Photo{ID: pID, PhotoQuality: 0, PhotoFavorite: true}
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)

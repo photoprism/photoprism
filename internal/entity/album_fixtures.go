@@ -297,7 +297,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"&ilikefood": {
 		ID:               1000011,
-		AlbumUID:         "as6sg6bipotaab18",
+		AlbumUID:         "as6sg6bipotaab19",
 		AlbumSlug:        "&ilikefood",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,

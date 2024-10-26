@@ -27,7 +27,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(10), count)
+		assert.Equal(t, int64(11), count)
 	})
 
 	t.Run("Cell-Location-Counts", func(t *testing.T) {
@@ -37,7 +37,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(9), count)
+		assert.Equal(t, int64(10), count)
 	})
 
 	t.Run("CountryCounts", func(t *testing.T) {
@@ -97,7 +97,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(55), count)
+		assert.Equal(t, int64(57), count)
 	})
 
 	t.Run("AlbumCounts", func(t *testing.T) {
@@ -137,7 +137,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(29), count)
+		assert.Equal(t, int64(28), count)
 	})
 
 	t.Run("FolderCounts", func(t *testing.T) {
@@ -157,7 +157,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(66), count)
+		assert.Equal(t, int64(69), count)
 	})
 
 	t.Run("KeywordCounts", func(t *testing.T) {
