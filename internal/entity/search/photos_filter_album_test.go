@@ -89,7 +89,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 		//TODO still variable results
-		assert.GreaterOrEqual(t, 0, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
