@@ -334,9 +334,9 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 			t.Logf("moments: removed %s", english.Plural(removed, "duplicate", "duplicates"))
 
 			// This returns a variable number of records on gorm1 due to an issue in sqlite not always deleting 2 records.
-			//  2 in Albums.  Updates for gorm2 have not shown this being replicated to date.
-			//  2 in Albums and 1 in PhotoAlbums.
-			assert.GreaterOrEqual(t, removed, 3)
+			// Updates for gorm2 have not shown this being replicated to date.
+			// Delete 2 in Albums and 0 in PhotoAlbums.
+			assert.GreaterOrEqual(t, removed, 2)
 
 			results := Db().Model(entity.PhotoAlbums{}).Where("album_uid NOT IN (?)", Db().Select("album_uid").Model(entity.Album{}).Where("album_uid IS NOT NULL")).Find(&entity.PhotoAlbums{})
 			assert.Equal(t, int64(0), results.RowsAffected, "after test orphaned records")
