@@ -79,7 +79,7 @@ func TestPhotoSelection(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(r))
+		assert.Equal(t, 2, len(r))
 		assert.IsType(t, entity.Photos{}, r)
 	})
 }

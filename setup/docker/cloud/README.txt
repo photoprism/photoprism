@@ -43,7 +43,7 @@ Data and all config files related to PhotoPrism can be found in
 
 The main docker compose config file for changing config options is
 
-  /opt/photoprism/docker-compose.yml
+  /opt/photoprism/compose.yaml
 
 The server is running as "photoprism" (UID 1000) by default. There's no need
 to change defaults unless you experience conflicts with other services running
@@ -78,12 +78,12 @@ You may add a static DNS entry (on DigitalOcean go to Networking > Domains)
 for this, or use a Dynamic DNS service of your choice.
 
 Once your server has a public domain name, please disable the self-signed
-certificate and enable domain based routing in docker-compose.yml and
+certificate and enable domain based routing in compose.yaml and
 traefik.yaml (see inline instructions in !! UPPERCASE !!):
 
   ssh root@<YOUR SERVER IP>
   cd /opt/photoprism
-  nano docker-compose.yml
+  nano compose.yaml
   nano traefik.yaml
 
 Then restart services in a terminal for the changes to take effect:

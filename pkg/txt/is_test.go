@@ -45,6 +45,9 @@ func TestIs(t *testing.T) {
 }
 
 func TestIsASCII(t *testing.T) {
+	t.Run("1", func(t *testing.T) {
+		assert.True(t, IsASCII("1"))
+	})
 	t.Run("123", func(t *testing.T) {
 		assert.True(t, IsASCII("123"))
 	})
@@ -65,6 +68,132 @@ func TestIsASCII(t *testing.T) {
 	})
 	t.Run("réseau", func(t *testing.T) {
 		assert.False(t, IsASCII("réseau"))
+	})
+	t.Run("80s", func(t *testing.T) {
+		assert.True(t, IsASCII("80s"))
+	})
+}
+
+func TestIsNumeric(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsNumeric(""))
+	})
+	t.Run("1", func(t *testing.T) {
+		assert.True(t, IsNumeric("1"))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.True(t, IsNumeric("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsNumeric("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.True(t, IsNumeric("2024-10-23"))
+	})
+	t.Run("20200102-204030", func(t *testing.T) {
+		assert.True(t, IsNumeric("20200102-204030"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsNumeric("ABC"))
+	})
+	t.Run("80s", func(t *testing.T) {
+		assert.False(t, IsNumeric("80s"))
+	})
+	t.Run("2e4", func(t *testing.T) {
+		assert.True(t, IsNumeric("2e4"))
+	})
+	t.Run("2e", func(t *testing.T) {
+		assert.False(t, IsNumeric("2e"))
+	})
+}
+
+func TestIsNumeral(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsNumeral(""))
+	})
+	t.Run("1", func(t *testing.T) {
+		assert.False(t, IsNumeral("1"))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.False(t, IsNumeral("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsNumeral("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.False(t, IsNumeral("2024-10-23"))
+	})
+	t.Run("20200102-204030", func(t *testing.T) {
+		assert.False(t, IsNumeral("20200102-204030"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsNumeral("ABC"))
+	})
+	t.Run("1st", func(t *testing.T) {
+		assert.True(t, IsNumeral("1st"))
+	})
+	t.Run("2ND", func(t *testing.T) {
+		assert.True(t, IsNumeral("1ND"))
+	})
+	t.Run("40th", func(t *testing.T) {
+		assert.True(t, IsNumeral("40th"))
+	})
+	t.Run("-1.", func(t *testing.T) {
+		assert.False(t, IsNumeral("-1."))
+	})
+	t.Run("1.", func(t *testing.T) {
+		assert.False(t, IsNumeral("1."))
+	})
+	t.Run("40.", func(t *testing.T) {
+		assert.False(t, IsNumeral("40."))
+	})
+	t.Run("80s", func(t *testing.T) {
+		assert.True(t, IsNumeral("80s"))
+	})
+}
+
+func TestIsNumber(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsNumber(""))
+	})
+	t.Run("1", func(t *testing.T) {
+		assert.True(t, IsNumber("1"))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.True(t, IsNumber("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsNumber("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.False(t, IsNumber("2024-10-23"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsNumber("ABC"))
+	})
+	t.Run("80s", func(t *testing.T) {
+		assert.False(t, IsNumber("80s"))
+	})
+}
+
+func TestIsDateNumber(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsDateNumber(""))
+	})
+	t.Run("123", func(t *testing.T) {
+		assert.True(t, IsDateNumber("123"))
+	})
+	t.Run("123.", func(t *testing.T) {
+		assert.False(t, IsDateNumber("123."))
+	})
+	t.Run("2024-10-23", func(t *testing.T) {
+		assert.True(t, IsDateNumber("2024-10-23"))
+	})
+	t.Run("20200102-204030", func(t *testing.T) {
+		assert.True(t, IsDateNumber("20200102-204030"))
+	})
+	t.Run("ABC", func(t *testing.T) {
+		assert.False(t, IsDateNumber("ABC"))
 	})
 }
 

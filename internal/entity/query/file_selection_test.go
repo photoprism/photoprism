@@ -57,7 +57,7 @@ func TestFileSelection(t *testing.T) {
 		if results, err := SelectedFiles(many, sel); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Len(t, results, 4) // due to correction of file_fixtures.go missing MediaType
+			assert.Len(t, results, 4)
 		}
 	})
 	t.Run("ShareSelectionPrimary", func(t *testing.T) {

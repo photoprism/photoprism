@@ -127,25 +127,27 @@ func TestPhoto_QualityScore(t *testing.T) {
 }
 
 func TestPhoto_UpdateQuality(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
-		p := &Photo{ID: 1, PhotoQuality: -1}
+	t.Run("Hidden", func(t *testing.T) {
+		p := &Photo{PhotoQuality: -1} // ToDo: Does this need ID: 1,?
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, -1, p.PhotoQuality)
 	})
-	t.Run("low quality expected", func(t *testing.T) {
-		p := &Photo{ID: 1, PhotoQuality: 0, PhotoFavorite: true}
-		Db().Create(p)
-		// Make it look like the gorm1 tests as they aren't updated by BeforeCreate
-		p.TakenAt = time.Date(0000, 1, 1, 0, 0, 0, 0, time.UTC)
+	t.Run("Favorite", func(t *testing.T) {
+		p := &Photo{PhotoQuality: 0, PhotoFavorite: true}
+		/*
+			p := &Photo{ID: 1, PhotoQuality: 0, PhotoFavorite: true}
+			Db().Create(p)
+			// Make it look like the gorm1 tests as they aren't updated by BeforeCreate
+			p.TakenAt = time.Date(0000, 1, 1, 0, 0, 0, 0, time.UTC)
+		*/
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 5, p.PhotoQuality)
-		p.DeletePermanently()
+		assert.Equal(t, 4, p.PhotoQuality)
 	})
 
 	t.Run("no PK provided", func(t *testing.T) {

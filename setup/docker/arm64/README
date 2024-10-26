@@ -19,7 +19,7 @@ as for regular Linux servers apply:
 
   https://docs.photoprism.app/getting-started/docker-compose/
 
-Existing users are advised to check their "docker-compose.yml" against our examples
+Existing users are advised to check their "compose.yaml" against our examples
 at <dl.photoprism.app/docker> from time to time in case there are new configuration
 options or other improvements. Update instructions can be found at the bottom of
 this README file.
@@ -73,7 +73,7 @@ It may also help to set the DOCKER_DEFAULT_PLATFORM environment variable to
   temporarily needs more memory to process large files
 - High-resolution panoramic images may require additional swap space and/or
   physical memory above the recommended minimum
-- We recommend disabling kernel security in your docker-compose.yml, especially
+- We recommend disabling kernel security in your compose.yaml, especially
   if you do not have experience with the configuration:
   ```
   photoprism:
@@ -91,7 +91,7 @@ If your server runs out of memory, the index is frequently locked, or other
 system resources are running low:
 
 - Try reducing the number of workers by setting PHOTOPRISM_WORKERS to a
-  reasonably small value in docker-compose.yml, depending on the performance
+  reasonably small value in compose.yaml, depending on the performance
   of your device or cloud server:
 
   https://docs.photoprism.app/getting-started/config-options/
@@ -120,7 +120,7 @@ transcoding is generally slow.
 
 ### Getting Updates ###
 
-Open a terminal and change to the folder where the "docker-compose.yml" file
+Open a terminal and change to the folder where the "compose.yaml" file
 was saved. Now run the following commands to download the most recent image
 from Docker Hub and restart your instance in the background:
 

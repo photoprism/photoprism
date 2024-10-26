@@ -208,24 +208,32 @@ func TestKeywords(t *testing.T) {
 }
 
 func TestUniqueWords(t *testing.T) {
-	t.Run("many", func(t *testing.T) {
+	t.Run("Many", func(t *testing.T) {
 		result := UniqueWords([]string{"lazy", "jpg", "Brown", "apple", "brown", "new-york", "JPG"})
 		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy", "new-york"}, result)
 	})
-	t.Run("one", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		result := UniqueWords([]string{"lazy"})
 		assert.Equal(t, []string{"lazy"}, result)
+	})
+	t.Run("Numerals", func(t *testing.T) {
+		result := UniqueWords([]string{"1st", "40.", "52nd", "ma'am", "80s"})
+		assert.Equal(t, []string{"1st", "40.", "52nd", "80s", "ma'am"}, result)
 	})
 }
 
 func TestUniqueKeywords(t *testing.T) {
-	t.Run("many", func(t *testing.T) {
+	t.Run("Many", func(t *testing.T) {
 		result := UniqueKeywords("lazy, Brown, apple, new-york, brown, ...")
 		assert.Equal(t, []string{"apple", "brown", "lazy", "new-york"}, result)
 	})
-	t.Run("one", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		result := UniqueKeywords("")
 		assert.Equal(t, []string(nil), result)
+	})
+	t.Run("Numerals", func(t *testing.T) {
+		result := UniqueKeywords("1st, 40., 52nd, ma'am, 80s")
+		assert.Equal(t, []string{"1st", "52nd", "80s", "ma'am"}, result)
 	})
 }
 

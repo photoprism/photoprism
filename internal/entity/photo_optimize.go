@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Optimize photo data, improve if possible.
-func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace, force bool) (updated bool, merged Photos, err error) {
+// Optimize the picture metadata based on the specified parameters.
+func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (updated bool, merged Photos, err error) {
 	if !m.HasID() {
 		return false, merged, errors.New("photo: cannot maintain, id is empty")
 	}
@@ -20,25 +20,26 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace, force bool) (updat
 		m.UpdateLocation()
 	}
 
-	if original, photos, err := m.Merge(mergeMeta, mergeUuid); err != nil {
-		return updated, merged, err
+	if original, photos, mergeErr := m.Merge(mergeMeta, mergeUuid); mergeErr != nil {
+		return updated, merged, mergeErr
 	} else if len(photos) > 0 && original.ID == m.ID {
 		merged = photos
 	} else if len(photos) > 0 && original.ID != m.ID {
 		return false, photos, nil
 	}
 
-	// Estimate if feature is enabled and place wasn't set otherwise.
-	if estimatePlace && SrcPriority[m.PlaceSrc] <= SrcPriority[SrcEstimate] {
+	// Estimate the location if it is unknown and this feature is enabled.
+	if estimateLocation && SrcPriority[m.PlaceSrc] <= SrcPriority[SrcEstimate] {
 		m.EstimateLocation(force)
 	}
 
+	// Get image classification labels.
 	labels := m.ClassifyLabels()
 
 	m.UpdateDateFields()
 
-	if err := m.UpdateTitle(labels); err != nil {
-		log.Info(err)
+	if updateErr := m.UpdateTitle(labels); updateErr != nil {
+		log.Info(updateErr)
 	}
 
 	details := m.GetDetails()
@@ -46,8 +47,8 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace, force bool) (updat
 	w = append(w, labels.Keywords()...)
 	details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
-	if err := m.IndexKeywords(); err != nil {
-		log.Errorf("photo: %s", err.Error())
+	if indexErr := m.IndexKeywords(); indexErr != nil {
+		log.Errorf("photo: %s", indexErr.Error())
 	}
 
 	m.PhotoQuality = m.QualityScore()
