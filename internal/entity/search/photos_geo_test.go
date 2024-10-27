@@ -454,7 +454,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 8, len(photos))
+		assert.Equal(t, 9, len(photos))
 	})
 	t.Run("PathOrPath", func(t *testing.T) {
 		var f form.SearchPhotosGeo

@@ -1414,7 +1414,7 @@ var FileFixtures = FileMap{
 		DeletedAt:       nil,
 	},
 	"Photo09.jpg": {
-		ID:              1000036,
+		ID:              1100036,
 		Photo:           PhotoFixtures.Pointer("Photo09"),
 		PhotoID:         PhotoFixtures.Pointer("Photo09").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo09").PhotoUID,
