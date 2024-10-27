@@ -243,6 +243,8 @@ var SpecialWords = map[string]string{
 	"webdav":             "WebDAV",
 	"webp":               "WebP",
 	"webm":               "WebM",
+	"tiktok":             "TikTok",
+	"ebay":               "eBay",
 	"whatsapp":           "WhatsApp",
 	"wechat":             "WeChat",
 	"chatgpt":            "ChatGPT",
