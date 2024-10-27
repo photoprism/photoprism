@@ -65,7 +65,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-scopes",
-			Usage:  "authorization `SCOPES` for single sign-on via OpenID Connect",
+			Usage:  "client authorization `SCOPES` for single sign-on via OpenID Connect",
 			Value:  authn.OidcDefaultScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
