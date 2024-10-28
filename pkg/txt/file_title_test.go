@@ -148,4 +148,7 @@ func TestFileTitle(t *testing.T) {
 	t.Run("Download", func(t *testing.T) {
 		assert.Equal(t, "Tourist Attraction Berlin", FileTitle("20170812-185131-Tourist-Attraction-Berlin-2017.jpg"))
 	})
+	t.Run("BreakLongTitle", func(t *testing.T) {
+		assert.Equal(t, "Tourist Attraction Berlin Apple Green Blue Sky Holiday Food Restaurant Germany City Vacation Friend Sun Water Drink", FileTitle("Tourist-Attraction-Berlin-Apple-Green-Blue-Sky-Holiday-Food-Restaurant-Germany-City-Vacation-Friend-Sun-Water-Drink-Fun.jpg"))
+	})
 }
