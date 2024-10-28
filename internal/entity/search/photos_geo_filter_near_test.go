@@ -19,7 +19,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 8)
+		assert.Equal(t, len(photos), 9)
 	})
 	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -259,7 +259,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 8)
+		assert.Equal(t, len(photos), 9)
 	})
 	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo

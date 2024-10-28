@@ -68,6 +68,7 @@ test: test-js test-go
 test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
+test-entity: reset-sqlite run-test-entity
 test-commands: reset-sqlite run-test-commands
 test-photoprism: reset-sqlite run-test-photoprism
 test-short: reset-sqlite run-test-short
@@ -351,6 +352,9 @@ run-test-pkg:
 run-test-api:
 	$(info Running all API tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/api/...
+run-test-entity:
+	$(info Running all Entity tests...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/entity/...
 run-test-commands:
 	$(info Running all CLI command tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/commands/...

@@ -2,12 +2,12 @@
 #  -------------------------------------------------------------------------
 #
 #  If your server has a public domain name, please disable the self-signed
-#  certificate and enable domain based routing in docker-compose.yml and
+#  certificate and enable domain based routing in compose.yaml and
 #  traefik.yaml (see inline instructions in !! UPPERCASE !!)
 #
 #    ssh root@<YOUR SERVER IP>
 #    cd /opt/photoprism
-#    nano docker-compose.yml
+#    nano compose.yaml
 #    nano traefik.yaml
 #    docker compose stop
 #    docker compose up -d

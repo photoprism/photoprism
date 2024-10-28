@@ -137,6 +137,10 @@ func TestCamera_Scanner(t *testing.T) {
 		camera := NewCamera("", "")
 		assert.False(t, camera.Scanner())
 	})
+	t.Run("Empty", func(t *testing.T) {
+		camera := Camera{}
+		assert.False(t, camera.Scanner())
+	})
 	t.Run("Foo", func(t *testing.T) {
 		camera := NewCamera("foo", "")
 		assert.False(t, camera.Scanner())

@@ -120,6 +120,18 @@ var PlaceFixtures = PlacesMap{
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
 	},
+	"California": {
+		ID:            s2.TokenPrefix + "80dc03fbc914",
+		PlaceLabel:    "California",
+		PlaceCity:     "",
+		PlaceState:    "California",
+		PlaceCountry:  "us",
+		PlaceKeywords: "",
+		PlaceFavorite: false,
+		PhotoCount:    3,
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
+	},
 }
 
 // CreatePlaceFixtures inserts known entities into the database for testing.
