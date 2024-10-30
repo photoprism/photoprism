@@ -10,12 +10,12 @@
             <template #item="props">
               <tr class="p-file">
                 <td>
-                  <v-edit-dialog :return-value.sync="props.item.Label.Name" class="p-inline-edit" @save="renameLabel(props.item.Label)">
+                  <v-dialog class="p-inline-edit" @save="renameLabel(props.item.Label)">
                     {{ props.item.Label.Name }}
                     <template #input>
                       <v-text-field v-model="props.item.Label.Name" :rules="[nameRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
                     </template>
-                  </v-edit-dialog>
+                  </v-dialog>
                 </td>
                 <td class="text-left">
                   {{ sourceName(props.item.LabelSrc) }}

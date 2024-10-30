@@ -111,7 +111,7 @@
               </v-img>
 
               <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" class="inline-edit" @save="onSave(model)">
+                <v-dialog v-if="canManage" class="inline-edit" @save="onSave(model)">
                   <span v-if="model.Name" class="text-body-2 ma-0">
                     {{ model.Name }}
                   </span>
@@ -121,7 +121,7 @@
                   <template #input>
                     <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
                   </template>
-                </v-edit-dialog>
+                </v-dialog>
                 <span v-else class="text-body-2 ma-0">
                   {{ model.Name }}
                 </span>
