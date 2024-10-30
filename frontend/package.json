@@ -123,6 +123,7 @@
     ">0.25% and last 2 years"
   ],
   "devDependencies": {
+    "@vue/language-server": "^2.1.8",
     "eslint-plugin-vuetify": "^2.4.0"
   }
 }
