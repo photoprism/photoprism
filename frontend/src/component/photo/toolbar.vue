@@ -87,9 +87,9 @@
               hide-details
               color="secondary-dark"
               bg-color="secondary"
-              item-value="ID"
-              item-title="Name"
               :items="countryOptions"
+              item-title="Name"
+              item-value="ID"
               class="input-countries"
               @update:model-value="
                 (v) => {
@@ -109,9 +109,9 @@
               hide-details
               color="secondary-dark"
               bg-color="secondary"
-              item-value="ID"
-              item-title="Name"
               :items="cameraOptions"
+              item-title="Name"
+              item-value="ID"
               @update:model-value="
                 (v) => {
                   updateQuery({ camera: v });
@@ -131,6 +131,8 @@
               color="secondary-dark"
               bg-color="secondary"
               :items="viewOptions"
+              item-title="text"
+              item-value="value"
               @update:model-value="
                 (v) => {
                   setView(v);
@@ -150,6 +152,8 @@
               color="secondary-dark"
               bg-color="secondary"
               :items="sortOptions"
+              item-title="text"
+              item-value="value"
               @update:model-value="
                 (v) => {
                   updateQuery({ order: v });
@@ -168,9 +172,9 @@
               hide-details
               color="secondary-dark"
               bg-color="secondary"
-              item-value="value"
-              item-title="text"
               :items="yearOptions()"
+              item-title="text"
+              item-value="value"
               @update:model-value="
                 (v) => {
                   updateQuery({ year: v });
@@ -189,9 +193,9 @@
               hide-details
               color="secondary-dark"
               bg-color="secondary"
-              item-value="value"
-              item-title="text"
               :items="monthOptions()"
+              item-title="text"
+              item-value="value"
               @update:model-value="
                 (v) => {
                   updateQuery({ month: v });
@@ -222,9 +226,9 @@
               hide-details
               color="secondary-dark"
               bg-color="secondary"
-              item-value="Slug"
-              item-title="Name"
               :items="colorOptions()"
+              item-title="Name"
+              item-value="Slug"
               @update:model-value="
                 (v) => {
                   updateQuery({ color: v });
@@ -243,9 +247,9 @@
               hide-details
               color="secondary-dark"
               bg-color="secondary"
-              item-value="Slug"
-              item-title="Name"
               :items="categoryOptions"
+              item-title="Name"
+              item-value="Slug"
               @update:model-value="
                 (v) => {
                   updateQuery({ label: v });

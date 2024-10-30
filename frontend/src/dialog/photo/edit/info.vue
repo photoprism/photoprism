@@ -23,7 +23,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @update:model-value="save"> </v-select>
+                <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"> </v-select>
               </td>
             </tr>
             <tr v-if="model.Path">

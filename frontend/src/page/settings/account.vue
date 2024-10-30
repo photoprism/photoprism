@@ -15,10 +15,10 @@
                     variant="filled"
                     flat
                     :disabled="busy"
-                    item-title="text"
-                    item-value="value"
                     color="secondary-dark"
                     :items="options.Gender()"
+                    item-title="text"
+                    item-value="value"
                     class="input-gender"
                     :rules="[(v) => validLength(v, 0, 16) || $gettext('Invalid')]"
                     @update:model-value="onChange"

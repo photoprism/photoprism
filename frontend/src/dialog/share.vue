@@ -33,7 +33,7 @@
                       <v-text-field :model-value="link.url()" hide-details variant="filled" flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="secondary-dark" class="input-url" @click.stop="selectText($event)"> </v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" class="pa-2">
-                      <v-select v-model="link.Expires" hide-details variant="filled" flat :label="expires(link)" browser-autocomplete="off" color="secondary-dark" item-title="text" item-value="value" :items="options.Expires()" class="input-expires"> </v-select>
+                      <v-select v-model="link.Expires" hide-details variant="filled" flat :label="expires(link)" browser-autocomplete="off" color="secondary-dark" :items="options.Expires()" item-title="text" item-value="value" class="input-expires"> </v-select>
                     </v-col>
                     <v-col cols="12" sm="6" class="pa-2">
                       <v-text-field v-model="link.Token" hide-details variant="filled" flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="secondary-dark" class="input-secret"></v-text-field>

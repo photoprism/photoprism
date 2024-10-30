@@ -19,10 +19,10 @@
           variant="solo"
           autocomplete="off"
           :items="dirs"
-          :loading="loading"
-          :disabled="busy || !ready"
           item-title="name"
           item-value="path"
+          :loading="loading"
+          :disabled="busy || !ready"
           @update:model-value="onChange"
           @focus="onFocus"
         >

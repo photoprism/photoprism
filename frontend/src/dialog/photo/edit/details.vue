@@ -42,6 +42,8 @@
                 hide-no-data
                 color="secondary-dark"
                 :items="options.Days()"
+                item-title="text"
+                item-value="value"
                 class="input-day"
                 @update:model-value="updateTime"
               >
@@ -62,6 +64,8 @@
                 hide-no-data
                 color="secondary-dark"
                 :items="options.MonthsShort()"
+                item-title="text"
+                item-value="value"
                 class="input-month"
                 @update:model-value="updateTime"
               >
@@ -82,6 +86,8 @@
                 hide-no-data
                 color="secondary-dark"
                 :items="options.Years()"
+                item-title="text"
+                item-value="value"
                 class="input-year"
                 @update:model-value="updateTime"
               >

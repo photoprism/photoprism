@@ -28,6 +28,8 @@
             v-model="form.Category"
             :disabled="busy"
             :items="options.FeedbackCategories()"
+            item-title="text"
+            item-value="value"
             :label="$gettext('Category')"
             color="secondary-dark"
             bg-color="secondary-light"

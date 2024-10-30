@@ -11,11 +11,11 @@
         <v-card-actions>
           <v-row align="start">
             <v-col cols="12" sm="6" class="px-2 pb-2">
-              <v-select v-model="settings.ui.theme" :disabled="busy" :items="themes" :label="$gettext('Theme')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" hide-details variant="filled" class="input-theme" @update:model-value="onChangeTheme"></v-select>
+              <v-select v-model="settings.ui.theme" :disabled="busy" :items="themes" item-title="text" item-value="value" :label="$gettext('Theme')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" hide-details variant="filled" class="input-theme" @update:model-value="onChangeTheme"></v-select>
             </v-col>
 
             <v-col cols="12" sm="6" class="px-2 pb-2">
-              <v-select v-model="settings.ui.language" :disabled="busy" :items="languages" :label="$gettext('Language')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" hide-details variant="filled" class="input-language" @update:model-value="onChange"></v-select>
+              <v-select v-model="settings.ui.language" :disabled="busy" :items="languages" item-title="text" item-value="value" :label="$gettext('Language')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" hide-details variant="filled" class="input-language" @update:model-value="onChange"></v-select>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -280,7 +280,21 @@
         <v-card-actions>
           <v-row align="start">
             <v-col cols="12" sm="6" class="px-2 pb-2">
-              <v-select v-model="settings.maps.style" :disabled="busy" :items="mapsStyle" :label="$gettext('Maps')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" hide-details variant="filled" class="input-style" @update:model-value="onChangeMapsStyle"></v-select>
+              <v-select
+                  v-model="settings.maps.style"
+                  :disabled="busy"
+                  :items="mapsStyle"
+                  item-title="text"
+                  item-value="value"
+                  :label="$gettext('Maps')"
+                  :menu-props="{ maxHeight: 346 }"
+                  color="secondary-dark"
+                  bg-color="secondary-light"
+                  hide-details
+                  variant="filled"
+                  class="input-style"
+                  @update:model-value="onChangeMapsStyle">
+              </v-select>
             </v-col>
 
             <v-col cols="12" sm="6" class="px-2 pb-2">
@@ -288,6 +302,8 @@
                 v-model="settings.maps.animate"
                 :disabled="busy"
                 :items="options.MapsAnimate()"
+                item-title="text"
+                item-value="value"
                 :label="$gettext('Animation')"
                 :menu-props="{ maxHeight: 346 }"
                 color="secondary-dark"

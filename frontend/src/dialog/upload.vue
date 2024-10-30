@@ -29,8 +29,8 @@
                 color="secondary-dark"
                 class="my-0 input-albums"
                 :items="albums"
-                item-value="UID"
                 item-title="Title"
+                item-value="UID"
                 :label="$gettext('Select albums or create a new one')"
                 return-object
               >

@@ -60,9 +60,9 @@
                 hide-details
                 color="secondary-dark"
                 bg-color="secondary"
-                item-value="value"
-                item-title="text"
                 :items="yearOptions()"
+                item-title="text"
+                item-value="value"
                 @update:model-value="
                   (v) => {
                     updateQuery({ year: v });
@@ -82,6 +82,8 @@
                 color="secondary-dark"
                 bg-color="secondary"
                 :items="categories"
+                item-title="text"
+                item-value="value"
                 @update:model-value="
                   (v) => {
                     updateQuery({ category: v });
@@ -101,6 +103,8 @@
                 color="secondary-dark"
                 bg-color="secondary"
                 :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
+                item-title="text"
+                item-value="value"
                 @update:model-value="
                   (v) => {
                     updateQuery({ order: v });
