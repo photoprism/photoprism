@@ -5,12 +5,6 @@
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
-# Abort if not executed as root.
-if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run ${0##*/} as root" 1>&2
-  exit 1
-fi
-
 if [[ -z $1 ]]; then
   PACKAGES="mariadb-client"
 else
@@ -30,21 +24,21 @@ fi
 
 DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
-if [[ $VERSION_CODENAME == "noble" || $DESTARCH == "armv7l" || $DESTARCH == "arm" ]]; then
+if [[ $DESTARCH == "armv7l" || $DESTARCH == "arm" ]]; then
   echo "Installing MariaDB distribution packages for ${DESTARCH^^}..."
 else
-  MARIADB_VERSION="11.3.2"
+  MARIADB_VERSION="11.rolling"
   MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
 
   if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then
     echo "Installing MariaDB $MARIADB_VERSION package sources for ${DESTARCH^^}..."
-    curl -Ls $MARIADB_URL | bash  -s -- --mariadb-server-version="mariadb-$MARIADB_VERSION"
+    curl -Ls "$MARIADB_URL" | sudo bash -s -- --mariadb-server-version="mariadb-$MARIADB_VERSION"
   fi
 fi
 
 echo "Installing \"$PACKAGES\"..."
 
-apt-get update
-apt-get -qq install $PACKAGES
+sudo apt-get update
+sudo apt-get -qq install $PACKAGES
 
 echo "Done."

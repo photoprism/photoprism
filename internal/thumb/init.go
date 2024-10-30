@@ -18,7 +18,7 @@ var (
 	NumWorkers    = DefaultWorkers
 )
 
-// Init initializes the package config based on the the available memory,
+// Init initializes the package config based on the available memory,
 // the allowed number of workers and the image processing library to be used.
 func Init(availableMemory uint64, maxWorkers int, imgLib string) {
 	// Set the maximum amount of cached data allowed
