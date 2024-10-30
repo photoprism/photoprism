@@ -32,16 +32,18 @@
       <v-toolbar flat :dense="$vuetify.display.smAndDown">
         <v-list class="navigation-home">
           <v-list-item class="nav-logo">
-            <img class="nav-avatar clickable" :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" @click.stop.prevent="goHome" />
-            <v-list-item-title class="text-h6">
-              {{ appName }}
-            </v-list-item-title>
-            <v-list-item-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
-              <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
-                <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
-                <v-icon v-else>mdi-chevron-right</v-icon>
-              </v-btn>
-            </v-list-item-action>
+            <div class="d-flex align-center w-100">
+              <img class="nav-avatar clickable mr-3" heigth="40px" width="40px" :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" @click.stop.prevent="goHome" />
+              <v-list-item-title class="text-h6 mr-auto">
+                {{ appName }}
+              </v-list-item-title>
+              <v-list-item-action class="hidden-sm-and-down ml-2" :title="$gettext('Minimize')">
+                <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
+                  <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
+                  <v-icon v-else>mdi-chevron-right</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </div>
           </v-list-item>
         </v-list>
       </v-toolbar>
