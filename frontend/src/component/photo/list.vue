@@ -57,17 +57,17 @@
                   @click.stop.prevent="onClick($event, index)"
                 >
                   <button v-if="selectMode" class="input-select">
-                    <i class="select-on"> mdi-circle-outline </i>
-                    <i class="select-off"> mdi-radiobox-blank </i>
+                    <i class="mdi mdi-circle-outline" />
+                    <i class="mdi mdi-radiobox-blank" />
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'" class="input-open" @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                       <icon-live-photo />
                     </i>
-                    <!-- TODO: change icon and fix them -->
-                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
+                    <i v-if="photo.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
+                    <!-- TODO: change icon-->
                     <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
+                    <i v-if="photo.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
                   </button>
                 </div>
               </td>

@@ -60,23 +60,24 @@
               @touchmove.stop.prevent
               @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
             >
+<!--              TODO: change icon-->
               <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')"> raw_on </i>
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                 <icon-live-photo />
               </i>
-              <!-- TODO: change this icon and fx them -->
-              <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
-              <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
+              <i v-if="photo.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
+              <i v-if="photo.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
+              <!-- TODO: change this icon -->
               <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-              <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')"> mdi-camera-burst </i>
+              <i v-if="photo.Type === 'image'" class="mdi mdi-camera-burst" :title="$gettext('Stack')" />
             </button>
 
             <button v-if="photo.Type === 'image' && selectMode" class="input-view" :title="$gettext('View')" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onOpen($event, index)" @touchmove.stop.prevent @click.stop.prevent="onOpen($event, index)">
-              <i color="white" class="action-fullscreen"> mdi-magnify-plus-outline </i>
+              <i color="white" class="mdi mdi-magnify-plus-outline" />
             </button>
 
             <button v-if="!isSharedView && hidePrivate && photo.Private" class="input-private">
-              <i color="white" class="select-on"> mdi-lock </i>
+              <i color="white" class="mdi mdi-lock" />
             </button>
 
             <!--
@@ -90,13 +91,13 @@
               use css to show it when it is being hovered.
             -->
             <button class="input-select" @mousedown.stop.prevent="input.mouseDown($event, index)" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-              <i color="white" class="select-on"> mdi-circle-outline </i>
-              <i color="white" class="select-off"> mdi-radiobox-blank </i>
+              <i color="white" class="mdi mdi-circle-outline" />
+              <i color="white" class="mdi mdi-radiobox-blank" />
             </button>
 
             <button v-if="!isSharedView" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-              <i v-if="photo.Favorite"> mdi-heart </i>
-              <i v-else>mdi-heart-outline </i>
+              <i v-if="photo.Favorite" class="mdi mdi-heart" />
+              <i v-else class="mdi mdi-heart-outline" />
             </button>
           </div>
         </div>

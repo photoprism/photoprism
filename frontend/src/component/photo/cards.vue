@@ -92,19 +92,19 @@
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
                 <icon-live-photo />
               </i>
-              <!-- TODO: change icon and fix them-->
-              <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> mdi-play </i>
-              <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> mdi-file-gif-box </i>
+              <i v-if="photo.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
+              <i v-if="photo.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
+              <!-- TODO: change icon -->
               <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
-              <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')"> mdi-camera-burst </i>
+              <i v-if="photo.Type === 'image'" class="mdi mdi-camera-burst" :title="$gettext('Stack')" />
             </button>
 
             <button v-if="photo.Type === 'image' && selectMode" class="input-view" :title="$gettext('View')" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onOpen($event, index)" @touchmove.stop.prevent @click.stop.prevent="onOpen($event, index)">
-              <i class="action-fullscreen"> mdi-magnify-plus-outline </i>
+              <i class="mdi mdi-magnify-plus-outline" />
             </button>
 
             <button v-if="!isSharedView && featPrivate && photo.Private" class="input-private">
-              <i class="select-on"> mdi-lock </i>
+              <i class="mdi mdi-lock" />
             </button>
 
             <!--
@@ -118,13 +118,13 @@
               use css to show it when it is being hovered.
             -->
             <button class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-              <i class="select-on"> mdi-circle-outline </i>
-              <i class="select-off"> mdi-radiobox-blank </i>
+              <i class="mdi mdi-circle-outline" />
+              <i class="mdi mdi-radiobox-blank" />
             </button>
 
             <button v-if="!isSharedView" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-              <i v-if="photo.Favorite"> mdi-heart </i>
-              <i v-else>mdi-heart-outline </i>
+              <i v-if="photo.Favorite" class="mdi mdi-heart" />
+              <i v-else class="mdi mdi-heart-outline" />
             </button>
           </div>
 
@@ -160,28 +160,28 @@
               </div>
               <div class="text-caption">
                 <button class="action-open-date" :data-uid="photo.UID" @click.exact="openDate(index)">
-                  <i :title="$gettext('Taken')"> mdi-calendar-range </i>
+                  <i :title="$gettext('Taken')" class="mdi mdi-calendar-range" />
                   {{ photo.getDateString(true) }}
                 </button>
                 <br />
                 <button v-if="photo.Type === 'video'" :title="$gettext('Video')" @click.exact="openPhoto(index)">
-                  <i>mdi-movie</i>
+                  <i class="mdi mdi-movie" />
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'live'" :title="$gettext('Live')" @click.exact="openPhoto(index)">
-                  <i>mdi-play-circle</i>
+                  <i class="mdi mdi-play-circle" />
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated') + ' GIF'" @click.exact="openPhoto(index)">
-                  <i>mdi-file-gif-box</i>
+                  <i class="mdi mdi-file-gif-box" />
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'vector'" :title="$gettext('Vector')" @click.exact="openPhoto(index)">
-                  <i>font_download</i>
+                  <i class="mdi font_download" />
                   {{ photo.getVectorInfo() }}
                 </button>
                 <button v-else :title="$gettext('Camera')" class="action-camera-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
-                  <i>mdi-camera</i>
+                  <i class="mdi mdi-camera" />
                   {{ photo.getPhotoInfo() }}
                 </button>
                 <button v-if="photo.LensID > 1 || photo.FocalLength" :title="$gettext('Lens')" class="action-lens-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
@@ -200,7 +200,7 @@
                 <template v-if="featPlaces && photo.Country !== 'zz'">
                   <br />
                   <button :title="$gettext('Location')" class="action-location" :data-uid="photo.UID" @click.exact="openLocation(index)">
-                    <i>mdi-map-marker</i>
+                    <i class="mdi mdi-map-marker" />
                     {{ photo.locationInfo() }}
                   </button>
                 </template>
