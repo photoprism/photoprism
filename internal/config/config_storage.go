@@ -638,12 +638,12 @@ func (c *Config) TestdataPath() string {
 
 // MariadbBin returns the mariadb executable file name.
 func (c *Config) MariadbBin() string {
-	return findBin("", "mariadb")
+	return findBin("", "mariadb", "mysql")
 }
 
 // MariadbDumpBin returns the mariadb-dump executable file name.
 func (c *Config) MariadbDumpBin() string {
-	return findBin("", "mariadb-dump")
+	return findBin("", "mariadb-dump", "mysqldump")
 }
 
 // SqliteBin returns the sqlite executable file name.
