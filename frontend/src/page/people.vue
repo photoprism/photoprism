@@ -13,21 +13,20 @@
           </v-badge>
         </template>
       </v-tab>
-
-      <v-tabs v-model="active">
-        <v-window>
-          <v-window-item v-for="(item, index) in tabs" :key="index">
-            <component :is="item.component" :static-filter="item.filter" :active="active === index" @updateFaceCount="onUpdateFaceCount"></component>
-          </v-window-item>
-        </v-window>
-      </v-tabs>
     </v-tabs>
+
+    <v-window v-model="active">
+      <v-window-item v-for="(item, index) in tabs" :key="index">
+        <component :is="item.component" :static-filter="item.filter" :active="active === index" @updateFaceCount="onUpdateFaceCount"></component>
+      </v-window-item>
+    </v-window>
   </div>
 </template>
 
 <script>
 import Recognized from "page/people/recognized.vue";
 import NewFaces from "page/people/new.vue";
+import { markRaw } from "vue";
 
 export default {
   name: "PPagePeople",
@@ -40,7 +39,7 @@ export default {
     const tabs = [
       {
         name: "people",
-        component: Recognized,
+        component: markRaw(Recognized),
         filter: { files: 1, type: "person" },
         label: this.$gettext("Recognized"),
         class: "",
@@ -52,7 +51,7 @@ export default {
     if (this.$config.allow("people", "manage")) {
       tabs.push({
         name: "people_faces",
-        component: NewFaces,
+        component: markRaw(NewFaces),
         filter: { markers: true, unknown: true },
         label: this.$gettext("New"),
         class: "",
