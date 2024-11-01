@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
 func TestNewLabel(t *testing.T) {
@@ -21,6 +21,12 @@ func TestNewLabel(t *testing.T) {
 		assert.Equal(t, "Unknown", label.LabelName)
 		assert.Equal(t, "unknown", label.LabelSlug)
 		assert.Equal(t, -6, label.LabelPriority)
+	})
+}
+
+func TestFlushLabelCache(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		FlushLabelCache()
 	})
 }
 
@@ -135,7 +141,7 @@ func TestLabel_UpdateClassify(t *testing.T) {
 }
 
 func TestLabel_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		label := NewLabel("Unicorn2000", 5)
 		initialDate := label.UpdatedAt
 		err := label.Save()
@@ -151,7 +157,7 @@ func TestLabel_Save(t *testing.T) {
 }
 
 func TestLabel_Delete(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		label := NewLabel("LabelToBeDeleted", 5)
 		err := label.Save()
 		assert.False(t, label.Deleted())
@@ -178,7 +184,7 @@ func TestLabel_Delete(t *testing.T) {
 }
 
 func TestLabel_Restore(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
 		label := &Label{DeletedAt: &deleteTime, LabelName: "ToBeRestored"}
@@ -205,24 +211,31 @@ func TestLabel_Restore(t *testing.T) {
 }
 
 func TestFindLabel(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("SaveAndFindWithCache", func(t *testing.T) {
 		label := &Label{LabelSlug: "find-me-label", LabelName: "Find Me"}
-		err := label.Save()
-		if err != nil {
-			t.Fatal(err)
+		saveErr := label.Save()
+		if saveErr != nil {
+			t.Fatal(saveErr)
 		}
-		r := FindLabel("find-me-label")
-		assert.Equal(t, "Find Me", r.LabelName)
+		uncached, findErr := FindLabel("find-me-label", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "Find Me", uncached.LabelName)
+		cached, cacheErr := FindLabel("find-me-label", true)
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "Find Me", cached.LabelName)
+		assert.Equal(t, uncached.LabelSlug, cached.LabelSlug)
+		assert.Equal(t, uncached.ID, cached.ID)
+		assert.Equal(t, uncached.LabelUID, cached.LabelUID)
 	})
-	t.Run("nil", func(t *testing.T) {
-		r := FindLabel("XXX")
-		assert.Nil(t, r)
+	t.Run("NotFound", func(t *testing.T) {
+		r, err := FindLabel("XXX", true)
+		assert.Error(t, err)
+		assert.NotNil(t, r)
 	})
-
 }
 
 func TestLabel_Links(t *testing.T) {
-	t.Run("1 result", func(t *testing.T) {
+	t.Run("OneResult", func(t *testing.T) {
 		label := LabelFixtures.Get("flower")
 		links := label.Links()
 		assert.Equal(t, "6jxf3jfn2k", links[0].LinkToken)
@@ -230,7 +243,7 @@ func TestLabel_Links(t *testing.T) {
 }
 
 func TestLabel_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		label := &Label{LabelSlug: "to-be-updated", LabelName: "Update Me Please"}
 		err := label.Save()
 		if err != nil {

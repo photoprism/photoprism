@@ -160,7 +160,7 @@ func TestFindFolder(t *testing.T) {
 }
 
 func TestFolder_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		folder := NewFolder("oldRoot", "oldPath", time.Now().UTC())
 
 		assert.Equal(t, "oldRoot", folder.Root)
@@ -177,7 +177,7 @@ func TestFolder_Updates(t *testing.T) {
 }
 
 func TestFolder_SetForm(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		formValues := Folder{FolderTitle: "Beautiful beach"}
 
 		folderForm, err := form.NewFolder(formValues)
@@ -200,7 +200,7 @@ func TestFolder_SetForm(t *testing.T) {
 }
 
 func TestFolder_Create(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Holiday 2020", Root: RootOriginals, Path: "2020/Greece"}
 		err := folder.Create()
 		if err != nil {

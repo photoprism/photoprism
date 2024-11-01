@@ -454,8 +454,8 @@ func (m *Photo) SaveLocation() error {
 
 	m.GetDetails().Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
-	if err := m.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo: %s %s while syncing keywords and labels", m.String(), err)
+	if err := m.UpdateKeywordLabels(); err != nil {
+		log.Errorf("photo: %s %s while updating keyword labels", m.String(), err)
 	}
 
 	if err := m.UpdateTitle(m.ClassifyLabels()); err != nil {

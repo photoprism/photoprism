@@ -34,10 +34,13 @@ func (l Labels) AppendLabel(label Label) Labels {
 	return append(l, label)
 }
 
-// Keywords returns all keywords contains in Labels and their categories
+// Keywords returns all keywords contained in Labels and their categories.
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
-		if label.Uncertainty >= 100 || label.Source == SrcKeyword {
+		if label.Uncertainty >= 100 ||
+			label.Source == SrcTitle ||
+			label.Source == SrcSubject ||
+			label.Source == SrcKeyword {
 			continue
 		}
 

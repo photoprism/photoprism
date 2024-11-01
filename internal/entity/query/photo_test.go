@@ -106,7 +106,7 @@ func TestOrphanPhotos(t *testing.T) {
 
 // TODO How to verify?
 func TestFixPrimaries(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		err := FixPrimaries()
 		if err != nil {
 			t.Fatal(err)

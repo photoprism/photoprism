@@ -8,7 +8,7 @@ import (
 
 // TODO find duplicates
 func TestDuplicates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		if files, err := Duplicates(10, 0, ""); err != nil {
 			t.Fatal(err)
 		} else if files == nil {

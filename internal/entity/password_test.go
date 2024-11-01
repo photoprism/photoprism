@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewPassword(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.Len(t, p.Hash, 60)
 	})
@@ -102,7 +102,7 @@ func TestPassword_Invalid(t *testing.T) {
 }
 
 func TestPassword_Create(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		p := Password{}
 
 		err := p.Create()

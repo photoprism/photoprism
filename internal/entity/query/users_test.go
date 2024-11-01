@@ -7,7 +7,7 @@ import (
 )
 
 func TestRegisteredUsers(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		users := RegisteredUsers()
 
 		for _, user := range users {

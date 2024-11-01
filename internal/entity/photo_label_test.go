@@ -41,7 +41,7 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		pl := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
 		r := pl.ClassifyLabel()
 		assert.Equal(t, "Flower", r.Name)
@@ -57,7 +57,7 @@ func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(13, 1000, 99, "image")
 		err := photoLabel.Save()
 		if err != nil {
@@ -78,7 +78,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 }
 
 func TestPhotoLabel_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photoLabel := PhotoLabel{LabelID: 555, PhotoID: 888}
 		assert.Equal(t, uint(0x22b), photoLabel.LabelID)
 
