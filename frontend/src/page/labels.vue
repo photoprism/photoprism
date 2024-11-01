@@ -52,7 +52,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <v-alert :model-value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No labels found</translate>
           </h3>
@@ -63,7 +63,7 @@
         </v-alert>
         <v-row class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
           <v-col v-for="(label, index) in results" :key="label.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
-            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card flex-grow-1" :class="label.classes(selection.includes(label.UID))" :to="label.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card flex-grow-1" :class="label.classes(selection.includes(label.UID))" @click="$router.push(label.route(view))" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="label.thumbnailUrl('tile_500')"
@@ -89,15 +89,35 @@
               </v-img>
 
               <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-dialog v-if="canManage" class="inline-edit" @save="onSave(label)">
-                  <span v-if="label.Name" class="text-body-2 ma-0">
-                    {{ label.Name }}
-                  </span>
-                  <span v-else>
-                    <v-icon>mdi-pencil</v-icon>
-                  </span>
-                  <template #input>
-                    <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
+                <v-dialog v-if="canManage" class="inline-edit" persistent>
+                  <template #activator="{ props }">
+                    <span v-if="label.Name" v-bind="props" class="text-body-2 ma-0" @click="labelToRename = label.Name">
+                      {{ label.Name }}
+                    </span>
+                    <span v-else>
+                      <v-icon>mdi-pencil</v-icon>
+                    </span>
+                  </template>
+
+                  <template #default="{ isActive }">
+                    <v-card>
+                      <v-text-field
+                          v-model="labelToRename"
+                          :rules="[titleRule]"
+                          :label="$gettext('Name')"
+                          color="secondary-dark"
+                          class="input-rename background-inherit elevation-0"
+                          single-line
+                          autofocus
+                          variant="solo"
+                          hide-details
+                      />
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="isActive.value = false">Cancel</v-btn>
+                        <v-btn @click="onSave(label); isActive.value = false" >Save</v-btn>
+                      </v-card-actions>
+                    </v-card>
                   </template>
                 </v-dialog>
                 <span v-else class="text-body-2 ma-0">
@@ -171,6 +191,7 @@ export default {
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      labelToRename: "",
     };
   },
   watch: {
@@ -311,7 +332,7 @@ export default {
       if (!this.canManage) {
         return;
       }
-
+      label.Name = this.labelToRename;
       label.update();
     },
     showAll() {
