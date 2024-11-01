@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <v-container grid-list-xs fluid class="pa-2 p-faces">
-      <v-alert :value="markers.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+      <v-alert :model-value="markers.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
         <h3 class="text-body-2 ma-0 pa-0">
           <translate>No people found</translate>
         </h3>

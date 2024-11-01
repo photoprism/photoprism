@@ -127,7 +127,7 @@
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <v-alert :model-value="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>
@@ -208,7 +208,9 @@
                       {{ album.Title }}
                     </button>
                     <button v-else class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-                      {{ album.getDateString() | capitalize }}
+<!--                      TODO: change filter-->
+<!--                      {{ album.getDateString() | capitalize }}-->
+                      {{ album.getDateString() }}
                     </button>
                   </h3>
                 </div>

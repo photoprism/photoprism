@@ -11,7 +11,7 @@
           <v-card>
             <v-card-text class="bg-white pa-0">
               <v-container fluid class="pa-0">
-                <v-alert :value="file.Error" type="error" class="my-0 text-capitalize">
+                <v-alert :model-value="file.Error" type="error" class="my-0 text-capitalize">
                   {{ file.Error }}
                 </v-alert>
                 <v-row class="d-flex align-stretch" align="center" justify="center">
@@ -180,7 +180,9 @@
                             <td>
                               <translate>Projection</translate>
                             </td>
-                            <td>{{ file.Projection | capitalize }}</td>
+<!--                            TODO: change filter-->
+<!--                            <td>{{ file.Projection | capitalize }}</td>-->
+                            <td>{{ file.Projection }}</td>
                           </tr>
                           <tr v-if="file.AspectRatio">
                             <td>
@@ -227,7 +229,9 @@
                             <td>
                               <translate>Main Color</translate>
                             </td>
-                            <td>{{ file.MainColor | capitalize }}</td>
+<!--                            TODO: change filter-->
+<!--                            <td>{{ file.MainColor | capitalize }}</td>-->
+                            <td>{{ file.MainColor }}</td>
                           </tr>
                           <tr v-if="file.Chroma">
                             <td>
