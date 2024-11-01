@@ -69,7 +69,9 @@
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
         <v-card-title class="text-h5 pa-2">
-          {{ details.err.Level | capitalize }}
+<!--          TODO: chnage filter-->
+<!--          {{ details.err.Level | capitalize }}-->
+          {{ details.err.Level }}
         </v-card-title>
 
         <v-card-text class="pa-2 text-body-2">

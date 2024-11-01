@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`">
+<!--      TODO: check v-speed-dial view and position-->
+      <v-speed-dial id="t-clipboard" location="bottom right" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :end="!rtl" :start="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`">
         <template #activator>
           <v-btn theme="dark" color="accent-darken-2 rounded-circle" class="action-menu">
             <!-- TODO: change this icon -->

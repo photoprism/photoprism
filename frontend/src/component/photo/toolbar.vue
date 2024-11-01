@@ -209,7 +209,7 @@
                         :label="labels.lens"
                         flat solo hide-details
                         color="secondary-dark"
-                        background-color="secondary-light"
+                        bg-color="secondary-light"
                         item-value="ID"
                         item-text="Model"
                         v-model="filter.lens"
