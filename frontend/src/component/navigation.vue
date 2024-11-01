@@ -1,7 +1,7 @@
 <template>
   <div id="p-navigation" :class="{ 'sidenav-visible': drawer }">
     <template v-if="visible && $vuetify.display.smAndDown">
-      <v-toolbar theme="dark" fixed flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
+      <v-toolbar theme="dark" position="fixed" flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
         <v-avatar class="nav-avatar" tile :size="28" :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="config.name" :class="{ 'animate-hue': indexing }" />
         </v-avatar>

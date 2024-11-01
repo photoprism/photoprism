@@ -15,7 +15,7 @@
           <v-card tile :data-id="marker.UID" style="user-select: none" :class="marker.classes()" class="result card flex-grow-1">
             <div class="card-background card"></div>
             <v-img :src="marker.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card">
-              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" class="input-reject" icon variant="text" size="small" absolute :title="$gettext('Remove')" @click.stop.prevent="onReject(marker)">
+              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" class="input-reject" icon variant="text" size="small" position="absolute" :title="$gettext('Remove')" @click.stop.prevent="onReject(marker)">
                 <v-icon color="white" class="action-reject">mdi-close</v-icon>
               </v-btn>
             </v-img>

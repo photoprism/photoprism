@@ -163,7 +163,7 @@
                   :ripple="false"
                   icon
                   variant="text"
-                  absolute
+                  position="absolute"
                   class="action-share"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onShare($event, index)"
@@ -173,12 +173,12 @@
                   <v-icon color="white">mdi-share-variant</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon variant="text" absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
                   <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon variant="text" absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
                   <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
                 </v-btn>
@@ -188,7 +188,7 @@
                   :ripple="false"
                   icon
                   variant="text"
-                  absolute
+                  position="absolute"
                   class="input-private"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onEdit($event, index)"
