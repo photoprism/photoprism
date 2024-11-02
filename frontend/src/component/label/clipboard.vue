@@ -1,9 +1,15 @@
 <template>
   <div>
     <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`">
-        <template #activator>
-          <v-btn theme="dark" color="accent-darken-2 rounded-circle" class="action-menu">
+      <v-speed-dial
+        id="t-clipboard"
+        v-model="expanded"
+        location="bottom right"
+        transition="slide-y-reverse-transition"
+        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`"
+      >
+        <template #activator="{ props }">
+          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle" class="action-menu">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
@@ -12,7 +18,7 @@
 
         <!-- v-btn
                 dark
-                small
+                size="small"
                 :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
@@ -22,14 +28,14 @@
             TODO: change this icon
             <v-icon>cloud_download</v-icon>
         </v-btn -->
-        <v-btn theme="dark" size="small" :title="$gettext('Add to album')" color="album rounded-circle" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
+        <v-btn key="bookmark" theme="dark" size="small" :title="$gettext('Add to album')" color="album rounded-circle" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
-        <v-btn theme="dark" size="small" color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
+        <v-btn key="delete" theme="dark" size="small" color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
 
-        <v-btn theme="dark" size="small" color="accent rounded-circle" class="action-clear" @click.stop="clearClipboard()">
+        <v-btn key="close" theme="dark" size="small" color="accent rounded-circle" class="action-clear" @click.stop="clearClipboard()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>
