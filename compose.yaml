@@ -157,6 +157,8 @@ services:
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
     image: photoprism/traefik:latest
+    security_opt:
+      - no-new-privileges:true
     ports:
       - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
