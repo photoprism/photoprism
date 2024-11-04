@@ -17,7 +17,7 @@
         </template>
 
         <!-- v-btn
-                dark
+                theme="dark"
                 size="small"
                 :title="$gettext('Download')"
                 color="download"

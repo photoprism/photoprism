@@ -207,7 +207,9 @@
           <!-- v-col cols="12" sm="6" md="3" class="pa-2 p-lens-select">
               <v-select @change="dropdownChange"
                         :label="labels.lens"
-                        flat solo hide-details
+                        flat
+                        variant="solo"
+                        hide-details
                         color="secondary-dark"
                         bg-color="secondary-light"
                         item-value="ID"

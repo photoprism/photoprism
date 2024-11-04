@@ -6,7 +6,7 @@
       <v-row class="p-colors">
         <v-col v-for="(color, index) in colors" :key="index" class="p-color pa-2 d-flex grow" cols="3">
           <v-hover v-slot="{ hover }">
-            <v-card :to="{ name: 'browse', query: { color: color.name } }" :dark="useDark(color)" :color="color.example" :text="!hover" class="clickable py-1">
+            <v-card :to="{ name: 'browse', query: { color: color.name } }" :theme="useDark(color)" :color="color.example" :text="!hover" class="clickable py-1">
               <v-card-text class="px-0 py-12 text-body-2">{{ color.label }}</v-card-text>
             </v-card>
           </v-hover>
