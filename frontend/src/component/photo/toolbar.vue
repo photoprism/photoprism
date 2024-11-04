@@ -213,7 +213,7 @@
                         color="secondary-dark"
                         bg-color="secondary-light"
                         item-value="ID"
-                        item-text="Model"
+                        item-title="Model"
                         v-model="filter.lens"
                         :items="lensOptions">
               </v-select>
