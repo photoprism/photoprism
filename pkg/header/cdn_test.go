@@ -8,6 +8,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCdn(t *testing.T) {
+	t.Run("Header", func(t *testing.T) {
+		assert.Equal(t, "Cdn-Host", CdnHost)
+		assert.Equal(t, "Cdn-Mobiledevice", CdnMobileDevice)
+		assert.Equal(t, "Cdn-Serverzone", CdnServerZone)
+		assert.Equal(t, "Cdn-Serverid", CdnServerID)
+		assert.Equal(t, "Cdn-Connectionid", CdnConnectionID)
+	})
+}
+
 func TestIsCdn(t *testing.T) {
 	t.Run("Header", func(t *testing.T) {
 		u, _ := url.Parse("/foo")

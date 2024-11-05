@@ -20,4 +20,8 @@ const (
 	ContentTypeMultipart = "multipart/form-data"
 	ContentTypeJson      = "application/json"
 	ContentTypeJsonUtf8  = "application/json; charset=utf-8"
+	ContentTypeHtml      = "text/html; charset=utf-8"
+	ContentTypeText      = "text/plain; charset=utf-8"
+	ContentTypeSVG       = "image/svg+xml"
+	ContentTypeAVC       = "video/mp4; codecs=\"avc1\""
 )
