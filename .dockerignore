@@ -1,3 +1,4 @@
+# Local build files and directories
 /photos/*
 /frontend/node_modules/*
 /node_modules
@@ -12,14 +13,38 @@
 /photoprism-*
 /coverage.*
 /frontend/tests/acceptance/screenshots
+
+# Custom config, database, log, and temporary files
 /tmp/
-.idea
-.DS_Store
 .env
+.dockerignore
+*.log
+*.jsonl
 *.db
 *.db-journal
 Dockerfile
 docker-compose*
 compose.yaml
 compose.*.yaml
-.dockerignore
+*.override.yml
+*.override.yaml
+*.tmp.yml
+*.tmp.yaml
+
+# Automatically generated files, e.g. by editors and operating systems
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.heartbeat
+.idea
+.glide
+*~
+.goutputstream*
+.c9revisions
+.settings
+.swp
+.tmp
