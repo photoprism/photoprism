@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-07-08 13:45+0000\n"
-"PO-Revision-Date: 2024-07-05 09:24+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2024-11-05 09:00+0000\n"
+"Last-Translator: Jozef Gaal <preklady@mayday.sk>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
 "backend/sk/>\n"
 "Language: sk\n"
@@ -13,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: messages.go:101
 msgid "Something went wrong, try again"
@@ -191,7 +190,7 @@ msgstr "Systém zaneprázdnený, prosím skúste znovu neskôr"
 #: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "Interval prebúdzania je %s, ale musí byť najviac 1 h."
+msgstr "Interval prebúdzania je %s, ale musí byť najviac 1 h"
 
 #: messages.go:145
 msgid "Your account could not be connected"
@@ -390,7 +389,7 @@ msgstr "Trvalo odstránené"
 #: messages.go:192
 #, c-format
 msgid "%s has been restored"
-msgstr "Označenie obnovené"
+msgstr "%s bolo obnovené"
 
 #: messages.go:193
 msgid "Successfully verified"
