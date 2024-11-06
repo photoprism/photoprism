@@ -1,20 +1,17 @@
 <template>
   <div>
     <v-container v-if="selection.length > 0" fluid class="pa-0">
-<!--      TODO: check v-speed-dial view and position-->
       <v-speed-dial
           id="t-clipboard"
           v-model="expanded"
-          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`"
+          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard position-relative`"
           :end="!rtl"
           :start="rtl"
-          direction="top"
-          location="bottom right"
-          position="fixed"
+          location="top center"
           transition="slide-y-reverse-transition"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle" class="action-menu">
+          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10" location="bottom right">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>

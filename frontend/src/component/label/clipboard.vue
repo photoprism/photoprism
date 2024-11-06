@@ -4,12 +4,12 @@
       <v-speed-dial
         id="t-clipboard"
         v-model="expanded"
-        location="bottom right"
+        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard position-relative`"
+        location="top center"
         transition="slide-y-reverse-transition"
-        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle" class="action-menu">
+          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10" location="bottom right">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
