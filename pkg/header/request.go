@@ -2,8 +2,6 @@ package header
 
 import (
 	"github.com/gin-gonic/gin"
-
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 const (
@@ -19,9 +17,9 @@ func ClientIP(c *gin.Context) (ip string) {
 	} else if c.Request == nil {
 		return UnknownIP
 	} else if ip = c.ClientIP(); ip != "" {
-		return clean.IP(ip, UnknownIP)
+		return IP(ip, UnknownIP)
 	} else if ip = c.RemoteIP(); ip != "" {
-		return clean.IP(ip, UnknownIP)
+		return IP(ip, UnknownIP)
 	}
 
 	// Tests may not specify an IP address.

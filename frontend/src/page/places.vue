@@ -225,8 +225,7 @@ export default {
         container: "map",
         style: "https://api.maptiler.com/maps/" + this.style + "/style.json?key=" + mapKey,
         glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
-        attributionControl: true,
-        customAttribution: this.attribution,
+        attributionControl: { compact: false, customAttribution: this.attribution },
         zoom: 0,
       };
 
@@ -342,7 +341,6 @@ export default {
             ],
           },
           attributionControl: false,
-          customAttribution: "",
           zoom: 0,
         };
       }
@@ -613,9 +611,12 @@ export default {
       this.map.on("load", () => this.onMapLoad());
     },
     getClusterFeatures(clusterId, limit, callback) {
-      this.map.getSource("photos").getClusterLeaves(clusterId, limit, undefined, (error, clusterFeatures) => {
-        callback(clusterFeatures);
-      });
+      this.map
+        .getSource("photos")
+        .getClusterLeaves(clusterId, limit, undefined)
+        .then((clusterFeatures) => {
+          callback(clusterFeatures);
+        });
     },
     getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 10000) {
@@ -679,23 +680,25 @@ export default {
             const imageContainer = document.createElement("div");
             imageContainer.className = "marker cluster-marker";
 
-            this.map.getSource("photos").getClusterLeaves(props.cluster_id, 4, 0, (error, clusterFeatures) => {
-              if (error) {
+            this.map
+              .getSource("photos")
+              .getClusterLeaves(props.cluster_id, 4, 0)
+              .then((clusterFeatures) => {
+                const previewImageCount = clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
+                const images = Array(previewImageCount)
+                  .fill(null)
+                  .map((a, i) => {
+                    const feature = clusterFeatures[Math.floor((clusterFeatures.length * i) / previewImageCount)];
+                    const image = document.createElement("div");
+                    image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
+                    return image;
+                  });
+
+                imageContainer.append(...images);
+              })
+              .catch((error) => {
                 return;
-              }
-
-              const previewImageCount = clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
-              const images = Array(previewImageCount)
-                .fill(null)
-                .map((a, i) => {
-                  const feature = clusterFeatures[Math.floor((clusterFeatures.length * i) / previewImageCount)];
-                  const image = document.createElement("div");
-                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
-                  return image;
-                });
-
-              imageContainer.append(...images);
-            });
+              });
 
             const counterBubble = document.createElement("div");
 
@@ -763,7 +766,7 @@ export default {
       // Add 'photos' data source.
       this.map.addSource("photos", {
         type: "geojson",
-        data: null,
+        data: { type: "FeatureCollection", features: [] },
         cluster: true,
         clusterMaxZoom: 18, // Max zoom to cluster points on
         clusterRadius: 80, // Radius of each cluster when clustering points (defaults to 50)

@@ -17,7 +17,7 @@ func FlushAlbumCache() {
 	albumCache.Flush()
 }
 
-// CachedAlbumByUID returns an existing album or nil if not found.
+// CachedAlbumByUID returns an existing album or an error if not found.
 func CachedAlbumByUID(uid string) (m Album, err error) {
 	// Valid album UID?
 	if uid == "" || rnd.InvalidUID(uid, AlbumUID) {

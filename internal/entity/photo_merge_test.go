@@ -35,7 +35,7 @@ func TestPhoto_Stackable(t *testing.T) {
 }
 
 func TestPhoto_IdenticalIdentical(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo19")
 
 		result, err := photo.Identical(true, true)
@@ -58,7 +58,7 @@ func TestPhoto_IdenticalIdentical(t *testing.T) {
 		}
 		assert.Equal(t, 0, len(result))
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo23")
 
 		result, err := photo.Identical(true, true)
@@ -70,7 +70,7 @@ func TestPhoto_IdenticalIdentical(t *testing.T) {
 		t.Logf("result: %#v", result)
 		assert.Equal(t, 2, len(result))
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo23")
 		result, err := photo.Identical(true, false)
 
@@ -84,7 +84,7 @@ func TestPhoto_IdenticalIdentical(t *testing.T) {
 }
 
 func TestPhoto_Merge(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo23")
 		original, merged, err := photo.Merge(true, false)
 

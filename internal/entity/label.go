@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -48,6 +49,18 @@ type Label struct {
 // TableName returns the entity table name.
 func (Label) TableName() string {
 	return "labels"
+}
+
+// AfterUpdate flushes the label cache when a label is updated.
+func (m *Label) AfterUpdate(tx *gorm.DB) (err error) {
+	FlushLabelCache()
+	return
+}
+
+// AfterDelete flushes the label cache when a label is deleted.
+func (m *Label) AfterDelete(tx *gorm.DB) (err error) {
+	FlushLabelCache()
+	return
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -101,6 +114,7 @@ func (m *Label) Create() error {
 func (m *Label) Delete() error {
 	Db().Where("label_id = ? OR category_id = ?", m.ID, m.ID).Delete(&Category{})
 	Db().Where("label_id = ?", m.ID).Delete(&PhotoLabel{})
+	FlushLabelCache()
 	return Db().Delete(m).Error
 }
 
@@ -152,17 +166,35 @@ func FirstOrCreateLabel(m *Label) *Label {
 	return nil
 }
 
-// FindLabel returns an existing row if exists.
-func FindLabel(s string) *Label {
+// FindLabel find the matching label based on the string provided or an error if not found.
+func FindLabel(s string, cached bool) (m Label, err error) {
 	labelSlug := txt.Slug(s)
 
-	result := Label{}
-
-	if err := Db().Where("label_slug = ? OR custom_slug = ?", labelSlug, labelSlug).First(&result).Error; err == nil {
-		return &result
+	if labelSlug == "" {
+		return m, fmt.Errorf("invalid label slug %s", clean.LogQuote(labelSlug))
 	}
 
-	return nil
+	// Return cached label, if found.
+	if cached {
+		if cacheData, ok := labelCache.Get(labelSlug); ok {
+			log.Tracef("label: cache hit for %s", labelSlug)
+			return cacheData.(Label), nil
+		}
+	}
+
+	// Fetch and cache label from database.
+	m = Label{}
+
+	if r := Db().First(&m, "label_slug = ? OR custom_slug = ?", labelSlug, labelSlug); r.RecordNotFound() {
+		labelCache.Delete(labelSlug)
+		return m, fmt.Errorf("label not found")
+	} else if r.Error != nil {
+		labelCache.Delete(labelSlug)
+		return m, r.Error
+	} else {
+		labelCache.SetDefault(m.LabelSlug, m)
+		return m, nil
+	}
 }
 
 // AfterCreate sets the New column used for database callback

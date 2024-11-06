@@ -7,8 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
 func TestCacheControlMaxAge(t *testing.T) {
@@ -16,27 +14,27 @@ func TestCacheControlMaxAge(t *testing.T) {
 		assert.Equal(t, CacheControlPrivateDefault, CacheControlMaxAge(0, false))
 		assert.Equal(t, "no-cache", CacheControlMaxAge(-1, false))
 		assert.Equal(t, "private, max-age=1", CacheControlMaxAge(1, false))
-		assert.Equal(t, "private, max-age=31536000", CacheControlMaxAge(unix.YearInt, false))
+		assert.Equal(t, "private, max-age=31536000", CacheControlMaxAge(CacheYearInt, false))
 		assert.Equal(t, "private, max-age=31536000", CacheControlMaxAge(1231536000, false))
 	})
 	t.Run("Public", func(t *testing.T) {
 		assert.Equal(t, CacheControlPublicDefault, CacheControlMaxAge(0, true))
 		assert.Equal(t, "no-cache", CacheControlMaxAge(-1, true))
 		assert.Equal(t, "public, max-age=1", CacheControlMaxAge(1, true))
-		assert.Equal(t, "public, max-age=31536000", CacheControlMaxAge(unix.YearInt, true))
+		assert.Equal(t, "public, max-age=31536000", CacheControlMaxAge(CacheYearInt, true))
 		assert.Equal(t, "public, max-age=31536000", CacheControlMaxAge(1231536000, true))
 	})
 }
 
 func BenchmarkTestCacheControlMaxAge(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		_ = CacheControlMaxAge(unix.YearInt, false)
+		_ = CacheControlMaxAge(CacheYearInt, false)
 	}
 }
 
 func BenchmarkTestCacheControlMaxAgeImmutable(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		_ = CacheControlMaxAge(unix.YearInt, false) + ", " + CacheControlImmutable
+		_ = CacheControlMaxAge(CacheYearInt, false) + ", " + CacheControlImmutable
 	}
 }
 
@@ -49,7 +47,7 @@ func TestSetCacheControl(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		SetCacheControl(c, unix.YearInt, false)
+		SetCacheControl(c, CacheYearInt, false)
 		assert.Equal(t, "private, max-age=31536000", c.Writer.Header().Get(CacheControl))
 	})
 	t.Run("Public", func(t *testing.T) {
@@ -60,7 +58,7 @@ func TestSetCacheControl(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		SetCacheControl(c, unix.YearInt, true)
+		SetCacheControl(c, CacheYearInt, true)
 		assert.Equal(t, "public, max-age=31536000", c.Writer.Header().Get(CacheControl))
 	})
 	t.Run("NoCache", func(t *testing.T) {
@@ -85,7 +83,7 @@ func TestSetCacheControlImmutable(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		SetCacheControlImmutable(c, unix.YearInt, false)
+		SetCacheControlImmutable(c, CacheYearInt, false)
 		assert.Equal(t, "private, max-age=31536000, immutable", c.Writer.Header().Get(CacheControl))
 	})
 	t.Run("Public", func(t *testing.T) {
@@ -96,7 +94,7 @@ func TestSetCacheControlImmutable(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		SetCacheControlImmutable(c, unix.YearInt, true)
+		SetCacheControlImmutable(c, CacheYearInt, true)
 		assert.Equal(t, "public, max-age=31536000, immutable", c.Writer.Header().Get(CacheControl))
 	})
 	t.Run("PublicDefault", func(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 )
 
 func TestFileSyncs(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		r, err := FileSyncs(uint(1000001), "downloaded", 10)
 		if err != nil {
 			t.Fatal(err)

@@ -194,7 +194,7 @@ func TestFileByHash(t *testing.T) {
 }
 
 func TestSetPhotoPrimary(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
 
 		err := SetPhotoPrimary("ps6sg6be2lvl0yh7", "fs6sg6bwhhbnlqdn")
@@ -244,7 +244,7 @@ func TestRenameFile(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		assert.Equal(t, "2790/02/Photo01.xmp", entity.FileFixturesExampleXMP.FileName)
 		assert.Equal(t, "/", entity.FileFixturesExampleXMP.FileRoot)
 		err := RenameFile("/", "exampleXmpFile.xmp", "test-root", "yyy.jpg")

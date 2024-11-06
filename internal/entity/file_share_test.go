@@ -57,7 +57,7 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 }
 
 func TestFileShare_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "NameBeforeUpdate")
 
 		assert.Equal(t, "NameBeforeUpdate", fileShare.RemoteName)
@@ -74,7 +74,7 @@ func TestFileShare_Updates(t *testing.T) {
 }
 
 func TestFileShare_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "NameBeforeUpdate2")
 		assert.Equal(t, "NameBeforeUpdate2", fileShare.RemoteName)
 		assert.Equal(t, uint(0x7b), fileShare.ServiceID)
@@ -90,7 +90,7 @@ func TestFileShare_Update(t *testing.T) {
 }
 
 func TestFileShare_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "Nameavc")
 
 		initialDate := fileShare.UpdatedAt

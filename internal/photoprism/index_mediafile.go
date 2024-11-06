@@ -911,8 +911,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			return result
 		}
 
-		if err = photo.SyncKeywordLabels(); err != nil {
-			log.Errorf("index: %s in %s (sync keywords and labels)", err, logName)
+		if err = photo.UpdateLabels(); err != nil {
+			log.Errorf("index: %s in %s (update labels)", err, logName)
 		}
 
 		if err = photo.IndexKeywords(); err != nil {

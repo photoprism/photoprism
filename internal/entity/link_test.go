@@ -114,7 +114,7 @@ func TestLink_Save(t *testing.T) {
 
 		assert.Error(t, link.Save())
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		link := NewLink("ls6sg6bffgtredft", false, false)
 
 		err := link.Save()
@@ -126,7 +126,7 @@ func TestLink_Save(t *testing.T) {
 }
 
 func TestLink_Delete(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		link := NewLink("ls6sg6bffgtreoft", false, false)
 
 		err := link.Delete()
@@ -147,7 +147,7 @@ func TestLink_Delete(t *testing.T) {
 }
 
 func TestFindLink(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewLink("ls6sg6bffgtrjoft", false, false)
 
 		link := &m
@@ -194,14 +194,14 @@ func TestFindLinks(t *testing.T) {
 }
 
 func TestFindValidLinksLinks(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		r := FindValidLinks("1jxf3jfn2k", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})
 }
 
 func TestLink_String(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		link := NewLink("jhgko", false, false)
 		uid := link.LinkUID
 		assert.Equal(t, uid, link.String())

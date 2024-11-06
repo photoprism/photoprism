@@ -4,8 +4,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
 const (
@@ -50,8 +48,8 @@ var (
 func CacheControlMaxAge(maxAge int, public bool) string {
 	if maxAge < 0 {
 		return CacheControlNoCache
-	} else if maxAge > unix.YearInt {
-		maxAge = unix.YearInt
+	} else if maxAge > CacheYearInt {
+		maxAge = CacheYearInt
 	}
 
 	switch {

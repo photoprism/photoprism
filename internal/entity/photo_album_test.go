@@ -59,7 +59,7 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 
 // TODO fails on mariadb
 func TestPhotoAlbum_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		p := PhotoAlbum{}
 
 		err := p.Create()

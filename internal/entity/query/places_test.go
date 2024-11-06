@@ -5,7 +5,7 @@ import (
 )
 
 func TestCellIDs(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		result, err := CellIDs()
 
 		if err != nil {
@@ -16,7 +16,7 @@ func TestCellIDs(t *testing.T) {
 	})
 }
 func TestPurgePlaces(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		if err := PurgePlaces(); err != nil {
 			t.Fatal(err)
 		}

@@ -6,5 +6,7 @@ const (
 	SrcManual   = "manual"
 	SrcLocation = "location"
 	SrcImage    = "image"
+	SrcTitle    = "title"
+	SrcSubject  = "subject"
 	SrcKeyword  = "keyword"
 )

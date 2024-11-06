@@ -40,9 +40,10 @@ venv
 .venv
 __pycache__
 
-# Temporary database, log, and config files
+# Custom config, database, log, and temporary files
 /tmp/
 *.log
+*.jsonl
 *.pid
 *.db
 *.db-journal
@@ -51,7 +52,7 @@ __pycache__
 *.override.yaml
 *.tmp.yaml
 
-# Files generated automatically, e.g. by IDEs and operating systems
+# Automatically generated files, e.g. by editors and operating systems
 .DS_Store
 .DS_Store?
 ._*

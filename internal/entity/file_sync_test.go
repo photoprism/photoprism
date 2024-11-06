@@ -56,7 +56,7 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 }
 
 func TestFileSync_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileSync := NewFileSync(123, "NameBeforeUpdate")
 
 		assert.Equal(t, "NameBeforeUpdate", fileSync.RemoteName)
@@ -73,7 +73,7 @@ func TestFileSync_Updates(t *testing.T) {
 }
 
 func TestFileSync_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileSync := NewFileSync(123, "NameBeforeUpdate2")
 		assert.Equal(t, "NameBeforeUpdate2", fileSync.RemoteName)
 		assert.Equal(t, uint(0x7b), fileSync.ServiceID)
@@ -89,7 +89,7 @@ func TestFileSync_Update(t *testing.T) {
 }
 
 func TestFileSync_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileSync := NewFileSync(123, "Nameavc")
 
 		initialDate := fileSync.UpdatedAt

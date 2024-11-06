@@ -68,7 +68,7 @@ func TestAlbumFolders(t *testing.T) {
 }
 
 func TestUpdateFolderDates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		if err := UpdateFolderDates(); err != nil {
 			t.Fatal(err)
 		}

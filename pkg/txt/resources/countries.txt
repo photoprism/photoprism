@@ -198,9 +198,19 @@ US:Venice Beach
 MN:Mongolia
 CL:Chile
 RW:Rwanda
-TR:Istanbul
 TR:Turkey
 TR:Türkei
+TR:Istanbul
+TR:Ankara
+TR:Izmir
+TR:Bursa
+TR:Antalya
+TR:Konya
+TR:Adana
+TR:Gaziantep
+TR:Kocaeli
+TR:Mersin
+TR:Diyarbakır
 KG:Kyrgyzstan
 BT:Bhutan
 NP:Everest
@@ -208,19 +218,84 @@ NP:Kathmandu
 NP:Nepal
 BD:Bangladesh
 JO:Jordan
+JO:Amman
+JO:عَمَّان
+JO:Zarqa
+JO:الزرقاء
+JO:Irbid
+JO:إربد
+JO:Russeifa
+JO:الرصيفة
+JO:Sahab
+JO:سحاب
+JO:Ar Ramtha
+JO:الرمثا
+JO:Aqaba
+JO:العقبة
+JO:Mafraq
+JO:المفرق
 SY:Syria
+SY:سوريا
+SY:Syrien
+SY:Damascus
+SY:دِمَشق
+SY:Aleppo
+SY:ﺣَﻠَﺐ
+SY:Ḥalab
+SY:Daraa
+SY:دَرْعَا
+SY:Ad-Deir
+SY:Deir ez-Zor
+SY:دير الزور
+SY:Al-Hasakah
+SY:لْحَسَكَة
+SY:Latakia
+SY:للَّاذْقِيَّة
+SY:Quneitra
+SY:Al Qunaytirah
+SY:Qunaitira
+SY:Kuneitra
+SY:لْقُنَيطْرَة
+SY:Idlib
+SY:in Homs
+SY:Qusseir
+SY:Raqqa
+SY:ar-Raqqah
+SY:Rakka
+SY:ٱلرَّقَّة
+SY:Afrin
+SY:Ifrin
+SY:Efrin
+SY:عفرين
 LB:Lebanon
 LB:لُبْنان
 LB:Beirut
+LB:بيروت
+LB:Dahieh
 LB:Dahiyeh
 LB:Dâhiye
 LB:Al-Dahyeh
-LB:Tripoli
 LB:Nabatieh
 LB:Byblos
 LB:Baalbek
+LB:Baalbeck
+LB:بعلبك
 LB:Quobeiyat
 LB:Rafic Hariri
+LB:Kafarkila
+LB:Kfarkila
+LB:Kfarkela
+LB:Kafarkela
+LB:Kafr Kila
+LB:كفركلا
+LB:Mhaibib
+LB:Ghobeiri
+LB:Ghobeiry
+LB:غبيري
+LB:in Sidon
+LB:صيدا
+LB:in Tyre
+LB:صُور
 BG:Bulgaria
 BG:Koprivshtitsa
 BG:Melnik
@@ -348,10 +423,37 @@ IQ:Irak
 IQ:Baghdad
 IQ:العراق
 IQ:بَغْدَاد
+IQ:Mosul
+IQ:Nineveh
+IQ:Basra
+IQ:Kirkuk
+IQ:Erbil
+IQ:Hewlêr
+IQ:أربيل
+IQ:ܐܲܪܒܹܝܠ
+IQ:هەولێر
+IQ:Najaf
+IQ:Karbala
+IQ:Sulaymaniyah
+IQ:Nasiriyah
+IQ:Dhi Qar
 IR:Iran
 IR:إيران
 IR:Tehran
+IR:Tehrān
+IR:Teheran
+IR:تهران
+IR:طهران
 IR:طَهْران
+IR:Shamsabad
+IR:Shams Abad
+IR:شمس اباد
+IR:Shamsābād
+IR:Parchin
+IR:پارچین
+IR:Shahroud
+IR:Schahrud
+IR:شاهرود
 IR:Isfahan
 IR:اصفهان
 IR:Bushehr
@@ -522,13 +624,15 @@ CA:Quebec
 CA:Ontario
 CA:Alberta
 IL:Israel
-IL:Holy Land
+IL:Israeli
+IL:Israelis
 IL:יִשְׂרָאֵל
 IL:Yisra'el
 IL:Yisrael
 IL:Tel Aviv
 IL:תֵּל אָבִיב-יָפוֹ
 IL:Ben Gurion
+IL:Caesarea
 IL:Netanya
 IL:קֵיסָרְיָה
 IL:Haifa
@@ -554,10 +658,18 @@ IL:Sderot
 IL:Mefalsim
 IL:Mitspe Ramon
 IL:Kibbutz
+IL:קִבּוּץ
+IL:קיבוץ
+IL:Kibbutzim
+IL:קִבּוּצִים
+IL:קיבוצים
+IL:Degania
 IL:Nahal Oz
 IL:Kfar Aza
 IL:Kfar Maimon
 IL:Kfar Hoshen
+IL:Kfar Masaryk
+IL:in Kfar
 IL:Be'eri
 EG:Egypt
 EG:Ägypten
@@ -613,6 +725,17 @@ PS:State of Palestine
 PS:فلسطين
 PS:Gaza City
 PS:Gaza Strip
+PS:in Gaza
+PS:Gazans
+PS:Palestinians
+PS:Tulkarm
+PS:Tulkarem
+PS:طولكرم
+PS:Dschenin
+PS:Djenin
+PS:جنين
+PS:Al-Aqsa
+PS:المسجد
 PS:West Bank
 PS:Samaria
 PS:Judea

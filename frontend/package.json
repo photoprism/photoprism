@@ -68,7 +68,7 @@
     "karma-verbose-reporter": "^0.0.8",
     "karma-webpack": "^5.0.1",
     "luxon": "^3.5.0",
-    "maplibre-gl": "^3.6.2",
+    "maplibre-gl": "^4.7.1",
     "memoize-one": "^6.0.0",
     "mini-css-extract-plugin": "^2.9.1",
     "minimist": ">=1.2.8",
