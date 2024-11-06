@@ -17,25 +17,23 @@
         <translate>Random</translate>
       </v-tab>
 
-      <v-tabs v-model="active">
-        <v-window>
-          <v-window-item>
-            <p-tab-discover-colors></p-tab-discover-colors>
-          </v-window-item>
+      <v-tabs-window v-model="active">
+        <v-tabs-window-item>
+          <p-tab-discover-colors></p-tab-discover-colors>
+        </v-tabs-window-item>
 
-          <v-window-item>
-            <p-tab-discover-todo></p-tab-discover-todo>
-          </v-window-item>
+        <v-tabs-window-item>
+          <p-tab-discover-todo></p-tab-discover-todo>
+        </v-tabs-window-item>
 
-          <v-window-item>
-            <p-tab-discover-todo></p-tab-discover-todo>
-          </v-window-item>
+        <v-tabs-window-item>
+          <p-tab-discover-todo></p-tab-discover-todo>
+        </v-tabs-window-item>
 
-          <v-window-item>
-            <p-tab-discover-todo></p-tab-discover-todo>
-          </v-window-item>
-        </v-window>
-      </v-tabs>
+        <v-tabs-window-item>
+          <p-tab-discover-todo></p-tab-discover-todo>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-tabs>
   </div>
 </template>

@@ -22,6 +22,7 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
+<!--      TODO: check the height -->
       <v-tabs v-model="active" elevation="0" grow class="form bg-transparent" bg-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
@@ -73,31 +74,29 @@
         <v-tab v-if="$config.feature('edit')" id="tab-info" ripple>
           <v-icon>mdi-cog</v-icon>
         </v-tab>
-
-        <v-tabs v-model="active">
-          <v-window>
-            <v-window-item>
-              <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
-            </v-window-item>
-
-            <v-window-item>
-              <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
-            </v-window-item>
-
-            <v-window-item>
-              <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
-            </v-window-item>
-
-            <v-window-item>
-              <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
-            </v-window-item>
-
-            <v-window-item v-if="$config.feature('edit')">
-              <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
-            </v-window-item>
-          </v-window>
-        </v-tabs>
       </v-tabs>
+
+      <v-tabs-window v-model="active">
+        <v-tabs-window-item>
+          <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item v-if="$config.feature('edit')">
+          <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-card>
   </v-dialog>
 </template>

@@ -15,11 +15,11 @@
       </v-tab>
     </v-tabs>
 
-    <v-window v-model="active">
-      <v-window-item v-for="(item, index) in tabs" :key="index">
+    <v-tabs-window v-model="active">
+      <v-tabs-window-item v-for="(item, index) in tabs" :key="index">
         <component :is="item.component" :static-filter="item.filter" :active="active === index" @updateFaceCount="onUpdateFaceCount"></component>
-      </v-window-item>
-    </v-window>
+      </v-tabs-window-item>
+    </v-tabs-window>
   </div>
 </template>
 

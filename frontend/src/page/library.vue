@@ -9,13 +9,11 @@
       </v-tab>
     </v-tabs>
 
-    <v-tabs v-model="active">
-      <v-window>
-        <v-window-item v-for="(item, index) in tabs" :key="index">
-          <component :is="item.component"></component>
-        </v-window-item>
-      </v-window>
-    </v-tabs>
+    <v-tabs-window v-model="active">
+      <v-tabs-window-item v-for="(item, index) in tabs" :key="index">
+        <component :is="item.component"></component>
+      </v-tabs-window-item>
+    </v-tabs-window>
   </div>
 </template>
 
