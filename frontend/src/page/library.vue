@@ -7,14 +7,14 @@
           <v-icon :size="18" :start="!rtl" :end="rtl">{{ item.icon }}</v-icon> {{ item.label }}
         </template>
       </v-tab>
+    </v-tabs>
 
-      <v-tabs v-model="active">
-        <v-window>
-          <v-window-item v-for="(item, index) in tabs" :key="index">
-            <component :is="item.component"></component>
-          </v-window-item>
-        </v-window>
-      </v-tabs>
+    <v-tabs v-model="active">
+      <v-window>
+        <v-window-item v-for="(item, index) in tabs" :key="index">
+          <component :is="item.component"></component>
+        </v-window-item>
+      </v-window>
     </v-tabs>
   </div>
 </template>
@@ -23,6 +23,7 @@
 import Import from "page/library/import.vue";
 import Index from "page/library/index.vue";
 import Logs from "page/library/logs.vue";
+import { markRaw } from "vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -53,7 +54,7 @@ export default {
     const tabs = [
       {
         name: "library_index",
-        component: Index,
+        component: markRaw(Index),
         label: this.$gettext("Index"),
         class: "",
         path: "/index",
@@ -63,7 +64,7 @@ export default {
       },
       {
         name: "library_import",
-        component: Import,
+        component: markRaw(Import),
         label: this.$gettext("Import"),
         class: "",
         path: "/import",
@@ -77,7 +78,7 @@ export default {
       // <!-- TODO: change this icon probably to file-document -->
       tabs.push({
         name: "library_logs",
-        component: Logs,
+        component: markRaw(Logs),
         label: this.$gettext("Logs"),
         class: "",
         path: "/logs",
