@@ -11,25 +11,28 @@ import (
 	"github.com/photoprism/photoprism/pkg/header"
 )
 
-// registerPWARoutes adds routes for bootstrapping and configuring the progressive web app user interface.
-func registerPWARoutes(router *gin.Engine, conf *config.Config) {
-	// Loads Progressive Web App (PWA) on all routes beginning with "library".
-	pwa := func(c *gin.Context) {
+// registerWebAppRoutes adds routes for the web user interface.
+func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
+	// Serve user interface bootstrap template on all routes starting with "/library".
+	ui := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			api.AbortNotFound(c)
 			return
 		}
 
+		// Set values for UI bootstrap template.
 		values := gin.H{
 			"signUp": config.SignUp,
 			"config": conf.ClientPublic(),
 		}
+
+		// Render UI bootstrap template.
 		c.HTML(http.StatusOK, conf.TemplateName(), values)
 	}
-	router.Any(conf.BaseUri("/library/*path"), pwa)
+	router.Any(conf.LibraryUri("/*path"), ui)
 
-	// Progressive Web App (PWA) Manifest.
+	// Serve the user interface manifest file.
 	manifest := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 		c.Header(header.ContentType, header.ContentTypeJsonUtf8)
@@ -37,7 +40,7 @@ func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	}
 	router.Any(conf.BaseUri("/manifest.json"), manifest)
 
-	// Progressive Web App (PWA) Service Worker.
+	// Serve user interface service worker file.
 	swWorker := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 		c.File(filepath.Join(conf.BuildPath(), "sw.js"))

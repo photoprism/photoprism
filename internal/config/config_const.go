@@ -9,6 +9,9 @@ import (
 // ApiUri defines the standard path for handling REST requests.
 const ApiUri = "/api/v1"
 
+// LibraryUri defines the path for user interface routes.
+const LibraryUri = "/library"
+
 // StaticUri defines the standard path for serving static content.
 const StaticUri = "/static"
 

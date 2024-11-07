@@ -85,8 +85,8 @@ func FlushCoverCache() {
 }
 
 // AddCacheHeader adds a cache control header to the response.
-func AddCacheHeader(c *gin.Context, maxAge ttl.Duration, public bool) {
-	header.SetCacheControl(c, maxAge.Int(), public)
+func AddCacheHeader(c *gin.Context, duration ttl.Duration, public bool) {
+	header.SetCacheControl(c, duration.Int(), public)
 }
 
 // AddCoverCacheHeader adds cover image cache control headers to the response.

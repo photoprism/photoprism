@@ -8,7 +8,7 @@ import (
 
 func TestRobots(t *testing.T) {
 	t.Run("Header", func(t *testing.T) {
-		assert.Equal(t, "X-Robots-Tag", Robots)
+		assert.Equal(t, "X-Robots-Tag", RobotsTag)
 	})
 	t.Run("Values", func(t *testing.T) {
 		assert.Equal(t, "all", RobotsAll)

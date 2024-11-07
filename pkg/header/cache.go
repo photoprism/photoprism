@@ -44,19 +44,19 @@ var (
 )
 
 // CacheControlMaxAge returns a CacheControl header value based on the specified
-// maxAge time in seconds or the defaults if maxAge is not a positive number.
-func CacheControlMaxAge(maxAge int, public bool) string {
-	if maxAge < 0 {
+// duration in seconds or the defaults if duration is not a positive number.
+func CacheControlMaxAge(duration int, public bool) string {
+	if duration < 0 {
 		return CacheControlNoCache
-	} else if maxAge > CacheYearInt {
-		maxAge = CacheYearInt
+	} else if duration > DurationYear {
+		duration = DurationYear
 	}
 
 	switch {
-	case maxAge > 0 && public:
-		return "public, max-age=" + strconv.Itoa(maxAge)
-	case maxAge > 0:
-		return "private, max-age=" + strconv.Itoa(maxAge)
+	case duration > 0 && public:
+		return "public, max-age=" + strconv.Itoa(duration)
+	case duration > 0:
+		return "private, max-age=" + strconv.Itoa(duration)
 	case public:
 		return CacheControlPublicDefault
 	default:
@@ -66,14 +66,14 @@ func CacheControlMaxAge(maxAge int, public bool) string {
 
 // SetCacheControl adds a CacheControl header to the response based on the specified parameters.
 // If maxAge is 0, the defaults will be used.
-func SetCacheControl(c *gin.Context, maxAge int, public bool) {
+func SetCacheControl(c *gin.Context, duration int, public bool) {
 	if c == nil {
 		return
 	} else if c.Writer == nil {
 		return
 	}
 
-	c.Header(CacheControl, CacheControlMaxAge(maxAge, public))
+	c.Header(CacheControl, CacheControlMaxAge(duration, public))
 }
 
 // SetCacheControlImmutable adds a CacheControl header to the response based on the specified parameters
