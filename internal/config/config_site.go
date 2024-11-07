@@ -1,10 +1,19 @@
 package config
 
 import (
+	_ "embed"
 	"fmt"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+//go:embed robots.txt
+var robotsTxt []byte
 
 const localhost = "localhost"
 
@@ -26,6 +35,11 @@ func (c *Config) BaseUri(res string) string {
 // ApiUri returns the api URI.
 func (c *Config) ApiUri() string {
 	return c.BaseUri(ApiUri)
+}
+
+// LibraryUri returns the user interface URI for the given resource.
+func (c *Config) LibraryUri(res string) string {
+	return c.BaseUri(LibraryUri + res)
 }
 
 // ContentUri returns the content delivery URI based on the CdnUrl and the ApiUri.
@@ -147,4 +161,26 @@ func (c *Config) LegalUrl() string {
 	}
 
 	return c.options.LegalUrl
+}
+
+// RobotsTxt returns the content of the robots.txt file to be used for this site:
+// https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
+func (c *Config) RobotsTxt() ([]byte, error) {
+	if c.Demo() && c.Public() {
+		// Allow public demo instances to be indexed.
+		return []byte(fmt.Sprintf("User-agent: *\nDisallow: /\nAllow: %s/\nAllow: %s/\nAllow: .js\nAllow: .css", LibraryUri, StaticUri)), nil
+	} else if c.Public() {
+		// Do not allow other instances to be indexed when public mode is enabled.
+		return robotsTxt, nil
+	} else if fileName := filepath.Join(c.ConfigPath(), "robots.txt"); !fs.FileExists(fileName) {
+		// Do not allow indexing if config/robots.txt does not exist.
+		return robotsTxt, nil
+	} else if robots, robotsErr := os.ReadFile(fileName); robotsErr != nil {
+		// Log error and do not allow indexing if config/robots.txt cannot be read.
+		log.Debugf("config: failed to read robots.txt file (%s)", clean.Error(robotsErr))
+		return robotsTxt, robotsErr
+	} else {
+		// Return content of the config/robots.txt file.
+		return robots, nil
+	}
 }

@@ -8,11 +8,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // registerStaticRoutes adds routes for serving static content and templates.
 func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
-	// Redirects to the PWA for now, can be replaced by a template later.
+	// Redirects to the login page.
 	login := func(c *gin.Context) {
 		if conf.OIDCEnabled() && conf.OIDCRedirect() {
 			c.Redirect(http.StatusTemporaryRedirect, conf.OIDCLoginUri())
@@ -20,6 +21,20 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 		}
 	}
+
+	// Control how crawlers index the site by serving a "robots.txt" file in addition
+	// to the "X-Robots-Tag" response header set in the Security middleware:
+	// https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
+	router.Any(conf.BaseUri("/robots.txt"), func(c *gin.Context) {
+		if robotsTxt, _ := conf.RobotsTxt(); len(robotsTxt) == 0 {
+			// Return error 404 if file cannot be read or is empty.
+			c.Data(http.StatusNotFound, header.ContentTypeText, []byte{})
+		} else {
+			// Allow clients to cache the response for one day.
+			c.Header(header.CacheControl, header.CacheControlMaxAge(header.DurationDay, true))
+			c.Data(http.StatusOK, header.ContentTypeText, robotsTxt)
+		}
+	})
 
 	router.Any(conf.BaseUri("/"), login)
 
