@@ -4,6 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Optional HTTP request header names.
+const (
+	Cookie    = "Cookie"
+	Referer   = "Referer"
+	Browser   = "Sec-Ch-Ua"
+	Platform  = "Sec-Ch-Ua-Platform"
+	FetchMode = "Sec-Fetch-Mode"
+)
+
+// Standard IP addresses and placeholders.
 const (
 	UnknownIP = "0.0.0.0"
 	LocalIP   = "127.0.0.1"

@@ -4,6 +4,7 @@ package header
 const (
 	Accept             = "Accept"
 	AcceptEncoding     = "Accept-Encoding"
+	AcceptLanguage     = "Accept-Language"
 	AcceptRanges       = "Accept-Ranges"
 	ContentType        = "Content-Type"
 	ContentDisposition = "Content-Disposition"
@@ -22,6 +23,8 @@ const (
 	ContentTypeJsonUtf8  = "application/json; charset=utf-8"
 	ContentTypeHtml      = "text/html; charset=utf-8"
 	ContentTypeText      = "text/plain; charset=utf-8"
+	ContentTypePNG       = "image/png"
+	ContentTypeJPEG      = "image/jpeg"
 	ContentTypeSVG       = "image/svg+xml"
 	ContentTypeAVC       = "video/mp4; codecs=\"avc1\""
 )

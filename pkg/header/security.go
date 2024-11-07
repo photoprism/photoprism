@@ -12,8 +12,17 @@ const (
 	ForwardedProto          = "X-Forwarded-Proto"          // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto
 )
 
-// Security header defaults.
+// Standard security policies.
+const (
+	PolicyDeny               = "DENY"
+	PolicyNoSniff            = "nosniff"
+	PolicyBlockXSS           = "1; mode=block"
+	PolicySameOrigin         = "same-origin"
+	PolicyFrameAncestorsNone = "frame-ancestors 'none';"
+)
+
+// Security header default policies.
 var (
-	DefaultContentSecurityPolicy = "frame-ancestors 'none';"
-	DefaultFrameOptions          = Deny
+	DefaultContentSecurityPolicy = PolicyFrameAncestorsNone
+	DefaultFrameOptions          = PolicyDeny
 )
