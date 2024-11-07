@@ -20,6 +20,7 @@ var Bots = []string{
 	"Exabot",
 	"Applebot",
 	"facebot",
+	"github-camo",
 }
 
 // BotsRegexp matches common search engine bot names.

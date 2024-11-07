@@ -14,6 +14,7 @@ func TestIsBot(t *testing.T) {
 		assert.True(t, IsBot("Mozilla/5.0 (Linux; Android 7.0;) AppleWebKit/537.36 (KHTML, like Gecko) Mobile Safari/537.36 (compatible; PetalBot;+https://webmaster.petalsearch.com/site/petalbot)"))
 		assert.True(t, IsBot("Mozilla/5.0 (Linux; Android 5.0) AppleWebKit/537.36 (KHTML, like Gecko) Mobile Safari/537.36 (compatible; Bytespider; spider-feedback@bytedance.com)"))
 		assert.True(t, IsBot("Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)"))
+		assert.True(t, IsBot("github-camo (b9ea4018)"))
 	})
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, IsBot("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2762.73 Safari/537.36"))
