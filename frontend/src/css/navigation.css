@@ -38,10 +38,6 @@ nav .v-list__item__title.title {
     padding-inline-start: 64px !important;
 }
 
-#p-navigation .v-list-item {
-    padding-inline-end: 8px !important;
-}
-
 #p-navigation .v-list-item__prepend,
 #p-navigation .v-list-item__append {
     display: unset;
@@ -51,6 +47,10 @@ nav .v-list__item__title.title {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+#p-navigation .nav-logout .v-list-item__content {
+    flex-direction: column;
 }
 
 #p-navigation .nav-count-item {

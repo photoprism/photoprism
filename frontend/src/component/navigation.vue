@@ -50,24 +50,14 @@
 
       <v-list class="pt-6 p-flex-menu navigation-menu">
         <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
-          <v-list-item-action :title="$gettext('Expand')">
-            <v-icon v-if="!rtl">mdi-chevron-right</v-icon>
-            <v-icon v-else>mdi-chevron-left</v-icon>
-          </v-list-item-action>
+          <v-icon v-if="!rtl" class="ma-auto">mdi-chevron-right</v-icon>
+          <v-icon v-else class="ma-auto">mdi-chevron-left</v-icon>
         </v-list-item>
 
-<!--        TODO: change collapsed navigation view-->
-<!--        <v-list-item v-if="isMini && $config.feature('search')" to="/browse" class="nav-browse" @click.stop="">-->
-<!--          <v-list-item-action :title="$gettext('Search')">-->
-<!--            <v-icon>mdi-magnify</v-icon>-->
-<!--          </v-list-item-action>-->
-
-<!--          <v-list-item-title>-->
-<!--            <translate>Search</translate>-->
-<!--          </v-list-item-title>-->
-<!--        </v-list-item>-->
-
-        <v-list-group v-if="!isMini && $config.feature('search')">
+        <v-list-item v-if="isMini && $config.feature('search')" to="/browse" class="nav-browse" @click.stop="">
+          <v-icon class="ma-auto">mdi-magnify</v-icon>
+        </v-list-item>
+        <v-list-group v-else-if="!isMini && $config.feature('search')">
           <template #activator="{ props }">
             <v-list-item v-bind="props" to="/browse" class="nav-browse" @click.stop="">
               <v-list-item-title class="p-flex-menuitem">
@@ -135,17 +125,10 @@
           </v-list-item>
         </v-list-group>
 
-<!--        <v-list-item v-if="isMini" v-show="$config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">-->
-<!--          <v-list-item-action :title="$gettext('Albums')">-->
-<!--            <v-icon>mdi-bookmark</v-icon>-->
-<!--          </v-list-item-action>-->
-
-<!--          <v-list-item-title :class="`menu-item ${rtl ? '&#45;&#45;rtl' : ''}`">-->
-<!--            <translate key="Albums">Albums</translate>-->
-<!--          </v-list-item-title>-->
-<!--        </v-list-item>-->
-
-        <v-list-group v-if="!isMini" v-show="$config.feature('albums')">
+        <v-list-item v-if="isMini" v-show="$config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">
+          <v-icon class="ma-auto">mdi-bookmark</v-icon>
+        </v-list-item>
+        <v-list-group v-else-if="!isMini" v-show="$config.feature('albums')">
           <template #activator="{ props }">
             <v-list-item v-bind="props" to="{ name: 'albums' }" class="nav-albums" @click.stop="">
               <v-list-item-title class="p-flex-menuitem">
@@ -165,17 +148,10 @@
           </v-list-item>
         </v-list-group>
 
-<!--        <v-list-item v-if="isMini && $config.feature('videos')" to="/videos" class="nav-video" @click.stop="">-->
-<!--          <v-list-item-action :title="$gettext('Videos')">-->
-<!--            <v-icon>mdi-play-circle</v-icon>-->
-<!--          </v-list-item-action>-->
-
-<!--          <v-list-item-title :class="`menu-item ${rtl ? '&#45;&#45;rtl' : ''}`">-->
-<!--            <translate key="Videos" class="nav-item-title">Videos</translate>-->
-<!--          </v-list-item-title>-->
-<!--        </v-list-item>-->
-
-        <v-list-group v-if="!isMini && $config.feature('videos')">
+        <v-list-item v-if="isMini && $config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
+            <v-icon class="ma-auto">mdi-play-circle</v-icon>
+        </v-list-item>
+        <v-list-group v-else-if="!isMini && $config.feature('videos')">
           <template #activator="{ props }">
             <v-list-item v-bind="props" to="/videos" class="nav-video" @click.stop="">
               <v-list-item-title class="p-flex-menuitem">
@@ -198,7 +174,10 @@
           </v-list-item>
         </v-list-group>
 
-        <v-list-item v-show="$config.feature('people') && (canManagePeople || config.count.people > 0)" :to="{ name: 'people' }" class="nav-people" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('people') && (canManagePeople || config.count.people > 0)" :to="{ name: 'people' }" class="nav-people" @click.stop="">
+          <v-icon class="ma-auto">mdi-account</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('people') && (canManagePeople || config.count.people > 0)" :to="{ name: 'people' }" class="nav-people" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-account</v-icon>
             <translate key="People" class="nav-item-title">People</translate>
@@ -208,7 +187,10 @@
           <!-- <span v-show="config.count.people > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people | abbreviateCount }}</span> -->
         </v-list-item>
 
-        <v-list-item v-show="$config.feature('favorites')" :to="{ name: 'favorites' }" class="nav-favorites" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('favorites')" :to="{ name: 'favorites' }" class="nav-favorites" @click.stop="">
+          <v-icon class="ma-auto">mdi-heart</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('favorites')" :to="{ name: 'favorites' }" class="nav-favorites" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-heart</v-icon>
             <translate key="Favorites" class="nav-item-title">Favorites</translate>
@@ -218,7 +200,10 @@
           <!-- <span v-show="config.count.favorites > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.favorites | abbreviateCount }}</span> -->
         </v-list-item>
 
-        <v-list-item v-show="$config.feature('moments')" :to="{ name: 'moments' }" class="nav-moments" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'moments' }" class="nav-moments" @click.stop="">
+          <v-icon class="ma-auto">mdi-star</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('moments')" :to="{ name: 'moments' }" class="nav-moments" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-star</v-icon>
             <translate key="Moments" class="nav-item-title">Moments</translate>
@@ -228,7 +213,10 @@
           <!-- <span v-show="config.count.moments > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments | abbreviateCount }}</span> -->
         </v-list-item>
 
-        <v-list-item v-show="$config.feature('moments')" :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
+          <v-icon class="ma-auto">mdi-calendar-range</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('moments')" :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-calendar-range</v-icon>
             <translate key="Calendar" class="nav-item-title">Calendar</translate>
@@ -250,14 +238,10 @@
         </v-list-item>
 
         <template v-if="canSearchPlaces">
-<!--          <v-list-item v-if="isMini" v-show="canSearchPlaces && $config.feature('places')" :to="{ name: 'places' }" class="nav-places" @click.stop="">-->
-<!--            <v-list-item-title class="p-flex-menuitem">-->
-<!--              <v-icon>mdi-map-marker</v-icon>-->
-<!--              <translate key="Places">Places</translate>-->
-<!--            </v-list-item-title>-->
-<!--          </v-list-item>-->
-
-          <v-list-group v-if="!isMini" v-show="canSearchPlaces && $config.feature('places')">
+          <v-list-item v-if="isMini" v-show="canSearchPlaces && $config.feature('places')" :to="{ name: 'places' }" class="nav-places" @click.stop="">
+            <v-icon class="ma-auto">mdi-map-marker</v-icon>
+          </v-list-item>
+          <v-list-group v-else v-show="canSearchPlaces && $config.feature('places')">
             <template #activator="{ props }">
               <v-list-item v-bind="props" to="/places" class="nav-places" @click.stop="">
                 <v-list-item-title class="p-flex-menuitem">
@@ -281,7 +265,10 @@
           </v-list-group>
         </template>
 
-        <v-list-item v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
+          <v-icon class="ma-auto">mdi-label</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-label</v-icon>
             <translate key="Labels" class="nav-item-title">Labels</translate>
@@ -291,7 +278,10 @@
           <!-- <span v-show="config.count.labels > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.labels | abbreviateCount }}</span> -->
         </v-list-item>
 
-        <v-list-item v-show="$config.feature('folders')" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('folders')" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
+          <v-icon class="ma-auto">mdi-folder</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('folders')" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-folder</v-icon>
             <translate key="Folders" class="nav-item-title">Folders</translate>
@@ -301,7 +291,10 @@
           <!-- <span v-show="config.count.folders > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.folders | abbreviateCount }}</span> -->
         </v-list-item>
 
-        <v-list-item v-show="$config.feature('private')" to="/private" class="nav-private" @click.stop="">
+        <v-list-item v-if="isMini && $config.feature('private')" to="/private" class="nav-private" @click.stop="">
+          <v-icon class="ma-auto">mdi-lock</v-icon>
+        </v-list-item>
+        <v-list-item v-else-if="!isMini && $config.feature('private')" to="/private" class="nav-private" @click.stop="">
           <v-list-item-title class="p-flex-menuitem">
             <v-icon>mdi-lock</v-icon>
             <translate key="Private" class="nav-item-title">Private</translate>
@@ -311,14 +304,10 @@
           <!-- <span v-show="config.count.private > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.private | abbreviateCount }}</span> -->
         </v-list-item>
 
-<!--        <v-list-item v-if="isMini && $config.feature('library')" :to="{ name: 'library_index' }" class="nav-library" @click.stop="">-->
-<!--          <v-list-item-title>-->
-<!--            <v-icon>mdi-film</v-icon>-->
-<!--            <translate key="Library">Library</translate>-->
-<!--          </v-list-item-title>-->
-<!--        </v-list-item>-->
-
-        <v-list-group v-if="!isMini && $config.feature('library')">
+        <v-list-item v-if="isMini && $config.feature('library')" :to="{ name: 'library_index' }" class="nav-library" @click.stop="">
+          <v-icon class="ma-auto">mdi-film</v-icon>
+        </v-list-item>
+        <v-list-group v-else-if="!isMini && $config.feature('library')">
           <template #activator="{ props }">
             <v-list-item v-bind="props" :to="{ name: 'library_index' }" class="nav-library" @click.stop="">
               <v-list-item-title class="p-flex-menuitem">
@@ -354,14 +343,10 @@
         </v-list-group>
 
         <template v-if="!config.disable.settings">
-<!--          <v-list-item v-if="isMini" v-show="$config.feature('settings')" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">-->
-<!--            <v-list-item-title>-->
-<!--              <v-icon>mdi-cog</v-icon>-->
-<!--              <translate key="Settings">Settings</translate>-->
-<!--            </v-list-item-title>-->
-<!--          </v-list-item>-->
-
-          <v-list-group v-if="!isMini" v-show="$config.feature('settings')">
+          <v-list-item v-if="isMini" v-show="$config.feature('settings')" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
+            <v-icon class="ma-auto">mdi-cog</v-icon>
+          </v-list-item>
+          <v-list-group v-else-if="!isMini" v-show="$config.feature('settings')">
             <template #activator="{ props }">
               <v-list-item v-bind="props" :to="{ name: 'settings' }" class="nav-settings" @click.stop="">
                 <v-list-item-title>
@@ -432,30 +417,26 @@
           </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-show="auth && !isPublic" class="p-profile position-fixed bottom-0" bg-color="secondary" @click.stop="onAccountSettings">
-           <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
-
-          <div class="profile-name ps-5">
-            <v-list-item-title>{{ displayName }}</v-list-item-title>
-            <v-list-item-subtitle>{{ accountInfo }}</v-list-item-subtitle>
-          </div>
-
-          <v-list-item-action class="ps-5" :title="$gettext('Logout')">
-            <v-btn icon @click.stop.prevent="onLogout">
-              <v-icon>mdi-power</v-icon>
-            </v-btn>
-          </v-list-item-action>
+        <v-list-item v-if="isMini && auth && !isPublic" class="nav-logout p-profile position-fixed bottom-0" @click.stop.prevent="onLogout">
+          <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
+          <v-icon size="x-large" class="ma-auto mt-3 mb-3">mdi-power</v-icon>
         </v-list-item>
+        <v-list-item v-else-if="!isMini && auth && !isPublic" class="p-profile position-fixed bottom-0" bg-color="secondary" @click.stop="onAccountSettings">
+          <div class="d-flex">
+            <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
 
-<!--        <v-list-item v-show="isMini && auth && !isPublic" class="nav-logout" @click.stop.prevent="onLogout">-->
-<!--          <v-list-item-action :title="$gettext('Logout')">-->
-<!--            <v-icon>mdi-power</v-icon>-->
-<!--          </v-list-item-action>-->
+            <div class="ps-5">
+              <v-list-item-title>{{ displayName }}</v-list-item-title>
+              <v-list-item-subtitle>{{ accountInfo }}</v-list-item-subtitle>
+            </div>
 
-<!--          <v-list-item-title>-->
-<!--            <translate key="Logout">Logout</translate>-->
-<!--          </v-list-item-title>-->
-<!--        </v-list-item>-->
+            <v-list-item-action class="ps-5" :title="$gettext('Logout')">
+              <v-btn icon @click.stop.prevent="onLogout">
+                <v-icon>mdi-power</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </div>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <div id="mobile-menu" :class="{ active: speedDial }" @click.stop="speedDial = false">
