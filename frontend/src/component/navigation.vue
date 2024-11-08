@@ -417,9 +417,9 @@
           </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="isMini && auth && !isPublic" class="nav-logout p-profile position-fixed bottom-0" @click.stop.prevent="onLogout">
-          <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
-          <v-icon size="x-large" class="ma-auto mt-3 mb-3">mdi-power</v-icon>
+        <v-list-item v-if="isMini && auth && !isPublic" class="nav-logout p-profile position-fixed bottom-0">
+          <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" @click.stop="onAccountSettings" />
+          <v-icon size="x-large" class="ma-auto mt-3 mb-3" @click.stop.prevent="onLogout">mdi-power</v-icon>
         </v-list-item>
         <v-list-item v-else-if="!isMini && auth && !isPublic" class="p-profile position-fixed bottom-0" bg-color="secondary" @click.stop="onAccountSettings">
           <div class="d-flex">
