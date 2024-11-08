@@ -18,11 +18,11 @@ export default {
   created() {
     window.addEventListener("scroll", this.onScroll);
   },
-  unmounted() {
+  beforeUnmount() {
     window.removeEventListener("scroll", this.onScroll);
   },
   methods: {
-    onScroll: function () {
+    onScroll() {
       if (window.scrollY > this.maxY) {
         this.maxY = window.scrollY;
         this.show = false;
@@ -33,8 +33,8 @@ export default {
         this.show = true;
       }
     },
-    scrollToTop: function () {
-      return this.$vuetify.goTo(0);
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
   },
 };
