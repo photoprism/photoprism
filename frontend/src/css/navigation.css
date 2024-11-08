@@ -29,27 +29,42 @@ nav .v-list__item__title.title {
     text-align: right;
 }
 
-#p-navigation .nav-count {
-    opacity: 0.5;
-    /*position: absolute;*/
-    /*left: 80px;*/
-    /*width: 40px;*/
-    /*display: inline-block;*/
-    text-align: right;
-}
-
-#p-navigation .nav-count.--rtl {
-    right: 80px;
-    text-align: left;
-}
-
 #p-navigation .menu-item.--rtl {
     /* Margin title from right 72px, the calc is the 72px minus the original "v-list-item" right margin 16px */
     margin-right: calc(72px - 16px);
 }
 
-.v-list__group__header .v-list__group__header__append-icon {
-    padding-left: 8px !important;
+#p-navigation .v-list-group__items .v-list-item  {
+    padding-inline-start: 64px !important;
+}
+
+#p-navigation .v-list-item {
+    padding-inline-end: 8px !important;
+}
+
+#p-navigation .v-list-item__prepend,
+#p-navigation .v-list-item__append {
+    display: unset;
+}
+
+#p-navigation .v-list-item__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#p-navigation .nav-count-item {
+    opacity: 0.5;
+    margin-right: 40px !important;
+}
+
+#p-navigation .nav-count-group {
+    opacity: 0.5;
+    margin-right: 8px !important;
+}
+
+#p-navigation .nav-item-title {
+    padding-left: 24px;
 }
 
 #photoprism .p-page a,
@@ -149,13 +164,6 @@ nav .v-list__item__title.title {
     display: flex;
     flex-flow: row;
     justify-content: space-between;
-}
-.p-flex-menuitem .nav-count {
-    margin-right: 48px;
-    margin-left: 8px;
-}
-.v-list__group__header .p-flex-menuitem .nav-count {
-    margin-right: 0;
 }
 
 #photoprism .nav-logo .v-list__item__action {
