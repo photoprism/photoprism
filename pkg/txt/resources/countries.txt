@@ -73,17 +73,27 @@ DE:Deutschland
 DE:Germany
 DE:Aachen
 DE:Steglitz
+DE:Kreuzberg
+DE:Kreuzberger
+DE:Neukölln
+DE:Neuköllner
 DE:Friedrichshain
 DE:Berghain
 DE:Bundestag
+DE:Bundesrat
+DE:Potsdam
+DE:Potsdamer
+DE:Brandenburg
+DE:Brandenburger
 DE:Grunewald
 DE:Charlottenburg
 DE:Wilmersdorf
 DE:Tempelhof
+DE:Tempelhofer
 DE:Schönefeld
+DE:Schönefelder
 DE:Reichstag
 DE:Kassel
-DE:Kreuzberg
 DE:Ostsee
 DE:Nordsee
 DE:Wannsee
@@ -91,22 +101,36 @@ DE:Berlin
 DE:Pfalz
 DE:Mannheim
 DE:Heidelberg
+DE:Heidelberger
 DE:Stuttgart
+DE:Stuttgarter
 DE:Bisingen
 DE:Balingen
 DE:Hechingen
 DE:Swabian
 DE:Schwarzwald
+DE:Schwarzwälder
+DE:Schwaben
+DE:Schwäbisch
 DE:Schwäbische
+DE:Schwäbisches
 DE:Albtrauf
 DE:München
+DE:Münchner
+DE:Oktoberfest
 DE:Württemberg
 DE:Bayern
+DE:Bavaria
+DE:Bairisch
+DE:Bavarian
 DE:Erfurt
 DE:Leipzig
+DE:Leipziger
 DE:Schwerin
 DE:Greifswald
+DE:Greifswalder
 DE:Dresden
+DE:Dresdener
 DE:Nebelhorn
 DE:Neuschwanstein
 DE:Nürnberg
@@ -114,11 +138,13 @@ DE:Würzburg
 DE:Munich
 DE:Frankfurt
 DE:Freiburg
-DE:Brandenburg
+DE:Freiburger
 DE:Hamburg
 DE:Tübingen
 DE:Tubingen
+DE:Tübinger
 DE:Köln
+DE:Kölner
 DE:Königsee
 DE:Dortmund
 DE:Düsseldorf
@@ -126,17 +152,21 @@ DE:Cologne
 DE:Saarland
 DE:Saarbrücken
 DE:Konstanz
+DE:Konstanzer
 DE:Reichenau
 DE:Meckenheim
 DE:Wiesbaden
 DE:Lahnstein
 DE:Augsburg
+DE:Augsburger
 DE:Freinsheim
 DE:Speyer
 DE:Marburg
+DE:Marburger
 DE:Mechtersheim
 DE:Dürkheim
 DE:Ulm
+DE:Neckarsulm
 DE:Zugspitze
 DE:Sächsische Schweiz
 LV:Latvia
@@ -214,9 +244,13 @@ TR:Diyarbakır
 KG:Kyrgyzstan
 BT:Bhutan
 NP:Everest
-NP:Kathmandu
 NP:Nepal
+NP:Himalaya
+NP:Kathmandu
 BD:Bangladesh
+BD:Dhaka
+BD:Chattogram
+BD:Khulna
 JO:Jordan
 JO:Amman
 JO:عَمَّان
@@ -711,9 +745,17 @@ FR:Strasbourg
 FR:Straßburg
 FR:Paris
 NL:Amsterdam
-NL:Beekse Bergen
+NL:Rotterdam
+NL:Den Haag
+NL:The Hague
+NL:Utrecht
 NL:Eindhoven
+NL:Groningen
+NL:Beekse Bergen
 NL:Netherlands
+NL:Nederland
+NL:Nederlands
+NL:Nederlanden
 NL:Holland
 TD:Chad
 BA:Bosnia
@@ -753,3 +795,8 @@ PS:Ramallah
 PS:Hebron
 HM:McDonald Island
 HM:Heard Island
+EU:Europe
+EU:Europa
+EU:European Union
+EU:Europäische Union
+EU:Union européenne
