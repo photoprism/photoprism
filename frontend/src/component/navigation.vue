@@ -399,11 +399,11 @@
           <v-list-item v-show="featMembership" class="nav-upgrade" @click.stop="">
             <v-list-item-title v-if="isPro">
               <v-icon>mdi-check-circle</v-icon>
-              <translate key="Upgrade">Upgrade</translate>
+              <translate key="Upgrade" class="nav-item-title">Upgrade</translate>
             </v-list-item-title>
             <v-list-item-title v-else>
               <v-icon>mdi-diamond</v-icon>
-              <translate key="Support Our Mission">Support Our Mission</translate>
+              <translate key="Support Our Mission" class="nav-item-title">Support Our Mission</translate>
             </v-list-item-title>
           </v-list-item>
         </router-link>
@@ -413,7 +413,7 @@
         <v-list-item v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" @click.stop="">
           <v-list-item-title class="text--warning">
             <v-icon color="warning">mdi-wifi-off</v-icon>
-            <translate key="Offline">Offline</translate>
+            <translate key="Offline" class="nav-item-title">Offline</translate>
           </v-list-item-title>
         </v-list-item>
 
