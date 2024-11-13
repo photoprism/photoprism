@@ -22,8 +22,7 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-<!--      TODO: check the height -->
-      <v-tabs v-model="active" elevation="0" grow class="form bg-transparent" bg-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
+      <v-tabs v-model="active" elevation="0" class="form bg-transparent" bg-color="secondary" slider-color="primary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
