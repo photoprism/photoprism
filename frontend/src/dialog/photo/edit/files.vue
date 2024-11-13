@@ -17,7 +17,7 @@
                 <v-row class="d-flex align-stretch" align="center" justify="center">
                   <v-col cols="12" class="pa-0 flex-grow-1">
                     <div class="v-table__overflow">
-                      <table class="v-datatable v-table theme--light photo-files d-flex">
+                      <v-table class="v-datatable v-table photo-files d-flex">
                         <tbody>
                           <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                             <td>
@@ -32,7 +32,7 @@
                               <translate>Actions</translate>
                             </td>
                             <td>
-                              <v-btn v-if="features.download" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                              <v-btn v-if="features.download" size="small" variant="flat" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                 <translate>Download</translate>
                               </v-btn>
                               <v-btn

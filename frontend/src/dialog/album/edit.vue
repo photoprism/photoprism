@@ -48,7 +48,7 @@
               <v-btn variant="flat" color="secondary-light" class="action-cancel" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn variant="flat" theme="dark" color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
+              <v-btn variant="flat" color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
                 <translate>Save</translate>
               </v-btn>
             </v-col>
