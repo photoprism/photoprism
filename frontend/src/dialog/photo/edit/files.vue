@@ -11,7 +11,7 @@
           <v-card>
             <v-card-text class="bg-white pa-0">
               <v-container fluid class="pa-0">
-                <v-alert :model-value="file.Error" type="error" class="my-0 text-capitalize">
+                <v-alert v-if="file.Error" type="error" class="my-0 text-capitalize">
                   {{ file.Error }}
                 </v-alert>
                 <v-row class="d-flex align-stretch" align="center" justify="center">
