@@ -61,15 +61,19 @@
                           <tr>
                             <td title="Unique ID"> UID </td>
                             <td>
-                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span>
+<!--                              TODO: change filter-->
+<!--                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span>-->
+                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.InstanceID" title="XMP">
                             <td>
                               <translate>Instance ID</translate>
                             </td>
-                            <td
-                              ><span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td
+                            <td>
+<!--                              TODO: change filter-->
+<!--                              <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td-->
+                            <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID }}</span></td
                             >
                           </tr>
                           <tr>
@@ -254,7 +258,9 @@
                             <td
                               >{{ formatTime(file.CreatedAt) }}
                               <translate>in</translate>
-                              {{ Math.round(file.CreatedIn / 1000000) | number("0,0") }} ms
+<!--                              TODO: change filter-->
+<!--                              {{ Math.round(file.CreatedIn / 1000000) | number("0,0") }} ms-->
+                              {{ Math.round(file.CreatedIn / 1000000) }} ms
                             </td>
                           </tr>
                           <tr v-if="file.UpdatedIn">
@@ -264,11 +270,13 @@
                             <td
                               >{{ formatTime(file.UpdatedAt) }}
                               <translate>in</translate>
-                              {{ Math.round(file.UpdatedIn / 1000000) | number("0,0") }} ms
+<!--                              TODO: change filter-->
+<!--                              {{ Math.round(file.UpdatedIn / 1000000) | number("0,0") }} ms-->
+                              {{ Math.round(file.UpdatedIn / 1000000) }} ms
                             </td>
                           </tr>
                         </tbody>
-                      </table>
+                      </v-table>
                     </div>
                   </v-col>
                 </v-row>

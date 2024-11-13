@@ -22,7 +22,7 @@
     </div>
     <div v-else class="search-results photo-results list-view">
       <div class="v-table__overflow">
-        <table class="v-datatable v-table theme--light">
+        <v-table class="v-datatable v-table">
           <thead>
             <tr>
               <th class="p-col-select" />
@@ -115,7 +115,7 @@
               </template>
             </tr>
           </tbody>
-        </table>
+        </v-table>
       </div>
     </div>
   </div>

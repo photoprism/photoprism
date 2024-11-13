@@ -2,19 +2,23 @@
   <div class="p-tab p-tab-photo-advanced">
     <v-form ref="form" lazy-validation accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
-        <table class="v-datatable v-table theme--light">
+        <v-table class="v-datatable v-table">
           <tbody>
             <tr>
               <td>UID</td>
-              <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID | uppercase }}</span></td
+              <td>
+<!--                TODO: change filter-->
+<!--                <span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID | uppercase }}</span></td-->
+              <span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID }}</span></td
               >
             </tr>
             <tr v-if="model.DocumentID">
               <td>Document ID</td>
-              <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID | uppercase }}</span></td
-              >
+              <td>
+<!--                TODO: change filter-->
+<!--                <span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID | uppercase }}</span></td-->
+                <span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID }}</span>
+              </td>
             </tr>
             <tr>
               <td :title="model.TypeSrc">
@@ -231,7 +235,7 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </v-table>
       </div>
     </v-form>
   </div>
