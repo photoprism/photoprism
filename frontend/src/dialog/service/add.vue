@@ -46,7 +46,7 @@
             <v-btn variant="flat" color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
-            <v-btn variant="flat" theme="dark" color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
+            <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>
           </v-col>
