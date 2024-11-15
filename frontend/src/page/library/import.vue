@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-import">
     <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit">
       <v-container fluid>
-        <p class="text-subtitle-1">
+        <p class="text-subtitle-1 text-white">
           <span v-if="fileName" class="break-word"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>
           <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
@@ -32,7 +32,7 @@
           <v-progress-linear color="secondary-dark" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-row align="start" class="pb-2">
+        <v-row align="start" class="mb-3 text-white">
           <v-col cols="12" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.import.move"
@@ -57,16 +57,16 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="primary-button" class="text-white ml-0 action-cancel" variant="flat" @click.stop="cancelImport()">
+        <v-btn :disabled="!busy || !ready" color="primary-button" class="ml-2 action-cancel" variant="flat" @click.stop="cancelImport()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="text-white ml-0 hidden-xs action-upload" variant="flat" @click.stop="showUpload()">
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="ml-2 hidden-xs action-upload" variant="flat" @click.stop="showUpload()">
           <translate>Upload</translate>
           <v-icon :end="!rtl" :start="rtl">mdi-cloud-upload</v-icon>
         </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-import" variant="flat" @click.stop="startImport()">
+        <v-btn :disabled="busy || !ready" color="primary-button" class="ml-2 action-import" variant="flat" @click.stop="startImport()">
           <translate>Import</translate>
           <v-icon :end="!rtl" :start="rtl">mdi-sync</v-icon>
         </v-btn>

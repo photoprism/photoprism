@@ -2,7 +2,7 @@
 <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit">
       <v-container fluid>
-        <p class="text-subtitle-1">
+        <p class="text-subtitle-1 text-white">
           <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
@@ -33,7 +33,7 @@
           <v-progress-linear color="secondary-dark" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-row align="start" class="pb-6">
+        <v-row align="start" class="pb-6 text-white">
           <v-col cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.index.rescan"
@@ -53,11 +53,11 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-cancel" variant="flat" @click.stop="cancelIndexing()">
+        <v-btn :disabled="!busy || !ready" color="primary-button" class="ml-2 mt-2 action-cancel" variant="flat" @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="text-white ml-0 mt-2 action-index" variant="flat" @click.stop="startIndexing()">
+        <v-btn :disabled="busy || !ready" color="primary-button" class="ml-2 mt-2 action-index" variant="flat" @click.stop="startIndexing()">
           <translate>Start</translate>
           <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
         </v-btn>

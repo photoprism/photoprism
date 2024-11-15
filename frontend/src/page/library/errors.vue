@@ -44,6 +44,7 @@
     </v-container>
     <v-list v-else-if="errors.length > 0" density="compact" lines="two" class="bg-transparent pa-1">
       <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
+<!--        TODO: fix it-->
         <v-list-item :prepend-avatar="err.Level" :color="err.Level">
           <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->
         </v-list-item>
