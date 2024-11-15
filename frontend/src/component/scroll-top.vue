@@ -1,6 +1,6 @@
 <template>
   <transition name="fade-transition">
-    <v-btn v-if="show" color="transparent" theme="dark" position="fixed" class="p-scroll-top rounded-circle" @click.stop="scrollToTop">
+    <v-btn v-if="show" theme="dark" position="fixed" class="p-scroll-top rounded-circle" @click.stop="scrollToTop">
       <v-icon>mdi-arrow-up</v-icon>
     </v-btn>
   </transition>

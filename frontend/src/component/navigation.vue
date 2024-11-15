@@ -8,7 +8,7 @@
         <v-toolbar-title class="nav-title">
           <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
-        <v-btn theme="dark" :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
+        <v-btn theme="dark" :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
           <!-- TODO: change icon -->
           <v-icon>more_vert</v-icon>
         </v-btn>
@@ -22,7 +22,7 @@
         <v-toolbar-title class="nav-title">
           {{ page.title }}
         </v-toolbar-title>
-        <v-btn theme="dark" :ripple="false" color="transparent" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
+        <v-btn theme="dark" :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
           <!-- TODO: change icon -->
           <v-icon>more_vert</v-icon>
         </v-btn>

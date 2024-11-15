@@ -172,7 +172,7 @@
                         {{ formatDate(props.item.Expires) }}
                       </td>
                       <td class="text-right" nowrap>
-                        <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
+                        <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
                           <v-icon color="secondary-dark">mdi-delete</v-icon>
                         </v-btn>
                       </td>

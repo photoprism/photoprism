@@ -9,13 +9,13 @@
             </button>
           </td>
           <td class="text-center">
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-share" color="transparent" @click.stop.prevent="editSharing(props.item)">
+            <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
               <v-icon v-if="props.item.AccShare" color="secondary-dark">mdi-check</v-icon>
               <v-icon v-else color="secondary-dark">mdi-cog</v-icon>
             </v-btn>
           </td>
           <td class="text-center">
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-sync" color="transparent" @click.stop.prevent="editSync(props.item)">
+            <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
               <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">mdi-alert </v-icon>
               <!-- TODO: change icon -->
               <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
@@ -27,10 +27,10 @@
             {{ formatDate(props.item.SyncDate) }}
           </td>
           <td class="hidden-xs text-right" nowrap>
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="remove(props.item)">
+            <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
               <v-icon color="secondary-dark">mdi-delete</v-icon>
             </v-btn>
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-edit" color="transparent" @click.stop.prevent="edit(props.item)">
+            <v-btn icon size="small" variant="text" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
               <v-icon color="secondary-dark">mdi-pencil</v-icon>
             </v-btn>
           </td>
