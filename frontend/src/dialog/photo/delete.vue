@@ -18,10 +18,10 @@
             <v-btn variant="flat" color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn v-if="action === ''" color="primary-button" variant="flat" theme="dark" class="action-confirm" @click.stop="confirm">
+            <v-btn v-if="action === ''" color="primary-button" variant="flat" class="action-confirm" @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>
-            <v-btn v-else color="primary-button" variant="flat" theme="dark" class="action-confirm" @click.stop="confirm">
+            <v-btn v-else color="primary-button" variant="flat" class="action-confirm" @click.stop="confirm">
               {{ action }}
             </v-btn>
           </v-col>
