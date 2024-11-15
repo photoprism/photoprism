@@ -56,7 +56,7 @@
         </v-col>
 
         <v-col cols="12" class="d-flex grow px-2 py-1">
-          <v-btn color="primary-button" class="text-white ml-0 flex-grow-1" variant="flat" :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
+          <v-btn color="primary-button" class="ml-0" variant="flat" :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
             <translate>Send</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-send</v-icon>
           </v-btn>
