@@ -91,17 +91,17 @@ export default {
       },
       editScope: "main",
       listColumns: [
-        { text: this.$gettext("Name"), value: "AccName", sortable: false, align: "left" },
-        { text: this.$gettext("Upload"), value: "AccShare", sortable: false, align: "center" },
-        { text: this.$gettext("Sync"), value: "AccSync", sortable: false, align: "center" },
+        { title: this.$gettext("Name"), key: "AccName", sortable: false, align: "left" },
+        { title: this.$gettext("Upload"), key: "AccShare", sortable: false, align: "center" },
+        { title: this.$gettext("Sync"), key: "AccSync", sortable: false, align: "center" },
         {
-          text: this.$gettext("Last Sync"),
-          value: "SyncDate",
+          title: this.$gettext("Last Sync"),
+          key: "SyncDate",
           sortable: false,
           class: "hidden-sm-and-down",
           align: "left",
         },
-        { text: "", value: "", sortable: false, class: "hidden-xs", align: "right" },
+        { title: "", key: "", sortable: false, class: "hidden-xs", align: "right" },
       ],
       rtl: this.$rtl,
     };
