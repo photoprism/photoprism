@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-faces-search" lazy-validation @submit.prevent="updateQuery">
       <v-toolbar dense class="page-toolbar" flat color="secondary-light pa-0">
         <v-spacer></v-spacer>
-        <v-divider direction="vertical"></v-divider>
+        <v-divider vertical></v-divider>
 
         <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>mdi-refresh</v-icon>
@@ -24,7 +24,7 @@
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
-      <v-container grid-list-xs fluid class="pa-2">
+      <v-container grid-list-xs fluid class="pa-0">
         <v-alert v-if="results.length === 0" color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No people found</translate>
@@ -34,7 +34,7 @@
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-row class="search-results face-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+        <v-row class="search-results face-results cards-view ma-0" :class="{ 'select-results': selection.length > 0 }">
           <v-col v-for="model in results" :key="model.ID" cols="12" sm="6" md="4" lg="3" xl="2" xxl="1" class="d-flex">
             <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card flex-grow-1">
               <div class="card-background card"></div>
@@ -46,7 +46,7 @@
               </v-img>
 
               <v-card-actions class="card-details pa-0">
-                <v-row v-if="model.SubjUID" align="center">
+                <v-row v-if="model.SubjUID" align="center" class="ma-0">
                   <v-col cols="12" class="text-left pa-0">
                     <v-text-field
                       :model-value="model.Name"
@@ -70,7 +70,7 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row align="center">
+                <v-row align="center" class="ma-0">
                   <v-col cols="12" class="text-left pa-0">
                     <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox

@@ -20,8 +20,8 @@
         </p>
       </v-alert>
     </template>
-    <v-row class="search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
-      <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="flex xs12 sm6 md4 lg3 xlg2 ul1 d-flex">
+    <v-row class="search-results photo-results cards-view ma-0" :class="{ 'select-results': selectMode }">
+      <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="pa-0 flex xs12 sm6 md4 lg3 xlg2 ul1 d-flex">
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result placeholder flex-grow-1">
           <div class="card image" />
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
