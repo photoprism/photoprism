@@ -3,6 +3,7 @@ FROM photoprism/develop:241031-noble
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)
+# FROM photoprism/develop:oracular # Ubuntu 24.10 (Oracular Oriole)
 # FROM photoprism/develop:noble    # Ubuntu 24.04 LTS (Noble Numbat)
 # FROM photoprism/develop:mantic   # Ubuntu 23.10 (Mantic Minotaur)
 # FROM photoprism/develop:lunar    # Ubuntu 23.04 (Lunar Lobster)
