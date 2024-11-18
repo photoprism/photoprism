@@ -60,6 +60,9 @@ case $VERSION_CODENAME in
   vera | virginia)
     VERSION_CODENAME=jammy
     ;;
+  oracular)
+    VERSION_CODENAME=noble
+    ;;
 esac
 
 echo "Installing libheif..."
