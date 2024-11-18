@@ -57,6 +57,9 @@ import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 
+import { passiveSupport } from 'passive-events-support/src/utils';
+passiveSupport({events: ['touchstart', 'touchmove']});
+
 config.progress(50);
 
 config.update().finally(() => {
@@ -103,7 +106,6 @@ config.update().finally(() => {
   };
 
   // Register Vuetify.
-  // console.log("app", app);
   const vuetify = createVuetify({
     rtl,
     icons: {
@@ -116,7 +118,6 @@ config.update().finally(() => {
     },
     theme,
   });
-  // console.log('vuetify', vuetify);
   app.use(vuetify);
 
   // Register other VueJS plugins.
@@ -196,8 +197,6 @@ config.update().finally(() => {
       }
     },
   });
-  console.log("router", router);
-  console.log("app 123", app);
   app.use(router);
 
   router.beforeEach((to, from, next) => {

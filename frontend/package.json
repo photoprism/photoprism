@@ -74,6 +74,7 @@
     "minimist": ">=1.2.8",
     "mocha": "^10.7.3",
     "node-storage-shim": "^2.0.1",
+    "passive-events-support": "^1.1.0",
     "photoswipe": "^4.1.3",
     "postcss": "^8.4.45",
     "postcss-import": "^16.1.0",
