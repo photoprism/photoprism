@@ -162,12 +162,12 @@ main {
 }
 
 #photoprism .v-tabs .v-badge__badge {
-    right: -22px;
-    font-size: 9px;
-    width: auto;
-    padding: 0 0.2rem;
-    min-width: 1.1rem;
+    top: 0 !important;
+    left: calc(100% + 4px) !important;
     height: 1.1rem;
+    min-width: 1.1rem;
+    font-size: 9px;
+    padding: 0 0.2rem;
 }
 
 ol, ul {
