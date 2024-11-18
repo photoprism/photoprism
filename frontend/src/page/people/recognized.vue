@@ -5,10 +5,8 @@
         <v-text-field
           v-if="canSearch"
           :model-value="filter.q"
-          variant="solo"
           hide-details
           clearable
-          overflow
           single-line
           validate-on="blur"
           class="input-search background-inherit elevation-0"
@@ -18,7 +16,7 @@
           autocorrect="off"
           autocapitalize="none"
           color="secondary-dark"
-          @change="
+          @change:model-value="
             (v) => {
               updateFilter({ q: v });
             }
