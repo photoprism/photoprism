@@ -169,7 +169,6 @@
                 </v-checkbox>
               </v-col>
 
-              <!-- TODO: change icon -->
               <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.BackupAlbums"
@@ -178,14 +177,13 @@
                   color="secondary-dark"
                   :label="$gettext('Album Backups')"
                   :hint="$gettext('Create YAML files to back up album metadata.')"
-                  prepend-icon="photo_album"
+                  prepend-icon="mdi-image-album"
                   persistent-hint
                   @update:model-value="onChange"
                 >
                 </v-checkbox>
               </v-col>
 
-              <!-- TODO: change icon -->
               <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.SidecarYaml"
@@ -194,7 +192,7 @@
                   color="secondary-dark"
                   :label="$gettext('Sidecar Files')"
                   :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
-                  prepend-icon="file_present"
+                  prepend-icon="mdi-clipboard-file-outline"
                   persistent-hint
                   @update:model-value="onChange"
                 >
@@ -320,7 +318,6 @@
               </v-checkbox>
             </v-col>
 
-            <!-- TODO: change icon -->
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.RawPresets"
@@ -329,14 +326,13 @@
                 color="secondary-dark"
                 :label="$gettext('Use Presets')"
                 :hint="$gettext('Enables RAW converter presets. May reduce performance.')"
-                prepend-icon="tonality"
+                prepend-icon="mdi-circle-half-full"
                 persistent-hint
                 @update:model-value="onChange"
               >
               </v-checkbox>
             </v-col>
 
-            <!-- TODO: change icon -->
             <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableImageMagick"
@@ -345,7 +341,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable ImageMagick')"
                 :hint="$gettext('Don\'t use ImageMagick to convert images.')"
-                prepend-icon="auto_fix_off"
+                prepend-icon="mdi-auto-fix"
                 persistent-hint
                 @update:model-value="onChange"
               >
@@ -375,7 +371,7 @@
                 color="secondary-dark"
                 :label="$gettext('Disable Vectors')"
                 :hint="$gettext('Disables vector graphics support.')"
-                prepend-icon="font_download_off"
+                prepend-icon="mdi-alpha-a-box"
                 persistent-hint
                 @update:model-value="onChange"
               >

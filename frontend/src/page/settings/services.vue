@@ -47,8 +47,7 @@
       <v-form ref="form" lazy-validation class="p-form-settings mt-2" accept-charset="UTF-8" @submit.prevent="add">
         <v-btn v-if="user.hasWebDAV()" variant="flat" color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
-          <!-- TODO: change icon -->
-          <v-icon :end="!rtl" :start="rtl">sync_alt</v-icon>
+          <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
         </v-btn>
 
         <v-btn color="primary-button" class="compact ml-0 my-2 mr-2" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">

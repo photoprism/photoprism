@@ -65,12 +65,11 @@
         </p>
       </v-alert>
     </div>
-    <!-- TODO: change icon -->
     <p-confirm-dialog :show="dialog.delete" icon="mdi-delete-outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
         <v-card-title class="text-h5 pa-2">
-<!--          TODO: chnage filter-->
+<!--          TODO: change filter-->
 <!--          {{ details.err.Level | capitalize }}-->
           {{ details.err.Level }}
         </v-card-title>

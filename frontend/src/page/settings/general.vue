@@ -236,7 +236,6 @@
               <v-checkbox v-model="settings.features.logs" :disabled="busy" class="ma-0 pa-0 input-logs" color="secondary-dark" :label="$gettext('Logs')" :hint="$gettext('Show server logs in Library.')" prepend-icon="mdi-playlist-check" persistent-hint @update:model-value="onChange"> </v-checkbox>
             </v-col>
 
-            <!-- TODO: change icon -->
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.account"
@@ -245,7 +244,7 @@
                 color="secondary-dark"
                 :label="$gettext('Account')"
                 :hint="$gettext('Change personal profile and security settings.')"
-                prepend-icon="admin_panel_settings"
+                prepend-icon="mdi-shield-account-variant"
                 persistent-hint
                 @update:model-value="onChange"
               >

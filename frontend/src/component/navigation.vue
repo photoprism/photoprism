@@ -9,8 +9,7 @@
           <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
         <v-btn theme="dark" :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
-          <!-- TODO: change icon -->
-          <v-icon>more_vert</v-icon>
+          <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </v-toolbar>
     </template>
@@ -23,8 +22,7 @@
           {{ page.title }}
         </v-toolbar-title>
         <v-btn theme="dark" :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
-          <!-- TODO: change icon -->
-          <v-icon>more_vert</v-icon>
+          <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </v-toolbar>
     </template>
@@ -449,8 +447,7 @@
             <v-icon>mdi-refresh</v-icon>
           </a>
           <router-link v-if="auth && $config.feature('account')" :to="{ name: 'settings_account' }" :title="$gettext('Account')" class="menu-action nav-account">
-            <!-- TODO: change this icon probably to shield-account -->
-            <v-icon>admin_panel_settings</v-icon>
+            <v-icon>mdi-shield-account-variant</v-icon>
           </router-link>
           <router-link v-if="auth && $config.feature('settings') && !routeName('settings')" :to="{ name: 'settings' }" :title="$gettext('Settings')" class="menu-action nav-settings">
             <v-icon>mdi-cog</v-icon>
@@ -502,8 +499,7 @@
           </div>
           <div v-if="auth && !routeName('index') && $config.feature('library') && $config.feature('logs')" class="menu-action nav-logs">
             <router-link :to="{ name: 'library_logs' }">
-              <!-- TODO: change this icon probably to file-document -->
-              <v-icon>feed</v-icon>
+              <v-icon>mdi-file-document</v-icon>
               <translate>Logs</translate>
             </router-link>
           </div>
@@ -517,7 +513,6 @@
             <router-link :to="{ name: 'upgrade' }">
               <template #default="{ href, navigate, isActive }">
                 <a :href="href" :class="{ active: isActive }" @click="navigate">
-                  <!-- TODO: change this icon -->
                   <v-icon v-if="isPro">mdi-check-circle</v-icon>
                   <v-icon v-else>mdi-diamond</v-icon>
                   <translate>Upgrade</translate>

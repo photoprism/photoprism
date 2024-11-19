@@ -4,8 +4,7 @@
       <v-card-text class="pt-6 px-6">
         <v-row>
           <v-col cols="3" class="text-left">
-            <!-- TODO: change this icon -->
-            <v-icon size="60" color="secondary-dark lighten-1">photo_album</v-icon>
+            <v-icon size="60" color="secondary-dark lighten-1">mdi-image-album</v-icon>
           </v-col>
           <v-col cols="9" class="text-left" align-self="center">
             <v-autocomplete

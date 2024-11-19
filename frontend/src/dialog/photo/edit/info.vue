@@ -23,8 +23,7 @@
             <tr>
               <td :title="model.TypeSrc">
                 <translate>Type</translate>
-                <!-- TODO: change this icon -->
-                <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.TypeSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td>
                 <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"> </v-select>
@@ -57,8 +56,7 @@
             <tr>
               <td :title="sourceName(model.TitleSrc)">
                 <translate>Title</translate>
-                <!-- TODO: change this icon -->
-                <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.TitleSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.TitleSrc)">
                 <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{ model.Title }}</span>
@@ -69,8 +67,7 @@
             <tr>
               <td :title="sourceName(model.TakenSrc)">
                 <translate>Taken</translate>
-                <!-- TODO: change this icon -->
-                <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.TakenSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.TakenSrc)">
                 {{ model.getDateString() }}
@@ -156,7 +153,7 @@
               <td :title="sourceName(model.PlaceSrc)">
                 <translate>Place</translate>
                 <!-- TODO: change this icon -->
-                <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.PlaceSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.PlaceSrc)">
                 {{ model.locationInfo() }}

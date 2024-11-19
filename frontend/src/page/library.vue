@@ -73,14 +73,13 @@ export default {
     ];
 
     if (this.$config.feature("logs")) {
-      // <!-- TODO: change this icon probably to file-document -->
       tabs.push({
         name: "library_logs",
         component: markRaw(Logs),
         label: this.$gettext("Logs"),
         class: "",
         path: "/logs",
-        icon: "feed",
+        icon: "mdi-file-document",
         readonly: true,
         demo: true,
       });

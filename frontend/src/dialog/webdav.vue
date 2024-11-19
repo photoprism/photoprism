@@ -9,8 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="3" class="text-right">
-            <!-- TODO: change this icon -->
-            <v-icon size="28" color="primary">sync_alt</v-icon>
+            <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
           </v-col>
         </v-row>
       </v-card-title>

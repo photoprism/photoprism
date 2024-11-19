@@ -10,8 +10,7 @@
               </h3>
             </v-col>
             <v-col cols="2" class="text-right">
-              <!-- TODO: change this icon -->
-              <v-icon v-if="page === 'setup'" size="28" color="primary">gpp_maybe</v-icon>
+              <v-icon v-if="page === 'setup'" size="28" color="primary">mdi-shield-alert</v-icon>
               <!-- TODO: change this icon -->
               <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
               <v-icon v-else size="28" color="primary">mdi-cog</v-icon>

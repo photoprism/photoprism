@@ -13,8 +13,7 @@
               <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
               <!-- TODO: change this icon -->
               <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
-              <!-- TODO: change this icon -->
-              <v-icon v-else size="28" color="primary">devices</v-icon>
+              <v-icon v-else size="28" color="primary">mdi-cellphone-link</v-icon>
             </v-col>
           </v-row>
         </v-card-title>

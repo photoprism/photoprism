@@ -196,21 +196,19 @@
                 <!-- TODO: change icon -->
                 <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :end="!rtl" :start="rtl">shield</v-icon>
                 <!-- TODO: change icon -->
-                <v-icon v-else :end="!rtl" :start="rtl">gpp_maybe</v-icon>
+                <v-icon v-else :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
               <v-btn block variant="flat" color="secondary-light" class="action-apps-dialog compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
-                <!-- TODO: change icon -->
-                <v-icon :end="!rtl" :start="rtl">devices</v-icon>
+                <v-icon :end="!rtl" :start="rtl">mdi-cellphone-link</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
               <v-btn block variant="flat" color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
-                <!-- TODO: change icon -->
-                <v-icon :end="!rtl" :start="rtl">sync_alt</v-icon>
+                <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
               </v-btn>
             </v-col>
           </v-row>

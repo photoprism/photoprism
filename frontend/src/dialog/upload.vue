@@ -3,7 +3,6 @@
     <v-card color="application">
       <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
         <v-btn icon theme="dark" @click.stop="cancel">
-          <!-- TODO: check icon -->
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
