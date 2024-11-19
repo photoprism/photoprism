@@ -753,8 +753,6 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./setup/docker/cloud && packer build digitalocean.json)
-drone-sign:
-	drone sign photoprism/photoprism --save
 lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:
