@@ -5,7 +5,6 @@
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field
             v-model.lazy.trim="filter.q"
-            variant="solo"
             hide-details
             clearable
             flat

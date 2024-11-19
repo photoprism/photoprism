@@ -4,7 +4,6 @@
       <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
           :model-value="filter.q"
-          variant="solo"
           hide-details
           clearable
           overflow

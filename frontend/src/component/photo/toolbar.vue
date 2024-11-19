@@ -5,7 +5,6 @@
         <v-text-field
           :model-value="filter.q"
           class="input-search background-inherit elevation-0"
-          variant="solo"
           hide-details
           clearable
           overflow
