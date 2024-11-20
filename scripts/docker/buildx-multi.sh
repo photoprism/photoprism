@@ -11,14 +11,15 @@ fi
 NUMERIC='^[0-9]+$'
 BUILD_DATE=$(/bin/date -u +%y%m%d)
 
-# kill old multi builder if still alive.
-echo "Removing existing multibuilder..."
+# Remove old multibuilder.
+echo "Removing old multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
 
-# wait 3 seconds.
+# Wait 3 seconds.
 sleep 3
 
-# Create multibuilder instance.
+# Create new multibuilder.
+echo "Creating new multibuilder..."
 docker buildx create --name multibuilder --use  || { echo 'failed to create multibuilder'; exit 1; }
 
 # Configure remote host for native arm builds.
