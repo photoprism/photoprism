@@ -18,8 +18,11 @@ docker buildx rm multibuilder 2>/dev/null
 # wait 3 seconds.
 sleep 3
 
-# create new multibuilder.
-docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
+# Create multibuilder instance.
+docker buildx create --name multibuilder --use  || { echo 'failed to create multibuilder'; exit 1; }
+
+# Configure remote host for native arm builds.
+docker buildx create --name multibuilder --append ssh://ci-arm || echo 'could not connect to remote host for native arm builds'
 
 echo "Starting 'photoprism/$1' multi-arch build based on docker/${1/-//}$4/Dockerfile..."
 echo "Build Arch: $2"
