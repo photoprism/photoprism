@@ -394,7 +394,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-noble docker-develop-noble-slim
+docker-develop-ubuntu: docker-develop-oracular docker-develop-oracular-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
@@ -454,7 +454,7 @@ docker-develop-mantic-slim:
 docker-develop-noble:
 	docker pull --platform=amd64 ubuntu:noble
 	docker pull --platform=arm64 ubuntu:noble
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble /noble "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble /noble
 docker-develop-noble-slim:
 	docker pull --platform=amd64 ubuntu:noble
 	docker pull --platform=arm64 ubuntu:noble
@@ -462,7 +462,7 @@ docker-develop-noble-slim:
 docker-develop-oracular:
 	docker pull --platform=amd64 ubuntu:oracular
 	docker pull --platform=arm64 ubuntu:oracular
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 oracular /oracular
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 oracular /oracular "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-oracular-slim:
 	docker pull --platform=amd64 ubuntu:oracular
 	docker pull --platform=arm64 ubuntu:oracular
@@ -484,10 +484,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-noble
+docker-preview-ce: docker-preview-oracular
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-noble
+docker-preview-ubuntu: docker-preview-oracular
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
@@ -557,7 +557,7 @@ docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-noble
+docker-release-ubuntu: docker-release-oracular
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
@@ -648,8 +648,8 @@ terminal-latest:
 	$(DOCKER_COMPOSE) -f compose.latest.yaml exec photoprism-latest bash
 logs-latest:
 	$(DOCKER_COMPOSE) -f compose.latest.yaml logs -f photoprism-latest
-docker-local: docker-local-noble
-docker-local-all: docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local: docker-local-oracular
+docker-local-all: docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -687,8 +687,8 @@ docker-local-oracular:
 	docker pull ubuntu:oracular
 	scripts/docker/build.sh photoprism ce-oracular /oracular "-t photoprism/photoprism:local"
 local-develop: docker-local-develop
-docker-local-develop: docker-local-develop-noble
-docker-local-develop-all: docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-oracular
+docker-local-develop-all: docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
@@ -713,6 +713,9 @@ docker-local-develop-mantic:
 docker-local-develop-noble:
 	docker pull ubuntu:noble
 	scripts/docker/build.sh develop noble /noble
+docker-local-develop-oracular:
+	docker pull ubuntu:oracular
+	scripts/docker/build.sh develop oracular /oracular
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
