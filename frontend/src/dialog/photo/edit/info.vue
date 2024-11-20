@@ -152,7 +152,6 @@
             <tr>
               <td :title="sourceName(model.PlaceSrc)">
                 <translate>Place</translate>
-                <!-- TODO: change this icon -->
                 <v-icon v-if="model.PlaceSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.PlaceSrc)">

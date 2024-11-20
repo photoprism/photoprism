@@ -5,8 +5,7 @@
         <v-card-actions v-if="$config.values.restart">
           <v-row align="start">
             <v-col cols="12" class="pa-2 text-left">
-              <!-- TODO: change icon -->
-              <v-alert color="primary" icon="info" class="pa-2" type="info" variant="outlined">
+              <v-alert color="primary" icon="mdi-information" class="pa-2" type="info" variant="outlined">
                 <a style="color: inherit" href="#restart">
                   <translate>Changes to the advanced settings require a restart to take effect.</translate>
                 </a>

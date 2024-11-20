@@ -195,7 +195,6 @@
                 <v-icon v-if="user.AuthMethod === '2fa'" :end="!rtl" :start="rtl">gpp_good</v-icon>
                 <!-- TODO: change icon -->
                 <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :end="!rtl" :start="rtl">shield</v-icon>
-                <!-- TODO: change icon -->
                 <v-icon v-else :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
               </v-btn>
             </v-col>

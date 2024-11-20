@@ -137,8 +137,7 @@
               </v-col>
               <v-col cols="6" class="text-center pa-1">
                 <v-btn color="card darken-1" size="small" variant="flat" theme="dark" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
-                  <!-- TODO: change this icon -->
-                  <v-icon>check</v-icon>
+                  <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>
             </v-row>

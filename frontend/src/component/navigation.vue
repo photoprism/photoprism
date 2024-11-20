@@ -522,8 +522,7 @@
           </div>
           <div v-if="config.legalUrl" class="menu-action nav-legal">
             <a :href="config.legalUrl" target="_blank">
-              <!-- TODO: change this icon -->
-              <v-icon>info</v-icon>
+              <v-icon>mdi-information</v-icon>
               <translate>Legal Information</translate>
             </a>
           </div>
