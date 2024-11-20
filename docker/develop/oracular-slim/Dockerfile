@@ -1,5 +1,5 @@
-#### Base Image: Ubuntu 24.04 LTS (Noble Numbat)
-FROM ubuntu:noble
+#### Base Image: Ubuntu 24.10 (Oracular Oriole)
+FROM ubuntu:oracular
 
 # Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
@@ -8,8 +8,8 @@ FROM ubuntu:noble
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Build Image (Ubuntu 24.04)"
-LABEL org.opencontainers.image.description="Ubuntu 24.04 LTS (Noble Numbat)"
+LABEL org.opencontainers.image.title="PhotoPrism® Base Image (Ubuntu 24.10)"
+LABEL org.opencontainers.image.description="Ubuntu 24.10 (Oracular Oriole)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
@@ -23,24 +23,18 @@ ARG BUILD_TAG
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
-    DOCKER_ENV="develop" \
-    NODE_ENV="production" \
+    DOCKER_ENV="prod" \
     PS1="\u@$BUILD_TAG:\w\$ " \
-    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
-    DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
-    TF_CPP_MIN_LOG_LEVEL="0" \
+    DEBIAN_FRONTEND="noninteractive" \
+    TF_CPP_MIN_LOG_LEVEL="2" \
     MALLOC_ARENA_MAX="4" \
-    GOPATH="/go" \
-    GOBIN="/usr/local/bin" \
-    GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
     PROG="photoprism"
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
-COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
@@ -51,38 +45,20 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
-        libc6 libbsd-dev ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync \
+        libc6 ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync \
         xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
         iputils-ping dnsutils \
     && \
-    apt-get -qq install \
-        software-properties-common pkg-config apt-utils \
-        build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
-        autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
-        libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
-        libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
-        libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
-        librsvg2-bin ghostscript gsfonts pdf2svg ps2eps libsharpyuv-dev \
-    && \
-    /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
-    /scripts/install-tensorflow.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
-    /scripts/install-chrome.sh && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    mkdir -p /etc/skel/.config/go && \
-    echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
-    cp -r /etc/skel/.config /root/.config && \
-    GOLANG_VERSION=go1.22.9 /scripts/install-go.sh && \
-    /scripts/install-go-tools.sh && \
-    echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cp /etc/skel/.bashrc /root/.bashrc && \
-    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
@@ -95,27 +71,11 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# Download models and testdata.
-RUN mkdir /tmp/photoprism && \
-    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
-    wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
-    wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
-    wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
-
 # Default working directory.
-WORKDIR "/go/src/github.com/photoprism/photoprism"
+WORKDIR /photoprism
 
-# Expose the following container ports:
-# - 2342 (HTTP)
-# - 2343 (Acceptance Tests)
-# - 2442 (HTTP)
-# - 2443 (HTTPS)
-# - 9515 (Chromedriver)
-# - 40000 (Go Debugger)
-EXPOSE 2342 2343 2442 2443 9515 40000
-
-# Declare container entrypoint script.
-ENTRYPOINT ["/scripts/entrypoint.sh"]
+# Expose HTTP and HTTPS ports.
+EXPOSE 2342 2442 2443
 
 # Keep container running.
 CMD ["tail", "-f", "/dev/null"]
