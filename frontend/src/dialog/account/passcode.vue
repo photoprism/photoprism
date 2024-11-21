@@ -19,7 +19,7 @@
         </v-card-title>
         <!-- Setup -->
         <template v-if="page === 'setup'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-2">
                 <translate>After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:</translate>
@@ -34,7 +34,6 @@
                   hide-details
                   required
                   autofocus
-                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -60,7 +59,7 @@
                 <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn variant="flat" color="primary-button" class="action-setup text-white compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
+                <v-btn variant="flat" color="primary-button" class="action-setup compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
                   <translate>Setup</translate>
                 </v-btn>
               </v-col>
@@ -69,7 +68,7 @@
         </template>
         <!-- Confirm -->
         <template v-else-if="page === 'confirm'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-1">
                 <translate>Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:</translate>
@@ -95,7 +94,6 @@
                   inputmode="numeric"
                   hide-details
                   required
-                  variant="solo"
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="one-time-code"
@@ -113,7 +111,7 @@
                 <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
-                <v-btn variant="flat" color="primary-button" class="action-confirm text-white compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
+                <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
                   <translate>Confirm</translate>
                 </v-btn>
               </v-col>
@@ -122,7 +120,7 @@
         </template>
         <!-- Activate -->
         <template v-else-if="page === 'activate'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:</translate>
@@ -134,7 +132,6 @@
                   mask="nnn nnn nnn nnn"
                   hide-details
                   readonly
-                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -157,10 +154,10 @@
                 <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
-                <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate text-white compact mr-0" @click.stop="onActivate">
+                <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate compact mr-0" @click.stop="onActivate">
                   <translate>Activate</translate>
                 </v-btn>
-                <v-btn v-else variant="flat" color="primary-button" class="action-copy text-white compact mr-0" @click.stop="onCopyRecoveryCode">
+                <v-btn v-else variant="flat" color="primary-button" class="action-copy compact mr-0" @click.stop="onCopyRecoveryCode">
                   <translate>Copy</translate>
                 </v-btn>
               </v-col>
@@ -169,7 +166,7 @@
         </template>
         <!-- Deactivate -->
         <template v-else-if="page === 'deactivate'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Two-factor authentication has been enabled for your account.</translate>
@@ -189,7 +186,6 @@
                   :type="showPassword ? 'text' : 'password'"
                   hide-details
                   required
-                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -208,7 +204,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="primary-button" class="action-deactivate text-white compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
+                <v-btn variant="flat" color="primary-button" class="action-deactivate compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
                   <translate>Deactivate</translate>
                 </v-btn>
                 <v-btn variant="flat" color="secondary-light" class="action-close mr-0" @click.stop="close">
@@ -220,7 +216,7 @@
         </template>
         <!-- Not Available -->
         <template v-else-if="page === 'not_available'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Only locally managed accounts can be set up for authentication with 2FA.</translate>

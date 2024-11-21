@@ -2,7 +2,7 @@
   <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
     <v-form ref="form" class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card elevation="24">
-        <v-card-title class="pa-2">
+        <v-card-title>
           <v-row class="pa-2">
             <v-col cols="9" class="text-left">
               <h3 class="text-h5 pa-0">
@@ -14,12 +14,12 @@
             </v-col>
           </v-row>
         </v-card-title>
-        <v-card-text class="py-0 px-2">
+        <v-card-text class="py-0">
           <v-row align="start">
-            <v-col v-if="oldRequired" cols="12" class="px-2 pb-2 text-caption">
+            <v-col v-if="oldRequired" cols="12" class="pb-2 text-caption">
               <translate>Please note that changing your password will log you out on other devices and browsers.</translate>
             </v-col>
-            <v-col v-if="oldRequired" cols="12" class="px-2 py-1">
+            <v-col v-if="oldRequired" cols="12" class="py-1">
               <v-text-field
                 v-model="oldPassword"
                 hide-details
@@ -38,7 +38,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" class="px-2 py-1">
+            <v-col cols="12" class="py-1">
               <v-text-field
                 v-model="newPassword"
                 required
@@ -60,7 +60,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" class="px-2 py-1">
+            <v-col cols="12" class="py-1">
               <v-text-field
                 v-model="confirmPassword"
                 required
@@ -84,13 +84,13 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="pt-1 pb-2 px-2">
+        <v-card-actions class="pt-1 pb-2">
           <v-row class="pa-2">
             <v-col cols="12" class="text-right">
               <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn variant="flat" color="primary-button" class="action-confirm text-white compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
+              <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
                 <translate>Save</translate>
               </v-btn>
             </v-col>

@@ -89,7 +89,7 @@
                   </v-col>
                 </template>
                 <v-col cols="12" class="px-2 pt-1 pb-0 auth-actions">
-                  <div class="action-buttons auth-buttons text-center">
+                  <div class="action-buttons auth-buttons text-center d-flex justify-space-around">
                     <v-btn v-if="enterCode" :color="colors.secondary" variant="outlined" :block="$vuetify.display.xs" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-4 py-2 opacity-80" @click.stop.prevent="onCancel">
                       <translate>Cancel</translate>
                     </v-btn>

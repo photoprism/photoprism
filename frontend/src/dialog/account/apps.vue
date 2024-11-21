@@ -19,7 +19,7 @@
         </v-card-title>
         <!-- Confirm -->
         <template v-if="confirmAction !== ''">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-1">
                 <translate>Enter your password to confirm the action and continue:</translate>
@@ -34,7 +34,6 @@
                   hide-details
                   required
                   autofocus
-                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -55,7 +54,7 @@
                 <v-btn variant="flat" color="secondary-light" class="action-back ml-0" @click.stop="onBack">
                   <translate>Back</translate>
                 </v-btn>
-                <v-btn variant="flat" color="primary-button" :disabled="!password || password.length < 4" class="action-confirm text-white compact mr-0" @click.stop="onConfirm">
+                <v-btn variant="flat" color="primary-button" :disabled="!password || password.length < 4" class="action-confirm compact mr-0" @click.stop="onConfirm">
                   <translate>Continue</translate>
                 </v-btn>
               </v-col>
@@ -64,7 +63,7 @@
         </template>
         <!-- Copy -->
         <template v-else-if="action === 'copy'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-1">
                 <translate>Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:</translate>
@@ -75,7 +74,6 @@
                   type="text"
                   hide-details
                   readonly
-                  variant="solo"
                   flat
                   autocorrect="off"
                   autocapitalize="none"
@@ -94,10 +92,10 @@
                 <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn v-if="appPasswordCopied" variant="flat" color="primary-button" :disabled="busy" class="action-done text-white compact mr-0" @click.stop="onDone">
+                <v-btn v-if="appPasswordCopied" variant="flat" color="primary-button" :disabled="busy" class="action-done compact mr-0" @click.stop="onDone">
                   <translate>Done</translate>
                 </v-btn>
-                <v-btn v-else variant="flat" color="primary-button" class="action-copy text-white compact mr-0" @click.stop="onCopyAppPassword">
+                <v-btn v-else variant="flat" color="primary-button" class="action-copy compact mr-0" @click.stop="onCopyAppPassword">
                   <translate>Copy</translate>
                 </v-btn>
               </v-col>
@@ -106,7 +104,7 @@
         </template>
         <!-- Add -->
         <template v-else-if="action === 'add'">
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2 text-body-1">
                 <translate>To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:</translate>
@@ -130,7 +128,7 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.scope" hide-details variant="filled" :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" class="input-scope"></v-select>
+                <v-select v-model="app.scope" hide-details variant="filled" :disabled="busy" item-title="text" item-value="value" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" class="input-scope"></v-select>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
                 <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details variant="filled" flat color="secondary-dark" class="input-expires" item-title="text" item-value="value" :items="options.Expires()"></v-select>
@@ -143,7 +141,7 @@
                 <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="onCancel">
                   <translate>Cancel</translate>
                 </v-btn>
-                <v-btn variant="flat" color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate text-white compact mr-0" @click.stop="onGenerate">
+                <v-btn variant="flat" color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate compact mr-0" @click.stop="onGenerate">
                   <translate>Generate</translate>
                 </v-btn>
               </v-col>
@@ -152,7 +150,7 @@
         </template>
         <!-- Apps -->
         <template v-else>
-          <v-card-text class="py-0 px-2">
+          <v-card-text class="py-0">
             <v-row align="start">
               <v-col cols="12" class="pa-2">
                 <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
@@ -187,7 +185,7 @@
                 <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn variant="flat" color="primary-button" class="action-add text-white compact mr-0" @click.stop="onAdd">
+                <v-btn variant="flat" color="primary-button" class="action-add compact mr-0" @click.stop="onAdd">
                   <translate>Add</translate>
                 </v-btn>
               </v-col>
@@ -245,28 +243,28 @@ export default {
       appPassword: "",
       appPasswordCopied: false,
       listColumns: [
-        { text: this.$gettext("Name"), value: "ID", sortable: false, align: "left" },
+        { title: this.$gettext("Name"), key: "ID", sortable: false, align: "left" },
         {
-          text: this.$gettext("Scope"),
+          title: this.$gettext("Scope"),
           class: "hidden-xs",
-          value: "AuthScope",
+          key: "AuthScope",
           sortable: false,
           align: "left",
         },
         {
-          text: this.$gettext("Last Used"),
-          value: "LastActive",
+          title: this.$gettext("Last Used"),
+          key: "LastActive",
           sortable: false,
           align: "left",
         },
         {
-          text: this.$gettext("Expires"),
+          title: this.$gettext("Expires"),
           class: "hidden-sm-and-down",
-          value: "Expires",
+          key: "Expires",
           sortable: false,
           align: "left",
         },
-        { text: "", value: "", sortable: false, align: "right" },
+        { title: "", key: "", sortable: false, align: "right" },
       ],
     };
   },

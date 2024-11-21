@@ -35,8 +35,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">
-        <!-- TODO: change this icon -->
-        <v-alert color="primary-darken-2" icon="info" class="pa-2" type="info" variant="outlined">
+        <v-alert color="primary-darken-2" icon="mdi-information" class="pa-2" type="info" variant="outlined">
           <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
