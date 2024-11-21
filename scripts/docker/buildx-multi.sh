@@ -20,7 +20,7 @@ echo "Done."
 # Create new multibuilder and add remote host for native arm builds.
 echo "Creating new multibuilder..."
 docker buildx create --name multibuilder --use 1>/dev/null || { echo 'buildx: failed to create multibuilder'; exit 1; }
-docker buildx create --name multibuilder --append ssh://ci-arm 2>/dev/null || echo 'buildx: failed to add remote host for native arm builds'
+docker buildx create --name multibuilder --append ssh://arm 2>/dev/null || echo 'buildx: failed to add remote host for native arm builds'
 echo "Done."
 
 echo "Starting 'photoprism/$1' multi-arch build based on docker/${1/-//}$4/Dockerfile..."
