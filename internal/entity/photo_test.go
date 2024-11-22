@@ -476,26 +476,25 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 }
 
 func TestPhoto_UpdateTitleLabels(t *testing.T) {
+	labelFood := Label{LabelName: "Food", LabelSlug: "food"}
+	labelWine := Label{LabelName: "Wine", LabelSlug: "wine"}
+	labelBar := Label{LabelName: "Bar", LabelSlug: "bar", DeletedAt: TimeStamp()}
+
+	err := labelFood.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = labelWine.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = labelBar.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
 	t.Run("Success", func(t *testing.T) {
-		labelFood := Label{LabelName: "Food", LabelSlug: "food"}
-		labelWine := Label{LabelName: "Wine", LabelSlug: "wine"}
-		labelBar := Label{LabelName: "Bar", LabelSlug: "bar", DeletedAt: TimeStamp()}
-
-		err := labelFood.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		err = labelWine.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		err = labelBar.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
-
 		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
 		photo := Photo{ID: 234567, PhotoTitle: "I was in a nice Wine Bar!", TitleSrc: SrcName, PhotoDescription: "cow, flower, food", DescriptionSrc: SrcMeta, Details: details}
 
@@ -520,24 +519,48 @@ func TestPhoto_UpdateTitleLabels(t *testing.T) {
 		assert.Equal(t, "snake, otter, food", p.Details.Keywords)
 		assert.Equal(t, 1, len(p.Labels))
 	})
+	t.Run("EmptyTitle", func(t *testing.T) {
+		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
+		photo := Photo{ID: 234568, PhotoTitle: "", TitleSrc: SrcName, PhotoDescription: "cow, flower, food", DescriptionSrc: SrcMeta, Details: details}
+
+		err = photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		p := FindPhoto(photo)
+
+		assert.Equal(t, 0, len(p.Labels))
+
+		err = p.UpdateTitleLabels()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		p = FindPhoto(*p)
+
+		assert.Equal(t, "", p.PhotoTitle)
+		assert.Equal(t, "cow, flower, food", p.PhotoDescription)
+		assert.Equal(t, "snake, otter, food", p.Details.Keywords)
+		assert.Equal(t, 0, len(p.Labels))
+	})
 }
 
 func TestPhoto_UpdateSubjectLabels(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		labelEgg := Label{LabelName: "Egg", LabelSlug: "egg"}
-		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		labelBird := Label{LabelName: "Bird", LabelSlug: "bird", DeletedAt: &deletedTime}
+	labelEgg := Label{LabelName: "Egg", LabelSlug: "egg"}
+	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+	labelBird := Label{LabelName: "Bird", LabelSlug: "bird", DeletedAt: &deletedTime}
 
-		err := labelBird.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
+	err := labelBird.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		err = labelEgg.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
-
+	err = labelEgg.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Run(`Success`, func(t *testing.T) {
 		details := &Details{Subject: "cow, egg, bird", SubjectSrc: SrcMeta}
 		photo := Photo{ID: 334567, TitleSrc: SrcName, Details: details}
 
@@ -560,24 +583,46 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 		assert.Equal(t, "cow, egg, bird", p.Details.Subject)
 		assert.Equal(t, 2, len(p.Labels))
 	})
+	t.Run("EmptySubject", func(t *testing.T) {
+		details := &Details{Subject: "", SubjectSrc: SrcMeta}
+		photo := Photo{ID: 334568, TitleSrc: SrcName, Details: details}
+
+		err = photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		p := FindPhoto(photo)
+
+		assert.Equal(t, 0, len(p.Labels))
+
+		err = p.UpdateSubjectLabels()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		p = FindPhoto(*p)
+
+		assert.Equal(t, "", p.Details.Subject)
+		assert.Equal(t, 0, len(p.Labels))
+	})
 }
 
 func TestPhoto_UpdateKeywordLabels(t *testing.T) {
+	labelOtter := Label{LabelName: "Otter", LabelSlug: "otter"}
+	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+	labelSnake := Label{LabelName: "Snake", LabelSlug: "snake", DeletedAt: &deletedTime}
+
+	err := labelSnake.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = labelOtter.Save()
+	if err != nil {
+		t.Fatal(err)
+	}
 	t.Run("Success", func(t *testing.T) {
-		labelOtter := Label{LabelName: "Otter", LabelSlug: "otter"}
-		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		labelSnake := Label{LabelName: "Snake", LabelSlug: "snake", DeletedAt: &deletedTime}
-
-		err := labelSnake.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		err = labelOtter.Save()
-		if err != nil {
-			t.Fatal(err)
-		}
-
 		details := &Details{Keywords: "cow, flower, snake, otter", KeywordsSrc: SrcAuto}
 		photo := Photo{ID: 434567, Details: details}
 
@@ -599,6 +644,29 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 
 		assert.Equal(t, "cow, flower, snake, otter", p.Details.Keywords)
 		assert.Equal(t, 3, len(p.Labels))
+	})
+	t.Run("EmptyKeywords", func(t *testing.T) {
+		details := &Details{Keywords: "", KeywordsSrc: SrcAuto}
+		photo := Photo{ID: 434568, Details: details}
+
+		err = photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		p := FindPhoto(photo)
+
+		assert.Equal(t, 0, len(p.Labels))
+
+		err = p.UpdateKeywordLabels()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		p = FindPhoto(*p)
+
+		assert.Equal(t, "", p.Details.Keywords)
+		assert.Equal(t, 0, len(p.Labels))
 	})
 }
 

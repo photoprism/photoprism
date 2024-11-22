@@ -232,6 +232,11 @@ func TestFindLabel(t *testing.T) {
 		assert.Error(t, err)
 		assert.NotNil(t, r)
 	})
+	t.Run("Empty", func(t *testing.T) {
+		r, err := FindLabel("", true)
+		assert.Error(t, err)
+		assert.NotNil(t, r)
+	})
 }
 
 func TestLabel_Links(t *testing.T) {
