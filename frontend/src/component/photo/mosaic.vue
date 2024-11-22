@@ -20,8 +20,8 @@
         </p>
       </v-alert>
     </div>
-    <v-row class="search-results photo-results mosaic-view" :class="{ 'select-results': selectMode }">
-      <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" class="d-flex xs4 sm3 md2 lg1" :data-index="index">
+    <div class="v-row search-results photo-results mosaic-view" :class="{ 'select-results': selectMode }">
+      <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" class="v-col v-col-xs-4 v-col-sm-3 v-col-md-2 v-col-lg-1 pa-1" :data-index="index">
         <!--
          The following div is the layout + size container. It makes the browser not
          re-layout all elements in the list when the children of one of them changes
@@ -102,7 +102,7 @@
           </div>
         </div>
       </div>
-    </v-row>
+    </div>
   </v-container>
 </template>
 <script>
