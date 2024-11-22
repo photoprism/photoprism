@@ -116,6 +116,10 @@
     border-radius: 6px !important;
 }
 
+#photoprism .cards-view .result {
+    height:100%;
+}
+
 .ra-2,
 .ra-2 > a,
 .rounded-2,
