@@ -4,7 +4,7 @@
       <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
       <v-card flat tile class="mt-2 px-1 application">
         <v-card-actions>
-          <v-row align="start">
+          <v-row align="start" class="ma-0">
             <v-col cols="8" sm="9" md="10" class="pa-0 d-flex" align-self="stretch">
               <v-row align="start" class="flex-grow-1">
                 <v-col md="2" class="pa-2 hidden-sm-and-down">
@@ -21,7 +21,7 @@
                     item-value="value"
                     class="input-gender"
                     :rules="[(v) => validLength(v, 0, 16) || $gettext('Invalid')]"
-                    @update:model-value="onChange"
+                    @update:modelValue="onChange"
                   >
                   </v-select>
                 </v-col>
@@ -222,14 +222,14 @@
         <v-card-actions>
           <v-row align="start">
             <v-col cols="3" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.Days()" class="input-birth-day" @update:model-value="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.Days()" class="input-birth-day" @update:modelValue="onChange"> </v-autocomplete>
             </v-col>
             <v-col cols="3" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @update:model-value="onChange">
+              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @update:modelValue="onChange">
               </v-autocomplete>
             </v-col>
             <v-col cols="6" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.Years()" class="input-birth-year" @update:model-value="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.Years()" class="input-birth-year" @update:modelValue="onChange"> </v-autocomplete>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -277,7 +277,7 @@
                 :items="countries"
                 class="input-country"
                 :rules="[(v) => validLength(v, 0, 2) || $gettext('Invalid')]"
-                @update:model-value="onChange"
+                @update:modelValue="onChange"
               >
               </v-autocomplete>
             </v-col>
