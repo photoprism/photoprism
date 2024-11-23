@@ -288,7 +288,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Label")
-	if res := UnscopedDb().Where("1=1").Delete(Label{}); res.Error != nil {
+	if res := UnscopedDb().Where("1=1").Delete(Labels{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	resetIDToOne(Label{}.TableName())
