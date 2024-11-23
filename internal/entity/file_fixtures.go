@@ -1415,7 +1415,7 @@ var FileFixtures = FileMap{
 		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo09.jpg": {
-		ID:              10000036, // Was a duplicate PK.
+		ID:              1100036,
 		Photo:           PhotoFixtures.Pointer("Photo09"),
 		PhotoID:         PhotoFixtures.Pointer("Photo09").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo09").PhotoUID,

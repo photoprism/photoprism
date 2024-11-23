@@ -677,7 +677,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 		}
 		assert.Equal(t, "image/jpeg", mediaFile.MimeType())
 	})
-
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/canon_eos_6d.dng")
 		if err != nil {
@@ -688,7 +687,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 		assert.True(t, mediaFile.IsDNG())
 		assert.True(t, mediaFile.IsRaw())
 	})
-
 	t.Run("iphone_7.xmp", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.xmp")
 		if err != nil {
@@ -696,7 +694,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 		}
 		assert.Equal(t, "text/plain", mediaFile.MimeType())
 	})
-
 	t.Run("iphone_7.json", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.json")
 		if err != nil {
@@ -727,7 +724,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 		}
 		assert.Equal(t, fs.MimeTypeXML, mediaFile.MimeType())
 	})
-
 	t.Run("earth.mov", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "earth.mov")); err != nil {
 			t.Fatal(err)
@@ -735,7 +731,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 			assert.Equal(t, "video/quicktime", f.MimeType())
 		}
 	})
-
 	t.Run("blue-go-video.mp4", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "blue-go-video.mp4")); err != nil {
 			t.Fatal(err)
@@ -743,7 +738,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 			assert.Equal(t, "video/mp4", f.MimeType())
 		}
 	})
-
 	t.Run("earth.avi", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "earth.avi")); err != nil {
 			t.Fatal(err)
@@ -751,7 +745,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 			assert.Equal(t, "video/x-msvideo", f.MimeType())
 		}
 	})
-
 	t.Run("agpl.svg", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/agpl.svg"); err != nil {
 			t.Fatal(err)
@@ -759,7 +752,6 @@ func TestMediaFile_MimeType(t *testing.T) {
 			assert.Equal(t, "image/svg+xml", f.MimeType())
 		}
 	})
-
 	t.Run("favicon.ico", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/favicon.ico"); err != nil {
 			t.Fatal(err)

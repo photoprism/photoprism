@@ -78,9 +78,6 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Register security middleware.
 	router.Use(Security(conf))
 
-	// Register robots tag middleware.
-	router.Use(Robots(conf))
-
 	// Create REST API router group.
 	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
 

@@ -74,7 +74,7 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 }
 
 func TestFileShare_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newFile := &File{ID: 123, PhotoID: 1000041} // Can't add share if the file and service aren't in the database.
 		Db().Create(newFile)
 		newService123 := &Service{ID: 123}
@@ -102,7 +102,7 @@ func TestFileShare_Updates(t *testing.T) {
 }
 
 func TestFileShare_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newFile := &File{ID: 123, PhotoID: 1000041} // Can't add share if the file and service aren't in the database.
 		Db().Create(newFile)
 		newService123 := &Service{ID: 123}
@@ -126,7 +126,7 @@ func TestFileShare_Update(t *testing.T) {
 }
 
 func TestFileShare_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newFile := &File{ID: 123, PhotoID: 1000041} // Can't add share if the file and service aren't in the database.
 		Db().Create(newFile)
 		newService123 := &Service{ID: 123}

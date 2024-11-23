@@ -73,17 +73,27 @@ DE:Deutschland
 DE:Germany
 DE:Aachen
 DE:Steglitz
+DE:Kreuzberg
+DE:Kreuzberger
+DE:Neukölln
+DE:Neuköllner
 DE:Friedrichshain
 DE:Berghain
 DE:Bundestag
+DE:Bundesrat
+DE:Potsdam
+DE:Potsdamer
+DE:Brandenburg
+DE:Brandenburger
 DE:Grunewald
 DE:Charlottenburg
 DE:Wilmersdorf
 DE:Tempelhof
+DE:Tempelhofer
 DE:Schönefeld
+DE:Schönefelder
 DE:Reichstag
 DE:Kassel
-DE:Kreuzberg
 DE:Ostsee
 DE:Nordsee
 DE:Wannsee
@@ -91,22 +101,36 @@ DE:Berlin
 DE:Pfalz
 DE:Mannheim
 DE:Heidelberg
+DE:Heidelberger
 DE:Stuttgart
+DE:Stuttgarter
 DE:Bisingen
 DE:Balingen
 DE:Hechingen
 DE:Swabian
 DE:Schwarzwald
+DE:Schwarzwälder
+DE:Schwaben
+DE:Schwäbisch
 DE:Schwäbische
+DE:Schwäbisches
 DE:Albtrauf
 DE:München
+DE:Münchner
+DE:Oktoberfest
 DE:Württemberg
 DE:Bayern
+DE:Bavaria
+DE:Bairisch
+DE:Bavarian
 DE:Erfurt
 DE:Leipzig
+DE:Leipziger
 DE:Schwerin
 DE:Greifswald
+DE:Greifswalder
 DE:Dresden
+DE:Dresdener
 DE:Nebelhorn
 DE:Neuschwanstein
 DE:Nürnberg
@@ -114,11 +138,13 @@ DE:Würzburg
 DE:Munich
 DE:Frankfurt
 DE:Freiburg
-DE:Brandenburg
+DE:Freiburger
 DE:Hamburg
 DE:Tübingen
 DE:Tubingen
+DE:Tübinger
 DE:Köln
+DE:Kölner
 DE:Königsee
 DE:Dortmund
 DE:Düsseldorf
@@ -126,17 +152,21 @@ DE:Cologne
 DE:Saarland
 DE:Saarbrücken
 DE:Konstanz
+DE:Konstanzer
 DE:Reichenau
 DE:Meckenheim
 DE:Wiesbaden
 DE:Lahnstein
 DE:Augsburg
+DE:Augsburger
 DE:Freinsheim
 DE:Speyer
 DE:Marburg
+DE:Marburger
 DE:Mechtersheim
 DE:Dürkheim
 DE:Ulm
+DE:Neckarsulm
 DE:Zugspitze
 DE:Sächsische Schweiz
 LV:Latvia
@@ -198,29 +228,108 @@ US:Venice Beach
 MN:Mongolia
 CL:Chile
 RW:Rwanda
-TR:Istanbul
 TR:Turkey
 TR:Türkei
+TR:Istanbul
+TR:Ankara
+TR:Izmir
+TR:Bursa
+TR:Antalya
+TR:Konya
+TR:Adana
+TR:Gaziantep
+TR:Kocaeli
+TR:Mersin
+TR:Diyarbakır
 KG:Kyrgyzstan
 BT:Bhutan
 NP:Everest
-NP:Kathmandu
 NP:Nepal
+NP:Himalaya
+NP:Kathmandu
 BD:Bangladesh
+BD:Dhaka
+BD:Chattogram
+BD:Khulna
 JO:Jordan
+JO:Amman
+JO:عَمَّان
+JO:Zarqa
+JO:الزرقاء
+JO:Irbid
+JO:إربد
+JO:Russeifa
+JO:الرصيفة
+JO:Sahab
+JO:سحاب
+JO:Ar Ramtha
+JO:الرمثا
+JO:Aqaba
+JO:العقبة
+JO:Mafraq
+JO:المفرق
 SY:Syria
+SY:سوريا
+SY:Syrien
+SY:Damascus
+SY:دِمَشق
+SY:Aleppo
+SY:ﺣَﻠَﺐ
+SY:Ḥalab
+SY:Daraa
+SY:دَرْعَا
+SY:Ad-Deir
+SY:Deir ez-Zor
+SY:دير الزور
+SY:Al-Hasakah
+SY:لْحَسَكَة
+SY:Latakia
+SY:للَّاذْقِيَّة
+SY:Quneitra
+SY:Al Qunaytirah
+SY:Qunaitira
+SY:Kuneitra
+SY:لْقُنَيطْرَة
+SY:Idlib
+SY:in Homs
+SY:Qusseir
+SY:Raqqa
+SY:ar-Raqqah
+SY:Rakka
+SY:ٱلرَّقَّة
+SY:Afrin
+SY:Ifrin
+SY:Efrin
+SY:عفرين
 LB:Lebanon
 LB:لُبْنان
 LB:Beirut
+LB:بيروت
+LB:Dahieh
 LB:Dahiyeh
 LB:Dâhiye
 LB:Al-Dahyeh
-LB:Tripoli
 LB:Nabatieh
 LB:Byblos
 LB:Baalbek
+LB:Baalbeck
+LB:بعلبك
 LB:Quobeiyat
 LB:Rafic Hariri
+LB:Kafarkila
+LB:Kfarkila
+LB:Kfarkela
+LB:Kafarkela
+LB:Kafr Kila
+LB:كفركلا
+LB:Mhaibib
+LB:Ghobeiri
+LB:Ghobeiry
+LB:غبيري
+LB:in Sidon
+LB:صيدا
+LB:in Tyre
+LB:صُور
 BG:Bulgaria
 BG:Koprivshtitsa
 BG:Melnik
@@ -348,10 +457,37 @@ IQ:Irak
 IQ:Baghdad
 IQ:العراق
 IQ:بَغْدَاد
+IQ:Mosul
+IQ:Nineveh
+IQ:Basra
+IQ:Kirkuk
+IQ:Erbil
+IQ:Hewlêr
+IQ:أربيل
+IQ:ܐܲܪܒܹܝܠ
+IQ:هەولێر
+IQ:Najaf
+IQ:Karbala
+IQ:Sulaymaniyah
+IQ:Nasiriyah
+IQ:Dhi Qar
 IR:Iran
 IR:إيران
 IR:Tehran
+IR:Tehrān
+IR:Teheran
+IR:تهران
+IR:طهران
 IR:طَهْران
+IR:Shamsabad
+IR:Shams Abad
+IR:شمس اباد
+IR:Shamsābād
+IR:Parchin
+IR:پارچین
+IR:Shahroud
+IR:Schahrud
+IR:شاهرود
 IR:Isfahan
 IR:اصفهان
 IR:Bushehr
@@ -522,13 +658,15 @@ CA:Quebec
 CA:Ontario
 CA:Alberta
 IL:Israel
-IL:Holy Land
+IL:Israeli
+IL:Israelis
 IL:יִשְׂרָאֵל
 IL:Yisra'el
 IL:Yisrael
 IL:Tel Aviv
 IL:תֵּל אָבִיב-יָפוֹ
 IL:Ben Gurion
+IL:Caesarea
 IL:Netanya
 IL:קֵיסָרְיָה
 IL:Haifa
@@ -554,10 +692,18 @@ IL:Sderot
 IL:Mefalsim
 IL:Mitspe Ramon
 IL:Kibbutz
+IL:קִבּוּץ
+IL:קיבוץ
+IL:Kibbutzim
+IL:קִבּוּצִים
+IL:קיבוצים
+IL:Degania
 IL:Nahal Oz
 IL:Kfar Aza
 IL:Kfar Maimon
 IL:Kfar Hoshen
+IL:Kfar Masaryk
+IL:in Kfar
 IL:Be'eri
 EG:Egypt
 EG:Ägypten
@@ -599,9 +745,17 @@ FR:Strasbourg
 FR:Straßburg
 FR:Paris
 NL:Amsterdam
-NL:Beekse Bergen
+NL:Rotterdam
+NL:Den Haag
+NL:The Hague
+NL:Utrecht
 NL:Eindhoven
+NL:Groningen
+NL:Beekse Bergen
 NL:Netherlands
+NL:Nederland
+NL:Nederlands
+NL:Nederlanden
 NL:Holland
 TD:Chad
 BA:Bosnia
@@ -613,6 +767,17 @@ PS:State of Palestine
 PS:فلسطين
 PS:Gaza City
 PS:Gaza Strip
+PS:in Gaza
+PS:Gazans
+PS:Palestinians
+PS:Tulkarm
+PS:Tulkarem
+PS:طولكرم
+PS:Dschenin
+PS:Djenin
+PS:جنين
+PS:Al-Aqsa
+PS:المسجد
 PS:West Bank
 PS:Samaria
 PS:Judea
@@ -630,3 +795,8 @@ PS:Ramallah
 PS:Hebron
 HM:McDonald Island
 HM:Heard Island
+EU:Europe
+EU:Europa
+EU:European Union
+EU:Europäische Union
+EU:Union européenne

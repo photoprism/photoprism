@@ -6,9 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,7 +17,7 @@ import (
 func TestDialectMysql(t *testing.T) {
 	if dumpName, err := filepath.Abs("./testdata/migrate_mysql.sql"); err != nil {
 		t.Fatal(err)
-	} else if err = exec.Command("mysql", "-u", "migrate", "-pmigrate", "migrate",
+	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
 		"-e", "source "+dumpName).Run(); err != nil {
 		t.Fatal(err)
 	}

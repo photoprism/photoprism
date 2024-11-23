@@ -26,12 +26,15 @@ type SearchPhotosGeo struct {
 	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken on or after this date"`
 	Favorite  string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted"`
-	Video     bool      `form:"video"`
-	Vector    bool      `form:"vector"`
-	Animated  bool      `form:"animated"`
-	Photo     bool      `form:"photo"`
-	Raw       bool      `form:"raw"`
-	Live      bool      `form:"live"`
+	Animated  bool      `form:"animated" notes:"Finds animations only"`
+	Audio     bool      `form:"audio" notes:"Finds audio recordings only"`
+	Document  bool      `form:"document" notes:"Finds documents only"`
+	Image     bool      `form:"image" notes:"Finds regular images only"`
+	Raw       bool      `form:"raw" notes:"Finds RAW images only"`
+	Live      bool      `form:"live" notes:"Finds Live Photos and short videos"`
+	Vector    bool      `form:"vector" notes:"Finds vector graphics only"`
+	Video     bool      `form:"video" notes:"Finds videos only"`
+	Photo     bool      `form:"photo" notes:"Excludes videos from search results"`
 	Scan      string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
 	Mp        string    `form:"mp" example:"mp:3-6" notes:"Resolution in Megapixels (MP)"`
 	Panorama  bool      `form:"panorama"`

@@ -2,10 +2,18 @@ package header
 
 import (
 	"github.com/gin-gonic/gin"
-
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// Optional HTTP request header names.
+const (
+	Cookie    = "Cookie"
+	Referer   = "Referer"
+	Browser   = "Sec-Ch-Ua"
+	Platform  = "Sec-Ch-Ua-Platform"
+	FetchMode = "Sec-Fetch-Mode"
+)
+
+// Standard IP addresses and placeholders.
 const (
 	UnknownIP = "0.0.0.0"
 	LocalIP   = "127.0.0.1"
@@ -19,9 +27,9 @@ func ClientIP(c *gin.Context) (ip string) {
 	} else if c.Request == nil {
 		return UnknownIP
 	} else if ip = c.ClientIP(); ip != "" {
-		return clean.IP(ip, UnknownIP)
+		return IP(ip, UnknownIP)
 	} else if ip = c.RemoteIP(); ip != "" {
-		return clean.IP(ip, UnknownIP)
+		return IP(ip, UnknownIP)
 	}
 
 	// Tests may not specify an IP address.

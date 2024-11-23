@@ -83,4 +83,15 @@ func TestTitle(t *testing.T) {
 	t.Run("ImgNonCommercialPics", func(t *testing.T) {
 		assert.Equal(t, "Non Commercial Pics", FileTitle("Img Non Commercial Pics"))
 	})
+	t.Run("TikTokZDF", func(t *testing.T) {
+		assert.Equal(t, "eBay Is Not TikTok! / ARD & ZDF", Title("ebay is not tiktok! / ard & zdf"))
+	})
+	t.Run("Arabic", func(t *testing.T) {
+		assert.Equal(t, "عَمَّان", Title("عَمَّان"))
+		assert.Equal(t, "Deir Ez-Zor", Title("deir ez-zor"))
+		assert.Equal(t, "Al-Hasakah", Title("al-hasakah"))
+		assert.Equal(t, "Tel Al-Sultan", Title("tel al-sultan"))
+		assert.Equal(t, "Al Qunaytirah", Title("al qunaytirah"))
+		assert.Equal(t, "In Al Qunaytirah", Title("in al qunaytirah"))
+	})
 }

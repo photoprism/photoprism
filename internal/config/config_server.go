@@ -211,7 +211,7 @@ func (c *Config) TemplateExists(name string) bool {
 	}
 }
 
-// TemplateName returns the name of the default template (e.g. index.gohtml).
+// TemplateName returns the name of the user interface bootstrap template.
 func (c *Config) TemplateName() string {
 	if s := c.Settings(); s != nil {
 		if c.TemplateExists(s.Templates.Default) {

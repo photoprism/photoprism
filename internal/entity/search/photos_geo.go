@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/geo/pluscode"
 	"github.com/photoprism/photoprism/pkg/geo/s2"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -502,16 +503,22 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Filter by media type.
 	if txt.NotEmpty(f.Type) {
 		s = s.Where("photos.photo_type IN (?)", SplitOr(strings.ToLower(f.Type)))
-	} else if f.Video {
-		s = s.Where("photos.photo_type = ?", entity.MediaVideo)
-	} else if f.Vector {
-		s = s.Where("photos.photo_type = ?", entity.MediaVector)
 	} else if f.Animated {
-		s = s.Where("photos.photo_type = ?", entity.MediaAnimated)
-	} else if f.Raw {
-		s = s.Where("photos.photo_type = ?", entity.MediaRaw)
+		s = s.Where("photos.photo_type = ?", media.Animated)
+	} else if f.Audio {
+		s = s.Where("photos.photo_type = ?", media.Audio)
+	} else if f.Document {
+		s = s.Where("photos.photo_type = ?", media.Document)
+	} else if f.Image {
+		s = s.Where("photos.photo_type = ?", media.Image)
 	} else if f.Live {
-		s = s.Where("photos.photo_type = ?", entity.MediaLive)
+		s = s.Where("photos.photo_type = ?", media.Live)
+	} else if f.Raw {
+		s = s.Where("photos.photo_type = ?", media.Raw)
+	} else if f.Vector {
+		s = s.Where("photos.photo_type = ?", media.Vector)
+	} else if f.Video {
+		s = s.Where("photos.photo_type = ?", media.Video)
 	} else if f.Photo {
 		s = s.Where("photos.photo_type IN ('image','raw','live','animated')")
 	}

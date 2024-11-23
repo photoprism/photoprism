@@ -1544,7 +1544,6 @@ var StopWords = map[string]bool{
 	"vor":              true,
 	"wahr?":            true,
 	"wann":             true,
-	"war":              true,
 	"waren":            true,
 	"warst":            true,
 	"wart":             true,

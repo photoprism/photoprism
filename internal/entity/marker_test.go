@@ -144,7 +144,7 @@ func TestMarker_SaveForm(t *testing.T) {
 }
 
 func TestUpdateOrCreateMarker(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerLabel, 100, 65)
 		assert.IsType(t, &Marker{}, m)
 		assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
@@ -169,7 +169,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 }
 
 func TestMarker_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := CreateMarkerIfNotExists(m)
 
@@ -194,7 +194,7 @@ func TestMarker_Updates(t *testing.T) {
 }
 
 func TestMarker_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := CreateMarkerIfNotExists(m)
 
@@ -248,7 +248,7 @@ func TestMarker_InvalidArea(t *testing.T) {
 
 // TODO fails on mariadb
 func TestMarker_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 
 		m, err := CreateMarkerIfNotExists(m)
@@ -438,7 +438,7 @@ func TestMarker_Create(t *testing.T) {
 }
 
 func TestMarker_Embeddings(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-4")
 
 		assert.Equal(t, 0.013083286379677253, m.Embeddings()[0][0])

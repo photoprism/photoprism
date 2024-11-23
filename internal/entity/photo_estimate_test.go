@@ -78,6 +78,43 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, UnknownID, m.CountryCode())
 		assert.Equal(t, "Unknown", m.CountryName())
 	})
+	t.Run("Vector", func(t *testing.T) {
+		m := Photo{
+			CameraID:   2,
+			PhotoType:  MediaVector,
+			PhotoTitle: "Logo",
+		}
+		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
+		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
+		m.EstimateCountry()
+		assert.Equal(t, "zz", m.CountryCode())
+		assert.Equal(t, "Unknown", m.CountryName())
+	})
+	t.Run("London", func(t *testing.T) {
+		m := Photo{
+			CameraID:         2,
+			PhotoType:        MediaImage,
+			PhotoDescription: "Trip to London",
+			DescriptionSrc:   "meta",
+		}
+		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
+		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
+		m.EstimateCountry()
+		assert.Equal(t, "gb", m.CountryCode())
+		assert.Equal(t, "United Kingdom", m.CountryName())
+	})
+	t.Run("Los Angeles", func(t *testing.T) {
+		m := Photo{
+			CameraID:  2,
+			PhotoType: MediaImage,
+			PhotoName: "Los-Angeles-2020",
+		}
+		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
+		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
+		m.EstimateCountry()
+		assert.Equal(t, "us", m.CountryCode())
+		assert.Equal(t, "United States", m.CountryName())
+	})
 }
 
 func TestPhoto_EstimateLocation(t *testing.T) {
@@ -191,6 +228,32 @@ func TestPhoto_EstimateLocation(t *testing.T) {
 		assert.Equal(t, UnknownID, m.CountryCode())
 		m.EstimateLocation(true)
 		assert.Equal(t, UnknownID, m.CountryCode())
+	})
+	t.Run("Vector", func(t *testing.T) {
+		m := Photo{
+			CameraID:    2,
+			TakenSrc:    SrcMeta,
+			PhotoType:   MediaVector,
+			EstimatedAt: TimeStamp(),
+			TakenAt:     time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
+		assert.Equal(t, UnknownID, m.CountryCode())
+		m.EstimateLocation(true)
+		assert.Equal(t, "zz", m.CountryCode())
+		assert.Equal(t, "Unknown", m.CountryName())
+		assert.Equal(t, "", m.PlaceSrc)
+	})
+	t.Run("TooMuchDifference", func(t *testing.T) {
+		m := Photo{
+			CameraID:    2,
+			TakenSrc:    SrcMeta,
+			PhotoType:   MediaImage,
+			EstimatedAt: TimeStamp(),
+			TakenAt:     time.Date(2016, 11, 12, 22, 7, 18, 0, time.UTC)}
+		assert.Equal(t, UnknownID, m.CountryCode())
+		m.EstimateLocation(true)
+		assert.Equal(t, "zz", m.CountryCode())
+		assert.Equal(t, "Unknown", m.CountryName())
+		assert.Equal(t, "", m.PlaceSrc)
 	})
 	/*t.Run("HasCountry", func(t *testing.T) {
 		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/zzz.jpg", TakenAt:  time.Date(2001, 1, 1, 7, 20, 0, 0, time.UTC)}

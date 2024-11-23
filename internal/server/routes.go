@@ -19,10 +19,10 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Register static asset and templates routes.
 	registerStaticRoutes(router, conf)
 
-	// Register PWA bootstrap and config routes.
-	registerPWARoutes(router, conf)
+	// Register user interface routes.
+	registerWebAppRoutes(router, conf)
 
-	// Register built-in WebDAV server routes.
+	// Register WebDAV server routes.
 	registerWebDAVRoutes(router, conf)
 
 	// Register sharing routes starting with "/s".

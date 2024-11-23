@@ -183,8 +183,8 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
-	if err := model.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo: %s %s while syncing keywords and labels", model.String(), err)
+	if err := model.UpdateLabels(); err != nil {
+		log.Errorf("photo: %s %s while updating labels", model.String(), err)
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
@@ -513,15 +513,97 @@ func (m *Photo) RemoveKeyword(w string) error {
 	return nil
 }
 
-// SyncKeywordLabels maintains the label / photo relationship for existing labels and keywords.
-func (m *Photo) SyncKeywordLabels() error {
+// UpdateLabels updates labels that are automatically set based on the photo title, subject, and keywords.
+func (m *Photo) UpdateLabels() error {
+	if err := m.UpdateTitleLabels(); err != nil {
+		return err
+	}
+
+	if err := m.UpdateSubjectLabels(); err != nil {
+		return err
+	}
+
+	if err := m.UpdateKeywordLabels(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateTitleLabels updates the labels assigned based on the photo title.
+func (m *Photo) UpdateTitleLabels() error {
+	if m == nil {
+		return nil
+	} else if m.PhotoTitle == "" {
+		return nil
+	} else if SrcPriority[m.TitleSrc] < SrcPriority[SrcName] {
+		return nil
+	}
+
+	keywords := txt.UniqueKeywords(m.PhotoTitle)
+
+	var labelIds []uint
+
+	for _, w := range keywords {
+		if label, err := FindLabel(w, true); err == nil {
+			if label.Deleted() {
+				continue
+			}
+
+			labelIds = append(labelIds, label.ID)
+			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 10, classify.SrcTitle))
+		}
+	}
+
+	return Db().Where("label_src = ? AND photo_id = ? AND label_id NOT IN (?)", classify.SrcTitle, m.ID, labelIds).Delete(&PhotoLabel{}).Error
+}
+
+// UpdateSubjectLabels updates the labels assigned based on photo subject metadata.
+func (m *Photo) UpdateSubjectLabels() error {
 	details := m.GetDetails()
+
+	if details == nil {
+		return nil
+	} else if details.Subject == "" {
+		return nil
+	} else if SrcPriority[details.SubjectSrc] < SrcPriority[SrcName] {
+		return nil
+	}
+
+	keywords := txt.UniqueKeywords(details.Subject)
+
+	var labelIds []uint
+
+	for _, w := range keywords {
+		if label, err := FindLabel(w, true); err == nil {
+			if label.Deleted() {
+				continue
+			}
+
+			labelIds = append(labelIds, label.ID)
+			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 15, classify.SrcSubject))
+		}
+	}
+
+	return Db().Where("label_src = ? AND photo_id = ? AND label_id NOT IN (?)", classify.SrcSubject, m.ID, labelIds).Delete(&PhotoLabel{}).Error
+}
+
+// UpdateKeywordLabels updates the labels assigned based on photo keyword metadata.
+func (m *Photo) UpdateKeywordLabels() error {
+	details := m.GetDetails()
+
+	if details == nil {
+		return nil
+	} else if details.Keywords == "" {
+		return nil
+	}
+
 	keywords := txt.UniqueKeywords(details.Keywords)
 
 	var labelIds []uint
 
 	for _, w := range keywords {
-		if label := FindLabel(w); label != nil {
+		if label, err := FindLabel(w, true); err == nil {
 			if label.Deleted() {
 				continue
 			}

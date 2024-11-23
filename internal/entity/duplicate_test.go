@@ -8,7 +8,7 @@ import (
 )
 
 func TestAddDuplicate(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		if err := AddDuplicate(
 			"foobar.jpg",
 			RootOriginals,
@@ -156,7 +156,7 @@ func TestSaveDuplicate(t *testing.T) {
 }
 
 func TestDuplicate_Purge(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		if err := AddDuplicate(
 			"forpurge.jpg",
 			RootOriginals,

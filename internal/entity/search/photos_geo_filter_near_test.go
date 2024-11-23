@@ -18,7 +18,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 9, len(photos)) // Photo08 and Photo09 shared an id value.
+		assert.Equal(t, 9, len(photos))
 	})
 	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo

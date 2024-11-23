@@ -8,15 +8,19 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// Authentication header names.
 const (
 	Auth       = "Authorization" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
-	AuthBasic  = "Basic"
-	AuthBearer = "Bearer"
 	XAuthToken = "X-Auth-Token"
 	XSessionID = "X-Session-ID"
+)
+
+// Authentication header values.
+const (
+	AuthBasic  = "Basic"
+	AuthBearer = "Bearer"
 )
 
 // AuthToken returns the client authentication token from the request context,
@@ -29,9 +33,9 @@ func AuthToken(c *gin.Context) string {
 
 	// First check the "X-Auth-Token" and "X-Session-ID" headers for an auth token.
 	if token := c.GetHeader(XAuthToken); token != "" {
-		return clean.ID(token)
+		return ID(token)
 	} else if id := c.GetHeader(XSessionID); id != "" {
-		return clean.ID(id)
+		return ID(id)
 	}
 
 	// Otherwise, the bearer token from the authorization request header is returned.
@@ -57,7 +61,7 @@ func Authorization(c *gin.Context) (authType, authToken string) {
 	} else if t := strings.Split(s, " "); len(t) != 2 {
 		// Ignore.
 	} else {
-		return clean.ID(t[0]), clean.ID(t[1])
+		return ID(t[0]), ID(t[1])
 	}
 
 	return "", ""

@@ -155,7 +155,7 @@ func TestDetails_Create(t *testing.T) {
 
 		assert.Error(t, details.Create())
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newPhoto := &Photo{ID: 1236799955432} // Can't add details if there isn't a photo in the database.
 		Db().Create(newPhoto)
 
@@ -173,7 +173,7 @@ func TestDetails_Create(t *testing.T) {
 }
 
 func TestDetails_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newPhoto := &Photo{ID: 123678955432} // Can't add details if there isn't a photo in the database.
 		Db().Create(newPhoto)
 

@@ -64,13 +64,13 @@ type Album struct {
 	Photos           []PhotoAlbum   `gorm:"foreignkey:AlbumUID;references:AlbumUID" json:"-" yaml:"Photos,omitempty"`
 }
 
-// AfterUpdate flushes the album cache.
+// AfterUpdate flushes the album cache when an album is updated.
 func (m *Album) AfterUpdate(tx *gorm.DB) (err error) {
 	FlushAlbumCache()
 	return
 }
 
-// AfterDelete flushes the album cache when an album gets deleted.
+// AfterDelete flushes the album cache when an album is deleted.
 func (m *Album) AfterDelete(tx *gorm.DB) (err error) {
 	FlushAlbumCache()
 	return

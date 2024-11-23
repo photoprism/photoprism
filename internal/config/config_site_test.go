@@ -39,6 +39,22 @@ func TestConfig_ApiUri(t *testing.T) {
 	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
 }
 
+func TestConfig_LibraryUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "/library", c.LibraryUri(""))
+	assert.Equal(t, "/library/", c.LibraryUri("/"))
+	assert.Equal(t, "/library/browse", c.LibraryUri("/browse"))
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, "/library", c.LibraryUri(""))
+	assert.Equal(t, "/library/", c.LibraryUri("/"))
+	assert.Equal(t, "/library/browse", c.LibraryUri("/browse"))
+	c.options.SiteUrl = "http://foo:2342/foo/"
+	assert.Equal(t, "/foo/library", c.LibraryUri(""))
+	assert.Equal(t, "/foo/library/", c.LibraryUri("/"))
+	assert.Equal(t, "/foo/library/browse", c.LibraryUri("/browse"))
+}
+
 func TestConfig_ContentUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -150,4 +166,28 @@ func TestConfig_SiteDescription(t *testing.T) {
 	assert.Equal(t, "My Description!", c.SiteDescription())
 	c.options.SiteDescription = ""
 	assert.Equal(t, "", c.SiteDescription())
+}
+
+func TestConfig_LegalInfo(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.LegalInfo())
+	assert.Equal(t, "", c.LegalUrl())
+	c.options.LegalInfo = "ACME Inc."
+	c.options.LegalUrl = "https://example.com/"
+	assert.Equal(t, c.options.LegalInfo, c.LegalInfo())
+	assert.Equal(t, c.options.LegalUrl, c.LegalUrl())
+	c.options.LegalInfo = ""
+	c.options.LegalUrl = ""
+	assert.Equal(t, "", c.LegalInfo())
+	assert.Equal(t, "", c.LegalUrl())
+}
+
+func TestConfig_RobotsTxt(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result, err := c.RobotsTxt()
+
+	assert.NoError(t, err)
+	assert.Equal(t, robotsTxt, result)
 }

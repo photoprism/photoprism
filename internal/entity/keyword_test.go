@@ -33,7 +33,7 @@ func TestFirstOrCreateKeyword(t *testing.T) {
 }
 
 func TestKeyword_Updates(t *testing.T) {
-	t.Run("success no ID on keyword", func(t *testing.T) {
+	t.Run("Success no ID on keyword", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate")
 
 		assert.Equal(t, "keywordbeforeupdate", keyword.Keyword)
@@ -81,7 +81,7 @@ func TestKeyword_Updates(t *testing.T) {
 }
 
 func TestKeyword_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate3")
 		assert.Equal(t, "keywordbeforeupdate3", keyword.Keyword)
 
@@ -106,7 +106,7 @@ func TestKeyword_Update(t *testing.T) {
 }
 
 func TestKeyword_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordName")
 
 		err := keyword.Save()

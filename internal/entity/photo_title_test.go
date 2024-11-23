@@ -42,7 +42,7 @@ func TestPhoto_SetTitle(t *testing.T) {
 		m.SetTitle("NewTitleSet", SrcAuto)
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
 		m.SetTitle("NewTitleSet", SrcName)

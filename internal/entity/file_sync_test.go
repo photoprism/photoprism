@@ -68,7 +68,7 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 }
 
 func TestFileSync_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newService := &Service{ID: 123}
 		Db().Create(newService)
 		fileSync := NewFileSync(123, "NameBeforeUpdate")
@@ -88,7 +88,7 @@ func TestFileSync_Updates(t *testing.T) {
 }
 
 func TestFileSync_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newService := &Service{ID: 123}
 		Db().Create(newService)
 
@@ -108,7 +108,7 @@ func TestFileSync_Update(t *testing.T) {
 }
 
 func TestFileSync_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newService := &Service{ID: 123}
 		Db().Create(newService)
 		newFile := &File{ID: 888, PhotoID: 1000041, FileName: "Nameavc"} // Can't add share if the file and service aren't in the database.

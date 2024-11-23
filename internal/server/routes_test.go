@@ -40,7 +40,7 @@ func TestStaticRoutes(t *testing.T) {
 	})
 }
 
-func TestPWARoutes(t *testing.T) {
+func TestWebAppRoutes(t *testing.T) {
 	// Create router.
 	r := gin.Default()
 
@@ -50,39 +50,37 @@ func TestPWARoutes(t *testing.T) {
 	// Find and load templates.
 	r.LoadHTMLFiles(conf.TemplateFiles()...)
 
-	// Register routes.
-	registerPWARoutes(r, conf)
+	// Register user interface routes.
+	registerWebAppRoutes(r, conf)
 
 	// Bootstrapping.
 	t.Run("GetLibrary", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/library/", nil)
+		req, _ := http.NewRequest("GET", conf.LibraryUri("/"), nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
 		assert.NotEmpty(t, w.Body)
 	})
 	t.Run("HeadLibrary", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("HEAD", "/library/", nil)
+		req, _ := http.NewRequest("HEAD", conf.LibraryUri("/"), nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
 		assert.NotEmpty(t, w.Body)
 	})
 	t.Run("GetLibraryBrowse", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/library/browse", nil)
+		req, _ := http.NewRequest("GET", conf.LibraryUri("/browse"), nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
 		assert.NotEmpty(t, w.Body)
 	})
 	t.Run("HeadLibraryBrowse", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("HEAD", "/library/browse", nil)
+		req, _ := http.NewRequest("HEAD", conf.LibraryUri("/browse"), nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
 	})
-
-	// Manifest.
 	t.Run("GetManifest", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/manifest.json", nil)
@@ -95,8 +93,6 @@ func TestPWARoutes(t *testing.T) {
 		assert.True(t, strings.Contains(manifest, `"start_url": "/library/",`))
 		assert.True(t, strings.Contains(manifest, "/static/icons/logo/128.png"))
 	})
-
-	// Service worker.
 	t.Run("GetServiceWorker", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/sw.js", nil)

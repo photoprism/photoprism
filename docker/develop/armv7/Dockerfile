@@ -57,6 +57,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libfontconfig1-dev libhdf5-serial-dev libzmq3-dev libjxl-dev libjxl-tools librav1e-dev \
         libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
         exiftool ffmpeg libavcodec-extra libavcodec-dev libdav1d-dev libvips-dev libsharpyuv-dev \
+        iputils-ping dnsutils \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-libheif.sh && \
@@ -65,7 +66,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     mkdir -p /etc/skel/.config/go && \
     echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
     cp -r /etc/skel/.config /root/.config && \
-    GOLANG_VERSION=go1.22.8 /scripts/install-go.sh && \
+    GOLANG_VERSION=go1.22.9 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \

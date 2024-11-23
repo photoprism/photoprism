@@ -21,8 +21,14 @@ import (
 
 // StartIndexing indexes media files in the "originals" folder.
 //
-//	@Tags	Library
-//	@Router	/api/v1/index [post]
+//	@Summary	start indexing
+//	@Id			StartIndexing
+//	@Tags		Library
+//	@Produce	json
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,429,500	{object}	i18n.Response
+//	@Param		options				body		form.IndexOptions	true	"index options"
+//	@Router		/api/v1/index [post]
 func StartIndexing(router *gin.RouterGroup) {
 	router.POST("/index", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)

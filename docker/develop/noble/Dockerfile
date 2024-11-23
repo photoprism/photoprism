@@ -56,6 +56,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
+        iputils-ping dnsutils \
     && \
     apt-get -qq install \
         software-properties-common pkg-config apt-utils \
@@ -76,7 +77,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     mkdir -p /etc/skel/.config/go && \
     echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
     cp -r /etc/skel/.config /root/.config && \
-    GOLANG_VERSION=go1.22.8 /scripts/install-go.sh && \
+    GOLANG_VERSION=go1.22.9 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \

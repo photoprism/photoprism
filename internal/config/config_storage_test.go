@@ -245,7 +245,7 @@ func TestConfig_CreateDirectories(t *testing.T) {
 	})
 }
 
-/* TODO Doesn't fail on https://drone.photoprism.app/!
+/* TODO
 	--- FAIL: TestConfig_CreateDirectories2 (0.00s)
     --- FAIL: TestConfig_CreateDirectories2/asset_path_not_found (0.00s)
         fs_test.go:142: error expected

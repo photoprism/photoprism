@@ -163,7 +163,7 @@ func TestFile_Create(t *testing.T) {
 		UnscopedDb().Where("id = ?", newID).Delete(&File{})
 		UnscopedDb().Delete(newPhoto)
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
 		file := &File{Photo: photo, FileType: "jpg", FileSize: 500, PhotoID: 766, FileName: "testname", FileRoot: "xyz"}
@@ -177,14 +177,14 @@ func TestFile_Create(t *testing.T) {
 }
 
 func TestFile_Purge(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, nil, file.Purge())
 	})
 }
 
 func TestFile_Found(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, nil, file.Purge())
 		assert.Equal(t, true, file.FileMissing)
@@ -223,7 +223,7 @@ func TestFile_Save(t *testing.T) {
 
 		assert.Equal(t, "file 123: cannot save file with empty photo id", err.Error())
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
 		file := &File{Photo: photo, FileType: "jpg", FileSize: 500, PhotoID: 766, FileName: "Food", FileRoot: "", UpdatedAt: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
@@ -237,7 +237,7 @@ func TestFile_Save(t *testing.T) {
 }
 
 func TestFile_UpdateVideoInfos(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileWidth: 600, FileName: "VideoUpdate", PhotoID: 1000003}
 
 		assert.Equal(t, "1990/04/bridge2.mp4", FileFixturesExampleBridgeVideo.FileName)
@@ -265,7 +265,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 }
 
 func TestFile_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
 		Db().Create(newPhoto)
 
@@ -497,7 +497,7 @@ func TestFile_DownloadName(t *testing.T) {
 }
 
 func TestFile_Undelete(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		photo := &Photo{}
 		err := photo.Create()
 		assert.NoError(t, err)
@@ -592,7 +592,7 @@ func TestFile_ValidFaceCount(t *testing.T) {
 }
 
 func TestFile_Rename(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)

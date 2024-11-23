@@ -11,15 +11,17 @@ fi
 NUMERIC='^[0-9]+$'
 BUILD_DATE=$(/bin/date -u +%y%m%d)
 
-# kill old multi builder if still alive.
-echo "Removing existing multibuilder..."
+# Remove existing multibuilder.
+echo "Removing old multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
-
-# wait 3 seconds.
 sleep 3
+echo "Done."
 
-# create new multibuilder.
-docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
+# Create new multibuilder and add remote host for native arm builds.
+echo "Creating new multibuilder..."
+docker buildx create --name multibuilder --use 1>/dev/null || { echo 'buildx: failed to create multibuilder'; exit 1; }
+docker buildx create --name multibuilder --append ssh://arm 2>/dev/null || echo 'buildx: failed to add remote host for native arm builds'
+echo "Done."
 
 echo "Starting 'photoprism/$1' multi-arch build based on docker/${1/-//}$4/Dockerfile..."
 echo "Build Arch: $2"
