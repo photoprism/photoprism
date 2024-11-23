@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
+  <v-container grid-list-xs fluid class="pa-4 p-photos p-photo-mosaic">
     <div v-if="photos.length === 0" class="pa-0">
       <!-- TODO: change this icon -->
       <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
