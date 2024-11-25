@@ -30,8 +30,7 @@
         ></v-text-field>
 
         <v-btn v-if="filter.latlng" icon :title="$gettext('Show more')" class="action-clear-location" @click.stop="clearLocation()">
-          <!-- TODO: change this icon -->
-          <v-icon>location_off</v-icon>
+          <v-icon>mdi-map-marker-off</v-icon>
         </v-btn>
 
         <v-btn icon class="hidden-xs action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
@@ -64,8 +63,7 @@
       <template v-else>
         <v-spacer></v-spacer>
         <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-browse" @click.stop="onBrowse">
-          <!-- TODO: change this icon -->
-          <v-icon size="20">tab</v-icon>
+          <v-icon size="20">mdi-tab</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
           <v-icon>mdi-close</v-icon>
