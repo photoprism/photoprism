@@ -16,6 +16,7 @@
 #photoprism .map-control .map-control-search {
     overflow: hidden;
     border-radius: 24px;
+    min-width: 257px;
 }
 
 #photoprism #map .marker {
