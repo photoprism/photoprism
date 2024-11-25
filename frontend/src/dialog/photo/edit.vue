@@ -35,12 +35,12 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
             <v-icon :size="18" :start="!rtl" :end="rtl">mdi-label</v-icon>
-            <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
-              <template #badge>
-                <span v-if="model.Labels.length">{{ model.Labels.length }}</span>
-              </template>
+            <v-badge v-if="model.Labels.length" color="secondary-dark" :location="rtl ? 'left' : 'right'" :content="model.Labels.length">
               <translate key="Labels">Labels</translate>
             </v-badge>
+            <template v-else>
+              <translate key="Labels">Labels</translate>
+            </template>
           </template>
         </v-tab>
 
@@ -48,12 +48,12 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
             <v-icon :size="18" :start="!rtl" :end="rtl">mdi-account-multiple</v-icon>
-            <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
-              <template #badge>
-                <span v-if="model.Faces">{{ model.Faces }}</span>
-              </template>
+            <v-badge v-if="model.Faces" color="secondary-dark" :location="rtl ? 'left' : 'right'" :content="model.Faces">
               <translate key="People">People</translate>
             </v-badge>
+            <template v-else>
+              <translate key="People">People</translate>
+            </template>
           </template>
         </v-tab>
 
@@ -61,12 +61,12 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
             <v-icon :size="18" :start="!rtl" :end="rtl">mdi-film</v-icon>
-            <v-badge color="secondary-dark" :location="rtl ? 'left' : 'right'">
-              <template #badge>
-                <span v-if="model.Files.length">{{ model.Files.length }}</span>
-              </template>
+            <v-badge v-if="model.Files.length" color="secondary-dark" :location="rtl ? 'left' : 'right'" :content="model.Files.length">
               <translate key="Files">Files</translate>
             </v-badge>
+            <template v-else>
+              <translate key="Files">Files</translate>
+            </template>
           </template>
         </v-tab>
 
