@@ -117,8 +117,8 @@
               use css to show it when it is being hovered.
             -->
             <button class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-              <i class="mdi mdi-circle-outline" />
-              <i class="mdi mdi-radiobox-blank" />
+              <i class="mdi mdi-check-circle select-on" />
+              <i class="mdi mdi-circle-outline select-off" />
             </button>
 
             <button v-if="!isSharedView" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
