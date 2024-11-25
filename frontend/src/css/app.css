@@ -95,12 +95,13 @@ main {
 
 /* General App Styles */
 
-#photoprism .v-badge__badge {
-    font-size: 12px;
-    height: 19px;
-    width: 19px;
-    right: -20px;
-    top: -8px;
+.v-badge__badge {
+    top: 0 !important;
+    left: 100% !important;
+    height: 1.1rem;
+    min-width: 1.1rem;
+    font-size: 9px;
+    padding: 0 0.2rem;
 }
 
 #photoprism .clickable {
@@ -162,12 +163,7 @@ main {
 }
 
 #photoprism .v-tabs .v-badge__badge {
-    top: 0 !important;
     left: calc(100% + 4px) !important;
-    height: 1.1rem;
-    min-width: 1.1rem;
-    font-size: 9px;
-    padding: 0 0.2rem;
 }
 
 ol, ul {
