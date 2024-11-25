@@ -85,15 +85,15 @@ export default {
       selected: [],
       newLabel: "",
       listColumns: [
-        { text: this.$gettext("Label"), value: "", sortable: false, align: "left" },
-        { text: this.$gettext("Source"), value: "LabelSrc", sortable: false, align: "left" },
+        { title: this.$gettext("Label"), key: "", sortable: false, align: "left" },
+        { title: this.$gettext("Source"), key: "LabelSrc", sortable: false, align: "left" },
         {
-          text: this.$gettext("Confidence"),
-          value: "Uncertainty",
+          title: this.$gettext("Confidence"),
+          key: "Uncertainty",
           sortable: false,
           align: "center",
         },
-        { text: this.$gettext("Action"), value: "", sortable: false, align: "center" },
+        { title: this.$gettext("Action"), key: "", sortable: false, align: "center" },
       ],
       nameRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
