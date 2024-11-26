@@ -34,6 +34,7 @@ let themes = {
       navigation: "#141417",
       "navigation-home": "#0e0f10",
     },
+    variables: {},
   },
   abyss: {
     title: "Abyss",
@@ -66,6 +67,7 @@ let themes = {
       navigation: "#0d0d0d",
       "navigation-home": "#000000",
     },
+    variables: {},
   },
   carbon: {
     dark: true,
@@ -98,6 +100,7 @@ let themes = {
       navigation: "#0E0D12",
       "navigation-home": "#0E0D12",
     },
+    variables: {},
   },
   chrome: {
     dark: true,
@@ -130,6 +133,7 @@ let themes = {
       navigation: "#1e2122",
       "navigation-home": "#1e2122",
     },
+    variables: {},
   },
   gemstone: {
     title: "Gemstone",
@@ -162,6 +166,7 @@ let themes = {
       navigation: "#1C1C21",
       "navigation-home": "#131316",
     },
+    variables: {},
   },
   grayscale: {
     title: "Grayscale",
@@ -194,6 +199,7 @@ let themes = {
       navigation: "#353839",
       "navigation-home": "#212121",
     },
+    variables: {},
   },
   lavender: {
     title: "Lavender",
@@ -226,6 +232,7 @@ let themes = {
       navigation: "#1b1e32",
       "navigation-home": "#121421",
     },
+    variables: {},
   },
   legacy: {
     title: "Legacy",
@@ -258,6 +265,7 @@ let themes = {
       navigation: "#212121",
       "navigation-home": "#000000",
     },
+    variables: {},
   },
   mint: {
     dark: true,
@@ -290,6 +298,7 @@ let themes = {
       navigation: "#181818",
       "navigation-home": "#181818",
     },
+    variables: {},
   },
   neon: {
     title: "Neon",
@@ -322,6 +331,7 @@ let themes = {
       navigation: "#0e0d0f",
       "navigation-home": "#000000",
     },
+    variables: {},
   },
   nordic: {
     dark: false,
@@ -354,6 +364,7 @@ let themes = {
       navigation: "#e7ebf1",
       "navigation-home": "#dde3eb",
     },
+    variables: {},
   },
   onyx: {
     title: "Onyx",
@@ -386,6 +397,7 @@ let themes = {
       navigation: "#353839",
       "navigation-home": "#212121",
     },
+    variables: {},
   },
   shadow: {
     title: "Shadow",
@@ -418,6 +430,7 @@ let themes = {
       navigation: "#212121",
       "navigation-home": "#000000",
     },
+    variables: {},
   },
   vanta: {
     title: "Vanta",
@@ -450,6 +463,7 @@ let themes = {
       navigation: "#0d0d0d",
       "navigation-home": "#000000",
     },
+    variables: {},
   },
   yellowstone: {
     title: "Yellowstone",
@@ -482,6 +496,7 @@ let themes = {
       navigation: "#191817",
       "navigation-home": "#0c0c0b",
     },
+    variables: {},
   },
 };
 
@@ -566,6 +581,29 @@ let options = [
 ];
 
 /* Theme Functions */
+
+// Returns an object containing all themes for use with Vuetify.
+export const All = () => {
+  let result = [];
+
+  for (let k in themes) {
+    if (themes.hasOwnProperty(k)) {
+      const theme = themes[k];
+
+      if (!theme["name"]) {
+        continue;
+      }
+
+      result[theme.name] = {
+        dark: !!theme.dark,
+        colors: theme.colors ? theme.colors : {},
+        variables: theme.variables ? theme.variables : {},
+      };
+    }
+  }
+
+  return result;
+};
 
 // Returns a theme by name.
 export const Get = (name) => {

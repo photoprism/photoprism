@@ -46,6 +46,7 @@ import Viewer from "common/viewer";
 import { createApp } from "vue";
 import { createVuetify } from "vuetify";
 import VueLuxon from "vue-luxon";
+import * as themes from "options/themes";
 // import VueFilters from "vue2-filters";
 // import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
@@ -57,8 +58,8 @@ import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 
-import { passiveSupport } from 'passive-events-support/src/utils';
-passiveSupport({events: ['touchstart', 'touchmove']});
+import { passiveSupport } from "passive-events-support/src/utils";
+passiveSupport({ events: ["touchstart", "touchmove"] });
 
 config.progress(50);
 
@@ -75,9 +76,6 @@ config.update().finally(() => {
   Settings.defaultLocale = app.config.globalProperties.$language.substring(0, 2);
   // Detect right-to-left languages such as Arabic and Hebrew
   const rtl = config.rtl();
-
-  // Get initial theme colors from config.
-  const theme = config.theme.colors;
 
   // HTTP Live Streaming (video support).
   window.Hls = Hls;
@@ -105,7 +103,7 @@ config.update().finally(() => {
     });
   };
 
-  // Register Vuetify.
+  // Create Vuetify instance.
   const vuetify = createVuetify({
     rtl,
     icons: {
@@ -116,7 +114,10 @@ config.update().finally(() => {
         ...customIcons,
       },
     },
-    theme,
+    theme: {
+      defaultTheme: config.themeName,
+      themes: themes.All(),
+    },
   });
   app.use(vuetify);
 

@@ -504,8 +504,8 @@ export default class Config {
       this.setColorMode("light");
     }
 
-    if (this.$vuetify) {
-      this.$vuetify.theme = this.theme.colors;
+    if (this.themeName && this.$vuetify) {
+      this.$vuetify.theme.name = this.themeName;
     }
 
     return this;
