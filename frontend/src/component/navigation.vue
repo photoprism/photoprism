@@ -26,7 +26,7 @@
         </v-btn>
       </v-toolbar>
     </template>
-    <v-navigation-drawer v-if="visible && auth" v-model="drawer" :rail="isMini" :width="270" :mobile-breakpoint="960" :rail-width="80" class="nav-sidebar navigation p-flex-nav" theme="dark" :location="rtl ? 'right' : undefined">
+    <v-navigation-drawer v-if="visible && auth" v-model="drawer" :rail="isMini" :width="270" :mobile-breakpoint="960" :rail-width="80" class="nav-sidebar navigation p-flex-nav" :location="rtl ? 'right' : undefined">
       <v-toolbar flat :dense="$vuetify.display.smAndDown">
         <v-list class="navigation-home">
           <v-list-item class="nav-logo">
