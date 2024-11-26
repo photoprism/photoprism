@@ -2,13 +2,13 @@
   <div class="p-tab p-tab-photo-details">
     <v-form ref="form" lazy-validation class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
       <v-row class="pa-2 d-flex align-stretch" align="start">
-        <v-col class="pa-2 p-photo d-flex" cols="12" sm="4" md="2" align-self="stretch">
-          <v-card tile class="pa-0 ma-0 elevation-0 flex-grow-1" :title="model.Title">
+        <v-col class="pa-2 p-photo d-flex align-stretch" cols="12" sm="4" md="2">
+          <v-card tile class="pa-0 ma-0 elevation-0 flex-grow-1">
             <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card elevation-0 clickable" @click.exact="openPhoto()">
 </v-img>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="8" md="10" class="d-flex" align-self="stretch">
+        <v-col cols="12" sm="8" md="10" class="d-flex pa-0" align-self="stretch">
           <v-row>
             <v-col cols="12" lg="6" class="pa-2">
               <v-text-field
@@ -361,14 +361,14 @@
             </v-col>
 
             <v-col v-if="!disabled" cols="12" :class="rtl ? 'text-left' : 'text-right'" class="pt-6">
-              <v-btn variant="flat" color="secondary-light" class="compact action-close" @click.stop="close">
+              <v-btn variant="flat" color="secondary-light" class="compact action-close ma-1" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
-              <v-btn color="primary-button" variant="flat" class="compact action-apply action-approve" @click.stop="save(false)">
+              <v-btn color="primary-button" variant="flat" class="compact action-apply action-approve ma-1" @click.stop="save(false)">
                 <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                 <span v-else><translate>Apply</translate></span>
               </v-btn>
-              <v-btn color="primary-button" variant="flat" class="compact action-done hidden-xs" @click.stop="save(true)">
+              <v-btn color="primary-button" variant="flat" class="compact action-done hidden-xs ma-1" @click.stop="save(true)">
                 <translate>Done</translate>
               </v-btn>
             </v-col>

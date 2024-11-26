@@ -2,8 +2,13 @@
   <div class="p-tab p-tab-photo-labels">
     <v-form ref="form" lazy-validation accept-charset="UTF-8" @submit.prevent>
       <v-row class="pa-2-md-and-up d-flex align-stretch" align="start">
-        <v-col class="pa-2 hidden-sm-and-down d-flex" cols="12" md="2" xxl="1" align-self="stretch">
-          <p-photo-preview :model="model"></p-photo-preview>
+        <v-col class="pa-2 hidden-sm-and-down d-flex align-stretch" cols="12" md="2" xxl="1">
+<!--          TODO: return it if needed-->
+<!--          <p-photo-preview :model="model"></p-photo-preview>-->
+          <v-card tile class="pa-0 ma-0 elevation-0 flex-grow-1">
+            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card elevation-0 clickable" @click.exact="openPhoto()">
+            </v-img>
+          </v-card>
         </v-col>
         <v-col class="pa-2-md-and-up ra-4-table-md-and-up" cols="12" md="10" xxl="1">
           <v-data-table v-model="selected" :headers="listColumns" :items="model.Labels" hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">

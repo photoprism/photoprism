@@ -104,6 +104,22 @@ main {
     padding: 0 0.2rem;
 }
 
+.v-autocomplete__selection {
+    min-width: 100%;
+}
+
+.v-slide-group {
+    overflow: initial;
+}
+
+.v-expansion-panel-text__wrapper {
+    padding: 0;
+}
+
+.v-row {
+    margin: 0;
+}
+
 #photoprism .clickable {
     cursor: pointer;
 }

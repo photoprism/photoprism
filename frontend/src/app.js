@@ -59,7 +59,7 @@ import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 
 import { passiveSupport } from "passive-events-support/src/utils";
-passiveSupport({ events: ["touchstart", "touchmove"] });
+passiveSupport({ events: ["touchstart", "touchmove", "wheel", "mousewheel"] });
 
 config.progress(50);
 
