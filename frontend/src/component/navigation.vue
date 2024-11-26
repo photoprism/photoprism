@@ -1,27 +1,27 @@
 <template>
   <div id="p-navigation" :class="{ 'sidenav-visible': drawer }">
     <template v-if="visible && $vuetify.display.smAndDown">
-      <v-toolbar theme="dark" position="fixed" flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
+      <v-toolbar position="fixed" flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
         <v-avatar class="nav-avatar" tile :size="28" :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="config.name" :class="{ 'animate-hue': indexing }" />
         </v-avatar>
         <v-toolbar-title class="nav-title">
           <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
         </v-toolbar-title>
-        <v-btn theme="dark" :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
+        <v-btn :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </v-toolbar>
     </template>
     <template v-else-if="visible && !auth">
-      <v-toolbar theme="dark" flat dense color="navigation darken-1" class="nav-small">
+      <v-toolbar flat dense color="navigation darken-1" class="nav-small">
         <v-avatar class="nav-avatar" tile :size="28">
           <img :src="appIcon" :alt="config.name" />
         </v-avatar>
         <v-toolbar-title class="nav-title">
           {{ page.title }}
         </v-toolbar-title>
-        <v-btn theme="dark" :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
+        <v-btn :ripple="false" class="mobile-menu-trigger elevation-0 rounded-circle" @click.stop.prevent="speedDial = true">
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </v-toolbar>
