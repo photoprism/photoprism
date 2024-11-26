@@ -60,15 +60,11 @@
               @touchmove.stop.prevent
               @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
             >
-<!--              TODO: change icon-->
-              <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')"> raw_on </i>
-              <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
-                <icon-live-photo />
-              </i>
+              <i v-if="photo.Type === 'raw'" class="action-raw mdi mdi-raw" :title="$gettext('RAW')"></i>
+              <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo /></i>
               <i v-if="photo.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
               <i v-if="photo.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
-              <!-- TODO: change this icon -->
-              <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
+              <i v-if="photo.Type === 'vector'" class="action-vector mdi mdi-vector-polyline" :title="$gettext('Vector')" />
               <i v-if="photo.Type === 'image'" class="mdi mdi-camera-burst" :title="$gettext('Stack')" />
             </button>
 

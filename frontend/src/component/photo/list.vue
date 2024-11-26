@@ -61,12 +61,9 @@
                     <i class="mdi mdi-radiobox-blank" />
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'" class="input-open" @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
-                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
-                      <icon-live-photo />
-                    </i>
+                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo /></i>
                     <i v-if="photo.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
-                    <!-- TODO: change icon-->
-                    <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
+                    <i v-if="photo.Type === 'vector'" class="action-vector mdi mdi-vector-polyline" :title="$gettext('Vector')"></i>
                     <i v-if="photo.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
                   </button>
                 </div>
