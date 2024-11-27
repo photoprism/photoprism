@@ -9,7 +9,7 @@
         transition="slide-y-reverse-transition"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10" location="bottom right">
+          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10; width: 56px; height: 56px;" location="bottom right">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
@@ -28,14 +28,14 @@
             TODO: change this icon
             <v-icon>cloud_download</v-icon>
         </v-btn -->
-        <v-btn key="bookmark" theme="dark" size="small" :title="$gettext('Add to album')" color="album rounded-circle" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
+        <v-btn key="bookmark" theme="dark" style="width: 40px; height: 40px;" size="small" :title="$gettext('Add to album')" color="album rounded-circle" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
-        <v-btn key="delete" theme="dark" size="small" color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
+        <v-btn key="delete" theme="dark" style="width: 40px; height: 40px;" size="small" color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
 
-        <v-btn key="close" theme="dark" size="small" color="accent rounded-circle" class="action-clear" @click.stop="clearClipboard()">
+        <v-btn key="close" theme="dark" style="width: 40px; height: 40px;" size="small" color="accent rounded-circle" class="action-clear" @click.stop="clearClipboard()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>
