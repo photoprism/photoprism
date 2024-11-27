@@ -34,8 +34,8 @@ nav .v-list__item__title.title {
     margin-right: calc(72px - 16px);
 }
 
-#p-navigation .v-list-group__items .v-list-item  {
-    padding-inline-start: 64px !important;
+#p-navigation .v-list-group__items .v-list-item-title {
+    padding-left: 32px;
 }
 
 #p-navigation .v-list-item__prepend,
@@ -164,6 +164,31 @@ nav .v-list__item__title.title {
     display: flex;
     flex-flow: row;
     justify-content: space-between;
+}
+
+.activator {
+    position: absolute;
+    z-index: 10;
+    margin-left: 64px;
+    margin-right: 48px;
+    width: calc(100% - 112px);
+}
+
+.activator.v-list-item {
+    padding: 0 !important;
+}
+
+.activator .nav-item-title {
+    padding-left: 0 !important;
+}
+
+.activator-parent {
+    position: relative;
+}
+
+.activator .nav-count-group {
+    position: absolute;
+    right: 0;
 }
 
 #photoprism .nav-logo .v-list__item__action {
