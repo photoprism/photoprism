@@ -686,7 +686,6 @@ export default {
       speedDial: false,
       rtl: this.$rtl,
       subscriptions: [],
-      isSearchGroupActive: false,
     };
   },
   computed: {
