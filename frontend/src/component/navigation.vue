@@ -26,22 +26,24 @@
         </v-btn>
       </v-toolbar>
     </template>
-    <v-navigation-drawer v-if="visible && auth" v-model="drawer" :rail="isMini" :width="270" :mobile-breakpoint="960" :rail-width="80" class="nav-sidebar navigation p-flex-nav" :location="rtl ? 'right' : undefined">
+    <v-navigation-drawer v-if="visible && auth" v-model="drawer" color="navigation" :rail="isMini" :width="270" :mobile-breakpoint="960" :rail-width="80" class="nav-sidebar navigation p-flex-nav" :location="rtl ? 'right' : undefined">
       <v-toolbar flat :dense="$vuetify.display.smAndDown">
-        <v-list class="navigation-home">
-          <v-list-item class="nav-logo">
-            <div class="d-flex align-center w-100">
-              <img class="nav-avatar clickable mr-3" heigth="40px" width="40px" :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" @click.stop.prevent="goHome" />
-              <v-list-item-title class="text-h6 mr-auto">
-                {{ appName }}
-              </v-list-item-title>
-              <v-list-item-action class="hidden-sm-and-down ml-2" :title="$gettext('Minimize')">
-                <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
-                  <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
-                  <v-icon v-else>mdi-chevron-right</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </div>
+        <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%">
+          <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
+            <template #prepend>
+              <div class="v-avatar bg-transparent nav-avatar clickable" @click.stop.prevent="goHome">
+                <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
+              </div>
+            </template>
+            <template #append>
+              <v-btn icon variant="text" :elevation="0" class="nav-minimize hidden-sm-and-down" :ripple="false" :title="$gettext('Minimize')" @click.stop="toggleIsMini()">
+                <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
+                <v-icon v-else>mdi-chevron-right</v-icon>
+              </v-btn>
+            </template>
+            <v-list-item-title class="nav-appname mr-auto">
+              {{ appName }}
+            </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-toolbar>
@@ -69,11 +71,7 @@
 
           <v-list-group>
             <template #activator="{ props }">
-              <v-list-item
-                  v-bind="props"
-                  class="nav-browse activator-parent"
-                  @click.stop=""
-              >
+              <v-list-item v-bind="props" class="nav-browse activator-parent" @click.stop="">
                 <v-icon>mdi-magnify</v-icon>
               </v-list-item>
             </template>

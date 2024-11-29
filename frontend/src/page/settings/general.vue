@@ -1,6 +1,6 @@
 <template>
-  <div class="p-tab p-settings-general">
-    <v-form ref="form" lazy-validation class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
+  <div class="p-tab p-settings-general py-2">
+    <v-form ref="form" lazy-validation class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title class="pb-2">
           <h3 class="text-body-2 mb-0">

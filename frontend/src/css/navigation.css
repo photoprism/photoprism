@@ -12,6 +12,34 @@ nav .v-list__item__title.title {
     color: #ffffff77;
 }
 
+#p-navigation .navigation-home .v-list-item-title {
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+#p-navigation .v-navigation-drawer--rail .navigation-home .v-list-item__append,
+#p-navigation .v-navigation-drawer--rail .navigation-home .v-list-item__content {
+    display: none;
+}
+
+#p-navigation .navigation-home .v-avatar {
+    width: 40px;
+    text-align: left;
+    margin-right: 12px;
+}
+
+#p-navigation .v-navigation-drawer--rail .navigation-home .v-avatar {
+    width: 55px;
+    margin: auto;
+}
+
+#p-navigation .navigation-home .v-avatar img {
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #p-navigation .nav-title {
     text-align: left;
     /* font-weight: bold; */

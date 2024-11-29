@@ -1,5 +1,5 @@
 <template>
-  <v-card variant="flat" tile class="application footer bg-transparent">
+  <v-card variant="flat" tile class="application footer">
     <v-card-actions class="footer-actions">
       <v-row align="start" class="pt-6">
         <v-col cols="12" sm="6" class="px-0 pb-2 text-body-1 text-selectable text-left">
