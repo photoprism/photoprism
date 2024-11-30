@@ -11,7 +11,7 @@
           validate-on="blur"
           variant="plain"
           density="compact"
-          class="input-search background-inherit elevation-0"
+          class="input-search background-inherit elevation-0 mb-2"
           :label="$gettext('Search')"
           autocomplete="off"
           autocorrect="off"

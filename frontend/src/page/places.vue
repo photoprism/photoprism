@@ -10,7 +10,7 @@
             flat
             single-line
             validate-on="blur"
-            class="input-search pa-0 ma-0"
+            class="input-search pa-0 mb-2"
             density="compact"
             :label="$gettext('Search')"
             prepend-inner-icon="mdi-magnify"

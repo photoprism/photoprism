@@ -17,6 +17,8 @@ nav .v-list__item__title.title {
     font-weight: 500;
 }
 
+#p-navigation .v-navigation-drawer .navigation-home .v-list-item__underlay,
+#p-navigation .v-navigation-drawer .navigation-home .v-list-item__overlay,
 #p-navigation .v-navigation-drawer--rail .navigation-home .v-list-item__append,
 #p-navigation .v-navigation-drawer--rail .navigation-home .v-list-item__content {
     display: none;

@@ -4,7 +4,7 @@
       <template v-if="!embedded">
         <v-text-field
           :model-value="filter.q"
-          class="input-search background-inherit elevation-0"
+          class="input-search background-inherit elevation-0 mb-2"
           hide-details
           clearable
           overflow

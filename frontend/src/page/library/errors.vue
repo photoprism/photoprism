@@ -10,7 +10,7 @@
         validate-on="blur"
         variant="plain"
         density="compact"
-        class="input-search background-inherit elevation-0"
+        class="input-search background-inherit elevation-0 mb-2"
         autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
