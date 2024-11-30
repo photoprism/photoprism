@@ -9,13 +9,15 @@
           overflow
           single-line
           validate-on="blur"
+          variant="plain"
+          density="compact"
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           prepend-inner-icon="mdi-magnify"
-          color="secondary-dark"
+          color="surface-variant"
           @change="
             (v) => {
               updateFilter({ q: v });
@@ -57,7 +59,7 @@
                 flat
                 variant="solo"
                 hide-details
-                color="secondary-dark"
+                color="surface-variant"
                 bg-color="secondary"
                 :items="yearOptions()"
                 item-title="text"
@@ -78,7 +80,7 @@
                 flat
                 variant="solo"
                 hide-details
-                color="secondary-dark"
+                color="surface-variant"
                 bg-color="secondary"
                 :items="categories"
                 item-title="text"
@@ -99,7 +101,7 @@
                 flat
                 variant="solo"
                 hide-details
-                color="secondary-dark"
+                color="surface-variant"
                 bg-color="secondary"
                 :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
                 item-title="text"
@@ -118,7 +120,7 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
@@ -126,7 +128,7 @@
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert v-if="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>

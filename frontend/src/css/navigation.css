@@ -126,18 +126,6 @@ nav .v-list__item__title.title {
     font-size: 24px;
 }
 
-#p-navigation .navigation-menu .v-list-item,
-#p-navigation .navigation-menu .v-list-item .v-list-item__overlay,
-#p-navigation .navigation-menu .v-list-item--active .v-list-item__overlay {
-    background: none;
-}
-
-#p-navigation .navigation-menu .v-list-item:hover .v-list-item__overlay {
-    background-color: #ffffff;
-    transition: none;
-    opacity: 0.1;
-}
-
 #photoprism .p-page a,
 #photoprism .text-link {
     text-decoration: none;

@@ -4,23 +4,23 @@
       <template #item="props">
         <tr :data-name="props.item.AccName">
           <td class="p-account">
-            <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
+            <button class="surface-variant--text" @click.stop.prevent="edit(props.item)">
               {{ props.item.AccName }}
             </button>
           </td>
           <td class="text-center">
             <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
-              <v-icon v-if="props.item.AccShare" color="secondary-dark">mdi-check</v-icon>
-              <v-icon v-else color="secondary-dark">mdi-cog</v-icon>
+              <v-icon v-if="props.item.AccShare" color="surface-variant">mdi-check</v-icon>
+              <v-icon v-else color="surface-variant">mdi-cog</v-icon>
             </v-btn>
           </td>
           <td class="text-center">
             <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
-              <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">mdi-alert </v-icon>
+              <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
               <!-- TODO: change icon -->
-              <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
+              <v-icon v-else-if="props.item.AccSync" color="surface-variant">sync</v-icon>
               <!-- TODO: change icon -->
-              <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
+              <v-icon v-else color="surface-variant">sync_disabled</v-icon>
             </v-btn>
           </td>
           <td class="hidden-sm-and-down">
@@ -28,10 +28,10 @@
           </td>
           <td class="hidden-xs text-right" nowrap>
             <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
-              <v-icon color="secondary-dark">mdi-delete</v-icon>
+              <v-icon color="surface-variant">mdi-delete</v-icon>
             </v-btn>
             <v-btn icon size="small" variant="text" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
-              <v-icon color="secondary-dark">mdi-pencil</v-icon>
+              <v-icon color="surface-variant">mdi-pencil</v-icon>
             </v-btn>
           </td>
         </tr>

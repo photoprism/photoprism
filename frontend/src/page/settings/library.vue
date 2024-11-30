@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-library py-2">
     <v-form ref="form" lazy-validation class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
-      <v-card flat tile class="mt-0 px-1 application">
+      <v-card flat tile class="mt-0 px-1 surface">
         <v-card-title class="pb-0">
           <h3 class="text-body-2 mb-0">
             <translate>Index</translate>
@@ -15,7 +15,7 @@
                 v-model="settings.features.estimates"
                 :disabled="busy"
                 class="ma-0 pa-0 input-estimates"
-                color="secondary-dark"
+                color="surface-variant"
                 :label="$gettext('Estimates')"
                 :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
                 prepend-icon="mdi-chart-timeline-variant-shimmer"
@@ -30,7 +30,7 @@
                 v-model="settings.features.review"
                 :disabled="busy"
                 class="ma-0 pa-0 input-review"
-                color="secondary-dark"
+                color="surface-variant"
                 :label="$gettext('Quality Filter')"
                 :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
                 prepend-icon="mdi-eye"
@@ -45,7 +45,7 @@
                 v-model="settings.index.convert"
                 :disabled="busy || demo || (!experimental && settings.index.convert)"
                 class="ma-0 pa-0 input-convert"
-                color="secondary-dark"
+                color="surface-variant"
                 :label="$gettext('Preview Images')"
                 :hint="$gettext('Automatically generate thumbnails for files that cannot otherwise be indexed or viewed.')"
                 prepend-icon="mdi-image"
@@ -58,7 +58,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card flat tile class="mt-0 px-1 application">
+      <v-card flat tile class="mt-0 px-1 surface">
         <v-card-title class="pb-0" :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
           <h3 class="text-body-2 mb-0">
             <translate>Stacks</translate>
@@ -72,7 +72,7 @@
                 v-model="settings.stack.meta"
                 :disabled="busy"
                 class="ma-0 pa-0 input-stack-meta"
-                color="secondary-dark"
+                color="surface-variant"
                 :label="$gettext('Place & Time')"
                 :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
                 prepend-icon="mdi-clock-time-four-outline"
@@ -87,7 +87,7 @@
                 v-model="settings.stack.uuid"
                 :disabled="busy"
                 class="ma-0 pa-0 input-stack-uuid"
-                color="secondary-dark"
+                color="surface-variant"
                 :label="$gettext('Unique ID')"
                 :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
                 prepend-icon="mdi-fingerprint"
@@ -102,7 +102,7 @@
                 v-model="settings.stack.name"
                 :disabled="busy"
                 class="ma-0 pa-0 input-stack-name"
-                color="secondary-dark"
+                color="surface-variant"
                 :label="$gettext('Sequential Name')"
                 :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
                 prepend-icon="mdi-format-list-numbered-rtl"

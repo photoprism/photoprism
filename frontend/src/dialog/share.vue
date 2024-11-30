@@ -9,7 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="3" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn icon variant="text" theme="dark" color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
+            <v-btn icon variant="text" theme="dark" color="surface-variant" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
               <v-icon>mdi-link-plus</v-icon>
             </v-btn>
           </v-col>
@@ -30,13 +30,13 @@
                 <v-container fluid class="pa-0">
                   <v-row>
                     <v-col cols="12" class="pa-2">
-                      <v-text-field :model-value="link.url()" hide-details variant="filled" flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="secondary-dark" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+                      <v-text-field :model-value="link.url()" hide-details variant="solo" flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="surface-variant" class="input-url" @click.stop="selectText($event)"> </v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" class="pa-2">
-                      <v-select v-model="link.Expires" hide-details variant="filled" flat :label="expires(link)" browser-autocomplete="off" color="secondary-dark" :items="options.Expires()" item-title="text" item-value="value" class="input-expires"> </v-select>
+                      <v-select v-model="link.Expires" hide-details variant="solo" flat :label="expires(link)" browser-autocomplete="off" color="surface-variant" :items="options.Expires()" item-title="text" item-value="value" class="input-expires"> </v-select>
                     </v-col>
                     <v-col cols="12" sm="6" class="pa-2">
-                      <v-text-field v-model="link.Token" hide-details variant="filled" flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="secondary-dark" class="input-secret"></v-text-field>
+                      <v-text-field v-model="link.Token" hide-details variant="solo" flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="surface-variant" class="input-secret"></v-text-field>
                     </v-col>
                     <!-- <v-col cols="12" sm="6" class="pa-2">
                       <v-text-field
@@ -45,7 +45,7 @@
                         autocomplete="off"
                         :label="label.pass"
                         :placeholder="link.HasPassword ? '••••••••' : 'optional'"
-                        color="secondary-dark"
+                        color="surface-variant"
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         @click:append="showPassword = !showPassword"

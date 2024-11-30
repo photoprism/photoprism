@@ -26,7 +26,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"> </v-select>
+                <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="surface-variant" :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"> </v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -50,7 +50,7 @@
                 <translate>Original Name</translate>
               </td>
               <td>
-                <v-text-field v-model="model.OriginalName" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
+                <v-text-field v-model="model.OriginalName" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="surface-variant" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
@@ -187,7 +187,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field v-model="model.CellAccuracy" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="surface-variant" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>

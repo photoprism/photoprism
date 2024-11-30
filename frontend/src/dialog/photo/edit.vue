@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
-    <v-card color="application">
+    <v-card color="surface">
       <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
         <v-btn icon theme="dark" class="action-close" @click.stop="close">
           <v-icon>mdi-close</v-icon>
@@ -35,7 +35,7 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
             <v-icon :size="18" :start="!rtl" :end="rtl">mdi-label</v-icon>
-            <v-badge v-if="model.Labels.length" color="secondary-dark" :location="rtl ? 'left' : 'right'" :content="model.Labels.length">
+            <v-badge v-if="model.Labels.length" color="surface-variant" :location="rtl ? 'left' : 'right'" :content="model.Labels.length">
               <translate key="Labels">Labels</translate>
             </v-badge>
             <template v-else>
@@ -48,7 +48,7 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
             <v-icon :size="18" :start="!rtl" :end="rtl">mdi-account-multiple</v-icon>
-            <v-badge v-if="model.Faces" color="secondary-dark" :location="rtl ? 'left' : 'right'" :content="model.Faces">
+            <v-badge v-if="model.Faces" color="surface-variant" :location="rtl ? 'left' : 'right'" :content="model.Faces">
               <translate key="People">People</translate>
             </v-badge>
             <template v-else>
@@ -61,7 +61,7 @@
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
             <v-icon :size="18" :start="!rtl" :end="rtl">mdi-film</v-icon>
-            <v-badge v-if="model.Files.length" color="secondary-dark" :location="rtl ? 'left' : 'right'" :content="model.Files.length">
+            <v-badge v-if="model.Files.length" color="surface-variant" :location="rtl ? 'left' : 'right'" :content="model.Files.length">
               <translate key="Files">Files</translate>
             </v-badge>
             <template v-else>

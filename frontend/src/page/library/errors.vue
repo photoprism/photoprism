@@ -8,13 +8,15 @@
         overflow
         single-line
         validate-on="blur"
+        variant="plain"
+        density="compact"
         class="input-search background-inherit elevation-0"
         autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
         :label="$gettext('Search')"
         prepend-inner-icon="mdi-magnify"
-        color="secondary-dark"
+        color="surface-variant"
         @change="
           (v) => {
             updateFilter({ q: v });
@@ -39,7 +41,7 @@
       </v-btn>
     </v-toolbar>
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" density="compact" lines="two" class="bg-transparent pa-1">
       <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
@@ -53,7 +55,7 @@
       </v-list-item>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
+      <v-alert color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
         <p class="text-body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>

@@ -2,6 +2,25 @@ import { $gettext, T } from "common/vm";
 
 /* Theme Styles */
 
+let variables = {
+  "border-color": "#FFFFFF",
+  "border-opacity": 0.12,
+  "high-emphasis-opacity": 0.96,
+  "medium-emphasis-opacity": 0.85,
+  "disabled-opacity": 0.5,
+  "idle-opacity": 0.1,
+  "hover-opacity": 0.04,
+  "focus-opacity": 0.12,
+  "selected-opacity": 0.08,
+  "activated-opacity": 0,
+  "pressed-opacity": 0.16,
+  "dragged-opacity": 0.08,
+  "theme-kbd": "#212529",
+  "theme-on-kbd": "#FFFFFF",
+  "theme-code": "#343434",
+  "theme-on-code": "#CCCCCC",
+};
+
 let themes = {
   default: {
     dark: true,
@@ -11,12 +30,18 @@ let themes = {
     colors: {
       background: "#2f3031",
       surface: "#2f3031",
+      "on-surface": "#ffffff",
+      "surface-bright": "#333333",
+      "surface-light": "#1c1d1e",
+      "surface-variant": "#7E4FE3",
+      "on-surface-variant": "#252627",
       card: "#232425",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
-      "secondary-dark": "#7E4FE3",
+      "primary-darken-1": "#8265bf",
       secondary: "#1c1d1e",
       "secondary-light": "#252627",
+      "secondary-darken-1": "#18191a",
       accent: "#333",
       error: "#e57373",
       info: "#00acc1",
@@ -34,7 +59,7 @@ let themes = {
       navigation: "#141417",
       "navigation-home": "#0e0f10",
     },
-    variables: {},
+    variables,
   },
   abyss: {
     title: "Abyss",
@@ -47,7 +72,7 @@ let themes = {
       card: "#242424",
       primary: "#814fd9",
       "primary-button": "#7e57c2",
-      "secondary-dark": "#814fd9",
+      "surface-variant": "#814fd9",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -67,7 +92,6 @@ let themes = {
       navigation: "#0d0d0d",
       "navigation-home": "#000000",
     },
-    variables: {},
   },
   carbon: {
     dark: true,
@@ -80,7 +104,7 @@ let themes = {
       card: "#292732",
       primary: "#8a6eff",
       "primary-button": "#53478a",
-      "secondary-dark": "#7f63fd",
+      "surface-variant": "#7f63fd",
       secondary: "#0E0D12",
       "secondary-light": "#292733",
       accent: "#262238",
@@ -100,7 +124,6 @@ let themes = {
       navigation: "#0E0D12",
       "navigation-home": "#0E0D12",
     },
-    variables: {},
   },
   chrome: {
     dark: true,
@@ -113,7 +136,7 @@ let themes = {
       card: "#1f1f1f",
       primary: "#ffffff",
       "primary-button": "#393939",
-      "secondary-dark": "#ffffff",
+      "surface-variant": "#ffffff",
       secondary: "#1f1f1f",
       "secondary-light": "#292929",
       accent: "#727272",
@@ -133,7 +156,6 @@ let themes = {
       navigation: "#1e2122",
       "navigation-home": "#1e2122",
     },
-    variables: {},
   },
   gemstone: {
     title: "Gemstone",
@@ -146,7 +168,7 @@ let themes = {
       card: "#2b2b2d",
       primary: "#AFB4D4",
       "primary-button": "#545465",
-      "secondary-dark": "#9BA0C5",
+      "surface-variant": "#9BA0C5",
       secondary: "#272727",
       "secondary-light": "#37373a",
       accent: "#333",
@@ -166,7 +188,6 @@ let themes = {
       navigation: "#1C1C21",
       "navigation-home": "#131316",
     },
-    variables: {},
   },
   grayscale: {
     title: "Grayscale",
@@ -179,7 +200,7 @@ let themes = {
       card: "#5e5e5e",
       primary: "#c8bdb1",
       "primary-button": "#726e69",
-      "secondary-dark": "#c8bdb1",
+      "surface-variant": "#c8bdb1",
       secondary: "#444",
       "secondary-light": "#5E5E5E",
       accent: "#333",
@@ -199,7 +220,6 @@ let themes = {
       navigation: "#353839",
       "navigation-home": "#212121",
     },
-    variables: {},
   },
   lavender: {
     title: "Lavender",
@@ -212,7 +232,7 @@ let themes = {
       card: "#DFE0E8",
       primary: "#9ca2c9",
       "primary-button": "#6c6f84",
-      "secondary-dark": "#475185",
+      "surface-variant": "#475185",
       secondary: "#dee0ed",
       "secondary-light": "#eef0f6",
       accent: "#8c8c8c",
@@ -232,7 +252,6 @@ let themes = {
       navigation: "#1b1e32",
       "navigation-home": "#121421",
     },
-    variables: {},
   },
   legacy: {
     title: "Legacy",
@@ -245,7 +264,7 @@ let themes = {
       card: "#e0e0e0",
       primary: "#FFCA28",
       "primary-button": "#212121",
-      "secondary-dark": "#212121",
+      "surface-variant": "#212121",
       secondary: "#bdbdbd",
       "secondary-light": "#e0e0e0",
       accent: "#757575",
@@ -265,7 +284,6 @@ let themes = {
       navigation: "#212121",
       "navigation-home": "#000000",
     },
-    variables: {},
   },
   mint: {
     dark: true,
@@ -278,7 +296,7 @@ let themes = {
       card: "#1e1e1e",
       primary: "#2bb14c",
       "primary-button": "#22903d",
-      "secondary-dark": "#2bb14c",
+      "surface-variant": "#2bb14c",
       secondary: "#181818",
       "secondary-light": "#1f1f1f",
       accent: "#727272",
@@ -298,7 +316,6 @@ let themes = {
       navigation: "#181818",
       "navigation-home": "#181818",
     },
-    variables: {},
   },
   neon: {
     title: "Neon",
@@ -311,7 +328,7 @@ let themes = {
       card: "#1b1a1c",
       primary: "#f44abf",
       "primary-button": "#890664",
-      "secondary-dark": "#cc0d99",
+      "surface-variant": "#cc0d99",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -331,7 +348,6 @@ let themes = {
       navigation: "#0e0d0f",
       "navigation-home": "#000000",
     },
-    variables: {},
   },
   nordic: {
     dark: false,
@@ -344,7 +360,7 @@ let themes = {
       card: "#ECEFF4",
       primary: "#4ca0b8",
       "primary-button": "#519fb6",
-      "secondary-dark": "#4ca0b8",
+      "surface-variant": "#4ca0b8",
       secondary: "#e2e7ee",
       "secondary-light": "#eceff4",
       accent: "#81A1C1",
@@ -364,7 +380,6 @@ let themes = {
       navigation: "#e7ebf1",
       "navigation-home": "#dde3eb",
     },
-    variables: {},
   },
   onyx: {
     title: "Onyx",
@@ -377,7 +392,7 @@ let themes = {
       card: "#cdccca",
       primary: "#c8bdb1",
       "primary-button": "#353839",
-      "secondary-dark": "#353839",
+      "surface-variant": "#353839",
       secondary: "#a8a8a8",
       "secondary-light": "#cdccca",
       accent: "#656565",
@@ -397,7 +412,6 @@ let themes = {
       navigation: "#353839",
       "navigation-home": "#212121",
     },
-    variables: {},
   },
   shadow: {
     title: "Shadow",
@@ -410,7 +424,7 @@ let themes = {
       card: "#666666",
       primary: "#c4f1e5",
       "primary-button": "#74817d",
-      "secondary-dark": "#c8e3e7",
+      "surface-variant": "#c8e3e7",
       secondary: "#585858",
       "secondary-light": "#666",
       accent: "#333",
@@ -430,7 +444,6 @@ let themes = {
       navigation: "#212121",
       "navigation-home": "#000000",
     },
-    variables: {},
   },
   vanta: {
     title: "Vanta",
@@ -443,7 +456,7 @@ let themes = {
       card: "#1d1d1d",
       primary: "#04acaf",
       "primary-button": "#444444",
-      "secondary-dark": "#04acaf",
+      "surface-variant": "#04acaf",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -463,7 +476,6 @@ let themes = {
       navigation: "#0d0d0d",
       "navigation-home": "#000000",
     },
-    variables: {},
   },
   yellowstone: {
     title: "Yellowstone",
@@ -476,7 +488,7 @@ let themes = {
       card: "#262524",
       primary: "#ffb700",
       "primary-button": "#54524e",
-      "secondary-dark": "#ffb700",
+      "surface-variant": "#ffb700",
       secondary: "#21201f",
       "secondary-light": "#262523",
       accent: "#333",
@@ -496,7 +508,6 @@ let themes = {
       navigation: "#191817",
       "navigation-home": "#0c0c0b",
     },
-    variables: {},
   },
 };
 
@@ -597,7 +608,7 @@ export const All = () => {
       result[theme.name] = {
         dark: !!theme.dark,
         colors: theme.colors ? theme.colors : {},
-        variables: theme.variables ? theme.variables : {},
+        variables: theme.variables ? theme.variables : variables,
       };
     }
   }

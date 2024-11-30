@@ -8,7 +8,7 @@ body.dark-theme.theme-lavender,
     background: #fafafa !important;
 }
 
-.theme-lavender .application.theme--light,
+.theme-lavender .v-application.theme--light,
 #photoprism.theme-lavender .theme--light.v-small-dialog__content,
 #photoprism.theme-lavender .theme--light.v-sheet,
 #photoprism.theme-lavender .theme--light.v-card {

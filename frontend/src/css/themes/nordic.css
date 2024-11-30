@@ -5,7 +5,7 @@ body.theme-nordic #p-navigation .theme--dark.v-icon,
 body.theme-nordic #p-navigation .theme--dark.v-list,
 body.theme-nordic #p-navigation .theme--dark.v-toolbar,
 #photoprism.theme-nordic .v-navigation-drawer>.theme--dark.v-list .v-list__item__sub-title,
-body.theme-nordic .theme--light.application {
+body.theme-nordic .theme--light.surface {
     color: #4C566A;
 }
 
@@ -26,7 +26,7 @@ body.theme-nordic,
     background: #f7f8fa !important;
 }
 
-.theme-nordic .application.theme--light,
+.theme-nordic .v-application.theme--light,
 #photoprism.theme-nordic .theme--light.v-small-dialog__content,
 #photoprism.theme-nordic .theme--light.v-sheet,
 #photoprism.theme-nordic .theme--light.v-card {

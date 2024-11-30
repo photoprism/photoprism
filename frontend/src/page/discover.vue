@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-discover">
-    <v-tabs v-model="active" elevation="0" grow class="bg-transparent" bg-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" grow class="bg-transparent" bg-color="secondary" slider-color="surface-variant" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>
       </v-tab>

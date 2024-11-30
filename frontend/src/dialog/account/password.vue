@@ -24,7 +24,7 @@
                 v-model="oldPassword"
                 hide-details
                 required
-                variant="filled"
+                variant="solo"
                 flat
                 type="password"
                 autocorrect="off"
@@ -34,7 +34,7 @@
                 :maxlength="maxLength"
                 :label="$gettext('Current Password')"
                 class="input-current-password"
-                color="secondary-dark"
+                color="surface-variant"
               ></v-text-field>
             </v-col>
 
@@ -44,7 +44,7 @@
                 required
                 counter
                 persistent-hint
-                variant="filled"
+                variant="solo"
                 flat
                 type="password"
                 :disabled="busy"
@@ -55,7 +55,7 @@
                 autocomplete="new-password"
                 :label="$gettext('New Password')"
                 class="input-new-password"
-                color="secondary-dark"
+                color="surface-variant"
                 :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), { n: minLength })"
               ></v-text-field>
             </v-col>
@@ -66,7 +66,7 @@
                 required
                 counter
                 persistent-hint
-                variant="filled"
+                variant="solo"
                 flat
                 type="password"
                 :disabled="busy"
@@ -77,7 +77,7 @@
                 autocomplete="new-password"
                 :label="$gettext('Retype Password')"
                 class="input-retype-password"
-                color="secondary-dark"
+                color="surface-variant"
                 :hint="$gettext('Please confirm your new password.')"
                 @keyup.enter="onConfirm"
               ></v-text-field>

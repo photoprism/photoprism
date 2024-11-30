@@ -11,12 +11,12 @@
 
         <v-autocomplete
           v-model="settings.import.path"
-          color="secondary-dark"
+          color="surface-variant"
           class="my-6 input-import-folder"
           hide-details
           hide-no-data
           flat
-          variant="solo"
+          variant="solo-filled"
           autocomplete="off"
           :items="dirs"
           item-title="name"
@@ -29,7 +29,7 @@
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="secondary-dark" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear color="surface-variant" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
         <v-row align="start" class="mb-3 text-white">
@@ -38,7 +38,7 @@
               v-model="settings.import.move"
               :disabled="busy || !ready"
               class="ma-0 pa-0"
-              color="secondary-dark"
+              color="surface-variant"
               :label="$gettext('Move Files')"
               :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
               prepend-icon="mdi-delete"

@@ -11,12 +11,13 @@
             single-line
             validate-on="blur"
             class="input-search pa-0 ma-0"
+            density="compact"
             :label="$gettext('Search')"
             prepend-inner-icon="mdi-magnify"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
-            color="secondary-dark"
+            color="surface-variant"
             @click:clear="clearQuery"
             @keyup.enter="formChange"
           ></v-text-field>

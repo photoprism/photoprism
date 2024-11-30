@@ -48,7 +48,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-list nav class="pt-6 p-flex-menu navigation-menu" bg-color="navigation" active-color="primary" open-strategy="single">
+      <v-list nav class="pt-4 p-flex-menu navigation-menu" bg-color="navigation" active-color="primary" open-strategy="single">
         <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
           <v-icon v-if="!rtl" class="ma-auto">mdi-chevron-right</v-icon>
           <v-icon v-else class="ma-auto">mdi-chevron-left</v-icon>

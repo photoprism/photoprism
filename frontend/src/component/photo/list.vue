@@ -2,7 +2,7 @@
   <div>
     <div v-if="photos.length === 0" class="pa-2">
       <!-- TODO: change this icon -->
-      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
+      <v-alert color="surface-variant" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
         <h3 v-if="filter.order === 'edited'" class="text-body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -100,11 +100,11 @@
 
                   <template v-else>
                     <v-btn v-if="hidePrivate" class="input-private" icon size="small" variant="text" :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
-                      <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">mdi-lock</v-icon>
+                      <v-icon v-if="photo.Private" color="surface-variant" class="select-on">mdi-lock</v-icon>
                       <v-icon v-else color="secondary" class="select-off">mdi-lock-open</v-icon>
                     </v-btn>
                     <v-btn class="input-favorite" icon size="small" variant="text" :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
-                      <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
+                      <v-icon v-if="photo.Favorite" color="surface-variant" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
                       <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">mdi-heart-outline</v-icon>
                     </v-btn>
                   </template>

@@ -8,7 +8,7 @@ body.dark-theme.theme-carbon,
     background: #16141c !important;
 }
 
-.theme-carbon .application.theme--light,
+.theme-carbon .v-application.theme--light,
 #photoprism.theme-carbon .theme--light.v-small-dialog__content,
 #photoprism.theme-carbon .theme--light.v-sheet,
 #photoprism.theme-carbon .theme--light.v-card {

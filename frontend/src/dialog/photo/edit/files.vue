@@ -201,7 +201,7 @@
                                   variant="solo"
                                   autocomplete="off"
                                   hide-details
-                                  color="secondary-dark"
+                                  color="surface-variant"
                                   :items="options.Orientations()"
                                   item-title="text"
                                   item-value="value"

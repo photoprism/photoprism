@@ -22,13 +22,13 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade" :title="$gettext('Learn more')">
-        <v-icon size="26" color="secondary-dark">{{ $vuetify.icons.prism }}</v-icon>
+        <v-icon size="26" color="surface-variant">{{ $vuetify.icons.prism }}</v-icon>
       </v-btn>
     </v-toolbar>
     <v-form ref="form" v-model="valid" autocomplete="off" class="px-6 pt-6 pb-0" lazy-validation @submit.prevent>
       <v-row v-if="busy">
         <v-col cols="12" class="d-flex text-sm-center pa-2">
-          <v-progress-linear color="secondary-dark flex-grow-1" :indeterminate="true"></v-progress-linear>
+          <v-progress-linear color="surface-variant flex-grow-1" :indeterminate="true"></v-progress-linear>
         </v-col>
       </v-row>
       <v-row v-else-if="error">
@@ -78,12 +78,12 @@
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
         </v-col>
         <v-col cols="12" class="grow align-center justify-center px-2 py-1">
-          <v-alert color="secondary-dark" variant="outlined">
+          <v-alert color="surface-variant" variant="outlined">
             <p class="text-subtitle-1 text-selectable">
               <strong><translate>To upgrade, you can either enter an activation code or click "Register" to sign up on our website:</translate></strong>
             </p>
             <!-- TODO: check property return-masked-value TEST -->
-            <v-text-field v-model="form.token" flat variant="solo" hide-details return-masked-value :mask="tokenMask" autocomplete="off" color="secondary-dark" bg-color="secondary-light" :label="$gettext('Activation Code')" type="text"> </v-text-field>
+            <v-text-field v-model="form.token" flat variant="solo" hide-details return-masked-value :mask="tokenMask" autocomplete="off" color="surface-variant" bg-color="secondary-light" :label="$gettext('Activation Code')" type="text"> </v-text-field>
             <div class="action-buttons text-left mt-6">
               <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy">
                 <translate>Manage Account</translate>

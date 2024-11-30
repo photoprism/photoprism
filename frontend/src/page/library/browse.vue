@@ -22,7 +22,7 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-file-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-file-clipboard>
@@ -30,7 +30,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
-        <v-alert v-if="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No pictures found</translate>
           </h3>

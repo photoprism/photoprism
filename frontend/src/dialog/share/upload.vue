@@ -9,7 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="4" class="text-right">
-            <v-btn icon variant="text" theme="dark" color="secondary-dark" class="ma-0" @click.stop="setup">
+            <v-btn icon variant="text" theme="dark" color="surface-variant" class="ma-0" @click.stop="setup">
               <v-icon>mdi-cloud</v-icon>
             </v-btn>
           </v-col>
@@ -18,15 +18,15 @@
       <v-card-text class="pt-0">
         <v-row>
           <v-col cols="12" class="text-left pt-2">
-            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data variant="filled" flat :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
+            <v-select v-model="service" color="surface-variant" hide-details hide-no-data variant="solo" flat :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
           </v-col>
           <v-col cols="12" class="text-left pt-2">
             <v-autocomplete
               v-model="path"
-              color="secondary-dark"
+              color="surface-variant"
               hide-details
               hide-no-data
-              variant="filled"
+              variant="solo"
               flat
               autocomplete="off"
               hint="Folder"

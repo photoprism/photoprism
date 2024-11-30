@@ -41,7 +41,7 @@
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  color="secondary-dark"
+                  color="surface-variant"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
                 ></v-text-field>
@@ -80,7 +80,7 @@
                   autocomplete="off"
                   append-icon="mdi-content-copy"
                   class="input-app-password text-selectable"
-                  color="secondary-dark"
+                  color="surface-variant"
                   @click:append="onCopyAppPassword"
                 ></v-text-field>
               </v-col>
@@ -119,19 +119,19 @@
                   required
                   autofocus
                   hide-details
-                  variant="filled"
+                  variant="solo"
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
                   class="input-name text-selectable"
-                  color="secondary-dark"
+                  color="surface-variant"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.scope" hide-details variant="filled" :disabled="busy" item-title="text" item-value="value" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" bg-color="secondary-light" class="input-scope"></v-select>
+                <v-select v-model="app.scope" hide-details variant="solo" :disabled="busy" item-title="text" item-value="value" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="surface-variant" bg-color="secondary-light" class="input-scope"></v-select>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details variant="filled" flat color="secondary-dark" class="input-expires" item-title="text" item-value="value" :items="options.Expires()"></v-select>
+                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details variant="solo" flat color="surface-variant" class="input-expires" item-title="text" item-value="value" :items="options.Expires()"></v-select>
               </v-col>
             </v-row>
           </v-card-text>
@@ -170,7 +170,7 @@
                       </td>
                       <td class="text-right" nowrap>
                         <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
-                          <v-icon color="secondary-dark">mdi-delete</v-icon>
+                          <v-icon color="surface-variant">mdi-delete</v-icon>
                         </v-btn>
                       </td>
                     </tr>

@@ -124,7 +124,7 @@ body.dark-theme.theme-default,
 #photoprism.theme-default .theme--light.v-small-dialog__content,
 #photoprism.theme-default .theme--light.v-sheet,
 #photoprism.theme-default .theme--light.v-card,
-.theme-default .application.theme--light {
+.theme-default .v-application.theme--light {
     background: #2f3031;
 }
 

@@ -8,7 +8,7 @@ body.dark-theme.theme-gemstone,
     background: #2f2f31 !important;
 }
 
-.theme-gemstone .application.theme--light,
+.theme-gemstone .v-application.theme--light,
 #photoprism.theme-gemstone .theme--light.v-small-dialog__content,
 #photoprism.theme-gemstone .theme--light.v-sheet,
 #photoprism.theme-gemstone .theme--light.v-card {

@@ -12,12 +12,12 @@
 
         <v-autocomplete
           v-model="settings.index.path"
-          color="secondary-dark"
+          color="surface-variant"
           class="my-6 input-index-folder"
           hide-details
           hide-no-data
           flat
-          variant="solo"
+          variant="solo-filled"
           autocomplete="off"
           :items="dirs"
           item-title="name"
@@ -30,7 +30,7 @@
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="secondary-dark" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear color="surface-variant" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
         <v-row align="start" class="pb-6 text-white">
@@ -39,7 +39,7 @@
               v-model="settings.index.rescan"
               :disabled="busy || !ready"
               class="ma-0 pa-0"
-              color="secondary-dark"
+              color="surface-variant"
               :label="$gettext('Complete Rescan')"
               :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
               prepend-icon="mdi-cached"
@@ -49,7 +49,7 @@
             </v-checkbox>
           </v-col>
           <v-col v-if="isAdmin" cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
-            <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="secondary-dark" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="mdi-delete-sweep" persistent-hint> </v-checkbox>
+            <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="surface-variant" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="mdi-delete-sweep" persistent-hint> </v-checkbox>
           </v-col>
         </v-row>
 

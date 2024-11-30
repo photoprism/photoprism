@@ -8,7 +8,7 @@ body.dark-theme.theme-abyss,
     background: #202020 !important;
 }
 
-.theme-abyss .application.theme--light,
+.theme-abyss .v-application.theme--light,
 #photoprism.theme-abyss .theme--light.v-small-dialog__content,
 #photoprism.theme-abyss .theme--light.v-sheet,
 #photoprism.theme-abyss .theme--light.v-card {

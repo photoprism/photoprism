@@ -13,22 +13,22 @@
       <v-card-text class="pb-0 pt-0 px-2">
         <v-row>
           <v-col cols="12" class="pa-2">
-            <v-text-field v-model="model.AccURL" hide-details autofocus variant="filled" flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+            <v-text-field v-model="model.AccURL" hide-details autofocus variant="solo" flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="surface-variant" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" class="pa-2">
-            <v-text-field v-model="model.AccUser" hide-details variant="filled" flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+            <v-text-field v-model="model.AccUser" hide-details variant="solo" flat :label="$gettext('Username')" placeholder="optional" color="surface-variant" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" class="pa-2">
             <v-text-field
               v-model="model.AccPass"
               hide-details
-              variant="filled"
+              variant="solo"
               flat
               autocomplete="new-password"
               autocapitalize="none"
               :label="$gettext('Password')"
               placeholder="optional"
-              color="secondary-dark"
+              color="surface-variant"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               @click:append="showPassword = !showPassword"

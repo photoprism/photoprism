@@ -5,7 +5,7 @@
     opacity: 0.9;
 }
 
-.theme-neon .secondary-dark--text.text--lighten-1 {
+.theme-neon .surface-variant--text.text--lighten-1 {
     color: #64616a !important;
 }
 
@@ -17,7 +17,7 @@ body.dark-theme.theme-neon,
     background: #242326 !important;
 }
 
-.theme-neon .application.theme--light,
+.theme-neon .v-application.theme--light,
 #photoprism.theme-neon .theme--light.v-small-dialog__content,
 #photoprism.theme-neon .theme--light.v-sheet,
 #photoprism.theme-neon .theme--light.v-card {

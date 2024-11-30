@@ -5,7 +5,7 @@
         <v-row>
           <v-col cols="3" class="text-center">
             <!-- TODO: change this icon -->
-            <v-icon size="54" color="secondary-dark lighten-1">{{ icon }}</v-icon>
+            <v-icon size="54" color="surface-variant lighten-1">{{ icon }}</v-icon>
           </v-col>
           <v-col cols="9" class="text-left" align-self="center">
             <div class="text-subtitle-1 pr-1">

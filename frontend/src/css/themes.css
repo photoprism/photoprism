@@ -36,3 +36,12 @@ input:-webkit-autofill:focus {
     background: inherit;
     box-shadow: none;
 }
+
+.v-ripple__container {
+    display:none !important;
+}
+
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
+    filter: grayscale(100%);
+}

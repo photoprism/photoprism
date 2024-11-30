@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
-    <v-card color="application">
+    <v-card color="surface">
       <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
         <v-btn icon theme="dark" @click.stop="cancel">
           <v-icon>mdi-close</v-icon>
@@ -25,7 +25,7 @@
                 chips
                 closable-chips
                 multiple
-                color="secondary-dark"
+                color="surface-variant"
                 class="my-0 input-albums"
                 :items="albums"
                 item-title="Title"
@@ -57,7 +57,7 @@
               <span v-else-if="completedTotal === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark" :indeterminate="indexing">
+            <v-progress-linear v-model="completedTotal" height="1.5em" color="surface-variant" :indeterminate="indexing">
               <p class="px-2 ma-0 text-right opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >

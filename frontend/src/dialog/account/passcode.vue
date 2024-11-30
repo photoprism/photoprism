@@ -41,7 +41,7 @@
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  color="secondary-dark"
+                  color="surface-variant"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onSetup"
                 ></v-text-field>
@@ -98,7 +98,7 @@
                   autocapitalize="none"
                   autocomplete="one-time-code"
                   class="input-code"
-                  color="secondary-dark"
+                  color="surface-variant"
                   prepend-inner-icon="verified_user"
                   @keyup.enter="onConfirm"
                 ></v-text-field>
@@ -138,7 +138,7 @@
                   autocomplete="off"
                   append-icon="mdi-content-copy"
                   class="input-recoverycode"
-                  color="secondary-dark"
+                  color="surface-variant"
                   @click:append="onCopyRecoveryCode"
                 ></v-text-field>
               </v-col>
@@ -194,7 +194,7 @@
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  color="secondary-dark"
+                  color="surface-variant"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onDeactivate"
                 ></v-text-field>

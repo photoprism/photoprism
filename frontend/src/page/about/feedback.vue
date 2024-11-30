@@ -6,7 +6,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
-        <v-icon size="26" color="secondary-dark">mdi-message-text</v-icon>
+        <v-icon size="26" color="surface-variant">mdi-message-text</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container v-if="sent" fluid class="pa-6">
@@ -31,7 +31,7 @@
             item-title="text"
             item-value="value"
             :label="$gettext('Category')"
-            color="secondary-dark"
+            color="surface-variant"
             bg-color="secondary-light"
             flat
             variant="solo"
@@ -48,11 +48,11 @@
         </v-col>
 
         <v-col cols="12" sm="6" class="pa-2">
-          <v-text-field v-model="form.UserName" flat variant="solo" hide-details autocomplete="off" color="secondary-dark" bg-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
+          <v-text-field v-model="form.UserName" flat variant="solo" hide-details autocomplete="off" color="surface-variant" bg-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
         </v-col>
 
         <v-col cols="12" sm="6" class="pa-2">
-          <v-text-field v-model="form.UserEmail" flat variant="solo" hide-details required autocapitalize="none" color="secondary-dark" :rules="[(v) => !!v || $gettext('Required')]" bg-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
+          <v-text-field v-model="form.UserEmail" flat variant="solo" hide-details required autocapitalize="none" color="surface-variant" :rules="[(v) => !!v || $gettext('Required')]" bg-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
         </v-col>
 
         <v-col cols="12" class="d-flex grow px-2 py-1">

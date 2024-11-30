@@ -9,13 +9,15 @@
           clearable
           single-line
           validate-on="blur"
+          variant="plain"
+          density="compact"
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          color="secondary-dark"
+          color="surface-variant"
           @change:model-value="
             (v) => {
               updateFilter({ q: v });
@@ -31,7 +33,7 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+        <v-btn icon variant="text" color="surface-variant" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
@@ -47,7 +49,7 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0" style="min-height: 100vh">
       <p-subject-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-subject-clipboard>
@@ -55,7 +57,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert v-if="results.length === 0" color="secondary-dark" icon="mdi-lightbulb-outline" class="no-results opacity-70" variant="outlined">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
@@ -117,7 +119,7 @@
                     <v-icon>mdi-pencil</v-icon>
                   </span>
                   <template #input>
-                    <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
+                    <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="surface-variant" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
                   </template>
                 </v-dialog>
                 <span v-else class="text-body-2 ma-0">

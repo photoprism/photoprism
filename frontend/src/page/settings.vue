@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-settings" :class="$config.aclClasses('settings')">
-    <v-tabs v-model="active" elevation="0" grow bg-color="secondary" slider-color="secondary-dark" :height="$vuetify.display.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" grow bg-color="secondary" slider-color="surface-variant" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>

@@ -11,7 +11,7 @@ body.dark-theme.theme-mint,
 #photoprism.theme-mint .theme--light.v-small-dialog__content,
 #photoprism.theme-mint .theme--light.v-sheet,
 #photoprism.theme-mint .theme--light.v-card,
-.theme-mint .application.theme--light {
+.theme-mint .v-application.theme--light {
     background: #1e1e1e;
 }
 

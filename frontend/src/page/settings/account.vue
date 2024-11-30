@@ -2,7 +2,7 @@
   <div class="p-tab p-settings-account py-2">
     <v-form ref="form" v-model="valid" lazy-validation class="p-form-account pb-4 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
       <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
-      <v-card flat tile class="mt-2 px-1 application">
+      <v-card flat tile class="mt-2 px-1 surface">
         <v-card-actions>
           <v-row align="start" class="ma-0">
             <v-col cols="8" sm="9" md="10" class="pa-0 d-flex" align-self="stretch">
@@ -12,10 +12,10 @@
                     v-model="user.Details.Gender"
                     :label="$gettext('Gender')"
                     hide-details
-                    variant="filled"
+                    variant="solo-filled"
                     flat
                     :disabled="busy"
-                    color="secondary-dark"
+                    color="surface-variant"
                     :items="options.Gender()"
                     item-title="text"
                     item-value="value"
@@ -30,7 +30,7 @@
                     v-model="user.Details.NameTitle"
                     hide-details
                     required
-                    variant="filled"
+                    variant="solo-filled"
                     flat
                     :disabled="busy"
                     maxlength="32"
@@ -39,7 +39,7 @@
                     autocapitalize="none"
                     :label="$pgettext('Account', 'Title')"
                     class="input-name-title"
-                    color="secondary-dark"
+                    color="surface-variant"
                     :rules="[(v) => validLength(v, 0, 32) || $gettext('Invalid')]"
                     @change="onChangeName"
                   ></v-text-field>
@@ -49,7 +49,7 @@
                     v-model="user.Details.GivenName"
                     hide-details
                     required
-                    variant="filled"
+                    variant="solo-filled"
                     flat
                     :disabled="busy"
                     maxlength="64"
@@ -58,7 +58,7 @@
                     autocapitalize="none"
                     :label="$gettext('Given Name')"
                     class="input-given-name"
-                    color="secondary-dark"
+                    color="surface-variant"
                     :rules="[(v) => validLength(v, 0, 64) || $gettext('Invalid')]"
                     @change="onChangeName"
                   ></v-text-field>
@@ -68,7 +68,7 @@
                     v-model="user.Details.FamilyName"
                     hide-details
                     required
-                    variant="filled"
+                    variant="solo-filled"
                     flat
                     :disabled="busy"
                     maxlength="64"
@@ -77,7 +77,7 @@
                     autocapitalize="none"
                     :label="$gettext('Family Name')"
                     class="input-family-name"
-                    color="secondary-dark"
+                    color="surface-variant"
                     :rules="[(v) => validLength(v, 0, 64) || $gettext('Invalid')]"
                     @change="onChangeName"
                   ></v-text-field>
@@ -87,7 +87,7 @@
                     v-model="user.DisplayName"
                     hide-details
                     required
-                    variant="filled"
+                    variant="solo-filled"
                     flat
                     :disabled="busy"
                     maxlength="200"
@@ -96,7 +96,7 @@
                     autocapitalize="none"
                     :label="$gettext('Display Name')"
                     class="input-display-name"
-                    color="secondary-dark"
+                    color="surface-variant"
                     :rules="[(v) => validLength(v, 1, 200) || $gettext('Required')]"
                     @change="onChange"
                   ></v-text-field>
@@ -106,7 +106,7 @@
                     v-model="user.Email"
                     hide-details
                     required
-                    variant="filled"
+                    variant="solo-filled"
                     flat
                     validate-on="blur"
                     type="email"
@@ -117,7 +117,7 @@
                     autocapitalize="none"
                     :label="$gettext('Email')"
                     class="input-email"
-                    color="secondary-dark"
+                    color="surface-variant"
                     :rules="[(v) => (!!v && validEmail(v)) || $gettext('Invalid')]"
                     @change="onChange"
                   ></v-text-field>
@@ -137,11 +137,11 @@
               <v-textarea
                 v-model="user.Details.Bio"
                 auto-grow
-                variant="solo"
+                variant="solo-filled"
                 hide-details
                 rows="2"
                 class="input-bio"
-                color="secondary-dark"
+                color="surface-variant"
                 autocorrect="off"
                 autocapitalize="none"
                 autocomplete="off"
@@ -156,11 +156,11 @@
               <v-textarea
                 v-model="user.Details.About"
                 auto-grow
-                variant="solo"
+                variant="solo-filled"
                 hide-details
                 rows="2"
                 class="input-about"
-                color="secondary-dark"
+                color="surface-variant"
                 autocorrect="off"
                 autocapitalize="none"
                 autocomplete="off"
@@ -174,7 +174,7 @@
           </v-row>
         </v-card-actions>
       </v-card>
-      <v-card flat tile class="mt-0 px-1 application">
+      <v-card flat tile class="mt-0 px-1 surface">
         <v-card-title class="pb-1">
           <h3 class="text-body-2 mb-0">
             <translate>Security and Access</translate>
@@ -213,7 +213,7 @@
           </v-row>
         </v-card-actions>
       </v-card>
-      <v-card flat tile class="mt-0 px-1 application">
+      <v-card flat tile class="mt-0 px-1 surface">
         <v-card-title class="pb-1">
           <h3 class="text-body-2 mb-0">
             <translate>Birth Date</translate>
@@ -222,19 +222,19 @@
         <v-card-actions>
           <v-row align="start">
             <v-col cols="3" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.Days()" class="input-birth-day" @update:modelValue="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details variant="solo-filled" flat item-title="text" item-value="value" color="surface-variant" :items="options.Days()" class="input-birth-day" @update:modelValue="onChange"> </v-autocomplete>
             </v-col>
             <v-col cols="3" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @update:modelValue="onChange">
+              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details variant="solo-filled" flat item-title="text" item-value="value" color="surface-variant" :items="options.MonthsShort()" class="input-birth-month" @update:modelValue="onChange">
               </v-autocomplete>
             </v-col>
             <v-col cols="6" class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details variant="filled" flat item-title="text" item-value="value" color="secondary-dark" :items="options.Years()" class="input-birth-year" @update:modelValue="onChange"> </v-autocomplete>
+              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details variant="solo-filled" flat item-title="text" item-value="value" color="surface-variant" :items="options.Years()" class="input-birth-year" @update:modelValue="onChange"> </v-autocomplete>
             </v-col>
           </v-row>
         </v-card-actions>
       </v-card>
-      <v-card flat tile class="mt-0 px-1 application">
+      <v-card flat tile class="mt-0 px-1 surface">
         <v-card-title class="pb-1">
           <h3 class="text-body-2 mb-0">
             <translate>Contact Details</translate>
@@ -247,7 +247,7 @@
                 v-model="user.Details.Location"
                 hide-details
                 required
-                variant="filled"
+                variant="solo-filled"
                 flat
                 :disabled="busy"
                 maxlength="500"
@@ -256,7 +256,7 @@
                 autocapitalize="none"
                 :label="$gettext('Location')"
                 class="input-location"
-                color="secondary-dark"
+                color="surface-variant"
                 :rules="[(v) => validLength(v, 0, 500) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
@@ -268,10 +268,10 @@
                 :label="$gettext('Country')"
                 hide-no-data
                 hide-details
-                variant="filled"
+                variant="solo-filled"
                 flat
                 autocomplete="off"
-                color="secondary-dark"
+                color="surface-variant"
                 item-value="Code"
                 item-title="Name"
                 :items="countries"
@@ -286,7 +286,7 @@
                 v-model="user.Details.Phone"
                 hide-details
                 required
-                variant="filled"
+                variant="solo-filled"
                 flat
                 :disabled="busy"
                 maxlength="32"
@@ -295,7 +295,7 @@
                 autocapitalize="none"
                 :label="$gettext('Phone')"
                 class="input-phone"
-                color="secondary-dark"
+                color="surface-variant"
                 :rules="[(v) => validLength(v, 0, 32) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
@@ -305,7 +305,7 @@
                 v-model="user.Details.SiteURL"
                 hide-details
                 required
-                variant="filled"
+                variant="solo-filled"
                 flat
                 :disabled="busy"
                 type="url"
@@ -315,7 +315,7 @@
                 autocapitalize="none"
                 :label="$gettext('Website')"
                 class="input-site-url"
-                color="secondary-dark"
+                color="surface-variant"
                 :rules="[(v) => validUrl(v) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
@@ -325,7 +325,7 @@
                 v-model="user.Details.FeedURL"
                 hide-details
                 required
-                variant="filled"
+                variant="solo-filled"
                 flat
                 :disabled="busy"
                 type="url"
@@ -335,7 +335,7 @@
                 autocapitalize="none"
                 :label="$gettext('Feed')"
                 class="input-feed-url"
-                color="secondary-dark"
+                color="surface-variant"
                 :rules="[(v) => validUrl(v) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>

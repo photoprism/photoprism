@@ -8,7 +8,7 @@ body.dark-theme.theme-yellowstone,
     background: #32312f !important;
 }
 
-.theme-yellowstone .application.theme--light,
+.theme-yellowstone .v-application.theme--light,
 #photoprism.theme-yellowstone .theme--light.v-small-dialog__content,
 #photoprism.theme-yellowstone .theme--light.v-sheet,
 #photoprism.theme-yellowstone .theme--light.v-card {

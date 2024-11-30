@@ -11,7 +11,7 @@ body.dark-theme.theme-chrome,
 #photoprism.theme-chrome .theme--light.v-small-dialog__content,
 #photoprism.theme-chrome .theme--light.v-sheet,
 #photoprism.theme-chrome .theme--light.v-card,
-.theme-chrome .application.theme--light {
+.theme-chrome .v-application.theme--light {
     background: #202020;
 }
 
@@ -69,8 +69,8 @@ body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--
     color: rgba(255, 255, 255, 0.2)!important;
 }
 
-body.dark-theme #photoprism.theme-chrome #map .secondary-dark.theme--light,
-body.dark-theme #photoprism.theme-chrome #map .secondary-dark--text {
+body.dark-theme #photoprism.theme-chrome #map .surface-variant.theme--light,
+body.dark-theme #photoprism.theme-chrome #map .surface-variant--text {
     color: #000000!important;
     caret-color: #000000!important;
     stroke: #000000!important;

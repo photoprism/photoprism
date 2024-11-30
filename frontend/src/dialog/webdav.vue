@@ -19,7 +19,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">
-        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="secondary-dark" :model-value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="surface-variant" :model-value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1 clickable" @click="windowsHelp($event)">
@@ -27,7 +27,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">
-        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="secondary-dark" :model-value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="surface-variant" :model-value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 text-body-1">

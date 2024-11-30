@@ -4,7 +4,7 @@
       <v-card-text class="pt-6 px-6">
         <v-row>
           <v-col cols="3" class="text-left">
-            <v-icon size="60" color="secondary-dark lighten-1">mdi-image-album</v-icon>
+            <v-icon size="60" color="surface-variant lighten-1">mdi-image-album</v-icon>
           </v-col>
           <v-col cols="9" class="text-left" align-self="center">
             <v-autocomplete
@@ -17,12 +17,12 @@
               :loading="loading"
               hide-no-data
               hide-details
-              variant="filled"
+              variant="solo"
               flat
               item-title="Title"
               item-value="UID"
               :label="$gettext('Album Name')"
-              color="secondary-dark"
+              color="surface-variant"
               class="input-album"
               @keyup.enter.native="confirm"
             >

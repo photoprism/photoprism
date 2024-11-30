@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="500" class="dialog-album-edit" color="application" @keydown.esc="close">
+  <v-dialog :model-value="show" persistent max-width="500" class="dialog-album-edit" color="surface" @keydown.esc="close">
     <v-form ref="form" lazy-validation class="form-album-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card elevation="24">
         <v-card-title class="pb-0">
@@ -16,28 +16,28 @@
           <v-container fluid class="pa-0">
             <v-row>
               <v-col v-if="album.Type !== 'month'" cols="12" class="pa-2">
-                <v-text-field v-model="model.Title" hide-details autofocus variant="filled" flat :rules="[titleRule]" :label="$gettext('Name')" :disabled="disabled" color="secondary-dark" class="input-title" @keyup.enter="confirm"></v-text-field>
+                <v-text-field v-model="model.Title" hide-details autofocus variant="solo" flat :rules="[titleRule]" :label="$gettext('Name')" :disabled="disabled" color="surface-variant" class="input-title" @keyup.enter="confirm"></v-text-field>
               </v-col>
               <v-col cols="12" class="pa-2">
-                <v-text-field v-model="model.Location" hide-details variant="filled" flat :label="$gettext('Location')" :disabled="disabled" color="secondary-dark" class="input-location"></v-text-field>
+                <v-text-field v-model="model.Location" hide-details variant="solo" flat :label="$gettext('Location')" :disabled="disabled" color="surface-variant" class="input-location"></v-text-field>
               </v-col>
               <v-col cols="12" class="pa-2">
-                <v-textarea :key="growDesc" v-model="model.Description" auto-grow hide-details variant="filled" flat autocomplete="off" :label="$gettext('Description')" :rows="1" :disabled="disabled" class="input-description" color="secondary-dark"></v-textarea>
+                <v-textarea :key="growDesc" v-model="model.Description" auto-grow hide-details variant="solo" flat autocomplete="off" :label="$gettext('Description')" :rows="1" :disabled="disabled" class="input-description" color="surface-variant"></v-textarea>
               </v-col>
               <v-col cols="12" class="pa-2">
                 <!-- TODO: check property return-masked-value TEST -->
                 <!-- TODO: check property allow-overflow TEST -->
-                <v-combobox v-model="model.Category" hide-details variant="filled" flat :search.sync="model.Category" :items="categories" :disabled="disabled" :label="$gettext('Category')" return-masked-value color="secondary-dark" class="input-category"></v-combobox>
+                <v-combobox v-model="model.Category" hide-details variant="solo" flat :search.sync="model.Category" :items="categories" :disabled="disabled" :label="$gettext('Category')" return-masked-value color="surface-variant" class="input-category"></v-combobox>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="model.Order" :label="$gettext('Sort Order')" :menu-props="{ maxHeight: 400 }" hide-details variant="filled" flat :items="sorting" :disabled="disabled" item-value="value" item-title="text" color="secondary-dark"></v-select>
+                <v-select v-model="model.Order" :label="$gettext('Sort Order')" :menu-props="{ maxHeight: 400 }" hide-details variant="solo" flat :items="sorting" :disabled="disabled" item-value="value" item-title="text" color="surface-variant"></v-select>
               </v-col>
               <v-col sm="3" class="pa-2">
                 <!-- TODO: check property flat TEST -->
-                <v-checkbox v-model="model.Favorite" :disabled="disabled" color="secondary-dark" :label="$gettext('Favorite')" hide-details flat> </v-checkbox>
+                <v-checkbox v-model="model.Favorite" :disabled="disabled" color="surface-variant" :label="$gettext('Favorite')" hide-details flat> </v-checkbox>
               </v-col>
               <v-col v-if="experimental && featPrivate" sm="3" class="pa-2">
-                <v-checkbox v-model="model.Private" :disabled="disabled" color="secondary-dark" :label="$gettext('Private')" hide-details flat> </v-checkbox>
+                <v-checkbox v-model="model.Private" :disabled="disabled" color="surface-variant" :label="$gettext('Private')" hide-details flat> </v-checkbox>
               </v-col>
             </v-row>
           </v-container>

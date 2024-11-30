@@ -9,13 +9,15 @@
           clearable
           overflow
           single-line
+          variant="plain"
+          density="compact"
           validate-on="blur"
           autocorrect="off"
           autocapitalize="none"
           autocomplete="off"
           :label="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
-          color="secondary-dark"
+          color="surface-variant"
           @change="
             (v) => {
               updateFilter({ q: v });
@@ -80,9 +82,10 @@
               :label="$gettext('Country')"
               :menu-props="{ maxHeight: 346 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="countryOptions"
               item-title="Name"
@@ -102,9 +105,10 @@
               :label="$gettext('Camera')"
               :menu-props="{ maxHeight: 346 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="cameraOptions"
               item-title="Name"
@@ -123,9 +127,10 @@
               :model-value="settings.view"
               :label="$gettext('View')"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="viewOptions"
               item-title="text"
@@ -144,9 +149,10 @@
               :label="$gettext('Sort Order')"
               :menu-props="{ maxHeight: 400 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="sortOptions"
               item-title="text"
@@ -165,9 +171,10 @@
               :label="$gettext('Year')"
               :menu-props="{ maxHeight: 346 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="yearOptions()"
               item-title="text"
@@ -186,9 +193,10 @@
               :label="$gettext('Month')"
               :menu-props="{ maxHeight: 346 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="monthOptions()"
               item-title="text"
@@ -207,7 +215,7 @@
                         flat
                         variant="solo"
                         hide-details
-                        color="secondary-dark"
+                        color="surface-variant"
                         bg-color="secondary-light"
                         item-value="ID"
                         item-title="Model"
@@ -221,9 +229,10 @@
               :label="$gettext('Color')"
               :menu-props="{ maxHeight: 346 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="colorOptions()"
               item-title="Name"
@@ -242,9 +251,10 @@
               :label="$gettext('Category')"
               :menu-props="{ maxHeight: 346 }"
               flat
+              single-line
               variant="solo"
               hide-details
-              color="secondary-dark"
+              color="surface-variant"
               bg-color="secondary"
               :items="categoryOptions"
               item-title="Name"

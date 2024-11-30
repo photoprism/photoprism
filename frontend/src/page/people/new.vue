@@ -5,7 +5,7 @@
         <v-spacer></v-spacer>
         <v-divider vertical></v-divider>
 
-        <v-btn icon variant="text" color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon variant="text" color="surface-variant" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
@@ -19,13 +19,13 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-0">
-        <v-alert v-if="results.length === 0" color="secondary-dark" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
