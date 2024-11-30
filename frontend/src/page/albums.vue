@@ -57,6 +57,7 @@
                 :disabled="context === 'state'"
                 :menu-props="{ maxHeight: 346 }"
                 flat
+                single-line
                 variant="solo"
                 hide-details
                 color="surface-variant"
@@ -78,6 +79,7 @@
                 :label="$gettext('Category')"
                 :menu-props="{ maxHeight: 346 }"
                 flat
+                single-line
                 variant="solo"
                 hide-details
                 color="surface-variant"
@@ -99,6 +101,7 @@
                 :label="$gettext('Sort Order')"
                 :menu-props="{ maxHeight: 400 }"
                 flat
+                single-line
                 variant="solo"
                 hide-details
                 color="surface-variant"
