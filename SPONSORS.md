@@ -26,6 +26,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 [**Lars Kusch**](https://github.com/LarsK1) (December 2023)
 
+**Joseph Hobbs** (November 2024)
+
 ## Gold Sponsors ##
 
 [**Simen Eriksen**](https://github.com/dennorske) (GitHub Sponsors, December 2019)
