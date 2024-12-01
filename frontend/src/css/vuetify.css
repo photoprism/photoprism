@@ -1,0 +1,9 @@
+/* Custom Vuetify 3 Component Styles */
+
+.v-selection-control--density-compact .v-label {
+    margin-left: 0.5em;
+}
+
+.v-selection-control--density-compact {
+    --v-selection-control-size: 20px;
+}

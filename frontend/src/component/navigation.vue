@@ -2,8 +2,8 @@
   <div id="p-navigation" :class="{ 'sidenav-visible': drawer }">
     <template v-if="visible && $vuetify.display.smAndDown">
       <v-toolbar position="fixed" flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
-        <v-avatar class="nav-avatar" tile :size="28" :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">
-          <img :src="appIcon" :alt="config.name" :class="{ 'animate-hue': indexing }" />
+        <v-avatar class="bg-transparent navigation-logo clickable" tile :size="28" :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">
+          <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
         </v-avatar>
         <v-toolbar-title class="nav-title">
           <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
@@ -15,8 +15,8 @@
     </template>
     <template v-else-if="visible && !auth">
       <v-toolbar flat dense color="navigation darken-1" class="nav-small">
-        <v-avatar class="nav-avatar" tile :size="28">
-          <img :src="appIcon" :alt="config.name" />
+        <v-avatar class="bg-transparent navigation-logo" tile :size="28">
+          <img :src="appIcon" :alt="appName" />
         </v-avatar>
         <v-toolbar-title class="nav-title">
           {{ page.title }}
@@ -31,7 +31,7 @@
         <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%">
           <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
             <template #prepend>
-              <div class="v-avatar bg-transparent nav-avatar clickable" @click.stop.prevent="goHome">
+              <div class="v-avatar bg-transparent navigation-logo clickable" @click.stop.prevent="goHome">
                 <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
               </div>
             </template>
@@ -48,7 +48,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-list nav class="pt-4 p-flex-menu navigation-menu" bg-color="navigation" active-color="primary" open-strategy="single">
+      <v-list nav class="pt-3 p-flex-menu navigation-menu" bg-color="navigation" color="primary" open-strategy="single">
         <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
           <v-icon v-if="!rtl" class="ma-auto">mdi-chevron-right</v-icon>
           <v-icon v-else class="ma-auto">mdi-chevron-left</v-icon>
@@ -429,7 +429,7 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item v-show="featUpgrade" :to="{ name: 'upgrade' }" variant="text" class="nav-upgrade" :exact="true" :ripple="false"  @click.stop="">
+              <v-list-item v-show="featUpgrade" :to="{ name: 'upgrade' }" variant="text" class="nav-upgrade" :exact="true" :ripple="false" @click.stop="">
                 <v-list-item-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="Upgrade">Upgrade</translate>
                 </v-list-item-title>
@@ -469,42 +469,47 @@
         </router-link>
       </v-list>
 
-      <v-list class="p-user-box" bg-color="navigation" active-color="primary">
-        <v-list-item v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" @click.stop="">
-          <v-list-item-title class="text--warning">
-            <v-icon color="warning">mdi-wifi-off</v-icon>
-            <p class="nav-item-title">
-              <translate key="Offline">Offline</translate>
-            </p>
-          </v-list-item-title>
-        </v-list-item>
-
-        <v-list-item v-if="isMini && auth && !isPublic" class="nav-logout p-profile position-fixed bottom-0">
-          <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" @click.stop="onAccountSettings" />
-          <v-icon size="x-large" class="ma-auto mt-3 mb-3" @click.stop.prevent="onLogout">mdi-power</v-icon>
-        </v-list-item>
-        <v-list-item v-else-if="!isMini && auth && !isPublic" class="p-profile position-fixed bottom-0" @click.stop="onAccountSettings">
-          <div class="d-flex">
-            <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
-
-            <div class="ps-5">
-              <v-list-item-title>{{ displayName }}</v-list-item-title>
-              <v-list-item-subtitle>{{ accountInfo }}</v-list-item-subtitle>
+      <v-container v-if="$config.disconnected" class="bg-navigation position-fixed bottom-0 border-t-thin pa-0">
+        <v-row no-gutters class="nav-connecting ma-0 py-2 clickable" align="center" @click.stop="showServerConnectionHelp">
+          <v-col :cols="isMini ? 12 : 3">
+            <div class="text-center">
+              <v-icon color="warning" size="28">mdi-wifi-off</v-icon>
             </div>
-
-            <v-list-item-action class="ps-5" :title="$gettext('Logout')">
+          </v-col>
+          <v-col v-if="!isMini" cols="9">
+            <p class="text-left text-body-2">
+              <translate key="No server connection">No server connection</translate>
+            </p>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-container v-else-if="auth && !isPublic" class="p-user-box bg-navigation p-profile position-fixed bottom-0 border-t-thin">
+        <v-row no-gutters align="center">
+          <v-col :cols="isMini ? 12 : 3">
+            <div class="navigation-user-avatar clickable text-center my-2" @click.stop="showAccountSettings">
+              <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
+            </div>
+          </v-col>
+          <v-col v-if="!isMini" cols="6">
+            <div class="text-left mt-1">
+              <p class="text-body-2">{{ displayName }}</p>
+              <p class="text-caption opacity-70">{{ accountInfo }}</p>
+            </div>
+          </v-col>
+          <v-col :cols="isMini ? 12 : 3">
+            <div class="text-center my-1">
               <v-btn icon variant="text" :elevation="0" @click.stop.prevent="onLogout">
                 <v-icon>mdi-power</v-icon>
               </v-btn>
-            </v-list-item-action>
-          </div>
-        </v-list-item>
-      </v-list>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-navigation-drawer>
     <div id="mobile-menu" :class="{ active: speedDial }" @click.stop="speedDial = false">
       <div class="menu-content grow-top-right">
         <div class="menu-icons">
-          <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action nav-logout" @click.prevent="onLogout">
+          <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action navigation-logout" @click.prevent="onLogout">
             <v-icon>mdi-power</v-icon>
           </a>
           <a href="#" :title="$gettext('Reload')" class="menu-action nav-reload" @click.prevent="reloadApp">
@@ -594,7 +599,7 @@
       </div>
     </div>
     <div v-if="config.legalInfo && visible" id="legal-info">
-      <span v-if="config.legalUrl" class="clickable" @click.stop.prevent="onInfo()">{{ config.legalInfo }}</span>
+      <span v-if="config.legalUrl" class="clickable" @click.stop.prevent="showLegalInfo()">{{ config.legalInfo }}</span>
       <span v-else>{{ config.legalInfo }}</span>
     </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
@@ -791,14 +796,17 @@ export default {
       this.isMini = !this.isMini;
       localStorage.setItem("last_navigation_mode", `${this.isMini}`);
     },
-    onAccountSettings: function () {
+    showAccountSettings: function () {
       if (this.$config.feature("account")) {
         this.$router.push({ name: "settings_account" });
       } else {
         this.$router.push({ name: "settings" });
       }
     },
-    onInfo() {
+    showServerConnectionHelp: function () {
+      this.$router.push({ path: "/help/websockets" });
+    },
+    showLegalInfo() {
       if (this.config.legalUrl) {
         window.open(this.config.legalUrl, "_blank").focus();
       } else {

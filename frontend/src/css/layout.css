@@ -225,12 +225,16 @@ footer {
     padding: 6px 24px 12px;
 }
 
+#photoprism .footer p > span,
+#photoprism .footer p > a,
 #photoprism .footer div > span,
 #photoprism .footer div > a {
     display: block;
 }
 
 @media only screen and (max-width: 599px) {
+    #photoprism .footer p > span,
+    #photoprism .footer p > a,
     #photoprism .footer div > span,
     #photoprism .footer div > a {
         display: inline-block;

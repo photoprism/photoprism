@@ -1,23 +1,18 @@
 <template>
-  <v-card variant="flat" tile class="application footer">
+  <v-card variant="flat" tile class="bg-background footer">
     <v-card-actions class="footer-actions">
-      <v-row align="start" class="pt-6">
-        <v-col cols="12" sm="6" class="px-0 pb-2 text-caption text-selectable text-left">
-          <strong
-            ><router-link to="/about" class="text-link text-selectable">
-{{ about }}{{ getMembership() }}
-</router-link></strong
-          >
-          <span class="body-link text-selectable"
-            >Build&nbsp;<a href="https://docs.photoprism.app/release-notes/" target="_blank" :title="version" class="body-link">{{ build }}</a></span
-          >
+      <v-row align="start" class="pt-6" no-gutters>
+        <v-col cols="12" sm="6" class="text-left">
+          <p class="text-body-2 text-selectable px-0 pb-2">
+            <strong><router-link to="/about" class="text-link text-selectable">{{ about }}{{ getMembership() }}</router-link></strong>
+            <span class="body-link text-selectable">Build&nbsp;<a href="https://docs.photoprism.app/release-notes/" target="_blank" :title="version" class="body-link">{{ build }}</a></span>
+          </p>
         </v-col>
-
-        <v-col cols="12" sm="6" class="px-0 pb-2 text-caption text-center text-sm-right">
-          <div class="hidden-xs">
+        <v-col cols="12" sm="6" class="hidden-xs text-center text-sm-right">
+          <p class="px-0 pb-2 text-body-2">
             <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE" target="_blank" class="text-link">3rd-party software packages</a>
             <a href="https://www.photoprism.app/about/team/" target="_blank" class="body-link">© 2018-2024 PhotoPrism UG</a>
-          </div>
+          </p>
         </v-col>
       </v-row>
     </v-card-actions>
