@@ -1,5 +1,5 @@
 <template>
-  <v-container :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places fill-height">
+  <v-container :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places fill-height" style="max-width: 100%;">
     <div style="width: 100%; height: 100%; position: relative">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
