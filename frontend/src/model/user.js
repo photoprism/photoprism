@@ -91,7 +91,7 @@ export class User extends RestModel {
         About: "",
         Bio: "",
         Location: "",
-        Country: "",
+        Country: "zz",
         Phone: "",
         SiteURL: "",
         ProfileURL: "",
