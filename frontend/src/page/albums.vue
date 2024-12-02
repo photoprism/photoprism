@@ -10,8 +10,8 @@
           single-line
           validate-on="blur"
           variant="plain"
-          density="compact"
-          class="input-search background-inherit elevation-0 mb-2"
+          density="comfortable"
+          class="input-search background-inherit elevation-0 mb-3"
           :label="$gettext('Search')"
           autocomplete="off"
           autocorrect="off"
@@ -61,6 +61,7 @@
                 variant="solo"
                 hide-details
                 color="surface-variant"
+                density="comfortable"
                 bg-color="secondary"
                 :items="yearOptions()"
                 item-title="text"
@@ -83,6 +84,7 @@
                 variant="solo"
                 hide-details
                 color="surface-variant"
+                density="comfortable"
                 bg-color="secondary"
                 :items="categories"
                 item-title="text"
@@ -105,6 +107,7 @@
                 variant="solo"
                 hide-details
                 color="surface-variant"
+                density="comfortable"
                 bg-color="secondary"
                 :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
                 item-title="text"

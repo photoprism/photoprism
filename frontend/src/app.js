@@ -110,6 +110,25 @@ config.update().finally(() => {
       VBtn: {
         variant: "flat",
       },
+      VTextField: {
+        flat: true,
+        variant: "solo",
+        "hide-details": true,
+      },
+      VAutocomplete: {
+        flat: true,
+        variant: "solo-filled",
+        "hide-details": true,
+      },
+      VSelect: {
+        flat: true,
+        variant: "solo-filled",
+        "hide-details": true,
+      },
+      VCheckbox: {
+        density: "compact",
+        "hide-details": true,
+      },
     },
     icons: {
       defaultSet: "mdi",

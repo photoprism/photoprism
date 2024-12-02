@@ -10,8 +10,8 @@
           single-line
           validate-on="blur"
           variant="plain"
-          density="compact"
-          class="input-search background-inherit elevation-0 mb-2"
+          density="comfortable"
+          class="input-search background-inherit elevation-0 mb-3"
           :label="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
           autocomplete="off"

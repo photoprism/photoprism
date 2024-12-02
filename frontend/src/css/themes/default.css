@@ -44,17 +44,6 @@ body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__co
     background: #00000033;
 }
 
-body.dark-theme #photoprism,
-body.dark-theme #photoprism .p-page a,
-body.dark-theme #photoprism .v-datatable a,
-body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panels__container,
-body.dark-theme #photoprism .theme--light.v-tabs-bar .v-tabs__div,
-body.dark-theme #photoprism .theme--light {
-    color: #ffffff;
-    caret-color: #ffffff;
-    stroke: #ffffff;
-}
-
 body.dark-theme #photoprism .theme--light.v-label {
     color: #ffffffaa;
 }

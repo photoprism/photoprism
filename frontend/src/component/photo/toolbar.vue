@@ -4,13 +4,13 @@
       <template v-if="!embedded">
         <v-text-field
           :model-value="filter.q"
-          class="input-search background-inherit elevation-0 mb-2"
+          class="input-search background-inherit elevation-0 mb-3"
           hide-details
           clearable
           overflow
           single-line
           variant="plain"
-          density="compact"
+          density="comfortable"
           validate-on="blur"
           autocorrect="off"
           autocapitalize="none"
@@ -86,6 +86,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="countryOptions"
               item-title="Name"
@@ -109,6 +110,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="cameraOptions"
               item-title="Name"
@@ -131,6 +133,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="viewOptions"
               item-title="text"
@@ -153,6 +156,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="sortOptions"
               item-title="text"
@@ -175,6 +179,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="yearOptions()"
               item-title="text"
@@ -197,6 +202,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="monthOptions()"
               item-title="text"
@@ -233,6 +239,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="colorOptions()"
               item-title="Name"
@@ -255,6 +262,7 @@
               variant="solo"
               hide-details
               color="surface-variant"
+              density="comfortable"
               bg-color="secondary"
               :items="categoryOptions"
               item-title="Name"

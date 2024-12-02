@@ -6,7 +6,7 @@ let variables = {
   "border-color": "#FFFFFF",
   "border-opacity": 0.12,
   "high-emphasis-opacity": 0.96,
-  "medium-emphasis-opacity": 0.85,
+  "medium-emphasis-opacity": 0.78,
   "disabled-opacity": 0.5,
   "idle-opacity": 0.1,
   "hover-opacity": 0.04,

@@ -6,18 +6,19 @@
           <v-text-field
             v-model.lazy.trim="filter.q"
             hide-details
+            theme="light"
             clearable
             flat
             single-line
             validate-on="blur"
-            class="input-search pa-0 mb-2"
-            density="compact"
+            class="input-search pa-0"
+            density="comfortable"
             :label="$gettext('Search')"
             prepend-inner-icon="mdi-magnify"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
-            color="surface-variant"
+            color="#f1f1f1"
             @click:clear="clearQuery"
             @keyup.enter="formChange"
           ></v-text-field>
