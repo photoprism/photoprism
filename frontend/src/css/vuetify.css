@@ -7,3 +7,7 @@
 .v-selection-control--density-compact {
     --v-selection-control-size: 20px;
 }
+
+.v-tabs button.v-tab:not(.v-tab-item--selected) {
+    opacity: 0.8;
+}
