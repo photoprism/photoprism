@@ -26,9 +26,10 @@
             <v-icon size="16" color="white">mdi-pencil</v-icon>
           </button>
 
+          <!--            TODO: check icon and button behaviours-->
           <button class="pswp__button action-select" style="background: none" :title="$gettext('Select')" @click.exact="onSelect">
             <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">mdi-check-circle</v-icon>
-            <v-icon v-else size="16" color="white">mdi-radiobox-blank</v-icon>
+            <v-icon v-else size="16" color="white">mdi-circle-outline</v-icon>
           </button>
 
           <button v-if="canLike" class="pswp__button action-like hidden-shared-only" style="background: none" :title="$gettext('Like')" @click.exact="onLike">

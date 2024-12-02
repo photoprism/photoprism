@@ -57,8 +57,8 @@
                   @click.stop.prevent="onClick($event, index)"
                 >
                   <button v-if="selectMode" class="input-select">
-                    <i class="mdi mdi-circle-outline" />
-                    <i class="mdi mdi-radiobox-blank" />
+                    <i class="mdi mdi-check-circle select-on" />
+                    <i class="mdi mdi-circle-outline select-off" />
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'" class="input-open" @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo /></i>
