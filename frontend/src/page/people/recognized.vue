@@ -111,17 +111,14 @@
               </v-img>
 
               <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-dialog v-if="canManage" class="inline-edit" @save="onSave(model)">
+                <div v-if="canManage" class="inline-edit" @click.stop.prevent="edit(model)">
                   <span v-if="model.Name" class="text-body-2 ma-0">
                     {{ model.Name }}
                   </span>
                   <span v-else>
                     <v-icon>mdi-pencil</v-icon>
                   </span>
-                  <template #input>
-                    <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="surface-variant" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
-                  </template>
-                </v-dialog>
+                </div>
                 <span v-else class="text-body-2 ma-0">
                   {{ model.Name }}
                 </span>
@@ -148,6 +145,7 @@
         </v-row>
       </v-container>
     </v-container>
+    <p-people-edit-dialog :show="dialog.edit" :person="model" @close="dialog.edit = false" @confirm="onSave(model)"></p-people-edit-dialog>
     <p-people-merge-dialog :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
@@ -205,6 +203,10 @@ export default {
         subj2: null,
         show: false,
       },
+      dialog: {
+        edit: false,
+      },
+      model: new Subject(false),
     };
   },
   computed: {
@@ -244,6 +246,17 @@ export default {
     }
   },
   methods: {
+    edit(subject) {
+      if (!subject) {
+        return;
+      } else if (!this.canManage) {
+        this.$router.push(subject.route(this.view));
+        return;
+      }
+
+      this.model = subject;
+      this.dialog.edit = true;
+    },
     onSave(m) {
       if (!this.canManage || !m.Name || m.Name.trim() === "") {
         // Refuse to save empty name.
@@ -254,9 +267,15 @@ export default {
 
       if (!existing) {
         this.busy = true;
-        m.update().finally(() => {
-          this.busy = false;
-        });
+        m.update()
+          .then((m) => {
+            this.$notify.success(this.$gettext("Changes successfully saved"));
+            this.$emit("close");
+          })
+          .finally(() => {
+            this.busy = false;
+          });
+
       } else if (existing.UID !== m.UID) {
         this.merge.subj1 = m;
         this.merge.subj2 = existing;
