@@ -44,6 +44,7 @@ const (
 
 func HttpOk(method, rawUrl string) bool {
 	req, err := http.NewRequest(method, rawUrl, nil)
+	req.Header.Add("Depth", "1")
 
 	if err != nil {
 		return false
