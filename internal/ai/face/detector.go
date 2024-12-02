@@ -238,32 +238,30 @@ func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLa
 				))
 			}
 
-			if leftEye != nil && rightEye != nil {
-				for _, eye := range eyeCascades {
-					for _, flpc := range flpcs[eye] {
-						if flpc == nil {
-							continue
-						}
+			for _, eye := range eyeCascades {
+				for _, flpc := range flpcs[eye] {
+					if flpc == nil {
+						continue
+					}
 
-						flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, false)
-						if flp.Row > 0 && flp.Col > 0 {
-							landmarkCoords = append(landmarkCoords, NewArea(
-								eye,
-								flp.Row,
-								flp.Col,
-								int(flp.Scale),
-							))
-						}
+					flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, false)
+					if flp.Row > 0 && flp.Col > 0 {
+						landmarkCoords = append(landmarkCoords, NewArea(
+							eye,
+							flp.Row,
+							flp.Col,
+							int(flp.Scale),
+						))
+					}
 
-						flp = flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, true)
-						if flp.Row > 0 && flp.Col > 0 {
-							landmarkCoords = append(landmarkCoords, NewArea(
-								eye+"_v",
-								flp.Row,
-								flp.Col,
-								int(flp.Scale),
-							))
-						}
+					flp = flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, true)
+					if flp.Row > 0 && flp.Col > 0 {
+						landmarkCoords = append(landmarkCoords, NewArea(
+							eye+"_v",
+							flp.Row,
+							flp.Col,
+							int(flp.Scale),
+						))
 					}
 				}
 			}
