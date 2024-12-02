@@ -90,37 +90,9 @@
               </v-img>
 
               <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-dialog v-if="canManage" class="inline-edit" persistent>
-                  <template #activator="{ props }">
-                    <span v-if="label.Name" v-bind="props" class="text-body-2 ma-0" @click="labelToRename = label.Name">
-                      {{ label.Name }}
-                    </span>
-                    <span v-else>
-                      <v-icon>mdi-pencil</v-icon>
-                    </span>
-                  </template>
-
-                  <template #default="{ isActive }">
-                    <v-card>
-                      <v-text-field
-                          v-model="labelToRename"
-                          :rules="[titleRule]"
-                          :label="$gettext('Name')"
-                          color="surface-variant"
-                          class="input-rename background-inherit elevation-0"
-                          single-line
-                          autofocus
-                          variant="solo"
-                          hide-details
-                      />
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn @click="isActive.value = false">Cancel</v-btn>
-                        <v-btn @click="onSave(label); isActive.value = false" >Save</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </template>
-                </v-dialog>
+                <p v-if="canManage" class="inline-edit" @click.stop.prevent="edit(label)">
+                  {{ label.Name }}
+                </p>
                 <span v-else class="text-body-2 ma-0">
                   {{ label.Name }}
                 </span>
@@ -141,6 +113,7 @@
         </v-row>
       </v-container>
     </v-container>
+    <p-label-edit-dialog :show="dialog.edit" :label="model" @close="dialog.edit = false"></p-label-edit-dialog>
   </div>
 </template>
 
@@ -193,6 +166,10 @@ export default {
       input: new Input(),
       lastId: "",
       labelToRename: "",
+      dialog: {
+        edit: false,
+      },
+      model: new Label(false),
     };
   },
   watch: {
@@ -221,6 +198,17 @@ export default {
     }
   },
   methods: {
+    edit(label) {
+      if (!label) {
+        return;
+      } else if (!this.canManage) {
+        this.$router.push(label.route(this.view));
+        return;
+      }
+
+      this.model = label;
+      this.dialog.edit = true;
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("labels_offset"));
 
