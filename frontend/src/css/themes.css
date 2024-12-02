@@ -22,26 +22,3 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
     transition: background-color 9999s !important;
 }
-
-.v-text-field>.v-input__control>.v-input__slot:after,
-.v-text-field>.v-input__control>.v-input__slot:before {
-    display: none !important;
-}
-
-#photoprism .v-select.v-text-field--box .v-select__selections {
-    padding-top: 20px;
-}
-
-#photoprism .theme--light.v-text-field--solo.background-inherit>.v-input__control>.v-input__slot {
-    background: inherit;
-    box-shadow: none;
-}
-
-.v-ripple__container {
-    display:none !important;
-}
-
-.v-btn--disabled.v-btn--variant-elevated,
-.v-btn--disabled.v-btn--variant-flat {
-    filter: grayscale(100%);
-}

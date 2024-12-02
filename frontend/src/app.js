@@ -106,6 +106,11 @@ config.update().finally(() => {
   // Create Vuetify instance.
   const vuetify = createVuetify({
     rtl,
+    defaults: {
+      VBtn: {
+        variant: "flat",
+      },
+    },
     icons: {
       defaultSet: "mdi",
       aliases,

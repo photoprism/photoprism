@@ -1,8 +1,8 @@
 <template>
-<div class="p-tab p-tab-index">
+  <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit">
       <v-container fluid>
-        <p class="text-subtitle-1 text-white">
+        <p class="text-subtitle-1">
           <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
@@ -33,13 +33,14 @@
           <v-progress-linear color="surface-variant" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-row align="start" class="pb-6 text-white">
+        <v-row align="start" class="pb-6">
           <v-col cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.index.rescan"
               :disabled="busy || !ready"
               class="ma-0 pa-0"
               color="surface-variant"
+              density="compact"
               :label="$gettext('Complete Rescan')"
               :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
               prepend-icon="mdi-cached"
@@ -49,15 +50,16 @@
             </v-checkbox>
           </v-col>
           <v-col v-if="isAdmin" cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
-            <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="surface-variant" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="mdi-delete-sweep" persistent-hint> </v-checkbox>
+            <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="surface-variant" density="compact" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="mdi-delete-sweep" persistent-hint>
+            </v-checkbox>
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="primary-button" class="ml-2 mt-2 action-cancel" variant="flat" @click.stop="cancelIndexing()">
+        <v-btn :disabled="!busy || !ready" color="secondary-light" class="ml-2 mt-2 action-cancel" @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="ml-2 mt-2 action-index" variant="flat" @click.stop="startIndexing()">
+        <v-btn :disabled="busy || !ready" color="primary-button" class="ml-2 mt-2 action-index" @click.stop="startIndexing()">
           <translate>Start</translate>
           <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
         </v-btn>

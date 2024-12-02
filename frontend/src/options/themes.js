@@ -15,6 +15,8 @@ let variables = {
   "activated-opacity": 0,
   "pressed-opacity": 0.16,
   "dragged-opacity": 0.08,
+  "overlay-color": "#121212",
+  "overlay-opacity": 0.42,
   "theme-kbd": "#212529",
   "theme-on-kbd": "#FFFFFF",
   "theme-code": "#343434",

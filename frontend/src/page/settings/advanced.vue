@@ -398,7 +398,7 @@
           <v-row align="start">
             <v-col cols="12" class="pa-2">
               <a id="restart"></a>
-              <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" class="text-white" variant="flat" @click.stop.p.prevent="onRestart">
+              <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
                 <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
               </v-btn>

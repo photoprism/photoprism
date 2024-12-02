@@ -11,3 +11,27 @@
 .v-tabs button.v-tab:not(.v-tab-item--selected) {
     opacity: 0.8;
 }
+
+.v-overlay__scrim {
+    background: rgb(var(--v-overlay-color, #121212));
+    opacity: var(--v-overlay-opacity, .32);
+}
+
+.v-ripple__container {
+    display:none !important;
+}
+
+.v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
+    background-color: rgb(var(--v-theme-secondary, #999)) !important;
+    opacity: 0.42;
+    z-index: 10;
+}
+
+.v-text-field>.v-input__control>.v-input__slot:after,
+.v-text-field>.v-input__control>.v-input__slot:before {
+    display: none !important;
+}
+
+#photoprism .v-select.v-text-field--box .v-select__selections {
+    padding-top: 20px;
+}
