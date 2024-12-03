@@ -55,7 +55,7 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" variant="flat" class="ml-2 mt-2 action-cancel" @click.stop="cancelIndexing()">
+        <v-btn :disabled="!busy || !ready" color="button" variant="flat" class="ml-2 mt-2 action-cancel" @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
         </v-btn>
 

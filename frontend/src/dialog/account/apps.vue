@@ -21,7 +21,7 @@
         <template v-if="confirmAction !== ''">
           <v-card-text class="py-0">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Enter your password to confirm the action and continue:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -34,14 +34,12 @@
                   hide-details
                   required
                   autofocus
-                  flat
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  color="surface-variant"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
                 ></v-text-field>
@@ -65,7 +63,7 @@
         <template v-else-if="action === 'copy'">
           <v-card-text class="py-0">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -74,13 +72,11 @@
                   type="text"
                   hide-details
                   readonly
-                  flat
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
                   append-icon="mdi-content-copy"
                   class="input-app-password text-selectable"
-                  color="surface-variant"
                   @click:append="onCopyAppPassword"
                 ></v-text-field>
               </v-col>
@@ -89,7 +85,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
                 <v-btn v-if="appPasswordCopied" variant="flat" color="primary-button" :disabled="busy" class="action-done compact mr-0" @click.stop="onDone">
@@ -106,7 +102,7 @@
         <template v-else-if="action === 'add'">
           <v-card-text class="py-0">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -119,26 +115,24 @@
                   required
                   autofocus
                   hide-details
-                  variant="solo"
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
                   class="input-name text-selectable"
-                  color="surface-variant"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.scope" hide-details variant="solo" :disabled="busy" item-title="text" item-value="value" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="surface-variant" bg-color="secondary-light" class="input-scope"></v-select>
+                <v-select v-model="app.scope" hide-details :disabled="busy" item-title="text" item-value="value" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" class="input-scope"></v-select>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
-                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details variant="solo" flat color="surface-variant" class="input-expires" item-title="text" item-value="value" :items="options.Expires()"></v-select>
+                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details class="input-expires" item-title="text" item-value="value" :items="options.Expires()"></v-select>
               </v-col>
             </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="onCancel">
+                <v-btn variant="flat" color="button" class="action-cancel ml-0" @click.stop="onCancel">
                   <translate>Cancel</translate>
                 </v-btn>
                 <v-btn variant="flat" color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate compact mr-0" @click.stop="onGenerate">
@@ -169,7 +163,7 @@
                         {{ formatDate(props.item.Expires) }}
                       </td>
                       <td class="text-right" nowrap>
-                        <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
+                        <v-btn icon size="small" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
                           <v-icon color="surface-variant">mdi-delete</v-icon>
                         </v-btn>
                       </td>
@@ -182,7 +176,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-close ml-0 mr-2" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
                 <v-btn variant="flat" color="primary-button" class="action-add compact mr-0" @click.stop="onAdd">

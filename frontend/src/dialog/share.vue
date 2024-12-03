@@ -83,7 +83,7 @@
             </v-btn>
           </v-col>
           <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn variant="flat" color="secondary-light" class="action-close" @click.stop="confirm">
+            <v-btn variant="flat" color="button" class="action-close" @click.stop="confirm">
               <translate>Close</translate>
             </v-btn>
           </v-col>

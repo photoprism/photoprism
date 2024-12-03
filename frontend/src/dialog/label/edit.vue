@@ -29,7 +29,7 @@
         <v-card-actions class="pt-0 px-6">
           <v-row class="pa-2">
             <v-col cols="12" class="text-right">
-              <v-btn variant="flat" color="secondary-light" class="action-cancel" @click.stop="close">
+              <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
               <v-btn variant="flat" color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">

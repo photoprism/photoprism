@@ -9,13 +9,13 @@
             </button>
           </td>
           <td class="text-center">
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
+            <v-btn icon size="small" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
               <v-icon v-if="props.item.AccShare" color="surface-variant">mdi-check</v-icon>
               <v-icon v-else color="surface-variant">mdi-cog</v-icon>
             </v-btn>
           </td>
           <td class="text-center">
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
+            <v-btn icon size="small" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
               <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
               <!-- TODO: change icon -->
               <v-icon v-else-if="props.item.AccSync" color="surface-variant">sync</v-icon>
@@ -27,10 +27,10 @@
             {{ formatDate(props.item.SyncDate) }}
           </td>
           <td class="hidden-xs text-right" nowrap>
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
+            <v-btn icon size="small" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
               <v-icon color="surface-variant">mdi-delete</v-icon>
             </v-btn>
-            <v-btn icon size="small" variant="text" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
+            <v-btn icon size="small" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
               <v-icon color="surface-variant">mdi-pencil</v-icon>
             </v-btn>
           </td>
@@ -45,7 +45,7 @@
       </p>
 
       <v-form ref="form" lazy-validation class="p-form-settings mt-2" accept-charset="UTF-8" @submit.prevent="add">
-        <v-btn v-if="user.hasWebDAV()" variant="flat" color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
+        <v-btn v-if="user.hasWebDAV()" color="button" variant="flat" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
           <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
         </v-btn>

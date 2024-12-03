@@ -34,21 +34,19 @@
                   hide-details
                   required
                   autofocus
-                  flat
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  color="surface-variant"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onSetup"
                 ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
               </v-col>
             </v-row>
@@ -56,7 +54,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-close ml-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-close mr-2" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
                 <v-btn variant="flat" color="primary-button" class="action-setup compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
@@ -70,7 +68,7 @@
         <template v-else-if="page === 'confirm'">
           <v-card-text class="py-0">
             <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -108,7 +106,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
                 <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
@@ -132,17 +130,15 @@
                   mask="nnn nnn nnn nnn"
                   hide-details
                   readonly
-                  flat
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
                   append-icon="mdi-content-copy"
                   class="input-recoverycode"
-                  color="surface-variant"
                   @click:append="onCopyRecoveryCode"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place.</translate>
                 <translate>It is a one-time use code that will disable 2FA for your account when you use it.</translate>
               </v-col>
@@ -151,7 +147,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
                 <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate compact mr-0" @click.stop="onActivate">
@@ -171,11 +167,11 @@
               <v-col cols="12" class="pa-2 text-body-2">
                 <translate>Two-factor authentication has been enabled for your account.</translate>
               </v-col>
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account.</translate>
                 <translate>It is a one-time use code that will disable 2FA for your account when you use it.</translate>
               </v-col>
-              <v-col cols="12" class="pa-2 text-body-1">
+              <v-col cols="12" class="pa-2 text-body-2">
                 <translate>To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:</translate>
               </v-col>
               <v-col cols="12" class="pa-2">
@@ -186,7 +182,6 @@
                   :type="showPassword ? 'text' : 'password'"
                   hide-details
                   required
-                  flat
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="current-password"
@@ -194,7 +189,6 @@
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  color="surface-variant"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onDeactivate"
                 ></v-text-field>
@@ -204,10 +198,10 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="primary-button" class="action-deactivate compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
+                <v-btn variant="flat" color="primary-button" class="action-deactivate compact mr-2" :disabled="setupDisabled()" @click.stop="onDeactivate">
                   <translate>Deactivate</translate>
                 </v-btn>
-                <v-btn variant="flat" color="secondary-light" class="action-close mr-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
               </v-col>
@@ -226,7 +220,7 @@
           <v-card-actions class="pa-2">
             <v-row class="pa-2">
               <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="secondary-light" class="action-close mr-0" @click.stop="close">
+                <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
               </v-col>

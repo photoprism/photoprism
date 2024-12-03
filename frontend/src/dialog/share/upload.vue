@@ -41,7 +41,7 @@
             </v-autocomplete>
           </v-col>
           <v-col cols="12" class="text-right pt-6">
-            <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
+            <v-btn variant="flat" color="button" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
             <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" theme="dark" class="action-setup ma-0" @click.stop="setup">

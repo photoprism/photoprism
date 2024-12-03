@@ -31,7 +31,7 @@
       <v-card-actions class="pt-0 px-2">
         <v-row class="px-2">
           <v-col cols="12"  class="text-right py-2">
-            <v-btn variant="flat" color="secondary-light" class="action-close compact" @click.stop="close">
+            <v-btn variant="flat" color="button" class="action-close compact" @click.stop="close">
               <translate>No thanks</translate>
             </v-btn>
             <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions" target="_blank" variant="flat" color="primary-button" class="text-white action-about compact">

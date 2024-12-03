@@ -310,7 +310,7 @@
             </v-col>
 
             <v-col v-if="!disabled" cols="12" :class="rtl ? 'text-left' : 'text-right'" class="pt-6">
-              <v-btn variant="flat" color="secondary-light" class="compact action-close ma-1" @click.stop="close">
+              <v-btn color="button" variant="flat" class="compact action-close ma-1" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
               <v-btn color="primary-button" variant="flat" class="compact action-apply action-approve ma-1" @click.stop="save(false)">

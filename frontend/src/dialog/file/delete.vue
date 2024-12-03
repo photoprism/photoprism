@@ -12,7 +12,7 @@
             </div>
           </v-col>
           <v-col cols="12" class="text-right pt-6">
-            <v-btn variant="flat" color="secondary-light" class="action-cancel" @click.stop="cancel">
+            <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
             <v-btn color="primary-button" variant="flat" class="action-confirm" @click.stop="confirm">

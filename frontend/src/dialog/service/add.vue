@@ -43,7 +43,7 @@
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-col>
           <v-col cols="12" class="text-right pt-2">
-            <v-btn variant="flat" color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
+            <v-btn variant="flat" color="button" class="action-cancel ml-2" @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
             <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">

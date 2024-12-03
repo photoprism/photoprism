@@ -38,7 +38,7 @@ let themes = {
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
       card: "#232425",
-      button: "#eb7c7c",
+      button: "#232425",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
       "primary-darken-1": "#8265bf",
@@ -614,6 +614,11 @@ export const All = () => {
         colors: theme.colors ? theme.colors : {},
         variables: theme.variables ? theme.variables : variables,
       };
+
+      // TODO: Make sure all themes have a button color defined, so this workaround is not needed anymore.
+      if (typeof result[theme.name].colors.button === "undefined") {
+        result[theme.name].colors.button = result[theme.name].colors["secondary-light"];
+      }
     }
   }
 

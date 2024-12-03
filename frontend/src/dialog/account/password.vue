@@ -24,8 +24,6 @@
                 v-model="oldPassword"
                 hide-details
                 required
-                variant="solo"
-                flat
                 type="password"
                 autocorrect="off"
                 autocapitalize="none"
@@ -34,7 +32,6 @@
                 :maxlength="maxLength"
                 :label="$gettext('Current Password')"
                 class="input-current-password"
-                color="surface-variant"
               ></v-text-field>
             </v-col>
 
@@ -44,8 +41,6 @@
                 required
                 counter
                 persistent-hint
-                variant="solo"
-                flat
                 type="password"
                 :disabled="busy"
                 :minlength="minLength"
@@ -55,7 +50,6 @@
                 autocomplete="new-password"
                 :label="$gettext('New Password')"
                 class="input-new-password"
-                color="surface-variant"
                 :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), { n: minLength })"
               ></v-text-field>
             </v-col>
@@ -66,8 +60,6 @@
                 required
                 counter
                 persistent-hint
-                variant="solo"
-                flat
                 type="password"
                 :disabled="busy"
                 :minlength="minLength"
@@ -77,7 +69,6 @@
                 autocomplete="new-password"
                 :label="$gettext('Retype Password')"
                 class="input-retype-password"
-                color="surface-variant"
                 :hint="$gettext('Please confirm your new password.')"
                 @keyup.enter="onConfirm"
               ></v-text-field>
@@ -87,7 +78,7 @@
         <v-card-actions class="pt-1 pb-2">
           <v-row class="pa-2">
             <v-col cols="12" class="text-right">
-              <v-btn variant="flat" color="secondary-light" class="action-cancel ml-0" @click.stop="close">
+              <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
               <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">

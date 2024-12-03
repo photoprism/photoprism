@@ -35,7 +35,7 @@ body.dark-theme .v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
     opacity: 0.48;
 }
 
-#photoprism .text-link {
+.text-link {
     color: rgb(var(--v-theme-primary, #ffffff));
     text-decoration: none;
 }

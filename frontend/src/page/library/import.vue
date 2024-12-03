@@ -58,7 +58,7 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" class="ml-2 action-cancel" @click.stop="cancelImport()">
+        <v-btn :disabled="!busy || !ready" color="button" class="ml-2 action-cancel" @click.stop="cancelImport()">
           <translate>Cancel</translate>
         </v-btn>
 

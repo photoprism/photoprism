@@ -157,7 +157,7 @@
       <v-card-actions class="pt-0 pb-2 px-2">
         <v-row class="pa-2">
           <v-col cols="12" class="text-right pt-6 pb-0">
-            <v-btn variant="flat" color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
+            <v-btn variant="flat" color="button" class="action-cancel ml-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
             <v-btn variant="flat" color="primary-button" class="action-save compact" @click.stop="save">

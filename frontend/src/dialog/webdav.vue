@@ -14,29 +14,29 @@
         </v-row>
       </v-card-title>
 
-      <v-card-text class="pa-2 text-body-1">
+      <v-card-text class="pa-2 text-body-2">
         <translate>WebDAV clients can connect to PhotoPrism using the following URL:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-1">
+      <v-card-text class="pa-2 text-body-2">
         <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="surface-variant" :model-value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-1 clickable" @click="windowsHelp($event)">
+      <v-card-text class="pa-2 text-body-2 clickable" @click="windowsHelp($event)">
         <translate>On Windows, enter the following resource in the connection dialog:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-1">
+      <v-card-text class="pa-2 text-body-2">
         <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="surface-variant" :model-value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-1">
+      <v-card-text class="pa-2 text-body-2">
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-1">
-        <v-alert color="primary-darken-2" icon="mdi-information" class="pa-2" type="info" variant="outlined">
-          <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
+      <v-card-text class="pa-2 text-body-2">
+        <v-alert color="primary" icon="mdi-information" class="pa-2" variant="outlined">
+          <a class="text-link" style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>
