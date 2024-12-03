@@ -4,8 +4,8 @@
       <template v-for="file in model.fileModels()">
         <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px" :title="file.baseName(70)">
           <v-expansion-panel-text>
-            <v-card>
-              <v-card-text class="bg-white pa-0">
+            <v-card tile>
+              <v-card-text class="pa-0">
                 <v-container fluid class="pa-0">
                   <v-alert v-if="file.Error" type="error" class="my-0 text-capitalize">
                     {{ file.Error }}
@@ -13,7 +13,7 @@
                   <v-row class="d-flex align-stretch" align="center" justify="center">
                     <v-col cols="12" class="pa-0 flex-grow-1">
                       <div class="v-table__overflow">
-                        <v-table class="v-datatable v-table photo-files d-flex">
+                        <v-table class="photo-files d-flex bg-transparent">
                           <tbody>
                             <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                               <td>
@@ -197,11 +197,11 @@
                               <td>
                                 <v-select
                                   v-model="file.Orientation"
-                                  flat
                                   variant="solo"
+                                  bg-color="transparent"
+                                  density="compact"
                                   autocomplete="off"
                                   hide-details
-                                  color="surface-variant"
                                   :items="options.Orientations()"
                                   item-title="text"
                                   item-value="value"

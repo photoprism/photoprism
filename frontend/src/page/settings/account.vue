@@ -10,12 +10,7 @@
                 <v-col md="2" class="pa-2 hidden-sm-and-down">
                   <v-text-field
                     v-model="user.Details.NameTitle"
-                    hide-details
                     required
-                    flat
-                    color="surface-variant"
-                    bg-color="secondary-light"
-                    variant="solo"
                     density="comfortable"
                     :disabled="busy"
                     maxlength="32"
@@ -33,10 +28,6 @@
                     v-model="user.Details.GivenName"
                     hide-details
                     required
-                    flat
-                    color="surface-variant"
-                    bg-color="secondary-light"
-                    variant="solo"
                     density="comfortable"
                     :disabled="busy"
                     maxlength="64"
@@ -54,9 +45,6 @@
                     v-model="user.Details.FamilyName"
                     hide-details
                     required
-                    color="surface-variant"
-                    bg-color="secondary-light"
-                    variant="solo"
                     density="comfortable"
                     flat
                     :disabled="busy"
@@ -75,9 +63,6 @@
                     v-model="user.DisplayName"
                     hide-details
                     required
-                    color="surface-variant"
-                    bg-color="secondary-light"
-                    variant="solo"
                     flat
                     :disabled="busy"
                     maxlength="200"
@@ -95,9 +80,6 @@
                     v-model="user.Email"
                     hide-details
                     required
-                    color="surface-variant"
-                    bg-color="secondary-light"
-                    variant="solo"
                     flat
                     validate-on="blur"
                     type="email"
@@ -123,10 +105,6 @@
               <v-textarea
                 v-model="user.Details.Bio"
                 auto-grow
-                flat
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
                 hide-details
                 rows="2"
                 class="input-bio"
@@ -144,10 +122,6 @@
               <v-textarea
                 v-model="user.Details.About"
                 auto-grow
-                flat
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
                 hide-details
                 rows="2"
                 class="input-about"
@@ -164,20 +138,20 @@
           </v-row>
         </v-card-actions>
       </v-card>
-      <v-card flat tile class="mt-0 px-1 surface">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-1 text-body-2">
           <translate>Security and Access</translate>
         </v-card-title>
         <v-card-actions>
           <v-row align="start">
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block variant="flat" density="default" color="secondary-light" class="action-change-password" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
+              <v-btn block variant="flat" density="default" class="action-change-password" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                 <translate>Change Password</translate>
                 <v-icon :end="!rtl" :start="rtl">mdi-lock</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block variant="flat" density="default" color="secondary-light" class="action-passcode-dialog" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
+              <v-btn block variant="flat" density="default" class="action-passcode-dialog" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                 <translate>2-Factor Authentication</translate>
                 <v-icon v-if="user.AuthMethod === '2fa'" :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
                 <!-- TODO: change icons -->
@@ -186,13 +160,13 @@
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block variant="flat" density="default" color="secondary-light" class="action-apps-dialog" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
+              <v-btn block variant="flat" density="default" class="action-apps-dialog" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
                 <v-icon :end="!rtl" :start="rtl">mdi-cellphone-link</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6" class="pa-2">
-              <v-btn block variant="flat" density="default" color="secondary-light" class="action-webdav-dialog" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
+              <v-btn block variant="flat" density="default" class="action-webdav-dialog" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
                 <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
               </v-btn>
@@ -200,7 +174,7 @@
           </v-row>
         </v-card-actions>
       </v-card>
-      <v-card flat tile class="mt-0 px-1 surface">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-1 text-body-2">
           <translate>Birth Date</translate>
         </v-card-title>
@@ -214,10 +188,6 @@
                 autocomplete="off"
                 hide-no-data
                 hide-details
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
-                flat
                 item-title="text"
                 item-value="value"
                 :items="options.Days()"
@@ -236,10 +206,6 @@
                 autocomplete="off"
                 hide-no-data
                 hide-details
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
-                flat
                 item-title="text"
                 item-value="value"
                 :items="options.MonthsShort()"
@@ -256,14 +222,6 @@
                 :disabled="busy"
                 :label="$gettext('Year')"
                 autocomplete="off"
-                hide-no-data
-                hide-details
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
-                flat
-                item-title="text"
-                item-value="value"
                 :items="options.Years()"
                 :rules="[(v) => v === -1 || (v >= 1000 && v <= 9999) || $gettext('Invalid')]"
                 density="comfortable"
@@ -275,7 +233,7 @@
           </v-row>
         </v-card-actions>
       </v-card>
-      <v-card flat tile class="mt-0 px-1 surface">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-1 text-body-2">
           <translate>Contact Details</translate>
         </v-card-title>
@@ -284,13 +242,7 @@
             <v-col cols="12" sm="7" class="pa-2">
               <v-text-field
                 v-model="user.Details.Location"
-                hide-details
-                required
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
                 density="comfortable"
-                flat
                 :disabled="busy"
                 maxlength="500"
                 autocomplete="off"
@@ -307,13 +259,7 @@
                 v-model="user.Details.Country"
                 :disabled="busy"
                 :label="$gettext('Country')"
-                hide-no-data
-                hide-details
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
                 density="comfortable"
-                flat
                 autocomplete="off"
                 item-value="Code"
                 item-title="Name"
@@ -329,11 +275,7 @@
                 v-model="user.Details.SiteURL"
                 hide-details
                 required
-                color="surface-variant"
-                bg-color="secondary-light"
-                variant="solo"
                 density="comfortable"
-                flat
                 :disabled="busy"
                 type="url"
                 maxlength="500"

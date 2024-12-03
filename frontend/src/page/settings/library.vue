@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-library py-2">
     <v-form ref="form" lazy-validation class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
-      <v-card flat tile class="mt-0 px-1 surface">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-0">
           <h3 class="text-body-2 mb-0">
             <translate>Index</translate>
@@ -61,7 +61,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card flat tile class="mt-0 px-1 surface">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-0" :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
           <h3 class="text-body-2 mb-0">
             <translate>Stacks</translate>

@@ -148,12 +148,6 @@ nav .v-list__item__title.title {
     font-size: 24px;
 }
 
-#photoprism .p-page a,
-#photoprism .text-link {
-    text-decoration: none;
-    color: #333333;
-}
-
 #photoprism .theme--dark.v-sheet .text-link,
 #photoprism .theme--dark.v-card .text-link {
     color: white;

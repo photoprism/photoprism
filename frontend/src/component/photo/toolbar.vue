@@ -75,19 +75,16 @@
 
     <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
       <v-card-text>
-        <v-row>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-countries-select">
+        <v-row dense>
+          <v-col cols="12" sm="6" md="3" class="p-countries-select">
             <v-select
               :model-value="filter.country"
               :label="$gettext('Country')"
               :menu-props="{ maxHeight: 346 }"
-              flat
               single-line
-              variant="solo"
               hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="countryOptions"
               item-title="Name"
               item-value="ID"
@@ -100,18 +97,15 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-camera-select">
+          <v-col cols="12" sm="6" md="3" class="p-camera-select">
             <v-select
               :model-value="filter.camera"
               :label="$gettext('Camera')"
               :menu-props="{ maxHeight: 346 }"
-              flat
               single-line
-              variant="solo"
               hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="cameraOptions"
               item-title="Name"
               item-value="ID"
@@ -123,18 +117,15 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-view-select">
+          <v-col cols="12" sm="6" md="3" class="p-view-select">
             <v-select
               id="viewSelect"
               :model-value="settings.view"
               :label="$gettext('View')"
-              flat
               single-line
-              variant="solo"
               hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="viewOptions"
               item-title="text"
               item-value="value"
@@ -146,18 +137,14 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-time-select">
+          <v-col cols="12" sm="6" md="3" class="p-time-select">
             <v-select
               :model-value="filter.order"
               :label="$gettext('Sort Order')"
               :menu-props="{ maxHeight: 400 }"
-              flat
               single-line
-              variant="solo"
-              hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="sortOptions"
               item-title="text"
               item-value="value"
@@ -169,18 +156,14 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-year-select">
+          <v-col cols="12" sm="6" md="3" class="p-year-select">
             <v-select
               :model-value="filter.year"
               :label="$gettext('Year')"
               :menu-props="{ maxHeight: 346 }"
-              flat
               single-line
-              variant="solo"
-              hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="yearOptions()"
               item-title="text"
               item-value="value"
@@ -192,18 +175,14 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-month-select">
+          <v-col cols="12" sm="6" md="3" class="p-month-select">
             <v-select
               :model-value="filter.month"
               :label="$gettext('Month')"
               :menu-props="{ maxHeight: 346 }"
-              flat
               single-line
-              variant="solo"
-              hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="monthOptions()"
               item-title="text"
               item-value="value"
@@ -215,11 +194,11 @@
             >
             </v-select>
           </v-col>
-          <!-- v-col cols="12" sm="6" md="3" class="pa-2 p-lens-select">
+          <!-- v-col cols="12" sm="6" md="3" class="p-lens-select">
               <v-select @change="dropdownChange"
                         :label="labels.lens"
                         flat
-                        variant="solo"
+                        variant="solo-filled"
                         hide-details
                         color="surface-variant"
                         bg-color="secondary-light"
@@ -229,18 +208,15 @@
                         :items="lensOptions">
               </v-select>
           </v-col -->
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-color-select">
+          <v-col cols="12" sm="6" md="3" class="p-color-select">
             <v-select
               :model-value="filter.color"
               :label="$gettext('Color')"
               :menu-props="{ maxHeight: 346 }"
-              flat
               single-line
-              variant="solo"
               hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="colorOptions()"
               item-title="Name"
               item-value="Slug"
@@ -252,18 +228,15 @@
             >
             </v-select>
           </v-col>
-          <v-col cols="12" sm="6" md="3" class="pa-2 p-category-select">
+          <v-col cols="12" sm="6" md="3" class="p-category-select">
             <v-select
               :model-value="filter.label"
               :label="$gettext('Category')"
               :menu-props="{ maxHeight: 346 }"
-              flat
               single-line
-              variant="solo"
               hide-details
-              color="surface-variant"
+              variant="solo-filled"
               density="comfortable"
-              bg-color="secondary"
               :items="categoryOptions"
               item-title="Name"
               item-value="Slug"

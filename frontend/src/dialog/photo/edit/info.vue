@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-photo-advanced">
     <v-form ref="form" lazy-validation accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
-        <v-table class="v-datatable v-table">
+        <v-table class="bg-transparent">
           <tbody>
             <tr>
               <td>UID</td>
@@ -26,7 +26,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat variant="solo" autocomplete="off" hide-details color="surface-variant" :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"> </v-select>
+                <v-select v-model="model.Type" variant="solo" bg-color="transparent" density="compact" autocomplete="off" hide-details :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"></v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -187,7 +187,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field v-model="model.CellAccuracy" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="surface-variant" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" variant="solo" bg-color="transparent" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" type="number" suffix="m" :max-width="100" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>

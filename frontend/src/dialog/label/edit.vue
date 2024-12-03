@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="500" class="dialog-label-edit" color="surface" @keydown.esc="close">
+  <v-dialog :model-value="show" persistent max-width="500" class="dialog-label-edit" color="background" @keydown.esc="close">
     <v-form ref="form" lazy-validation class="form-label-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card elevation="24">
         <v-card-title class="pb-0">

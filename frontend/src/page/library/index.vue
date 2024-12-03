@@ -13,7 +13,7 @@
         <v-autocomplete
           v-model="settings.index.path"
           color="surface-variant"
-          class="my-6 input-index-folder"
+          class="mt-6 input-index-folder"
           hide-details
           hide-no-data
           flat
@@ -30,10 +30,10 @@
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="surface-variant" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-row align="start" class="pb-6">
+        <v-row align="start" class="mt-3 mb-4">
           <v-col cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.index.rescan"
@@ -55,11 +55,11 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="secondary-light" class="ml-2 mt-2 action-cancel" @click.stop="cancelIndexing()">
+        <v-btn :disabled="!busy || !ready" variant="flat" class="ml-2 mt-2 action-cancel" @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="ml-2 mt-2 action-index" @click.stop="startIndexing()">
+        <v-btn :disabled="busy || !ready" base-color="primary-button" class="ml-2 mt-2 action-index" @click.stop="startIndexing()">
           <translate>Start</translate>
           <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
         </v-btn>

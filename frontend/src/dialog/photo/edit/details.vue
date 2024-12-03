@@ -3,7 +3,7 @@
     <v-form ref="form" lazy-validation class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
       <v-row class="pa-2 d-flex align-stretch" align="start">
         <v-col class="pa-2 p-photo d-flex align-stretch" cols="12" sm="4" md="2">
-          <v-card tile class="pa-0 ma-0 elevation-0 flex-grow-1">
+          <v-card tile color="background" class="pa-0 ma-0 elevation-0 flex-grow-1">
             <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card elevation-0 clickable" @click.exact="openPhoto()">
 </v-img>
           </v-card>
@@ -17,17 +17,14 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                variant="solo"
-                flat
                 :label="$pgettext('Photo', 'Title')"
                 placeholder=""
-                color="surface-variant"
                 autocomplete="off"
                 class="input-title"
               ></v-text-field>
             </v-col>
 
-            <v-col cols="4" md="1" class="pa-2">
+            <v-col cols="4" lg="1" class="pa-2">
               <v-autocomplete
                 v-model="model.Day"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -36,10 +33,7 @@
                 :label="$gettext('Day')"
                 autocomplete="off"
                 hide-details
-                variant="solo"
-                flat
                 hide-no-data
-                color="surface-variant"
                 :items="options.Days()"
                 item-title="text"
                 item-value="value"
@@ -48,7 +42,7 @@
               >
               </v-autocomplete>
             </v-col>
-            <v-col cols="4" md="1" class="pa-2">
+            <v-col cols="4" lg="1" class="pa-2">
               <v-autocomplete
                 v-model="model.Month"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -57,10 +51,7 @@
                 :label="$gettext('Month')"
                 autocomplete="off"
                 hide-details
-                variant="solo"
-                flat
                 hide-no-data
-                color="surface-variant"
                 :items="options.MonthsShort()"
                 item-title="text"
                 item-value="value"
@@ -69,7 +60,7 @@
               >
               </v-autocomplete>
             </v-col>
-            <v-col cols="4" md="2" class="pa-2">
+            <v-col cols="4" lg="2" class="pa-2">
               <v-autocomplete
                 v-model="model.Year"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -78,10 +69,7 @@
                 :label="$gettext('Year')"
                 autocomplete="off"
                 hide-details
-                variant="solo"
-                flat
                 hide-no-data
-                color="surface-variant"
                 :items="options.Years()"
                 item-title="text"
                 item-value="value"
@@ -91,7 +79,7 @@
               </v-autocomplete>
             </v-col>
 
-            <v-col cols="6" md="2" class="pa-2">
+            <v-col cols="6" lg="2" class="pa-2">
               <!-- TODO: check property return-masked-value TEST -->
               <v-text-field
                 v-model="time"
@@ -102,11 +90,8 @@
                 autocorrect="off"
                 autocapitalize="none"
                 hide-details
-                variant="solo"
-                flat
                 return-masked-value
                 mask="##:##:##"
-                color="surface-variant"
                 class="input-local-time"
               ></v-text-field>
             </v-col>
@@ -123,11 +108,8 @@
                 :readonly="!!(model.Lat || model.Lng)"
                 :label="$gettext('Country')"
                 hide-details
-                variant="solo"
-                flat
                 hide-no-data
                 autocomplete="off"
-                color="surface-variant"
                 item-value="Code"
                 item-title="Name"
                 :items="countries"
@@ -146,14 +128,11 @@
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Latitude')"
                 placeholder=""
-                color="surface-variant"
                 class="input-latitude"
                 @paste="pastePosition"
               ></v-text-field>
@@ -165,20 +144,17 @@
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Longitude')"
                 placeholder=""
-                color="surface-variant"
                 class="input-longitude"
                 @paste="pastePosition"
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" sm="6" class="pa-2 p-camera-select">
+            <v-col cols="12" md="6" class="pa-2 p-camera-select">
               <v-select
                 v-model="model.CameraID"
                 :append-icon="model.CameraSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -187,9 +163,6 @@
                 :menu-props="{ maxHeight: 346 }"
                 autocomplete="off"
                 hide-details
-                variant="solo"
-                flat
-                color="surface-variant"
                 item-value="ID"
                 item-title="Name"
                 :items="cameraOptions"
@@ -199,11 +172,11 @@
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.Iso" :disabled="disabled" hide-details variant="solo" flat autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" color="surface-variant" class="input-iso"></v-text-field>
+              <v-text-field v-model="model.Iso" :disabled="disabled" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" class="input-iso"></v-text-field>
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details variant="solo" flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" color="surface-variant" class="input-exposure"></v-text-field>
+              <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" class="input-exposure"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6" class="pa-2 p-lens-select">
@@ -215,9 +188,6 @@
                 :menu-props="{ maxHeight: 346 }"
                 autocomplete="off"
                 hide-details
-                variant="solo"
-                flat
-                color="surface-variant"
                 item-value="ID"
                 item-title="Name"
                 :items="lensOptions"
@@ -227,11 +197,11 @@
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details variant="solo" flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" color="surface-variant" class="input-fnumber"></v-text-field>
+              <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" class="input-fnumber"></v-text-field>
             </v-col>
 
             <v-col cols="6" md="3" class="pa-2">
-              <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details variant="solo" flat autocomplete="off" :label="$gettext('Focal Length')" placeholder="" color="surface-variant" class="input-focal-length"></v-text-field>
+              <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details autocomplete="off" :label="$gettext('Focal Length')" placeholder="" class="input-focal-length"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6" class="pa-2">
@@ -241,12 +211,9 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 :label="$gettext('Artist')"
                 placeholder=""
-                color="surface-variant"
                 class="input-artist"
               ></v-text-field>
             </v-col>
@@ -258,12 +225,9 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 :label="$gettext('Copyright')"
                 placeholder=""
-                color="surface-variant"
                 class="input-copyright"
               ></v-text-field>
             </v-col>
@@ -275,14 +239,11 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('License')"
                 placeholder=""
                 :rows="1"
-                color="surface-variant"
                 class="input-license"
               ></v-textarea>
             </v-col>
@@ -294,14 +255,11 @@
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Subject')"
                 placeholder=""
                 :rows="1"
-                color="surface-variant"
                 class="input-subject"
               ></v-textarea>
             </v-col>
@@ -312,14 +270,11 @@
                 :append-icon="model.DescriptionSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Description')"
                 placeholder=""
                 :rows="1"
-                color="surface-variant"
                 class="input-description"
               ></v-textarea>
             </v-col>
@@ -330,14 +285,11 @@
                 :append-icon="model.Details.KeywordsSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Keywords')"
                 placeholder=""
                 :rows="1"
-                color="surface-variant"
                 class="input-keywords"
               ></v-textarea>
             </v-col>
@@ -348,14 +300,11 @@
                 :append-icon="model.Details.NotesSrc === 'mdi-human-male' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
-                variant="solo"
-                flat
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Notes')"
                 placeholder=""
                 :rows="1"
-                color="surface-variant"
                 class="input-notes"
               ></v-textarea>
             </v-col>

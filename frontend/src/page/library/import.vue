@@ -12,7 +12,7 @@
         <v-autocomplete
           v-model="settings.import.path"
           color="surface-variant"
-          class="my-6 input-import-folder"
+          class="mt-6 input-import-folder"
           hide-details
           hide-no-data
           flat
@@ -29,10 +29,10 @@
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="surface-variant" height="1.5em" :model-value="completed" :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear :model-value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-row align="start" class="mb-3">
+        <v-row align="start" class="mt-3 mb-4">
           <v-col cols="12" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.import.move"
@@ -58,7 +58,7 @@
           </v-col>
         </v-row>
 
-        <v-btn :disabled="!busy || !ready" color="secondary-light" class="ml-2 action-cancel" @click.stop="cancelImport()">
+        <v-btn :disabled="!busy || !ready" class="ml-2 action-cancel" @click.stop="cancelImport()">
           <translate>Cancel</translate>
         </v-btn>
 

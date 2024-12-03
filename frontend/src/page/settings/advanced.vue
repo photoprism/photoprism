@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-advanced py-2">
     <v-form ref="form" lazy-validation class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
-      <v-card flat tile class="mt-0 px-1 surface">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-actions v-if="$config.values.restart">
           <v-row align="start">
             <v-col cols="12" class="pa-2 text-left">

@@ -49,20 +49,17 @@
       </v-toolbar>
       <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
         <v-card-text>
-          <v-row>
+          <v-row dense>
             <v-col cols="12" sm="4" class="pa-2 p-year-select">
               <v-select
                 :model-value="filter.year"
                 :label="$gettext('Year')"
                 :disabled="context === 'state'"
                 :menu-props="{ maxHeight: 346 }"
-                flat
                 single-line
-                variant="solo"
                 hide-details
-                color="surface-variant"
+                variant="solo-filled"
                 density="comfortable"
-                bg-color="secondary"
                 :items="yearOptions()"
                 item-title="text"
                 item-value="value"
@@ -79,13 +76,10 @@
                 :model-value="filter.category"
                 :label="$gettext('Category')"
                 :menu-props="{ maxHeight: 346 }"
-                flat
                 single-line
-                variant="solo"
                 hide-details
-                color="surface-variant"
+                variant="solo-filled"
                 density="comfortable"
-                bg-color="secondary"
                 :items="categories"
                 item-title="text"
                 item-value="value"
@@ -102,13 +96,10 @@
                 :model-value="filter.order"
                 :label="$gettext('Sort Order')"
                 :menu-props="{ maxHeight: 400 }"
-                flat
                 single-line
-                variant="solo"
                 hide-details
-                color="surface-variant"
+                variant="solo-filled"
                 density="comfortable"
-                bg-color="secondary"
                 :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
                 item-title="text"
                 item-value="value"
@@ -126,7 +117,7 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>

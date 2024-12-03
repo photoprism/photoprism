@@ -1,5 +1,5 @@
 /* Component Color Defaults */
-
+/*
 .card {
     background-color: #e0e0e0;
 }
@@ -99,9 +99,9 @@ body.dark-theme #photoprism .theme--light.v-select .v-select__selections {
 body.dark-theme #photoprism .v-tabs .v-badge__badge {
     color: #000000;
 }
-
+*/
 /* Default Theme */
-
+/*
 body.dark-theme.theme-default,
 .theme-default .v-main__wrap,
 .theme-default .p-page,
@@ -206,3 +206,4 @@ body.dark-theme.theme-default,
 #photoprism.theme-default .cards-view .card.is-selected .card-details .v-icon {
     color: #fff;
 }
+*/

@@ -108,26 +108,97 @@ config.update().finally(() => {
     rtl,
     defaults: {
       VBtn: {
+        flat: true,
         variant: "flat",
+        ripple: false,
+      },
+      VCheckbox: {
+        density: "compact",
+        color: "surface-variant",
+        hideDetails: "auto",
+        ripple: false,
       },
       VTextField: {
         flat: true,
-        variant: "solo",
-        "hide-details": true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        hideDetails: "auto",
+      },
+      VTextarea: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        hideDetails: "auto",
       },
       VAutocomplete: {
         flat: true,
         variant: "solo-filled",
-        "hide-details": true,
+        color: "surface-variant",
+        itemTitle: "text",
+        itemValue: "value",
+        hideDetails: "auto",
+        hideNoData: true,
+      },
+      VCombobox: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        itemTitle: "text",
+        itemValue: "value",
+        hideDetails: "auto",
       },
       VSelect: {
         flat: true,
         variant: "solo-filled",
-        "hide-details": true,
+        color: "surface-variant",
+        itemTitle: "text",
+        itemValue: "value",
+        hideDetails: "auto",
       },
-      VCheckbox: {
+      VCard: {
         density: "compact",
-        "hide-details": true,
+        color: "background",
+        flat: true,
+        ripple: false,
+      },
+      VContainer: {
+        fluid: true,
+      },
+      VTab: {
+        color: "on-surface",
+        baseColor: "on-surface-variant",
+      },
+      VTabs: {
+        grow: true,
+        elevation: 0,
+        color: "on-surface",
+        bgColor: "secondary",
+        baseColor: "secondary",
+        sliderColor: "surface-variant",
+      },
+      VTable: {
+        density: "comfortable",
+      },
+      VDataTable: {
+        density: "comfortable",
+        color: "background",
+      },
+      VExpansionPanel: {
+        tile: true,
+        ripple: false,
+      },
+      VExpansionPanels: {
+        flat: true,
+        tile: true,
+        static: true,
+        variant: "accordion",
+        bgColor: "accent",
+        ripple: false,
+      },
+      VProgressLinear: {
+        height: 10,
+        rounded: true,
+        color: "surface-variant",
       },
     },
     icons: {

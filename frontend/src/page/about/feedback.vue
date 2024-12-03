@@ -32,9 +32,6 @@
             item-value="value"
             :label="$gettext('Category')"
             color="surface-variant"
-            bg-color="secondary-light"
-            flat
-            variant="solo"
             hide-details
             required
             autocomplete="off"
@@ -44,19 +41,19 @@
         </v-col>
 
         <v-col cols="12" class="pa-2">
-          <v-textarea v-model="form.Message" required auto-grow flat variant="solo" hide-details autocomplete="off" rows="10" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('How can we help?')"></v-textarea>
+          <v-textarea v-model="form.Message" required auto-grow hide-details autocomplete="off" rows="10" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('How can we help?')"></v-textarea>
         </v-col>
 
         <v-col cols="12" sm="6" class="pa-2">
-          <v-text-field v-model="form.UserName" flat variant="solo" hide-details autocomplete="off" color="surface-variant" bg-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
+          <v-text-field v-model="form.UserName" hide-details autocomplete="off" color="surface-variant" :label="$gettext('Name')" type="text"> </v-text-field>
         </v-col>
 
         <v-col cols="12" sm="6" class="pa-2">
-          <v-text-field v-model="form.UserEmail" flat variant="solo" hide-details required autocapitalize="none" color="surface-variant" :rules="[(v) => !!v || $gettext('Required')]" bg-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
+          <v-text-field v-model="form.UserEmail" hide-details required autocapitalize="none" color="surface-variant" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('E-Mail')" type="email"> </v-text-field>
         </v-col>
 
         <v-col cols="12" class="d-flex grow px-2 py-1">
-          <v-btn color="primary-button" class="ml-0" variant="flat" :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
+          <v-btn color="primary-button" class="ml-0" :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
             <translate>Send</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-send</v-icon>
           </v-btn>

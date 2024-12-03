@@ -6,7 +6,7 @@
           <p-photo-preview :model="model"></p-photo-preview>
         </v-col>
         <v-col class="pa-2-md-and-up ra-4-table-md-and-up" cols="12" md="10" xxl="1">
-          <v-data-table v-model="selected" :headers="listColumns" :items="model.Labels" hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">
+          <v-data-table v-model="selected" density="comfortable" color="background" :headers="listColumns" :items="model.Labels" hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">
             <template #item="props">
               <tr class="p-file">
                 <td>

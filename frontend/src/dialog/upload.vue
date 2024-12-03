@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
-    <v-card color="surface">
+    <v-card color="background">
       <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
         <v-btn icon theme="dark" @click.stop="cancel">
           <v-icon>mdi-close</v-icon>
@@ -14,18 +14,15 @@
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
-            <p class="text-subtitle-1">
+            <p class="text-body-2 pb-2">
               <!-- TODO: check property allow-overflow TEST -->
               <v-combobox
                 v-if="total === 0"
                 v-model="selectedAlbums"
-                flat
-                variant="solo"
                 hide-details
                 chips
                 closable-chips
                 multiple
-                color="surface-variant"
                 class="my-0 input-albums"
                 :items="albums"
                 item-title="Title"
@@ -57,22 +54,22 @@
               <span v-else-if="completedTotal === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear v-model="completedTotal" height="1.5em" color="surface-variant" :indeterminate="indexing">
+            <v-progress-linear v-model="completedTotal" :indeterminate="indexing" class="py-1" :height="21">
               <p class="px-2 ma-0 text-right opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >
             </v-progress-linear>
 
-            <p v-if="isDemo" class="text-body-2">
+            <p v-if="isDemo" class="text-body-2 py-2">
               <translate :translate-params="{ n: fileLimit }">You can upload up to %{n} files for test purposes.</translate>
               <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
             </p>
-            <p v-else-if="rejectNSFW" class="text-body-2">
+            <p v-else-if="rejectNSFW" class="text-body-2 py-2">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
-            <p v-if="featReview" class="text-body-1">
+            <p v-if="featReview" class="text-body-2 py-2">
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 

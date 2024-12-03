@@ -41,7 +41,7 @@
       </v-btn>
     </v-toolbar>
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" density="compact" lines="two" class="bg-transparent pa-1">
       <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">

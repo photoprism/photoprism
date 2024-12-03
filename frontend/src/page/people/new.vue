@@ -19,7 +19,7 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>

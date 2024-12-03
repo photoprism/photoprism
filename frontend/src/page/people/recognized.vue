@@ -49,7 +49,7 @@
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
-      <v-progress-linear color="surface-variant" :indeterminate="true"></v-progress-linear>
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0" style="min-height: 100vh">
       <p-subject-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-subject-clipboard>
@@ -57,7 +57,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results opacity-70" variant="outlined">
+        <v-alert v-if="results.length === 0" icon="mdi-lightbulb-outline" class="no-results opacity-70" variant="outlined">
           <h3 class="text-body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
