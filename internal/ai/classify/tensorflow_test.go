@@ -232,7 +232,7 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 		}
 
 		result, err := tensorFlow.createTensor(imageBuffer, "jpeg")
-		assert.Equal(t, tensorflow.DataType(0x1), result.DataType())
+		assert.Equal(t, tensorflow.DataType(tensorflow.Float), result.DataType())
 		assert.Equal(t, int64(1), result.Shape()[0])
 		assert.Equal(t, int64(224), result.Shape()[2])
 	})

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -75,25 +75,25 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 
 	if !f.All {
 		if txt.Yes(f.Favorite) {
-			s = s.Where("subj_favorite = 1")
+			s = s.Where("subj_favorite = TRUE")
 		} else if txt.No(f.Favorite) {
-			s = s.Where("subj_favorite = 0")
+			s = s.Where("subj_favorite = FALSE")
 		}
 
 		if !txt.Yes(f.Hidden) {
-			s = s.Where("subj_hidden = 0")
+			s = s.Where("subj_hidden = FALSE")
 		}
 
 		if txt.Yes(f.Private) {
-			s = s.Where("subj_private = 1")
+			s = s.Where("subj_private = TRUE")
 		} else if txt.No(f.Private) {
-			s = s.Where("subj_private = 0")
+			s = s.Where("subj_private = FALSE")
 		}
 
 		if txt.Yes(f.Excluded) {
-			s = s.Where("subj_excluded = 1")
+			s = s.Where("subj_excluded = TRUE")
 		} else if txt.No(f.Excluded) {
-			s = s.Where("subj_excluded = 0")
+			s = s.Where("subj_excluded = FALSE")
 		}
 	}
 

@@ -2,13 +2,14 @@ package entity
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/form"
@@ -25,22 +26,22 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	FileUID        string          `gorm:"type:VARBINARY(42);index;default:'';" json:"FileUID" yaml:"FileUID"`
-	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
-	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerName     string          `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
+	MarkerUID      string          `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
+	FileUID        string          `gorm:"type:bytes;size:42;index;default:'';" json:"FileUID" yaml:"FileUID"`
+	MarkerType     string          `gorm:"type:bytes;size:8;default:'';" json:"Type" yaml:"Type"`
+	MarkerSrc      string          `gorm:"type:bytes;size:8;default:'';" json:"Src" yaml:"Src,omitempty"`
+	MarkerName     string          `gorm:"size:160;" json:"Name" yaml:"Name,omitempty"`
 	MarkerReview   bool            `json:"Review" yaml:"Review,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
-	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
-	SubjSrc        string          `gorm:"type:VARBINARY(8);index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
-	subject        *Subject        `gorm:"foreignkey:SubjUID;association_foreignkey:SubjUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	FaceID         string          `gorm:"type:VARBINARY(64);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	SubjUID        string          `gorm:"type:bytes;size:42;index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjSrc        string          `gorm:"type:bytes;size:8;index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
+	subject        *Subject        `gorm:"foreignKey:SubjUID;"`
+	FaceID         string          `gorm:"type:bytes;size:64;index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
-	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
+	face           *Face           `gorm:"foreignKey:FaceID;"`
+	EmbeddingsJSON json.RawMessage `json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     face.Embeddings `gorm:"-" yaml:"-"`
-	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
+	LandmarksJSON  json.RawMessage `json:"-" yaml:"LandmarksJSON,omitempty"`
 	X              float32         `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
 	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
@@ -48,7 +49,7 @@ type Marker struct {
 	Q              int             `json:"Q" yaml:"Q,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
-	Thumb          string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	Thumb          string          `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
@@ -60,12 +61,13 @@ func (Marker) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
+func (m *Marker) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.MarkerUID, 'm') {
 		return nil
 	}
 
-	return scope.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	scope.Statement.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	return scope.Error
 }
 
 // NewMarker creates a new entity.
@@ -132,7 +134,7 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 
 	if !updated || m.MarkerUID == "" {
 		return false
-	} else if err := UnscopedDb().Model(m).UpdateColumns(Map{"file_uid": m.FileUID, "thumb": m.Thumb}).Error; err != nil {
+	} else if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"file_uid": m.FileUID, "thumb": m.Thumb}).Error; err != nil {
 		log.Errorf("faces: failed assigning marker %s to file %s (%s)", m.MarkerUID, m.FileUID, err)
 		return false
 	} else {
@@ -256,7 +258,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if m.SubjUID == f.SubjUID && m.FaceID == f.ID {
 		// Update matching timestamp.
 		m.MatchedAt = TimeStamp()
-		return false, m.Updates(Map{"MatchedAt": m.MatchedAt})
+		return false, m.Updates(map[string]interface{}{"MatchedAt": m.MatchedAt})
 	}
 
 	// Remember current values for comparison.
@@ -302,7 +304,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Update matching timestamp.
 	m.MatchedAt = TimeStamp()
 
-	if err := m.Updates(Map{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjUID": m.SubjUID, "SubjSrc": m.SubjSrc, "MarkerReview": false, "MatchedAt": m.MatchedAt}); err != nil {
+	if err := m.Updates(map[string]interface{}{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjUID": m.SubjUID, "SubjSrc": m.SubjSrc, "MarkerReview": false, "MatchedAt": m.MatchedAt}); err != nil {
 		return false, err
 	} else if !updated {
 		return false, nil
@@ -355,7 +357,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		Where("face_id = ?", m.FaceID).
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
-		UpdateColumns(Map{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
+		UpdateColumns(map[string]interface{}{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else if res.RowsAffected > 0 && m.face != nil {
 		log.Debugf("markers: matched %s with %s", subj, m.FaceID)
@@ -472,7 +474,7 @@ func (m *Marker) ClearSubject(src string) error {
 	}()
 
 	// Update index & resolve collisions.
-	if err := m.Updates(Map{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjUID": "", "SubjSrc": src}); err != nil {
+	if err := m.Updates(map[string]interface{}{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjUID": "", "SubjSrc": src}); err != nil {
 		return err
 	} else if m.face == nil {
 		m.subject = nil
@@ -552,9 +554,9 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove subject if set automatically.
 	if m.SubjSrc == SrcAuto {
 		m.SubjUID = ""
-		err = m.Updates(Map{"FaceID": "", "FaceDist": -1.0, "SubjUID": "", "MatchedAt": m.MatchedAt})
+		err = m.Updates(map[string]interface{}{"FaceID": "", "FaceDist": -1.0, "SubjUID": "", "MatchedAt": m.MatchedAt})
 	} else {
-		err = m.Updates(Map{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
+		err = m.Updates(map[string]interface{}{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
 	}
 
 	return updated, m.RefreshPhotos()
@@ -585,7 +587,10 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimeStamp()
-	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
+	if m.MarkerUID == "" {
+		return errors.New("markeruid required but not provided")
+	}
+	return UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Top returns the top Y coordinate as float64.

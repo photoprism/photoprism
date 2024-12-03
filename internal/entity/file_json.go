@@ -3,6 +3,8 @@ package entity
 import (
 	"encoding/json"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // MarshalJSON returns the JSON encoding.
@@ -15,45 +17,45 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Hash           string
 		Size           int64
 		Primary        bool
-		TimeIndex      *string       `json:",omitempty"`
-		MediaID        *string       `json:",omitempty"`
-		MediaUTC       int64         `json:",omitempty"`
-		InstanceID     string        `json:",omitempty"`
-		OriginalName   string        `json:",omitempty"`
-		Codec          string        `json:",omitempty"`
-		FileType       string        `json:",omitempty"`
-		MediaType      string        `json:",omitempty"`
-		Mime           string        `json:",omitempty"`
-		Sidecar        bool          `json:",omitempty"`
-		Missing        bool          `json:",omitempty"`
-		Portrait       bool          `json:",omitempty"`
-		Video          bool          `json:",omitempty"`
-		Duration       time.Duration `json:",omitempty"`
-		FPS            float64       `json:",omitempty"`
-		Frames         int           `json:",omitempty"`
-		Width          int           `json:",omitempty"`
-		Height         int           `json:",omitempty"`
-		Orientation    int           `json:",omitempty"`
-		OrientationSrc string        `json:",omitempty"`
-		Projection     string        `json:",omitempty"`
-		AspectRatio    float32       `json:",omitempty"`
-		ColorProfile   string        `json:",omitempty"`
-		MainColor      string        `json:",omitempty"`
-		Colors         string        `json:",omitempty"`
-		Luminance      string        `json:",omitempty"`
-		Diff           int           `json:",omitempty"`
-		Chroma         int16         `json:",omitempty"`
-		HDR            bool          `json:",omitempty"`
-		Watermark      bool          `json:",omitempty"`
-		Software       string        `json:",omitempty"`
-		Error          string        `json:",omitempty"`
-		ModTime        int64         `json:",omitempty"`
-		CreatedAt      time.Time     `json:",omitempty"`
-		CreatedIn      int64         `json:",omitempty"`
-		UpdatedAt      time.Time     `json:",omitempty"`
-		UpdatedIn      int64         `json:",omitempty"`
-		DeletedAt      *time.Time    `json:",omitempty"`
-		Markers        *Markers      `json:",omitempty"`
+		TimeIndex      *string        `json:",omitempty"`
+		MediaID        *string        `json:",omitempty"`
+		MediaUTC       int64          `json:",omitempty"`
+		InstanceID     string         `json:",omitempty"`
+		OriginalName   string         `json:",omitempty"`
+		Codec          string         `json:",omitempty"`
+		FileType       string         `json:",omitempty"`
+		MediaType      string         `json:",omitempty"`
+		Mime           string         `json:",omitempty"`
+		Sidecar        bool           `json:",omitempty"`
+		Missing        bool           `json:",omitempty"`
+		Portrait       bool           `json:",omitempty"`
+		Video          bool           `json:",omitempty"`
+		Duration       time.Duration  `json:",omitempty"`
+		FPS            float64        `json:",omitempty"`
+		Frames         int            `json:",omitempty"`
+		Width          int            `json:",omitempty"`
+		Height         int            `json:",omitempty"`
+		Orientation    int            `json:",omitempty"`
+		OrientationSrc string         `json:",omitempty"`
+		Projection     string         `json:",omitempty"`
+		AspectRatio    float32        `json:",omitempty"`
+		ColorProfile   string         `json:",omitempty"`
+		MainColor      string         `json:",omitempty"`
+		Colors         string         `json:",omitempty"`
+		Luminance      string         `json:",omitempty"`
+		Diff           int            `json:",omitempty"`
+		Chroma         int16          `json:",omitempty"`
+		HDR            bool           `json:",omitempty"`
+		Watermark      bool           `json:",omitempty"`
+		Software       string         `json:",omitempty"`
+		Error          string         `json:",omitempty"`
+		ModTime        int64          `json:",omitempty"`
+		CreatedAt      time.Time      `json:",omitempty"`
+		CreatedIn      int64          `json:",omitempty"`
+		UpdatedAt      time.Time      `json:",omitempty"`
+		UpdatedIn      int64          `json:",omitempty"`
+		DeletedAt      gorm.DeletedAt `json:",omitempty"`
+		Markers        *Markers       `json:",omitempty"`
 	}{
 		UID:            m.FileUID,
 		PhotoUID:       m.PhotoUID,

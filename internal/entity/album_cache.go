@@ -1,10 +1,12 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -33,7 +35,8 @@ func CachedAlbumByUID(uid string) (m Album, err error) {
 	// Find in database.
 	m = Album{}
 
-	if r := Db().First(&m, "album_uid = ?", uid); r.RecordNotFound() {
+	r := Db().First(&m, "album_uid = ?", uid)
+	if errors.Is(r.Error, gorm.ErrRecordNotFound) {
 		return m, fmt.Errorf("album not found")
 	} else if r.Error != nil {
 		return m, r.Error

@@ -4,13 +4,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func TestDialectMysql(t *testing.T) {
@@ -24,9 +25,20 @@ func TestDialectMysql(t *testing.T) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	db, err := gorm.Open(
-		"mysql",
-		"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+	db, err := gorm.Open(mysql.Open(
+		"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"),
+		&gorm.Config{
+			Logger: logger.New(
+				log,
+				logger.Config{
+					SlowThreshold:             time.Second,  // Slow SQL threshold
+					LogLevel:                  logger.Error, // Log level
+					IgnoreRecordNotFoundError: true,         // Ignore ErrRecordNotFound error for logger
+					ParameterizedQueries:      true,         // Don't include params in the SQL log
+					Colorful:                  false,        // Disable color
+				},
+			),
+		},
 	)
 
 	if err != nil || db == nil {
@@ -37,10 +49,8 @@ func TestDialectMysql(t *testing.T) {
 		return
 	}
 
-	defer db.Close()
-
-	db.LogMode(false)
-	db.SetLogger(log)
+	sqldb, _ := db.DB()
+	defer sqldb.Close()
 
 	opt := Opt(true, true, nil)
 
@@ -56,12 +66,12 @@ func TestDialectMysql(t *testing.T) {
 
 	stmt := db.Table("photos").Where("photo_description = '' OR photo_description IS NULL")
 
-	count := 0
+	count := int64(0)
 
 	// Fetch count from database.
 	if err = stmt.Count(&count).Error; err != nil {
 		t.Error(err)
 	} else {
-		assert.Equal(t, 0, count)
+		assert.Equal(t, int64(0), count)
 	}
 }

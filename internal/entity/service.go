@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
@@ -33,34 +34,34 @@ type Services []Service
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
 // - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
 type Service struct {
-	ID            uint   `gorm:"primary_key"`
-	AccName       string `gorm:"type:VARCHAR(160);"`
-	AccOwner      string `gorm:"type:VARCHAR(160);"`
-	AccURL        string `gorm:"type:VARCHAR(255);"`
-	AccType       string `gorm:"type:VARBINARY(255);"`
-	AccKey        string `gorm:"type:VARBINARY(255);"`
-	AccUser       string `gorm:"type:VARBINARY(255);"`
-	AccPass       string `gorm:"type:VARBINARY(255);"`
-	AccTimeout    string `gorm:"type:VARBINARY(16);"`
-	AccError      string `gorm:"type:VARBINARY(512);"`
+	ID            uint   `gorm:"primaryKey;"`
+	AccName       string `gorm:"size:160;"`
+	AccOwner      string `gorm:"size:160;"`
+	AccURL        string `gorm:"size:255;"`
+	AccType       string `gorm:"type:bytes;size:255;"`
+	AccKey        string `gorm:"type:bytes;size:255;"`
+	AccUser       string `gorm:"type:bytes;size:255;"`
+	AccPass       string `gorm:"type:bytes;size:255;"`
+	AccTimeout    string `gorm:"type:bytes;size:16;"`
+	AccError      string `gorm:"type:bytes;size:512;"`
 	AccErrors     int
 	AccShare      bool
 	AccSync       bool
 	RetryLimit    int
-	SharePath     string `gorm:"type:VARBINARY(1024);"`
-	ShareSize     string `gorm:"type:VARBINARY(16);"`
+	SharePath     string `gorm:"type:bytes;size:1024;"`
+	ShareSize     string `gorm:"type:bytes;size:16;"`
 	ShareExpires  int
-	SyncPath      string `gorm:"type:VARBINARY(1024);"`
-	SyncStatus    string `gorm:"type:VARBINARY(16);"`
+	SyncPath      string `gorm:"type:bytes;size:1024;"`
+	SyncStatus    string `gorm:"type:bytes;size:16;"`
 	SyncInterval  int
 	SyncDate      sql.NullTime `deepcopier:"skip"`
 	SyncUpload    bool
 	SyncDownload  bool
 	SyncFilenames bool
 	SyncRaw       bool
-	CreatedAt     time.Time  `deepcopier:"skip"`
-	UpdatedAt     time.Time  `deepcopier:"skip"`
-	DeletedAt     *time.Time `deepcopier:"skip" sql:"index"`
+	CreatedAt     time.Time      `deepcopier:"skip"`
+	UpdatedAt     time.Time      `deepcopier:"skip"`
+	DeletedAt     gorm.DeletedAt `deepcopier:"skip" sql:"index"`
 }
 
 // TableName returns the entity table name.
@@ -81,6 +82,11 @@ func AddService(form form.Service) (model *Service, err error) {
 	err = model.SaveForm(form)
 
 	return model, err
+}
+
+// Equivalent to the NewRecord of Gorm V1
+func (m *Service) IsNew() bool {
+	return m.CreatedAt.IsZero()
 }
 
 // LogErr updates the service error count and message.
@@ -104,7 +110,13 @@ func (m *Service) LogErr(err error) error {
 
 // ResetErrors resets the service and related file error messages and counters.
 func (m *Service) ResetErrors(share, sync bool) error {
-	if !share && !sync || Db().NewRecord(m) {
+	//if !share && !sync || m.IsNew() {
+	value, err := NewRecord(m)
+	if err != nil {
+		return err
+	}
+
+	if !share && !sync || value {
 		return nil
 	}
 
@@ -113,13 +125,13 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	}
 
 	if share {
-		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(Map{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(map[string]interface{}{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
 
 	if sync {
-		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Map{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(map[string]interface{}{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
@@ -127,7 +139,7 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	m.AccError = ""
 	m.AccErrors = 0
 
-	return m.Updates(Map{"acc_error": m.AccError, "acc_errors": m.AccErrors})
+	return m.Updates(map[string]interface{}{"acc_error": m.AccError, "acc_errors": m.AccErrors})
 }
 
 // SaveForm saves the entity using form data and stores it in the database.
@@ -173,7 +185,9 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Reset error counters if account already exists.
-	if !Db().NewRecord(m) {
+	value, err := NewRecord(m)
+	Log("service", "reset errors", err)
+	if value {
 		Log("service", "reset errors", m.ResetErrors(m.AccShare, m.AccSync))
 	}
 

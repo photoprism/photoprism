@@ -61,7 +61,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		fileSync.Status = entity.FileSyncUploaded
 		fileSync.RemoteDate = time.Now()
 		fileSync.RemoteSize = file.FileSize
-		fileSync.FileID = file.ID
+		fileSync.FileID = &file.ID
 		fileSync.Error = ""
 		fileSync.Errors = 0
 

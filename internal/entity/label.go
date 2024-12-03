@@ -1,11 +1,12 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/event"
@@ -26,24 +27,24 @@ type Labels []Label
 
 // Label is used for photo, album and location categorization
 type Label struct {
-	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	LabelSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
-	CustomSlug       string     `gorm:"type:VARBINARY(160);index;" json:"CustomSlug" yaml:"-"`
-	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
-	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
-	LabelDescription string     `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
-	LabelNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
-	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
-	PhotoCount       int        `gorm:"default:1" json:"PhotoCount" yaml:"-"`
-	Thumb            string     `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc         string     `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
-	PublishedAt      *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	New              bool       `gorm:"-" json:"-" yaml:"-"`
+	ID               uint           `gorm:"primaryKey;" json:"ID" yaml:"-"`
+	LabelUID         string         `gorm:"type:bytes;size:42;uniqueIndex;" json:"UID" yaml:"UID"`
+	LabelSlug        string         `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
+	CustomSlug       string         `gorm:"type:bytes;size:160;index;" json:"CustomSlug" yaml:"-"`
+	LabelName        string         `gorm:"size:160;" json:"Name" yaml:"Name"`
+	LabelPriority    int            `json:"Priority" yaml:"Priority,omitempty"`
+	LabelFavorite    bool           `json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelDescription string         `gorm:"size:2048;" json:"Description" yaml:"Description,omitempty"`
+	LabelNotes       string         `gorm:"size:1024;" json:"Notes" yaml:"Notes,omitempty"`
+	LabelCategories  []*Label       `gorm:"many2many:categories;foreignKey:ID;joinForeignKey:LabelID;References:ID;joinReferences:CategoryID" json:"-" yaml:"-"`
+	PhotoCount       int            `gorm:"default:1" json:"PhotoCount" yaml:"-"`
+	Thumb            string         `gorm:"type:bytes;size:128;index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc         string         `gorm:"type:bytes;size:8;default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	CreatedAt        time.Time      `json:"CreatedAt" yaml:"-"`
+	UpdatedAt        time.Time      `json:"UpdatedAt" yaml:"-"`
+	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	New              bool           `gorm:"-" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -64,12 +65,13 @@ func (m *Label) AfterDelete(tx *gorm.DB) (err error) {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Label) BeforeCreate(scope *gorm.Scope) error {
+func (m *Label) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.LabelUID, LabelUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
+	scope.Statement.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
+	return scope.Error
 }
 
 // NewLabel returns a new label.
@@ -120,11 +122,7 @@ func (m *Label) Delete() error {
 
 // Deleted returns true if the label is deleted.
 func (m *Label) Deleted() bool {
-	if m.DeletedAt == nil {
-		return false
-	}
-
-	return !m.DeletedAt.IsZero()
+	return m.DeletedAt.Valid
 }
 
 // Restore restores the label in the database.
@@ -185,7 +183,7 @@ func FindLabel(s string, cached bool) (m Label, err error) {
 	// Fetch and cache label from database.
 	m = Label{}
 
-	if r := Db().First(&m, "label_slug = ? OR custom_slug = ?", labelSlug, labelSlug); r.RecordNotFound() {
+	if r := Db().First(&m, "label_slug = ? OR custom_slug = ?", labelSlug, labelSlug); errors.Is(r.Error, gorm.ErrRecordNotFound) {
 		labelCache.Delete(labelSlug)
 		return m, fmt.Errorf("label not found")
 	} else if r.Error != nil {
@@ -198,7 +196,7 @@ func FindLabel(s string, cached bool) (m Label, err error) {
 }
 
 // AfterCreate sets the New column used for database callback
-func (m *Label) AfterCreate(scope *gorm.Scope) error {
+func (m *Label) AfterCreate(scope *gorm.DB) error {
 	m.New = true
 	return nil
 }
@@ -261,7 +259,7 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 				continue
 			}
 
-			if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
+			if err := db.Model(m).Association("LabelCategories").Append(sn); err != nil {
 				log.Debugf("index: failed saving label category %s (%s)", clean.Log(category), err)
 			}
 		}

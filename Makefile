@@ -73,6 +73,7 @@ test-commands: reset-sqlite run-test-commands
 test-photoprism: reset-sqlite run-test-photoprism
 test-short: reset-sqlite run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
+test-sqlite: reset-sqlite-unit run-test-sqlite
 acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance acceptance-sqlite-stop
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance-short acceptance-sqlite-stop
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop
@@ -335,6 +336,10 @@ reset-mariadb-local:
 reset-mariadb-acceptance:
 	$(info Resetting acceptance database...)
 	mysql < scripts/sql/reset-acceptance.sql
+reset-sqlite-unit:
+	$(info Resetting SQLite unit database...)
+	rm --force ./storage/testdata/unit.test.db
+	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
@@ -347,6 +352,9 @@ run-test-short:
 run-test-go:
 	$(info Running all Go tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
+run-test-sqlite:
+	$(info Running all Go tests on SQLite...)
+	PHOTOPRISM_TEST_DRIVER="sqlite" PHOTOPRISM_TEST_DSN="file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db?_foreign_keys=on&_busy_timeout=5000" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./internal/... ./pkg/...
 run-test-mariadb:
 	$(info Running all Go tests on MariaDB...)
 	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...

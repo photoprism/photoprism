@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -15,93 +15,93 @@ import (
 
 // Photo represents a photo search result.
 type Photo struct {
-	ID               uint          `json:"-" select:"photos.id"`
-	CompositeID      string        `json:"ID" select:"files.photo_id AS composite_id"`
-	UUID             string        `json:"DocumentID,omitempty" select:"photos.uuid"`
-	PhotoUID         string        `json:"UID" select:"photos.photo_uid"`
-	PhotoType        string        `json:"Type" select:"photos.photo_type"`
-	TypeSrc          string        `json:"TypeSrc" select:"photos.taken_src"`
-	TakenAt          time.Time     `json:"TakenAt" select:"photos.taken_at"`
-	TakenAtLocal     time.Time     `json:"TakenAtLocal" select:"photos.taken_at_local"`
-	TakenSrc         string        `json:"TakenSrc" select:"photos.taken_src"`
-	TimeZone         string        `json:"TimeZone" select:"photos.time_zone"`
-	PhotoPath        string        `json:"Path" select:"photos.photo_path"`
-	PhotoName        string        `json:"Name" select:"photos.photo_name"`
-	OriginalName     string        `json:"OriginalName" select:"photos.original_name"`
-	PhotoTitle       string        `json:"Title" select:"photos.photo_title"`
-	PhotoDescription string        `json:"Description" select:"photos.photo_description"`
-	PhotoYear        int           `json:"Year" select:"photos.photo_year"`
-	PhotoMonth       int           `json:"Month" select:"photos.photo_month"`
-	PhotoDay         int           `json:"Day" select:"photos.photo_day"`
-	PhotoCountry     string        `json:"Country" select:"photos.photo_country"`
-	PhotoStack       int8          `json:"Stack" select:"photos.photo_stack"`
-	PhotoFavorite    bool          `json:"Favorite" select:"photos.photo_favorite"`
-	PhotoPrivate     bool          `json:"Private" select:"photos.photo_private"`
-	PhotoIso         int           `json:"Iso" select:"photos.photo_iso"`
-	PhotoFocalLength int           `json:"FocalLength" select:"photos.photo_focal_length"`
-	PhotoFNumber     float32       `json:"FNumber" select:"photos.photo_f_number"`
-	PhotoExposure    string        `json:"Exposure" select:"photos.photo_exposure"`
-	PhotoFaces       int           `json:"Faces,omitempty" select:"photos.photo_faces"`
-	PhotoQuality     int           `json:"Quality" select:"photos.photo_quality"`
-	PhotoResolution  int           `json:"Resolution" select:"photos.photo_resolution"`
-	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"photos.photo_duration"`
-	PhotoColor       int16         `json:"Color" select:"photos.photo_color"`
-	PhotoScan        bool          `json:"Scan" select:"photos.photo_scan"`
-	PhotoPanorama    bool          `json:"Panorama" select:"photos.photo_panorama"`
-	CameraID         uint          `json:"CameraID" select:"photos.camera_id"` // Camera
-	CameraSrc        string        `json:"CameraSrc,omitempty" select:"photos.camera_src"`
-	CameraSerial     string        `json:"CameraSerial,omitempty" select:"photos.camera_serial"`
-	CameraMake       string        `json:"CameraMake,omitempty" select:"cameras.camera_make"`
-	CameraModel      string        `json:"CameraModel,omitempty" select:"cameras.camera_model"`
-	CameraType       string        `json:"CameraType,omitempty" select:"cameras.camera_type"`
-	LensID           uint          `json:"LensID" select:"photos.lens_id"` // Lens
-	LensMake         string        `json:"LensMake,omitempty" select:"lenses.lens_model"`
-	LensModel        string        `json:"LensModel,omitempty" select:"lenses.lens_make"`
-	PhotoAltitude    int           `json:"Altitude,omitempty" select:"photos.photo_altitude"`
-	PhotoLat         float64       `json:"Lat" select:"photos.photo_lat"`
-	PhotoLng         float64       `json:"Lng" select:"photos.photo_lng"`
-	CellID           string        `json:"CellID" select:"photos.cell_id"` // Cell
-	CellAccuracy     int           `json:"CellAccuracy,omitempty" select:"photos.cell_accuracy"`
-	PlaceID          string        `json:"PlaceID" select:"photos.place_id"`
-	PlaceSrc         string        `json:"PlaceSrc" select:"photos.place_src"`
-	PlaceLabel       string        `json:"PlaceLabel" select:"places.place_label"`
-	PlaceCity        string        `json:"PlaceCity" select:"places.place_city"`
-	PlaceState       string        `json:"PlaceState" select:"places.place_state"`
-	PlaceCountry     string        `json:"PlaceCountry" select:"places.place_country"`
-	InstanceID       string        `json:"InstanceID" select:"files.instance_id"`
-	FileID           uint          `json:"-" select:"files.id AS file_id"` // File
-	FileUID          string        `json:"FileUID" select:"files.file_uid"`
-	FileRoot         string        `json:"FileRoot" select:"files.file_root"`
-	FileName         string        `json:"FileName" select:"files.file_name"`
-	FileHash         string        `json:"Hash" select:"files.file_hash"`
-	FileWidth        int           `json:"Width" select:"files.file_width"`
-	FileHeight       int           `json:"Height" select:"files.file_height"`
-	FilePortrait     bool          `json:"Portrait" select:"files.file_portrait"`
-	FilePrimary      bool          `json:"-" select:"files.file_primary"`
-	FileSidecar      bool          `json:"-" select:"files.file_sidecar"`
-	FileMissing      bool          `json:"-" select:"files.file_missing"`
-	FileVideo        bool          `json:"-" select:"files.file_video"`
-	FileDuration     time.Duration `json:"-" select:"files.file_duration"`
-	FileFPS          float64       `json:"-" select:"files.file_fps"`
-	FileFrames       int           `json:"-" select:"files.file_frames"`
-	FileCodec        string        `json:"-" select:"files.file_codec"`
-	FileType         string        `json:"-" select:"files.file_type"`
-	MediaType        string        `json:"-" select:"files.media_type"`
-	FileMime         string        `json:"-" select:"files.file_mime"`
-	FileSize         int64         `json:"-" select:"files.file_size"`
-	FileOrientation  int           `json:"-" select:"files.file_orientation"`
-	FileProjection   string        `json:"-" select:"files.file_projection"`
-	FileAspectRatio  float32       `json:"-" select:"files.file_aspect_ratio"`
-	FileColors       string        `json:"-" select:"files.file_colors"`
-	FileDiff         int           `json:"-" select:"files.file_diff"`
-	FileChroma       int16         `json:"-" select:"files.file_chroma"`
-	FileLuminance    string        `json:"-" select:"files.file_luminance"`
-	Merged           bool          `json:"Merged" select:"-"`
-	CreatedAt        time.Time     `json:"CreatedAt" select:"photos.created_at"`
-	UpdatedAt        time.Time     `json:"UpdatedAt" select:"photos.updated_at"`
-	EditedAt         time.Time     `json:"EditedAt,omitempty" select:"photos.edited_at"`
-	CheckedAt        time.Time     `json:"CheckedAt,omitempty" select:"photos.checked_at"`
-	DeletedAt        *time.Time    `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
+	ID               uint           `json:"-" select:"photos.id"`
+	CompositeID      string         `json:"ID" select:"files.photo_id AS composite_id"`
+	UUID             string         `json:"DocumentID,omitempty" select:"photos.uuid"`
+	PhotoUID         string         `json:"UID" select:"photos.photo_uid"`
+	PhotoType        string         `json:"Type" select:"photos.photo_type"`
+	TypeSrc          string         `json:"TypeSrc" select:"photos.taken_src"`
+	TakenAt          time.Time      `json:"TakenAt" select:"photos.taken_at"`
+	TakenAtLocal     time.Time      `json:"TakenAtLocal" select:"photos.taken_at_local"`
+	TakenSrc         string         `json:"TakenSrc" select:"photos.taken_src"`
+	TimeZone         string         `json:"TimeZone" select:"photos.time_zone"`
+	PhotoPath        string         `json:"Path" select:"photos.photo_path"`
+	PhotoName        string         `json:"Name" select:"photos.photo_name"`
+	OriginalName     string         `json:"OriginalName" select:"photos.original_name"`
+	PhotoTitle       string         `json:"Title" select:"photos.photo_title"`
+	PhotoDescription string         `json:"Description" select:"photos.photo_description"`
+	PhotoYear        int            `json:"Year" select:"photos.photo_year"`
+	PhotoMonth       int            `json:"Month" select:"photos.photo_month"`
+	PhotoDay         int            `json:"Day" select:"photos.photo_day"`
+	PhotoCountry     string         `json:"Country" select:"photos.photo_country"`
+	PhotoStack       int8           `json:"Stack" select:"photos.photo_stack"`
+	PhotoFavorite    bool           `json:"Favorite" select:"photos.photo_favorite"`
+	PhotoPrivate     bool           `json:"Private" select:"photos.photo_private"`
+	PhotoIso         int            `json:"Iso" select:"photos.photo_iso"`
+	PhotoFocalLength int            `json:"FocalLength" select:"photos.photo_focal_length"`
+	PhotoFNumber     float32        `json:"FNumber" select:"photos.photo_f_number"`
+	PhotoExposure    string         `json:"Exposure" select:"photos.photo_exposure"`
+	PhotoFaces       int            `json:"Faces,omitempty" select:"photos.photo_faces"`
+	PhotoQuality     int            `json:"Quality" select:"photos.photo_quality"`
+	PhotoResolution  int            `json:"Resolution" select:"photos.photo_resolution"`
+	PhotoDuration    time.Duration  `json:"Duration,omitempty" yaml:"photos.photo_duration"`
+	PhotoColor       int16          `json:"Color" select:"photos.photo_color"`
+	PhotoScan        bool           `json:"Scan" select:"photos.photo_scan"`
+	PhotoPanorama    bool           `json:"Panorama" select:"photos.photo_panorama"`
+	CameraID         uint           `json:"CameraID" select:"photos.camera_id"` // Camera
+	CameraSrc        string         `json:"CameraSrc,omitempty" select:"photos.camera_src"`
+	CameraSerial     string         `json:"CameraSerial,omitempty" select:"photos.camera_serial"`
+	CameraMake       string         `json:"CameraMake,omitempty" select:"cameras.camera_make"`
+	CameraModel      string         `json:"CameraModel,omitempty" select:"cameras.camera_model"`
+	CameraType       string         `json:"CameraType,omitempty" select:"cameras.camera_type"`
+	LensID           uint           `json:"LensID" select:"photos.lens_id"` // Lens
+	LensMake         string         `json:"LensMake,omitempty" select:"lenses.lens_model"`
+	LensModel        string         `json:"LensModel,omitempty" select:"lenses.lens_make"`
+	PhotoAltitude    int            `json:"Altitude,omitempty" select:"photos.photo_altitude"`
+	PhotoLat         float64        `json:"Lat" select:"photos.photo_lat"`
+	PhotoLng         float64        `json:"Lng" select:"photos.photo_lng"`
+	CellID           string         `json:"CellID" select:"photos.cell_id"` // Cell
+	CellAccuracy     int            `json:"CellAccuracy,omitempty" select:"photos.cell_accuracy"`
+	PlaceID          string         `json:"PlaceID" select:"photos.place_id"`
+	PlaceSrc         string         `json:"PlaceSrc" select:"photos.place_src"`
+	PlaceLabel       string         `json:"PlaceLabel" select:"places.place_label"`
+	PlaceCity        string         `json:"PlaceCity" select:"places.place_city"`
+	PlaceState       string         `json:"PlaceState" select:"places.place_state"`
+	PlaceCountry     string         `json:"PlaceCountry" select:"places.place_country"`
+	InstanceID       string         `json:"InstanceID" select:"files.instance_id"`
+	FileID           uint           `json:"-" select:"files.id AS file_id"` // File
+	FileUID          string         `json:"FileUID" select:"files.file_uid"`
+	FileRoot         string         `json:"FileRoot" select:"files.file_root"`
+	FileName         string         `json:"FileName" select:"files.file_name"`
+	FileHash         string         `json:"Hash" select:"files.file_hash"`
+	FileWidth        int            `json:"Width" select:"files.file_width"`
+	FileHeight       int            `json:"Height" select:"files.file_height"`
+	FilePortrait     bool           `json:"Portrait" select:"files.file_portrait"`
+	FilePrimary      bool           `json:"-" select:"files.file_primary"`
+	FileSidecar      bool           `json:"-" select:"files.file_sidecar"`
+	FileMissing      bool           `json:"-" select:"files.file_missing"`
+	FileVideo        bool           `json:"-" select:"files.file_video"`
+	FileDuration     time.Duration  `json:"-" select:"files.file_duration"`
+	FileFPS          float64        `json:"-" select:"files.file_fps"`
+	FileFrames       int            `json:"-" select:"files.file_frames"`
+	FileCodec        string         `json:"-" select:"files.file_codec"`
+	FileType         string         `json:"-" select:"files.file_type"`
+	MediaType        string         `json:"-" select:"files.media_type"`
+	FileMime         string         `json:"-" select:"files.file_mime"`
+	FileSize         int64          `json:"-" select:"files.file_size"`
+	FileOrientation  int            `json:"-" select:"files.file_orientation"`
+	FileProjection   string         `json:"-" select:"files.file_projection"`
+	FileAspectRatio  float32        `json:"-" select:"files.file_aspect_ratio"`
+	FileColors       string         `json:"-" select:"files.file_colors"`
+	FileDiff         int            `json:"-" select:"files.file_diff"`
+	FileChroma       int16          `json:"-" select:"files.file_chroma"`
+	FileLuminance    string         `json:"-" select:"files.file_luminance"`
+	Merged           bool           `json:"Merged" select:"-"`
+	CreatedAt        time.Time      `json:"CreatedAt" select:"photos.created_at"`
+	UpdatedAt        time.Time      `json:"UpdatedAt" select:"photos.updated_at"`
+	EditedAt         time.Time      `json:"EditedAt,omitempty" select:"photos.edited_at"`
+	CheckedAt        time.Time      `json:"CheckedAt,omitempty" select:"photos.checked_at"`
+	DeletedAt        gorm.DeletedAt `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
 
 	Files []entity.File `json:"Files"`
 }
@@ -140,7 +140,7 @@ func (m *Photo) Approve() error {
 	if err := UnscopedDb().
 		Table(entity.Photo{}.TableName()).
 		Where("photo_uid = ?", m.GetUID()).
-		UpdateColumns(entity.Map{
+		UpdateColumns(map[string]interface{}{
 			"deleted_at":    gorm.Expr("NULL"),
 			"edited_at":     &edited,
 			"photo_quality": 3}).Error; err != nil {
@@ -149,7 +149,7 @@ func (m *Photo) Approve() error {
 
 	m.EditedAt = edited
 	m.PhotoQuality = 3
-	m.DeletedAt = nil
+	m.DeletedAt = gorm.DeletedAt{}
 
 	// Update precalculated photo and file counts.
 	if err := entity.UpdateCounts(); err != nil {
@@ -167,7 +167,7 @@ func (m *Photo) Approve() error {
 func (m *Photo) Restore() error {
 	if !m.HasID() {
 		return fmt.Errorf("photo has no id")
-	} else if m.DeletedAt == nil {
+	} else if !m.DeletedAt.Valid {
 		return nil
 	}
 
@@ -178,7 +178,7 @@ func (m *Photo) Restore() error {
 		return err
 	}
 
-	m.DeletedAt = nil
+	m.DeletedAt = gorm.DeletedAt{}
 
 	return nil
 }

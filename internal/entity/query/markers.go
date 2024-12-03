@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 )
 
 // MarkerByUID returns a Marker based on the UID.
@@ -50,7 +51,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result entity.Markers, err error) {
 	db := Db().
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("embeddings_json <> ''")
 
 	if matchedBefore == nil {
@@ -83,7 +84,7 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 	stmt := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("embeddings_json <> ''").
 		Order("marker_uid")
 
@@ -126,8 +127,8 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
 	result := Db().
 		Model(&entity.Marker{}).
-		Where("marker_invalid = 1 AND (subj_uid <> '' OR face_id <> '')").
-		UpdateColumns(entity.Map{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
+		Where("marker_invalid = TRUE AND (subj_uid <> '' OR face_id <> '')").
+		UpdateColumns(map[string]interface{}{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return result.RowsAffected, result.Error
 }
@@ -138,7 +139,7 @@ func RemoveNonExistentMarkerFaces() (removed int64, err error) {
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
-		UpdateColumns(entity.Map{"face_id": "", "face_dist": -1.0, "matched_at": nil})
+		UpdateColumns(map[string]interface{}{"face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return result.RowsAffected, result.Error
 }
@@ -148,7 +149,7 @@ func RemoveNonExistentMarkerSubjects() (removed int64, err error) {
 	result := Db().
 		Model(&entity.Marker{}).
 		Where(fmt.Sprintf("subj_uid <> '' AND subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Subject{}.TableName())).
-		UpdateColumns(entity.Map{"subj_uid": "", "matched_at": nil})
+		UpdateColumns(map[string]interface{}{"subj_uid": "", "matched_at": nil})
 
 	return result.RowsAffected, result.Error
 }
@@ -214,37 +215,39 @@ func MarkersWithSubjectConflict() (results entity.Markers, err error) {
 func ResetFaceMarkerMatches() (removed int64, err error) {
 	res := Db().Model(&entity.Marker{}).
 		Where("subj_src = ? AND marker_type = ?", entity.SrcAuto, entity.MarkerFace).
-		UpdateColumns(entity.Map{"marker_name": "", "subj_uid": "", "subj_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
+		UpdateColumns(map[string]interface{}{"marker_name": "", "subj_uid": "", "subj_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return res.RowsAffected, res.Error
 }
 
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
 func CountUnmatchedFaceMarkers() (n int) {
+	nData := int64(0)
 	q := Db().Model(&entity.Markers{}).
-		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
+		Where("matched_at IS NULL AND marker_invalid = FALSE AND embeddings_json <> ''").
 		Where("marker_type = ?", entity.MarkerFace)
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return n
+	return functions.SafeInt64toint(nData)
 }
 
 // CountMarkers counts the number of face markers in the index.
 func CountMarkers(markerType string) (n int) {
+	nData := int64(0)
 	q := Db().Model(&entity.Markers{})
 
 	if markerType != "" {
 		q = q.Where("marker_type = ?", markerType)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count markers)", err)
 	}
 
-	return n
+	return functions.SafeInt64toint(nData)
 }
 
 // RemoveOrphanMarkers removes markers without an existing file.

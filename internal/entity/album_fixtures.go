@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type AlbumMap map[string]Album
@@ -46,7 +48,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"holiday-2030": {
 		ID:               1000001,
@@ -71,7 +73,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"berlin-2019": {
 		ID:               1000002,
@@ -96,7 +98,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"april-1990": {
 		ID:               1000003,
@@ -121,7 +123,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"import": {
 		ID:               1000004,
@@ -146,7 +148,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"emptyMoment": {
 		ID:               1000005,
@@ -171,7 +173,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"2016-04": {
 		ID:               1000006,
@@ -195,7 +197,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"september-2021": {
 		ID:               1000007,
@@ -219,7 +221,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"california-usa": {
 		ID:               1000008,
@@ -243,7 +245,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"california-duplicate-1": {
 		ID:               1000009,
@@ -267,7 +269,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"california-duplicate-2": {
 		ID:               1000010,
@@ -291,7 +293,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"&ilikefood": {
 		ID:               1000011,
@@ -316,7 +318,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"i-love-%-dog": {
 		ID:               1000012,
@@ -341,7 +343,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"%gold": {
 		ID:               1000013,
@@ -366,7 +368,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"sale%": {
 		ID:               1000014,
@@ -391,7 +393,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"pets&dogs": {
 		ID:               1000015,
@@ -416,7 +418,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"light&": {
 		ID:               1000016,
@@ -441,7 +443,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"'family": {
 		ID:               1000017,
@@ -466,7 +468,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"father's-day": {
 		ID:               1000018,
@@ -491,7 +493,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"ice-cream'": {
 		ID:               1000019,
@@ -516,7 +518,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"*forrest": {
 		ID:               1000020,
@@ -541,7 +543,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"my*kids": {
 		ID:               1000021,
@@ -566,7 +568,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"yoga***": {
 		ID:               1000022,
@@ -591,7 +593,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"|banana": {
 		ID:               1000023,
@@ -616,7 +618,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"blue|": {
 		ID:               1000024,
@@ -641,7 +643,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"345-shirt": {
 		ID:               1000025,
@@ -666,7 +668,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"color-555-blue": {
 		ID:               1000026,
@@ -691,7 +693,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"route-66": {
 		ID:               1000027,
@@ -716,7 +718,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"red|green": {
 		ID:               1000028,
@@ -741,7 +743,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"germany": {
 		ID:               1000029,
@@ -766,7 +768,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 	"mexico": {
 		ID:               1000030,
@@ -791,7 +793,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 }
 

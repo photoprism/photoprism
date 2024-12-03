@@ -28,4 +28,6 @@ var IgnoreErr = QueryErr{
 	"drop index ":  {"drop"},
 	"drop table ":  {"drop"},
 	"alter table ": {"duplicate"},
+	"delete from ": {"no such"},
+	"update ":      {"no such"},
 }

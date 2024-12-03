@@ -5,6 +5,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -60,7 +61,7 @@ func usersModAction(ctx *cli.Context) error {
 				return fmt.Errorf("user already exists")
 			}
 
-			m.DeletedAt = nil
+			m.DeletedAt = gorm.DeletedAt{}
 			log.Infof("user %s will be restored", m.String())
 		}
 

@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var FolderFixtures = map[string]Folder{
@@ -25,7 +27,7 @@ var FolderFixtures = map[string]Folder{
 		CreatedAt:         time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
+		DeletedAt:         gorm.DeletedAt{},
 	},
 	"1990/04": {
 		FolderUID:         "dqo63pn2f87f02xj",
@@ -47,7 +49,7 @@ var FolderFixtures = map[string]Folder{
 		CreatedAt:         time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
+		DeletedAt:         gorm.DeletedAt{},
 	},
 	"2007/12": {
 		FolderUID:         "dqo63pn2f87f02oi",
@@ -69,7 +71,7 @@ var FolderFixtures = map[string]Folder{
 		CreatedAt:         time.Date(2007, 12, 25, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 30, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
+		DeletedAt:         gorm.DeletedAt{},
 	},
 }
 
