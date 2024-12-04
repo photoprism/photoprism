@@ -28,41 +28,41 @@
           @focus="onFocus"
         >
         </v-autocomplete>
+        <v-progress-linear :model-value="completed" :indeterminate="busy"></v-progress-linear>
 
-        <p class="options">
-          <v-progress-linear :model-value="completed" :indeterminate="busy"></v-progress-linear>
-        </p>
+        <div class="action-controls">
+          <v-checkbox
+            v-model="settings.index.rescan"
+            :disabled="busy || !ready"
+            :label="$gettext('Complete Rescan')"
+            :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
+            prepend-icon="mdi-cached"
+            persistent-hint
+            @update:model-value="onChange"
+          >
+          </v-checkbox>
+          <v-checkbox
+            v-if="isAdmin"
+            v-model="cleanup"
+            :disabled="busy || !ready"
+            :label="$gettext('Cleanup')"
+            :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')"
+            prepend-icon="mdi-delete-sweep"
+            persistent-hint
+          >
+          </v-checkbox>
+        </div>
 
-        <v-row align="start" class="mt-3 mb-4">
-          <v-col cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
-            <v-checkbox
-              v-model="settings.index.rescan"
-              :disabled="busy || !ready"
-              class="ma-0 pa-0"
-              color="surface-variant"
-              density="compact"
-              :label="$gettext('Complete Rescan')"
-              :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
-              prepend-icon="mdi-cached"
-              persistent-hint
-              @update:model-value="onChange"
-            >
-            </v-checkbox>
-          </v-col>
-          <v-col v-if="isAdmin" cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
-            <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="surface-variant" density="compact" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="mdi-delete-sweep" persistent-hint>
-            </v-checkbox>
-          </v-col>
-        </v-row>
+        <div class="action-buttons">
+          <v-btn :disabled="!busy || !ready" color="button" variant="flat" class="action-cancel" @click.stop="cancelIndexing()">
+            <translate>Cancel</translate>
+          </v-btn>
 
-        <v-btn :disabled="!busy || !ready" color="button" variant="flat" class="ml-2 mt-2 action-cancel" @click.stop="cancelIndexing()">
-          <translate>Cancel</translate>
-        </v-btn>
-
-        <v-btn :disabled="busy || !ready" base-color="primary-button" class="ml-2 mt-2 action-index" @click.stop="startIndexing()">
-          <translate>Start</translate>
-          <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
-        </v-btn>
+          <v-btn :disabled="busy || !ready" base-color="primary-button" class="action-index" @click.stop="startIndexing()">
+            <translate>Start</translate>
+            <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
+          </v-btn>
+        </div>
 
         <v-alert v-if="ready && !busy && config.count.hidden > 1" color="error" icon="mdi-exclamation" class="mt-6" variant="outlined">
           <translate :translate-params="{ n: config.count.hidden }">The index currently contains %{n} hidden files.</translate>

@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
 @import url("typography.css");
+@import url("controls.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
 @import url("themes.css");
@@ -123,10 +124,6 @@ main {
 
 #photoprism .clickable {
     cursor: pointer;
-}
-
-#photoprism button:focus {
-    outline: none;
 }
 
 #photoprism .p-scroll-top {

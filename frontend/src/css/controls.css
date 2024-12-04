@@ -1,0 +1,34 @@
+#photoprism button:focus {
+    outline: none;
+}
+
+.action-buttons,
+.action-controls {
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.action-buttons p,
+.action-controls p {
+    margin: 0;
+}
+
+.action-buttons {
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.action-controls {
+    gap: 20px;
+    margin-top: 16px;
+    margin-bottom: 20px;
+}
+
+.action-controls .v-btn .v-btn__content,
+.action-controls .v-btn .v-btn__content {
+    min-width: 68px;
+}
+
+.auth-login .action-buttons {
+    margin: 20px auto 16px auto;
+}

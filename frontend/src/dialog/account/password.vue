@@ -3,19 +3,19 @@
     <v-form ref="form" class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card elevation="24">
         <v-card-title>
-          <v-row class="pa-2">
+          <v-row no-gutters>
             <v-col cols="9" class="text-left">
-              <h3 class="text-h5 pa-0">
+              <h6 class="text-h6">
                 <translate>Change Password</translate>
-              </h3>
+              </h6>
             </v-col>
             <v-col cols="3" class="text-right">
               <v-icon size="28" color="primary">mdi-lock</v-icon>
             </v-col>
           </v-row>
         </v-card-title>
-        <v-card-text class="py-0">
-          <v-row align="start">
+        <v-card-text>
+          <v-row align="start" no-gutters>
             <v-col v-if="oldRequired" cols="12" class="pb-2 text-caption">
               <translate>Please note that changing your password will log you out on other devices and browsers.</translate>
             </v-col>
@@ -75,17 +75,13 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="pt-1 pb-2">
-          <v-row class="pa-2">
-            <v-col cols="12" class="text-right">
-              <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
-                <translate>Cancel</translate>
-              </v-btn>
-              <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
-                <translate>Save</translate>
-              </v-btn>
-            </v-col>
-          </v-row>
+        <v-card-actions class="text-right">
+          <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
+            <translate>Cancel</translate>
+          </v-btn>
+          <v-btn variant="flat" color="primary-button" class="action-confirm" :disabled="isDisabled()" @click.stop="onConfirm">
+            <translate>Save</translate>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

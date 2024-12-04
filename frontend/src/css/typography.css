@@ -3,6 +3,7 @@
 body {
     color: #333333;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 17px;
 
     /* Text rendering defaults. */
     letter-spacing: normal;
@@ -32,11 +33,6 @@ body #app {
         orphans: 3;
         widows: 0;
     }
-}
-
-button.v-btn.compact  {
-    font-size: 14px;
-    height: 34px;
 }
 
 .caption.filename {

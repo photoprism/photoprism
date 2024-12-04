@@ -61,3 +61,39 @@ body.dark-theme .v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
 body.dark-theme {
     background: rgb(var(--v-theme-background, #2f3031)) !important;
 }
+
+.v-overlay.v-dialog .v-card {
+    border-radius: 8px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-title,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-title {
+    padding: 0;
+    margin: 24px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-title h6,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-title h6 {
+    padding: 0;
+    margin: 0;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
+    padding: 0;
+    margin: 0 24px 0 24px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions {
+    padding: 0;
+    margin: 16px 24px 20px 24px;
+    gap: 12px;
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn .v-btn__content {
+    min-width: 68px;
+}

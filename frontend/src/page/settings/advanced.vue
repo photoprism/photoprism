@@ -394,16 +394,12 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-actions v-if="!config.disable.restart" class="pt-6">
-          <v-row align="start">
-            <v-col cols="12" class="pa-2">
-              <a id="restart"></a>
-              <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
-                <translate>Restart</translate>
-                <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
+        <v-card-actions v-if="!config.disable.restart" class="pt-6 d-flex flex-wrap ga-2">
+          <a id="restart"></a>
+          <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
+            <translate>Restart</translate>
+            <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

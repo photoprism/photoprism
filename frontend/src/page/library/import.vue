@@ -27,50 +27,57 @@
           @focus="onFocus"
         >
         </v-autocomplete>
+        <v-progress-linear :model-value="completed" :indeterminate="busy"></v-progress-linear>
 
-        <p class="options">
-          <v-progress-linear :model-value="completed" :indeterminate="busy"></v-progress-linear>
-        </p>
-
-        <v-row align="start" class="mt-3 mb-4">
-          <v-col cols="12" class="px-2 pb-2 pt-2">
-            <v-checkbox
-              v-model="settings.import.move"
-              :disabled="busy || !ready"
-              class="ma-0 pa-0"
-              color="surface-variant"
-              density="compact"
-              :label="$gettext('Move Files')"
-              :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
-              prepend-icon="mdi-delete"
-              persistent-hint
-              @update:model-value="onChange"
-            >
-            </v-checkbox>
+        <div class="action-controls">
+          <v-checkbox
+            v-model="settings.import.move"
+            :disabled="busy || !ready"
+            class="ma-0 pa-0"
+            color="surface-variant"
+            density="compact"
+            :label="$gettext('Move Files')"
+            :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
+            prepend-icon="mdi-delete"
+            persistent-hint
+            @update:model-value="onChange"
+          >
+          </v-checkbox>
+          <p>
+            <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
+            <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
+            <translate>Original file names will be stored and indexed.</translate>
+            <translate>Note you may manually manage your originals folder and importing is optional.</translate>
+          </p>
+        </div>
+        <!-- v-row align="start" class="my-3 mx-0" no-gutters>
+          <v-col cols="12">
           </v-col>
-          <v-col cols="12" class="px-2 pb-2 pt-2">
-            <p class="text-body-1 pt-2">
+          <v-col cols="12">
+            <p class="text-body-2 py-3">
               <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
               <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
               <translate>Original file names will be stored and indexed.</translate>
               <translate>Note you may manually manage your originals folder and importing is optional.</translate>
             </p>
           </v-col>
-        </v-row>
+        </v-row -->
 
-        <v-btn :disabled="!busy || !ready" color="button" class="ml-2 action-cancel" @click.stop="cancelImport()">
-          <translate>Cancel</translate>
-        </v-btn>
+        <div class="action-buttons">
+          <v-btn :disabled="!busy || !ready" color="button" class="action-cancel" @click.stop="cancelImport()">
+            <translate>Cancel</translate>
+          </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="ml-2 hidden-xs action-upload" @click.stop="showUpload()">
-          <translate>Upload</translate>
-          <v-icon :end="!rtl" :start="rtl">mdi-cloud-upload</v-icon>
-        </v-btn>
+          <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="hidden-xs action-upload" @click.stop="showUpload()">
+            <translate>Upload</translate>
+            <v-icon :end="!rtl" :start="rtl">mdi-cloud-upload</v-icon>
+          </v-btn>
 
-        <v-btn :disabled="busy || !ready" color="primary-button" class="ml-2 action-import" @click.stop="startImport()">
-          <translate>Import</translate>
-          <v-icon :end="!rtl" :start="rtl">mdi-sync</v-icon>
-        </v-btn>
+          <v-btn :disabled="busy || !ready" color="primary-button" class="action-import" @click.stop="startImport()">
+            <translate>Import</translate>
+            <v-icon :end="!rtl" :start="rtl">mdi-sync</v-icon>
+          </v-btn>
+        </div>
       </v-container>
     </v-form>
   </div>
