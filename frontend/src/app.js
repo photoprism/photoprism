@@ -112,6 +112,18 @@ config.update().finally(() => {
         variant: "flat",
         ripple: false,
       },
+      VSwitch: {
+        flat: true,
+        baseColor: "surface",
+        color: "surface-variant",
+        ripple: false,
+      },
+      VRating: {
+        density: "compact",
+        color: "on-surface",
+        activeColor: "surface-variant",
+        ripple: false,
+      },
       VCheckbox: {
         density: "compact",
         color: "surface-variant",
@@ -195,7 +207,7 @@ config.update().finally(() => {
         tile: true,
         static: true,
         variant: "accordion",
-        bgColor: "accent",
+        bgColor: "card",
         ripple: false,
       },
       VProgressLinear: {

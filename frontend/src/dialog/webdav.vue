@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-model="visible" max-width="500">
-    <v-card class="pa-2">
-      <v-card-title class="text-h5 pa-0">
-        <v-row class="pa-2">
+  <v-dialog v-model="visible" max-width="580">
+    <v-card elevation="24">
+      <v-card-title>
+        <v-row no-gutters>
           <v-col cols="9" class="text-left">
-            <h3 class="text-h5 pa-0">
+            <h6 class="text-h6">
               <translate>Connect via WebDAV</translate>
-            </h3>
+            </h6>
           </v-col>
           <v-col cols="3" class="text-right">
             <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
@@ -14,33 +14,33 @@
         </v-row>
       </v-card-title>
 
-      <v-card-text class="pa-2 text-body-2">
+      <v-card-text class="text-body-2">
         <translate>WebDAV clients can connect to PhotoPrism using the following URL:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-2">
+      <v-card-text class="py-2 text-body-2">
         <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="surface-variant" :model-value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-2 clickable" @click="windowsHelp($event)">
+      <v-card-text class="py-2 text-body-2 clickable" @click="windowsHelp($event)">
         <translate>On Windows, enter the following resource in the connection dialog:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-2">
+      <v-card-text class="py-2 text-body-2">
         <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line variant="outlined" color="surface-variant" :model-value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-2">
+      <v-card-text class="py-2 text-body-2">
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 text-body-2">
+      <v-card-actions class="text-body-2">
         <v-alert color="primary" icon="mdi-information" class="pa-2" variant="outlined">
           <a class="text-link" style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>
-      </v-card-text>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
