@@ -451,7 +451,11 @@
           </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="featMembership" :to="{ name: 'upgrade' }" variant="text" class="nav-upgrade" @click.stop="">
+        <v-list-item v-if="isMini && featMembership" :to="{ name: 'upgrade' }" variant="text" class="nav-upgrade" @click.stop="">
+          <v-icon v-if="isPro" class="ma-auto">mdi-check-circle</v-icon>
+          <v-icon v-else class="ma-auto">mdi-diamond</v-icon>
+        </v-list-item>
+        <v-list-item v-if="!isMini && featMembership" :to="{ name: 'upgrade' }" variant="text" class="nav-upgrade" @click.stop="">
           <v-list-item-title v-if="isPro" class="p-flex-menuitem">
             <v-icon>mdi-check-circle</v-icon>
             <p class="nav-item-title">
