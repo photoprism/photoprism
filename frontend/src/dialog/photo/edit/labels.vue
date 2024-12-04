@@ -10,12 +10,14 @@
             <template #item="props">
               <tr class="p-file">
                 <td>
-                  <v-dialog class="p-inline-edit" @save="renameLabel(props.item.Label)">
-                    {{ props.item.Label.Name }}
-                    <template #input>
-                      <v-text-field v-model="props.item.Label.Name" :rules="[nameRule]" :label="$gettext('Name')" color="surface-variant" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>
-                    </template>
-                  </v-dialog>
+                  {{ props.item.Label.Name }}
+<!--                  TODO: add this dialog later-->
+<!--                  <v-dialog class="p-inline-edit" @save="renameLabel(props.item.Label)">-->
+<!--                    {{ props.item.Label.Name }}-->
+<!--                    <template #input>-->
+<!--                      <v-text-field v-model="props.item.Label.Name" :rules="[nameRule]" :label="$gettext('Name')" color="surface-variant" class="input-rename background-inherit elevation-0" single-line autofocus variant="solo" hide-details></v-text-field>-->
+<!--                    </template>-->
+<!--                  </v-dialog>-->
                 </td>
                 <td class="text-left">
                   {{ sourceName(props.item.LabelSrc) }}
@@ -37,7 +39,7 @@
                 </td>
               </tr>
             </template>
-            <template v-if="!disabled" #footer>
+            <template v-if="!disabled" #tfoot>
               <tr>
                 <td>
                   <v-text-field v-model="newLabel" :rules="[nameRule]" color="surface-variant" autocomplete="off" :label="$gettext('Name')" single-line flat variant="solo" hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
@@ -142,13 +144,14 @@ export default {
 
       this.model.activateLabel(label.ID);
     },
-    renameLabel(label) {
-      if (!label) {
-        return;
-      }
-
-      this.model.renameLabel(label.ID, label.Name);
-    },
+    // TODO: add this dialog later
+    // renameLabel(label) {
+    //   if (!label) {
+    //     return;
+    //   }
+    //
+    //   this.model.renameLabel(label.ID, label.Name);
+    // },
     searchLabel(label) {
       this.$router.push({ name: "all", query: { q: "label:" + label.Slug } }).catch(() => {});
       this.$emit("close");
