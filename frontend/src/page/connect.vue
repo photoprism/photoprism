@@ -83,12 +83,12 @@
               <strong><translate>To upgrade, you can either enter an activation code or click "Register" to sign up on our website:</translate></strong>
             </p>
             <!-- TODO: check property return-masked-value TEST -->
-            <v-text-field v-model="form.token" flat variant="solo" hide-details return-masked-value :mask="tokenMask" autocomplete="off" color="surface-variant" bg-color="secondary-light" :label="$gettext('Activation Code')" type="text"> </v-text-field>
+            <v-text-field v-model="form.token" single-line hide-details return-masked-value :mask="tokenMask" autocomplete="off" :placeholder="$gettext('Activation Code')"></v-text-field>
             <div class="action-buttons text-left mt-6">
-              <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy">
+              <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="surface-variant" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy">
                 <translate>Manage Account</translate>
               </v-btn>
-              <v-btn v-else color="primary-button lighten-2" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy" @click.stop="compare">
+              <v-btn v-else color="surface-variant" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy" @click.stop="compare">
                 <translate>Compare Editions</translate>
               </v-btn>
 

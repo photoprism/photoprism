@@ -444,29 +444,27 @@
           </div>
         </template>
 
-        <v-list-item v-show="!auth" :to="{ name: 'login' }" variant="text" class="nav-login" :ripple="false" @click.stop="">
+        <v-list-item v-show="!auth" :to="{ name: 'login' }" variant="text" class="nav-login" @click.stop="">
           <v-list-item-title>
             <v-icon>mdi-lock</v-icon>
             <translate key="Login">Login</translate>
           </v-list-item-title>
         </v-list-item>
 
-        <router-link :to="{ name: 'upgrade' }" custom>
-          <v-list-item v-show="featMembership" variant="text" class="nav-upgrade" :ripple="false" @click.stop="">
-            <v-list-item-title v-if="isPro">
-              <v-icon>mdi-check-circle</v-icon>
-              <p class="nav-item-title">
-                <translate key="Upgrade">Upgrade</translate>
-              </p>
-            </v-list-item-title>
-            <v-list-item-title v-else>
-              <v-icon>mdi-diamond</v-icon>
-              <p class="nav-item-title">
-                <translate key="Support Our Mission">Support Our Mission</translate>
-              </p>
-            </v-list-item-title>
-          </v-list-item>
-        </router-link>
+        <v-list-item v-if="featMembership" :to="{ name: 'upgrade' }" variant="text" class="nav-upgrade" @click.stop="">
+          <v-list-item-title v-if="isPro" class="p-flex-menuitem">
+            <v-icon>mdi-check-circle</v-icon>
+            <p class="nav-item-title">
+              <translate key="Upgrade">Upgrade</translate>
+            </p>
+          </v-list-item-title>
+          <v-list-item-title v-else class="p-flex-menuitem">
+            <v-icon>mdi-diamond</v-icon>
+            <p class="nav-item-title">
+              <translate key="Support Our Mission">Support Our Mission</translate>
+            </p>
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
 
       <v-container v-if="$config.disconnected" class="bg-navigation position-fixed bottom-0 border-t-thin pa-0">

@@ -179,6 +179,9 @@ config.update().finally(() => {
       VTable: {
         density: "comfortable",
       },
+      VListItem: {
+        ripple: false,
+      },
       VDataTable: {
         density: "comfortable",
         color: "background",
