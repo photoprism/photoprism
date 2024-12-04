@@ -9,7 +9,7 @@ let variables = {
   "medium-emphasis-opacity": 0.88,
   "disabled-opacity": 0.9,
   "idle-opacity": 0.1,
-  "hover-opacity": 0.01,
+  "hover-opacity": 0.016,
   "focus-opacity": 0.018,
   "selected-opacity": 0.08,
   "activated-opacity": 0,
