@@ -49,7 +49,7 @@
       </v-row>
       <v-row v-else-if="success">
         <v-col cols="12" class="pa-2 d-flex">
-          <p class="text-subtitle-1 text-left flex-grow-1">
+          <p class="text-body-1 text-left flex-grow-1">
             <translate>Your account has been successfully connected.</translate>
             <span v-if="$config.values.restart">
               <translate>Please restart your instance for the changes to take effect.</translate>
@@ -73,13 +73,13 @@
         </v-col>
       </v-row>
       <v-row v-else>
-        <v-col v-if="$config.getTier() < 4" cols="12" class="d-flex align-center justify-center px-2 pt-1 pb-6 text-subtitle-1 text-selectable">
+        <v-col v-if="$config.getTier() < 4" cols="12" class="d-flex align-center justify-center px-2 pt-1 pb-6 text-body-1 text-selectable">
           <translate>Become a member today, support our mission and enjoy our member benefits!</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
         </v-col>
         <v-col cols="12" class="grow align-center justify-center px-2 py-1">
           <v-alert color="surface-variant" variant="outlined">
-            <p class="text-subtitle-1 text-selectable">
+            <p class="text-body-1 text-selectable">
               <strong><translate>To upgrade, you can either enter an activation code or click "Register" to sign up on our website:</translate></strong>
             </p>
             <!-- TODO: check property return-masked-value TEST -->
@@ -105,7 +105,7 @@
             </div>
           </v-alert>
         </v-col>
-        <v-col cols="12" class="px-2 pt-6 pb-0 text-body-1 text-selectable">
+        <v-col cols="12" class="px-2 pt-6 pb-0 text-body-2 text-selectable">
           <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
           <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
         </v-col>

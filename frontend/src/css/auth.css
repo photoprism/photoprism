@@ -111,8 +111,8 @@
 #photoprism main .auth-login .text-subtitle-2,
 #photoprism main .auth-login .text-body-1,
 #photoprism main .auth-login .text-body-2,
-#photoprism main .auth-login .body-1,
-#photoprism main .auth-login .body-2 {
+#photoprism main .auth-login .text-body-2,
+#photoprism main .auth-login .text-subtitle-2 {
     caret-color: #fff;
     color: #fff;
 }
