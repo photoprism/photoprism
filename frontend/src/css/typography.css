@@ -39,6 +39,19 @@ body #app {
     font-weight: 500;
 }
 
+.break-word,
+.v-datatable td,
+.v-card button,
+.v-card .caption {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
 /* Line Height */
 
 .lh-15 {
@@ -63,4 +76,32 @@ body #app {
 
 .lh-20 {
     line-height: 2.0rem !important;
+}
+
+/* Page Text Styles */
+
+.p-page p,
+.p-page li {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.425;
+    letter-spacing: 0.0178571429em;
+    margin-bottom: 0.85rem;
+}
+
+.p-page h2 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0.0125em;
+    margin-bottom: 0.5rem;
+}
+
+.p-page h3,
+.p-page h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: 0.009375em;
+    margin-bottom: 0.5rem;
 }

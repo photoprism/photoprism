@@ -157,21 +157,6 @@ main {
     overflow: auto;
 }
 
-#photoprism .body-1,
-#photoprism .body-2,
-#photoprism .break-word,
-#photoprism .v-datatable td,
-#photoprism .v-card button,
-#photoprism .v-card .caption {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-}
-
 #photoprism.is-rtl .v-card .caption {
     text-align: right;
 }

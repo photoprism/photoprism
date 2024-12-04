@@ -107,6 +107,10 @@
 #photoprism main .auth-login form,
 #photoprism main .auth-login footer,
 #photoprism main .auth-login .v-input__prepend-outer .v-icon,
+#photoprism main .auth-login .text-subtitle-1,
+#photoprism main .auth-login .text-subtitle-2,
+#photoprism main .auth-login .text-body-1,
+#photoprism main .auth-login .text-body-2,
 #photoprism main .auth-login .body-1,
 #photoprism main .auth-login .body-2 {
     caret-color: #fff;
