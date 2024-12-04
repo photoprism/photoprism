@@ -35,18 +35,6 @@ body.dark-theme .v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
     opacity: 0.48;
 }
 
-.text-link {
-    color: rgb(var(--v-theme-primary, #ffffff));
-    text-decoration: none;
-}
-
-#photoprism .p-page a,
-#photoprism .footer .text-link,
-#photoprism .footer .body-link {
-    color: rgb(var(--v-theme-on-surface, #ffffff));
-    text-decoration: none;
-}
-
 .v-table {
     background: transparent;
     color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
