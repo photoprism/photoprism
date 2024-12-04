@@ -213,8 +213,8 @@
                                   <template #selection="{ item }">
                                     <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
                                   </template>
-                                  <template #item="{ item }">
-                                    <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
+                                  <template #item="{ item, props }">
+                                      <span v-bind="props" class="d-flex" :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
                                   </template>
                                 </v-select>
                               </td>
@@ -323,22 +323,22 @@ export default {
       rtl: this.$rtl,
       listColumns: [
         {
-          text: this.$gettext("Primary"),
-          value: "Primary",
+          title: this.$gettext("Primary"),
+          key: "Primary",
           sortable: false,
           align: "center",
           class: "p-col-primary",
         },
-        { text: this.$gettext("Name"), value: "Name", sortable: false, align: "left" },
+        { title: this.$gettext("Name"), key: "Name", sortable: false, align: "left" },
         {
-          text: this.$gettext("Dimensions"),
-          value: "",
+          title: this.$gettext("Dimensions"),
+          key: "",
           sortable: false,
           class: "hidden-sm-and-down",
         },
-        { text: this.$gettext("Size"), value: "Size", sortable: false, class: "hidden-xs" },
-        { text: this.$gettext("Type"), value: "", sortable: false, align: "left" },
-        { text: this.$gettext("Status"), value: "", sortable: false, align: "left" },
+        { title: this.$gettext("Size"), key: "Size", sortable: false, class: "hidden-xs" },
+        { title: this.$gettext("Type"), key: "", sortable: false, align: "left" },
+        { title: this.$gettext("Status"), key: "", sortable: false, align: "left" },
       ],
     };
   },
