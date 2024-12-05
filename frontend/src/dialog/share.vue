@@ -18,53 +18,54 @@
       <v-card-text>
         <v-expansion-panels class="pa-0 elevation-0">
           <v-expansion-panel v-for="(link, index) in links" :key="link.UID" class="pa-0 elevation-0 bg-secondary mb-1">
-            <template #header>
+            <v-expansion-panel-title>
               <button :class="`text-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none" @click.stop="copyUrl(link)">
-                <!-- TODO: change this icon -->
-                <v-icon size="16" class="pr-1">link</v-icon>
+                <v-icon size="16" class="pr-1">mdi-link</v-icon>
                 /s/<strong v-if="link.Token" style="font-weight: 500"> {{ link.getToken() }} </strong><span v-else>…</span>
               </button>
-            </template>
-            <v-card>
-              <v-card-text class="secondary-light">
-                <v-container fluid class="pa-0">
-                  <v-row>
-                    <v-col cols="12" class="pa-2">
-                      <v-text-field :model-value="link.url()" hide-details variant="solo" flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="surface-variant" class="input-url" @click.stop="selectText($event)"> </v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" class="pa-2">
-                      <v-select v-model="link.Expires" hide-details variant="solo" flat :label="expires(link)" browser-autocomplete="off" color="surface-variant" :items="options.Expires()" item-title="text" item-value="value" class="input-expires"> </v-select>
-                    </v-col>
-                    <v-col cols="12" sm="6" class="pa-2">
-                      <v-text-field v-model="link.Token" hide-details variant="solo" flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="surface-variant" class="input-secret"></v-text-field>
-                    </v-col>
-                    <!-- <v-col cols="12" sm="6" class="pa-2">
-                      <v-text-field
-                        v-model="link.Password"
-                        hide-details
-                        autocomplete="off"
-                        :label="label.pass"
-                        :placeholder="link.HasPassword ? '••••••••' : 'optional'"
-                        color="surface-variant"
-                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                        :type="showPassword ? 'text' : 'password'"
-                        @click:append="showPassword = !showPassword"
-                      ></v-text-field>
-                    </v-col> -->
-                    <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
-                      <v-btn size="small" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                    </v-col>
-                    <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
-                      <v-btn variant="flat" theme="dark" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
-                        <translate>Save</translate>
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-            </v-card>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-card>
+                <v-card-text class="secondary-light">
+                  <v-container fluid class="pa-0">
+                    <v-row>
+                      <v-col cols="12" class="pa-2">
+                        <v-text-field :model-value="link.url()" hide-details variant="solo" flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" autocomplete="off" color="surface-variant" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" class="pa-2">
+                        <v-select v-model="link.Expires" hide-details variant="solo" flat :label="expires(link)" browser-autocomplete="off" color="surface-variant" :items="options.Expires()" item-title="text" item-value="value" class="input-expires"> </v-select>
+                      </v-col>
+                      <v-col cols="12" sm="6" class="pa-2">
+                        <v-text-field v-model="link.Token" hide-details variant="solo" flat required autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="surface-variant" class="input-secret"></v-text-field>
+                      </v-col>
+                      <!-- <v-col cols="12" sm="6" class="pa-2">
+                        <v-text-field
+                          v-model="link.Password"
+                          hide-details
+                          autocomplete="off"
+                          :label="label.pass"
+                          :placeholder="link.HasPassword ? '••••••••' : 'optional'"
+                          color="surface-variant"
+                          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                          :type="showPassword ? 'text' : 'password'"
+                          @click:append="showPassword = !showPassword"
+                        ></v-text-field>
+                      </v-col> -->
+                      <v-col cols="6" :class="!rtl ? 'text-left' : 'text-right'" class="pa-2">
+                        <v-btn size="small" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
+                        <v-btn variant="flat" theme="dark" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
+                          <translate>Save</translate>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
 
