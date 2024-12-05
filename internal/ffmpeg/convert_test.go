@@ -82,7 +82,7 @@ func TestAvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Contains(t, r.String(), "/bin/ffmpeg -hwaccel qsv -hwaccel_output_format qsv -qsv_device /dev/dri/renderD128 -i VID123.mov -c:a aac -vf scale_qsv=w='if(gte(iw,ih), min(1500, iw), -1)':h='if(gte(iw,ih), -1, min(1500, ih))':format=nv12 -c:v h264_qsv -map 0:v:0 -map 0:a:0? -r 30 -b:v 50M -bitrate 50M -f mp4 -movflags +faststart -y VID123.mov.avc")
+		assert.Contains(t, r.String(), "/bin/ffmpeg -hwaccel qsv -hwaccel_output_format qsv -i VID123.mov -c:a aac -vf scale_qsv=w='if(gte(iw,ih), min(1500, iw), -1)':h='if(gte(iw,ih), -1, min(1500, ih))':format=nv12 -c:v h264_qsv -map 0:v:0 -map 0:a:0? -r 30 -b:v 50M -bitrate 50M -f mp4 -movflags +faststart -y VID123.mov.avc")
 	})
 	t.Run("h264_videotoolbox", func(t *testing.T) {
 		opt := Options{
