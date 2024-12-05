@@ -31,10 +31,10 @@
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
         <v-alert v-if="results.length === 0" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
-          <h3 class="text-body-2 ma-0 pa-0">
+          <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No pictures found</translate>
           </h3>
-          <p class="text-body-1 mt-2 mb-0 pa-0">
+          <p class="mt-2 mb-0 pa-0">
             <translate>Duplicates will be skipped and only appear once.</translate>
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>

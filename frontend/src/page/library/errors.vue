@@ -56,7 +56,7 @@
     </v-list>
     <div v-else class="pa-2">
       <v-alert color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
-        <p class="text-body-1 mt-0 mb-0 pa-0">
+        <p class="mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
           </template>

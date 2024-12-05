@@ -26,10 +26,10 @@
 
       <v-container grid-list-xs fluid class="pa-0">
         <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
-          <h3 class="text-body-2 ma-0 pa-0">
+          <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
-          <p class="text-body-1 mt-2 mb-0 pa-0">
+          <p class="mt-2 mb-0 pa-0">
             <translate>You may rescan your library to find additional faces.</translate>
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
