@@ -2,7 +2,12 @@
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panels v-model="state" class="pa-0 elevation-0 bg-secondary" variant="accordion">
       <template v-for="file in model.fileModels()">
-        <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px" :title="file.baseName(70)">
+        <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
+          <v-expansion-panel-title>
+            <div class="text-caption filename">
+              {{ file.baseName(70) }}
+            </div>
+          </v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-card tile>
               <v-card-text class="pa-0">
