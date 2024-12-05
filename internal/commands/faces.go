@@ -8,7 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -22,7 +22,7 @@ import (
 var FacesCommands = cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
-	Subcommands: []cli.Command{
+	Subcommands: []*cli.Command{
 		{
 			Name:   "stats",
 			Usage:  "Shows stats on face samples",
@@ -32,9 +32,10 @@ var FacesCommands = cli.Command{
 			Name:  "audit",
 			Usage: "Scans the index for issues",
 			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "fix, f",
-					Usage: "fix discovered issues",
+				&cli.BoolFlag{
+					Name:    "fix",
+					Aliases: []string{"f"},
+					Usage:   "fix discovered issues",
 				},
 			},
 			Action: facesAuditAction,
@@ -43,9 +44,10 @@ var FacesCommands = cli.Command{
 			Name:  "reset",
 			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "force, f",
-					Usage: "remove all people and faces",
+				&cli.BoolFlag{
+					Name:    "force",
+					Aliases: []string{"f"},
+					Usage:   "remove all people and faces",
 				},
 			},
 			Action: facesResetAction,
@@ -60,9 +62,10 @@ var FacesCommands = cli.Command{
 			Name:  "update",
 			Usage: "Performs face clustering and matching",
 			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "force, f",
-					Usage: "update all faces",
+				&cli.BoolFlag{
+					Name:    "force",
+					Aliases: []string{"f"},
+					Usage:   "update all faces",
 				},
 			},
 			Action: facesUpdateAction,

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -28,25 +28,29 @@ var RestoreCommand = cli.Command{
 }
 
 var restoreFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:  "force, f",
-		Usage: "replace the index database with the backup, if it already exists",
+	&cli.BoolFlag{
+		Name:    "force",
+		Aliases: []string{"f"},
+		Usage:   "replace the index database with the backup, if it already exists",
 	},
-	cli.BoolFlag{
-		Name:  "albums, a",
-		Usage: "restore albums from the YAML backup files found in the album backup path",
+	&cli.BoolFlag{
+		Name:    "albums",
+		Aliases: []string{"a"},
+		Usage:   "restore albums from the YAML backup files found in the album backup path",
 	},
-	cli.StringFlag{
+	&cli.StringFlag{
 		Name:  "albums-path",
 		Usage: "custom album backup `PATH`",
 	},
-	cli.BoolFlag{
-		Name:  "database, index, i",
-		Usage: "restore the index database from the specified file (stdin if - is passed as filename), or the most recent backup found in the database backup path",
+	&cli.BoolFlag{
+		Name:    "database",
+		Aliases: []string{"index", "i"},
+		Usage:   "restore the index database from the specified file (stdin if - is passed as filename), or the most recent backup found in the database backup path",
 	},
-	cli.StringFlag{
-		Name:  "database-path, index-path",
-		Usage: "custom database backup `PATH`",
+	&cli.StringFlag{
+		Name:    "database-path",
+		Aliases: []string{"index-path"},
+		Usage:   "custom database backup `PATH`",
 	},
 }
 

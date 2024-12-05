@@ -1,6 +1,6 @@
 package report
 
-import "github.com/urfave/cli"
+import "github.com/urfave/cli/v2"
 
 func CliFormat(ctx *cli.Context) Format {
 	switch {
@@ -16,16 +16,19 @@ func CliFormat(ctx *cli.Context) Format {
 }
 
 var CliFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:  "md, m",
-		Usage: "format as machine-readable Markdown",
+	&cli.BoolFlag{
+		Name:    "md",
+		Aliases: []string{"m"},
+		Usage:   "format as machine-readable Markdown",
 	},
-	cli.BoolFlag{
-		Name:  "csv, c",
-		Usage: "export as semicolon separated values",
+	&cli.BoolFlag{
+		Name:    "csv",
+		Aliases: []string{"c"},
+		Usage:   "export as semicolon separated values",
 	},
-	cli.BoolFlag{
-		Name:  "tsv, t",
-		Usage: "export as tab separated values",
+	&cli.BoolFlag{
+		Name:    "tsv",
+		Aliases: []string{"t"},
+		Usage:   "export as tab separated values",
 	},
 }

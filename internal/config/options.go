@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -25,6 +25,7 @@ type Options struct {
 	PartnerID              string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode               string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
 	Public                 bool          `yaml:"Public" json:"-" flag:"public"`
+	NoHub                  bool          `yaml:"NoHub" json:"-" flag:"no-hub"`
 	AdminUser              string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword          string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	PasswordLength         int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
@@ -236,7 +237,7 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.BackupAlbums = true
 
 	// Initialize options with the values from the "defaults.yml" file, if it exists.
-	if defaultsYaml := ctx.GlobalString("defaults-yaml"); defaultsYaml == "" {
+	if defaultsYaml := ctx.String("defaults-yaml"); defaultsYaml == "" {
 		log.Tracef("config: defaults file was not specified")
 	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
 		log.Tracef("config: defaults file %s does not exist", clean.Log(c.DefaultsYaml))

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/workers"
@@ -15,9 +15,10 @@ var OptimizeCommand = cli.Command{
 	Name:  "optimize",
 	Usage: "Maintains titles, estimates, and other metadata",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "force, f",
-			Usage: "update all, including recently optimized",
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "update all, including recently optimized",
 		},
 	},
 	Action: optimizeAction,

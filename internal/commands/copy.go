@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -22,9 +22,10 @@ var CopyCommand = cli.Command{
 	Usage:     "Copies media files to originals",
 	ArgsUsage: "[source]",
 	Flags: []cli.Flag{
-		cli.StringFlag{
-			Name:  "dest, d",
-			Usage: "relative originals `PATH` to which the files should be imported",
+		&cli.StringFlag{
+			Name:    "dest",
+			Aliases: []string{"d"},
+			Usage:   "relative originals `PATH` to which the files should be imported",
 		},
 	},
 	Action: copyAction,

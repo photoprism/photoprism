@@ -12,11 +12,12 @@ func TestUsersCommand(t *testing.T) {
 		var err error
 
 		//Add John
-		ctx := NewTestContext([]string{"add", "--name=John", "--email=john@test.de", "--password=test1234", "--role=admin", "john"})
+		args := []string{"add", "--name=John", "--email=john@test.de", "--password=test1234", "--role=admin", "john"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersAddCommand.Run(ctx)
+			err = UsersAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -24,11 +25,12 @@ func TestUsersCommand(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
-		ctx2 := NewTestContext([]string{"show", "john"})
+		args2 := []string{"show", "john"}
+		ctx2 := NewTestContext(args2)
 
 		// Run command with test context.
 		output2 := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx2)
+			err = UsersShowCommand.Run(ctx2, args2...)
 		})
 
 		//t.Logf(output2)
@@ -40,11 +42,12 @@ func TestUsersCommand(t *testing.T) {
 		//Modify John
 
 		// Create test context with flags and arguments.
-		ctx3 := NewTestContext([]string{"mod", "--name=Johnny", "--email=johnnny@test.de", "--password=test12345", "john"})
+		args3 := []string{"mod", "--name=Johnny", "--email=johnnny@test.de", "--password=test12345", "john"}
+		ctx3 := NewTestContext(args3)
 
 		// Run command with test context.
 		output3 := capture.Output(func() {
-			err = UsersModCommand.Run(ctx3)
+			err = UsersModCommand.Run(ctx3, args3...)
 		})
 
 		// Check command output for plausibility.
@@ -53,7 +56,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Empty(t, output3)
 
 		output4 := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx2)
+			err = UsersShowCommand.Run(ctx2, args2...)
 		})
 
 		//t.Logf(output4)
@@ -65,11 +68,12 @@ func TestUsersCommand(t *testing.T) {
 
 		//Remove John
 		// Create test context with flags and arguments.
-		ctx5 := NewTestContext([]string{"rm", "--force", "john"})
+		args5 := []string{"rm", "--force", "john"}
+		ctx5 := NewTestContext(args5)
 
 		// Run command with test context.
 		output5 := capture.Output(func() {
-			err = UsersRemoveCommand.Run(ctx5)
+			err = UsersRemoveCommand.Run(ctx5, args5...)
 		})
 
 		// Check command output for plausibility.
@@ -78,7 +82,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Empty(t, output5)
 
 		output6 := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx2)
+			err = UsersShowCommand.Run(ctx2, args2...)
 		})
 
 		//t.Logf(output6)

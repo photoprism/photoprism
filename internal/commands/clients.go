@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -30,59 +30,66 @@ var ClientsCommands = cli.Command{
 	Name:    "clients",
 	Aliases: []string{"client"},
 	Usage:   "Client credentials subcommands",
-	Subcommands: []cli.Command{
-		ClientsListCommand,
-		ClientsAddCommand,
-		ClientsShowCommand,
-		ClientsModCommand,
-		ClientsRemoveCommand,
-		ClientsResetCommand,
+	Subcommands: []*cli.Command{
+		&ClientsListCommand,
+		&ClientsAddCommand,
+		&ClientsShowCommand,
+		&ClientsModCommand,
+		&ClientsRemoveCommand,
+		&ClientsResetCommand,
 	},
 }
 
 // ClientAddFlags specifies the "photoprism client add" command flags.
 var ClientAddFlags = []cli.Flag{
-	cli.StringFlag{
+	&cli.StringFlag{
 		Name:   "id",
 		Usage:  ClientIdUsage,
 		Hidden: true,
 	},
-	cli.StringFlag{
-		Name:  "name, n",
-		Usage: ClientNameUsage,
+	&cli.StringFlag{
+		Name:    "name",
+		Aliases: []string{"n"},
+		Usage:   ClientNameUsage,
 	},
-	cli.StringFlag{
-		Name:  "role, r",
-		Usage: ClientRoleUsage,
-		Value: acl.RoleClient.String(),
+	&cli.StringFlag{
+		Name:    "role",
+		Aliases: []string{"r"},
+		Usage:   ClientRoleUsage,
+		Value:   acl.RoleClient.String(),
 	},
-	cli.StringFlag{
-		Name:  "scope, s",
-		Usage: ClientAuthScope,
+	&cli.StringFlag{
+		Name:    "scope",
+		Aliases: []string{"s"},
+		Usage:   ClientAuthScope,
 	},
-	cli.StringFlag{
-		Name:   "provider, p",
-		Usage:  ClientAuthProvider,
-		Value:  authn.ProviderClient.String(),
-		Hidden: true,
+	&cli.StringFlag{
+		Name:    "provider",
+		Aliases: []string{"p"},
+		Usage:   ClientAuthProvider,
+		Value:   authn.ProviderClient.String(),
+		Hidden:  true,
 	},
-	cli.StringFlag{
-		Name:   "method, m",
-		Usage:  ClientAuthMethod,
-		Value:  authn.MethodOAuth2.String(),
-		Hidden: true,
+	&cli.StringFlag{
+		Name:    "method",
+		Aliases: []string{"m"},
+		Usage:   ClientAuthMethod,
+		Value:   authn.MethodOAuth2.String(),
+		Hidden:  true,
 	},
-	cli.Int64Flag{
-		Name:  "expires, e",
-		Usage: ClientAuthExpires,
-		Value: unix.Day,
+	&cli.Int64Flag{
+		Name:    "expires",
+		Aliases: []string{"e"},
+		Usage:   ClientAuthExpires,
+		Value:   unix.Day,
 	},
-	cli.Int64Flag{
-		Name:  "tokens, t",
-		Usage: ClientAuthTokens,
-		Value: 10,
+	&cli.Int64Flag{
+		Name:    "tokens",
+		Aliases: []string{"t"},
+		Usage:   ClientAuthTokens,
+		Value:   10,
 	},
-	cli.StringFlag{
+	&cli.StringFlag{
 		Name:   "secret",
 		Usage:  ClientSecretUsage,
 		Hidden: true,
@@ -91,55 +98,62 @@ var ClientAddFlags = []cli.Flag{
 
 // ClientModFlags specifies the "photoprism client mod" command flags.
 var ClientModFlags = []cli.Flag{
-	cli.StringFlag{
-		Name:  "name, n",
-		Usage: ClientNameUsage,
+	&cli.StringFlag{
+		Name:    "name",
+		Aliases: []string{"n"},
+		Usage:   ClientNameUsage,
 	},
-	cli.StringFlag{
-		Name:  "role, r",
-		Usage: ClientRoleUsage,
-		Value: acl.RoleClient.String(),
+	&cli.StringFlag{
+		Name:    "role",
+		Aliases: []string{"r"},
+		Usage:   ClientRoleUsage,
+		Value:   acl.RoleClient.String(),
 	},
-	cli.StringFlag{
-		Name:  "scope, s",
-		Usage: ClientAuthScope,
+	&cli.StringFlag{
+		Name:    "scope",
+		Aliases: []string{"s"},
+		Usage:   ClientAuthScope,
 	},
-	cli.StringFlag{
-		Name:   "provider, p",
-		Usage:  ClientAuthProvider,
-		Value:  authn.ProviderClient.String(),
-		Hidden: true,
+	&cli.StringFlag{
+		Name:    "provider",
+		Aliases: []string{"p"},
+		Usage:   ClientAuthProvider,
+		Value:   authn.ProviderClient.String(),
+		Hidden:  true,
 	},
-	cli.StringFlag{
-		Name:   "method, m",
-		Usage:  ClientAuthMethod,
-		Value:  authn.MethodOAuth2.String(),
-		Hidden: true,
+	&cli.StringFlag{
+		Name:    "method",
+		Aliases: []string{"m"},
+		Usage:   ClientAuthMethod,
+		Value:   authn.MethodOAuth2.String(),
+		Hidden:  true,
 	},
-	cli.Int64Flag{
-		Name:  "expires, e",
-		Usage: ClientAuthExpires,
-		Value: unix.Day,
+	&cli.Int64Flag{
+		Name:    "expires",
+		Aliases: []string{"e"},
+		Usage:   ClientAuthExpires,
+		Value:   unix.Day,
 	},
-	cli.Int64Flag{
-		Name:  "tokens, t",
-		Usage: ClientAuthTokens,
-		Value: 10,
+	&cli.Int64Flag{
+		Name:    "tokens",
+		Aliases: []string{"t"},
+		Usage:   ClientAuthTokens,
+		Value:   10,
 	},
-	cli.StringFlag{
+	&cli.StringFlag{
 		Name:   "secret",
 		Usage:  ClientSecretUsage,
 		Hidden: true,
 	},
-	cli.BoolFlag{
+	&cli.BoolFlag{
 		Name:  "regenerate",
 		Usage: ClientRegenerateSecret,
 	},
-	cli.BoolFlag{
+	&cli.BoolFlag{
 		Name:  "enable",
 		Usage: ClientEnable,
 	},
-	cli.BoolFlag{
+	&cli.BoolFlag{
 		Name:  "disable",
 		Usage: ClientDisable,
 	},

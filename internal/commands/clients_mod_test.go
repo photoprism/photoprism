@@ -12,11 +12,12 @@ func TestClientsModCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"mod", "--name=New", "--scope=test", "cs5cpu17n6gjxxxx"})
+		args := []string{"mod", "--name=New", "--scope=test", "cs5cpu17n6gjxxxx"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsModCommand.Run(ctx)
+			err = ClientsModCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -26,11 +27,12 @@ func TestClientsModCommand(t *testing.T) {
 	t.Run("DisableEnableAuth", func(t *testing.T) {
 		var err error
 
-		ctx0 := NewTestContext([]string{"show", "cs7pvt5h8rw9aaqj"})
+		args0 := []string{"show", "cs7pvt5h8rw9aaqj"}
+		ctx0 := NewTestContext(args0)
 
 		// Run command with test context.
 		output0 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx0)
+			err = ClientsShowCommand.Run(ctx0, args0...)
 		})
 
 		// Check command output for plausibility.
@@ -40,11 +42,12 @@ func TestClientsModCommand(t *testing.T) {
 		assert.Contains(t, output0, "oauth2")
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"mod", "--disable", "cs7pvt5h8rw9aaqj"})
+		args := []string{"mod", "--disable", "cs7pvt5h8rw9aaqj"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsModCommand.Run(ctx)
+			err = ClientsModCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -54,7 +57,7 @@ func TestClientsModCommand(t *testing.T) {
 
 		// Run command with test context.
 		output1 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx0)
+			err = ClientsShowCommand.Run(ctx0, args0...)
 		})
 
 		// Check command output for plausibility.
@@ -63,11 +66,12 @@ func TestClientsModCommand(t *testing.T) {
 		assert.Contains(t, output1, "AuthEnabled  | false")
 
 		// Create test context with flags and arguments.
-		ctx1 := NewTestContext([]string{"mod", "--enable", "cs7pvt5h8rw9aaqj"})
+		args1 := []string{"mod", "--enable", "cs7pvt5h8rw9aaqj"}
+		ctx1 := NewTestContext(args1)
 
 		// Run command with test context.
 		output2 := capture.Output(func() {
-			err = ClientsModCommand.Run(ctx1)
+			err = ClientsModCommand.Run(ctx1, args1...)
 		})
 
 		// Check command output for plausibility.
@@ -76,7 +80,7 @@ func TestClientsModCommand(t *testing.T) {
 
 		// Run command with test context.
 		output3 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx0)
+			err = ClientsShowCommand.Run(ctx0, args0...)
 		})
 
 		// Check command output for plausibility.
@@ -88,11 +92,12 @@ func TestClientsModCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"mod", "--regenerate", "cs7pvt5h8rw9aaqj"})
+		args := []string{"mod", "--regenerate", "cs7pvt5h8rw9aaqj"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsModCommand.Run(ctx)
+			err = ClientsModCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

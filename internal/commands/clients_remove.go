@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -17,9 +17,10 @@ var ClientsRemoveCommand = cli.Command{
 	Usage:     "Deletes the specified client application",
 	ArgsUsage: "[client id]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "force, f",
-			Usage: "don't ask for confirmation",
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "don't ask for confirmation",
 		},
 	},
 	Action: clientsRemoveAction,

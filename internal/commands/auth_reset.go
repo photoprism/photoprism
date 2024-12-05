@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -20,13 +20,15 @@ var AuthResetCommand = cli.Command{
 	Usage:       "Resets the authentication of all users and clients",
 	Description: AuthResetDescription,
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "trace, t",
-			Usage: "show trace logs for debugging",
+		&cli.BoolFlag{
+			Name:    "trace",
+			Aliases: []string{"t"},
+			Usage:   "show trace logs for debugging",
 		},
-		cli.BoolFlag{
-			Name:  "yes, y",
-			Usage: "assume \"yes\" and run non-interactively",
+		&cli.BoolFlag{
+			Name:    "yes",
+			Aliases: []string{"y"},
+			Usage:   "assume \"yes\" and run non-interactively",
 		},
 	},
 	Action: authResetAction,

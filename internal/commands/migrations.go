@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -31,13 +31,15 @@ var MigrationsRunCommand = cli.Command{
 	Usage:     "Executes database schema migrations",
 	ArgsUsage: "[migrations...]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "failed, f",
-			Usage: "run previously failed migrations",
+		&cli.BoolFlag{
+			Name:    "failed",
+			Aliases: []string{"f"},
+			Usage:   "run previously failed migrations",
 		},
-		cli.BoolFlag{
-			Name:  "trace, t",
-			Usage: "show trace logs for debugging",
+		&cli.BoolFlag{
+			Name:    "trace",
+			Aliases: []string{"t"},
+			Usage:   "show trace logs for debugging",
 		},
 	},
 	Action: migrationsRunAction,
@@ -47,9 +49,9 @@ var MigrationsRunCommand = cli.Command{
 var MigrationsCommands = cli.Command{
 	Name:  "migrations",
 	Usage: "Database schema migration subcommands",
-	Subcommands: []cli.Command{
-		MigrationsStatusCommand,
-		MigrationsRunCommand,
+	Subcommands: []*cli.Command{
+		&MigrationsStatusCommand,
+		&MigrationsRunCommand,
 	},
 }
 

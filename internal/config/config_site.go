@@ -145,7 +145,7 @@ func (c *Config) SitePreview() string {
 
 // LegalInfo returns the legal info text for the page footer.
 func (c *Config) LegalInfo() string {
-	if s := c.CliGlobalString("imprint"); s != "" {
+	if s := c.CliContextString("imprint"); s != "" {
 		log.Warnf("config: option 'imprint' is deprecated, please use 'legal-info'")
 		return s
 	}
@@ -155,7 +155,7 @@ func (c *Config) LegalInfo() string {
 
 // LegalUrl returns the legal info url.
 func (c *Config) LegalUrl() string {
-	if s := c.CliGlobalString("imprint-url"); s != "" {
+	if s := c.CliContextString("imprint-url"); s != "" {
 		log.Warnf("config: option 'imprint-url' is deprecated, please use 'legal-url'")
 		return s
 	}

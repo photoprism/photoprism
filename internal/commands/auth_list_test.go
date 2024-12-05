@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"fmt"
+	"runtime/debug"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,11 +15,12 @@ func TestAuthListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls"})
+		args := []string{"ls"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthListCommand.Run(ctx)
+			err = AuthListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -31,11 +34,12 @@ func TestAuthListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "alice"})
+		args := []string{"ls", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthListCommand.Run(ctx)
+			err = AuthListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -51,11 +55,12 @@ func TestAuthListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--csv", "alice"})
+		args := []string{"ls", "--csv", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthListCommand.Run(ctx)
+			err = AuthListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -70,11 +75,12 @@ func TestAuthListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--tokens", "alice"})
+		args := []string{"ls", "--tokens", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthListCommand.Run(ctx)
+			err = AuthListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -90,11 +96,12 @@ func TestAuthListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--tokens", "notexisting"})
+		args := []string{"ls", "--tokens", "notexisting"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthListCommand.Run(ctx)
+			err = AuthListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -105,12 +112,20 @@ func TestAuthListCommand(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		var err error
 
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("error: %s \nstack: %s", r, debug.Stack())
+				assert.Error(t, err)
+			}
+		}()
+
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--xyz", "alice"})
+		args := []string{"ls", "--xyz", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthListCommand.Run(ctx)
+			err = AuthListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

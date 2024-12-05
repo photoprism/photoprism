@@ -10,10 +10,10 @@ import (
 func TestShowConfigOptionsCommand(t *testing.T) {
 	var err error
 
-	ctx := NewTestContext([]string{"config-options", "--md"})
-
+	args := []string{"config-options", "--md"}
+	ctx := NewTestContext(args)
 	output := capture.Stdout(func() {
-		err = ShowConfigOptionsCommand.Run(ctx)
+		err = ShowConfigOptionsCommand.Run(ctx, args...)
 	})
 
 	assert.NoError(t, err)

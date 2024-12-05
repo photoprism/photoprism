@@ -12,11 +12,12 @@ func TestAuthAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--scope=metrics", "--expires=5000", "--name=alice", "alice"})
+		args := []string{"add", "--scope=metrics", "--expires=5000", "--name=alice", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthAddCommand.Run(ctx)
+			err = AuthAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -30,11 +31,12 @@ func TestAuthAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--scope=test", "--expires=5000", "--name=xyz"})
+		args := []string{"add", "--scope=test", "--expires=5000", "--name=xyz"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthAddCommand.Run(ctx)
+			err = AuthAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -48,11 +50,12 @@ func TestAuthAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--scope=test", "--expires=5000", "xxxxx"})
+		args := []string{"add", "--scope=test", "--expires=5000", "xxxxx"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthAddCommand.Run(ctx)
+			err = AuthAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -65,11 +68,12 @@ func TestAuthAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--scope=test", "--expires=5000", "alice"})
+		args := []string{"add", "--scope=test", "--expires=5000", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthAddCommand.Run(ctx)
+			err = AuthAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -81,11 +85,12 @@ func TestAuthAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--name=test", "--expires=5000", "alice"})
+		args := []string{"add", "--name=test", "--expires=5000", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthAddCommand.Run(ctx)
+			err = AuthAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

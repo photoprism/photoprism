@@ -1,6 +1,6 @@
 package commands
 
-import "github.com/urfave/cli"
+import "github.com/urfave/cli/v2"
 
 // MigrateCommand configures the command name, flags, and action.
 var MigrateCommand = cli.Command{

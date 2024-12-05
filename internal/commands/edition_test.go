@@ -7,22 +7,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUsersLegacyCommand(t *testing.T) {
-	t.Run("All", func(t *testing.T) {
+func TestEditionCommand(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		args := []string{""}
+		args := []string{"edition"}
 		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersLegacyCommand.Run(ctx, args...)
+			err = EditionCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "| ID | UID | Name | User | Email | Admin | Created At |")
+		assert.Contains(t, output, "ce")
 	})
 }

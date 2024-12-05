@@ -11,9 +11,10 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/sevlyar/go-daemon"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/session"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/server"
@@ -35,14 +36,16 @@ var StartCommand = cli.Command{
 
 // startFlags specifies the start command parameters.
 var startFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:   "detach-server, d",
-		Usage:  "detach from the console (daemon mode)",
-		EnvVar: "PHOTOPRISM_DETACH_SERVER",
+	&cli.BoolFlag{
+		Name:    "detach-server",
+		Aliases: []string{"d"},
+		Usage:   "detach from the console (daemon mode)",
+		EnvVars: config.EnvVars("DETACH_SERVER"),
 	},
-	cli.BoolFlag{
-		Name:  "config, c",
-		Usage: "show config",
+	&cli.BoolFlag{
+		Name:    "config",
+		Aliases: []string{"c"},
+		Usage:   "show config",
 	},
 }
 
@@ -89,7 +92,7 @@ func startAction(ctx *cli.Context) error {
 	dctx := new(daemon.Context)
 	dctx.LogFileName = conf.LogFilename()
 	dctx.PidFileName = conf.PIDFilename()
-	dctx.Args = ctx.Args()
+	dctx.Args = ctx.Args().Slice()
 
 	if !daemon.WasReborn() && conf.DetachServer() {
 		conf.Shutdown()

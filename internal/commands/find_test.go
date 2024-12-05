@@ -12,11 +12,12 @@ func TestFindCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"find", "--csv"})
+		args := []string{"find", "--csv"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = FindCommand.Run(ctx)
+			err = FindCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
@@ -39,11 +39,14 @@ func TestMain(m *testing.M) {
 func NewTestContext(args []string) *cli.Context {
 	// Create new command-line app.
 	app := cli.NewApp()
+	app.Name = "photoprism"
 	app.Usage = "PhotoPrism®"
+	app.Description = ""
 	app.Version = "test"
 	app.Copyright = "(c) 2018-2024 PhotoPrism UG. All rights reserved."
-	app.EnableBashCompletion = true
 	app.Flags = config.Flags.Cli()
+	app.Commands = PhotoPrism
+	app.EnableBashCompletion = false
 	app.Metadata = map[string]interface{}{
 		"Name":    "PhotoPrism",
 		"About":   "PhotoPrism®",
@@ -52,9 +55,9 @@ func NewTestContext(args []string) *cli.Context {
 	}
 
 	// Parse command arguments.
-	flags := flag.NewFlagSet("test", 0)
-	LogErr(flags.Parse(args))
+	set := flag.NewFlagSet("test", flag.ContinueOnError)
+	LogErr(set.Parse(args))
 
 	// Create and return new context.
-	return cli.NewContext(app, flags, nil)
+	return cli.NewContext(app, set, nil)
 }

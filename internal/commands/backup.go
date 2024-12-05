@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
@@ -30,30 +30,35 @@ var BackupCommand = cli.Command{
 }
 
 var backupFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:  "force, f",
-		Usage: "replace the index database backup file, if it exists",
+	&cli.BoolFlag{
+		Name:    "force",
+		Aliases: []string{"f"},
+		Usage:   "replace the index database backup file, if it exists",
 	},
-	cli.BoolFlag{
-		Name:  "albums, a",
-		Usage: "create YAML files to back up album metadata (in the standard backup path if no other path is specified)",
+	&cli.BoolFlag{
+		Name:    "albums",
+		Aliases: []string{"a"},
+		Usage:   "create YAML files to back up album metadata (in the standard backup path if no other path is specified)",
 	},
-	cli.StringFlag{
+	&cli.StringFlag{
 		Name:  "albums-path",
 		Usage: "custom album backup `PATH`",
 	},
-	cli.BoolFlag{
-		Name:  "database, index, i",
-		Usage: "create index database backup (in the backup path with the date as filename if no filename is passed, or sent to stdout if - is passed as filename)",
+	&cli.BoolFlag{
+		Name:    "database",
+		Aliases: []string{"index", "i"},
+		Usage:   "create index database backup (in the backup path with the date as filename if no filename is passed, or sent to stdout if - is passed as filename)",
 	},
-	cli.StringFlag{
-		Name:  "database-path, index-path",
-		Usage: "custom database backup `PATH`",
+	&cli.StringFlag{
+		Name:    "database-path",
+		Aliases: []string{"index-path"},
+		Usage:   "custom database backup `PATH`",
 	},
-	cli.IntFlag{
-		Name:  "retain, r",
-		Usage: "`NUMBER` of database backups to keep (-1 to keep all)",
-		Value: config.DefaultBackupRetain,
+	&cli.IntFlag{
+		Name:    "retain",
+		Aliases: []string{"r"},
+		Usage:   "`NUMBER` of database backups to keep (-1 to keep all)",
+		Value:   config.DefaultBackupRetain,
 	},
 }
 

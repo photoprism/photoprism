@@ -4,7 +4,7 @@ import (
 	"syscall"
 
 	"github.com/sevlyar/go-daemon"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 )

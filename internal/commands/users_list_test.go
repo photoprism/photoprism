@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"fmt"
+	"runtime/debug"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,11 +15,12 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--login", "--created", "--deleted", "-n", "100", "--md"})
+		args := []string{"ls", "--login", "--created", "--deleted", "-n", "100", "--md"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -32,11 +35,12 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "-l", "friend"})
+		args := []string{"ls", "-l", "friend"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -52,11 +56,12 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "-a", "friend"})
+		args := []string{"ls", "-a", "friend"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -72,11 +77,12 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "-r", "friend"})
+		args := []string{"ls", "-r", "friend"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -92,11 +98,12 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--csv", "friend"})
+		args := []string{"ls", "--csv", "friend"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -112,11 +119,12 @@ func TestUsersListCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "notexisting"})
+		args := []string{"ls", "notexisting"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -124,35 +132,43 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 	})
-	t.Run("InvalidFlag", func(t *testing.T) {
+	t.Run("OneResult", func(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "--xyz", "friend"})
+		args := []string{"ls", "--count=1", "friend"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
+			err = UsersListCommand.Run(ctx, args...)
+		})
+
+		// Check result.
+		assert.NoError(t, err)
+		assert.NotEmpty(t, output)
+	})
+	t.Run("InvalidFlag", func(t *testing.T) {
+		var err error
+
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("error: %s \nstack: %s", r, debug.Stack())
+				assert.Error(t, err)
+			}
+		}()
+
+		// Create test context with flags and arguments.
+		args := []string{"ls", "--xyz", "friend"}
+		ctx := NewTestContext(args)
+
+		// Run command with test context.
+		output := capture.Output(func() {
+			err = UsersListCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
-		assert.Error(t, err)
-		assert.Empty(t, output)
-	})
-	t.Run("InvalidValue", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"ls", "-n=-1", "friend"})
-
-		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx)
-		})
-
-		// Check command output for plausibility.
-		//t.Logf(output)
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})

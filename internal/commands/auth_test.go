@@ -13,11 +13,12 @@ func TestAuthCommands(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"auth", "ls"})
+		args := []string{"auth", "ls"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthCommands.Run(ctx)
+			err = AuthCommands.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -31,11 +32,12 @@ func TestAuthCommands(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"auth", "ls", "alice"})
+		args := []string{"auth", "ls", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = AuthCommands.Run(ctx)
+			err = AuthCommands.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
