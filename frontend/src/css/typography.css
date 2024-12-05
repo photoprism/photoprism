@@ -81,6 +81,7 @@ body #app {
 /* Page Text Styles */
 
 .p-page p,
+.p-help-websockets p,
 .p-page li {
     font-size: 0.875rem;
     font-weight: 400;
