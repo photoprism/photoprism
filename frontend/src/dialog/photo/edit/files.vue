@@ -47,7 +47,7 @@
                                 >
                                   <translate>Primary</translate>
                                 </v-btn>
-                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" variant="flat" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" density="comfortable" variant="flat" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
                                   <translate>Unstack</translate>
                                 </v-btn>
                                 <v-btn v-if="features.delete && !file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
