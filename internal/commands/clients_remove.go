@@ -12,7 +12,7 @@ import (
 )
 
 // ClientsRemoveCommand configures the command name, flags, and action.
-var ClientsRemoveCommand = cli.Command{
+var ClientsRemoveCommand = &cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes the specified client application",
 	ArgsUsage: "[client id]",

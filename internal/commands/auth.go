@@ -5,16 +5,16 @@ import (
 )
 
 // AuthCommands registers the API authentication subcommands.
-var AuthCommands = cli.Command{
+var AuthCommands = &cli.Command{
 	Name:    "auth",
 	Aliases: []string{"sess"},
 	Usage:   "API authentication subcommands",
 	Subcommands: []*cli.Command{
-		&AuthListCommand,
-		&AuthAddCommand,
-		&AuthShowCommand,
-		&AuthRemoveCommand,
-		&AuthResetCommand,
+		AuthListCommand,
+		AuthAddCommand,
+		AuthShowCommand,
+		AuthRemoveCommand,
+		AuthResetCommand,
 	},
 }
 

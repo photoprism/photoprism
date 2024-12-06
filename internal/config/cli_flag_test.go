@@ -12,7 +12,7 @@ func TestCliFlag_Skip(t *testing.T) {
 		Flag: &cli.StringFlag{
 			Name:    "with-tags",
 			Usage:   "`STRING`",
-			EnvVars: []string{"PHOTOPRISM_WITH_TAGS"},
+			EnvVars: EnvVars("WITH_TAGS"),
 		},
 		Tags: []string{"foo", "bar"},
 	}
@@ -21,7 +21,7 @@ func TestCliFlag_Skip(t *testing.T) {
 		Flag: &cli.StringFlag{
 			Name:    "no-tags",
 			Usage:   "`STRING`",
-			EnvVars: []string{"PHOTOPRISM_NO_TAGS"},
+			EnvVars: EnvVars("NO_TAGS"),
 		},
 		Tags: []string{},
 	}
@@ -33,6 +33,58 @@ func TestCliFlag_Skip(t *testing.T) {
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, withTags.Skip([]string{"foo"}))
 		assert.False(t, noTags.Skip([]string{"foo"}))
+	})
+}
+
+func TestCliFlag_EnvVars(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		testFlag := CliFlag{
+			Flag: &cli.StringFlag{
+				Name:    "test",
+				Usage:   "`STRING`",
+				EnvVars: nil,
+			},
+			Tags: []string{"foo", "bar"},
+		}
+
+		assert.Equal(t, "test", testFlag.Name())
+		assert.Equal(t, []string{"test"}, testFlag.Names())
+		assert.Equal(t, "test", testFlag.String())
+		assert.Equal(t, "", testFlag.EnvVar())
+		assert.Equal(t, []string{}, testFlag.EnvVars())
+	})
+	t.Run("One", func(t *testing.T) {
+		testFlag := CliFlag{
+			Flag: &cli.StringFlag{
+				Name:    "test",
+				Usage:   "`STRING`",
+				EnvVars: EnvVars("BAR_BAZ"),
+			},
+			Tags: []string{"foo", "bar"},
+		}
+
+		assert.Equal(t, "test", testFlag.Name())
+		assert.Equal(t, []string{"test"}, testFlag.Names())
+		assert.Equal(t, "test", testFlag.String())
+		assert.Equal(t, "PHOTOPRISM_BAR_BAZ", testFlag.EnvVar())
+		assert.Equal(t, []string{"PHOTOPRISM_BAR_BAZ"}, testFlag.EnvVars())
+	})
+	t.Run("Multiple", func(t *testing.T) {
+		testFlag := CliFlag{
+			Flag: &cli.StringFlag{
+				Name:    "test",
+				Aliases: []string{"t"},
+				Usage:   "`STRING`",
+				EnvVars: EnvVars("FOO_1", "ORIGINALS_PATH"),
+			},
+			Tags: []string{"foo", "bar"},
+		}
+
+		assert.Equal(t, "test", testFlag.Name())
+		assert.Equal(t, []string{"test", "t"}, testFlag.Names())
+		assert.Equal(t, "test, t", testFlag.String())
+		assert.Equal(t, "PHOTOPRISM_FOO_1, PHOTOPRISM_ORIGINALS_PATH", testFlag.EnvVar())
+		assert.Equal(t, []string{"PHOTOPRISM_FOO_1", "PHOTOPRISM_ORIGINALS_PATH"}, testFlag.EnvVars())
 	})
 }
 

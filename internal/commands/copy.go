@@ -16,7 +16,7 @@ import (
 )
 
 // CopyCommand configures the command name, flags, and action.
-var CopyCommand = cli.Command{
+var CopyCommand = &cli.Command{
 	Name:      "cp",
 	Aliases:   []string{"copy"},
 	Usage:     "Copies media files to originals",

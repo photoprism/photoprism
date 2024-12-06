@@ -9,7 +9,7 @@ import (
 )
 
 // VersionCommand configures the "photoprism version" command.
-var VersionCommand = cli.Command{
+var VersionCommand = &cli.Command{
 	Name:   "version",
 	Usage:  "Shows version information",
 	Action: versionAction,

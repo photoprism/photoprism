@@ -16,7 +16,7 @@ import (
 )
 
 // ImportCommand configures the command name, flags, and action.
-var ImportCommand = cli.Command{
+var ImportCommand = &cli.Command{
 	Name:      "mv",
 	Aliases:   []string{"import"},
 	Usage:     "Moves media files to originals",

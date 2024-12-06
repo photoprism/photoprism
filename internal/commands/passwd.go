@@ -19,7 +19,7 @@ import (
 )
 
 // PasswdCommand configures the command name, flags, and action.
-var PasswdCommand = cli.Command{
+var PasswdCommand = &cli.Command{
 	Name:      "passwd",
 	Usage:     "Changes the local account password of a registered user",
 	ArgsUsage: "[username]",

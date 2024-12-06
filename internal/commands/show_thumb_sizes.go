@@ -10,7 +10,7 @@ import (
 )
 
 // ShowThumbSizesCommand configures the command name, flags, and action.
-var ShowThumbSizesCommand = cli.Command{
+var ShowThumbSizesCommand = &cli.Command{
 	Name:    "thumb-sizes",
 	Aliases: []string{"thumbs"},
 	Usage:   "Displays supported thumbnail types and sizes",

@@ -9,7 +9,7 @@ import (
 )
 
 // EditionCommand configures the "photoprism edition" command.
-var EditionCommand = cli.Command{
+var EditionCommand = &cli.Command{
 	Name:   "edition",
 	Usage:  "Shows edition information",
 	Hidden: true,

@@ -18,7 +18,7 @@ const restoreDescription = `A custom filename for the database backup (or - to r
    will be automatically determined based on the current configuration.`
 
 // RestoreCommand configures the command name, flags, and action.
-var RestoreCommand = cli.Command{
+var RestoreCommand = &cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
 	Usage:       "Restores the index database and/or album metadata from a backup",

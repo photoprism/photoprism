@@ -12,7 +12,7 @@ import (
 )
 
 // CleanUpCommand configures the command name, flags, and action.
-var CleanUpCommand = cli.Command{
+var CleanUpCommand = &cli.Command{
 	Name:   "cleanup",
 	Usage:  "Removes orphaned index entries, sidecar and thumbnail files",
 	Flags:  cleanUpFlags,

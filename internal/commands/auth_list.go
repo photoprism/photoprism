@@ -12,7 +12,7 @@ import (
 )
 
 // AuthListCommand configures the command name, flags, and action.
-var AuthListCommand = cli.Command{
+var AuthListCommand = &cli.Command{
 	Name:      "ls",
 	Usage:     "Lists currently authenticated users and clients",
 	ArgsUsage: "[search]",

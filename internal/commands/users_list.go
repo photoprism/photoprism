@@ -12,7 +12,7 @@ import (
 )
 
 // UsersListCommand configures the command name, flags, and action.
-var UsersListCommand = cli.Command{
+var UsersListCommand = &cli.Command{
 	Name:   "ls",
 	Usage:  "Lists registered user accounts",
 	Flags:  append(report.CliFlags, CountFlag, UsersLoginFlag, UsersCreatedFlag, UsersDeletedFlag),

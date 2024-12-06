@@ -20,7 +20,7 @@ const backupDescription = `A custom filename for the database backup (or - to se
    will be automatically determined based on the current configuration.`
 
 // BackupCommand configures the command name, flags, and action.
-var BackupCommand = cli.Command{
+var BackupCommand = &cli.Command{
 	Name:        "backup",
 	Description: backupDescription,
 	Usage:       "Creates an index database backup and/or album YAML backup files",

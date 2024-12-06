@@ -1,27 +1,15 @@
 package commands
 
 import (
-	"fmt"
-	"runtime/debug"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/capture"
 )
 
 func TestUsersListCommand(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "--login", "--created", "--deleted", "-n", "100", "--md"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "--login", "--created", "--deleted", "-n", "100", "--md"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -32,16 +20,8 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NotContains(t, output, "visitor")
 	})
 	t.Run("LastLogin", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "-l", "friend"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "-l", "friend"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -53,16 +33,8 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NotContains(t, output, "visitor")
 	})
 	t.Run("Created", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "-a", "friend"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "-a", "friend"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -74,16 +46,8 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NotContains(t, output, "visitor")
 	})
 	t.Run("Deleted", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "-r", "friend"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "-r", "friend"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -95,16 +59,8 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NotContains(t, output, "visitor")
 	})
 	t.Run("CSV", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "--csv", "friend"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "--csv", "friend"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -116,16 +72,8 @@ func TestUsersListCommand(t *testing.T) {
 		assert.NotContains(t, output, "alice")
 	})
 	t.Run("NoResult", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "notexisting"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "notexisting"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -133,43 +81,20 @@ func TestUsersListCommand(t *testing.T) {
 		assert.Empty(t, output)
 	})
 	t.Run("OneResult", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "--count=1", "friend"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "--count=1", "friend"})
 
 		// Check result.
 		assert.NoError(t, err)
 		assert.NotEmpty(t, output)
 	})
 	t.Run("InvalidFlag", func(t *testing.T) {
-		var err error
-
-		defer func() {
-			if r := recover(); r != nil {
-				err = fmt.Errorf("error: %s \nstack: %s", r, debug.Stack())
-				assert.Error(t, err)
-			}
-		}()
-
-		// Create test context with flags and arguments.
-		args := []string{"ls", "--xyz", "friend"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersListCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "--xyz", "friend"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
-		assert.Error(t, err)
 		assert.Empty(t, output)
+		assert.Error(t, err)
 	})
 }

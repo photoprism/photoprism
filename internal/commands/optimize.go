@@ -11,7 +11,7 @@ import (
 )
 
 // OptimizeCommand configures the command name, flags, and action.
-var OptimizeCommand = cli.Command{
+var OptimizeCommand = &cli.Command{
 	Name:  "optimize",
 	Usage: "Maintains titles, estimates, and other metadata",
 	Flags: []cli.Flag{

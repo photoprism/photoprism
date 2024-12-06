@@ -11,7 +11,7 @@ import (
 )
 
 // ShowFileFormatsCommand configures the command name, flags, and action.
-var ShowFileFormatsCommand = cli.Command{
+var ShowFileFormatsCommand = &cli.Command{
 	Name:    "file-formats",
 	Aliases: []string{"formats"},
 	Usage:   "Displays supported media and sidecar file formats",

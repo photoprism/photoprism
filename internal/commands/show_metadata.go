@@ -11,7 +11,7 @@ import (
 )
 
 // ShowMetadataCommand configures the command name, flags, and action.
-var ShowMetadataCommand = cli.Command{
+var ShowMetadataCommand = &cli.Command{
 	Name:    "metadata",
 	Aliases: []string{"meta"},
 	Usage:   "Displays supported metadata tags and standards",

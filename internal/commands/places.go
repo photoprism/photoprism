@@ -13,7 +13,7 @@ import (
 )
 
 // PlacesCommands configures the command name, flags, and action.
-var PlacesCommands = cli.Command{
+var PlacesCommands = &cli.Command{
 	Name:  "places",
 	Usage: "Maps and location information subcommands",
 	Subcommands: []*cli.Command{

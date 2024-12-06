@@ -10,7 +10,7 @@ import (
 )
 
 // MomentsCommand configures the command name, flags, and action.
-var MomentsCommand = cli.Command{
+var MomentsCommand = &cli.Command{
 	Name:   "moments",
 	Usage:  "Creates albums of special moments, trips, and places",
 	Action: momentsAction,

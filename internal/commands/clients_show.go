@@ -12,7 +12,7 @@ import (
 )
 
 // ClientsShowCommand configures the command name, flags, and action.
-var ClientsShowCommand = cli.Command{
+var ClientsShowCommand = &cli.Command{
 	Name:      "show",
 	Usage:     "Shows client configuration details",
 	ArgsUsage: "[client id]",

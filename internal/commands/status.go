@@ -15,7 +15,7 @@ import (
 )
 
 // StatusCommand configures the command name, flags, and action.
-var StatusCommand = cli.Command{
+var StatusCommand = &cli.Command{
 	Name:   "status",
 	Usage:  "Checks if the Web server is running",
 	Action: statusAction,

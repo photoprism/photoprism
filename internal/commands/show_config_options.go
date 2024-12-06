@@ -11,7 +11,7 @@ import (
 )
 
 // ShowConfigOptionsCommand configures the command name, flags, and action.
-var ShowConfigOptionsCommand = cli.Command{
+var ShowConfigOptionsCommand = &cli.Command{
 	Name:   "config-options",
 	Usage:  "Displays supported environment variables and CLI flags",
 	Flags:  report.CliFlags,

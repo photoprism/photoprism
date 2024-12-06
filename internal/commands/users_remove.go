@@ -13,7 +13,7 @@ import (
 )
 
 // UsersRemoveCommand configures the command name, flags, and action.
-var UsersRemoveCommand = cli.Command{
+var UsersRemoveCommand = &cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes a registered user account",
 	ArgsUsage: "[username]",

@@ -15,7 +15,7 @@ import (
 )
 
 // UsersAddCommand configures the command name, flags, and action.
-var UsersAddCommand = cli.Command{
+var UsersAddCommand = &cli.Command{
 	Name:      "add",
 	Usage:     "Creates a new user account",
 	ArgsUsage: "[username]",

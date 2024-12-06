@@ -12,7 +12,7 @@ import (
 )
 
 // ClientsResetCommand configures the command name, flags, and action.
-var ClientsResetCommand = cli.Command{
+var ClientsResetCommand = &cli.Command{
 	Name:  "reset",
 	Usage: "Removes all registered client applications",
 	Flags: []cli.Flag{

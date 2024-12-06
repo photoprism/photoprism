@@ -15,7 +15,7 @@ import (
 )
 
 // FindCommand configures the command name, flags, and action.
-var FindCommand = cli.Command{
+var FindCommand = &cli.Command{
 	Name:      "find",
 	Usage:     "Searches the index for specific files",
 	ArgsUsage: "filter",

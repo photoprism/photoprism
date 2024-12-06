@@ -36,7 +36,7 @@ var AuthAddFlags = []cli.Flag{
 }
 
 // AuthAddCommand configures the command name, flags, and action.
-var AuthAddCommand = cli.Command{
+var AuthAddCommand = &cli.Command{
 	Name:  "add",
 	Usage: "Adds a new authentication secret for client applications",
 	Description: "If you specify a username as argument, an app password will be created for this user account." +

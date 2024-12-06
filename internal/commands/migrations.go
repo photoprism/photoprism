@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
-var MigrationsStatusCommand = cli.Command{
+var MigrationsStatusCommand = &cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
 	Usage:     "Displays the status of schema migrations",
@@ -25,7 +25,7 @@ var MigrationsStatusCommand = cli.Command{
 	Action:    migrationsStatusAction,
 }
 
-var MigrationsRunCommand = cli.Command{
+var MigrationsRunCommand = &cli.Command{
 	Name:      "run",
 	Aliases:   []string{"execute", "migrate"},
 	Usage:     "Executes database schema migrations",
@@ -46,12 +46,12 @@ var MigrationsRunCommand = cli.Command{
 }
 
 // MigrationsCommands registers the "migrations" CLI command.
-var MigrationsCommands = cli.Command{
+var MigrationsCommands = &cli.Command{
 	Name:  "migrations",
 	Usage: "Database schema migration subcommands",
 	Subcommands: []*cli.Command{
-		&MigrationsStatusCommand,
-		&MigrationsRunCommand,
+		MigrationsStatusCommand,
+		MigrationsRunCommand,
 	},
 }
 

@@ -12,7 +12,7 @@ import (
 )
 
 // ThumbsCommand configures the command name, flags, and action.
-var ThumbsCommand = cli.Command{
+var ThumbsCommand = &cli.Command{
 	Name:      "thumbs",
 	Usage:     "(Re-)generates thumbnails based on the current configuration",
 	ArgsUsage: "[subfolder]",

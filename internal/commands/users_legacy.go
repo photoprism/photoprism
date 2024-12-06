@@ -12,7 +12,7 @@ import (
 )
 
 // UsersLegacyCommand configures the command name, flags, and action.
-var UsersLegacyCommand = cli.Command{
+var UsersLegacyCommand = &cli.Command{
 	Name:      "legacy",
 	Usage:     "Lists legacy user accounts",
 	ArgsUsage: "[search]",

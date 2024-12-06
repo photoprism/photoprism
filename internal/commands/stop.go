@@ -10,7 +10,7 @@ import (
 )
 
 // StopCommand configures the command name, flags, and action.
-var StopCommand = cli.Command{
+var StopCommand = &cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
 	Usage:   "Stops the Web server in daemon mode",

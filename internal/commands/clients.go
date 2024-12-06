@@ -26,17 +26,17 @@ const (
 )
 
 // ClientsCommands configures the client application subcommands.
-var ClientsCommands = cli.Command{
+var ClientsCommands = &cli.Command{
 	Name:    "clients",
 	Aliases: []string{"client"},
 	Usage:   "Client credentials subcommands",
 	Subcommands: []*cli.Command{
-		&ClientsListCommand,
-		&ClientsAddCommand,
-		&ClientsShowCommand,
-		&ClientsModCommand,
-		&ClientsRemoveCommand,
-		&ClientsResetCommand,
+		ClientsListCommand,
+		ClientsAddCommand,
+		ClientsShowCommand,
+		ClientsModCommand,
+		ClientsRemoveCommand,
+		ClientsResetCommand,
 	},
 }
 

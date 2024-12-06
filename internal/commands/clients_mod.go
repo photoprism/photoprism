@@ -13,7 +13,7 @@ import (
 )
 
 // ClientsModCommand configures the command name, flags, and action.
-var ClientsModCommand = cli.Command{
+var ClientsModCommand = &cli.Command{
 	Name:      "mod",
 	Usage:     "Updates client application settings",
 	ArgsUsage: "[client id]",

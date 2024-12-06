@@ -16,7 +16,7 @@ import (
 )
 
 // PurgeCommand configures the command name, flags, and action.
-var PurgeCommand = cli.Command{
+var PurgeCommand = &cli.Command{
 	Name:   "purge",
 	Usage:  "Updates missing files, photo counts, and album covers",
 	Flags:  purgeFlags,

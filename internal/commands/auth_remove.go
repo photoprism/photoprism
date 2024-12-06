@@ -13,7 +13,7 @@ import (
 )
 
 // AuthRemoveCommand configures the command name, flags, and action.
-var AuthRemoveCommand = cli.Command{
+var AuthRemoveCommand = &cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes a session by id or access token",
 	ArgsUsage: "[identifier]",

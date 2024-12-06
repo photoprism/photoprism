@@ -11,7 +11,7 @@ import (
 )
 
 // ShowConfigYamlCommand configures the command name, flags, and action.
-var ShowConfigYamlCommand = cli.Command{
+var ShowConfigYamlCommand = &cli.Command{
 	Name:   "config-yaml",
 	Usage:  "Displays supported YAML config options and CLI flags",
 	Flags:  report.CliFlags,

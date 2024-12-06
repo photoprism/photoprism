@@ -11,7 +11,7 @@ import (
 )
 
 // ShowSearchFiltersCommand configures the command name, flags, and action.
-var ShowSearchFiltersCommand = cli.Command{
+var ShowSearchFiltersCommand = &cli.Command{
 	Name:   "search-filters",
 	Usage:  "Displays supported search filters with examples",
 	Flags:  report.CliFlags,

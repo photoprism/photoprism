@@ -13,7 +13,7 @@ import (
 )
 
 // UsersModCommand configures the command name, flags, and action.
-var UsersModCommand = cli.Command{
+var UsersModCommand = &cli.Command{
 	Name:      "mod",
 	Usage:     "Changes user account settings",
 	ArgsUsage: "[username]",

@@ -16,7 +16,7 @@ import (
 )
 
 // IndexCommand registers the index cli command.
-var IndexCommand = cli.Command{
+var IndexCommand = &cli.Command{
 	Name:      "index",
 	Usage:     "Indexes original media files",
 	ArgsUsage: "[subfolder]",

@@ -12,7 +12,7 @@ import (
 )
 
 // ClientsListCommand configures the command name, flags, and action.
-var ClientsListCommand = cli.Command{
+var ClientsListCommand = &cli.Command{
 	Name:      "ls",
 	Usage:     "Lists registered client applications",
 	ArgsUsage: "[search]",

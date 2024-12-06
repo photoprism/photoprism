@@ -26,7 +26,7 @@ import (
 )
 
 // StartCommand configures the command name, flags, and action.
-var StartCommand = cli.Command{
+var StartCommand = &cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
 	Usage:   "Starts the Web server",

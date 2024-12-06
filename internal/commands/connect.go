@@ -7,7 +7,7 @@ import (
 )
 
 // ConnectCommand configures the command name, flags, and action.
-var ConnectCommand = cli.Command{
+var ConnectCommand = &cli.Command{
 	Name:      "connect",
 	Usage:     "Connects your membership account",
 	ArgsUsage: "[activation code]",

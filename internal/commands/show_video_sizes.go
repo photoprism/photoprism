@@ -10,7 +10,7 @@ import (
 )
 
 // ShowVideoSizesCommand configures the command name, flags, and action.
-var ShowVideoSizesCommand = cli.Command{
+var ShowVideoSizesCommand = &cli.Command{
 	Name:   "video-sizes",
 	Usage:  "Displays supported standard video sizes",
 	Flags:  report.CliFlags,

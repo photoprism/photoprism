@@ -17,7 +17,7 @@ import (
 )
 
 // ClientsAddCommand configures the command name, flags, and action.
-var ClientsAddCommand = cli.Command{
+var ClientsAddCommand = &cli.Command{
 	Name:        "add",
 	Usage:       "Registers a new client application",
 	Description: "If you specify a username as argument, the new client will belong to this user and inherit its privileges.",
