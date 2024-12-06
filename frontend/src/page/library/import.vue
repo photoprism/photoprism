@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-import">
-    <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit">
+    <v-form ref="form" class="p-photo-import" validate-on="lazy" @submit.prevent="submit">
       <v-container fluid>
         <p class="text-subtitle-1">
           <span v-if="fileName" class="break-word"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>

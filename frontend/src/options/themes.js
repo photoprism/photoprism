@@ -3,6 +3,7 @@ import { $gettext, T } from "common/vm";
 /* Theme Styles */
 
 let variables = {
+  "btn-height": "32px",
   "border-color": "#FFFFFF",
   "border-opacity": 0.12,
   "high-emphasis-opacity": 0.96,

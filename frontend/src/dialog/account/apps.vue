@@ -1,21 +1,13 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
-    <v-form ref="form" lazy-validation class="form-password" accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" validate-on="lazy" class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card elevation="24">
-        <v-card-title>
-          <v-row no-gutters>
-            <v-col cols="9" class="text-left">
-              <h6 class="text-h6">
-                <translate>Apps and Devices</translate>
-              </h6>
-            </v-col>
-            <v-col cols="3" class="text-right">
-              <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
-              <!-- TODO: change this icon -->
-              <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
-              <v-icon v-else size="28" color="primary">mdi-cellphone-link</v-icon>
-            </v-col>
-          </v-row>
+        <v-card-title class="d-flex justify-start align-center ga-3">
+          <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
+          <!-- TODO: change this icon -->
+          <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
+          <v-icon v-else size="28" color="primary">mdi-cellphone-link</v-icon>
+          <h6 class="text-h6"><translate>Apps and Devices</translate></h6>
         </v-card-title>
         <!-- Confirm -->
         <template v-if="confirmAction !== ''">

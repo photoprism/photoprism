@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-details">
-    <v-form ref="form" lazy-validation class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
+    <v-form ref="form" validate-on="lazy" class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
       <v-row class="pa-2 d-flex align-stretch" align="start">
         <v-col class="pa-2 p-photo d-flex align-stretch" cols="12" sm="4" md="2">
           <v-card tile color="background" class="pa-0 ma-0 elevation-0 flex-grow-1">

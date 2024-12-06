@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form ref="form" v-model="valid" lazy-validation class="p-form-account pb-6 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form ref="form" v-model="valid" validate-on="lazy" class="p-form-account pb-6 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
       <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
       <v-card flat tile class="px-1 bg-background pt-3">
         <v-card-actions>

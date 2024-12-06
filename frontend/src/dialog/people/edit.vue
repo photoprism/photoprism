@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="dialog-person-edit" color="background" @keydown.esc="close">
-    <v-form ref="form" lazy-validation class="form-person-edit" accept-charset="UTF-8" @submit.prevent="confirm">
+    <v-form ref="form" validate-on="lazy" class="form-person-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card elevation="24">
         <v-card-title class="pb-0">
           <v-row>

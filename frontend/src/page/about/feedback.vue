@@ -21,7 +21,7 @@
         <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU" />
       </p>
     </v-container>
-    <v-form v-else ref="form" v-model="valid" autocomplete="off" class="pa-4" lazy-validation>
+    <v-form v-else ref="form" v-model="valid" autocomplete="off" class="pa-4" validate-on="lazy">
       <v-row>
         <v-col cols="12" class="pa-2">
           <v-select

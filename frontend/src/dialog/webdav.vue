@@ -1,17 +1,9 @@
 <template>
   <v-dialog v-model="visible" max-width="580">
     <v-card elevation="24">
-      <v-card-title>
-        <v-row no-gutters>
-          <v-col cols="9" class="text-left">
-            <h6 class="text-h6">
-              <translate>Connect via WebDAV</translate>
-            </h6>
-          </v-col>
-          <v-col cols="3" class="text-right">
-            <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
-          </v-col>
-        </v-row>
+      <v-card-title class="d-flex justify-start align-center ga-3">
+        <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
+        <h6 class="text-h6"><translate>Connect via WebDAV</translate></h6>
       </v-card-title>
 
       <v-card-text class="text-body-2">
@@ -34,12 +26,18 @@
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
-      <v-card-actions class="text-body-2">
+      <v-card-text class="text-body-2">
         <v-alert color="primary" icon="mdi-information" class="pa-2" variant="outlined">
           <a class="text-link" style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>
+      </v-card-text>
+
+      <v-card-actions class="text-right">
+        <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
+          <translate>Close</translate>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

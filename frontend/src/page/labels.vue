@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-labels-search" lazy-validation @submit.stop.prevent="updateQuery()">
+    <v-form ref="form" class="p-labels-search" validate-on="lazy" @submit.stop.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
           :model-value="filter.q"
@@ -12,7 +12,7 @@
           variant="plain"
           density="comfortable"
           class="input-search background-inherit elevation-0 mb-3"
-          :label="$gettext('Search')"
+          :placeholder="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
           autocomplete="off"
           autocorrect="off"
@@ -53,7 +53,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert v-if="results.length === 0" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
           <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No labels found</translate>
           </h3>

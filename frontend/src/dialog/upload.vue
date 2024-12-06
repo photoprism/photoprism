@@ -10,7 +10,7 @@
         </v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
-        <v-form ref="form" class="p-photo-upload" lazy-validation @submit.prevent="submit">
+        <v-form ref="form" class="p-photo-upload" validate-on="lazy" @submit.prevent="submit">
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>

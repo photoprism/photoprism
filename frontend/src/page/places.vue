@@ -1,5 +1,5 @@
 <template>
-  <v-container :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places fill-height" style="max-width: 100%;">
+  <v-container :class="$config.aclClasses('places')" fluid class="pa-0 p-page p-page-places fill-height">
     <div style="width: 100%; height: 100%; position: relative">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
@@ -13,7 +13,7 @@
             validate-on="blur"
             class="input-search pa-0"
             density="comfortable"
-            :label="$gettext('Search')"
+            :placeholder="$gettext('Search')"
             prepend-inner-icon="mdi-magnify"
             autocomplete="off"
             autocorrect="off"

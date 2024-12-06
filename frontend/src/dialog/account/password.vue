@@ -2,17 +2,9 @@
   <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
     <v-form ref="form" class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card elevation="24">
-        <v-card-title>
-          <v-row no-gutters>
-            <v-col cols="9" class="text-left">
-              <h6 class="text-h6">
-                <translate>Change Password</translate>
-              </h6>
-            </v-col>
-            <v-col cols="3" class="text-right">
-              <v-icon size="28" color="primary">mdi-lock</v-icon>
-            </v-col>
-          </v-row>
+        <v-card-title class="d-flex justify-start align-center ga-3">
+          <v-icon size="28" color="primary">mdi-lock</v-icon>
+          <h6 class="text-h6"><translate>Change Password</translate></h6>
         </v-card-title>
         <v-card-text>
           <v-row align="start" no-gutters>

@@ -173,9 +173,6 @@ config.update().finally(() => {
         flat: true,
         ripple: false,
       },
-      VContainer: {
-        fluid: true,
-      },
       VTab: {
         color: "on-surface",
         baseColor: "on-surface-variant",

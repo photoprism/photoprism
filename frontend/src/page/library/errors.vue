@@ -14,7 +14,7 @@
         autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
-        :label="$gettext('Search')"
+        :placeholder="$gettext('Search')"
         prepend-inner-icon="mdi-magnify"
         color="surface-variant"
         @change="

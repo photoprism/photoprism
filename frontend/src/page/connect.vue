@@ -25,7 +25,7 @@
         <v-icon size="26" color="surface-variant">{{ $vuetify.icons.prism }}</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-form ref="form" v-model="valid" autocomplete="off" class="px-6 pt-6 pb-0" lazy-validation @submit.prevent>
+    <v-form ref="form" v-model="valid" autocomplete="off" class="px-6 pt-6 pb-0" validate-on="lazy" @submit.prevent>
       <v-row v-if="busy">
         <v-col cols="12" class="d-flex text-sm-center pa-2">
           <v-progress-linear :indeterminate="true"></v-progress-linear>

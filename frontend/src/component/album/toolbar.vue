@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" lazy-validation autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8" @submit.prevent="updateQuery()">
+  <v-form ref="form" validate-on="lazy" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8" @submit.prevent="updateQuery()">
     <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
       <v-toolbar-title :title="album.Title">
         <span class="hidden-xs">

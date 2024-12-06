@@ -50,14 +50,15 @@ body.dark-theme {
     background: rgb(var(--v-theme-background, #2f3031)) !important;
 }
 
-.v-overlay.v-dialog .v-card {
+.v-overlay.v-dialog .v-card,
+.v-overlay.v-dialog>.v-overlay__content>form>.v-card {
     border-radius: 8px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-title,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-title {
     padding: 0;
-    margin: 24px;
+    margin: 24px 26px 18px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-title h6,
@@ -69,13 +70,30 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-text,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
     padding: 0;
-    margin: 0 24px 0 24px;
+    margin: 0 26px 0 26px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.grid,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.grid {
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.dense,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.dense {
+    margin-left: 22px;
+    margin-right: 22px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.last,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.last {
+    margin-bottom: 26px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions {
     padding: 0;
-    margin: 16px 24px 20px 24px;
+    margin: 12px 26px 20px 26px;
     gap: 12px;
     flex-wrap: wrap;
     display: flex;
@@ -84,4 +102,9 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn .v-btn__content,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn .v-btn__content {
     min-width: 68px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content {
+    min-width: 74px;
 }

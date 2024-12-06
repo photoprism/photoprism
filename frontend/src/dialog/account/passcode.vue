@@ -1,30 +1,22 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-passcode-dialog" @keydown.esc="close">
-    <v-form ref="form" lazy-validation accept-charset="UTF-8" class="form-password" @submit.prevent>
+    <v-form ref="form" validate-on="lazy" accept-charset="UTF-8" class="form-password" @submit.prevent>
       <v-card elevation="24">
-        <v-card-title class="pa-2">
-          <v-row class="pa-2">
-            <v-col cols="10" class="text-left">
-              <h3 class="text-h5 pa-0">
-                <translate>2-Factor Authentication</translate>
-              </h3>
-            </v-col>
-            <v-col cols="2" class="text-right">
-              <v-icon v-if="page === 'setup'" size="28" color="primary">mdi-shield-alert</v-icon>
-              <!-- TODO: change this icon -->
-              <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
-              <v-icon v-else size="28" color="primary">mdi-cog</v-icon>
-            </v-col>
-          </v-row>
+        <v-card-title class="d-flex justify-start align-center ga-3">
+          <v-icon v-if="page === 'setup'" size="28" color="primary">mdi-shield-alert</v-icon>
+          <!-- TODO: change this icon -->
+          <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
+          <v-icon v-else size="28" color="primary">mdi-cog</v-icon>
+          <h6 class="text-h6"><translate>2-Factor Authentication</translate></h6>
         </v-card-title>
         <!-- Setup -->
         <template v-if="page === 'setup'">
-          <v-card-text class="py-0">
-            <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-2">
+          <v-card-text class="dense">
+            <v-row align="start" dense>
+              <v-col cols="12" class="text-body-2">
                 <translate>After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:</translate>
               </v-col>
-              <v-col cols="12" class="pa-2">
+              <v-col cols="12">
                 <v-text-field
                   v-model="password"
                   :disabled="busy"
@@ -44,24 +36,18 @@
                   @keyup.enter="onSetup"
                 ></v-text-field>
               </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" class="pa-2 text-body-2">
+              <v-col cols="12" class="text-caption">
                 <translate>Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="pa-2">
-            <v-row class="pa-2">
-              <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="button" class="action-close mr-2" @click.stop="close">
-                  <translate>Close</translate>
-                </v-btn>
-                <v-btn variant="flat" color="primary-button" class="action-setup compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
-                  <translate>Setup</translate>
-                </v-btn>
-              </v-col>
-            </v-row>
+          <v-card-actions>
+            <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
+              <translate>Close</translate>
+            </v-btn>
+            <v-btn variant="flat" color="primary-button" class="action-setup" :disabled="setupDisabled()" @click.stop="onSetup">
+              <translate>Setup</translate>
+            </v-btn>
           </v-card-actions>
         </template>
         <!-- Confirm -->
