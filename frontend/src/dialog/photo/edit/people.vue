@@ -5,7 +5,7 @@
         <h3 class="text-subtitle-2 ma-0 pa-0">
           <translate>No people found</translate>
         </h3>
-        <p class="mt-2 mb-0 pa-0">
+        <p class="text-body-2 mt-2 mb-0 pa-0">
           <translate>You may rescan your library to find additional faces.</translate>
           <translate>Recognition starts after indexing has been completed.</translate>
         </p>
