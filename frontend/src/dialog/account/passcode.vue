@@ -7,13 +7,13 @@
           <!-- TODO: change this icon -->
           <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
           <v-icon v-else size="28" color="primary">mdi-cog</v-icon>
-          <h6 class="text-h6"><translate>2-Factor Authentication</translate></h6>
+          <h6 class="text-h5"><translate>2-Factor Authentication</translate></h6>
         </v-card-title>
         <!-- Setup -->
         <template v-if="page === 'setup'">
           <v-card-text class="dense">
             <v-row align="start" dense>
-              <v-col cols="12" class="text-body-2">
+              <v-col cols="12" class="text-subtitle-2">
                 <translate>After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:</translate>
               </v-col>
               <v-col cols="12">
@@ -36,7 +36,7 @@
                   @keyup.enter="onSetup"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" class="text-caption">
+              <v-col cols="12" class="text-body-2">
                 <translate>Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
               </v-col>
             </v-row>
@@ -52,20 +52,20 @@
         </template>
         <!-- Confirm -->
         <template v-else-if="page === 'confirm'">
-          <v-card-text class="py-0">
-            <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-2">
+          <v-card-text class="dense">
+            <v-row align="start" dense>
+              <v-col cols="12" class="text-body-2">
                 <translate>Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:</translate>
               </v-col>
-              <v-col cols="12" class="pa-2">
+              <v-col cols="12">
                 <img :src="key.QRCode" class="width-100" alt="QR Code" />
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12" class="pa-2 text-subtitle-1 text-center">
+            <v-row dense>
+              <v-col cols="12" class="text-subtitle-1 text-center">
                 <pre class="clickable" @click.stop.prevent="copyText(key.Secret)">{{ key.Secret }}</pre>
               </v-col>
-              <v-col cols="12" class="pa-2">
+              <v-col cols="12">
                 <!-- TODO: change this icon -->
                 <v-text-field
                   v-model="code"
@@ -89,27 +89,23 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="pa-2">
-            <v-row class="pa-2">
-              <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
-                  <translate>Cancel</translate>
-                </v-btn>
-                <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
-                  <translate>Confirm</translate>
-                </v-btn>
-              </v-col>
-            </v-row>
+          <v-card-actions class="text-right">
+            <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
+              <translate>Cancel</translate>
+            </v-btn>
+            <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
+              <translate>Confirm</translate>
+            </v-btn>
           </v-card-actions>
         </template>
         <!-- Activate -->
         <template v-else-if="page === 'activate'">
-          <v-card-text class="py-0">
-            <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-2">
+          <v-card-text class="dense">
+            <v-row align="start" dense>
+              <v-col cols="12" class="text-body-2">
                 <translate>Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:</translate>
               </v-col>
-              <v-col cols="12" class="pa-2">
+              <v-col cols="12">
                 <v-text-field
                   v-model="key.RecoveryCode"
                   type="text"
@@ -124,43 +120,39 @@
                   @click:append="onCopyRecoveryCode"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" class="pa-2 text-body-2">
+              <v-col cols="12" class="text-subtitle-2">
                 <translate>To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place.</translate>
                 <translate>It is a one-time use code that will disable 2FA for your account when you use it.</translate>
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="pa-2">
-            <v-row class="pa-2">
-              <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
-                  <translate>Cancel</translate>
-                </v-btn>
-                <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate compact mr-0" @click.stop="onActivate">
-                  <translate>Activate</translate>
-                </v-btn>
-                <v-btn v-else variant="flat" color="primary-button" class="action-copy compact mr-0" @click.stop="onCopyRecoveryCode">
-                  <translate>Copy</translate>
-                </v-btn>
-              </v-col>
-            </v-row>
+          <v-card-actions class="text-right">
+            <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
+              <translate>Cancel</translate>
+            </v-btn>
+            <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate compact mr-0" @click.stop="onActivate">
+              <translate>Activate</translate>
+            </v-btn>
+            <v-btn v-else variant="flat" color="primary-button" class="action-copy compact mr-0" @click.stop="onCopyRecoveryCode">
+              <translate>Copy</translate>
+            </v-btn>
           </v-card-actions>
         </template>
         <!-- Deactivate -->
         <template v-else-if="page === 'deactivate'">
-          <v-card-text class="py-0">
-            <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-2">
+          <v-card-text class="dense">
+            <v-row align="start" dense>
+              <v-col cols="12" class="text-body-2">
                 <translate>Two-factor authentication has been enabled for your account.</translate>
               </v-col>
-              <v-col cols="12" class="pa-2 text-body-2">
+              <v-col cols="12" class="text-subtitle-2">
                 <translate>If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account.</translate>
                 <translate>It is a one-time use code that will disable 2FA for your account when you use it.</translate>
               </v-col>
-              <v-col cols="12" class="pa-2 text-body-2">
+              <v-col cols="12" class="text-subtitle-2">
                 <translate>To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:</translate>
               </v-col>
-              <v-col cols="12" class="pa-2">
+              <v-col cols="12">
                 <v-text-field
                   v-model="password"
                   :disabled="busy"
@@ -181,36 +173,28 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="pa-2">
-            <v-row class="pa-2">
-              <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="primary-button" class="action-deactivate compact mr-2" :disabled="setupDisabled()" @click.stop="onDeactivate">
-                  <translate>Deactivate</translate>
-                </v-btn>
-                <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
-                  <translate>Close</translate>
-                </v-btn>
-              </v-col>
-            </v-row>
+          <v-card-actions class="text-right">
+            <v-btn variant="flat" color="primary-button" class="action-deactivate compact mr-2" :disabled="setupDisabled()" @click.stop="onDeactivate">
+              <translate>Deactivate</translate>
+            </v-btn>
+            <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
+              <translate>Close</translate>
+            </v-btn>
           </v-card-actions>
         </template>
         <!-- Not Available -->
         <template v-else-if="page === 'not_available'">
-          <v-card-text class="py-0">
-            <v-row align="start">
-              <v-col cols="12" class="pa-2 text-body-2">
+          <v-card-text class="dense">
+            <v-row align="start" dense>
+              <v-col cols="12" class="text-body-2">
                 <translate>Only locally managed accounts can be set up for authentication with 2FA.</translate>
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="pa-2">
-            <v-row class="pa-2">
-              <v-col cols="12" class="text-right">
-                <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
-                  <translate>Close</translate>
-                </v-btn>
-              </v-col>
-            </v-row>
+          <v-card-actions class="text-right">
+            <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
+              <translate>Close</translate>
+            </v-btn>
           </v-card-actions>
         </template>
       </v-card>

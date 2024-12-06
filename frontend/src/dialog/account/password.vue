@@ -4,14 +4,14 @@
       <v-card elevation="24">
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-lock</v-icon>
-          <h6 class="text-h6"><translate>Change Password</translate></h6>
+          <h6 class="text-h5"><translate>Change Password</translate></h6>
         </v-card-title>
-        <v-card-text>
-          <v-row align="start" no-gutters>
-            <v-col v-if="oldRequired" cols="12" class="pb-2 text-caption">
+        <v-card-text class="dense">
+          <v-row align="start" dense>
+            <v-col v-if="oldRequired" cols="12" class="text-caption">
               <translate>Please note that changing your password will log you out on other devices and browsers.</translate>
             </v-col>
-            <v-col v-if="oldRequired" cols="12" class="py-1">
+            <v-col v-if="oldRequired" cols="12">
               <v-text-field
                 v-model="oldPassword"
                 hide-details
@@ -27,7 +27,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" class="py-1">
+            <v-col cols="12">
               <v-text-field
                 v-model="newPassword"
                 required
@@ -46,7 +46,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" class="py-1">
+            <v-col cols="12">
               <v-text-field
                 v-model="confirmPassword"
                 required
