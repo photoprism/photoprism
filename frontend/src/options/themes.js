@@ -41,7 +41,7 @@ let themes = {
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
       card: "#232425",
-      table: "#262728",
+      table: "#252627",
       button: "#232425",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
