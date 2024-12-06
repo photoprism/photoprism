@@ -4,7 +4,7 @@
     <p>If the connection fails and can't be reestablished, your browser won't receive photo counts, log messages, or metadata updates.</p>
     <p>To fix this issue, please make sure you didn't block WebSocket connections in your browser or firewall and check the configuration of any Web server that is in front of PhotoPrism:</p>
     <v-expansion-panels class="elevation-0" variant="accordion">
-      <v-expansion-panel class="bg-secondary mb-1" title="How to configure NGINX to proxy WebSockets">
+      <v-expansion-panel  color="secondary" class="mb-1" title="How to configure NGINX to proxy WebSockets">
         <v-expansion-panel-text>
         <v-card class="bg-secondary-light">
           <v-card-text>
@@ -35,7 +35,7 @@ http {
         </v-card>
         </v-expansion-panel-text>
       </v-expansion-panel>
-      <v-expansion-panel class="bg-secondary mb-1" title="How to configure Caddy 1 to proxy WebSockets">
+      <v-expansion-panel color="secondary" class="mb-1" title="How to configure Caddy 1 to proxy WebSockets">
         <v-expansion-panel-text>
         <v-card class="bg-secondary-light">
           <v-card-text>
@@ -53,7 +53,7 @@ example.com {
         </v-card>
         </v-expansion-panel-text>
       </v-expansion-panel>
-      <v-expansion-panel class="bg-secondary mb-1" title="How to configure Caddy 2 to proxy WebSockets">
+      <v-expansion-panel color="secondary" class="mb-1" title="How to configure Caddy 2 to proxy WebSockets">
         <v-expansion-panel-text class="bg-secondary-light">
         <v-card class="bg-secondary-light">
           <v-card-text>
@@ -69,7 +69,7 @@ example.com {
         </v-card>
         </v-expansion-panel-text>
       </v-expansion-panel>
-      <v-expansion-panel class="bg-secondary mb-1" title="How to reverse proxy WebSockets with Apache 2.4">
+      <v-expansion-panel color="secondary"class="mb-1" title="How to reverse proxy WebSockets with Apache 2.4">
         <v-expansion-panel-text>
         <v-card class="bg-secondary-light">
           <v-card-text>
