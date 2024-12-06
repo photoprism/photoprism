@@ -2,30 +2,27 @@
   <v-dialog :model-value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
     <v-card elevation="24">
       <v-card-title class="d-flex justify-start align-center ga-3">
-            <h3 class="text-h5">
-              <translate>Add Account</translate>
-            </h3>
+        <h6 class="text-h6">
+          <translate>Add Account</translate>
+        </h6>
       </v-card-title>
       <v-card-text class="dense">
         <v-row dense>
           <v-col cols="12">
-            <v-text-field v-model="model.AccURL" hide-details autofocus variant="solo" flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="surface-variant" autocorrect="off" autocapitalize="none"></v-text-field>
+            <v-text-field v-model="model.AccURL" hide-details autofocus :label="$gettext('Service URL')" placeholder="https://www.example.com/" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-col>
           <v-col cols="12" sm="6">
-            <v-text-field v-model="model.AccUser" hide-details variant="solo" flat :label="$gettext('Username')" placeholder="optional" color="surface-variant" autocorrect="off" autocapitalize="none"></v-text-field>
+            <v-text-field v-model="model.AccUser" hide-details :label="$gettext('Username')" placeholder="optional" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-col>
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="model.AccPass"
               hide-details
-              variant="solo"
-              flat
               autocomplete="new-password"
               autocapitalize="none"
               :label="$gettext('Password')"
               placeholder="optional"
-              color="surface-variant"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               @click:append="showPassword = !showPassword"
             ></v-text-field>

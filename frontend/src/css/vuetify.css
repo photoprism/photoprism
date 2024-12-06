@@ -92,7 +92,7 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions {
     padding: 0;
-    margin: 4px 26px 20px 26px;
+    margin: 4px 26px 16px 26px;
     gap: 12px;
     flex-wrap: wrap;
     display: flex;
