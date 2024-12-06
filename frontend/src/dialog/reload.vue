@@ -1,15 +1,14 @@
 <template>
-  <v-dialog :model-value="show" max-width="300">
+  <v-dialog :model-value="show" max-width="340">
     <v-card>
-      <v-card-title class="text-subtitle-1 pa-6">
-        <translate>PhotoPrism has been updated…</translate>
+      <v-card-title class="d-flex justify-start align-center flex-nowrap ga-3">
+        <h6 class="text-subtitle-1"><translate>PhotoPrism has been updated…</translate></h6>
       </v-card-title>
-      <v-card-actions class="pa-6">
-        <v-spacer></v-spacer>
-        <v-btn color="secondary-light" class="compact mx-2" variant="flat" @click="close">
+      <v-card-actions>
+        <v-btn color="button" variant="flat" @click="close">
           <translate>Cancel</translate>
         </v-btn>
-        <v-btn color="primary-button" class="action-update-reload compact" density="comfortable" variant="flat" @click="reload">
+        <v-btn color="primary-button" class="action-update-reload" variant="flat" @click="reload">
           <translate>Reload</translate>
         </v-btn>
       </v-card-actions>
