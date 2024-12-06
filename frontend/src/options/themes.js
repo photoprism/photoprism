@@ -4,6 +4,8 @@ import { $gettext, T } from "common/vm";
 
 let variables = {
   "btn-height": "32px",
+  "table-row-height": "44px",
+  "table-header-height": "44px",
   "border-color": "#FFFFFF",
   "border-opacity": 0.12,
   "high-emphasis-opacity": 0.96,
@@ -31,14 +33,15 @@ let themes = {
     title: "Default",
     name: "default",
     colors: {
-      background: "#2B2C2C",
-      surface: "#171818",
+      background: "#2f3031",
+      surface: "#191a1b",
       "on-surface": "#ffffff",
       "surface-bright": "#333333",
       "surface-light": "#1c1d1e",
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
       card: "#232425",
+      table: "#262728",
       button: "#232425",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
@@ -616,9 +619,12 @@ export const All = () => {
         variables: theme.variables ? theme.variables : variables,
       };
 
-      // TODO: Make sure all themes have a button color defined, so this workaround is not needed anymore.
+      // TODO: Make sure all themes have a button and table color, so this workaround is not needed anymore.
       if (typeof result[theme.name].colors.button === "undefined") {
         result[theme.name].colors.button = result[theme.name].colors["secondary-light"];
+      }
+      if (typeof result[theme.name].colors.table === "undefined") {
+        result[theme.name].colors.table = result[theme.name].colors["card"];
       }
     }
   }

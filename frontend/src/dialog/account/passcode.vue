@@ -7,7 +7,7 @@
           <!-- TODO: change this icon -->
           <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
           <v-icon v-else size="28" color="primary">mdi-cog</v-icon>
-          <h6 class="text-h5"><translate>2-Factor Authentication</translate></h6>
+          <h6 class="text-h6"><translate>2-Factor Authentication</translate></h6>
         </v-card-title>
         <!-- Setup -->
         <template v-if="page === 'setup'">

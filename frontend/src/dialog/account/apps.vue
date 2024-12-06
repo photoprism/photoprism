@@ -7,7 +7,7 @@
           <!-- TODO: change this icon -->
           <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
           <v-icon v-else size="28" color="primary">mdi-cellphone-link</v-icon>
-          <h6 class="text-h5"><translate>Apps and Devices</translate></h6>
+          <h6 class="text-h6"><translate>Apps and Devices</translate></h6>
         </v-card-title>
         <!-- Confirm -->
         <template v-if="confirmAction !== ''">
@@ -38,7 +38,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
+          <v-card-actions>
             <v-btn variant="flat" color="secondary-light" class="action-back" @click.stop="onBack">
               <translate>Back</translate>
             </v-btn>
@@ -59,7 +59,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
+          <v-card-actions>
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>
@@ -89,7 +89,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
+          <v-card-actions>
             <v-btn variant="flat" color="button" class="action-cancel" @click.stop="onCancel">
               <translate>Cancel</translate>
             </v-btn>
@@ -103,7 +103,7 @@
           <v-card-text>
             <v-row align="start" no-gutters>
               <v-col cols="12">
-                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer density="compact" class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
+                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer density="compact" class="ra-8 elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
                   <template #item="props">
                     <tr :data-name="props.item.ClientName">
                       <td class="text-selectable text-left">
@@ -119,7 +119,7 @@
                         {{ formatDate(props.item.Expires) }}
                       </td>
                       <td class="text-right" nowrap>
-                        <v-btn icon size="small" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
+                        <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
                           <v-icon color="surface-variant">mdi-delete</v-icon>
                         </v-btn>
                       </td>
@@ -129,7 +129,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
+          <v-card-actions>
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>

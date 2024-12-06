@@ -9,7 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="4" class="text-right">
-            <v-btn icon variant="text" theme="dark" color="surface-variant" class="ma-0" @click.stop="setup">
+            <v-btn icon variant="text" color="surface-variant" class="ma-0" @click.stop="setup">
               <v-icon>mdi-cloud</v-icon>
             </v-btn>
           </v-col>
@@ -44,10 +44,10 @@
             <v-btn variant="flat" color="button" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" theme="dark" class="action-setup ma-0" @click.stop="setup">
+            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" class="action-setup ma-0" @click.stop="setup">
               <translate>Setup</translate>
             </v-btn>
-            <v-btn v-else :disabled="noServices" color="primary-button" variant="flat" theme="dark" class="action-upload ma-0" @click.stop="confirm">
+            <v-btn v-else :disabled="noServices" color="primary-button" variant="flat" class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
           </v-col>

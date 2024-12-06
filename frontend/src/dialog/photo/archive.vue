@@ -15,7 +15,7 @@
             <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
               <translate>No</translate>
             </v-btn>
-            <v-btn color="primary-button" variant="flat" theme="dark" class="action-confirm" @click.stop="confirm">
+            <v-btn color="primary-button" variant="flat" class="action-confirm" @click.stop="confirm">
               <translate>Yes</translate>
             </v-btn>
           </v-col>

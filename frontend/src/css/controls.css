@@ -15,7 +15,9 @@
 
 .action-buttons {
     gap: 12px;
-    margin-top: 24px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 16px;
 }
 
 .action-controls {

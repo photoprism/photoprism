@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-services">
-    <div class="bg-card">
-      <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 account-results list-view" item-key="ID" :no-data-text="$gettext('No services configured.')">
+    <v-container fluid>
+      <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 account-results list-view ra-8" item-key="ID" :no-data-text="$gettext('No services configured.')">
         <template #item="props">
           <tr :data-name="props.item.AccName">
             <td class="p-account">
@@ -10,13 +10,13 @@
               </button>
             </td>
             <td class="text-center">
-              <v-btn icon size="small" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
+              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
                 <v-icon v-if="props.item.AccShare" color="surface-variant">mdi-check</v-icon>
                 <v-icon v-else color="surface-variant">mdi-cog</v-icon>
               </v-btn>
             </td>
             <td class="text-center">
-              <v-btn icon size="small" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
+              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
                 <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
                 <!-- TODO: change icon -->
                 <v-icon v-else-if="props.item.AccSync" color="surface-variant">sync</v-icon>
@@ -28,19 +28,18 @@
               {{ formatDate(props.item.SyncDate) }}
             </td>
             <td class="hidden-xs text-right" nowrap>
-              <v-btn icon size="small" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
+              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
                 <v-icon color="surface-variant">mdi-delete</v-icon>
               </v-btn>
-              <v-btn icon size="small" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
+              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
                 <v-icon color="surface-variant">mdi-pencil</v-icon>
               </v-btn>
             </td>
           </tr>
         </template>
       </v-data-table>
-    </div>
-    <v-container fluid>
-      <p class="text-caption pa-0 clickable" @click.stop.prevent="webdavDialog">
+
+      <p class="text-caption pt-3 clickable" @click.stop.prevent="webdavDialog">
         <translate>Note:</translate>
         <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. </translate>
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. </translate>

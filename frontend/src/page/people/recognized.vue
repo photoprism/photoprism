@@ -89,7 +89,7 @@
                   class="input-hidden"
                   icon
                   variant="text"
-                  size="small"
+                  density="comfortable"
                   position="absolute"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onToggleHidden($event, index)"

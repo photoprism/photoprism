@@ -114,8 +114,11 @@ config.update().finally(() => {
       },
       VSwitch: {
         flat: true,
+        inline: true,
+        density: "compact",
         baseColor: "surface",
         color: "surface-variant",
+        hideDetails: true,
         ripple: false,
       },
       VRating: {
@@ -192,7 +195,6 @@ config.update().finally(() => {
         ripple: false,
       },
       VDataTable: {
-        density: "comfortable",
         color: "background",
       },
       VExpansionPanel: {

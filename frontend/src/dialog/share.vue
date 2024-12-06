@@ -9,7 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="3" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn icon variant="text" theme="dark" color="surface-variant" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
+            <v-btn icon variant="text" color="surface-variant" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
               <v-icon>mdi-link-plus</v-icon>
             </v-btn>
           </v-col>
@@ -52,12 +52,12 @@
                         ></v-text-field>
                       </v-col> -->
                       <v-col cols="6" :class="!rtl ? 'text-left' : 'text-right'" class="pa-2">
-                        <v-btn size="small" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
+                        <v-btn density="comfortable" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </v-col>
                       <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
-                        <v-btn variant="flat" theme="dark" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
+                        <v-btn variant="flat" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
                           <translate>Save</translate>
                         </v-btn>
                       </v-col>

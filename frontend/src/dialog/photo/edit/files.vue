@@ -18,43 +18,42 @@
                   <v-row class="d-flex align-stretch" align="center" justify="center">
                     <v-col cols="12" class="pa-0 flex-grow-1">
                       <div class="v-table__overflow">
-                        <v-table class="photo-files d-flex bg-transparent">
+                        <v-table hover density="default" class="photo-files d-flex bg-transparent">
                           <tbody>
                             <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                               <td>
                                 <translate>Preview</translate>
                               </td>
                               <td>
-                                <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" class="card elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
+                                <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" rounded="6" class="card elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <translate>Actions</translate>
                               </td>
-                              <td>
-                                <v-btn v-if="features.download" size="small" variant="flat" color="primary-button" class="btn-action action-download ma-1" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                              <td class="d-flex justify-start align-center ga-2">
+                                <v-btn v-if="features.download" density="comfortable" variant="flat" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                   <translate>Download</translate>
                                 </v-btn>
                                 <v-btn
                                   v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
-                                  size="small"
+                                  density="comfortable"
                                   variant="flat"
-                                  theme="dark"
                                   color="primary-button"
-                                  class="btn-action action-primary ma-1"
+                                  class="btn-action action-primary"
                                   :disabled="busy"
                                   @click.stop.prevent="primaryFile(file)"
                                 >
                                   <translate>Primary</translate>
                                 </v-btn>
-                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-unstack ma-1" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" variant="flat" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
                                   <translate>Unstack</translate>
                                 </v-btn>
-                                <v-btn v-if="features.delete && !file.Primary" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-delete ma-1" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
+                                <v-btn v-if="features.delete && !file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
                                   <translate>Delete</translate>
                                 </v-btn>
-                                <v-btn v-if="experimental && canAccessPrivate && file.Primary" size="small" variant="flat" theme="dark" color="primary-button" class="btn-action action-open-folder ma-1" :href="folderUrl(file)" target="_blank">
+                                <v-btn v-if="experimental && canAccessPrivate && file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
                                   <translate>File Browser</translate>
                                 </v-btn>
                               </td>

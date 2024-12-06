@@ -4,7 +4,7 @@
       <v-card elevation="24">
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-lock</v-icon>
-          <h6 class="text-h5"><translate>Change Password</translate></h6>
+          <h6 class="text-h6"><translate>Change Password</translate></h6>
         </v-card-title>
         <v-card-text class="dense">
           <v-row align="start" dense>
@@ -67,7 +67,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="text-right">
+        <v-card-actions>
           <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
             <translate>Cancel</translate>
           </v-btn>

@@ -114,7 +114,7 @@
                 </v-col>
                 <template v-if="config.ext.oidc.enabled && !enterCode">
                   <v-col cols="12" class="px-2 pb-4 oidc-actions">
-                    <v-divider theme="dark" />
+                    <v-divider />
                     <div class="text-center oidc-buttons pt-6">
                       <v-btn :color="colors.primary" variant="flat" :disabled="loading" block class="text-white action-oidc-login ra-6 my-0 py-0 px-4" @click.stop.prevent="onOidcLogin">
                         <img alt="" class="oidc-icon v-icon--left theme--dark" :src="config.ext.oidc.icon" />

@@ -1,8 +1,8 @@
 <template>
   <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="background">
-      <v-toolbar theme="dark" flat color="navigation" :dense="$vuetify.display.smAndDown">
-        <v-btn icon theme="dark" @click.stop="cancel">
+      <v-toolbar flat color="navigation" :dense="$vuetify.display.smAndDown">
+        <v-btn icon @click.stop="cancel">
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
@@ -73,7 +73,7 @@
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
-            <v-btn :disabled="busy" color="primary-button" class="text-white ml-0 mt-2 action-upload" theme="dark" variant="flat" @click.stop="onUploadDialog()">
+            <v-btn :disabled="busy" color="primary-button" class="text-white ml-0 mt-2 action-upload" variant="flat" @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
               <v-icon :end="!rtl" :start="rtl">mdi-download</v-icon>
             </v-btn>

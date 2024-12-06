@@ -1,16 +1,15 @@
 <template>
-  <div class="p-tab p-tab-photo-details">
+  <div class="p-tab p-tab-photo-details pa-2">
     <v-form ref="form" validate-on="lazy" class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
-      <v-row class="pa-2 d-flex align-stretch" align="start">
-        <v-col class="pa-2 p-photo d-flex align-stretch" cols="12" sm="4" md="2">
+      <v-row class="d-flex align-stretch" align="start" dense>
+        <v-col class="p-photo d-flex align-stretch" cols="12" sm="4" md="2">
           <v-card tile color="background" class="pa-0 ma-0 elevation-0 flex-grow-1">
-            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card elevation-0 clickable" @click.exact="openPhoto()">
-</v-img>
+            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card ra-8 elevation-0 clickable" @click.exact="openPhoto()"></v-img>
           </v-card>
         </v-col>
         <v-col cols="12" sm="8" md="10" class="d-flex pa-0" align-self="stretch">
-          <v-row>
-            <v-col cols="12" lg="6" class="pa-2">
+          <v-row dense>
+            <v-col cols="12" lg="6">
               <v-text-field
                 v-model="model.Title"
                 :append-icon="model.TitleSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -24,7 +23,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="4" lg="1" class="pa-2">
+            <v-col cols="4" lg="2" xl="1">
               <v-autocomplete
                 v-model="model.Day"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -42,7 +41,7 @@
               >
               </v-autocomplete>
             </v-col>
-            <v-col cols="4" lg="1" class="pa-2">
+            <v-col cols="4" lg="2" xl="1">
               <v-autocomplete
                 v-model="model.Month"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -60,7 +59,7 @@
               >
               </v-autocomplete>
             </v-col>
-            <v-col cols="4" lg="2" class="pa-2">
+            <v-col cols="4" lg="2">
               <v-autocomplete
                 v-model="model.Year"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -79,7 +78,7 @@
               </v-autocomplete>
             </v-col>
 
-            <v-col cols="6" lg="2" class="pa-2">
+            <v-col cols="6" lg="2">
               <!-- TODO: check property return-masked-value TEST -->
               <v-text-field
                 v-model="time"
@@ -96,11 +95,11 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="6" sm="6" md="6" lg="3" class="pa-2">
+            <v-col cols="6" sm="6" lg="2" xl="3">
               <v-autocomplete v-model="model.TimeZone" :disabled="disabled" :label="$gettext('Time Zone')" hide-details flat hide-no-data color="surface-variant" item-value="ID" item-title="Name" :items="options.TimeZones()" class="input-timezone" @update:model-value="updateTime"> </v-autocomplete>
             </v-col>
 
-            <v-col cols="12" sm="8" md="4" lg="3" class="pa-2">
+            <v-col cols="12" sm="8" md="4" lg="2" xl="3">
               <v-autocomplete
                 v-model="model.Country"
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -118,11 +117,11 @@
               </v-autocomplete>
             </v-col>
 
-            <v-col cols="4" md="2" lg="2" class="pa-2">
+            <v-col cols="4" md="2">
               <v-text-field v-model="model.Altitude" :disabled="disabled" hide-details flat autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Altitude (m)')" placeholder="" color="surface-variant" class="input-altitude"></v-text-field>
             </v-col>
 
-            <v-col cols="4" sm="6" md="3" lg="2" class="pa-2">
+            <v-col cols="4" sm="6" md="3" lg="2">
               <v-text-field
                 v-model="model.Lat"
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -138,7 +137,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="4" sm="6" md="3" lg="2" class="pa-2">
+            <v-col cols="4" sm="6" md="3" lg="2">
               <v-text-field
                 v-model="model.Lng"
                 :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -154,7 +153,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="6" class="pa-2 p-camera-select">
+            <v-col cols="12" md="6" class="p-camera-select">
               <v-select
                 v-model="model.CameraID"
                 :append-icon="model.CameraSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -171,15 +170,15 @@
               </v-select>
             </v-col>
 
-            <v-col cols="6" md="3" class="pa-2">
+            <v-col cols="6" md="3">
               <v-text-field v-model="model.Iso" :disabled="disabled" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" class="input-iso"></v-text-field>
             </v-col>
 
-            <v-col cols="6" md="3" class="pa-2">
+            <v-col cols="6" md="3">
               <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" class="input-exposure"></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="6" class="pa-2 p-lens-select">
+            <v-col cols="12" md="6" class="p-lens-select">
               <v-select
                 v-model="model.LensID"
                 :append-icon="model.CameraSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -196,15 +195,15 @@
               </v-select>
             </v-col>
 
-            <v-col cols="6" md="3" class="pa-2">
+            <v-col cols="6" md="3">
               <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" class="input-fnumber"></v-text-field>
             </v-col>
 
-            <v-col cols="6" md="3" class="pa-2">
+            <v-col cols="6" md="3">
               <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details autocomplete="off" :label="$gettext('Focal Length')" placeholder="" class="input-focal-length"></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="6" class="pa-2">
+            <v-col cols="12" md="6">
               <v-text-field
                 v-model="model.Details.Artist"
                 :append-icon="model.Details.ArtistSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -218,7 +217,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="6" md="3" class="pa-2">
+            <v-col cols="6" md="3">
               <v-text-field
                 v-model="model.Details.Copyright"
                 :append-icon="model.Details.CopyrightSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -232,7 +231,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="6" md="3" class="pa-2">
+            <v-col cols="6" md="3">
               <v-textarea
                 v-model="model.Details.License"
                 :append-icon="model.Details.LicenseSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -248,7 +247,7 @@
               ></v-textarea>
             </v-col>
 
-            <v-col cols="12" class="pa-2">
+            <v-col cols="12">
               <v-textarea
                 v-model="model.Details.Subject"
                 :append-icon="model.Details.SubjectSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -264,7 +263,7 @@
               ></v-textarea>
             </v-col>
 
-            <v-col cols="12" class="pa-2">
+            <v-col cols="12">
               <v-textarea
                 v-model="model.Description"
                 :append-icon="model.DescriptionSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -279,7 +278,7 @@
               ></v-textarea>
             </v-col>
 
-            <v-col cols="12" md="8" class="pa-2">
+            <v-col cols="12" md="8">
               <v-textarea
                 v-model="model.Details.Keywords"
                 :append-icon="model.Details.KeywordsSrc === 'mdi-human-male' ? 'mdi-check' : ''"
@@ -294,7 +293,7 @@
               ></v-textarea>
             </v-col>
 
-            <v-col cols="12" md="4" class="pa-2">
+            <v-col cols="12" md="4">
               <v-textarea
                 v-model="model.Details.Notes"
                 :append-icon="model.Details.NotesSrc === 'mdi-human-male' ? 'mdi-check' : ''"

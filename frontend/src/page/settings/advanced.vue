@@ -14,10 +14,8 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-title class="pb-0">
-          <h3 class="text-body-2 mb-0">
-            <translate>Global Options</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Global Options</translate>
         </v-card-title>
 
         <v-card-actions>
@@ -153,10 +151,8 @@
         </v-card-actions>
 
         <template v-if="!settings.DisableBackups">
-          <v-card-title class="pb-0">
-            <h3 class="text-body-2 mb-0">
-              <translate>Backup</translate>
-            </h3>
+          <v-card-title class="pb-0 text-subtitle-2">
+            <translate>Backup</translate>
           </v-card-title>
 
           <v-card-actions>
@@ -212,10 +208,8 @@
           </v-card-actions>
         </template>
 
-        <v-card-title class="pb-0">
-          <h3 class="text-body-2 mb-0" :title="$gettext('Preview Images')">
-            <translate>Preview Images</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Preview Images</translate>
         </v-card-title>
 
         <v-card-actions>
@@ -257,10 +251,8 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-title class="pb-0">
-          <h3 class="text-body-2 mb-0">
-            <translate>Image Quality</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Image Quality</translate>
         </v-card-title>
 
         <v-card-actions>
@@ -288,10 +280,8 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-title class="pb-0">
-          <h3 class="text-body-2 mb-0">
-            <translate>File Conversion</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>File Conversion</translate>
         </v-card-title>
 
         <v-card-actions>

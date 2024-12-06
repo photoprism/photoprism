@@ -127,12 +127,12 @@
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-row align="center">
               <v-col cols="6" class="text-center pa-1">
-                <v-btn color="card darken-1" size="small" variant="flat" theme="dark" block :rounded="false" class="action-archive text-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
+                <v-btn color="card darken-1" density="comfortable" variant="flat" block :rounded="false" class="action-archive text-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-col>
               <v-col cols="6" class="text-center pa-1">
-                <v-btn color="card darken-1" size="small" variant="flat" theme="dark" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
+                <v-btn color="card darken-1" density="comfortable" variant="flat" block :rounded="false" class="action-approve text-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
               </v-col>

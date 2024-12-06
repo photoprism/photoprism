@@ -5,8 +5,8 @@
         <v-col class="pa-2 hidden-sm-and-down align-stretch" cols="12" md="2" xxl="1">
           <p-photo-preview :model="model"></p-photo-preview>
         </v-col>
-        <v-col class="pa-2-md-and-up ra-4-table-md-and-up" cols="12" md="10" xxl="1">
-          <v-data-table v-model="selected" density="comfortable" color="background" :headers="listColumns" :items="model.Labels" hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">
+        <v-col class="pa-2-md-and-up ra-8" cols="12" md="10" xxl="1">
+          <v-data-table v-model="selected" density="comfortable" :headers="listColumns" :items="model.Labels" hover hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">
             <template #item="props">
               <tr class="p-file">
                 <td>
@@ -24,16 +24,16 @@
                 </td>
                 <td class="text-center"> {{ 100 - props.item.Uncertainty }}% </td>
                 <td class="text-center">
-                  <v-btn v-if="disabled" icon size="small" variant="text" :ripple="false" class="action-view" title="Search" @click.stop.prevent="searchLabel(props.item.Label)">
+                  <v-btn v-if="disabled" icon density="comfortable" variant="text" :ripple="false" class="action-view" title="Search" @click.stop.prevent="searchLabel(props.item.Label)">
                     <v-icon color="surface-variant">mdi-magnify</v-icon>
                   </v-btn>
-                  <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon size="small" variant="text" :ripple="false" class="action-delete" title="Delete" @click.stop.prevent="removeLabel(props.item.Label)">
+                  <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon density="comfortable" variant="text" :ripple="false" class="action-delete" title="Delete" @click.stop.prevent="removeLabel(props.item.Label)">
                     <v-icon color="surface-variant">mdi-delete</v-icon>
                   </v-btn>
-                  <v-btn v-else-if="props.item.Uncertainty < 100" icon size="small" variant="text" :ripple="false" class="action-remove" title="Remove" @click.stop.prevent="removeLabel(props.item.Label)">
+                  <v-btn v-else-if="props.item.Uncertainty < 100" icon density="comfortable" variant="text" :ripple="false" class="action-remove" title="Remove" @click.stop.prevent="removeLabel(props.item.Label)">
                     <v-icon color="surface-variant">mdi-minus</v-icon>
                   </v-btn>
-                  <v-btn v-else icon size="small" variant="text" :ripple="false" class="action-on" title="Activate" @click.stop.prevent="activateLabel(props.item.Label)">
+                  <v-btn v-else icon density="comfortable" variant="text" :ripple="false" class="action-on" title="Activate" @click.stop.prevent="activateLabel(props.item.Label)">
                     <v-icon color="surface-variant">mdi-plus</v-icon>
                   </v-btn>
                 </td>
@@ -42,14 +42,14 @@
             <template v-if="!disabled" #tfoot>
               <tr>
                 <td>
-                  <v-text-field v-model="newLabel" :rules="[nameRule]" color="surface-variant" autocomplete="off" :label="$gettext('Name')" single-line flat variant="solo" hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
+                  <v-text-field v-model="newLabel" :rules="[nameRule]" color="surface-variant" autocomplete="off" :label="$gettext('Name')" single-line flat variant="plain" hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
                 </td>
                 <td class="text-left">
                   {{ sourceName("manual") }}
                 </td>
                 <td class="text-center"> 100% </td>
                 <td class="text-center">
-                  <v-btn icon size="small" variant="text" :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
+                  <v-btn icon density="comfortable" variant="text" :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
                     <v-icon color="surface-variant">mdi-plus</v-icon>
                   </v-btn>
                 </td>

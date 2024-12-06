@@ -11,29 +11,29 @@
           transition="slide-y-reverse-transition"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" theme="dark" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10; width: 56px; height: 56px;" location="bottom right">
+          <v-btn v-bind="props" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10; width: 56px; height: 56px;" location="bottom right">
             <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="canShare" key="share" theme="dark" style="width: 40px; height: 40px;" size="small" :title="$gettext('Share')" color="share" :disabled="selection.length !== 1" class="action-share rounded-circle" @click.stop="shareDialog()">
+        <v-btn v-if="canShare" key="share" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Share')" color="share" :disabled="selection.length !== 1" class="action-share rounded-circle" @click.stop="shareDialog()">
           <v-icon>mdi-share-variant</v-icon>
         </v-btn>
-        <v-btn v-if="canManage" key="pencil" theme="dark" style="width: 40px; height: 40px;" size="small" :title="$gettext('Edit')" color="edit" :disabled="selection.length !== 1" class="action-edit rounded-circle" @click.stop="editDialog()">
+        <v-btn v-if="canManage" key="pencil" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Edit')" color="edit" :disabled="selection.length !== 1" class="action-edit rounded-circle" @click.stop="editDialog()">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn theme="dark" style="width: 40px; height: 40px;" key="download" size="small" :title="$gettext('Download')" color="download" class="action-download rounded-circle" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
+        <v-btn style="width: 40px; height: 40px;" key="download" density="comfortable" :title="$gettext('Download')" color="download" class="action-download rounded-circle" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
           <v-icon>mdi-download</v-icon>
         </v-btn>
-        <v-btn v-if="canManage" key="bookmark" theme="dark" style="width: 40px; height: 40px;" size="small" :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-clone rounded-circle" @click.stop="dialog.album = true">
+        <v-btn v-if="canManage" key="bookmark" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-clone rounded-circle" @click.stop="dialog.album = true">
           <v-icon>mdi-bookmark</v-icon>
         </v-btn>
-        <v-btn v-if="canDelete && deletable.includes(context)" key="delete" theme="dark" style="width: 40px; height: 40px;" size="small" color="remove" :title="$gettext('Delete')" :disabled="selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
+        <v-btn v-if="canDelete && deletable.includes(context)" key="delete" style="width: 40px; height: 40px;" density="comfortable" color="remove" :title="$gettext('Delete')" :disabled="selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-        <v-btn key="close" theme="dark" style="width: 40px; height: 40px;" size="small" color="accent" class="action-clear rounded-circle" @click.stop="clearClipboard()">
+        <v-btn key="close" style="width: 40px; height: 40px;" density="comfortable" color="accent" class="action-clear rounded-circle" @click.stop="clearClipboard()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>

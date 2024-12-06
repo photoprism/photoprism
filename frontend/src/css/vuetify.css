@@ -28,6 +28,14 @@
     opacity: 0.42;
 }
 
+.v-switch.v-switch--flat.v-input.v-input--horizontal.v-locale--is-ltr {
+    margin-left: 8px;
+}
+
+.v-label {
+    font-size: 0.875rem;
+}
+
 body.dark-theme .v-btn--disabled.v-btn--variant-elevated .v-btn__overlay,
 body.dark-theme .v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
     background-color: #676767;
@@ -35,20 +43,11 @@ body.dark-theme .v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
     opacity: 0.48;
 }
 
-.v-table {
-    background: transparent;
-    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
-}
-
-.v-table .v-select .v-field .v-field__input {
-    padding-left: 0;
-    padding-right: 0;
-    font-size: 0.875rem;
-}
-
 body.dark-theme {
     background: rgb(var(--v-theme-background, #2f3031)) !important;
 }
+
+/* Dialog Styles */
 
 .v-overlay.v-dialog .v-card,
 .v-overlay.v-dialog>.v-overlay__content>form>.v-card {
@@ -70,7 +69,7 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-text,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
     padding: 0;
-    margin: 0 26px 0 26px;
+    margin: 0 26px 8px 26px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-text.grid,
@@ -81,8 +80,8 @@ body.dark-theme {
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-text.dense,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-text.dense {
-    margin-left: 22px;
-    margin-right: 22px;
+    margin-left: 18px;
+    margin-right: 18px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-text.last,
@@ -93,10 +92,12 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions {
     padding: 0;
-    margin: 12px 26px 20px 26px;
+    margin: 4px 26px 20px 26px;
     gap: 12px;
     flex-wrap: wrap;
     display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn .v-btn__content,
@@ -107,4 +108,53 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content {
     min-width: 74px;
+}
+
+/* List Styles */
+
+.v-menu>.v-overlay__content>.v-list:not(.v-list--nav) {
+    padding: 0;
+    opacity: 0.97;
+}
+
+/* Table Styles */
+
+.v-table {
+    background: rgba(var(--v-theme-table, --v-theme-card));
+    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+}
+
+.v-table .v-select.v-input .v-field .v-field__input {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#table-select-menu .v-list-item.v-list-item--density-default.v-list-item--one-line {
+    min-height: 36px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-inline: 12px;
+}
+
+#table-select-menu .v-list-item-title,
+.v-table,
+.v-table .v-field,
+.v-table .v-select,
+.v-table .v-select.v-input .v-field .v-field__input,
+.v-table .v-label {
+    font-size: 0.8125rem !important;
+}
+
+/* Grid Styles */
+
+.v-row {
+    margin: 0;
+}
+
+.v-row--dense>.v-col, .v-row--dense>[class*=v-col-] {
+    padding: 8px;
+}
+
+.v-row--dense>.v-col, .v-row--dense>[class*=v-col-] {
+    padding: 8px;
 }

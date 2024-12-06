@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-photo-advanced">
     <v-form ref="form" validate-on="lazy" accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
-        <v-table class="bg-transparent">
+        <v-table hover density="default" class="bg-transparent">
           <tbody>
             <tr>
               <td>UID</td>
@@ -26,7 +26,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" variant="solo" bg-color="transparent" density="compact" autocomplete="off" hide-details :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"></v-select>
+                <v-select v-model="model.Type" :menu-props="{ id: 'table-select-menu', density: 'compact' }" variant="solo" bg-color="transparent" density="compact" autocomplete="off" hide-details :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"></v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -88,7 +88,7 @@
                 <translate>Quality Score</translate>
               </td>
               <td>
-                <v-rating v-model="model.Quality" :length="7" readonly size="small"></v-rating>
+                <v-rating v-model="model.Quality" :length="7" size="small" density="compact" readonly></v-rating>
               </td>
             </tr>
             <tr>
@@ -122,7 +122,7 @@
                 <translate>Favorite</translate>
               </td>
               <td>
-                <v-switch v-model="model.Favorite" hide-details class="input-favorite" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
+                <v-switch v-model="model.Favorite" hide-details class="input-favorite ml-2" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr v-if="$config.feature('private')">
@@ -130,7 +130,7 @@
                 <translate>Private</translate>
               </td>
               <td>
-                <v-switch v-model="model.Private" hide-details class="input-private" :label="model.Private ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
+                <v-switch v-model="model.Private" hide-details class="input-private ml-2" :label="model.Private ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -138,7 +138,7 @@
                 <translate>Scan</translate>
               </td>
               <td>
-                <v-switch v-model="model.Scan" hide-details class="input-scan" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
+                <v-switch v-model="model.Scan" hide-details class="input-scan ml-2" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -146,7 +146,7 @@
                 <translate>Panorama</translate>
               </td>
               <td>
-                <v-switch v-model="model.Panorama" hide-details class="input-panorama" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
+                <v-switch v-model="model.Panorama" hide-details class="input-panorama ml-2" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
