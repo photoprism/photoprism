@@ -15,7 +15,7 @@ require (
 	github.com/gin-contrib/gzip v1.0.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217
-	github.com/google/open-location-code/go v0.0.0-20240712113549-dfcebc905b81
+	github.com/google/open-location-code/go v0.0.0-20241206115931-b6937486c621
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.14.0
 	github.com/jinzhu/gorm v1.9.16
@@ -162,7 +162,7 @@ require (
 )
 
 require (
-	github.com/emersion/go-webdav v0.5.0
+	github.com/emersion/go-webdav v0.6.0
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 )
