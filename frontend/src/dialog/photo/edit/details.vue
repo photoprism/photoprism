@@ -308,17 +308,19 @@
               ></v-textarea>
             </v-col>
 
-            <v-col v-if="!disabled" cols="12" :class="rtl ? 'text-left' : 'text-right'" class="pt-6">
-              <v-btn color="button" variant="flat" class="compact action-close ma-1" @click.stop="close">
-                <translate>Close</translate>
-              </v-btn>
-              <v-btn color="primary-button" variant="flat" class="compact action-apply action-approve ma-1" @click.stop="save(false)">
-                <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
-                <span v-else><translate>Apply</translate></span>
-              </v-btn>
-              <v-btn color="primary-button" variant="flat" class="compact action-done hidden-xs ma-1" @click.stop="save(true)">
-                <translate>Done</translate>
-              </v-btn>
+            <v-col v-if="!disabled" cols="12">
+              <div class="action-buttons">
+                <v-btn color="button" variant="flat" class="action-close" @click.stop="close">
+                  <translate>Close</translate>
+                </v-btn>
+                <v-btn color="primary-button" variant="flat" class="action-apply action-approve" @click.stop="save(false)">
+                  <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
+                  <span v-else><translate>Apply</translate></span>
+                </v-btn>
+                <v-btn color="primary-button" variant="flat" class="action-done hidden-xs" @click.stop="save(true)">
+                  <translate>Done</translate>
+                </v-btn>
+              </div>
             </v-col>
           </v-row>
         </v-col>

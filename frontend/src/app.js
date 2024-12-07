@@ -110,14 +110,13 @@ config.update().finally(() => {
       VBtn: {
         flat: true,
         variant: "flat",
+        baseColor: "surface",
         ripple: true,
       },
       VSwitch: {
         flat: true,
-        inline: true,
         density: "compact",
         baseColor: "surface",
-        color: "surface-variant",
         hideDetails: true,
         ripple: false,
       },

@@ -146,13 +146,13 @@
           <v-card-actions class="ma-0 pa-0">
             <v-row align="start" dense>
               <v-col cols="12" sm="6">
-                <v-btn block color="button" variant="flat" density="default" class="action-change-password" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
+                <v-btn block variant="flat" color="button" class="action-change-password" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                   <translate>Change Password</translate>
                   <v-icon :end="!rtl" :start="rtl">mdi-lock</v-icon>
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-btn block color="button" variant="flat" density="default" class="action-passcode-dialog" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
+                <v-btn block variant="flat" color="button" class="action-passcode-dialog" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                   <translate>2-Factor Authentication</translate>
                   <v-icon v-if="user.AuthMethod === '2fa'" :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
                   <!-- TODO: change icons -->
@@ -161,13 +161,13 @@
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-btn block color="button" variant="flat" density="default" class="action-apps-dialog" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
+                <v-btn block variant="flat" color="button" class="action-apps-dialog" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                   <translate>Apps and Devices</translate>
                   <v-icon :end="!rtl" :start="rtl">mdi-cellphone-link</v-icon>
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-btn block color="button" variant="flat" density="default" class="action-webdav-dialog" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
+                <v-btn block variant="flat" color="button" class="action-webdav-dialog" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                   <translate>Connect via WebDAV</translate>
                   <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
                 </v-btn>

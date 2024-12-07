@@ -54,11 +54,11 @@
         </div>
 
         <div class="action-buttons">
-          <v-btn :disabled="!busy || !ready" color="button" variant="flat" class="action-cancel" @click.stop="cancelIndexing()">
+          <v-btn :disabled="!busy || !ready" variant="flat" color="button" class="action-cancel" @click.stop="cancelIndexing()">
             <translate>Cancel</translate>
           </v-btn>
 
-          <v-btn :disabled="busy || !ready" base-color="primary-button" class="action-index" @click.stop="startIndexing()">
+          <v-btn :disabled="busy || !ready" variant="flat" color="primary-button" class="action-index" @click.stop="startIndexing()">
             <translate>Start</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
           </v-btn>

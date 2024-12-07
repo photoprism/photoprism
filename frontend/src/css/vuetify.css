@@ -1,13 +1,5 @@
 /* Custom Vuetify 3 Component Styles */
 
-.v-selection-control--density-compact .v-label {
-    margin-left: 0.5em;
-}
-
-.v-selection-control--density-compact {
-    --v-selection-control-size: 20px;
-}
-
 .v-tabs button.v-tab:not(.v-tab-item--selected) {
     opacity: 0.8;
 }
@@ -19,17 +11,6 @@
 
 .v-slide-group .v-ripple__container {
     display:none !important;
-}
-
-.v-btn--disabled.v-btn--variant-elevated .v-btn__overlay,
-.v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
-    background-color: #efefef;
-    z-index: 10;
-    opacity: 0.42;
-}
-
-.v-switch.v-switch--flat.v-input.v-input--horizontal.v-locale--is-ltr {
-    margin-left: 8px;
 }
 
 .v-label {
@@ -58,7 +39,7 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>.v-card>.v-card-title,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-title {
     padding: 0;
-    margin: 24px 26px 18px;
+    margin: 22px 26px 18px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-title h6,
@@ -99,11 +80,13 @@ body.dark-theme {
     justify-content: flex-end;
 }
 
+.action-buttons .v-btn .v-btn__content,
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn .v-btn__content,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn .v-btn__content {
     min-width: 68px;
 }
 
+.action-buttons .v-btn.bg-primary-button .v-btn__content,
 .v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content {
     min-width: 75px;
@@ -115,6 +98,36 @@ body.dark-theme {
     padding: 0;
     opacity: 0.97;
 }
+
+/* Input Styles */
+
+.v-selection-control--density-compact .v-label {
+    margin-left: 0.5em;
+}
+
+.v-selection-control--density-compact {
+    --v-selection-control-size: 20px;
+}
+
+.v-switch.v-switch--flat.v-input.v-input--horizontal.v-locale--is-ltr {
+    margin-left: 8px;
+}
+
+.v-input.v-input--disabled.v-switch {
+    opacity: var(--v-disabled-opacity);
+}
+
+.v-btn--disabled {
+    opacity: 0.26;
+}
+
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
+    color: rgba(var(--v-theme-on-surface), 0.26) !important;
+    background: rgb(var(--v-theme-surface)) !important;
+}
+
+/* color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)); */
 
 .v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,
 .v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend {

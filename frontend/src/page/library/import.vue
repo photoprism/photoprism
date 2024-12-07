@@ -64,16 +64,16 @@
         </v-row -->
 
         <div class="action-buttons">
-          <v-btn :disabled="!busy || !ready" color="button" class="action-cancel" @click.stop="cancelImport()">
+          <v-btn :disabled="!busy || !ready" variant="flat" color="button" class="action-cancel" @click.stop="cancelImport()">
             <translate>Cancel</translate>
           </v-btn>
 
-          <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" color="primary-button" class="hidden-xs action-upload" @click.stop="showUpload()">
+          <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" variant="flat" color="primary-button" class="hidden-xs action-upload" @click.stop="showUpload()">
             <translate>Upload</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-cloud-upload</v-icon>
           </v-btn>
 
-          <v-btn :disabled="busy || !ready" color="primary-button" class="action-import" @click.stop="startImport()">
+          <v-btn :disabled="busy || !ready" variant="flat" color="primary-button" class="action-import" @click.stop="startImport()">
             <translate>Import</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-sync</v-icon>
           </v-btn>
