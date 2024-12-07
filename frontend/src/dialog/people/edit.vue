@@ -1,7 +1,7 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="dialog-person-edit" color="background" @keydown.esc="close">
     <v-form ref="form" validate-on="lazy" class="form-person-edit" accept-charset="UTF-8" @submit.prevent="confirm">
-      <v-card elevation="24">
+      <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
               <h3 class="text-h5">
                 <translate :translate-params="{ name: model.modelName() }">Edit %{name}</translate>

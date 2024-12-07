@@ -1,7 +1,7 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
     <v-form ref="form" class="form-password" accept-charset="UTF-8" @submit.prevent>
-      <v-card elevation="24">
+      <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-lock</v-icon>
           <h6 class="text-h6"><translate>Change Password</translate></h6>

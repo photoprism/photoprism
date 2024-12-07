@@ -481,7 +481,7 @@ export const Gender = () => [
 ];
 
 export const Orientations = () => [
-  { value: 1, text: "" },
+  { value: 1, text: "0°" },
   { value: 6, text: "90°" },
   { value: 3, text: "180°" },
   { value: 8, text: "270°" },

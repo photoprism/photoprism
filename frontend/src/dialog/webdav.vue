@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="visible" max-width="580">
-    <v-card elevation="24">
+    <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
         <h6 class="text-h6"><translate>Connect via WebDAV</translate></h6>

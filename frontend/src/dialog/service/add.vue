@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
-    <v-card elevation="24">
+    <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <h6 class="text-h6">
           <translate>Add Account</translate>

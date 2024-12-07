@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
-    <v-card elevation="24">
+    <v-card>
       <v-card-title class="pb-0">
         <v-row>
           <v-col cols="8">

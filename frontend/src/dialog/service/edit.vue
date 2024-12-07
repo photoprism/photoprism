@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
-    <v-card elevation="24">
+    <v-card>
       <v-card-title class="pa-2">
         <v-row v-if="scope === 'sharing'" class="py-2 pr-0 pl-2">
           <v-col cols="9">

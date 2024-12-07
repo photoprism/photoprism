@@ -110,7 +110,7 @@ config.update().finally(() => {
       VBtn: {
         flat: true,
         variant: "flat",
-        ripple: false,
+        ripple: true,
       },
       VSwitch: {
         flat: true,
@@ -179,6 +179,7 @@ config.update().finally(() => {
       VTab: {
         color: "on-surface",
         baseColor: "on-surface-variant",
+        ripple: false,
       },
       VTabs: {
         grow: true,

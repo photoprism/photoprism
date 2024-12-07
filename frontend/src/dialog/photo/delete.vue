@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="360" class="p-photo-delete-dialog" @keydown.esc="cancel">
-    <v-card elevation="24">
+    <v-card>
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-row>
           <v-col cols="3" class="text-center">

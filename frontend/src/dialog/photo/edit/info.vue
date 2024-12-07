@@ -26,7 +26,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" :menu-props="{ id: 'table-select-menu', density: 'compact' }" variant="solo" bg-color="transparent" density="compact" autocomplete="off" hide-details :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"></v-select>
+                <v-select v-model="model.Type" :list-props="{ density: 'compact' }" max-width="160" variant="solo" bg-color="transparent" density="compact" autocomplete="off" hide-details :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"></v-select>
               </td>
             </tr>
             <tr v-if="model.Path">

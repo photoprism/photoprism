@@ -36,15 +36,7 @@
                                 <v-btn v-if="features.download" density="comfortable" variant="flat" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                   <translate>Download</translate>
                                 </v-btn>
-                                <v-btn
-                                  v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
-                                  density="comfortable"
-                                  variant="flat"
-                                  color="primary-button"
-                                  class="btn-action action-primary"
-                                  :disabled="busy"
-                                  @click.stop.prevent="primaryFile(file)"
-                                >
+                                <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
                                   <translate>Primary</translate>
                                 </v-btn>
                                 <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" density="comfortable" variant="flat" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
@@ -61,8 +53,8 @@
                             <tr>
                               <td title="Unique ID"> UID </td>
                               <td>
-  <!--                              TODO: change filter-->
-  <!--                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span>-->
+                                <!--                              TODO: change filter-->
+                                <!--                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span>-->
                                 <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID }}</span>
                               </td>
                             </tr>
@@ -71,8 +63,8 @@
                                 <translate>Instance ID</translate>
                               </td>
                               <td>
-  <!--                              TODO: change filter-->
-  <!--                              <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td-->
+                                <!--                              TODO: change filter-->
+                                <!--                              <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td-->
                                 <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID }}</span></td
                               >
                             </tr>
@@ -184,8 +176,8 @@
                               <td>
                                 <translate>Projection</translate>
                               </td>
-  <!--                            TODO: change filter-->
-  <!--                            <td>{{ file.Projection | capitalize }}</td>-->
+                              <!--                            TODO: change filter-->
+                              <!--                            <td>{{ file.Projection | capitalize }}</td>-->
                               <td>{{ file.Projection }}</td>
                             </tr>
                             <tr v-if="file.AspectRatio">
@@ -201,24 +193,31 @@
                               <td>
                                 <v-select
                                   v-model="file.Orientation"
-                                  variant="solo"
-                                  bg-color="transparent"
-                                  density="compact"
                                   autocomplete="off"
                                   hide-details
+                                  variant="solo"
+                                  max-width="120"
+                                  bg-color="transparent"
+                                  density="compact"
                                   :items="options.Orientations()"
                                   item-title="text"
                                   item-value="value"
+                                  :list-props="{ density: 'compact' }"
                                   :readonly="readonly || !features.edit || file.Error || (file.Frames && file.Frames > 1) || (file.Duration && file.Duration > 1) || (file.FileType !== 'jpg' && file.FileType !== 'png')"
                                   :disabled="busy"
                                   class="input-orientation"
                                   @update:model-value="changeOrientation(file)"
                                 >
                                   <template #selection="{ item }">
-                                    <span :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
+                                    <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
+                                    <span>{{ item.title }}</span>
                                   </template>
-                                  <template #item="{ item, props }">
-                                      <span v-bind="props" class="d-flex" :title="item.text"><v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon></span>
+                                  <template #item="{ props, item }">
+                                    <v-list-item v-bind="props">
+                                      <template #prepend>
+                                        <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
+                                      </template>
+                                    </v-list-item>
                                   </template>
                                 </v-select>
                               </td>
@@ -233,8 +232,8 @@
                               <td>
                                 <translate>Main Color</translate>
                               </td>
-  <!--                            TODO: change filter-->
-  <!--                            <td>{{ file.MainColor | capitalize }}</td>-->
+                              <!--                            TODO: change filter-->
+                              <!--                            <td>{{ file.MainColor | capitalize }}</td>-->
                               <td>{{ file.MainColor }}</td>
                             </tr>
                             <tr v-if="file.Chroma">
@@ -258,8 +257,8 @@
                               <td
                                 >{{ formatTime(file.CreatedAt) }}
                                 <translate>in</translate>
-  <!--                              TODO: change filter-->
-  <!--                              {{ Math.round(file.CreatedIn / 1000000) | number("0,0") }} ms-->
+                                <!--                              TODO: change filter-->
+                                <!--                              {{ Math.round(file.CreatedIn / 1000000) | number("0,0") }} ms-->
                                 {{ Math.round(file.CreatedIn / 1000000) }} ms
                               </td>
                             </tr>
@@ -270,8 +269,8 @@
                               <td
                                 >{{ formatTime(file.UpdatedAt) }}
                                 <translate>in</translate>
-  <!--                              TODO: change filter-->
-  <!--                              {{ Math.round(file.UpdatedIn / 1000000) | number("0,0") }} ms-->
+                                <!--                              TODO: change filter-->
+                                <!--                              {{ Math.round(file.UpdatedIn / 1000000) | number("0,0") }} ms-->
                                 {{ Math.round(file.UpdatedIn / 1000000) }} ms
                               </td>
                             </tr>

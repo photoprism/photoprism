@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
-    <v-card elevation="24">
+    <v-card>
       <v-card-text class="pt-6 px-6">
         <v-row>
           <v-col cols="3" class="text-left">

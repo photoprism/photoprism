@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="575" class="modal-dialog sponsor-dialog" @keydown.esc="close">
-    <v-card elevation="24">
+    <v-card>
       <v-card-title class="px-2 pb-0">
         <v-row class="px-2">
           <v-col cols="10">
