@@ -49,7 +49,7 @@ body.dark-theme {
 
 /* Dialog Styles */
 
-.v-overlay.v-dialog .v-card,
+.v-overlay.v-dialog>.v-overlay__content>.v-card,
 .v-overlay.v-dialog>.v-overlay__content>form>.v-card {
     border-radius: 8px;
     box-shadow: 0 11px 15px -7px var(--v-shadow-key-umbra-opacity, #0003), 0 24px 38px 3px var(--v-shadow-key-penumbra-opacity, #00000024), 0 9px 46px 8px var(--v-shadow-key-ambient-opacity, #0000001f) !important;

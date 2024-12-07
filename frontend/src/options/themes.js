@@ -7,7 +7,7 @@ let variables = {
   "table-row-height": "44px",
   "table-header-height": "44px",
   "border-color": "#FFFFFF",
-  "border-opacity": 0.12,
+  "border-opacity": 0.08,
   "high-emphasis-opacity": 0.96,
   "medium-emphasis-opacity": 0.88,
   "disabled-opacity": 0.9,
