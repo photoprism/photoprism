@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" validate-on="lazy" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8" :class="{ embedded: embedded }" @submit.prevent="updateQuery()">
+  <v-form ref="form" validate-on="blur" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8" :class="{ embedded: embedded }" @submit.prevent="updateQuery()">
     <v-toolbar flat :dense="$vuetify.display.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
       <template v-if="!embedded">
         <v-text-field

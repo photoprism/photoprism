@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
-    <v-form ref="form" validate-on="lazy" class="form-password" accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" validate-on="blur" class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>

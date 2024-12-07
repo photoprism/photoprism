@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-settings-general py-2">
-    <v-form ref="form" validate-on="lazy" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form ref="form" validate-on="blur" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-2 text-subtitle-2">
           <translate key="User Interface">User Interface</translate>

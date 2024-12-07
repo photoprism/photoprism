@@ -1,6 +1,6 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="modal-dialog p-account-passcode-dialog" @keydown.esc="close">
-    <v-form ref="form" validate-on="lazy" accept-charset="UTF-8" class="form-password" @submit.prevent>
+    <v-form ref="form" validate-on="blur" accept-charset="UTF-8" class="form-password" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="page === 'setup'" size="28" color="primary">mdi-shield-alert</v-icon>
