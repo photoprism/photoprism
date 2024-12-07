@@ -59,12 +59,15 @@ if [[ $TF_DRIVER == "auto" ]]; then
 
   CPU_DETECTED=$(lshw -c processor -json 2>/dev/null)
 
-  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx2') == "true" ]]; then
+  if [[ $(echo "${CPU_DETECTED}" | jq -r '[.[].capabilities.avx2,.[].capabilities.fma] | all') == "true" ]]; then
     TF_DRIVER="avx2"
+    echo "Driver avx2 detected"
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx') == "true" ]]; then
     TF_DRIVER="avx"
+    echo "Driver avx detected"
   else
     TF_DRIVER=""
+    echo "No drivers detected"
   fi
 fi
 
