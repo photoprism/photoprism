@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-settings-services">
-    <v-container>
+    <v-container class="width-lg">
       <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 account-results list-view" item-key="ID" :no-data-text="$gettext('No services configured.')">
         <template #item="props">
           <tr :data-name="props.item.AccName">
