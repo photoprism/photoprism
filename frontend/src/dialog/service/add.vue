@@ -2,6 +2,7 @@
   <v-dialog :model-value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
+        <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
         <h6 class="text-h6">
           <translate>Add Account</translate>
         </h6>
