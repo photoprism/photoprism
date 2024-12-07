@@ -30,7 +30,7 @@
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-selectable"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
@@ -55,7 +55,7 @@
                 <translate>Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:</translate>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="appPassword" type="text" hide-details readonly autocorrect="off" autocapitalize="none" autocomplete="off" append-icon="mdi-content-copy" class="input-app-password text-selectable" @click:append="onCopyAppPassword"></v-text-field>
+                <v-text-field v-model="appPassword" type="text" hide-details readonly autocorrect="off" autocapitalize="none" autocomplete="off" append-inner-icon="mdi-content-copy" class="input-app-password text-selectable" @click:append="onCopyAppPassword"></v-text-field>
               </v-col>
             </v-row>
           </v-card-text>

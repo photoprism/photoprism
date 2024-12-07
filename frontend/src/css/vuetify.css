@@ -74,14 +74,12 @@ body.dark-theme {
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-text.grid,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-text.grid {
-    margin-left: 14px;
-    margin-right: 14px;
+    margin: -12px 14px -12px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-text.dense,
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-text.dense {
-    margin-left: 18px;
-    margin-right: 18px;
+    margin: -8px 18px -8px;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-text.last,
