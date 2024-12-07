@@ -21,7 +21,7 @@
               </v-col>
             </v-row>
         </v-card-text>
-        <v-card-actions class="text-right">
+        <v-card-actions>
           <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
             <translate>Cancel</translate>
           </v-btn>

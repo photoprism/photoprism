@@ -88,11 +88,11 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
-            <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
+          <v-card-actions>
+            <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
+            <v-btn variant="flat" color="primary-button" class="action-confirm compact" :disabled="code.length !== 6" @click.stop="onConfirm">
               <translate>Confirm</translate>
             </v-btn>
           </v-card-actions>
@@ -125,14 +125,14 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
-            <v-btn variant="flat" color="button" class="action-cancel mr-2" @click.stop="close">
+          <v-card-actions>
+            <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate compact mr-0" @click.stop="onActivate">
+            <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate compact" @click.stop="onActivate">
               <translate>Activate</translate>
             </v-btn>
-            <v-btn v-else variant="flat" color="primary-button" class="action-copy compact mr-0" @click.stop="onCopyRecoveryCode">
+            <v-btn v-else variant="flat" color="primary-button" class="action-copy compact" @click.stop="onCopyRecoveryCode">
               <translate>Copy</translate>
             </v-btn>
           </v-card-actions>
@@ -172,11 +172,11 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
-            <v-btn variant="flat" color="primary-button" class="action-deactivate compact mr-2" :disabled="setupDisabled()" @click.stop="onDeactivate">
+          <v-card-actions>
+            <v-btn variant="flat" color="primary-button" class="action-deactivate compact" :disabled="setupDisabled()" @click.stop="onDeactivate">
               <translate>Deactivate</translate>
             </v-btn>
-            <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
+            <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>
           </v-card-actions>
@@ -190,8 +190,8 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions class="text-right">
-            <v-btn variant="flat" color="button" class="action-close mr-0" @click.stop="close">
+          <v-card-actions>
+            <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>
           </v-card-actions>

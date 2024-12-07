@@ -34,11 +34,11 @@
           </v-col>
         </v-row>
       </v-card-text>
-      <v-card-actions class="text-right">
-        <v-btn variant="flat" color="button" class="action-cancel ml-2" @click.stop="cancel">
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
           <span>{{ label.cancel }}</span>
         </v-btn>
-        <v-btn variant="flat" color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
+        <v-btn variant="flat" color="primary-button" class="action-confirm compact" @click.stop="confirm">
           <span>{{ label.confirm }}</span>
         </v-btn>
       </v-card-actions>
