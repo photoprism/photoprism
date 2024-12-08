@@ -11,11 +11,12 @@ func TestClientsAddCommand(t *testing.T) {
 	t.Run("AddClient", func(t *testing.T) {
 		var err error
 
-		ctx := NewTestContext([]string{"add", "--name=Clara Client", "--scope=photos albums", "--expires=5000", "--tokens=2", "clara"})
+		args := []string{"add", "--name=Clara Client", "--scope=photos albums", "--expires=5000", "--tokens=2", "clara"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsAddCommand.Run(ctx)
+			err = ClientsAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

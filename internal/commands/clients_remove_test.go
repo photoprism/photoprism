@@ -11,10 +11,11 @@ func TestCientsRemoveCommand(t *testing.T) {
 	t.Run("NoConfirmationProvided", func(t *testing.T) {
 		var err error
 
-		ctx0 := NewTestContext([]string{"show", "cs7pvt5h8rw9aaqj"})
+		args0 := []string{"show", "cs7pvt5h8rw9aaqj"}
+		ctx0 := NewTestContext(args0)
 
 		output0 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx0)
+			err = ClientsShowCommand.Run(ctx0, args0...)
 		})
 
 		//t.Logf(output0)
@@ -23,11 +24,12 @@ func TestCientsRemoveCommand(t *testing.T) {
 		assert.Contains(t, output0, "client")
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"rm", "cs7pvt5h8rw9aaqj"})
+		args := []string{"rm", "cs7pvt5h8rw9aaqj"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsRemoveCommand.Run(ctx)
+			err = ClientsRemoveCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -35,10 +37,11 @@ func TestCientsRemoveCommand(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
-		ctx2 := NewTestContext([]string{"show", "cs7pvt5h8rw9aaqj"})
+		args2 := []string{"show", "cs7pvt5h8rw9aaqj"}
+		ctx2 := NewTestContext(args2)
 
 		output2 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx2)
+			err = ClientsShowCommand.Run(ctx2, args2...)
 		})
 
 		//t.Logf(output2)
@@ -49,10 +52,11 @@ func TestCientsRemoveCommand(t *testing.T) {
 	t.Run("RemoveClient", func(t *testing.T) {
 		var err error
 
-		ctx0 := NewTestContext([]string{"show", "cs7pvt5h8rw9aaqj"})
+		args0 := []string{"show", "cs7pvt5h8rw9aaqj"}
+		ctx0 := NewTestContext(args0)
 
 		output0 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx0)
+			err = ClientsShowCommand.Run(ctx0, args0...)
 		})
 
 		//t.Logf(output0)
@@ -61,21 +65,23 @@ func TestCientsRemoveCommand(t *testing.T) {
 		assert.Contains(t, output0, "client")
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"rm", "--force", "cs7pvt5h8rw9aaqj"})
+		args := []string{"rm", "--force", "cs7pvt5h8rw9aaqj"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsRemoveCommand.Run(ctx)
+			err = ClientsRemoveCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
-		ctx2 := NewTestContext([]string{"show", "cs7pvt5h8rw9aaqj"})
+		args2 := []string{"show", "cs7pvt5h8rw9aaqj"}
+		ctx2 := NewTestContext(args2)
 
 		output2 := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx2)
+			err = ClientsShowCommand.Run(ctx2, args2...)
 		})
 
 		assert.Error(t, err)
@@ -85,11 +91,12 @@ func TestCientsRemoveCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"rm", "--force", "cs7pvt5h8rw9a000"})
+		args := []string{"rm", "--force", "cs7pvt5h8rw9a000"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsRemoveCommand.Run(ctx)
+			err = ClientsRemoveCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

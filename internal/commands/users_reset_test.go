@@ -12,11 +12,12 @@ func TestUsersResetCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx0 := NewTestContext([]string{"ls"})
+		args0 := []string{"ls"}
+		ctx0 := NewTestContext(args0)
 
 		// Run command with test context.
 		output0 := capture.Output(func() {
-			err = UsersListCommand.Run(ctx0)
+			err = UsersListCommand.Run(ctx0, args0...)
 		})
 
 		// Check command output for plausibility.
@@ -26,11 +27,12 @@ func TestUsersResetCommand(t *testing.T) {
 		assert.Contains(t, output0, "bob")
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"reset"})
+		args := []string{"reset"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersResetCommand.Run(ctx)
+			err = UsersResetCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -40,7 +42,7 @@ func TestUsersResetCommand(t *testing.T) {
 
 		// Run command with test context.
 		output1 := capture.Output(func() {
-			err = UsersListCommand.Run(ctx0)
+			err = UsersListCommand.Run(ctx0, args0...)
 		})
 
 		// Check command output for plausibility.

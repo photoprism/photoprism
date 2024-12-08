@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowSearchFiltersCommand configures the command name, flags, and action.
-var ShowSearchFiltersCommand = cli.Command{
+var ShowSearchFiltersCommand = &cli.Command{
 	Name:   "search-filters",
 	Usage:  "Displays supported search filters with examples",
 	Flags:  report.CliFlags,

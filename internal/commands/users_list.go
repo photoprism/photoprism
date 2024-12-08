@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -12,7 +12,7 @@ import (
 )
 
 // UsersListCommand configures the command name, flags, and action.
-var UsersListCommand = cli.Command{
+var UsersListCommand = &cli.Command{
 	Name:   "ls",
 	Usage:  "Lists registered user accounts",
 	Flags:  append(report.CliFlags, CountFlag, UsersLoginFlag, UsersCreatedFlag, UsersDeletedFlag),
@@ -39,7 +39,7 @@ func usersListAction(ctx *cli.Context) error {
 		}
 
 		// Fetch users from database.
-		users, err := query.Users(ctx.Int("n"), 0, "", ctx.Args().First(), ctx.Bool("deleted"))
+		users, err := query.Users(ctx.Int("count"), 0, "", ctx.Args().First(), ctx.Bool("deleted"))
 
 		if err != nil {
 			return err

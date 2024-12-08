@@ -12,11 +12,12 @@ func TestUsersModCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"mod", "--name=New", "--email=new@test.de", "uqxqg7i1kperxxx0"})
+		args := []string{"mod", "--name=New", "--email=new@test.de", "uqxqg7i1kperxxx0"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersModCommand.Run(ctx)
+			err = UsersModCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -28,11 +29,12 @@ func TestUsersModCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"mod", "--name=New", "--email=new@test.de", "deleted"})
+		args := []string{"mod", "--name=New", "--email=new@test.de", "deleted"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersModCommand.Run(ctx)
+			err = UsersModCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

@@ -1,0 +1,215 @@
+/* Custom Vuetify 3 Component Styles */
+
+.v-tabs button.v-tab:not(.v-tab-item--selected) {
+    opacity: 0.8;
+}
+
+.v-overlay__scrim {
+    background: rgb(var(--v-overlay-color, #121212));
+    opacity: var(--v-overlay-opacity, .32);
+}
+
+.v-slide-group .v-ripple__container {
+    display:none !important;
+}
+
+.v-input.v-switch .v-label {
+    font-size: 0.875rem;
+}
+
+.v-input.v-text-field .v-field .v-label.v-field-label:not(.v-field-label--floating) {
+    opacity: var(--v-low-emphasis-opacity, .67);
+}
+
+.v-input.v-text-field .v-field:not(.v-field--focused) .v-label.v-field-label.v-field-label--floating {
+    opacity: var(--v-medium-emphasis-opacity, .88);
+}
+
+body.dark-theme .v-btn--disabled.v-btn--variant-elevated .v-btn__overlay,
+body.dark-theme .v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
+    background-color: #676767;
+    z-index: 10;
+    opacity: 0.48;
+}
+
+body.dark-theme {
+    background: rgb(var(--v-theme-background, #2f3031)) !important;
+}
+
+/* Dialog Styles */
+
+.v-overlay.v-dialog>.v-overlay__content>.v-card,
+.v-overlay.v-dialog>.v-overlay__content>form>.v-card {
+    border-radius: 8px;
+    box-shadow: 0 11px 15px -7px var(--v-shadow-key-umbra-opacity, #0003), 0 24px 38px 3px var(--v-shadow-key-penumbra-opacity, #00000024), 0 9px 46px 8px var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-title,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-title {
+    padding: 0;
+    margin: 22px 26px 18px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-title h6,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-title h6 {
+    padding: 0;
+    margin: 0;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
+    padding: 0;
+    margin: 0 26px 8px 26px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.grid,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.grid {
+    margin: -12px 14px -12px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.dense,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.dense {
+    margin: -8px 18px -8px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.last,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.last {
+    margin-bottom: 26px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions {
+    padding: 0;
+    margin: 8px 26px 16px 26px;
+    gap: 12px;
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.action-buttons .v-btn .v-btn__content,
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn .v-btn__content {
+    min-width: 68px;
+}
+
+.action-buttons .v-btn.bg-primary-button .v-btn__content,
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content {
+    min-width: 75px;
+}
+
+/* List Styles */
+
+.v-menu>.v-overlay__content>.v-list:not(.v-list--nav) {
+    padding: 0;
+    opacity: 0.97;
+}
+
+/* Input Styles */
+
+.v-selection-control--density-compact .v-label {
+    margin-left: 0.5em;
+}
+
+.v-selection-control--density-compact {
+    --v-selection-control-size: 20px;
+}
+
+.v-switch.v-switch--flat.v-input.v-input--horizontal.v-locale--is-ltr {
+    margin-left: 8px;
+}
+
+.v-input.v-input--disabled.v-switch {
+    opacity: var(--v-disabled-opacity);
+}
+
+.v-btn--disabled {
+    opacity: 0.26;
+}
+
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
+    color: rgba(var(--v-theme-on-surface), 0.26) !important;
+    background: rgb(var(--v-theme-surface)) !important;
+}
+
+/* color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)); */
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection {
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend .v-list-item__spacer {
+    width: 8px;
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection .v-icon,
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend .v-icon {
+    font-size: 19px;
+    height: 19px;
+    width: 19px;
+    margin-bottom: 1px;
+    vertical-align: baseline;
+    line-height: inherit;
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__content>.v-list-item-title {
+    font-size: 0.8125rem;
+}
+
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact.v-list-item--one-line {
+    line-height: 36px;
+    min-height: 36px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-inline: 10px;
+}
+
+/* Table Styles */
+
+.v-table {
+    background: rgba(var(--v-theme-table, --v-theme-card));
+    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+}
+
+.v-table .v-select.v-input .v-field .v-field__input {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.v-table,
+.v-table .v-field,
+.v-table .v-select,
+.v-table .v-select.v-input .v-field .v-field__input,
+.v-table .v-label {
+    font-size: 0.8125rem !important;
+}
+
+.v-container>.v-table {
+    border-radius: 8px;
+}
+
+/* Grid Styles */
+
+.v-row {
+    margin: 0;
+}
+
+.v-row--dense>.v-col, .v-row--dense>[class*=v-col-] {
+    padding: 8px;
+}
+
+.v-row--dense>.v-col, .v-row--dense>[class*=v-col-] {
+    padding: 8px;
+}

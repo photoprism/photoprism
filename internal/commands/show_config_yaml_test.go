@@ -10,10 +10,10 @@ import (
 func TestShowConfigYamlCommand(t *testing.T) {
 	var err error
 
-	ctx := NewTestContext([]string{"config-yaml", "--md"})
-
+	args := []string{"config-yaml", "--md"}
+	ctx := NewTestContext(args)
 	output := capture.Stdout(func() {
-		err = ShowConfigYamlCommand.Run(ctx)
+		err = ShowConfigYamlCommand.Run(ctx, args...)
 	})
 
 	if err != nil {

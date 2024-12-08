@@ -12,11 +12,12 @@ func TestUsersRemoveCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"rm", "uqxqg7i1kperxxx0"})
+		args := []string{"rm", "uqxqg7i1kperxxx0"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersRemoveCommand.Run(ctx)
+			err = UsersRemoveCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -28,11 +29,12 @@ func TestUsersRemoveCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"rm", "deleted"})
+		args := []string{"rm", "deleted"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersRemoveCommand.Run(ctx)
+			err = UsersRemoveCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

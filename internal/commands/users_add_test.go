@@ -12,11 +12,12 @@ func TestUsersAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--name=Alice", "--email=jane@test.de", "--password=test1234", "--role=admin", "alice"})
+		args := []string{"add", "--name=Alice", "--email=jane@test.de", "--password=test1234", "--role=admin", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersAddCommand.Run(ctx)
+			err = UsersAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -29,11 +30,12 @@ func TestUsersAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--name=deleted", "--password=test1234", "deleted"})
+		args := []string{"add", "--name=deleted", "--password=test1234", "deleted"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersAddCommand.Run(ctx)
+			err = UsersAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -46,11 +48,12 @@ func TestUsersAddCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"add", "--name=noname", "--password=test1234", "/##"})
+		args := []string{"add", "--name=noname", "--password=test1234", "/##"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersAddCommand.Run(ctx)
+			err = UsersAddCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

@@ -11,11 +11,12 @@ func TestPasswdCommand(t *testing.T) {
 	t.Run("UserNotFound", func(t *testing.T) {
 		var err error
 
-		ctx := NewTestContext([]string{"passwd", "--show", "mila"})
+		args := []string{"passwd", "--show", "mila"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = PasswdCommand.Run(ctx)
+			err = PasswdCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -25,11 +26,12 @@ func TestPasswdCommand(t *testing.T) {
 	t.Run("DeletedUser", func(t *testing.T) {
 		var err error
 
-		ctx := NewTestContext([]string{"passwd", "--show", "uqxqg7i1kperxvu8"})
+		args := []string{"passwd", "--show", "uqxqg7i1kperxvu8"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = PasswdCommand.Run(ctx)
+			err = PasswdCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -39,7 +41,8 @@ func TestPasswdCommand(t *testing.T) {
 	t.Run("DeletePassword", func(t *testing.T) {
 		var err error
 
-		ctx := NewTestContext([]string{"passwd", "--rm", "no_local_auth"})
+		args := []string{"passwd", "--rm", "no_local_auth"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {

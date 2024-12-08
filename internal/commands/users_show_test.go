@@ -12,11 +12,12 @@ func TestUsersShowCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"show", "alice"})
+		args := []string{"show", "alice"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx)
+			err = UsersShowCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -30,11 +31,12 @@ func TestUsersShowCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"show", "notexisting"})
+		args := []string{"show", "notexisting"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx)
+			err = UsersShowCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.

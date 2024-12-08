@@ -3,19 +3,19 @@ package commands
 import (
 	"fmt"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// VersionCommand configures the command name, flags, and action.
-var VersionCommand = cli.Command{
+// VersionCommand configures the "photoprism version" command.
+var VersionCommand = &cli.Command{
 	Name:   "version",
 	Usage:  "Shows version information",
 	Action: versionAction,
 }
 
-// versionAction prints the current version
+// versionAction displays information about the current version.
 func versionAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 

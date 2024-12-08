@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/list"
 )
@@ -52,26 +52,49 @@ func (f CliFlag) Hidden() bool {
 	return true
 }
 
-// EnvVar returns the flag environment variable name.
+// EnvVar returns the names of the environment variables as a comma separated string.
 func (f CliFlag) EnvVar() string {
-	field := f.Fields().FieldByName("EnvVar")
-
-	if !field.IsValid() {
-		return ""
-	}
-
-	return field.String()
+	return strings.Join(f.EnvVars(), ", ")
 }
 
-// Name returns the command flag name.
+// EnvVars returns the environment variable names as string slice.
+func (f CliFlag) EnvVars() []string {
+	field := f.Fields().FieldByName("EnvVars")
+
+	if !field.IsValid() {
+		return []string{}
+	}
+
+	if vars := field.Interface().([]string); len(vars) > 0 {
+		return vars
+	}
+
+	return []string{}
+}
+
+// Name returns the command flag names as a comma-separated string.
+func (f CliFlag) String() string {
+	return strings.Join(f.Names(), ", ")
+}
+
+// Name returns the default command flag name.
 func (f CliFlag) Name() string {
-	return f.Flag.GetName()
+	if n := f.Flag.Names(); len(n) > 0 {
+		return n[0]
+	}
+
+	return ""
+}
+
+// Names returns the command flag names as string slice.
+func (f CliFlag) Names() []string {
+	return f.Flag.Names()
 }
 
 // CommandFlag returns the full command flag based on the name.
 func (f CliFlag) CommandFlag() string {
-	n := strings.Split(f.Name(), ",")
-	return "--" + n[0]
+	n := strings.Split(f.String(), ",")
+	return "--" + strings.TrimSpace(n[0])
 }
 
 // Usage returns the command flag usage.

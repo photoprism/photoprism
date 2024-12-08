@@ -25,12 +25,12 @@
     text-align: right;
 }
 
-#photoprism.is-rtl .p-flex-menuitem .nav-count {
+#photoprism.is-rtl .nav-menu-item .nav-count {
     margin-left: 48px;
     margin-right: 8px;
 }
 
-#photoprism.is-rtl .v-list__group__header .p-flex-menuitem .nav-count {
+#photoprism.is-rtl .v-list__group__header .nav-menu-item .nav-count {
     margin-left: 0;
 }
 

@@ -1,25 +1,26 @@
 <template>
-  <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
+  <v-container :class="$config.aclClasses('places')" fluid class="pa-0 p-page p-page-places fill-height">
     <div style="width: 100%; height: 100%; position: relative">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field
             v-model.lazy.trim="filter.q"
-            solo
             hide-details
+            theme="light"
             clearable
             flat
             single-line
-            validate-on-blur
-            class="input-search pa-0 ma-0"
-            :label="$gettext('Search')"
-            prepend-inner-icon="search"
-            browser-autocomplete="off"
+            validate-on="blur"
+            class="input-search pa-0"
+            density="comfortable"
+            :placeholder="$gettext('Search')"
+            prepend-inner-icon="mdi-magnify"
+            autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
-            color="secondary-dark"
+            color="#f1f1f1"
             @click:clear="clearQuery"
-            @keyup.enter.native="formChange"
+            @keyup.enter="formChange"
           ></v-text-field>
         </div>
       </div>

@@ -12,11 +12,12 @@ func TestClientsShowCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"show", "cs5gfen1bgxz7s9i"})
+		args := []string{"show", "cs5gfen1bgxz7s9i"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx)
+			err = ClientsShowCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
@@ -30,11 +31,12 @@ func TestClientsShowCommand(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"show", "cs5gfen1bgxzxxxx"})
+		args := []string{"show", "cs5gfen1bgxzxxxx"}
+		ctx := NewTestContext(args)
 
 		// Run command with test context.
 		output := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx)
+			err = ClientsShowCommand.Run(ctx, args...)
 		})
 
 		// Check command output for plausibility.
