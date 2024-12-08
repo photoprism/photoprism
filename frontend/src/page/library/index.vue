@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-photo-index" validate-on="blur" @submit.prevent="submit">
       <v-container fluid>
-        <p class="text-subtitle-1">
+        <p class="text-body-1">
           <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>

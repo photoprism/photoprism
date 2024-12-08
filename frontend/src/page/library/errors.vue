@@ -75,11 +75,11 @@
           {{ details.err.Level }}
         </v-card-title>
 
-        <v-card-text class="pa-2 text-body-2">
+        <v-card-text class="pa-2 text-subtitle-2">
           {{ localTime(details.err.Time) }}
         </v-card-text>
 
-        <v-card-text class="pa-2 text-body-1">
+        <v-card-text class="pa-2 text-body-2">
           {{ details.err.Message }}
         </v-card-text>
 

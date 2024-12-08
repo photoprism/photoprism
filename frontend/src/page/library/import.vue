@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-import">
     <v-form ref="form" class="p-photo-import" validate-on="blur" @submit.prevent="submit">
       <v-container fluid>
-        <p class="text-subtitle-1">
+        <p class="text-body-1">
           <span v-if="fileName" class="break-word"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>
           <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>

@@ -27,7 +27,7 @@
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
           <div class="pa-6 card-details">
             <div>
-              <h3 class="text-body-2 mb-2" :title="photo.Title">
+              <h3 class="text-subtitle-2 mb-2" :title="photo.Title">
                 <!-- TODO: change this filter -->
                 <!-- {{ photo.Title | truncate(80) }} -->
                 {{ photo.Title }}
@@ -141,7 +141,7 @@
 
           <div class="pa-6 card-details">
             <div>
-              <h3 class="text-body-2 mb-2" :title="photo.Title">
+              <h3 class="text-subtitle-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   <!-- TODO: change this filter -->
                   <!-- {{ photo.Title | truncate(80) }} -->

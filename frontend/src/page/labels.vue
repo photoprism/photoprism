@@ -93,7 +93,7 @@
                 <p v-if="canManage" class="inline-edit" @click.stop.prevent="edit(label)">
                   {{ label.Name }}
                 </p>
-                <span v-else class="text-body-2 ma-0">
+                <span v-else class="text-subtitle-2 ma-0">
                   {{ label.Name }}
                 </span>
               </v-card-title>

@@ -199,7 +199,7 @@
 
               <v-card-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
-                  <h3 class="text-body-2 mb-0">
+                  <h3 class="text-subtitle-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                       <!-- TODO: change this filter -->
                       <!-- {{ album.Title | truncate(80) }} -->

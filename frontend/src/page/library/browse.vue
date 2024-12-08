@@ -63,7 +63,7 @@
 
               <v-card-title v-if="model.isFile()" class="pa-4 card-details" style="user-select: none">
                 <div>
-                  <h3 class="text-body-2 mb-2" :title="model.Name">
+                  <h3 class="text-subtitle-2 mb-2" :title="model.Name">
                     <button @click.exact="openFile(index)">
                       {{ model.baseName() }}
                     </button>
@@ -75,7 +75,7 @@
               </v-card-title>
               <v-card-title v-else class="pa-4 card-details">
                 <div>
-                  <h3 class="text-body-2 mb-2" :title="model.Title">
+                  <h3 class="text-subtitle-2 mb-2" :title="model.Title">
                     <button @click.exact="openFile(index)">
                       {{ model.baseName() }}
                     </button>
