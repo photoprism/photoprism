@@ -34,8 +34,8 @@ body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs-bar .v-tabs__div {
 
 body.dark-theme #photoprism.theme-chrome .p-page a,
 body.dark-theme #photoprism.theme-chrome .theme--light,
-body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu.theme--dark.v-list,
-body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--dark.v-icon {
+body.dark-theme #photoprism.theme-chrome #p-navigation .nav-menu.theme--dark.v-list,
+body.dark-theme #photoprism.theme-chrome #p-navigation .nav-menu .theme--dark.v-icon {
     color: #d8d8d8;
     caret-color: #d8d8d8;
     stroke: #d8d8d8;
@@ -47,7 +47,7 @@ body.dark-theme #photoprism.theme-chrome .v-input--selection-controls__input .th
     stroke: #8e8e8e;
 }
 
-body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--dark.v-icon {
+body.dark-theme #photoprism.theme-chrome #p-navigation .nav-menu .theme--dark.v-icon {
     color: inherit;
 }
 

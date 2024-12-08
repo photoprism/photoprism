@@ -7,13 +7,13 @@ let variables = {
   "table-row-height": "44px",
   "table-header-height": "44px",
   "border-color": "#FFFFFF",
-  "border-opacity": 0.08,
+  "border-opacity": 0.04,
   "high-emphasis-opacity": 0.96,
   "medium-emphasis-opacity": 0.88,
   "low-emphasis-opacity": 0.7,
   "disabled-opacity": 0.75,
   "idle-opacity": 0.1,
-  "hover-opacity": 0.018,
+  "hover-opacity": 0.019,
   "focus-opacity": 0.02,
   "selected-opacity": 0.08,
   "activated-opacity": 0,
@@ -25,6 +25,12 @@ let variables = {
   "theme-on-kbd": "#FFFFFF",
   "theme-code": "#343434",
   "theme-on-code": "#CCCCCC",
+};
+
+export const variations = {
+  colors: ["primary", "secondary", "surface", "navigation"],
+  lighten: 1,
+  darken: 1,
 };
 
 let themes = {

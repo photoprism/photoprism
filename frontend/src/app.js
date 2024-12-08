@@ -225,6 +225,7 @@ config.update().finally(() => {
     theme: {
       defaultTheme: config.themeName,
       themes: themes.All(),
+      variations: themes.variations,
     },
   });
   app.use(vuetify);
