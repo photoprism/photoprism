@@ -67,13 +67,12 @@
               </v-col>
               <v-col cols="12">
                 <!-- TODO: change this icon -->
-                <v-text-field
+                <v-otp-input
                   v-model="code"
                   :disabled="busy"
                   name="one-time-code"
                   type="text"
                   :label="$gettext('Verification Code')"
-                  mask="### ###"
                   pattern="[0-9]*"
                   inputmode="numeric"
                   hide-details
@@ -84,7 +83,7 @@
                   class="input-code"
                   prepend-inner-icon="verified_user"
                   @keyup.enter="onConfirm"
-                ></v-text-field>
+                ></v-otp-input>
               </v-col>
             </v-row>
           </v-card-text>
