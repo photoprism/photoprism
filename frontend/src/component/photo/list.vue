@@ -23,7 +23,7 @@
     <div v-else class="search-results photo-results list-view">
       <v-container fluid>
         <div class="v-table__overflow">
-          <v-table class="v-datatable v-table ra-8">
+          <v-table class="v-datatable v-table">
             <thead>
               <tr>
                 <th class="p-col-select" />

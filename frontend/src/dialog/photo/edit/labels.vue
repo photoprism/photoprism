@@ -5,7 +5,7 @@
         <v-col class="pa-2 hidden-sm-and-down align-stretch" cols="12" md="2" xxl="1">
           <p-photo-preview :model="model"></p-photo-preview>
         </v-col>
-        <v-col class="pa-2-md-and-up ra-8" cols="12" md="10" xxl="1">
+        <v-col class="pa-2-md-and-up" cols="12" md="10" xxl="1">
           <v-data-table v-model="selected" density="comfortable" :headers="listColumns" :items="model.Labels" hover hide-default-footer class="elevation-0 p-results" item-key="ID" :no-data-text="$gettext('No labels found')">
             <template #item="props">
               <tr class="p-file">

@@ -25,7 +25,7 @@
                                 <translate>Preview</translate>
                               </td>
                               <td>
-                                <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" rounded="6" class="card elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
+                                <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" rounded="4" class="card elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
                               </td>
                             </tr>
                             <tr>

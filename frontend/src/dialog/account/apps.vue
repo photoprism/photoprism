@@ -103,7 +103,7 @@
           <v-card-text>
             <v-row align="start" no-gutters>
               <v-col cols="12">
-                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer density="compact" class="ra-8 elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
+                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer density="compact" class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
                   <template #item="props">
                     <tr :data-name="props.item.ClientName">
                       <td class="text-selectable text-left">

@@ -4,7 +4,7 @@
       <v-row class="d-flex align-stretch" align="start" dense>
         <v-col class="p-photo d-flex align-stretch" cols="12" sm="4" md="2">
           <v-card tile color="background" class="pa-0 ma-0 elevation-0 flex-grow-1">
-            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card ra-8 elevation-0 clickable" @click.exact="openPhoto()"></v-img>
+            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" rounded="6" class="card elevation-0 clickable" @click.exact="openPhoto()"></v-img>
           </v-card>
         </v-col>
         <v-col cols="12" sm="8" md="10" class="d-flex pa-0" align-self="stretch">

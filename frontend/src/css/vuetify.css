@@ -196,8 +196,9 @@ body.dark-theme {
     font-size: 0.8125rem !important;
 }
 
-.v-container>.v-table {
-    border-radius: 8px;
+.v-container>.v-table:not(.tile),
+.v-form .v-table:not(.tile) {
+    border-radius: 6px;
 }
 
 /* Grid Styles */

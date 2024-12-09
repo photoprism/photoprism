@@ -1,5 +1,5 @@
 <template>
-  <div class="p-photo-preview pa-0 ma-0 elevation-0 v-card v-sheet v-sheet--tile no-transition" :title="title">
+  <div class="p-photo-preview ra-6 pa-0 ma-0 elevation-0 v-card v-sheet v-sheet--tile no-transition" :title="title">
     <div class="v-responsive v-image card elevation-0 clickable" @click.prevent.stop="openPhoto">
       <div class="v-responsive__sizer" style="padding-bottom: 100%"></div>
       <div class="v-image__image v-image__image--cover w-100" :style="cover"></div>
