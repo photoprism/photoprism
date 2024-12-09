@@ -17,12 +17,9 @@
     font-size: 0.875rem;
 }
 
-.v-input.v-text-field .v-field .v-label.v-field-label:not(.v-field-label--floating) {
-    opacity: var(--v-low-emphasis-opacity, .67);
-}
-
+.v-input.v-text-field .v-field .v-label.v-field-label:not(.v-field-label--floating),
 .v-input.v-text-field .v-field:not(.v-field--focused) .v-label.v-field-label.v-field-label--floating {
-    opacity: var(--v-medium-emphasis-opacity, .88);
+    opacity: var(--v-label-opacity, .7);
 }
 
 body.dark-theme .v-btn--disabled.v-btn--variant-elevated .v-btn__overlay,

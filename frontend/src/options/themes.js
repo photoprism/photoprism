@@ -10,7 +10,7 @@ let variables = {
   "border-opacity": 0.05,
   "high-emphasis-opacity": 0.96,
   "medium-emphasis-opacity": 0.88,
-  "low-emphasis-opacity": 0.7,
+  "label-opacity": 0.7,
   "disabled-opacity": 0.75,
   "idle-opacity": 0.1,
   "hover-opacity": 0.019,
@@ -623,7 +623,7 @@ export const All = () => {
       result[theme.name] = {
         dark: !!theme.dark,
         colors: theme.colors ? theme.colors : {},
-        variables: theme.variables ? theme.variables : variables,
+        variables: theme.variables ? { ...variables, ...theme.variables } : variables,
       };
 
       // TODO: Make sure all themes have a button and table color, so this workaround is not needed anymore.
