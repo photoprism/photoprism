@@ -38,7 +38,7 @@
         <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
           <span>{{ label.cancel }}</span>
         </v-btn>
-        <v-btn variant="flat" color="primary-button" class="action-confirm compact" @click.stop="confirm">
+        <v-btn variant="flat" color="primary-button" class="action-confirm" @click.stop="confirm">
           <span>{{ label.confirm }}</span>
         </v-btn>
       </v-card-actions>

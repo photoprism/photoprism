@@ -52,6 +52,15 @@ body #app {
     -webkit-hyphens: auto;
 }
 
+.text-monospace {
+    white-space: pre;
+    font-family: monospace;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.425;
+    letter-spacing: 0.0178571429em;
+}
+
 /* Line Height */
 
 .lh-15 {

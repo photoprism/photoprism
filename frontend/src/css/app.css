@@ -118,7 +118,7 @@ main {
     padding: 0;
 }
 
-#photoprism .clickable {
+.clickable {
     cursor: pointer;
 }
 
@@ -149,8 +149,9 @@ main {
     user-select: text !important;
 }
 
-#photoprism .p-page pre {
+.p-page pre {
     overflow: auto;
+    font-size: 0.875rem
 }
 
 #photoprism.is-rtl .v-card .caption {

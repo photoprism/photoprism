@@ -13,10 +13,10 @@
             </div>
           </v-col>
           <v-col cols="12" class="pt-6 text-right">
-            <v-btn variant="flat" color="button" class="action-cancel compact" @click.stop="cancel">
+            <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" variant="flat" class="action-confirm compact" @click.stop="confirm">
+            <v-btn color="primary-button" variant="flat" class="action-confirm" @click.stop="confirm">
               <translate key="Delete">Yes</translate>
             </v-btn>
           </v-col>

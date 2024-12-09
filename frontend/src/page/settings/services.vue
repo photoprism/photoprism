@@ -17,7 +17,7 @@
             </td>
             <td class="text-center">
               <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
-                <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
+                <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert</v-icon>
                 <!-- TODO: change icon -->
                 <v-icon v-else-if="props.item.AccSync" color="surface-variant">sync</v-icon>
                 <!-- TODO: change icon -->
@@ -47,7 +47,7 @@
 
       <v-form ref="form" validate-on="blur" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="add">
         <div class="action-buttons">
-          <v-btn v-if="user.hasWebDAV()" color="button" variant="flat" class="action-webdav-dialog compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
+          <v-btn v-if="user.hasWebDAV()" color="button" variant="flat" class="action-webdav-dialog" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
             <translate>Connect via WebDAV</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
           </v-btn>

@@ -160,7 +160,7 @@
             <v-btn variant="flat" color="button" class="action-cancel ml-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" class="action-save compact" @click.stop="save">
+            <v-btn variant="flat" color="primary-button" class="action-save" @click.stop="save">
               <translate>Save</translate>
             </v-btn>
           </v-col>

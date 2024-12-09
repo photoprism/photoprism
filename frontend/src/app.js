@@ -143,6 +143,11 @@ config.update().finally(() => {
         color: "surface-variant",
         hideDetails: "auto",
       },
+      VOtpInput: {
+        variant: "outlined",
+        baseColor: "on-surface-variant",
+        autofocus: true,
+      },
       VAutocomplete: {
         flat: true,
         variant: "solo-filled",

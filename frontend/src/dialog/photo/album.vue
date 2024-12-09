@@ -31,7 +31,7 @@
         <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
           <translate>Cancel</translate>
         </v-btn>
-        <v-btn variant="flat" color="primary-button" class="action-confirm text-white compact" @click.stop="confirm">
+        <v-btn variant="flat" color="primary-button" class="action-confirm text-white" @click.stop="confirm">
           <span v-if="!album">{{ labels.createAlbum }}</span>
           <span v-else>{{ labels.addToAlbum }}</span>
         </v-btn>
