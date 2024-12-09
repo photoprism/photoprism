@@ -86,7 +86,7 @@
                     </v-col>
                   </template>
                   <v-col cols="12" class="px-2 pt-1 pb-0 auth-actions">
-                    <div class="action-buttons auth-buttons d-flex ga-3 align-center justify-center">
+                    <div class="action-buttons auth-buttons pb-1 d-flex ga-3 align-center justify-center">
                       <v-btn v-if="enterCode" color="primary-button" variant="outlined" :block="$vuetify.display.xs" class="action-cancel opacity-80" @click.stop.prevent="onCancel">
                         <translate>Cancel</translate>
                       </v-btn>
@@ -104,7 +104,7 @@
                       <translate>Use your recovery code or contact an administrator for help.</translate>
                     </div>
                     <div v-else-if="passwordResetUri" class="auth-links text-center opacity-80">
-                      <a :href="passwordResetUri" class="text-link link--text">
+                      <a :href="passwordResetUri" class="text-surface-variant">
                         <translate>Forgot password?</translate>
                       </a>
                     </div>
@@ -126,7 +126,7 @@
           </v-form>
         </v-col>
       </v-row>
-      <p-auth-footer :colors="colors"></p-auth-footer>
+      <p-auth-footer></p-auth-footer>
     </v-theme-provider>
   </v-container>
 </template>
@@ -136,12 +136,6 @@ export default {
   name: "PPageLogin",
   data() {
     return {
-      colors: {
-        accent: "#05dde1",
-        primary: "#00a6a9",
-        secondary: "#505050",
-        link: "#c8e3e7",
-      },
       loading: false,
       username: "",
       password: "",
