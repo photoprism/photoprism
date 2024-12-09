@@ -403,8 +403,10 @@ let themes = {
     name: "nordic",
     colors: {
       background: "#f7f8fa",
-      surface: "#E0E4EC",
+      surface: "#e4e8f0",
+      "on-surface": "#1e1e1f",
       card: "#ECEFF4",
+      button: "#d8dce4",
       primary: "#4ca0b8",
       "primary-button": "#519fb6",
       "surface-variant": "#4ca0b8",
@@ -426,6 +428,15 @@ let themes = {
       terminal: "#4C566A",
       navigation: "#e7ebf1",
       "navigation-home": "#dde3eb",
+    },
+    variables: {
+      "overlay-color": "#e4e8f0",
+      "border-color": "#ffffff",
+      "border-opacity": 0.08,
+      "high-emphasis-opacity": 0.96,
+      "medium-emphasis-opacity": 0.7,
+      "hover-opacity": 0.08,
+      "focus-opacity": 0.1,
     },
   },
   onyx: {
