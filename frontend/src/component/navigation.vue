@@ -150,7 +150,7 @@
 
             <v-list-group>
               <template #activator="{ props }">
-                <v-list-item v-bind="props" to="{ name: 'albums' }" variant="text" class="nav-albums activator-parent" :ripple="false" @click.stop="">
+                <v-list-item v-bind="props" variant="text" class="nav-albums activator-parent" :ripple="false" @click.stop="">
                   <v-icon>mdi-bookmark</v-icon>
                 </v-list-item>
               </template>
@@ -180,7 +180,7 @@
 
             <v-list-group>
               <template #activator="{ props }">
-                <v-list-item v-bind="props" to="/videos" variant="text" class="nav-video" :ripple="false" @click.stop="">
+                <v-list-item v-bind="props" variant="text" class="nav-video" :ripple="false" @click.stop="">
                   <v-icon>mdi-play-circle</v-icon>
                 </v-list-item>
               </template>
@@ -285,7 +285,7 @@
 
               <v-list-group>
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/places" variant="text" class="nav-places" :ripple="false" @click.stop="">
+                  <v-list-item v-bind="props" variant="text" class="nav-places" :ripple="false" @click.stop="">
                     <v-icon>mdi-map-marker</v-icon>
                   </v-list-item>
                 </template>
@@ -361,7 +361,7 @@
 
             <v-list-group>
               <template #activator="{ props }">
-                <v-list-item v-bind="props" :to="{ name: 'library_index' }" variant="text" class="nav-library" :ripple="false" @click.stop="">
+                <v-list-item v-bind="props" variant="text" class="nav-library" :ripple="false" @click.stop="">
                   <v-icon>mdi-film</v-icon>
                 </v-list-item>
               </template>
@@ -407,7 +407,7 @@
 
               <v-list-group>
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" :to="{ name: 'settings' }" variant="text" class="nav-settings" :ripple="false" @click.stop="">
+                  <v-list-item v-bind="props" variant="text" class="nav-settings" :ripple="false" @click.stop="">
                     <v-icon>mdi-cog</v-icon>
                   </v-list-item>
                 </template>
