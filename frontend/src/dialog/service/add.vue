@@ -25,7 +25,7 @@
               placeholder="optional"
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              @click:append="showPassword = !showPassword"
+              @click:append-inner="showPassword = !showPassword"
             ></v-text-field>
           </v-col>
           <v-col cols="12" class="text-left text-caption">

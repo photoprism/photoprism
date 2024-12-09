@@ -46,9 +46,9 @@
                           :label="label.pass"
                           :placeholder="link.HasPassword ? '••••••••' : 'optional'"
                           color="surface-variant"
-                          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                          :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                           :type="showPassword ? 'text' : 'password'"
-                          @click:append="showPassword = !showPassword"
+                          @click:append-inner="showPassword = !showPassword"
                         ></v-text-field>
                       </v-col> -->
                       <v-col cols="6" :class="!rtl ? 'text-left' : 'text-right'" class="pa-2">

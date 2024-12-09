@@ -10,7 +10,7 @@ let variables = {
   "border-opacity": 0.05,
   "high-emphasis-opacity": 0.96,
   "medium-emphasis-opacity": 0.88,
-  "label-opacity": 0.7,
+  "label-opacity": 0.67,
   "disabled-opacity": 0.75,
   "idle-opacity": 0.1,
   "hover-opacity": 0.019,
@@ -36,7 +36,6 @@ export const variations = {
 let themes = {
   default: {
     dark: true,
-    sponsor: false,
     title: "Default",
     name: "default",
     colors: {
@@ -52,10 +51,8 @@ let themes = {
       button: "#1e1e1f",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
-      "primary-darken-1": "#8265bf",
       secondary: "#1c1d1e",
       "secondary-light": "#2a2b2c",
-      "secondary-darken-1": "#18191a",
       accent: "#2D2E2E",
       error: "#e57373",
       info: "#00acc1",
@@ -75,11 +72,55 @@ let themes = {
     },
     variables,
   },
+  login: {
+    dark: false,
+    title: "Login",
+    name: "login",
+    colors: {
+      background: "#2f3031",
+      surface: "#fafafa",
+      "on-surface": "#333333",
+      "surface-bright": "#fafafa",
+      "surface-light": "#1c1d1e",
+      "surface-variant": "#c8e3e7",
+      "on-surface-variant": "#00a6a9",
+      card: "#505050",
+      table: "#505050",
+      button: "#c8e3e7",
+      primary: "#05dde1",
+      "primary-button": "#00a6a9",
+      secondary: "#505050",
+      "secondary-light": "#2a2b2c",
+      accent: "#05dde1",
+      error: "#e57373",
+      info: "#00acc1",
+      success: "#4db6ac",
+      warning: "#ffd740",
+      remove: "#DF5353",
+      restore: "#3EA2F4",
+      album: "#ffab00",
+      download: "#00bfa5",
+      private: "#00b8d4",
+      edit: "#0AA9FF",
+      share: "#9575cd",
+      love: "#ef5350",
+      terminal: "#4A464F",
+      navigation: "#141417",
+      "navigation-home": "#0e0f10",
+    },
+    variables: {
+      "border-color": "#000000",
+      "border-opacity": 0.08,
+      "high-emphasis-opacity": 0.96,
+      "medium-emphasis-opacity": 0.7,
+      "hover-opacity": 0.08,
+      "focus-opacity": 0.1,
+    },
+  },
   abyss: {
     title: "Abyss",
     name: "abyss",
     dark: true,
-    sponsor: true,
     colors: {
       background: "#202020",
       surface: "#202020",
@@ -110,7 +151,6 @@ let themes = {
   },
   carbon: {
     dark: true,
-    sponsor: true,
     title: "Carbon",
     name: "carbon",
     colors: {
@@ -142,7 +182,6 @@ let themes = {
   },
   chrome: {
     dark: true,
-    sponsor: false,
     title: "Chrome",
     name: "chrome",
     colors: {
@@ -176,7 +215,6 @@ let themes = {
     title: "Gemstone",
     name: "gemstone",
     dark: true,
-    sponsor: true,
     colors: {
       background: "#2f2f31",
       surface: "#2f2f31",
@@ -208,7 +246,6 @@ let themes = {
     title: "Grayscale",
     name: "grayscale",
     dark: true,
-    sponsor: false,
     colors: {
       background: "#525252",
       surface: "#525252",
@@ -240,7 +277,6 @@ let themes = {
     title: "Lavender",
     name: "lavender",
     dark: false,
-    sponsor: false,
     colors: {
       background: "#fafafa",
       surface: "#FAFBFF",
@@ -272,7 +308,6 @@ let themes = {
     title: "Legacy",
     name: "legacy",
     dark: false,
-    sponsor: false,
     colors: {
       background: "#F5F5F5",
       surface: "#F5F5F5",
@@ -302,7 +337,6 @@ let themes = {
   },
   mint: {
     dark: true,
-    sponsor: false,
     title: "Mint",
     name: "mint",
     colors: {
@@ -336,7 +370,6 @@ let themes = {
     title: "Neon",
     name: "neon",
     dark: true,
-    sponsor: true,
     colors: {
       background: "#242326",
       surface: "#242326",
@@ -366,7 +399,6 @@ let themes = {
   },
   nordic: {
     dark: false,
-    sponsor: false,
     title: "Nordic",
     name: "nordic",
     colors: {
@@ -400,7 +432,6 @@ let themes = {
     title: "Onyx",
     name: "onyx",
     dark: false,
-    sponsor: false,
     colors: {
       background: "#e5e4e2",
       surface: "#e5e4e2",
@@ -432,7 +463,6 @@ let themes = {
     title: "Shadow",
     name: "shadow",
     dark: true,
-    sponsor: true,
     colors: {
       background: "#444",
       surface: "#444",
@@ -464,7 +494,6 @@ let themes = {
     title: "Vanta",
     name: "vanta",
     dark: true,
-    sponsor: true,
     colors: {
       background: "#212121",
       surface: "#212121",
@@ -496,7 +525,6 @@ let themes = {
     title: "Yellowstone",
     name: "yellowstone",
     dark: true,
-    sponsor: true,
     colors: {
       background: "#32312f",
       surface: "#32312f",

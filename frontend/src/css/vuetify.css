@@ -132,7 +132,10 @@ body.dark-theme {
     background: rgb(var(--v-theme-surface)) !important;
 }
 
-/* color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)); */
+.v-field--variant-solo.v-field--focused .v-field__prepend-inner .v-icon {
+    color: rgb(var(--v-theme-on-surface-variant));
+    caret-color: rgb(var(--v-theme-on-surface-variant));
+}
 
 .v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,
 .v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend {

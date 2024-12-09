@@ -32,7 +32,7 @@
                   class="input-password text-selectable"
                   :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
-                  @click:append="showPassword = !showPassword"
+                  @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
                 ></v-text-field>
               </v-col>

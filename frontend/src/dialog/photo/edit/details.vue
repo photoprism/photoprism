@@ -12,7 +12,7 @@
             <v-col cols="12" lg="6">
               <v-text-field
                 v-model="model.Title"
-                :append-icon="model.TitleSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.TitleSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
@@ -26,7 +26,7 @@
             <v-col cols="4" lg="2" xl="1">
               <v-autocomplete
                 v-model="model.Day"
-                :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.TakenSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :error="invalidDate"
                 :label="$gettext('Day')"
@@ -44,7 +44,7 @@
             <v-col cols="4" lg="2" xl="1">
               <v-autocomplete
                 v-model="model.Month"
-                :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.TakenSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :error="invalidDate"
                 :label="$gettext('Month')"
@@ -62,7 +62,7 @@
             <v-col cols="4" lg="2">
               <v-autocomplete
                 v-model="model.Year"
-                :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.TakenSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :error="invalidDate"
                 :label="$gettext('Year')"
@@ -82,7 +82,7 @@
               <!-- TODO: check property return-masked-value TEST -->
               <v-text-field
                 v-model="time"
-                :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.TakenSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :label="model.timeIsUTC() ? $gettext('Time UTC') : $gettext('Local Time')"
                 autocomplete="off"
@@ -102,7 +102,7 @@
             <v-col cols="12" sm="8" md="4" lg="2" xl="3">
               <v-autocomplete
                 v-model="model.Country"
-                :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :readonly="!!(model.Lat || model.Lng)"
                 :label="$gettext('Country')"
@@ -124,7 +124,7 @@
             <v-col cols="4" sm="6" md="3" lg="2">
               <v-text-field
                 v-model="model.Lat"
-                :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
                 autocomplete="off"
@@ -140,7 +140,7 @@
             <v-col cols="4" sm="6" md="3" lg="2">
               <v-text-field
                 v-model="model.Lng"
-                :append-icon="model.PlaceSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
                 autocomplete="off"
@@ -156,7 +156,7 @@
             <v-col cols="12" md="6" class="p-camera-select">
               <v-select
                 v-model="model.CameraID"
-                :append-icon="model.CameraSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.CameraSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :label="$gettext('Camera')"
                 :menu-props="{ maxHeight: 346 }"
@@ -181,7 +181,7 @@
             <v-col cols="12" md="6" class="p-lens-select">
               <v-select
                 v-model="model.LensID"
-                :append-icon="model.CameraSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.CameraSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :label="$gettext('Lens')"
                 :menu-props="{ maxHeight: 346 }"
@@ -206,7 +206,7 @@
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="model.Details.Artist"
-                :append-icon="model.Details.ArtistSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.Details.ArtistSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
@@ -220,7 +220,7 @@
             <v-col cols="6" md="3">
               <v-text-field
                 v-model="model.Details.Copyright"
-                :append-icon="model.Details.CopyrightSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.Details.CopyrightSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
@@ -234,7 +234,7 @@
             <v-col cols="6" md="3">
               <v-textarea
                 v-model="model.Details.License"
-                :append-icon="model.Details.LicenseSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.Details.LicenseSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
@@ -250,7 +250,7 @@
             <v-col cols="12">
               <v-textarea
                 v-model="model.Details.Subject"
-                :append-icon="model.Details.SubjectSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.Details.SubjectSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
                 hide-details
@@ -266,7 +266,7 @@
             <v-col cols="12">
               <v-textarea
                 v-model="model.Description"
-                :append-icon="model.DescriptionSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.DescriptionSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
                 autocomplete="off"
@@ -281,7 +281,7 @@
             <v-col cols="12" md="8">
               <v-textarea
                 v-model="model.Details.Keywords"
-                :append-icon="model.Details.KeywordsSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.Details.KeywordsSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
                 autocomplete="off"
@@ -296,7 +296,7 @@
             <v-col cols="12" md="4">
               <v-textarea
                 v-model="model.Details.Notes"
-                :append-icon="model.Details.NotesSrc === 'mdi-human-male' ? 'mdi-check' : ''"
+                :append-inner-icon="model.Details.NotesSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 hide-details
                 autocomplete="off"
