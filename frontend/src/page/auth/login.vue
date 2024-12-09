@@ -25,7 +25,7 @@
                         variant="solo"
                         density="comfortable"
                         type="text"
-                        :placeholder="$gettext('Verification Code')"
+                        :placeholder="$gettext('Recovery Code')"
                         inputmode="text"
                         hide-details
                         required
