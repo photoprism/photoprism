@@ -133,9 +133,11 @@ body.dark-theme {
     opacity: var(--v-label-opacity, .7);
 }
 
-.v-field--variant-solo.v-field--focused .v-field__prepend-inner .v-icon {
-    color: rgb(var(--v-theme-on-surface-variant));
-    caret-color: rgb(var(--v-theme-on-surface-variant));
+.v-field--variant-solo.v-field--focused .v-field__prepend-inner .v-icon,
+.v-field--variant-solo-filled.v-field--focused .v-field__prepend-inner .v-icon,
+.v-field--variant-plain.v-field--focused .v-field__prepend-inner .v-icon {
+    color: rgb(var(--v-theme-surface-variant));
+    caret-color: rgb(var(--v-theme-surface-variant));
 }
 
 .v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,

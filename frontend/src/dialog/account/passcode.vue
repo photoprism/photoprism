@@ -22,7 +22,7 @@
                   :disabled="busy"
                   name="password"
                   :type="showPassword ? 'text' : 'password'"
-                  :label="$gettext('Password')"
+                  :placeholder="$gettext('Password')"
                   hide-details
                   required
                   autofocus
@@ -30,8 +30,8 @@
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-selectable"
-                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="mdi-lock"
+                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onSetup"
                 ></v-text-field>

@@ -22,6 +22,8 @@
                 autocomplete="current-password"
                 :disabled="busy"
                 :maxlength="maxLength"
+                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append-inner="showPassword = !showPassword"
                 :label="$gettext('Current Password')"
                 class="input-current-password"
               ></v-text-field>
@@ -101,6 +103,7 @@ export default {
       confirmPassword: "",
       minLength: this.$config.get("passwordLength"),
       maxLength: 72,
+      showPassword: false,
       rtl: this.$rtl,
     };
   },
