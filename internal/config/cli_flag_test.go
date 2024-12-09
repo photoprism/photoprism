@@ -4,24 +4,24 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func TestCliFlag_Skip(t *testing.T) {
 	withTags := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "with-tags",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_WITH_TAGS",
+		Flag: &cli.StringFlag{
+			Name:    "with-tags",
+			Usage:   "`STRING`",
+			EnvVars: EnvVars("WITH_TAGS"),
 		},
 		Tags: []string{"foo", "bar"},
 	}
 
 	noTags := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "no-tags",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_NO_TAGS",
+		Flag: &cli.StringFlag{
+			Name:    "no-tags",
+			Usage:   "`STRING`",
+			EnvVars: EnvVars("NO_TAGS"),
 		},
 		Tags: []string{},
 	}
@@ -36,23 +36,75 @@ func TestCliFlag_Skip(t *testing.T) {
 	})
 }
 
+func TestCliFlag_EnvVars(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		testFlag := CliFlag{
+			Flag: &cli.StringFlag{
+				Name:    "test",
+				Usage:   "`STRING`",
+				EnvVars: nil,
+			},
+			Tags: []string{"foo", "bar"},
+		}
+
+		assert.Equal(t, "test", testFlag.Name())
+		assert.Equal(t, []string{"test"}, testFlag.Names())
+		assert.Equal(t, "test", testFlag.String())
+		assert.Equal(t, "", testFlag.EnvVar())
+		assert.Equal(t, []string{}, testFlag.EnvVars())
+	})
+	t.Run("One", func(t *testing.T) {
+		testFlag := CliFlag{
+			Flag: &cli.StringFlag{
+				Name:    "test",
+				Usage:   "`STRING`",
+				EnvVars: EnvVars("BAR_BAZ"),
+			},
+			Tags: []string{"foo", "bar"},
+		}
+
+		assert.Equal(t, "test", testFlag.Name())
+		assert.Equal(t, []string{"test"}, testFlag.Names())
+		assert.Equal(t, "test", testFlag.String())
+		assert.Equal(t, "PHOTOPRISM_BAR_BAZ", testFlag.EnvVar())
+		assert.Equal(t, []string{"PHOTOPRISM_BAR_BAZ"}, testFlag.EnvVars())
+	})
+	t.Run("Multiple", func(t *testing.T) {
+		testFlag := CliFlag{
+			Flag: &cli.StringFlag{
+				Name:    "test",
+				Aliases: []string{"t"},
+				Usage:   "`STRING`",
+				EnvVars: EnvVars("FOO_1", "ORIGINALS_PATH"),
+			},
+			Tags: []string{"foo", "bar"},
+		}
+
+		assert.Equal(t, "test", testFlag.Name())
+		assert.Equal(t, []string{"test", "t"}, testFlag.Names())
+		assert.Equal(t, "test, t", testFlag.String())
+		assert.Equal(t, "PHOTOPRISM_FOO_1, PHOTOPRISM_ORIGINALS_PATH", testFlag.EnvVar())
+		assert.Equal(t, []string{"PHOTOPRISM_FOO_1", "PHOTOPRISM_ORIGINALS_PATH"}, testFlag.EnvVars())
+	})
+}
+
 func TestCliFlag_Hidden(t *testing.T) {
 	hidden := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "is-hidden",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_HIDDEN",
-			Hidden: true,
+		Flag: &cli.StringFlag{
+			Name:    "is-hidden",
+			Usage:   "`STRING`",
+			EnvVars: []string{"PHOTOPRISM_HIDDEN"},
+			Hidden:  true,
 		},
 		Tags: []string{"foo", "bar"},
 	}
 
 	visible := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "is-visible",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_VISIBLE",
-			Hidden: false,
+		Flag: &cli.StringFlag{
+			Name:    "is-visible",
+			Usage:   "`STRING`",
+			EnvVars: []string{"PHOTOPRISM_VISIBLE"},
+			Hidden:  false,
 		},
 		Tags: []string{},
 	}
@@ -67,20 +119,20 @@ func TestCliFlag_Hidden(t *testing.T) {
 
 func TestCliFlag_Default(t *testing.T) {
 	hasdefault := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "flag-with-default",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_DEFAULT",
+		Flag: &cli.StringFlag{
+			Name:    "flag-with-default",
+			Usage:   "`STRING`",
+			EnvVars: []string{"PHOTOPRISM_DEFAULT"},
 		},
 		DocDefault: "default-value",
 		Tags:       []string{"foo", "bar"},
 	}
 
 	nodefault := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "flag-without-default",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_NODEFAULT",
+		Flag: &cli.StringFlag{
+			Name:    "flag-without-default",
+			Usage:   "`STRING`",
+			EnvVars: []string{"PHOTOPRISM_NODEFAULT"},
 		},
 		Tags: []string{},
 	}
@@ -91,10 +143,10 @@ func TestCliFlag_Default(t *testing.T) {
 
 func TestCliFlag_EnvVar(t *testing.T) {
 	hasDefault := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "flag-with-default",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_DEFAULT",
+		Flag: &cli.StringFlag{
+			Name:    "flag-with-default",
+			Usage:   "`STRING`",
+			EnvVars: []string{"PHOTOPRISM_DEFAULT"},
 		},
 		DocDefault: "default-value",
 		Tags:       []string{"foo", "bar"},
@@ -105,10 +157,10 @@ func TestCliFlag_EnvVar(t *testing.T) {
 
 func TestCliFlag_CommandFlag(t *testing.T) {
 	hasdefault := CliFlag{
-		Flag: cli.StringFlag{
-			Name:   "flag-with-default",
-			Usage:  "`STRING`",
-			EnvVar: "PHOTOPRISM_DEFAULT",
+		Flag: &cli.StringFlag{
+			Name:    "flag-with-default",
+			Usage:   "`STRING`",
+			EnvVars: []string{"PHOTOPRISM_DEFAULT"},
 		},
 		DocDefault: "default-value",
 		Tags:       []string{"foo", "bar"},
@@ -119,7 +171,7 @@ func TestCliFlag_CommandFlag(t *testing.T) {
 
 func TestCliFlag_Usage(t *testing.T) {
 	community := CliFlag{
-		Flag: cli.StringFlag{
+		Flag: &cli.StringFlag{
 			Name:  "flag-community",
 			Usage: "`STRING`",
 		},
@@ -128,7 +180,7 @@ func TestCliFlag_Usage(t *testing.T) {
 	}
 
 	essentials := CliFlag{
-		Flag: cli.StringFlag{
+		Flag: &cli.StringFlag{
 			Name:  "flag-essentials",
 			Usage: "`STRING`",
 		},
@@ -136,7 +188,7 @@ func TestCliFlag_Usage(t *testing.T) {
 	}
 
 	plus := CliFlag{
-		Flag: cli.StringFlag{
+		Flag: &cli.StringFlag{
 			Name:  "flag-plus",
 			Usage: "`STRING`",
 		},
@@ -144,7 +196,7 @@ func TestCliFlag_Usage(t *testing.T) {
 	}
 
 	pro := CliFlag{
-		Flag: cli.StringFlag{
+		Flag: &cli.StringFlag{
 			Name:  "flag-pro",
 			Usage: "`STRING`",
 		},

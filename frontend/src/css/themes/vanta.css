@@ -17,10 +17,10 @@ body.dark-theme.theme-vanta {
     stroke: rgba(5, 221, 225, 0.3);
 }
 
-.theme-vanta .v-content__wrap,
+.theme-vanta .v-main__wrap,
 .theme-vanta .p-page,
 .theme-vanta .form,
-.theme-vanta .v-content {
+.theme-vanta .v-main {
     background: #212121 !important;
 }
 
@@ -30,7 +30,7 @@ body.dark-theme.theme-vanta {
     background: #212121;
 }
 
-.theme-vanta .application.theme--light {
+.theme-vanta .v-application.theme--light {
     background: #212121;
 }
 
@@ -71,8 +71,8 @@ body.dark-theme.theme-vanta {
 #photoprism.theme-vanta,
 #photoprism.theme-vanta .p-page a,
 #photoprism.theme-vanta .v-datatable a,
-#photoprism.theme-vanta .theme--light.v-expansion-panel .v-expansion-panel__container,
-#photoprism.theme-vanta .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-vanta .theme--light.v-expansion-panels .v-expansion-panels__container,
+#photoprism.theme-vanta .theme--light.v-tabs-bar .v-tabs__div,
 #photoprism.theme-vanta .theme--light {
     color: #fff;
 }
@@ -89,7 +89,7 @@ body.dark-theme.theme-vanta {
     color: #eee;
 }
 
-#photoprism.theme-vanta .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-vanta .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-vanta .accent--text {
     color: #05dde1 !important;
 }
@@ -105,7 +105,7 @@ body.dark-theme.theme-vanta {
     color: #999 !important;
 }
 
-#photoprism.theme-vanta .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-vanta .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

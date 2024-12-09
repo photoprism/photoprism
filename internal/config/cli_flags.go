@@ -1,11 +1,21 @@
 package config
 
 import (
-	"github.com/urfave/cli"
+	"strings"
+
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 )
+
+func firstName(names string) string {
+	if n := strings.Split(names, ","); len(n) > 0 {
+		return strings.TrimSpace(n[0])
+	}
+
+	return ""
+}
 
 // CliFlags represents a list of command-line parameters.
 type CliFlags []CliFlag
@@ -41,7 +51,7 @@ func (f CliFlags) Remove(names []string) (result CliFlags) {
 	result = make(CliFlags, 0, len(f))
 
 	for _, flag := range f {
-		if list.Contains(names, flag.Name()) {
+		if list.ContainsAny(names, []string{flag.Name(), flag.String()}) {
 			continue
 		}
 
@@ -55,10 +65,12 @@ func (f CliFlags) Remove(names []string) (result CliFlags) {
 func (f CliFlags) Replace(name string, replacement CliFlag) CliFlags {
 	done := false
 
-	for i, flag := range f {
-		if !done && flag.Name() == name {
-			f[i] = replacement
-			done = true
+	if name = firstName(name); name != "" {
+		for i, flag := range f {
+			if !done && flag.Name() == name {
+				f[i] = replacement
+				done = true
+			}
 		}
 	}
 
@@ -72,15 +84,16 @@ func (f CliFlags) Replace(name string, replacement CliFlag) CliFlags {
 // Insert inserts command flags, if possible after the flag specified by name.
 func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 	result = make(CliFlags, 0, len(f)+len(insert))
-
 	done := false
 
-	for _, flag := range f {
-		result = append(result, flag)
+	if name = firstName(name); name != "" {
+		for _, flag := range f {
+			result = append(result, flag)
 
-		if !done && flag.Name() == name {
-			result = append(result, insert...)
-			done = true
+			if !done && flag.Name() == name {
+				result = append(result, insert...)
+				done = true
+			}
 		}
 	}
 
@@ -95,16 +108,17 @@ func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 // InsertBefore inserts command flags, if possible before the flag specified by name.
 func (f CliFlags) InsertBefore(name string, insert []CliFlag) (result CliFlags) {
 	result = make(CliFlags, 0, len(f)+len(insert))
-
 	done := false
 
-	for _, flag := range f {
-		if !done && flag.Name() == name {
-			result = append(result, insert...)
-			done = true
-		}
+	if name = firstName(name); name != "" {
+		for _, flag := range f {
+			if !done && flag.Name() == name {
+				result = append(result, insert...)
+				done = true
+			}
 
-		result = append(result, flag)
+			result = append(result, flag)
+		}
 	}
 
 	if !done {

@@ -4,13 +4,13 @@ import (
 	"syscall"
 
 	"github.com/sevlyar/go-daemon"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // StopCommand configures the command name, flags, and action.
-var StopCommand = cli.Command{
+var StopCommand = &cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
 	Usage:   "Stops the Web server in daemon mode",

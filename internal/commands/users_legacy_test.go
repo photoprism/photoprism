@@ -3,21 +3,13 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUsersLegacyCommand(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{""})
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersLegacyCommand.Run(ctx)
-		})
+		output, err := RunWithTestContext(UsersLegacyCommand, []string{""})
 
 		// Check command output for plausibility.
 		//t.Logf(output)

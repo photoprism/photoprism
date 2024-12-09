@@ -28,7 +28,7 @@ export default {
     this.subscriptions["player.pause"] = Event.subscribe("player.pause", this.onPause);
     this.subscriptions["player.close"] = Event.subscribe("player.close", this.onClose);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

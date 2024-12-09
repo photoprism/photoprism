@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -13,7 +13,7 @@ import (
 )
 
 // AuthRemoveCommand configures the command name, flags, and action.
-var AuthRemoveCommand = cli.Command{
+var AuthRemoveCommand = &cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes a session by id or access token",
 	ArgsUsage: "[identifier]",

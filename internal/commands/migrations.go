@@ -9,14 +9,14 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
-var MigrationsStatusCommand = cli.Command{
+var MigrationsStatusCommand = &cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
 	Usage:     "Displays the status of schema migrations",
@@ -25,29 +25,31 @@ var MigrationsStatusCommand = cli.Command{
 	Action:    migrationsStatusAction,
 }
 
-var MigrationsRunCommand = cli.Command{
+var MigrationsRunCommand = &cli.Command{
 	Name:      "run",
 	Aliases:   []string{"execute", "migrate"},
 	Usage:     "Executes database schema migrations",
 	ArgsUsage: "[migrations...]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "failed, f",
-			Usage: "run previously failed migrations",
+		&cli.BoolFlag{
+			Name:    "failed",
+			Aliases: []string{"f"},
+			Usage:   "run previously failed migrations",
 		},
-		cli.BoolFlag{
-			Name:  "trace, t",
-			Usage: "show trace logs for debugging",
+		&cli.BoolFlag{
+			Name:    "trace",
+			Aliases: []string{"t"},
+			Usage:   "show trace logs for debugging",
 		},
 	},
 	Action: migrationsRunAction,
 }
 
 // MigrationsCommands registers the "migrations" CLI command.
-var MigrationsCommands = cli.Command{
+var MigrationsCommands = &cli.Command{
 	Name:  "migrations",
 	Usage: "Database schema migration subcommands",
-	Subcommands: []cli.Command{
+	Subcommands: []*cli.Command{
 		MigrationsStatusCommand,
 		MigrationsRunCommand,
 	},

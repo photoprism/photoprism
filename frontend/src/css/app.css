@@ -23,10 +23,10 @@ Additional information can be found in our Developer Guide:
 
 */
 
-@import url("vendor/icons/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
 @import url("typography.css");
+@import url("controls.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
 @import url("themes.css");
@@ -45,6 +45,7 @@ Additional information can be found in our Developer Guide:
 @import url("help.css");
 @import url("auth.css");
 @import url("layout.css");
+@import url("vuetify.css");
 @import url("rtl.css");
 
 /* Core Element Styles */
@@ -96,20 +97,29 @@ main {
 
 /* General App Styles */
 
-#photoprism .v-badge__badge {
-    font-size: 12px;
-    height: 19px;
-    width: 19px;
-    right: -20px;
-    top: -8px;
+.v-badge__badge {
+    top: 0 !important;
+    left: 100% !important;
+    height: 1.1rem;
+    min-width: 1.1rem;
+    font-size: 0.75rem;
+    padding: 0 0.1rem;
 }
 
-#photoprism .clickable {
+.v-autocomplete__selection {
+    min-width: 100%;
+}
+
+.v-slide-group {
+    overflow: initial;
+}
+
+.v-expansion-panel-text__wrapper {
+    padding: 0;
+}
+
+.clickable {
     cursor: pointer;
-}
-
-#photoprism button:focus {
-    outline: none;
 }
 
 #photoprism .p-scroll-top {
@@ -139,23 +149,9 @@ main {
     user-select: text !important;
 }
 
-#photoprism .p-page pre {
+.p-page pre {
     overflow: auto;
-}
-
-#photoprism .body-1,
-#photoprism .body-2,
-#photoprism .break-word,
-#photoprism .v-datatable td,
-#photoprism .v-card button,
-#photoprism .v-card .caption {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
+    font-size: 0.875rem
 }
 
 #photoprism.is-rtl .v-card .caption {
@@ -163,12 +159,7 @@ main {
 }
 
 #photoprism .v-tabs .v-badge__badge {
-    right: -22px;
-    font-size: 9px;
-    width: auto;
-    padding: 0 0.2rem;
-    min-width: 1.1rem;
-    height: 1.1rem;
+    left: calc(100% + 4px) !important;
 }
 
 ol, ul {
@@ -180,7 +171,7 @@ ol, ul {
     padding: 1px 0 1px 8px !important;
 }
 
-body #photoprism .v-list__tile .v-icon {
+body #photoprism .v-list__item .v-icon {
     color: inherit;
 }
 

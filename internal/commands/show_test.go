@@ -4,19 +4,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/capture"
 )
 
 func TestShowConfigCommand(t *testing.T) {
-	var err error
-
-	ctx := config.CliTestContext()
-
-	output := capture.Output(func() {
-		err = ShowConfigCommand.Run(ctx)
-	})
+	// Run command with test context.
+	output, err := RunWithTestContext(ShowConfigCommand, []string{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -33,13 +25,8 @@ func TestShowConfigCommand(t *testing.T) {
 }
 
 func TestShowTagsCommand(t *testing.T) {
-	var err error
-
-	ctx := config.CliTestContext()
-
-	output := capture.Output(func() {
-		err = ShowMetadataCommand.Run(ctx)
-	})
+	// Run command with test context.
+	output, err := RunWithTestContext(ShowMetadataCommand, []string{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -54,13 +41,8 @@ func TestShowTagsCommand(t *testing.T) {
 }
 
 func TestShowFiltersCommand(t *testing.T) {
-	var err error
-
-	ctx := config.CliTestContext()
-
-	output := capture.Output(func() {
-		err = ShowSearchFiltersCommand.Run(ctx)
-	})
+	// Run command with test context.
+	output, err := RunWithTestContext(ShowSearchFiltersCommand, []string{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -75,13 +57,8 @@ func TestShowFiltersCommand(t *testing.T) {
 }
 
 func TestShowFormatsCommand(t *testing.T) {
-	var err error
-
-	ctx := config.CliTestContext()
-
-	output := capture.Output(func() {
-		err = ShowFileFormatsCommand.Run(ctx)
-	})
+	// Run command with test context.
+	output, err := RunWithTestContext(ShowFileFormatsCommand, []string{})
 
 	if err != nil {
 		t.Fatal(err)

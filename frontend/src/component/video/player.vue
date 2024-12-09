@@ -59,10 +59,12 @@ export default {
       default: () => {},
     },
   },
-  data: () => ({
-    refresh: false,
-    style: `width: 90vw; height: 90vh`,
-  }),
+  data() {
+    return {
+      refresh: false,
+      style: `width: 90vw; height: 90vh`,
+    };
+  },
   watch: {
     source: function (src) {
       if (src) {
@@ -74,7 +76,7 @@ export default {
     document.body.classList.add("player");
     this.render();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.body.classList.remove("player");
     this.stop();
   },

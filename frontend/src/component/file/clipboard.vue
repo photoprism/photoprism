@@ -1,24 +1,33 @@
 <template>
   <div>
     <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`">
-        <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
+      <v-speed-dial
+        id="t-clipboard"
+        v-model="expanded"
+        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard position-relative`"
+        :end="!rtl"
+        :start="rtl"
+        location="top center"
+        transition="slide-y-reverse-transition"
+      >
+        <template #activator="{ props }">
+          <v-btn v-bind="props" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10; width: 56px; height: 56px;" location="bottom right">
+            <!-- TODO: change this icon -->
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="$config.feature('download')" fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="selection.length === 0" @click.stop="download()">
-          <v-icon>get_app</v-icon>
+        <v-btn key="download" v-if="$config.feature('download')" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Download')" color="download" class="action-download rounded-circle" :disabled="selection.length === 0" @click.stop="download()">
+          <v-icon>mdi-download</v-icon>
         </v-btn>
 
-        <v-btn v-if="$config.feature('albums')" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
+        <v-btn v-if="$config.feature('albums')" key="bookmark" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album rounded-circle" @click.stop="dialog.album = true">
+          <v-icon>mdi-bookmark</v-icon>
         </v-btn>
 
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
+        <v-btn key="close" style="width: 40px; height: 40px;" density="comfortable" color="accent" class="action-clear rounded-circle" @click.stop="clearClipboard()">
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-speed-dial>
     </v-container>

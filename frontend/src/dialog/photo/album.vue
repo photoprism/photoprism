@@ -1,47 +1,40 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
-    <v-card raised elevation="24">
-      <v-card-text class="pt-3 px-3">
-        <v-layout row wrap>
-          <v-flex xs3 text-xs-left>
-            <v-icon size="60" color="secondary-dark lighten-1">photo_album</v-icon>
-          </v-flex>
-          <v-flex xs9 text-xs-left align-self-center>
+  <v-dialog :model-value="show" persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
+    <v-card>
+      <v-card-text class="dense mt-2">
+        <v-row dense>
+          <v-col cols="3" class="text-left">
+            <v-icon size="60" color="surface-variant lighten-1">mdi-image-album</v-icon>
+          </v-col>
+          <v-col cols="9" class="text-left" align-self="center">
             <v-autocomplete
               ref="input"
               v-model="album"
-              browser-autocomplete="off"
+              autocomplete="off"
               :hint="$gettext('Album Name')"
               :items="items"
-              :search-input.sync="search"
+              :search.sync="search"
               :loading="loading"
               hide-no-data
               hide-details
-              box
-              flat
-              item-text="Title"
+              item-title="Title"
               item-value="UID"
               :label="$gettext('Album Name')"
-              color="secondary-dark"
               class="input-album"
               @keyup.enter.native="confirm"
             >
             </v-autocomplete>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
-      <v-card-actions class="pt-0 pb-3 px-3">
-        <v-layout row wrap class="pa-0">
-          <v-flex xs12 text-xs-right>
-            <v-btn depressed color="secondary-light" class="action-cancel mx-1" @click.stop="cancel">
-              <translate>Cancel</translate>
-            </v-btn>
-            <v-btn depressed color="primary-button" class="action-confirm white--text compact mx-0" @click.stop="confirm">
-              <span v-if="!album">{{ labels.createAlbum }}</span>
-              <span v-else>{{ labels.addToAlbum }}</span>
-            </v-btn>
-          </v-flex>
-        </v-layout>
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
+          <translate>Cancel</translate>
+        </v-btn>
+        <v-btn variant="flat" color="primary-button" class="action-confirm text-white" @click.stop="confirm">
+          <span v-if="!album">{{ labels.createAlbum }}</span>
+          <span v-else>{{ labels.addToAlbum }}</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

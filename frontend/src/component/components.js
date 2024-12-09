@@ -47,32 +47,28 @@ import IconLivePhoto from "component/icon/live-photo.vue";
 import IconSponsor from "component/icon/sponsor.vue";
 import IconPrism from "component/icon/prism.vue";
 
-const components = {};
-
-components.install = (Vue) => {
-  Vue.component("PNotify", PNotify);
-  Vue.component("PNavigation", PNavigation);
-  Vue.component("PScrollTop", PScrollTop);
-  Vue.component("PLoadingBar", PLoadingBar);
-  Vue.component("PVideoPlayer", PVideoPlayer);
-  Vue.component("PPhotoViewer", PPhotoViewer);
-  Vue.component("PPhotoToolbar", PPhotoToolbar);
-  Vue.component("PPhotoCards", PPhotoCards);
-  Vue.component("PPhotoMosaic", PPhotoMosaic);
-  Vue.component("PPhotoList", PPhotoList);
-  Vue.component("PPhotoPreview", PPhotoPreview);
-  Vue.component("PPhotoClipboard", PPhotoClipboard);
-  Vue.component("PAlbumClipboard", PAlbumClipboard);
-  Vue.component("PAlbumToolbar", PAlbumToolbar);
-  Vue.component("PLabelClipboard", PLabelClipboard);
-  Vue.component("PFileClipboard", PFileClipboard);
-  Vue.component("PSubjectClipboard", PSubjectClipboard);
-  Vue.component("PAuthHeader", PAuthHeader);
-  Vue.component("PAuthFooter", PAuthFooter);
-  Vue.component("PAboutFooter", PAboutFooter);
-  Vue.component("IconLivePhoto", IconLivePhoto);
-  Vue.component("IconSponsor", IconSponsor);
-  Vue.component("IconPrism", IconPrism);
-};
-
-export default components;
+export function installComponents(app) {
+  app.component("PNotify", PNotify);
+  app.component("PNavigation", PNavigation);
+  app.component("PScrollTop", PScrollTop);
+  app.component("PLoadingBar", PLoadingBar);
+  app.component("PVideoPlayer", PVideoPlayer);
+  app.component("PPhotoViewer", PPhotoViewer);
+  app.component("PPhotoToolbar", PPhotoToolbar);
+  app.component("PPhotoCards", PPhotoCards);
+  app.component("PPhotoMosaic", PPhotoMosaic);
+  app.component("PPhotoList", PPhotoList);
+  app.component("PPhotoPreview", PPhotoPreview);
+  app.component("PPhotoClipboard", PPhotoClipboard);
+  app.component("PAlbumClipboard", PAlbumClipboard);
+  app.component("PAlbumToolbar", PAlbumToolbar);
+  app.component("PLabelClipboard", PLabelClipboard);
+  app.component("PFileClipboard", PFileClipboard);
+  app.component("PSubjectClipboard", PSubjectClipboard);
+  app.component("PAuthHeader", PAuthHeader);
+  app.component("PAuthFooter", PAuthFooter);
+  app.component("PAboutFooter", PAboutFooter);
+  app.component("IconLivePhoto", IconLivePhoto);
+  app.component("IconSponsor", IconSponsor);
+  app.component("IconPrism", IconPrism);
+}

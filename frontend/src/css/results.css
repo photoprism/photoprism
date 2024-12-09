@@ -99,9 +99,9 @@ body.chrome #photoprism .search-results .result {
     height: auto;
 }
 
-#photoprism table.photo-files tbody tr td:first-child {
+.photo-files tbody tr td:first-child {
     width: 30%;
-    padding: 0 16px 0 24px;
+    padding: 0 24px !important;
 }
 
 #photoprism .img-placeholder {

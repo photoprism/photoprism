@@ -1,27 +1,28 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+    <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field
-        :value="filter.q"
-        solo
+        :model-value="filter.q"
         hide-details
         clearable
         overflow
         single-line
-        validate-on-blur
-        class="input-search background-inherit elevation-0"
-        browser-autocomplete="off"
+        validate-on="blur"
+        variant="plain"
+        density="comfortable"
+        class="input-search background-inherit elevation-0 mb-3"
+        autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
-        :label="$gettext('Search')"
-        prepend-inner-icon="search"
-        color="secondary-dark"
+        :placeholder="$gettext('Search')"
+        prepend-inner-icon="mdi-magnify"
+        color="surface-variant"
         @change="
           (v) => {
             updateFilter({ q: v });
           }
         "
-        @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+        @keyup.enter="(e) => updateQuery({ q: e.target.value })"
         @click:clear="
           () => {
             updateQuery({ q: '' });
@@ -30,33 +31,32 @@
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload()">
-        <v-icon>refresh</v-icon>
+        <v-icon>mdi-refresh</v-icon>
       </v-btn>
       <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete()">
-        <v-icon>delete</v-icon>
+        <v-icon>mdi-delete</v-icon>
       </v-btn>
       <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report" :title="$gettext('Troubleshooting Checklists')">
-        <v-icon>bug_report</v-icon>
+        <v-icon>mdi-bug</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
-      <v-list-tile v-for="err in errors" :key="err.ID" avatar class="rounded-4" @click="showDetails(err)">
-        <v-list-tile-avatar>
-          <v-icon :color="err.Level">{{ err.Level }}</v-icon>
-        </v-list-tile-avatar>
+    <v-list v-else-if="errors.length > 0" density="compact" lines="two" class="bg-transparent pa-1">
+      <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
+<!--        TODO: fix it-->
+        <v-list-item :prepend-avatar="err.Level" :color="err.Level">
+          <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->
+        </v-list-item>
 
-        <v-list-tile-content class="text-selectable">
-          <v-list-tile-title>{{ err.Message }}</v-list-tile-title>
-          <v-list-tile-sub-title>{{ formatTime(err.Time) }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
+        <v-list-item-title>{{ err.Message }}</v-list-item-title>
+        <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
+      </v-list-item>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert :value="true" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
-        <p class="body-1 mt-0 mb-0 pa-0">
+      <v-alert color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
+        <p class="mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
           </template>
@@ -66,24 +66,26 @@
         </p>
       </v-alert>
     </div>
-    <p-confirm-dialog :show="dialog.delete" icon="delete_outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
+    <p-confirm-dialog :show="dialog.delete" icon="mdi-delete-outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
-        <v-card-title class="headline pa-2">
-          {{ details.err.Level | capitalize }}
+        <v-card-title class="text-h5 pa-2">
+<!--          TODO: change filter-->
+<!--          {{ details.err.Level | capitalize }}-->
+          {{ details.err.Level }}
         </v-card-title>
 
-        <v-card-text class="pa-2 body-2">
+        <v-card-text class="pa-2 text-subtitle-2">
           {{ localTime(details.err.Time) }}
         </v-card-text>
 
-        <v-card-text class="pa-2 body-1">
+        <v-card-text class="pa-2 text-body-2">
           {{ details.err.Message }}
         </v-card-text>
 
         <v-card-actions class="pa-2">
           <v-spacer></v-spacer>
-          <v-btn color="secondary-light" depressed class="action-close" @click="details.show = false">
+          <v-btn color="secondary-light" variant="flat" class="action-close" @click="details.show = false">
             <translate>Close</translate>
           </v-btn>
         </v-card-actions>

@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowConfigOptionsCommand configures the command name, flags, and action.
-var ShowConfigOptionsCommand = cli.Command{
+var ShowConfigOptionsCommand = &cli.Command{
 	Name:   "config-options",
 	Usage:  "Displays supported environment variables and CLI flags",
 	Flags:  report.CliFlags,

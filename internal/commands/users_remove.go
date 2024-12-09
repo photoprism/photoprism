@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -13,14 +13,15 @@ import (
 )
 
 // UsersRemoveCommand configures the command name, flags, and action.
-var UsersRemoveCommand = cli.Command{
+var UsersRemoveCommand = &cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes a registered user account",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "force, f",
-			Usage: "don't ask for confirmation",
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "don't ask for confirmation",
 		},
 	},
 	Action: usersRemoveAction,

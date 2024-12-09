@@ -1,14 +1,14 @@
 /* Abyss Theme */
 
 body.dark-theme.theme-abyss,
-.theme-abyss .v-content__wrap,
+.theme-abyss .v-main__wrap,
 .theme-abyss .p-page,
 .theme-abyss .form,
-.theme-abyss .v-content {
+.theme-abyss .v-main {
     background: #202020 !important;
 }
 
-.theme-abyss .application.theme--light,
+.theme-abyss .v-application.theme--light,
 #photoprism.theme-abyss .theme--light.v-small-dialog__content,
 #photoprism.theme-abyss .theme--light.v-sheet,
 #photoprism.theme-abyss .theme--light.v-card {
@@ -52,8 +52,8 @@ body.dark-theme.theme-abyss,
 #photoprism.theme-abyss,
 #photoprism.theme-abyss .p-page a,
 #photoprism.theme-abyss .v-datatable a,
-#photoprism.theme-abyss .theme--light.v-expansion-panel .v-expansion-panel__container,
-#photoprism.theme-abyss .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-abyss .theme--light.v-expansion-panels .v-expansion-panels__container,
+#photoprism.theme-abyss .theme--light.v-tabs-bar .v-tabs__div,
 #photoprism.theme-abyss .theme--light {
     color: #fff;
 }
@@ -70,7 +70,7 @@ body.dark-theme.theme-abyss,
     color: #eee;
 }
 
-#photoprism.theme-abyss .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-abyss .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-abyss .accent--text {
     color: #643da9 !important;
 }
@@ -86,7 +86,7 @@ body.dark-theme.theme-abyss,
     color: #999 !important;
 }
 
-#photoprism.theme-abyss .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-abyss .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }
