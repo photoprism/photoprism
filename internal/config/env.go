@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/list"
@@ -26,10 +27,19 @@ func EnvVar(flag string) string {
 // Env checks the presence of environment and command-line flags.
 func Env(vars ...string) bool {
 	for _, s := range vars {
-		if (os.Getenv(EnvVar(s)) == "true" || list.Contains(os.Args, "--"+s)) && !list.Contains(os.Args, "--"+s+"=false") {
+		if (envIsTrue(EnvVar(s)) || list.Contains(os.Args, "--"+s)) && !list.Contains(os.Args, "--"+s+"=false") {
 			return true
 		}
 	}
 
 	return false
+}
+
+func envIsTrue(env string) bool {
+	v := os.Getenv(env)
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		log.Warnf("Invalid boolean value for env %s, assuming false", env)
+	}
+	return b
 }
