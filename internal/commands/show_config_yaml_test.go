@@ -3,18 +3,12 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestShowConfigYamlCommand(t *testing.T) {
-	var err error
-
-	args := []string{"config-yaml", "--md"}
-	ctx := NewTestContext(args)
-	output := capture.Stdout(func() {
-		err = ShowConfigYamlCommand.Run(ctx, args...)
-	})
+	// Run command with test context.
+	output, err := RunWithTestContext(ShowConfigYamlCommand, []string{"config-yaml", "--md"})
 
 	if err != nil {
 		t.Fatal(err)

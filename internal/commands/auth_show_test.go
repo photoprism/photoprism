@@ -3,41 +3,24 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAuthShowCommand(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"show", "sess34q3hael"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = AuthShowCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(AuthShowCommand, []string{"show", "sess34q3hael"})
 
 		// Check command output for plausibility.
-		t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "alice")
 		assert.Contains(t, output, "access_token")
 		assert.Contains(t, output, "Client")
 	})
 	t.Run("NoResult", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"show", "sess34qxxxxx"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = AuthShowCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(AuthShowCommand, []string{"show", "sess34qxxxxx"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)

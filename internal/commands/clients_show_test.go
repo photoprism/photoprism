@@ -3,22 +3,13 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestClientsShowCommand(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"show", "cs5gfen1bgxz7s9i"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs5gfen1bgxz7s9i"})
 
 		// Check command output for plausibility.
 		//t.Logf(output)
@@ -28,16 +19,8 @@ func TestClientsShowCommand(t *testing.T) {
 		assert.Contains(t, output, "confidential")
 	})
 	t.Run("NoResult", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"show", "cs5gfen1bgxzxxxx"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = ClientsShowCommand.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs5gfen1bgxzxxxx"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)

@@ -4,22 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/capture"
 )
 
 func TestAuthCommands(t *testing.T) {
 	t.Run("List", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"auth", "ls"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = AuthCommands.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(AuthCommands, []string{"auth", "ls"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -29,16 +19,8 @@ func TestAuthCommands(t *testing.T) {
 		assert.Contains(t, output, "visitor")
 	})
 	t.Run("ListAlice", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		args := []string{"auth", "ls", "alice"}
-		ctx := NewTestContext(args)
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = AuthCommands.Run(ctx, args...)
-		})
+		output, err := RunWithTestContext(AuthCommands, []string{"auth", "ls", "alice"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
