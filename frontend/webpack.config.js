@@ -29,7 +29,7 @@ const ESLintPlugin = require("eslint-webpack-plugin");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const OfflinePlugin = require("@lcdp/offline-plugin");
 const webpack = require("webpack");
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env?.BUILD_ENV === "development" || process.env?.NODE_ENV === "development";
 const isCustom = !!process.env.CUSTOM_SRC;
 const appName = process.env.CUSTOM_NAME ? process.env.CUSTOM_NAME : "PhotoPrism";
 const { VueLoaderPlugin } = require("vue-loader");
