@@ -29,7 +29,7 @@ let variables = {
 
 export const variations = {
   colors: ["primary", "secondary", "surface", "navigation"],
-  lighten: 1,
+  lighten: 2,
   darken: 1,
 };
 
@@ -60,7 +60,8 @@ let themes = {
       warning: "#ffd740",
       remove: "#DF5353",
       restore: "#3EA2F4",
-      album: "#ffab00",
+      album: "#ffaa00",
+      "on-album": "#ffffff",
       download: "#00bfa5",
       private: "#00b8d4",
       edit: "#0AA9FF",

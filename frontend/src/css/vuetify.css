@@ -179,6 +179,14 @@ body.dark-theme {
     padding-inline: 10px;
 }
 
+.p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon {
+    width: 35px;
+    height: 35px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    color: #ffffff !important;
+}
+
 /* Table Styles */
 
 .v-table {
