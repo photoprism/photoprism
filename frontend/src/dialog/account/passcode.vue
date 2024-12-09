@@ -69,6 +69,7 @@
                 <v-otp-input
                   v-model="code"
                   :disabled="busy"
+                  :length="6"
                   name="one-time-code"
                   type="number"
                   :label="$gettext('Verification Code')"

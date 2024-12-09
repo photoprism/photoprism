@@ -56,9 +56,11 @@
     min-height: 24px;
 }
 
-#photoprism main .auth-login a {
+#photoprism main .auth-login a,
+#photoprism main .auth-login .clickable {
     color: rgb(var(--v-theme-secondary, #c8e3e7));
     text-decoration: none;
+    cursor: pointer;
 }
 
 /* Auth Form Logo */
