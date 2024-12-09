@@ -93,7 +93,7 @@
                       <v-btn v-else-if="registerUri" color="primary-button" variant="outlined" :block="$vuetify.display.xs" class="action-register opacity-80" @click.stop.prevent="onRegister">
                         <translate>Create Account</translate>
                       </v-btn>
-                      <v-btn color="primary-button" variant="flat" :disabled="loginDisabled" :block="$vuetify.display.xs" class="text-white action-confirm" @click.stop.prevent="onLogin">
+                      <v-btn color="primary-button" variant="flat" :disabled="loginDisabled" :block="$vuetify.display.xs" class="action-confirm" @click.stop.prevent="onLogin">
                         <translate>Sign in</translate>
                         <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
                         <v-icon v-else end>mdi-chevron-right</v-icon>
@@ -113,8 +113,8 @@
                     <v-col cols="12" class="px-2 pb-4 oidc-actions">
                       <v-divider />
                       <div class="text-center oidc-buttons pt-6">
-                        <v-btn :color="colors.primary" variant="flat" :disabled="loading" block class="text-white action-oidc-login ra-6 my-0 py-0 px-4" @click.stop.prevent="onOidcLogin">
-                          <img alt="" class="oidc-icon v-icon--left theme--dark" :src="config.ext.oidc.icon" />
+                        <v-btn color="primary-button" variant="flat" :disabled="loading" block class="action-oidc-login" @click.stop.prevent="onOidcLogin">
+                          <img alt="" class="oidc-icon v-icon--left mx-1" :src="config.ext.oidc.icon" />
                           <translate :translate-params="{ provider: config.ext.oidc.provider }">Continue with %{provider}</translate>
                         </v-btn>
                       </div>
