@@ -1,35 +1,29 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
+    <div v-if="selection.length > 0" class="position-fixed bottom-0 right-0">
       <v-speed-dial
         id="t-clipboard"
         v-model="expanded"
-        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-subject-clipboard position-relative`"
+        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-subject-clipboard`"
         :end="!rtl"
         :start="rtl"
-        location="top center"
+        :attach="true"
+        location="top"
         transition="slide-y-reverse-transition"
+        offset="8"
+        z-index="10"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10; width: 56px; height: 56px;" location="bottom right">
-            <v-icon v-if="selection.length === 0">mdi-menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+          <v-btn v-bind="props" icon size="52" color="secondary" density="comfortable" class="action-menu ma-5">
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn key="download" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Download')" color="download" class="action-download rounded-circle" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
-          <v-icon>mdi-download</v-icon>
-        </v-btn>
-
-        <v-btn v-if="canAddAlbums" key="bookmark" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album rounded-circle" @click.stop="dialog.album = true">
-          <v-icon>mdi-bookmark</v-icon>
-        </v-btn>
-
-        <v-btn key="close" style="width: 40px; height: 40px;" density="comfortable" color="accent" class="action-clear rounded-circle" @click.stop="clearClipboard()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+        <v-btn key="download" :title="$gettext('Download')" icon="mdi-download" color="download" density="comfortable"  class="action-download" :disabled="!canDownload || selection.length !== 1" @click.stop="download()"></v-btn>
+        <v-btn v-if="canAddAlbums" key="bookmark" :title="$gettext('Add to album')" icon="mdi-bookmark" color="album" density="comfortable"  :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true"></v-btn>
+        <v-btn key="close" icon="mdi-close" color="grey-darken-2" density="comfortable"  class="action-clear" @click.stop="clearClipboard()"></v-btn>
       </v-speed-dial>
-    </v-container>
+    </div>
     <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
   </div>
 </template>

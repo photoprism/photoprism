@@ -1,45 +1,30 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
+    <div v-if="selection.length > 0" class="position-fixed bottom-0 right-0">
       <v-speed-dial
         id="t-clipboard"
         v-model="expanded"
-        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard position-relative`"
-        location="top center"
+        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`"
+        :end="!rtl"
+        :start="rtl"
+        :attach="true"
+        location="top"
         transition="slide-y-reverse-transition"
+        offset="8"
+        z-index="10"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" color="accent-darken-2 rounded-circle position-fixed" class="action-menu ma-5" style="z-index: 10; width: 56px; height: 56px;" location="bottom right">
-            <!-- TODO: change this icon -->
-            <v-icon v-if="selection.length === 0">menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+          <v-btn v-bind="props" icon size="52" color="secondary" density="comfortable" class="action-menu ma-5">
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <!-- v-btn
-
-                density="comfortable"
-                :title="$gettext('Download')"
-                color="download"
-                @click.stop="download()"
-                class="p-label-clipboard-download rounded-circle"
-                :disabled="selection.length !== 1"
-        >
-            TODO: change this icon
-            <v-icon>cloud_download</v-icon>
-        </v-btn -->
-        <v-btn key="bookmark" style="width: 40px; height: 40px;" density="comfortable" :title="$gettext('Add to album')" color="album rounded-circle" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>mdi-bookmark</v-icon>
-        </v-btn>
-        <v-btn key="delete" style="width: 40px; height: 40px;" density="comfortable" color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete rounded-circle" @click.stop="dialog.delete = true">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-
-        <v-btn key="close" style="width: 40px; height: 40px;" density="comfortable" color="accent rounded-circle" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+        <!-- v-btn key="download" :title="$gettext('Download')" icon="mdi-download" color="download" density="comfortable class="action-download" :disabled="selection.length !== 1" @click.stop="download()"></v-btn -->
+        <v-btn key="bookmark" :title="$gettext('Add to album')" icon="mdi-bookmark" color="album" density="comfortable" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true"></v-btn>
+        <v-btn key="delete" :title="$gettext('Delete')" icon="mdi-delete" color="remove" density="comfortable" :disabled="!canManage || selection.length === 0" class="action-delete" @click.stop="dialog.delete = true"></v-btn>
+        <v-btn key="close" icon="mdi-close" color="grey-darken-2" density="comfortable"  class="action-clear" @click.stop="clearClipboard()"></v-btn>
       </v-speed-dial>
-    </v-container>
+    </div>
     <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
     <p-label-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-label-delete-dialog>
   </div>
