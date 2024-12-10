@@ -72,6 +72,13 @@ body.chrome #photoprism .search-results .result {
     opacity: 1;
 }
 
+.clipboard-container {
+    position: fixed;
+    bottom: 4px;
+    right: 4px;
+    z-index: 10;
+}
+
 #photoprism .p-clipboard.--ltr {
     right: 8px;
     bottom: 12px;

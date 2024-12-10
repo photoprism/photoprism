@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="selection.length > 0" class="position-fixed bottom-0 right-0">
+    <div v-if="selection.length > 0" class="clipboard-container">
       <v-speed-dial
           id="t-clipboard"
           v-model="expanded"
@@ -11,7 +11,6 @@
           location="top"
           transition="slide-y-reverse-transition"
           offset="8"
-          z-index="10"
       >
         <template #activator="{ props }">
           <v-btn v-bind="props" icon size="52" color="secondary" density="comfortable" class="action-menu ma-5">
