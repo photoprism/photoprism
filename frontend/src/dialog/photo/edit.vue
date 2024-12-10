@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
+  <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-photo-edit-dialog" @click.stop @keydown.esc="close">
     <v-card tile color="background">
       <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">
         <v-btn icon class="action-close" @click.stop="close">
