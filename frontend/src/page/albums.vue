@@ -47,10 +47,10 @@
           <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
-        <v-card-text>
+      <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-lighten-1">
+        <v-card-text class="dense">
           <v-row dense>
-            <v-col cols="12" sm="4" class="pa-2 p-year-select">
+            <v-col cols="12" sm="4" class="p-year-select">
               <v-select
                 :model-value="filter.year"
                 :label="$gettext('Year')"
@@ -71,7 +71,7 @@
               >
               </v-select>
             </v-col>
-            <v-col cols="12" sm="4" class="pa-2 p-category-select">
+            <v-col cols="12" sm="4" class="p-category-select">
               <v-select
                 :model-value="filter.category"
                 :label="$gettext('Category')"
@@ -91,7 +91,7 @@
               >
               </v-select>
             </v-col>
-            <v-col cols="12" sm="4" class="pa-2 p-sort-select">
+            <v-col cols="12" sm="4" class="p-sort-select">
               <v-select
                 :model-value="filter.order"
                 :label="$gettext('Sort Order')"

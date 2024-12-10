@@ -4,7 +4,7 @@
       <template v-for="file in model.fileModels()">
         <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
           <v-expansion-panel-title>
-            <div class="text-caption filename">
+            <div class="text-caption font-weight-bold filename">
               {{ file.baseName(70) }}
             </div>
           </v-expansion-panel-title>

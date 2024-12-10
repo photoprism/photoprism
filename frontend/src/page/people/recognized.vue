@@ -1,7 +1,7 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-subjects" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-form ref="form" class="p-people-search" validate-on="blur" @submit.prevent="updateQuery()">
-      <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
+      <v-toolbar dense flat height="48" class="page-toolbar pa-0" color="secondary-light">
         <v-text-field
           v-if="canSearch"
           :model-value="filter.q"
