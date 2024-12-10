@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" validate-on="blur" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8" @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
+    <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
       <v-toolbar-title :title="album.Title">
         <span class="hidden-xs">
           <router-link :to="{ name: collectionRoute }">

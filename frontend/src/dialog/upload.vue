@@ -1,7 +1,7 @@
 <template>
   <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="background">
-      <v-toolbar flat color="navigation" :dense="$vuetify.display.smAndDown">
+      <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
         <v-btn icon @click.stop="cancel">
           <v-icon>mdi-close</v-icon>
         </v-btn>

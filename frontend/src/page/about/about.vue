@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-about">
-    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
+    <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
       <v-toolbar-title> {{ $config.getAbout() }}{{ getMembership() }} </v-toolbar-title>
 
       <v-spacer></v-spacer>

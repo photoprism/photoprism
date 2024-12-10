@@ -1,7 +1,7 @@
 <template>
   <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card tile color="background">
-      <v-toolbar flat color="navigation" :dense="$vuetify.display.smAndDown">
+      <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">
         <v-btn icon class="action-close" @click.stop="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -22,7 +22,7 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-tabs v-model="active" elevation="0" class="form" :height="$vuetify.display.smAndDown ? 48 : 64">
+      <v-tabs v-model="active" elevation="0" class="form" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>

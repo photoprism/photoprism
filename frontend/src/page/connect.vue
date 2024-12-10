@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-upgrade">
-    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
+    <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
       <v-toolbar-title>
         <translate>Membership</translate>
         <v-icon v-if="rtl">mdi-chevron-left</v-icon>

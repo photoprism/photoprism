@@ -1,7 +1,7 @@
 <template>
   <div id="p-navigation" :class="{ 'sidenav-visible': drawer }">
     <template v-if="visible && $vuetify.display.smAndDown">
-      <v-toolbar position="fixed" flat dense color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
+      <v-toolbar position="fixed" flat density="compact" color="navigation darken-1" class="nav-small elevation-2" @click.stop.prevent>
         <v-avatar class="bg-transparent navigation-logo clickable" tile :size="28" :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">
           <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
         </v-avatar>
@@ -14,7 +14,7 @@
       </v-toolbar>
     </template>
     <template v-else-if="visible && !auth">
-      <v-toolbar flat dense color="navigation darken-1" class="nav-small">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" color="navigation darken-1" class="nav-small">
         <v-avatar class="bg-transparent navigation-logo" tile :size="28">
           <img :src="appIcon" :alt="appName" />
         </v-avatar>
@@ -26,10 +26,10 @@
         </v-btn>
       </v-toolbar>
     </template>
-    <v-navigation-drawer v-if="visible && auth" v-model="drawer" color="navigation" :rail="isMini" :width="270" :mobile-breakpoint="960" :rail-width="80" class="nav-sidebar navigation" :location="rtl ? 'right' : undefined">
+    <v-navigation-drawer v-if="visible && auth" v-model="drawer" color="navigation" :rail="isMini" :rail-width="70" :width="270" :mobile-breakpoint="960" class="nav-sidebar navigation" :location="rtl ? 'right' : undefined">
       <div class="nav-container">
-        <v-toolbar flat :dense="$vuetify.display.smAndDown">
-          <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%">
+        <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
+          <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%" density="compact">
             <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
               <template #prepend>
                 <div class="v-avatar bg-transparent navigation-logo clickable" @click.stop.prevent="goHome">
@@ -49,7 +49,7 @@
           </v-list>
         </v-toolbar>
 
-        <v-list nav class="nav-menu" bg-color="navigation" color="primary" open-strategy="single">
+        <v-list nav class="nav-menu" bg-color="navigation" color="primary" open-strategy="single" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
           <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
             <v-icon v-if="!rtl" class="ma-auto">mdi-chevron-right</v-icon>
             <v-icon v-else class="ma-auto">mdi-chevron-left</v-icon>

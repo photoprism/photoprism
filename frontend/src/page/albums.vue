@@ -1,7 +1,7 @@
 <template>
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-form ref="form" class="p-albums-search" validate-on="blur" @submit.prevent="updateQuery()">
-      <v-toolbar flat :dense="$vuetify.display.smAndDown" class="page-toolbar" color="secondary">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
         <v-text-field
           :model-value="filter.q"
           hide-details

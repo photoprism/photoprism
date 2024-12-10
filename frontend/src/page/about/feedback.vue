@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-support">
-    <v-toolbar flat color="secondary" :dense="$vuetify.display.smAndDown">
+    <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
       <v-toolbar-title>
         <translate>Contact Us</translate>
       </v-toolbar-title>

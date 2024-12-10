@@ -172,7 +172,7 @@
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'vector'" :title="$gettext('Vector')" @click.exact="openPhoto(index)">
-                  <i class="mdi mdi mdi-vector-polyline" />
+                  <i class="mdi mdi-vector-polyline" />
                   {{ photo.getVectorInfo() }}
                 </button>
                 <button v-else :title="$gettext('Camera')" class="action-camera-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
@@ -180,15 +180,13 @@
                   {{ photo.getPhotoInfo() }}
                 </button>
                 <button v-if="photo.LensID > 1 || photo.FocalLength" :title="$gettext('Lens')" class="action-lens-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
-                  <!-- TODO: change icon -->
-                  <i>camera</i>
+                  <i class="mdi mdi-camera-iris" />
                   {{ photo.getLensInfo() }}
                 </button>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
                   <br />
                   <button :title="$gettext('Name')" @click.exact="downloadFile(index)">
-                    <!-- TODO: change icon -->
-                    <i>insert_drive_file</i>
+                    <i class="mdi mdi-file" />
                     {{ photo.baseName() }}
                   </button>
                 </template>
