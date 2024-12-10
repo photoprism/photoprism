@@ -21,7 +21,7 @@
       </v-alert>
     </template>
     <div class="v-row search-results photo-results cards-view ma-0" :class="{ 'select-results': selectMode }">
-      <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="v-col-xs-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2 v-col-xxl-1 pa-1">
+      <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2 v-col-xxl-1 pa-1">
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="result card bg-card placeholder">
           <div class="card image" />
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
@@ -141,16 +141,22 @@
 
           <div class="pa-6 card-details">
             <div>
-              <h3 class="text-subtitle-2 mb-2" :title="photo.Title">
+              <h3 class="text-body-2 mb-1" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   <!-- TODO: change this filter -->
                   <!-- {{ photo.Title | truncate(80) }} -->
                   {{ photo.Title }}
                 </button>
               </h3>
-              <div v-if="photo.Description" class="text-caption mb-2" :title="$gettext('Description')">
+              <div v-if="photo.Description" class="text-caption mb-1" :title="$gettext('Description')">
                 <button @click.exact="editPhoto(index)">
                   {{ photo.Description }}
+                </button>
+              </div>
+              <div v-if="filter.order === 'name' && $config.feature('download')" class="text-caption">
+                <button :title="$gettext('Name')" @click.exact="downloadFile(index)">
+                  <i class="mdi mdi-file" />
+                  {{ photo.baseName() }}
                 </button>
               </div>
               <div class="text-caption">
@@ -183,13 +189,6 @@
                   <i class="mdi mdi-camera-iris" />
                   {{ photo.getLensInfo() }}
                 </button>
-                <template v-if="filter.order === 'name' && $config.feature('download')">
-                  <br />
-                  <button :title="$gettext('Name')" @click.exact="downloadFile(index)">
-                    <i class="mdi mdi-file" />
-                    {{ photo.baseName() }}
-                  </button>
-                </template>
                 <template v-if="featPlaces && photo.Country !== 'zz'">
                   <br />
                   <button :title="$gettext('Location')" class="action-location" :data-uid="photo.UID" @click.exact="openLocation(index)">
