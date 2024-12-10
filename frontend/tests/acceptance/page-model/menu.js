@@ -5,7 +5,7 @@ export default class Page {
 
   async openNav() {
     if (await Selector("div.nav-expand").visible) {
-      await t.click(Selector("div.nav-expand a"));
+      await t.click(Selector("div.nav-expand i"));
     } else if (await Selector("div.nav-expand").visible) {
       await t.click(Selector("div.nav-expand i"));
     }
@@ -27,24 +27,24 @@ export default class Page {
         (page === "review") |
         (page === "archive")
       ) {
-        if (!(await Selector("div.v-list__group--active div.nav-browse").visible)) {
-          await t.click(Selector("div.nav-browse + div"));
+        if (!(await Selector("div.v-list-group--open a.nav-browse").visible)) {
+          await t.click(Selector("div.nav-browse .mdi-chevron-down"));
         }
       } else if (page === "live") {
-        if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {
-          await t.click(Selector("div.nav-video + div"));
+        if (!(await Selector("div.v-list-group--open a.nav-video").visible)) {
+          await t.click(Selector("div.nav-video .mdi-chevron-down"));
         }
       } else if (page === "states") {
-        if (!(await Selector("div.v-list__group--active div.nav-places").visible)) {
-          await t.click(Selector("div.nav-places + div"));
+        if (!(await Selector("div.v-list-group--open a.nav-places").visible)) {
+          await t.click(Selector("div.nav-places .mdi-chevron-down"));
         }
       } else if ((page === "originals") | (page === "hidden") | (page === "errors")) {
-        if (!(await Selector("div.v-list__group--active div.nav-library").visible)) {
-          await t.click(Selector("div.nav-library + div"));
+        if (!(await Selector("div.v-list-group--open a.nav-library").visible)) {
+          await t.click(Selector("div.nav-library .mdi-chevron-down"));
         }
       } else if ((page === "about") | (page === "feedback") | (page === "license")) {
-        if (!(await Selector("div.v-list__group--active div.nav-settings").visible)) {
-          await t.click(Selector("div.nav-settings + div"));
+        if (!(await Selector("div.v-list-group--open a.nav-settings").visible)) {
+          await t.click(Selector("div.nav-settings .mdi-chevron-down"));
         }
       }
       await t.click(Selector(".nav-" + page));
@@ -68,34 +68,34 @@ export default class Page {
       (page === "archive")
     ) {
       if (
-        !(await Selector("div.v-list__group--active div.nav-browse", { timeout: 15000 }).visible)
+        !(await Selector("div.v-list-group--open div.nav-browse", { timeout: 15000 }).visible)
       ) {
-        await t.click(Selector("div.nav-browse + div", { timeout: 15000 }));
+        await t.click(Selector("div.nav-browse .mdi-chevron-down", { timeout: 15000 }));
       }
     } else if (page === "live") {
       if (await Selector(".nav-video").visible) {
-        if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {
-          await t.click(Selector("div.nav-video + div"));
+        if (!(await Selector("div.v-list-group--open div.nav-video").visible)) {
+          await t.click(Selector("div.nav-video .mdi-chevron-down"));
         }
       }
     } else if (page === "states") {
       if (await Selector(".nav-places").visible) {
-        if (!(await Selector("div.v-list__group--active div.nav-places").visible)) {
-          await t.click(Selector("div.nav-places + div"));
+        if (!(await Selector("div.v-list-group--open div.nav-places").visible)) {
+          await t.click(Selector("div.nav-places .mdi-chevron-down"));
         }
       }
     } else if ((page === "originals") | (page === "hidden") | (page === "errors")) {
       if (await Selector(".nav-library").visible) {
-        if (!(await Selector("div.v-list__group--active div.nav-library").visible)) {
-          if (await Selector("div.nav-library + div").visible) {
-            await t.click(Selector("div.nav-library + div"));
+        if (!(await Selector("div.v-list-group--open div.nav-library").visible)) {
+          if (await Selector("div.nav-library .mdi-chevron-down").visible) {
+            await t.click(Selector("div.nav-library .mdi-chevron-down"));
           }
         }
       }
     } else if ((page === "abouts") | (page === "feedback") | (page === "license")) {
       if (await Selector(".nav-settings").visible) {
-        if (!(await Selector("div.v-list__group--active div.nav-settings").visible)) {
-          await t.click(Selector("div.nav-settings + div"));
+        if (!(await Selector("div.v-list-group--open div.nav-settings").visible)) {
+          await t.click(Selector("div.nav-settings.mdi-chevron-down"));
         }
       }
     }

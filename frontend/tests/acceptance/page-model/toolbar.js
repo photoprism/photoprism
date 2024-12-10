@@ -28,9 +28,9 @@ export default class Page {
       await this.checkMobileMenuActionAvailability(action, visible);
       await t.click(Selector("#photoprism"), { offsetX: 1, offsetY: 1 });
     } else if (visible) {
-      await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).ok();
+      await t.expect(Selector("header.v-toolbar button.action-" + action).visible).ok();
     } else {
-      await t.expect(Selector("nav.v-toolbar button.action-" + action).visible).notOk();
+      await t.expect(Selector("header.v-toolbar button.action-" + action).visible).notOk();
     }
   }
 
@@ -89,7 +89,7 @@ export default class Page {
       }
       await t.click(Selector("button.nav-menu-" + action));
     } else {
-      await t.click(Selector("nav.v-toolbar button.action-" + action));
+      await t.click(Selector("header.v-toolbar button.action-" + action));
     }
   }
 
@@ -129,9 +129,9 @@ export default class Page {
     await t.click(filterSelector);
 
     if (option) {
-      await t.click(Selector('div[role="listitem"]').withText(option));
+      await t.click(Selector('div[role="option"]').withText(option));
     } else {
-      await t.click(Selector('div[role="listitem"]').nth(1));
+      await t.click(Selector('div[role="option"]').nth(1));
     }
   }
 }
