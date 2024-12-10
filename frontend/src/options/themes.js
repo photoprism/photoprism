@@ -39,7 +39,7 @@ let themes = {
     title: "Default",
     name: "default",
     colors: {
-      background: "#2b2d2f",
+      background: "#2c2d2f",
       surface: "#161718",
       "on-surface": "#ffffff",
       "surface-bright": "#333333",
@@ -47,7 +47,7 @@ let themes = {
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
       card: "#161718",
-      table: "#1E2022", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
+      table: "#1F2022", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
       button: "#1D1E1F",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",

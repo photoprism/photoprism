@@ -210,7 +210,7 @@ config.update().finally(() => {
         tile: true,
         static: true,
         variant: "accordion",
-        bgColor: "card",
+        bgColor: "secondary-light",
         ripple: false,
       },
       VProgressLinear: {
