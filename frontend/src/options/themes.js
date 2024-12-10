@@ -40,15 +40,15 @@ let themes = {
     name: "default",
     colors: {
       background: "#282a2c",
-      surface: "#131415",
+      surface: "#161718",
       "on-surface": "#ffffff",
       "surface-bright": "#333333",
       "surface-light": "#1c1d1e",
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
       card: "#232425",
-      table: "#1C1D1F", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718
-      button: "#191A1C",
+      table: "#1E2022", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
+      button: "#1C1D1F",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
       secondary: "#191A1C",
