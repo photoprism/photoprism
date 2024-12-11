@@ -243,8 +243,7 @@
                 </div>
                 <div v-if="album.Category !== ''" class="text-caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
-                    <!-- TODO: change this icon -->
-                    <v-icon size="14">local_offer</v-icon>
+                    <v-icon size="14">mdi-tag</v-icon>
                     {{ album.Category }}
                   </button>
                 </div>

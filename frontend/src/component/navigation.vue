@@ -258,8 +258,7 @@
 
             <v-list-item v-if="isRestricted" v-show="$config.feature('places')" to="/states" variant="text" class="nav-states" :ripple="false" @click.stop="">
               <v-list-item-title class="nav-menu-item" @click.stop="">
-                <!-- TODO: change the icon -->
-                <v-icon>near_me</v-icon>
+                <v-icon>mdi-near_me</v-icon>
                 <translate key="States">States</translate>
               </v-list-item-title>
               <!-- TODO: fix filter -->
@@ -522,8 +521,7 @@
             <v-icon>mdi-cloud-upload</v-icon>
           </a>
           <router-link v-if="!auth && !isPublic" :to="{ name: 'login' }" :title="$gettext('Login')" class="menu-action nav-login">
-            <!-- TODO: change this icon -->
-            <v-icon>login</v-icon>
+            <v-icon>mdi-login</v-icon>
           </router-link>
         </div>
         <div class="menu-actions">

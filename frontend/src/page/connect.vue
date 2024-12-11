@@ -22,7 +22,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade" :title="$gettext('Learn more')">
-        <v-icon size="26" color="surface-variant">{{ $vuetify.icons.prism }}</v-icon>
+        <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
       </v-btn>
     </v-toolbar>
     <v-form ref="form" v-model="valid" autocomplete="off" class="px-6 pt-6 pb-0" validate-on="blur" @submit.prevent>
@@ -33,8 +33,7 @@
       </v-row>
       <v-row v-else-if="error">
         <v-col cols="12" class="text-sm-left pa-2">
-          <!-- TODO: change this icon -->
-          <v-alert color="error" icon="gpp_bad" class="mt-6" variant="outlined">
+          <v-alert color="error" icon="mdi-shield-alert" class="mt-6" variant="outlined">
             {{ error }}
           </v-alert>
         </v-col>
@@ -62,8 +61,7 @@
           </v-btn>
           <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
-            <!-- TODO: change this icon -->
-            <v-icon :end="!rtl" :start="rtl">restart_alt</v-icon>
+            <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
           </v-btn>
           <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy">
             <translate>Upgrade Now</translate>

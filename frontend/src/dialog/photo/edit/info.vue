@@ -65,8 +65,7 @@
               </td>
               <td :title="sourceName(model.TitleSrc)">
                 <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{ model.Title }}</span>
-                <!-- TODO: change this icon -->
-                <v-icon v-if="model.TitleSrc === 'name'" class="src">insert_drive_file</v-icon>
+                <v-icon v-if="model.TitleSrc === 'name'" class="src">mdi-file</v-icon>
               </td>
             </tr>
             <tr>
@@ -76,8 +75,7 @@
               </td>
               <td :title="sourceName(model.TakenSrc)">
                 {{ model.getDateString() }}
-                <!-- TODO: change this icon -->
-                <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">insights</v-icon>
+                <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">mdi-chart-timeline-variant-shimmer</v-icon>
               </td>
             </tr>
             <tr v-if="albums.length > 0">
@@ -161,8 +159,7 @@
               </td>
               <td :title="sourceName(model.PlaceSrc)">
                 {{ model.locationInfo() }}
-                <!-- TODO: change this icon -->
-                <v-icon v-if="model.PlaceSrc === 'estimate'" class="src">insights</v-icon>
+                <v-icon v-if="model.PlaceSrc === 'estimate'" class="src">mdi-chart-timeline-variant-shimmer</v-icon>
               </td>
             </tr>
             <tr v-if="model.Lat">

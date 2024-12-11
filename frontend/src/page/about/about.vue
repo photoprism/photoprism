@@ -6,7 +6,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
-        <v-icon size="26" color="surface-variant">{{ $vuetify.icons.prism }}</v-icon>
+        <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-6 pt-6 pb-1">

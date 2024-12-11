@@ -9,7 +9,7 @@
             </h3>
           </v-col>
           <v-col cols="2" class="text-right">
-            <v-icon size="26" color="surface-variant">{{ $vuetify.icons.prism }}</v-icon>
+            <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
           </v-col>
         </v-row>
       </v-card-title>

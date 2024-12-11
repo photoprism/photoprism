@@ -4,8 +4,7 @@
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
-          <!-- TODO: change this icon -->
-          <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
+          <v-icon v-else-if="action === 'copy'" size="28" color="primary">mdi-shield-lock</v-icon>
           <v-icon v-else size="28" color="primary">mdi-cellphone-link</v-icon>
           <h6 class="text-h6"><translate>Apps and Devices</translate></h6>
         </v-card-title>

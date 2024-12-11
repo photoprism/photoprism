@@ -155,8 +155,7 @@
                 <v-btn block variant="flat" color="button" class="action-passcode-dialog" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                   <translate>2-Factor Authentication</translate>
                   <v-icon v-if="user.AuthMethod === '2fa'" :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
-                  <!-- TODO: change icons -->
-                  <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :end="!rtl" :start="rtl">shield</v-icon>
+                  <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :end="!rtl" :start="rtl">mdi-shield-check</v-icon>
                   <v-icon v-else :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
                 </v-btn>
               </v-col>

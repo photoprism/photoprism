@@ -1,8 +1,7 @@
 <template>
   <v-container grid-list-xs fluid class="pa-1 p-photos p-photo-cards">
     <template v-if="photos.length === 0">
-      <!-- TODO: change this icon -->
-      <v-alert color="surface-variant" :icon="isSharedView ? 'image_not_supported' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
+      <v-alert color="surface-variant" :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'" class="no-results ma-2 opacity-70" variant="outlined">
         <h3 v-if="filter.order === 'edited'" class="text-subtitle-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>

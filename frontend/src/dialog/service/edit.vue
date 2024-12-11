@@ -91,15 +91,14 @@
             <v-select v-model="model.SyncInterval" :disabled="!model.AccSync" :label="$gettext('Interval')" autocomplete="off" hide-details variant="solo" flat color="surface-variant" item-title="text" item-value="value" :items="options.Intervals()"></v-select>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
-            <!-- TODO: change this icon -->
             <v-checkbox
               v-model="model.SyncDownload"
               :disabled="!model.AccSync || readonly"
               hide-details
               flat
               color="surface-variant"
-              true-icon="radio_button_checked"
-              false-icon="radio_button_unchecked"
+              true-icon="mdi-radiobox-marked"
+              false-icon="mdi-radiobox-blank"
               :label="$gettext('Download remote files')"
               @update:model-value="onChangeSync('download')"
             ></v-checkbox>
@@ -108,8 +107,7 @@
             <v-checkbox v-model="model.SyncFilenames" :disabled="!model.AccSync" hide-details flat color="surface-variant" :label="$gettext('Preserve filenames')"></v-checkbox>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
-            <!-- TODO: change this icon -->
-            <v-checkbox v-model="model.SyncUpload" :disabled="!model.AccSync" hide-details flat color="surface-variant" true-icon="radio_button_checked" false-icon="radio_button_unchecked" :label="$gettext('Upload local files')" @update:model-value="onChangeSync('upload')"></v-checkbox>
+            <v-checkbox v-model="model.SyncUpload" :disabled="!model.AccSync" hide-details flat color="surface-variant" true-icon="mdi-radiobox-marked" false-icon="mdi-radiobox-blank" :label="$gettext('Upload local files')" @update:model-value="onChangeSync('upload')"></v-checkbox>
           </v-col>
           <v-col cols="12" sm="6" class="px-2">
             <v-checkbox v-model="model.SyncRaw" :disabled="!model.AccSync" hide-details flat color="surface-variant" :label="$gettext('Sync raw and video files')"></v-checkbox>
