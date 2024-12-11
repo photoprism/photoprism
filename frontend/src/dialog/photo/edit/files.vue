@@ -18,7 +18,12 @@
                   <v-row class="d-flex align-stretch" align="center" justify="center">
                     <v-col cols="12" class="pa-0 flex-grow-1">
                       <div class="v-table__overflow">
-                        <v-table hover density="default" class="photo-files d-flex bg-transparent">
+                        <v-table
+                            tile
+                            hover
+                            :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+                            class="photo-files d-flex bg-transparent"
+                        >
                           <tbody>
                             <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                               <td>

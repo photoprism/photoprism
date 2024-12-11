@@ -1,44 +1,53 @@
 <template>
   <div class="p-tab p-settings-services">
+    <v-data-table
+        v-model="selected"
+        :headers="listColumns"
+        :items="results"
+        tile
+        hover
+        hide-default-footer
+        item-key="ID" :no-data-text="$gettext('No services configured.')"
+        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+        class="elevation-0 account-results list-view"
+    >
+      <template #item="props">
+        <tr :data-name="props.item.AccName">
+          <td class="p-account">
+            <button class="surface-variant--text" @click.stop.prevent="edit(props.item)">
+              {{ props.item.AccName }}
+            </button>
+          </td>
+          <td class="text-center">
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
+              <v-icon v-if="props.item.AccShare" color="surface-variant">mdi-check</v-icon>
+              <v-icon v-else color="surface-variant">mdi-cog</v-icon>
+            </v-btn>
+          </td>
+          <td class="text-center">
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
+              <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert</v-icon>
+              <!-- TODO: change icon -->
+              <v-icon v-else-if="props.item.AccSync" color="surface-variant">sync</v-icon>
+              <!-- TODO: change icon -->
+              <v-icon v-else color="surface-variant">sync_disabled</v-icon>
+            </v-btn>
+          </td>
+          <td class="hidden-sm-and-down">
+            {{ formatDate(props.item.SyncDate) }}
+          </td>
+          <td class="hidden-xs text-right" nowrap>
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
+              <v-icon color="surface-variant">mdi-delete</v-icon>
+            </v-btn>
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
+              <v-icon color="surface-variant">mdi-pencil</v-icon>
+            </v-btn>
+          </td>
+        </tr>
+      </template>
+    </v-data-table>
     <v-container fluid>
-      <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 account-results list-view" item-key="ID" :no-data-text="$gettext('No services configured.')">
-        <template #item="props">
-          <tr :data-name="props.item.AccName">
-            <td class="p-account">
-              <button class="surface-variant--text" @click.stop.prevent="edit(props.item)">
-                {{ props.item.AccName }}
-              </button>
-            </td>
-            <td class="text-center">
-              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
-                <v-icon v-if="props.item.AccShare" color="surface-variant">mdi-check</v-icon>
-                <v-icon v-else color="surface-variant">mdi-cog</v-icon>
-              </v-btn>
-            </td>
-            <td class="text-center">
-              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
-                <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert</v-icon>
-                <!-- TODO: change icon -->
-                <v-icon v-else-if="props.item.AccSync" color="surface-variant">sync</v-icon>
-                <!-- TODO: change icon -->
-                <v-icon v-else color="surface-variant">sync_disabled</v-icon>
-              </v-btn>
-            </td>
-            <td class="hidden-sm-and-down">
-              {{ formatDate(props.item.SyncDate) }}
-            </td>
-            <td class="hidden-xs text-right" nowrap>
-              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
-                <v-icon color="surface-variant">mdi-delete</v-icon>
-              </v-btn>
-              <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
-                <v-icon color="surface-variant">mdi-pencil</v-icon>
-              </v-btn>
-            </td>
-          </tr>
-        </template>
-      </v-data-table>
-
       <p class="text-caption pt-3 clickable" @click.stop.prevent="webdavDialog">
         <translate>Note:</translate>
         <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. </translate>

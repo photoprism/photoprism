@@ -2,7 +2,12 @@
   <div class="p-tab p-tab-photo-advanced">
     <v-form ref="form" validate-on="blur" accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
-        <v-table hover density="default" class="bg-transparent">
+        <v-table
+            tile
+            hover
+            :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+            class="bg-transparent"
+        >
           <tbody>
             <tr>
               <td>UID</td>

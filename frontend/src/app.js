@@ -93,7 +93,7 @@ config.update().finally(() => {
   app.config.globalProperties.$config = config;
   app.config.globalProperties.$clipboard = PhotoClipboard;
   app.config.globalProperties.$isMobile = isMobile;
-  app.config.globalProperties.$rtl = ref(rtl);
+  app.config.globalProperties.$rtl = rtl;
   app.config.globalProperties.$sponsorFeatures = () => {
     return config.load().finally(() => {
       if (config.values.sponsor) {
