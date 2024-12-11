@@ -180,11 +180,23 @@ body.dark-theme {
 }
 
 .p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon {
-    width: 35px;
-    height: 35px;
-    margin-top: 1px;
-    margin-bottom: 1px;
+    width: 38px;
+    height: 38px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     color: #ffffff !important;
+}
+
+.p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon.action-delete {
+    margin-bottom: 5px;
+}
+
+.p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon.action-delete .v-icon {
+    --v-icon-size-multiplier: 1.2;
+}
+
+.clipboard-container .v-btn.v-btn--icon {
+    box-shadow: 0 3px 5px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 6px 10px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 18px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
 }
 
 /* Table Styles */

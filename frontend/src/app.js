@@ -29,7 +29,7 @@ import "common/navigation";
 import Api from "common/api";
 import Notify from "common/notify";
 import Scrollbar from "common/scrollbar";
-import Clipboard from "common/clipboard";
+import { PhotoClipboard } from "common/clipboard";
 import { installComponents } from "component/components";
 import { installDialogs } from "dialog/dialogs";
 import customIcons from "component/icons";
@@ -43,7 +43,7 @@ import { config, session } from "app/session";
 import { Settings } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
-import { createApp } from "vue";
+import { createApp, ref } from "vue";
 import { createVuetify } from "vuetify";
 import VueLuxon from "vue-luxon";
 import * as themes from "options/themes";
@@ -59,6 +59,7 @@ import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 
 import { passiveSupport } from "passive-events-support/src/utils";
+
 passiveSupport({ events: ["touchstart", "touchmove", "wheel", "mousewheel"] });
 
 config.progress(50);
@@ -90,9 +91,9 @@ config.update().finally(() => {
   app.config.globalProperties.$log = Log;
   app.config.globalProperties.$socket = Socket;
   app.config.globalProperties.$config = config;
-  app.config.globalProperties.$clipboard = Clipboard;
+  app.config.globalProperties.$clipboard = PhotoClipboard;
   app.config.globalProperties.$isMobile = isMobile;
-  app.config.globalProperties.$rtl = rtl;
+  app.config.globalProperties.$rtl = ref(rtl);
   app.config.globalProperties.$sponsorFeatures = () => {
     return config.load().finally(() => {
       if (config.values.sponsor) {

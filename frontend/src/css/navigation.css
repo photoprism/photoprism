@@ -276,7 +276,7 @@ nav .v-list__item__title.title {
     flex-direction: row;
     flex-wrap: nowrap;
     margin-top: auto;
-    padding: 6px 8px;
+    padding: 4px;
     gap: 8px;
 
     border-block-start-color: rgba(var(--v-border-color), var(--v-border-opacity));

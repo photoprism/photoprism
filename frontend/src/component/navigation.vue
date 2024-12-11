@@ -472,7 +472,7 @@
             </v-list-item>
           </v-list>
 
-          <div v-if="$config.disconnected" class="nav-info connection-info pa-1 clickable" @click.stop="showServerConnectionHelp">
+          <div v-if="disconnected" class="nav-info connection-info clickable" @click.stop="showServerConnectionHelp">
             <div class="nav-info__underlay"></div>
             <div class="text-center ma-2">
               <v-icon color="warning" size="28">mdi-wifi-off</v-icon>
@@ -481,7 +481,7 @@
               <translate key="No server connection">No server connection</translate>
             </div>
           </div>
-          <div v-else-if="auth && !isPublic" class="nav-info user-info">
+          <div v-show="auth && !isPublic && !disconnected" class="nav-info user-info">
             <div class="nav-info__underlay"></div>
             <div class="nav-user-avatar text-center my-1 mx-2 clickable" @click.stop="showAccountSettings">
               <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
@@ -646,6 +646,7 @@ export default {
       appName: this.$config.getName(),
       appAbout: this.$config.getAbout(),
       appIcon: this.$config.getIcon(),
+      disconnected: this.$config.disconnected,
       indexing: false,
       drawer: null,
       featUpgrade: tier < 6 && isSuperAdmin && !isPublic && !isDemo,
@@ -699,7 +700,7 @@ export default {
       return this.$gettext("Unregistered");
     },
     userAvatarURL() {
-      return this.$session.getUser().getAvatarURL("tile_50");
+      return this.$session.getUser().getAvatarURL("tile_50", this.$config);
     },
     accountInfo() {
       const user = this.$session.getUser();

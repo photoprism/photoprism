@@ -77,7 +77,7 @@ const config = {
     preferRelative: true,
     alias: {
       // TODO: change it
-      'vue$': 'vue/dist/vue.runtime.esm-bundler.js',
+      vue$: "vue/dist/vue.runtime.esm-bundler.js",
       // vue: isDev ? "vue/dist/vue.js" : "vue/dist/vue.min.js",
     },
   },

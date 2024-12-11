@@ -177,15 +177,19 @@ export class User extends RestModel {
     return Api.options(this.getEntityResource() + "/register").then((response) => Promise.resolve(new Form(response.data)));
   }
 
-  getAvatarURL(size) {
+  getAvatarURL(size, $config) {
     if (!size) {
       size = "tile_500";
     }
 
+    if (!$config) {
+      $config = config;
+    }
+
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+      return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
     } else {
-      return `${config.staticUri}/img/avatar/${size}.jpg`;
+      return `${$config.staticUri}/img/avatar/${size}.jpg`;
     }
   }
 

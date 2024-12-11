@@ -27,6 +27,8 @@ import RestModel from "model/rest";
 import Notify from "common/notify";
 import { $gettext } from "vm.js";
 import { config } from "app/session";
+import { reactive } from "vue";
+
 export const MaxItems = 999;
 
 export class Clipboard {
@@ -39,7 +41,7 @@ export class Clipboard {
 
     this.storage = storage;
     this.selectionMap = {};
-    this.selection = [];
+    this.selection = reactive([]);
     this.lastId = "";
     this.maxItems = MaxItems;
 
@@ -257,6 +259,4 @@ export class Clipboard {
   }
 }
 
-const PhotoClipboard = new Clipboard(window.localStorage, "photo_clipboard");
-
-export default PhotoClipboard;
+export const PhotoClipboard = reactive(new Clipboard(window.localStorage, "photo_clipboard"));

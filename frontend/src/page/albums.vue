@@ -47,7 +47,7 @@
           <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-lighten-1">
+      <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" tile flat color="secondary-lighten-1">
         <v-card-text class="dense">
           <v-row dense>
             <v-col cols="12" sm="4" class="p-year-select">

@@ -8,7 +8,7 @@
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
-      <p-photo-clipboard :refresh="refresh" :selection="selection" :album="model" context="album"></p-photo-clipboard>
+      <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :edit-photo="editPhoto" :open-photo="openPhoto" :is-shared-view="isShared"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>

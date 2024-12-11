@@ -30,6 +30,7 @@ import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
+import { ref, reactive } from "vue";
 
 onInit();
 
@@ -39,7 +40,7 @@ export default class Config {
    * @param {object} values
    */
   constructor(storage, values) {
-    this.disconnected = false;
+    this.disconnected = ref(false);
     this.storage = storage;
     this.storage_key = "config";
     this.previewToken = "";
@@ -58,6 +59,7 @@ export default class Config {
       this.debug = true;
       this.test = true;
       this.demo = false;
+      this.theme = themes.Get("default");
       this.themeName = "";
       this.baseUri = "";
       this.staticUri = "/static";
@@ -106,7 +108,7 @@ export default class Config {
       caption: values.siteCaption,
     };
 
-    this.values = values;
+    this.values = reactive(values);
     this.debug = !!values.debug;
     this.test = !!values.test;
     this.demo = !!values.demo;

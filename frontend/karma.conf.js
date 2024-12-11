@@ -133,7 +133,7 @@ module.exports = (config) => {
         modules: [path.join(__dirname, "src"), path.join(__dirname, "node_modules"), path.join(__dirname, "tests/unit")],
         preferRelative: true,
         alias: {
-          vue: "vue/dist/vue.min.js",
+          vue$: "vue/dist/vue.runtime.esm-bundler.js",
         },
       },
       module: {
