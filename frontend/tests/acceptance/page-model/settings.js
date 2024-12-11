@@ -4,34 +4,34 @@ export default class Page {
   constructor() {
     this.generalTab = Selector("#tab-settings_general");
     this.languageInput = Selector(".input-language input");
-    this.languageOpenSelection = Selector(".input-language div.v-select__selections");
-    this.uploadCheckbox = Selector(".input-upload div.v-input--selection-controls__ripple");
-    this.downloadCheckbox = Selector(".input-download div.v-input--selection-controls__ripple");
-    this.importCheckbox = Selector(".input-import div.v-input--selection-controls__ripple");
-    this.archiveCheckbox = Selector(".input-archive div.v-input--selection-controls__ripple");
-    this.editCheckbox = Selector(".input-edit div.v-input--selection-controls__ripple");
-    this.filesCheckbox = Selector(".input-files div.v-input--selection-controls__ripple");
-    this.momentsCheckbox = Selector(".input-moments div.v-input--selection-controls__ripple");
-    this.labelsCheckbox = Selector(".input-labels div.v-input--selection-controls__ripple");
-    this.logsCheckbox = Selector(".input-logs div.v-input--selection-controls__ripple");
-    this.shareCheckbox = Selector(".input-share div.v-input--selection-controls__ripple");
-    this.placesCheckbox = Selector(".input-places div.v-input--selection-controls__ripple");
+    this.languageOpenSelection = Selector(".input-language div.v-input__control");
+    this.uploadCheckbox = Selector(".input-upload div.v-selection-control__input");
+    this.downloadCheckbox = Selector(".input-download div.v-selection-control__input");
+    this.importCheckbox = Selector(".input-import div.v-selection-control__input");
+    this.archiveCheckbox = Selector(".input-archive div.v-selection-control__input");
+    this.editCheckbox = Selector(".input-edit div.v-selection-control__input");
+    this.filesCheckbox = Selector(".input-files div.v-selection-control__input");
+    this.momentsCheckbox = Selector(".input-moments div.v-selection-control__input");
+    this.labelsCheckbox = Selector(".input-labels div.v-selection-control__input");
+    this.logsCheckbox = Selector(".input-logs div.v-selection-control__input");
+    this.shareCheckbox = Selector(".input-share div.v-selection-control__input");
+    this.placesCheckbox = Selector(".input-places div.v-selection-control__input");
     this.privateCheckbox = Selector(
-      'input[aria-label="Private"] + div.v-input--selection-controls__ripple'
+      'input[aria-label="Private"] + div.v-selection-control__input'
     );
-    this.peopleCheckbox = Selector(".input-people div.v-input--selection-controls__ripple");
-    this.deleteCheckbox = Selector(".input-delete div.v-input--selection-controls__ripple");
-    this.libraryCheckbox = Selector(".input-library div.v-input--selection-controls__ripple");
+    this.peopleCheckbox = Selector(".input-people div.v-selection-control__input");
+    this.deleteCheckbox = Selector(".input-delete div.v-selection-control__input");
+    this.libraryCheckbox = Selector(".input-library div.v-selection-control__input");
 
     this.libraryTab = Selector("#tab-settings_media");
-    this.reviewCheckbox = Selector(".input-review div.v-input--selection-controls__ripple");
-    this.convertCheckbox = Selector(".input-convert div.v-input--selection-controls__ripple");
-    this.estimatesCheckbox = Selector(".input-estimates div.v-input--selection-controls__ripple");
+    this.reviewCheckbox = Selector(".input-review div.v-selection-control__input");
+    this.convertCheckbox = Selector(".input-convert div.v-selection-control__input");
+    this.estimatesCheckbox = Selector(".input-estimates div.v-selection-control__input");
     this.dateTimeStacksCheckbox = Selector(
-      ".input-stack-meta div.v-input--selection-controls__ripple"
+      ".input-stack-meta div.v-selection-control__input"
     );
-    this.uuidStacksCheckbox = Selector(".input-stack-uuid div.v-input--selection-controls__ripple");
-    this.nameStacksCheckbox = Selector(".input-stack-name div.v-input--selection-controls__ripple");
+    this.uuidStacksCheckbox = Selector(".input-stack-uuid div.v-selection-control__input");
+    this.nameStacksCheckbox = Selector(".input-stack-name div.v-selection-control__input");
 
     this.advancedTab = Selector("#tab-settings_advanced");
     this.debugCheckbox = Selector("label").withText("Debug Logs");

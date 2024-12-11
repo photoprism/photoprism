@@ -23,6 +23,17 @@ func EnvVar(flag string) string {
 	return "PHOTOPRISM_" + strings.ToUpper(strings.ReplaceAll(flag, "-", "_"))
 }
 
+// EnvVars returns the names of the environment variable for the specified config flag.
+func EnvVars(flags ...string) (vars []string) {
+	vars = make([]string, len(flags))
+
+	for i, flag := range flags {
+		vars[i] = EnvVar(flag)
+	}
+
+	return vars
+}
+
 // Env checks the presence of environment and command-line flags.
 func Env(vars ...string) bool {
 	for _, s := range vars {

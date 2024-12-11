@@ -34,7 +34,7 @@ import Util from "common/util";
 import { config } from "app/session";
 import countries from "options/countries.json";
 import { $gettext } from "common/vm";
-import Clipboard from "common/clipboard";
+import { PhotoClipboard } from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";
 import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebM, canUseHevc } from "common/caniuse";
@@ -200,7 +200,7 @@ export class Photo extends RestModel {
   }
 
   classes() {
-    return this.generateClasses(this.isPlayable(), Clipboard.has(this), this.Portrait, this.Favorite, this.Private, this.isStack());
+    return this.generateClasses(this.isPlayable(), PhotoClipboard.has(this), this.Portrait, this.Favorite, this.Private, this.isStack());
   }
 
   generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, isStack) => {

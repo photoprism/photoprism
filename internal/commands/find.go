@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/dustin/go-humanize"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
@@ -15,14 +15,15 @@ import (
 )
 
 // FindCommand configures the command name, flags, and action.
-var FindCommand = cli.Command{
+var FindCommand = &cli.Command{
 	Name:      "find",
 	Usage:     "Searches the index for specific files",
 	ArgsUsage: "filter",
-	Flags: append(report.CliFlags, cli.UintFlag{
-		Name:  "n",
-		Usage: "maximum number of search `RESULTS`",
-		Value: 10000,
+	Flags: append(report.CliFlags, &cli.UintFlag{
+		Name:    "count",
+		Aliases: []string{"n"},
+		Usage:   "maximum number of search `RESULTS`",
+		Value:   10000,
 	}),
 	Action: findAction,
 }
@@ -44,7 +45,7 @@ func findAction(ctx *cli.Context) error {
 		Query:   strings.TrimSpace(ctx.Args().First()),
 		Primary: false,
 		Merged:  false,
-		Count:   ctx.Int("n"),
+		Count:   ctx.Int("count"),
 		Offset:  0,
 		Order:   sortby.Name,
 	}

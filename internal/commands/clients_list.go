@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -12,7 +12,7 @@ import (
 )
 
 // ClientsListCommand configures the command name, flags, and action.
-var ClientsListCommand = cli.Command{
+var ClientsListCommand = &cli.Command{
 	Name:      "ls",
 	Usage:     "Lists registered client applications",
 	ArgsUsage: "[search]",
@@ -26,7 +26,7 @@ func clientsListAction(ctx *cli.Context) error {
 		cols := []string{"Client ID", "Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
 
 		// Fetch clients from database.
-		clients, err := query.Clients(ctx.Int("n"), 0, "", ctx.Args().First())
+		clients, err := query.Clients(ctx.Int("count"), 0, "", ctx.Args().First())
 
 		if err != nil {
 			return err

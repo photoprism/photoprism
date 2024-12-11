@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -17,23 +17,26 @@ import (
 
 // AuthAddFlags specifies the "photoprism auth add" command flags.
 var AuthAddFlags = []cli.Flag{
-	cli.StringFlag{
-		Name:  "name, n",
-		Usage: "`CLIENT` name to help identify the application",
+	&cli.StringFlag{
+		Name:    "name",
+		Aliases: []string{"n"},
+		Usage:   "`CLIENT` name to help identify the application",
 	},
-	cli.StringFlag{
-		Name:  "scope, s",
-		Usage: "authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)",
+	&cli.StringFlag{
+		Name:    "scope",
+		Aliases: []string{"s"},
+		Usage:   "authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)",
 	},
-	cli.Int64Flag{
-		Name:  "expires, e",
-		Usage: "authentication `LIFETIME` in seconds, after which access expires (-1 to disable the limit)",
-		Value: unix.Year,
+	&cli.Int64Flag{
+		Name:    "expires",
+		Aliases: []string{"e"},
+		Usage:   "authentication `LIFETIME` in seconds, after which access expires (-1 to disable the limit)",
+		Value:   unix.Year,
 	},
 }
 
 // AuthAddCommand configures the command name, flags, and action.
-var AuthAddCommand = cli.Command{
+var AuthAddCommand = &cli.Command{
 	Name:  "add",
 	Usage: "Adds a new authentication secret for client applications",
 	Description: "If you specify a username as argument, an app password will be created for this user account." +

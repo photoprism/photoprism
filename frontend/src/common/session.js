@@ -41,7 +41,6 @@ export default class Session {
    */
   constructor(storage, config, shared) {
     this.storage_key = "sessionStorage";
-    this.auth = false;
     this.config = config;
     this.provider = "";
     this.user = new User(false);
@@ -73,9 +72,7 @@ export default class Session {
     }
 
     // Authenticated?
-    if (this.isUser()) {
-      this.auth = true;
-    }
+    this.auth = this.isUser();
 
     // Subscribe to session events.
     Event.subscribe("session.logout", () => {

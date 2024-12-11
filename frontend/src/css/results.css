@@ -72,6 +72,13 @@ body.chrome #photoprism .search-results .result {
     opacity: 1;
 }
 
+.clipboard-container {
+    position: fixed;
+    bottom: 4px;
+    right: 4px;
+    z-index: 10;
+}
+
 #photoprism .p-clipboard.--ltr {
     right: 8px;
     bottom: 12px;
@@ -99,9 +106,9 @@ body.chrome #photoprism .search-results .result {
     height: auto;
 }
 
-#photoprism table.photo-files tbody tr td:first-child {
+.photo-files tbody tr td:first-child {
     width: 30%;
-    padding: 0 16px 0 24px;
+    padding: 0 24px !important;
 }
 
 #photoprism .img-placeholder {

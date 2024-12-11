@@ -2,13 +2,13 @@
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('photos')" class="p-page p-page-photos" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <p-photo-toolbar :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
-      <p-photo-clipboard :context="context" :refresh="refresh" :selection="selection"></p-photo-clipboard>
+      <p-photo-clipboard :context="context" :refresh="refresh"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :edit-photo="editPhoto" :open-photo="openPhoto" :is-shared-view="isShared"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
@@ -193,7 +193,7 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

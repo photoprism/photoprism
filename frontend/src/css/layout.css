@@ -110,10 +110,14 @@
 .v-alert,
 #photoprism .cards-view .result,
 #photoprism div.v-dialog > div.v-card,
-#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container,
+#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panels__container,
 #photoprism div.v-dialog > form > div.v-card,
-#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panel__container {
-    border-radius: 6px;
+#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panels__container {
+    border-radius: 6px !important;
+}
+
+#photoprism .cards-view .result {
+    height:100%;
 }
 
 .ra-2,
@@ -221,12 +225,16 @@ footer {
     padding: 6px 24px 12px;
 }
 
+#photoprism .footer p > span,
+#photoprism .footer p > a,
 #photoprism .footer div > span,
 #photoprism .footer div > a {
     display: block;
 }
 
 @media only screen and (max-width: 599px) {
+    #photoprism .footer p > span,
+    #photoprism .footer p > a,
     #photoprism .footer div > span,
     #photoprism .footer div > a {
         display: inline-block;
@@ -244,8 +252,4 @@ footer {
 #photoprism .footer .footer-actions {
     padding: 0;
     margin: 0;
-}
-
-#photoprism .p-about-footer .body-1 {
-    line-height: 1.8em;
 }

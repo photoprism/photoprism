@@ -64,23 +64,24 @@ test.meta("testID", "settings-general-001").meta({ type: "short", mode: "auth" }
 test.meta("testID", "settings-general-002").meta({ type: "short", mode: "auth" })(
   "Common: Change language",
   async (t) => {
-    await t.expect(Selector(".nav-browse").innerText).contains("Search");
+    await menu.openNav()
+    await t.expect(Selector("a.nav-browse").innerText).contains("Search");
 
     await menu.openPage("settings");
     await t
       .click(settings.languageOpenSelection)
-      .hover(Selector("div").withText("Deutsch").parent('div[role="listitem"]'))
-      .click(Selector("div").withText("Deutsch").parent('div[role="listitem"]'));
+      .hover(Selector("div").withText("Deutsch").parent('div[role="option"]'))
+      .click(Selector("div").withText("Deutsch").parent('div[role="option"]'));
     await t.eval(() => location.reload());
 
-    await t.expect(Selector(".nav-browse").innerText).contains("Suche");
+    await t.expect(Selector("a.nav-browse").innerText).contains("Suche");
 
     await t
       .click(settings.languageOpenSelection)
-      .hover(Selector("div").withText("English").parent('div[role="listitem"]'))
-      .click(Selector("div").withText("English").parent('div[role="listitem"]'));
+      .hover(Selector("div").withText("English").parent('div[role="option"]'))
+      .click(Selector("div").withText("English").parent('div[role="option"]'));
 
-    await t.expect(Selector(".nav-browse").innerText).contains("Search");
+    await t.expect(Selector("a.nav-browse").innerText).contains("Search");
   }
 );
 
@@ -262,6 +263,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
 
     await menu.openPage("settings");
     await t.click(settings.peopleCheckbox).click(settings.labelsCheckbox);
+    await menu.openPage("browse");
 
     await menu.checkMenuItemAvailability("people", true);
     await menu.checkMenuItemAvailability("labels", true);

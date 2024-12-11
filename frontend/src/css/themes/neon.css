@@ -5,19 +5,19 @@
     opacity: 0.9;
 }
 
-.theme-neon .secondary-dark--text.text--lighten-1 {
+.theme-neon .surface-variant--text.text--lighten-1 {
     color: #64616a !important;
 }
 
 body.dark-theme.theme-neon,
-.theme-neon .v-content__wrap,
+.theme-neon .v-main__wrap,
 .theme-neon .p-page,
 .theme-neon .form,
-.theme-neon .v-content {
+.theme-neon .v-main {
     background: #242326 !important;
 }
 
-.theme-neon .application.theme--light,
+.theme-neon .v-application.theme--light,
 #photoprism.theme-neon .theme--light.v-small-dialog__content,
 #photoprism.theme-neon .theme--light.v-sheet,
 #photoprism.theme-neon .theme--light.v-card {
@@ -61,8 +61,8 @@ body.dark-theme.theme-neon,
 #photoprism.theme-neon,
 #photoprism.theme-neon .p-page a,
 #photoprism.theme-neon .v-datatable a,
-#photoprism.theme-neon .theme--light.v-expansion-panel .v-expansion-panel__container,
-#photoprism.theme-neon .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-neon .theme--light.v-expansion-panels .v-expansion-panels__container,
+#photoprism.theme-neon .theme--light.v-tabs-bar .v-tabs__div,
 #photoprism.theme-neon .theme--light {
     color: #fff;
 }
@@ -79,7 +79,7 @@ body.dark-theme.theme-neon,
     color: #eee;
 }
 
-#photoprism.theme-neon .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-neon .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-neon .accent--text {
     color: #d532d2 !important;
 }
@@ -95,7 +95,7 @@ body.dark-theme.theme-neon,
     color: #999 !important;
 }
 
-#photoprism.theme-neon .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-neon .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }
