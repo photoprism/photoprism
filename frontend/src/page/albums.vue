@@ -11,19 +11,19 @@
           validate-on="blur"
           variant="plain"
           density="comfortable"
-          class="input-search background-inherit elevation-0 mb-3"
           :placeholder="$gettext('Search')"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           prepend-inner-icon="mdi-magnify"
           color="surface-variant"
-          @change="
+          class="input-search background-inherit elevation-0 mb-3"
+          @update:modelValue="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => updateQuery()"
           @click:clear="
             () => {
               updateQuery({ q: '' });

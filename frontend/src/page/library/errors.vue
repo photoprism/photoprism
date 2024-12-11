@@ -10,19 +10,19 @@
         validate-on="blur"
         variant="plain"
         density="comfortable"
-        class="input-search background-inherit elevation-0 mb-3"
         autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
         :placeholder="$gettext('Search')"
         prepend-inner-icon="mdi-magnify"
         color="surface-variant"
-        @change="
+        class="input-search background-inherit elevation-0 mb-3"
+        @update:modelValue="
           (v) => {
             updateFilter({ q: v });
           }
         "
-        @keyup.enter="(e) => updateQuery({ q: e.target.value })"
+        @keyup.enter="() => updateQuery()"
         @click:clear="
           () => {
             updateQuery({ q: '' });
@@ -45,7 +45,7 @@
     </v-container>
     <v-list v-else-if="errors.length > 0" density="compact" lines="two" class="bg-transparent pa-1">
       <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
-<!--        TODO: fix it-->
+        <!--        TODO: fix it-->
         <v-list-item :prepend-avatar="err.Level" :color="err.Level">
           <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->
         </v-list-item>
@@ -70,8 +70,8 @@
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
         <v-card-title class="text-h5 pa-2">
-<!--          TODO: change filter-->
-<!--          {{ details.err.Level | capitalize }}-->
+          <!--          TODO: change filter-->
+          <!--          {{ details.err.Level | capitalize }}-->
           {{ details.err.Level }}
         </v-card-title>
 

@@ -4,7 +4,6 @@
       <template v-if="!embedded">
         <v-text-field
           :model-value="filter.q"
-          class="input-search background-inherit elevation-0 mb-3"
           hide-details
           clearable
           overflow
@@ -18,12 +17,13 @@
           :placeholder="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
           color="surface-variant"
-          @change="
+          class="input-search background-inherit elevation-0 mb-3"
+          @update:modelValue="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => updateQuery()"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -251,8 +251,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <p-photo-delete-dialog :show="dialog.delete" :text="$gettext('Are you sure you want to delete all archived pictures?')" :action="$gettext('Delete All')" @cancel="dialog.delete = false" @confirm="batchDelete">
-</p-photo-delete-dialog>
+    <p-photo-delete-dialog :show="dialog.delete" :text="$gettext('Are you sure you want to delete all archived pictures?')" :action="$gettext('Delete All')" @cancel="dialog.delete = false" @confirm="batchDelete"> </p-photo-delete-dialog>
   </v-form>
 </template>
 <script>
