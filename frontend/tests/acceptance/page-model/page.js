@@ -19,11 +19,11 @@ const sharedialog = new ShareDialog();
 
 export default class Page {
   constructor() {
-    this.selectOption = Selector("div.v-list-item__title", { timeout: 15000 });
+    this.selectOption = Selector('div[role="option"]', { timeout: 15000 });
     this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
     this.cardDescription = Selector('div[title="Description"]', { timeout: 7000 });
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
-    this.cardTaken = Selector("div.caption button.action-open-date", { timeout: 7000 });
+    this.cardTaken = Selector("div.text-caption button.action-open-date", { timeout: 7000 });
     this.usernameInput = Selector(".input-username input", { timeout: 7000 });
     this.passwordInput = Selector(".input-password input", { timeout: 7000 });
     this.passcodeInput = Selector(".input-code input", { timeout: 7000 });
@@ -50,9 +50,9 @@ export default class Page {
     await contextmenu.checkContextMenuCount("1");
     await contextmenu.triggerContextMenuAction("share", "", "");
     await t.click(sharedialog.expandLink.nth(0));
-    const InitialUrl = await sharedialog.linkUrl.innerText;
+    const InitialUrl = await sharedialog.linkUrl.value;
     const InitialSecret = await sharedialog.linkSecretInput.value;
-    const InitialExpire = await Selector("div.v-input__control").innerText;
+    const InitialExpire = await Selector(".input-expires .v-select__selection-text").innerText;
     await t
       .expect(InitialUrl)
       .notContains("secretfortesting")
@@ -67,9 +67,8 @@ export default class Page {
     await album.openAlbumWithUid(FirstAlbum);
     await toolbar.triggerToolbarAction("share", "");
     await t.click(sharedialog.expandLink.nth(0));
-    await t.wait(5000);
-    const UrlAfterChange = await sharedialog.linkUrl.innerText;
-    const ExpireAfterChange = await Selector("div.v-input__control").innerText;
+    const ExpireAfterChange = await Selector(".input-expires .v-select__selection-text").innerText;
+    const UrlAfterChange = await sharedialog.linkUrl.value;
     await t
       .expect(UrlAfterChange)
       .contains("secretfortesting")

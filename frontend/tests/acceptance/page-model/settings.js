@@ -16,9 +16,7 @@ export default class Page {
     this.logsCheckbox = Selector(".input-logs div.v-selection-control__input");
     this.shareCheckbox = Selector(".input-share div.v-selection-control__input");
     this.placesCheckbox = Selector(".input-places div.v-selection-control__input");
-    this.privateCheckbox = Selector(
-      'input[aria-label="Private"] + div.v-selection-control__input'
-    );
+    this.privateCheckbox = Selector(".input-private div.v-selection-control__input");
     this.peopleCheckbox = Selector(".input-people div.v-selection-control__input");
     this.deleteCheckbox = Selector(".input-delete div.v-selection-control__input");
     this.libraryCheckbox = Selector(".input-library div.v-selection-control__input");
