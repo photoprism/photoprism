@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-files">
-    <v-expansion-panels v-model="state" class="pa-0 elevation-0" variant="accordion">
+    <v-expansion-panels v-model="state" class="pa-0 elevation-0" variant="accordion" multiple >
       <template v-for="file in model.fileModels()">
         <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0" style="margin-top: 1px">
           <v-expansion-panel-title>
