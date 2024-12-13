@@ -139,10 +139,10 @@
                       <td class="text-left hidden-sm-and-down" nowrap>
                         {{ formatDate(props.item.Expires) }}
                       </td>
-                      <td class="text-right" nowrap>
-                        <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)">
-                          <v-icon color="surface-variant">mdi-delete</v-icon>
-                        </v-btn>
+                      <td>
+                        <div class="table-actions">
+                          <v-btn icon="mdi-delete" color="surface-variant" density="compact" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="onRevoke(props.item)"></v-btn>
+                        </div>
                       </td>
                     </tr>
                   </template>

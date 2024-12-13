@@ -34,3 +34,17 @@
 .auth-login .action-buttons {
     margin: 20px auto 16px auto;
 }
+
+table .table-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+@media only screen and (min-width: 1280px) {
+    table .table-actions {
+        gap: 12px;
+    }
+}

@@ -38,7 +38,7 @@
                 <th class="text-left hidden-xs">
                   {{ showName ? $gettext("Name") : $gettext("Location") }}
                 </th>
-                <th class="text-center"></th>
+                <th v-if="!isSharedView" class="text-center"></th>
               </tr>
             </thead>
             <tbody>
@@ -90,25 +90,25 @@
                     {{ photo.locationInfo() }}
                   </span>
                 </td>
-                <template v-if="!isSharedView">
-                  <td class="text-center">
+                <td v-if="!isSharedView">
+                  <div class="table-actions">
                     <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
                       <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
                       <div class="v-btn v-btn--icon v-btn--small" />
                     </template>
 
                     <template v-else>
-                      <v-btn v-if="hidePrivate" icon density="comfortable" variant="text" :ripple="false" :data-uid="photo.UID" class="input-private" @click.stop.prevent="photo.togglePrivate()">
+                      <v-btn v-if="hidePrivate" icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-private" @click.stop.prevent="photo.togglePrivate()">
                         <v-icon v-if="photo.Private" color="surface-variant" class="select-on">mdi-lock</v-icon>
                         <v-icon v-else color="surface-bright" class="select-off">mdi-lock-open</v-icon>
                       </v-btn>
-                      <v-btn icon density="comfortable" variant="text" :ripple="false" :data-uid="photo.UID" class="input-favorite" @click.stop.prevent="photo.toggleLike()">
+                      <v-btn icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-favorite" @click.stop.prevent="photo.toggleLike()">
                         <v-icon v-if="photo.Favorite" color="surface-variant" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
                         <v-icon v-else color="surface-bright" :data-uid="photo.UID" class="select-off">mdi-heart-outline</v-icon>
                       </v-btn>
                     </template>
-                  </td>
-                </template>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
