@@ -138,7 +138,6 @@ export default {
       // Set currently selected albums.
       if (this.data && Array.isArray(this.data.albums)) {
         this.selectedAlbums = this.data.albums;
-        console.log('this.selectedAlbums', this.selectedAlbums);
       } else {
         this.selectedAlbums = [];
       }
@@ -166,7 +165,6 @@ export default {
         .then((response) => {
           this.loading = false;
           this.albums = response.models;
-          console.log('this.albums', this.albums);
         })
         .catch(() => (this.loading = false));
     },
