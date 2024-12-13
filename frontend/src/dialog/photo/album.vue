@@ -4,26 +4,26 @@
       <v-card-text class="dense mt-2">
         <v-row dense>
           <v-col cols="3" class="text-left">
-            <v-icon size="60" color="surface-variant lighten-1">mdi-image-album</v-icon>
+            <v-icon size="60" color="surface-variant">mdi-image-album</v-icon>
           </v-col>
           <v-col cols="9" class="text-left" align-self="center">
-            <v-autocomplete
+            <v-combobox
               ref="input"
               v-model="album"
               autocomplete="off"
               :hint="$gettext('Album Name')"
               :items="items"
-              :search.sync="search"
               :loading="loading"
               hide-no-data
               hide-details
+              return-object
               item-title="Title"
               item-value="UID"
               :label="$gettext('Album Name')"
               class="input-album"
               @keyup.enter.native="confirm"
             >
-            </v-autocomplete>
+            </v-combobox>
           </v-col>
         </v-row>
       </v-card-text>
@@ -32,8 +32,8 @@
           <translate>Cancel</translate>
         </v-btn>
         <v-btn variant="flat" color="primary-button" class="action-confirm text-white" @click.stop="confirm">
-          <span v-if="!album">{{ labels.createAlbum }}</span>
-          <span v-else>{{ labels.addToAlbum }}</span>
+          <span v-if="typeof album === 'object'">{{ labels.addToAlbum }}</span>
+          <span v-else>{{ labels.createAlbum }}</span>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -53,9 +53,8 @@ export default {
   data() {
     return {
       loading: false,
-      search: "",
       newAlbum: null,
-      album: false,
+      album: null,
       albums: [],
       items: [],
       labels: {
@@ -65,17 +64,6 @@ export default {
     };
   },
   watch: {
-    search(q) {
-      const exists = this.albums.findIndex((album) => album.Title === q);
-
-      if (exists !== -1 || !q) {
-        this.items = this.albums;
-        this.newAlbum = null;
-      } else {
-        this.newAlbum = new Album({ Title: q, UID: "", Favorite: false });
-        this.items = this.albums.concat([this.newAlbum]);
-      }
-    },
     show: function (show) {
       if (show) {
         this.queryServer("");
@@ -91,15 +79,18 @@ export default {
         return;
       }
 
-      if (this.album) {
-        this.$emit("confirm", this.album);
-      } else if (this.newAlbum) {
+      if (typeof this.album === "object" && this.album?.UID) {
+        this.$emit("confirm", this.album?.UID);
+      } else if (typeof this.album === "string" && this.album.length > 0) {
         this.loading = true;
 
-        this.newAlbum
+        let newAlbum = new Album({ Title: this.album, UID: "", Favorite: false });
+
+        newAlbum
           .save()
           .then((a) => {
             this.loading = false;
+            this.album = a;
             this.$emit("confirm", a.UID);
           })
           .catch(() => {
