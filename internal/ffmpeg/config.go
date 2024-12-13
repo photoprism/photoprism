@@ -20,6 +20,6 @@ func (o Options) VideoFilter(format PixelFormat) string {
 	} else if format == FormatQSV {
 		return fmt.Sprintf("scale_qsv=w='if(gte(iw,ih), min(%d, iw), -1)':h='if(gte(iw,ih), -1, min(%d, ih))':format=nv12", o.Size, o.Size)
 	} else {
-		return fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.Size, o.Size, format)
+		return fmt.Sprintf("\"scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s\"", o.Size, o.Size, format)
 	}
 }
