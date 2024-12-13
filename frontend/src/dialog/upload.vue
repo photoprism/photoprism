@@ -42,7 +42,7 @@
                     <v-icon class="pr-1">mdi-bookmark</v-icon>
                     <!-- TODO: change this filter -->
                     <!-- {{ data.item.Title ? data.item.Title : data.item | truncate(40) }} -->
-                    {{ data.item.Title ? data.item.Title : data.item }}
+                    {{ data.item.title ? data.item.title : data.item }}
                   </v-chip>
                 </template>
               </v-combobox>
@@ -138,6 +138,7 @@ export default {
       // Set currently selected albums.
       if (this.data && Array.isArray(this.data.albums)) {
         this.selectedAlbums = this.data.albums;
+        console.log('this.selectedAlbums', this.selectedAlbums);
       } else {
         this.selectedAlbums = [];
       }
@@ -165,6 +166,7 @@ export default {
         .then((response) => {
           this.loading = false;
           this.albums = response.models;
+          console.log('this.albums', this.albums);
         })
         .catch(() => (this.loading = false));
     },
