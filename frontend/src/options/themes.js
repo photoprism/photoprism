@@ -46,7 +46,7 @@ let themes = {
       "surface-light": "#1c1d1e",
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
-      card: "#161718",
+      card: "#171718",
       table: "#1F2022", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
       button: "#1D1E1F",
       primary: "#9E7BEA",
