@@ -769,7 +769,7 @@ export default {
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
         cluster: true,
-        clusterMaxZoom: 18, // Max zoom to cluster points on
+        clusterMaxZoom: 17, // Max zoom to cluster points on
         clusterRadius: 80, // Radius of each cluster when clustering points (defaults to 50)
       });
 
