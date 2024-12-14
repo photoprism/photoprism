@@ -177,8 +177,8 @@
                 </v-btn>
 
                 <v-btn :ripple="false" icon variant="text" position="absolute" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">mdi-star</v-icon>
-                  <v-icon color="white" class="select-off">mdi-star-outline</v-icon>
+                  <v-icon icon="mdi-star" color="favorite" class="select-on"></v-icon>
+                  <v-icon icon="mdi-star-outline" color="white" class="select-off"></v-icon>
                 </v-btn>
 
                 <v-btn

@@ -91,7 +91,7 @@
             </button>
 
             <button v-if="!isSharedView" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-              <i v-if="photo.Favorite" class="mdi mdi-star" />
+              <i v-if="photo.Favorite" class="mdi mdi-star text-favorite" />
               <i v-else class="mdi mdi-star-outline" />
             </button>
           </div>

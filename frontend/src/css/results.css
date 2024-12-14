@@ -264,7 +264,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .mosaic-view .result.image i,
 #photoprism .list-view .result .image i,
 #photoprism .cards-view .result .image i {
-    color: #e2e2e2;
+    color: #f6f6f6;
     font-size: 24px;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -324,7 +324,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .cards-view .input-select,
 #photoprism .mosaic-view .input-select {
     visibility: hidden;
-    opacity: 0.5;
+    opacity: 0.6;
     right: 4px;
     bottom: 4px;
 }
@@ -341,6 +341,12 @@ body.chrome #photoprism .search-results .result {
     opacity: 1;
 }
 
+#photoprism .cards-view .result .image button,
+#photoprism .list-view .result .image button,
+#photoprism .mosaic-view .result.image button {
+    text-shadow: #606060aa 0 0 4px;
+}
+
 #photoprism .search-results .result .input-select .select-off,
 #photoprism .search-results .result.is-selected .input-select .select-on {
     display: inline-flex;
@@ -353,7 +359,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .input-favorite,
 #photoprism .mosaic-view .input-favorite {
-    opacity: 0.5;
+    opacity: 0.6;
     left: 4px;
     bottom: 4px;
 }
@@ -525,7 +531,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .face-results .is-face.is-hidden,
 #photoprism .face-results .is-marker.is-invalid {
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
 /* old browser support */
