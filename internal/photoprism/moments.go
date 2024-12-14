@@ -94,7 +94,7 @@ func (w *Moments) Start() (err error) {
 			}
 
 			if a := entity.FindFolderAlbum(mom.Path); a != nil {
-				if a.DeletedAt != nil {
+				if a.DeletedAt.Valid {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				} else if err := a.UpdateFolder(mom.Path, f.Serialize()); err != nil {
@@ -160,7 +160,7 @@ func (w *Moments) Start() (err error) {
 					log.Errorf("moments: %s (update slug)", err.Error())
 				}
 
-				if a.DeletedAt != nil {
+				if a.DeletedAt.Valid {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 				} else {
@@ -231,7 +231,7 @@ func (w *Moments) Start() (err error) {
 					log.Errorf("moments: %s (update slug)", err.Error())
 				}
 
-				if a.DeletedAt != nil || f.Serialize() == a.AlbumFilter {
+				if a.DeletedAt.Valid || f.Serialize() == a.AlbumFilter {
 					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 					continue
 				}

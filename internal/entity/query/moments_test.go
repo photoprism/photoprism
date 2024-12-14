@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -323,13 +324,22 @@ func TestMoment_Title(t *testing.T) {
 
 func TestRemoveDuplicateMoments(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
+		// Make sure that data is ok before test
+		results := Db().Model(entity.PhotoAlbums{}).Where("album_uid NOT IN (?)", Db().Select("album_uid").Model(entity.Album{}).Where("album_uid IS NOT NULL")).Find(&entity.PhotoAlbums{})
+		assert.Equal(t, int64(0), results.RowsAffected, "before test orphaned records")
+
 		if removed, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		} else {
 			t.Logf("moments: removed %s", english.Plural(removed, "duplicate", "duplicates"))
 
-			// TODO: Needs review, variable number of results.
-			assert.GreaterOrEqual(t, removed, 1)
+			// This returns a variable number of records on gorm1 due to an issue in sqlite not always deleting 2 records.
+			// Updates for gorm2 have not shown this being replicated to date.
+			// Delete 2 in Albums and 0 in PhotoAlbums.
+			assert.GreaterOrEqual(t, removed, 2)
+
+			results := Db().Model(entity.PhotoAlbums{}).Where("album_uid NOT IN (?)", Db().Select("album_uid").Model(entity.Album{}).Where("album_uid IS NOT NULL")).Find(&entity.PhotoAlbums{})
+			assert.Equal(t, int64(0), results.RowsAffected, "after test orphaned records")
 		}
 	})
 }

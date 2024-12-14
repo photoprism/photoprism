@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -22,14 +23,15 @@ func People() (people entity.People, err error) {
 
 // PeopleCount returns the total number of people in the index.
 func PeopleCount() (count int, err error) {
+	countData := int64(0)
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
-		Where("subj_hidden = 0").
+		Where("subj_hidden = FALSE").
 		Where("subj_type = ?", entity.SubjPerson).
-		Count(&count).Error
+		Count(&countData).Error
 
-	return count, err
+	return functions.SafeInt64toint(countData), err
 }
 
 // Subjects returns subjects from the index.
@@ -78,7 +80,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 
 	if err := Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
-		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
+		Where("marker_invalid = FALSE AND marker_type = ?", entity.MarkerFace).
 		Order("marker_name").
 		Find(&markers).Error; err != nil {
 		return affected, err
@@ -104,7 +106,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 
 		name = m.MarkerName
 
-		if err := m.Updates(entity.Map{"SubjUID": subj.SubjUID, "MarkerReview": false}); err != nil {
+		if err := m.Updates(map[string]interface{}{"SubjUID": subj.SubjUID, "MarkerReview": false}); err != nil {
 			return affected, err
 		}
 

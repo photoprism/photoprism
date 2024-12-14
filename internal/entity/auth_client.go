@@ -7,7 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -29,17 +29,17 @@ type Clients []Client
 
 // Client represents a client application.
 type Client struct {
-	ClientUID    string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
-	UserUID      string    `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	ClientUID    string    `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
+	UserUID      string    `gorm:"type:bytes;size:42;index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string    `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user         *User     `gorm:"-" yaml:"-"`
+	user         *User     `gorm:"foreignKey:UserUID;references:UserUID" yaml:"-"`
 	ClientName   string    `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
 	ClientRole   string    `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
-	ClientType   string    `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
-	ClientURL    string    `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL  string    `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
-	AuthProvider string    `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string    `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	ClientType   string    `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
+	ClientURL    string    `gorm:"type:bytes;size:255;default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
+	CallbackURL  string    `gorm:"type:bytes;size:255;default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
+	AuthProvider string    `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string    `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthScope    string    `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	AuthExpires  int64     `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
 	AuthTokens   int64     `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
@@ -74,14 +74,14 @@ func NewClient() *Client {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Client) BeforeCreate(scope *gorm.Scope) error {
+func (m *Client) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUID(m.ClientUID, ClientUID) {
 		return nil
 	}
 
 	m.ClientUID = rnd.GenerateUID(ClientUID)
-
-	return scope.SetColumn("ClientUID", m.ClientUID)
+	scope.Statement.SetColumn("ClientUID", m.ClientUID)
+	return scope.Error
 }
 
 // FindClientByUID returns the matching client or nil if it was not found.

@@ -75,7 +75,7 @@ func usersListAction(ctx *cli.Context) error {
 			}
 
 			if ctx.Bool("deleted") {
-				rows[i] = append(rows[i], report.DateTime(user.DeletedAt))
+				rows[i] = append(rows[i], report.DateTime(&user.DeletedAt.Time))
 			}
 		}
 

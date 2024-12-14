@@ -3,8 +3,8 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"gorm.io/gorm"
 )
 
 var photoMergeMutex = sync.Mutex{}
@@ -13,7 +13,7 @@ var photoMergeMutex = sync.Mutex{}
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
-	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).
+	if err := Db().Where("file_primary = TRUE AND photo_id = ?", m.ID).
 		Order("file_width DESC, file_hdr DESC").
 		First(&file).Error; err == nil && file.ID > 0 {
 		return file.ResolvePrimary()
@@ -101,9 +101,9 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			continue
 		}
 
-		deleted := Now()
+		deleted := gorm.DeletedAt{Time: Now(), Valid: true}
 
-		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
+		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = FALSE WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
 		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
 
 		switch DbDialect() {
@@ -119,15 +119,15 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			log.Warnf("sql: unsupported dialect %s", DbDialect())
 		}
 
-		merge.DeletedAt = &deleted
+		merge.DeletedAt = deleted
 		merge.PhotoQuality = -1
 
 		merged = append(merged, merge)
 	}
 
 	if original.ID != m.ID {
-		deleted := Now()
-		m.DeletedAt = &deleted
+		deleted := gorm.DeletedAt{Time: Now(), Valid: true}
+		m.DeletedAt = deleted
 		m.PhotoQuality = -1
 	}
 

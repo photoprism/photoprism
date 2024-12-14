@@ -447,7 +447,7 @@ CREATE TABLE `files` (
   `file_color_profile` varbinary(64) DEFAULT NULL,
   `file_main_color` varbinary(16) DEFAULT NULL,
   `file_colors` varbinary(18) DEFAULT NULL,
-  `File_luminance` varbinary(18) DEFAULT NULL,
+  `file_luminance` varbinary(18) DEFAULT NULL,
   `file_diff` int(11) DEFAULT -1,
   `file_chroma` smallint(6) DEFAULT -1,
   `file_software` varchar(64) DEFAULT NULL,

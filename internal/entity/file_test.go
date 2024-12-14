@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -103,7 +104,7 @@ func TestFile_ShareFileName(t *testing.T) {
 }
 
 func TestFile_Changed(t *testing.T) {
-	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+	var deletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
 	t.Run("different modified times", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		d := time.Date(2020, 01, 15, 0, 0, 0, 0, time.UTC)
@@ -120,27 +121,27 @@ func TestFile_Changed(t *testing.T) {
 		assert.Equal(t, false, file.Changed(500, d))
 	})
 	t.Run("deleted", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: deletedAt}
 		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, false, file.Changed(500, d))
 	})
 }
 
 func TestFile_Missing(t *testing.T) {
-	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+	var deletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
 
 	t.Run("deleted", func(t *testing.T) {
-		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: deletedAt}
 		assert.Equal(t, true, file.Missing())
 	})
 
 	t.Run("missing", func(t *testing.T) {
-		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: gorm.DeletedAt{Valid: false}}
 		assert.Equal(t, true, file.Missing())
 	})
 
 	t.Run("not_missing", func(t *testing.T) {
-		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: gorm.DeletedAt{Valid: false}}
 		assert.Equal(t, false, file.Missing())
 	})
 }
@@ -152,9 +153,15 @@ func TestFile_Create(t *testing.T) {
 		assert.Error(t, file.Create())
 	})
 	t.Run("file already exists", func(t *testing.T) {
+		newPhoto := &Photo{ID: 123} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		file := &File{PhotoID: 123, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		assert.Nil(t, file.Create())
+		newID := file.ID
 		assert.Error(t, file.Create())
+		UnscopedDb().Where("id = ?", newID).Delete(&File{})
+		UnscopedDb().Delete(newPhoto)
 	})
 	t.Run("Success", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
@@ -244,7 +251,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 
 		var files Files
 
-		if err := Db().Where("photo_id = ? AND file_video = 1", file.PhotoID).Find(&files).Error; err != nil {
+		if err := Db().Where("photo_id = ? AND file_video = TRUE", file.PhotoID).Find(&files).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -259,6 +266,9 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 
 func TestFile_Update(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeUpdated", FileRoot: "", PhotoID: 5678}
 
 		err := file.Save()
@@ -275,6 +285,9 @@ func TestFile_Update(t *testing.T) {
 			t.Fatal(err2)
 		}
 		assert.Equal(t, "Happy", file.FileName)
+
+		UnscopedDb().Delete(file)
+		UnscopedDb().Delete(newPhoto)
 	})
 }
 
@@ -374,6 +387,9 @@ func TestFile_SetProjection(t *testing.T) {
 
 func TestFile_Delete(t *testing.T) {
 	t.Run("permanently", func(t *testing.T) {
+		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBePermanentlyDeleted", FileRoot: "", PhotoID: 5678}
 
 		err := file.Save()
@@ -386,8 +402,12 @@ func TestFile_Delete(t *testing.T) {
 		err2 := file.Delete(true)
 
 		assert.Nil(t, err2)
+		UnscopedDb().Delete(newPhoto)
 	})
 	t.Run("not permanently", func(t *testing.T) {
+		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeDeleted", FileRoot: "", PhotoID: 5678}
 
 		err := file.Save()
@@ -400,6 +420,7 @@ func TestFile_Delete(t *testing.T) {
 		err2 := file.Delete(false)
 
 		assert.Nil(t, err2)
+		newPhoto.DeletePermanently()
 	})
 }
 
@@ -477,25 +498,42 @@ func TestFile_DownloadName(t *testing.T) {
 
 func TestFile_Undelete(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		photo := &Photo{}
+		err := photo.Create()
+		assert.NoError(t, err)
+		file := &File{Photo: photo, FileType: "jpg", FileSize: 500}
+		err = file.Create()
+		assert.NoError(t, err)
 		assert.Equal(t, nil, file.Purge())
 		assert.Equal(t, true, file.FileMissing)
-		err := file.Undelete()
+
+		err = file.Undelete()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+		UnscopedDb().Delete(photo.Details)
+		UnscopedDb().Delete(file)
+		UnscopedDb().Delete(photo)
 	})
 	t.Run("file not missing", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		photo := &Photo{}
+		err := photo.Create()
+		assert.NoError(t, err)
+		file := &File{Photo: photo, FileType: "jpg", FileSize: 500}
+		err = file.Create()
+		assert.NoError(t, err)
 		assert.Equal(t, false, file.FileMissing)
-		err := file.Undelete()
+		err = file.Undelete()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+		UnscopedDb().Delete(photo.Details)
+		UnscopedDb().Delete(file)
+		UnscopedDb().Delete(photo)
 	})
 }
 
@@ -560,7 +598,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 
 		p := m.RelatedPhoto()
 
@@ -574,7 +612,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "x/y/newName.jpg", m.FileName)
 		assert.Equal(t, "newRoot", m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 		assert.Equal(t, "x/y", p.PhotoPath)
 		assert.Equal(t, "newBase", p.PhotoName)
 
@@ -585,7 +623,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 		assert.Equal(t, "2790/07", p.PhotoPath)
 		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
 	})
@@ -861,5 +899,26 @@ func TestFile_SetOrientation(t *testing.T) {
 		m.SetOrientation(-1, SrcManual)
 		assert.Equal(t, 8, m.Orientation())
 		assert.Equal(t, "", m.FileOrientationSrc)
+	})
+}
+
+func TestFile_MissingPhotoID(t *testing.T) {
+	t.Run("No PhotoID or Photo", func(t *testing.T) {
+		file := File{}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
+	})
+	t.Run("No PhotoID and Photo.ID = 0", func(t *testing.T) {
+		file := File{Photo: &Photo{ID: 0}}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
+	})
+	t.Run("PhotoID = 0 and Photo.ID = 0", func(t *testing.T) {
+		file := File{PhotoID: 0, Photo: &Photo{ID: 0}}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
 	})
 }

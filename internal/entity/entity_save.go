@@ -23,6 +23,13 @@ func Save(m interface{}, keyNames ...string) (err error) {
 		return nil
 	}
 
+	// Use Create if there was a constraint violation
+	if strings.Contains(strings.ToLower(err.Error()), "constraint") {
+		if err = UnscopedDb().Create(m).Error; err == nil {
+			return nil
+		}
+	}
+
 	// Try again if database was locked, return otherwise.
 	if !strings.Contains(strings.ToLower(err.Error()), "lock") {
 		return err

@@ -13,14 +13,14 @@ const (
 
 // FileShare represents a one-to-many relation between File and Account for pushing files to remote services.
 type FileShare struct {
-	FileID     uint   `gorm:"primary_key;auto_increment:false"`
-	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
-	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
-	Status     string `gorm:"type:VARBINARY(16);"`
-	Error      string `gorm:"type:VARBINARY(512);"`
+	FileID     uint   `gorm:"primaryKey;autoIncrement:false"`
+	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false"`
+	RemoteName string `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false"`
+	Status     string `gorm:"type:bytes;size:16;"`
+	Error      string `gorm:"type:bytes;size:512;"`
 	Errors     int
-	File       *File
-	Account    *Service
+	File       *File    `gorm:"foreignKey:FileID"`
+	Account    *Service `gorm:"foreignKey:ServiceID"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

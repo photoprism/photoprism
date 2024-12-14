@@ -4,9 +4,9 @@ import "github.com/photoprism/photoprism/internal/event"
 
 // PhotoUser represents the user and group ownership of a Photo and the corresponding permissions.
 type PhotoUser struct {
-	UID     string `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"UID" yaml:"UID"`
-	UserUID string `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;index" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
-	TeamUID string `gorm:"type:VARBINARY(42);index" json:"TeamUID,omitempty" yaml:"TeamUID,omitempty"`
+	UID     string `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false" json:"UID" yaml:"UID"`
+	UserUID string `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;index" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	TeamUID string `gorm:"type:bytes;size:42;index" json:"TeamUID,omitempty" yaml:"TeamUID,omitempty"`
 	Perm    uint   `json:"Perm,omitempty" yaml:"Perm,omitempty"`
 }
 

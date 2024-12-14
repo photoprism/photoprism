@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -16,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/header"
 )
 
@@ -38,6 +40,14 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	caller := "internal/api/api_test.go/TestMain"
+	dbc, err := testextras.AcquireDBMutex(log, caller)
+	if err != nil {
+		log.Error("FAIL")
+		os.Exit(1)
+	}
+	defer testextras.UnlockDBMutex(dbc.Db())
+
 	// Init test config.
 	c := config.TestConfig()
 	get.SetConfig(c)
@@ -47,8 +57,11 @@ func TestMain(m *testing.M) {
 	limiter.Login = limiter.NewLimit(1, 10000)
 
 	// Run unit tests.
+	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
+	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 	os.Exit(code)
 }
 

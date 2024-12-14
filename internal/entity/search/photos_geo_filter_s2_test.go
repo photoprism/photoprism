@@ -33,7 +33,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 9)
+		assert.Equal(t, 9, len(photos))
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo

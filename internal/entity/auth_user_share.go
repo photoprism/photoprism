@@ -63,13 +63,13 @@ func (m UserShares) Contains(uid string) bool {
 
 // UserShare represents content shared with a user.
 type UserShare struct {
-	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
-	ShareUID  string     `gorm:"type:VARBINARY(42);primary_key;index;" json:"ShareUID" yaml:"ShareUID"`
-	LinkUID   string     `gorm:"type:VARBINARY(42);" json:"LinkUID,omitempty" yaml:"LinkUID,omitempty"`
+	UserUID   string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"UserUID"`
+	ShareUID  string     `gorm:"type:bytes;size:42;primaryKey;index;" json:"ShareUID" yaml:"ShareUID"`
+	LinkUID   string     `gorm:"type:bytes;size:42;" json:"LinkUID,omitempty" yaml:"LinkUID,omitempty"`
 	ExpiresAt *time.Time `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	Comment   string     `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm      uint       `json:"Perm,omitempty" yaml:"Perm,omitempty"`
-	RefID     string     `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
+	RefID     string     `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
 	CreatedAt time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"-"`
 }
@@ -159,7 +159,7 @@ func (m *UserShare) UpdateLink(link Link) error {
 	m.UpdatedAt = Now()
 	m.ExpiresAt = link.ExpiresAt()
 
-	values := Map{
+	values := map[string]interface{}{
 		"link_uid":   m.LinkUID,
 		"expires_at": m.ExpiresAt,
 		"comment":    m.Comment,

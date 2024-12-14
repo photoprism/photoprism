@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/maps"
@@ -23,13 +23,13 @@ type Countries []Country
 
 // Country represents a country location, used for labeling photos.
 type Country struct {
-	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
-	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
-	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
-	CountryDescription string `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CountryNotes       string `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	ID                 string `gorm:"type:bytes;size:2;primaryKey;" json:"ID" yaml:"ID"`
+	CountrySlug        string `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
+	CountryName        string `gorm:"size:160;" json:"Name" yaml:"Name,omitempty"`
+	CountryDescription string `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CountryNotes       string `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CountryPhoto       *Photo `json:"-" yaml:"-"`
-	CountryPhotoID     uint   `json:"-" yaml:"-"`
+	CountryPhotoID     *uint  `json:"-" yaml:"-"`
 	New                bool   `gorm:"-" json:"-" yaml:"-"`
 }
 
@@ -108,7 +108,7 @@ func FirstOrCreateCountry(m *Country) *Country {
 }
 
 // AfterCreate sets the New column used for database callback
-func (m *Country) AfterCreate(scope *gorm.Scope) error {
+func (m *Country) AfterCreate(scope *gorm.DB) error {
 	m.New = true
 	return nil
 }

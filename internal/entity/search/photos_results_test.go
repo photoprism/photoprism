@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestPhoto_Ids(t *testing.T) {
@@ -12,7 +13,7 @@ func TestPhoto_Ids(t *testing.T) {
 		ID:           1111198,
 		CreatedAt:    time.Time{},
 		UpdatedAt:    time.Time{},
-		DeletedAt:    &time.Time{},
+		DeletedAt:    gorm.DeletedAt{},
 		TakenAt:      time.Time{},
 		TakenAtLocal: time.Time{},
 		PhotoUID:     "ps6sg6be2lvl0o98",
@@ -55,7 +56,7 @@ func TestPhoto_Approve(t *testing.T) {
 			ID:           100028476,
 			CreatedAt:    time.Time{},
 			UpdatedAt:    time.Time{},
-			DeletedAt:    &time.Time{},
+			DeletedAt:    gorm.DeletedAt{},
 			TakenAt:      time.Time{},
 			TakenAtLocal: time.Time{},
 			TakenSrc:     "",
@@ -71,7 +72,7 @@ func TestPhoto_Approve(t *testing.T) {
 		}
 
 		assert.Equal(t, 3, r.PhotoQuality)
-		assert.Nil(t, r.DeletedAt)
+		assert.False(t, r.DeletedAt.Valid)
 		assert.NotNil(t, r.EditedAt)
 	})
 }
@@ -101,14 +102,14 @@ func TestPhoto_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Nil(t, r.DeletedAt)
+		assert.False(t, r.DeletedAt.Valid)
 	})
 	t.Run("Restore", func(t *testing.T) {
 		r := Photo{
 			ID:           100028476,
 			CreatedAt:    time.Time{},
 			UpdatedAt:    time.Time{},
-			DeletedAt:    &time.Time{},
+			DeletedAt:    gorm.DeletedAt{Time: time.Now(), Valid: true},
 			TakenAt:      time.Time{},
 			TakenAtLocal: time.Time{},
 			TakenSrc:     "",
@@ -117,7 +118,7 @@ func TestPhoto_Restore(t *testing.T) {
 			PhotoQuality: 2,
 		}
 
-		assert.NotNil(t, r.DeletedAt)
+		assert.True(t, r.DeletedAt.Valid)
 
 		err := r.Restore()
 
@@ -125,7 +126,7 @@ func TestPhoto_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Nil(t, r.DeletedAt)
+		assert.False(t, r.DeletedAt.Valid)
 	})
 }
 
@@ -193,7 +194,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		ID:               111111,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
+		DeletedAt:        gorm.DeletedAt{},
 		TakenAt:          time.Time{},
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -253,7 +254,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		ID:               22222,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
+		DeletedAt:        gorm.DeletedAt{},
 		TakenAt:          time.Time{},
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -324,7 +325,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 		ID:               111111,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
+		DeletedAt:        gorm.DeletedAt{},
 		TakenAt:          time.Time{},
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -384,7 +385,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 		ID:               22222,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
+		DeletedAt:        gorm.DeletedAt{},
 		TakenAt:          time.Time{},
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -452,7 +453,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
-			DeletedAt:        &time.Time{},
+			DeletedAt:        gorm.DeletedAt{},
 			TakenAt:          time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
@@ -516,7 +517,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
-			DeletedAt:        &time.Time{},
+			DeletedAt:        gorm.DeletedAt{},
 			TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenAtLocal:     time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
@@ -581,7 +582,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
-			DeletedAt:        &time.Time{},
+			DeletedAt:        gorm.DeletedAt{},
 			TakenAt:          time.Date(2022, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenAtLocal:     time.Date(2022, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",

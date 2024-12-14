@@ -2,8 +2,8 @@ package entity
 
 // PhotoKeyword represents the many-to-many relation between Photo and Keyword
 type PhotoKeyword struct {
-	PhotoID   uint `gorm:"primary_key;auto_increment:false"`
-	KeywordID uint `gorm:"primary_key;auto_increment:false;index"`
+	PhotoID   uint `gorm:"primaryKey;autoIncrement:false"`
+	KeywordID uint `gorm:"primaryKey;autoIncrement:false"`
 }
 
 // TableName returns the entity table name.

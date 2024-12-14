@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -22,18 +22,18 @@ type Links []Link
 
 // Link represents a link to share content.
 type Link struct {
-	LinkUID     string    `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID    string    `gorm:"type:VARBINARY(42);unique_index:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
-	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
-	LinkToken   string    `gorm:"type:VARBINARY(160);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
+	LinkUID     string    `gorm:"type:bytes;size:42;primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	ShareUID    string    `gorm:"type:bytes;size:42;uniqueIndex:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
+	ShareSlug   string    `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug,omitempty"`
+	LinkToken   string    `gorm:"type:bytes;size:160;uniqueIndex:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`
 	HasPassword bool      `json:"VerifyPassword" yaml:"VerifyPassword,omitempty"`
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm        uint      `json:"Perm,omitempty" yaml:"Perm,omitempty"`
-	RefID       string    `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
-	CreatedBy   string    `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
+	RefID       string    `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
+	CreatedBy   string    `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
@@ -44,17 +44,19 @@ func (Link) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Link) BeforeCreate(scope *gorm.Scope) error {
+func (m *Link) BeforeCreate(scope *gorm.DB) error {
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(LinkPrefix)
-		Log("link", "set ref id", scope.SetColumn("RefID", m.RefID))
+		scope.Statement.SetColumn("RefID", m.RefID)
+		Log("link", "set ref id", scope.Error)
 	}
 
 	if rnd.IsUnique(m.LinkUID, LinkUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
+	scope.Statement.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
+	return scope.Error
 }
 
 // NewLink creates a sharing link.

@@ -8,6 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 )
 
 var lensMutex = sync.Mutex{}
@@ -17,17 +19,17 @@ type Lenses []Lens
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	LensSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
-	LensName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
-	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
-	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
-	LensDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	LensNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	CreatedAt       time.Time  `json:"-" yaml:"-"`
-	UpdatedAt       time.Time  `json:"-" yaml:"-"`
-	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
+	ID              uint           `gorm:"primaryKey;" json:"ID" yaml:"ID"`
+	LensSlug        string         `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"Slug,omitempty"`
+	LensName        string         `gorm:"size:160;" json:"Name" yaml:"Name"`
+	LensMake        string         `gorm:"size:160;" json:"Make" yaml:"Make,omitempty"`
+	LensModel       string         `gorm:"size:160;" json:"Model" yaml:"Model,omitempty"`
+	LensType        string         `gorm:"size:100;" json:"Type" yaml:"Type,omitempty"`
+	LensDescription string         `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	LensNotes       string         `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CreatedAt       time.Time      `json:"-" yaml:"-"`
+	UpdatedAt       time.Time      `json:"-" yaml:"-"`
+	DeletedAt       gorm.DeletedAt `sql:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -152,4 +154,16 @@ func (m *Lens) String() string {
 // Unknown returns true if the lens is not a known make or model.
 func (m *Lens) Unknown() bool {
 	return m.LensSlug == "" || m.LensSlug == UnknownLens.LensSlug
+}
+
+// ScopedSearchFirstLens populates lens with the results of a Where(query, values) excluding soft delete records
+func ScopedSearchFirstLens(lens *Lens, query string, values ...interface{}) (tx *gorm.DB) {
+	// Preload related entities if a matching record is found.
+	stmt := Db()
+
+	tempLens := &Lens{}
+	if tx = stmt.Where(query, values...).First(tempLens); tx.Error == nil {
+		deepcopier.Copy(tempLens).To(lens)
+	}
+	return tx
 }

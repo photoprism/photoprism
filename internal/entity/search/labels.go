@@ -78,11 +78,11 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 	}
 
 	if f.Favorite {
-		s = s.Where("labels.label_favorite = 1")
+		s = s.Where("labels.label_favorite = TRUE")
 	}
 
 	if !f.All {
-		s = s.Where("labels.label_priority >= 0 OR labels.label_favorite = 1")
+		s = s.Where("labels.label_priority >= 0 OR labels.label_favorite = TRUE")
 	}
 
 	if result := s.Scan(&results); result.Error != nil {
