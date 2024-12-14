@@ -15,7 +15,7 @@ require (
 	github.com/gin-contrib/gzip v1.0.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217
-	github.com/google/open-location-code/go v0.0.0-20241206115931-b6937486c621
+	github.com/google/open-location-code/go v0.0.0-20241213145606-bf601ad90a45
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.14.0
 	github.com/jinzhu/gorm v1.9.16
@@ -49,7 +49,7 @@ require (
 )
 
 require (
-	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
+	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
 	golang.org/x/image v0.23.0
 )
 
