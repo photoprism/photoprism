@@ -1,42 +1,39 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
-    <v-card>
-      <v-card-text class="dense mt-2">
-        <v-row dense>
-          <v-col cols="3" class="text-left">
-            <v-icon size="60" color="surface-variant">mdi-image-album</v-icon>
-          </v-col>
-          <v-col cols="9" class="text-left" align-self="center">
-            <v-combobox
-              ref="input"
-              v-model="album"
-              autocomplete="off"
-              :hint="$gettext('Album Name')"
-              :items="items"
-              :loading="loading"
-              hide-no-data
-              hide-details
-              return-object
-              item-title="Title"
-              item-value="UID"
-              :label="$gettext('Album Name')"
-              class="input-album"
-              @keyup.enter.native="confirm"
-            >
-            </v-combobox>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
-          <translate>Cancel</translate>
-        </v-btn>
-        <v-btn variant="flat" color="primary-button" class="action-confirm text-white" @click.stop="confirm">
-          <span v-if="typeof album === 'object'">{{ labels.addToAlbum }}</span>
-          <span v-else>{{ labels.createAlbum }}</span>
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+  <v-dialog :model-value="show" persistent max-width="390" class="p-photo-album-dialog" @keydown.esc="cancel">
+    <v-form ref="form" validate-on="blur" accept-charset="UTF-8" @submit.prevent="confirm">
+      <v-card>
+        <v-card-title class="d-flex justify-start align-center ga-3">
+          <v-icon icon="mdi-image-album" size="28" color="primary"></v-icon>
+          <h6 class="text-h6"><translate key="Add to album">Add to album</translate></h6>
+        </v-card-title>
+        <v-card-text>
+          <v-combobox
+            ref="input"
+            v-model="album"
+            autocomplete="off"
+            :placeholder="$gettext('Select albums or create a new one')"
+            :items="items"
+            :loading="loading"
+            hide-no-data
+            hide-details
+            return-object
+            item-title="Title"
+            item-value="UID"
+            class="input-album"
+            @keyup.enter.native="confirm"
+          >
+          </v-combobox>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
+            <translate>Cancel</translate>
+          </v-btn>
+          <v-btn :disabled="!album" variant="flat" color="primary-button" class="action-confirm text-white" @click.stop="confirm">
+            <translate>Confirm</translate>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-form>
   </v-dialog>
 </template>
 <script>

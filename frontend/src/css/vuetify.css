@@ -29,6 +29,7 @@ body.dark-theme {
 .v-dialog>.v-overlay__content>form>.v-card>.v-card-title {
     padding: 0;
     margin: 22px 26px 18px;
+    white-space: normal;
 }
 
 .v-dialog>.v-overlay__content>.v-card>.v-card-title h6,
