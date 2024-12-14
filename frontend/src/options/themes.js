@@ -1,38 +1,9 @@
 import { $gettext, T } from "common/vm";
+import { style, colors, variables } from "ui";
 
-/* Theme Styles */
+/* Theme Definitions */
 
-let variables = {
-  "btn-height": "32px",
-  "table-row-height": "44px",
-  "table-header-height": "44px",
-  "border-color": "#FFFFFF",
-  "border-opacity": 0.05,
-  "high-emphasis-opacity": 0.96,
-  "medium-emphasis-opacity": 0.88,
-  "label-opacity": 0.67,
-  "disabled-opacity": 0.75,
-  "idle-opacity": 0.1,
-  "hover-opacity": 0.019,
-  "focus-opacity": 0.022,
-  "selected-opacity": 0.08,
-  "activated-opacity": 0,
-  "pressed-opacity": 0.16,
-  "dragged-opacity": 0.08,
-  "overlay-color": "#121212",
-  "overlay-opacity": 0.42,
-  "theme-kbd": "#212529",
-  "theme-on-kbd": "#FFFFFF",
-  "theme-code": "#343434",
-  "theme-on-code": "#CCCCCC",
-};
-
-export const variations = {
-  colors: ["primary", "secondary", "surface", "navigation"],
-  lighten: 2,
-  darken: 1,
-};
-
+// TODO: Make sure all themes have a button and table color.
 let themes = {
   default: {
     dark: true,
@@ -43,11 +14,10 @@ let themes = {
       surface: "#161718",
       "on-surface": "#ffffff",
       "surface-bright": "#333333",
-      "surface-light": "#1c1d1e",
       "surface-variant": "#7E4FE3",
       "on-surface-variant": "#f6f7e8",
       card: "#171718",
-      table: "#1F2022", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
+      table: "#242426", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
       button: "#1D1E1F",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
@@ -71,7 +41,6 @@ let themes = {
       navigation: "#141417",
       "navigation-home": "#0e0f10",
     },
-    variables,
   },
   login: {
     dark: false,
@@ -82,7 +51,6 @@ let themes = {
       surface: "#fafafa",
       "on-surface": "#333333",
       "surface-bright": "#fafafa",
-      "surface-light": "#1c1d1e",
       "surface-variant": "#00a6a9",
       "on-surface-variant": "#c8e3e7",
       card: "#505050",
@@ -406,11 +374,14 @@ let themes = {
       background: "#f7f8fa",
       surface: "#e4e8f0",
       "on-surface": "#1e1e1f",
+      "surface-bright": "#cbced6",
+      "surface-variant": "#4ca0b8",
+      "on-surface-variant": "#f6f7e8",
       card: "#ECEFF4",
+      table: "#ECEFF4",
       button: "#d8dce4",
       primary: "#4ca0b8",
       "primary-button": "#519fb6",
-      "surface-variant": "#4ca0b8",
       secondary: "#e2e7ee",
       "secondary-light": "#eceff4",
       accent: "#F2F5FA",
@@ -447,11 +418,16 @@ let themes = {
     colors: {
       background: "#e5e4e2",
       surface: "#e5e4e2",
-      card: "#cdccca",
+      "on-surface": "#000000",
+      card: "#a8a8a8",
+      button: "#505557",
+      table: "#dddcda",
       primary: "#c8bdb1",
-      "primary-button": "#353839",
-      "surface-variant": "#353839",
+      "primary-button": "#393c3d",
+      "surface-variant": "#a39a90",
+      "on-surface-variant": "#656565",
       secondary: "#a8a8a8",
+      "on-secondary": "#000000",
       "secondary-light": "#cdccca",
       accent: "#656565",
       error: "#e57373",
@@ -566,7 +542,15 @@ let themes = {
   },
 };
 
-/* Available Themes */
+/* Automatically Generated Theme Color variations */
+
+export const variations = {
+  colors: ["primary", "secondary", "surface", "navigation"],
+  lighten: 2,
+  darken: 1,
+};
+
+/* Themes Available for Selection in Settings > General */
 
 let options = [
   {
@@ -646,49 +630,61 @@ let options = [
   },
 ];
 
-/* Theme Functions */
+/* Theme Helper Functions */
 
-// Returns an object containing all themes for use with Vuetify.
+// All returns an object containing all defined themes for use with Vuetify.
 export const All = () => {
   let result = [];
 
   for (let k in themes) {
     if (themes.hasOwnProperty(k)) {
+      // Get theme definition.
       const theme = themes[k];
 
+      // Skip themes without a name.
       if (!theme["name"]) {
         continue;
       }
 
+      // Get theme style (dark, light).
+      const s = style(theme);
+
+      // Add theme definition with presets.
       result[theme.name] = {
         dark: !!theme.dark,
-        colors: theme.colors ? theme.colors : {},
-        variables: theme.variables ? { ...variables, ...theme.variables } : variables,
+        colors: theme.colors ? { ...colors[s], ...theme.colors } : colors[s],
+        variables: theme.variables ? { ...variables[s], ...theme.variables } : variables[s],
       };
-
-      // TODO: Make sure all themes have a button and table color, so this workaround is not needed anymore.
-      if (typeof result[theme.name].colors.button === "undefined") {
-        result[theme.name].colors.button = result[theme.name].colors["secondary-light"];
-      }
-      if (typeof result[theme.name].colors.table === "undefined") {
-        result[theme.name].colors.table = result[theme.name].colors["card"];
-      }
     }
   }
 
+  // Return all themes with dark/light presets applied.
   return result;
 };
 
-// Returns a theme by name.
+// Get returns a theme by name.
 export const Get = (name) => {
   if (typeof themes[name] === "undefined") {
-    return themes[options[0].value];
+    name = options[0].value;
   }
 
-  return themes[name];
+  // Get theme definition.
+  const theme = themes[name];
+
+  // Get theme style (dark, light).
+  const s = style(theme);
+
+  // Return theme definition with dark/light presets applied.
+  return {
+    dark: !!theme.dark,
+    title: theme.title ? theme.title : theme.name,
+    name: theme.name,
+    colors: theme.colors ? { ...colors[s], ...theme.colors } : colors[s],
+    variables: theme.variables ? { ...variables[s], ...theme.variables } : variables[s],
+  };
 };
 
-// Adds or replaces a theme by name.
+// Set adds or replaces a theme by name.
 export const Set = (name, val) => {
   if (typeof themes[name] === "undefined") {
     options.push({
@@ -701,7 +697,7 @@ export const Set = (name, val) => {
   themes[name] = val;
 };
 
-// Removes a theme by name.
+// Remove deletes a theme by name.
 export const Remove = (name) => {
   delete themes[name];
   const i = options.findIndex((el) => el.value === name);
@@ -710,7 +706,7 @@ export const Remove = (name) => {
   }
 };
 
-// Returns translated theme options.
+// Translated returns theme selection options with the current locale.
 export const Translated = () => {
   return options.map((v) => {
     if (v.disabled) {

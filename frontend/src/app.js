@@ -43,7 +43,7 @@ import { config, session } from "app/session";
 import { Settings } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
-import { createApp, ref } from "vue";
+import { createApp } from "vue";
 import { createVuetify } from "vuetify";
 import VueLuxon from "vue-luxon";
 import * as themes from "options/themes";
