@@ -32,8 +32,8 @@
           </button>
 
           <button v-if="canLike" class="pswp__button action-like hidden-shared-only" style="background: none" :title="$gettext('Like')" @click.exact="onLike">
-            <v-icon v-if="item.Favorite" size="16" color="white">mdi-heart</v-icon>
-            <v-icon v-else size="16" color="white">mdi-heart-outline</v-icon>
+            <v-icon v-if="item.Favorite" icon="mdi-star" size="19" color="white"></v-icon>
+            <v-icon v-else icon="mdi-star-outline" size="19" color="white"></v-icon>
           </button>
 
           <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')"></button>

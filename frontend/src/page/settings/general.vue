@@ -66,7 +66,7 @@
                 density="compact"
                 :label="$gettext('Moments')"
                 :hint="$gettext('Generate albums of special moments, journeys, and places.')"
-                prepend-icon="mdi-star"
+                prepend-icon="mdi-compass"
                 persistent-hint
                 @update:model-value="onChange"
               >

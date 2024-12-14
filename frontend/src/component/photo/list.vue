@@ -20,7 +20,7 @@
       </v-alert>
     </div>
     <div v-else class="search-results photo-results list-view">
-      <div :class="$vuetify.display.smAndDown ? 'v-table--density-compact' : 'v-table--density-default'" class="v-table v-theme--default v-table--density-default v-table v-table--hover v-theme--default v-datatable">
+      <div :class="$vuetify.display.smAndDown ? 'v-table--density-compact' : 'v-table--density-default'" class="v-table v-table--density-default v-table v-table--hover v-datatable">
         <div class="v-table__wrapper">
           <table>
             <thead>
@@ -99,12 +99,12 @@
 
                     <template v-else>
                       <v-btn v-if="hidePrivate" icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-private" @click.stop.prevent="photo.togglePrivate()">
-                        <v-icon v-if="photo.Private" color="surface-variant" class="select-on">mdi-lock</v-icon>
-                        <v-icon v-else color="surface-bright" class="select-off">mdi-lock-open</v-icon>
+                        <v-icon v-if="photo.Private" icon="mdi-lock" color="surface-variant" class="select-on"></v-icon>
+                        <v-icon v-else icon="mdi-lock-open-outline" color="surface-variant" class="select-off opacity-40"></v-icon>
                       </v-btn>
                       <v-btn icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-favorite" @click.stop.prevent="photo.toggleLike()">
-                        <v-icon v-if="photo.Favorite" color="surface-variant" :data-uid="photo.UID" class="select-on">mdi-heart</v-icon>
-                        <v-icon v-else color="surface-bright" :data-uid="photo.UID" class="select-off">mdi-heart-outline</v-icon>
+                        <v-icon v-if="photo.Favorite" icon="mdi-star" color="surface-variant" :data-uid="photo.UID" class="select-on"></v-icon>
+                        <v-icon v-else icon="mdi-star-outline" color="surface-variant opacity-40" :data-uid="photo.UID" class="select-off"></v-icon>
                       </v-btn>
                     </template>
                   </div>

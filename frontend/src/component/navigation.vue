@@ -212,11 +212,11 @@
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('favorites')" :to="{ name: 'favorites' }" variant="text" class="nav-favorites" :ripple="false" @click.stop="">
-              <v-icon class="ma-auto">mdi-heart</v-icon>
+              <v-icon class="ma-auto">mdi-star</v-icon>
             </v-list-item>
             <v-list-item v-else-if="!isMini && $config.feature('favorites')" :to="{ name: 'favorites' }" variant="text" class="nav-favorites" :ripple="false" @click.stop="">
               <v-list-item-title class="nav-menu-item">
-                <v-icon>mdi-heart</v-icon>
+                <v-icon>mdi-star</v-icon>
                 <p class="nav-item-title">
                   <translate key="Favorites">Favorites</translate>
                 </p>
@@ -227,11 +227,11 @@
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
-              <v-icon class="ma-auto">mdi-star</v-icon>
+              <v-icon class="ma-auto">mdi-compass</v-icon>
             </v-list-item>
             <v-list-item v-else-if="!isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
               <v-list-item-title class="nav-menu-item">
-                <v-icon>mdi-star</v-icon>
+                <v-icon>mdi-compass</v-icon>
                 <p class="nav-item-title">
                   <translate key="Moments">Moments</translate>
                 </p>
