@@ -238,24 +238,59 @@ func (m *File) OriginalBase(seq int) string {
 
 // ShareBase returns a meaningful file name for sharing.
 func (m *File) ShareBase(seq int) string {
+	// Return fallback share name if the file hash is empty.
+	if len(m.FileHash) < 8 {
+		return fmt.Sprintf("%s.%s", rnd.UUID(), m.FileType)
+	}
+
 	photo := m.RelatedPhoto()
 
+	// Return fallback share name if the related photo could not be found.
 	if photo == nil {
 		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
-	} else if len(m.FileHash) < 8 {
-		return fmt.Sprintf("%s.%s", rnd.UUID(), m.FileType)
-	} else if photo.TakenAtLocal.IsZero() || photo.PhotoTitle == "" {
-		return fmt.Sprintf("%s.%s", m.FileHash, m.FileType)
 	}
 
-	name := txt.Title(slug.MakeLang(photo.PhotoTitle, "en"))
-	taken := photo.TakenAtLocal.Format("20060102-150405")
+	var (
+		takenAt   time.Time
+		fileTitle string
+	)
 
+	// Get time when the photo was taken.
+	if !photo.TakenAtLocal.IsZero() {
+		takenAt = photo.TakenAtLocal
+	} else if !photo.TakenAt.IsZero() {
+		takenAt = photo.TakenAt
+	} else if !m.PhotoTakenAt.IsZero() {
+		takenAt = m.PhotoTakenAt
+	} else {
+		takenAt = time.Unix(m.ModTime, 0)
+	}
+
+	// Get title to use in the share file name.
+	if photo.PhotoTitle != "" {
+		fileTitle = photo.PhotoTitle
+	} else if m.OriginalName != "" && fs.NonCanonical(m.OriginalName) {
+		fileTitle = m.OriginalName
+	} else if m.FileName != "" && fs.NonCanonical(m.FileName) {
+		fileTitle = m.FileName
+	} else if photo.OriginalName != "" && fs.NonCanonical(photo.OriginalName) {
+		fileTitle = photo.OriginalName
+	} else if photo.PhotoName != "" && fs.NonCanonical(photo.PhotoName) {
+		fileTitle = photo.PhotoName
+	} else {
+		fileTitle = m.FileHash
+	}
+
+	// Compose a file share name based on time and title.
+	fileTime := takenAt.Format("20060102-150405")
+	fileTitle = txt.Title(slug.MakeLang(fileTitle, "en"))
+
+	// Append file sequence number if requested.
 	if seq > 0 {
-		return fmt.Sprintf("%s-%s (%d).%s", taken, name, seq, m.FileType)
+		return fmt.Sprintf("%s-%s (%d).%s", fileTime, fileTitle, seq, m.FileType)
 	}
 
-	return fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
+	return fmt.Sprintf("%s-%s.%s", fileTime, fileTitle, m.FileType)
 }
 
 // Changed returns true if new and old file size or modified time are different.

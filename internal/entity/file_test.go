@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/colors"
 	"github.com/photoprism/photoprism/pkg/media/projection"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFile_RegenerateIndex(t *testing.T) {
@@ -53,52 +54,63 @@ func TestFirstFileByHash(t *testing.T) {
 }
 
 func TestFile_ShareFileName(t *testing.T) {
-	t.Run("photo with title", func(t *testing.T) {
+	t.Run("WithPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareBase(0)
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+		assert.Equal(t, "20190115-000000-Berlin-Morning-Mood.jpg", filename)
 		assert.Contains(t, filename, fs.ExtJPEG)
 	})
-	t.Run("photo without title", func(t *testing.T) {
+	t.Run("WithPhotoTitleSequence", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
+
+		filename := file.ShareBase(2)
+
+		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+		assert.Equal(t, "20190115-000000-Berlin-Morning-Mood (2).jpg", filename)
+		assert.Contains(t, filename, fs.ExtJPEG)
+	})
+	t.Run("EmptyPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
 		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, filename, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg")
+		assert.Equal(t, "20190115-000000-E98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
-	t.Run("photo without photo", func(t *testing.T) {
+	t.Run("NoRelatedPhoto", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
+		assert.Equal(t, "19700101-000000-E98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
-	t.Run("file without photo", func(t *testing.T) {
+	t.Run("FileWithoutPhoto", func(t *testing.T) {
 		file := FileFixtures.Get("FileWithoutPhoto.mp4")
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, "pcad9a68fa6acc5c5ba965adf6ec465ca42fd916.mp4", filename)
+		assert.Equal(t, "20201206-020651-Filewithoutphoto-Mp4.mp4", filename)
 	})
-	t.Run("file hash < 8", func(t *testing.T) {
+	t.Run("ShortFileHash", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98"}
 
-		filename := file.ShareBase(0)
-
-		assert.NotContains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+		assert.True(t, rnd.IsUUID(fs.BasePrefix(file.ShareBase(0), true)))
+		assert.True(t, rnd.IsUUID(fs.BasePrefix(file.ShareBase(1), true)))
+		assert.True(t, rnd.IsUUID(fs.BasePrefix(file.ShareBase(2), true)))
 	})
-	t.Run("no file uid", func(t *testing.T) {
+	t.Run("EmptyFileUID", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileHash: "e98ijhyt"}
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, filename, "e98ijhyt.jpg")
+		assert.Equal(t, "19700101-000000-E98ijhyt.jpg", filename)
 	})
 }
 
