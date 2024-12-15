@@ -122,6 +122,15 @@
                   <!-- <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review | abbreviateCount }}</span> -->
                 </v-list-item>
 
+                <v-list-item v-if="canAccessPrivate" v-show="$config.feature('private')" to="/private" variant="text" class="nav-private" :ripple="false" @click.stop="">
+                  <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
+                    <translate key="Private">Private</translate>
+                  </v-list-item-title>
+                  <!-- TODO: fix filter -->
+                  <span v-show="config.count.private > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.private }}</span>
+                  <!-- <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review | abbreviateCount }}</span> -->
+                </v-list-item>
+
                 <v-list-item v-show="$config.feature('archive')" to="/archive" variant="text" class="nav-archive" :ripple="false" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate>Archive</translate>
@@ -226,21 +235,6 @@
               <!-- <span v-show="config.count.favorites > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.favorites | abbreviateCount }}</span> -->
             </v-list-item>
 
-            <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
-              <v-icon class="ma-auto">mdi-compass</v-icon>
-            </v-list-item>
-            <v-list-item v-else-if="!isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
-              <v-list-item-title class="nav-menu-item">
-                <v-icon>mdi-compass</v-icon>
-                <p class="nav-item-title">
-                  <translate key="Moments">Moments</translate>
-                </p>
-              </v-list-item-title>
-              <!-- TODO: fix filter -->
-              <span v-show="config.count.moments > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.moments }}</span>
-              <!-- <span v-show="config.count.moments > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments | abbreviateCount }}</span> -->
-            </v-list-item>
-
             <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'calendar' }" variant="text" class="nav-calendar" :ripple="false" @click.stop="">
               <v-icon class="ma-auto">mdi-calendar-range</v-icon>
             </v-list-item>
@@ -254,6 +248,21 @@
               <!-- TODO: fix filter -->
               <span v-show="config.count.months > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.months }}</span>
               <!-- <span v-show="config.count.months > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.months | abbreviateCount }}</span> -->
+            </v-list-item>
+
+            <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
+              <v-icon class="ma-auto">mdi-compass</v-icon>
+            </v-list-item>
+            <v-list-item v-else-if="!isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
+              <v-list-item-title class="nav-menu-item">
+                <v-icon>mdi-compass</v-icon>
+                <p class="nav-item-title">
+                  <translate key="Moments">Moments</translate>
+                </p>
+              </v-list-item-title>
+              <!-- TODO: fix filter -->
+              <span v-show="config.count.moments > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.moments }}</span>
+              <!-- <span v-show="config.count.moments > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isRestricted" v-show="$config.feature('places')" to="/states" variant="text" class="nav-states" :ripple="false" @click.stop="">
@@ -329,21 +338,6 @@
               <!-- TODO: fix filter -->
               <span v-show="config.count.folders > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.folders }}</span>
               <!-- <span v-show="config.count.folders > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.folders | abbreviateCount }}</span> -->
-            </v-list-item>
-
-            <v-list-item v-if="isMini && $config.feature('private')" to="/private" variant="text" class="nav-private" :ripple="false" @click.stop="">
-              <v-icon class="ma-auto">mdi-lock</v-icon>
-            </v-list-item>
-            <v-list-item v-else-if="!isMini && $config.feature('private')" to="/private" variant="text" class="nav-private" :ripple="false" @click.stop="">
-              <v-list-item-title class="nav-menu-item">
-                <v-icon>mdi-lock</v-icon>
-                <p class="nav-item-title">
-                  <translate key="Private">Private</translate>
-                </p>
-              </v-list-item-title>
-              <!-- TODO: fix filter -->
-              <span v-show="config.count.private > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.private }}</span>
-              <!-- <span v-show="config.count.private > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.private | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('library')" :to="{ name: 'library_index' }" variant="text" class="nav-library" :ripple="false" @click.stop="">

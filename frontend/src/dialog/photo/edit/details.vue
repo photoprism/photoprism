@@ -313,11 +313,11 @@
                 <v-btn color="button" variant="flat" class="action-close" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-                <v-btn color="primary-button" variant="flat" class="action-apply action-approve" @click.stop="save(false)">
+                <v-btn color="highlight" variant="flat" class="action-apply action-approve" @click.stop="save(false)">
                   <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                   <span v-else><translate>Apply</translate></span>
                 </v-btn>
-                <v-btn color="primary-button" variant="flat" class="action-done hidden-xs" @click.stop="save(true)">
+                <v-btn color="highlight" variant="flat" class="action-done hidden-xs" @click.stop="save(true)">
                   <translate>Done</translate>
                 </v-btn>
               </div>

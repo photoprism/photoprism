@@ -8,7 +8,7 @@
         <v-btn color="button" variant="flat" @click="close">
           <translate>Cancel</translate>
         </v-btn>
-        <v-btn color="primary-button" class="action-update-reload" variant="flat" @click="reload">
+        <v-btn color="highlight" class="action-update-reload" variant="flat" @click="reload">
           <translate>Reload</translate>
         </v-btn>
       </v-card-actions>

@@ -73,7 +73,7 @@
       </template>
     </v-toolbar>
 
-    <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" tile flat color="secondary-lighten-1">
+    <v-card v-show="searchExpanded" class="pa-0 page-toolbar-expanded" tile flat color="secondary-lighten-1">
       <v-card-text class="dense">
         <v-row dense>
           <v-col cols="12" sm="6" md="3" class="p-countries-select">

@@ -38,10 +38,10 @@
           </v-alert>
         </v-col>
         <v-col cols="12" class="pa-2">
-          <v-btn color="primary-button lighten-2" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy" @click.stop="reset">
+          <v-btn color="highlight lighten-2" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy" @click.stop="reset">
             <translate>Cancel</translate>
           </v-btn>
-          <v-btn color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" href="https://www.photoprism.app/contact" target="_blank" variant="flat">
+          <v-btn color="highlight" :block="$vuetify.display.xs" class="text-white ml-0" href="https://www.photoprism.app/contact" target="_blank" variant="flat">
             <translate>Contact Us</translate>
           </v-btn>
         </v-col>
@@ -56,14 +56,14 @@
           </p>
         </v-col>
         <v-col cols="12" class="d-flex grow pa-2">
-          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2 flex-grow-1" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy">
+          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="highlight lighten-2 flex-grow-1" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy">
             <translate>Manage Account</translate>
           </v-btn>
-          <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy" @click.stop.p.prevent="onRestart">
+          <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="highlight" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
           </v-btn>
-          <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy">
+          <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="highlight" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy">
             <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
             <v-icon v-else end>mdi-chevron-right</v-icon>
@@ -90,12 +90,12 @@
                 <translate>Compare Editions</translate>
               </v-btn>
 
-              <v-btn v-if="!form.token.length" color="primary-button" class="text-white ml-0 action-proceed" :block="$vuetify.display.xs" variant="flat" :disabled="busy" @click.stop="connect">
+              <v-btn v-if="!form.token.length" color="highlight" class="text-white ml-0 action-proceed" :block="$vuetify.display.xs" variant="flat" :disabled="busy" @click.stop="connect">
                 <translate>Register</translate>
                 <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
                 <v-icon v-else end>mdi-chevron-right</v-icon>
               </v-btn>
-              <v-btn v-else color="primary-button" :block="$vuetify.display.xs" class="text-white ml-0 action-activate" variant="flat" :disabled="busy || form.token.length !== tokenMask.length" @click.stop="activate">
+              <v-btn v-else color="highlight" :block="$vuetify.display.xs" class="text-white ml-0 action-activate" variant="flat" :disabled="busy || form.token.length !== tokenMask.length" @click.stop="activate">
                 <translate>Activate</translate>
                 <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
                 <v-icon v-else end>mdi-chevron-right</v-icon>

@@ -28,7 +28,7 @@
           <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
             <translate>Cancel</translate>
           </v-btn>
-          <v-btn :disabled="!album" variant="flat" color="primary-button" class="action-confirm text-white" @click.stop="confirm">
+          <v-btn :disabled="!album" variant="flat" color="highlight" class="action-confirm text-white" @click.stop="confirm">
             <translate>Confirm</translate>
           </v-btn>
         </v-card-actions>

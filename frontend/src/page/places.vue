@@ -703,7 +703,7 @@ export default {
 
             const counterBubble = document.createElement("div");
 
-            counterBubble.className = "counter-bubble primary-button theme--light";
+            counterBubble.className = "counter-bubble highlight theme--light";
             counterBubble.innerText = this.abbreviateCount(props.point_count);
 
             el.append(imageContainer);

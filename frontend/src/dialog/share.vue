@@ -49,7 +49,7 @@
                         </v-btn>
                       </v-col>
                       <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
-                        <v-btn variant="flat" color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
+                        <v-btn variant="flat" color="highlight" class="ma-0 compact action-save" @click.stop.exact="update(link)">
                           <translate>Save</translate>
                         </v-btn>
                       </v-col>

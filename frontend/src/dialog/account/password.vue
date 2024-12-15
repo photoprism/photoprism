@@ -73,7 +73,7 @@
           <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
             <translate>Cancel</translate>
           </v-btn>
-          <v-btn variant="flat" color="primary-button" class="action-confirm" :disabled="isDisabled()" @click.stop="onConfirm">
+          <v-btn variant="flat" color="highlight" class="action-confirm" :disabled="isDisabled()" @click.stop="onConfirm">
             <translate>Save</translate>
           </v-btn>
         </v-card-actions>

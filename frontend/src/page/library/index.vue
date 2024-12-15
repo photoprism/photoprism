@@ -58,7 +58,7 @@
             <translate>Cancel</translate>
           </v-btn>
 
-          <v-btn :disabled="busy || !ready" variant="flat" color="primary-button" class="action-index" @click.stop="startIndexing()">
+          <v-btn :disabled="busy || !ready" variant="flat" color="highlight" class="action-index" @click.stop="startIndexing()">
             <translate>Start</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
           </v-btn>

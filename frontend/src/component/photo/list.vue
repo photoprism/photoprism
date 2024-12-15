@@ -35,7 +35,7 @@
                 <th class="text-left hidden-sm-and-down">
                   {{ $gettext("Camera") }}
                 </th>
-                <th class="text-left hidden-xs">
+                <th class="text-left hidden-md-and-down">
                   {{ showName ? $gettext("Name") : $gettext("Location") }}
                 </th>
                 <th v-if="!isSharedView" class="text-center"></th>
@@ -43,19 +43,19 @@
             </thead>
             <tbody>
               <tr v-for="(photo, index) in photos" :key="photo.ID" ref="items" :data-index="index">
-                <td :data-uid="photo.UID" class="result" :class="photo.classes()">
-                  <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="image card"></div>
+                <td :data-uid="photo.UID" class="result text-center" :class="photo.classes()">
+                  <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="card preview"></div>
                   <div
                     v-else
                     :key="photo.Hash"
-                    :style="`background-image: url(${photo.thumbnailUrl('tile_50')})`"
-                    class="card clickable image"
+                    class="card clickable preview"
                     @touchstart="onMouseDown($event, index)"
                     @touchend.stop.prevent="onClick($event, index)"
                     @mousedown="onMouseDown($event, index)"
                     @contextmenu.stop="onContextMenu($event, index)"
                     @click.stop.prevent="onClick($event, index)"
                   >
+                    <div :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`" class="image" />
                     <button v-if="selectMode" class="input-select">
                       <i class="mdi mdi-check-circle select-on" />
                       <i class="mdi mdi-circle-outline select-off" />
@@ -68,18 +68,18 @@
                     </button>
                   </div>
                 </td>
-                <td class="p-photo-desc clickable" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
+                <td class="meta-data meta-title clickable" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   {{ photo.Title }}
                 </td>
-                <td class="p-photo-desc hidden-xs" :title="photo.getDateString()">
+                <td class="meta-data meta-date hidden-xs" :title="photo.getDateString()">
                   <button @click.stop.prevent="openDate(index)">
                     {{ photo.shortDateString() }}
                   </button>
                 </td>
-                <td class="p-photo-desc hidden-sm-and-down">
+                <td class="meta-data hidden-sm-and-down">
                   <button @click.stop.prevent="editPhoto(index)">{{ photo.CameraMake }} {{ photo.CameraModel }}</button>
                 </td>
-                <td class="p-photo-desc hidden-xs">
+                <td class="meta-data hidden-md-and-down">
                   <button v-if="filter.order === 'name'" :title="$gettext('Name')" @click.exact="downloadFile(index)">
                     {{ photo.FileName }}
                   </button>
@@ -90,21 +90,21 @@
                     {{ photo.locationInfo() }}
                   </span>
                 </td>
-                <td v-if="!isSharedView">
+                <td v-if="!isSharedView" class="text-center">
                   <div class="table-actions">
                     <template v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex">
-                      <div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" />
+                      <!-- div v-if="hidePrivate" class="v-btn v-btn--icon v-btn--small" / -->
                       <div class="v-btn v-btn--icon v-btn--small" />
                     </template>
 
                     <template v-else>
-                      <v-btn v-if="hidePrivate" icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-private" @click.stop.prevent="photo.togglePrivate()">
+                      <!-- v-btn v-if="hidePrivate" icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-private" @click.stop.prevent="photo.togglePrivate()">
                         <v-icon v-if="photo.Private" icon="mdi-lock" color="surface-variant" class="select-on"></v-icon>
                         <v-icon v-else icon="mdi-lock-open-outline" color="surface-variant" class="select-off opacity-40"></v-icon>
-                      </v-btn>
-                      <v-btn icon density="compact" variant="text" :ripple="false" :data-uid="photo.UID" class="input-favorite" @click.stop.prevent="photo.toggleLike()">
-                        <v-icon v-if="photo.Favorite" icon="mdi-star" color="surface-variant" :data-uid="photo.UID" class="select-on"></v-icon>
-                        <v-icon v-else icon="mdi-star-outline" color="surface-variant opacity-40" :data-uid="photo.UID" class="select-off"></v-icon>
+                      </v-btn -->
+                      <v-btn icon density="comfortable" variant="text" :ripple="false" :data-uid="photo.UID" class="input-favorite" @click.stop.prevent="photo.toggleLike()">
+                        <v-icon v-if="photo.Favorite" icon="mdi-star" color="favorite" :data-uid="photo.UID" class="select-on"></v-icon>
+                        <v-icon v-else icon="mdi-star-outline" color="surface" :data-uid="photo.UID" class="select-off"></v-icon>
                       </v-btn>
                     </template>
                   </div>

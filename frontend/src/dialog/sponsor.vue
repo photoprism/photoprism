@@ -12,10 +12,10 @@
         <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
           <translate>No thanks</translate>
         </v-btn>
-        <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions" target="_blank" variant="flat" color="primary-button" class="text-white action-about">
+        <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions" target="_blank" variant="flat" color="highlight" class="text-white action-about">
           <translate>Learn more</translate>
         </v-btn>
-        <v-btn v-else variant="flat" color="primary-button" class="text-white action-upgrade" @click.stop="upgrade">
+        <v-btn v-else variant="flat" color="highlight" class="text-white action-upgrade" @click.stop="upgrade">
           <translate>Upgrade Now</translate>
         </v-btn>
       </v-card-actions>

@@ -41,7 +41,7 @@
             <v-btn variant="flat" color="secondary-light" class="action-back" @click.stop="onBack">
               <translate>Back</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" :disabled="!password || password.length < 4" class="action-confirm" @click.stop="onConfirm">
+            <v-btn variant="flat" color="highlight" :disabled="!password || password.length < 4" class="action-confirm" @click.stop="onConfirm">
               <translate>Continue</translate>
             </v-btn>
           </v-card-actions>
@@ -74,10 +74,10 @@
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>
-            <v-btn v-if="appPasswordCopied" variant="flat" color="primary-button" :disabled="busy" class="action-done" @click.stop="onDone">
+            <v-btn v-if="appPasswordCopied" variant="flat" color="highlight" :disabled="busy" class="action-done" @click.stop="onDone">
               <translate>Done</translate>
             </v-btn>
-            <v-btn v-else variant="flat" color="primary-button" class="action-copy" @click.stop="onCopyAppPassword">
+            <v-btn v-else variant="flat" color="highlight" class="action-copy" @click.stop="onCopyAppPassword">
               <translate>Copy</translate>
             </v-btn>
           </v-card-actions>
@@ -104,7 +104,7 @@
             <v-btn variant="flat" color="button" class="action-cancel" @click.stop="onCancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate" @click.stop="onGenerate">
+            <v-btn variant="flat" color="highlight" :disabled="app.client_name === '' || app.scope === ''" class="action-generate" @click.stop="onGenerate">
               <translate>Generate</translate>
             </v-btn>
           </v-card-actions>
@@ -154,7 +154,7 @@
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" class="action-add" @click.stop="onAdd">
+            <v-btn variant="flat" color="highlight" class="action-add" @click.stop="onAdd">
               <translate>Add</translate>
             </v-btn>
           </v-card-actions>

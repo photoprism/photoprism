@@ -13,7 +13,7 @@
           offset="12"
       >
         <template #activator="{ props }">
-          <v-btn v-bind="props" icon size="52" color="primary-button" variant="elevated" density="comfortable" class="action-menu ma-5">
+          <v-btn v-bind="props" icon size="52" color="highlight" variant="elevated" density="comfortable" class="action-menu ma-5">
             <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>

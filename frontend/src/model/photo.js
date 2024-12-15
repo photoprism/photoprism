@@ -335,6 +335,29 @@ export class Photo extends RestModel {
     return DateTime.fromISO(takenAt).toUTC();
   });
 
+  getOriginalName() {
+    return this.generateOriginalName();
+  }
+
+  generateOriginalName = memoizeOne(() => {
+    let name = "";
+    const main = this.originalFile();
+
+    if (main) {
+      if (main.OriginalName) {
+        name = main.OriginalName;
+      } else {
+        name = main.Name;
+      }
+    }
+
+    if (!name) {
+      name = this.FileName;
+    }
+
+    return this.fileBase(name);
+  });
+
   baseName(truncate) {
     let result = this.fileBase(this.FileName ? this.FileName : this.mainFile().Name);
 
@@ -1119,7 +1142,9 @@ export class Photo extends RestModel {
   update() {
     const values = this.getValues(true);
 
-    if (values.Title) {
+    console.log("values", values);
+
+    if (typeof values.Title === "string") {
       values.TitleSrc = src.Manual;
     }
 
@@ -1127,7 +1152,7 @@ export class Photo extends RestModel {
       values.TypeSrc = src.Manual;
     }
 
-    if (values.Description) {
+    if (typeof values.Description === "string") {
       values.DescriptionSrc = src.Manual;
     }
 

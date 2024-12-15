@@ -73,7 +73,7 @@
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
-            <v-btn :disabled="busy" color="primary-button" class="text-white ml-0 mt-2 action-upload" variant="flat" @click.stop="onUploadDialog()">
+            <v-btn :disabled="busy" color="highlight" class="text-white ml-0 mt-2 action-upload" variant="flat" @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
               <v-icon :end="!rtl" :start="rtl">mdi-download</v-icon>
             </v-btn>

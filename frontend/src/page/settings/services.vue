@@ -59,7 +59,7 @@
             <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
           </v-btn>
 
-          <v-btn color="primary-button" class="compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">
+          <v-btn color="highlight" class="compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">
             <translate>Connect</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-plus</v-icon>
           </v-btn>

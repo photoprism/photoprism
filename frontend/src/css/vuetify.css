@@ -76,9 +76,9 @@ body.dark-theme {
     min-width: 68px;
 }
 
-.action-buttons .v-btn.bg-primary-button .v-btn__content,
-.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content,
-.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-primary-button .v-btn__content {
+.action-buttons .v-btn.bg-highlight .v-btn__content,
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-highlight .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-highlight .v-btn__content {
     min-width: 75px;
 }
 

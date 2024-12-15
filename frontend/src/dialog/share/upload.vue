@@ -35,10 +35,10 @@
         <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
           <translate>Cancel</translate>
         </v-btn>
-        <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" class="action-setup" @click.stop="setup">
+        <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="highlight" variant="flat" class="action-setup" @click.stop="setup">
           <translate>Setup</translate>
         </v-btn>
-        <v-btn v-else :disabled="noServices" color="primary-button" variant="flat" class="action-upload" @click.stop="confirm">
+        <v-btn v-else :disabled="noServices" color="highlight" variant="flat" class="action-upload" @click.stop="confirm">
           <translate>Upload</translate>
         </v-btn>
       </v-card-actions>

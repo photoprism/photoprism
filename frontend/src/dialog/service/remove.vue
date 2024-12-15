@@ -9,7 +9,7 @@
         <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
           <translate key="Cancel">Cancel</translate>
         </v-btn>
-        <v-btn variant="flat" color="primary-button" class="action-confirm" @click.stop="confirm">
+        <v-btn variant="flat" color="highlight" class="action-confirm" @click.stop="confirm">
           <translate key="Delete">Delete</translate>
         </v-btn>
       </v-card-actions>

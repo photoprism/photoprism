@@ -26,15 +26,14 @@
          re-layout all elements in the list when the children of one of them changes
         -->
         <div class="image-container">
-          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result image" />
+          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result preview" />
           <div
             v-else
             :key="photo.Hash"
             tile
             :data-id="photo.ID"
             :data-uid="photo.UID"
-            :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
-            :class="photo.classes().join(' ') + ' card result clickable image'"
+            :class="photo.classes().join(' ') + ' card result clickable preview'"
             :alt="photo.Title"
             :title="photo.Title"
             @contextmenu.stop="onContextMenu($event, index)"
@@ -45,11 +44,12 @@
             @mouseover="playLive(photo)"
             @mouseleave="pauseLive(photo)"
           >
-            <v-row v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
+            <div :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`" class="image" />
+            <div v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none" loop muted playsinline>
                 <source :src="photo.videoUrl()" />
               </video>
-            </v-row>
+            </div>
 
             <button
               v-if="photo.Type !== 'image' || photo.isStack()"

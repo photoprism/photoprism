@@ -44,7 +44,7 @@
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               <translate>Close</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" class="action-setup" :disabled="setupDisabled()" @click.stop="onSetup">
+            <v-btn variant="flat" color="highlight" class="action-setup" :disabled="setupDisabled()" @click.stop="onSetup">
               <translate>Setup</translate>
             </v-btn>
           </v-card-actions>
@@ -83,7 +83,7 @@
             <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn variant="flat" color="primary-button" class="action-confirm" :disabled="code.length !== 6" @click.stop="onConfirm">
+            <v-btn variant="flat" color="highlight" class="action-confirm" :disabled="code.length !== 6" @click.stop="onConfirm">
               <translate>Confirm</translate>
             </v-btn>
           </v-card-actions>
@@ -120,10 +120,10 @@
             <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn v-if="recoveryCodeCopied" variant="flat" color="primary-button" class="action-activate" @click.stop="onActivate">
+            <v-btn v-if="recoveryCodeCopied" variant="flat" color="highlight" class="action-activate" @click.stop="onActivate">
               <translate>Activate</translate>
             </v-btn>
-            <v-btn v-else variant="flat" color="primary-button" class="action-copy" @click.stop="onCopyRecoveryCode">
+            <v-btn v-else variant="flat" color="highlight" class="action-copy" @click.stop="onCopyRecoveryCode">
               <translate>Copy</translate>
             </v-btn>
           </v-card-actions>
@@ -164,7 +164,7 @@
             </v-row>
           </v-card-text>
           <v-card-actions>
-            <v-btn variant="flat" color="primary-button" class="action-deactivate" :disabled="setupDisabled()" @click.stop="onDeactivate">
+            <v-btn variant="flat" color="highlight" class="action-deactivate" :disabled="setupDisabled()" @click.stop="onDeactivate">
               <translate>Deactivate</translate>
             </v-btn>
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">

@@ -29,14 +29,14 @@
           <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
         </p>
         <p v-if="isSuperAdmin" class="text-center my-6">
-          <v-btn to="/upgrade" color="primary-button" class="text-white px-4 py-2 action-membership" rounded variant="flat">
+          <v-btn to="/upgrade" color="highlight" class="text-white px-4 py-2 action-membership" rounded variant="flat">
             <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
             <v-icon v-else end>mdi-chevron-right</v-icon>
           </v-btn>
         </p>
         <p v-else class="text-center my-6">
-          <v-btn href="https://link.photoprism.app/membership" target="_blank" color="primary-button" class="text-white px-4 py-2 action-membership" rounded variant="flat">
+          <v-btn href="https://link.photoprism.app/membership" target="_blank" color="highlight" class="text-white px-4 py-2 action-membership" rounded variant="flat">
             <translate>Learn more</translate>
             <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
             <v-icon v-else end>mdi-chevron-right</v-icon>
@@ -51,7 +51,7 @@
           <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
         </p>
         <p class="text-center my-6">
-          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button" class="text-white px-4 py-2 action-membership" rounded variant="flat">
+          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="highlight" class="text-white px-4 py-2 action-membership" rounded variant="flat">
             <translate>Manage Account</translate>
             <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
             <v-icon v-else end>mdi-chevron-right</v-icon>

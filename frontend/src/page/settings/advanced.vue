@@ -386,7 +386,7 @@
 
         <v-card-actions v-if="!config.disable.restart" class="pt-6 d-flex flex-wrap ga-2">
           <a id="restart"></a>
-          <v-btn color="primary-button" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
+          <v-btn color="highlight" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
             <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
           </v-btn>

@@ -226,9 +226,9 @@ export default class Util {
       case "wmv":
         return "Windows Media";
       case "svg":
-        return "Scalable Vector Graphics";
+        return "SVG";
       case "pdf":
-        return "Portable Document Format";
+        return "PDF";
       case "ai":
         return "Adobe Illustrator";
       case "ps":

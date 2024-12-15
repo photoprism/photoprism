@@ -38,19 +38,19 @@
                                 <translate>Actions</translate>
                               </td>
                               <td class="d-flex justify-start align-center ga-2">
-                                <v-btn v-if="features.download" density="comfortable" variant="flat" color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                                <v-btn v-if="features.download" density="comfortable" variant="flat" color="highlight" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
                                   <translate>Download</translate>
                                 </v-btn>
-                                <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
+                                <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" density="comfortable" variant="flat" color="highlight" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
                                   <translate>Primary</translate>
                                 </v-btn>
-                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" density="comfortable" variant="flat" color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" density="comfortable" variant="flat" color="highlight" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
                                   <translate>Unstack</translate>
                                 </v-btn>
-                                <v-btn v-if="features.delete && !file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
+                                <v-btn v-if="features.delete && !file.Primary" density="comfortable" variant="flat" color="highlight" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
                                   <translate>Delete</translate>
                                 </v-btn>
-                                <v-btn v-if="experimental && canAccessPrivate && file.Primary" density="comfortable" variant="flat" color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
+                                <v-btn v-if="experimental && canAccessPrivate && file.Primary" density="comfortable" variant="flat" color="highlight" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
                                   <translate>File Browser</translate>
                                 </v-btn>
                               </td>
