@@ -1142,8 +1142,6 @@ export class Photo extends RestModel {
   update() {
     const values = this.getValues(true);
 
-    console.log("values", values);
-
     if (typeof values.Title === "string") {
       values.TitleSrc = src.Manual;
     }
