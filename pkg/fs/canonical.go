@@ -7,7 +7,7 @@ import (
 
 // NonCanonical returns true if the file basename is NOT canonical.
 func NonCanonical(basename string) bool {
-	if len(basename) != 24 {
+	if l := len(basename); l != 22 && l != 24 {
 		return true
 	}
 
@@ -28,12 +28,16 @@ func IsCanonical(basename string) bool {
 }
 
 // CanonicalName returns a canonical name based on time and CRC32 checksum.
-func CanonicalName(date time.Time, checksum string) string {
+func CanonicalName(date time.Time, checksum, pattern string) string {
 	if len(checksum) != 8 {
 		checksum = "EEEEEEEE"
 	} else {
 		checksum = strings.ToUpper(checksum)
 	}
 
-	return date.Format("20060102_150405_") + checksum
+	if pattern == "" {
+		pattern = "20060102_150405_"
+	}
+
+	return date.Format(pattern) + checksum
 }

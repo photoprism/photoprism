@@ -280,8 +280,13 @@ func (m *MediaFile) Exposure() string {
 }
 
 // CanonicalName returns the canonical name of a media file.
-func (m *MediaFile) CanonicalName() string {
-	return fs.CanonicalName(m.DateCreated(), m.Checksum())
+func (m *MediaFile) CanonicalName(pattern string) string {
+	return fs.CanonicalName(m.DateCreated(), m.Checksum(), pattern)
+}
+
+// CanonicalNameDefault returns the default canonical name of a media file.
+func (m *MediaFile) CanonicalNameDefault() string {
+	return fs.CanonicalName(m.DateCreated(), m.Checksum(), "")
 }
 
 // CanonicalNameFromFile returns the canonical name of a file derived from the image name.
