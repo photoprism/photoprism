@@ -1,19 +1,11 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
     <v-card>
-      <v-card-title class="pb-0">
-        <v-row>
-          <v-col cols="9">
-            <h3 class="text-h5 mb-0">
-              <translate :translate-params="{ name: model.modelName() }">Share %{name}</translate>
-            </h3>
-          </v-col>
-          <v-col cols="3" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn icon variant="text" color="surface-variant" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
-              <v-icon>mdi-link-plus</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
+      <v-card-title class="d-flex justify-start align-center ga-3">
+          <h6 class="text-h6"><translate :translate-params="{ name: model.modelName() }">Share %{name}</translate></h6>
+          <v-btn icon variant="text" color="primary" class="action-add-link" :class="rtl ? 'text-left' : 'text-right'" :title="$gettext('Add Link')" @click.stop="add">
+            <v-icon>mdi-link-plus</v-icon>
+          </v-btn>
       </v-card-title>
       <v-card-text>
         <v-expansion-panels class="pa-0 elevation-0">
@@ -76,19 +68,13 @@
           <translate>Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
         </v-container>
       </v-card-text>
-      <v-card-actions class="pt-0 px-6">
-        <v-row class="pa-2">
-          <v-col cols="6">
-            <v-btn variant="flat" color="secondary-light" class="action-webdav" @click.stop="upload">
-              <translate>WebDAV Upload</translate>
-            </v-btn>
-          </v-col>
-          <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'">
-            <v-btn variant="flat" color="button" class="action-close" @click.stop="confirm">
-              <translate>Close</translate>
-            </v-btn>
-          </v-col>
-        </v-row>
+      <v-card-actions>
+        <v-btn variant="flat" color="secondary-light" class="action-webdav" @click.stop="upload">
+          <translate>WebDAV Upload</translate>
+        </v-btn>
+        <v-btn variant="flat" color="button" class="action-close" :class="rtl ? 'text-left' : 'text-right'" @click.stop="confirm">
+          <translate>Close</translate>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

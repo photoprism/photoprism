@@ -1,33 +1,22 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card>
-      <v-card-title class="pb-0">
-        <v-row>
-          <v-col cols="8">
-            <h3 class="text-h5 mb-0">
-              <translate>WebDAV Upload</translate>
-            </h3>
-          </v-col>
-          <v-col cols="4" class="text-right">
-            <v-btn icon variant="text" color="surface-variant" class="ma-0" @click.stop="setup">
+      <v-card-title class="d-flex justify-start align-center ga-3">
+            <h6 class="text-h6"><translate>WebDAV Upload</translate></h6>
+            <v-btn icon variant="text" color="primary" @click.stop="setup">
               <v-icon>mdi-cloud</v-icon>
             </v-btn>
-          </v-col>
-        </v-row>
       </v-card-title>
-      <v-card-text class="pt-0">
-        <v-row>
-          <v-col cols="12" class="text-left pt-2">
-            <v-select v-model="service" color="surface-variant" hide-details hide-no-data variant="solo" flat :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
+      <v-card-text class="dense">
+        <v-row dense>
+          <v-col cols="12" class="text-left">
+            <v-select v-model="service" hide-details hide-no-data :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
           </v-col>
-          <v-col cols="12" class="text-left pt-2">
+          <v-col cols="12" class="text-left">
             <v-autocomplete
               v-model="path"
-              color="surface-variant"
               hide-details
               hide-no-data
-              variant="solo"
-              flat
               autocomplete="off"
               hint="Folder"
               :search.sync="search"
@@ -40,19 +29,19 @@
             >
             </v-autocomplete>
           </v-col>
-          <v-col cols="12" class="text-right pt-6">
-            <v-btn variant="flat" color="button" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
-              <translate>Cancel</translate>
-            </v-btn>
-            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" class="action-setup ma-0" @click.stop="setup">
-              <translate>Setup</translate>
-            </v-btn>
-            <v-btn v-else :disabled="noServices" color="primary-button" variant="flat" class="action-upload ma-0" @click.stop="confirm">
-              <translate>Upload</translate>
-            </v-btn>
-          </v-col>
         </v-row>
       </v-card-text>
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
+          <translate>Cancel</translate>
+        </v-btn>
+        <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" variant="flat" class="action-setup" @click.stop="setup">
+          <translate>Setup</translate>
+        </v-btn>
+        <v-btn v-else :disabled="noServices" color="primary-button" variant="flat" class="action-upload" @click.stop="confirm">
+          <translate>Upload</translate>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

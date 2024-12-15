@@ -1,47 +1,23 @@
 <template>
   <v-dialog :model-value="show" persistent max-width="575" class="modal-dialog sponsor-dialog" @keydown.esc="close">
     <v-card>
-      <v-card-title class="px-2 pb-0">
-        <v-row class="px-2">
-          <v-col cols="10">
-            <h3 class="text-h6 mb-0">
-              <translate>Support Our Mission</translate>
-            </h3>
-          </v-col>
-          <v-col cols="2" class="text-right">
-            <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
-          </v-col>
-        </v-row>
+      <v-card-title class="d-flex justify-start align-center ga-3">
+        <v-icon size="28" color="primary">mdi-diamond-stone</v-icon>
+        <h6 class="text-h6"><translate>Support Our Mission</translate></h6>
       </v-card-title>
-      <v-card-text class="px-2">
-        <v-row class="px-2">
-          <v-col cols="12" class="py-1">
-            <p class="text-body-2">
-              <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-            </p>
-            <p class="text-body-1">
-              <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
-            </p>
-            <p class="text-body-1">
-              <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
-            </p>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions class="pt-0 px-2">
-        <v-row class="px-2">
-          <v-col cols="12"  class="text-right py-2">
-            <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
-              <translate>No thanks</translate>
-            </v-btn>
-            <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions" target="_blank" variant="flat" color="primary-button" class="text-white action-about">
-              <translate>Learn more</translate>
-            </v-btn>
-            <v-btn v-else variant="flat" color="primary-button" class="text-white action-upgrade" @click.stop="upgrade">
-              <translate>Upgrade Now</translate>
-            </v-btn>
-          </v-col>
-        </v-row>
+      <v-card-text class="text-subtitle-2"><translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate></v-card-text>
+      <v-card-text class="text-body-2"><translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate></v-card-text>
+      <v-card-text class="text-body-2"><translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate></v-card-text>
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
+          <translate>No thanks</translate>
+        </v-btn>
+        <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions" target="_blank" variant="flat" color="primary-button" class="text-white action-about">
+          <translate>Learn more</translate>
+        </v-btn>
+        <v-btn v-else variant="flat" color="primary-button" class="text-white action-upgrade" @click.stop="upgrade">
+          <translate>Upgrade Now</translate>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
