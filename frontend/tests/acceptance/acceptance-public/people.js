@@ -51,7 +51,7 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
     const JaneUID = await subject.getNthSubjectUid(0);
 
     await t
-      .expect(Selector("a[data-uid=" + JaneUID + "] div.caption").innerText)
+      .expect(Selector("a[data-uid=" + JaneUID + "] div.text-caption").innerText)
       .contains(PhotosInFaceCount.toString());
 
     await subject.openSubjectWithUid(JaneUID);

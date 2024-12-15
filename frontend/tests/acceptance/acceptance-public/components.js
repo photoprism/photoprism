@@ -46,7 +46,7 @@ test.meta("testID", "components-003").meta({ type: "short", mode: "public" })(
       .ok()
       .expect(Selector("div.p-photo-mosaic").visible)
       .ok()
-      .expect(Selector("div.is-photo div.caption").exists)
+      .expect(Selector("div.is-photo div.text-caption").exists)
       .notOk()
       .expect(Selector("#photo-viewer").visible)
       .notOk();
@@ -57,7 +57,7 @@ test.meta("testID", "components-004").meta({ mode: "public" })("Common: List vie
   await toolbar.setFilter("view", "List");
 
   await t
-    .expect(Selector("table.v-datatable").visible)
+    .expect(Selector("div.v-table").visible)
     .ok()
     .expect(Selector("div.list-view").visible)
     .ok();
@@ -72,7 +72,7 @@ test.meta("testID", "components-005").meta({ type: "short", mode: "public" })(
     await t
       .expect(Selector("div.type-image div.clickable").visible)
       .ok()
-      .expect(Selector("div.is-photo div.caption").visible)
+      .expect(Selector("div.is-photo div.text-caption").visible)
       .ok()
       .expect(Selector("#photo-viewer").visible)
       .notOk();

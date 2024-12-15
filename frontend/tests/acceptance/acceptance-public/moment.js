@@ -52,9 +52,9 @@ test.meta("testID", "moments-001").meta({ mode: "public" })(
       .contains("Winter")
       .expect(page.cardDescription.nth(0).innerText)
       .contains("We went to ski")
-      .expect(Selector("div.caption").nth(1).innerText)
+      .expect(Selector("div.text-caption").nth(1).innerText)
       .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
+      .expect(Selector("div.text-caption").nth(2).innerText)
       .contains("Snow-Land");
 
     await album.openNthAlbum(0);
@@ -102,7 +102,7 @@ test.meta("testID", "moments-001").meta({ mode: "public" })(
       .contains("Nature & Landscape")
       .expect(page.cardDescription.innerText)
       .notContains("We went to ski")
-      .expect(Selector("div.caption").nth(0).innerText)
+      .expect(Selector("div.text-caption").nth(0).innerText)
       .notContains("Snow-Land");
   }
 );

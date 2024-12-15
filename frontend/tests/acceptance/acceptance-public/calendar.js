@@ -59,9 +59,9 @@ test.meta("testID", "calendar-002").meta({ mode: "public" })(
       .contains("March 2014")
       .expect(page.cardDescription.nth(0).innerText)
       .contains("We went to ski")
-      .expect(Selector("div.caption").nth(1).innerText)
+      .expect(Selector("div.text-caption").nth(1).innerText)
       .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
+      .expect(Selector("div.text-caption").nth(2).innerText)
       .contains("Snow");
 
     await album.openNthAlbum(0);
@@ -105,7 +105,7 @@ test.meta("testID", "calendar-002").meta({ mode: "public" })(
     await t
       .expect(page.cardDescription.innerText)
       .notContains("We went to ski")
-      .expect(Selector("div.caption").nth(0).innerText)
+      .expect(Selector("div.text-caption").nth(0).innerText)
       .notContains("Snow");
   }
 );
