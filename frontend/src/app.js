@@ -49,7 +49,6 @@ import VueLuxon from "vue-luxon";
 import * as themes from "options/themes";
 // import VueFilters from "vue2-filters";
 // import VueFullscreen from "vue-fullscreen";
-import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
 import "common/maptiler-lang";
 import { T, Mount } from "common/vm";
@@ -249,8 +248,7 @@ config.update().finally(() => {
   // debugger;
   // app.use(VueLuxon);
   app.config.globalProperties.$luxon = VueLuxon;
-  app.config.globalProperties.$fullscreen = VueInfiniteScroll;
-  app.use(VueInfiniteScroll);
+  // app.config.globalProperties.$fullscreen = InfiniteLoading;
   // app.use(VueFullscreen);
   // app.use(VueFilters);
   // app.use(Components);

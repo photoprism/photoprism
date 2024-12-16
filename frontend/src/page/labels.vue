@@ -1,5 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none">
     <v-form ref="form" class="p-labels-search" validate-on="blur" @submit.stop.prevent="updateQuery()">
       <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
         <v-text-field
@@ -51,7 +51,7 @@
     <v-container v-else fluid class="pa-0">
       <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-label-clipboard>
 
-      <p-scroll-to-top></p-scroll-to-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
@@ -422,11 +422,11 @@ export default {
             this.setOffset(resp.offset + resp.limit);
             this.page++;
 
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .catch(() => {
@@ -539,7 +539,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -569,11 +569,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 labels found'));
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .finally(() => {

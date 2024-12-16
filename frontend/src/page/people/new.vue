@@ -22,7 +22,7 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-to-top></p-scroll-to-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <v-container grid-list-xs fluid class="pa-0">
         <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">

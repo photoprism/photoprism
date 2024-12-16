@@ -1,12 +1,12 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-album-photos">
     <p-album-toolbar :filter="filter" :album="model" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
 
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-to-top></p-scroll-to-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
 
@@ -286,11 +286,11 @@ export default {
             this.offset = offset + count;
             this.page++;
 
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .catch(() => {
@@ -402,7 +402,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -435,11 +435,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .finally(() => {

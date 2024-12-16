@@ -1,5 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none">
     <v-form ref="form" class="p-albums-search" validate-on="blur" @submit.prevent="updateQuery()">
       <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
         <v-text-field
@@ -123,7 +123,7 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-to-top></p-scroll-to-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
@@ -664,11 +664,11 @@ export default {
             this.setOffset(resp.offset + resp.limit);
             this.page++;
 
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .catch(() => {
@@ -769,7 +769,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -799,11 +799,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 albums found'));
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .finally(() => {

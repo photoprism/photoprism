@@ -24,8 +24,8 @@ Additional information can be found in our Developer Guide:
 */
 
 import PNotify from "component/notify.vue";
+import PScroll from "component/scroll.vue";
 import PNavigation from "component/navigation.vue";
-import PScrollToTop from "component/scroll-to-top.vue";
 import PLoadingBar from "component/loading-bar.vue";
 import PPhotoViewer from "component/photo-viewer.vue";
 import PVideoPlayer from "component/video/player.vue";
@@ -49,8 +49,8 @@ import IconPrism from "component/icon/prism.vue";
 
 export function installComponents(app) {
   app.component("PNotify", PNotify);
+  app.component("PScroll", PScroll);
   app.component("PNavigation", PNavigation);
-  app.component("PScrollToTop", PScrollToTop);
   app.component("PLoadingBar", PLoadingBar);
   app.component("PVideoPlayer", PVideoPlayer);
   app.component("PPhotoViewer", PPhotoViewer);

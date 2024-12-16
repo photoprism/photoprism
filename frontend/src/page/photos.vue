@@ -1,12 +1,12 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('photos')" class="p-page p-page-photos" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div style="user-select: none" :class="$config.aclClasses('photos')" class="p-page p-page-photos">
     <p-photo-toolbar :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
 
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-to-top></p-scroll-to-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <p-photo-clipboard :context="context" :refresh="refresh"></p-photo-clipboard>
 
@@ -92,7 +92,7 @@ export default {
       complete: false,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight * 6,
+      scrollDistance: window.innerHeight * 5,
       batchSize: batchSize,
       offset: 0,
       page: 0,
@@ -427,11 +427,11 @@ export default {
             this.offset = offset + count;
             this.page++;
 
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .catch(() => {
@@ -554,7 +554,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -587,11 +587,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
-            this.$nextTick(() => {
+            /* this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.$emit("scrollRefresh");
               }
-            });
+            }); */
           }
         })
         .finally(() => {

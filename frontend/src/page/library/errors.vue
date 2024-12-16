@@ -1,5 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-errors">
     <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
       <v-text-field
         :model-value="filter.q"
@@ -44,17 +44,20 @@
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list v-else-if="errors.length > 0" density="compact" lines="two" class="bg-transparent pa-1">
-      <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
-        <!--        TODO: fix it-->
-        <v-list-item :prepend-avatar="err.Level" :color="err.Level">
-          <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->
-        </v-list-item>
+    <v-container v-else-if="errors.length > 0" fluid class="pa-0">
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
+      <v-list density="compact" lines="two" class="bg-transparent pa-1">
+        <v-list-item v-for="err in errors" :key="err.ID" class="rounded-4" @click="showDetails(err)">
+          <!--        TODO: fix it-->
+          <v-list-item :prepend-avatar="err.Level" :color="err.Level">
+            <!-- <v-icon :color="err.Level">{{ err.Level }}</v-icon> -->
+          </v-list-item>
 
-        <v-list-item-title>{{ err.Message }}</v-list-item-title>
-        <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
-      </v-list-item>
-    </v-list>
+          <v-list-item-title>{{ err.Message }}</v-list-item-title>
+          <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+    </v-container>
     <div v-else class="pa-2">
       <v-alert color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
         <p class="mt-0 mb-0 pa-0">
