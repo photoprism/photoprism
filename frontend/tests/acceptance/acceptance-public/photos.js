@@ -36,7 +36,7 @@ test.meta("testID", "photos-001").meta({ mode: "public" })("Common: Scroll to to
   await scroll(0, 1400);
   await scroll(0, 900);
 
-  await t.click(Selector("button.p-scroll-top")).expect(getcurrentPosition()).eql(0);
+  await t.click(Selector("button.p-scroll-to-top")).expect(getcurrentPosition()).eql(0);
 });
 
 //TODO Covered by admin role test

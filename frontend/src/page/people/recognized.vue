@@ -54,7 +54,7 @@
     <v-container v-else fluid class="pa-0" style="min-height: 100vh">
       <p-subject-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-subject-clipboard>
 
-      <p-scroll-top></p-scroll-top>
+      <p-scroll-to-top></p-scroll-to-top>
 
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert v-if="results.length === 0" icon="mdi-lightbulb-outline" class="no-results opacity-70" variant="outlined">

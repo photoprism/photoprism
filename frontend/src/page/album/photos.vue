@@ -6,7 +6,7 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+      <p-scroll-to-top></p-scroll-to-top>
 
       <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
 

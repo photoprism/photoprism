@@ -122,7 +122,7 @@ main {
     cursor: pointer;
 }
 
-.p-scroll-top {
+.p-scroll-to-top {
     position: fixed;
     top: 104px;
     left: 50%;
@@ -151,7 +151,7 @@ main {
     -webkit-tap-highlight-color: transparent;
 }
 
-.p-scroll-top svg {
+.p-scroll-to-top svg {
     display: inline-block;
     vertical-align: -.5em;
     fill: currentcolor;

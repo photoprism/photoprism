@@ -123,7 +123,7 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+      <p-scroll-to-top></p-scroll-to-top>
 
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 

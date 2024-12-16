@@ -27,7 +27,7 @@
     <v-container v-else fluid class="pa-0">
       <p-file-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-file-clipboard>
 
-      <p-scroll-top></p-scroll-top>
+      <p-scroll-to-top></p-scroll-to-top>
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
         <v-alert v-if="results.length === 0" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
