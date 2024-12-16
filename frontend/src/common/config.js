@@ -103,10 +103,10 @@ export default class Config {
       }
     }
 
-    this.page = {
+    this.page = reactive({
       title: values.siteTitle,
       caption: values.siteCaption,
-    };
+    });
 
     this.values = reactive(values);
     this.debug = !!values.debug;
