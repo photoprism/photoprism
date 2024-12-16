@@ -246,3 +246,10 @@ form>.v-card>.v-card-text.grid {
 form>.v-card>.v-card-text.dense {
     margin: -8px;
 }
+
+@media (min-width: 1700px) {
+    .v-col-xl-2 {
+        flex: 0 0 16.6666666667%;
+        max-width: 16.6666666667%;
+    }
+}

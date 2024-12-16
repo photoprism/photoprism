@@ -226,23 +226,29 @@ nav .v-list__item__title.title {
     color: rgb(var(--v-theme-primary, #ffffff));
 }
 
-form>.page-toolbar-expanded {
+.page-toolbar-expansion {
     position: relative;
+    display: none;
 }
 
-form>.page-toolbar-expanded>.v-card {
+.page-toolbar-expansion.page-toolbar-expansion--visible {
+    display: block;
+}
+
+.page-toolbar-expansion>.v-card {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
+    height: auto;
+    overflow: hidden;
     z-index: 2;
     padding: 0;
     border-radius: 0 0 12px 12px;
-    overflow: hidden;
     opacity: 0.985;
 }
 
-form>.page-toolbar-expanded>.v-card>.v-card-text.dense {
+.page-toolbar-expansion>.v-card>.v-card-text.dense {
     margin: -16px;
 }
 

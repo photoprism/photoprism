@@ -48,8 +48,8 @@
         </v-btn>
       </v-toolbar>
 
-      <div class="page-toolbar-expanded">
-        <v-card v-show="searchExpanded" flat color="secondary">
+      <div :class="{ 'page-toolbar-expansion--visible': searchExpanded }" class="page-toolbar-expansion">
+        <v-card flat color="secondary">
           <v-card-text class="dense">
             <v-row dense>
               <v-col cols="12" sm="4" class="p-year-select">
@@ -404,6 +404,8 @@ export default {
     },
   },
   created() {
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+
     this.search();
 
     this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
@@ -411,12 +413,20 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
-  unmounted() {
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.onScroll, { passive: true });
+
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
+    onScroll() {
+      // TODO: Show search toolbar with fixed position at the top.
+      if (this.searchExpanded === true && window.scrollY > 12) {
+        this.searchExpanded = false;
+      }
+    },
     onConfigUpdated(data) {
       if (!data || !data.config?.albumCategories) {
         return;

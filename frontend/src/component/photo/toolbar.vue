@@ -73,8 +73,8 @@
       </template>
     </v-toolbar>
 
-    <div class="page-toolbar-expanded">
-      <v-card v-show="searchExpanded" flat color="secondary">
+    <div :class="{ 'page-toolbar-expansion--visible': searchExpanded }" class="page-toolbar-expansion">
+      <v-card flat color="secondary">
         <v-card-text class="dense">
           <v-row dense>
             <v-col cols="12" sm="6" md="3" class="p-countries-select">
@@ -307,6 +307,7 @@ export default {
     const readonly = this.$config.get("readonly");
 
     return {
+      searchExpanded: false,
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       config: this.$config.values,
@@ -314,7 +315,6 @@ export default {
       canUpload: !readonly && !this.embedded && this.$config.allow("files", "upload") && features.upload,
       canDelete: !readonly && !this.embedded && this.$config.allow("photos", "delete") && features.delete,
       canAccessLibrary: this.$config.allow("photos", "access_library"),
-      searchExpanded: false,
       listView: this.$config.settings()?.search?.listView,
       all: {
         countries: [{ ID: "", Name: this.$gettext("All Countries") }],
@@ -397,7 +397,19 @@ export default {
       }
     },
   },
+  created() {
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.onScroll, { passive: true });
+  },
   methods: {
+    onScroll() {
+      // TODO: Show search toolbar with fixed position at the top.
+      if (this.searchExpanded === true && window.scrollY > 12) {
+        this.searchExpanded = false;
+      }
+    },
     colorOptions() {
       return this.all.colors.concat(options.Colors());
     },
