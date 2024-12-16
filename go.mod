@@ -66,7 +66,7 @@ require (
 	golang.org/x/time v0.8.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.8
+require github.com/go-ldap/ldap/v3 v3.4.9
 
 require (
 	github.com/prometheus/client_golang v1.20.5
@@ -102,7 +102,7 @@ require (
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.5 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.7 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
