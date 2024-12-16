@@ -152,7 +152,7 @@ export default class Page {
   }
 
   async checkSortOptions(type) {
-    await t.click(Selector(".p-expand-search"));
+    await t.click(Selector(".action-expand"));
     await t.click(Selector(".p-sort-select"));
     await t.expect(Selector("div[role=listbox]:first-of-type").visible).ok();
 

@@ -124,7 +124,7 @@ export default class Page {
         throw "unknown filter";
     }
     if (!(await Selector(filterSelector).visible)) {
-      await t.click(Selector(".p-expand-search"));
+      await t.click(Selector(".action-expand"));
     }
     await t.click(filterSelector);
 

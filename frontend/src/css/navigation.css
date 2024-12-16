@@ -152,8 +152,8 @@ nav .v-list__item__title.title {
     font-size: 24px;
 }
 
-#photoprism .theme--dark.v-sheet .text-link,
-#photoprism .theme--dark.v-card .text-link {
+.theme--dark.v-sheet .text-link,
+.theme--dark.v-card .text-link {
     color: white;
 }
 
@@ -183,41 +183,70 @@ nav .v-list__item__title.title {
     padding-top: 48px;
 }
 
-#photoprism .v-tabs .v-toolbar__content {
-    padding: 0 16px 0 0;
+.v-tabs .v-toolbar__content {
+    padding: 0 8px 0 0;
 }
 
-#photoprism .v-toolbar.page-toolbar {
+.v-toolbar.page-toolbar {
     box-shadow: none;
 }
 
-#photoprism .v-tabs .v-toolbar.page-toolbar .v-toolbar__content,
-#photoprism .v-toolbar.page-toolbar .v-toolbar__content {
-    padding: 0 16px 0 16px;
+.p-page .v-toolbar.page-toolbar .v-toolbar__content,
+.v-tabs .v-toolbar.page-toolbar .v-toolbar__content,
+.v-toolbar.page-toolbar .v-toolbar__content {
+    padding: 0 8px;
 }
 
-#photoprism .v-toolbar.page-toolbar .v-text-field .v-input__prepend-outer {
+.p-page .v-toolbar.page-toolbar.v-toolbar--density-compact .v-toolbar__content {
+    padding: 0 2px;
+}
+
+.v-toolbar.page-toolbar .v-text-field .v-input__prepend-outer {
     margin-right: 0;
 }
 
-#photoprism .v-toolbar.page-toolbar .v-text-field .v-input__slot {
+.v-toolbar.page-toolbar .v-text-field .v-input__slot {
     padding-left: 0;
 }
 
-#photoprism .page-toolbar .input-category .v-select__selections {
+.page-toolbar .input-category .v-select__selections {
     min-width: 130px;
 }
 
-#photoprism .page-toolbar .input-category .v-select__selections input {
+.page-toolbar .input-category .v-select__selections input {
     position: absolute;
 }
 
-#photoprism .page-toolbar .input-category .v-select__selections .v-select__selection {
+.page-toolbar .input-category .v-select__selections .v-select__selection {
     white-space: nowrap;
     overflow: hidden;
 }
 
-#photoprism .p-photo-toolbar.embedded {
+.page-toolbar .v-btn.action-expand--active {
+    color: rgb(var(--v-theme-primary, #ffffff));
+}
+
+form>.page-toolbar-expanded {
+    position: relative;
+}
+
+form>.page-toolbar-expanded>.v-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 0;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+    opacity: 0.985;
+}
+
+form>.page-toolbar-expanded>.v-card>.v-card-text.dense {
+    margin: -16px;
+}
+
+.p-photo-toolbar.embedded {
     position: sticky;
     top: 0;
     z-index: 1;
@@ -317,28 +346,28 @@ nav .v-list__item__title.title {
     position: relative;
 }
 
-#photoprism .nav-logo .v-list__item__action {
+.nav-logo .v-list__item__action {
     min-width: 35px;
 }
 
-#photoprism nav.nav-small .v-menu__content {
+nav.nav-small .v-menu__content {
     padding: 0;
 }
 
 /* SPEED DIAL */
 
-#photoprism .v-speed-dial__list .v-btn .v-icon {
+.v-speed-dial__list .v-btn .v-icon {
     font-size: 19px;
 }
 
 /* Mobile Menu */
 
 #p-navigation .nav-small .nav-mobile-menu-trigger {
-    margin-inline-end: 12px;
+    margin-inline-end: 6px;
 }
 
-#photoprism .v-btn.nav-mobile-menu-trigger:after,
-#photoprism .v-btn.nav-mobile-menu-trigger:before {
+.v-btn.nav-mobile-menu-trigger:after,
+.v-btn.nav-mobile-menu-trigger:before {
     display: none !important;
 }
 
@@ -357,7 +386,7 @@ nav .v-list__item__title.title {
     height: 0;
 }
 
-#photoprism #mobile-menu .v-icon {
+#mobile-menu .v-icon {
     fill: rgba(255, 255, 255, .93);
     color: rgba(255, 255, 255, .93);
 }
@@ -401,7 +430,7 @@ nav .v-list__item__title.title {
     text-align: center;
 }
 
-#photoprism #mobile-menu .menu-icons a {
+#mobile-menu .menu-icons a {
     fill: rgba(255, 255, 255, .83);
     color: rgba(255, 255, 255, .83);
     -webkit-box-flex: 1;
@@ -441,7 +470,7 @@ nav .v-list__item__title.title {
     background: #3f4042;
 }
 
-#photoprism #mobile-menu .menu-action a {
+#mobile-menu .menu-action a {
     fill: rgba(255, 255, 255, .85);
     color: rgba(255, 255, 255, .85);
     display: inline-block;
@@ -462,15 +491,15 @@ nav .v-list__item__title.title {
     font-size: 20px;
 }
 
-#photoprism #mobile-menu .menu-action.nav-membership a .v-icon {
+#mobile-menu .menu-action.nav-membership a .v-icon {
     color: #d9b8ff;
 }
 
-#photoprism #mobile-menu .menu-icons a:hover i,
-#photoprism #mobile-menu .menu-icons a:hover .v-icon,
-#photoprism #mobile-menu .menu-action:hover a,
-#photoprism #mobile-menu .menu-action:hover .v-icon,
-#photoprism #mobile-menu .menu-action:hover a i {
+#mobile-menu .menu-icons a:hover i,
+#mobile-menu .menu-icons a:hover .v-icon,
+#mobile-menu .menu-action:hover a,
+#mobile-menu .menu-action:hover .v-icon,
+#mobile-menu .menu-action:hover a i {
     fill: #ffffff;
     color: #ffffff;
 }

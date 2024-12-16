@@ -8,16 +8,17 @@
           clearable
           overflow
           single-line
+          rounded
+          variant="solo-filled"
+          :density="density"
           validate-on="blur"
-          variant="plain"
-          density="comfortable"
           :placeholder="$gettext('Search')"
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           prepend-inner-icon="mdi-magnify"
           color="surface-variant"
-          class="input-search background-inherit elevation-0 mb-3"
+          class="input-search background-inherit elevation-0"
           @update:modelValue="
             (v) => {
               updateFilter({ q: v });
@@ -43,77 +44,79 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
 
-        <v-btn v-if="canManage && !staticFilter['order']" icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+        <v-btn v-if="canManage && !staticFilter['order']" :icon="searchExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': searchExpanded }" @click.stop="searchExpanded = !searchExpanded">
         </v-btn>
       </v-toolbar>
-      <v-card v-show="searchExpanded" class="pa-0 page-toolbar-expanded" tile flat color="secondary-lighten-1">
-        <v-card-text class="dense">
-          <v-row dense>
-            <v-col cols="12" sm="4" class="p-year-select">
-              <v-select
-                :model-value="filter.year"
-                :label="$gettext('Year')"
-                :disabled="context === 'state'"
-                :menu-props="{ maxHeight: 346 }"
-                single-line
-                hide-details
-                variant="solo-filled"
-                density="comfortable"
-                :items="yearOptions()"
-                item-title="text"
-                item-value="value"
-                @update:model-value="
-                  (v) => {
-                    updateQuery({ year: v });
-                  }
-                "
-              >
-              </v-select>
-            </v-col>
-            <v-col cols="12" sm="4" class="p-category-select">
-              <v-select
-                :model-value="filter.category"
-                :label="$gettext('Category')"
-                :menu-props="{ maxHeight: 346 }"
-                single-line
-                hide-details
-                variant="solo-filled"
-                density="comfortable"
-                :items="categories"
-                item-title="text"
-                item-value="value"
-                @update:model-value="
-                  (v) => {
-                    updateQuery({ category: v });
-                  }
-                "
-              >
-              </v-select>
-            </v-col>
-            <v-col cols="12" sm="4" class="p-sort-select">
-              <v-select
-                :model-value="filter.order"
-                :label="$gettext('Sort Order')"
-                :menu-props="{ maxHeight: 400 }"
-                single-line
-                hide-details
-                variant="solo-filled"
-                density="comfortable"
-                :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
-                item-title="text"
-                item-value="value"
-                @update:model-value="
-                  (v) => {
-                    updateQuery({ order: v });
-                  }
-                "
-              >
-              </v-select>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
+
+      <div class="page-toolbar-expanded">
+        <v-card v-show="searchExpanded" flat color="secondary">
+          <v-card-text class="dense">
+            <v-row dense>
+              <v-col cols="12" sm="4" class="p-year-select">
+                <v-select
+                  :model-value="filter.year"
+                  :label="$gettext('Year')"
+                  :disabled="context === 'state'"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="yearOptions()"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      updateQuery({ year: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="4" class="p-category-select">
+                <v-select
+                  :model-value="filter.category"
+                  :label="$gettext('Category')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="categories"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      updateQuery({ category: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="4" class="p-sort-select">
+                <v-select
+                  :model-value="filter.order"
+                  :label="$gettext('Sort Order')"
+                  :menu-props="{ maxHeight: 400 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      updateQuery({ order: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </div>
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-6">
@@ -370,6 +373,9 @@ export default {
     };
   },
   computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
     context: function () {
       if (!this.staticFilter) {
         return "album";

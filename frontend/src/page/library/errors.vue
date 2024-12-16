@@ -7,16 +7,17 @@
         clearable
         overflow
         single-line
+        rounded
+        variant="solo-filled"
+        :density="density"
         validate-on="blur"
-        variant="plain"
-        density="comfortable"
         autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
         :placeholder="$gettext('Search')"
         prepend-inner-icon="mdi-magnify"
         color="surface-variant"
-        class="input-search background-inherit elevation-0 mb-3"
+        class="input-search background-inherit elevation-0"
         @update:modelValue="
           (v) => {
             updateFilter({ q: v });
@@ -123,6 +124,11 @@ export default {
         err: { Level: "", Message: "", Time: "" },
       },
     };
+  },
+  computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
   },
   watch: {
     $route() {

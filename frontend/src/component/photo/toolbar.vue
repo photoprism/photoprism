@@ -8,8 +8,9 @@
           clearable
           overflow
           single-line
-          variant="plain"
-          density="comfortable"
+          rounded
+          variant="solo-filled"
+          :density="density"
           validate-on="blur"
           autocorrect="off"
           autocapitalize="none"
@@ -17,7 +18,7 @@
           :placeholder="$gettext('Search')"
           prepend-inner-icon="mdi-magnify"
           color="surface-variant"
-          class="input-search background-inherit elevation-0 mb-3"
+          class="input-search background-inherit elevation-0"
           @update:modelValue="
             (v) => {
               updateFilter({ q: v });
@@ -58,8 +59,7 @@
           <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
 
-        <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+        <v-btn :icon="searchExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': searchExpanded }" @click.stop="searchExpanded = !searchExpanded">
         </v-btn>
       </template>
       <template v-else>
@@ -73,184 +73,186 @@
       </template>
     </v-toolbar>
 
-    <v-card v-show="searchExpanded" class="pa-0 page-toolbar-expanded" tile flat color="secondary-lighten-1">
-      <v-card-text class="dense">
-        <v-row dense>
-          <v-col cols="12" sm="6" md="3" class="p-countries-select">
-            <v-select
-              :model-value="filter.country"
-              :label="$gettext('Country')"
-              :menu-props="{ maxHeight: 346 }"
-              single-line
-              hide-details
-              variant="solo-filled"
-              density="comfortable"
-              :items="countryOptions"
-              item-title="Name"
-              item-value="ID"
-              class="input-countries"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ country: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="3" class="p-camera-select">
-            <v-select
-              :model-value="filter.camera"
-              :label="$gettext('Camera')"
-              :menu-props="{ maxHeight: 346 }"
-              single-line
-              hide-details
-              variant="solo-filled"
-              density="comfortable"
-              :items="cameraOptions"
-              item-title="Name"
-              item-value="ID"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ camera: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="3" class="p-view-select">
-            <v-select
-              id="viewSelect"
-              :model-value="settings.view"
-              :label="$gettext('View')"
-              single-line
-              hide-details
-              variant="solo-filled"
-              density="comfortable"
-              :items="viewOptions"
-              item-title="text"
-              item-value="value"
-              @update:model-value="
-                (v) => {
-                  setView(v);
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="3" class="p-time-select">
-            <v-select
-              :model-value="filter.order"
-              :label="$gettext('Sort Order')"
-              :menu-props="{ maxHeight: 400 }"
-              single-line
-              variant="solo-filled"
-              density="comfortable"
-              :items="sortOptions"
-              item-title="text"
-              item-value="value"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ order: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="3" class="p-year-select">
-            <v-select
-              :model-value="filter.year"
-              :label="$gettext('Year')"
-              :menu-props="{ maxHeight: 346 }"
-              single-line
-              variant="solo-filled"
-              density="comfortable"
-              :items="yearOptions()"
-              item-title="text"
-              item-value="value"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ year: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="3" class="p-month-select">
-            <v-select
-              :model-value="filter.month"
-              :label="$gettext('Month')"
-              :menu-props="{ maxHeight: 346 }"
-              single-line
-              variant="solo-filled"
-              density="comfortable"
-              :items="monthOptions()"
-              item-title="text"
-              item-value="value"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ month: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <!-- v-col cols="12" sm="6" md="3" class="p-lens-select">
-              <v-select @change="dropdownChange"
-                        :label="labels.lens"
-                        flat
-                        variant="solo-filled"
-                        hide-details
-                        color="surface-variant"
-                        bg-color="secondary-light"
-                        item-value="ID"
-                        item-title="Model"
-                        v-model="filter.lens"
-                        :items="lensOptions">
+    <div class="page-toolbar-expanded">
+      <v-card v-show="searchExpanded" flat color="secondary">
+        <v-card-text class="dense">
+          <v-row dense>
+            <v-col cols="12" sm="6" md="3" class="p-countries-select">
+              <v-select
+                :model-value="filter.country"
+                :label="$gettext('Country')"
+                :menu-props="{ maxHeight: 346 }"
+                single-line
+                hide-details
+                variant="solo-filled"
+                :density="density"
+                :items="countryOptions"
+                item-title="Name"
+                item-value="ID"
+                class="input-countries"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ country: v });
+                  }
+                "
+              >
               </v-select>
-          </v-col -->
-          <v-col cols="12" sm="6" md="3" class="p-color-select">
-            <v-select
-              :model-value="filter.color"
-              :label="$gettext('Color')"
-              :menu-props="{ maxHeight: 346 }"
-              single-line
-              hide-details
-              variant="solo-filled"
-              density="comfortable"
-              :items="colorOptions()"
-              item-title="Name"
-              item-value="Slug"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ color: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="12" sm="6" md="3" class="p-category-select">
-            <v-select
-              :model-value="filter.label"
-              :label="$gettext('Category')"
-              :menu-props="{ maxHeight: 346 }"
-              single-line
-              hide-details
-              variant="solo-filled"
-              density="comfortable"
-              :items="categoryOptions"
-              item-title="Name"
-              item-value="Slug"
-              @update:model-value="
-                (v) => {
-                  updateQuery({ label: v });
-                }
-              "
-            >
-            </v-select>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="p-camera-select">
+              <v-select
+                :model-value="filter.camera"
+                :label="$gettext('Camera')"
+                :menu-props="{ maxHeight: 346 }"
+                single-line
+                hide-details
+                variant="solo-filled"
+                :density="density"
+                :items="cameraOptions"
+                item-title="Name"
+                item-value="ID"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ camera: v });
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="p-view-select">
+              <v-select
+                id="viewSelect"
+                :model-value="settings.view"
+                :label="$gettext('View')"
+                single-line
+                hide-details
+                variant="solo-filled"
+                :density="density"
+                :items="viewOptions"
+                item-title="text"
+                item-value="value"
+                @update:model-value="
+                  (v) => {
+                    setView(v);
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="p-time-select">
+              <v-select
+                :model-value="filter.order"
+                :label="$gettext('Sort Order')"
+                :menu-props="{ maxHeight: 400 }"
+                single-line
+                variant="solo-filled"
+                :density="density"
+                :items="sortOptions"
+                item-title="text"
+                item-value="value"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ order: v });
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="p-year-select">
+              <v-select
+                :model-value="filter.year"
+                :label="$gettext('Year')"
+                :menu-props="{ maxHeight: 346 }"
+                single-line
+                variant="solo-filled"
+                :density="density"
+                :items="yearOptions()"
+                item-title="text"
+                item-value="value"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ year: v });
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="p-month-select">
+              <v-select
+                :model-value="filter.month"
+                :label="$gettext('Month')"
+                :menu-props="{ maxHeight: 346 }"
+                single-line
+                variant="solo-filled"
+                :density="density"
+                :items="monthOptions()"
+                item-title="text"
+                item-value="value"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ month: v });
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+            <!-- v-col cols="12" sm="6" md="3" class="p-lens-select">
+                <v-select @change="dropdownChange"
+                          :label="labels.lens"
+                          flat
+                          variant="solo-filled"
+                          hide-details
+                          color="surface-variant"
+                          bg-color="secondary-light"
+                          item-value="ID"
+                          item-title="Model"
+                          v-model="filter.lens"
+                          :items="lensOptions">
+                </v-select>
+            </v-col -->
+            <v-col cols="12" sm="6" md="3" class="p-color-select">
+              <v-select
+                :model-value="filter.color"
+                :label="$gettext('Color')"
+                :menu-props="{ maxHeight: 346 }"
+                single-line
+                hide-details
+                variant="solo-filled"
+                :density="density"
+                :items="colorOptions()"
+                item-title="Name"
+                item-value="Slug"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ color: v });
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+            <v-col cols="12" sm="6" md="3" class="p-category-select">
+              <v-select
+                :model-value="filter.label"
+                :label="$gettext('Category')"
+                :menu-props="{ maxHeight: 346 }"
+                single-line
+                hide-details
+                variant="solo-filled"
+                :density="density"
+                :items="categoryOptions"
+                item-title="Name"
+                item-value="Slug"
+                @update:model-value="
+                  (v) => {
+                    updateQuery({ label: v });
+                  }
+                "
+              >
+              </v-select>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </div>
     <p-photo-delete-dialog :show="dialog.delete" :text="$gettext('Are you sure you want to delete all archived pictures?')" :action="$gettext('Delete All')" @cancel="dialog.delete = false" @confirm="batchDelete"> </p-photo-delete-dialog>
   </v-form>
 </template>
@@ -329,6 +331,9 @@ export default {
     };
   },
   computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
     countryOptions() {
       return this.all.countries.concat(this.config.countries);
     },

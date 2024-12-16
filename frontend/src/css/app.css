@@ -122,9 +122,41 @@ main {
     cursor: pointer;
 }
 
-#photoprism .p-scroll-top {
-    top: 64px;
-    right: 8px;
+.p-scroll-top {
+    position: fixed;
+    top: 104px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    padding: .4rem .8rem;
+    margin: auto;
+
+    background-color: rgb(var(--v-theme-button, #ffffff));
+    border-radius: 1.6rem;
+    box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
+    color: rgb(var(--v-theme-on-button, #333333));
+    cursor: pointer;
+    display: block;
+    font-family: inherit;
+    font-size: .7rem;
+    outline: none;
+
+    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4,0,.2,1), opacity 125ms;
+    z-index: 2;
+
+    user-select: none;
+    text-decoration: none;
+
+    border: 0;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.p-scroll-top svg {
+    display: inline-block;
+    vertical-align: -.5em;
+    fill: currentcolor;
+    height: 1.2rem;
+    width: 1.2rem;
 }
 
 #photoprism .float-left {
