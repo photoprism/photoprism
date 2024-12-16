@@ -77,6 +77,13 @@ else
   umask 0002
 fi
 
+# Check if the current kernel is recent enough, see https://github.com/photoprism/photoprism/issues/4339
+MIN_KERNEL='3.17'
+OLDER_KERNEL=$(printf "$MIN_KERNEL\n$(uname -r)" | sort -V | head -1)
+if [[ ! "$OLDER_KERNEL" = "$MIN_KERNEL" ]]; then
+  export PHOTOPRISM_DISABLE_VIPS=true
+fi
+
 # display additional container info for troubleshooting
 echo "file umask....: \"$(umask)\" ($(umask -S))"
 echo "home directory: ${HOME}"
