@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-album-photos">
-    <p-album-toolbar :filter="filter" :album="model" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
+    <p-album-toolbar ref="toolbar" :filter="filter" :album="model" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
 
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear :indeterminate="true"></v-progress-linear>
@@ -418,6 +418,11 @@ export default {
 
       Photo.search(params)
         .then((response) => {
+          // Hide search toolbar expansion panel when matching pictures were found.
+          if (this.offset === 0 && response.count > 0) {
+            this.$refs?.toolbar.hideExpansionPanel();
+          }
+
           this.offset = this.batchSize;
           this.results = response.models;
           this.viewer.results = [];

@@ -226,16 +226,16 @@ nav .v-list__item__title.title {
     color: rgb(var(--v-theme-primary, #ffffff));
 }
 
-.page-toolbar-expansion {
+.toolbar-expansion-panel {
     position: relative;
     display: none;
 }
 
-.page-toolbar-expansion.page-toolbar-expansion--visible {
+.toolbar-expansion-panel.toolbar-expansion-panel--visible {
     display: block;
 }
 
-.page-toolbar-expansion>.v-card {
+.toolbar-expansion-panel>.v-card {
     position: absolute;
     top: 0;
     left: 0;
@@ -248,7 +248,7 @@ nav .v-list__item__title.title {
     opacity: 0.985;
 }
 
-.page-toolbar-expansion>.v-card>.v-card-text.dense {
+.toolbar-expansion-panel>.v-card>.v-card-text.dense {
     margin: -16px;
 }
 

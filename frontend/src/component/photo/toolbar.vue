@@ -24,10 +24,10 @@
               updateFilter({ q: v });
             }
           "
-          @keyup.enter="() => updateQuery()"
+          @keyup.enter="() => onUpdate()"
           @click:clear="
             () => {
-              updateQuery({ q: '' });
+              onUpdate({ q: '' });
             }
           "
         ></v-text-field>
@@ -73,7 +73,7 @@
       </template>
     </v-toolbar>
 
-    <div :class="{ 'page-toolbar-expansion--visible': searchExpanded }" class="page-toolbar-expansion">
+    <div :class="{ 'toolbar-expansion-panel--visible': searchExpanded }" class="toolbar-expansion-panel">
       <v-card flat color="secondary">
         <v-card-text class="dense">
           <v-row dense>
@@ -92,7 +92,7 @@
                 class="input-countries"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ country: v });
+                    onUpdate({ country: v });
                   }
                 "
               >
@@ -112,7 +112,7 @@
                 item-value="ID"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ camera: v });
+                    onUpdate({ camera: v });
                   }
                 "
               >
@@ -151,7 +151,7 @@
                 item-value="value"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ order: v });
+                    onUpdate({ order: v });
                   }
                 "
               >
@@ -170,7 +170,7 @@
                 item-value="value"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ year: v });
+                    onUpdate({ year: v });
                   }
                 "
               >
@@ -189,7 +189,7 @@
                 item-value="value"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ month: v });
+                    onUpdate({ month: v });
                   }
                 "
               >
@@ -223,7 +223,7 @@
                 item-value="Slug"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ color: v });
+                    onUpdate({ color: v });
                   }
                 "
               >
@@ -243,7 +243,7 @@
                 item-value="Slug"
                 @update:model-value="
                   (v) => {
-                    updateQuery({ label: v });
+                    onUpdate({ label: v });
                   }
                 "
               >
@@ -424,7 +424,7 @@ export default {
         if (name === "list" && !this.listView) {
           name = "mosaic";
         }
-
+        this.hideExpansionPanel();
         this.refresh({ view: name });
       }
     },
@@ -446,6 +446,14 @@ export default {
       const routeUrl = this.$router.resolve(route).href;
       if (routeUrl) {
         window.open(routeUrl, "_blank");
+      }
+    },
+    onUpdate(v) {
+      this.updateQuery(v);
+    },
+    hideExpansionPanel() {
+      if (this.searchExpanded) {
+        this.searchExpanded = false;
       }
     },
     batchDelete() {

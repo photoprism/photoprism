@@ -1,6 +1,6 @@
 <template>
   <div style="user-select: none" :class="$config.aclClasses('photos')" class="p-page p-page-photos">
-    <p-photo-toolbar :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
+    <p-photo-toolbar ref="toolbar" :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
 
     <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear :indeterminate="true"></v-progress-linear>
@@ -570,6 +570,11 @@ export default {
 
       Photo.search(params)
         .then((response) => {
+          // Hide search toolbar expansion panel when matching pictures were found.
+          if (this.offset === 0 && response.count > 0) {
+            this.$refs?.toolbar.hideExpansionPanel();
+          }
+
           this.offset = response.limit;
           this.results = response.models;
           this.viewer.results = [];

@@ -48,7 +48,7 @@
         </v-btn>
       </v-toolbar>
 
-      <div :class="{ 'page-toolbar-expansion--visible': searchExpanded }" class="page-toolbar-expansion">
+      <div :class="{ 'toolbar-expansion-panel--visible': searchExpanded }" class="toolbar-expansion-panel">
         <v-card flat color="secondary">
           <v-card-text class="dense">
             <v-row dense>
@@ -784,6 +784,11 @@ export default {
 
       Album.search(params)
         .then((resp) => {
+          // Hide search toolbar expansion panel when matching albums were found.
+          if (this.searchExpanded && this.offset === 0 && resp.count > 0) {
+            this.searchExpanded = false;
+          }
+
           this.offset = resp.limit;
           this.results = resp.models;
 
