@@ -133,5 +133,7 @@ export default class Page {
     } else {
       await t.click(Selector('div[role="option"]').nth(1));
     }
+
+    await t.click(Selector(".action-expand"));
   }
 }

@@ -25,6 +25,7 @@ export default class Page {
         (page === "stacks") |
         (page === "scans") |
         (page === "review") |
+        (page === "private")|
         (page === "archive")
       ) {
         if (!(await Selector("div.v-list-group--open a.nav-browse").visible)) {
@@ -65,6 +66,7 @@ export default class Page {
       (page === "stacks") |
       (page === "scans") |
       (page === "review") |
+      (page === "private") |
       (page === "archive")
     ) {
       if (
