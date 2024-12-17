@@ -38,7 +38,13 @@
                   </v-list-item>
                 </template>
                 <template #chip="data">
-                  <v-chip :key="JSON.stringify(data.item)" :model-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
+                  <v-chip
+                      :key="JSON.stringify(data.item)"
+                      :model-value="data.selected"
+                      :disabled="data.disabled"
+                      class="bg-highlight rounded-xl"
+                      @click:close="removeSelection(data.index)"
+                  >
                     <v-icon class="pr-1">mdi-bookmark</v-icon>
                     <!-- TODO: change this filter -->
                     <!-- {{ data.item.Title ? data.item.Title : data.item | truncate(40) }} -->
@@ -147,6 +153,9 @@ export default {
     },
   },
   methods: {
+    removeSelection(index) {
+      this.selectedAlbums.splice(index, 1);
+    },
     findAlbums(q) {
       if (this.loading) {
         return;
