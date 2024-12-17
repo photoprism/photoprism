@@ -71,7 +71,7 @@
                     prepend-inner-icon="mdi-account-plus"
                     autocomplete="off"
                     class="input-name pa-0 ma-0"
-                    @update:model-value="onRename(marker)"
+                    @blur="onRename(marker)"
                     @keyup.enter.native="onRename(marker)"
                   >
                   </v-combobox>

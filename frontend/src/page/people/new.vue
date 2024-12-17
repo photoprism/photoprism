@@ -70,7 +70,7 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row align="center" class="ma-0">
+                <v-row v-else align="center" class="ma-0">
                   <v-col cols="12" class="text-start pa-0">
                     <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox
@@ -92,16 +92,15 @@
                       prepend-inner-icon="mdi-account-plus"
                       autocomplete="off"
                       class="input-name pa-0 ma-0"
-                      @update:model-value="
-                        (newName) => {
-                          onRename(model, newName);
-                        }
-                      "
                       @keyup.enter.native="
                         (event) => {
                           onRename(model, event.target.value);
                         }
                       "
+                      @blur="
+                        (event) => {
+                          onRename(model, event.target.value);
+                        }"
                     >
                     </v-combobox>
                   </v-col>
