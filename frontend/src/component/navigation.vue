@@ -64,8 +64,6 @@
                   <p class="nav-item-title">
                     <translate key="Search">Search</translate>
                   </p>
-                  <!-- TODO: fix filter -->
-                  <!-- <span v-if="config.count.all > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.all | abbreviateCount }}</span> -->
                   <span v-if="config.count.all > 0" :class="`nav-count-group ${rtl ? '--rtl' : ''}`">{{ config.count.all }}</span>
                 </v-list-item-title>
               </v-list-item>
@@ -117,27 +115,21 @@
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate>Review</translate>
                   </v-list-item-title>
-                  <!-- TODO: fix filter -->
                   <span v-show="config.count.review > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.review }}</span>
-                  <!-- <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review | abbreviateCount }}</span> -->
                 </v-list-item>
 
                 <v-list-item v-if="canAccessPrivate" v-show="$config.feature('private')" to="/private" variant="text" class="nav-private" :ripple="false" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate key="Private">Private</translate>
                   </v-list-item-title>
-                  <!-- TODO: fix filter -->
                   <span v-show="config.count.private > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.private }}</span>
-                  <!-- <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review | abbreviateCount }}</span> -->
                 </v-list-item>
 
                 <v-list-item v-show="$config.feature('archive')" to="/archive" variant="text" class="nav-archive" :ripple="false" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate>Archive</translate>
                   </v-list-item-title>
-                  <!-- TODO: fix filter -->
                   <span v-show="config.count.archived > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.archived }}</span>
-                  <!-- <span v-show="config.count.archived > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.archived | abbreviateCount }}</span> -->
                 </v-list-item>
               </v-list-group>
             </div>
@@ -151,8 +143,6 @@
                   <p class="nav-item-title">
                     <translate key="Albums">Albums</translate>
                   </p>
-                  <!-- TODO: fix filter -->
-                  <!-- <span v-if="config.count.albums > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums | abbreviateCount }}</span> -->
                   <span v-if="config.count.albums > 0" :class="`nav-count-group ${rtl ? '--rtl' : ''}`">{{ config.count.albums }}</span>
                 </v-list-item-title>
               </v-list-item>
@@ -181,8 +171,6 @@
                   <p class="nav-item-title">
                     <translate key="Videos">Videos</translate>
                   </p>
-                  <!-- TODO: fix filter -->
-                  <!-- <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos | abbreviateCount }}</span> -->
                   <span v-show="config.count.videos > 0" :class="`nav-count-group ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
                 </v-list-item-title>
               </v-list-item>
@@ -198,9 +186,7 @@
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate>Live Photos</translate>
                   </v-list-item-title>
-                  <!-- TODO: fix filter -->
                   <span v-show="config.count.live > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.live }}</span>
-                  <!-- <span v-show="config.count.live > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.live | abbreviateCount }}</span> -->
                 </v-list-item>
               </v-list-group>
             </div>
@@ -215,9 +201,7 @@
                   <translate key="People">People</translate>
                 </p>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.people > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.people }}</span>
-              <!-- <span v-show="config.count.people > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('favorites')" :to="{ name: 'favorites' }" variant="text" class="nav-favorites" :ripple="false" @click.stop="">
@@ -230,9 +214,7 @@
                   <translate key="Favorites">Favorites</translate>
                 </p>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.favorites > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.favorites }}</span>
-              <!-- <span v-show="config.count.favorites > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.favorites | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'calendar' }" variant="text" class="nav-calendar" :ripple="false" @click.stop="">
@@ -245,9 +227,7 @@
                   <translate key="Calendar">Calendar</translate>
                 </p>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.months > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.months }}</span>
-              <!-- <span v-show="config.count.months > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.months | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('moments')" :to="{ name: 'moments' }" variant="text" class="nav-moments" :ripple="false" @click.stop="">
@@ -260,9 +240,7 @@
                   <translate key="Moments">Moments</translate>
                 </p>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.moments > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.moments }}</span>
-              <!-- <span v-show="config.count.moments > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isRestricted" v-show="$config.feature('places')" to="/states" variant="text" class="nav-states" :ripple="false" @click.stop="">
@@ -270,9 +248,7 @@
                 <v-icon>mdi-near_me</v-icon>
                 <translate key="States">States</translate>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.states > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.states }}</span>
-              <!-- <span v-show="config.count.states > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states | abbreviateCount }}</span> -->
             </v-list-item>
 
             <template v-if="canSearchPlaces">
@@ -285,9 +261,7 @@
                     <p class="nav-item-title">
                       <translate key="Places">Places</translate>
                     </p>
-                    <!-- TODO: fix filter -->
                     <span v-show="config.count.places > 0" :class="`nav-count-group ${rtl ? '--rtl' : ''}`">{{ config.count.places }}</span>
-                    <!-- <span v-show="config.count.places > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.places | abbreviateCount }}</span> -->
                   </v-list-item-title>
                 </v-list-item>
 
@@ -302,9 +276,7 @@
                     <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                       <translate key="States">States</translate>
                     </v-list-item-title>
-                    <!-- TODO: fix filter -->
                     <span v-show="config.count.states > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.states }}</span>
-                    <!-- <span v-show="config.count.states > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states | abbreviateCount }}</span> -->
                   </v-list-item>
                 </v-list-group>
               </div>
@@ -320,9 +292,7 @@
                   <translate key="Labels">Labels</translate>
                 </p>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.labels > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.labels }}</span>
-              <!-- <span v-show="config.count.labels > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.labels | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('folders')" :to="{ name: 'folders' }" variant="text" class="nav-folders" :ripple="false" @click.stop="">
@@ -335,9 +305,7 @@
                   <translate key="Folders">Folders</translate>
                 </p>
               </v-list-item-title>
-              <!-- TODO: fix filter -->
               <span v-show="config.count.folders > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.folders }}</span>
-              <!-- <span v-show="config.count.folders > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.folders | abbreviateCount }}</span> -->
             </v-list-item>
 
             <v-list-item v-if="isMini && $config.feature('library')" :to="{ name: 'library_index' }" variant="text" class="nav-library" :ripple="false" @click.stop="">
@@ -363,18 +331,14 @@
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate key="Originals">Originals</translate>
                   </v-list-item-title>
-                  <!-- TODO: fix filter -->
                   <span v-show="config.count.files > 0 && canAccessPrivate" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.files }}</span>
-                  <!-- <span v-show="config.count.files > 0 && canAccessPrivate" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files | abbreviateCount }}</span> -->
                 </v-list-item>
 
                 <v-list-item :to="{ name: 'hidden' }" variant="text" class="nav-hidden" :ripple="false" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item ${rtl ? '--rtl' : ''}`">
                     <translate key="Hidden">Hidden</translate>
                   </v-list-item-title>
-                  <!-- TODO: fix filter -->
                   <span v-show="config.count.hidden > 0" :class="`nav-count-item ${rtl ? '--rtl' : ''}`">{{ config.count.hidden }}</span>
-                  <!-- <span v-show="config.count.hidden > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.hidden | abbreviateCount }}</span> -->
                 </v-list-item>
 
                 <v-list-item :to="{ name: 'errors' }" variant="text" class="nav-errors" @click.stop="">
@@ -599,17 +563,6 @@ import Album from "model/album";
 
 export default {
   name: "PNavigation",
-  filters: {
-    abbreviateCount: (val) => {
-      const value = Number.parseInt(val);
-      // TODO: make abbreviation configurable by userprofile settings or env var before enabling it.
-      // if (value >= 1000) {
-      //   const digits = value % 1000 <= 50 ? 0 : 1;
-      //   return (value/1000).toFixed(digits).toString()+'k';
-      // }
-      return value;
-    },
-  },
   data() {
     const appName = this.$config.getName();
 
