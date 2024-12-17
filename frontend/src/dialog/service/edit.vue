@@ -8,7 +8,7 @@
               {{ $gettext("Manual Upload") }}
             </h3>
           </v-col>
-          <v-col cols="3" class="text-right">
+          <v-col cols="3" class="text-end">
             <v-switch v-model="model.AccShare" color="surface-variant" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="ma-0 hidden-xs float-right" hide-details></v-switch>
             <v-switch v-model="model.AccShare" color="surface-variant" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="ma-0 hidden-sm-and-up float-right" hide-details></v-switch>
           </v-col>
@@ -19,7 +19,7 @@
               {{ $gettext("Remote Sync") }}
             </h3>
           </v-col>
-          <v-col cols="3" class="text-right">
+          <v-col cols="3" class="text-end">
             <v-switch v-model="model.AccSync" color="surface-variant" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="mt-0 hidden-xs float-right" hide-details flat></v-switch>
             <v-switch v-model="model.AccSync" color="surface-variant" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="mt-0 hidden-sm-and-up float-right" hide-details flat></v-switch>
           </v-col>
@@ -30,7 +30,7 @@
               {{ $gettext("Edit Account") }}
             </h3>
           </v-col>
-          <v-col cols="2" class="text-right">
+          <v-col cols="2" class="text-end">
             <v-btn icon variant="text" :ripple="false" class="action-remove mt-0" @click.stop.prevent="remove()">
               <v-icon color="surface-variant">mdi-delete</v-icon>
             </v-btn>
@@ -154,7 +154,7 @@
       </v-card-text>
       <v-card-actions class="pt-0 pb-2 px-2">
         <v-row class="pa-2">
-          <v-col cols="12" class="text-right pt-6 pb-0">
+          <v-col cols="12" class="text-end pt-6 pb-0">
             <v-btn variant="flat" color="button" class="action-cancel ml-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>

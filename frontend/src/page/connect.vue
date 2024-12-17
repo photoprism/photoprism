@@ -48,7 +48,7 @@
       </v-row>
       <v-row v-else-if="success">
         <v-col cols="12" class="pa-2 d-flex">
-          <p class="text-body-1 text-left flex-grow-1">
+          <p class="text-body-1 text-start flex-grow-1">
             <translate>Your account has been successfully connected.</translate>
             <span v-if="$config.values.restart">
               <translate>Please restart your instance for the changes to take effect.</translate>
@@ -82,7 +82,7 @@
             </p>
             <!-- TODO: check property return-masked-value TEST -->
             <v-text-field v-model="form.token" single-line hide-details return-masked-value :mask="tokenMask" autocomplete="off" :placeholder="$gettext('Activation Code')"></v-text-field>
-            <div class="action-buttons text-left mt-6">
+            <div class="action-buttons text-start mt-6">
               <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="surface-variant" :block="$vuetify.display.xs" class="ml-0" variant="outlined" :disabled="busy">
                 <translate>Manage Account</translate>
               </v-btn>

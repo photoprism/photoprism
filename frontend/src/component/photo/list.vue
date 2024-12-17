@@ -26,16 +26,16 @@
             <thead>
               <tr>
                 <th class="p-col-select"></th>
-                <th class="text-left">
+                <th class="text-start">
                   {{ $gettext("Title") }}
                 </th>
-                <th class="text-left hidden-xs">
+                <th class="text-start hidden-xs">
                   {{ $gettext("Taken") }}
                 </th>
-                <th class="text-left hidden-sm-and-down">
+                <th class="text-start hidden-sm-and-down">
                   {{ $gettext("Camera") }}
                 </th>
-                <th class="text-left hidden-md-and-down">
+                <th class="text-start hidden-md-and-down">
                   {{ showName ? $gettext("Name") : $gettext("Location") }}
                 </th>
                 <th v-if="!isSharedView" class="text-center"></th>

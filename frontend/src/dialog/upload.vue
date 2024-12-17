@@ -61,7 +61,7 @@
             </p>
 
             <v-progress-linear v-model="completedTotal" :indeterminate="indexing" class="py-1" :height="21">
-              <p class="px-2 ma-0 text-right opacity-85"
+              <p class="px-2 ma-0 text-end opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >
             </v-progress-linear>

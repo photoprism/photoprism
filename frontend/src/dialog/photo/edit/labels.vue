@@ -29,7 +29,7 @@
 <!--                    </template>-->
 <!--                  </v-dialog>-->
                 </td>
-                <td class="text-left">
+                <td class="text-start">
                   {{ sourceName(props.item.LabelSrc) }}
                 </td>
                 <td class="text-center"> {{ 100 - props.item.Uncertainty }}% </td>
@@ -54,7 +54,7 @@
                 <td>
                   <v-text-field v-model="newLabel" :rules="[nameRule]" color="surface-variant" autocomplete="off" :label="$gettext('Name')" single-line flat variant="plain" hide-details autofocus class="input-label" @keyup.enter="addLabel"></v-text-field>
                 </td>
-                <td class="text-left">
+                <td class="text-start">
                   {{ sourceName("manual") }}
                 </td>
                 <td class="text-center"> 100% </td>

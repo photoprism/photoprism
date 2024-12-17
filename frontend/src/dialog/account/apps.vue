@@ -127,16 +127,16 @@
                 >
                   <template #item="props">
                     <tr :data-name="props.item.ClientName">
-                      <td class="text-selectable text-left">
+                      <td class="text-selectable text-start">
                         {{ props.item.ClientName }}
                       </td>
-                      <td class="text-left hidden-xs" nowrap>
+                      <td class="text-start hidden-xs" nowrap>
                         {{ scopeInfo(props.item.AuthScope) }}
                       </td>
-                      <td class="text-left" nowrap>
+                      <td class="text-start" nowrap>
                         {{ formatDateTime(props.item.LastActive) }}
                       </td>
-                      <td class="text-left hidden-sm-and-down" nowrap>
+                      <td class="text-start hidden-sm-and-down" nowrap>
                         {{ formatDate(props.item.Expires) }}
                       </td>
                       <td>

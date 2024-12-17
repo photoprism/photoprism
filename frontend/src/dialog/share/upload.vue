@@ -9,10 +9,10 @@
       </v-card-title>
       <v-card-text class="dense">
         <v-row dense>
-          <v-col cols="12" class="text-left">
+          <v-col cols="12" class="text-start">
             <v-select v-model="service" hide-details hide-no-data :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
           </v-col>
-          <v-col cols="12" class="text-left">
+          <v-col cols="12" class="text-start">
             <v-autocomplete
               v-model="path"
               hide-details

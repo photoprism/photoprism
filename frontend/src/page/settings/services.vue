@@ -34,7 +34,7 @@
           <td class="hidden-sm-and-down">
             {{ formatDate(props.item.SyncDate) }}
           </td>
-          <td class="hidden-xs text-right" nowrap>
+          <td class="hidden-xs text-end" nowrap>
             <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
               <v-icon color="surface-variant">mdi-delete</v-icon>
             </v-btn>

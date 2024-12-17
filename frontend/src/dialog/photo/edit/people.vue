@@ -29,7 +29,7 @@
                 </v-col>
               </v-row>
               <v-row v-else-if="marker.SubjUID" align="center">
-                <v-col cols="12" class="text-left pa-0">
+                <v-col cols="12" class="text-start pa-0">
                   <v-text-field
                     v-model="marker.Name"
                     :rules="[textRule]"
@@ -50,7 +50,7 @@
                 </v-col>
               </v-row>
               <v-row v-else align="center">
-                <v-col cols="12" class="text-left pa-0">
+                <v-col cols="12" class="text-start pa-0">
                   <!-- TODO: check property allow-overflow TEST -->
                   <v-combobox
                     v-model="marker.Name"

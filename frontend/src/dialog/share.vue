@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
           <h6 class="text-h6"><translate :translate-params="{ name: model.modelName() }">Share %{name}</translate></h6>
-          <v-btn icon variant="text" color="primary" class="action-add-link" :class="rtl ? 'text-left' : 'text-right'" :title="$gettext('Add Link')" @click.stop="add">
+          <v-btn icon variant="text" color="primary" class="action-add-link" :class="rtl ? 'text-start' : 'text-end'" :title="$gettext('Add Link')" @click.stop="add">
             <v-icon>mdi-link-plus</v-icon>
           </v-btn>
       </v-card-title>
@@ -43,12 +43,12 @@
                           @click:append-inner="showPassword = !showPassword"
                         ></v-text-field>
                       </v-col> -->
-                      <v-col cols="6" :class="!rtl ? 'text-left' : 'text-right'" class="pa-2">
+                      <v-col cols="6" :class="!rtl ? 'text-start' : 'text-end'" class="pa-2">
                         <v-btn density="comfortable" icon variant="text" color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </v-col>
-                      <v-col cols="6" :class="rtl ? 'text-left' : 'text-right'" class="pa-2">
+                      <v-col cols="6" :class="rtl ? 'text-start' : 'text-end'" class="pa-2">
                         <v-btn variant="flat" color="highlight" class="ma-0 compact action-save" @click.stop.exact="update(link)">
                           <translate>Save</translate>
                         </v-btn>
@@ -61,7 +61,7 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <v-container fluid :text-left="!rtl" :text-right="rtl" class="pb-0 pt-6 pr-0 pl-0 text-caption">
+        <v-container fluid :text-start="!rtl" :text-end="rtl" class="pb-0 pt-6 pr-0 pl-0 text-caption">
           <translate :translate-params="{ name: model.modelName() }">People you share a link with will be able to view public contents.</translate>
           <translate>A click will copy it to your clipboard.</translate>
           <translate>Any private photos and videos remain private and won't be shared.</translate>
@@ -72,7 +72,7 @@
         <v-btn variant="flat" color="secondary-light" class="action-webdav" @click.stop="upload">
           <translate>WebDAV Upload</translate>
         </v-btn>
-        <v-btn variant="flat" color="button" class="action-close" :class="rtl ? 'text-left' : 'text-right'" @click.stop="confirm">
+        <v-btn variant="flat" color="button" class="action-close" :class="rtl ? 'text-start' : 'text-end'" @click.stop="confirm">
           <translate>Close</translate>
         </v-btn>
       </v-card-actions>

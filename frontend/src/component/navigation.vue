@@ -434,7 +434,7 @@
             <div class="text-center ma-2">
               <v-icon color="warning" size="28">mdi-wifi-off</v-icon>
             </div>
-            <div v-if="!isMini" class="text-left mt-1 text-body-2">
+            <div v-if="!isMini" class="text-start mt-1 text-body-2">
               <translate key="No server connection">No server connection</translate>
             </div>
           </div>
@@ -443,7 +443,7 @@
             <div class="nav-user-avatar text-center my-1 mx-2 clickable" @click.stop="showAccountSettings">
               <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
             </div>
-            <div v-if="!isMini" class="text-left mt-1 flex-grow-1 clickable" @click.stop="showAccountSettings">
+            <div v-if="!isMini" class="text-start mt-1 flex-grow-1 clickable" @click.stop="showAccountSettings">
               <p class="text-body-2">{{ displayName }}</p>
               <p class="text-caption opacity-70">{{ accountInfo }}</p>
             </div>

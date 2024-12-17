@@ -47,7 +47,7 @@
 
               <v-card-actions class="card-details pa-0">
                 <v-row v-if="model.SubjUID" align="center" class="ma-0">
-                  <v-col cols="12" class="text-left pa-0">
+                  <v-col cols="12" class="text-start pa-0">
                     <v-text-field
                       :model-value="model.Name"
                       :rules="[textRule]"
@@ -71,7 +71,7 @@
                   </v-col>
                 </v-row>
                 <v-row align="center" class="ma-0">
-                  <v-col cols="12" class="text-left pa-0">
+                  <v-col cols="12" class="text-start pa-0">
                     <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox
                       :model-value="model.Name"

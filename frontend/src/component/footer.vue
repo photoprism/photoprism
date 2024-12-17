@@ -2,7 +2,7 @@
   <v-card variant="flat" tile class="bg-background footer">
     <v-card-actions class="footer-actions">
       <v-row align="start" class="pt-6" no-gutters>
-        <v-col cols="12" sm="6" class="text-left">
+        <v-col cols="12" sm="6" class="text-start">
           <p class="text-body-2 text-selectable px-0 pb-2">
             <strong><router-link to="/about" class="text-link text-selectable">{{ about }}{{ getMembership() }}</router-link></strong>
             <span class="body-link text-selectable">Build&nbsp;<a href="https://docs.photoprism.app/release-notes/" target="_blank" :title="version" class="body-link">{{ build }}</a></span>

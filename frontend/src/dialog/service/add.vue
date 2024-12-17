@@ -28,7 +28,7 @@
               @click:append-inner="showPassword = !showPassword"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" class="text-left text-caption">
+          <v-col cols="12" class="text-start text-caption">
             <translate>Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.</translate>
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-col>
