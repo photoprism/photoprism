@@ -3,9 +3,8 @@
     <v-form ref="form" validate-on="blur" class="form-label-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
-              <h3 class="text-h5">
-                <translate :translate-params="{ name: model.modelName() }">Edit %{name}</translate>
-              </h3>
+          <v-icon size="28" color="primary">mdi-label</v-icon>
+          <h6 class="text-h6"><translate :translate-params="{ name: model.modelName() }">Edit %{name}</translate></h6>
         </v-card-title>
 
         <v-card-text class="dense">
