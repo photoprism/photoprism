@@ -31,24 +31,19 @@
             }
           "
         ></v-text-field>
-
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-
         <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
           <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
-
         <v-btn v-if="canManage && staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')" @click.prevent="create()">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
-
-        <v-btn v-if="canManage && !staticFilter['order']" :icon="searchExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': searchExpanded }" @click.stop="searchExpanded = !searchExpanded">
-        </v-btn>
+        <v-btn v-if="canManage && !staticFilter['order']" :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': expanded }" @click.stop="toggleExpansionPanel"></v-btn>
       </v-toolbar>
 
-      <div :class="{ 'toolbar-expansion-panel--visible': searchExpanded }" class="toolbar-expansion-panel">
+      <div :class="{ 'toolbar-expansion-panel--visible': expanded }" class="toolbar-expansion-panel">
         <v-card flat color="secondary">
           <v-card-text class="dense">
             <v-row dense>
@@ -123,7 +118,13 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
+      <p-scroll
+          :hide-panel="hideExpansionPanel"
+          :load-more="loadMore"
+          :load-disabled="scrollDisabled"
+          :load-distance="scrollDistance"
+          :loading="loading">
+      </p-scroll>
 
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
@@ -321,7 +322,7 @@ export default {
     }
 
     return {
-      searchExpanded: false,
+      expanded: false,
       experimental: this.$config.get("experimental") && !this.$config.ce(),
       canUpload: this.$config.allow("files", "upload") && features.upload,
       canShare: this.$config.allow("albums", "share") && features.share,
@@ -404,8 +405,6 @@ export default {
     },
   },
   created() {
-    window.addEventListener("scroll", this.onScroll, { passive: true });
-
     this.search();
 
     this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
@@ -414,17 +413,17 @@ export default {
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
   beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll, { passive: true });
-
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
-    onScroll() {
-      // TODO: Show search toolbar with fixed position at the top.
-      if (this.searchExpanded === true && window.scrollY > 12) {
-        this.searchExpanded = false;
+    toggleExpansionPanel() {
+      this.expanded = !this.expanded;
+    },
+    hideExpansionPanel() {
+      if (this.expanded) {
+        this.expanded = false;
       }
     },
     onConfigUpdated(data) {
@@ -664,11 +663,11 @@ export default {
             this.setOffset(resp.offset + resp.limit);
             this.page++;
 
-            /* this.$nextTick(() => {
+            this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
-            }); */
+            });
           }
         })
         .catch(() => {
@@ -785,8 +784,8 @@ export default {
       Album.search(params)
         .then((resp) => {
           // Hide search toolbar expansion panel when matching albums were found.
-          if (this.searchExpanded && this.offset === 0 && resp.count > 0) {
-            this.searchExpanded = false;
+          if (this.offset === 0 && resp.count > 0) {
+            this.hideExpansionPanel();
           }
 
           this.offset = resp.limit;
@@ -804,11 +803,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 albums found'));
-            /* this.$nextTick(() => {
+            this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
-            }); */
+            });
           }
         })
         .finally(() => {

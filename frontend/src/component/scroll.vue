@@ -23,6 +23,18 @@ export default {
       type: Boolean,
       default: true,
     },
+    hidePanel: {
+      type: Function,
+      default: () => {},
+    },
+    hidePanelDistance: {
+      type: Number,
+      default: 12,
+    },
+    resetDistance: {
+      type: Number,
+      default: 250,
+    },
     loading: {
       type: Boolean,
       default: false,
@@ -30,45 +42,102 @@ export default {
   },
   data() {
     return {
-      maxScrollY: 0,
       wait: false,
+      waitTime: 100, // ms
+      panelHidden: false,
       showButton: false,
+      showButtonDistance: 80,
+      maxScrollY: 0,
+      onScrollOptions: { passive: true },
     };
   },
   created() {
-    window.addEventListener("scroll", this.onScroll, { passive: true });
+    window.addEventListener("scroll", this.onScroll, this.onScrollOptions);
   },
   beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll, { passive: true });
+    window.removeEventListener("scroll", this.onScroll, this.onScrollOptions);
   },
   methods: {
     onScroll() {
       if (window.scrollY > this.maxScrollY) {
+        // Remember the maximum vertical scroll position.
         this.maxScrollY = window.scrollY;
 
-        if (this.showButton) {
-          this.showButton = false;
+        // Hide "Back to top" button if currently shown.
+        this.resetButton();
+
+        // Hide the expansion panel when scrolling more than specified in this.hidePanelDistance.
+        if (window.scrollY > this.hidePanelDistance) {
+          this.onHidePanel();
         }
 
-        if (!this.loadDisabled && !this.wait && document.documentElement.scrollHeight - window.scrollY < this.loadDistance) {
-          this.wait = true;
-          this.loadMore();
-          setTimeout(() => {
-            this.wait = false;
-          }, 1000);
+        // Trigger this.loadMore() callback if within load distance (infinite scrolling).
+        if (document.documentElement.scrollHeight - window.scrollY < this.loadDistance) {
+          this.onLoadMore();
         }
-      } else if (window.scrollY < window.innerHeight) {
-        if (this.showButton) {
-          this.showButton = false;
-        }
-        if (this.maxScrollY !== 0) {
-          this.maxScrollY = 0;
-        }
-      } else if (!this.showButton && !this.loading && !this.wait && this.maxScrollY - window.scrollY > 80) {
+      } else if (window.scrollY < this.resetDistance) {
+        // Hide "Back to top" button and reset maximum scroll position.
+        this.reset();
+      } else if (this.maxScrollY - window.scrollY > this.showButtonDistance) {
+        // Show "Back to top" button if it is not already shown.
+        this.onShowButton();
+      }
+    },
+    reset() {
+      this.resetButton();
+      this.resetHidePanel();
+      this.resetScrollY();
+    },
+    onShowButton() {
+      // Show "Back to top" button if it is not already visible.
+      if (!this.showButton && !this.loading && !this.wait) {
         this.showButton = true;
       }
     },
+    resetButton() {
+      // Hide the "Back to top" button if it is visible.
+      if (this.showButton) {
+        this.showButton = false;
+      }
+    },
+    onHidePanel() {
+      // Hide expansion panel when scrolling down and it's not already hidden.
+      if (!this.panelHidden) {
+        this.hidePanel();
+        this.panelHidden = true;
+      }
+    },
+    resetHidePanel() {
+      if (this.panelHidden) {
+        this.panelHidden = false;
+      }
+    },
+    resetScrollY() {
+      // Reset maximum vertical scroll position.
+      if (this.maxScrollY > 0) {
+        this.maxScrollY = -1;
+      }
+    },
+    onLoadMore() {
+      // Call this.loadMore() for infinite scrolling,
+      // unless this.loadDisabled or this.wait is set.
+      if (!this.loadDisabled && !this.wait) {
+        this.onWait();
+        this.loadMore();
+      }
+    },
+    onWait() {
+      // Helps ensure that callback functions like this.loadMore()
+      // are only called once within this.waitTime.
+      if (!this.wait) {
+        this.wait = true;
+        setTimeout(() => {
+          this.wait = false;
+        }, this.waitTime);
+      }
+    },
     scrollToTop() {
+      // Scroll smoothly to the top of the browser window.
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
   },

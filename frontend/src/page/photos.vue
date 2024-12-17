@@ -6,7 +6,13 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
+      <p-scroll
+          :hide-panel="hideExpansionPanel"
+          :load-more="loadMore"
+          :load-disabled="scrollDisabled"
+          :load-distance="scrollDistance"
+          :loading="loading">
+      </p-scroll>
 
       <p-photo-clipboard :context="context" :refresh="refresh"></p-photo-clipboard>
 
@@ -199,6 +205,9 @@ export default {
     }
   },
   methods: {
+    hideExpansionPanel() {
+      return this.$refs?.toolbar.hideExpansionPanel();
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("photos_offset"));
       if (this.offset > 0 || !offset) {
@@ -427,11 +436,11 @@ export default {
             this.offset = offset + count;
             this.page++;
 
-            /* this.$nextTick(() => {
+            this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
-            }); */
+            });
           }
         })
         .catch(() => {
@@ -572,7 +581,7 @@ export default {
         .then((response) => {
           // Hide search toolbar expansion panel when matching pictures were found.
           if (this.offset === 0 && response.count > 0) {
-            this.$refs?.toolbar.hideExpansionPanel();
+            this.hideExpansionPanel();
           }
 
           this.offset = response.limit;
@@ -592,11 +601,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
-            /* this.$nextTick(() => {
+            this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
-            }); */
+            });
           }
         })
         .finally(() => {

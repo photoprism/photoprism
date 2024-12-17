@@ -422,11 +422,11 @@ export default {
             this.setOffset(resp.offset + resp.limit);
             this.page++;
 
-            /* this.$nextTick(() => {
+            this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
-            }); */
+            });
           }
         })
         .catch(() => {
@@ -569,11 +569,11 @@ export default {
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 labels found'));
-            /* this.$nextTick(() => {
+            this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
-            }); */
+            });
           }
         })
         .finally(() => {

@@ -114,6 +114,7 @@ export default {
     ].concat(this.$config.get("countries"));
     const features = this.$config.settings().features;
     return {
+      expanded: false,
       canUpload: this.$config.allow("files", "upload") && features.upload,
       canDownload: this.$config.allow("albums", "download") && features.download,
       canShare: this.$config.allow("albums", "share") && features.share,
@@ -124,7 +125,6 @@ export default {
       collectionTitle: this.$route.meta?.collectionTitle ? this.$route.meta.collectionTitle : this.$gettext("Albums"),
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       navIcon: this.$rtl ? "mdi-chevron-left" : "mdi-chevron-right",
-      searchExpanded: false,
       listView: this.$config.settings()?.search?.listView,
       dialog: {
         share: false,
@@ -132,10 +132,14 @@ export default {
         edit: false,
       },
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
-      growDesc: false,
     };
   },
   methods: {
+    hideExpansionPanel() {
+      if (this.expanded) {
+        this.expanded = false;
+      }
+    },
     T() {
       return T.apply(this, arguments);
     },
@@ -151,9 +155,8 @@ export default {
         Event.publish("dialog.upload", { albums: [] });
       }
     },
-    expand() {
-      this.searchExpanded = !this.searchExpanded;
-      this.growDesc = !this.growDesc;
+    onUpdate(v) {
+      this.updateQuery(v);
     },
     setView(name) {
       if (name) {

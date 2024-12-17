@@ -58,9 +58,7 @@
         <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
           <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
-
-        <v-btn :icon="searchExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': searchExpanded }" @click.stop="searchExpanded = !searchExpanded">
-        </v-btn>
+        <v-btn :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': expanded }" @click.stop="toggleExpansionPanel"></v-btn>
       </template>
       <template v-else>
         <v-spacer></v-spacer>
@@ -73,7 +71,7 @@
       </template>
     </v-toolbar>
 
-    <div :class="{ 'toolbar-expansion-panel--visible': searchExpanded }" class="toolbar-expansion-panel">
+    <div :class="{ 'toolbar-expansion-panel--visible': expanded }" class="toolbar-expansion-panel">
       <v-card flat color="secondary">
         <v-card-text class="dense">
           <v-row dense>
@@ -307,7 +305,7 @@ export default {
     const readonly = this.$config.get("readonly");
 
     return {
-      searchExpanded: false,
+      expanded: false,
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       config: this.$config.values,
@@ -397,18 +395,14 @@ export default {
       }
     },
   },
-  created() {
-    window.addEventListener("scroll", this.onScroll, { passive: true });
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll, { passive: true });
-  },
   methods: {
-    onScroll() {
-      // TODO: Show search toolbar with fixed position at the top.
-      if (this.searchExpanded === true && window.scrollY > 12) {
-        this.searchExpanded = false;
+    hideExpansionPanel() {
+      if (this.expanded) {
+        this.expanded = false;
       }
+    },
+    toggleExpansionPanel() {
+      this.expanded = !this.expanded;
     },
     colorOptions() {
       return this.all.colors.concat(options.Colors());
@@ -450,11 +444,6 @@ export default {
     },
     onUpdate(v) {
       this.updateQuery(v);
-    },
-    hideExpansionPanel() {
-      if (this.searchExpanded) {
-        this.searchExpanded = false;
-      }
     },
     batchDelete() {
       if (!this.canDelete) {
