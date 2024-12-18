@@ -110,8 +110,7 @@
                       </v-btn>
                       <v-btn color="highlight" variant="flat" :disabled="loginDisabled" :block="$vuetify.display.xs" class="action-confirm" @click.stop.prevent="onLogin">
                         <translate>Sign in</translate>
-                        <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
-                        <v-icon v-else end>mdi-chevron-right</v-icon>
+                        <v-icon :icon="$config.rtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
                       </v-btn>
                     </div>
                     <div v-if="enterCode" :class="{ clickable: !useRecoveryCode }" class="auth-links text-center opacity-80" @click.stop.prevent="onUseRecoveryCode">
@@ -129,7 +128,7 @@
                       <v-divider />
                       <div class="text-center oidc-buttons mt-6">
                         <v-btn color="highlight" variant="flat" :disabled="loading" block class="action-oidc-login" @click.stop.prevent="onOidcLogin">
-                          <img alt="" class="oidc-icon v-icon--left mx-1" :src="config.ext.oidc.icon" />
+                          <img alt="" class="oidc-icon v-icon--start mx-1" :src="config.ext.oidc.icon" />
                           <translate :translate-params="{ provider: config.ext.oidc.provider }">Continue with %{provider}</translate>
                         </v-btn>
                       </div>
@@ -165,7 +164,7 @@ export default {
       wallpaperUri: this.$config.values.wallpaperUri,
       registerUri: this.$config.values.registerUri,
       passwordResetUri: this.$config.values.passwordResetUri,
-      rtl: this.$rtl,
+      rtl: this.$config.rtl(),
     };
   },
   computed: {
