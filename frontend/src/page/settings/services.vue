@@ -56,7 +56,7 @@
 
           <v-btn color="highlight" class="compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">
             <translate>Connect</translate>
-            <v-icon end>mdi-plus</v-icon>
+            <v-icon icon="mdi-plus" end></v-icon>
           </v-btn>
         </div>
       </v-form>
