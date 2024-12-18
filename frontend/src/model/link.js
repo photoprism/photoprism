@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import Model from "model.js";
 import { DateTime } from "luxon";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 const c = window.__CONFIG__;
 

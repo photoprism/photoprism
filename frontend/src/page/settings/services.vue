@@ -20,8 +20,7 @@
           </td>
           <td class="text-center">
             <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
-              <v-icon v-if="props.item.AccShare" color="surface-variant">mdi-check</v-icon>
-              <v-icon v-else color="surface-variant">mdi-cog</v-icon>
+              <v-icon :icon="props.item.AccShare ? 'mdi-check' : 'mdi-cog'" color="surface-variant"></v-icon>
             </v-btn>
           </td>
           <td class="text-center">
@@ -35,12 +34,8 @@
             {{ formatDate(props.item.SyncDate) }}
           </td>
           <td class="hidden-xs text-end" nowrap>
-            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)">
-              <v-icon color="surface-variant">mdi-delete</v-icon>
-            </v-btn>
-            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)">
-              <v-icon color="surface-variant">mdi-pencil</v-icon>
-            </v-btn>
+            <v-btn icon="mdi-delete" color="surface-variant" density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)"></v-btn>
+            <v-btn icon="mdi-pencil" color="surface-variant" density="comfortable" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)"></v-btn>
           </td>
         </tr>
       </template>
@@ -56,12 +51,12 @@
         <div class="action-buttons">
           <v-btn v-if="user.hasWebDAV()" color="button" variant="flat" class="action-webdav-dialog" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
             <translate>Connect via WebDAV</translate>
-            <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
+            <v-icon end>mdi-swap-horizontal</v-icon>
           </v-btn>
 
           <v-btn color="highlight" class="compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">
             <translate>Connect</translate>
-            <v-icon :end="!rtl" :start="rtl">mdi-plus</v-icon>
+            <v-icon end>mdi-plus</v-icon>
           </v-btn>
         </div>
       </v-form>

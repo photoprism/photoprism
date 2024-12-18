@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import Axios from "axios";
 import Notify from "common/notify";
-import { $gettext } from "vm.js";
+import { $gettext } from "common/gettext";
 import Event from "pubsub-js";
 
 const testConfig = {

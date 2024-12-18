@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-photo-index" validate-on="blur" @submit.prevent="submit">
       <v-container fluid>
         <p class="text-body-1">
-          <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
+          <span v-if="fileName" class="text-break">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
@@ -60,7 +60,7 @@
 
           <v-btn :disabled="busy || !ready" variant="flat" color="highlight" class="action-index" @click.stop="startIndexing()">
             <translate>Start</translate>
-            <v-icon :end="!rtl" :start="rtl">mdi-update</v-icon>
+            <v-icon end>mdi-update</v-icon>
           </v-btn>
         </div>
 

@@ -4,7 +4,7 @@
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" :start="!rtl" :end="rtl">{{ item.icon }}</v-icon> {{ item.label }}
+          <v-icon :size="18" start>{{ item.icon }}</v-icon> {{ item.label }}
         </template>
       </v-tab>
     </v-tabs>

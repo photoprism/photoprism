@@ -71,14 +71,9 @@ body.chrome .search-results .result {
     z-index: 10;
 }
 
-.p-clipboard.--ltr {
-    right: 8px;
-    bottom: 12px;
-}
-
-.p-clipboard.--rtl {
-    left: 8px;
-    bottom: 12px;
+.is-rtl .clipboard-container {
+    right: auto;
+    left: 4px;
 }
 
 .p-clipboard .v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
@@ -247,12 +242,12 @@ body.chrome .search-results .result {
 
 .list-view td.meta-data {
     min-width: 90px;
-    text-align: left;
+    text-align: start;
 }
 
 .list-view td.meta-data button {
     min-width: 84px;
-    text-align: left;
+    text-align: start;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -350,6 +345,11 @@ body.chrome .search-results .result {
     padding: 0 0 0 17px;
     position: relative;
     display: block;
+    text-align: start;
+}
+
+.is-rtl .cards-view .result .card-details .meta-details button {
+    padding: 0 17px 0 0;
 }
 
 .cards-view .result .card-details .meta-details button i {
@@ -363,9 +363,10 @@ body.chrome .search-results .result {
     text-transform: none;
     vertical-align: text-bottom;
     white-space: nowrap;
+    text-align: start;
     position: absolute;
-    left: 0;
     top: 0;
+    margin-inline-start: -17px;
 }
 
 .cards-view .result.placeholder .card-details i {
@@ -587,7 +588,7 @@ body.chrome .search-results .result {
 }
 
 .cards-view .card-details button {
-    text-align: left;
+    text-align: start;
 }
 
 .cards-view .v-card .card-details {

@@ -7,8 +7,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start">
-            <v-col cols="12" sm="6" class="px-2 pb-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6">
               <v-select
                 v-model="settings.ui.theme"
                 :disabled="busy"
@@ -22,7 +22,7 @@
               ></v-select>
             </v-col>
 
-            <v-col cols="12" sm="6" class="px-2 pb-2">
+            <v-col cols="12" sm="6">
               <v-select
                 v-model="settings.ui.language"
                 :disabled="busy"
@@ -42,7 +42,7 @@
 
       <v-card v-if="isDemo || isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
-          <v-row align="start">
+          <v-row align="start" dense>
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.people"
@@ -305,8 +305,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start">
-            <v-col cols="12" sm="6" class="px-2 pb-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6">
               <v-select
                 v-model="settings.maps.style"
                 :disabled="busy"
@@ -322,7 +322,7 @@
               </v-select>
             </v-col>
 
-            <v-col cols="12" sm="6" class="px-2 pb-2">
+            <v-col cols="12" sm="6">
               <v-select
                 v-model="settings.maps.animate"
                 :disabled="busy"
@@ -346,7 +346,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start">
+          <v-row align="start" dense>
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"

@@ -148,27 +148,27 @@
               <v-col cols="12" sm="6">
                 <v-btn block variant="flat" color="button" class="action-change-password" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                   <translate>Change Password</translate>
-                  <v-icon :end="!rtl" :start="rtl">mdi-lock</v-icon>
+                  <v-icon end>mdi-lock</v-icon>
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-btn block variant="flat" color="button" class="action-passcode-dialog" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                   <translate>2-Factor Authentication</translate>
-                  <v-icon v-if="user.AuthMethod === '2fa'" :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
-                  <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :end="!rtl" :start="rtl">mdi-shield-check</v-icon>
-                  <v-icon v-else :end="!rtl" :start="rtl">mdi-shield-alert</v-icon>
+                  <v-icon v-if="user.AuthMethod === '2fa'" end>mdi-shield-alert</v-icon>
+                  <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" end>mdi-shield-check</v-icon>
+                  <v-icon v-else end>mdi-shield-alert</v-icon>
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-btn block variant="flat" color="button" class="action-apps-dialog" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                   <translate>Apps and Devices</translate>
-                  <v-icon :end="!rtl" :start="rtl">mdi-cellphone-link</v-icon>
+                  <v-icon end>mdi-cellphone-link</v-icon>
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-btn block variant="flat" color="button" class="action-webdav-dialog" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                   <translate>Connect via WebDAV</translate>
-                  <v-icon :end="!rtl" :start="rtl">mdi-swap-horizontal</v-icon>
+                  <v-icon end>mdi-swap-horizontal</v-icon>
                 </v-btn>
               </v-col>
             </v-row>

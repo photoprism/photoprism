@@ -17,6 +17,16 @@ body.dark-theme {
     background: rgb(var(--v-theme-background, #2f3031)) !important;
 }
 
+/* Card Styles */
+
+.v-card-title {
+    padding: 12px 20px;
+}
+
+.v-card-actions {
+    padding: 8px 12px;
+}
+
 /* Dialog Styles */
 
 .v-overlay.v-dialog>.v-overlay__content>.v-card,
@@ -92,19 +102,23 @@ body.dark-theme {
 /* Input Styles */
 
 .v-selection-control--density-compact .v-label {
-    margin-left: 0.5em;
+    margin-inline-start: .5em;
 }
 
 .v-selection-control--density-compact {
     --v-selection-control-size: 20px;
 }
 
-.v-switch.v-switch--flat.v-input.v-input--horizontal.v-locale--is-ltr {
-    margin-left: 8px;
+.v-switch.v-switch--flat.v-input.v-input--horizontal {
+    margin-inline-start: 8px;
 }
 
 .v-input.v-input--disabled.v-switch {
     opacity: var(--v-disabled-opacity);
+}
+
+.v-btn {
+    letter-spacing: .0125em;
 }
 
 .v-btn--disabled {
@@ -198,6 +212,23 @@ body.dark-theme {
 
 .clipboard-container .v-btn.v-btn--icon {
     box-shadow: 0 3px 5px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 6px 10px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 18px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+}
+
+/* Badge Styles */
+
+.v-badge .v-badge__badge {
+    font-size: 0.75rem;
+    text-align: center;
+    height: 1.05rem;
+    min-width: 1.05rem;
+    margin: 0;
+    padding: 0;
+}
+
+.v-tabs .v-badge.v-badge--inline {
+    position: relative;
+    margin-inline-start: -4px;
+    top: -8px;
 }
 
 /* Table Styles */

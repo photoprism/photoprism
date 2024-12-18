@@ -453,15 +453,41 @@ export default class Config {
     return this;
   }
 
+  rtl(locale) {
+    if (!locale) {
+      locale = this.getLanguage();
+    }
+
+    return Languages().some((l) => l.value === locale && l.rtl);
+  }
+
   setLanguage(locale) {
-    if (!locale || this.loading()) {
-      return;
+    if (!locale) {
+      return this;
+    }
+
+    if (document && document.body) {
+      const isRtl = this.rtl(locale);
+
+      Api.defaults.headers.common["Accept-Language"] = locale;
+
+      // Update <html> lang and dir attributes on current locale.
+      document.documentElement.setAttribute("lang", locale);
+      document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
+
+      // Set body.is-rtl class depending on current locale.
+      if (isRtl !== document.body.classList.contains("is-rtl")) {
+        document.body.classList.toggle("is-rtl");
+      }
+    }
+
+    if (this.loading()) {
+      return this;
     }
 
     if (this.values.settings && this.values.settings.ui) {
       this.values.settings.ui.language = locale;
       this.storage.setItem(this.storage_key + ".locale", locale);
-      Api.defaults.headers.common["Accept-Language"] = locale;
     }
 
     return this;
@@ -545,14 +571,6 @@ export default class Config {
 
   feature(name) {
     return this.values.settings.features[name] === true;
-  }
-
-  rtl() {
-    if (!this.values || !this.values.settings || !this.values.settings.ui.language) {
-      return false;
-    }
-
-    return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
   }
 
   setTokens(tokens) {

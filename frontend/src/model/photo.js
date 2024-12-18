@@ -33,7 +33,7 @@ import { DateTime } from "luxon";
 import Util from "common/util";
 import { config } from "app/session";
 import countries from "options/countries.json";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 import { PhotoClipboard } from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";

@@ -41,7 +41,7 @@ import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
 import Connect from "page/connect.vue";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 import { config, session } from "./session";
 
 const c = window.__CONFIG__;

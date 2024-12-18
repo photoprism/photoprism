@@ -243,7 +243,7 @@
 import Thumb from "model/thumb";
 import { DateTime, Info } from "luxon";
 import * as options from "options/options";
-import { T } from "common/vm";
+import { T } from "common/gettext";
 import Util from "common/util";
 
 export default {

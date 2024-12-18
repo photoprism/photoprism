@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-photo-import" validate-on="blur" @submit.prevent="submit">
       <v-container fluid>
         <p class="text-body-1">
-          <span v-if="fileName" class="break-word"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>
+          <span v-if="fileName" class="text-break"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>
           <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
           <span v-else><translate>Press button to start importing…</translate></span>
@@ -70,12 +70,12 @@
 
           <v-btn v-if="!$config.values.readonly && $config.feature('upload')" :disabled="busy || !ready" variant="flat" color="highlight" class="hidden-xs action-upload" @click.stop="showUpload()">
             <translate>Upload</translate>
-            <v-icon :end="!rtl" :start="rtl">mdi-cloud-upload</v-icon>
+            <v-icon end>mdi-cloud-upload</v-icon>
           </v-btn>
 
           <v-btn :disabled="busy || !ready" variant="flat" color="highlight" class="action-import" @click.stop="startImport()">
             <translate>Import</translate>
-            <v-icon :end="!rtl" :start="rtl">mdi-sync</v-icon>
+            <v-icon end>mdi-sync</v-icon>
           </v-btn>
         </div>
       </v-container>

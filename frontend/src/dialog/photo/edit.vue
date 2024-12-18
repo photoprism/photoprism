@@ -26,7 +26,7 @@
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
-            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-pencil</v-icon>
+            <v-icon :size="18" start>mdi-pencil</v-icon>
             <translate key="Details">Details</translate>
           </template>
         </v-tab>
@@ -34,39 +34,27 @@
         <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
-            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-label</v-icon>
-            <v-badge v-if="model.Labels.length" color="surface-variant" :location="rtl ? 'left' : 'right'" :content="model.Labels.length">
-              <translate key="Labels">Labels</translate>
-            </v-badge>
-            <template v-else>
-              <translate key="Labels">Labels</translate>
-            </template>
+            <v-icon :size="18" start>mdi-label</v-icon>
+            <translate key="Labels">Labels</translate>
+            <v-badge v-if="model.Labels.length" color="surface-variant" inline :content="model.Labels.length"></v-badge>
           </template>
         </v-tab>
 
         <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
-            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-account-multiple</v-icon>
-            <v-badge v-if="model.Faces" color="surface-variant" :location="rtl ? 'left' : 'right'" :content="model.Faces">
-              <translate key="People">People</translate>
-            </v-badge>
-            <template v-else>
-              <translate key="People">People</translate>
-            </template>
+            <v-icon :size="18" start>mdi-account-multiple</v-icon>
+            <translate key="People">People</translate>
+            <v-badge v-if="model.Faces" color="surface-variant" inline :content="model.Faces"></v-badge>
           </template>
         </v-tab>
 
         <v-tab id="tab-files" ripple>
           <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
-            <v-icon :size="18" :start="!rtl" :end="rtl">mdi-film</v-icon>
-            <v-badge v-if="model.Files.length" color="surface-variant" :location="rtl ? 'left' : 'right'" :content="model.Files.length">
-              <translate key="Files">Files</translate>
-            </v-badge>
-            <template v-else>
-              <translate key="Files">Files</translate>
-            </template>
+            <v-icon :size="18" start>mdi-film</v-icon>
+            <translate key="Files">Files</translate>
+            <v-badge v-if="model.Files.length" color="surface-variant" inline :content="model.Files.length"></v-badge>
           </template>
         </v-tab>
 

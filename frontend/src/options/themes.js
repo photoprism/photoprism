@@ -1,4 +1,4 @@
-import { $gettext, T } from "common/vm";
+import { $gettext, T } from "common/gettext";
 import { style, colors, variables } from "ui";
 
 /* Theme Definitions */

@@ -1,5 +1,5 @@
 import { timeZonesNames } from "@vvo/tzdb";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 import { Info } from "luxon";
 import { config } from "app/session";
 import { MediaImage, MediaLive, MediaVideo, MediaAnimated, MediaVector, MediaRaw } from "model/photo";

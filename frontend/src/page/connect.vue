@@ -3,8 +3,7 @@
     <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
       <v-toolbar-title>
         <translate>Membership</translate>
-        <v-icon v-if="rtl">mdi-chevron-left</v-icon>
-        <v-icon v-else>mdi-chevron-right</v-icon>
+        <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'"></v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
@@ -61,12 +60,11 @@
           </v-btn>
           <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="highlight" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
-            <v-icon :end="!rtl" :start="rtl">mdi-restart</v-icon>
+            <v-icon end>mdi-restart</v-icon>
           </v-btn>
           <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="highlight" :block="$vuetify.display.xs" class="text-white ml-0" variant="flat" :disabled="busy">
             <translate>Upgrade Now</translate>
-            <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
-            <v-icon v-else end>mdi-chevron-right</v-icon>
+            <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" start></v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -92,13 +90,11 @@
 
               <v-btn v-if="!form.token.length" color="highlight" class="text-white ml-0 action-proceed" :block="$vuetify.display.xs" variant="flat" :disabled="busy" @click.stop="connect">
                 <translate>Register</translate>
-                <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
-                <v-icon v-else end>mdi-chevron-right</v-icon>
+                <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" start></v-icon>
               </v-btn>
               <v-btn v-else color="highlight" :block="$vuetify.display.xs" class="text-white ml-0 action-activate" variant="flat" :disabled="busy || form.token.length !== tokenMask.length" @click.stop="activate">
                 <translate>Activate</translate>
-                <v-icon v-if="rtl" start>mdi-chevron-left</v-icon>
-                <v-icon v-else end>mdi-chevron-right</v-icon>
+                <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" start></v-icon>
               </v-btn>
             </div>
           </v-alert>

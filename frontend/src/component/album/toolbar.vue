@@ -69,7 +69,7 @@
 import Event from "pubsub-js";
 import Notify from "common/notify";
 import download from "common/download";
-import { T } from "common/vm";
+import { T } from "common/gettext";
 
 export default {
   name: "PAlbumToolbar",

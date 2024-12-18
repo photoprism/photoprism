@@ -27,7 +27,7 @@ import RestModel from "model/rest";
 import Form from "common/form";
 import Util from "common/util";
 import Api from "common/api";
-import { T, $gettext } from "common/vm";
+import { T, $gettext } from "common/gettext";
 import { config } from "app/session";
 import memoizeOne from "memoize-one";
 import * as auth from "../options/auth";

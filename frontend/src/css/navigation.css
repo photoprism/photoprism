@@ -24,7 +24,6 @@ nav .v-list__item__title.title {
     display: none;
 }
 
-
 #p-navigation .nav-user-avatar {
     height: 36px;
     text-align: center;
@@ -43,6 +42,11 @@ nav .v-list__item__title.title {
     width: 40px;
     text-align: left;
     margin-right: 12px;
+}
+
+.is-rtl #p-navigation .nav-sidebar .nav-logo {
+    margin-right: 0;
+    margin-left: 12px;
 }
 
 #p-navigation .nav-small .nav-logo img {
@@ -80,13 +84,13 @@ nav .v-list__item__title.title {
     text-align: right;
 }
 
-#p-navigation .menu-item.--rtl {
-    /* Margin title from right 72px, the calc is the 72px minus the original "v-list-item" right margin 16px */
-    margin-right: calc(72px - 16px);
-}
-
 #p-navigation .v-list-group__items .v-list-item-title {
     padding-left: 32px;
+}
+
+.is-rtl #p-navigation .v-list-group__items .v-list-item-title {
+    padding-left: 0;
+    padding-right: 32px;
 }
 
 #p-navigation .v-list-item__prepend,
@@ -113,11 +117,21 @@ nav .v-list__item__title.title {
     line-height: 24px;
 }
 
+.is-rtl #p-navigation .nav-count-item {
+    margin-left: 48px !important;
+    margin-right: auto !important;
+}
+
 #p-navigation .nav-count-group {
     opacity: 0.5;
     font-weight: 500;
     letter-spacing: normal;
     margin-right: 8px;
+}
+
+.is-rtl #p-navigation .nav-count-group {
+    margin-bottom: 0;
+    margin-left: 8px;
 }
 
 #p-navigation .nav-menu .nav-menu-item {
@@ -133,11 +147,21 @@ nav .v-list__item__title.title {
     right: 0;
 }
 
+.is-rtl #p-navigation .activator .nav-count-group {
+    right: auto;
+    left: 0;
+}
+
 #p-navigation .nav-item-title {
     font-size: .8125rem;
     font-weight: 500;
     letter-spacing: normal;
     padding-left: 24px;
+}
+
+.is-rtl #p-navigation .nav-item-title {
+    padding-left: 0;
+    padding-right: 24px;
 }
 
 #p-navigation .v-list-item--variant-plain {
@@ -146,6 +170,11 @@ nav .v-list__item__title.title {
 
 #p-navigation .activator .nav-item-title {
     padding-left: 8px !important;
+}
+
+.is-rtl #p-navigation .activator .nav-item-title {
+    padding-left: 0 !important;
+    padding-right: 8px !important;
 }
 
 #p-navigation .nav-menu .v-icon--size-default {

@@ -1,10 +1,37 @@
-/* Font Settings */
+/* Font Default Settings */
 
 body {
     color: #333333;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 17px;
+}
 
+html,
+body,
+body #app,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6,
+.text-subtitle-1,
+.text-subtitle-2,
+.text-body-1,
+.text-body-2,
+.text-caption,
+.text-button,
+.text-overline {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+html,
+body,
+body #app,
+.text-subtitle-1,
+.text-subtitle-2,
+.text-body-1,
+.text-body-2,
+.text-caption {
     /* Text rendering defaults. */
     letter-spacing: normal;
     text-justify: inter-word;
@@ -13,17 +40,13 @@ body {
     -webkit-font-smoothing: antialiased;
 
     /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
 
+    text-rendering: optimizeLegibility;
     /* Support for Firefox. */
     -moz-osx-font-smoothing: grayscale;
 
     /* Enable font features. */
     font-feature-settings: 'kern', 'liga';
-}
-
-body #app {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 @media (min-width: 600px) {

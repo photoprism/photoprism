@@ -34,7 +34,6 @@ import { installComponents } from "component/components";
 import { installDialogs } from "dialog/dialogs";
 import customIcons from "component/icons";
 import Event from "pubsub-js";
-import { createGettext } from "vue3-gettext";
 import Log from "common/log";
 import PhotoPrism from "app.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -51,7 +50,8 @@ import * as themes from "options/themes";
 // import VueFullscreen from "vue-fullscreen";
 import Hls from "hls.js";
 import "common/maptiler-lang";
-import { T, Mount } from "common/vm";
+import { createGettext, T } from "common/gettext";
+import { Locale } from "locales/vuetify";
 import * as offline from "@lcdp/offline-plugin/runtime";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
@@ -73,7 +73,7 @@ config.update().finally(() => {
   let app = createApp(PhotoPrism);
   // Initialize language and detect alignment.
   app.config.globalProperties.$language = config.getLanguage();
-  Settings.defaultLocale = app.config.globalProperties.$language.substring(0, 2);
+  Settings.defaultLocale = config.getLanguage().substring(0, 2);
   // Detect right-to-left languages such as Arabic and Hebrew
   const rtl = config.rtl();
 
@@ -103,9 +103,11 @@ config.update().finally(() => {
     });
   };
 
+  // Register other VueJS plugins.
+  const gettext =createGettext(config);
+
   // Create Vuetify instance.
   const vuetify = createVuetify({
-    rtl,
     defaults: {
       VBtn: {
         flat: true,
@@ -232,16 +234,10 @@ config.update().finally(() => {
       themes: themes.All(),
       variations: themes.variations,
     },
+    locale: Locale(gettext.$gettext),
   });
-  app.use(vuetify);
 
-  // Register other VueJS plugins.
-  const gettext = createGettext({
-    translations: config.translations,
-    silent: true, // !config.values.debug,
-    defaultLanguage: app.config.globalProperties.$language,
-    // autoAddKeyAttributes: true,
-  });
+  app.use(vuetify);
   app.use(gettext);
 
   // TODO: check it
@@ -373,8 +369,8 @@ config.update().finally(() => {
     setInterval(() => config.update(), 600000);
   }
 
-  // Start application.
-  Mount(app, router);
+  // Mount application to #app.
+  app.mount("#app");
   if (config.baseUri === "") {
     offline.install();
   }

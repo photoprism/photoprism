@@ -8,7 +8,7 @@
     z-index: 2;
 }
 
-#photoprism.is-rtl .map-control {
+.is-rtl .map-control {
     left: auto;
     right: 10px;
 }
@@ -39,18 +39,19 @@
     height: 100%
 }
 
-#photoprism #map .counter-bubble {
+#photoprism #map .badge {
     border-radius: 100%;
     position: absolute;
     width: 24px;
     height: 24px;
     font-size: 12px;
     display: flex;
-    color: #ffffff;
     top: -5px;
     right: -5px;
     align-items: center;
     justify-content: center;
+    color: rgb(var(--v-theme-on-highlight, #ffffff));
+    background: rgb(var(--v-theme-highlight, #53478a));
     box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
 }
 

@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
-@import url("typography.css");
+@import url("text.css");
 @import url("controls.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
@@ -97,15 +97,6 @@ main {
 
 /* General App Styles */
 
-.v-badge__badge {
-    top: 0 !important;
-    left: 100% !important;
-    height: 1.1rem;
-    min-width: 1.1rem;
-    font-size: 0.75rem;
-    padding: 0 0.1rem;
-}
-
 .v-autocomplete__selection {
     min-width: 100%;
 }
@@ -130,33 +121,29 @@ main {
     padding: .4rem .8rem;
     margin: auto;
     opacity: 0.87;
-    background-color: rgb(var(--v-theme-button, #ffffff));
-    border-radius: 1.6rem;
-    box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
     color: rgb(var(--v-theme-on-button, #333333));
+    background-color: rgb(var(--v-theme-button, #ffffff));
+    box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
+    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4,0,.2,1), opacity 125ms;
+    -webkit-tap-highlight-color: transparent;
+    border: 0;
+    border-radius: 1.6rem;
     cursor: pointer;
     display: block;
     font-family: inherit;
-    font-size: .75rem;
+    font-size: .825rem;
     outline: none;
-
-    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4,0,.2,1), opacity 125ms;
-    z-index: 2;
-
     user-select: none;
     text-decoration: none;
-
-    border: 0;
-
-    -webkit-tap-highlight-color: transparent;
+    z-index: 2;
 }
 
 .p-scroll svg {
     display: inline-block;
-    vertical-align: -.5em;
+    vertical-align: -.4em;
     fill: currentcolor;
-    height: 1.2rem;
-    width: 1.2rem;
+    height: 1.25rem;
+    width: 1.25rem;
 }
 
 #photoprism .float-left {
@@ -186,12 +173,8 @@ main {
     font-size: 0.875rem
 }
 
-#photoprism.is-rtl .v-card .caption {
+.is-rtl .v-card .caption {
     text-align: right;
-}
-
-#photoprism .v-tabs .v-badge__badge {
-    left: calc(100% + 4px) !important;
 }
 
 ol, ul {

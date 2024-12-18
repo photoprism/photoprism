@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import RestModel from "model/rest";
 import Notify from "common/notify";
-import { $gettext } from "vm.js";
+import { $gettext } from "common/gettext";
 import { config } from "app/session";
 import { reactive } from "vue";
 

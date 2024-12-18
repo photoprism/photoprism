@@ -1,5 +1,5 @@
 <template>
-  <div id="photoprism" :class="[isRtl ? 'is-rtl' : '', 'theme-' + themeName]">
+  <div id="photoprism" :class="['theme-' + themeName]">
     <p-loading-bar height="4"></p-loading-bar>
 
     <p-notify></p-notify>
@@ -25,7 +25,6 @@ export default {
   name: "App",
   data() {
     return {
-      isRtl: this.$config.rtl(),
       themeName: this.$config.themeName,
       subscriptions: [],
       touchStart: 0,
@@ -51,7 +50,6 @@ export default {
   },
   methods: {
     onRefresh(config) {
-      this.isRtl = config.rtl();
       this.themeName = config.themeName;
     },
     onTouchStart(e) {

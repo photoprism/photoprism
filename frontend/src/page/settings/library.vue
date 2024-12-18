@@ -7,8 +7,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start">
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.estimates"
                 :disabled="busy"
@@ -24,7 +24,7 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.review"
                 :disabled="busy"
@@ -40,7 +40,7 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.index.convert"
                 :disabled="busy || demo || (!experimental && settings.index.convert)"
@@ -65,8 +65,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start">
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.meta"
                 :disabled="busy"
@@ -82,7 +82,7 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.uuid"
                 :disabled="busy"
@@ -98,7 +98,7 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.name"
                 :disabled="busy"

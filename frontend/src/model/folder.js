@@ -29,7 +29,7 @@ import { DateTime } from "luxon";
 import File from "model/file";
 import Util from "common/util";
 import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 export const RootImport = "import";
 export const RootOriginals = "originals";
