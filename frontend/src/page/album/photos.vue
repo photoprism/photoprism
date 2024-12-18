@@ -7,11 +7,11 @@
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-scroll
-          :hide-panel="hideExpansionPanel"
-          :load-more="loadMore"
-          :load-disabled="scrollDisabled"
-          :load-distance="scrollDistance"
-          :loading="loading">
+        :hide-panel="hideExpansionPanel"
+        :load-more="loadMore"
+        :load-disabled="scrollDisabled"
+        :load-distance="scrollDistance"
+        :loading="loading">
       </p-scroll>
 
       <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
