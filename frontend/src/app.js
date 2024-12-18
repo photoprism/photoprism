@@ -103,10 +103,10 @@ config.update().finally(() => {
     });
   };
 
-  // Register other VueJS plugins.
-  const gettext =createGettext(config);
+  // Create Vue 3 Gettext instance.
+  const gettext = createGettext(config);
 
-  // Create Vuetify instance.
+  // Create Vuetify 3 instance.
   const vuetify = createVuetify({
     defaults: {
       VBtn: {
@@ -234,10 +234,13 @@ config.update().finally(() => {
       themes: themes.All(),
       variations: themes.variations,
     },
-    locale: Locale(gettext.$gettext),
+    locale: Locale(),
   });
 
+  // Use Vuetify.
   app.use(vuetify);
+
+  // Use Vue 3 Gettext.
   app.use(gettext);
 
   // TODO: check it
@@ -363,14 +366,17 @@ config.update().finally(() => {
   });
 
   if (isMobile) {
+    // Add "mobile" class to body if running on a mobile device.
     document.body.classList.add("mobile");
   } else {
     // Pull client config every 10 minutes in case push fails (except on mobile to save battery).
     setInterval(() => config.update(), 600000);
   }
 
-  // Mount application to #app.
+  // Mount to #app.
   app.mount("#app");
+
+  // Allows the application to be installed as a PWA.
   if (config.baseUri === "") {
     offline.install();
   }
