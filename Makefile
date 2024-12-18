@@ -301,7 +301,7 @@ build-tensorflow-arm64:
 	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
 	docker run -ti photoprism/tensorflow:arm64 bash
 watch-js:
-	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production NODE_OPTIONS="--huge-max-old-generation-size" npm run watch)
+	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && env TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test npm run test)
