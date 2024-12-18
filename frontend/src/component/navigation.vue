@@ -41,7 +41,7 @@
                     <v-icon :icon="rtl ? 'mdi-chevron-right' : 'mdi-chevron-left'"></v-icon>
                   </v-btn>
                 </template>
-                <v-list-item-title class="nav-toolbar-title mr-auto">
+                <v-list-item-title class="nav-toolbar-title">
                   {{ appName }}
                 </v-list-item-title>
               </v-list-item>

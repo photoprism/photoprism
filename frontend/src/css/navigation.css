@@ -72,16 +72,13 @@ nav .v-list__item__title.title {
 #p-navigation .nav-toolbar-title {
     font-size: 1.15rem;
     font-weight: 500;
+    text-align: start;
 }
 
 #p-navigation .nav-small .nav-toolbar-title {
     margin-inline-start: 8px;
-    text-align: left;
+    text-align: start;
     line-height: normal !important;
-}
-
-.is-rtl #p-navigation .nav-toolbar-title {
-    text-align: right;
 }
 
 #p-navigation .v-list-group__items .v-list-item-title {
