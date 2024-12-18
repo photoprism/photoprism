@@ -27,6 +27,10 @@ body.dark-theme {
     padding: 8px 12px;
 }
 
+.v-card-actions.grid {
+    padding: 0 8px;
+}
+
 /* Dialog Styles */
 
 .v-overlay.v-dialog>.v-overlay__content>.v-card,

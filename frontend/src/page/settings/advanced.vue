@@ -163,7 +163,7 @@
                   :disabled="busy || settings.BackupSchedule === ''"
                   class="ma-0 pa-0 input-backup-database"
                   density="compact"
-                color="surface-variant"
+                  color="surface-variant"
                   :label="$gettext('Database Backups')"
                   :hint="$gettext('Create regular backups based on the configured schedule.')"
                   prepend-icon="mdi-history"
@@ -195,7 +195,7 @@
                   :disabled="busy"
                   class="ma-0 pa-0 input-sidecar-yaml"
                   density="compact"
-                color="surface-variant"
+                  color="surface-variant"
                   :label="$gettext('Sidecar Files')"
                   :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
                   prepend-icon="mdi-clipboard-file-outline"
@@ -212,28 +212,28 @@
           <translate>Preview Images</translate>
         </v-card-title>
 
-        <v-card-actions>
-          <v-row align="start" dense>
-            <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="px-2 pb-2">
+        <v-card-actions class="grid">
+          <v-row align="start">
+            <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="py-2">
               <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" density="compact"
                 color="surface-variant" bg-color="secondary-light" hide-details variant="solo" @update:model-value="onChange"></v-select>
             </v-col>
 
-            <v-col cols="12" lg="4" class="px-2 pb-2">
+            <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0 ml-0 mr-3" @update:model-value="onChange"></v-slider>
+              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
-            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0 ml-0 mr-3" @update:model-value="onChange"></v-slider>
+              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
-            <v-col cols="12" sm="6" lg="4">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-checkbox
                 v-model="settings.ThumbUncached"
                 :disabled="busy"
@@ -255,32 +255,32 @@
           <translate>Image Quality</translate>
         </v-card-title>
 
-        <v-card-actions>
-          <v-row align="start" dense>
-            <v-col cols="12" lg="4" class="px-2 pb-2">
+        <v-card-actions class="grid">
+          <v-row align="start">
+            <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0 ml-0 mr-3" @update:model-value="onChange"></v-slider>
+              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
-            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0 ml-0 mr-3" @update:model-value="onChange"></v-slider>
+              <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="ma-0" @update:model-value="onChange"></v-slider>
             </v-col>
 
-            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0 ml-0 mr-3" @update:model-value="onChange"></v-slider>
+              <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="ma-0" @update:model-value="onChange"></v-slider>
             </v-col>
           </v-row>
         </v-card-actions>
 
-        <v-card-title class="pb-0 text-subtitle-2">
+        <v-card-title class="py-0 text-subtitle-2">
           <translate>File Conversion</translate>
         </v-card-title>
 
