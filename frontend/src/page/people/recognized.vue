@@ -270,7 +270,7 @@ export default {
         m.update()
           .then((m) => {
             this.$notify.success(this.$gettext("Changes successfully saved"));
-            this.$emit("close");
+            this.dialog.edit = false;
           })
           .finally(() => {
             this.busy = false;
