@@ -429,8 +429,8 @@
 
           <div v-if="disconnected" class="nav-info connection-info clickable" @click.stop="showServerConnectionHelp">
             <div class="nav-info__underlay"></div>
-            <div class="text-center ma-2">
-              <v-icon color="warning" size="28">mdi-wifi-off</v-icon>
+            <div class="text-center my-1">
+              <v-icon color="warning" size="25">mdi-wifi-off</v-icon>
             </div>
             <div v-if="!isMini" class="text-start mt-1 text-body-2">
               <translate key="No server connection">No server connection</translate>
