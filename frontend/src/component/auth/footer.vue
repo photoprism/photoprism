@@ -13,7 +13,7 @@
           <strong>{{ caption }}</strong>
         </v-col>
         <v-col v-else xs="12" class="pa-0 text-subtitle-2 text-selectable text-center text-sm-end">
-          <router-link to="/about" class="text-link">
+          <router-link to="/about" class="text-link text-ltr">
             <span class="text-white">Made with ❤️ in Berlin</span>
           </router-link>
         </v-col>

@@ -71,19 +71,19 @@ export default {
     },
 
     addWarningMessage: function (message) {
-      this.addMessage("warning", "black--text", message, 3000);
+      this.addMessage("warning", "text-black", message, 3000);
     },
 
     addErrorMessage: function (message) {
-      this.addMessage("error", "white--text", message, 8000);
+      this.addMessage("error", "text-white", message, 8000);
     },
 
     addSuccessMessage: function (message) {
-      this.addMessage("success", "white--text", message, 2000);
+      this.addMessage("success", "text-white", message, 2000);
     },
 
     addInfoMessage: function (message) {
-      this.addMessage("info", "white--text", message, 2000);
+      this.addMessage("info", "text-white", message, 2000);
     },
 
     addMessage: function (color, textColor, message, delay) {

@@ -11,7 +11,7 @@
         <img :src="$config.staticUri + '/img/agplv3-small.png'" alt="AGPLv3 Logo" />
       </a>
     </v-toolbar>
-    <v-container fluid class="pa-6 text-selectable">
+    <v-container fluid class="pa-6 text-selectable text-ltr">
       <h3 style="text-align: center">GNU AFFERO GENERAL PUBLIC LICENSE</h3>
       <p style="text-align: center">Version 3, 19 November 2007</p>
 

@@ -50,11 +50,11 @@ body #app,
 }
 
 .text-ltr {
-    direction: ltr;
+    direction: ltr !important;
 }
 
 .text-rtl {
-    direction: rtl;
+    direction: rtl !important;
 }
 
 @media (min-width: 600px) {
