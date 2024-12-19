@@ -459,7 +459,7 @@
       </div>
     </template>
     <div id="mobile-menu" :class="{ active: speedDial }" @click.stop="speedDial = false">
-      <div class="menu-content grow-top-right">
+      <div class="menu-content grow-top-end">
         <div class="menu-icons">
           <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action navigation-logout" @click.prevent="onLogout">
             <v-icon>mdi-power</v-icon>

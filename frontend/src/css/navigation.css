@@ -40,13 +40,8 @@ nav .v-list__item__title.title {
 
 #p-navigation .nav-sidebar .nav-logo {
     width: 40px;
-    text-align: left;
-    margin-right: 12px;
-}
-
-.is-rtl #p-navigation .nav-sidebar .nav-logo {
-    margin-right: 0;
-    margin-left: 12px;
+    text-align: inherit;
+    margin-inline-end: 12px;
 }
 
 #p-navigation .nav-small .nav-logo img {
@@ -82,12 +77,7 @@ nav .v-list__item__title.title {
 }
 
 #p-navigation .v-list-group__items .v-list-item-title {
-    padding-left: 32px;
-}
-
-.is-rtl #p-navigation .v-list-group__items .v-list-item-title {
-    padding-left: 0;
-    padding-right: 32px;
+    padding-inline-start: 32px;
 }
 
 #p-navigation .v-list-item__prepend,
@@ -107,28 +97,18 @@ nav .v-list__item__title.title {
 
 #p-navigation .nav-count-item {
     opacity: 0.5;
-    margin-right: 48px !important;
+    margin-inline-end: 48px !important;
     font-size: .8125rem;
     font-weight: 500;
     letter-spacing: normal;
     line-height: 24px;
 }
 
-.is-rtl #p-navigation .nav-count-item {
-    margin-left: 48px !important;
-    margin-right: auto !important;
-}
-
 #p-navigation .nav-count-group {
     opacity: 0.5;
     font-weight: 500;
     letter-spacing: normal;
-    margin-right: 8px;
-}
-
-.is-rtl #p-navigation .nav-count-group {
-    margin-bottom: 0;
-    margin-left: 8px;
+    margin-inline-end: 8px;
 }
 
 #p-navigation .nav-menu .nav-menu-item {
@@ -153,12 +133,7 @@ nav .v-list__item__title.title {
     font-size: .8125rem;
     font-weight: 500;
     letter-spacing: normal;
-    padding-left: 24px;
-}
-
-.is-rtl #p-navigation .nav-item-title {
-    padding-left: 0;
-    padding-right: 24px;
+    padding-inline-start: 24px;
 }
 
 #p-navigation .v-list-item--variant-plain {
@@ -166,12 +141,7 @@ nav .v-list__item__title.title {
 }
 
 #p-navigation .activator .nav-item-title {
-    padding-left: 8px !important;
-}
-
-.is-rtl #p-navigation .activator .nav-item-title {
-    padding-left: 0 !important;
-    padding-right: 8px !important;
+    padding-inline-start: 8px !important;
 }
 
 #p-navigation .nav-menu .v-icon--size-default {
@@ -228,11 +198,11 @@ nav .v-list__item__title.title {
 }
 
 .v-toolbar.page-toolbar .v-text-field .v-input__prepend-outer {
-    margin-right: 0;
+    margin-inline-end: 0;
 }
 
 .v-toolbar.page-toolbar .v-text-field .v-input__slot {
-    padding-left: 0;
+    padding-inline-start: 0;
 }
 
 .page-toolbar .input-category .v-select__selections {
@@ -443,6 +413,11 @@ nav.nav-small .v-menu__content {
     border-radius: 8px;
 }
 
+.is-rtl #mobile-menu .menu-content {
+    right: auto;
+    left: 0;
+}
+
 #mobile-menu .menu-icons {
     -ms-flex-pack: distribute;
     -webkit-box-orient: horizontal;
@@ -521,6 +496,10 @@ nav.nav-small .v-menu__content {
 #mobile-menu .menu-action a .v-icon {
     padding: 0 16px 0 0;
     font-size: 20px;
+}
+
+.is-rtl #mobile-menu .menu-action a .v-icon {
+    padding: 0 0 0 16px;
 }
 
 #mobile-menu .menu-action.nav-membership a .v-icon {
