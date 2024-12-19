@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$emit("cancel");
+      this.$emit("close");
     },
     confirm() {
       this.$emit("confirm");

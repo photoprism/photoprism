@@ -145,8 +145,8 @@
         </v-row>
       </v-container>
     </v-container>
-    <p-people-edit-dialog :show="dialog.edit" :person="model" @close="dialog.edit = false" @confirm="onSave(model)"></p-people-edit-dialog>
-    <p-people-merge-dialog :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
+    <p-people-edit-dialog :show="dialog.edit" :person="model" @close="dialog.edit = false" @confirm="onSave"></p-people-edit-dialog>
+    <p-people-merge-dialog :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @close="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 
@@ -283,7 +283,6 @@ export default {
       }
     },
     onCancelMerge() {
-      this.merge.subj1.Name = this.merge.subj1.originalValue("Name");
       this.merge.show = false;
       this.merge.subj1 = null;
       this.merge.subj2 = null;
@@ -295,6 +294,7 @@ export default {
 
       this.busy = true;
       this.merge.show = false;
+      this.dialog.edit = false;
       this.$notify.blockUI();
       this.merge.subj1.update().finally(() => {
         this.busy = false;

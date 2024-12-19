@@ -8,17 +8,17 @@
         </v-card-title>
 
         <v-card-text class="dense">
-            <v-row dense>
-              <v-col cols="12">
-                <v-text-field v-model="model.Name" hide-details autofocus :rules="[titleRule]" :label="$gettext('Name')" :disabled="disabled" class="input-title" @keyup.enter="confirm"></v-text-field>
-              </v-col>
-              <v-col sm="4">
-                <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" hide-details> </v-checkbox>
-              </v-col>
-              <v-col sm="4">
-                <v-checkbox v-model="model.Hidden" :disabled="disabled" :label="$gettext('Hidden')" hide-details> </v-checkbox>
-              </v-col>
-            </v-row>
+          <v-row dense>
+            <v-col cols="12">
+              <v-text-field v-model="model.Name" hide-details autofocus :rules="[titleRule]" :label="$gettext('Name')" :disabled="disabled" class="input-title" @keyup.enter="confirm"></v-text-field>
+            </v-col>
+            <v-col sm="4">
+              <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" hide-details> </v-checkbox>
+            </v-col>
+            <v-col sm="4">
+              <v-checkbox v-model="model.Hidden" :disabled="disabled" :label="$gettext('Hidden')" hide-details> </v-checkbox>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
@@ -67,12 +67,7 @@ export default {
         this.close();
         return;
       }
-      this.$emit("confirm");
-
-      this.model.update().then((m) => {
-        this.$notify.success(this.$gettext("Changes successfully saved"));
-        this.$emit("close");
-      });
+      this.$emit("confirm", this.model);
     },
   },
 };
