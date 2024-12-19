@@ -1,28 +1,33 @@
 <template>
   <div class="p-tab p-tab-photo-advanced">
-    <v-form ref="form" lazy-validation dense accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" validate-on="blur" accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
-        <table class="v-datatable v-table theme--light">
+        <v-table
+            tile
+            hover
+            :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+            class="bg-transparent"
+        >
           <tbody>
             <tr>
               <td>UID</td>
-              <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID | uppercase }}</span></td
-              >
+              <td>
+                <span class="clickable text-uppercase" @click.stop.prevent="copyText(model.UID)">{{ model.UID }}</span>
+              </td>
             </tr>
             <tr v-if="model.DocumentID">
               <td>Document ID</td>
-              <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID | uppercase }}</span></td
-              >
+              <td>
+                <span class="clickable text-uppercase" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID }}</span>
+              </td>
             </tr>
             <tr>
               <td :title="model.TypeSrc">
                 <translate>Type</translate>
-                <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.TypeSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat solo browser-autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
+                <v-select v-model="model.Type" :list-props="{ density: 'compact' }" max-width="160" variant="solo" bg-color="transparent" density="compact" autocomplete="off" hide-details :items="options.PhotoTypes()" item-title="text" item-value="value" class="input-type" @update:model-value="save"></v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -46,27 +51,27 @@
                 <translate>Original Name</translate>
               </td>
               <td>
-                <v-text-field v-model="model.OriginalName" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
+                <v-text-field v-model="model.OriginalName" flat variant="solo" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="surface-variant" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
               <td :title="sourceName(model.TitleSrc)">
                 <translate>Title</translate>
-                <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.TitleSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.TitleSrc)">
                 <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{ model.Title }}</span>
-                <v-icon v-if="model.TitleSrc === 'name'" class="src">insert_drive_file</v-icon>
+                <v-icon v-if="model.TitleSrc === 'name'" class="src">mdi-file</v-icon>
               </td>
             </tr>
             <tr>
               <td :title="sourceName(model.TakenSrc)">
                 <translate>Taken</translate>
-                <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.TakenSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.TakenSrc)">
                 {{ model.getDateString() }}
-                <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">insights</v-icon>
+                <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">mdi-chart-timeline-variant-shimmer</v-icon>
               </td>
             </tr>
             <tr v-if="albums.length > 0">
@@ -74,7 +79,7 @@
                 <translate>Albums</translate>
               </td>
               <td>
-                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
+                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="text-primary text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
               </td>
             </tr>
             <tr>
@@ -82,7 +87,7 @@
                 <translate>Quality Score</translate>
               </td>
               <td>
-                <v-rating v-model="model.Quality" :length="7" readonly small></v-rating>
+                <v-rating v-model="model.Quality" :length="7" size="small" density="compact" readonly></v-rating>
               </td>
             </tr>
             <tr>
@@ -108,7 +113,7 @@
                 <translate>Stackable</translate>
               </td>
               <td>
-                <v-switch v-model="model.Stack" hide-details class="input-stackable" :true-value="0" :false-value="-1" :label="model.Stack > -1 ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Stack" hide-details class="input-stackable" :true-value="0" :false-value="-1" :label="model.Stack > -1 ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -116,7 +121,7 @@
                 <translate>Favorite</translate>
               </td>
               <td>
-                <v-switch v-model="model.Favorite" hide-details class="input-favorite" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Favorite" hide-details class="input-favorite ml-2" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr v-if="$config.feature('private')">
@@ -124,7 +129,7 @@
                 <translate>Private</translate>
               </td>
               <td>
-                <v-switch v-model="model.Private" hide-details class="input-private" :label="model.Private ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Private" hide-details class="input-private ml-2" :label="model.Private ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -132,7 +137,7 @@
                 <translate>Scan</translate>
               </td>
               <td>
-                <v-switch v-model="model.Scan" hide-details class="input-scan" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Scan" hide-details class="input-scan ml-2" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -140,17 +145,17 @@
                 <translate>Panorama</translate>
               </td>
               <td>
-                <v-switch v-model="model.Panorama" hide-details class="input-panorama" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
+                <v-switch v-model="model.Panorama" hide-details class="input-panorama ml-2" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @update:model-value="save"></v-switch>
               </td>
             </tr>
             <tr>
               <td :title="sourceName(model.PlaceSrc)">
                 <translate>Place</translate>
-                <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
+                <v-icon v-if="model.PlaceSrc === 'manual'" class="src">mdi-check</v-icon>
               </td>
               <td :title="sourceName(model.PlaceSrc)">
                 {{ model.locationInfo() }}
-                <v-icon v-if="model.PlaceSrc === 'estimate'" class="src">insights</v-icon>
+                <v-icon v-if="model.PlaceSrc === 'estimate'" class="src">mdi-chart-timeline-variant-shimmer</v-icon>
               </td>
             </tr>
             <tr v-if="model.Lat">
@@ -180,7 +185,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" variant="solo" bg-color="transparent" density="compact" hide-details autocomplete="off" autocorrect="off" autocapitalize="none" type="number" suffix="m" :max-width="100" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
@@ -224,7 +229,7 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </v-table>
       </div>
     </v-form>
   </div>
@@ -234,7 +239,7 @@
 import Thumb from "model/thumb";
 import { DateTime, Info } from "luxon";
 import * as options from "options/options";
-import { T } from "common/vm";
+import { T } from "common/gettext";
 import Util from "common/util";
 
 export default {

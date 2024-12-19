@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import Event from "pubsub-js";
-import { $gettext } from "vm.js";
+import { $gettext } from "common/gettext";
 
 let ajaxPending = 0;
 let ajaxCallbacks = [];

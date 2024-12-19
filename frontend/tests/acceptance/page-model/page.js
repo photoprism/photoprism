@@ -19,15 +19,15 @@ const sharedialog = new ShareDialog();
 
 export default class Page {
   constructor() {
-    this.selectOption = Selector("div.v-list__tile__title", { timeout: 15000 });
+    this.selectOption = Selector('div[role="option"]', { timeout: 15000 });
     this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
     this.cardDescription = Selector('div[title="Description"]', { timeout: 7000 });
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
-    this.cardTaken = Selector("div.caption button.action-open-date", { timeout: 7000 });
+    this.cardTaken = Selector("button.action-open-date", { timeout: 7000 });
     this.usernameInput = Selector(".input-username input", { timeout: 7000 });
     this.passwordInput = Selector(".input-password input", { timeout: 7000 });
     this.passcodeInput = Selector(".input-code input", { timeout: 7000 });
-    this.togglePasswordMode = Selector(".v-input__icon--append", { timeout: 7000 });
+    this.togglePasswordMode = Selector(".v-field__append-inner", { timeout: 7000 });
     this.loginAction = Selector(".action-confirm", { timeout: 7000 });
   }
 
@@ -40,7 +40,7 @@ export default class Page {
 
   async logout() {
     await menu.openNav();
-    await t.click(Selector('div[title="Logout"]'));
+    await t.click(Selector('button i.mdi-power'));
   }
 
   async testCreateEditDeleteSharingLink(type) {
@@ -50,9 +50,9 @@ export default class Page {
     await contextmenu.checkContextMenuCount("1");
     await contextmenu.triggerContextMenuAction("share", "", "");
     await t.click(sharedialog.expandLink.nth(0));
-    const InitialUrl = await sharedialog.linkUrl.innerText;
+    const InitialUrl = await sharedialog.linkUrl.value;
     const InitialSecret = await sharedialog.linkSecretInput.value;
-    const InitialExpire = await Selector("div.v-select__selections").innerText;
+    const InitialExpire = await Selector(".input-expires .v-select__selection-text").innerText;
     await t
       .expect(InitialUrl)
       .notContains("secretfortesting")
@@ -60,16 +60,15 @@ export default class Page {
       .contains("Never")
       .typeText(sharedialog.linkSecretInput, "secretForTesting", { replace: true })
       .click(sharedialog.linkExpireInput)
-      .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
+      .click(Selector("div").withText("After 1 day").parent('div[role="option"]'))
       .click(sharedialog.dialogSave)
       .click(sharedialog.dialogClose);
     await contextmenu.clearSelection();
     await album.openAlbumWithUid(FirstAlbum);
     await toolbar.triggerToolbarAction("share", "");
     await t.click(sharedialog.expandLink.nth(0));
-    await t.wait(5000);
-    const UrlAfterChange = await sharedialog.linkUrl.innerText;
-    const ExpireAfterChange = await Selector("div.v-select__selections").innerText;
+    const ExpireAfterChange = await Selector(".input-expires .v-select__selection-text").innerText;
+    const UrlAfterChange = await sharedialog.linkUrl.value;
     await t
       .expect(UrlAfterChange)
       .contains("secretfortesting")
@@ -77,7 +76,7 @@ export default class Page {
       .contains("After 1 day")
       .typeText(sharedialog.linkSecretInput, InitialSecret, { replace: true })
       .click(sharedialog.linkExpireInput)
-      .click(Selector("div").withText("Never").parent('div[role="listitem"]'))
+      .click(Selector("div").withText("Never").parent('div[role="option"]'))
       .click(sharedialog.dialogSave)
       .click(sharedialog.expandLink);
     const LinkCount = await Selector(".action-url").count;

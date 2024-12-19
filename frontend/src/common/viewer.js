@@ -131,7 +131,7 @@ class Viewer {
         captionEl.children[0].innerHTML = Util.encodeHTML(item.Title);
 
         if (item.Playable) {
-          captionEl.children[0].innerHTML += ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_circle_fill</i>';
+          captionEl.children[0].innerHTML += ' <i aria-hidden="true" class="v-icon material-icons theme--dark mdi mdi-play-circle" title="Play"></i>';
         }
 
         if (item.Description) {

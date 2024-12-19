@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowConfigYamlCommand configures the command name, flags, and action.
-var ShowConfigYamlCommand = cli.Command{
+var ShowConfigYamlCommand = &cli.Command{
 	Name:   "config-yaml",
 	Usage:  "Displays supported YAML config options and CLI flags",
 	Flags:  report.CliFlags,

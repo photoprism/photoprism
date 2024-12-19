@@ -1,52 +1,64 @@
-import { $gettext, T } from "common/vm";
+import { $gettext, T } from "common/gettext";
+import { style, colors, variables } from "ui";
 
-/* Theme Styles */
+/* Theme Definitions */
 
+// TODO: Make sure all themes have a button and table color.
 let themes = {
+  /* Default user interface theme */
   default: {
     dark: true,
-    sponsor: false,
     title: "Default",
     name: "default",
     colors: {
-      application: "#2f3031",
-      form: "#2f3031",
-      card: "#232425",
+      background: "#2c2d2f",
+      surface: "#161718",
+      "on-surface": "#ffffff",
+      "surface-bright": "#333333",
+      "surface-variant": "#7852cd",
+      "on-surface-variant": "#f6f7e8",
+      card: "#171718",
+      selected: "#5e319b",
+      table: "#242426", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
+      button: "#1D1E1F",
       primary: "#9E7BEA",
-      "primary-button": "#5F1DB7",
-      "secondary-dark": "#7E4FE3",
-      secondary: "#1c1d1e",
-      "secondary-light": "#252627",
-      accent: "#333",
+      highlight: "#5e319b",
+      secondary: "#191A1C",
+      "secondary-light": "#1E2022",
+      accent: "#2D2E2E",
       error: "#e57373",
       info: "#00acc1",
       success: "#4db6ac",
       warning: "#ffd740",
-      remove: "#DF5353",
-      restore: "#3EA2F4",
-      album: "#ffab00",
+      favorite: "#FFD600",
+      remove: "#da4e4c",
+      restore: "#00d48a",
+      album: "#ed9e00",
+      "on-album": "#ffffff",
       download: "#00bfa5",
       private: "#00b8d4",
-      edit: "#0AA9FF",
-      share: "#9575cd",
+      edit: "#2196F3",
+      share: "#3F51B5",
       love: "#ef5350",
       terminal: "#4A464F",
       navigation: "#141417",
       "navigation-home": "#0e0f10",
     },
   },
+
+  /* Optional themes that the user can choose from in Settings > General */
   abyss: {
     title: "Abyss",
     name: "abyss",
     dark: true,
-    sponsor: true,
     colors: {
-      application: "#202020",
-      form: "#202020",
+      background: "#202020",
+      surface: "#202020",
       card: "#242424",
       primary: "#814fd9",
-      "primary-button": "#7e57c2",
-      "secondary-dark": "#814fd9",
+      highlight: "#7e57c2",
+      "surface-variant": "#814fd9",
+      "on-surface-variant": "#1a1a1a",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -69,16 +81,15 @@ let themes = {
   },
   carbon: {
     dark: true,
-    sponsor: true,
     title: "Carbon",
     name: "carbon",
     colors: {
-      application: "#16141c",
-      form: "#16141c",
+      background: "#16141c",
+      surface: "#16141c",
       card: "#292732",
       primary: "#8a6eff",
-      "primary-button": "#53478a",
-      "secondary-dark": "#7f63fd",
+      highlight: "#53478a",
+      "surface-variant": "#7f63fd",
       secondary: "#0E0D12",
       "secondary-light": "#292733",
       accent: "#262238",
@@ -101,16 +112,15 @@ let themes = {
   },
   chrome: {
     dark: true,
-    sponsor: false,
     title: "Chrome",
     name: "chrome",
     colors: {
-      application: "#1d1d1d",
-      form: "#1d1d1d",
+      background: "#1d1d1d",
+      surface: "#1d1d1d",
       card: "#1f1f1f",
       primary: "#ffffff",
-      "primary-button": "#393939",
-      "secondary-dark": "#ffffff",
+      highlight: "#393939",
+      "surface-variant": "#ffffff",
       secondary: "#1f1f1f",
       "secondary-light": "#292929",
       accent: "#727272",
@@ -135,14 +145,13 @@ let themes = {
     title: "Gemstone",
     name: "gemstone",
     dark: true,
-    sponsor: true,
     colors: {
-      application: "#2f2f31",
-      form: "#2f2f31",
+      background: "#2f2f31",
+      surface: "#2f2f31",
       card: "#2b2b2d",
       primary: "#AFB4D4",
-      "primary-button": "#545465",
-      "secondary-dark": "#9BA0C5",
+      highlight: "#545465",
+      "surface-variant": "#9BA0C5",
       secondary: "#272727",
       "secondary-light": "#37373a",
       accent: "#333",
@@ -167,14 +176,13 @@ let themes = {
     title: "Grayscale",
     name: "grayscale",
     dark: true,
-    sponsor: false,
     colors: {
-      application: "#525252",
-      form: "#525252",
+      background: "#525252",
+      surface: "#525252",
       card: "#5e5e5e",
       primary: "#c8bdb1",
-      "primary-button": "#726e69",
-      "secondary-dark": "#c8bdb1",
+      highlight: "#726e69",
+      "surface-variant": "#c8bdb1",
       secondary: "#444",
       "secondary-light": "#5E5E5E",
       accent: "#333",
@@ -199,17 +207,16 @@ let themes = {
     title: "Lavender",
     name: "lavender",
     dark: false,
-    sponsor: false,
     colors: {
-      application: "#fafafa",
-      form: "#fafafa",
+      background: "#fafafa",
+      surface: "#FAFBFF",
       card: "#DFE0E8",
       primary: "#9ca2c9",
-      "primary-button": "#6c6f84",
-      "secondary-dark": "#475185",
-      secondary: "#dee0ed",
+      highlight: "#6c6f84",
+      "surface-variant": "#475185",
+      secondary: "#E2E5F3",
       "secondary-light": "#eef0f6",
-      accent: "#8c8c8c",
+      accent: "#EAEAF3",
       error: "#e57373",
       info: "#00acc1",
       success: "#26A69A",
@@ -231,14 +238,13 @@ let themes = {
     title: "Legacy",
     name: "legacy",
     dark: false,
-    sponsor: false,
     colors: {
-      application: "#F5F5F5",
-      form: "#F5F5F5",
+      background: "#F5F5F5",
+      surface: "#F5F5F5",
       card: "#e0e0e0",
       primary: "#FFCA28",
-      "primary-button": "#212121",
-      "secondary-dark": "#212121",
+      highlight: "#212121",
+      "surface-variant": "#212121",
       secondary: "#bdbdbd",
       "secondary-light": "#e0e0e0",
       accent: "#757575",
@@ -261,16 +267,15 @@ let themes = {
   },
   mint: {
     dark: true,
-    sponsor: false,
     title: "Mint",
     name: "mint",
     colors: {
-      application: "#121212",
-      form: "#121212",
+      background: "#121212",
+      surface: "#121212",
       card: "#1e1e1e",
       primary: "#2bb14c",
-      "primary-button": "#22903d",
-      "secondary-dark": "#2bb14c",
+      highlight: "#22903d",
+      "surface-variant": "#2bb14c",
       secondary: "#181818",
       "secondary-light": "#1f1f1f",
       accent: "#727272",
@@ -295,14 +300,13 @@ let themes = {
     title: "Neon",
     name: "neon",
     dark: true,
-    sponsor: true,
     colors: {
-      application: "#242326",
-      form: "#242326",
+      background: "#242326",
+      surface: "#242326",
       card: "#1b1a1c",
       primary: "#f44abf",
-      "primary-button": "#890664",
-      "secondary-dark": "#cc0d99",
+      highlight: "#890664",
+      "surface-variant": "#cc0d99",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -325,23 +329,33 @@ let themes = {
   },
   nordic: {
     dark: false,
-    sponsor: false,
     title: "Nordic",
     name: "nordic",
     colors: {
-      application: "#f7f8fa",
-      form: "#f7f8fa",
-      card: "#ECEFF4",
+      background: "#f7f8fa",
+      "on-background": "#4c566a",
+      surface: "#ECEFF4",
+      "on-surface": "#3e4757",
+      "surface-bright": "#cbced6",
+      "surface-variant": "#8590A7",
+      "on-surface-variant": "#f6f7e8",
+      card: "#eceff4",
+      table: "#f2f3f7",
+      button: "#E4E6EB",
+      "on-button": "#3e4757",
       primary: "#4ca0b8",
-      "primary-button": "#519fb6",
-      "secondary-dark": "#4ca0b8",
-      secondary: "#e2e7ee",
+      highlight: "#D8DCE3",
+      "on-highlight": "#3e4757",
+      selected: "#d8dee9",
+      secondary: "#E2E7EE",
+      "on-secondary": "#4c566a",
       "secondary-light": "#eceff4",
-      accent: "#81A1C1",
+      accent: "#F2F5FA",
       error: "#BF616A",
       info: "#88C0D0",
       success: "#8FBCBB",
       warning: "#f0d8a8",
+      favorite: "#EBCB8B",
       remove: "#BF616A",
       restore: "#81A1C1",
       album: "#EBCB8B",
@@ -351,23 +365,38 @@ let themes = {
       share: "#B48EAD",
       love: "#ef5350",
       terminal: "#4C566A",
-      navigation: "#e7ebf1",
+      navigation: "#E5E9F0",
+      "on-navigation": "#3e4757",
       "navigation-home": "#dde3eb",
+      "on-navigation-home": "#3e4757",
+    },
+    variables: {
+      "overlay-color": "#f2f2f2",
+      "border-color": "#ffffff",
+      "border-opacity": 0.08,
+      "high-emphasis-opacity": 0.96,
+      "medium-emphasis-opacity": 0.7,
+      "hover-opacity": 0.06,
+      "focus-opacity": 0.08,
     },
   },
   onyx: {
     title: "Onyx",
     name: "onyx",
     dark: false,
-    sponsor: false,
     colors: {
-      application: "#e5e4e2",
-      form: "#e5e4e2",
-      card: "#cdccca",
+      background: "#e5e4e2",
+      surface: "#e5e4e2",
+      "on-surface": "#000000",
+      card: "#a8a8a8",
+      button: "#505557",
+      table: "#dddcda",
       primary: "#c8bdb1",
-      "primary-button": "#353839",
-      "secondary-dark": "#353839",
+      highlight: "#393c3d",
+      "surface-variant": "#a39a90",
+      "on-surface-variant": "#656565",
       secondary: "#a8a8a8",
+      "on-secondary": "#000000",
       "secondary-light": "#cdccca",
       accent: "#656565",
       error: "#e57373",
@@ -391,14 +420,13 @@ let themes = {
     title: "Shadow",
     name: "shadow",
     dark: true,
-    sponsor: true,
     colors: {
-      application: "#444",
-      form: "#444",
+      background: "#444",
+      surface: "#444",
       card: "#666666",
       primary: "#c4f1e5",
-      "primary-button": "#74817d",
-      "secondary-dark": "#c8e3e7",
+      highlight: "#74817d",
+      "surface-variant": "#c8e3e7",
       secondary: "#585858",
       "secondary-light": "#666",
       accent: "#333",
@@ -423,14 +451,13 @@ let themes = {
     title: "Vanta",
     name: "vanta",
     dark: true,
-    sponsor: true,
     colors: {
-      application: "#212121",
-      form: "#212121",
+      background: "#212121",
+      surface: "#212121",
       card: "#1d1d1d",
       primary: "#04acaf",
-      "primary-button": "#444444",
-      "secondary-dark": "#04acaf",
+      highlight: "#444444",
+      "surface-variant": "#04acaf",
       secondary: "#111111",
       "secondary-light": "#1a1a1a",
       accent: "#090c10",
@@ -455,14 +482,13 @@ let themes = {
     title: "Yellowstone",
     name: "yellowstone",
     dark: true,
-    sponsor: true,
     colors: {
-      application: "#32312f",
-      form: "#32312f",
+      background: "#32312f",
+      surface: "#32312f",
       card: "#262524",
       primary: "#ffb700",
-      "primary-button": "#54524e",
-      "secondary-dark": "#ffb700",
+      highlight: "#54524e",
+      "surface-variant": "#ffb700",
       secondary: "#21201f",
       "secondary-light": "#262523",
       accent: "#333",
@@ -483,9 +509,80 @@ let themes = {
       "navigation-home": "#0c0c0b",
     },
   },
+
+  /* Special theme used on the login page */
+  login: {
+    dark: false,
+    title: "Login",
+    name: "login",
+    colors: {
+      background: "#2f3031",
+      surface: "#fafafa",
+      "on-surface": "#333333",
+      "surface-bright": "#fafafa",
+      "surface-variant": "#00a6a9",
+      "on-surface-variant": "#c8e3e7",
+      card: "#505050",
+      table: "#505050",
+      button: "#c8e3e7",
+      primary: "#05dde1",
+      highlight: "#00a6a9",
+      secondary: "#c8e3e7",
+      "secondary-light": "#2a2b2c",
+      accent: "#05dde1",
+      error: "#e57373",
+      info: "#00acc1",
+      success: "#4db6ac",
+      warning: "#ffd740",
+      remove: "#DF5353",
+      restore: "#3EA2F4",
+      album: "#ffab00",
+      download: "#00bfa5",
+      private: "#00b8d4",
+      edit: "#0AA9FF",
+      share: "#9575cd",
+      love: "#ef5350",
+      terminal: "#4A464F",
+      navigation: "#141417",
+      "navigation-home": "#0e0f10",
+    },
+    variables: {
+      "border-color": "#ffffff",
+      "border-opacity": 0.08,
+      "high-emphasis-opacity": 0.96,
+      "medium-emphasis-opacity": 0.7,
+      "hover-opacity": 0.08,
+      "focus-opacity": 0.1,
+    },
+  },
+
+  /* Special light theme, e.g. used for map controls in Places */
+  light: {
+    dark: false,
+    title: "Light",
+    name: "light",
+    colors: {
+      "on-surface": "#000000",
+      "surface-bright": "#FFFFFF",
+      "surface-light": "#EEEEEE",
+      "surface-variant": "#1e1e1f",
+      "on-surface-variant": "#EEEEEE",
+    },
+    variables: {
+      "focus-opacity": 0.0,
+    },
+  },
 };
 
-/* Available Themes */
+/* Automatically Generated Theme Color variations */
+
+export const variations = {
+  colors: ["primary", "highlight", "secondary", "surface", "navigation"],
+  lighten: 2,
+  darken: 1,
+};
+
+/* Themes Available for Selection in Settings > General */
 
 let options = [
   {
@@ -565,18 +662,61 @@ let options = [
   },
 ];
 
-/* Theme Functions */
+/* Theme Helper Functions */
 
-// Returns a theme by name.
-export const Get = (name) => {
-  if (typeof themes[name] === "undefined") {
-    return themes[options[0].value];
+// All returns an object containing all defined themes for use with Vuetify.
+export const All = () => {
+  let result = [];
+
+  for (let k in themes) {
+    if (themes.hasOwnProperty(k)) {
+      // Get theme definition.
+      const theme = themes[k];
+
+      // Skip themes without a name.
+      if (!theme["name"]) {
+        continue;
+      }
+
+      // Get theme style (dark, light).
+      const s = style(theme);
+
+      // Add theme definition with presets.
+      result[theme.name] = {
+        dark: !!theme.dark,
+        colors: theme.colors ? { ...colors[s], ...theme.colors } : colors[s],
+        variables: theme.variables ? { ...variables[s], ...theme.variables } : variables[s],
+      };
+    }
   }
 
-  return themes[name];
+  // Return all themes with dark/light presets applied.
+  return result;
 };
 
-// Adds or replaces a theme by name.
+// Get returns a theme by name.
+export const Get = (name) => {
+  if (typeof themes[name] === "undefined") {
+    name = options[0].value;
+  }
+
+  // Get theme definition.
+  const theme = themes[name];
+
+  // Get theme style (dark, light).
+  const s = style(theme);
+
+  // Return theme definition with dark/light presets applied.
+  return {
+    dark: !!theme.dark,
+    title: theme.title ? theme.title : theme.name,
+    name: theme.name,
+    colors: theme.colors ? { ...colors[s], ...theme.colors } : colors[s],
+    variables: theme.variables ? { ...variables[s], ...theme.variables } : variables[s],
+  };
+};
+
+// Set adds or replaces a theme by name.
 export const Set = (name, val) => {
   if (typeof themes[name] === "undefined") {
     options.push({
@@ -589,7 +729,7 @@ export const Set = (name, val) => {
   themes[name] = val;
 };
 
-// Removes a theme by name.
+// Remove deletes a theme by name.
 export const Remove = (name) => {
   delete themes[name];
   const i = options.findIndex((el) => el.value === name);
@@ -598,7 +738,7 @@ export const Remove = (name) => {
   }
 };
 
-// Returns translated theme options.
+// Translated returns theme selection options with the current locale.
 export const Translated = () => {
   return options.map((v) => {
     if (v.disabled) {

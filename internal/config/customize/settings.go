@@ -83,6 +83,7 @@ func NewSettings(theme, lang string) *Settings {
 		Import: ImportSettings{
 			Path: RootPath,
 			Move: false,
+			Dest: "",
 		},
 		Index: IndexSettings{
 			Path:    RootPath,

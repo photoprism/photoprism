@@ -364,18 +364,21 @@ func TestMediaFile_Exposure(t *testing.T) {
 	c := config.TestConfig()
 
 	t.Run("/cat_brown.jpg", func(t *testing.T) {
-
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/cat_brown.jpg")
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "1/50", mediaFile.Exposure())
 	})
 	t.Run("/elephants.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/elephants.jpg")
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "1/640", mediaFile.Exposure())
 	})
 }
@@ -384,29 +387,36 @@ func TestMediaFileCanonicalName(t *testing.T) {
 	c := config.TestConfig()
 
 	mediaFile, err := NewMediaFile(c.ExamplesPath() + "/beach_wood.jpg")
+
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "20180111_110938_7D8F8A23", mediaFile.CanonicalName())
+
+	assert.Equal(t, "2018_01_11-11_09_38_7D8F8A23", mediaFile.CanonicalName("2006_01_02-15_04_05_"))
+	assert.Equal(t, "180111-110938_7D8F8A23", mediaFile.CanonicalName("060102-150405_"))
+	assert.Equal(t, "20180111_110938_7D8F8A23", mediaFile.CanonicalName(""))
+	assert.Equal(t, "20180111_110938_7D8F8A23", mediaFile.CanonicalNameDefault())
 }
 
 func TestMediaFileCanonicalNameFromFile(t *testing.T) {
-	t.Run("/beach_wood.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+	c := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
+	t.Run("/beach_wood.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/beach_wood.jpg")
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "beach_wood", mediaFile.CanonicalNameFromFile())
 	})
 	t.Run("/airport_grey", func(t *testing.T) {
-		conf := config.TestConfig()
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/airport_grey")
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/airport_grey")
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "airport_grey", mediaFile.CanonicalNameFromFile())
 	})
 }

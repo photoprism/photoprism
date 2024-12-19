@@ -27,7 +27,7 @@ import Marker from "model/marker";
 import RestModel from "model/rest";
 import { DateTime } from "luxon";
 import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 import * as src from "common/src";
 import Api from "common/api";
 

@@ -26,7 +26,7 @@ Additional information can be found in our Developer Guide:
 import Model from "model.js";
 import Api from "common/api";
 import { config } from "app/session.js";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 const thumbs = window.__CONFIG__.thumbs;
 

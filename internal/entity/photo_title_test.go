@@ -30,21 +30,30 @@ func TestPhoto_NoTitle(t *testing.T) {
 }
 
 func TestPhoto_SetTitle(t *testing.T) {
-	t.Run("empty title", func(t *testing.T) {
+	t.Run("ManuallyDeleteTitle", func(t *testing.T) {
+		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Manually delete existing title.
 		m.SetTitle("", SrcManual)
-		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		assert.Equal(t, "", m.PhotoTitle)
 	})
-	t.Run("title not from the same source", func(t *testing.T) {
+	t.Run("LowerSourcePriority", func(t *testing.T) {
+		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Set title with lower source priority.
 		m.SetTitle("NewTitleSet", SrcAuto)
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
 	})
-	t.Run("Success", func(t *testing.T) {
+	t.Run("SameSourcePriority", func(t *testing.T) {
+		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Try to delete existing title with same source priority.
+		m.SetTitle("", SrcName)
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Replace existing title with same source priority.
 		m.SetTitle("NewTitleSet", SrcName)
 		assert.Equal(t, "NewTitleSet", m.PhotoTitle)
 	})

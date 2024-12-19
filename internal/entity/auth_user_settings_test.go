@@ -3,8 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config/customize"
 )
 
 func TestCreateUserSettings(t *testing.T) {
@@ -75,6 +76,7 @@ func TestUserSettings_Apply(t *testing.T) {
 		Import: customize.ImportSettings{
 			Path: "imports/2023",
 			Move: false,
+			Dest: customize.DefaultImportDest,
 		},
 	}
 	r := m.Apply(s)

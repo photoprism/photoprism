@@ -1,27 +1,28 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`">
-        <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
-            <v-icon v-if="selection.length === 0">menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+    <div v-if="selection.length > 0" class="clipboard-container">
+      <v-speed-dial
+        id="t-clipboard"
+        v-model="expanded"
+        :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`"
+        :end="!rtl"
+        :start="rtl"
+        :attach="true"
+        location="top"
+        transition="slide-y-reverse-transition"
+        offset="12"
+      >
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon size="52" color="highlight" variant="elevated" density="comfortable" class="action-menu ma-5">
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="$config.feature('download')" fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="selection.length === 0" @click.stop="download()">
-          <v-icon>get_app</v-icon>
-        </v-btn>
-
-        <v-btn v-if="$config.feature('albums')" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
-        </v-btn>
-
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
-        </v-btn>
+        <v-btn v-if="$config.feature('download')" key="download" :title="$gettext('Download')" icon="mdi-download" color="download" density="comfortable" :disabled="selection.length === 0" class="action-download" @click.stop="download()"></v-btn>
+        <v-btn v-if="$config.feature('albums')" key="bookmark" :title="$gettext('Add to album')" icon="mdi-bookmark" color="album" density="comfortable" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true"></v-btn>
+        <v-btn key="close" icon="mdi-close" color="grey-darken-2" density="comfortable" class="action-clear" @click.stop="clearClipboard()"></v-btn>
       </v-speed-dial>
-    </v-container>
+    </div>
     <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
   </div>
 </template>

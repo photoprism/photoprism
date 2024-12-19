@@ -5,25 +5,27 @@ import (
 	"strings"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ThumbsCommand configures the command name, flags, and action.
-var ThumbsCommand = cli.Command{
+var ThumbsCommand = &cli.Command{
 	Name:      "thumbs",
 	Usage:     "(Re-)generates thumbnails based on the current configuration",
 	ArgsUsage: "[subfolder]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "force, f",
-			Usage: "replace existing thumbnail images",
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "replace existing thumbnail images",
 		},
-		cli.BoolFlag{
-			Name:  "originals, o",
-			Usage: "scan originals only, skip sidecar folder",
+		&cli.BoolFlag{
+			Name:    "originals",
+			Aliases: []string{"o"},
+			Usage:   "scan originals only, skip sidecar folder",
 		},
 	},
 	Action: thumbsAction,

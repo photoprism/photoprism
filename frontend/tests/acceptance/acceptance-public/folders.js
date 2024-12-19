@@ -66,9 +66,9 @@ test.meta("testID", "folders-002").meta({ mode: "public" })(
       .contains("MyFolder")
       .expect(page.cardDescription.nth(0).innerText)
       .contains("Last holiday")
-      .expect(Selector("div.caption").nth(1).innerText)
+      .expect(Selector("div.text-caption").nth(1).innerText)
       .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
+      .expect(Selector("div.text-caption").nth(2).innerText)
       .contains("United States");
 
     await album.openNthAlbum(0);
@@ -119,7 +119,7 @@ test.meta("testID", "folders-002").meta({ mode: "public" })(
       .contains("Kanada")
       .expect(page.cardDescription.nth(0).innerText)
       .notContains("We went to ski")
-      .expect(Selector("div.caption").nth(0).innerText)
+      .expect(Selector("div.text-caption").nth(0).innerText)
       .notContains("United States");
   }
 );

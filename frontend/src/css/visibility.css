@@ -28,6 +28,22 @@ body.readonly #photoprism .feature-readonly {
     opacity: 0 !important;
 }
 
+#photoprism .opacity-10 {
+    opacity: 0.1 !important;
+}
+
+#photoprism .opacity-20 {
+    opacity: 0.2 !important;
+}
+
+#photoprism .opacity-30 {
+    opacity: 0.3 !important;
+}
+
+#photoprism .opacity-40 {
+    opacity: 0.4 !important;
+}
+
 #photoprism .opacity-50 {
     opacity: 0.5 !important;
 }

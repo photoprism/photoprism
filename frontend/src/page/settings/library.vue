@@ -1,117 +1,119 @@
 <template>
-  <div class="p-tab p-settings-library">
-    <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
-      <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>Index</translate>
-          </h3>
+  <div class="p-tab p-settings-library py-2">
+    <v-form ref="form" validate-on="blur" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
+      <v-card flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Index</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.estimates"
                 :disabled="busy"
                 class="ma-0 pa-0 input-estimates"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Estimates')"
                 :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
-                prepend-icon="insights"
+                prepend-icon="mdi-chart-timeline-variant-shimmer"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.review"
                 :disabled="busy"
                 class="ma-0 pa-0 input-review"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Quality Filter')"
                 :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
-                prepend-icon="remove_red_eye"
+                prepend-icon="mdi-eye"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.index.convert"
                 :disabled="busy || demo || (!experimental && settings.index.convert)"
                 class="ma-0 pa-0 input-convert"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Preview Images')"
                 :hint="$gettext('Automatically generate thumbnails for files that cannot otherwise be indexed or viewed.')"
-                prepend-icon="image"
+                prepend-icon="mdi-image"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
 
-      <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-0" :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
-          <h3 class="body-2 mb-0">
-            <translate>Stacks</translate>
-          </h3>
+      <v-card flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-0 text-subtitle-2" :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
+          <translate>Stacks</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.meta"
                 :disabled="busy"
                 class="ma-0 pa-0 input-stack-meta"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Place & Time')"
                 :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
-                prepend-icon="schedule"
+                prepend-icon="mdi-clock-time-four-outline"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.uuid"
                 :disabled="busy"
                 class="ma-0 pa-0 input-stack-uuid"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Unique ID')"
                 :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
-                prepend-icon="fingerprint"
+                prepend-icon="mdi-fingerprint"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.name"
                 :disabled="busy"
                 class="ma-0 pa-0 input-stack-name"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Sequential Name')"
                 :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
-                prepend-icon="format_list_numbered_rtl"
+                prepend-icon="mdi-format-list-numbered-rtl"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -135,7 +137,7 @@ export default {
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,
-      settings: new Settings(this.$config.settings()),
+      settings: new Settings(this.$config.getSettings()),
       options: options,
       busy: this.$config.loading(),
       subscriptions: [],
@@ -145,7 +147,7 @@ export default {
     this.load();
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings)));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
@@ -153,7 +155,7 @@ export default {
   methods: {
     load() {
       this.$config.load().then(() => {
-        this.settings.setValues(this.$config.settings());
+        this.settings.setValues(this.$config.getSettings());
         this.busy = false;
       });
     },

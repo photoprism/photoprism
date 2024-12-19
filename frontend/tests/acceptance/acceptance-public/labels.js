@@ -79,7 +79,7 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     await t.expect(Selector("div.no-results").visible).ok();
 
     await toolbar.search("beacon");
-    await album.checkAlbumVisibility(LabelBeaconUid, true);
+    await label.checkLabelVisibility(LabelBeaconUid, true);
   }
 );
 
@@ -112,7 +112,6 @@ test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Rename Label
   const FirstPhotoKeywords = await photoedit.keywords.value;
 
   await t.expect(FirstPhotoTitle).contains("Zebra").expect(FirstPhotoKeywords).contains("zebra");
-
   await t
     .click(photoedit.labelsTab)
     .click(photoedit.openInlineEdit)
@@ -133,18 +132,16 @@ test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Rename Label
   await t.click(photoedit.dialogClose);
   await menu.openPage("labels");
   await toolbar.search("horse");
-  await album.checkAlbumVisibility(LabelZebraUid, true);
+  await label.checkLabelVisibility(LabelZebraUid, true);
   await label.openLabelWithUid(LabelZebraUid);
   await toolbar.setFilter("view", "Cards");
   await photo.checkPhotoVisibility(FirstPhotoZebraUid, true);
-  await t
-    .click(page.cardTitle.withAttribute("data-uid", FirstPhotoZebraUid))
-    .click(photoedit.labelsTab)
-    .click(photoedit.openInlineEdit)
-    .typeText(photoedit.inputLabelRename, "Zebra", { replace: true })
-    .pressKey("enter")
-    .click(photoedit.dialogClose);
   await menu.openPage("labels");
+  await toolbar.search("zebra");
+  await t
+    .click(Selector("p.inline-edit").withText("Zebra"))
+    .typeText(Selector(".input-title input"), "Horse", { replace: true })
+    .click(Selector("button.action-confirm"));
   await toolbar.search("horse");
 
   await t.expect(Selector("div.no-results").visible).ok();

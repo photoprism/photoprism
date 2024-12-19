@@ -1,14 +1,14 @@
 /* Lavender Theme */
 
 body.dark-theme.theme-lavender,
-.theme-lavender .v-content__wrap,
+.theme-lavender .v-main__wrap,
 .theme-lavender .p-page,
 .theme-lavender .form,
-.theme-lavender .v-content {
+.theme-lavender .v-main {
     background: #fafafa !important;
 }
 
-.theme-lavender .application.theme--light,
+.theme-lavender .v-application.theme--light,
 #photoprism.theme-lavender .theme--light.v-small-dialog__content,
 #photoprism.theme-lavender .theme--light.v-sheet,
 #photoprism.theme-lavender .theme--light.v-card {

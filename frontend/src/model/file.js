@@ -28,7 +28,7 @@ import Api from "common/api";
 import { DateTime } from "luxon";
 import Util from "common/util";
 import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 import download from "common/download";
 import { MediaImage } from "./photo";
 

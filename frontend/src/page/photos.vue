@@ -1,14 +1,20 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('photos')" class="p-page p-page-photos" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <p-photo-toolbar :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
+  <div style="user-select: none" :class="$config.aclClasses('photos')" class="p-page p-page-photos">
+    <p-photo-toolbar ref="toolbar" :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+      <p-scroll
+        :hide-panel="hideExpansionPanel"
+        :load-more="loadMore"
+        :load-disabled="scrollDisabled"
+        :load-distance="scrollDistance"
+        :loading="loading">
+      </p-scroll>
 
-      <p-photo-clipboard :context="context" :refresh="refresh" :selection="selection"></p-photo-clipboard>
+      <p-photo-clipboard :context="context" :refresh="refresh"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :edit-photo="editPhoto" :open-photo="openPhoto" :is-shared-view="isShared"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
@@ -66,7 +72,7 @@ export default {
       q: q,
     };
 
-    const settings = this.$config.settings();
+    const settings = this.$config.getSettings();
     const features = settings.features;
 
     if (settings) {
@@ -126,7 +132,7 @@ export default {
     $route() {
       const query = this.$route.query;
 
-      const settings = this.$config.settings();
+      const settings = this.$config.getSettings();
 
       if (settings.features) {
         if (settings.features.private) {
@@ -193,12 +199,15 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
+    hideExpansionPanel() {
+      return this.$refs?.toolbar.hideExpansionPanel();
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("photos_offset"));
       if (this.offset > 0 || !offset) {
@@ -429,7 +438,7 @@ export default {
 
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -554,7 +563,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -570,6 +579,11 @@ export default {
 
       Photo.search(params)
         .then((response) => {
+          // Hide search toolbar expansion panel when matching pictures were found.
+          if (this.offset === 0 && response.count > 0) {
+            this.hideExpansionPanel();
+          }
+
           this.offset = response.limit;
           this.results = response.models;
           this.viewer.results = [];
@@ -589,7 +603,7 @@ export default {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }

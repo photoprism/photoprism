@@ -1,34 +1,31 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`">
-        <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
-            <v-icon v-if="selection.length === 0">menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+    <div v-if="selection.length > 0" class="clipboard-container">
+      <v-speed-dial
+          id="t-clipboard"
+          v-model="expanded"
+          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`"
+          :end="!rtl"
+          :start="rtl"
+          :attach="true"
+          location="top"
+          transition="slide-y-reverse-transition"
+          offset="12"
+      >
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon size="52" color="highlight" variant="elevated" density="comfortable" class="action-menu ma-5">
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="canShare" fab dark small :title="$gettext('Share')" color="share" :disabled="selection.length !== 1" class="action-share" @click.stop="shareDialog()">
-          <v-icon>share</v-icon>
-        </v-btn>
-        <v-btn v-if="canManage" fab dark small :title="$gettext('Edit')" color="edit" :disabled="selection.length !== 1" class="action-edit" @click.stop="editDialog()">
-          <v-icon>edit</v-icon>
-        </v-btn>
-        <v-btn fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="!canDownload || selection.length !== 1" @click.stop="download()">
-          <v-icon>get_app</v-icon>
-        </v-btn>
-        <v-btn v-if="canManage" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-clone" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
-        </v-btn>
-        <v-btn v-if="canDelete && deletable.includes(context)" fab dark small color="remove" :title="$gettext('Delete')" :disabled="selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
-          <v-icon>delete</v-icon>
-        </v-btn>
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
-        </v-btn>
+        <v-btn v-if="canShare" key="share" :title="$gettext('Share')" icon="mdi-share-variant" color="share" density="comfortable" :disabled="selection.length !== 1" class="action-share" @click.stop="shareDialog()"></v-btn>
+        <v-btn v-if="canManage" key="pencil" :title="$gettext('Edit')" icon="mdi-pencil" color="edit" density="comfortable" :disabled="selection.length !== 1" class="action-edit" @click.stop="editDialog()"></v-btn>
+        <v-btn key="download" :title="$gettext('Download')" icon="mdi-download" color="download" density="comfortable" class="action-download" :disabled="!canDownload || selection.length !== 1" @click.stop="download()"></v-btn>
+        <v-btn v-if="canManage" key="bookmark" :title="$gettext('Add to album')" icon="mdi-bookmark" color="album" density="comfortable" :disabled="selection.length === 0" class="action-clone" @click.stop="dialog.album = true"></v-btn>
+        <v-btn v-if="canDelete && deletable.includes(context)" key="delete" :title="$gettext('Delete')" icon="mdi-delete" color="remove" density="comfortable" :disabled="selection.length === 0" class="action-delete" @click.stop="dialog.delete = true"></v-btn>
+        <v-btn key="close" icon="mdi-close" color="grey-darken-2" density="comfortable" class="action-clear" @click.stop="clearClipboard()"></v-btn>
       </v-speed-dial>
-    </v-container>
+    </div>
     <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="cloneAlbums"></p-photo-album-dialog>
     <p-album-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-album-delete-dialog>
   </div>
@@ -68,7 +65,7 @@ export default {
     },
   },
   data() {
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
 
     return {
       canDelete: this.$config.allow("albums", "delete"),

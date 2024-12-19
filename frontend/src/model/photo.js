@@ -33,8 +33,8 @@ import { DateTime } from "luxon";
 import Util from "common/util";
 import { config } from "app/session";
 import countries from "options/countries.json";
-import { $gettext } from "common/vm";
-import Clipboard from "common/clipboard";
+import { $gettext } from "common/gettext";
+import { PhotoClipboard } from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";
 import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebM, canUseHevc } from "common/caniuse";
@@ -200,7 +200,7 @@ export class Photo extends RestModel {
   }
 
   classes() {
-    return this.generateClasses(this.isPlayable(), Clipboard.has(this), this.Portrait, this.Favorite, this.Private, this.isStack());
+    return this.generateClasses(this.isPlayable(), PhotoClipboard.has(this), this.Portrait, this.Favorite, this.Private, this.isStack());
   }
 
   generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, isStack) => {
@@ -333,6 +333,29 @@ export class Photo extends RestModel {
 
   generateUtcDate = memoizeOne((takenAt) => {
     return DateTime.fromISO(takenAt).toUTC();
+  });
+
+  getOriginalName() {
+    return this.generateOriginalName();
+  }
+
+  generateOriginalName = memoizeOne(() => {
+    let name = "";
+    const main = this.originalFile();
+
+    if (main) {
+      if (main.OriginalName) {
+        name = main.OriginalName;
+      } else {
+        name = main.Name;
+      }
+    }
+
+    if (!name) {
+      name = this.FileName;
+    }
+
+    return this.fileBase(name);
   });
 
   baseName(truncate) {
@@ -682,7 +705,7 @@ export class Photo extends RestModel {
   }
 
   downloadAll() {
-    const s = config.settings();
+    const s = config.getSettings();
 
     if (!s || !s.features || !s.download || !s.features.download || s.download.disabled) {
       console.log("download: disabled in settings", s.features, s.download);
@@ -1119,7 +1142,7 @@ export class Photo extends RestModel {
   update() {
     const values = this.getValues(true);
 
-    if (values.Title) {
+    if (typeof values.Title === "string") {
       values.TitleSrc = src.Manual;
     }
 
@@ -1127,7 +1150,7 @@ export class Photo extends RestModel {
       values.TypeSrc = src.Manual;
     }
 
-    if (values.Description) {
+    if (typeof values.Description === "string") {
       values.DescriptionSrc = src.Manual;
     }
 

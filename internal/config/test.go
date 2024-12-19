@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -216,7 +216,7 @@ func NewTestContext(args []string) *cli.Context {
 	}
 
 	// Parse command arguments.
-	flags := flag.NewFlagSet("test", 0)
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
 	LogErr(flags.Parse(args))
 
 	// Create and return new context.
@@ -227,7 +227,7 @@ func NewTestContext(args []string) *cli.Context {
 func CliTestContext() *cli.Context {
 	config := NewTestOptions("config-cli")
 
-	globalSet := flag.NewFlagSet("test", 0)
+	globalSet := flag.NewFlagSet("test", flag.ContinueOnError)
 	globalSet.String("config-path", config.ConfigPath, "doc")
 	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.String("oidc-uri", config.OIDCUri, "doc")

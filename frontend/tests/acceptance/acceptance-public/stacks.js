@@ -45,8 +45,7 @@ test.meta("testID", "stacks-002").meta({ type: "short", mode: "public" })(
     await t
       .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid))
       .click(photoedit.filesTab);
-    const FirstFileName = await Selector("div.caption").nth(0).innerText;
-
+    const FirstFileName = await Selector("td").withText("Filename").nextSibling(0).innerText;
     await t.expect(FirstFileName).contains("photos8_1_ski.jpg");
 
     await t
@@ -54,9 +53,9 @@ test.meta("testID", "stacks-002").meta({ type: "short", mode: "public" })(
       .click(photoedit.makeFilePrimary)
       .click(photoedit.dialogClose)
       .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid));
-    const FirstFileNameAfterChange = await Selector("div.caption").nth(0).innerText;
+    const FirstFileNameAfterChange = await Selector("td").withText("Filename").nextSibling(0).innerText;
 
-    await t
+      await t
       .expect(FirstFileNameAfterChange)
       .notContains("photos8_1_ski.jpg")
       .expect(FirstFileNameAfterChange)

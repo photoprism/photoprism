@@ -1,9 +1,17 @@
 /* Auth Form Styles */
 
 #photoprism main .auth-login {
-    min-height: 500px;
-    position: relative;
+    min-height: 100px;
+    position: absolute;
     color-scheme: light;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
 }
 
 /* Auth Form Colors */
@@ -45,7 +53,14 @@
 }
 
 #photoprism main .auth-actions .auth-links {
-    min-height: 42px;
+    min-height: 24px;
+}
+
+#photoprism main .auth-login a,
+#photoprism main .auth-login .clickable {
+    color: rgb(var(--v-theme-secondary, #c8e3e7));
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* Auth Form Logo */
@@ -107,10 +122,19 @@
 #photoprism main .auth-login form,
 #photoprism main .auth-login footer,
 #photoprism main .auth-login .v-input__prepend-outer .v-icon,
-#photoprism main .auth-login .body-1,
-#photoprism main .auth-login .body-2 {
-    caret-color: #fff;
-    color: #fff;
+#photoprism main .auth-login .text-subtitle-1,
+#photoprism main .auth-login .text-subtitle-2,
+#photoprism main .auth-login .text-body-1,
+#photoprism main .auth-login .text-body-2,
+#photoprism main .auth-login .text-body-2,
+#photoprism main .auth-login .text-subtitle-2 {
+    caret-color: #ffffff;
+    color: #ffffff;
+}
+
+#photoprism main .auth-login form input {
+    color: rgb(var(--v-theme-on-surface));
+    caret-color: rgb(var(--v-theme-on-surface));
 }
 
 #photoprism main .auth-login .theme--light.v-icon,
@@ -119,12 +143,12 @@
     color: rgba(0, 0, 0, .54);
 }
 
-#photoprism #app main .auth-login .v-btn.v-btn--disabled,
-#photoprism #app main .auth-login .v-btn.v-btn--disabled .v-icon {
+#photoprism .v-application main .auth-login .v-btn.v-btn--disabled,
+#photoprism .v-application main .auth-login .v-btn.v-btn--disabled .v-icon {
     color: rgba(255, 255, 255, .36) !important;
 }
 
-#photoprism #app main .auth-login .v-btn.v-btn--disabled {
+#photoprism .v-application main .auth-login .v-btn.v-btn--disabled {
     background-color: rgba(255, 255, 255, .16) !important;
 }
 

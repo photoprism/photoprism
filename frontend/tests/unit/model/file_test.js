@@ -335,7 +335,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file5 = new File(values5);
-    assert.equal(file5.typeInfo(), "Scalable Vector Graphics");
+    assert.equal(file5.typeInfo(), "SVG");
   });
 
   it("should get size info", () => {

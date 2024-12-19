@@ -27,7 +27,7 @@ import RestModel from "model/rest";
 import Api from "common/api";
 import { DateTime } from "luxon";
 import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 const SubjPerson = "person";
 

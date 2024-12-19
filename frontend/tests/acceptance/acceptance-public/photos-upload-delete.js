@@ -30,7 +30,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       console.log("Skipped on mobile");
     } else {
       await menu.openNav();
-      const InitialOriginalsCount = await Selector(".nav-originals .nav-count", { timeout: 5000 })
+      const InitialOriginalsCount = await Selector("a.nav-originals span.nav-count-item", { timeout: 5000 })
         .innerText;
       await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
       await toolbar.search("digikam");
@@ -56,7 +56,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await t.expect(FileCount).eql(2);
 
       await menu.openNav();
-      const OriginalsCountAfterUpload = await Selector(".nav-originals .nav-count", {
+      const OriginalsCountAfterUpload = await Selector("a.nav-originals span.nav-count-item", {
         timeout: 5000,
       }).innerText;
       await t.expect(parseInt(InitialOriginalsCount) + 2).eql(parseInt(OriginalsCountAfterUpload));
@@ -68,9 +68,9 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await t.click(photoedit.filesTab);
 
       await t
-        .expect(Selector("div.caption").withText(".json").visible)
+        .expect(Selector("div.text-caption").withText(".json").visible)
         .ok()
-        .expect(Selector("div.caption").withText(".jpg").visible)
+        .expect(Selector("div.text-caption").withText(".jpg").visible)
         .ok();
 
       await t.click(photoedit.dialogClose);
@@ -135,9 +135,9 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })(
       await t.click(photoedit.filesTab);
 
       await t
-        .expect(Selector("div.caption").withText(".mp4").visible)
+        .expect(Selector("div.text-caption").withText(".mp4").visible)
         .ok()
-        .expect(Selector("div.caption").withText(".jpg").visible)
+        .expect(Selector("div.text-caption").withText(".jpg").visible)
         .ok();
 
       await t.click(photoedit.dialogClose);
@@ -283,7 +283,9 @@ test.meta("testID", "photos-upload-delete-005").meta({ type: "short", mode: "pub
       await t
         .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/hentai_2.jpg"])
         .wait(15000);
-      await t.click(Selector("nav.v-toolbar button"));
+      await t.click(Selector("header.v-toolbar i.mdi-close")).wait(8000);
+
+
       await menu.openPage("library");
       await t.click(library.logsTab);
 
@@ -299,7 +301,7 @@ test.meta("testID", "photos-upload-delete-006").meta({ type: "short", mode: "pub
       console.log("Skipped on mobile");
     } else {
       await menu.openNav();
-      const InitialOriginalsCount = await Selector(".nav-originals .nav-count", {
+      const InitialOriginalsCount = await Selector("a.nav-originals span.nav-count-item", {
         timeout: 10000,
       }).innerText;
       await menu.openPage("browse");
@@ -309,7 +311,7 @@ test.meta("testID", "photos-upload-delete-006").meta({ type: "short", mode: "pub
         .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/foo.txt"])
         .wait(15000);
       await menu.openNav();
-      const OriginalsCountAfterUpload = await Selector(".nav-originals .nav-count", {
+      const OriginalsCountAfterUpload = await Selector("a.nav-originals span.nav-count-item", {
         timeout: 10000,
       }).innerText;
 

@@ -1,117 +1,116 @@
 <template>
   <div class="p-page p-page-faces" style="user-select: none">
-    <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar dense class="page-toolbar" flat color="secondary-light pa-0">
+    <v-form ref="form" class="p-faces-search" validate-on="blur" @submit.prevent="updateQuery">
+      <v-toolbar dense flat height="48" class="page-toolbar pa-0" color="secondary-light">
         <v-spacer></v-spacer>
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
-          <v-icon>refresh</v-icon>
+        <v-btn icon variant="text" color="surface-variant" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
-          <v-icon>visibility</v-icon>
+          <v-icon>mdi-eye</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
-          <v-icon>visibility_off</v-icon>
+          <v-icon>mdi-eye-off</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
-      <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
-          <h3 class="body-2 ma-0 pa-0">
+      <v-container grid-list-xs fluid class="pa-0">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-check-circle-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="mt-2 mb-0 pa-0">
             <translate>You may rescan your library to find additional faces.</translate>
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results face-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="model in results" :key="model.ID" xs12 sm6 md4 lg3 xl2 xxl1 d-flex>
-            <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card">
+        <v-row class="search-results face-results cards-view ma-0" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="model in results" :key="model.ID" cols="12" sm="6" md="4" lg="3" xl="2" xxl="1" class="d-flex">
+            <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card flex-grow-1">
               <div class="card-background card"></div>
-              <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1 clickable" @click.stop.prevent="onView(model)">
-                <v-btn :ripple="false" :depressed="false" class="input-hidden" icon flat small absolute @click.stop.prevent="toggleHidden(model)">
-                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
-                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+              <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card clickable" @click.stop.prevent="onView(model)">
+                <v-btn :ripple="false" class="input-hidden" icon variant="text" density="comfortable" position="absolute" @click.stop.prevent="toggleHidden(model)">
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
               </v-img>
 
               <v-card-actions class="card-details pa-0">
-                <v-layout v-if="model.SubjUID" row wrap align-center>
-                  <v-flex xs12 class="text-xs-left pa-0">
+                <v-row v-if="model.SubjUID" align="center" class="ma-0">
+                  <v-col cols="12" class="text-start pa-0">
                     <v-text-field
-                      :value="model.Name"
+                      :model-value="model.Name"
                       :rules="[textRule]"
                       :readonly="readonly"
-                      browser-autocomplete="off"
+                      autocomplete="off"
                       class="input-name pa-0 ma-0"
                       hide-details
                       single-line
-                      solo-inverted
+                      variant="solo-inverted"
                       @change="
                         (newName) => {
                           onRename(model, newName);
                         }
                       "
-                      @keyup.enter.native="
+                      @keyup.enter="
                         (event) => {
                           onRename(model, event.target.value);
                         }
                       "
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
-                <v-layout v-else row wrap align-center>
-                  <v-flex xs12 class="text-xs-left pa-0">
+                  </v-col>
+                </v-row>
+                <v-row v-else align="center" class="ma-0">
+                  <v-col cols="12" class="text-start pa-0">
+                    <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox
-                      :value="model.Name"
+                      :model-value="model.Name"
                       style="z-index: 250"
                       :items="$config.values.people"
+                      item-title="Name"
                       item-value="Name"
-                      item-text="Name"
                       :readonly="readonly"
                       :return-object="false"
                       :menu-props="menuProps"
-                      :allow-overflow="false"
                       :hint="$gettext('Name')"
                       hide-details
                       single-line
-                      solo-inverted
+                      variant="solo-inverted"
                       open-on-clear
                       hide-no-data
                       append-icon=""
-                      prepend-inner-icon="person_add"
-                      browser-autocomplete="off"
+                      prepend-inner-icon="mdi-account-plus"
+                      autocomplete="off"
                       class="input-name pa-0 ma-0"
-                      @change="
-                        (newName) => {
-                          onRename(model, newName);
-                        }
-                      "
                       @keyup.enter.native="
                         (event) => {
                           onRename(model, event.target.value);
                         }
                       "
+                      @blur="
+                        (event) => {
+                          onRename(model, event.target.value);
+                        }"
                     >
                     </v-combobox>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-card-actions>
             </v-card>
-          </v-flex>
-        </v-layout>
-        <div class="text-xs-center mt-3 mb-2">
-          <v-btn color="secondary" round depressed :to="{ name: 'all', query: { q: 'face:new' } }">
+          </v-col>
+        </v-row>
+        <div class="text-center mt-4 mb-2">
+          <v-btn color="secondary" rounded variant="flat" :to="{ name: 'all', query: { q: 'face:new' } }">
             <translate>Show all new faces</translate>
           </v-btn>
         </div>
@@ -209,7 +208,7 @@ export default {
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

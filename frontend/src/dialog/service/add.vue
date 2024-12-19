@@ -1,56 +1,46 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
-    <v-card raised elevation="24">
-      <v-card-title primary-title class="pa-2">
-        <v-layout row wrap>
-          <v-flex xs12 class="pa-2">
-            <h3 class="headline pa-0">
-              <translate>Add Account</translate>
-            </h3>
-          </v-flex>
-        </v-layout>
+  <v-dialog :model-value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
+    <v-card>
+      <v-card-title class="d-flex justify-start align-center ga-3">
+        <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
+        <h6 class="text-h6">
+          <translate>Add Account</translate>
+        </h6>
       </v-card-title>
-      <v-card-text class="pb-0 pt-0 px-2">
-        <v-layout row wrap>
-          <v-flex xs12 class="pa-2">
-            <v-text-field v-model="model.AccURL" hide-details autofocus box flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-text-field v-model="model.AccUser" hide-details box flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
+      <v-card-text class="dense">
+        <v-row dense>
+          <v-col cols="12">
+            <v-text-field v-model="model.AccURL" hide-details autofocus :label="$gettext('Service URL')" placeholder="https://www.example.com/" autocorrect="off" autocapitalize="none"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field v-model="model.AccUser" hide-details :label="$gettext('Username')" placeholder="optional" autocorrect="off" autocapitalize="none"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6">
             <v-text-field
               v-model="model.AccPass"
               hide-details
-              box
-              flat
-              browser-autocomplete="new-password"
+              autocomplete="new-password"
               autocapitalize="none"
               :label="$gettext('Password')"
               placeholder="optional"
-              color="secondary-dark"
-              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              @click:append="showPassword = !showPassword"
+              @click:append-inner="showPassword = !showPassword"
             ></v-text-field>
-          </v-flex>
-        </v-layout>
-      </v-card-text>
-      <v-card-actions class="pt-1 pb-2 px-2">
-        <v-layout row wrap class="pa-2">
-          <v-flex xs12 text-xs-left class="caption">
+          </v-col>
+          <v-col cols="12" class="text-start text-caption">
             <translate>Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.</translate>
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
-          </v-flex>
-          <v-flex xs12 text-xs-right class="pt-2">
-            <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
-              <span>{{ label.cancel }}</span>
-            </v-btn>
-            <v-btn depressed dark color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
-              <span>{{ label.confirm }}</span>
-            </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
+          <span>{{ label.cancel }}</span>
+        </v-btn>
+        <v-btn variant="flat" color="highlight" class="action-confirm" @click.stop="confirm">
+          <span>{{ label.confirm }}</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

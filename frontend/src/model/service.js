@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import RestModel from "model/rest";
 import Api from "common/api";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 import { config } from "app/session";
 
 export class Service extends RestModel {

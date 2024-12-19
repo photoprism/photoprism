@@ -29,30 +29,37 @@ import "common/navigation";
 import Api from "common/api";
 import Notify from "common/notify";
 import Scrollbar from "common/scrollbar";
-import Clipboard from "common/clipboard";
-import Components from "component/components";
-import icons from "component/icons";
-import Dialogs from "dialog/dialogs";
+import { PhotoClipboard } from "common/clipboard";
+import { installComponents } from "component/components";
+import { installDialogs } from "dialog/dialogs";
+import customIcons from "component/icons";
 import Event from "pubsub-js";
-import GetTextPlugin from "vue-gettext";
 import Log from "common/log";
 import PhotoPrism from "app.vue";
-import Router from "vue-router";
-import Routes from "app/routes";
+import { createRouter, createWebHistory } from "vue-router";
+import routes from "app/routes";
 import { config, session } from "app/session";
-import { Settings } from "luxon";
+import { Settings as Luxon } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
-import Vue from "vue";
-import Vuetify from "vuetify";
+import { createApp } from "vue";
+import { createVuetify } from "vuetify";
 import VueLuxon from "vue-luxon";
-import VueFilters from "vue2-filters";
-import VueFullscreen from "vue-fullscreen";
-import VueInfiniteScroll from "vue-infinite-scroll";
+import * as themes from "options/themes";
+// import VueFilters from "vue2-filters";
+// import VueFullscreen from "vue-fullscreen";
 import Hls from "hls.js";
 import "common/maptiler-lang";
-import { T, Mount } from "common/vm";
+import { createGettext, T } from "common/gettext";
+import { Locale } from "locales/locale";
 import * as offline from "@lcdp/offline-plugin/runtime";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
+import "vuetify/styles";
+import "@mdi/font/css/materialdesignicons.css";
+
+import { passiveSupport } from "passive-events-support/src/utils";
+
+passiveSupport({ events: ["touchstart", "touchmove", "wheel", "mousewheel"] });
 
 config.progress(50);
 
@@ -63,32 +70,30 @@ config.update().finally(() => {
   const isPublic = config.isPublic();
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
+  let app = createApp(PhotoPrism);
   // Initialize language and detect alignment.
-  Vue.config.language = config.getLanguage();
-  Settings.defaultLocale = Vue.config.language.substring(0, 2);
+  app.config.globalProperties.$language = config.getLanguageLocale();
+  Luxon.defaultLocale = config.getLanguageCode();
   // Detect right-to-left languages such as Arabic and Hebrew
-  const rtl = config.rtl();
-
-  // Get initial theme colors from config.
-  const theme = config.theme.colors;
+  const rtl = config.isRtl();
 
   // HTTP Live Streaming (video support).
   window.Hls = Hls;
 
   // Assign helpers to VueJS prototype.
-  Vue.prototype.$event = Event;
-  Vue.prototype.$notify = Notify;
-  Vue.prototype.$scrollbar = Scrollbar;
-  Vue.prototype.$viewer = viewer;
-  Vue.prototype.$session = session;
-  Vue.prototype.$api = Api;
-  Vue.prototype.$log = Log;
-  Vue.prototype.$socket = Socket;
-  Vue.prototype.$config = config;
-  Vue.prototype.$clipboard = Clipboard;
-  Vue.prototype.$isMobile = isMobile;
-  Vue.prototype.$rtl = rtl;
-  Vue.prototype.$sponsorFeatures = () => {
+  app.config.globalProperties.$event = Event;
+  app.config.globalProperties.$notify = Notify;
+  app.config.globalProperties.$scrollbar = Scrollbar;
+  app.config.globalProperties.$viewer = viewer;
+  app.config.globalProperties.$session = session;
+  app.config.globalProperties.$api = Api;
+  app.config.globalProperties.$log = Log;
+  app.config.globalProperties.$socket = Socket;
+  app.config.globalProperties.$config = config;
+  app.config.globalProperties.$clipboard = PhotoClipboard;
+  app.config.globalProperties.$isMobile = isMobile;
+  app.config.globalProperties.$rtl = rtl;
+  app.config.globalProperties.$sponsorFeatures = () => {
     return config.load().finally(() => {
       if (config.values.sponsor) {
         return Promise.resolve();
@@ -98,24 +103,157 @@ config.update().finally(() => {
     });
   };
 
-  // Register Vuetify.
-  Vue.use(Vuetify, { rtl, icons, theme });
+  // Create Vue 3 Gettext instance.
+  const gettext = createGettext(config);
 
-  // Register other VueJS plugins.
-  Vue.use(GetTextPlugin, {
-    translations: config.translations,
-    silent: true, // !config.values.debug,
-    defaultLanguage: Vue.config.language,
-    autoAddKeyAttributes: true,
+  // Create Vuetify 3 instance.
+  const vuetify = createVuetify({
+    defaults: {
+      VBtn: {
+        flat: true,
+        variant: "flat",
+        ripple: true,
+      },
+      VSwitch: {
+        flat: true,
+        density: "compact",
+        baseColor: "surface",
+        hideDetails: true,
+        ripple: false,
+      },
+      VRating: {
+        density: "compact",
+        color: "on-surface",
+        activeColor: "surface-variant",
+        ripple: false,
+      },
+      VCheckbox: {
+        density: "compact",
+        color: "surface-variant",
+        hideDetails: "auto",
+        ripple: false,
+      },
+      VTextField: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        hideDetails: "auto",
+      },
+      VTextarea: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        hideDetails: "auto",
+      },
+      VOtpInput: {
+        variant: "outlined",
+        baseColor: "on-surface-variant",
+        autofocus: true,
+      },
+      VAutocomplete: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        itemTitle: "text",
+        itemValue: "value",
+        hideDetails: "auto",
+        hideNoData: true,
+      },
+      VCombobox: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        itemTitle: "text",
+        itemValue: "value",
+        hideDetails: "auto",
+      },
+      VSelect: {
+        flat: true,
+        variant: "solo-filled",
+        color: "surface-variant",
+        itemTitle: "text",
+        itemValue: "value",
+        hideDetails: "auto",
+      },
+      VCard: {
+        density: "compact",
+        color: "background",
+        flat: true,
+        ripple: false,
+      },
+      VTab: {
+        color: "on-surface",
+        baseColor: "on-surface-variant",
+        ripple: false,
+      },
+      VTabs: {
+        grow: true,
+        elevation: 0,
+        color: "on-surface",
+        bgColor: "secondary",
+        baseColor: "secondary",
+        sliderColor: "surface-variant",
+      },
+      VTable: {
+        density: "comfortable",
+      },
+      VListItem: {
+        ripple: false,
+      },
+      VDataTable: {
+        color: "background",
+      },
+      VExpansionPanel: {
+        tile: true,
+        ripple: false,
+      },
+      VExpansionPanels: {
+        flat: true,
+        tile: true,
+        static: true,
+        variant: "accordion",
+        bgColor: "secondary-light",
+        ripple: false,
+      },
+      VProgressLinear: {
+        height: 10,
+        rounded: true,
+        color: "surface-variant",
+      },
+    },
+    icons: {
+      defaultSet: "mdi",
+      aliases,
+      sets: {
+        mdi,
+        ...customIcons,
+      },
+    },
+    theme: {
+      defaultTheme: config.themeName,
+      themes: themes.All(),
+      variations: themes.variations,
+    },
+    locale: Locale(),
   });
 
-  Vue.use(VueLuxon);
-  Vue.use(VueInfiniteScroll);
-  Vue.use(VueFullscreen);
-  Vue.use(VueFilters);
-  Vue.use(Components);
-  Vue.use(Dialogs);
-  Vue.use(Router);
+  // Use Vuetify.
+  app.use(vuetify);
+
+  // Use Vue 3 Gettext.
+  app.use(gettext);
+
+  // TODO: check it
+  // debugger;
+  // app.use(VueLuxon);
+  app.config.globalProperties.$luxon = VueLuxon;
+  // app.config.globalProperties.$fullscreen = InfiniteLoading;
+  // app.use(VueFullscreen);
+  // app.use(VueFilters);
+  // app.use(Components);
+  installComponents(app);
+  // app.use(Dialogs);
+  installDialogs(app);
 
   // make scroll-pos-restore compatible with bfcache
   // this is required to make scroll-pos-restore work on iOS in PWA-mode
@@ -148,12 +286,10 @@ config.update().finally(() => {
   });
 
   // Configure client-side routing.
-  const router = new Router({
-    routes: Routes,
-    mode: "history",
-    base: config.baseUri + "/library/",
-    saveScrollPosition: true,
-    scrollBehavior: (to, from, savedPosition) => {
+  const router = createRouter({
+    history: createWebHistory(config.baseUri + "/library/"),
+    routes: routes,
+    scrollBehavior(to, from, savedPosition) {
       let prevScrollPos = savedPosition;
 
       if (window.positionToRestore !== undefined) {
@@ -170,10 +306,11 @@ config.update().finally(() => {
           });
         });
       } else {
-        return { x: 0, y: 0 };
+        return { left: 0, top: 0 };
       }
     },
   });
+  app.use(router);
 
   router.beforeEach((to, from, next) => {
     if (document.querySelector(".v-dialog--active.v-dialog--fullscreen")) {
@@ -229,14 +366,17 @@ config.update().finally(() => {
   });
 
   if (isMobile) {
+    // Add "mobile" class to body if running on a mobile device.
     document.body.classList.add("mobile");
   } else {
     // Pull client config every 10 minutes in case push fails (except on mobile to save battery).
     setInterval(() => config.update(), 600000);
   }
 
-  // Start application.
-  Mount(Vue, PhotoPrism, router);
+  // Mount to #app.
+  app.mount("#app");
+
+  // Allows the application to be installed as a PWA.
   if (config.baseUri === "") {
     offline.install();
   }

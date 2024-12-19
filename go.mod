@@ -15,7 +15,7 @@ require (
 	github.com/gin-contrib/gzip v1.0.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217
-	github.com/google/open-location-code/go v0.0.0-20240712113549-dfcebc905b81
+	github.com/google/open-location-code/go v0.0.0-20241213145606-bf601ad90a45
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.14.0
 	github.com/jinzhu/gorm v1.9.16
@@ -40,18 +40,17 @@ require (
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
-	github.com/urfave/cli v1.22.16
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.29.0
-	golang.org/x/net v0.31.0
+	golang.org/x/crypto v0.31.0
+	golang.org/x/net v0.33.0
 	gonum.org/v1/gonum v0.15.1
 	gopkg.in/photoprism/go-tz.v2 v2.1.3
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
-	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
-	golang.org/x/image v0.22.0
+	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
+	golang.org/x/image v0.23.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5
@@ -63,28 +62,29 @@ require github.com/chzyer/readline v1.5.1 // indirect
 require github.com/gabriel-vasile/mimetype v1.4.7
 
 require (
-	golang.org/x/sync v0.9.0
+	golang.org/x/sync v0.10.0
 	golang.org/x/time v0.8.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.8
+require github.com/go-ldap/ldap/v3 v3.4.9
 
 require (
 	github.com/prometheus/client_golang v1.20.5
-	github.com/prometheus/common v0.60.1
+	github.com/prometheus/common v0.61.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 
-require golang.org/x/text v0.20.0
+require golang.org/x/text v0.21.0
 
 require (
 	github.com/davidbyttow/govips/v2 v2.15.0
-	github.com/go-co-op/gocron/v2 v2.12.4
+	github.com/go-co-op/gocron/v2 v2.14.0
 	github.com/pquerna/otp v1.4.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
+	github.com/urfave/cli/v2 v2.27.5
 	github.com/zitadel/oidc/v3 v3.33.1
 )
 
@@ -102,7 +102,7 @@ require (
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.5 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.7 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -137,15 +137,16 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
+	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	github.com/zitadel/logging v0.6.1 // indirect
 	github.com/zitadel/schema v1.3.0 // indirect
 	go.opentelemetry.io/otel v1.29.0 // indirect
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
-	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
+	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/tools v0.27.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/tools v0.28.0 // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
@@ -161,7 +162,7 @@ require (
 )
 
 require (
-	github.com/emersion/go-webdav v0.5.0
+	github.com/emersion/go-webdav v0.6.0
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 )

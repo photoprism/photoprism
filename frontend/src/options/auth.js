@@ -1,4 +1,4 @@
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 // Providers maps account roles to their display name.
 export const Roles = () => {

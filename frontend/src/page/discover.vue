@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-discover">
-    <v-tabs v-model="active" flat grow color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" grow class="bg-transparent" bg-color="secondary" slider-color="surface-variant" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>
       </v-tab>
@@ -17,23 +17,23 @@
         <translate>Random</translate>
       </v-tab>
 
-      <v-tabs-items touchless>
-        <v-tab-item>
+      <v-tabs-window v-model="active">
+        <v-tabs-window-item>
           <p-tab-discover-colors></p-tab-discover-colors>
-        </v-tab-item>
+        </v-tabs-window-item>
 
-        <v-tab-item>
+        <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-tabs-window-item>
 
-        <v-tab-item>
+        <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-tabs-window-item>
 
-        <v-tab-item>
+        <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-tabs>
   </div>
 </template>
