@@ -58,9 +58,7 @@
                             <tr>
                               <td title="Unique ID"> UID </td>
                               <td>
-                                <!--                              TODO: change filter-->
-                                <!--                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span>-->
-                                <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID }}</span>
+                                <span class="clickable text-uppercase" @click.stop.prevent="copyText(file.UID)">{{ file.UID }}</span>
                               </td>
                             </tr>
                             <tr v-if="file.InstanceID" title="XMP">
@@ -68,10 +66,8 @@
                                 <translate>Instance ID</translate>
                               </td>
                               <td>
-                                <!--                              TODO: change filter-->
-                                <!--                              <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td-->
-                                <span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID }}</span></td
-                              >
+                                <span class="clickable text-uppercase" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID }}</span>
+                              </td>
                             </tr>
                             <tr>
                               <td title="SHA-1">
@@ -181,9 +177,7 @@
                               <td>
                                 <translate>Projection</translate>
                               </td>
-                              <!--                            TODO: change filter-->
-                              <!--                            <td>{{ file.Projection | capitalize }}</td>-->
-                              <td>{{ file.Projection }}</td>
+                              <td class="text-capitalize">{{ file.Projection }}</td>
                             </tr>
                             <tr v-if="file.AspectRatio">
                               <td>

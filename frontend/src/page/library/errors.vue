@@ -73,10 +73,8 @@
     <p-confirm-dialog :show="dialog.delete" icon="mdi-delete-outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
     <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
-        <v-card-title class="text-h5 pa-2">
-          <!--          TODO: change filter-->
-          <!--          {{ details.err.Level | capitalize }}-->
-          {{ details.err.Level }}
+        <v-card-title class="d-flex justify-start align-center ga-3">
+          <h6 class="text-h6 text-capitalize">{{ details.err.Level }}</h6>
         </v-card-title>
 
         <v-card-text class="pa-2 text-subtitle-2">
@@ -87,8 +85,7 @@
           {{ details.err.Message }}
         </v-card-text>
 
-        <v-card-actions class="pa-2">
-          <v-spacer></v-spacer>
+        <v-card-actions>
           <v-btn color="secondary-light" variant="flat" class="action-close" @click="details.show = false">
             <translate>Close</translate>
           </v-btn>

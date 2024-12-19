@@ -42,7 +42,7 @@
                       :key="JSON.stringify(data.item)"
                       :model-value="data.selected"
                       :disabled="data.disabled"
-                      class="bg-highlight rounded-xl"
+                      class="bg-highlight rounded-xl text-truncate d-block"
                       @click:close="removeSelection(data.index)"
                   >
                     <v-icon class="pr-1">mdi-bookmark</v-icon>

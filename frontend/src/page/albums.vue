@@ -204,14 +204,12 @@
               <v-card-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
                   <h3 class="text-subtitle-2 mb-0">
-                    <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
+                    <button v-if="album.Type !== 'month'" class="action-title-edit text-truncate d-block" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                       <!-- TODO: change this filter -->
                       <!-- {{ album.Title | truncate(80) }} -->
                       {{ album.Title }}
                     </button>
-                    <button v-else class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-<!--                      TODO: change filter-->
-<!--                      {{ album.getDateString() | capitalize }}-->
+                    <button v-else class="action-title-edit text-capitalize" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                       {{ album.getDateString() }}
                     </button>
                   </h3>
@@ -220,7 +218,7 @@
 
               <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="album.Description" class="text-caption mb-2" :title="$gettext('Description')">
-                  <button @click.exact="edit(album)">
+                  <button @click.exact="edit(album)" class="text-truncate d-block">
                     <!-- TODO: change this filter -->
                     <!-- {{ album.Description | truncate(100) }} -->
                     {{ album.Description }}
@@ -239,7 +237,7 @@
                   </button>
                 </div>
                 <div v-else-if="album.Type === 'folder'" class="text-caption mb-2">
-                  <button @click.exact="edit(album)">
+                  <button @click.exact="edit(album)" class="text-truncate d-block">
                     <!-- TODO: change this filter -->
 <!-- /{{ album.Path | truncate(100) }} -->
 /{{ album.Path }}

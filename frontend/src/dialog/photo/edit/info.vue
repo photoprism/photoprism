@@ -12,17 +12,13 @@
             <tr>
               <td>UID</td>
               <td>
-<!--                TODO: change filter-->
-<!--                <span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID | uppercase }}</span></td-->
-              <span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID }}</span></td
-              >
+                <span class="clickable text-uppercase" @click.stop.prevent="copyText(model.UID)">{{ model.UID }}</span>
+              </td>
             </tr>
             <tr v-if="model.DocumentID">
               <td>Document ID</td>
               <td>
-<!--                TODO: change filter-->
-<!--                <span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID | uppercase }}</span></td-->
-                <span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID }}</span>
+                <span class="clickable text-uppercase" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID }}</span>
               </td>
             </tr>
             <tr>
