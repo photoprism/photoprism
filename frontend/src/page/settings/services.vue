@@ -1,57 +1,64 @@
 <template>
   <div class="p-tab p-settings-services">
-    <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-actions disable-initial-sort class="elevation-0 account-results list-view" item-key="ID" :no-data-text="$gettext('No services configured.')">
-      <template #items="props">
+    <v-data-table
+        v-model="selected"
+        :headers="listColumns"
+        :items="results"
+        tile
+        hover
+        hide-default-footer
+        item-key="ID" :no-data-text="$gettext('No services configured.')"
+        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+        class="elevation-0 account-results list-view"
+    >
+      <template #item="props">
         <tr :data-name="props.item.AccName">
           <td class="p-account">
-            <button class="secondary-dark--text text--lighten-1" @click.stop.prevent="edit(props.item)">
+            <button class="surface-variant--text" @click.stop.prevent="edit(props.item)">
               {{ props.item.AccName }}
             </button>
           </td>
-          <td class="text-xs-center">
-            <v-btn icon small flat :ripple="false" class="action-toggle-share" color="transparent" @click.stop.prevent="editSharing(props.item)">
-              <v-icon v-if="props.item.AccShare" color="secondary-dark">check</v-icon>
-              <v-icon v-else color="secondary-dark">settings</v-icon>
+          <td class="text-center">
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
+              <v-icon :icon="props.item.AccShare ? 'mdi-check' : 'mdi-cog'" color="surface-variant"></v-icon>
             </v-btn>
           </td>
-          <td class="text-xs-center">
-            <v-btn icon small flat :ripple="false" class="action-toggle-sync" color="transparent" @click.stop.prevent="editSync(props.item)">
-              <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">report_problem </v-icon>
-              <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
-              <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
+          <td class="text-center">
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
+              <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert</v-icon>
+              <v-icon v-else-if="props.item.AccSync" color="surface-variant">mdi-sync</v-icon>
+              <v-icon v-else color="surface-variant">mdi-sync-off</v-icon>
             </v-btn>
           </td>
           <td class="hidden-sm-and-down">
             {{ formatDate(props.item.SyncDate) }}
           </td>
-          <td class="hidden-xs-only text-xs-right" nowrap>
-            <v-btn icon small flat :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="remove(props.item)">
-              <v-icon color="secondary-dark">delete</v-icon>
-            </v-btn>
-            <v-btn icon small flat :ripple="false" class="action-edit" color="transparent" @click.stop.prevent="edit(props.item)">
-              <v-icon color="secondary-dark">edit</v-icon>
-            </v-btn>
+          <td class="hidden-xs text-end" nowrap>
+            <v-btn icon="mdi-delete" color="surface-variant" density="comfortable" variant="plain" :ripple="false" class="action-remove action-secondary" @click.stop.prevent="remove(props.item)"></v-btn>
+            <v-btn icon="mdi-pencil" color="surface-variant" density="comfortable" variant="plain" :ripple="false" class="action-edit" @click.stop.prevent="edit(props.item)"></v-btn>
           </td>
         </tr>
       </template>
     </v-data-table>
     <v-container fluid>
-      <p class="caption pa-0 clickable" @click.stop.prevent="webdavDialog">
+      <p class="text-caption pt-3 clickable" @click.stop.prevent="webdavDialog">
         <translate>Note:</translate>
         <translate>WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. </translate>
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. </translate>
       </p>
 
-      <v-form ref="form" lazy-validation dense class="p-form-settings mt-2" accept-charset="UTF-8" @submit.prevent="add">
-        <v-btn v-if="user.hasWebDAV()" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.breakpoint.xsOnly" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
-          <translate>Connect via WebDAV</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
-        </v-btn>
+      <v-form ref="form" validate-on="blur" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="add">
+        <div class="action-buttons">
+          <v-btn v-if="user.hasWebDAV()" color="button" variant="flat" class="action-webdav-dialog" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
+            <translate>Connect via WebDAV</translate>
+            <v-icon end>mdi-swap-horizontal</v-icon>
+          </v-btn>
 
-        <v-btn color="primary-button" class="white--text compact ml-0 my-2 mr-2" :block="$vuetify.breakpoint.xsOnly" :disabled="isPublic || isDemo" depressed @click.stop="add">
-          <translate>Connect</translate>
-          <v-icon :right="!rtl" :left="rtl" dark>add</v-icon>
-        </v-btn>
+          <v-btn color="highlight" class="compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">
+            <translate>Connect</translate>
+            <v-icon icon="mdi-plus" end></v-icon>
+          </v-btn>
+        </div>
       </v-form>
     </v-container>
 
@@ -88,17 +95,17 @@ export default {
       },
       editScope: "main",
       listColumns: [
-        { text: this.$gettext("Name"), value: "AccName", sortable: false, align: "left" },
-        { text: this.$gettext("Upload"), value: "AccShare", sortable: false, align: "center" },
-        { text: this.$gettext("Sync"), value: "AccSync", sortable: false, align: "center" },
+        { title: this.$gettext("Name"), key: "AccName", sortable: false, align: "left" },
+        { title: this.$gettext("Upload"), key: "AccShare", sortable: false, align: "center" },
+        { title: this.$gettext("Sync"), key: "AccSync", sortable: false, align: "center" },
         {
-          text: this.$gettext("Last Sync"),
-          value: "SyncDate",
+          title: this.$gettext("Last Sync"),
+          key: "SyncDate",
           sortable: false,
           class: "hidden-sm-and-down",
           align: "left",
         },
-        { text: "", value: "", sortable: false, class: "hidden-xs-only", align: "right" },
+        { title: "", key: "", sortable: false, class: "hidden-xs", align: "right" },
       ],
       rtl: this.$rtl,
     };

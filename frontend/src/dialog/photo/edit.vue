@@ -1,101 +1,89 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
-    <v-card color="application">
-      <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark class="action-close" @click.stop="close">
-          <v-icon>close</v-icon>
+  <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-photo-edit-dialog" @click.stop @keydown.esc="close">
+    <v-card tile color="background">
+      <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">
+        <v-btn icon class="action-close" @click.stop="close">
+          <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title
           >{{ title }}
-          <v-icon v-if="isPrivate" title="Private">lock</v-icon>
+          <v-icon v-if="isPrivate" title="Private">mdi-lock</v-icon>
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="selection.length > 1">
           <v-btn icon :disabled="selected < 1" class="action-previous" @click.stop="prev">
-            <v-icon v-if="!rtl">navigate_before</v-icon>
-            <v-icon v-else>navigate_next</v-icon>
+            <v-icon v-if="!rtl">mdi-chevron-left</v-icon>
+            <v-icon v-else>mdi-chevron-right</v-icon>
           </v-btn>
 
           <v-btn icon :disabled="selected >= selection.length - 1" class="action-next" @click.stop="next">
-            <v-icon v-if="!rtl">navigate_next</v-icon>
-            <v-icon v-else>navigate_before</v-icon>
+            <v-icon v-if="!rtl">mdi-chevron-right</v-icon>
+            <v-icon v-else>mdi-chevron-left</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-tabs v-model="active" flat grow class="form" color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+      <v-tabs v-model="active" elevation="0" class="form" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
         <v-tab id="tab-details" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Details')">mdi-pencil</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">edit</v-icon>
+            <v-icon :size="18" start>mdi-pencil</v-icon>
             <translate key="Details">Details</translate>
           </template>
         </v-tab>
 
         <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Labels')">label</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Labels')">mdi-label</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">label</v-icon>
-            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
-              <template #badge>
-                <span v-if="model.Labels.length">{{ model.Labels.length }}</span>
-              </template>
-              <translate key="Labels">Labels</translate>
-            </v-badge>
+            <v-icon :size="18" start>mdi-label</v-icon>
+            <translate key="Labels">Labels</translate>
+            <v-badge v-if="model.Labels.length" color="surface-variant" inline :content="model.Labels.length"></v-badge>
           </template>
         </v-tab>
 
         <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('People')">people_alt</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('People')">mdi-account-multiple</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">people_alt</v-icon>
-            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
-              <template #badge>
-                <span v-if="model.Faces">{{ model.Faces }}</span>
-              </template>
-              <translate key="People">People</translate>
-            </v-badge>
+            <v-icon :size="18" start>mdi-account-multiple</v-icon>
+            <translate key="People">People</translate>
+            <v-badge v-if="model.Faces" color="surface-variant" inline :content="model.Faces"></v-badge>
           </template>
         </v-tab>
 
         <v-tab id="tab-files" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Files')">camera_roll</v-icon>
+          <v-icon v-if="$vuetify.display.smAndDown" :title="$gettext('Files')">mdi-film</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">camera_roll</v-icon>
-            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
-              <template #badge>
-                <span v-if="model.Files.length">{{ model.Files.length }}</span>
-              </template>
-              <translate key="Files">Files</translate>
-            </v-badge>
+            <v-icon :size="18" start>mdi-film</v-icon>
+            <translate key="Files">Files</translate>
+            <v-badge v-if="model.Files.length" color="surface-variant" inline :content="model.Files.length"></v-badge>
           </template>
         </v-tab>
 
         <v-tab v-if="$config.feature('edit')" id="tab-info" ripple>
-          <v-icon>settings</v-icon>
+          <v-icon>mdi-cog</v-icon>
         </v-tab>
-
-        <v-tabs-items touchless>
-          <v-tab-item lazy>
-            <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
-          </v-tab-item>
-
-          <v-tab-item lazy>
-            <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
-          </v-tab-item>
-
-          <v-tab-item lazy>
-            <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
-          </v-tab-item>
-
-          <v-tab-item lazy>
-            <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
-          </v-tab-item>
-
-          <v-tab-item v-if="$config.feature('edit')" lazy>
-            <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
-          </v-tab-item>
-        </v-tabs-items>
       </v-tabs>
+
+      <v-tabs-window v-model="active" class="overflow-y-auto" style="height: 100%">
+        <v-tabs-window-item>
+          <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item v-if="$config.feature('edit')">
+          <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-card>
   </v-dialog>
 </template>
@@ -156,7 +144,7 @@ export default {
       return this.$gettext("Edit Photo");
     },
     isPrivate() {
-      if (this.model && this.model.Private && this.$config.settings().features.private) {
+      if (this.model && this.model.Private && this.$config.getSettings().features.private) {
         return this.model.Private;
       }
 
@@ -173,7 +161,7 @@ export default {
   created() {
     this.subscriptions.push(Event.subscribe("photos.updated", (ev, data) => this.onUpdate(ev, data)));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }

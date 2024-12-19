@@ -1,5 +1,5 @@
 <template>
-  <div id="photoprism" :class="[isRtl ? 'is-rtl' : '', 'theme-' + themeName]">
+  <div id="photoprism" :class="['theme-' + themeName]">
     <p-loading-bar height="4"></p-loading-bar>
 
     <p-notify></p-notify>
@@ -7,9 +7,9 @@
     <v-app :class="appClass">
       <p-navigation></p-navigation>
 
-      <v-content>
+      <v-main>
         <router-view></router-view>
-      </v-content>
+      </v-main>
     </v-app>
 
     <p-video-viewer></p-video-viewer>
@@ -22,10 +22,9 @@ import "css/app.css";
 import Event from "pubsub-js";
 
 export default {
-  name: "PhotoPrism",
+  name: "App",
   data() {
     return {
-      isRtl: this.$config.rtl(),
       themeName: this.$config.themeName,
       subscriptions: [],
       touchStart: 0,
@@ -33,7 +32,7 @@ export default {
   },
   computed: {
     appClass: function () {
-      return [this.$route.meta.background, this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen", this.$route.meta.hideNav ? "hide-nav" : "show-nav"];
+      return [this.$route.meta.background, this.$vuetify.display.smAndDown ? "small-screen" : "large-screen", this.$route.meta.hideNav ? "hide-nav" : "show-nav"];
     },
   },
   created() {
@@ -42,7 +41,7 @@ export default {
     this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
     this.$config.setVuetify(this.$vuetify);
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
@@ -51,7 +50,6 @@ export default {
   },
   methods: {
     onRefresh(config) {
-      this.isRtl = config.rtl();
       this.themeName = config.themeName;
     },
     onTouchStart(e) {

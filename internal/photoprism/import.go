@@ -289,8 +289,12 @@ func (imp *Import) Cancel() {
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
+// Format: 2006/01/20060102_150405_CHECKSUM.ext
 func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile, folder string) (string, error) {
-	fileName := mainFile.CanonicalName()
+	// Get the import destination path and file name patterns.
+	pathPattern, namePattern := imp.conf.Settings().Import.GetDestName()
+
+	fileName := mainFile.CanonicalName(namePattern)
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
@@ -305,20 +309,20 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 		}
 	}
 
-	// Find and return available filename.
-	iteration := 0
-	dir := filepath.Join(imp.originalsPath(), folder, dateCreated.Format("2006/01"))
-	result := filepath.Join(dir, fileName+fileExtension)
+	// Find and return the next available file name if the default name is already being used by another file.
+	i := 0
+	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format(pathPattern))
+	filePath := filepath.Join(pathName, fileName+fileExtension)
 
-	for fs.FileExists(result) {
-		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("%s already exists", clean.Log(fs.RelName(result, imp.originalsPath())))
+	for fs.FileExists(filePath) {
+		if mediaFile.Hash() == fs.Hash(filePath) {
+			return filePath, fmt.Errorf("%s already exists", clean.Log(fs.RelName(filePath, imp.originalsPath())))
 		}
 
-		iteration++
+		i++
 
-		result = filepath.Join(dir, fileName+"."+fmt.Sprintf("%05d", iteration)+fileExtension)
+		filePath = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%05d", i)+fileExtension)
 	}
 
-	return result, nil
+	return filePath, nil
 }

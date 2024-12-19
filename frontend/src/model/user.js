@@ -27,7 +27,7 @@ import RestModel from "model/rest";
 import Form from "common/form";
 import Util from "common/util";
 import Api from "common/api";
-import { T, $gettext } from "common/vm";
+import { T, $gettext } from "common/gettext";
 import { config } from "app/session";
 import memoizeOne from "memoize-one";
 import * as auth from "../options/auth";
@@ -91,7 +91,7 @@ export class User extends RestModel {
         About: "",
         Bio: "",
         Location: "",
-        Country: "",
+        Country: "zz",
         Phone: "",
         SiteURL: "",
         ProfileURL: "",
@@ -177,15 +177,19 @@ export class User extends RestModel {
     return Api.options(this.getEntityResource() + "/register").then((response) => Promise.resolve(new Form(response.data)));
   }
 
-  getAvatarURL(size) {
+  getAvatarURL(size, $config) {
     if (!size) {
       size = "tile_500";
     }
 
+    if (!$config) {
+      $config = config;
+    }
+
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+      return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
     } else {
-      return `${config.staticUri}/img/avatar/${size}.jpg`;
+      return `${$config.staticUri}/img/avatar/${size}.jpg`;
     }
   }
 

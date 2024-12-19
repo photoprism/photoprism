@@ -1,246 +1,397 @@
 <template>
-  <div class="p-tab p-settings-general">
-    <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
-      <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-2">
-          <h3 class="body-2 mb-0">
-            <translate key="User Interface">User Interface</translate>
-          </h3>
+  <div class="p-tab p-settings-general py-2">
+    <v-form ref="form" validate-on="blur" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
+      <v-card flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-2 text-subtitle-2">
+          <translate key="User Interface">User Interface</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select v-model="settings.ui.theme" :disabled="busy" :items="themes" :label="$gettext('Theme')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-theme" @change="onChangeTheme"></v-select>
-            </v-flex>
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="settings.ui.theme"
+                :disabled="busy"
+                :items="themes"
+                item-title="text"
+                item-value="value"
+                :label="$gettext('Theme')"
+                :menu-props="{ maxHeight: 346 }"
+                class="input-theme"
+                @update:model-value="onChangeTheme"
+              ></v-select>
+            </v-col>
 
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select v-model="settings.ui.language" :disabled="busy" :items="languages" :label="$gettext('Language')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-language" @change="onChange"></v-select>
-            </v-flex>
-          </v-layout>
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="settings.ui.language"
+                :disabled="busy"
+                :items="languages"
+                item-title="text"
+                item-value="value"
+                :label="$gettext('Language')"
+                :menu-props="{ maxHeight: 346 }"
+                hide-details
+                class="input-language"
+                @update:model-value="onChange"
+              ></v-select>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="isDemo || isSuperAdmin" flat tile class="mt-0 px-1 application">
+      <v-card v-if="isDemo || isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.people" :disabled="busy" class="ma-0 pa-0 input-people" color="secondary-dark" :label="$gettext('People')" :hint="$gettext('Recognize faces so people can be assigned and found.')" prepend-icon="person" persistent-hint @change="onChange">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.people"
+                :disabled="busy"
+                class="ma-0 pa-0 input-people"
+                density="compact"
+                :label="$gettext('People')"
+                :hint="$gettext('Recognize faces so people can be assigned and found.')"
+                prepend-icon="mdi-account"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.moments"
                 :disabled="busy"
                 class="ma-0 pa-0 input-moments"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Moments')"
                 :hint="$gettext('Generate albums of special moments, journeys, and places.')"
-                prepend-icon="star"
+                prepend-icon="mdi-compass"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.labels" :disabled="busy" class="ma-0 pa-0 input-labels" color="secondary-dark" :label="$gettext('Labels')" :hint="$gettext('Browse and edit image classification labels.')" prepend-icon="label" persistent-hint @change="onChange"> </v-checkbox>
-            </v-flex>
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.labels"
+                :disabled="busy"
+                class="ma-0 pa-0 input-labels"
+                density="compact"
+                :label="$gettext('Labels')"
+                :hint="$gettext('Browse and edit image classification labels.')"
+                prepend-icon="mdi-label"
+                persistent-hint
+                @update:model-value="onChange"
+              ></v-checkbox>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.private"
                 :disabled="busy"
                 class="ma-0 pa-0 input-private"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Private')"
                 :hint="$gettext('Exclude content marked as private from search results, shared albums, labels, and places.')"
-                prepend-icon="lock"
+                prepend-icon="mdi-lock"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.upload"
                 :disabled="busy || config.readonly || isDemo"
                 class="ma-0 pa-0 input-upload"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Upload')"
                 :hint="$gettext('Add files to your library via Web Upload.')"
-                prepend-icon="cloud_upload"
+                prepend-icon="mdi-cloud-upload"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.download" :disabled="busy || isDemo" class="ma-0 pa-0 input-download" color="secondary-dark" :label="$gettext('Download')" :hint="$gettext('Download single files and zip archives.')" prepend-icon="get_app" persistent-hint @change="onChange">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.download"
+                :disabled="busy || isDemo"
+                class="ma-0 pa-0 input-download"
+                density="compact"
+                :label="$gettext('Download')"
+                :hint="$gettext('Download single files and zip archives.')"
+                prepend-icon="mdi-download"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.import"
                 :disabled="busy || config.readonly || isDemo"
                 class="ma-0 pa-0 input-import"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Import')"
                 :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
-                prepend-icon="create_new_folder"
+                prepend-icon="mdi-folder-plus"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.share" :disabled="busy" class="ma-0 pa-0 input-share" color="secondary-dark" :label="$gettext('Share')" :hint="$gettext('Upload to WebDAV and share links with friends.')" prepend-icon="share" persistent-hint @change="onChange"> </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.edit" :disabled="busy || isDemo" class="ma-0 pa-0 input-edit" color="secondary-dark" :label="$gettext('Edit')" :hint="$gettext('Change photo titles, locations, and other metadata.')" prepend-icon="edit" persistent-hint @change="onChange">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.share"
+                :disabled="busy"
+                class="ma-0 pa-0 input-share"
+                density="compact"
+                :label="$gettext('Share')"
+                :hint="$gettext('Upload to WebDAV and share links with friends.')"
+                prepend-icon="mdi-share-variant"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.archive" :disabled="busy || isDemo" class="ma-0 pa-0 input-archive" color="secondary-dark" :label="$gettext('Archive')" :hint="$gettext('Hide photos that have been moved to archive.')" prepend-icon="archive" persistent-hint @change="onChange">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.edit"
+                :disabled="busy || isDemo"
+                class="ma-0 pa-0 input-edit"
+                density="compact"
+                :label="$gettext('Edit')"
+                :hint="$gettext('Change photo titles, locations, and other metadata.')"
+                prepend-icon="mdi-pencil"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.delete" :disabled="busy" class="ma-0 pa-0 input-delete" color="secondary-dark" :label="$gettext('Delete')" :hint="$gettext('Permanently remove files to free up storage.')" prepend-icon="delete" persistent-hint @change="onChange"> </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.services" :disabled="busy" class="ma-0 pa-0 input-services" color="secondary-dark" :label="$gettext('Services')" :hint="$gettext('Share your pictures with other apps and services.')" prepend-icon="sync_alt" persistent-hint @change="onChange">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.archive"
+                :disabled="busy || isDemo"
+                class="ma-0 pa-0 input-archive"
+                density="compact"
+                :label="$gettext('Archive')"
+                :hint="$gettext('Hide photos that have been moved to archive.')"
+                prepend-icon="mdi-package-down"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.delete"
+                :disabled="busy"
+                class="ma-0 pa-0 input-delete"
+                density="compact"
+                :label="$gettext('Delete')"
+                :hint="$gettext('Permanently remove files to free up storage.')"
+                prepend-icon="mdi-delete"
+                persistent-hint
+                @update:model-value="onChange"
+              ></v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.services"
+                :disabled="busy"
+                class="ma-0 pa-0 input-services"
+                density="compact"
+                :label="$gettext('Services')"
+                :hint="$gettext('Share your pictures with other apps and services.')"
+                prepend-icon="mdi-sync"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.library"
                 :disabled="busy || isDemo"
                 class="ma-0 pa-0 input-library"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Library')"
                 :hint="$gettext('Index and import files through the user interface.')"
-                prepend-icon="camera_roll"
+                prepend-icon="mdi-film"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.files" :disabled="busy" class="ma-0 pa-0 input-files" color="secondary-dark" :label="$gettext('Originals')" :hint="$gettext('Browse indexed files and folders in Library.')" prepend-icon="account_tree" persistent-hint @change="onChange">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.files"
+                :disabled="busy"
+                class="ma-0 pa-0 input-files"
+                density="compact"
+                :label="$gettext('Originals')"
+                :hint="$gettext('Browse indexed files and folders in Library.')"
+                prepend-icon="mdi-file-tree"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.logs" :disabled="busy" class="ma-0 pa-0 input-logs" color="secondary-dark" :label="$gettext('Logs')" :hint="$gettext('Show server logs in Library.')" prepend-icon="grading" persistent-hint @change="onChange"> </v-checkbox>
-            </v-flex>
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.logs"
+                :disabled="busy"
+                class="ma-0 pa-0 input-logs"
+                density="compact"
+                :label="$gettext('Logs')"
+                :hint="$gettext('Show server logs in Library.')"
+                prepend-icon="mdi-playlist-check"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.account"
                 :disabled="busy || isDemo"
                 class="ma-0 pa-0 input-account"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Account')"
                 :hint="$gettext('Change personal profile and security settings.')"
-                prepend-icon="admin_panel_settings"
+                prepend-icon="mdi-shield-account-variant"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex v-if="!config.disable.places" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.places" :disabled="busy || isDemo" class="ma-0 pa-0 input-places" color="secondary-dark" :label="$gettext('Places')" :hint="$gettext('Search and display photos on a map.')" prepend-icon="place" persistent-hint @change="onChange"> </v-checkbox>
-            </v-flex>
-          </v-layout>
+            <v-col v-if="!config.disable.places" cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.places"
+                :disabled="busy || isDemo"
+                class="ma-0 pa-0 input-places"
+                density="compact"
+                :label="$gettext('Places')"
+                :hint="$gettext('Search and display photos on a map.')"
+                prepend-icon="mdi-map-marker"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-2">
-          <h3 class="body-2 mb-0">
-            <translate key="Places">Places</translate>
-          </h3>
+      <v-card v-if="settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-2 text-subtitle-2">
+          <translate key="Places">Places</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select v-model="settings.maps.style" :disabled="busy" :items="mapsStyle" :label="$gettext('Maps')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-style" @change="onChangeMapsStyle"></v-select>
-            </v-flex>
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="settings.maps.style"
+                :disabled="busy"
+                :items="mapsStyle"
+                item-title="text"
+                item-value="value"
+                :label="$gettext('Maps')"
+                :menu-props="{ maxHeight: 346 }"
+                hide-details
+                class="input-style"
+                @update:model-value="onChangeMapsStyle"
+              >
+              </v-select>
+            </v-col>
 
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select v-model="settings.maps.animate" :disabled="busy" :items="options.MapsAnimate()" :label="$gettext('Animation')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-animate" @change="onChange"></v-select>
-            </v-flex>
-          </v-layout>
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="settings.maps.animate"
+                :disabled="busy"
+                :items="options.MapsAnimate()"
+                item-title="text"
+                item-value="value"
+                :label="$gettext('Animation')"
+                :menu-props="{ maxHeight: 346 }"
+                hide-details
+                class="input-animate"
+                @update:model-value="onChange"
+              ></v-select>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="settings.features.download" flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>Download</translate>
-          </h3>
+      <v-card v-if="settings.features.download" flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Download</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"
                 :disabled="busy"
                 class="ma-0 pa-0 input-download-originals"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Originals')"
                 :hint="$gettext('Download only original media files, without any automatically generated files.')"
-                prepend-icon="camera"
+                prepend-icon="mdi-camera-iris"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
                 :disabled="busy"
                 class="ma-0 pa-0 input-download-raw"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('RAW')"
                 :hint="$gettext('Include RAW image files when downloading stacks and archives.')"
-                prepend-icon="raw_on"
+                prepend-icon="mdi-raw"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
                 :disabled="busy"
                 class="ma-0 pa-0 input-download-sidecar"
-                color="secondary-dark"
+                density="compact"
                 :label="$gettext('Sidecar')"
                 :hint="$gettext('Include sidecar files when downloading stacks and archives.')"
-                prepend-icon="attach_file"
+                prepend-icon="mdi-paperclip"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -265,14 +416,14 @@ export default {
       isSuperAdmin: this.$session.isSuperAdmin(),
       isPublic: this.$config.get("public"),
       config: this.$config.values,
-      settings: new Settings(this.$config.settings()),
+      settings: new Settings(this.$config.getSettings()),
       options: options,
       busy: this.$config.loading(),
       subscriptions: [],
       themes: [],
       currentTheme: this.$config.themeName,
       mapsStyle: options.MapsStyle(this.$config.get("experimental")),
-      currentMapsStyle: this.$config.settings().maps.style,
+      currentMapsStyle: this.$config.getSettings().maps.style,
       languages: options.Languages(),
       dialog: {
         sponsor: false,
@@ -283,7 +434,7 @@ export default {
     this.load();
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings)));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
@@ -293,7 +444,7 @@ export default {
       this.$config.load().then(() => {
         this.themes = themes.Translated();
         this.mapsStyle = options.MapsStyle(this.$config.get("experimental"));
-        this.settings.setValues(this.$config.settings());
+        this.settings.setValues(this.$config.getSettings());
         this.busy = false;
       });
     },

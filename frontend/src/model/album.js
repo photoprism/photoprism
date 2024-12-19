@@ -28,7 +28,7 @@ import Api from "common/api";
 import countries from "options/countries.json";
 import { DateTime } from "luxon";
 import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 export let BatchSize = 24;
 
@@ -68,7 +68,7 @@ export class Album extends RestModel {
   route(view) {
     return {
       name: view,
-      params: { album: this.UID, slug: "view", year: this.Year, month: this.Month },
+      params: { album: this.UID, slug: "view" },
     };
   }
 

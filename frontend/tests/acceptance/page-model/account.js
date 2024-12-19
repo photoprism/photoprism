@@ -7,12 +7,12 @@ export default class Page {
     this.newPassword = Selector(".input-new-password input", { timeout: 15000 });
     this.retypePassword = Selector(".input-retype-password input", { timeout: 15000 });
     this.confirm = Selector(".action-confirm");
-    this.close = Selector(".action-close");
+    this.close = Selector(".v-card-actions .action-close");
     this.appsAndDevicesAction = Selector("button.action-apps-dialog")
     this.appAdd = Selector("button.action-add")
     this.clientName = Selector(".input-name input", { timeout: 15000 });
-    this.clientScope = Selector(".input-scope div.v-select__selections", { timeout: 15000 });
-    this.clientExpires = Selector(".input-expires div.v-select__selections", { timeout: 15000 });
+    this.clientScope = Selector(".input-scope div.v-input__control", { timeout: 15000 });
+    this.clientExpires = Selector(".input-expires div.v-input__control", { timeout: 15000 });
     this.appGenerate = Selector("button.action-generate")
     this.password = Selector(".input-password input", { timeout: 15000 });
     this.appCopy = Selector("button.action-copy")

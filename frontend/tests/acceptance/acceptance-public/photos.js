@@ -30,13 +30,13 @@ test.meta("testID", "photos-001").meta({ mode: "public" })("Common: Scroll to to
     .notOk()
     .expect(getcurrentPosition())
     .eql(0)
-    .expect(Selector("div.image.clickable").nth(0).visible)
+    .expect(Selector("div.type-image div.clickable").nth(0).visible)
     .ok();
 
   await scroll(0, 1400);
   await scroll(0, 900);
 
-  await t.click(Selector("button.p-scroll-top")).expect(getcurrentPosition()).eql(0);
+  await t.click(Selector("button.p-scroll")).expect(getcurrentPosition()).eql(0);
 });
 
 //TODO Covered by admin role test
@@ -192,18 +192,18 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })(
     await photoviewer.triggerPhotoViewerAction("edit");
     const FirstPhotoTitle = await photoedit.title.value;
     const FirstPhotoLocalTime = await photoedit.localTime.value;
-    const FirstPhotoDay = await photoedit.day.value;
-    const FirstPhotoMonth = await photoedit.month.value;
-    const FirstPhotoYear = await photoedit.year.value;
-    const FirstPhotoTimezone = await photoedit.timezone.value;
+    const FirstPhotoDay = await photoedit.dayValue.innerText;
+    const FirstPhotoMonth = await photoedit.monthValue.innerText;
+    const FirstPhotoYear = await photoedit.yearValue.innerText;
+    const FirstPhotoTimezone = await photoedit.timezoneValue.innerText;
     const FirstPhotoLatitude = await photoedit.latitude.value;
     const FirstPhotoLongitude = await photoedit.longitude.value;
     const FirstPhotoAltitude = await photoedit.altitude.value;
-    const FirstPhotoCountry = await photoedit.country.value;
-    const FirstPhotoCamera = await photoedit.camera.innerText;
+    const FirstPhotoCountry = await photoedit.countryValue.innerText;
+    const FirstPhotoCamera = await photoedit.cameraValue.innerText;
     const FirstPhotoIso = await photoedit.iso.value;
     const FirstPhotoExposure = await photoedit.exposure.value;
-    const FirstPhotoLens = await photoedit.lens.innerText;
+    const FirstPhotoLens = await photoedit.lensValue.innerText;
     const FirstPhotoFnumber = await photoedit.fnumber.value;
     const FirstPhotoFocalLength = await photoedit.focallength.value;
     const FirstPhotoSubject = await photoedit.subject.value;
@@ -241,7 +241,9 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })(
       "Super nice cat license",
       "Description of a nice image :)",
       ", cat, love",
-      "Some notes"
+      "Some notes",
+        "Canon EOS M10",
+        "EF-M15-45mm f/3.5-6.3 IS STM"
     );
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
@@ -257,38 +259,10 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })(
     await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
     await contextmenu.triggerContextMenuAction("edit", "");
 
-    //const expectedValues = [{ FirstPhotoTitle: photoedit.title }, { "bluh bla": photoedit.day }];
-    /*const expectedValues = [
-    [FirstPhotoTitle, photoedit.title],
-    ["blah", photoedit.day],
-  ];
-  await photoedit.checkEditFormValuesNewNew(expectedValues);*/
+    const expectedInputValues = [["title", "New Photo Title"], ["localTime", "04:30:30"], ["altitude", "-1"], ["latitude", "41.15333"], ["longitude", "20.168331"], ["iso", "32"], ["exposure", "1/32"], ["fnumber", "29"], ["focallength", "33"], ["subject", "Super nice edited photo"], ["artist", "Happy"], ["copyright", "Happy2020"], ["license", "Super nice cat license"], ["description", "Description of a nice image :)"], ["notes", "Some notes"]];
+    const expectedSelectValues = [["day", "15"], ["month", "07"],["year", "2019"],["timezone", "Europe/Moscow"], ["country", "Albania"], ["camera", "Canon EOS M10"], ["lens", "EF-M15-45mm f/3.5-6.3 IS STM"]]
 
-    await photoedit.checkEditFormValues(
-      "New Photo Title",
-      "15",
-      "07",
-      "2019",
-      "04:30:30",
-      "Europe/Moscow",
-      "Albania",
-      "-1",
-      "",
-      "",
-      "",
-      "32",
-      "1/32",
-      "",
-      "29",
-      "33",
-      "Super nice edited photo",
-      "Happy",
-      "Happy2020",
-      "Super nice cat license",
-      "Description of a nice image :)",
-      "cat",
-      "Some notes"
-    );
+    await photoedit.checkEditFormValues(expectedInputValues, expectedSelectValues);
 
     await photoedit.undoPhotoEdit(
       FirstPhotoTitle,
@@ -311,7 +285,9 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })(
       FirstPhotoLicense,
       FirstPhotoDescription,
       FirstPhotoKeywords,
-      FirstPhotoNotes
+      FirstPhotoNotes,
+        FirstPhotoCamera,
+        FirstPhotoLens
     );
     await contextmenu.checkContextMenuCount("1");
     await contextmenu.clearSelection();

@@ -1,18 +1,18 @@
 <template>
-  <div id="photoprism-help" class="p-page p-page-help">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-      <v-toolbar-title>
+  <div class="p-page p-page-help">
+    <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
+      <v-toolbar-title class="flex-grow-1">
         <translate>Help</translate>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('About')">
-        <v-icon size="26">info</v-icon>
+      <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-info mx-2" :title="$gettext('Learn more')">
+        <v-icon icon="mdi-book-open-page-variant" size="26" color="surface-variant"></v-icon>
       </v-btn>
     </v-toolbar>
 
-    <v-container fluid class="px-4 py-2">
+    <v-container fluid class="px-6 py-4">
       <p-help-websockets></p-help-websockets>
     </v-container>
 

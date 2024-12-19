@@ -1,0 +1,299 @@
+/* Custom Vuetify 3 Component Styles */
+
+.v-tabs button.v-tab:not(.v-tab-item--selected) {
+    opacity: 0.8;
+}
+
+.v-overlay__scrim {
+    background: rgb(var(--v-overlay-color, #121212));
+    opacity: var(--v-overlay-opacity, .32);
+}
+
+.v-slide-group .v-ripple__container {
+    display:none !important;
+}
+
+/* Themes */
+
+body.dark-theme {
+    background: rgb(var(--v-theme-background, #2f3031)) !important;
+}
+
+/* Alerts */
+
+.v-alert a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Cards */
+
+.v-card-title {
+    padding: 12px 20px;
+}
+
+.v-card-actions {
+    padding: 8px 12px;
+}
+
+.v-card-actions.grid {
+    padding: 0 8px;
+}
+
+/* Dialogs */
+
+.v-overlay.v-dialog>.v-overlay__content>.v-card,
+.v-overlay.v-dialog>.v-overlay__content>form>.v-card {
+    border-radius: 8px;
+    box-shadow: 0 11px 15px -7px var(--v-shadow-key-umbra-opacity, #0003), 0 24px 38px 3px var(--v-shadow-key-penumbra-opacity, #00000024), 0 9px 46px 8px var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-title,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-title {
+    padding: 0;
+    margin: 16px 20px 18px;
+    white-space: normal;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-title h6,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-title h6 {
+    padding: 0;
+    margin: 0;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
+    padding: 0;
+    margin: 0 20px 8px 20px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.dense,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.dense {
+    margin: -10px 12px -10px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.grid,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.grid {
+    margin: -14px 8px -14px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-text.last,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text.last {
+    margin-bottom: 20px;
+}
+
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions {
+    padding: 0;
+    margin: 8px 20px 10px 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.action-buttons .v-btn .v-btn__content,
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn .v-btn__content {
+    min-width: 68px;
+}
+
+.action-buttons .v-btn.bg-highlight .v-btn__content,
+.v-dialog>.v-overlay__content>.v-card>.v-card-actions .v-btn.bg-highlight .v-btn__content,
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-actions .v-btn.bg-highlight .v-btn__content {
+    min-width: 75px;
+}
+
+/* Lists */
+
+.v-menu>.v-overlay__content>.v-list:not(.v-list--nav) {
+    padding: 0;
+    opacity: 0.97;
+}
+
+/* Form Inputs */
+
+.v-selection-control--density-compact .v-label {
+    margin-inline-start: .5em;
+}
+
+.v-selection-control--density-compact {
+    --v-selection-control-size: 20px;
+}
+
+.v-switch.v-switch--flat.v-input.v-input--horizontal {
+    margin-inline-start: 8px;
+}
+
+.v-input.v-input--disabled.v-switch {
+    opacity: var(--v-disabled-opacity);
+}
+
+.v-btn {
+    letter-spacing: .0125em;
+}
+
+.v-btn--disabled {
+    opacity: 0.26;
+}
+
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
+    background: rgb(var(--v-theme-surface)) !important;
+    box-shadow: none;
+    color: rgba(var(--v-theme-on-surface), .5) !important;
+    opacity: var(--v-disabled-opacity);
+}
+
+.v-btn--disabled.v-btn--variant-elevated .v-btn__overlay,
+.v-btn--disabled.v-btn--variant-flat .v-btn__overlay {
+    background-color: rgb(var(--v-theme-on-surface));
+    opacity: 0.23;
+}
+
+.v-input.v-switch .v-label {
+    font-size: 0.875rem;
+}
+
+.v-input.v-text-field .v-field .v-label.v-field-label:not(.v-field-label--floating),
+.v-input.v-text-field .v-field:not(.v-field--focused) .v-label.v-field-label.v-field-label--floating {
+    opacity: var(--v-label-opacity, .7);
+}
+
+.v-field--variant-solo.v-field--focused .v-field__prepend-inner .v-icon,
+.v-field--variant-solo-filled.v-field--focused .v-field__prepend-inner .v-icon,
+.v-field--variant-plain.v-field--focused .v-field__prepend-inner .v-icon {
+    color: rgb(var(--v-theme-surface-variant));
+    caret-color: rgb(var(--v-theme-surface-variant));
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection {
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend .v-list-item__spacer {
+    width: 8px;
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection .v-icon,
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__prepend .v-icon {
+    font-size: 19px;
+    height: 19px;
+    width: 19px;
+    margin-bottom: 1px;
+    vertical-align: baseline;
+    line-height: inherit;
+}
+
+.v-input.v-select.v-input--density-compact>.v-input__control>.v-field .v-select__selection,
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact>.v-list-item__content>.v-list-item-title {
+    font-size: 0.8125rem;
+}
+
+.v-menu>.v-overlay__content>.v-list>.v-list-item.v-list-item--density-compact.v-list-item--one-line {
+    line-height: 36px;
+    min-height: 36px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-inline: 10px;
+}
+
+.p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon {
+    width: 38px;
+    height: 38px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    color: #ffffff !important;
+}
+
+.p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon.action-delete {
+    margin-bottom: 5px;
+}
+
+.p-clipboard>.v-speed-dial__content>.v-btn.v-btn--icon.action-delete .v-icon {
+    --v-icon-size-multiplier: 1.2;
+}
+
+.clipboard-container .v-btn.v-btn--icon {
+    box-shadow: 0 3px 5px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 6px 10px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 18px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+}
+
+/* Badges */
+
+.v-badge .v-badge__badge {
+    font-size: 0.75rem;
+    text-align: center;
+    height: 1.05rem;
+    min-width: 1.05rem;
+    margin: 0;
+    padding: 0;
+}
+
+.v-tabs .v-badge.v-badge--inline {
+    position: relative;
+    margin-inline-start: -4px;
+    top: -8px;
+}
+
+/* Tables */
+
+.v-table {
+    background: rgba(var(--v-theme-table, --v-theme-card));
+    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+}
+
+.v-table .v-select.v-input .v-field .v-field__input {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.v-table,
+.v-table .v-field,
+.v-table .v-select,
+.v-table .v-select.v-input .v-field .v-field__input,
+.v-table .v-label {
+    font-size: 0.8125rem !important;
+}
+
+.v-form .v-table:not(.tile),
+.v-container .v-table:not(.tile) {
+    border-radius: 6px;
+}
+
+/* Flex Grids */
+
+.v-row {
+    margin: 0;
+}
+
+.v-row--dense>.v-col, .v-row--dense>[class*=v-col-] {
+    padding: 8px;
+}
+
+.v-row--dense>.v-col, .v-row--dense>[class*=v-col-] {
+    padding: 8px;
+}
+
+form>.v-card>.v-card-text.grid {
+    margin: -12px;
+}
+
+form>.v-card>.v-card-text.dense {
+    margin: -8px;
+}
+
+@media (min-width: 1700px) {
+    .v-col-xl-2 {
+        flex: 0 0 16.6666666667%;
+        max-width: 16.6666666667%;
+    }
+}

@@ -1,58 +1,47 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
-    <v-card raised elevation="24">
-      <v-card-title primary-title class="pb-0">
-        <v-layout row wrap>
-          <v-flex xs8>
-            <h3 class="headline mb-0">
-              <translate>WebDAV Upload</translate>
-            </h3>
-          </v-flex>
-          <v-flex xs4 text-xs-right>
-            <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="setup">
-              <v-icon>cloud</v-icon>
+  <v-dialog :model-value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+    <v-card>
+      <v-card-title class="d-flex justify-start align-center ga-3">
+            <h6 class="text-h6"><translate>WebDAV Upload</translate></h6>
+            <v-btn icon variant="text" color="primary" @click.stop="setup">
+              <v-icon>mdi-cloud</v-icon>
             </v-btn>
-          </v-flex>
-        </v-layout>
       </v-card-title>
-      <v-card-text class="pt-0">
-        <v-layout row wrap>
-          <v-flex xs12 text-xs-left class="pt-2">
-            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data box flat :label="$gettext('Account')" item-text="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @change="onChange"> </v-select>
-          </v-flex>
-          <v-flex xs12 text-xs-left class="pt-2">
+      <v-card-text class="dense">
+        <v-row dense>
+          <v-col cols="12" class="text-start">
+            <v-select v-model="service" hide-details hide-no-data :label="$gettext('Account')" item-title="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @update:model-value="onChange"> </v-select>
+          </v-col>
+          <v-col cols="12" class="text-start">
             <v-autocomplete
               v-model="path"
-              color="secondary-dark"
               hide-details
               hide-no-data
-              box
-              flat
-              browser-autocomplete="off"
+              autocomplete="off"
               hint="Folder"
-              :search-input.sync="search"
+              :search.sync="search"
               :items="pathItems"
               :loading="loading"
               :disabled="loading || noServices"
-              item-text="abs"
+              item-title="abs"
               item-value="abs"
               :label="$gettext('Folder')"
             >
             </v-autocomplete>
-          </v-flex>
-          <v-flex xs12 text-xs-right class="pt-4">
-            <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
-              <translate>Cancel</translate>
-            </v-btn>
-            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" depressed dark class="action-setup ma-0" @click.stop="setup">
-              <translate>Setup</translate>
-            </v-btn>
-            <v-btn v-else :disabled="noServices" color="primary-button" depressed dark class="action-upload ma-0" @click.stop="confirm">
-              <translate>Upload</translate>
-            </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
+          <translate>Cancel</translate>
+        </v-btn>
+        <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="highlight" variant="flat" class="action-setup" @click.stop="setup">
+          <translate>Setup</translate>
+        </v-btn>
+        <v-btn v-else :disabled="noServices" color="highlight" variant="flat" class="action-upload" @click.stop="confirm">
+          <translate>Upload</translate>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

@@ -3,14 +3,14 @@ package commands
 import (
 	"fmt"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowVideoSizesCommand configures the command name, flags, and action.
-var ShowVideoSizesCommand = cli.Command{
+var ShowVideoSizesCommand = &cli.Command{
 	Name:   "video-sizes",
 	Usage:  "Displays supported standard video sizes",
 	Flags:  report.CliFlags,

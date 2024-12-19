@@ -1,20 +1,20 @@
 <template>
   <div class="p-page p-page-settings" :class="$config.aclClasses('settings')">
-    <v-tabs v-model="active" flat grow touchless color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" grow bg-color="secondary" slider-color="surface-variant" :height="$vuetify.display.smAndDown ? 48 : 64">
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
-        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
+        <v-icon v-if="$vuetify.display.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon>
+          <v-icon :size="18" start>{{ item.icon }}</v-icon>
           {{ item.label }}
         </template>
       </v-tab>
-
-      <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
-          <component :is="item.component"></component>
-        </v-tab-item>
-      </v-tabs-items>
     </v-tabs>
+
+    <v-tabs-window v-model="active">
+      <v-tabs-window-item v-for="(item, index) in tabs" :key="index">
+        <component :is="item.component"></component>
+      </v-tabs-window-item>
+    </v-tabs-window>
   </div>
 </template>
 
@@ -25,6 +25,7 @@ import Advanced from "page/settings/advanced.vue";
 import Services from "page/settings/services.vue";
 import Account from "page/settings/account.vue";
 import { config } from "app/session";
+import { markRaw } from "vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -53,11 +54,11 @@ export default {
     const tabs = [
       {
         name: "settings_general",
-        component: General,
+        component: markRaw(General),
         label: this.$gettext("General"),
         class: "",
         path: "/settings",
-        icon: "tv",
+        icon: "mdi-television",
         public: true,
         admin: true,
         demo: true,
@@ -65,11 +66,11 @@ export default {
       },
       {
         name: "settings_media",
-        component: Library,
+        component: markRaw(Library),
         label: this.$gettext("Library"),
         class: "",
         path: "/settings/media",
-        icon: "camera_roll",
+        icon: "mdi-film",
         public: true,
         admin: true,
         demo: true,
@@ -77,11 +78,11 @@ export default {
       },
       {
         name: "settings_advanced",
-        component: Advanced,
+        component: markRaw(Advanced),
         label: this.$gettext("Advanced"),
         class: "",
         path: "/settings/advanced",
-        icon: "build",
+        icon: "mdi-wrench",
         public: false,
         admin: true,
         demo: true,
@@ -89,11 +90,11 @@ export default {
       },
       {
         name: "settings_services",
-        component: Services,
+        component: markRaw(Services),
         label: this.$gettext("Services"),
         class: "",
         path: "/settings/services",
-        icon: "sync_alt",
+        icon: "mdi-swap-horizontal",
         public: false,
         admin: true,
         demo: true,
@@ -101,11 +102,11 @@ export default {
       },
       {
         name: "settings_account",
-        component: Account,
+        component: markRaw(Account),
         label: this.$gettext("Account"),
         class: "",
         path: "/settings/account",
-        icon: "admin_panel_settings",
+        icon: "mdi-shield-account-variant",
         public: false,
         admin: true,
         demo: true,

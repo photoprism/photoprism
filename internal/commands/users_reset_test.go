@@ -3,21 +3,13 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUsersResetCommand(t *testing.T) {
 	t.Run("NotConfirmed", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		ctx0 := NewTestContext([]string{"ls"})
-
 		// Run command with test context.
-		output0 := capture.Output(func() {
-			err = UsersListCommand.Run(ctx0)
-		})
+		output0, err := RunWithTestContext(UsersListCommand, []string{"ls"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
@@ -25,13 +17,8 @@ func TestUsersResetCommand(t *testing.T) {
 		assert.Contains(t, output0, "alice")
 		assert.Contains(t, output0, "bob")
 
-		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"reset"})
-
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersResetCommand.Run(ctx)
-		})
+		output, err := RunWithTestContext(UsersResetCommand, []string{"reset"})
 
 		// Check command output for plausibility.
 		//t.Logf(output)
@@ -39,9 +26,7 @@ func TestUsersResetCommand(t *testing.T) {
 		assert.Empty(t, output)
 
 		// Run command with test context.
-		output1 := capture.Output(func() {
-			err = UsersListCommand.Run(ctx0)
-		})
+		output1, err := RunWithTestContext(UsersListCommand, []string{"ls"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)

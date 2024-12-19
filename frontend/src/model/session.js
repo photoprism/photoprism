@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import { $gettext, T } from "common/vm";
+import { $gettext, T } from "common/gettext";
 import Util from "common/util";
 import * as auth from "options/auth";
 import memoizeOne from "memoize-one";

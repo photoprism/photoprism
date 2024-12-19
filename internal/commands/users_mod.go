@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -13,11 +13,11 @@ import (
 )
 
 // UsersModCommand configures the command name, flags, and action.
-var UsersModCommand = cli.Command{
+var UsersModCommand = &cli.Command{
 	Name:      "mod",
 	Usage:     "Changes user account settings",
 	ArgsUsage: "[username]",
-	Flags: append(UserFlags, cli.BoolFlag{
+	Flags: append(UserFlags, &cli.BoolFlag{
 		Name:  "disable-2fa",
 		Usage: UserDisable2FA,
 	}),

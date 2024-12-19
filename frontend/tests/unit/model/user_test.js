@@ -1,6 +1,10 @@
 import "../fixtures";
 import User from "model/user";
 import File from "model/file";
+import Config from "common/config";
+import StorageShim from "node-storage-shim";
+
+const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -239,7 +243,7 @@ describe("model/user", () => {
       Thumb: "91e6c374afb78b28a52d7b4fd4fd2ea861b87123",
     };
     const user2 = new User(values2);
-    const result2 = await user2.getAvatarURL();
+    const result2 = await user2.getAvatarURL("tile_500", defaultConfig);
     assert.equal(result2, "/api/v1/t/91e6c374afb78b28a52d7b4fd4fd2ea861b87123/public/tile_500");
   });
 

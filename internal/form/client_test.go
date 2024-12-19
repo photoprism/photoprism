@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/authn"
 )
@@ -22,7 +22,7 @@ func TestNewClient(t *testing.T) {
 
 func TestAddClientFromCli(t *testing.T) {
 	// Specify command flags.
-	flags := flag.NewFlagSet("test", 0)
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
 	flags.String("name", "(default)", "Usage")
 	flags.String("scope", "(default)", "Usage")
 	flags.String("provider", "(default)", "Usage")
@@ -91,7 +91,7 @@ func TestAddClientFromCli(t *testing.T) {
 
 func TestModClientFromCli(t *testing.T) {
 	// Specify command flags.
-	flags := flag.NewFlagSet("test", 0)
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
 	flags.String("name", "(default)", "Usage")
 	flags.String("scope", "(default)", "Usage")
 	flags.String("provider", "(default)", "Usage")

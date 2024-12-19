@@ -25,12 +25,13 @@ Additional information can be found in our Developer Guide:
 
 import Event from "pubsub-js";
 import { config } from "app/session";
+import { reactive } from "vue";
 
 class Log {
   constructor() {
     this.cap = 150;
     this.created = new Date();
-    this.logs = [
+    this.logs = reactive([
       /* EXAMPLE LOG MESSAGE
             {
                 "message": "waiting for events",
@@ -38,7 +39,7 @@ class Log {
                 "time": this.created.toISOString(),
             },
             */
-    ];
+    ]);
 
     this.logId = 0;
 
@@ -81,6 +82,6 @@ class Log {
   }
 }
 
-const log = new Log();
+const log = reactive(new Log());
 
 export default log;

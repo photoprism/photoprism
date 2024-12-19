@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/tidwall/gjson"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 )
 
 // StatusCommand configures the command name, flags, and action.
-var StatusCommand = cli.Command{
+var StatusCommand = &cli.Command{
 	Name:   "status",
 	Usage:  "Checks if the Web server is running",
 	Action: statusAction,

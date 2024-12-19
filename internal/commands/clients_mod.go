@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -13,7 +13,7 @@ import (
 )
 
 // ClientsModCommand configures the command name, flags, and action.
-var ClientsModCommand = cli.Command{
+var ClientsModCommand = &cli.Command{
 	Name:      "mod",
 	Usage:     "Updates client application settings",
 	ArgsUsage: "[client id]",

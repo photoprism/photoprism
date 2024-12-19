@@ -1,28 +1,30 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.stop.prevent="updateQuery()">
-      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+  <div :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none">
+    <v-form ref="form" class="p-labels-search" validate-on="blur" @submit.stop.prevent="updateQuery()">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
         <v-text-field
-          :value="filter.q"
-          solo
+          :model-value="filter.q"
           hide-details
           clearable
           overflow
           single-line
-          validate-on-blur
-          class="input-search background-inherit elevation-0"
-          :label="$gettext('Search')"
-          prepend-inner-icon="search"
-          browser-autocomplete="off"
+          rounded
+          variant="solo-filled"
+          :density="density"
+          validate-on="blur"
+          :placeholder="$gettext('Search')"
+          prepend-inner-icon="mdi-magnify"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          color="secondary-dark"
-          @change="
+          color="surface-variant"
+          class="input-search background-inherit elevation-0"
+          @update:modelValue="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => updateQuery()"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -31,39 +33,39 @@
         ></v-text-field>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <v-btn v-if="!filter.all" icon class="action-show-all" :title="$gettext('Show more')" @click.stop="showAll()">
-          <v-icon>unfold_more</v-icon>
+          <v-icon>mdi-unfold-more-horizontal</v-icon>
         </v-btn>
         <v-btn v-else icon class="action-show-important" :title="$gettext('Show less')" @click.stop="showImportant()">
-          <v-icon>unfold_less</v-icon>
+          <v-icon>mdi-unfold-less-horizontal</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-label-clipboard>
 
-      <p-scroll-top></p-scroll-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No labels found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(label, index) in results" :key="label.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card" :class="label.classes(selection.includes(label.UID))" :to="label.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(label, index) in results" :key="label.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card flex-grow-1" :class="label.classes(selection.includes(label.UID))" @click="$router.push(label.route(view))" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="label.thumbnailUrl('tile_500')"
@@ -71,42 +73,34 @@
                 :transition="false"
                 aspect-ratio="1"
                 style="user-select: none"
-                class="card darken-1 clickable"
+                class="card clickable"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canSelect" :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                <v-btn v-if="canSelect" :ripple="false" icon variant="text" position="absolute" class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                  <v-icon icon="mdi-star" color="favorite" class="select-on"></v-icon>
+                  <v-icon icon="mdi-star-outline" color="white" class="select-off"></v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="label.Name" lazy class="inline-edit" @save="onSave(label)">
-                  <span v-if="label.Name" class="body-2 ma-0">
-                    {{ label.Name }}
-                  </span>
-                  <span v-else>
-                    <v-icon>edit</v-icon>
-                  </span>
-                  <template #input>
-                    <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
-                  </template>
-                </v-edit-dialog>
-                <span v-else class="body-2 ma-0">
+              <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+                <p v-if="canManage" class="inline-edit" @click.stop.prevent="edit(label)">
+                  {{ label.Name }}
+                </p>
+                <span v-else class="text-subtitle-2 ma-0">
                   {{ label.Name }}
                 </span>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
-                <div class="caption mb-2">
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+                <div class="text-caption mb-2">
                   <button v-if="label.PhotoCount === 1">
                     <translate>Contains one picture.</translate>
                   </button>
@@ -116,10 +110,11 @@
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-container>
+    <p-label-edit-dialog :show="dialog.edit" :label="model" @close="dialog.edit = false"></p-label-edit-dialog>
   </div>
 </template>
 
@@ -171,7 +166,17 @@ export default {
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      labelToRename: "",
+      dialog: {
+        edit: false,
+      },
+      model: new Label(false),
     };
+  },
+  computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
   },
   watch: {
     $route() {
@@ -193,12 +198,23 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
+    edit(label) {
+      if (!label) {
+        return;
+      } else if (!this.canManage) {
+        this.$router.push(label.route(this.view));
+        return;
+      }
+
+      this.model = label;
+      this.dialog.edit = true;
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("labels_offset"));
 
@@ -311,7 +327,7 @@ export default {
       if (!this.canManage) {
         return;
       }
-
+      label.Name = this.labelToRename;
       label.update();
     },
     showAll() {
@@ -408,7 +424,7 @@ export default {
 
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -523,7 +539,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -555,7 +571,7 @@ export default {
             // this.$notify.info(this.$gettext('More than 20 labels found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }

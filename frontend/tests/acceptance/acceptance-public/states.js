@@ -52,9 +52,9 @@ test.meta("testID", "states-001").meta({ mode: "public" })(
       .contains("Wonderland")
       .expect(page.cardDescription.nth(0).innerText)
       .contains("We love earth")
-      .expect(Selector("div.caption").nth(1).innerText)
+      .expect(Selector("div.text-caption").nth(1).innerText)
       .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
+      .expect(Selector("div.text-caption").nth(2).innerText)
       .contains("Earth");
 
     await album.openNthAlbum(0);
@@ -100,7 +100,7 @@ test.meta("testID", "states-001").meta({ mode: "public" })(
       .contains("British Columbia")
       .expect(page.cardDescription.innerText)
       .notContains("We love earth")
-      .expect(Selector("div.caption").nth(0).innerText)
+      .expect(Selector("div.text-caption").nth(0).innerText)
       .notContains("Earth");
   }
 );

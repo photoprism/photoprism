@@ -1,46 +1,44 @@
 <template>
-  <v-dialog v-model="visible" lazy max-width="500">
-    <v-card class="pa-2">
-      <v-card-title class="headline pa-0">
-        <v-layout row wrap class="pa-2">
-          <v-flex xs9 class="text-xs-left">
-            <h3 class="headline pa-0">
-              <translate>Connect via WebDAV</translate>
-            </h3>
-          </v-flex>
-          <v-flex xs3 class="text-xs-right">
-            <v-icon size="28" color="primary">sync_alt</v-icon>
-          </v-flex>
-        </v-layout>
+  <v-dialog v-model="visible" max-width="580">
+    <v-card>
+      <v-card-title class="d-flex justify-start align-center ga-3">
+        <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
+        <h6 class="text-h6"><translate>Connect via WebDAV</translate></h6>
       </v-card-title>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="text-body-2">
         <translate>WebDAV clients can connect to PhotoPrism using the following URL:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
-        <v-text-field autocorrect="off" autocapitalize="none" browser-autocomplete="off" hide-details readonly single-line outline color="secondary-dark" :value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+      <v-card-text class="text-body-2">
+        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line :model-value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1 clickable" @click="windowsHelp($event)">
+      <v-card-text class="text-body-2 clickable" @click="windowsHelp($event)">
         <translate>On Windows, enter the following resource in the connection dialog:</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
-        <v-text-field autocorrect="off" autocapitalize="none" browser-autocomplete="off" hide-details readonly single-line outline color="secondary-dark" :value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
+      <v-card-text class="text-body-2">
+        <v-text-field autocorrect="off" autocapitalize="none" autocomplete="off" hide-details readonly single-line :model-value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
+      <v-card-text class="text-body-2">
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
-      <v-card-text class="pa-2 body-1">
-        <v-alert :value="true" color="primary darken-2" icon="info" class="pa-2" type="info" outline>
-          <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
+      <v-card-text class="pt-3 text-body-2">
+        <v-alert color="surface-variant" icon="mdi-information" class="pa-2" variant="outlined">
+          <a class="text-link" style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>
       </v-card-text>
+
+      <v-card-actions>
+        <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
+          <translate>Close</translate>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

@@ -1,268 +1,290 @@
 <template>
   <div class="p-tab p-tab-photo-files">
-    <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
+    <v-expansion-panels v-model="state" class="pa-0 elevation-0" variant="accordion" multiple >
       <template v-for="file in model.fileModels()">
-        <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
-          <template #header>
-            <div class="caption filename">
+        <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0" style="margin-top: 1px">
+          <v-expansion-panel-title>
+            <div class="text-caption font-weight-bold filename">
               {{ file.baseName(70) }}
             </div>
-          </template>
-          <v-card>
-            <v-card-text class="white pa-0">
-              <v-container fluid class="pa-0">
-                <v-alert :value="file.Error" type="error" class="my-0 text-capitalize">
-                  {{ file.Error }}
-                </v-alert>
-                <v-layout row wrap fill-height align-center justify-center>
-                  <v-flex xs12 class="pa-0">
-                    <div class="v-table__overflow">
-                      <table class="v-datatable v-table theme--light photo-files">
-                        <tbody>
-                          <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
-                            <td>
-                              <translate>Preview</translate>
-                            </td>
-                            <td>
-                              <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" class="card darken-1 elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <translate>Actions</translate>
-                            </td>
-                            <td>
-                              <v-btn v-if="features.download" small depressed dark color="primary-button" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
-                                <translate>Download</translate>
-                              </v-btn>
-                              <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed dark color="primary-button" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
-                                <translate>Primary</translate>
-                              </v-btn>
-                              <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small depressed dark color="primary-button" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
-                                <translate>Unstack</translate>
-                              </v-btn>
-                              <v-btn v-if="features.delete && !file.Primary" small depressed dark color="primary-button" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
-                                <translate>Delete</translate>
-                              </v-btn>
-                              <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed dark color="primary-button" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
-                                <translate>File Browser</translate>
-                              </v-btn>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td title="Unique ID"> UID </td>
-                            <td>
-                              <span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span>
-                            </td>
-                          </tr>
-                          <tr v-if="file.InstanceID" title="XMP">
-                            <td>
-                              <translate>Instance ID</translate>
-                            </td>
-                            <td
-                              ><span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td
-                            >
-                          </tr>
-                          <tr>
-                            <td title="SHA-1">
-                              <translate>Hash</translate>
-                            </td>
-                            <td
-                              ><span class="clickable" @click.stop.prevent="copyText(file.Hash)">{{ file.Hash }}</span></td
-                            >
-                          </tr>
-                          <tr v-if="file.Name">
-                            <td>
-                              <translate>Filename</translate>
-                            </td>
-                            <td
-                              ><span class="clickable" @click.stop.prevent="copyText(file.Name)">{{ file.Name }}</span></td
-                            >
-                          </tr>
-                          <tr v-if="file.Root">
-                            <td>
-                              <translate>Storage</translate>
-                            </td>
-                            <td>{{ file.storageInfo() }}</td>
-                          </tr>
-                          <tr v-if="file.OriginalName">
-                            <td>
-                              <translate>Original Name</translate>
-                            </td>
-                            <td
-                              ><span class="clickable" @click.stop.prevent="copyText(file.OriginalName)">{{ file.OriginalName }}</span></td
-                            >
-                          </tr>
-                          <tr>
-                            <td>
-                              <translate>Size</translate>
-                            </td>
-                            <td>{{ file.sizeInfo() }}</td>
-                          </tr>
-                          <tr v-if="file.Software">
-                            <td>
-                              <translate>Software</translate>
-                            </td>
-                            <td>{{ file.Software }}</td>
-                          </tr>
-                          <tr v-if="file.FileType">
-                            <td>
-                              <translate>Type</translate>
-                            </td>
-                            <td>{{ file.typeInfo() }}</td>
-                          </tr>
-                          <tr v-if="file.isAnimated()">
-                            <td>
-                              <translate>Animated</translate>
-                            </td>
-                            <td>
-                              <translate>Yes</translate>
-                            </td>
-                          </tr>
-                          <tr v-if="file.Codec && file.Codec !== file.FileType">
-                            <td>
-                              <translate>Codec</translate>
-                            </td>
-                            <td>{{ codecName(file) }}</td>
-                          </tr>
-                          <tr v-if="file.Duration && file.Duration > 0">
-                            <td>
-                              <translate>Duration</translate>
-                            </td>
-                            <td>{{ formatDuration(file) }}</td>
-                          </tr>
-                          <tr v-if="file.Frames">
-                            <td>
-                              <translate>Frames</translate>
-                            </td>
-                            <td>{{ file.Frames }}</td>
-                          </tr>
-                          <tr v-if="file.FPS">
-                            <td>
-                              <translate>FPS</translate>
-                            </td>
-                            <td>{{ file.FPS.toFixed(1) }}</td>
-                          </tr>
-                          <tr v-if="file.Primary">
-                            <td>
-                              <translate>Primary</translate>
-                            </td>
-                            <td>
-                              <translate>Yes</translate>
-                            </td>
-                          </tr>
-                          <tr v-if="file.HDR">
-                            <td>
-                              <translate>High Dynamic Range (HDR)</translate>
-                            </td>
-                            <td>
-                              <translate>Yes</translate>
-                            </td>
-                          </tr>
-                          <tr v-if="file.Portrait">
-                            <td>
-                              <translate>Portrait</translate>
-                            </td>
-                            <td>
-                              <translate>Yes</translate>
-                            </td>
-                          </tr>
-                          <tr v-if="file.Projection">
-                            <td>
-                              <translate>Projection</translate>
-                            </td>
-                            <td>{{ file.Projection | capitalize }}</td>
-                          </tr>
-                          <tr v-if="file.AspectRatio">
-                            <td>
-                              <translate>Aspect Ratio</translate>
-                            </td>
-                            <td>{{ file.AspectRatio }} : 1</td>
-                          </tr>
-                          <tr v-if="file.Orientation">
-                            <td>
-                              <translate>Orientation</translate>
-                            </td>
-                            <td>
-                              <v-select
-                                v-model="file.Orientation"
-                                flat
-                                solo
-                                browser-autocomplete="off"
-                                hide-details
-                                color="secondary-dark"
-                                :items="options.Orientations()"
-                                :readonly="readonly || !features.edit || file.Error || (file.Frames && file.Frames > 1) || (file.Duration && file.Duration > 1) || (file.FileType !== 'jpg' && file.FileType !== 'png')"
-                                :disabled="busy"
-                                class="input-orientation"
-                                @change="changeOrientation(file)"
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-card tile>
+              <v-card-text class="pa-0">
+                <v-container fluid class="pa-0">
+                  <v-alert v-if="file.Error" type="error" class="my-0 text-capitalize">
+                    {{ file.Error }}
+                  </v-alert>
+                  <v-row class="d-flex align-stretch" align="center" justify="center">
+                    <v-col cols="12" class="pa-0 flex-grow-1">
+                      <div class="v-table__overflow">
+                        <v-table
+                            tile
+                            hover
+                            :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+                            class="photo-files d-flex bg-transparent"
+                        >
+                          <tbody>
+                            <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
+                              <td>
+                                <translate>Preview</translate>
+                              </td>
+                              <td>
+                                <v-img :src="file.thumbnailUrl('tile_224')" aspect-ratio="1" max-width="112" max-height="112" rounded="4" class="card elevation-0 clickable my-1" @click.exact="openFile(file)"></v-img>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <translate>Actions</translate>
+                              </td>
+                              <td class="d-flex justify-start align-center ga-2">
+                                <v-btn v-if="features.download" density="comfortable" variant="flat" color="highlight" class="btn-action action-download" :disabled="busy" @click.stop.prevent="downloadFile(file)">
+                                  <translate>Download</translate>
+                                </v-btn>
+                                <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" density="comfortable" variant="flat" color="highlight" class="btn-action action-primary" :disabled="busy" @click.stop.prevent="primaryFile(file)">
+                                  <translate>Primary</translate>
+                                </v-btn>
+                                <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" density="comfortable" variant="flat" color="highlight" class="btn-action action-unstack" :disabled="busy" @click.stop.prevent="unstackFile(file)">
+                                  <translate>Unstack</translate>
+                                </v-btn>
+                                <v-btn v-if="features.delete && !file.Primary" density="comfortable" variant="flat" color="highlight" class="btn-action action-delete" :disabled="busy" @click.stop.prevent="showDeleteDialog(file)">
+                                  <translate>Delete</translate>
+                                </v-btn>
+                                <v-btn v-if="experimental && canAccessPrivate && file.Primary" density="comfortable" variant="flat" color="highlight" class="btn-action action-open-folder" :href="folderUrl(file)" target="_blank">
+                                  <translate>File Browser</translate>
+                                </v-btn>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td title="Unique ID"> UID </td>
+                              <td>
+                                <span class="clickable text-uppercase" @click.stop.prevent="copyText(file.UID)">{{ file.UID }}</span>
+                              </td>
+                            </tr>
+                            <tr v-if="file.InstanceID" title="XMP">
+                              <td>
+                                <translate>Instance ID</translate>
+                              </td>
+                              <td>
+                                <span class="clickable text-uppercase" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID }}</span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td title="SHA-1">
+                                <translate>Hash</translate>
+                              </td>
+                              <td
+                                ><span class="clickable" @click.stop.prevent="copyText(file.Hash)">{{ file.Hash }}</span></td
                               >
-                                <template #selection="{ item }">
-                                  <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
-                                </template>
-                                <template #item="{ item }">
-                                  <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
-                                </template>
-                              </v-select>
-                            </td>
-                          </tr>
-                          <tr v-if="file.ColorProfile">
-                            <td>
-                              <translate>Color Profile</translate>
-                            </td>
-                            <td>{{ file.ColorProfile }}</td>
-                          </tr>
-                          <tr v-if="file.MainColor">
-                            <td>
-                              <translate>Main Color</translate>
-                            </td>
-                            <td>{{ file.MainColor | capitalize }}</td>
-                          </tr>
-                          <tr v-if="file.Chroma">
-                            <td>
-                              <translate>Chroma</translate>
-                            </td>
-                            <td><v-progress-linear :value="file.Chroma" style="max-width: 300px" :title="`${file.Chroma}%`"></v-progress-linear></td>
-                          </tr>
-                          <tr v-if="file.Missing">
-                            <td>
-                              <translate>Missing</translate>
-                            </td>
-                            <td>
-                              <translate>Yes</translate>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <translate>Added</translate>
-                            </td>
-                            <td
-                              >{{ formatTime(file.CreatedAt) }}
-                              <translate>in</translate>
-                              {{ Math.round(file.CreatedIn / 1000000) | number("0,0") }} ms
-                            </td>
-                          </tr>
-                          <tr v-if="file.UpdatedIn">
-                            <td>
-                              <translate>Updated</translate>
-                            </td>
-                            <td
-                              >{{ formatTime(file.UpdatedAt) }}
-                              <translate>in</translate>
-                              {{ Math.round(file.UpdatedIn / 1000000) | number("0,0") }} ms
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-          </v-card>
-        </v-expansion-panel-content>
+                            </tr>
+                            <tr v-if="file.Name">
+                              <td>
+                                <translate>Filename</translate>
+                              </td>
+                              <td
+                                ><span class="clickable" @click.stop.prevent="copyText(file.Name)">{{ file.Name }}</span></td
+                              >
+                            </tr>
+                            <tr v-if="file.Root">
+                              <td>
+                                <translate>Storage</translate>
+                              </td>
+                              <td>{{ file.storageInfo() }}</td>
+                            </tr>
+                            <tr v-if="file.OriginalName">
+                              <td>
+                                <translate>Original Name</translate>
+                              </td>
+                              <td
+                                ><span class="clickable" @click.stop.prevent="copyText(file.OriginalName)">{{ file.OriginalName }}</span></td
+                              >
+                            </tr>
+                            <tr>
+                              <td>
+                                <translate>Size</translate>
+                              </td>
+                              <td>{{ file.sizeInfo() }}</td>
+                            </tr>
+                            <tr v-if="file.Software">
+                              <td>
+                                <translate>Software</translate>
+                              </td>
+                              <td>{{ file.Software }}</td>
+                            </tr>
+                            <tr v-if="file.FileType">
+                              <td>
+                                <translate>Type</translate>
+                              </td>
+                              <td>{{ file.typeInfo() }}</td>
+                            </tr>
+                            <tr v-if="file.isAnimated()">
+                              <td>
+                                <translate>Animated</translate>
+                              </td>
+                              <td>
+                                <translate>Yes</translate>
+                              </td>
+                            </tr>
+                            <tr v-if="file.Codec && file.Codec !== file.FileType">
+                              <td>
+                                <translate>Codec</translate>
+                              </td>
+                              <td>{{ codecName(file) }}</td>
+                            </tr>
+                            <tr v-if="file.Duration && file.Duration > 0">
+                              <td>
+                                <translate>Duration</translate>
+                              </td>
+                              <td>{{ formatDuration(file) }}</td>
+                            </tr>
+                            <tr v-if="file.Frames">
+                              <td>
+                                <translate>Frames</translate>
+                              </td>
+                              <td>{{ file.Frames }}</td>
+                            </tr>
+                            <tr v-if="file.FPS">
+                              <td>
+                                <translate>FPS</translate>
+                              </td>
+                              <td>{{ file.FPS.toFixed(1) }}</td>
+                            </tr>
+                            <tr v-if="file.Primary">
+                              <td>
+                                <translate>Primary</translate>
+                              </td>
+                              <td>
+                                <translate>Yes</translate>
+                              </td>
+                            </tr>
+                            <tr v-if="file.HDR">
+                              <td>
+                                <translate>High Dynamic Range (HDR)</translate>
+                              </td>
+                              <td>
+                                <translate>Yes</translate>
+                              </td>
+                            </tr>
+                            <tr v-if="file.Portrait">
+                              <td>
+                                <translate>Portrait</translate>
+                              </td>
+                              <td>
+                                <translate>Yes</translate>
+                              </td>
+                            </tr>
+                            <tr v-if="file.Projection">
+                              <td>
+                                <translate>Projection</translate>
+                              </td>
+                              <td class="text-capitalize">{{ file.Projection }}</td>
+                            </tr>
+                            <tr v-if="file.AspectRatio">
+                              <td>
+                                <translate>Aspect Ratio</translate>
+                              </td>
+                              <td>{{ file.AspectRatio }} : 1</td>
+                            </tr>
+                            <tr v-if="file.Orientation">
+                              <td>
+                                <translate>Orientation</translate>
+                              </td>
+                              <td>
+                                <v-select
+                                  v-model="file.Orientation"
+                                  autocomplete="off"
+                                  hide-details
+                                  variant="solo"
+                                  max-width="120"
+                                  bg-color="transparent"
+                                  density="compact"
+                                  :items="options.Orientations()"
+                                  item-title="text"
+                                  item-value="value"
+                                  :list-props="{ density: 'compact' }"
+                                  :readonly="readonly || !features.edit || file.Error || (file.Frames && file.Frames > 1) || (file.Duration && file.Duration > 1) || (file.FileType !== 'jpg' && file.FileType !== 'png')"
+                                  :disabled="busy"
+                                  class="input-orientation"
+                                  @update:model-value="changeOrientation(file)"
+                                >
+                                  <template #selection="{ item }">
+                                    <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
+                                    <span>{{ item.title }}</span>
+                                  </template>
+                                  <template #item="{ props, item }">
+                                    <v-list-item v-bind="props">
+                                      <template #prepend>
+                                        <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
+                                      </template>
+                                    </v-list-item>
+                                  </template>
+                                </v-select>
+                              </td>
+                            </tr>
+                            <tr v-if="file.ColorProfile">
+                              <td>
+                                <translate>Color Profile</translate>
+                              </td>
+                              <td>{{ file.ColorProfile }}</td>
+                            </tr>
+                            <tr v-if="file.MainColor">
+                              <td>
+                                <translate>Main Color</translate>
+                              </td>
+                              <!--                            TODO: change filter-->
+                              <!--                            <td>{{ file.MainColor | capitalize }}</td>-->
+                              <td>{{ file.MainColor }}</td>
+                            </tr>
+                            <tr v-if="file.Chroma">
+                              <td>
+                                <translate>Chroma</translate>
+                              </td>
+                              <td><v-progress-linear :model-value="file.Chroma" style="max-width: 300px" :title="`${file.Chroma}%`"></v-progress-linear></td>
+                            </tr>
+                            <tr v-if="file.Missing">
+                              <td>
+                                <translate>Missing</translate>
+                              </td>
+                              <td>
+                                <translate>Yes</translate>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <translate>Added</translate>
+                              </td>
+                              <td
+                                >{{ formatTime(file.CreatedAt) }}
+                                <translate>in</translate>
+                                <!--                              TODO: change filter-->
+                                <!--                              {{ Math.round(file.CreatedIn / 1000000) | number("0,0") }} ms-->
+                                {{ Math.round(file.CreatedIn / 1000000) }} ms
+                              </td>
+                            </tr>
+                            <tr v-if="file.UpdatedIn">
+                              <td>
+                                <translate>Updated</translate>
+                              </td>
+                              <td
+                                >{{ formatTime(file.UpdatedAt) }}
+                                <translate>in</translate>
+                                <!--                              TODO: change filter-->
+                                <!--                              {{ Math.round(file.UpdatedIn / 1000000) | number("0,0") }} ms-->
+                                {{ Math.round(file.UpdatedIn / 1000000) }} ms
+                              </td>
+                            </tr>
+                          </tbody>
+                        </v-table>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
       </template>
-    </v-expansion-panel>
+    </v-expansion-panels>
     <p-file-delete-dialog :show="deleteFile.dialog" @cancel="closeDeleteDialog" @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
@@ -288,12 +310,12 @@ export default {
   },
   data() {
     return {
-      state: [true],
+      state: [0],
       deleteFile: {
         dialog: false,
         file: null,
       },
-      features: this.$config.settings().features,
+      features: this.$config.getSettings().features,
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
@@ -303,22 +325,22 @@ export default {
       rtl: this.$rtl,
       listColumns: [
         {
-          text: this.$gettext("Primary"),
-          value: "Primary",
+          title: this.$gettext("Primary"),
+          key: "Primary",
           sortable: false,
           align: "center",
           class: "p-col-primary",
         },
-        { text: this.$gettext("Name"), value: "Name", sortable: false, align: "left" },
+        { title: this.$gettext("Name"), key: "Name", sortable: false, align: "left" },
         {
-          text: this.$gettext("Dimensions"),
-          value: "",
+          title: this.$gettext("Dimensions"),
+          key: "",
           sortable: false,
           class: "hidden-sm-and-down",
         },
-        { text: this.$gettext("Size"), value: "Size", sortable: false, class: "hidden-xs-only" },
-        { text: this.$gettext("Type"), value: "", sortable: false, align: "left" },
-        { text: this.$gettext("Status"), value: "", sortable: false, align: "left" },
+        { title: this.$gettext("Size"), key: "Size", sortable: false, class: "hidden-xs" },
+        { title: this.$gettext("Type"), key: "", sortable: false, align: "left" },
+        { title: this.$gettext("Status"), key: "", sortable: false, align: "left" },
       ],
     };
   },

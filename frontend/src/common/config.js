@@ -30,6 +30,7 @@ import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
+import { ref, reactive } from "vue";
 
 onInit();
 
@@ -39,7 +40,7 @@ export default class Config {
    * @param {object} values
    */
   constructor(storage, values) {
-    this.disconnected = false;
+    this.disconnected = ref(false);
     this.storage = storage;
     this.storage_key = "config";
     this.previewToken = "";
@@ -58,6 +59,7 @@ export default class Config {
       this.debug = true;
       this.test = true;
       this.demo = false;
+      this.theme = themes.Get("default");
       this.themeName = "";
       this.baseUri = "";
       this.staticUri = "/static";
@@ -101,12 +103,12 @@ export default class Config {
       }
     }
 
-    this.page = {
+    this.page = reactive({
       title: values.siteTitle,
       caption: values.siteCaption,
-    };
+    });
 
-    this.values = values;
+    this.values = reactive(values);
     this.debug = !!values.debug;
     this.test = !!values.test;
     this.demo = !!values.demo;
@@ -250,6 +252,8 @@ export default class Config {
     }
   }
 
+  // getPerson returns the details of a person by name
+  // (case-insensitive), or null if it does not exist.
   getPerson(name) {
     name = name.toLowerCase();
 
@@ -268,6 +272,8 @@ export default class Config {
     }
   }
 
+  // onCount updates the media type, location, people and other
+  // counters used e.g. in the expanded sidebar navigation.
   onCount(ev, data) {
     const type = ev.split(".")[1];
 
@@ -346,39 +352,9 @@ export default class Config {
     this.values.count;
   }
 
+  // setVuetify sets a reference to the current Vuetify instance.
   setVuetify(instance) {
     this.$vuetify = instance;
-  }
-
-  setBodyTheme(name) {
-    if (!document || !document.body) {
-      return;
-    }
-    document.body.classList.forEach((c) => {
-      if (c.startsWith("theme-")) {
-        document.body.classList.remove(c);
-      }
-    });
-
-    document.body.classList.add("theme-" + name);
-  }
-
-  setColorMode(value) {
-    if (!document || !document.body) {
-      return;
-    }
-
-    const tags = document.getElementsByTagName("html");
-
-    if (tags && tags.length > 0) {
-      tags[0].setAttribute("data-color-mode", value);
-    }
-
-    if (value === "dark") {
-      document.body.classList.add("dark-theme");
-    } else {
-      document.body.classList.remove("dark-theme");
-    }
   }
 
   aclClasses(resource) {
@@ -431,41 +407,50 @@ export default class Config {
     return !this.allowAny(resource, perm);
   }
 
-  settings() {
-    return this.values.settings;
-  }
-
-  setSettings(settings) {
-    if (!settings) return;
-
-    if (this.debug) {
-      console.log("config: new settings", settings);
-    }
-
-    this.values.settings = settings;
-
-    this.setBatchSize(settings);
-    this.setLanguage(settings.ui.language);
-    this.setTheme(settings.ui.theme);
-
-    return this;
-  }
-
+  // setLanguage sets the ISO/IEC 15897 locale,
+  // e.g. "en" or "zh_TW" (minimum 2 letters).
   setLanguage(locale) {
-    if (!locale || this.loading()) {
-      return;
+    // Skip setting language if no locale is specified.
+    if (!locale) {
+      return this;
     }
 
-    if (this.values.settings && this.values.settings.ui) {
-      this.values.settings.ui.language = locale;
-      this.storage.setItem(this.storage_key + ".locale", locale);
+    // Update the Accept-Language header for XHR requests.
+    if (Api) {
       Api.defaults.headers.common["Accept-Language"] = locale;
     }
 
+    // Update the language-specific attributes of the <html> and <body> elements.
+    if (document && document.body) {
+      const isRtl = this.isRtl(locale);
+
+      // Update <html> lang and dir attributes on current locale.
+      document.documentElement.setAttribute("lang", locale);
+      document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
+
+      // Set body.is-rtl class depending on current locale.
+      if (isRtl !== document.body.classList.contains("is-rtl")) {
+        document.body.classList.toggle("is-rtl");
+      }
+    }
+
+    // Don't update the configuration settings if they haven't been loaded yet.
+    if (this.loading()) {
+      return this;
+    }
+
+    // Update the configuration settings and save them to window.localStorage.
+    if (this.values.settings && this.values.settings.ui) {
+      this.values.settings.ui.language = locale;
+      this.storage.setItem(this.storage_key + ".locale", locale);
+    }
+
     return this;
   }
 
-  getLanguage() {
+  // getLanguageLocale returns the ISO/IEC 15897 locale,
+  // e.g. "en" or "zh_TW" (minimum 2 letters).
+  getLanguageLocale() {
     let locale = "en";
 
     if (this.loading()) {
@@ -480,6 +465,22 @@ export default class Config {
     return locale;
   }
 
+  // getLanguageCode returns the ISO 639-1 language code (2 letters),
+  // see https://www.loc.gov/standards/iso639-2/php/code_list.php.
+  getLanguageCode() {
+    return this.getLanguageLocale().substring(0, 2);
+  }
+
+  // isRtl returns true if a right-to-left language is currently used.
+  isRtl(locale) {
+    if (!locale) {
+      locale = this.getLanguageLocale();
+    }
+
+    return Languages().some((l) => l.value === locale && l.rtl);
+  }
+
+  // setTheme set the current UI theme based on the specified name.
   setTheme(name) {
     let theme = onSetTheme(name, this);
 
@@ -504,22 +505,82 @@ export default class Config {
       this.setColorMode("light");
     }
 
-    if (this.$vuetify) {
-      this.$vuetify.theme = this.theme.colors;
+    if (this.themeName && this.$vuetify) {
+      this.$vuetify.theme.name = this.themeName;
     }
 
     return this;
   }
 
+  // setBodyTheme updates the classes of the <body> element based on the specified theme name.
+  setBodyTheme(name) {
+    if (!document || !document.body) {
+      return;
+    }
+
+    document.body.classList.forEach((c) => {
+      if (c.startsWith("theme-")) {
+        document.body.classList.remove(c);
+      }
+    });
+
+    document.body.classList.add("theme-" + name);
+  }
+
+  // setColorMode updates the dark/light mode attributes of the <html> and <body> elements.
+  setColorMode(value) {
+    if (!document || !document.body) {
+      return;
+    }
+
+    const tags = document.getElementsByTagName("html");
+
+    if (tags && tags.length > 0) {
+      tags[0].setAttribute("data-color-mode", value);
+    }
+
+    if (value === "dark") {
+      document.body.classList.add("dark-theme");
+    } else {
+      document.body.classList.remove("dark-theme");
+    }
+  }
+
+  // getSettings returns the current user's configuration settings.
+  getSettings() {
+    return this.values.settings;
+  }
+
+  // setSettings updates the current user's configuration settings
+  // and then changes the UI language and theme as needed.
+  setSettings(settings) {
+    if (!settings) return;
+
+    if (this.debug) {
+      console.log("config: new settings", settings);
+    }
+
+    this.values.settings = settings;
+
+    this.setBatchSize(settings);
+    this.setLanguage(settings.ui.language);
+    this.setTheme(settings.ui.theme);
+
+    return this;
+  }
+
+  // getValues returns all client configuration values as exposed by the backend.
   getValues() {
     return this.values;
   }
 
+  // storeValues saves the current configuration values in window.localStorage.
   storeValues() {
     this.storage.setItem(this.storage_key, JSON.stringify(this.getValues()));
     return this;
   }
 
+  // restoreValues restores the configuration values from window.localStorage.
   restoreValues() {
     const json = this.storage.getItem(this.storage_key);
     if (json !== "undefined") {
@@ -528,31 +589,28 @@ export default class Config {
     return this;
   }
 
+  // set updates a top-level config value.
   set(key, value) {
     this.values[key] = value;
     return this;
   }
 
+  // has checks if the specified top-level config value exists.
   has(key) {
     return !!this.values[key];
   }
 
+  // get returns a top-level config value.
   get(key) {
     return this.values[key];
   }
 
+  // feature checks a single feature flag by name and returns true if it is set.
   feature(name) {
     return this.values.settings.features[name] === true;
   }
 
-  rtl() {
-    if (!this.values || !this.values.settings || !this.values.settings.ui.language) {
-      return false;
-    }
-
-    return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
-  }
-
+  // setTokens sets the security tokens required to load thumbnails and download files from the server.
   setTokens(tokens) {
     if (!tokens || !tokens.previewToken || !tokens.downloadToken) {
       return;
@@ -563,6 +621,7 @@ export default class Config {
     this.values.downloadToken = tokens.downloadToken;
   }
 
+  // updateTokens updates the security tokens required to load thumbnails and download files from the server.
   updateTokens() {
     if (this.values["previewToken"]) {
       this.previewToken = this.values.previewToken;
@@ -572,6 +631,8 @@ export default class Config {
     }
   }
 
+  // albumCategories returns an array containing the categories
+  // assigned to albums, or an empty array if there are none.
   albumCategories() {
     if (this.values["albumCategories"]) {
       return this.values["albumCategories"];
@@ -580,10 +641,12 @@ export default class Config {
     return [];
   }
 
+  // isPublic returns true if the instance is running in public mode, i.e. without authentication.
   isPublic() {
     return this.values && this.values.public;
   }
 
+  // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
     return this.values && this.values.demo;
   }

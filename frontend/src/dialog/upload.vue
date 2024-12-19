@@ -1,51 +1,54 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
-    <v-card color="application">
-      <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark @click.stop="cancel">
-          <v-icon>close</v-icon>
+  <v-dialog :model-value="show" fullscreen :scrim="false" scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
+    <v-card color="background">
+      <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
+        <v-btn icon @click.stop="cancel">
+          <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
           <translate key="Upload">Upload</translate>
         </v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
-        <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
+        <v-form ref="form" class="p-photo-upload" validate-on="blur" @submit.prevent="submit">
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
-            <p class="subheading">
+            <p class="text-body-2 pb-2">
+              <!-- TODO: check property allow-overflow TEST -->
               <v-combobox
                 v-if="total === 0"
                 v-model="selectedAlbums"
-                flat
-                solo
                 hide-details
                 chips
-                deletable-chips
+                closable-chips
                 multiple
-                color="secondary-dark"
                 class="my-0 input-albums"
                 :items="albums"
+                item-title="Title"
                 item-value="UID"
-                item-text="Title"
-                :allow-overflow="false"
                 :label="$gettext('Select albums or create a new one')"
                 return-object
               >
                 <template #no-data>
-                  <v-list-tile>
-                    <v-list-tile-content>
-                      <v-list-tile-title>
-                        <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
-                      </v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                  <v-list-item>
+                    <v-list-item-title>
+                      <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
+                    </v-list-item-title>
+                  </v-list-item>
                 </template>
-                <template #selection="data">
-                  <v-chip :key="JSON.stringify(data.item)" :selected="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @input="data.parent.selectItem(data.item)">
-                    <v-icon class="pr-1">bookmark</v-icon>
-                    {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
+                <template #chip="data">
+                  <v-chip
+                      :key="JSON.stringify(data.item)"
+                      :model-value="data.selected"
+                      :disabled="data.disabled"
+                      class="bg-highlight rounded-xl text-truncate d-block"
+                      @click:close="removeSelection(data.index)"
+                  >
+                    <v-icon class="pr-1">mdi-bookmark</v-icon>
+                    <!-- TODO: change this filter -->
+                    <!-- {{ data.item.Title ? data.item.Title : data.item | truncate(40) }} -->
+                    {{ data.item.title ? data.item.title : data.item }}
                   </v-chip>
                 </template>
               </v-combobox>
@@ -57,28 +60,28 @@
               <span v-else-if="completedTotal === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark" :indeterminate="indexing">
-              <p class="px-2 ma-0 text-xs-right opacity-85"
+            <v-progress-linear v-model="completedTotal" :indeterminate="indexing" class="py-1" :height="21">
+              <p class="px-2 ma-0 text-end opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >
             </v-progress-linear>
 
-            <p v-if="isDemo" class="body-2">
+            <p v-if="isDemo" class="text-body-2 py-2">
               <translate :translate-params="{ n: fileLimit }">You can upload up to %{n} files for test purposes.</translate>
               <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
             </p>
-            <p v-else-if="rejectNSFW" class="body-2">
+            <p v-else-if="rejectNSFW" class="text-body-2 py-2">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
-            <p v-if="featReview" class="body-1">
+            <p v-if="featReview" class="text-body-2 py-2">
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
-            <v-btn :disabled="busy" color="primary-button" class="white--text ml-0 mt-2 action-upload" depressed @click.stop="onUploadDialog()">
+            <v-btn :disabled="busy" color="highlight" class="text-white ml-0 mt-2 action-upload" variant="flat" @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
-              <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
+              <v-icon icon="mdi-download" end></v-icon>
             </v-btn>
           </v-container>
         </v-form>
@@ -150,6 +153,9 @@ export default {
     },
   },
   methods: {
+    removeSelection(index) {
+      this.selectedAlbums.splice(index, 1);
+    },
     findAlbums(q) {
       if (this.loading) {
         return;

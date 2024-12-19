@@ -51,7 +51,7 @@
 /* Photo Viewer */
 
 #photo-viewer {
-    z-index: 1500;
+    z-index: 2500;
 }
 
 #photo-viewer .pswp__caption__center {

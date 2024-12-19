@@ -71,15 +71,18 @@ body.firefox.dark-theme {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: rgba(242, 242, 242, .32);
+    background-color: rgba(242, 242, 242, .26);
     border: solid transparent;
     border-width: 0 0 0 4px;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, .64);
-    border: solid transparent;
-    border-width: 1px 1px 1px 6px;
+    border-style: solid;
+    border-color: rgba(242, 242, 242, .26);
+    border-width: 1px;
+    border-radius: 6px;
     min-height: 28px;
     padding: 100px 0 0;
+
 }

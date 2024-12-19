@@ -30,11 +30,16 @@ func (m *Photo) SetTitle(title, source string) {
 	title = strings.ReplaceAll(title, "\"", "'")
 	title = txt.Shorten(title, txt.ClipLongName, txt.Ellipsis)
 
-	if title == "" {
+	// Get source priority.
+	p := SrcPriority[source]
+
+	// Compare the source priority with the priority of the current title source.
+	if (p < SrcPriority[m.TitleSrc]) && m.HasTitle() {
 		return
 	}
 
-	if (SrcPriority[source] < SrcPriority[m.TitleSrc]) && m.HasTitle() {
+	// Allow users to manually delete existing titles.
+	if title == "" && p != 1 && p < SrcPriority[SrcManual] {
 		return
 	}
 
@@ -44,7 +49,7 @@ func (m *Photo) SetTitle(title, source string) {
 
 // UpdateTitle updated the photo title based on location and labels.
 func (m *Photo) UpdateTitle(labels classify.Labels) error {
-	if m.TitleSrc != SrcAuto && m.HasTitle() {
+	if m.TitleSrc != SrcAuto {
 		return fmt.Errorf("photo: %s keeps existing %s title", m.String(), SrcString(m.TitleSrc))
 	}
 
@@ -155,11 +160,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		} else if fileTitle != "" {
 			m.SetTitle(fileTitle, SrcAuto)
 		} else {
-			if m.TakenSrc != SrcAuto {
-				m.SetTitle(fmt.Sprintf("%s / %s", UnknownTitle, m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(UnknownTitle, SrcAuto)
-			}
+			m.SetTitle(UnknownTitle, SrcAuto)
 		}
 	}
 

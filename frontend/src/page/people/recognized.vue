@@ -1,29 +1,29 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-subjects" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery()">
-      <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
+  <div class="p-page p-page-subjects" style="user-select: none">
+    <v-form ref="form" class="p-people-search" validate-on="blur" @submit.prevent="updateQuery()">
+      <v-toolbar dense flat height="48" class="page-toolbar pa-0" color="secondary-light">
         <v-text-field
           v-if="canSearch"
-          :value="filter.q"
-          solo
+          :model-value="filter.q"
           hide-details
           clearable
-          overflow
           single-line
-          validate-on-blur
-          class="input-search background-inherit elevation-0"
-          :label="$gettext('Search')"
-          prepend-inner-icon="search"
-          browser-autocomplete="off"
+          validate-on="blur"
+          variant="plain"
+          density="comfortable"
+          :placeholder="$gettext('Search')"
+          prepend-inner-icon="mdi-magnify"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          color="secondary-dark"
-          @change="
+          color="surface-variant"
+          class="input-search background-inherit elevation-0 mb-3"
+          @update:modelValue="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => updateQuery()"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -33,43 +33,43 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+        <v-btn icon variant="text" color="surface-variant" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <template v-if="canManage">
           <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden()">
-            <v-icon>visibility</v-icon>
+            <v-icon>mdi-eye</v-icon>
           </v-btn>
           <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden()">
-            <v-icon>visibility_off</v-icon>
+            <v-icon>mdi-eye-off</v-icon>
           </v-btn>
         </template>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container v-else fluid class="pa-0">
+    <v-container v-else fluid class="pa-0" style="min-height: 100vh">
       <p-subject-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-subject-clipboard>
 
-      <p-scroll-top></p-scroll-top>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert v-if="results.length === 0" icon="mdi-lightbulb-outline" class="no-results opacity-70" variant="outlined">
+          <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
             <translate>You may rescan your library to find additional faces.</translate>
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(model, index) in results" :key="model.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="model.UID" style="user-select: none" class="result card" :class="model.classes(selection.includes(model.UID))" :to="model.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(model, index) in results" :key="model.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="model.UID" style="user-select: none" class="result card flex-grow-1" :class="model.classes(selection.includes(model.UID))" :to="model.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="model.thumbnailUrl('tile_320')"
@@ -77,7 +77,7 @@
                 :transition="false"
                 aspect-ratio="1"
                 style="user-select: none"
-                class="card darken-1 clickable"
+                class="card clickable"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
@@ -86,54 +86,52 @@
                 <v-btn
                   v-if="canManage"
                   :ripple="false"
-                  :depressed="false"
                   class="input-hidden"
                   icon
-                  flat
-                  small
-                  absolute
+                  variant="text"
+                  density="comfortable"
+                  position="absolute"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onToggleHidden($event, index)"
                   @touchmove.stop.prevent
                   @click.stop.prevent="onToggleHidden($event, index)"
                 >
-                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
-                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                  <v-icon icon="mdi-star" color="favorite" class="select-on"></v-icon>
+                  <v-icon icon="mdi-star-outline" color="white" class="select-off"></v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" lazy class="inline-edit" @save="onSave(model)">
-                  <span v-if="model.Name" class="body-2 ma-0">
+              <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+                <div v-if="canManage" class="inline-edit" @click.stop.prevent="edit(model)">
+                  <span v-if="model.Name" class="text-body-2 ma-0">
                     {{ model.Name }}
                   </span>
                   <span v-else>
-                    <v-icon>edit</v-icon>
+                    <v-icon>mdi-pencil</v-icon>
                   </span>
-                  <template #input>
-                    <v-text-field v-model="model.Name" :rules="[titleRule]" :readonly="readonly" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
-                  </template>
-                </v-edit-dialog>
-                <span v-else class="body-2 ma-0">
+                </div>
+                <span v-else class="text-body-2 ma-0">
                   {{ model.Name }}
                 </span>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
-                <div v-if="model.About" class="caption mb-2" :title="$gettext('About')">
-                  {{ model.About | truncate(100) }}
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+                <div v-if="model.About" class="text-caption mb-2 text-truncate d-block" :title="$gettext('About')">
+                  <!-- TODO: change this filter -->
+                  <!-- {{ model.About | truncate(100) }} -->
+                  {{ model.About }}
                 </div>
 
-                <div class="caption mb-2">
+                <div class="text-caption mb-2">
                   <button v-if="model.PhotoCount === 1">
                     <translate>Contains one picture.</translate>
                   </button>
@@ -143,11 +141,12 @@
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-container>
-    <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
+    <p-people-edit-dialog :show="dialog.edit" :person="model" @close="dialog.edit = false" @confirm="onSave"></p-people-edit-dialog>
+    <p-people-merge-dialog :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @close="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 
@@ -204,6 +203,10 @@ export default {
         subj2: null,
         show: false,
       },
+      dialog: {
+        edit: false,
+      },
+      model: new Subject(false),
     };
   },
   computed: {
@@ -237,12 +240,23 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
+    edit(subject) {
+      if (!subject) {
+        return;
+      } else if (!this.canManage) {
+        this.$router.push(subject.route(this.view));
+        return;
+      }
+
+      this.model = subject;
+      this.dialog.edit = true;
+    },
     onSave(m) {
       if (!this.canManage || !m.Name || m.Name.trim() === "") {
         // Refuse to save empty name.
@@ -253,9 +267,15 @@ export default {
 
       if (!existing) {
         this.busy = true;
-        m.update().finally(() => {
-          this.busy = false;
-        });
+        m.update()
+          .then((m) => {
+            this.$notify.success(this.$gettext("Changes successfully saved"));
+            this.dialog.edit = false;
+          })
+          .finally(() => {
+            this.busy = false;
+          });
+
       } else if (existing.UID !== m.UID) {
         this.merge.subj1 = m;
         this.merge.subj2 = existing;
@@ -263,7 +283,6 @@ export default {
       }
     },
     onCancelMerge() {
-      this.merge.subj1.Name = this.merge.subj1.originalValue("Name");
       this.merge.show = false;
       this.merge.subj1 = null;
       this.merge.subj2 = null;
@@ -275,6 +294,7 @@ export default {
 
       this.busy = true;
       this.merge.show = false;
+      this.dialog.edit = false;
       this.$notify.blockUI();
       this.merge.subj1.update().finally(() => {
         this.busy = false;
@@ -509,7 +529,7 @@ export default {
 
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -626,7 +646,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -658,7 +678,7 @@ export default {
             // this.$notify.info(this.$gettext('More than 20 people found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }

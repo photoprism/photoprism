@@ -27,7 +27,7 @@ import Api from "common/api";
 import Form from "common/form";
 import Model from "model.js";
 import Link from "link.js";
-import { $gettext } from "common/vm";
+import { $gettext } from "common/gettext";
 
 export class Rest extends Model {
   getId() {

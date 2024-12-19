@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -15,18 +15,20 @@ import (
 const AuthResetDescription = "This command recreates the auth_sessions database table so that it is compatible with the current version. As a result, all users and clients must re-authenticate. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
 
 // AuthResetCommand configures the command name, flags, and action.
-var AuthResetCommand = cli.Command{
+var AuthResetCommand = &cli.Command{
 	Name:        "reset",
 	Usage:       "Resets the authentication of all users and clients",
 	Description: AuthResetDescription,
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "trace, t",
-			Usage: "show trace logs for debugging",
+		&cli.BoolFlag{
+			Name:    "trace",
+			Aliases: []string{"t"},
+			Usage:   "show trace logs for debugging",
 		},
-		cli.BoolFlag{
-			Name:  "yes, y",
-			Usage: "assume \"yes\" and run non-interactively",
+		&cli.BoolFlag{
+			Name:    "yes",
+			Aliases: []string{"y"},
+			Usage:   "assume \"yes\" and run non-interactively",
 		},
 	},
 	Action: authResetAction,

@@ -41,7 +41,6 @@ export default class Session {
    */
   constructor(storage, config, shared) {
     this.storage_key = "sessionStorage";
-    this.auth = false;
     this.config = config;
     this.provider = "";
     this.user = new User(false);
@@ -73,9 +72,7 @@ export default class Session {
     }
 
     // Authenticated?
-    if (this.isUser()) {
-      this.auth = true;
-    }
+    this.auth = this.isUser();
 
     // Subscribe to session events.
     Event.subscribe("session.logout", () => {
@@ -403,7 +400,7 @@ export default class Session {
     this.reset();
 
     return Api.post("session", { username, password, code, token }).then((resp) => {
-      const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
+      const reload = this.config.getLanguageLocale() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.onLogin();
       return Promise.resolve(reload);

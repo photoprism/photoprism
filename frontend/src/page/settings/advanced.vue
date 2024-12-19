@@ -1,381 +1,395 @@
 <template>
-  <div class="p-tab p-settings-advanced">
-    <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
-      <v-card flat tile class="mt-0 px-1 application">
+  <div class="p-tab p-settings-advanced py-2">
+    <v-form ref="form" validate-on="blur" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
+      <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-actions v-if="$config.values.restart">
-          <v-layout wrap align-top>
-            <v-flex xs12 class="pa-2 text-xs-left">
-              <v-alert :value="true" color="primary" icon="info" class="pa-2" type="info" outline>
+          <v-row align="start" dense>
+            <v-col cols="12" class="pa-2 text-start">
+              <v-alert color="primary" icon="mdi-information" class="pa-2" type="info" variant="outlined">
                 <a style="color: inherit" href="#restart">
                   <translate>Changes to the advanced settings require a restart to take effect.</translate>
                 </a>
               </v-alert>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>Global Options</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Global Options</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.Debug"
                 :disabled="busy"
                 class="ma-0 pa-0 input-debug"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Debug Logs')"
                 :hint="$gettext('Enable debug mode to display additional logs and help with troubleshooting.')"
-                prepend-icon="pest_control"
+                prepend-icon="mdi-bug"
                 persistent-hint
-                @change="onChange">
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.Experimental"
                 :disabled="busy"
                 class="ma-0 pa-0 input-experimental"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Experimental Features')"
                 :hint="$gettext('Enable new features currently under development.')"
-                prepend-icon="science"
+                prepend-icon="mdi-flask-empty"
                 persistent-hint
-                @change="onChange">
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.ReadOnly"
                 :disabled="busy"
                 class="ma-0 pa-0 input-readonly"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Read-Only Mode')"
                 :hint="$gettext('Disable features that require write permission for the originals folder.')"
-                prepend-icon="do_not_touch"
+                prepend-icon="mdi-hand-back-right-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableBackups"
                 :disabled="busy"
                 class="ma-0 pa-0 input-disable-backups"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable Backups')"
                 :hint="$gettext('Prevent database and album backups as well as YAML sidecar files from being created.')"
-                prepend-icon="remove_moderator"
+                prepend-icon="mdi-shield-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableWebDAV"
                 :disabled="busy"
                 class="ma-0 pa-0 input-disable-webdav"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable WebDAV')"
                 :hint="$gettext('Prevent other apps from accessing PhotoPrism as a shared network drive.')"
-                prepend-icon="sync_disabled"
+                prepend-icon="mdi-sync-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisablePlaces"
                 :disabled="busy"
                 class="ma-0 pa-0 input-disable-places"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable Places')"
                 :hint="$gettext('Disable interactive world maps and reverse geocoding.')"
-                prepend-icon="location_off"
+                prepend-icon="mdi-map-marker-off"
                 persistent-hint
-                @change="onChange">
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableExifTool"
                 :disabled="busy || (!settings.Experimental && !settings.DisableExifTool)"
                 class="ma-0 pa-0 input-disable-exiftool"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable ExifTool')"
                 :hint="$gettext('ExifTool is required for full support of XMP metadata, videos and Live Photos.')"
-                prepend-icon="no_photography"
+                prepend-icon="mdi-camera-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableTensorFlow"
                 :disabled="busy"
                 class="ma-0 pa-0 input-disable-tensorflow"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable TensorFlow')"
                 :hint="$gettext('TensorFlow is required for image classification, facial recognition, and detecting unsafe content.')"
-                prepend-icon="layers_clear"
+                prepend-icon="mdi-layers-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
         <template v-if="!settings.DisableBackups">
-          <v-card-title primary-title class="pb-0">
-            <h3 class="body-2 mb-0">
-              <translate>Backup</translate>
-            </h3>
+          <v-card-title class="pb-0 text-subtitle-2">
+            <translate>Backup</translate>
           </v-card-title>
 
           <v-card-actions>
-            <v-layout wrap align-top>
-              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-row align="start" dense>
+              <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.BackupDatabase"
                   :disabled="busy || settings.BackupSchedule === ''"
                   class="ma-0 pa-0 input-backup-database"
-                  color="secondary-dark"
+                  density="compact"
+                  color="surface-variant"
                   :label="$gettext('Database Backups')"
                   :hint="$gettext('Create regular backups based on the configured schedule.')"
-                  prepend-icon="history"
+                  prepend-icon="mdi-history"
                   persistent-hint
-                  @change="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-checkbox>
-              </v-flex>
+              </v-col>
 
-              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.BackupAlbums"
                   :disabled="busy"
                   class="ma-0 pa-0 input-backup-albums"
-                  color="secondary-dark"
+                  density="compact"
+                color="surface-variant"
                   :label="$gettext('Album Backups')"
                   :hint="$gettext('Create YAML files to back up album metadata.')"
-                  prepend-icon="photo_album"
+                  prepend-icon="mdi-image-album"
                   persistent-hint
-                  @change="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-checkbox>
-              </v-flex>
+              </v-col>
 
-              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.SidecarYaml"
                   :disabled="busy"
                   class="ma-0 pa-0 input-sidecar-yaml"
-                  color="secondary-dark"
+                  density="compact"
+                  color="surface-variant"
                   :label="$gettext('Sidecar Files')"
                   :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
-                  prepend-icon="file_present"
+                  prepend-icon="mdi-clipboard-file-outline"
                   persistent-hint
-                  @change="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-checkbox>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
 
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0" :title="$gettext('Preview Images')">
-            <translate>Preview Images</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Preview Images</translate>
         </v-card-title>
 
-        <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex v-if="settings.ThumbLibrary === 'imaging'" xs12 class="px-2 pb-2">
-              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" background-color="secondary-light" hide-details box @change="onChange"></v-select>
-            </v-flex>
+        <v-card-actions class="grid">
+          <v-row align="start">
+            <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="py-2">
+              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" density="compact"
+                color="surface-variant" bg-color="secondary-light" hide-details variant="solo" @update:model-value="onChange"></v-select>
+            </v-col>
 
-            <v-flex xs12 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">
+            <v-col cols="12" lg="4" class="py-2">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
-              </v-subheader>
-              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
+              </v-list-subheader>
+              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
-              </v-subheader>
-              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
+              </v-list-subheader>
+              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-checkbox
                 v-model="settings.ThumbUncached"
                 :disabled="busy"
                 class="ma-0 pa-0"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Dynamic Previews')"
                 :hint="$gettext('On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices.')"
-                prepend-icon="memory"
+                prepend-icon="mdi-memory"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>Image Quality</translate>
-          </h3>
+        <v-card-title class="pb-0 text-subtitle-2">
+          <translate>Image Quality</translate>
         </v-card-title>
 
-        <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">
+        <v-card-actions class="grid">
+          <v-row align="start">
+            <v-col cols="12" lg="4" class="py-2">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
-              </v-subheader>
-              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
+              </v-list-subheader>
+              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
-              </v-subheader>
-              <v-flex class="pr-3">
-                <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
-              </v-flex>
-            </v-flex>
+              </v-list-subheader>
+              <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="ma-0" @update:model-value="onChange"></v-slider>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">
+            <v-col cols="12" sm="6" lg="4" class="py-2">
+              <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
-              </v-subheader>
-              <v-flex class="pr-3">
-                <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
-              </v-flex>
-            </v-flex>
-          </v-layout>
+              </v-list-subheader>
+              <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="ma-0" @update:model-value="onChange"></v-slider>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>File Conversion</translate>
-          </h3>
+        <v-card-title class="py-0 text-subtitle-2">
+          <translate>File Conversion</translate>
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableDarktable"
                 :disabled="busy || settings.DisableRaw"
                 class="ma-0 pa-0 input-disable-darktable"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable Darktable')"
                 :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
-                prepend-icon="raw_off"
+                prepend-icon="mdi-raw-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableRawTherapee"
                 :disabled="busy || settings.DisableRaw"
                 class="ma-0 pa-0 input-disable-rawtherapee"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable RawTherapee')"
                 :hint="$gettext('Don\'t use RawTherapee to convert RAW images.')"
-                prepend-icon="raw_off"
+                prepend-icon="mdi-raw-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.RawPresets"
                 :disabled="busy || settings.DisableRaw"
                 class="ma-0 pa-0 input-raw-presets"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Use Presets')"
                 :hint="$gettext('Enables RAW converter presets. May reduce performance.')"
-                prepend-icon="tonality"
+                prepend-icon="mdi-circle-half-full"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableImageMagick"
                 :disabled="busy"
                 class="ma-0 pa-0 input-disable-imagemagick"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable ImageMagick')"
                 :hint="$gettext('Don\'t use ImageMagick to convert images.')"
-                prepend-icon="auto_fix_off"
+                prepend-icon="mdi-auto-fix"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableFFmpeg"
                 :disabled="busy || (!settings.Experimental && !settings.DisableFFmpeg)"
                 class="ma-0 pa-0 input-disable-ffmpeg"
-                color="secondary-dark"
+                density="compact"
+                color="surface-variant"
                 :label="$gettext('Disable FFmpeg')"
                 :hint="$gettext('Disables video transcoding and thumbnail extraction.')"
-                prepend-icon="videocam_off"
+                prepend-icon="mdi-video-off"
                 persistent-hint
-                @change="onChange"
+                @update:model-value="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex v-if="isSponsor" xs12 sm6 lg4 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.DisableVectors" :disabled="busy" class="ma-0 pa-0 input-disable-vectors" color="secondary-dark" :label="$gettext('Disable Vectors')" :hint="$gettext('Disables vector graphics support.')" prepend-icon="font_download_off" persistent-hint @change="onChange">
+            <v-col v-if="isSponsor" cols="12" sm="6" lg="4">
+              <v-checkbox
+                v-model="settings.DisableVectors"
+                :disabled="busy"
+                class="ma-0 pa-0 input-disable-vectors"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Disable Vectors')"
+                :hint="$gettext('Disables vector graphics support.')"
+                prepend-icon="mdi-alpha-a-box"
+                persistent-hint
+                @update:model-value="onChange"
+              >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
-        <v-card-actions v-if="!config.disable.restart" class="pt-3">
-          <v-layout wrap align-top>
-            <v-flex xs12 class="pa-2">
-              <a id="restart"></a>
-              <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
-                <translate>Restart</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
-              </v-btn>
-            </v-flex>
-          </v-layout>
+        <v-card-actions v-if="!config.disable.restart" class="pt-6 d-flex flex-wrap ga-2">
+          <a id="restart"></a>
+          <v-btn color="highlight" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
+            <translate>Restart</translate>
+            <v-icon end>mdi-restart</v-icon>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

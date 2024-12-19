@@ -1,133 +1,139 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery()">
-      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+  <div :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none">
+    <v-form ref="form" class="p-albums-search" validate-on="blur" @submit.prevent="updateQuery()">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
         <v-text-field
-          :value="filter.q"
-          solo
+          :model-value="filter.q"
           hide-details
           clearable
           overflow
           single-line
-          validate-on-blur
-          class="input-search background-inherit elevation-0"
-          :label="$gettext('Search')"
-          browser-autocomplete="off"
+          rounded
+          variant="solo-filled"
+          :density="density"
+          validate-on="blur"
+          :placeholder="$gettext('Search')"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          prepend-inner-icon="search"
-          color="secondary-dark"
-          @change="
+          prepend-inner-icon="mdi-magnify"
+          color="surface-variant"
+          class="input-search background-inherit elevation-0"
+          @update:modelValue="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => updateQuery()"
           @click:clear="
             () => {
               updateQuery({ q: '' });
             }
           "
         ></v-text-field>
-
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+          <v-icon>mdi-refresh</v-icon>
         </v-btn>
-
         <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-          <v-icon>cloud_upload</v-icon>
+          <v-icon>mdi-cloud-upload</v-icon>
         </v-btn>
-
         <v-btn v-if="canManage && staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')" @click.prevent="create()">
-          <v-icon>add</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
-
-        <v-btn v-if="canManage && !staticFilter['order']" icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
-        </v-btn>
+        <v-btn v-if="canManage && !staticFilter['order']" :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" :title="$gettext('Expand Search')" class="action-expand" :class="{ 'action-expand--active': expanded }" @click.stop="toggleExpansionPanel"></v-btn>
       </v-toolbar>
-      <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
-        <v-card-text>
-          <v-layout row wrap>
-            <v-flex xs12 sm4 pa-2 class="p-year-select">
-              <v-select
-                :value="filter.year"
-                :label="$gettext('Year')"
-                :disabled="context === 'state'"
-                :menu-props="{ maxHeight: 346 }"
-                flat
-                solo
-                hide-details
-                color="secondary-dark"
-                background-color="secondary"
-                item-value="value"
-                item-text="text"
-                :items="yearOptions()"
-                @change="
-                  (v) => {
-                    updateQuery({ year: v });
-                  }
-                "
-              >
-              </v-select>
-            </v-flex>
-            <v-flex xs12 sm4 pa-2 class="p-category-select">
-              <v-select
-                :value="filter.category"
-                :label="$gettext('Category')"
-                :menu-props="{ maxHeight: 346 }"
-                flat
-                solo
-                hide-details
-                color="secondary-dark"
-                background-color="secondary"
-                :items="categories"
-                @change="
-                  (v) => {
-                    updateQuery({ category: v });
-                  }
-                "
-              >
-              </v-select>
-            </v-flex>
-            <v-flex xs12 sm4 pa-2 class="p-sort-select">
-              <v-select
-                :value="filter.order"
-                :label="$gettext('Sort Order')"
-                :menu-props="{ maxHeight: 400 }"
-                flat
-                solo
-                hide-details
-                color="secondary-dark"
-                background-color="secondary"
-                :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
-                @change="
-                  (v) => {
-                    updateQuery({ order: v });
-                  }
-                "
-              >
-              </v-select>
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-      </v-card>
+
+      <div :class="{ 'toolbar-expansion-panel--visible': expanded }" class="toolbar-expansion-panel">
+        <v-card flat color="secondary">
+          <v-card-text class="dense">
+            <v-row dense>
+              <v-col cols="12" sm="4" class="p-year-select">
+                <v-select
+                  :model-value="filter.year"
+                  :label="$gettext('Year')"
+                  :disabled="context === 'state'"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="yearOptions()"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      updateQuery({ year: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="4" class="p-category-select">
+                <v-select
+                  :model-value="filter.category"
+                  :label="$gettext('Category')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="categories"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      updateQuery({ category: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="4" class="p-sort-select">
+                <v-select
+                  :model-value="filter.order"
+                  :label="$gettext('Sort Order')"
+                  :menu-props="{ maxHeight: 400 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      updateQuery({ order: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </div>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
+    <v-container v-if="loading" fluid class="pa-6">
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+      <p-scroll
+          :hide-panel="hideExpansionPanel"
+          :load-more="loadMore"
+          :load-disabled="scrollDisabled"
+          :load-distance="scrollDistance"
+          :loading="loading">
+      </p-scroll>
 
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
-          <h3 class="body-2 ma-0 pa-0">
+        <v-alert v-if="results.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+          <h3 class="text-subtitle-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
+          <p class="mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
             <template v-if="staticFilter.type === 'album'">
               <translate>After selecting pictures from search results, you can add them to an album using the context menu.</translate>
@@ -138,9 +144,9 @@
           </p>
         </v-alert>
 
-        <v-layout row wrap class="search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(album, index) in results" :key="album.UID" xs6 sm4 md3 xlg2 xxl1 d-flex>
-            <v-card tile :data-uid="album.UID" style="user-select: none" class="result card" :class="album.classes(selection.includes(album.UID))" :to="album.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(album, index) in results" :key="album.UID" cols="6" sm="4" md="3" xl="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="album.UID" style="user-select: none" class="result card flex-grow-1" :class="album.classes(selection.includes(album.UID))" :to="album.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card" style="user-select: none"></div>
               <v-img
                 :src="album.thumbnailUrl('tile_500')"
@@ -148,63 +154,78 @@
                 :transition="false"
                 aspect-ratio="1"
                 style="user-select: none"
-                class="card darken-1 clickable"
+                class="card clickable"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon flat absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
-                  <v-icon color="white">share</v-icon>
+                <v-btn
+                  v-if="canShare && album.LinkCount > 0"
+                  :ripple="false"
+                  icon
+                  variant="text"
+                  position="absolute"
+                  class="action-share"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onShare($event, index)"
+                  @touchmove.stop.prevent
+                  @click.stop.prevent="onShare($event, index)"
+                >
+                  <v-icon color="white">mdi-share-variant</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">mdi-check-circle</v-icon>
+                  <v-icon color="white" class="select-off">mdi-radiobox-blank</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+                <v-btn :ripple="false" icon variant="text" position="absolute" class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                  <v-icon icon="mdi-star" color="favorite" class="select-on"></v-icon>
+                  <v-icon icon="mdi-star-outline" color="white" class="select-off"></v-icon>
                 </v-btn>
 
                 <v-btn
                   v-if="canManage && experimental && featPrivate && album.Private"
                   :ripple="false"
                   icon
-                  flat
-                  absolute
+                  variant="text"
+                  position="absolute"
                   class="input-private"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onEdit($event, index)"
                   @touchmove.stop.prevent
                   @click.stop.prevent="onEdit($event, index)"
                 >
-                  <v-icon color="white" class="select-on">lock</v-icon>
+                  <v-icon color="white" class="select-on">mdi-lock</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pl-3 pt-3 pr-3 pb-2 card-details" style="user-select: none">
+              <v-card-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
-                  <h3 class="body-2 mb-0">
-                    <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-                      {{ album.Title | truncate(80) }}
+                  <h3 class="text-subtitle-2 mb-0">
+                    <button v-if="album.Type !== 'month'" class="action-title-edit text-truncate d-block" :data-uid="album.UID" @click.stop.prevent="edit(album)">
+                      <!-- TODO: change this filter -->
+                      <!-- {{ album.Title | truncate(80) }} -->
+                      {{ album.Title }}
                     </button>
-                    <button v-else class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-                      {{ album.getDateString() | capitalize }}
+                    <button v-else class="action-title-edit text-capitalize" :data-uid="album.UID" @click.stop.prevent="edit(album)">
+                      {{ album.getDateString() }}
                     </button>
                   </h3>
                 </div>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
-                <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
-                  <button @click.exact="edit(album)">
-                    {{ album.Description | truncate(100) }}
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+                <div v-if="album.Description" class="text-caption mb-2" :title="$gettext('Description')">
+                  <button @click.exact="edit(album)" class="text-truncate d-block">
+                    <!-- TODO: change this filter -->
+                    <!-- {{ album.Description | truncate(100) }} -->
+                    {{ album.Description }}
                   </button>
                 </div>
 
-                <div v-else-if="album.Type === 'album'" class="caption mb-2">
+                <div v-else-if="album.Type === 'album'" class="text-caption mb-2">
                   <button v-if="album.PhotoCount === 1" @click.exact="edit(album)">
                     <translate>Contains one picture.</translate>
                   </button>
@@ -215,29 +236,31 @@
                     <translate>Add pictures from search results by selecting them.</translate>
                   </button>
                 </div>
-                <div v-else-if="album.Type === 'folder'" class="caption mb-2">
-                  <button @click.exact="edit(album)">
-/{{ album.Path | truncate(100) }}
+                <div v-else-if="album.Type === 'folder'" class="text-caption mb-2">
+                  <button @click.exact="edit(album)" class="text-truncate d-block">
+                    <!-- TODO: change this filter -->
+<!-- /{{ album.Path | truncate(100) }} -->
+/{{ album.Path }}
 </button>
                 </div>
-                <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
+                <div v-if="album.Category !== ''" class="text-caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
-                    <v-icon size="14">local_offer</v-icon>
+                    <v-icon size="14">mdi-tag</v-icon>
                     {{ album.Category }}
                   </button>
                 </div>
-                <div v-if="album.getLocation() !== ''" class="caption mb-2 d-inline-block">
+                <div v-if="album.getLocation() !== ''" class="text-caption mb-2 d-inline-block">
                   <button @click.exact="edit(album)">
-                    <v-icon size="14">location_on</v-icon>
+                    <v-icon size="14">mdi-map-marker</v-icon>
                     {{ album.getLocation() }}
                   </button>
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
-        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
-          <v-btn class="action-add" color="secondary" round @click.prevent="create">
+          </v-col>
+        </v-row>
+        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-center my-2">
+          <v-btn class="action-add" color="secondary" rounded @click.prevent="create">
             <translate>Add Album</translate>
           </v-btn>
         </div>
@@ -284,7 +307,7 @@ export default {
     const year = query["year"] ? parseInt(query["year"]) : "";
     const filter = { q, category, order, year };
     const settings = {};
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
 
     let categories = [{ value: "", text: this.$gettext("All Categories") }];
 
@@ -297,7 +320,7 @@ export default {
     }
 
     return {
-      searchExpanded: false,
+      expanded: false,
       experimental: this.$config.get("experimental") && !this.$config.ce(),
       canUpload: this.$config.allow("files", "upload") && features.upload,
       canShare: this.$config.allow("albums", "share") && features.share,
@@ -349,6 +372,9 @@ export default {
     };
   },
   computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
     context: function () {
       if (!this.staticFilter) {
         return "album";
@@ -384,12 +410,20 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
     this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.onConfigUpdated(data)));
   },
-  destroyed() {
+  beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
+    toggleExpansionPanel() {
+      this.expanded = !this.expanded;
+    },
+    hideExpansionPanel() {
+      if (this.expanded) {
+        this.expanded = false;
+      }
+    },
     onConfigUpdated(data) {
       if (!data || !data.config?.albumCategories) {
         return;
@@ -629,7 +663,7 @@ export default {
 
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -732,7 +766,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -747,6 +781,11 @@ export default {
 
       Album.search(params)
         .then((resp) => {
+          // Hide search toolbar expansion panel when matching albums were found.
+          if (this.offset === 0 && resp.count > 0) {
+            this.hideExpansionPanel();
+          }
+
           this.offset = resp.limit;
           this.results = resp.models;
 
@@ -764,7 +803,7 @@ export default {
             // this.$notify.info(this.$gettext('More than 20 albums found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }

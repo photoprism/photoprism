@@ -5,14 +5,14 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // CleanUpCommand configures the command name, flags, and action.
-var CleanUpCommand = cli.Command{
+var CleanUpCommand = &cli.Command{
 	Name:   "cleanup",
 	Usage:  "Removes orphaned index entries, sidecar and thumbnail files",
 	Flags:  cleanUpFlags,
@@ -20,7 +20,7 @@ var CleanUpCommand = cli.Command{
 }
 
 var cleanUpFlags = []cli.Flag{
-	cli.BoolFlag{
+	&cli.BoolFlag{
 		Name:  "dry",
 		Usage: "dry run, don't actually remove anything",
 	},

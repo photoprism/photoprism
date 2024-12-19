@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -16,7 +16,7 @@ import (
 )
 
 // IndexCommand registers the index cli command.
-var IndexCommand = cli.Command{
+var IndexCommand = &cli.Command{
 	Name:      "index",
 	Usage:     "Indexes original media files",
 	ArgsUsage: "[subfolder]",
@@ -25,17 +25,20 @@ var IndexCommand = cli.Command{
 }
 
 var indexFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:  "force, f",
-		Usage: "rescan all originals, including unchanged files",
+	&cli.BoolFlag{
+		Name:    "force",
+		Aliases: []string{"f"},
+		Usage:   "rescan all originals, including unchanged files",
 	},
-	cli.BoolFlag{
-		Name:  "archived, a",
-		Usage: "do not skip files belonging to archived photos",
+	&cli.BoolFlag{
+		Name:    "archived",
+		Aliases: []string{"a"},
+		Usage:   "do not skip files belonging to archived photos",
 	},
-	cli.BoolFlag{
-		Name:  "cleanup, c",
-		Usage: "remove orphan index entries and thumbnails",
+	&cli.BoolFlag{
+		Name:    "cleanup",
+		Aliases: []string{"c"},
+		Usage:   "remove orphan index entries and thumbnails",
 	},
 }
 

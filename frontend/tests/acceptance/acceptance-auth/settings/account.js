@@ -17,6 +17,7 @@ test.meta("testID", "account-001").meta({ type: "short", mode: "auth" })(
     async (t) => {
         await page.login("jane", "photoprism")
         await t
+            .click(Selector(".auth-links"))
             .typeText(page.passcodeInput, "123456", { replace: true })
             .click(account.confirm)
             .expect(page.passcodeInput.visible)
@@ -54,9 +55,9 @@ test.meta("testID", "account-002").meta({ type: "short", mode: "auth" })(
             .click(account.appAdd)
             .typeText(account.clientName, "M$@#y-app-passw*&^[]/'><ord", { replace: true })
             .click(account.clientScope)
-            .click(Selector("div").withText("Full Access").parent('div[role="listitem"]'))
+            .click(Selector("div").withText("Full Access").parent('div[role="option"]'))
             .click(account.clientExpires)
-            .click(Selector("div").withText("After 7 days").parent('div[role="listitem"]'))
+            .click(Selector("div").withText("After 7 days").parent('div[role="option"]'))
             .click(account.appGenerate)
             .typeText(account.password, "photoprism", { replace: true })
             .click(account.confirm);

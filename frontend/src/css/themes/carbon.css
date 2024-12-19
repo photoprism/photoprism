@@ -1,14 +1,14 @@
 /* Carbon Dark Theme */
 
 body.dark-theme.theme-carbon,
-.theme-carbon .v-content__wrap,
+.theme-carbon .v-main__wrap,
 .theme-carbon .p-page,
 .theme-carbon .form,
-.theme-carbon .v-content {
+.theme-carbon .v-main {
     background: #16141c !important;
 }
 
-.theme-carbon .application.theme--light,
+.theme-carbon .v-application.theme--light,
 #photoprism.theme-carbon .theme--light.v-small-dialog__content,
 #photoprism.theme-carbon .theme--light.v-sheet,
 #photoprism.theme-carbon .theme--light.v-card {
@@ -69,7 +69,7 @@ body.dark-theme.theme-carbon,
     color: #ffffff !important;
 }
 
-#photoprism.theme-carbon .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-carbon .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-carbon .accent--text {
     color: #D3CBFF !important;
 }
@@ -85,7 +85,7 @@ body.dark-theme.theme-carbon,
     color: #999 !important;
 }
 
-#photoprism.theme-carbon .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-carbon .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

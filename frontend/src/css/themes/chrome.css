@@ -1,17 +1,17 @@
 /* Chrome Dark Theme */
 
 body.dark-theme.theme-chrome,
-.theme-chrome .v-content__wrap,
+.theme-chrome .v-main__wrap,
 .theme-chrome .p-page,
 .theme-chrome .form,
-.theme-chrome .v-content {
+.theme-chrome .v-main {
     background: #1d1d1d !important;
 }
 
 #photoprism.theme-chrome .theme--light.v-small-dialog__content,
 #photoprism.theme-chrome .theme--light.v-sheet,
 #photoprism.theme-chrome .theme--light.v-card,
-.theme-chrome .application.theme--light {
+.theme-chrome .v-application.theme--light {
     background: #202020;
 }
 
@@ -25,8 +25,8 @@ body.dark-theme.theme-chrome,
 
 body.dark-theme #photoprism.theme-chrome,
 body.dark-theme #photoprism.theme-chrome .v-datatable a,
-body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panel .v-expansion-panel__container,
-body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs__bar .v-tabs__div {
+body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panels .v-expansion-panels__container,
+body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs-bar .v-tabs__div {
     color: #ffffff;
     caret-color: #ffffff;
     stroke: #ffffff;
@@ -34,8 +34,8 @@ body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs__bar .v-tabs__div 
 
 body.dark-theme #photoprism.theme-chrome .p-page a,
 body.dark-theme #photoprism.theme-chrome .theme--light,
-body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu.theme--dark.v-list,
-body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--dark.v-icon {
+body.dark-theme #photoprism.theme-chrome #p-navigation .nav-menu.theme--dark.v-list,
+body.dark-theme #photoprism.theme-chrome #p-navigation .nav-menu .theme--dark.v-icon {
     color: #d8d8d8;
     caret-color: #d8d8d8;
     stroke: #d8d8d8;
@@ -47,7 +47,7 @@ body.dark-theme #photoprism.theme-chrome .v-input--selection-controls__input .th
     stroke: #8e8e8e;
 }
 
-body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--dark.v-icon {
+body.dark-theme #photoprism.theme-chrome #p-navigation .nav-menu .theme--dark.v-icon {
     color: inherit;
 }
 
@@ -69,8 +69,8 @@ body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--
     color: rgba(255, 255, 255, 0.2)!important;
 }
 
-body.dark-theme #photoprism.theme-chrome #map .secondary-dark.theme--light,
-body.dark-theme #photoprism.theme-chrome #map .secondary-dark--text {
+body.dark-theme #photoprism.theme-chrome #map .surface-variant.theme--light,
+body.dark-theme #photoprism.theme-chrome #map .surface-variant--text {
     color: #000000!important;
     caret-color: #000000!important;
     stroke: #000000!important;
@@ -110,7 +110,7 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
     color: #ffffff !important;
 }
 
-#photoprism.theme-chrome .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-chrome .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-chrome .accent--text {
     color: #ffffff !important;
 }
@@ -126,7 +126,7 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
     color: #999 !important;
 }
 
-#photoprism.theme-chrome .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-chrome .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

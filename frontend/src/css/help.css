@@ -1,25 +1,24 @@
-#photoprism-help h3 {
-    margin: 1em 0 1em 0;
+.p-help .v-expansion-panel-title {
+    font-size: 0.875rem;
+    letter-spacing: normal;
+}
+
+.p-help h3 {
+    margin: 0 0 1em 0;
+    line-height: 1.25;
     padding: 0;
 }
 
-#photoprism-help p {
+.p-help p {
     margin: 0 0 1em 0;
     padding: 0;
 }
 
-#photoprism p a.highlight,
-#photoprism #photoprism-help p a{
+.p-help a.text-link {
     text-decoration: none;
-    color: #4a148c;
+    color: rgb(var(--v-theme-primary, #9E7BEA)) !important;
 }
 
-#photoprism p a.highlight:hover,
-#photoprism #photoprism-help p a:hover{
+.p-help a.text-link:hover {
     text-decoration: underline !important;
-}
-
-#photoprism .v-alert a {
-    color: inherit;
-    text-decoration: none;
 }

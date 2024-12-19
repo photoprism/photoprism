@@ -1,13 +1,13 @@
 package commands
 
 import (
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 )
 
 // ConnectCommand configures the command name, flags, and action.
-var ConnectCommand = cli.Command{
+var ConnectCommand = &cli.Command{
 	Name:      "connect",
 	Usage:     "Connects your membership account",
 	ArgsUsage: "[activation code]",

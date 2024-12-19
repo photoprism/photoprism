@@ -23,10 +23,10 @@ Additional information can be found in our Developer Guide:
 
 */
 
-@import url("vendor/icons/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
-@import url("typography.css");
+@import url("text.css");
+@import url("controls.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
 @import url("themes.css");
@@ -45,7 +45,7 @@ Additional information can be found in our Developer Guide:
 @import url("help.css");
 @import url("auth.css");
 @import url("layout.css");
-@import url("rtl.css");
+@import url("vuetify.css");
 
 /* Core Element Styles */
 
@@ -96,25 +96,53 @@ main {
 
 /* General App Styles */
 
-#photoprism .v-badge__badge {
-    font-size: 12px;
-    height: 19px;
-    width: 19px;
-    right: -20px;
-    top: -8px;
+.v-autocomplete__selection {
+    min-width: 100%;
 }
 
-#photoprism .clickable {
+.v-slide-group {
+    overflow: initial;
+}
+
+.v-expansion-panel-text__wrapper {
+    padding: 0;
+}
+
+.clickable {
     cursor: pointer;
 }
 
-#photoprism button:focus {
+.p-scroll {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    padding: .4rem .8rem;
+    margin: auto;
+    opacity: 0.87;
+    color: rgb(var(--v-theme-on-button, #333333));
+    background-color: rgb(var(--v-theme-button, #ffffff));
+    box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
+    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4,0,.2,1), opacity 125ms;
+    -webkit-tap-highlight-color: transparent;
+    border: 0;
+    border-radius: 1.6rem;
+    cursor: pointer;
+    display: block;
+    font-family: inherit;
+    font-size: .825rem;
     outline: none;
+    user-select: none;
+    text-decoration: none;
+    z-index: 2;
 }
 
-#photoprism .p-scroll-top {
-    top: 64px;
-    right: 8px;
+.p-scroll svg {
+    display: inline-block;
+    vertical-align: -.4em;
+    fill: currentcolor;
+    height: 1.25rem;
+    width: 1.25rem;
 }
 
 #photoprism .float-left {
@@ -139,36 +167,13 @@ main {
     user-select: text !important;
 }
 
-#photoprism .p-page pre {
+.p-page pre {
     overflow: auto;
+    font-size: 0.875rem
 }
 
-#photoprism .body-1,
-#photoprism .body-2,
-#photoprism .break-word,
-#photoprism .v-datatable td,
-#photoprism .v-card button,
-#photoprism .v-card .caption {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-}
-
-#photoprism.is-rtl .v-card .caption {
+.is-rtl .v-card .caption {
     text-align: right;
-}
-
-#photoprism .v-tabs .v-badge__badge {
-    right: -22px;
-    font-size: 9px;
-    width: auto;
-    padding: 0 0.2rem;
-    min-width: 1.1rem;
-    height: 1.1rem;
 }
 
 ol, ul {
@@ -180,7 +185,7 @@ ol, ul {
     padding: 1px 0 1px 8px !important;
 }
 
-body #photoprism .v-list__tile .v-icon {
+body #photoprism .v-list__item .v-icon {
     color: inherit;
 }
 

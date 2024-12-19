@@ -251,7 +251,7 @@ zip-nasnet:
 zip-nsfw:
 	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
-	(cd frontend &&	env NODE_ENV=production npm run build)
+	(cd frontend &&	env BUILD_ENV=production NODE_ENV=production npm run build)
 build-go: build-develop
 build-develop:
 	rm -f $(BINARY_NAME)
@@ -301,10 +301,10 @@ build-tensorflow-arm64:
 	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
 	docker run -ti photoprism/tensorflow:arm64 bash
 watch-js:
-	(cd frontend &&	env NODE_ENV=development npm run watch)
+	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
 test-js:
 	$(info Running JS unit tests...)
-	(cd frontend && env TZ=UTC NODE_ENV=development BABEL_ENV=test npm run test)
+	(cd frontend && env TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
