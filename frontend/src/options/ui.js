@@ -10,7 +10,7 @@ export const colorsDark = {
   "surface-variant": "#7E4FE3",
   "on-surface-variant": "#f6f7e8",
   card: "#171718",
-  table: "#1F2022", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
+  table: "#1F2022",
   button: "#1D1E1F",
   primary: "#9E7BEA",
   highlight: "#5F1DB7",
