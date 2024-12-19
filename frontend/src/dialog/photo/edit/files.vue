@@ -315,7 +315,7 @@ export default {
         dialog: false,
         file: null,
       },
-      features: this.$config.settings().features,
+      features: this.$config.getSettings().features,
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),

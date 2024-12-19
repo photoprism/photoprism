@@ -254,8 +254,8 @@ export default {
     },
   },
   data() {
-    const featPlaces = this.$config.settings().features.places;
-    const featPrivate = this.$config.settings().features.private;
+    const featPlaces = this.$config.getSettings().features.places;
+    const featPrivate = this.$config.getSettings().features.private;
     const featDownload = this.$config.feature('download');
     const input = new Input();
     const debug = this.$config.get("debug");

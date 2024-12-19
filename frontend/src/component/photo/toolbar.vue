@@ -6,8 +6,8 @@
           :model-value="filter.q"
           hide-details
           clearable
-          overflow
           single-line
+          overflow
           rounded
           variant="solo-filled"
           :density="density"
@@ -301,7 +301,7 @@ export default {
     },
   },
   data() {
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
     const readonly = this.$config.get("readonly");
 
     return {
@@ -313,7 +313,7 @@ export default {
       canUpload: !readonly && !this.embedded && this.$config.allow("files", "upload") && features.upload,
       canDelete: !readonly && !this.embedded && this.$config.allow("photos", "delete") && features.delete,
       canAccessLibrary: this.$config.allow("photos", "access_library"),
-      listView: this.$config.settings()?.search?.listView,
+      listView: this.$config.getSettings()?.search?.listView,
       all: {
         countries: [{ ID: "", Name: this.$gettext("All Countries") }],
         cameras: [{ ID: 0, Name: this.$gettext("All Cameras") }],
@@ -342,7 +342,7 @@ export default {
       return this.all.categories.concat(this.config.categories);
     },
     viewOptions() {
-      if (this.$config.settings()?.search?.listView) {
+      if (this.$config.getSettings()?.search?.listView) {
         return [
           { value: "mosaic", text: this.$gettext("Mosaic") },
           { value: "cards", text: this.$gettext("Cards") },

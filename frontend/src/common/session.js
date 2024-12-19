@@ -400,7 +400,7 @@ export default class Session {
     this.reset();
 
     return Api.post("session", { username, password, code, token }).then((resp) => {
-      const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
+      const reload = this.config.getLanguageLocale() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.onLogin();
       return Promise.resolve(reload);

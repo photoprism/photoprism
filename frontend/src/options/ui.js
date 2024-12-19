@@ -61,21 +61,20 @@ export const variablesDark = {
   "theme-on-code": "#CCCCCC",
 };
 
-/* Light Theme Presets */
-
 export const light = "light";
 
 export const colorsLight = {
-  background: "#f7f8fa",
-  surface: "#e4e8f0",
+  background: "#FFFFFF",
+  surface: "#FFFFFF",
   "on-surface": "#1e1e1f",
-  "surface-bright": "#cbced6",
-  "surface-variant": "#878787",
-  "on-surface-variant": "#f6f7e8",
+  "surface-bright": "#FFFFFF",
+  "surface-light": "#EEEEEE",
+  "surface-variant": "#424242",
+  "on-surface-variant": "#EEEEEE",
   card: "#a8a8a8",
   button: "#474b4d",
   table: "#dddcda",
-  primary: "#353839",
+  primary: "#1867C0",
   highlight: "#3d3f40",
   selected: "#c3c3c3",
   secondary: "#e2e7ee",
@@ -102,13 +101,25 @@ export const colorsLight = {
 export const variablesLight = {
   ...variablesDark,
   ...{
-    "overlay-color": "#e4e8f0",
-    "border-color": "#ffffff",
-    "border-opacity": 0.08,
-    "high-emphasis-opacity": 0.96,
-    "medium-emphasis-opacity": 0.7,
-    "hover-opacity": 0.08,
-    "focus-opacity": 0.1,
+    "border-color": "#000000",
+    "border-opacity": 0.12,
+    "high-emphasis-opacity": 0.95,
+    "medium-emphasis-opacity": 0.75,
+    "label-opacity": 0.8,
+    "disabled-opacity": 0.75,
+    "idle-opacity": 0.1,
+    "hover-opacity": 0.019,
+    "focus-opacity": 0.022,
+    "selected-opacity": 0.08,
+    "activated-opacity": 0,
+    "pressed-opacity": 0.16,
+    "dragged-opacity": 0.08,
+    "overlay-color": "#f2f2f2",
+    "overlay-opacity": 0.42,
+    "theme-kbd": "#212529",
+    "theme-on-kbd": "#FFFFFF",
+    "theme-code": "#F5F5F5",
+    "theme-on-code": "#000000",
   },
 };
 

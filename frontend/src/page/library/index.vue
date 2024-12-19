@@ -89,7 +89,7 @@ export default {
 
     return {
       ready: !this.$config.loading(),
-      settings: new Settings(this.$config.settings()),
+      settings: new Settings(this.$config.getSettings()),
       readonly: this.$config.get("readonly"),
       config: this.$config.values,
       isAdmin: this.$session.isAdmin(),
@@ -117,7 +117,7 @@ export default {
   methods: {
     load() {
       this.$config.load().then(() => {
-        this.settings.setValues(this.$config.settings());
+        this.settings.setValues(this.$config.getSettings());
         this.dirs = [this.root];
 
         if (this.settings.index.path !== this.root.path) {

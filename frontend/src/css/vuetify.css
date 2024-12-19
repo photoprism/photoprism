@@ -13,11 +13,13 @@
     display:none !important;
 }
 
+/* Themes */
+
 body.dark-theme {
     background: rgb(var(--v-theme-background, #2f3031)) !important;
 }
 
-/* Card Styles */
+/* Cards */
 
 .v-card-title {
     padding: 12px 20px;
@@ -31,7 +33,7 @@ body.dark-theme {
     padding: 0 8px;
 }
 
-/* Dialog Styles */
+/* Dialogs */
 
 .v-overlay.v-dialog>.v-overlay__content>.v-card,
 .v-overlay.v-dialog>.v-overlay__content>form>.v-card {
@@ -96,14 +98,14 @@ body.dark-theme {
     min-width: 75px;
 }
 
-/* List Styles */
+/* Lists */
 
 .v-menu>.v-overlay__content>.v-list:not(.v-list--nav) {
     padding: 0;
     opacity: 0.97;
 }
 
-/* Input Styles */
+/* Form Inputs */
 
 .v-selection-control--density-compact .v-label {
     margin-inline-start: .5em;
@@ -218,7 +220,7 @@ body.dark-theme {
     box-shadow: 0 3px 5px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 6px 10px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 18px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
 }
 
-/* Badge Styles */
+/* Badges */
 
 .v-badge .v-badge__badge {
     font-size: 0.75rem;
@@ -235,7 +237,7 @@ body.dark-theme {
     top: -8px;
 }
 
-/* Table Styles */
+/* Tables */
 
 .v-table {
     background: rgba(var(--v-theme-table, --v-theme-card));
@@ -260,7 +262,7 @@ body.dark-theme {
     border-radius: 6px;
 }
 
-/* Grid Styles */
+/* Flex Grids */
 
 .v-row {
     margin: 0;

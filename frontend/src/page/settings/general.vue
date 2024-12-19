@@ -416,14 +416,14 @@ export default {
       isSuperAdmin: this.$session.isSuperAdmin(),
       isPublic: this.$config.get("public"),
       config: this.$config.values,
-      settings: new Settings(this.$config.settings()),
+      settings: new Settings(this.$config.getSettings()),
       options: options,
       busy: this.$config.loading(),
       subscriptions: [],
       themes: [],
       currentTheme: this.$config.themeName,
       mapsStyle: options.MapsStyle(this.$config.get("experimental")),
-      currentMapsStyle: this.$config.settings().maps.style,
+      currentMapsStyle: this.$config.getSettings().maps.style,
       languages: options.Languages(),
       dialog: {
         sponsor: false,
@@ -444,7 +444,7 @@ export default {
       this.$config.load().then(() => {
         this.themes = themes.Translated();
         this.mapsStyle = options.MapsStyle(this.$config.get("experimental"));
-        this.settings.setValues(this.$config.settings());
+        this.settings.setValues(this.$config.getSettings());
         this.busy = false;
       });
     },

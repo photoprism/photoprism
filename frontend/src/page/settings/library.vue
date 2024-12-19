@@ -137,7 +137,7 @@ export default {
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,
-      settings: new Settings(this.$config.settings()),
+      settings: new Settings(this.$config.getSettings()),
       options: options,
       busy: this.$config.loading(),
       subscriptions: [],
@@ -155,7 +155,7 @@ export default {
   methods: {
     load() {
       this.$config.load().then(() => {
-        this.settings.setValues(this.$config.settings());
+        this.settings.setValues(this.$config.getSettings());
         this.busy = false;
       });
     },

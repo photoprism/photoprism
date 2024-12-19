@@ -65,7 +65,7 @@ export default {
     },
   },
   data() {
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
 
     return {
       canDelete: this.$config.allow("albums", "delete"),

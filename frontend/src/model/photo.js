@@ -705,7 +705,7 @@ export class Photo extends RestModel {
   }
 
   downloadAll() {
-    const s = config.settings();
+    const s = config.getSettings();
 
     if (!s || !s.features || !s.download || !s.features.download || s.download.disabled) {
       console.log("download: disabled in settings", s.features, s.download);

@@ -99,7 +99,7 @@ export default {
 
     return {
       ready: !this.$config.loading(),
-      settings: new Settings(this.$config.settings()),
+      settings: new Settings(this.$config.getSettings()),
       started: false,
       busy: false,
       loading: false,
@@ -122,7 +122,7 @@ export default {
   methods: {
     load() {
       this.$config.load().then(() => {
-        this.settings.setValues(this.$config.settings());
+        this.settings.setValues(this.$config.getSettings());
         this.dirs = [this.root];
 
         if (this.settings.import.path !== this.root.path) {

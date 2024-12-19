@@ -25,7 +25,7 @@ export function createGettext($config) {
   gettext = vue3Gettext({
     translations: $config.translations,
     silent: true, // !config.values.debug,
-    defaultLanguage: $config.getLanguage(),
+    defaultLanguage: $config.getLanguageLocale(),
     // autoAddKeyAttributes: true,
   });
 

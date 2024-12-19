@@ -87,7 +87,7 @@ describe("common/config", () => {
   });
 
   it("should return settings", () => {
-    const result = defaultConfig.settings();
+    const result = defaultConfig.getSettings();
     assert.equal(result.ui.theme, "default");
     assert.equal(result.ui.language, "en");
   });
@@ -143,7 +143,7 @@ describe("common/config", () => {
 
   it("should return if language is rtl", () => {
     const myConfig = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
-    const result = myConfig.rtl();
+    const result = myConfig.isRtl();
     assert.equal(result, false);
     const newValues = {
       Debug: true,
@@ -157,12 +157,12 @@ describe("common/config", () => {
       },
     };
     myConfig.setValues(newValues);
-    const result2 = myConfig.rtl();
+    const result2 = myConfig.isRtl();
     assert.equal(result2, true);
     const values2 = { siteTitle: "Foo" };
     const storage = new StorageShim();
     const config3 = new Config(storage, values2);
-    const result3 = config3.rtl();
+    const result3 = config3.isRtl();
     assert.equal(result3, false);
   });
 

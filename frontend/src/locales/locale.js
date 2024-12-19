@@ -2,8 +2,8 @@ import { config } from "app/session";
 import { T } from "common/gettext";
 
 export const Locale = () => {
-  const locale = config.getLanguage();
-  const isRTL = config.rtl();
+  const locale = config.getLanguageLocale();
+  const isRTL = config.isRtl();
 
   return {
     locale: locale,

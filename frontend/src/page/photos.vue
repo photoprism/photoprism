@@ -72,7 +72,7 @@ export default {
       q: q,
     };
 
-    const settings = this.$config.settings();
+    const settings = this.$config.getSettings();
     const features = settings.features;
 
     if (settings) {
@@ -132,7 +132,7 @@ export default {
     $route() {
       const query = this.$route.query;
 
-      const settings = this.$config.settings();
+      const settings = this.$config.getSettings();
 
       if (settings.features) {
         if (settings.features.private) {

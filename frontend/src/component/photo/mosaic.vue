@@ -143,7 +143,7 @@ export default {
   },
   data() {
     return {
-      hidePrivate: this.$config.settings().features.private,
+      hidePrivate: this.$config.getSettings().features.private,
       input: new Input(),
       firstVisibleElementIndex: 0,
       lastVisibileElementIndex: 0,

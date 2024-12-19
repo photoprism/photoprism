@@ -144,7 +144,7 @@ export default {
       return this.$gettext("Edit Photo");
     },
     isPrivate() {
-      if (this.model && this.model.Private && this.$config.settings().features.private) {
+      if (this.model && this.model.Private && this.$config.getSettings().features.private) {
         return this.model.Private;
       }
 

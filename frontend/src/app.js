@@ -39,7 +39,7 @@ import PhotoPrism from "app.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "app/routes";
 import { config, session } from "app/session";
-import { Settings } from "luxon";
+import { Settings as Luxon } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
 import { createApp } from "vue";
@@ -51,7 +51,7 @@ import * as themes from "options/themes";
 import Hls from "hls.js";
 import "common/maptiler-lang";
 import { createGettext, T } from "common/gettext";
-import { Locale } from "locales/vuetify";
+import { Locale } from "locales/locale";
 import * as offline from "@lcdp/offline-plugin/runtime";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
@@ -72,10 +72,10 @@ config.update().finally(() => {
 
   let app = createApp(PhotoPrism);
   // Initialize language and detect alignment.
-  app.config.globalProperties.$language = config.getLanguage();
-  Settings.defaultLocale = config.getLanguage().substring(0, 2);
+  app.config.globalProperties.$language = config.getLanguageLocale();
+  Luxon.defaultLocale = config.getLanguageCode();
   // Detect right-to-left languages such as Arabic and Hebrew
-  const rtl = config.rtl();
+  const rtl = config.isRtl();
 
   // HTTP Live Streaming (video support).
   window.Hls = Hls;

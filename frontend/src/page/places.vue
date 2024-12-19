@@ -1,6 +1,6 @@
 <template>
   <v-container :class="$config.aclClasses('places')" fluid class="pa-0 p-page p-page-places fill-height">
-    <div style="width: 100%; height: 100%; position: relative">
+    <div class="places">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field
@@ -10,21 +10,22 @@
             clearable
             flat
             single-line
+            overflow
+            rounded
             validate-on="blur"
             class="input-search pa-0"
-            density="comfortable"
+            :density="$vuetify.display.xs ? 'compact' : 'comfortable'"
             :placeholder="$gettext('Search')"
             prepend-inner-icon="mdi-magnify"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
-            color="#f1f1f1"
             @click:clear="clearQuery"
             @keyup.enter="formChange"
           ></v-text-field>
         </div>
       </div>
-      <div id="map" ref="map" style="width: 100%; height: 100%"></div>
+      <div ref="map" class="map-container"></div>
       <div v-if="showCluster" class="cluster-control">
         <v-card class="cluster-control-container">
           <p-page-photos ref="cluster" :static-filter="cluster" :on-close="closeCluster" :embedded="true" />
@@ -58,7 +59,7 @@ export default {
       s: this.scope(),
     };
 
-    const settings = this.$config.settings();
+    const settings = this.$config.getSettings();
 
     if (settings) {
       const features = settings.features;
@@ -73,6 +74,7 @@ export default {
     }
 
     return {
+      isRtl: this.$config.isRtl(),
       canSearch: this.$config.allow("places", "search"),
       initialized: false,
       map: null,
@@ -152,7 +154,7 @@ export default {
         mapKey = this.$config.get("mapKey").replace(/[^a-z0-9]/gi, "");
       }
 
-      const settings = this.$config.settings();
+      const settings = this.$config.getSettings();
       const features = settings.features;
 
       if (settings) {
@@ -223,24 +225,23 @@ export default {
       }
 
       let mapOptions = {
-        container: "map",
+        container: this.$refs.map,
         style: "https://api.maptiler.com/maps/" + this.style + "/style.json?key=" + mapKey,
         glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
-        attributionControl: { compact: false, customAttribution: this.attribution },
+        attributionControl: { compact: true },
         zoom: 0,
       };
 
       if (this.style === "" || this.style === "default") {
         mapOptions = {
-          container: "map",
+          container: this.$refs.map,
           style: "https://cdn.photoprism.app/maps/default.json",
           glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
-          attributionControl: true,
           zoom: 0,
         };
       } else if (this.style === "low-resolution") {
         mapOptions = {
-          container: "map",
+          container: this.$refs.map,
           style: {
             version: 8,
             sources: {
@@ -565,9 +566,9 @@ export default {
       this.map = new maplibregl.Map(this.options);
       this.map.setLanguage(this.$config.values.settings.ui.language.split("-")[0]);
 
-      const controlPos = this.$rtl ? "top-left" : "top-right";
+      const controlPos = "top-right";
 
-      // Show map navigation control.
+      // Add map navigation control.
       this.map.addControl(
         new maplibregl.NavigationControl({
           visualizePitch: true,
@@ -577,7 +578,7 @@ export default {
         controlPos
       );
 
-      // Show terrain control, if supported.
+      // Add terrain control, if supported.
       if (this.terrain[this.style]) {
         this.map.addControl(
           new maplibregl.TerrainControl({
@@ -587,10 +588,10 @@ export default {
         );
       }
 
-      // Show fullscreen control.
+      // Add fullscreen control.
       this.map.addControl(new maplibregl.FullscreenControl({ container: document.querySelector("body") }), controlPos);
 
-      // Show locate control.
+      // Add locate position control.
       this.map.addControl(
         new maplibregl.GeolocateControl({
           positionOptions: {
@@ -601,15 +602,21 @@ export default {
         controlPos
       );
 
-      // Map style switcher control.
+      // Add style switcher control.
       if (this.mapStyles.length > 1) {
         this.map.addControl(new MapStyleControl(this.mapStyles, this.style, this.setStyle), controlPos);
       }
 
-      // Show map scale control.
-      this.map.addControl(new maplibregl.ScaleControl({}), this.$rtl ? "bottom-right" : "bottom-left");
+      // Add map scale control.
+      this.map.addControl(new maplibregl.ScaleControl({}), "bottom-left");
 
       this.map.on("load", () => this.onMapLoad());
+
+      const attrCtrl = this.$refs.map.querySelector(".maplibregl-ctrl-attrib.maplibregl-compact-show");
+
+      if (attrCtrl) {
+        attrCtrl.classList?.remove("maplibregl-compact-show");
+      }
     },
     getClusterFeatures(clusterId, limit, callback) {
       this.map

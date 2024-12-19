@@ -52,7 +52,7 @@ export default {
       canManage: this.$config.allow("people", "manage"),
       canDownload: this.$config.allow("people", "download") && this.$config.feature("download"),
       canAddAlbums: this.$config.allow("albums", "create") && this.$config.feature("albums"),
-      features: this.$config.settings().features,
+      features: this.$config.getSettings().features,
       expanded: false,
       dialog: {
         delete: false,

@@ -112,7 +112,7 @@ export default {
         Name: this.$gettext("All Countries"),
       },
     ].concat(this.$config.get("countries"));
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
     return {
       expanded: false,
       canUpload: this.$config.allow("files", "upload") && features.upload,
@@ -125,7 +125,7 @@ export default {
       collectionTitle: this.$route.meta?.collectionTitle ? this.$route.meta.collectionTitle : this.$gettext("Albums"),
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       navIcon: this.$rtl ? "mdi-chevron-left" : "mdi-chevron-right",
-      listView: this.$config.settings()?.search?.listView,
+      listView: this.$config.getSettings()?.search?.listView,
       dialog: {
         share: false,
         upload: false,

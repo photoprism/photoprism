@@ -110,7 +110,7 @@
                       </v-btn>
                       <v-btn color="highlight" variant="flat" :disabled="loginDisabled" :block="$vuetify.display.xs" class="action-confirm" @click.stop.prevent="onLogin">
                         <translate>Sign in</translate>
-                        <v-icon :icon="$config.rtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
+                        <v-icon :icon="$config.isRtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
                       </v-btn>
                     </div>
                     <div v-if="enterCode" :class="{ clickable: !useRecoveryCode }" class="auth-links text-center opacity-80" @click.stop.prevent="onUseRecoveryCode">
@@ -164,7 +164,7 @@ export default {
       wallpaperUri: this.$config.values.wallpaperUri,
       registerUri: this.$config.values.registerUri,
       passwordResetUri: this.$config.values.passwordResetUri,
-      rtl: this.$config.rtl(),
+      rtl: this.$config.isRtl(),
     };
   },
   computed: {

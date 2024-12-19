@@ -61,7 +61,7 @@ export default {
     },
   },
   data() {
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
 
     return {
       selection: this.$clipboard.selection,

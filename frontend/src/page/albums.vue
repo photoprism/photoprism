@@ -307,7 +307,7 @@ export default {
     const year = query["year"] ? parseInt(query["year"]) : "";
     const filter = { q, category, order, year };
     const settings = {};
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
 
     let categories = [{ value: "", text: this.$gettext("All Categories") }];
 
