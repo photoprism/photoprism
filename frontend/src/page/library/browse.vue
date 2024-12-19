@@ -179,7 +179,7 @@ export default {
       let result = [];
       let path = "/index/files";
 
-      const crumbs = this.path.split("/");
+      const crumbs = [...this.path];
 
       crumbs.forEach((dir) => {
         if (dir) {
