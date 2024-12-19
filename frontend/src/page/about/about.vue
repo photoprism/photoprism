@@ -5,7 +5,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
+      <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info mx-2" :title="$gettext('Learn more')">
         <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
       </v-btn>
     </v-toolbar>

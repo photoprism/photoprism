@@ -19,6 +19,13 @@ body.dark-theme {
     background: rgb(var(--v-theme-background, #2f3031)) !important;
 }
 
+/* Alerts */
+
+.v-alert a {
+    color: inherit;
+    text-decoration: none;
+}
+
 /* Cards */
 
 .v-card-title {

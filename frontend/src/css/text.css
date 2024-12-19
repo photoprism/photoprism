@@ -49,6 +49,14 @@ body #app,
     font-feature-settings: 'kern', 'liga';
 }
 
+.text-ltr {
+    direction: ltr;
+}
+
+.text-rtl {
+    direction: rtl;
+}
+
 @media (min-width: 600px) {
     .text-columns {
         column-count: 2;
