@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 13:26+0000\n"
+"PO-Revision-Date: 2024-12-20 01:21+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -11,36 +11,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales/locale.js:81
 msgid "{0} appended action"
-msgstr ""
+msgstr "{0} जोड़ी गई कार्रवाई"
 
 #: src/locales/locale.js:85
 msgid "{0} files"
-msgstr ""
+msgstr "{0} फ़ाइलें"
 
 #: src/locales/locale.js:86
 msgid "{0} files ({1} in total)"
-msgstr ""
+msgstr "{0} फ़ाइलें (कुल {1})"
 
 #: src/locales/locale.js:75
 msgid "{0} more"
-msgstr ""
+msgstr "{0} अधिक"
 
 #: src/locales/locale.js:80
 msgid "{0} prepended action"
-msgstr ""
+msgstr "{0} पूर्वनिर्धारित कार्रवाई"
 
 #: src/locales/locale.js:55
 msgid "{0} selected"
-msgstr ""
+msgstr "{0} चयनित"
 
 #: src/locales/locale.js:49
 msgid "{0}-{1} of {2}"
-msgstr ""
+msgstr "{0}-{1} में से {2}"
 
 #: src/page/albums.vue:525
 msgid "%{n} albums found"
@@ -141,15 +141,15 @@ msgstr "सक्रिय"
 
 #: src/locales/locale.js:36
 msgid "Activate to remove sorting."
-msgstr ""
+msgstr "सॉर्टिंग हटाने के लिए सक्रिय करें।"
 
 #: src/locales/locale.js:38
 msgid "Activate to sort ascending."
-msgstr ""
+msgstr "आरोही क्रम में क्रमबद्ध करने के लिए सक्रिय करें।"
 
 #: src/locales/locale.js:37
 msgid "Activate to sort descending."
-msgstr ""
+msgstr "अवरोही क्रम में क्रमबद्ध करने के लिए सक्रिय करें।"
 
 #: src/page/connect.vue:367
 msgid "Activation Code"
@@ -259,7 +259,7 @@ msgstr "एल्बम हटाए गए"
 
 #: src/locales/locale.js:44
 msgid "All"
-msgstr ""
+msgstr "सभी"
 
 #: src/page/albums.vue:383
 msgid "All %{n} albums loaded"
@@ -328,7 +328,7 @@ msgstr "ऊंचाई (एम)"
 
 #: src/locales/locale.js:94
 msgid "AM"
-msgstr ""
+msgstr "पूर्वाह्न"
 
 #: src/component/navigation.vue:89 src/component/navigation.vue:87
 #: src/component/photo/cards.vue:223 src/component/photo/cards.vue:362
@@ -434,7 +434,7 @@ msgstr "पीछे"
 
 #: src/component/scroll.vue:4
 msgid "Back to top"
-msgstr ""
+msgstr "शीर्ष पर वापस जाएं"
 
 #: src/page/settings/advanced.vue:66 src/page/settings/advanced.vue:2
 msgid "Backup"
@@ -442,7 +442,7 @@ msgstr "बैकअप"
 
 #: src/locales/locale.js:18
 msgid "Badge"
-msgstr ""
+msgstr "बिल्ला"
 
 #: src/page/about/about.vue:24 src/page/about/about.vue:3
 #: src/page/about/about.vue:26 src/page/about/about.vue:5
@@ -490,7 +490,7 @@ msgstr "छवि वर्गीकरण लेबल ब्राउज़ �
 
 #: src/locales/locale.js:91
 msgid "Browse Files"
-msgstr ""
+msgstr "फ़ाइलों को ब्राउज़ करें"
 
 #: src/page/settings/general.vue:449
 msgid "Browse indexed files and folders in Library."
@@ -564,7 +564,7 @@ msgstr "पत्ते"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr ""
+msgstr "{1} में से {0} कैरोसेल स्लाइड"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -622,7 +622,7 @@ msgstr "साफ - सफाई"
 
 #: src/locales/locale.js:79
 msgid "Clear {0}"
-msgstr ""
+msgstr "साफ़ करें {0}"
 
 #: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:43
 msgid "Client"
@@ -925,7 +925,7 @@ msgstr "डिस्कवर"
 
 #: src/locales/locale.js:21
 msgid "Dismiss"
-msgstr ""
+msgstr "नकार देना"
 
 #: src/dialog/admin/users/add.vue:124 src/dialog/admin/users/edit.vue:176
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:160
@@ -993,7 +993,7 @@ msgstr "गुणवत्ता फ़िल्टर"
 
 #: src/locales/locale.js:89
 msgid "Drag and drop files here"
-msgstr ""
+msgstr "फ़ाइलों को यहां खींचें और छोड़ें"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1065,11 +1065,11 @@ msgstr "दो-कारक प्रमाणीकरण सक्षम क�
 
 #: src/locales/locale.js:61 src/locales/locale.js:63
 msgid "Enter date"
-msgstr ""
+msgstr "तारीख दर्ज करें"
 
 #: src/locales/locale.js:58
 msgid "Enter dates"
-msgstr ""
+msgstr "तारीखें दर्ज करें"
 
 #: src/dialog/account/passcode.vue:48 src/dialog/account/passcode.vue:13
 #: src/page/auth/login.vue:13 src/page/auth/login.vue:2
@@ -1234,7 +1234,7 @@ msgstr "क्रमिक नाम वाली फाइलें जैस�
 
 #: src/locales/locale.js:47 src/locales/locale.js:105
 msgid "First page"
-msgstr ""
+msgstr "पहला पृष्ठ"
 
 #: src/dialog/photo/edit/details.vue:438
 msgid "Focal Length"
@@ -1301,7 +1301,7 @@ msgstr "वैश्विक विकल्प"
 
 #: src/locales/locale.js:103
 msgid "Go to page {0}"
-msgstr ""
+msgstr "पृष्ठ {0} पर जाएं"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -1489,7 +1489,7 @@ msgstr "मद"
 
 #: src/locales/locale.js:43
 msgid "Items per page:"
-msgstr ""
+msgstr "प्रति पृष्ठ आइटम:"
 
 #: src/page/settings/advanced.vue:548
 msgid "JPEG Quality: %{n}"
@@ -1540,7 +1540,7 @@ msgstr "आखरी लॉगइन"
 
 #: src/locales/locale.js:48 src/locales/locale.js:106
 msgid "Last page"
-msgstr ""
+msgstr "अंतिम पृष्ठ"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1623,15 +1623,15 @@ msgstr "लाइव तस्वीरें"
 
 #: src/locales/locale.js:120
 msgid "Load more"
-msgstr ""
+msgstr "और लोड करें"
 
 #: src/locales/locale.js:28
 msgid "Loading items..."
-msgstr ""
+msgstr "आइटम लोड हो रहे हैं..।"
 
 #: src/locales/locale.js:118
 msgid "Loading..."
-msgstr ""
+msgstr "लोड हो रहा है..।"
 
 #: src/options/admin.js:31 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
@@ -1823,15 +1823,15 @@ msgstr "नवीनतम पहले"
 
 #: src/locales/locale.js:110
 msgid "Next"
-msgstr ""
+msgstr "अगला"
 
 #: src/locales/locale.js:45 src/locales/locale.js:101
 msgid "Next page"
-msgstr ""
+msgstr "अगला पृष्ठ"
 
 #: src/locales/locale.js:69
 msgid "Next visual"
-msgstr ""
+msgstr "अगला दृश्य"
 
 #: src/dialog/people/merge.vue:9 src/dialog/photo/archive.vue:9
 #: src/dialog/photo/edit/info.vue:367 src/dialog/photo/edit/info.vue:390
@@ -1846,7 +1846,7 @@ msgstr "कोई एल्बम नहीं मिला"
 
 #: src/locales/locale.js:66
 msgid "No data available"
-msgstr ""
+msgstr "कोई डेटा मौजूद नहीं"
 
 #: src/dialog/photo/edit/labels.vue:60 src/page/labels.vue:38
 #: src/page/labels.vue:443
@@ -1855,11 +1855,11 @@ msgstr "कोई लेबल नहीं मिला"
 
 #: src/locales/locale.js:27
 msgid "No matching records found"
-msgstr ""
+msgstr "कोई मेल खाता रिकॉर्ड नहीं मिला"
 
 #: src/locales/locale.js:121
 msgid "No more"
-msgstr ""
+msgstr "अब और नहीं"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:283 src/page/people/new.vue:372
@@ -1882,7 +1882,7 @@ msgstr "हाल ही में संपादित कोई चित्�
 
 #: src/component/navigation.vue:435 src/component/navigation.vue:433
 msgid "No server connection"
-msgstr ""
+msgstr "कोई सर्वर कनेक्शन नहीं"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
@@ -1921,7 +1921,7 @@ msgstr "कोई नहीं"
 
 #: src/locales/locale.js:35
 msgid "Not sorted."
-msgstr ""
+msgstr "क्रमबद्ध नहीं।"
 
 #: src/page/library/import.vue:22 src/page/library/import.vue:7
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -1954,7 +1954,7 @@ msgstr "ओआईडीसी"
 
 #: src/locales/locale.js:23
 msgid "OK"
-msgstr ""
+msgstr "ठीक है"
 
 #: src/component/photo/toolbar.vue:106 src/component/photo/toolbar.vue:118
 #: src/component/photo/toolbar.vue:128 src/dialog/album/edit.vue:22
@@ -2013,7 +2013,7 @@ msgstr "खुला"
 
 #: src/locales/locale.js:90
 msgid "or"
-msgstr ""
+msgstr "या"
 
 #: src/options/options.js:447
 msgid "Orange"
@@ -2053,11 +2053,11 @@ msgstr "घर के बाहर"
 
 #: src/locales/locale.js:104
 msgid "Page {0}, Current page"
-msgstr ""
+msgstr "पृष्ठ {0}, वर्तमान पृष्ठ"
 
 #: src/locales/locale.js:100
 msgid "Pagination Navigation"
-msgstr ""
+msgstr "पृष्ठांकन नेविगेशन"
 
 #: src/dialog/photo/edit/info.vue:135
 msgid "Panorama"
@@ -2166,7 +2166,7 @@ msgstr "कृपया आक्रामक सामग्री वाले
 
 #: src/locales/locale.js:82
 msgid "Please enter OTP character {0}"
-msgstr ""
+msgstr "कृपया OTP वर्ण {0} दर्ज करें"
 
 #: src/dialog/account/password.vue:11
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2182,7 +2182,7 @@ msgstr "कृपया प्रतीक्षा करें…"
 
 #: src/locales/locale.js:95
 msgid "PM"
-msgstr ""
+msgstr "बजे"
 
 #: src/page/settings/advanced.vue:604
 msgid "PNG Size Limit: %{n}px"
@@ -2226,15 +2226,15 @@ msgstr "छवियों का पूर्वावलोकन करें
 
 #: src/locales/locale.js:111
 msgid "Previous"
-msgstr ""
+msgstr "पहले का"
 
 #: src/locales/locale.js:46 src/locales/locale.js:102
 msgid "Previous page"
-msgstr ""
+msgstr "पिछला पृष्ठ"
 
 #: src/locales/locale.js:68
 msgid "Previous visual"
-msgstr ""
+msgstr "पिछला दृश्य"
 
 #: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/files.vue:142
 #: src/dialog/photo/edit/files.vue:36 src/dialog/photo/edit/files.vue:139
@@ -2277,7 +2277,7 @@ msgstr "बिना सोचे समझे"
 
 #: src/locales/locale.js:115
 msgid "Rating {0} of {1}"
-msgstr ""
+msgstr "{1} में से {0} रेटिंग"
 
 #: src/options/options.js:354
 msgid "Raw"
@@ -2325,7 +2325,7 @@ msgstr "मान्यता प्राप्त"
 
 #: src/page/auth/login.vue:108
 msgid "Recovery Code"
-msgstr ""
+msgstr "पुनःप्राप्ति सांकेतिक अंक"
 
 #: src/options/options.js:446
 msgid "Red"
@@ -2416,7 +2416,7 @@ msgstr "भूमिका"
 
 #: src/locales/locale.js:31
 msgid "Rows per page:"
-msgstr ""
+msgstr "प्रति पृष्ठ पंक्तियाँ:"
 
 #: src/options/options.js:322 src/page/places.vue:175
 msgid "Satellite"
@@ -2479,15 +2479,15 @@ msgstr "एल्बम का चयन करें या एक नया �
 
 #: src/locales/locale.js:60
 msgid "Select date"
-msgstr ""
+msgstr "तारीख़ चुनें"
 
 #: src/locales/locale.js:57
 msgid "Select dates"
-msgstr ""
+msgstr "तिथियाँ चुनें"
 
 #: src/locales/locale.js:96
 msgid "Select Time"
-msgstr ""
+msgstr "समय चुनें"
 
 #: src/component/photo/clipboard.vue:68
 msgid "Selection approved"
@@ -2615,7 +2615,7 @@ msgstr "सॉफ़्टवेयर"
 
 #: src/locales/locale.js:40
 msgid "Sort by"
-msgstr ""
+msgstr "इसके अनुसार क्रमबद्ध करें"
 
 #: src/component/photo/toolbar.vue:362 src/dialog/album/edit.vue:145
 #: src/page/albums.vue:227
@@ -2624,11 +2624,11 @@ msgstr "क्रमबद्ध आदेश"
 
 #: src/locales/locale.js:34
 msgid "Sorted ascending."
-msgstr ""
+msgstr "आरोही क्रम में क्रमबद्ध।"
 
 #: src/locales/locale.js:33
 msgid "Sorted descending."
-msgstr ""
+msgstr "अवरोही क्रम में क्रमबद्ध।"
 
 #: src/dialog/photo/edit/labels.vue:25
 msgid "Source"
@@ -2825,7 +2825,7 @@ msgstr "अपग्रेड करने के लिए, आप या त�
 
 #: src/locales/locale.js:76
 msgid "Today"
-msgstr ""
+msgstr "आज"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:175 src/component/album/toolbar.vue:192

@@ -2,42 +2,42 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-09-13 13:26+0000\n"
+"PO-Revision-Date: 2024-12-20 01:21+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales/locale.js:81
 msgid "{0} appended action"
-msgstr ""
+msgstr "{0} дададзена дзеянне"
 
 #: src/locales/locale.js:85
 msgid "{0} files"
-msgstr ""
+msgstr "Файлаў: {0}"
 
 #: src/locales/locale.js:86
 msgid "{0} files ({1} in total)"
-msgstr ""
+msgstr "{0} файлаў (усяго {1})"
 
 #: src/locales/locale.js:75
 msgid "{0} more"
-msgstr ""
+msgstr "яшчэ {0}"
 
 #: src/locales/locale.js:80
 msgid "{0} prepended action"
-msgstr ""
+msgstr "{0} дададзенае дзеянне"
 
 #: src/locales/locale.js:55
 msgid "{0} selected"
-msgstr ""
+msgstr "{0} выбрана"
 
 #: src/locales/locale.js:49
 msgid "{0}-{1} of {2}"
-msgstr ""
+msgstr "{0}-{1} з {2}"
 
 #: src/page/albums.vue:525
 msgid "%{n} albums found"
@@ -138,15 +138,15 @@ msgstr "Актываваць"
 
 #: src/locales/locale.js:36
 msgid "Activate to remove sorting."
-msgstr ""
+msgstr "Уключыце, каб выдаліць сартаванне."
 
 #: src/locales/locale.js:38
 msgid "Activate to sort ascending."
-msgstr ""
+msgstr "Уключыце для сартавання па ўзрастанні."
 
 #: src/locales/locale.js:37
 msgid "Activate to sort descending."
-msgstr ""
+msgstr "Уключыце для сартавання па змяншэнні."
 
 #: src/page/connect.vue:367
 msgid "Activation Code"
@@ -256,7 +256,7 @@ msgstr "Альбомы выдалены"
 
 #: src/locales/locale.js:44
 msgid "All"
-msgstr ""
+msgstr "Усе"
 
 #: src/page/albums.vue:383
 msgid "All %{n} albums loaded"
@@ -325,7 +325,7 @@ msgstr "Вышыня (м)"
 
 #: src/locales/locale.js:94
 msgid "AM"
-msgstr ""
+msgstr "AM"
 
 #: src/component/navigation.vue:89 src/component/navigation.vue:87
 #: src/component/photo/cards.vue:223 src/component/photo/cards.vue:362
@@ -431,7 +431,7 @@ msgstr "Назад"
 
 #: src/component/scroll.vue:4
 msgid "Back to top"
-msgstr ""
+msgstr "Вярнуцца да пачатку"
 
 #: src/page/settings/advanced.vue:66 src/page/settings/advanced.vue:2
 msgid "Backup"
@@ -439,7 +439,7 @@ msgstr "Рэзервовае капіраванне"
 
 #: src/locales/locale.js:18
 msgid "Badge"
-msgstr ""
+msgstr "Значок"
 
 #: src/page/about/about.vue:24 src/page/about/about.vue:3
 #: src/page/about/about.vue:26 src/page/about/about.vue:5
@@ -487,7 +487,7 @@ msgstr "Прагляд і рэдагаванне метак класіфікац
 
 #: src/locales/locale.js:91
 msgid "Browse Files"
-msgstr ""
+msgstr "Прагляд файлаў"
 
 #: src/page/settings/general.vue:449
 msgid "Browse indexed files and folders in Library."
@@ -561,7 +561,7 @@ msgstr "Карты"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr ""
+msgstr "Слайд каруселі {0} з {1}"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -619,7 +619,7 @@ msgstr "Прыбіраць"
 
 #: src/locales/locale.js:79
 msgid "Clear {0}"
-msgstr ""
+msgstr "Ачысціць {0}"
 
 #: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:43
 msgid "Client"
@@ -922,7 +922,7 @@ msgstr "Адкрыйце для сябе"
 
 #: src/locales/locale.js:21
 msgid "Dismiss"
-msgstr ""
+msgstr "Звольніць"
 
 #: src/dialog/admin/users/add.vue:124 src/dialog/admin/users/edit.vue:176
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:160
@@ -990,7 +990,7 @@ msgstr "Фільтр памяншэння памеру"
 
 #: src/locales/locale.js:89
 msgid "Drag and drop files here"
-msgstr ""
+msgstr "Перацягнуць файлы сюды"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1062,11 +1062,11 @@ msgstr "Уключэнне двухфактарнай аўтэнтыфікацы
 
 #: src/locales/locale.js:61 src/locales/locale.js:63
 msgid "Enter date"
-msgstr ""
+msgstr "Увядзіце дату"
 
 #: src/locales/locale.js:58
 msgid "Enter dates"
-msgstr ""
+msgstr "Увядзіце даты"
 
 #: src/dialog/account/passcode.vue:48 src/dialog/account/passcode.vue:13
 #: src/page/auth/login.vue:13 src/page/auth/login.vue:2
@@ -1231,7 +1231,7 @@ msgstr "Файлы з такімі паслядоўнымі назвамі, як
 
 #: src/locales/locale.js:47 src/locales/locale.js:105
 msgid "First page"
-msgstr ""
+msgstr "Першая старонка"
 
 #: src/dialog/photo/edit/details.vue:438
 msgid "Focal Length"
@@ -1298,7 +1298,7 @@ msgstr "Глабальныя параметры"
 
 #: src/locales/locale.js:103
 msgid "Go to page {0}"
-msgstr ""
+msgstr "Перайсці на старонку {0}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -1486,7 +1486,7 @@ msgstr "Пункт"
 
 #: src/locales/locale.js:43
 msgid "Items per page:"
-msgstr ""
+msgstr "Элементаў на старонцы:"
 
 #: src/page/settings/advanced.vue:548
 msgid "JPEG Quality: %{n}"
@@ -1537,7 +1537,7 @@ msgstr "Апошні ўваход"
 
 #: src/locales/locale.js:48 src/locales/locale.js:106
 msgid "Last page"
-msgstr ""
+msgstr "Апошняя старонка"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1620,15 +1620,15 @@ msgstr "Жывыя фатаграфіі"
 
 #: src/locales/locale.js:120
 msgid "Load more"
-msgstr ""
+msgstr "Загрузіць больш"
 
 #: src/locales/locale.js:28
 msgid "Loading items..."
-msgstr ""
+msgstr "Загрузка элементаў..."
 
 #: src/locales/locale.js:118
 msgid "Loading..."
-msgstr ""
+msgstr "Загрузка..."
 
 #: src/options/admin.js:31 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
@@ -1820,15 +1820,15 @@ msgstr "Спачатку найноўшыя"
 
 #: src/locales/locale.js:110
 msgid "Next"
-msgstr ""
+msgstr "Далей"
 
 #: src/locales/locale.js:45 src/locales/locale.js:101
 msgid "Next page"
-msgstr ""
+msgstr "Наступная старонка"
 
 #: src/locales/locale.js:69
 msgid "Next visual"
-msgstr ""
+msgstr "Наступны візуал"
 
 #: src/dialog/people/merge.vue:9 src/dialog/photo/archive.vue:9
 #: src/dialog/photo/edit/info.vue:367 src/dialog/photo/edit/info.vue:390
@@ -1843,7 +1843,7 @@ msgstr "Альбомы не знойдзены"
 
 #: src/locales/locale.js:66
 msgid "No data available"
-msgstr ""
+msgstr "Дадзеных няма"
 
 #: src/dialog/photo/edit/labels.vue:60 src/page/labels.vue:38
 #: src/page/labels.vue:443
@@ -1852,11 +1852,11 @@ msgstr "Меткі не знойдзены"
 
 #: src/locales/locale.js:27
 msgid "No matching records found"
-msgstr ""
+msgstr "Адпаведныя запісы не знойдзены"
 
 #: src/locales/locale.js:121
 msgid "No more"
-msgstr ""
+msgstr "Не больш"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:283 src/page/people/new.vue:372
@@ -1879,7 +1879,7 @@ msgstr "Няма нядаўна адрэдагаваных фота"
 
 #: src/component/navigation.vue:435 src/component/navigation.vue:433
 msgid "No server connection"
-msgstr ""
+msgstr "Няма злучэння з серверам"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
@@ -1918,7 +1918,7 @@ msgstr "Няма"
 
 #: src/locales/locale.js:35
 msgid "Not sorted."
-msgstr ""
+msgstr "Не адсартаваны."
 
 #: src/page/library/import.vue:22 src/page/library/import.vue:7
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -1951,7 +1951,7 @@ msgstr "OIDC"
 
 #: src/locales/locale.js:23
 msgid "OK"
-msgstr ""
+msgstr "добра"
 
 #: src/component/photo/toolbar.vue:106 src/component/photo/toolbar.vue:118
 #: src/component/photo/toolbar.vue:128 src/dialog/album/edit.vue:22
@@ -2010,7 +2010,7 @@ msgstr "Адкрыты"
 
 #: src/locales/locale.js:90
 msgid "or"
-msgstr ""
+msgstr "або"
 
 #: src/options/options.js:447
 msgid "Orange"
@@ -2050,11 +2050,11 @@ msgstr "На адкрытым паветры"
 
 #: src/locales/locale.js:104
 msgid "Page {0}, Current page"
-msgstr ""
+msgstr "Старонка {0}, бягучая старонка"
 
 #: src/locales/locale.js:100
 msgid "Pagination Navigation"
-msgstr ""
+msgstr "Навігацыя па пагінацыі"
 
 #: src/dialog/photo/edit/info.vue:135
 msgid "Panorama"
@@ -2163,7 +2163,7 @@ msgstr "Калі ласка, не запампоўвайце фатаграфі�
 
 #: src/locales/locale.js:82
 msgid "Please enter OTP character {0}"
-msgstr ""
+msgstr "Увядзіце аднаразовы пароль {0}"
 
 #: src/dialog/account/password.vue:11
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2179,7 +2179,7 @@ msgstr "Калі ласка пачакай…"
 
 #: src/locales/locale.js:95
 msgid "PM"
-msgstr ""
+msgstr "PM"
 
 #: src/page/settings/advanced.vue:604
 msgid "PNG Size Limit: %{n}px"
@@ -2223,15 +2223,15 @@ msgstr "Папярэдні прагляд відарысаў"
 
 #: src/locales/locale.js:111
 msgid "Previous"
-msgstr ""
+msgstr "Папярэдні"
 
 #: src/locales/locale.js:46 src/locales/locale.js:102
 msgid "Previous page"
-msgstr ""
+msgstr "Папярэдняя старонка"
 
 #: src/locales/locale.js:68
 msgid "Previous visual"
-msgstr ""
+msgstr "Папярэдні візуал"
 
 #: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/files.vue:142
 #: src/dialog/photo/edit/files.vue:36 src/dialog/photo/edit/files.vue:139
@@ -2274,7 +2274,7 @@ msgstr "Выпадковы"
 
 #: src/locales/locale.js:115
 msgid "Rating {0} of {1}"
-msgstr ""
+msgstr "Рэйтынг {0} з {1}"
 
 #: src/options/options.js:354
 msgid "Raw"
@@ -2322,7 +2322,7 @@ msgstr "Прызналі"
 
 #: src/page/auth/login.vue:108
 msgid "Recovery Code"
-msgstr ""
+msgstr "Код аднаўлення"
 
 #: src/options/options.js:446
 msgid "Red"
@@ -2413,7 +2413,7 @@ msgstr "Роля"
 
 #: src/locales/locale.js:31
 msgid "Rows per page:"
-msgstr ""
+msgstr "Радкоў на старонцы:"
 
 #: src/options/options.js:322 src/page/places.vue:175
 msgid "Satellite"
@@ -2476,15 +2476,15 @@ msgstr "Выберыце альбомы або стварыце новы"
 
 #: src/locales/locale.js:60
 msgid "Select date"
-msgstr ""
+msgstr "Выберыце дату"
 
 #: src/locales/locale.js:57
 msgid "Select dates"
-msgstr ""
+msgstr "Выберыце даты"
 
 #: src/locales/locale.js:96
 msgid "Select Time"
-msgstr ""
+msgstr "Выберыце Час"
 
 #: src/component/photo/clipboard.vue:68
 msgid "Selection approved"
@@ -2612,7 +2612,7 @@ msgstr "праграмнае забеспячэнне"
 
 #: src/locales/locale.js:40
 msgid "Sort by"
-msgstr ""
+msgstr "Сартаваць па"
 
 #: src/component/photo/toolbar.vue:362 src/dialog/album/edit.vue:145
 #: src/page/albums.vue:227
@@ -2621,11 +2621,11 @@ msgstr "Парадак сартавання"
 
 #: src/locales/locale.js:34
 msgid "Sorted ascending."
-msgstr ""
+msgstr "Адсартавана па ўзрастанні."
 
 #: src/locales/locale.js:33
 msgid "Sorted descending."
-msgstr ""
+msgstr "Адсартавана па змяншэнні."
 
 #: src/dialog/photo/edit/labels.vue:25
 msgid "Source"
@@ -2802,7 +2802,7 @@ msgstr "Назва занадта доўгая"
 
 #: src/locales/locale.js:52
 msgid "to"
-msgstr ""
+msgstr "каб"
 
 #: src/dialog/account/passcode.vue:75 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
@@ -2822,7 +2822,7 @@ msgstr "Каб абнавіць, вы можаце ўвесці код акты�
 
 #: src/locales/locale.js:76
 msgid "Today"
-msgstr ""
+msgstr "сёння"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:175 src/component/album/toolbar.vue:192

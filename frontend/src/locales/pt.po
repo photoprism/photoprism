@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 13:26+0000\n"
+"PO-Revision-Date: 2024-12-20 01:21+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
@@ -11,36 +11,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales/locale.js:81
 msgid "{0} appended action"
-msgstr ""
+msgstr "{0} ação anexada"
 
 #: src/locales/locale.js:85
 msgid "{0} files"
-msgstr ""
+msgstr "{0} ficheiros"
 
 #: src/locales/locale.js:86
 msgid "{0} files ({1} in total)"
-msgstr ""
+msgstr "{0} ficheiros ({1} no total)"
 
 #: src/locales/locale.js:75
 msgid "{0} more"
-msgstr ""
+msgstr "{0} mais"
 
 #: src/locales/locale.js:80
 msgid "{0} prepended action"
-msgstr ""
+msgstr "{0} ação precedida"
 
 #: src/locales/locale.js:55
 msgid "{0} selected"
-msgstr ""
+msgstr "{0} selecionado"
 
 #: src/locales/locale.js:49
 msgid "{0}-{1} of {2}"
-msgstr ""
+msgstr "{0}-{1} de {2}"
 
 #: src/page/albums.vue:525
 msgid "%{n} albums found"
@@ -141,15 +141,15 @@ msgstr "Ativar"
 
 #: src/locales/locale.js:36
 msgid "Activate to remove sorting."
-msgstr ""
+msgstr "Ativar para remover a ordenação."
 
 #: src/locales/locale.js:38
 msgid "Activate to sort ascending."
-msgstr ""
+msgstr "Ativar para ordenar por ordem crescente."
 
 #: src/locales/locale.js:37
 msgid "Activate to sort descending."
-msgstr ""
+msgstr "Ativar para ordenar por ordem decrescente."
 
 #: src/page/connect.vue:367
 msgid "Activation Code"
@@ -259,7 +259,7 @@ msgstr "Álbuns excluídos"
 
 #: src/locales/locale.js:44
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #: src/page/albums.vue:383
 msgid "All %{n} albums loaded"
@@ -328,7 +328,7 @@ msgstr "Altitude (m)"
 
 #: src/locales/locale.js:94
 msgid "AM"
-msgstr ""
+msgstr "AM"
 
 #: src/component/navigation.vue:89 src/component/navigation.vue:87
 #: src/component/photo/cards.vue:223 src/component/photo/cards.vue:362
@@ -434,7 +434,7 @@ msgstr "Voltar"
 
 #: src/component/scroll.vue:4
 msgid "Back to top"
-msgstr ""
+msgstr "Volta ao início"
 
 #: src/page/settings/advanced.vue:66 src/page/settings/advanced.vue:2
 msgid "Backup"
@@ -442,7 +442,7 @@ msgstr "Cópia de Segurança"
 
 #: src/locales/locale.js:18
 msgid "Badge"
-msgstr ""
+msgstr "Crachá"
 
 #: src/page/about/about.vue:24 src/page/about/about.vue:3
 #: src/page/about/about.vue:26 src/page/about/about.vue:5
@@ -490,7 +490,7 @@ msgstr "Navegar e editar as etiquetas de classificação da imagem."
 
 #: src/locales/locale.js:91
 msgid "Browse Files"
-msgstr ""
+msgstr "Procurar ficheiros"
 
 #: src/page/settings/general.vue:449
 msgid "Browse indexed files and folders in Library."
@@ -564,7 +564,7 @@ msgstr "Cartões"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr ""
+msgstr "Slide de carrossel {0} de {1}"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -622,7 +622,7 @@ msgstr "Limpeza"
 
 #: src/locales/locale.js:79
 msgid "Clear {0}"
-msgstr ""
+msgstr "Limpa {0}"
 
 #: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:43
 msgid "Client"
@@ -925,7 +925,7 @@ msgstr "Explorar"
 
 #: src/locales/locale.js:21
 msgid "Dismiss"
-msgstr ""
+msgstr "Dispensa"
 
 #: src/dialog/admin/users/add.vue:124 src/dialog/admin/users/edit.vue:176
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:160
@@ -993,7 +993,7 @@ msgstr "Filtro de redimensionamento"
 
 #: src/locales/locale.js:89
 msgid "Drag and drop files here"
-msgstr ""
+msgstr "Arrasta e larga ficheiros aqui"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1065,11 +1065,11 @@ msgstr "Ativar a autenticação de dois fatores significa que você precisará d
 
 #: src/locales/locale.js:61 src/locales/locale.js:63
 msgid "Enter date"
-msgstr ""
+msgstr "Introduzir data"
 
 #: src/locales/locale.js:58
 msgid "Enter dates"
-msgstr ""
+msgstr "Introduzir datas"
 
 #: src/dialog/account/passcode.vue:48 src/dialog/account/passcode.vue:13
 #: src/page/auth/login.vue:13 src/page/auth/login.vue:2
@@ -1234,7 +1234,7 @@ msgstr "Arquivos com nomes sequenciais, como \"IMG_1234 (2)\" ou \"IMG_1234 (3)\
 
 #: src/locales/locale.js:47 src/locales/locale.js:105
 msgid "First page"
-msgstr ""
+msgstr "Primeira página"
 
 #: src/dialog/photo/edit/details.vue:438
 msgid "Focal Length"
@@ -1301,7 +1301,7 @@ msgstr "Opções Globais"
 
 #: src/locales/locale.js:103
 msgid "Go to page {0}"
-msgstr ""
+msgstr "Vai para a página {0}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -1489,7 +1489,7 @@ msgstr "Item"
 
 #: src/locales/locale.js:43
 msgid "Items per page:"
-msgstr ""
+msgstr "Itens por página:"
 
 #: src/page/settings/advanced.vue:548
 msgid "JPEG Quality: %{n}"
@@ -1540,7 +1540,7 @@ msgstr "Último Login"
 
 #: src/locales/locale.js:48 src/locales/locale.js:106
 msgid "Last page"
-msgstr ""
+msgstr "Última página"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1623,15 +1623,15 @@ msgstr "Fotos ao vivo"
 
 #: src/locales/locale.js:120
 msgid "Load more"
-msgstr ""
+msgstr "Carrega mais"
 
 #: src/locales/locale.js:28
 msgid "Loading items..."
-msgstr ""
+msgstr "Carregamento de itens..."
 
 #: src/locales/locale.js:118
 msgid "Loading..."
-msgstr ""
+msgstr "Carregamento..."
 
 #: src/options/admin.js:31 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
@@ -1823,15 +1823,15 @@ msgstr "Recentes primeiro"
 
 #: src/locales/locale.js:110
 msgid "Next"
-msgstr ""
+msgstr "Seguinte"
 
 #: src/locales/locale.js:45 src/locales/locale.js:101
 msgid "Next page"
-msgstr ""
+msgstr "Página seguinte"
 
 #: src/locales/locale.js:69
 msgid "Next visual"
-msgstr ""
+msgstr "Próximo visual"
 
 #: src/dialog/people/merge.vue:9 src/dialog/photo/archive.vue:9
 #: src/dialog/photo/edit/info.vue:367 src/dialog/photo/edit/info.vue:390
@@ -1846,7 +1846,7 @@ msgstr "Nenhum álbum encontrado"
 
 #: src/locales/locale.js:66
 msgid "No data available"
-msgstr ""
+msgstr "Não existem dados disponíveis"
 
 #: src/dialog/photo/edit/labels.vue:60 src/page/labels.vue:38
 #: src/page/labels.vue:443
@@ -1855,11 +1855,11 @@ msgstr "Nenhuma etiqueta encontrada"
 
 #: src/locales/locale.js:27
 msgid "No matching records found"
-msgstr ""
+msgstr "Não foram encontrados registos correspondentes"
 
 #: src/locales/locale.js:121
 msgid "No more"
-msgstr ""
+msgstr "Não mais"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:283 src/page/people/new.vue:372
@@ -1882,7 +1882,7 @@ msgstr "Nenhuma foto editada recentemente"
 
 #: src/component/navigation.vue:435 src/component/navigation.vue:433
 msgid "No server connection"
-msgstr ""
+msgstr "Não há ligação ao servidor"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
@@ -1921,7 +1921,7 @@ msgstr "Nenhum"
 
 #: src/locales/locale.js:35
 msgid "Not sorted."
-msgstr ""
+msgstr "Não estás classificado."
 
 #: src/page/library/import.vue:22 src/page/library/import.vue:7
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -1954,7 +1954,7 @@ msgstr "OIDC"
 
 #: src/locales/locale.js:23
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/component/photo/toolbar.vue:106 src/component/photo/toolbar.vue:118
 #: src/component/photo/toolbar.vue:128 src/dialog/album/edit.vue:22
@@ -2013,7 +2013,7 @@ msgstr "Aberto"
 
 #: src/locales/locale.js:90
 msgid "or"
-msgstr ""
+msgstr "ou"
 
 #: src/options/options.js:447
 msgid "Orange"
@@ -2053,11 +2053,11 @@ msgstr "Ao ar livre"
 
 #: src/locales/locale.js:104
 msgid "Page {0}, Current page"
-msgstr ""
+msgstr "Página {0}, Página atual"
 
 #: src/locales/locale.js:100
 msgid "Pagination Navigation"
-msgstr ""
+msgstr "Navegação de paginação"
 
 #: src/dialog/photo/edit/info.vue:135
 msgid "Panorama"
@@ -2166,7 +2166,7 @@ msgstr "Por favor, não envie fotos com conteúdo ofensivo."
 
 #: src/locales/locale.js:82
 msgid "Please enter OTP character {0}"
-msgstr ""
+msgstr "Introduz o carácter OTP {0}"
 
 #: src/dialog/account/password.vue:11
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2182,7 +2182,7 @@ msgstr "Por favor, aguarde…"
 
 #: src/locales/locale.js:95
 msgid "PM"
-msgstr ""
+msgstr "PM"
 
 #: src/page/settings/advanced.vue:604
 msgid "PNG Size Limit: %{n}px"
@@ -2226,15 +2226,15 @@ msgstr "Imagens de pré-visualização"
 
 #: src/locales/locale.js:111
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 #: src/locales/locale.js:46 src/locales/locale.js:102
 msgid "Previous page"
-msgstr ""
+msgstr "Página anterior"
 
 #: src/locales/locale.js:68
 msgid "Previous visual"
-msgstr ""
+msgstr "Visual anterior"
 
 #: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/files.vue:142
 #: src/dialog/photo/edit/files.vue:36 src/dialog/photo/edit/files.vue:139
@@ -2277,7 +2277,7 @@ msgstr "Aleatório"
 
 #: src/locales/locale.js:115
 msgid "Rating {0} of {1}"
-msgstr ""
+msgstr "Classificação {0} de {1}"
 
 #: src/options/options.js:354
 msgid "Raw"
@@ -2325,7 +2325,7 @@ msgstr "Reconhecido"
 
 #: src/page/auth/login.vue:108
 msgid "Recovery Code"
-msgstr ""
+msgstr "Código de recuperação"
 
 #: src/options/options.js:446
 msgid "Red"
@@ -2416,7 +2416,7 @@ msgstr "Papel"
 
 #: src/locales/locale.js:31
 msgid "Rows per page:"
-msgstr ""
+msgstr "Linhas por página:"
 
 #: src/options/options.js:322 src/page/places.vue:175
 msgid "Satellite"
@@ -2479,15 +2479,15 @@ msgstr "Selecione álbuns ou crie um novo"
 
 #: src/locales/locale.js:60
 msgid "Select date"
-msgstr ""
+msgstr "Selecionar data"
 
 #: src/locales/locale.js:57
 msgid "Select dates"
-msgstr ""
+msgstr "Selecionar datas"
 
 #: src/locales/locale.js:96
 msgid "Select Time"
-msgstr ""
+msgstr "Selecionar hora"
 
 #: src/component/photo/clipboard.vue:68
 msgid "Selection approved"
@@ -2615,7 +2615,7 @@ msgstr "Programas"
 
 #: src/locales/locale.js:40
 msgid "Sort by"
-msgstr ""
+msgstr "Ordenar por"
 
 #: src/component/photo/toolbar.vue:362 src/dialog/album/edit.vue:145
 #: src/page/albums.vue:227
@@ -2624,11 +2624,11 @@ msgstr "Ordem de classificação"
 
 #: src/locales/locale.js:34
 msgid "Sorted ascending."
-msgstr ""
+msgstr "Ordenado por ordem crescente."
 
 #: src/locales/locale.js:33
 msgid "Sorted descending."
-msgstr ""
+msgstr "Ordenado de forma descendente."
 
 #: src/dialog/photo/edit/labels.vue:25
 msgid "Source"
@@ -2825,7 +2825,7 @@ msgstr "Para atualizar, você pode inserir um código de ativação ou clicar em
 
 #: src/locales/locale.js:76
 msgid "Today"
-msgstr ""
+msgstr "Hoje"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:175 src/component/album/toolbar.vue:192

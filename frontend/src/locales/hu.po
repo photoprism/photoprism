@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 13:26+0000\n"
+"PO-Revision-Date: 2024-12-20 01:21+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -11,35 +11,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.4\n"
 
 #: src/locales/locale.js:81
 msgid "{0} appended action"
-msgstr ""
+msgstr "{0} appended action"
 
 #: src/locales/locale.js:85
 msgid "{0} files"
-msgstr ""
+msgstr "{0} fájlok"
 
 #: src/locales/locale.js:86
 msgid "{0} files ({1} in total)"
-msgstr ""
+msgstr "{0} fájlok ({1} összesen)"
 
 #: src/locales/locale.js:75
 msgid "{0} more"
-msgstr ""
+msgstr "{0} még"
 
 #: src/locales/locale.js:80
 msgid "{0} prepended action"
-msgstr ""
+msgstr "{0} prepended action"
 
 #: src/locales/locale.js:55
 msgid "{0} selected"
-msgstr ""
+msgstr "{0} kiválasztott"
 
 #: src/locales/locale.js:49
 msgid "{0}-{1} of {2}"
-msgstr ""
+msgstr "{0}-{1} of {2}"
 
 #: src/page/albums.vue:525
 msgid "%{n} albums found"
@@ -140,15 +140,15 @@ msgstr "Aktiválja a  címet."
 
 #: src/locales/locale.js:36
 msgid "Activate to remove sorting."
-msgstr ""
+msgstr "Aktiválja a szortírozás megszüntetéséhez."
 
 #: src/locales/locale.js:38
 msgid "Activate to sort ascending."
-msgstr ""
+msgstr "Aktiválja a növekvő rendezéshez."
 
 #: src/locales/locale.js:37
 msgid "Activate to sort descending."
-msgstr ""
+msgstr "Aktiválja a csökkenő rendezéshez."
 
 #: src/page/connect.vue:367
 msgid "Activation Code"
@@ -258,7 +258,7 @@ msgstr "Albumok törölve"
 
 #: src/locales/locale.js:44
 msgid "All"
-msgstr ""
+msgstr "Minden"
 
 #: src/page/albums.vue:383
 msgid "All %{n} albums loaded"
@@ -327,7 +327,7 @@ msgstr "Magasság (m)"
 
 #: src/locales/locale.js:94
 msgid "AM"
-msgstr ""
+msgstr "AM"
 
 #: src/component/navigation.vue:89 src/component/navigation.vue:87
 #: src/component/photo/cards.vue:223 src/component/photo/cards.vue:362
@@ -433,7 +433,7 @@ msgstr "Vissza"
 
 #: src/component/scroll.vue:4
 msgid "Back to top"
-msgstr ""
+msgstr "Vissza a tetejére"
 
 #: src/page/settings/advanced.vue:66 src/page/settings/advanced.vue:2
 msgid "Backup"
@@ -441,7 +441,7 @@ msgstr "Biztonsági mentés"
 
 #: src/locales/locale.js:18
 msgid "Badge"
-msgstr ""
+msgstr "Jelvény"
 
 #: src/page/about/about.vue:24 src/page/about/about.vue:3
 #: src/page/about/about.vue:26 src/page/about/about.vue:5
@@ -489,7 +489,7 @@ msgstr "Böngéssze és szerkessze a képbesorolási címkéket."
 
 #: src/locales/locale.js:91
 msgid "Browse Files"
-msgstr ""
+msgstr "Fájlok böngészése"
 
 #: src/page/settings/general.vue:449
 msgid "Browse indexed files and folders in Library."
@@ -563,7 +563,7 @@ msgstr "Kártyák"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr ""
+msgstr "{0} körhinta {0} a {1}-től"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -621,7 +621,7 @@ msgstr "Tisztítás"
 
 #: src/locales/locale.js:79
 msgid "Clear {0}"
-msgstr ""
+msgstr "Clear {0}"
 
 #: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:43
 msgid "Client"
@@ -924,7 +924,7 @@ msgstr "Felfedez"
 
 #: src/locales/locale.js:21
 msgid "Dismiss"
-msgstr ""
+msgstr "Elutasíthatod"
 
 #: src/dialog/admin/users/add.vue:124 src/dialog/admin/users/edit.vue:176
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:160
@@ -992,7 +992,7 @@ msgstr "Lekicsinyítési szűrő"
 
 #: src/locales/locale.js:89
 msgid "Drag and drop files here"
-msgstr ""
+msgstr "Húzza ide a fájlokat"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1064,11 +1064,11 @@ msgstr "A kéttényezős hitelesítés engedélyezése azt jelenti, hogy a bejel
 
 #: src/locales/locale.js:61 src/locales/locale.js:63
 msgid "Enter date"
-msgstr ""
+msgstr "Adja meg a dátumot"
 
 #: src/locales/locale.js:58
 msgid "Enter dates"
-msgstr ""
+msgstr "Adja meg a dátumokat"
 
 #: src/dialog/account/passcode.vue:48 src/dialog/account/passcode.vue:13
 #: src/page/auth/login.vue:13 src/page/auth/login.vue:2
@@ -1233,7 +1233,7 @@ msgstr "Az olyan szekvenciális nevű fájlok, mint az „IMG_1234 (2)” és �
 
 #: src/locales/locale.js:47 src/locales/locale.js:105
 msgid "First page"
-msgstr ""
+msgstr "Első oldal"
 
 #: src/dialog/photo/edit/details.vue:438
 msgid "Focal Length"
@@ -1300,7 +1300,7 @@ msgstr "Globális lehetőségek"
 
 #: src/locales/locale.js:103
 msgid "Go to page {0}"
-msgstr ""
+msgstr "Menj az oldalra {0}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -1488,7 +1488,7 @@ msgstr "Tétel"
 
 #: src/locales/locale.js:43
 msgid "Items per page:"
-msgstr ""
+msgstr "Tételek oldalanként:"
 
 #: src/page/settings/advanced.vue:548
 msgid "JPEG Quality: %{n}"
@@ -1539,7 +1539,7 @@ msgstr "Utolsó bejelentkezés"
 
 #: src/locales/locale.js:48 src/locales/locale.js:106
 msgid "Last page"
-msgstr ""
+msgstr "Utolsó oldal"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1622,15 +1622,15 @@ msgstr "Fényképek"
 
 #: src/locales/locale.js:120
 msgid "Load more"
-msgstr ""
+msgstr "Töltsön többet"
 
 #: src/locales/locale.js:28
 msgid "Loading items..."
-msgstr ""
+msgstr "Tételek betöltése..."
 
 #: src/locales/locale.js:118
 msgid "Loading..."
-msgstr ""
+msgstr "Betöltés..."
 
 #: src/options/admin.js:31 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
@@ -1822,15 +1822,15 @@ msgstr "Először a legújabb"
 
 #: src/locales/locale.js:110
 msgid "Next"
-msgstr ""
+msgstr "Következő"
 
 #: src/locales/locale.js:45 src/locales/locale.js:101
 msgid "Next page"
-msgstr ""
+msgstr "Következő oldal"
 
 #: src/locales/locale.js:69
 msgid "Next visual"
-msgstr ""
+msgstr "Következő vizuális"
 
 #: src/dialog/people/merge.vue:9 src/dialog/photo/archive.vue:9
 #: src/dialog/photo/edit/info.vue:367 src/dialog/photo/edit/info.vue:390
@@ -1845,7 +1845,7 @@ msgstr "Nem találhatók albumok"
 
 #: src/locales/locale.js:66
 msgid "No data available"
-msgstr ""
+msgstr "Nincs adat"
 
 #: src/dialog/photo/edit/labels.vue:60 src/page/labels.vue:38
 #: src/page/labels.vue:443
@@ -1854,11 +1854,11 @@ msgstr "Nem találhatók címkék"
 
 #: src/locales/locale.js:27
 msgid "No matching records found"
-msgstr ""
+msgstr "Nem találtunk megfelelő rekordokat"
 
 #: src/locales/locale.js:121
 msgid "No more"
-msgstr ""
+msgstr "Nem több"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:283 src/page/people/new.vue:372
@@ -1881,7 +1881,7 @@ msgstr "Nincsenek nemrég szerkesztett képek"
 
 #: src/component/navigation.vue:435 src/component/navigation.vue:433
 msgid "No server connection"
-msgstr ""
+msgstr "Nincs szerverkapcsolat"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
@@ -1920,7 +1920,7 @@ msgstr "Egyik sem"
 
 #: src/locales/locale.js:35
 msgid "Not sorted."
-msgstr ""
+msgstr "Nem rendezett."
 
 #: src/page/library/import.vue:22 src/page/library/import.vue:7
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -1953,7 +1953,7 @@ msgstr "OIDC"
 
 #: src/locales/locale.js:23
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/component/photo/toolbar.vue:106 src/component/photo/toolbar.vue:118
 #: src/component/photo/toolbar.vue:128 src/dialog/album/edit.vue:22
@@ -2012,7 +2012,7 @@ msgstr "Nyissa meg a  címet."
 
 #: src/locales/locale.js:90
 msgid "or"
-msgstr ""
+msgstr "vagy"
 
 #: src/options/options.js:447
 msgid "Orange"
@@ -2052,11 +2052,11 @@ msgstr "Szabadtéri"
 
 #: src/locales/locale.js:104
 msgid "Page {0}, Current page"
-msgstr ""
+msgstr "Oldal {0}, Jelenlegi oldal"
 
 #: src/locales/locale.js:100
 msgid "Pagination Navigation"
-msgstr ""
+msgstr "Oldalszámozás Navigáció"
 
 #: src/dialog/photo/edit/info.vue:135
 msgid "Panorama"
@@ -2165,7 +2165,7 @@ msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
 
 #: src/locales/locale.js:82
 msgid "Please enter OTP character {0}"
-msgstr ""
+msgstr "Kérjük, adja meg az OTP karaktert {0}"
 
 #: src/dialog/account/password.vue:11
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2181,7 +2181,7 @@ msgstr "Kérjük, várjon…"
 
 #: src/locales/locale.js:95
 msgid "PM"
-msgstr ""
+msgstr "PM"
 
 #: src/page/settings/advanced.vue:604
 msgid "PNG Size Limit: %{n}px"
@@ -2225,15 +2225,15 @@ msgstr "Képek előnézete"
 
 #: src/locales/locale.js:111
 msgid "Previous"
-msgstr ""
+msgstr "Előző"
 
 #: src/locales/locale.js:46 src/locales/locale.js:102
 msgid "Previous page"
-msgstr ""
+msgstr "Előző oldal"
 
 #: src/locales/locale.js:68
 msgid "Previous visual"
-msgstr ""
+msgstr "Előző kép"
 
 #: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/files.vue:142
 #: src/dialog/photo/edit/files.vue:36 src/dialog/photo/edit/files.vue:139
@@ -2276,7 +2276,7 @@ msgstr "Véletlen"
 
 #: src/locales/locale.js:115
 msgid "Rating {0} of {1}"
-msgstr ""
+msgstr "A {0} minősítés {1}"
 
 #: src/options/options.js:354
 msgid "Raw"
@@ -2324,7 +2324,7 @@ msgstr "Elismert"
 
 #: src/page/auth/login.vue:108
 msgid "Recovery Code"
-msgstr ""
+msgstr "Helyreállítási kód"
 
 #: src/options/options.js:446
 msgid "Red"
@@ -2415,7 +2415,7 @@ msgstr "Szerepvállalás"
 
 #: src/locales/locale.js:31
 msgid "Rows per page:"
-msgstr ""
+msgstr "Sorok oldalanként:"
 
 #: src/options/options.js:322 src/page/places.vue:175
 msgid "Satellite"
@@ -2478,15 +2478,15 @@ msgstr "Válasszon albumokat, vagy hozzon létre egy újat"
 
 #: src/locales/locale.js:60
 msgid "Select date"
-msgstr ""
+msgstr "Válassza ki a dátumot"
 
 #: src/locales/locale.js:57
 msgid "Select dates"
-msgstr ""
+msgstr "Válassza ki a dátumokat"
 
 #: src/locales/locale.js:96
 msgid "Select Time"
-msgstr ""
+msgstr "Idő kiválasztása"
 
 #: src/component/photo/clipboard.vue:68
 msgid "Selection approved"
@@ -2614,7 +2614,7 @@ msgstr "Szoftver"
 
 #: src/locales/locale.js:40
 msgid "Sort by"
-msgstr ""
+msgstr "Rendezés"
 
 #: src/component/photo/toolbar.vue:362 src/dialog/album/edit.vue:145
 #: src/page/albums.vue:227
@@ -2623,11 +2623,11 @@ msgstr "Sorrend"
 
 #: src/locales/locale.js:34
 msgid "Sorted ascending."
-msgstr ""
+msgstr "Növekvő sorrendben."
 
 #: src/locales/locale.js:33
 msgid "Sorted descending."
-msgstr ""
+msgstr "Lefelé rendezve."
 
 #: src/dialog/photo/edit/labels.vue:25
 msgid "Source"
@@ -2824,7 +2824,7 @@ msgstr "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a \"Regisztr�
 
 #: src/locales/locale.js:76
 msgid "Today"
-msgstr ""
+msgstr "Ma"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:175 src/component/album/toolbar.vue:192
