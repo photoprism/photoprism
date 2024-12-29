@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-20 01:21+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-12-24 01:02+0000\n"
+"Last-Translator: Omer Duran <me@omerduran.dev>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -98,7 +98,7 @@ msgstr "Tıklayarak panoya kopyalayabilirsiniz."
 #: src/component/navigation.vue:393 src/component/navigation.vue:46
 #: src/page/people/recognized.vue:361 src/page/settings/account.vue:266
 msgid "About"
-msgstr "Hakkında"
+msgstr "Hakkımızda"
 
 #: src/options/auth.js:26 src/options/auth.js:44
 msgid "Access Token"
@@ -454,7 +454,7 @@ msgstr "Bugün üye olun, misyonumuzu destekleyin ve üye avantajlarımızdan ya
 #: src/dialog/sponsor.vue:8 src/page/about/about.vue:28
 #: src/page/about/about.vue:7
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "100% self tarafından finanse edilen ve bağımsız bir şirket olarak, verilerinizi asla satmayacağımıza ve yazılım ve hizmetlerimiz konusunda her zaman şeffaf olacağımıza dair size söz verebiliriz."
+msgstr "100% öz fonlu ve bağımsız olarak, verilerinizi asla satmayacağımız ve yazılım ile hizmetlerimiz konusunda her zaman şeffaf olacağımızı size garanti edebiliriz."
 
 #: src/dialog/admin/users/edit.vue:282 src/page/settings/account.vue:244
 msgid "Bio"
@@ -564,7 +564,7 @@ msgstr "Kartlar"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr "1}'in {0} atlıkarınca slaytı"
+msgstr "{1}'in {0} kaydırmalı slayt"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -714,7 +714,7 @@ msgstr "Devam etmek"
 
 #: src/page/auth/login.vue:58 src/page/auth/login.vue:6
 msgid "Continue with %{provider}"
-msgstr "Sağlayıcı} ile devam edin"
+msgstr "%{provider} ile devam edin"
 
 #: src/options/auth.js:9
 msgid "Contributor"
@@ -790,7 +790,7 @@ msgstr "Müşteri Hizmetleri"
 
 #: src/options/options.js:453
 msgid "Cyan"
-msgstr "Cyan"
+msgstr "Camgöbeği"
 
 #: src/options/options.js:426
 msgid "Daily"
@@ -864,7 +864,7 @@ msgstr "Boyutlar"
 
 #: src/page/settings/advanced.vue:189
 msgid "Disable Backups"
-msgstr "Yedekleri Devredışı Bırak"
+msgstr "Yedekleri devre dışı bırak"
 
 #: src/page/settings/advanced.vue:663
 msgid "Disable Darktable"
@@ -892,7 +892,7 @@ msgstr "Etkileşimli dünya haritalarını ve ters coğrafi kodlamayı devre dı
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
-msgstr "Yerleri Devre Dışı Bırak"
+msgstr "Yerleri devre dışı bırak"
 
 #: src/page/settings/advanced.vue:687
 msgid "Disable RawTherapee"
@@ -904,7 +904,7 @@ msgstr "TensorFlow'u devre dışı bırak"
 
 #: src/page/settings/advanced.vue:785
 msgid "Disable Vectors"
-msgstr "Vektörleri Devre Dışı Bırak"
+msgstr "Vektörleri devre dışı bırak"
 
 #: src/page/settings/advanced.vue:213
 msgid "Disable WebDAV"
@@ -925,7 +925,7 @@ msgstr "Keşfetmek"
 
 #: src/locales/locale.js:21
 msgid "Dismiss"
-msgstr "Dağılın"
+msgstr "Göz ardı et"
 
 #: src/dialog/admin/users/add.vue:124 src/dialog/admin/users/edit.vue:176
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:160
@@ -1078,7 +1078,7 @@ msgstr "Kimlik doğrulayıcı uygulamanız tarafından oluşturulan doğrulama k
 
 #: src/common/api.js:122
 msgid "Enter verification code"
-msgstr "dogrulama kodunu giriniz"
+msgstr "Doğrulama kodunu giriniz"
 
 #: src/dialog/account/apps.vue:15 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
@@ -1107,7 +1107,7 @@ msgstr "Tahminler"
 
 #: src/options/options.js:427
 msgid "Every two days"
-msgstr "iki günde bir"
+msgstr "İki günde bir"
 
 #: src/page/settings/general.vue:209
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
@@ -1119,7 +1119,7 @@ msgstr "Gizlenenleri hariç tut"
 
 #: src/page/settings/advanced.vue:262
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Tam Video, Canlı Fotoğraf ve XMP desteği için ExifTool ile meta veri çıkarma gereklidir."
+msgstr "XMP meta verileri, videolar ve Canlı Fotoğraflar için tam destek için ExifTool gereklidir."
 
 #: src/component/photo/toolbar.vue:210 src/page/albums.vue:146
 msgid "Expand Search"
@@ -1149,7 +1149,7 @@ msgstr "Yüz"
 
 #: src/dialog/photo/edit/info.vue:91
 msgid "Faces"
-msgstr "yüzler"
+msgstr "Yüzler"
 
 #: src/dialog/account/apps.vue:94 src/dialog/account/passcode.vue:69
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
@@ -1167,7 +1167,7 @@ msgstr "Bağlantı güncellenemedi"
 
 #: src/dialog/admin/users/edit.vue:154 src/page/settings/account.vue:136
 msgid "Family Name"
-msgstr "Aile Adı"
+msgstr "Soyadı"
 
 #: src/options/options.js:297
 msgid "Fast"
@@ -1293,7 +1293,7 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 
 #: src/dialog/admin/users/edit.vue:129 src/page/settings/account.vue:111
 msgid "Given Name"
-msgstr "Verilen İsim"
+msgstr "İsim"
 
 #: src/page/settings/advanced.vue:17
 msgid "Global Options"
@@ -1301,7 +1301,7 @@ msgstr "Küresel Seçenekler"
 
 #: src/locales/locale.js:103
 msgid "Go to page {0}"
-msgstr "Sayfa {0}'a gidin"
+msgstr "{0}. sayfaya gidin"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -1426,7 +1426,7 @@ msgstr "Yığınları ve arşivleri indirirken sidecar dosyalarını ekleyin."
 #: src/component/navigation.vue:516 src/page/library.vue:36
 #: src/page/settings/library.vue:5
 msgid "Index"
-msgstr "Dizin"
+msgstr "İndeks"
 
 #: src/page/settings/general.vue:425
 msgid "Index and import files through the user interface."
@@ -1592,7 +1592,7 @@ msgstr "Sevmek"
 
 #: src/options/options.js:450
 msgid "Lime"
-msgstr "Sarı"
+msgstr "Lime yeşili"
 
 #: src/page/library/browse.vue:320
 msgid "Limit reached, showing first %{n} files"
@@ -1627,7 +1627,7 @@ msgstr "Daha fazla yükle"
 
 #: src/locales/locale.js:28
 msgid "Loading items..."
-msgstr "Ürünler yükleniyor..."
+msgstr "Öğeler yükleniyor..."
 
 #: src/locales/locale.js:118
 msgid "Loading..."
@@ -1701,7 +1701,7 @@ msgstr "Hesabı Yönet"
 
 #: src/dialog/photo/edit/labels.vue:43
 msgid "manual"
-msgstr "el ile"
+msgstr "manuel"
 
 #: src/dialog/service/edit.vue:44
 msgid "Manual Upload"
@@ -1725,7 +1725,7 @@ msgstr "Üyelik"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
-msgstr "0] ile %{b}'i birleştirelim mi?"
+msgstr "%{a} ile %{b} birleştirilsin mi?"
 
 #: src/page/about/feedback.vue:28
 msgid "Message sent"
@@ -1912,7 +1912,7 @@ msgstr "Bu anahtar kelimeyi içeren uyarı veya hata yok. Aramanın büyük/kü�
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:88
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında görünmeden önce bir inceleme gerektirir."
+msgstr "Fotoğrafik olmayan ve düşük kaliteli görüntülerin arama sonuçlarında görünmeden önce incelenmesi gerekmektedir."
 
 #: src/options/admin.js:39 src/options/auth.js:32 src/options/options.js:293
 #: src/options/options.js:389
@@ -2021,7 +2021,7 @@ msgstr "Turuncu"
 
 #: src/dialog/photo/edit/files.vue:178 src/dialog/photo/edit/files.vue:175
 msgid "Orientation"
-msgstr "Oryantasyon"
+msgstr "Yönlendirme"
 
 #: src/page/library/import.vue:21 src/page/library/import.vue:6
 msgid "Original file names will be stored and indexed."
@@ -2053,7 +2053,7 @@ msgstr "Dış mekan"
 
 #: src/locales/locale.js:104
 msgid "Page {0}, Current page"
-msgstr "Sayfa {0}, Geçerli sayfa"
+msgstr "Sayfa {0}, Mevcut sayfa"
 
 #: src/locales/locale.js:100
 msgid "Pagination Navigation"
@@ -2154,7 +2154,7 @@ msgstr "Lütfen yeni şifrenizi onaylayın."
 
 #: src/dialog/account/apps.vue:36 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Lütfen aşağıdaki rastgele oluşturulmuş uygulama şifresini kopyalayın ve bir daha göremeyeceğiniz için güvenli bir yerde saklayın:"
+msgstr "Lütfen aşağıda verilen rastgele oluşturulmuş uygulama şifresini kopyalayın ve güvenli bir yerde saklayın, çünkü bunu bir daha göremeyeceksiniz:"
 
 #: src/dialog/upload.vue:49
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2182,7 +2182,7 @@ msgstr "Lütfen bekleyin…"
 
 #: src/locales/locale.js:95
 msgid "PM"
-msgstr "BAŞBAKAN"
+msgstr "PM"
 
 #: src/page/settings/advanced.vue:604
 msgid "PNG Size Limit: %{n}px"
@@ -2198,11 +2198,11 @@ msgstr "Dosya adlarını koru"
 
 #: src/page/library/import.vue:8
 msgid "Press button to start importing…"
-msgstr "İçe aktarmaya başlamak için düğmeye basın.."
+msgstr "İçe aktarmaya başlamak için düğmeye basın…"
 
 #: src/page/library/index.vue:9
 msgid "Press button to start indexing…"
-msgstr "İndekslemeyi başlatmak için düğmeye basın.."
+msgstr "İndekslemeyi başlatmak için düğmeye basın…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:3
 msgid "Press enter to create a new album."
@@ -2281,7 +2281,7 @@ msgstr "Değerlendirme {1}'in {0}'ı"
 
 #: src/options/options.js:354
 msgid "Raw"
-msgstr "Çiğ"
+msgstr "Raw"
 
 #: src/component/photo/cards.vue:339 src/component/photo/mosaic.vue:187
 #: src/page/settings/general.vue:687
@@ -2321,7 +2321,7 @@ msgstr "Belirli kişilerin bulunabilmesi için yüzleri tanır."
 
 #: src/page/people.vue:18
 msgid "Recognized"
-msgstr "Tanınmış"
+msgstr "Tanımlanmış"
 
 #: src/page/auth/login.vue:108
 msgid "Recovery Code"
@@ -2346,7 +2346,7 @@ msgstr "Tekrar yükle"
 #: src/component/navigation.vue:138 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:96 src/page/settings/library.vue:48
 msgid "Reloading…"
-msgstr "Yeniden doldurma.."
+msgstr "Yeniden doldurma…"
 
 #: src/dialog/service/edit.vue:87
 msgid "Remote Sync"
@@ -2906,7 +2906,7 @@ msgstr "Sıralanmamış"
 
 #: src/dialog/photo/edit/files.vue:42 src/dialog/photo/edit/files.vue:39
 msgid "Unstack"
-msgstr "Unstack"
+msgstr "Yığından çıkar"
 
 #: src/dialog/photo/edit/files.vue:237 src/dialog/photo/edit/files.vue:234
 #: src/dialog/photo/edit/info.vue:191
@@ -2923,11 +2923,11 @@ msgstr "Dizin güncelleniyor"
 
 #: src/page/library/index.vue:163
 msgid "Updating moments"
-msgstr "Anların güncellenmesi"
+msgstr "Anılar güncelliyor"
 
 #: src/dialog/admin/users/edit.vue:151
 msgid "Updating picture…"
-msgstr "Resim güncelleniyor.."
+msgstr "Resim güncelleniyor…"
 
 #: src/page/library/index.vue:167
 msgid "Updating previews"
@@ -2984,7 +2984,7 @@ msgstr "WebDAV'a yükleyin ve bağlantıları arkadaşlarınızla paylaşın."
 
 #: src/dialog/upload.vue:37
 msgid "Uploading %{n} of %{t}…"
-msgstr "1]'in %{n}'ı yükleniyor.."
+msgstr "%{t} içinden %{n} yüklüyor…"
 
 #: src/dialog/upload.vue:90 src/dialog/upload.vue:98 src/dialog/upload.vue:212
 msgid "Uploading photos…"
@@ -3114,9 +3114,7 @@ msgstr "WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanab
 
 #: src/page/settings/services.vue:35
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
-"Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV istemcileri doğrudan\n"
-"          PhotoPrism."
+msgstr "Microsoft'un Windows Gezgini veya Apple'ın Finder'ı gibi WebDAV istemcileri, PhotoPrism'e doğrudan bağlanabilir."
 
 #: src/dialog/share.vue:72 src/dialog/share/upload.vue:4
 msgid "WebDAV Upload"

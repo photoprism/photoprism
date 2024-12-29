@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-20 01:21+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-12-29 05:02+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -16,27 +16,30 @@ msgstr ""
 
 #: src/locales/locale.js:81
 msgid "{0} appended action"
-msgstr "{0} action annexée"
+msgstr "{0} action(s) attachées(s)"
 
 #: src/locales/locale.js:85
 msgid "{0} files"
-msgstr "{0} fichiers"
+msgstr "{0} fichier(s)"
 
 #: src/locales/locale.js:86
 msgid "{0} files ({1} in total)"
-msgstr "Fichiers {0} ({1} au total)"
+msgstr "{0} fichiers(s) ({1} au total)"
 
 #: src/locales/locale.js:75
+#, fuzzy
 msgid "{0} more"
-msgstr "{0} plus"
+msgstr "{0} de plus"
 
 #: src/locales/locale.js:80
+#, fuzzy
 msgid "{0} prepended action"
-msgstr "{0} action préparée"
+msgstr "{0} action(s) préliminaire(s)"
 
 #: src/locales/locale.js:55
+#, fuzzy
 msgid "{0} selected"
-msgstr "{0} sélectionné"
+msgstr "{0} sélectionnée(s)"
 
 #: src/locales/locale.js:49
 msgid "{0}-{1} of {2}"
@@ -44,29 +47,29 @@ msgstr "{0}-{1} de {2}"
 
 #: src/page/albums.vue:525
 msgid "%{n} albums found"
-msgstr "%{n} albums trouvés"
+msgstr "%{n} album(s) trouvé(s)"
 
 #: src/dialog/share/upload.vue:80
 msgid "%{n} files uploaded"
-msgstr "%{n} fichiers chargés"
+msgstr "%{n} fichier(s) chargé(s)"
 
 #: src/page/library/browse.vue:316
 msgid "%{n} folders found"
-msgstr "%{n} dossiers trouvés"
+msgstr "%{n} dossier(s) trouvé(s)"
 
 #: src/page/labels.vue:447
 msgid "%{n} labels found"
-msgstr "%{n} étiquettes trouvées"
+msgstr "%{n} étiquette(s) trouvée(s)"
 
 #: src/page/people/new.vue:287 src/page/people/new.vue:376
 #: src/page/people/recognized.vue:522
 msgid "%{n} people found"
-msgstr "%{n} personnes trouvées"
+msgstr "%{n} personne(s) trouvée(s)"
 
 #: src/page/album/photos.vue:261 src/page/album/photos.vue:422
 #: src/page/photos.vue:401 src/page/photos.vue:574
 msgid "%{n} pictures found"
-msgstr "%{n} images trouvées"
+msgstr "%{n} image(s) trouvée(s)"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -145,11 +148,11 @@ msgstr "Activer pour supprimer le tri."
 
 #: src/locales/locale.js:38
 msgid "Activate to sort ascending."
-msgstr "Active pour trier par ordre croissant."
+msgstr "Activer pour trier par ordre croissant."
 
 #: src/locales/locale.js:37
 msgid "Activate to sort descending."
-msgstr "Active pour trier par ordre décroissant."
+msgstr "Activer pour trier par ordre décroissant."
 
 #: src/page/connect.vue:367
 msgid "Activation Code"
@@ -264,7 +267,7 @@ msgstr "Tous"
 
 #: src/page/albums.vue:383
 msgid "All %{n} albums loaded"
-msgstr "Les %{n} albums ont été chargés"
+msgstr "Les %{n} album(s) ont été chargé(s)"
 
 #: src/page/labels.vue:298
 msgid "All %{n} labels loaded"
@@ -565,7 +568,7 @@ msgstr "Cartes"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr "Diapositive carrousel {0} de {1}"
+msgstr "Page {0} sur {1} du carrousel"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -996,7 +999,7 @@ msgstr "Filtre de qualité"
 
 #: src/locales/locale.js:89
 msgid "Drag and drop files here"
-msgstr "Glisse et dépose les fichiers ici"
+msgstr "Glisser et déposer les fichiers ici"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1068,7 +1071,7 @@ msgstr "Avec l'authentification à deux facteurs, il faut un code de vérificati
 
 #: src/locales/locale.js:61 src/locales/locale.js:63
 msgid "Enter date"
-msgstr "Saisis la date"
+msgstr "Saisir la date"
 
 #: src/locales/locale.js:58
 msgid "Enter dates"
@@ -1494,20 +1497,21 @@ msgid "Item"
 msgstr "Item"
 
 #: src/locales/locale.js:43
+#, fuzzy
 msgid "Items per page:"
-msgstr "Articles par page :"
+msgstr "Article(s) par page :"
 
 #: src/page/settings/advanced.vue:548
 msgid "JPEG Quality: %{n}"
-msgstr "Qualité JPEG : %{n}"
+msgstr "Qualité des JPEG : %{n}"
 
 #: src/page/settings/advanced.vue:576
 msgid "JPEG Size Limit: %{n}px"
-msgstr "Limite de taille JPEG : %{n}px"
+msgstr "Limite de taille des JPEGs : %{n}px"
 
 #: src/page/library/import.vue:20 src/page/library/import.vue:5
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "Les JPEGS et miniatures sont automatiquement affichés selon les besoins."
+msgstr "Les JPEGs et miniatures sont automatiquement affichés selon les besoins."
 
 #: src/dialog/photo/edit/details.vue:557
 msgid "Keywords"
@@ -1629,15 +1633,16 @@ msgstr "Photos en direct"
 
 #: src/locales/locale.js:120
 msgid "Load more"
-msgstr "En savoir plus"
+msgstr "En charger plus"
 
 #: src/locales/locale.js:28
+#, fuzzy
 msgid "Loading items..."
-msgstr "Chargement des articles..."
+msgstr "Chargement des articles…"
 
 #: src/locales/locale.js:118
 msgid "Loading..."
-msgstr "Chargement..."
+msgstr "Chargement…"
 
 #: src/options/admin.js:31 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
@@ -1836,6 +1841,7 @@ msgid "Next page"
 msgstr "Page suivante"
 
 #: src/locales/locale.js:69
+#, fuzzy
 msgid "Next visual"
 msgstr "Visuel suivant"
 
@@ -1864,6 +1870,7 @@ msgid "No matching records found"
 msgstr "Aucun enregistrement correspondant n'a été trouvé"
 
 #: src/locales/locale.js:121
+#, fuzzy
 msgid "No more"
 msgstr "Pas plus"
 
@@ -1927,7 +1934,7 @@ msgstr "Aucun"
 
 #: src/locales/locale.js:35
 msgid "Not sorted."
-msgstr "Pas trié."
+msgstr "Non trié."
 
 #: src/page/library/import.vue:22 src/page/library/import.vue:7
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -2059,7 +2066,7 @@ msgstr "Extérieur"
 
 #: src/locales/locale.js:104
 msgid "Page {0}, Current page"
-msgstr "Page {0}, page actuelle"
+msgstr "Page {0}, page en cours"
 
 #: src/locales/locale.js:100
 msgid "Pagination Navigation"
@@ -2172,7 +2179,7 @@ msgstr "Veuillez ne pas envoyer de photos choquantes."
 
 #: src/locales/locale.js:82
 msgid "Please enter OTP character {0}"
-msgstr "Saisis le caractère OTP {0}"
+msgstr "Saisir le caractère OTP {0}"
 
 #: src/dialog/account/password.vue:11
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2239,6 +2246,7 @@ msgid "Previous page"
 msgstr "Page précédente"
 
 #: src/locales/locale.js:68
+#, fuzzy
 msgid "Previous visual"
 msgstr "Visuel précédent"
 
@@ -2283,7 +2291,7 @@ msgstr "Aléatoire"
 
 #: src/locales/locale.js:115
 msgid "Rating {0} of {1}"
-msgstr "Classement {0} de {1}"
+msgstr "Évaluation {0} sur {1}"
 
 #: src/options/options.js:354
 msgid "Raw"
@@ -2485,15 +2493,15 @@ msgstr "Sélectionner des albums ou en créer un nouveau"
 
 #: src/locales/locale.js:60
 msgid "Select date"
-msgstr "Choisis la date"
+msgstr "Sélectionner la date"
 
 #: src/locales/locale.js:57
 msgid "Select dates"
-msgstr "Sélectionne les dates"
+msgstr "Sélectionner les dates"
 
 #: src/locales/locale.js:96
 msgid "Select Time"
-msgstr "Sélectionne l'heure"
+msgstr "Sélectionner l'heure"
 
 #: src/component/photo/clipboard.vue:68
 msgid "Selection approved"
@@ -2630,7 +2638,7 @@ msgstr "Ordre de tri"
 
 #: src/locales/locale.js:34
 msgid "Sorted ascending."
-msgstr "Classés par ordre croissant."
+msgstr "Triés par ordre croissant."
 
 #: src/locales/locale.js:33
 msgid "Sorted descending."

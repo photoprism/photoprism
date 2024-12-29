@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-20 01:21+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-12-24 01:02+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -141,15 +141,15 @@ msgstr "Aktivieren"
 
 #: src/locales/locale.js:36
 msgid "Activate to remove sorting."
-msgstr "Aktiviere, um die Sortierung aufzuheben."
+msgstr "Aktivieren, um die Sortierung aufzuheben."
 
 #: src/locales/locale.js:38
 msgid "Activate to sort ascending."
-msgstr "Aktiviere diese Option, um aufsteigend zu sortieren."
+msgstr "Aktivieren, um aufsteigend zu sortieren."
 
 #: src/locales/locale.js:37
 msgid "Activate to sort descending."
-msgstr "Aktiviere diese Option, um absteigend zu sortieren."
+msgstr "Aktivieren, um absteigend zu sortieren."
 
 #: src/page/connect.vue:367
 msgid "Activation Code"
@@ -434,7 +434,7 @@ msgstr "Zurück"
 
 #: src/component/scroll.vue:4
 msgid "Back to top"
-msgstr "Zurück zum Anfang"
+msgstr "Zurück nach oben"
 
 #: src/page/settings/advanced.vue:66 src/page/settings/advanced.vue:2
 msgid "Backup"
@@ -564,7 +564,7 @@ msgstr "Karteikarten"
 
 #: src/locales/locale.js:71
 msgid "Carousel slide {0} of {1}"
-msgstr "Karussell Rutsche {0} von {1}"
+msgstr "Slide {0} von {1}"
 
 #: src/component/photo/toolbar.vue:467 src/dialog/album/edit.vue:130
 #: src/page/about/feedback.vue:121 src/page/albums.vue:201
@@ -925,7 +925,7 @@ msgstr "Entdecken"
 
 #: src/locales/locale.js:21
 msgid "Dismiss"
-msgstr "Ablehnen"
+msgstr "Verwerfen"
 
 #: src/dialog/admin/users/add.vue:124 src/dialog/admin/users/edit.vue:176
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:160
@@ -993,7 +993,7 @@ msgstr "Skalierungsfilter"
 
 #: src/locales/locale.js:89
 msgid "Drag and drop files here"
-msgstr "Dateien hierher ziehen und ablegen"
+msgstr "Dateien per Drag-and-Drop hier ablegen"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1301,7 +1301,7 @@ msgstr "Globale Optionen"
 
 #: src/locales/locale.js:103
 msgid "Go to page {0}"
-msgstr "Gehe zu Seite {0}"
+msgstr "Zu Seite {0}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -1489,7 +1489,7 @@ msgstr "Eintrag"
 
 #: src/locales/locale.js:43
 msgid "Items per page:"
-msgstr "Artikel pro Seite:"
+msgstr "Ergebnisse pro Seite:"
 
 #: src/page/settings/advanced.vue:548
 msgid "JPEG Quality: %{n}"
@@ -1627,11 +1627,11 @@ msgstr "Mehr laden"
 
 #: src/locales/locale.js:28
 msgid "Loading items..."
-msgstr "Artikel laden..."
+msgstr "Ergebnisse laden..."
 
 #: src/locales/locale.js:118
 msgid "Loading..."
-msgstr "Laden..."
+msgstr "Lädt..."
 
 #: src/options/admin.js:31 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
@@ -1855,11 +1855,11 @@ msgstr "Keine Kategorien gefunden"
 
 #: src/locales/locale.js:27
 msgid "No matching records found"
-msgstr "Keine passenden Datensätze gefunden"
+msgstr "Keine passenden Ergebnisse gefunden"
 
 #: src/locales/locale.js:121
 msgid "No more"
-msgstr "Nicht mehr"
+msgstr "Keine weiteren"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:283 src/page/people/new.vue:372
@@ -2325,7 +2325,7 @@ msgstr "Erkannt"
 
 #: src/page/auth/login.vue:108
 msgid "Recovery Code"
-msgstr "Einziehungscode"
+msgstr "Wiederherstellungs-Code"
 
 #: src/options/options.js:446
 msgid "Red"
