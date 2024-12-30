@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 13:18+0000\n"
+"PO-Revision-Date: 2024-12-30 16:01+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -578,7 +578,7 @@ msgstr "İptal"
 
 #: src/component/photo/dialog/edit/details.vue:454
 msgid "Caption"
-msgstr ""
+msgstr "Başlık"
 
 #: src/component/photo/toolbar.vue:91 src/component/photo/toolbar.vue:97
 msgid "Cards"

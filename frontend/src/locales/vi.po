@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-30 13:18+0000\n"
+"PO-Revision-Date: 2024-12-30 16:01+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -575,7 +575,7 @@ msgstr "Hủy bỏ"
 
 #: src/component/photo/dialog/edit/details.vue:454
 msgid "Caption"
-msgstr ""
+msgstr "Đầu đề"
 
 #: src/component/photo/toolbar.vue:91 src/component/photo/toolbar.vue:97
 msgid "Cards"
