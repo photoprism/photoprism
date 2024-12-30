@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-20 01:21+0000\n"
+"PO-Revision-Date: 2024-12-30 13:18+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -92,7 +92,7 @@ msgstr "Napsauttamalla sitä voit kopioida sen leikepöydälle."
 
 #: src/component/dialog/reload.vue:26
 msgid "A new version of %{s} is available:"
-msgstr ""
+msgstr "Uusi versio %{s}:stä on saatavilla:"
 
 #: src/dialog/admin/users/edit.vue:255 src/page/about/about.vue:53
 #: src/app/routes.js:60 src/component/navigation.vue:394
@@ -2679,7 +2679,7 @@ msgstr "Ohjelmisto"
 
 #: src/component/dialog/reload.vue:5
 msgid "Software Update"
-msgstr ""
+msgstr "Ohjelmiston päivitys"
 
 #: src/locales.js:42
 msgid "Sort by"

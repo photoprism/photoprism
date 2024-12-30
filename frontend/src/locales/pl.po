@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-20 01:21+0000\n"
+"PO-Revision-Date: 2024-12-30 13:18+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -95,7 +95,7 @@ msgstr "Kliknięcie na link powyżej skopiuje go do schowka."
 
 #: src/component/dialog/reload.vue:26
 msgid "A new version of %{s} is available:"
-msgstr ""
+msgstr "Dostępna jest nowa wersja %{s}:"
 
 #: src/dialog/admin/users/edit.vue:255 src/page/about/about.vue:53
 #: src/app/routes.js:60 src/component/navigation.vue:394
@@ -2682,7 +2682,7 @@ msgstr "Oprogramowanie"
 
 #: src/component/dialog/reload.vue:5
 msgid "Software Update"
-msgstr ""
+msgstr "Aktualizacja oprogramowania"
 
 #: src/locales.js:42
 msgid "Sort by"

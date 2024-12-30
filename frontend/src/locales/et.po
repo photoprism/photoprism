@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-20 01:21+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-12-30 13:18+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -92,7 +92,7 @@ msgstr "Klõpsamine kopeerib selle lõikelauale."
 
 #: src/component/dialog/reload.vue:26
 msgid "A new version of %{s} is available:"
-msgstr ""
+msgstr "Rakenduse %{s} uus versioon on saadaval:"
 
 #: src/dialog/admin/users/edit.vue:255 src/page/about/about.vue:53
 #: src/app/routes.js:60 src/component/navigation.vue:394
@@ -2679,7 +2679,7 @@ msgstr "Tarkvara"
 
 #: src/component/dialog/reload.vue:5
 msgid "Software Update"
-msgstr ""
+msgstr "Tarkvara värskendus"
 
 #: src/locales.js:42
 msgid "Sort by"
