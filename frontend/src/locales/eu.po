@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1128,11 +1128,11 @@ msgstr "Estimazioa"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Estimatu kokapenak"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Kalkulatu argazkien gutxi gorabeherako kokapena GPS koordenaturik gabe."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1170,7 +1170,7 @@ msgstr "Esposizio"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Atera irudi finkoak eta sortu miniaturak indexatzen dituzun bitartean."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1197,7 +1197,7 @@ msgstr "Ezin izan da esteka kendu"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Ezin izan da konektatu kontua."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1339,7 +1339,7 @@ msgstr "Momentu, bidai eta leku berezien albumak automatikoki sortzen ditu."
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Sortu Aurrebistak"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2450,7 +2450,7 @@ msgstr "Eskaerak huts egin du - erantzun baliogabea"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Eskatu argazkirik gabeko eta kalitate baxuko irudiak berrikustea bilaketa-emaitzetan agertu aurretik."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3187,7 +3187,7 @@ msgstr "Antzekotasun bisuala"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Abisua"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

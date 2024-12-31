@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1128,11 +1128,11 @@ msgstr "Ocena"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Ocenjevanje lokacij"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Ocenite približno lokacijo slik brez koordinat GPS."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1170,7 +1170,7 @@ msgstr "Izpostavljenost"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Med indeksiranjem izpisujte mirujoče slike in ustvarjajte sličice."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1197,7 +1197,7 @@ msgstr "Neuspešno odstranjevanje povezave"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Ni uspelo povezati računa."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1339,7 +1339,7 @@ msgstr "Samodejno ustvari albume posebnih trenutkov, potovanj in krajev."
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Ustvarjanje predogledov"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2450,7 +2450,7 @@ msgstr "Zahteva ni uspela - neveljaven odgovor"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "zahteva, da se pred prikazom v rezultatih iskanja pregledajo nefotografske slike in slike nizke kakovosti."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3187,7 +3187,7 @@ msgstr "Skupine po podobnosti"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Opozorilo"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

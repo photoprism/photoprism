@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -1131,11 +1131,11 @@ msgstr "Texmînkirin"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Cihên Texmîn bikin"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Cihê nêzîkê wêneyan bêyî koordînatên GPS-ê texmîn bikin."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1173,7 +1173,7 @@ msgstr "دەرخستن"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Wêneyên hêstiran derxînin û di dema îndekskirinê de nîgaran çêkin."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1200,7 +1200,7 @@ msgstr "لابردنی بەستەرەکە شکستی هێنا"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Girêdana hesabê têk çû."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1342,7 +1342,7 @@ msgstr "Bixweber albûmên demên taybetî, rêwîtî û deveran diafirîne."
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Pêşdîtinan biafirînin"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2453,7 +2453,7 @@ msgstr "داواکاریەکە سەرکەوتوو نەبوو - وەڵامە نا
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Berî ku ew di encamên lêgerînê de xuya bibin, pêdivî ye ku wêneyên ne-wêne û ne-kalîteyê bêne vekolandin."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3190,7 +3190,7 @@ msgstr "گروپکردن بە پێی هاوشێوەیی"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Gazî"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

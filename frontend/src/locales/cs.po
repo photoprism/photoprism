@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
@@ -1131,11 +1131,11 @@ msgstr "Odhad"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Odhad lokalit"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Odhad přibližné polohy obrázků bez souřadnic GPS."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1173,7 +1173,7 @@ msgstr "Expozice"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Extrakce statických snímků a generování miniatur při indexování."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1200,7 +1200,7 @@ msgstr "Odstraňování odkazu selhalo"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Nepodařilo se připojit účet."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1342,7 +1342,7 @@ msgstr "Automaticky vytváří alba zvláštních okamžiků, výletů a míst."
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Generování náhledů"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2453,7 +2453,7 @@ msgstr "Požadavek selhal - neplatná odpověď"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Požadavek na kontrolu nefotografických a nekvalitních obrázků před jejich zobrazením ve výsledcích vyhledávání."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3190,7 +3190,7 @@ msgstr "Vizuální podobnost"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Varování"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -1131,11 +1131,11 @@ msgstr "Anggaran"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Anggarkan Lokasi"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Anggarkan anggaran lokasi gambar tanpa koordinat GPS."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1173,7 +1173,7 @@ msgstr "Dedahan"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Ekstrak imej pegun dan hasilkan lakaran kecil semasa mengindeks."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1200,7 +1200,7 @@ msgstr "Gagal mengalih keluar pautan"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Gagal menyambungkan akaun."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1342,7 +1342,7 @@ msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat seca
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Hasilkan Pratonton"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2453,7 +2453,7 @@ msgstr "Permintaan gagal - respons tidak sah"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Memerlukan imej bukan fotografi dan berkualiti rendah untuk disemak sebelum ia muncul dalam hasil carian."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3190,7 +3190,7 @@ msgstr "Kumpulan mengikut persamaan"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Amaran"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

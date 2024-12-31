@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -1131,11 +1131,11 @@ msgstr "估算"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "估計地點"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "在沒有 GPS 座標的情況下估計圖片的大致位置。"
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1173,7 +1173,7 @@ msgstr "曝光"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "提取靜態圖像並在索引時產生縮圖。"
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1200,7 +1200,7 @@ msgstr "移除連結失敗"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "無法連接帳戶。"
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1342,7 +1342,7 @@ msgstr "自動建立特殊時刻、旅行和地點的相冊。"
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "生成預覽"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2453,7 +2453,7 @@ msgstr "要求失敗 - 無效的回應"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "要求非攝影和低品質影像在出現在搜尋結果中之前經過審查。"
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3190,7 +3190,7 @@ msgstr "視覺相似度"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

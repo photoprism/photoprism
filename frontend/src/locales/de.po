@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -1131,11 +1131,11 @@ msgstr "Schätzung"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Schätzung Standorte"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Schätze den ungefähren Standort von Bildern ohne GPS-Koordinaten."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1173,7 +1173,7 @@ msgstr "Belichtungszeit"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Extrahiere Standbilder und erstelle Miniaturansichten während der Indizierung."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1200,7 +1200,7 @@ msgstr "Der Link konnte nicht gelöscht werden"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Die Verbindung zum Konto ist fehlgeschlagen."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1342,7 +1342,7 @@ msgstr "Alben von besonderen Momenten, Reisen und Orten erstellen."
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Vorschauen generieren"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2453,7 +2453,7 @@ msgstr "Anfrage fehlgeschlagen - ungültige Antwort"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Verlangt, dass nicht-fotografische und qualitativ schlechte Bilder geprüft werden, bevor sie in den Suchergebnissen erscheinen."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3190,7 +3190,7 @@ msgstr "Visuelle Ähnlichkeit"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Warnung"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

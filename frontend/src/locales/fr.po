@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1137,11 +1137,11 @@ msgstr "Estimation"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Estimation des lieux"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Estime l'emplacement approximatif des photos sans coordonnées GPS."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1180,7 +1180,7 @@ msgstr "Exposition"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Extrait les images fixes et génère des vignettes lors de l'indexation."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1207,7 +1207,7 @@ msgstr "Échec de la suppression du lien"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Échec de la connexion au compte."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1351,7 +1351,7 @@ msgstr "Création automatique d'albums regroupant des moments, des voyages et de
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Générer des aperçus"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2467,7 +2467,7 @@ msgstr "Échec de la requête - réponse incorrecte"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Exige que les images non photographiques et de faible qualité soient examinées avant d'apparaître dans les résultats de recherche."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3204,7 +3204,7 @@ msgstr "Similitude visuelle"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Avertissement"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"

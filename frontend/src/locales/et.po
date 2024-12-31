@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-30 16:01+0000\n"
+"PO-Revision-Date: 2024-12-31 01:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1128,11 +1128,11 @@ msgstr "Hinnang:"
 
 #: src/page/settings/library.vue:87
 msgid "Estimate Locations"
-msgstr ""
+msgstr "Hinnangulised asukohad"
 
 #: src/page/settings/library.vue:88
 msgid "Estimate the approximate location of pictures without GPS coordinates."
-msgstr ""
+msgstr "Hinnake piltide ligikaudset asukohta ilma GPS-koordinaatideta."
 
 #: src/options/options.js:427
 msgid "Every two days"
@@ -1170,7 +1170,7 @@ msgstr "Säriaeg"
 
 #: src/page/settings/library.vue:111
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr ""
+msgstr "Väljavõte fotodest ja pisipiltide genereerimine indekseerimise ajal."
 
 #: src/component/photo/dialog/edit/details.vue:402
 msgid "F Number"
@@ -1197,7 +1197,7 @@ msgstr "Lingi eemaldamine ebaõnnestus"
 
 #: src/page/connect.vue:137
 msgid "Failed to connect account."
-msgstr ""
+msgstr "Konto ühendamine ebaõnnestus."
 
 #: src/component/dialog/share.vue:87
 msgid "Failed updating link"
@@ -1339,7 +1339,7 @@ msgstr "Loob automaatselt albumid erilistest hetkedest, reisidest ja kohtadest."
 
 #: src/page/settings/library.vue:110
 msgid "Generate Previews"
-msgstr ""
+msgstr "Loo eelvaateid"
 
 #: src/dialog/admin/users/edit.vue:130 src/page/settings/account.vue:111
 msgid "Given Name"
@@ -2450,7 +2450,7 @@ msgstr "Päring ebaõnnestus - vigane vastus"
 
 #: src/page/settings/library.vue:65
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr ""
+msgstr "Nõuda mittefotograafiliste ja madala kvaliteediga piltide läbivaatamist enne nende ilmumist otsingutulemustesse."
 
 #: src/dialog/admin/users/add.vue:79 src/dialog/admin/users/add.vue:105
 #: src/dialog/admin/users/edit.vue:179 src/page/about/feedback.vue:127
@@ -3187,7 +3187,7 @@ msgstr "Visuaalne sarnasus"
 
 #: src/page/library/errors.vue:193
 msgid "Warning"
-msgstr ""
+msgstr "Hoiatus"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
