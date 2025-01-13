@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-31 01:08+0000\n"
+"PO-Revision-Date: 2025-01-13 09:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -2665,7 +2665,7 @@ msgstr "在库中显示服务器日志。"
 
 #: src/component/viewer.vue:403
 msgid "Show/Hide Sidebar"
-msgstr ""
+msgstr "显示/隐藏侧边栏"
 
 #: src/model/file.js:209 src/page/settings/general.vue:710
 msgid "Sidecar"

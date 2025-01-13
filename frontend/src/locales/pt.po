@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-31 01:08+0000\n"
+"PO-Revision-Date: 2025-01-13 09:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
@@ -2663,7 +2663,7 @@ msgstr "Mostrar registros do servidor na Biblioteca."
 
 #: src/component/viewer.vue:403
 msgid "Show/Hide Sidebar"
-msgstr ""
+msgstr "Mostrar/ocultar a barra lateral"
 
 #: src/model/file.js:209 src/page/settings/general.vue:710
 msgid "Sidecar"

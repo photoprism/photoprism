@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-12-31 01:08+0000\n"
+"PO-Revision-Date: 2025-01-13 09:12+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2660,7 +2660,7 @@ msgstr "Hiển thị nhật ký máy chủ trong Thư viện."
 
 #: src/component/viewer.vue:403
 msgid "Show/Hide Sidebar"
-msgstr ""
+msgstr "Hiển thị/Ẩn thanh bên"
 
 #: src/model/file.js:209 src/page/settings/general.vue:710
 msgid "Sidecar"

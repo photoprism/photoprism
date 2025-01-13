@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-12-31 01:08+0000\n"
+"PO-Revision-Date: 2025-01-13 09:12+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
@@ -2663,7 +2663,7 @@ msgstr "הצג יומני שרת בספרייה."
 
 #: src/component/viewer.vue:403
 msgid "Show/Hide Sidebar"
-msgstr ""
+msgstr "הצג/הסתר סרגל צד"
 
 #: src/model/file.js:209 src/page/settings/general.vue:710
 msgid "Sidecar"
