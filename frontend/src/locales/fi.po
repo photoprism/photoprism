@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-13 09:12+0000\n"
+"PO-Revision-Date: 2025-01-16 22:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -155,7 +155,7 @@ msgstr "Aktivoi lajittelemaan alenevasti."
 
 #: src/page/about/about.vue:73
 msgid "Activating Your License"
-msgstr ""
+msgstr "Lisenssin aktivointi"
 
 #: src/page/connect.vue:223 src/page/connect.vue:231
 msgid "Activation Code"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-13 09:12+0000\n"
+"PO-Revision-Date: 2025-01-16 22:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
@@ -158,7 +158,7 @@ msgstr "Aktivácia na zoradenie zostupne."
 
 #: src/page/about/about.vue:73
 msgid "Activating Your License"
-msgstr ""
+msgstr "Aktivácia vašej licencie"
 
 #: src/page/connect.vue:223 src/page/connect.vue:231
 msgid "Activation Code"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-13 09:12+0000\n"
+"PO-Revision-Date: 2025-01-16 22:17+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -158,7 +158,7 @@ msgstr "激活以降序排序。"
 
 #: src/page/about/about.vue:73
 msgid "Activating Your License"
-msgstr ""
+msgstr "啟動您的許可證"
 
 #: src/page/connect.vue:223 src/page/connect.vue:231
 msgid "Activation Code"
