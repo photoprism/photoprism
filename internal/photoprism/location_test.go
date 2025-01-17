@@ -87,8 +87,8 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Berlin", location2.City())
 		assert.Equal(t, "Berlin", location2.State())
 	})
-	t.Run("iphone_xr.heic", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_xr.heic")
+	t.Run("iphone_xr.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_xr.jpg")
 
 		if err != nil {
 			t.Fatal(err)
