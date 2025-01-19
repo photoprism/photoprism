@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-16 22:28+0000\n"
+"PO-Revision-Date: 2025-01-19 16:25+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1728,7 +1728,7 @@ msgstr "Διαχείριση λογαριασμού"
 
 #: src/component/photo/dialog/edit/labels.vue:42
 msgid "Manual"
-msgstr ""
+msgstr "Χειροκίνητο"
 
 #: src/component/service/dialog/edit.vue:39
 msgid "Manual Upload"
@@ -2041,7 +2041,7 @@ msgstr "Ανοίξτε το"
 #: src/component/service/dialog/add.vue:74
 #: src/component/service/dialog/add.vue:93
 msgid "optional"
-msgstr ""
+msgstr "προαιρετικό"
 
 #: src/locales.js:92
 msgid "or"
@@ -2135,7 +2135,7 @@ msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερ�
 
 #: src/model/subject.js:158
 msgid "Person"
-msgstr ""
+msgstr "Πρόσωπο"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -3179,7 +3179,7 @@ msgstr "Ανέβασμα WebDAV"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr ""
+msgstr "Η υποστήριξη WebGL είναι απενεργοποιημένη στο πρόγραμμα περιήγησής σας"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3250,7 +3250,7 @@ msgstr "Ο λογαριασμός σας έχει συνδεθεί επιτυχ�
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr ""
+msgstr "Το πρόγραμμα περιήγησής σας δεν υποστηρίζει WebGL"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213

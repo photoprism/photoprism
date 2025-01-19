@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-16 22:28+0000\n"
+"PO-Revision-Date: 2025-01-19 16:25+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
@@ -1731,7 +1731,7 @@ msgstr "Administrer konto"
 
 #: src/component/photo/dialog/edit/labels.vue:42
 msgid "Manual"
-msgstr ""
+msgstr "Manuell"
 
 #: src/component/service/dialog/edit.vue:39
 msgid "Manual Upload"
@@ -2044,7 +2044,7 @@ msgstr "Åpen"
 #: src/component/service/dialog/add.vue:74
 #: src/component/service/dialog/add.vue:93
 msgid "optional"
-msgstr ""
+msgstr "valgfritt"
 
 #: src/locales.js:92
 msgid "or"
@@ -2138,7 +2138,7 @@ msgstr "Permanent fjern bilder for å frigjøre lagringsplass."
 
 #: src/model/subject.js:158
 msgid "Person"
-msgstr ""
+msgstr "Person"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -3182,7 +3182,7 @@ msgstr "WebDAV-opplasting"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr ""
+msgstr "WebGL-støtte er deaktivert i nettleseren din"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3253,7 +3253,7 @@ msgstr "Kontoen din har blitt koblet til."
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr ""
+msgstr "Nettleseren din støtter ikke WebGL"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213

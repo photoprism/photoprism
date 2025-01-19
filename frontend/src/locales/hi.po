@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-16 22:28+0000\n"
+"PO-Revision-Date: 2025-01-19 16:25+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -1731,7 +1731,7 @@ msgstr "खाते का प्रबंधन करें"
 
 #: src/component/photo/dialog/edit/labels.vue:42
 msgid "Manual"
-msgstr ""
+msgstr "नियमावली"
 
 #: src/component/service/dialog/edit.vue:39
 msgid "Manual Upload"
@@ -2044,7 +2044,7 @@ msgstr "खुला"
 #: src/component/service/dialog/add.vue:74
 #: src/component/service/dialog/add.vue:93
 msgid "optional"
-msgstr ""
+msgstr "वैकल्पिक"
 
 #: src/locales.js:92
 msgid "or"
@@ -2138,7 +2138,7 @@ msgstr "मेमोरी खाली करने के लिए फ़ा�
 
 #: src/model/subject.js:158
 msgid "Person"
-msgstr ""
+msgstr "व्यक्ति"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -3182,7 +3182,7 @@ msgstr "WebDAV अपलोड करें"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr ""
+msgstr "आपके ब्राउज़र में WebGL समर्थन अक्षम है"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3253,7 +3253,7 @@ msgstr "आपका खाता सफलतापूर्वक कनेक
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr ""
+msgstr "आपका ब्राउज़र WebGL का समर्थन नहीं करता है"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213

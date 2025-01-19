@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-16 22:28+0000\n"
+"PO-Revision-Date: 2025-01-19 16:25+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1728,7 +1728,7 @@ msgstr "Quản lý tài khoản"
 
 #: src/component/photo/dialog/edit/labels.vue:42
 msgid "Manual"
-msgstr ""
+msgstr "Thủ công"
 
 #: src/component/service/dialog/edit.vue:39
 msgid "Manual Upload"
@@ -2041,7 +2041,7 @@ msgstr "Mở"
 #: src/component/service/dialog/add.vue:74
 #: src/component/service/dialog/add.vue:93
 msgid "optional"
-msgstr ""
+msgstr "không bắt buộc"
 
 #: src/locales.js:92
 msgid "or"
@@ -2135,7 +2135,7 @@ msgstr "Xóa vĩnh viễn các tập tin để giải phóng bộ nhớ."
 
 #: src/model/subject.js:158
 msgid "Person"
-msgstr ""
+msgstr "Người"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -3181,7 +3181,7 @@ msgstr "Tải lên WebDAV"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr ""
+msgstr "Hỗ trợ WebGL bị vô hiệu hóa trong trình duyệt của bạn"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3252,7 +3252,7 @@ msgstr "Tài khoản của bạn đã được kết nối thành công."
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr ""
+msgstr "Trình duyệt của bạn không hỗ trợ WebGL"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213

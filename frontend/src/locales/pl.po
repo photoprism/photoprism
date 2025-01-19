@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-16 22:28+0000\n"
+"PO-Revision-Date: 2025-01-19 16:25+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -1731,7 +1731,7 @@ msgstr "Zarządzaj kontem"
 
 #: src/component/photo/dialog/edit/labels.vue:42
 msgid "Manual"
-msgstr ""
+msgstr "Podręcznik"
 
 #: src/component/service/dialog/edit.vue:39
 msgid "Manual Upload"
@@ -2044,7 +2044,7 @@ msgstr "Otwarty"
 #: src/component/service/dialog/add.vue:74
 #: src/component/service/dialog/add.vue:93
 msgid "optional"
-msgstr ""
+msgstr "opcjonalny"
 
 #: src/locales.js:92
 msgid "or"
@@ -2138,7 +2138,7 @@ msgstr "Usuń pliki permanentnie, aby zwolnić miejsce na dysku."
 
 #: src/model/subject.js:158
 msgid "Person"
-msgstr ""
+msgstr "Osoba"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -3182,7 +3182,7 @@ msgstr "Wyślij na WebDAV"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr ""
+msgstr "Obsługa WebGL jest wyłączona w twojej przeglądarce"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3253,7 +3253,7 @@ msgstr "Twoje konto zostało pomyślnie połączone."
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr ""
+msgstr "Twoja przeglądarka nie obsługuje WebGL"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213

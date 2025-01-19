@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-16 22:28+0000\n"
+"PO-Revision-Date: 2025-01-19 16:25+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1728,7 +1728,7 @@ msgstr "Кіраванне ўліковым запісам"
 
 #: src/component/photo/dialog/edit/labels.vue:42
 msgid "Manual"
-msgstr ""
+msgstr "Дапаможнік"
 
 #: src/component/service/dialog/edit.vue:39
 msgid "Manual Upload"
@@ -2041,7 +2041,7 @@ msgstr "Адкрыты"
 #: src/component/service/dialog/add.vue:74
 #: src/component/service/dialog/add.vue:93
 msgid "optional"
-msgstr ""
+msgstr "неабавязковы"
 
 #: src/locales.js:92
 msgid "or"
@@ -2135,7 +2135,7 @@ msgstr "Выдаліце файлы назаўсёды, каб вызваліц�
 
 #: src/model/subject.js:158
 msgid "Person"
-msgstr ""
+msgstr "Асоба"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -3179,7 +3179,7 @@ msgstr "Загрузка WebDAV"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr ""
+msgstr "Падтрымка WebGL адключана ў вашым браўзеры"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3250,7 +3250,7 @@ msgstr "Ваш уліковы запіс быў паспяхова падклю�
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr ""
+msgstr "Ваш браўзер не падтрымлівае WebGL"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213
