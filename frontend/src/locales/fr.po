@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-19 16:25+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-01-21 00:49+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -453,6 +453,7 @@ msgid "Badge"
 msgstr "Badge"
 
 #: src/dialog/admin/users/edit.vue:376
+#, fuzzy
 msgid "Base Folder"
 msgstr "Dossier de base"
 
@@ -3199,7 +3200,7 @@ msgstr "Chargement via le protocole WebDAV"
 
 #: src/page/places.vue:106
 msgid "WebGL support is disabled in your browser"
-msgstr "La prise en charge de WebGL est désactivée dans ton navigateur"
+msgstr "La prise en charge de WebGL est désactivée dans votre navigateur"
 
 #: src/page/settings/account.vue:647
 msgid "Website"
@@ -3210,8 +3211,9 @@ msgid "White"
 msgstr "Blanc"
 
 #: src/page/settings/account.vue:549
+#, fuzzy
 msgid "Work Details"
-msgstr "Détails du travail"
+msgstr "Détails sur le poste"
 
 #: src/page/settings/account.vue:522
 #: src/component/photo/dialog/edit/details.vue:143
@@ -3270,7 +3272,7 @@ msgstr "Votre compte a été connecté avec succès."
 
 #: src/page/places.vue:110
 msgid "Your browser does not support WebGL"
-msgstr "Ton navigateur ne prend pas en charge WebGL"
+msgstr "Votre navigateur ne prend pas en charge WebGL"
 
 #: src/component/dialog/sponsor.vue:41 src/page/about/about.vue:87
 #: src/page/about/about.vue:142 src/page/connect.vue:213
