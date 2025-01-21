@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-19 16:25+0000\n"
+"PO-Revision-Date: 2025-01-21 05:46+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -2356,7 +2356,7 @@ msgstr "أحمر"
 #: src/app/routes.js:297 src/component/navigation.vue:839
 #: src/component/navigation.vue:928
 msgid "Regions"
-msgstr ""
+msgstr "المناطق"
 
 #: src/page/connect.vue:270 src/page/connect.vue:275
 msgid "Register"
