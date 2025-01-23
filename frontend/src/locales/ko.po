@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-21 05:46+0000\n"
+"PO-Revision-Date: 2025-01-23 18:02+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.8.4\n"
+"X-Generator: Weblate 5.9.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:83
@@ -562,7 +562,7 @@ msgstr "취소"
 
 #: src/common/util.js:590
 msgid "Cannot copy to clipboard"
-msgstr ""
+msgstr "클립보드에 복사할 수 없습니다."
 
 #: src/component/photo/edit/details.vue:86
 #: src/component/photo/edit/labels.vue:46
@@ -623,7 +623,7 @@ msgstr "확인됨"
 
 #: src/component/dialog/upload.vue:155 src/component/photo/album/dialog.vue:51
 msgid "Choose an album or create a new one"
-msgstr ""
+msgstr "앨범을 선택하거나 새 앨범 만들기"
 
 #: src/component/photo/edit/files.vue:450
 msgid "Chroma"
@@ -2212,7 +2212,7 @@ msgstr "파일 이름 보류"
 
 #: src/component/dialog/upload.vue:138
 msgid "Press \"Browse\" to select the files to upload…"
-msgstr ""
+msgstr "'찾아보기'를 눌러 업로드할 파일을 선택합니다…"
 
 #: src/component/dialog/upload.vue:163
 msgid "Press enter to create a new album."
@@ -2493,11 +2493,11 @@ msgstr "선택"
 
 #: src/page/library/index.vue:52
 msgid "Select a folder to scan for changes…"
-msgstr ""
+msgstr "변경 사항을 검색할 폴더를 선택합니다…"
 
 #: src/page/library/import.vue:46
 msgid "Select a source folder to import files from…"
-msgstr ""
+msgstr "파일을 가져올 소스 폴더를 선택합니다…"
 
 #: src/locales.js:62
 msgid "Select date"

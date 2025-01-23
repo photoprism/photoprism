@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-21 05:46+0000\n"
+"PO-Revision-Date: 2025-01-23 18:02+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.8.4\n"
+"X-Generator: Weblate 5.9.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:83
@@ -559,7 +559,7 @@ msgstr "Hủy bỏ"
 
 #: src/common/util.js:590
 msgid "Cannot copy to clipboard"
-msgstr ""
+msgstr "Không thể sao chép vào clipboard"
 
 #: src/component/photo/edit/details.vue:86
 #: src/component/photo/edit/labels.vue:46
@@ -620,7 +620,7 @@ msgstr "Đã kiểm tra"
 
 #: src/component/dialog/upload.vue:155 src/component/photo/album/dialog.vue:51
 msgid "Choose an album or create a new one"
-msgstr ""
+msgstr "Chọn một album hoặc tạo một album mới"
 
 #: src/component/photo/edit/files.vue:450
 msgid "Chroma"
@@ -2209,7 +2209,7 @@ msgstr "Giữ nguyên tên tập tin"
 
 #: src/component/dialog/upload.vue:138
 msgid "Press \"Browse\" to select the files to upload…"
-msgstr ""
+msgstr "Nhấn \"Duyệt\" để chọn các tập tin cần tải lên…"
 
 #: src/component/dialog/upload.vue:163
 msgid "Press enter to create a new album."
@@ -2490,11 +2490,11 @@ msgstr "Lựa chọn"
 
 #: src/page/library/index.vue:52
 msgid "Select a folder to scan for changes…"
-msgstr ""
+msgstr "Chọn một thư mục để quét tìm thay đổi…"
 
 #: src/page/library/import.vue:46
 msgid "Select a source folder to import files from…"
-msgstr ""
+msgstr "Chọn thư mục nguồn để nhập tệp từ đó…"
 
 #: src/locales.js:62
 msgid "Select date"

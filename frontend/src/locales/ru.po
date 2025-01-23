@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-21 05:46+0000\n"
+"PO-Revision-Date: 2025-01-23 18:02+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.8.4\n"
+"X-Generator: Weblate 5.9.2\n"
 "Generated-By: usercopypaste\n"
 
 #: src/locales.js:83
@@ -562,7 +562,7 @@ msgstr "Отменить"
 
 #: src/common/util.js:590
 msgid "Cannot copy to clipboard"
-msgstr ""
+msgstr "Невозможно скопировать в буфер обмена"
 
 #: src/component/photo/edit/details.vue:86
 #: src/component/photo/edit/labels.vue:46
@@ -623,7 +623,7 @@ msgstr "Проверено"
 
 #: src/component/dialog/upload.vue:155 src/component/photo/album/dialog.vue:51
 msgid "Choose an album or create a new one"
-msgstr ""
+msgstr "Выбери альбом или создай новый"
 
 #: src/component/photo/edit/files.vue:450
 msgid "Chroma"
@@ -2212,7 +2212,7 @@ msgstr "Сохранять имена файлов"
 
 #: src/component/dialog/upload.vue:138
 msgid "Press \"Browse\" to select the files to upload…"
-msgstr ""
+msgstr "Нажми \"Обзор\", чтобы выбрать файлы для загрузки…"
 
 #: src/component/dialog/upload.vue:163
 msgid "Press enter to create a new album."
@@ -2493,11 +2493,11 @@ msgstr "Выбрать"
 
 #: src/page/library/index.vue:52
 msgid "Select a folder to scan for changes…"
-msgstr ""
+msgstr "Выбери папку, которую нужно просканировать на предмет изменений…"
 
 #: src/page/library/import.vue:46
 msgid "Select a source folder to import files from…"
-msgstr ""
+msgstr "Выбери исходную папку, из которой будут импортироваться файлы…"
 
 #: src/locales.js:62
 msgid "Select date"

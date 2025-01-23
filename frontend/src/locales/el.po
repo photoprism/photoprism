@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-21 05:46+0000\n"
+"PO-Revision-Date: 2025-01-23 18:02+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.8.4\n"
+"X-Generator: Weblate 5.9.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:83
@@ -559,7 +559,7 @@ msgstr "Ακύρωση"
 
 #: src/common/util.js:590
 msgid "Cannot copy to clipboard"
-msgstr ""
+msgstr "Δεν είναι δυνατή η αντιγραφή στο πρόχειρο"
 
 #: src/component/photo/edit/details.vue:86
 #: src/component/photo/edit/labels.vue:46
@@ -620,7 +620,7 @@ msgstr "Σημειωμένο"
 
 #: src/component/dialog/upload.vue:155 src/component/photo/album/dialog.vue:51
 msgid "Choose an album or create a new one"
-msgstr ""
+msgstr "Επιλέξτε ένα άλμπουμ ή δημιουργήστε ένα νέο"
 
 #: src/component/photo/edit/files.vue:450
 msgid "Chroma"
@@ -2209,7 +2209,7 @@ msgstr "Διατήρηση ονομάτων αρχείων"
 
 #: src/component/dialog/upload.vue:138
 msgid "Press \"Browse\" to select the files to upload…"
-msgstr ""
+msgstr "Πατήστε \"Αναζήτηση\" για να επιλέξετε τα αρχεία προς μεταφόρτωση…"
 
 #: src/component/dialog/upload.vue:163
 msgid "Press enter to create a new album."
@@ -2490,11 +2490,11 @@ msgstr "Επιλέξτε"
 
 #: src/page/library/index.vue:52
 msgid "Select a folder to scan for changes…"
-msgstr ""
+msgstr "Επιλέξτε έναν φάκελο για σάρωση για αλλαγές…"
 
 #: src/page/library/import.vue:46
 msgid "Select a source folder to import files from…"
-msgstr ""
+msgstr "Επιλέξτε ένα φάκελο προέλευσης για να εισάγετε αρχεία από…"
 
 #: src/locales.js:62
 msgid "Select date"

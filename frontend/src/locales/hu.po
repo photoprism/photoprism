@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-21 05:46+0000\n"
+"PO-Revision-Date: 2025-01-23 18:02+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.8.4\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: src/locales.js:83
 msgid "{0} appended action"
@@ -561,7 +561,7 @@ msgstr "Mégsem"
 
 #: src/common/util.js:590
 msgid "Cannot copy to clipboard"
-msgstr ""
+msgstr "Nem lehet a vágólapra másolni"
 
 #: src/component/photo/edit/details.vue:86
 #: src/component/photo/edit/labels.vue:46
@@ -622,7 +622,7 @@ msgstr "Ellenőrizve"
 
 #: src/component/dialog/upload.vue:155 src/component/photo/album/dialog.vue:51
 msgid "Choose an album or create a new one"
-msgstr ""
+msgstr "Válasszon egy albumot vagy hozzon létre egy újat"
 
 #: src/component/photo/edit/files.vue:450
 msgid "Chroma"
@@ -2211,7 +2211,7 @@ msgstr "Fájlnevek megőrzése"
 
 #: src/component/dialog/upload.vue:138
 msgid "Press \"Browse\" to select the files to upload…"
-msgstr ""
+msgstr "Nyomja meg a \"Tallózás\" gombot a feltölteni kívánt fájlok kiválasztásához…"
 
 #: src/component/dialog/upload.vue:163
 msgid "Press enter to create a new album."
@@ -2492,11 +2492,11 @@ msgstr "Kiválasztás"
 
 #: src/page/library/index.vue:52
 msgid "Select a folder to scan for changes…"
-msgstr ""
+msgstr "Válasszon ki egy mappát a változások kereséséhez…"
 
 #: src/page/library/import.vue:46
 msgid "Select a source folder to import files from…"
-msgstr ""
+msgstr "Válassza ki a forrásmappát a fájlok importálásához…"
 
 #: src/locales.js:62
 msgid "Select date"
