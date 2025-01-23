@@ -1,0 +1,32 @@
+name: AhmadTests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Build Projects
+        run: echo "Building project..."
+
+
+  TriggerUITests:
+    name: Trigger UI Testing Workflow
+    runs-on: ubuntu-latest
+    needs: BuildAndTest
+    env:
+      SPOTIFY_TESTING_REPO_NAME: ahmadnas00/PhotoprismProject
+      UI_TESTING_WORKFLOW_ID: UI_Login.yaml
+    steps:
+      - name: Trigger Selenium Testing Workflow
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN_GITHUB }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"ref\": \"main\", \"inputs\": {\"grid_url\": \"http://localhost:4444\", \"chrome_131_0\": true}}" \
+            https://api.github.com/repos/$SPOTIFY_TESTING_REPO_NAME/actions/workflows/$UI_TESTING_WORKFLOW_ID/dispatches
