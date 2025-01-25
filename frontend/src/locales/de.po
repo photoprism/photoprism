@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-24 16:44+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-01-25 09:11+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -2499,7 +2499,7 @@ msgstr "Daten auswählen"
 
 #: src/component/dialog/upload.vue:145 src/component/photo/album/dialog.vue:51
 msgid "Select or create an album"
-msgstr ""
+msgstr "Album auswählen oder erstellen"
 
 #: src/component/dialog/upload.vue:129
 msgid "Select the files to upload…"

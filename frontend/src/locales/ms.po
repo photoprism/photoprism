@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-24 16:44+0000\n"
+"PO-Revision-Date: 2025-01-25 09:10+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -2499,7 +2499,7 @@ msgstr "Pilih tarikh"
 
 #: src/component/dialog/upload.vue:145 src/component/photo/album/dialog.vue:51
 msgid "Select or create an album"
-msgstr ""
+msgstr "Pilih atau buat album"
 
 #: src/component/dialog/upload.vue:129
 msgid "Select the files to upload…"

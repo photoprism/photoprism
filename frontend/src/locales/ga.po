@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-24 16:44+0000\n"
+"PO-Revision-Date: 2025-01-25 09:10+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2496,7 +2496,7 @@ msgstr "Roghnaigh dátaí"
 
 #: src/component/dialog/upload.vue:145 src/component/photo/album/dialog.vue:51
 msgid "Select or create an album"
-msgstr ""
+msgstr "Roghnaigh nó cruthaigh albam"
 
 #: src/component/dialog/upload.vue:129
 msgid "Select the files to upload…"
