@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-25 09:10+0000\n"
+"PO-Revision-Date: 2025-01-26 15:44+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -2509,7 +2509,7 @@ msgstr "Sélectionner"
 
 #: src/page/library/import.vue:42
 msgid "Select a source folder to import files…"
-msgstr ""
+msgstr "Sélectionne un dossier source pour importer des fichiers…"
 
 #: src/locales.js:62
 msgid "Select date"
@@ -2522,15 +2522,15 @@ msgstr "Sélectionner les dates"
 #: src/component/photo/album/dialog.vue:51
 #: src/component/photo/upload/dialog.vue:145
 msgid "Select or create an album"
-msgstr "Sélectionne ou crée un album"
+msgstr "Sélectionner ou créer un album"
 
 #: src/component/photo/upload/dialog.vue:129
 msgid "Select the files to upload…"
-msgstr "Sélectionne les fichiers à télécharger…"
+msgstr "Sélectionner les fichiers à charger…"
 
 #: src/page/library/index.vue:49
 msgid "Select the folder to be indexed…"
-msgstr ""
+msgstr "Sélectionne le dossier à indexer…"
 
 #: src/locales.js:98
 msgid "Select Time"

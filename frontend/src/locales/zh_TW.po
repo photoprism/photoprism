@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-25 09:10+0000\n"
+"PO-Revision-Date: 2025-01-26 15:44+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -2492,7 +2492,7 @@ msgstr "選擇"
 
 #: src/page/library/import.vue:42
 msgid "Select a source folder to import files…"
-msgstr ""
+msgstr "選擇要匯入檔案的來源資料夾…"
 
 #: src/locales.js:62
 msgid "Select date"
@@ -2513,7 +2513,7 @@ msgstr "選擇要上傳的檔案…"
 
 #: src/page/library/index.vue:49
 msgid "Select the folder to be indexed…"
-msgstr ""
+msgstr "選擇要索引的資料夾…"
 
 #: src/locales.js:98
 msgid "Select Time"

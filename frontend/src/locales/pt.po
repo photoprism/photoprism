@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-25 09:10+0000\n"
+"PO-Revision-Date: 2025-01-26 15:44+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
@@ -2492,7 +2492,7 @@ msgstr "Selecionar"
 
 #: src/page/library/import.vue:42
 msgid "Select a source folder to import files…"
-msgstr ""
+msgstr "Seleciona uma pasta de origem para importar ficheiros…"
 
 #: src/locales.js:62
 msgid "Select date"
@@ -2513,7 +2513,7 @@ msgstr "Seleciona os ficheiros a carregar…"
 
 #: src/page/library/index.vue:49
 msgid "Select the folder to be indexed…"
-msgstr ""
+msgstr "Seleciona a pasta a ser indexada…"
 
 #: src/locales.js:98
 msgid "Select Time"

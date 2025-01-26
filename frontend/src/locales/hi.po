@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-25 09:10+0000\n"
+"PO-Revision-Date: 2025-01-26 15:44+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -2492,7 +2492,7 @@ msgstr "चुनें"
 
 #: src/page/library/import.vue:42
 msgid "Select a source folder to import files…"
-msgstr ""
+msgstr "फ़ाइलें आयात करने के लिए स्रोत फ़ोल्डर चुनें…"
 
 #: src/locales.js:62
 msgid "Select date"
@@ -2513,7 +2513,7 @@ msgstr "अपलोड करने के लिए फ़ाइलें च�
 
 #: src/page/library/index.vue:49
 msgid "Select the folder to be indexed…"
-msgstr ""
+msgstr "अनुक्रमित करने के लिए फ़ोल्डर का चयन करें…"
 
 #: src/locales.js:98
 msgid "Select Time"
