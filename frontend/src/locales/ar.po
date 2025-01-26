@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-26 15:44+0000\n"
+"PO-Revision-Date: 2025-01-26 20:50+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -167,7 +167,7 @@ msgstr "يضيف"
 
 #: src/component/photo/edit/people.vue:163 src/page/people/new.vue:259
 msgid "Add %{name}?"
-msgstr ""
+msgstr "إضافة %{name}؟"
 
 #: src/component/user/add/dialog.vue:50 src/component/service/add.vue:38
 msgid "Add Account"
@@ -189,7 +189,7 @@ msgstr "إضافة رابط"
 #: src/component/photo/edit/people.vue:163 src/page/people/new.vue:56
 #: src/page/people/new.vue:259
 msgid "Add person?"
-msgstr ""
+msgstr "إضافة شخص؟"
 
 #: src/page/albums.vue:452
 msgid "Add pictures from search results by selecting them."
