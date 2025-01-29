@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-29 06:10+0000\n"
+"PO-Revision-Date: 2025-01-29 06:17+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -176,7 +176,7 @@ msgstr "जोड़ना"
 
 #: src/component/photo/edit/people.vue:163 src/page/people/new.vue:259
 msgid "Add %{s}?"
-msgstr ""
+msgstr "%{s} जोड़ें?"
 
 #: src/component/user/add/dialog.vue:50 src/component/service/add.vue:38
 msgid "Add Account"
@@ -1074,7 +1074,7 @@ msgstr "संपादित करें"
 #: src/component/label/edit/dialog.vue:49
 #: src/component/people/edit/dialog.vue:49
 msgid "Edit %{s}"
-msgstr ""
+msgstr "%{s} संपादित करें"
 
 #: src/component/user/edit/dialog.vue:60 src/component/service/edit.vue:68
 msgid "Edit Account"
@@ -1448,7 +1448,7 @@ msgstr "आयातित फ़ाइलों को तिथि के अ�
 
 #: src/page/library/import.vue:37
 msgid "Importing %{s}…"
-msgstr ""
+msgstr "%{s} आयात किया जा रहा है…"
 
 #: src/page/library/import.vue:39
 msgid "Importing files to originals…"
@@ -2623,7 +2623,7 @@ msgstr "शेयर"
 
 #: src/component/share/dialog.vue:41
 msgid "Share %{s}"
-msgstr ""
+msgstr "%{s} साझा करें"
 
 #: src/page/settings/general.vue:395
 msgid "Share your pictures with other apps and services."
