@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-29 04:08+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 06:10+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -70,11 +70,11 @@ msgstr "%{n} fotos encontradas"
 
 #: src/common/form.js:180 src/common/form.js:185
 msgid "%{s} is too long"
-msgstr ""
+msgstr "%{s} é demasiado longo"
 
 #: src/common/form.js:179 src/common/form.js:184
 msgid "%{s} is too short"
-msgstr ""
+msgstr "%{s} é demasiado curto"
 
 #: src/options/options.js:433
 msgid "1 hour"
@@ -2814,7 +2814,7 @@ msgstr "O TensorFlow é necessário para a classificação de imagens, o reconhe
 
 #: src/common/form.js:173
 msgid "Text"
-msgstr ""
+msgstr "Texto"
 
 #: src/component/photo/edit/details.vue:35 src/page/people/new.vue:70
 msgid "Text too long"

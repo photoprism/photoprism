@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-29 04:08+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 06:10+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
@@ -70,11 +70,11 @@ msgstr "Pronađeno je %{n} slika"
 
 #: src/common/form.js:180 src/common/form.js:185
 msgid "%{s} is too long"
-msgstr ""
+msgstr "%{s} je predug"
 
 #: src/common/form.js:179 src/common/form.js:184
 msgid "%{s} is too short"
-msgstr ""
+msgstr "%{s} je prekratak"
 
 #: src/options/options.js:433
 msgid "1 hour"
@@ -2814,7 +2814,7 @@ msgstr "TensorFlow je potreban za klasifikaciju slika, prepoznavanje lica i otkr
 
 #: src/common/form.js:173
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: src/component/photo/edit/details.vue:35 src/page/people/new.vue:70
 msgid "Text too long"

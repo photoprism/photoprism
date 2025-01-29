@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-29 04:08+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 06:10+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -67,11 +67,11 @@ msgstr "%{n} fotos gevind"
 
 #: src/common/form.js:180 src/common/form.js:185
 msgid "%{s} is too long"
-msgstr ""
+msgstr "%{s} is te lank"
 
 #: src/common/form.js:179 src/common/form.js:184
 msgid "%{s} is too short"
-msgstr ""
+msgstr "%{s} is te kort"
 
 #: src/options/options.js:433
 msgid "1 hour"
@@ -2811,7 +2811,7 @@ msgstr "TensorFlow word vereis vir beeldklassifikasie, gesigsherkenning en die o
 
 #: src/common/form.js:173
 msgid "Text"
-msgstr ""
+msgstr "Teks"
 
 #: src/component/photo/edit/details.vue:35 src/page/people/new.vue:70
 msgid "Text too long"

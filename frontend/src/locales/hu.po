@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-29 04:08+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 06:10+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -69,11 +69,11 @@ msgstr "%{n} kép találat"
 
 #: src/common/form.js:180 src/common/form.js:185
 msgid "%{s} is too long"
-msgstr ""
+msgstr "%{s} túl hosszú"
 
 #: src/common/form.js:179 src/common/form.js:184
 msgid "%{s} is too short"
-msgstr ""
+msgstr "%{s} túl rövid"
 
 #: src/options/options.js:433
 msgid "1 hour"
@@ -2813,7 +2813,7 @@ msgstr "A TensorFlow-ra a képosztályozáshoz, az arcfelismeréshez és a nem b
 
 #: src/common/form.js:173
 msgid "Text"
-msgstr ""
+msgstr "Szöveg"
 
 #: src/component/photo/edit/details.vue:35 src/page/people/new.vue:70
 msgid "Text too long"

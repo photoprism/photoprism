@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-29 04:08+0000\n"
+"PO-Revision-Date: 2025-01-29 06:10+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -67,11 +67,11 @@ msgstr "Знойдзена %{n} відарысаў"
 
 #: src/common/form.js:180 src/common/form.js:185
 msgid "%{s} is too long"
-msgstr ""
+msgstr "%{s} занадта доўга"
 
 #: src/common/form.js:179 src/common/form.js:184
 msgid "%{s} is too short"
-msgstr ""
+msgstr "%{s} занадта кароткі"
 
 #: src/options/options.js:433
 msgid "1 hour"
@@ -2811,7 +2811,7 @@ msgstr "TensorFlow патрабуецца для класіфікацыі від
 
 #: src/common/form.js:173
 msgid "Text"
-msgstr ""
+msgstr "Тэкст"
 
 #: src/component/photo/edit/details.vue:35 src/page/people/new.vue:70
 msgid "Text too long"
