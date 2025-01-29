@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-26 20:50+0000\n"
+"PO-Revision-Date: 2025-01-29 04:08+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -439,7 +439,7 @@ msgstr "Аўтэнтыфікацыя"
 
 #: src/component/photo/edit/info.vue:59
 msgid "Auto"
-msgstr ""
+msgstr "Аўто"
 
 #: src/component/settings/apps.vue:148
 msgid "Back"
@@ -618,7 +618,7 @@ msgstr "Змяніць прыватны тэг"
 
 #: src/page/settings/account.vue:155 src/page/settings/account.vue:160
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "Не ўдалося захаваць змены"
 
 #: src/component/user/edit/dialog.vue:69 src/component/user/edit/dialog.vue:166
 #: src/component/album/edit/dialog.vue:64
@@ -665,7 +665,7 @@ msgstr "Уліковыя даныя кліента"
 
 #: src/component/user/add/dialog.vue:22
 msgid "close"
-msgstr ""
+msgstr "блізка"
 
 #: src/page/admin/sessions.vue:454 src/component/photo/edit/details.vue:605
 #: src/component/photo/toolbar.vue:242
@@ -1334,7 +1334,7 @@ msgstr "Стварыць прэв'ю"
 
 #: src/component/photo/edit/info.vue:176
 msgid "Generated"
-msgstr ""
+msgstr "Згенераваны"
 
 #: src/component/user/edit/dialog.vue:120 src/page/settings/account.vue:105
 msgid "Given Name"
@@ -1504,11 +1504,11 @@ msgstr "Несапраўдны"
 
 #: src/page/settings/account.vue:175 src/page/settings/account.vue:599
 msgid "Invalid address"
-msgstr ""
+msgstr "Няправільны адрас"
 
 #: src/page/settings/account.vue:696 src/page/settings/account.vue:588
 msgid "Invalid country"
-msgstr ""
+msgstr "Няправільная краіна"
 
 #: src/component/photo/edit/details.vue:147
 msgid "Invalid date"
@@ -1526,7 +1526,7 @@ msgstr "Выбрана няправільнае фота"
 #: src/page/settings/account.vue:621 src/page/settings/account.vue:715
 #: src/page/settings/account.vue:607
 msgid "Invalid URL"
-msgstr ""
+msgstr "Няправільны URL"
 
 #: src/component/settings/passcode.vue:311
 #: src/component/settings/passcode.vue:388
@@ -2822,7 +2822,7 @@ msgstr "Тэма"
 
 #: src/page/settings/account.vue:151
 msgid "This field is required"
-msgstr ""
+msgstr "Гэта поле абавязковае"
 
 #: src/component/settings/webdav.vue:99 src/page/settings/services.vue:144
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2905,7 +2905,7 @@ msgstr "Жэтон"
 #: src/page/settings/account.vue:559 src/page/settings/account.vue:577
 #: src/page/settings/account.vue:671 src/page/settings/account.vue:563
 msgid "Too long"
-msgstr ""
+msgstr "Занадта доўга"
 
 #: src/component/photo/upload/dialog.vue:196
 msgid "Too many files selected"

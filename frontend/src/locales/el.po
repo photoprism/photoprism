@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-26 20:50+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 04:08+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -439,7 +439,7 @@ msgstr "Αυθεντικοποίηση"
 
 #: src/component/photo/edit/info.vue:59
 msgid "Auto"
-msgstr ""
+msgstr "Auto"
 
 #: src/component/settings/apps.vue:148
 msgid "Back"
@@ -618,7 +618,7 @@ msgstr "Αλλαγή ιδιωτικής κατάστασης"
 
 #: src/page/settings/account.vue:155 src/page/settings/account.vue:160
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "Οι αλλαγές δεν μπόρεσαν να αποθηκευτούν"
 
 #: src/component/user/edit/dialog.vue:69 src/component/user/edit/dialog.vue:166
 #: src/component/album/edit/dialog.vue:64
@@ -665,7 +665,7 @@ msgstr "Διαπιστευτήρια πελάτη"
 
 #: src/component/user/add/dialog.vue:22
 msgid "close"
-msgstr ""
+msgstr "close"
 
 #: src/page/admin/sessions.vue:454 src/component/photo/edit/details.vue:605
 #: src/component/photo/toolbar.vue:242
@@ -1334,7 +1334,7 @@ msgstr "Δημιουργία προεπισκοπήσεων"
 
 #: src/component/photo/edit/info.vue:176
 msgid "Generated"
-msgstr ""
+msgstr "Παραγωγή"
 
 #: src/component/user/edit/dialog.vue:120 src/page/settings/account.vue:105
 msgid "Given Name"
@@ -1504,11 +1504,11 @@ msgstr "Μη έγκυρη ημερομηνία"
 
 #: src/page/settings/account.vue:175 src/page/settings/account.vue:599
 msgid "Invalid address"
-msgstr ""
+msgstr "Μη έγκυρη διεύθυνση"
 
 #: src/page/settings/account.vue:696 src/page/settings/account.vue:588
 msgid "Invalid country"
-msgstr ""
+msgstr "Μη έγκυρη χώρα"
 
 #: src/component/photo/edit/details.vue:147
 msgid "Invalid date"
@@ -1526,7 +1526,7 @@ msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 #: src/page/settings/account.vue:621 src/page/settings/account.vue:715
 #: src/page/settings/account.vue:607
 msgid "Invalid URL"
-msgstr ""
+msgstr "Μη έγκυρο URL"
 
 #: src/component/settings/passcode.vue:311
 #: src/component/settings/passcode.vue:388
@@ -2822,7 +2822,7 @@ msgstr "Θέμα"
 
 #: src/page/settings/account.vue:151
 msgid "This field is required"
-msgstr ""
+msgstr "Το πεδίο αυτό είναι υποχρεωτικό"
 
 #: src/component/settings/webdav.vue:99 src/page/settings/services.vue:144
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2905,7 +2905,7 @@ msgstr "Token"
 #: src/page/settings/account.vue:559 src/page/settings/account.vue:577
 #: src/page/settings/account.vue:671 src/page/settings/account.vue:563
 msgid "Too long"
-msgstr ""
+msgstr "Πολύ μεγάλο χρονικό διάστημα"
 
 #: src/component/photo/upload/dialog.vue:196
 msgid "Too many files selected"

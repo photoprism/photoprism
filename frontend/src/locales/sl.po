@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-26 20:50+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 04:08+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -439,7 +439,7 @@ msgstr "Preverjanje pristnosti"
 
 #: src/component/photo/edit/info.vue:59
 msgid "Auto"
-msgstr ""
+msgstr "Samodejno"
 
 #: src/component/settings/apps.vue:148
 msgid "Back"
@@ -618,7 +618,7 @@ msgstr "Sprememba zasebne zastave"
 
 #: src/page/settings/account.vue:155 src/page/settings/account.vue:160
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "Sprememb ni bilo mogoče shraniti"
 
 #: src/component/user/edit/dialog.vue:69 src/component/user/edit/dialog.vue:166
 #: src/component/album/edit/dialog.vue:64
@@ -665,7 +665,7 @@ msgstr "Pooblastila stranke"
 
 #: src/component/user/add/dialog.vue:22
 msgid "close"
-msgstr ""
+msgstr "zaprite"
 
 #: src/page/admin/sessions.vue:454 src/component/photo/edit/details.vue:605
 #: src/component/photo/toolbar.vue:242
@@ -1334,7 +1334,7 @@ msgstr "Ustvarjanje predogledov"
 
 #: src/component/photo/edit/info.vue:176
 msgid "Generated"
-msgstr ""
+msgstr "Ustvarjeno"
 
 #: src/component/user/edit/dialog.vue:120 src/page/settings/account.vue:105
 msgid "Given Name"
@@ -1504,11 +1504,11 @@ msgstr "Nepravilen datum"
 
 #: src/page/settings/account.vue:175 src/page/settings/account.vue:599
 msgid "Invalid address"
-msgstr ""
+msgstr "Nepravilen naslov"
 
 #: src/page/settings/account.vue:696 src/page/settings/account.vue:588
 msgid "Invalid country"
-msgstr ""
+msgstr "Neveljavna država"
 
 #: src/component/photo/edit/details.vue:147
 msgid "Invalid date"
@@ -1526,7 +1526,7 @@ msgstr "Izbrana napačna fotografija"
 #: src/page/settings/account.vue:621 src/page/settings/account.vue:715
 #: src/page/settings/account.vue:607
 msgid "Invalid URL"
-msgstr ""
+msgstr "Nepravilen URL"
 
 #: src/component/settings/passcode.vue:311
 #: src/component/settings/passcode.vue:388
@@ -2822,7 +2822,7 @@ msgstr "Tema"
 
 #: src/page/settings/account.vue:151
 msgid "This field is required"
-msgstr ""
+msgstr "To polje je obvezno"
 
 #: src/component/settings/webdav.vue:99 src/page/settings/services.vue:144
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2905,7 +2905,7 @@ msgstr "Žeton"
 #: src/page/settings/account.vue:559 src/page/settings/account.vue:577
 #: src/page/settings/account.vue:671 src/page/settings/account.vue:563
 msgid "Too long"
-msgstr ""
+msgstr "Predolgo"
 
 #: src/component/photo/upload/dialog.vue:196
 msgid "Too many files selected"
