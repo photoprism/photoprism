@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-29 06:10+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-01-29 08:02+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -473,7 +473,7 @@ msgstr "Abzeichen"
 #: src/component/user/edit/dialog.vue:356
 #: src/component/user/edit/dialog.vue:357
 msgid "Base Path"
-msgstr "Basispfad"
+msgstr "Basis-Verzeichnis"
 
 #: src/page/about/about.vue:83 src/page/connect.vue:213
 msgid "Become a member today, support our mission and enjoy our member benefits!"
@@ -3056,7 +3056,7 @@ msgstr "Dateien hochladen"
 #: src/component/user/edit/dialog.vue:375
 #: src/component/user/edit/dialog.vue:376
 msgid "Upload Path"
-msgstr "Upload-Ordner"
+msgstr "Upload-Verzeichnis"
 
 #: src/page/settings/general.vue:299
 msgid "Upload to WebDAV and share links with friends."

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-29 06:10+0000\n"
+"PO-Revision-Date: 2025-01-29 08:02+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -470,7 +470,7 @@ msgstr "Txapa"
 #: src/component/user/edit/dialog.vue:356
 #: src/component/user/edit/dialog.vue:357
 msgid "Base Path"
-msgstr ""
+msgstr "Oinarrizko bidea"
 
 #: src/page/about/about.vue:83 src/page/connect.vue:213
 msgid "Become a member today, support our mission and enjoy our member benefits!"
@@ -3053,7 +3053,7 @@ msgstr "Kargatu tokiko fitxategiak"
 #: src/component/user/edit/dialog.vue:375
 #: src/component/user/edit/dialog.vue:376
 msgid "Upload Path"
-msgstr ""
+msgstr "Kargatu bidea"
 
 #: src/page/settings/general.vue:299
 msgid "Upload to WebDAV and share links with friends."
