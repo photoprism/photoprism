@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-01-29 08:02+0000\n"
+"PO-Revision-Date: 2025-02-03 15:59+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1102,7 +1102,7 @@ msgstr "Bật chế độ gỡ lỗi để hiển thị nhật ký bổ sung và
 
 #: src/page/settings/advanced.vue:129
 msgid "Enable new features that may be incomplete or unstable."
-msgstr ""
+msgstr "Kích hoạt các tính năng mới có thể chưa đầy đủ hoặc không ổn định."
 
 #: src/page/settings/advanced.vue:679
 msgid "Enables RAW converter presets. May reduce performance."
