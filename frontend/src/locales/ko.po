@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-03 15:59+0000\n"
+"PO-Revision-Date: 2025-02-04 00:13+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -2068,7 +2068,7 @@ msgstr "열기"
 
 #: src/component/photo/edit/files.vue:237
 msgid "Open Folder"
-msgstr ""
+msgstr "폴더 열기"
 
 #: src/component/service/add.vue:74 src/component/service/add.vue:93
 msgid "optional"

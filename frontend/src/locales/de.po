@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-03 15:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-02-04 00:13+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -2068,7 +2068,7 @@ msgstr "Öffnen"
 
 #: src/component/photo/edit/files.vue:237
 msgid "Open Folder"
-msgstr ""
+msgstr "Ordner öffnen"
 
 #: src/component/service/add.vue:74 src/component/service/add.vue:93
 msgid "optional"
@@ -2989,7 +2989,7 @@ msgstr "Unsortiert"
 
 #: src/component/photo/edit/files.vue:205
 msgid "Unstack"
-msgstr "Einzelaufnahme"
+msgstr "Nicht stapeln"
 
 #: src/component/photo/edit/files.vue:480 src/component/photo/edit/info.vue:415
 msgid "Updated"
