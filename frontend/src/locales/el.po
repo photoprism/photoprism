@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-04 00:13+0000\n"
+"PO-Revision-Date: 2025-02-05 18:53+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1540,7 +1540,7 @@ msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 
 #: src/common/form.js:213 src/common/form.js:215
 msgid "Invalid time"
-msgstr ""
+msgstr "Μη έγκυρη ώρα"
 
 #: src/common/form.js:232 src/common/form.js:234
 msgid "Invalid URL"

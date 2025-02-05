@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-04 00:13+0000\n"
+"PO-Revision-Date: 2025-02-05 18:53+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -1543,7 +1543,7 @@ msgstr "عکس نامعتبر انتخاب شد"
 
 #: src/common/form.js:213 src/common/form.js:215
 msgid "Invalid time"
-msgstr ""
+msgstr "زمان نامعتبر"
 
 #: src/common/form.js:232 src/common/form.js:234
 msgid "Invalid URL"

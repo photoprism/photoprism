@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-04 00:13+0000\n"
+"PO-Revision-Date: 2025-02-05 18:53+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
@@ -1543,7 +1543,7 @@ msgstr "無効な写真が選択されました"
 
 #: src/common/form.js:213 src/common/form.js:215
 msgid "Invalid time"
-msgstr ""
+msgstr "無効な時間"
 
 #: src/common/form.js:232 src/common/form.js:234
 msgid "Invalid URL"
