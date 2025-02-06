@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-02-06 11:02+0000\n"
+"Last-Translator: Anastasiia <andreevu88@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgstr "%{n} файлів завантажено"
 
 #: src/page/library/browse.vue:325
 msgid "%{n} folders found"
-msgstr "%{n} тек знайдено"
+msgstr "%{n} папок знайдено"
 
 #: src/page/labels.vue:450
 msgid "%{n} labels found"
@@ -322,7 +322,7 @@ msgstr "Усі поля обов'язкові для заповнення"
 
 #: src/page/library/import.vue:12
 msgid "All files from import folder"
-msgstr "Всі файли з теки імпорту"
+msgstr "Всі файли з папки імпорту"
 
 #: src/component/photo/toolbar.vue:63
 msgid "All Lenses"
@@ -409,7 +409,7 @@ msgstr "Ви впевнені що хочете заархівувати вид�
 
 #: src/component/photo/toolbar.vue:507
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr "Ви впевнені, що хочете видалити всі архівні зображення?"
+msgstr "Ви впевнені що хочете видалити всі архівні зображення?"
 
 #: src/component/album/delete/dialog.vue:30
 msgid "Are you sure you want to delete these albums?"
@@ -464,11 +464,11 @@ msgstr "Повернутися до початку"
 
 #: src/page/settings/advanced.vue:290
 msgid "Backup"
-msgstr "Резервне копіювання."
+msgstr "Резервне копіювання"
 
 #: src/locales.js:20
 msgid "Badge"
-msgstr "Значок."
+msgstr "Значок"
 
 #: src/component/user/edit/dialog.vue:359
 #: src/component/user/edit/dialog.vue:360
@@ -557,7 +557,7 @@ msgstr "Не можете отримати доступ до програми а
 
 #: src/page/album/photos.vue:287 src/page/photos.vue:416
 msgid "Can't load more, limit reached"
-msgstr "Не можна завантажити більше, досягнуто обмеження"
+msgstr "Не можна завантажити більше, досягнуто ліміту"
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
 #: src/page/albums.vue:590 src/page/albums.vue:606 src/page/labels.vue:225
@@ -630,7 +630,7 @@ msgstr "Змінити назви фотографій, розташування
 
 #: src/component/photo/clipboard.vue:103
 msgid "Change private flag"
-msgstr "Змінити означку приватності"
+msgstr "Змінити позначку приватності"
 
 #: src/component/user/add/dialog.vue:90 src/component/user/add/dialog.vue:95
 #: src/component/user/edit/dialog.vue:80 src/component/user/edit/dialog.vue:85
@@ -659,7 +659,7 @@ msgstr "Перевірено"
 
 #: src/component/photo/edit/files.vue:456
 msgid "Chroma"
-msgstr "Колірність"
+msgstr "Кoльоровість"
 
 #: src/page/library/index.vue:169
 msgid "Cleaning index and cache"
@@ -807,7 +807,7 @@ msgstr "Створити альбом"
 
 #: src/page/settings/advanced.vue:317
 msgid "Create regular backups based on the configured schedule."
-msgstr "Створюйте резервні копії індексів на основі налаштованого розкладу."
+msgstr "Створюйте регулярні резервні копії на основі налаштованого розкладу."
 
 #: src/page/settings/advanced.vue:340
 msgid "Create YAML files to back up album metadata."
