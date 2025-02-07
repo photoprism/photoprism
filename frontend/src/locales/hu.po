@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -1850,7 +1850,7 @@ msgstr "Legalább %{n} karakteresnek kell lennie."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "Mute"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3303,6 +3303,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Sound"
+#~ msgstr "Hang"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "A jelenleg fejlesztés alatt álló új funkciók engedélyezése."

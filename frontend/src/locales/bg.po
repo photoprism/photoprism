@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
@@ -1851,7 +1851,7 @@ msgstr "Най-малко 6 символа."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "Заглушаване на звука"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3304,6 +3304,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Sound"
+#~ msgstr "Звук"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "Разрешаване на нови функции, които са в процес на разработка."

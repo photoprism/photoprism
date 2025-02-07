@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
@@ -1851,7 +1851,7 @@ msgstr "Skal indeholde mindst %{n} tegn."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "Dæmpet"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3304,6 +3304,9 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Sound"
+#~ msgstr "Lyd"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "Aktivér nye funktioner, der aktuelt er under udvikling."

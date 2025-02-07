@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -1851,7 +1851,7 @@ msgstr "कम से कम %{n} अक्षर होने चाहिए�
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "आवाज़ बंद करना"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3304,6 +3304,9 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "Sound"
+#~ msgstr "आवाज़"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "वर्तमान में विकास के तहत नई सुविधाएँ सक्षम करें।"

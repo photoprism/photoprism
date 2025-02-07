@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1848,7 +1848,7 @@ msgstr "Vähintään %{n} merkkiä."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "Mykistä"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3301,6 +3301,9 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#~ msgid "Sound"
+#~ msgstr "Ääni"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "Ota käyttöön uudet ominaisuudet, joita kehitetään parhaillaan."

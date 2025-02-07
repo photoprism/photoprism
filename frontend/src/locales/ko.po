@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -1851,7 +1851,7 @@ msgstr "8자 이상이어야 합니다."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "음소거"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3304,6 +3304,9 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Sound"
+#~ msgstr "사운드"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "현재 개발중인 새로운 기능을 활성화하기."

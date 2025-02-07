@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1848,7 +1848,7 @@ msgstr "Πρέπει να έχει τουλάχιστον %{n} χαρακτήρ�
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "Σίγαση"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3301,6 +3301,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Sound"
+#~ msgstr "Ήχος"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "Ενεργοποίηση νέων χαρακτηριστικών που βρίσκονται υπό ανάπτυξη."

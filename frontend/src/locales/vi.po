@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1848,7 +1848,7 @@ msgstr "Phải có ít nhất %{n} ký tự."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "Tắt tiếng"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3303,6 +3303,9 @@ msgstr "Thư viện của bạn được phân tích liên tục để tự đ�
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "Phóng to / thu nhỏ"
+
+#~ msgid "Sound"
+#~ msgstr "Âm thanh"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "Kích hoạt các tính năng mới hiện đang được phát triển."

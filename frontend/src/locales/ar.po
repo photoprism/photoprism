@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -1851,7 +1851,7 @@ msgstr "يجب أن يحتوي على %{n} أحرف على الأقل."
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "صامت"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3304,6 +3304,9 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#~ msgid "Sound"
+#~ msgstr "صوت"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "تمكين الميزات الجديدة قيد التطوير حاليًا."

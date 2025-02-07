@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-05 18:53+0000\n"
+"PO-Revision-Date: 2025-02-07 03:40+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -1851,7 +1851,7 @@ msgstr "必须至少有%{n}个字符。"
 
 #: src/component/viewer.vue:546
 msgid "Mute"
-msgstr ""
+msgstr "静音"
 
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
@@ -3306,6 +3306,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/viewer.vue:101
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Sound"
+#~ msgstr "声音"
 
 #~ msgid "Enable new features currently under development."
 #~ msgstr "启用处于开发中的新特性。"
