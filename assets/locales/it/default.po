@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-07-08 13:45+0000\n"
-"PO-Revision-Date: 2024-07-05 09:24+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-02-15 18:02+0000\n"
+"Last-Translator: Andrea Risso <andry.riss@gmail.com>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "backend/it/>\n"
 "Language: it\n"
@@ -13,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: messages.go:101
 msgid "Something went wrong, try again"
@@ -142,7 +141,7 @@ msgstr "Impossibile connettersi, si prega di riprovare"
 
 #: messages.go:132
 msgid "Enter verification code"
-msgstr "Inserisci codice di verifica"
+msgstr "Inserisci codice di verifca"
 
 #: messages.go:133
 msgid "Invalid verification code, please try again"
