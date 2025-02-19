@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-13 15:37+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-02-19 16:59+0000\n"
+"Last-Translator: Anastasiia <andreevu88@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -868,7 +868,7 @@ msgstr "За замовчуванням"
 
 #: src/component/service/edit.vue:122
 msgid "Default Folder"
-msgstr "Тека за замовчуванням"
+msgstr "Папка за замовчуванням"
 
 #: src/component/session/remove/dialog.vue:56
 #: src/component/user/remove/dialog.vue:56 src/component/album/clipboard.vue:95
@@ -922,7 +922,7 @@ msgstr "Вимкнути ExifTool"
 
 #: src/page/settings/advanced.vue:153
 msgid "Disable features that require write permission for the originals folder."
-msgstr "Вимкніть функції, які вимагають дозволу на запис до теки оригіналів."
+msgstr "Вимкніть функції, які вимагають дозволу на запис до папки оригіналів."
 
 #: src/page/settings/advanced.vue:726
 msgid "Disable FFmpeg"
@@ -971,7 +971,7 @@ msgstr "Огляд"
 
 #: src/locales.js:23
 msgid "Dismiss"
-msgstr "Звільнити."
+msgstr "Звільнити"
 
 #: src/component/user/add/dialog.vue:116 src/component/user/add/dialog.vue:117
 #: src/component/user/edit/dialog.vue:163
@@ -1134,7 +1134,7 @@ msgstr "Введіть пароль для підтвердження дії т�
 #: src/page/connect.vue:52 src/component/lightbox.vue:231
 #: src/page/connect.vue:56 src/page/library/errors.vue:203
 msgid "Error"
-msgstr "Помилка."
+msgstr "Помилка"
 
 #: src/app/routes.js:316 src/component/navigation.vue:1280
 msgid "Errors"
@@ -1296,19 +1296,19 @@ msgstr "Фокусна відстань"
 #: src/component/service/upload.vue:88 src/component/service/upload.vue:95
 #: src/model/folder.js:199 src/page/library/browse.vue:187
 msgid "Folder"
-msgstr "Тека"
+msgstr "Папка"
 
 #: src/page/library/browse.vue:333
 msgid "Folder contains %{n} files"
-msgstr "Тека містить %{n} файлів"
+msgstr "Папка містить %{n} файлів"
 
 #: src/page/library/browse.vue:324
 msgid "Folder is empty"
-msgstr "Тека порожня"
+msgstr "Папка порожня"
 
 #: src/app/routes.js:201 src/component/navigation.vue:1157
 msgid "Folders"
-msgstr "Теки"
+msgstr "Папки"
 
 #: src/page/auth/login.vue:253
 msgid "Forgot password?"
