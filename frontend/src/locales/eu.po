@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-13 15:37+0000\n"
+"PO-Revision-Date: 2025-02-19 11:43+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2714,7 +2714,7 @@ msgstr "Software eguneratzea"
 
 #: src/component/lightbox.vue:671
 msgid "Something went wrong, try again"
-msgstr ""
+msgstr "Arazoren bat izan da. Saiatu berriro"
 
 #: src/locales.js:42
 msgid "Sort by"
