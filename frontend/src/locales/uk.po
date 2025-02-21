@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-21 01:24+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-02-21 23:25+0000\n"
+"Last-Translator: Anastasiia <andreevu88@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -1538,7 +1538,7 @@ msgstr "Неправильні параметри"
 
 #: src/component/photo/edit/dialog.vue:156 src/model/thumb.js:77
 msgid "Invalid photo selected"
-msgstr "вибрано невірне фото"
+msgstr "Вибрано невірне фото"
 
 #: src/common/form.js:229 src/common/form.js:231
 msgid "Invalid time"
@@ -1933,7 +1933,7 @@ msgstr "Відповідних записів не знайдено"
 
 #: src/locales.js:123
 msgid "No more"
-msgstr "Досить."
+msgstr "Досить"
 
 #: src/component/photo/edit/people.vue:34 src/page/people/new.vue:342
 #: src/page/people/new.vue:431 src/page/people/new.vue:130
@@ -1986,7 +1986,7 @@ msgstr "Жодного"
 
 #: src/common/util.js:726 src/component/lightbox.vue:569
 msgid "Not allowed"
-msgstr "Не можна."
+msgstr "Не можна"
 
 #: src/component/lightbox.vue:566
 msgid "Not found"
@@ -2003,7 +2003,7 @@ msgstr "Не підтримується"
 
 #: src/page/library/import.vue:91
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Зауважте, що ви можете вручну керувати текою оригіналів, а імпортувати необов’язково."
+msgstr "Зауважте, що ви можете вручну керувати папкою оригіналів, та імпортувати необов’язково."
 
 #: src/page/settings/services.vue:142
 msgid "Note:"
@@ -2066,7 +2066,7 @@ msgstr "Один файл вивантажено"
 
 #: src/page/library/browse.vue:334
 msgid "One folder found"
-msgstr "Одну теку знайдено"
+msgstr "Одну папку знайдено"
 
 #: src/page/labels.vue:474
 msgid "One label found"
