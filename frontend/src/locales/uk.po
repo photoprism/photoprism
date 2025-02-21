@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-19 16:59+0000\n"
-"Last-Translator: Anastasiia <andreevu88@gmail.com>\n"
+"PO-Revision-Date: 2025-02-21 01:24+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -831,7 +831,7 @@ msgstr "Поточний пароль"
 
 #: src/options/themes.js:853 src/options/themes.js:862
 msgid "Custom"
-msgstr ""
+msgstr "Нестандартний"
 
 #: src/page/about/feedback.vue:5 src/options/options.js:472
 msgid "Customer Support"

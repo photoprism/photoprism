@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-13 15:37+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-02-21 01:24+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -830,7 +830,7 @@ msgstr "Jelenlegi jelszó"
 
 #: src/options/themes.js:853 src/options/themes.js:862
 msgid "Custom"
-msgstr ""
+msgstr "Custom"
 
 #: src/page/about/feedback.vue:5 src/options/options.js:472
 msgid "Customer Support"

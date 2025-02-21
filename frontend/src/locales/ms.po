@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-13 15:37+0000\n"
+"PO-Revision-Date: 2025-02-21 01:24+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -831,7 +831,7 @@ msgstr "Kata Laluan Semasa"
 
 #: src/options/themes.js:853 src/options/themes.js:862
 msgid "Custom"
-msgstr ""
+msgstr "Adat"
 
 #: src/page/about/feedback.vue:5 src/options/options.js:472
 msgid "Customer Support"

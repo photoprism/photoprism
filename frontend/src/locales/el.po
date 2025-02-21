@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-13 15:37+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-02-21 01:24+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -828,7 +828,7 @@ msgstr "Τρέχων κωδικός πρόσβασης"
 
 #: src/options/themes.js:853 src/options/themes.js:862
 msgid "Custom"
-msgstr ""
+msgstr "Προσαρμοσμένο"
 
 #: src/page/about/feedback.vue:5 src/options/options.js:472
 msgid "Customer Support"
