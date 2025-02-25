@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-07-08 13:45+0000\n"
-"PO-Revision-Date: 2024-07-05 09:24+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-02-25 12:18+0000\n"
+"Last-Translator: Jurre de Jongh <jurre.de.jongh@topicus.nl>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -13,15 +12,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.9.2\n"
 
 #: messages.go:101
 msgid "Something went wrong, try again"
-msgstr "Er ging iets mis, probeer het opnieuw."
+msgstr "Er ging iets mis, probeer het opnieuw"
 
 #: messages.go:102
 msgid "Unable to do that"
-msgstr "Dat kan niet."
+msgstr "Dat kan niet"
 
 #: messages.go:103
 msgid "Changes could not be saved"
