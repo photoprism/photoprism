@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-02-21 01:24+0000\n"
+"PO-Revision-Date: 2025-03-02 18:12+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -56,7 +56,7 @@ msgstr "%{n} بوخچە دۆزرایەوە"
 
 #: src/component/navigation.vue:1593
 msgid "%{n} GB of %{q} GB used"
-msgstr ""
+msgstr "%{n} GB ji %{q} GB hat bikaranîn"
 
 #: src/page/labels.vue:477
 msgid "%{n} labels found"
