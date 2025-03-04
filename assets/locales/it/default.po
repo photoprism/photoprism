@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-04 07:30+0000\n"
-"PO-Revision-Date: 2025-02-15 18:02+0000\n"
-"Last-Translator: Andrea Risso <andry.riss@gmail.com>\n"
+"PO-Revision-Date: 2025-03-04 07:35+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "backend/it/>\n"
 "Language: it\n"
@@ -202,7 +202,7 @@ msgstr "Troppe richieste"
 
 #: messages.go:148
 msgid "Storage is full"
-msgstr ""
+msgstr "La memoria è piena"
 
 #: messages.go:151
 msgid "Changes successfully saved"

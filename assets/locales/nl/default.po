@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-04 07:30+0000\n"
-"PO-Revision-Date: 2025-02-25 12:18+0000\n"
-"Last-Translator: Jurre de Jongh <jurre.de.jongh@topicus.nl>\n"
+"PO-Revision-Date: 2025-03-04 07:35+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -202,7 +202,7 @@ msgstr "Te veel verzoeken"
 
 #: messages.go:148
 msgid "Storage is full"
-msgstr ""
+msgstr "Opslag is vol"
 
 #: messages.go:151
 msgid "Changes successfully saved"
