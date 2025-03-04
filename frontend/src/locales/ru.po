@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-02 18:12+0000\n"
+"PO-Revision-Date: 2025-03-04 07:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
@@ -1941,7 +1941,7 @@ msgstr "Не больше"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:44
 msgid "No new files can be added to your library."
-msgstr ""
+msgstr "Никакие новые файлы не могут быть добавлены в твою библиотеку."
 
 #: src/component/photo/edit/people.vue:34 src/page/people/new.vue:342
 #: src/page/people/new.vue:431 src/page/people/new.vue:133
@@ -3325,7 +3325,7 @@ msgstr "Ваша библиотека постоянно анализирует�
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:44
 msgid "Your storage is full."
-msgstr ""
+msgstr "Твое хранилище переполнено."
 
 #: src/component/lightbox.vue:228
 msgid "Zoom in/out"

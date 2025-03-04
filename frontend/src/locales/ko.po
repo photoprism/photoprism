@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-02 18:12+0000\n"
+"PO-Revision-Date: 2025-03-04 07:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -1941,7 +1941,7 @@ msgstr "더 이상"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:44
 msgid "No new files can be added to your library."
-msgstr ""
+msgstr "라이브러리에 새 파일을 추가할 수 없습니다."
 
 #: src/component/photo/edit/people.vue:34 src/page/people/new.vue:342
 #: src/page/people/new.vue:431 src/page/people/new.vue:133
@@ -3325,7 +3325,7 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:44
 msgid "Your storage is full."
-msgstr ""
+msgstr "저장 공간이 꽉 찼습니다."
 
 #: src/component/lightbox.vue:228
 msgid "Zoom in/out"

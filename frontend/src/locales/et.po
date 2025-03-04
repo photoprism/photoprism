@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-02 18:12+0000\n"
+"PO-Revision-Date: 2025-03-04 07:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1938,7 +1938,7 @@ msgstr "Enam ei ole"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:44
 msgid "No new files can be added to your library."
-msgstr ""
+msgstr "Raamatukogusse ei saa lisada uusi faile."
 
 #: src/component/photo/edit/people.vue:34 src/page/people/new.vue:342
 #: src/page/people/new.vue:431 src/page/people/new.vue:133
@@ -3324,7 +3324,7 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:44
 msgid "Your storage is full."
-msgstr ""
+msgstr "Teie mälu on täis."
 
 #: src/component/lightbox.vue:228
 msgid "Zoom in/out"
