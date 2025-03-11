@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-11 16:41+0000\n"
-"PO-Revision-Date: 2025-03-04 07:35+0000\n"
+"PO-Revision-Date: 2025-03-11 17:07+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
 "backend/ko/>\n"
@@ -206,7 +206,7 @@ msgstr "저장 공간이 가득 찼습니다."
 
 #: messages.go:150
 msgid "Quota exceeded"
-msgstr ""
+msgstr "할당량 초과"
 
 #: messages.go:153
 msgid "Changes successfully saved"

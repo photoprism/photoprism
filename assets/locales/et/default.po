@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-11 16:41+0000\n"
-"PO-Revision-Date: 2025-03-04 07:35+0000\n"
+"PO-Revision-Date: 2025-03-11 17:07+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: et\n"
@@ -205,7 +205,7 @@ msgstr "Ladu on täis"
 
 #: messages.go:150
 msgid "Quota exceeded"
-msgstr ""
+msgstr "Kvoot ületatud"
 
 #: messages.go:153
 msgid "Changes successfully saved"
