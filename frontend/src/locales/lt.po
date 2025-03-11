@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-11 17:10+0000\n"
+"PO-Revision-Date: 2025-03-11 19:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
@@ -1488,7 +1488,7 @@ msgstr "Atsisiunčiant stekus ir archyvus įtraukti šalutinius failus."
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Increase storage size or delete files to continue."
-msgstr ""
+msgstr "Norėdami tęsti, padidinkite saugyklos dydį arba ištrinkite failus."
 
 #: src/component/navigation.vue:1876 src/page/library.vue:36
 #: src/page/settings/library.vue:32
@@ -1517,7 +1517,7 @@ msgstr "Atvejo ID"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr ""
+msgstr "Nepakankama saugykla"
 
 #: src/component/service/edit.vue:207
 msgid "Interval"

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: Photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-11 17:10+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-11 19:58+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -1488,7 +1488,7 @@ msgstr "Dołączaj pliki sidecar podczas pobierania stosów i archiwów."
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Increase storage size or delete files to continue."
-msgstr ""
+msgstr "Zwiększ rozmiar pamięci lub usuń pliki, aby kontynuować."
 
 #: src/component/navigation.vue:1876 src/page/library.vue:36
 #: src/page/settings/library.vue:32
@@ -1517,7 +1517,7 @@ msgstr "ID instancji"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr ""
+msgstr "Niewystarczająca pamięć"
 
 #: src/component/service/edit.vue:207
 msgid "Interval"
