@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-04 07:31+0000\n"
+"PO-Revision-Date: 2025-03-11 17:10+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -1790,7 +1790,7 @@ msgstr "마커"
 
 #: src/component/user/add/dialog.vue:69
 msgid "Maximum number of accounts has been reached."
-msgstr ""
+msgstr "최대 계정 수에 도달했습니다."
 
 #: src/options/options.js:318
 msgid "Medium"

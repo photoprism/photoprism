@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-04 07:31+0000\n"
+"PO-Revision-Date: 2025-03-11 17:10+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1787,7 +1787,7 @@ msgstr "Merker"
 
 #: src/component/user/add/dialog.vue:69
 msgid "Maximum number of accounts has been reached."
-msgstr ""
+msgstr "Maksimum aantal rekeninge is bereik."
 
 #: src/options/options.js:318
 msgid "Medium"
