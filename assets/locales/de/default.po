@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-11 19:22+0000\n"
-"PO-Revision-Date: 2025-03-11 17:09+0000\n"
+"PO-Revision-Date: 2025-03-11 19:36+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
@@ -203,7 +203,7 @@ msgstr "Zu viele Anfragen"
 
 #: messages.go:149
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Zu wenig Speicherplatz"
 
 #: messages.go:150
 msgid "Quota exceeded"

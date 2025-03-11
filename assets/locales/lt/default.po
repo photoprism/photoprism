@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-11 19:22+0000\n"
-"PO-Revision-Date: 2025-03-11 17:07+0000\n"
+"PO-Revision-Date: 2025-03-11 19:36+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lt\n"
@@ -203,7 +203,7 @@ msgstr "Per daug prašymų"
 
 #: messages.go:149
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Nepakankama saugykla"
 
 #: messages.go:150
 msgid "Quota exceeded"
