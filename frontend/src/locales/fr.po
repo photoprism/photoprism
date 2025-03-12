@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 03:18+0000\n"
+"PO-Revision-Date: 2025-03-12 19:07+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -901,7 +901,7 @@ msgstr "Tout supprimer"
 
 #: src/component/photo/toolbar.vue:469 src/page/library/errors.vue:225
 msgid "Delete all?"
-msgstr ""
+msgstr "Effacer tout ?"
 
 #: src/page/library/index.vue:111
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
@@ -1378,7 +1378,7 @@ msgstr "Généré"
 
 #: src/component/photo/toolbar.vue:165
 msgid "Get Started"
-msgstr ""
+msgstr "Commencer"
 
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:121 src/page/settings/account.vue:106
@@ -1510,7 +1510,7 @@ msgstr "Inclure les fichiers side-car lors du téléchargement de piles et d'arc
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Increase storage size or delete files to continue."
-msgstr "Augmente la taille du stockage ou supprime des fichiers pour continuer."
+msgstr "Augmentez l'espace de stockage ou supprimez des fichiers pour continuer."
 
 #: src/component/navigation.vue:1897 src/page/library.vue:36
 #: src/page/settings/library.vue:32
@@ -1539,7 +1539,7 @@ msgstr "ID de l'instance"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "Stockage insuffisant"
+msgstr "Espace de stockage insuffisant."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"
@@ -1676,7 +1676,7 @@ msgstr "En savoir plus"
 #: src/page/admin/sessions.vue:121 src/page/admin/users.vue:120
 #: src/page/labels.vue:142
 msgid "Learn More"
-msgstr ""
+msgstr "En savoir plus"
 
 #: src/component/navigation.vue:1965
 msgid "Legal Information"
@@ -2466,7 +2466,7 @@ msgstr "Rouge"
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:123
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:87
 msgid "Refresh"
-msgstr ""
+msgstr "Rafraîchir"
 
 #: src/app/routes.js:316 src/component/navigation.vue:894
 #: src/component/navigation.vue:977
@@ -3022,7 +3022,7 @@ msgstr "Topograpique"
 
 #: src/page/library/errors.vue:129
 msgid "Troubleshooting"
-msgstr ""
+msgstr "Dépannage"
 
 #: src/component/photo/view/cards.vue:127 src/component/photo/view/list.vue:53
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:69

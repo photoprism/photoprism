@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 03:18+0000\n"
+"PO-Revision-Date: 2025-03-12 19:07+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -892,7 +892,7 @@ msgstr "全部删除"
 
 #: src/component/photo/toolbar.vue:469 src/page/library/errors.vue:225
 msgid "Delete all?"
-msgstr ""
+msgstr "全部刪除？"
 
 #: src/page/library/index.vue:111
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
@@ -1363,7 +1363,7 @@ msgstr "產生"
 
 #: src/component/photo/toolbar.vue:165
 msgid "Get Started"
-msgstr ""
+msgstr "立即開始"
 
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:121 src/page/settings/account.vue:106
@@ -1658,7 +1658,7 @@ msgstr "了解更多"
 #: src/page/admin/sessions.vue:121 src/page/admin/users.vue:120
 #: src/page/labels.vue:142
 msgid "Learn More"
-msgstr ""
+msgstr "了解更多"
 
 #: src/component/navigation.vue:1965
 msgid "Legal Information"
@@ -2444,7 +2444,7 @@ msgstr "紅色"
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:123
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:87
 msgid "Refresh"
-msgstr ""
+msgstr "重新整理"
 
 #: src/app/routes.js:316 src/component/navigation.vue:894
 #: src/component/navigation.vue:977
@@ -2999,7 +2999,7 @@ msgstr "地形圖"
 
 #: src/page/library/errors.vue:129
 msgid "Troubleshooting"
-msgstr ""
+msgstr "故障排除"
 
 #: src/component/photo/view/cards.vue:127 src/component/photo/view/list.vue:53
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:69

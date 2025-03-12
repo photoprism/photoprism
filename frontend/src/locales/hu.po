@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 03:18+0000\n"
+"PO-Revision-Date: 2025-03-12 19:07+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -891,7 +891,7 @@ msgstr "Mindent törölni"
 
 #: src/component/photo/toolbar.vue:469 src/page/library/errors.vue:225
 msgid "Delete all?"
-msgstr ""
+msgstr "Mindent törölni?"
 
 #: src/page/library/index.vue:111
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
@@ -1362,7 +1362,7 @@ msgstr "Generált"
 
 #: src/component/photo/toolbar.vue:165
 msgid "Get Started"
-msgstr ""
+msgstr "Kezdje el"
 
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:121 src/page/settings/account.vue:106
@@ -1657,7 +1657,7 @@ msgstr "Tudjon meg többet"
 #: src/page/admin/sessions.vue:121 src/page/admin/users.vue:120
 #: src/page/labels.vue:142
 msgid "Learn More"
-msgstr ""
+msgstr "Tudjon meg többet"
 
 #: src/component/navigation.vue:1965
 msgid "Legal Information"
@@ -2443,7 +2443,7 @@ msgstr "Piros"
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:123
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:87
 msgid "Refresh"
-msgstr ""
+msgstr "Frissítés"
 
 #: src/app/routes.js:316 src/component/navigation.vue:894
 #: src/component/navigation.vue:977
@@ -2998,7 +2998,7 @@ msgstr "Topográfiai"
 
 #: src/page/library/errors.vue:129
 msgid "Troubleshooting"
-msgstr ""
+msgstr "Hibaelhárítás"
 
 #: src/component/photo/view/cards.vue:127 src/component/photo/view/list.vue:53
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:69
