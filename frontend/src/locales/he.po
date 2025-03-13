@@ -432,7 +432,7 @@ msgid "Are you sure you want to permanently delete this file?"
 msgstr "בטוח למחוק לצמיתות את הקבצים?"
 
 #: src/component/session/remove/dialog.vue:32
-#: src/component/confirm/action.vue:30
+#: src/component/confirm/dialog.vue:30
 msgid "Are you sure?"
 msgstr "האם אתה בטוח?"
 
@@ -572,7 +572,7 @@ msgstr "לא ניתן לבחור עוד פרטים"
 #: src/component/user/add/dialog.vue:27 src/component/user/edit/dialog.vue:473
 #: src/component/user/remove/dialog.vue:45 src/page/connect.vue:117
 #: src/component/album/delete/dialog.vue:43
-#: src/component/album/edit/dialog.vue:198 src/component/confirm/action.vue:43
+#: src/component/album/edit/dialog.vue:198 src/component/confirm/dialog.vue:43
 #: src/component/file/delete/dialog.vue:47
 #: src/component/label/delete/dialog.vue:47
 #: src/component/label/edit/dialog.vue:107
@@ -3296,7 +3296,7 @@ msgstr "שנה"
 msgid "Yellow"
 msgstr "צהוב"
 
-#: src/component/confirm/action.vue:54 src/component/people/merge/dialog.vue:58
+#: src/component/confirm/dialog.vue:54 src/component/people/merge/dialog.vue:58
 #: src/component/photo/archive/dialog.vue:58
 #: src/component/photo/edit/files.vue:365
 #: src/component/photo/edit/files.vue:395
