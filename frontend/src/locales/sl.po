@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"PO-Revision-Date: 2025-03-14 15:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2720,11 +2720,11 @@ msgstr "Pokaži več"
 
 #: src/page/settings/content.vue:313
 msgid "Show picture captions in search results."
-msgstr ""
+msgstr "V rezultatih iskanja prikažite podpise slik."
 
 #: src/page/settings/content.vue:290
 msgid "Show picture titles in search results."
-msgstr ""
+msgstr "Prikazovanje naslovov slik v rezultatih iskanja."
 
 #: src/page/settings/general.vue:469
 msgid "Show server logs in Library."

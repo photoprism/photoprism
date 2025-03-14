@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"PO-Revision-Date: 2025-03-14 15:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -2723,11 +2723,11 @@ msgstr "Daha fazla göster"
 
 #: src/page/settings/content.vue:313
 msgid "Show picture captions in search results."
-msgstr ""
+msgstr "Arama sonuçlarında resim başlıklarını gösterin."
 
 #: src/page/settings/content.vue:290
 msgid "Show picture titles in search results."
-msgstr ""
+msgstr "Arama sonuçlarında resim başlıklarını gösterin."
 
 #: src/page/settings/general.vue:469
 msgid "Show server logs in Library."

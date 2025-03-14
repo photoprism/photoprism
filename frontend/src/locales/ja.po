@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 15:03+0000\n"
+"PO-Revision-Date: 2025-03-14 15:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
@@ -2723,11 +2723,11 @@ msgstr "表示を増やす"
 
 #: src/page/settings/content.vue:313
 msgid "Show picture captions in search results."
-msgstr ""
+msgstr "検索結果に画像のキャプションを表示する。"
 
 #: src/page/settings/content.vue:290
 msgid "Show picture titles in search results."
-msgstr ""
+msgstr "検索結果に写真のタイトルを表示する。"
 
 #: src/page/settings/general.vue:469
 msgid "Show server logs in Library."

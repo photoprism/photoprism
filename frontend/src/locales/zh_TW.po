@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"PO-Revision-Date: 2025-03-14 15:12+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -2723,11 +2723,11 @@ msgstr "顯示更多"
 
 #: src/page/settings/content.vue:313
 msgid "Show picture captions in search results."
-msgstr ""
+msgstr "在搜尋結果中顯示圖片標題。"
 
 #: src/page/settings/content.vue:290
 msgid "Show picture titles in search results."
-msgstr ""
+msgstr "在搜尋結果中顯示圖片標題。"
 
 #: src/page/settings/general.vue:469
 msgid "Show server logs in Library."
