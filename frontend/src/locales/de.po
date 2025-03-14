@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 15:12+0000\n"
+"PO-Revision-Date: 2025-03-14 15:14+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -3247,7 +3247,7 @@ msgstr "Ansicht"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr "Zeige die Suchergebnisse als Liste an."
+msgstr "Suchergebnisse als Liste anzeigen."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
