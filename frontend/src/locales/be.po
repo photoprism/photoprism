@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -593,7 +593,7 @@ msgstr "Надпіс"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "Тытры"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1710,7 +1710,7 @@ msgstr "Спіс"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "Спіс"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2708,7 +2708,7 @@ msgstr "Паказаць усе новыя твары"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "Паказваць метаданыя цітраў у выніках пошуку."
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2728,7 +2728,7 @@ msgstr "Паказаць журналы сервера ў бібліятэцы."
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "Паказаць метаданыя загалоўка ў выніках пошуку."
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 msgid "Show/Hide Sidebar"
@@ -2970,7 +2970,7 @@ msgstr "Назва занадта доўгая"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "Назвы"
 
 #: src/locales.js:55
 msgid "to"
@@ -3244,7 +3244,7 @@ msgstr "Выгляд"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "Праглядзець вынікі пошуку ў выглядзе спісу."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"

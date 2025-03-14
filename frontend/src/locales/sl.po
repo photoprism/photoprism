@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-14 11:37+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -593,7 +593,7 @@ msgstr "Naslov"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "Podnapisi"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1710,7 +1710,7 @@ msgstr "Seznam"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "Pogled na seznam"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2708,7 +2708,7 @@ msgstr "Prikaži vse nove obraze"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "Prikaz metapodatkov o napisih v rezultatih iskanja."
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2728,7 +2728,7 @@ msgstr "Prikaži dnevnike strežnika v knjižnici."
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "Prikaz metapodatkov o naslovu v rezultatih iskanja."
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 msgid "Show/Hide Sidebar"
@@ -2970,7 +2970,7 @@ msgstr "Predolg naslov"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "Naslovi"
 
 #: src/locales.js:55
 msgid "to"
@@ -3244,7 +3244,7 @@ msgstr "Oglejte si"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "Rezultate iskanja prikažite kot seznam."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"

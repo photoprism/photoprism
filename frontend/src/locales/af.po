@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -593,7 +593,7 @@ msgstr "Byskrif"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "Onderskrifte"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1710,7 +1710,7 @@ msgstr "Lys"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "Lys Aansig"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2708,7 +2708,7 @@ msgstr "Wys alle nuwe gesigte"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "Wys onderskrifmetadata in soekresultate."
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2728,7 +2728,7 @@ msgstr "Wys bedienerlogboeke in Biblioteek."
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "Wys titelmetadata in soekresultate."
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 msgid "Show/Hide Sidebar"
@@ -2970,7 +2970,7 @@ msgstr "Titel te lank"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "Titels"
 
 #: src/locales.js:55
 msgid "to"
@@ -3244,7 +3244,7 @@ msgstr "Beskou"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "Bekyk soekresultate as 'n lys."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"

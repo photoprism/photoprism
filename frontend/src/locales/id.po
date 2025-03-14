@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:32+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
@@ -596,7 +596,7 @@ msgstr "Keterangan"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "Keterangan"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1713,7 +1713,7 @@ msgstr "Daftar"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "Tampilan Daftar"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2711,7 +2711,7 @@ msgstr "Tampilkan semua wajah baru"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "Tampilkan metadata keterangan dalam hasil pencarian."
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2731,7 +2731,7 @@ msgstr "Tampilkan log server di Perpustakaan."
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "Tampilkan metadata judul di hasil pencarian."
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 msgid "Show/Hide Sidebar"
@@ -2973,7 +2973,7 @@ msgstr "Judul terlalu panjang"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "Judul"
 
 #: src/locales.js:55
 msgid "to"
@@ -3247,7 +3247,7 @@ msgstr "Melihat"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "Melihat hasil pencarian sebagai daftar."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"

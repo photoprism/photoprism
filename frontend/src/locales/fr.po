@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -602,7 +602,7 @@ msgstr "Légende"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "Légendes"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1731,7 +1731,7 @@ msgstr "Liste"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "Vue de la liste"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2733,7 +2733,7 @@ msgstr "Montrer tous les nouveaux visages"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "Afficher les métadonnées des légendes dans les résultats de recherche."
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2753,7 +2753,7 @@ msgstr "Afficher les journaux serveurs dans Bibliothèque."
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "Afficher les métadonnées du titre dans les résultats de recherche."
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 #, fuzzy
@@ -2996,7 +2996,7 @@ msgstr "Titre trop long"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "Titres"
 
 #: src/locales.js:55
 msgid "to"
@@ -3271,7 +3271,7 @@ msgstr "Voir"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "Affiche les résultats de la recherche sous forme de liste."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"

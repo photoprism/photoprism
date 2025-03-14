@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:37+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -596,7 +596,7 @@ msgstr "캡션"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "캡션"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1713,7 +1713,7 @@ msgstr "리스트"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "목록 보기"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2711,7 +2711,7 @@ msgstr "모든 새 얼굴 표시"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "검색 결과에 캡션 메타데이터를 표시합니다."
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2731,7 +2731,7 @@ msgstr "라이브러리에 서버 로그를 표시합니다."
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "검색 결과에 제목 메타데이터를 표시합니다."
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 msgid "Show/Hide Sidebar"
@@ -2973,7 +2973,7 @@ msgstr "주제 너무 긴다"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "제목"
 
 #: src/locales.js:55
 msgid "to"
@@ -3247,7 +3247,7 @@ msgstr "보기"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "검색 결과를 목록으로 봅니다."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"

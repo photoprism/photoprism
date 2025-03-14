@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -596,7 +596,7 @@ msgstr "標題"
 
 #: src/page/settings/content.vue:312
 msgid "Captions"
-msgstr ""
+msgstr "字幕"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
@@ -1713,7 +1713,7 @@ msgstr "清單"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr ""
+msgstr "清單視圖"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2711,7 +2711,7 @@ msgstr "顯示所有新面孔"
 
 #: src/page/settings/content.vue:313
 msgid "Show caption metadata in search results."
-msgstr ""
+msgstr "在搜尋結果中顯示標題元資料。"
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2731,7 +2731,7 @@ msgstr "在收藏庫中顯示伺服器日誌。"
 
 #: src/page/settings/content.vue:290
 msgid "Show title metadata in search results."
-msgstr ""
+msgstr "在搜尋結果中顯示標題元資料。"
 
 #: src/component/lightbox.vue:940 src/component/lightbox.vue:941
 msgid "Show/Hide Sidebar"
@@ -2973,7 +2973,7 @@ msgstr "標題太長"
 
 #: src/page/settings/content.vue:289
 msgid "Titles"
-msgstr ""
+msgstr "標題"
 
 #: src/locales.js:55
 msgid "to"
@@ -3247,7 +3247,7 @@ msgstr "檢視"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr ""
+msgstr "以清單形式查看搜尋結果。"
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
