@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-12 19:07+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-03-14 11:30+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -754,7 +754,7 @@ msgstr "Chứa một hình ảnh."
 
 #: src/page/settings.vue:49
 msgid "Content"
-msgstr ""
+msgstr "Nội dung"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"

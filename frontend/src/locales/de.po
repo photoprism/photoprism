@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 19:09+0000\n"
+"PO-Revision-Date: 2025-03-14 11:32+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -757,7 +757,7 @@ msgstr "Enthält ein Bild."
 
 #: src/page/settings.vue:49
 msgid "Content"
-msgstr ""
+msgstr "Inhalte"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"

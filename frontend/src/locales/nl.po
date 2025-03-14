@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 19:07+0000\n"
+"PO-Revision-Date: 2025-03-14 11:30+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -757,7 +757,7 @@ msgstr "Bevat één foto."
 
 #: src/page/settings.vue:49
 msgid "Content"
-msgstr ""
+msgstr "Inhoud"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"
@@ -1526,7 +1526,7 @@ msgstr "Instantie-ID"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "Onvoldoende opslag"
+msgstr "Onvoldoende opslag."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"

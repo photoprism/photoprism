@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 19:07+0000\n"
+"PO-Revision-Date: 2025-03-14 11:30+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -757,7 +757,7 @@ msgstr "ประกอบด้วยหนึ่งภาพ"
 
 #: src/page/settings.vue:49
 msgid "Content"
-msgstr ""
+msgstr "เนื้อหา"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"

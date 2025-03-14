@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 19:07+0000\n"
+"PO-Revision-Date: 2025-03-14 11:30+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -757,7 +757,7 @@ msgstr "한 장의 사진이 포함되어 있습니다."
 
 #: src/page/settings.vue:49
 msgid "Content"
-msgstr ""
+msgstr "콘텐츠"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"

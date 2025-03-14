@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-12 19:07+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2025-03-14 11:32+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
@@ -757,7 +757,7 @@ msgstr "מכיל תמונה אחת."
 
 #: src/page/settings.vue:49
 msgid "Content"
-msgstr ""
+msgstr "תוֹכֶן"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"
@@ -1526,7 +1526,7 @@ msgstr "מזהה מופע"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "אחסון לא מספיק"
+msgstr "אחסון לא מספיק."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"
