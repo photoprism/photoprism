@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-14 11:37+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -1526,7 +1526,7 @@ msgstr "ID da Instância"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "Armazenamento insuficiente"
+msgstr "Armazenamento insuficiente."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"

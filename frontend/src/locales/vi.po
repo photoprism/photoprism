@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2025-03-14 11:37+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1523,7 +1523,7 @@ msgstr "ID phiên bản"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "Không đủ dung lượng lưu trữ"
+msgstr "Không đủ dung lượng lưu trữ."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"

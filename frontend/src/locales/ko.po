@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-14 11:37+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -1526,7 +1526,7 @@ msgstr "인스턴스 ID"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "저장 공간 부족"
+msgstr "저장 공간 부족."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"

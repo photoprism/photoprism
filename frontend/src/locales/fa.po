@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 11:30+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2025-03-14 11:37+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
@@ -1526,7 +1526,7 @@ msgstr "ID نمونه"
 
 #: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
 msgid "Insufficient storage."
-msgstr "ذخیره سازی ناکافی"
+msgstr "ذخیره سازی ناکافی."
 
 #: src/component/service/edit.vue:207
 msgid "Interval"
