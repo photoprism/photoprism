@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 11:50+0000\n"
+"PO-Revision-Date: 2025-03-15 13:47+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
@@ -520,7 +520,7 @@ msgstr "Pregledavajte i uređujte oznake klasifikacije slika."
 
 #: src/page/settings/general.vue:200
 msgid "Browse and share your pictures organized into monthly albums."
-msgstr ""
+msgstr "Pregledavajte i dijelite svoje slike organizirane u mjesečne albume."
 
 #: src/locales.js:94
 msgid "Browse Files"

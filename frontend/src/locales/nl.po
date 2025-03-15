@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 11:50+0000\n"
+"PO-Revision-Date: 2025-03-15 13:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -520,7 +520,7 @@ msgstr "Bladeren en bewerken van beeldclassificatie-etiketten."
 
 #: src/page/settings/general.vue:200
 msgid "Browse and share your pictures organized into monthly albums."
-msgstr ""
+msgstr "Bekijk en deel je foto's georganiseerd in maandelijkse albums."
 
 #: src/locales.js:94
 msgid "Browse Files"

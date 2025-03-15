@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 11:53+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-03-15 13:47+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -520,7 +520,7 @@ msgstr "Automatische Bild-Kategorisierung sehen und bearbeiten."
 
 #: src/page/settings/general.vue:200
 msgid "Browse and share your pictures organized into monthly albums."
-msgstr ""
+msgstr "Durchsuche und teile deine Bilder, die in monatlichen Alben organisiert sind."
 
 #: src/locales.js:94
 msgid "Browse Files"

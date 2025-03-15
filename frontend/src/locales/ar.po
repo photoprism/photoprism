@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 11:50+0000\n"
+"PO-Revision-Date: 2025-03-15 13:47+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -520,7 +520,7 @@ msgstr "تصفح وتحرير تسميات تصنيف الصورة."
 
 #: src/page/settings/general.vue:200
 msgid "Browse and share your pictures organized into monthly albums."
-msgstr ""
+msgstr "تصفح وشارك صورك المنظمة في ألبومات شهرية."
 
 #: src/locales.js:94
 msgid "Browse Files"
