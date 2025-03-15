@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 15:14+0000\n"
+"PO-Revision-Date: 2025-03-15 11:53+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -2779,7 +2779,7 @@ msgstr "Software-Update"
 
 #: src/component/lightbox.vue:673
 msgid "Something went wrong, try again"
-msgstr "Etwas ist schief gelaufen, versuchen Sie es erneut"
+msgstr "Es ist ein Fehler aufgetreten, bitte erneut versuchen"
 
 #: src/locales.js:43
 msgid "Sort by"
@@ -2830,7 +2830,7 @@ msgstr "Start"
 
 #: src/page/settings/general.vue:82
 msgid "Start Page"
-msgstr ""
+msgstr "Startseite"
 
 #: src/component/lightbox.vue:975 src/component/lightbox.vue:976
 msgid "Start/Stop Slideshow"

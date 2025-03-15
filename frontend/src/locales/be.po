@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-14 15:12+0000\n"
+"PO-Revision-Date: 2025-03-15 11:50+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2827,7 +2827,7 @@ msgstr "Пачаць"
 
 #: src/page/settings/general.vue:82
 msgid "Start Page"
-msgstr ""
+msgstr "Пачатковая старонка"
 
 #: src/component/lightbox.vue:975 src/component/lightbox.vue:976
 msgid "Start/Stop Slideshow"
