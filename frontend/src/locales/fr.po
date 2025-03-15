@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-14 15:12+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-15 10:23+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -1731,7 +1731,7 @@ msgstr "Liste"
 
 #: src/page/settings/content.vue:266
 msgid "List View"
-msgstr "Vue de la liste"
+msgstr "Vue en liste"
 
 #: src/app/routes.js:229 src/component/photo/view/cards.vue:313
 #: src/component/photo/view/cards.vue:486 src/component/photo/view/list.vue:163
@@ -2744,12 +2744,14 @@ msgid "Show more"
 msgstr "Montre plus"
 
 #: src/page/settings/content.vue:313
+#, fuzzy
 msgid "Show picture captions in search results."
-msgstr "Affiche les légendes des images dans les résultats de recherche."
+msgstr "Afficher la légende des images dans les résultats de recherche."
 
 #: src/page/settings/content.vue:290
+#, fuzzy
 msgid "Show picture titles in search results."
-msgstr "Affiche les titres des images dans les résultats de recherche."
+msgstr "Afficher le titre des images dans les résultats de recherche."
 
 #: src/page/settings/general.vue:469
 msgid "Show server logs in Library."
@@ -3271,7 +3273,7 @@ msgstr "Voir"
 
 #: src/page/settings/content.vue:267
 msgid "View search results as a list."
-msgstr "Affiche les résultats de la recherche sous forme de liste."
+msgstr "Afficher les résultats de la recherche sous forme de liste."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
