@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-11 19:22+0000\n"
-"PO-Revision-Date: 2025-03-11 19:36+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-17 18:17+0000\n"
+"Last-Translator: Omer Duran <me@omerduran.dev>\n"
 "Language-Team: none\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -32,7 +32,7 @@ msgstr "Silinemedi"
 #: messages.go:107
 #, c-format
 msgid "%s already exists"
-msgstr "%s Zaten var"
+msgstr "%s zaten var"
 
 #: messages.go:108
 msgid "Not found"
@@ -288,7 +288,7 @@ msgstr "İçe aktarma %d s içinde tamamlandı"
 
 #: messages.go:171
 msgid "Import canceled"
-msgstr "İthalat iptal edildi"
+msgstr "İçe aktarma iptal edildi"
 
 #: messages.go:172
 #, c-format
