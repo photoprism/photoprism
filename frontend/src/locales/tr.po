@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 13:47+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-17 18:17+0000\n"
+"Last-Translator: Omer Duran <me@omerduran.dev>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -40,7 +40,7 @@ msgstr "{0} seçildi"
 
 #: src/locales.js:52
 msgid "{0}-{1} of {2}"
-msgstr "{2}'nin {0}-{1}'i"
+msgstr "{2} içinden {0}-{1}"
 
 #: src/page/albums.vue:593
 msgid "%{n} albums found"
@@ -56,7 +56,7 @@ msgstr "%{n} klasör bulundu"
 
 #: src/component/navigation.vue:1624
 msgid "%{n} GB of %{q} GB used"
-msgstr "%{n} GB %{q} GB kullanılmış"
+msgstr "%{n} GB %{q} GB kullanıldı"
 
 #: src/page/labels.vue:505
 msgid "%{n} labels found"
@@ -78,7 +78,7 @@ msgstr "%{s} çok uzun"
 
 #: src/common/form.js:262 src/common/form.js:267
 msgid "%{s} is too short"
-msgstr "s} çok kısa"
+msgstr "%{s} çok kısa"
 
 #: src/options/options.js:458
 msgid "1 hour"
@@ -119,14 +119,14 @@ msgstr "Hakkımızda"
 
 #: src/options/auth.js:26 src/options/auth.js:44
 msgid "Access Token"
-msgstr "Erişim Belirteci"
+msgstr "Erişim Jetonu"
 
 #: src/component/navigation.vue:87 src/component/navigation.vue:1736
 #: src/component/service/upload.vue:71 src/model/service.js:96
 #: src/model/user.js:171 src/page/settings.vue:85
 #: src/page/settings/general.vue:561
 msgid "Account"
-msgstr "Hesabınız"
+msgstr "Hesap"
 
 #: src/component/user/add/dialog.vue:101 src/component/service/add.vue:53
 msgid "Account created"
@@ -151,7 +151,7 @@ msgstr "Aksiyon"
 
 #: src/component/photo/edit/files.vue:154
 msgid "Actions"
-msgstr "Hareketler"
+msgstr "Aksiyonlar"
 
 #: src/page/connect.vue:294 src/component/settings/passcode.vue:346
 #: src/page/connect.vue:303
@@ -181,7 +181,7 @@ msgstr "Ekle"
 
 #: src/component/photo/edit/people.vue:162 src/page/people/new.vue:241
 msgid "Add %{s}?"
-msgstr "Add %{s}?"
+msgstr "Ekle %{s}?"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
@@ -207,7 +207,7 @@ msgstr "Kişi ekleyelim mi?"
 
 #: src/page/albums.vue:412
 msgid "Add pictures from search results by selecting them."
-msgstr "Arama sonuçlarını seçerek resimler ekleyin."
+msgstr "Arama sonuçlarından resimleri seçerek ekleyin."
 
 #: src/component/album/clipboard.vue:85 src/component/file/clipboard.vue:61
 #: src/component/label/clipboard.vue:48 src/component/people/clipboard.vue:58
@@ -293,15 +293,15 @@ msgstr "Tümü"
 
 #: src/page/albums.vue:449
 msgid "All %{n} albums loaded"
-msgstr "%{n} albüm yüklendi"
+msgstr "Tüm %{n} albüm yüklendi"
 
 #: src/page/labels.vue:354
 msgid "All %{n} labels loaded"
-msgstr "%{n} etiket yüklendi"
+msgstr "Tüm %{n} etiketler yüklendi"
 
 #: src/page/people/recognized.vue:373
 msgid "All %{n} people loaded"
-msgstr "%{n} kişi yüklendi"
+msgstr "Tüm %{n} kişiler yüklendi"
 
 #: src/component/album/toolbar.vue:42 src/component/photo/toolbar.vue:71
 msgid "All Cameras"
@@ -499,7 +499,7 @@ msgstr "Siyah"
 
 #: src/options/options.js:523
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos Değişikliği, Daha Az Çınlayan Eserler"
+msgstr "Blackman: Lanczos Modifikasyonu, Daha Az Çan Etkisi"
 
 #: src/options/options.js:489
 msgid "Blue"
@@ -554,7 +554,7 @@ msgstr "Kamera"
 
 #: src/component/photo/edit/info.vue:263
 msgid "Camera Serial"
-msgstr "Kamera Seri"
+msgstr "Kamera Seri Numarası"
 
 #: src/page/auth/login.vue:254
 msgid "Can't access your authenticator app or device?"
@@ -634,7 +634,7 @@ msgstr "Fotoğraf başlıklarını, konumları ve diğer meta verileri değişti
 
 #: src/component/photo/clipboard.vue:103
 msgid "Change private flag"
-msgstr "Özel bayrağı değiştir"
+msgstr "Özel işaretini değiştir"
 
 #: src/component/user/add/dialog.vue:108 src/component/user/add/dialog.vue:113
 #: src/component/user/edit/dialog.vue:89 src/component/user/edit/dialog.vue:94
@@ -663,7 +663,7 @@ msgstr "Seçildi"
 
 #: src/component/photo/edit/files.vue:495
 msgid "Chroma"
-msgstr "Renk"
+msgstr "Renk doygunluğu"
 
 #: src/page/library/index.vue:169
 msgid "Cleaning index and cache"
@@ -716,11 +716,11 @@ msgstr "Renkler"
 
 #: src/page/connect.vue:260 src/page/connect.vue:269
 msgid "Compare Editions"
-msgstr "Baskıları Karşılaştırın"
+msgstr "Sürümleri Karşılaştır"
 
 #: src/page/library/index.vue:99
 msgid "Complete Rescan"
-msgstr "Tekrar Tara"
+msgstr "Tam Yeniden Tarama"
 
 #: src/component/photo/edit/labels.vue:23
 #: src/component/photo/edit/labels.vue:111
@@ -770,7 +770,7 @@ msgstr "İçerik"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"
-msgstr "Devam etmek"
+msgstr "Devam et"
 
 #: src/page/auth/login.vue:291
 msgid "Continue with %{provider}"
@@ -823,7 +823,7 @@ msgstr "Albüm meta verilerini yedeklemek için YAML dosyaları oluşturun."
 
 #: src/page/settings/advanced.vue:367
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "Resim meta verilerini yedeklemek için YAML sidecar dosyaları oluşturun."
+msgstr "Resim meta verilerini yedeklemek için YAML sidecar oluşturun."
 
 #: src/page/admin/sessions.vue:417 src/component/photo/edit/info.vue:412
 msgid "Created"
@@ -867,7 +867,7 @@ msgstr "Gün"
 
 #: src/component/settings/passcode.vue:445
 msgid "Deactivate"
-msgstr "Devre dışı bırakmak"
+msgstr "Devre dışı bırak"
 
 #: src/page/settings/advanced.vue:104
 msgid "Debug Logs"
@@ -905,7 +905,7 @@ msgstr "Tümünü Sil"
 
 #: src/component/photo/toolbar.vue:416 src/page/library/errors.vue:190
 msgid "Delete all?"
-msgstr "Hepsini sileyim mi?"
+msgstr "Hepsini sil?"
 
 #: src/page/library/index.vue:111
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
@@ -913,7 +913,7 @@ msgstr "Artık dizin girişlerini, sidecar dosyalarını ve küçük resimleri s
 
 #: src/component/album/edit/dialog.vue:107 src/page/albums.vue:403
 msgid "Description"
-msgstr "Tanım"
+msgstr "Açıklama"
 
 #: src/component/settings/webdav.vue:115
 msgid "Detailed instructions can be found in our User Guide."
@@ -1106,7 +1106,7 @@ msgstr "Düzenle"
 #: src/component/label/edit/dialog.vue:52
 #: src/component/people/edit/dialog.vue:52
 msgid "Edit %{s}"
-msgstr "%{s} i düzenle"
+msgstr "%{s}'i düzenle"
 
 #: src/component/user/edit/dialog.vue:61 src/component/service/edit.vue:79
 msgid "Edit Account"
@@ -1982,7 +1982,7 @@ msgstr "Eşleşen kayıt bulunamadı"
 
 #: src/locales.js:124
 msgid "No more"
-msgstr "Daha fazla değil"
+msgstr "Artık yok"
 
 #: src/component/photo/edit/people.vue:34 src/page/people/new.vue:344
 #: src/page/people/new.vue:433 src/page/people/new.vue:100
@@ -2016,7 +2016,7 @@ msgstr "Yapılandırılmış hizmet yok."
 
 #: src/component/confirm/sponsor.vue:72
 msgid "No thanks"
-msgstr "Hayır teşekkürler"
+msgstr "Hayır, teşekkürler"
 
 #: src/page/library/errors.vue:180
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
@@ -2082,7 +2082,7 @@ msgstr "OIDC"
 
 #: src/locales.js:25
 msgid "OK"
-msgstr "TAMAM."
+msgstr "TAMAM"
 
 #: src/component/album/edit/dialog.vue:25 src/component/photo/toolbar.vue:115
 #: src/component/photo/toolbar.vue:127 src/component/photo/toolbar.vue:137
@@ -2283,7 +2283,7 @@ msgstr "Yer ve Zaman"
 #: src/page/places.vue:50 src/page/settings/general.vue:587
 #: src/page/settings/general.vue:616
 msgid "Places"
-msgstr "Konumlar"
+msgstr "Yerler"
 
 #: src/component/settings/password.vue:129
 msgid "Please confirm your new password."
@@ -2311,7 +2311,7 @@ msgstr "Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcıl
 
 #: src/page/connect.vue:148 src/page/connect.vue:152
 msgid "Please restart your instance for the changes to take effect."
-msgstr "Değişikliklerin etkili olması için lütfen örneğinizi yeniden başlatın."
+msgstr "Değişikliklerin etkili olması için lütfen instance'ınızı yeniden başlatın."
 
 #: src/common/notify.js:98
 msgid "Please wait…"
@@ -2934,7 +2934,7 @@ msgstr "Dizin şu anda %{n} gizli dosya içermektedir."
 
 #: src/page/library/index.vue:161
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir veya mükerrer olabilir."
+msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilirler veya kopyaları mevcut olabilir."
 
 #: src/page/settings/general.vue:60
 msgid "Theme"
@@ -3029,7 +3029,7 @@ msgstr "Çok fazla dosya seçildi"
 
 #: src/common/api.js:124
 msgid "Too many requests"
-msgstr "Çok fazla talep var"
+msgstr "Çok fazla istek var"
 
 #: src/options/options.js:363 src/page/places.vue:338
 msgid "Topographic"
