@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 13:47+0000\n"
+"PO-Revision-Date: 2025-03-18 08:04+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
@@ -138,7 +138,7 @@ msgstr "Изтрит акаунт"
 
 #: src/page/admin/users.vue:333
 msgid "Account restored"
-msgstr ""
+msgstr "Възстановена сметка"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -1844,7 +1844,7 @@ msgstr "Сливане на %{a} с %{b}?"
 
 #: src/page/about/feedback.vue:102
 msgid "Message"
-msgstr ""
+msgstr "Съобщение"
 
 #: src/page/about/feedback.vue:48 src/page/about/feedback.vue:40
 msgid "Message sent"
@@ -2858,7 +2858,7 @@ msgstr "Тема"
 
 #: src/page/about/feedback.vue:162 src/page/about/feedback.vue:163
 msgid "Submit"
-msgstr ""
+msgstr "Подаване на"
 
 #: src/component/settings/passcode.vue:132
 msgid "Successfully activated"

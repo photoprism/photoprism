@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-15 13:47+0000\n"
+"PO-Revision-Date: 2025-03-18 08:04+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -135,7 +135,7 @@ msgstr "Tài khoản đã bị xóa"
 
 #: src/page/admin/users.vue:333
 msgid "Account restored"
-msgstr ""
+msgstr "Tài khoản đã được khôi phục"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -1841,7 +1841,7 @@ msgstr "Hợp nhất %{a} với %{b}?"
 
 #: src/page/about/feedback.vue:102
 msgid "Message"
-msgstr ""
+msgstr "Tin nhắn"
 
 #: src/page/about/feedback.vue:48 src/page/about/feedback.vue:40
 msgid "Message sent"
@@ -2855,7 +2855,7 @@ msgstr "Chủ thể"
 
 #: src/page/about/feedback.vue:162 src/page/about/feedback.vue:163
 msgid "Submit"
-msgstr ""
+msgstr "Nộp"
 
 #: src/component/settings/passcode.vue:132
 msgid "Successfully activated"

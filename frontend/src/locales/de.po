@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-15 13:47+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-18 08:05+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgstr "Konto gelöscht"
 
 #: src/page/admin/users.vue:333
 msgid "Account restored"
-msgstr ""
+msgstr "Konto wiederhergestellt"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -2858,7 +2858,7 @@ msgstr "Bildinhalt"
 
 #: src/page/about/feedback.vue:162 src/page/about/feedback.vue:163
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: src/component/settings/passcode.vue:132
 msgid "Successfully activated"
