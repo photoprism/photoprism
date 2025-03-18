@@ -78,13 +78,16 @@ func (c *Config) AppIconsPath(name ...string) string {
 // AppConfig returns the progressive web app config.
 func (c *Config) AppConfig() pwa.Config {
 	return pwa.Config{
-		Icon:        c.AppIcon(),
-		Color:       c.AppColor(),
-		Name:        c.AppName(),
-		Description: c.SiteDescription(),
-		Mode:        c.AppMode(),
-		BaseUri:     c.BaseUri("/"),
-		StaticUri:   c.StaticUri(),
+		Icon:          c.AppIcon(),
+		Color:         c.AppColor(),
+		Name:          c.AppName(),
+		Description:   c.SiteDescription(),
+		DefaultLocale: c.DefaultLocale(),
+		Mode:          c.AppMode(),
+		BaseUri:       c.BaseUri("/"),
+		StaticUri:     c.StaticUri(),
+		SiteUrl:       c.SiteUrl(),
+		CdnUrl:        c.CdnUrl("/"),
 	}
 }
 

@@ -20,32 +20,33 @@ const album = new Album();
 const label = new Label();
 const subject = new Subject();
 
+//TODO add test for list view again as soon as we have the new menu implemented
 test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "public" })(
-  "Common: Private/unprivate photo/video using clipboard and list",
+  "Common: Private/unprivate photo/video using clipboard",
   async (t) => {
     await toolbar.setFilter("view", "Mosaic");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
-    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    //const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
     const ThirdPhotoUid = await photo.getNthPhotoUid("image", 2);
     const FirstVideoUid = await photo.getNthPhotoUid("video", 0);
-    const SecondVideoUid = await photo.getNthPhotoUid("video", 1);
+    //const SecondVideoUid = await photo.getNthPhotoUid("video", 1);
     const ThirdVideoUid = await photo.getNthPhotoUid("video", 2);
     await menu.openPage("private");
 
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
-    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    //await photo.checkPhotoVisibility(SecondPhotoUid, false);
     await photo.checkPhotoVisibility(ThirdPhotoUid, false);
     await photo.checkPhotoVisibility(FirstVideoUid, false);
-    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    //await photo.checkPhotoVisibility(SecondVideoUid, false);
     await photo.checkPhotoVisibility(ThirdVideoUid, false);
 
     await menu.openPage("browse");
     await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
     await photo.triggerHoverAction("uid", FirstVideoUid, "select");
     await contextmenu.triggerContextMenuAction("private", "");
-    await toolbar.setFilter("view", "List");
+    /*await toolbar.setFilter("view", "List");
     await photo.triggerListViewActions("uid", SecondPhotoUid, "private");
-    await photo.triggerListViewActions("uid", SecondVideoUid, "private");
+    await photo.triggerListViewActions("uid", SecondVideoUid, "private");*/
     await toolbar.setFilter("view", "Cards");
     await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");
     await photo.triggerHoverAction("uid", ThirdVideoUid, "select");
@@ -61,16 +62,16 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     }
 
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
-    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    // await photo.checkPhotoVisibility(SecondPhotoUid, false);
     await photo.checkPhotoVisibility(ThirdPhotoUid, false);
     await photo.checkPhotoVisibility(FirstVideoUid, false);
-    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    //await photo.checkPhotoVisibility(SecondVideoUid, false);
     await photo.checkPhotoVisibility(ThirdVideoUid, false);
 
     await menu.openPage("video");
 
     await photo.checkPhotoVisibility(FirstVideoUid, false);
-    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    //await photo.checkPhotoVisibility(SecondVideoUid, false);
     await photo.checkPhotoVisibility(ThirdVideoUid, false);
 
     await menu.openPage("private");
@@ -80,20 +81,20 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
       await toolbar.triggerToolbarAction("reload");
     }
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
-    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    //await photo.checkPhotoVisibility(SecondPhotoUid, true);
     await photo.checkPhotoVisibility(ThirdPhotoUid, true);
     await photo.checkPhotoVisibility(FirstVideoUid, true);
-    await photo.checkPhotoVisibility(SecondVideoUid, true);
+    //await photo.checkPhotoVisibility(SecondVideoUid, true);
     await photo.checkPhotoVisibility(ThirdVideoUid, true);
 
     await contextmenu.clearSelection();
     await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
-    await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
+    //await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
     await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");
     await photo.triggerHoverAction("uid", FirstVideoUid, "select");
-    await photo.triggerHoverAction("uid", SecondVideoUid, "select");
+    //await photo.triggerHoverAction("uid", SecondVideoUid, "select");
     await photo.triggerHoverAction("uid", ThirdVideoUid, "select");
-    await contextmenu.checkContextMenuCount("6");
+    await contextmenu.checkContextMenuCount("4");
     await contextmenu.triggerContextMenuAction("private", "");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
@@ -101,22 +102,22 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
       await toolbar.triggerToolbarAction("reload");
     }
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
-    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    //await photo.checkPhotoVisibility(SecondPhotoUid, false);
     await photo.checkPhotoVisibility(ThirdPhotoUid, false);
     await photo.checkPhotoVisibility(FirstVideoUid, false);
-    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    //await photo.checkPhotoVisibility(SecondVideoUid, false);
     await photo.checkPhotoVisibility(ThirdVideoUid, false);
 
     await menu.openPage("browse");
     await toolbar.search("photo:true");
 
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
-    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    //await photo.checkPhotoVisibility(SecondPhotoUid, true);
     await photo.checkPhotoVisibility(ThirdPhotoUid, true);
     await toolbar.search("video:true");
 
     await photo.checkPhotoVisibility(FirstVideoUid, true);
-    await photo.checkPhotoVisibility(SecondVideoUid, true);
+    //await photo.checkPhotoVisibility(SecondVideoUid, true);
     await photo.checkPhotoVisibility(ThirdVideoUid, true);
   }
 );
@@ -539,11 +540,7 @@ test.meta("testID", "photos-archive-private-005").meta({ type: "short", mode: "p
   async (t) => {
     await menu.openPage("archive");
     await toolbar.triggerToolbarAction("delete-all");
-    await t
-      .expect(
-        Selector("div").withText("Are you sure you want to delete all archived pictures?").visible
-      )
-      .ok();
+    await t.expect(Selector("p").withText("Are you sure you want to delete all archived pictures?").visible).ok();
     await t.click(Selector("button.action-cancel"));
   }
 );

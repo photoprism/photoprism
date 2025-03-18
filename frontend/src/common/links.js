@@ -1,0 +1,23 @@
+export default {
+  docs: "https://link.photoprism.app/docs",
+  userGuide: "https://docs.photoprism.app/user-guide/",
+  developerGuide: "https://docs.photoprism.app/developer-guide/",
+  developerSetup: "https://docs.photoprism.app/developer-guide/setup/",
+  firstSteps: "https://docs.photoprism.app/user-guide/first-steps/",
+  troubleshooting: "https://docs.photoprism.app/getting-started/troubleshooting/",
+  missingPictures: "https://docs.photoprism.app/getting-started/troubleshooting/#missing-pictures",
+  kb: "https://www.photoprism.app/kb",
+  bugs: "https://www.photoprism.app/kb/reporting-bugs",
+  account: "https://my.photoprism.app/dashboard",
+  connect: "https://my.photoprism.app/connect/",
+  compare: "https://link.photoprism.app/personal-editions",
+  contact: "https://www.photoprism.app/contact",
+  pro: {
+    kb: "https://www.photoprism.app/pro/kb",
+    support: "https://www.photoprism.app/pro/support",
+    supportEmail: "mailto:support@photoprism.pro",
+    register: "https://my.photoprism.app/register/pro",
+    activation: "https://www.photoprism.app/pro/kb/activation",
+    compare: "https://link.photoprism.app/team-editions",
+  },
+};

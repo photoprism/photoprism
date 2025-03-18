@@ -11,7 +11,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/colors"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/media/projection"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFile_RegenerateIndex(t *testing.T) {
@@ -53,52 +55,63 @@ func TestFirstFileByHash(t *testing.T) {
 }
 
 func TestFile_ShareFileName(t *testing.T) {
-	t.Run("photo with title", func(t *testing.T) {
+	t.Run("WithPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareBase(0)
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
-		assert.Contains(t, filename, fs.ExtJPEG)
+		assert.Equal(t, "20190115-000000-Berlin-Morning-Mood.jpg", filename)
+		assert.Contains(t, filename, fs.ExtJpeg)
 	})
-	t.Run("photo without title", func(t *testing.T) {
+	t.Run("WithPhotoTitleSequence", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
+
+		filename := file.ShareBase(2)
+
+		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+		assert.Equal(t, "20190115-000000-Berlin-Morning-Mood (2).jpg", filename)
+		assert.Contains(t, filename, fs.ExtJpeg)
+	})
+	t.Run("EmptyPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
 		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, filename, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg")
+		assert.Equal(t, "20190115-000000-E98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
-	t.Run("photo without photo", func(t *testing.T) {
+	t.Run("NoRelatedPhoto", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
+		assert.Equal(t, "19700101-000000-E98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
-	t.Run("file without photo", func(t *testing.T) {
+	t.Run("FileWithoutPhoto", func(t *testing.T) {
 		file := FileFixtures.Get("FileWithoutPhoto.mp4")
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, "pcad9a68fa6acc5c5ba965adf6ec465ca42fd916.mp4", filename)
+		assert.Equal(t, "20201206-020651-Filewithoutphoto-Mp4.mp4", filename)
 	})
-	t.Run("file hash < 8", func(t *testing.T) {
+	t.Run("ShortFileHash", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98"}
 
-		filename := file.ShareBase(0)
-
-		assert.NotContains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+		assert.True(t, rnd.IsUUID(fs.BasePrefix(file.ShareBase(0), true)))
+		assert.True(t, rnd.IsUUID(fs.BasePrefix(file.ShareBase(1), true)))
+		assert.True(t, rnd.IsUUID(fs.BasePrefix(file.ShareBase(2), true)))
 	})
-	t.Run("no file uid", func(t *testing.T) {
+	t.Run("EmptyFileUID", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileHash: "e98ijhyt"}
 
 		filename := file.ShareBase(0)
 
-		assert.Equal(t, filename, "e98ijhyt.jpg")
+		assert.Equal(t, "19700101-000000-E98ijhyt.jpg", filename)
 	})
 }
 
@@ -290,14 +303,14 @@ func TestFile_Links(t *testing.T) {
 	})
 }
 
-func TestFile_NoJPEG(t *testing.T) {
+func TestFile_NoJpeg(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
-		assert.True(t, file.NoJPEG())
+		assert.True(t, file.NoJpeg())
 	})
 	t.Run("false", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
-		assert.False(t, file.NoJPEG())
+		assert.False(t, file.NoJpeg())
 	})
 }
 
@@ -419,12 +432,12 @@ func TestFile_OriginalBase(t *testing.T) {
 		filename := file.OriginalBase(0)
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
-		assert.Contains(t, filename, fs.ExtJPEG)
+		assert.Contains(t, filename, fs.ExtJpeg)
 
 		filename2 := file.OriginalBase(1)
 		assert.Contains(t, filename2, "20190115-000000-Berlin-Morning-Mood")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.ExtJPEG)
+		assert.Contains(t, filename2, fs.ExtJpeg)
 	})
 	t.Run("original name empty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
@@ -433,12 +446,12 @@ func TestFile_OriginalBase(t *testing.T) {
 		filename := file.OriginalBase(0)
 
 		assert.Contains(t, filename, "sonnenaufgang")
-		assert.Contains(t, filename, fs.ExtJPEG)
+		assert.Contains(t, filename, fs.ExtJpeg)
 
 		filename2 := file.OriginalBase(1)
 		assert.Contains(t, filename2, "sonnenaufgang")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.ExtJPEG)
+		assert.Contains(t, filename2, fs.ExtJpeg)
 	})
 	t.Run("original name not empty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
@@ -447,12 +460,12 @@ func TestFile_OriginalBase(t *testing.T) {
 		filename := file.OriginalBase(0)
 
 		assert.Contains(t, filename, "Sonnenaufgang")
-		assert.Contains(t, filename, fs.ExtJPEG)
+		assert.Contains(t, filename, fs.ExtJpeg)
 
 		filename2 := file.OriginalBase(1)
 		assert.Contains(t, filename2, "Sonnenaufgang")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.ExtJPEG)
+		assert.Contains(t, filename2, fs.ExtJpeg)
 	})
 }
 
@@ -463,12 +476,12 @@ func TestFile_DownloadName(t *testing.T) {
 
 		filename := file.DownloadName(customize.DownloadNameFile, 0)
 		assert.Contains(t, filename, "filename")
-		assert.Contains(t, filename, fs.ExtJPEG)
+		assert.Contains(t, filename, fs.ExtJpeg)
 
 		filename2 := file.DownloadName(customize.DownloadNameOriginal, 1)
 		assert.Contains(t, filename2, "originalName")
 		assert.Contains(t, filename2, "(1)")
-		assert.Contains(t, filename2, fs.ExtJPEG)
+		assert.Contains(t, filename2, fs.ExtJpeg)
 
 		filename3 := file.DownloadName("xxx", 0)
 		assert.Contains(t, filename3, "20190115-000000-Berlin-Morning-Mood")
@@ -763,6 +776,26 @@ func TestFile_SetFrames(t *testing.T) {
 	})
 }
 
+func TestFile_SetPages(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := File{FilePages: 4}
+
+		assert.Equal(t, 4, m.FilePages)
+
+		m.SetPages(120)
+
+		assert.Equal(t, 120, m.FilePages)
+
+		m.SetPages(30)
+
+		assert.Equal(t, 30, m.FilePages)
+
+		m.SetPages(0)
+
+		assert.Equal(t, 30, m.FilePages)
+	})
+}
+
 func TestFile_SetDuration(t *testing.T) {
 	t.Run("FileFPS", func(t *testing.T) {
 		m := File{FileFPS: 20}
@@ -861,5 +894,21 @@ func TestFile_SetOrientation(t *testing.T) {
 		m.SetOrientation(-1, SrcManual)
 		assert.Equal(t, 8, m.Orientation())
 		assert.Equal(t, "", m.FileOrientationSrc)
+	})
+}
+
+func TestFile_ContentType(t *testing.T) {
+	t.Run("Image", func(t *testing.T) {
+		m := FileFixtures.Get("exampleFileName.jpg")
+		assert.Equal(t, false, m.FileVideo)
+		assert.Equal(t, header.ContentTypeJpeg, m.ContentType())
+	})
+	t.Run("Video", func(t *testing.T) {
+		avc := FileFixtures.Get("Video.mp4")
+		assert.Equal(t, true, avc.FileVideo)
+		assert.Equal(t, header.ContentTypeMp4AvcMain, avc.ContentType())
+		hevc := FileFixtures.Get("Photo21.mp4")
+		assert.Equal(t, true, hevc.FileVideo)
+		assert.Equal(t, header.ContentTypeMp4HvcMain10, hevc.ContentType())
 	})
 }

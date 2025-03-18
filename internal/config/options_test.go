@@ -3,8 +3,9 @@ package config
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestNewOptions(t *testing.T) {

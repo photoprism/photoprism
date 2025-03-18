@@ -19,6 +19,7 @@ var photoYamlMutex = sync.Mutex{}
 func (m *Photo) Yaml() ([]byte, error) {
 	// Load details if not done yet.
 	m.GetDetails()
+	m.NormalizeValues()
 
 	m.CreatedAt = m.CreatedAt.UTC().Truncate(time.Second)
 	m.UpdatedAt = m.UpdatedAt.UTC().Truncate(time.Second)
@@ -66,8 +67,8 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 
 // YamlFileName returns both the absolute file path and the relative name for the YAML sidecar file, e.g. for logging.
 func (m *Photo) YamlFileName(originalsPath, sidecarPath string) (absolute, relative string, err error) {
-	absolute, err = fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYAML)
-	relative = filepath.Join(m.PhotoPath, m.PhotoName) + fs.ExtYAML
+	absolute, err = fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYaml)
+	relative = filepath.Join(m.PhotoPath, m.PhotoName) + fs.ExtYaml
 
 	return absolute, relative, err
 }
@@ -126,6 +127,8 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 	if err = yaml.Unmarshal(data, m); err != nil {
 		return err
 	}
+
+	m.NormalizeValues()
 
 	return nil
 }

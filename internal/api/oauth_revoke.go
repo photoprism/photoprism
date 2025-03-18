@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -51,8 +51,8 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		var role acl.Role
 		var err error
 
-		// Token revokation request form.
-		var f form.OAuthRevokeToken
+		// Token revocation request form.
+		var frm form.OAuthRevokeToken
 
 		// Get token and session from request header.
 		if authToken = AuthToken(c); authToken == "" {
@@ -73,29 +73,29 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		}
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
-		if err = c.ShouldBind(&f); err != nil && authToken == "" {
+		if err = c.ShouldBind(&frm); err != nil && authToken == "" {
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
 			AbortBadRequest(c)
 			return
-		} else if f.Empty() {
-			f.Token = authToken
-			f.TokenTypeHint = form.AccessToken
+		} else if frm.Empty() {
+			frm.Token = authToken
+			frm.TokenTypeHint = form.AccessToken
 		}
 
-		// Validate revokation form values.
-		if err = f.Validate(); err != nil {
+		// Validate revocation form values.
+		if err = frm.Validate(); err != nil {
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
 			AbortInvalidCredentials(c)
 			return
 		}
 
 		// Find session to be revoked.
-		switch f.TokenTypeHint {
+		switch frm.TokenTypeHint {
 		case form.RefID:
 			if s == nil || sUserUID == "" || role == acl.RoleNone {
 				c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 				return
-			} else if sess = entity.FindSessionByRefID(f.Token); sess == nil {
+			} else if sess = entity.FindSessionByRefID(frm.Token); sess == nil {
 				AbortInvalidCredentials(c)
 				return
 			}
@@ -105,9 +105,9 @@ func OAuthRevoke(router *gin.RouterGroup) {
 				return
 			}
 
-			sess, err = entity.FindSession(f.Token)
+			sess, err = entity.FindSession(frm.Token)
 		case form.AccessToken:
-			sess, err = entity.FindSession(rnd.SessionID(f.Token))
+			sess, err = entity.FindSession(rnd.SessionID(frm.Token))
 		}
 
 		// If not already set, get the log role and actor from the session to be revoked.
@@ -124,7 +124,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			}
 		}
 
-		// Check revokation request and abort if invalid.
+		// Check revocation request and abort if invalid.
 		if err != nil {
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err.Error())
 			AbortInvalidCredentials(c)

@@ -30,7 +30,7 @@ func (m *Photo) EstimateCountry() {
 	// Try to guess country from photo title.
 	if code := txt.CountryCode(m.PhotoTitle); code != unknown {
 		countryCode = code
-	} else if code = txt.CountryCode(m.PhotoDescription); code != unknown && m.DescriptionSrc != SrcAuto {
+	} else if code = txt.CountryCode(m.GetCaption()); code != unknown && m.CaptionSrc != SrcAuto {
 		countryCode = code
 	}
 

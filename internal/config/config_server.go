@@ -1,6 +1,7 @@
 package config
 
 import (
+	"net/url"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -8,7 +9,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/media/http/scheme"
 )
 
 const (
@@ -47,13 +49,13 @@ func (c *Config) ProxyProtoHeaders() map[string]string {
 	h := make(map[string]string, p+1)
 
 	if p == 0 {
-		h[header.ForwardedProto] = header.ProtoHttps
+		h[header.ForwardedProto] = scheme.Https
 		return h
 	}
 
 	for k, v := range c.options.ProxyProtoHeaders {
 		if l := len(c.options.ProxyProtoHttps); l == 0 {
-			h[v] = header.ProtoHttps
+			h[v] = scheme.Https
 		} else if l > k {
 			h[v] = c.options.ProxyProtoHttps[k]
 		} else {
@@ -138,16 +140,44 @@ func (c *Config) HttpPort() int {
 	return c.options.HttpPort
 }
 
-// HttpSocket tries to parse the HttpHost as a Unix socket path and returns an empty string otherwise.
-func (c *Config) HttpSocket() string {
-	if c.options.HttpSocket != "" {
-		// Do nothing.
+// HttpSocket tries to parse the HttpHost as a Unix socket URL and returns it, or nil if it fails.
+func (c *Config) HttpSocket() *url.URL {
+	if c.options.HttpSocket != nil {
+		// Return cached resource URI.
+		return c.options.HttpSocket
 	} else if host := c.options.HttpHost; !strings.HasPrefix(host, "unix:") {
-		return ""
-	} else if strings.Contains(host, "/") {
-		c.options.HttpSocket = strings.TrimPrefix(host, "unix:")
+		return nil
 	}
 
+	// Parse socket resource URI.
+	socket, err := url.Parse(c.options.HttpHost)
+
+	// Return nil if parsing failed, or it's not a Unix domain socket URI.
+	if err != nil {
+		return nil
+	}
+
+	if socket.Scheme == scheme.HttpUnix {
+		socket.Scheme = scheme.Unix
+	}
+
+	if socket.Scheme != scheme.Unix || socket.Host == "" && socket.Path == "" {
+		return nil
+	} else if socket.Host != "" && socket.Path == "" {
+		// Create a path from the host if an absolute socket path is not specified,
+		socket.Path = fs.Abs(socket.Host)
+		socket.Host = ""
+	}
+
+	// Should never happen.
+	if socket.Path == "" {
+		return nil
+	}
+
+	// Cache parsed resource URI.
+	c.options.HttpSocket = socket
+
+	// Return parsed resource URI.
 	return c.options.HttpSocket
 }
 

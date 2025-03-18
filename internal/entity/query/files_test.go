@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestFilesByPath(t *testing.T) {
@@ -108,7 +109,7 @@ func TestFilesByUID(t *testing.T) {
 		assert.Equal(t, 0, len(files))
 	})
 	//TODO fails on mariadb
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		files, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, -100, 0)
 
 		assert.Error(t, err)

@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
+
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestUploadToService(t *testing.T) {
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UploadToService(router)
 		r := PerformRequest(app, "POST", "/api/v1/services/1000000/upload")

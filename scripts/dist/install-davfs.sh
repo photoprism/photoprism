@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs the DavFS filesystem driver on Linux.
+# Installs the DavFS filesystem driver on Linux.
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 

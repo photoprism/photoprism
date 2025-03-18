@@ -4,9 +4,25 @@ UI:
   Theme: onyx
   Language: de
   TimeZone: ""
+  StartPage: default
 Search:
-  BatchSize: 0
+  BatchSize: -1
   ListView: true
+  ShowTitles: true
+  ShowCaptions: true
+Albums:
+  Order:
+    Album: oldest
+    Folder: added
+    Moment: oldest
+    State: newest
+    Month: oldest
+  Download:
+    Name: share
+    Disabled: false
+    Originals: true
+    MediaRaw: false
+    MediaSidecar: false
 Maps:
   Animate: 0
   Style: ""
@@ -25,6 +41,7 @@ Features:
   Labels: true
   Library: true
   Logs: true
+  Calendar: true
   Moments: true
   People: true
   Places: true

@@ -303,7 +303,7 @@ func TestUpdateMarker(t *testing.T) {
 }
 
 func TestClearMarkerSubject(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetPhoto(router)

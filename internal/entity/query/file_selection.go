@@ -61,13 +61,13 @@ func ShareSelection(originals bool) FileSelection {
 		}
 
 		omitTypes = []string{
-			fs.ImagePNG.String(),
-			fs.ImageWebP.String(),
-			fs.ImageTIFF.String(),
-			fs.ImageAVIF.String(),
-			fs.ImageHEIC.String(),
-			fs.ImageBMP.String(),
-			fs.ImageGIF.String(),
+			fs.ImagePng.String(),
+			fs.ImageWebp.String(),
+			fs.ImageTiff.String(),
+			fs.ImageAvif.String(),
+			fs.ImageHeic.String(),
+			fs.ImageBmp.String(),
+			fs.ImageGif.String(),
 		}
 	}
 
@@ -83,16 +83,16 @@ func ShareSelection(originals bool) FileSelection {
 }
 
 // SelectedFiles finds files based on the given selection form, e.g. for downloading or sharing.
-func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err error) {
-	if f.Empty() {
+func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, err error) {
+	if frm.Empty() {
 		return results, errors.New("no items selected")
 	}
 
 	// Resolve photos in smart albums.
-	if photoIds, err := AlbumsPhotoUIDs(f.Albums, false, o.Private); err != nil {
+	if photoIds, err := AlbumsPhotoUIDs(frm.Albums, false, o.Private); err != nil {
 		log.Warnf("query: %s", err.Error())
 	} else if len(photoIds) > 0 {
-		f.Photos = append(f.Photos, photoIds...)
+		frm.Photos = append(frm.Photos, photoIds...)
 	}
 
 	var concat string
@@ -123,7 +123,7 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 		Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id").
 		Where("files.file_missing = 0 AND files.file_name <> '' AND files.file_hash <> ''").
-		Where(where, f.Photos, f.Places, f.Files, f.Files, f.Files, f.Albums, f.Subjects, f.Labels, f.Labels).
+		Where(where, frm.Photos, frm.Places, frm.Files, frm.Files, frm.Files, frm.Albums, frm.Subjects, frm.Labels, frm.Labels).
 		Group("files.id")
 
 	// File size limit?

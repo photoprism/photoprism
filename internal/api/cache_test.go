@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 func TestAddVideoCacheHeader(t *testing.T) {

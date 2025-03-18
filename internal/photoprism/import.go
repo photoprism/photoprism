@@ -254,7 +254,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				continue
 			}
 
-			if err := os.Remove(file); err != nil {
+			if err = os.Remove(file); err != nil {
 				log.Errorf("import: failed removing %s (%s)", clean.Log(fs.RelName(file, importPath)), err.Error())
 			}
 		}
@@ -268,16 +268,17 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		// Run face recognition if enabled.
 		if w := NewFaces(imp.conf); w.Disabled() {
 			log.Debugf("import: skipping face recognition")
-		} else if err := w.Start(FacesOptionsDefault()); err != nil {
+		} else if err = w.Start(FacesOptionsDefault()); err != nil {
 			log.Errorf("import: %s", err)
 		}
 
 		// Update photo counts and visibilities.
-		if err := entity.UpdateCounts(); err != nil {
+		if err = entity.UpdateCounts(); err != nil {
 			log.Warnf("index: %s (update counts)", err)
 		}
 	}
 
+	config.FlushUsageCache()
 	runtime.GC()
 
 	return done
@@ -289,8 +290,12 @@ func (imp *Import) Cancel() {
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
+// Format: 2006/01/20060102_150405_CHECKSUM.ext
 func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile, folder string) (string, error) {
-	fileName := mainFile.CanonicalName()
+	// Get the import destination path and file name patterns.
+	pathPattern, namePattern := imp.conf.Settings().Import.GetDestName()
+
+	fileName := mainFile.CanonicalName(namePattern)
 	fileExtension := mediaFile.Extension()
 	dateCreated := mainFile.DateCreated()
 
@@ -305,20 +310,20 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 		}
 	}
 
-	// Find and return available filename.
-	iteration := 0
-	dir := filepath.Join(imp.originalsPath(), folder, dateCreated.Format("2006/01"))
-	result := filepath.Join(dir, fileName+fileExtension)
+	// Find and return the next available file name if the default name is already being used by another file.
+	i := 0
+	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format(pathPattern))
+	filePath := filepath.Join(pathName, fileName+fileExtension)
 
-	for fs.FileExists(result) {
-		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("%s already exists", clean.Log(fs.RelName(result, imp.originalsPath())))
+	for fs.FileExists(filePath) {
+		if mediaFile.Hash() == fs.Hash(filePath) {
+			return filePath, fmt.Errorf("%s already exists", clean.Log(fs.RelName(filePath, imp.originalsPath())))
 		}
 
-		iteration++
+		i++
 
-		result = filepath.Join(dir, fileName+"."+fmt.Sprintf("%05d", iteration)+fileExtension)
+		filePath = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%05d", i)+fileExtension)
 	}
 
-	return result, nil
+	return filePath, nil
 }

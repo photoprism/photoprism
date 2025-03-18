@@ -10,7 +10,7 @@ import (
 
 // CreateSessionResponse returns the authentication response data for POST requests
 // based on the session and configuration.
-func CreateSessionResponse(authToken string, sess *entity.Session, conf config.ClientConfig) gin.H {
+func CreateSessionResponse(authToken string, sess *entity.Session, conf *config.ClientConfig) gin.H {
 	return GetSessionResponse(authToken, sess, conf)
 }
 
@@ -26,7 +26,7 @@ func CreateSessionError(code int, err error) gin.H {
 
 // GetSessionResponse returns the authentication response data for GET requests
 // based on the session and configuration.
-func GetSessionResponse(authToken string, sess *entity.Session, conf config.ClientConfig) gin.H {
+func GetSessionResponse(authToken string, sess *entity.Session, conf *config.ClientConfig) gin.H {
 	if authToken == "" {
 		return gin.H{
 			"status":     StatusSuccess,

@@ -13,7 +13,7 @@ type SearchPhotosGeo struct {
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
 	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
 	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
-	Type      string    `form:"type"`
+	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); separate with |"`
 	Path      string    `form:"path"`
 	Folder    string    `form:"folder"` // Alias for Path
 	Name      string    `form:"name"`
@@ -34,7 +34,7 @@ type SearchPhotosGeo struct {
 	Live      bool      `form:"live" notes:"Finds Live Photos and short videos"`
 	Vector    bool      `form:"vector" notes:"Finds vector graphics only"`
 	Video     bool      `form:"video" notes:"Finds videos only"`
-	Photo     bool      `form:"photo" notes:"Excludes videos from search results"`
+	Photo     bool      `form:"photo" notes:"Excludes videos and documents from search results"`
 	Scan      string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
 	Mp        string    `form:"mp" example:"mp:3-6" notes:"Resolution in Megapixels (MP)"`
 	Panorama  bool      `form:"panorama"`
@@ -63,6 +63,7 @@ type SearchPhotosGeo struct {
 	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length (35mm equivalent)"`
 	F         string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (f-number)"`
 	Color     string    `form:"color"`
+	Codec     string    `form:"codec" example:"codec:avc1" notes:"Media Codec (e.g. jpeg, avc1, hvc1); separate with |"`
 	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
 	Person    string    `form:"person"`   // Alias for Subject

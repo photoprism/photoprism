@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs Darktable on Linux.
+# Installs Darktable on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-darktable.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -11,7 +11,7 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
-# Determine the system architecture.
+# Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else

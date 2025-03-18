@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs JPEG XL on Linux.
+# Installs JPEG XL on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-jxl.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -11,7 +11,7 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
-# Determine the system architecture.
+# Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
@@ -46,7 +46,7 @@ case $DESTARCH in
       rm -rf /tmp/jpegxl
       mkdir -p "$TMPDIR"
       echo "Extracting \"$URL\" to \"$TMPDIR\"."
-      wget --inet4-only -c "$URL" -O - | tar --overwrite --mode=755 -xz -C "$TMPDIR"
+      curl -fsSL "$URL" | tar --overwrite --mode=755 -xz -C "$TMPDIR"
       (cd "$TMPDIR" && dpkg -i jxl_0.8.1_amd64.deb libjxl_0.8.1_amd64.deb libjxl-dev_0.8.1_amd64.deb)
       apt --fix-broken install
       rm -rf /tmp/jpegxl

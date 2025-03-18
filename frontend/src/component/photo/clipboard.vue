@@ -1,72 +1,208 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-photo-clipboard`">
-        <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
-            <v-icon v-if="selection.length === 0">menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+    <div v-if="selection.length > 0" class="clipboard-container">
+      <v-speed-dial
+        id="t-clipboard"
+        v-model="expanded"
+        :class="`p-clipboard p-photo-clipboard`"
+        :end="!rtl"
+        :start="rtl"
+        :attach="true"
+        location="top"
+        transition="slide-y-reverse-transition"
+        offset="12"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon
+            size="52"
+            color="highlight"
+            variant="elevated"
+            density="comfortable"
+            class="action-menu opacity-95 ma-5"
+          >
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="canShare && context !== 'archive' && context !== 'hidden' && context !== 'review'" fab dark small :title="$gettext('Share')" color="share" :disabled="selection.length === 0 || busy" class="action-share" @click.stop="dialog.share = true">
-          <v-icon>cloud</v-icon>
-        </v-btn>
-        <v-btn v-if="canManage && context === 'review'" fab dark small :title="$gettext('Approve')" color="share" :disabled="selection.length === 0 || busy" class="action-approve" @click.stop="batchApprove">
-          <v-icon>check</v-icon>
-        </v-btn>
-        <v-btn v-if="canEdit" fab dark small :title="$gettext('Edit')" color="edit" :disabled="selection.length === 0 || busy" class="action-edit" @click.stop="edit">
-          <v-icon>edit</v-icon>
-        </v-btn>
-        <v-btn v-if="canTogglePrivate && context !== 'archive' && context !== 'hidden'" fab dark small :title="$gettext('Change private flag')" color="private" :disabled="selection.length === 0 || busy" class="action-private" @click.stop="batchPrivate">
-          <v-icon>lock</v-icon>
-        </v-btn>
-        <v-btn v-if="canDownload && context !== 'archive'" fab dark small :title="$gettext('Download')" :disabled="busy" color="download" class="action-download" @click.stop="download()">
-          <v-icon>get_app</v-icon>
-        </v-btn>
-        <v-btn v-if="canEditAlbum && context !== 'archive' && context !== 'hidden'" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0 || busy" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
-        </v-btn>
-        <v-btn v-if="canArchive && !isAlbum && context !== 'archive' && context !== 'hidden'" fab dark small color="remove" :title="$gettext('Archive')" :disabled="selection.length === 0 || busy" class="action-archive" @click.stop="archivePhotos">
-          <v-icon>archive</v-icon>
-        </v-btn>
-        <v-btn v-if="canArchive && !album && context === 'archive' && context !== 'hidden'" fab dark small color="restore" :title="$gettext('Restore')" :disabled="selection.length === 0 || busy" class="action-restore" @click.stop="batchRestore">
-          <v-icon>unarchive</v-icon>
-        </v-btn>
-        <v-btn v-if="canEditAlbum && isAlbum" fab dark small :title="$gettext('Remove from album')" color="remove" :disabled="selection.length === 0 || busy" class="action-remove" @click.stop="removeFromAlbum">
-          <v-icon>eject</v-icon>
-        </v-btn>
-        <v-btn v-if="canDelete && !album && context === 'archive'" fab dark small :title="$gettext('Delete')" color="remove" :disabled="selection.length === 0 || busy" class="action-delete" @click.stop="deletePhotos">
-          <v-icon>delete</v-icon>
-        </v-btn>
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
-        </v-btn>
+        <v-btn
+          v-if="canShare && canServiceUpload && context !== 'archive' && context !== 'hidden' && context !== 'review'"
+          key="action-share"
+          :title="$gettext('Share')"
+          icon="mdi-share"
+          color="share"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-share"
+          @click.stop="dialog.share = true"
+        ></v-btn>
+        <v-btn
+          v-if="canManage && context === 'review'"
+          key="action-approve"
+          :title="$gettext('Approve')"
+          icon="mdi-check-bold"
+          color="share"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-approve"
+          @click.stop="batchApprove"
+        ></v-btn>
+        <v-btn
+          v-if="canArchive && !album && context === 'archive' && context !== 'hidden'"
+          key="action-restore"
+          :title="$gettext('Restore')"
+          icon="mdi-check-bold"
+          color="share"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-restore"
+          @click.stop="batchRestore"
+        ></v-btn>
+        <v-btn
+          v-if="canEdit"
+          key="action-edit"
+          :title="$gettext('Edit')"
+          icon="mdi-pencil"
+          color="edit"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-edit"
+          @click.stop="edit"
+        ></v-btn>
+        <v-btn
+          v-if="canTogglePrivate && context !== 'archive' && context !== 'hidden'"
+          key="action-private"
+          :title="$gettext('Change private flag')"
+          icon="mdi-lock"
+          color="private"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-private"
+          @click.stop="batchPrivate"
+        ></v-btn>
+        <v-btn
+          v-if="canDownload && context !== 'archive'"
+          key="action-download"
+          :title="$gettext('Download')"
+          icon="mdi-download"
+          color="download"
+          variant="elevated"
+          density="comfortable"
+          :disabled="busy"
+          class="action-download"
+          @click.stop="download()"
+        ></v-btn>
+        <v-btn
+          v-if="canEditAlbum && context !== 'archive' && context !== 'hidden'"
+          key="action-album"
+          :title="$gettext('Add to album')"
+          icon="mdi-bookmark"
+          color="album"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-album"
+          @click.stop="dialog.album = true"
+        ></v-btn>
+        <v-btn
+          v-if="canArchive && context !== 'archive' && context !== 'hidden'"
+          key="action-archive"
+          :title="$gettext('Archive')"
+          icon="mdi-archive"
+          color="remove"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-archive"
+          @click.stop="archivePhotos"
+        ></v-btn>
+        <v-btn
+          v-if="canEditAlbum && isAlbum"
+          key="action-remove"
+          :title="$gettext('Remove from album')"
+          icon="mdi-eject"
+          color="remove"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-remove"
+          @click.stop="removeFromAlbum"
+        ></v-btn>
+        <v-btn
+          v-if="canDelete && !album && context === 'archive'"
+          key="action-delete"
+          :title="$gettext('Delete')"
+          icon="mdi-delete"
+          color="remove"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0 || busy"
+          class="action-delete"
+          @click.stop="deletePhotos"
+        ></v-btn>
+        <v-btn
+          key="action-close"
+          icon="mdi-close"
+          color="grey-darken-2"
+          variant="elevated"
+          density="comfortable"
+          class="action-clear"
+          @click.stop="clearClipboard()"
+        ></v-btn>
       </v-speed-dial>
-    </v-container>
-    <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false" @confirm="batchArchive"></p-photo-archive-dialog>
-    <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-photo-delete-dialog>
-    <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
-    <p-share-upload-dialog :show="dialog.share" :items="{ photos: selection }" :model="album" @cancel="dialog.share = false" @confirm="onShared"></p-share-upload-dialog>
+    </div>
+    <p-photo-archive-dialog
+      :visible="dialog.archive"
+      @close="dialog.archive = false"
+      @confirm="batchArchive"
+    ></p-photo-archive-dialog>
+    <p-confirm-dialog
+      :visible="dialog.delete"
+      :text="$gettext(`Are you sure you want to permanently delete these pictures?`)"
+      :action="$gettext('Yes')"
+      icon="mdi-delete-outline"
+      @close="dialog.delete = false"
+      @confirm="batchDelete"
+    ></p-confirm-dialog>
+    <p-photo-album-dialog
+      :visible="dialog.album"
+      @close="dialog.album = false"
+      @confirm="addToAlbum"
+    ></p-photo-album-dialog>
+    <p-service-upload
+      :visible="dialog.share"
+      :items="{ photos: selection }"
+      :model="album"
+      @close="dialog.share = false"
+      @confirm="onShared"
+    ></p-service-upload>
   </div>
 </template>
 <script>
-import Api from "common/api";
-import Notify from "common/notify";
-import Event from "pubsub-js";
+import $api from "common/api";
+import $notify from "common/notify";
 import download from "common/download";
 import Photo from "model/photo";
 
+import PConfirmDialog from "component/confirm/dialog.vue";
+import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
+
 export default {
   name: "PPhotoClipboard",
+  components: {
+    PConfirmDialog,
+    PPhotoAlbumDialog,
+  },
   props: {
     context: {
       type: String,
       default: "photos",
-    },
-    selection: {
-      type: Array,
-      default: () => [],
     },
     refresh: {
       type: Function,
@@ -78,14 +214,16 @@ export default {
     },
   },
   data() {
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
 
     return {
+      selection: this.$clipboard.selection,
       canTogglePrivate: this.$config.allow("photos", "manage") && features.private,
       canArchive: this.$config.allow("photos", "delete") && features.archive,
       canDelete: this.$config.allow("photos", "delete") && features.delete,
       canDownload: this.$config.allow("photos", "download") && features.download,
       canShare: this.$config.allow("photos", "share") && features.share,
+      canServiceUpload: this.$config.feature("services") && this.$config.allow("services", "upload"),
       canManage: this.$config.allow("photos", "manage") && features.albums,
       canEdit: this.$config.allow("photos", "update") && features.edit,
       canEditAlbum: this.$config.allow("albums", "update") && features.albums,
@@ -99,7 +237,7 @@ export default {
         album: false,
         share: false,
       },
-      rtl: this.$rtl,
+      rtl: this.$isRtl,
     };
   },
   methods: {
@@ -114,14 +252,15 @@ export default {
 
       this.busy = true;
 
-      Api.post("batch/photos/approve", { photos: this.selection })
+      $api
+        .post("batch/photos/approve", { photos: this.selection })
         .then(() => this.onApproved())
         .finally(() => {
           this.busy = false;
         });
     },
     onApproved() {
-      Notify.success(this.$gettext("Selection approved"));
+      $notify.success(this.$gettext("Selection approved"));
       this.clearClipboard();
     },
     archivePhotos() {
@@ -143,14 +282,15 @@ export default {
       this.busy = true;
       this.dialog.archive = false;
 
-      Api.post("batch/photos/archive", { photos: this.selection })
+      $api
+        .post("batch/photos/archive", { photos: this.selection })
         .then(() => this.onArchived())
         .finally(() => {
           this.busy = false;
         });
     },
     onArchived() {
-      Notify.success(this.$gettext("Selection archived"));
+      $notify.success(this.$gettext("Selection archived"));
       this.clearClipboard();
     },
     deletePhotos() {
@@ -167,23 +307,23 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/photos/delete", { photos: this.selection }).then(() => this.onDeleted());
+      $api.post("batch/photos/delete", { photos: this.selection }).then(() => this.onDeleted());
     },
     onDeleted() {
-      Notify.success(this.$gettext("Permanently deleted"));
+      $notify.success(this.$gettext("Permanently deleted"));
       this.clearClipboard();
     },
     batchPrivate() {
-      Api.post("batch/photos/private", { photos: this.selection }).then(() => this.onPrivateSaved());
+      $api.post("batch/photos/private", { photos: this.selection }).then(() => this.onPrivateSaved());
     },
     onPrivateSaved() {
       this.clearClipboard();
     },
     batchRestore() {
-      Api.post("batch/photos/restore", { photos: this.selection }).then(() => this.onRestored());
+      $api.post("batch/photos/restore", { photos: this.selection }).then(() => this.onRestored());
     },
     onRestored() {
-      Notify.success(this.$gettext("Selection restored"));
+      $notify.success(this.$gettext("Selection restored"));
       this.clearClipboard();
     },
     addToAlbum(ppid) {
@@ -198,7 +338,8 @@ export default {
       this.busy = true;
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, { photos: this.selection })
+      $api
+        .post(`albums/${ppid}/photos`, { photos: this.selection })
         .then(() => this.onAdded())
         .finally(() => {
           this.busy = false;
@@ -223,7 +364,8 @@ export default {
 
       this.dialog.album = false;
 
-      Api.delete(`albums/${uid}/photos`, { data: { photos: this.selection } })
+      $api
+        .delete(`albums/${uid}/photos`, { data: { photos: this.selection } })
         .then(() => this.onRemoved())
         .finally(() => {
           this.busy = false;
@@ -252,7 +394,8 @@ export default {
             });
           break;
         default:
-          Api.post("zip", { photos: this.selection })
+          $api
+            .post("zip", { photos: this.selection })
             .then((r) => {
               this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
             })
@@ -261,7 +404,7 @@ export default {
             });
       }
 
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       this.expanded = false;
     },
@@ -270,7 +413,7 @@ export default {
     },
     edit() {
       // Open Edit Dialog
-      Event.PubSub.publish("dialog.edit", { selection: this.selection, album: this.album, index: 0 });
+      this.$event.PubSub.publish("dialog.edit", { selection: this.selection, album: this.album, index: 0 });
     },
     onShared() {
       this.dialog.share = false;

@@ -35,16 +35,16 @@ func SearchFaces(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SearchFaces
+		var frm form.SearchFaces
 
-		err := c.MustBindWith(&f, binding.Form)
+		err := c.MustBindWith(&frm, binding.Form)
 
 		if err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		result, err := search.Faces(f)
+		result, err := search.Faces(frm)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})
@@ -52,8 +52,8 @@ func SearchFaces(router *gin.RouterGroup) {
 		}
 
 		AddCountHeader(c, len(result))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 		AddTokenHeaders(c, s)
 
 		c.JSON(http.StatusOK, result)

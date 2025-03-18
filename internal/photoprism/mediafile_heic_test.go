@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 )
 
-func TestMediaFile_HEIC(t *testing.T) {
+func TestMediaFile_Heic(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -77,7 +77,7 @@ func TestMediaFile_HEIC(t *testing.T) {
 		assert.Equal(t, 4032, jpegInfo.Width)
 		assert.Equal(t, 3024, jpegInfo.Height)
 		assert.Equal(t, false, jpegInfo.Flash)
-		assert.Equal(t, "", jpegInfo.Description)
+		assert.Equal(t, "", jpegInfo.Caption)
 
 		if err = os.Remove(filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "iphone_7.heic.jpg")); err != nil {
 			t.Error(err)
@@ -138,7 +138,7 @@ func TestMediaFile_HEIC(t *testing.T) {
 		assert.Equal(t, 3024, jpegInfo.Width)
 		assert.Equal(t, 4032, jpegInfo.Height)
 		assert.Equal(t, false, jpegInfo.Flash)
-		assert.Equal(t, "", jpegInfo.Description)
+		assert.Equal(t, "", jpegInfo.Caption)
 
 		if err = os.Remove(filepath.Join(c.SidecarPath(), c.ExamplesPath(), "iphone_15_pro.heic.jpg")); err != nil {
 			t.Error(err)

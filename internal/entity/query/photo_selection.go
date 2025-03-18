@@ -9,16 +9,16 @@ import (
 )
 
 // SelectedPhotos finds photos based on the given selection form, e.g. for adding them to an album.
-func SelectedPhotos(f form.Selection) (results entity.Photos, err error) {
-	if f.Empty() {
+func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {
+	if frm.Empty() {
 		return results, errors.New("no items selected")
 	}
 
 	// Resolve photos in smart albums.
-	if photoIds, err := AlbumsPhotoUIDs(f.Albums, false, false); err != nil {
+	if photoIds, err := AlbumsPhotoUIDs(frm.Albums, false, false); err != nil {
 		log.Warnf("query: %s", err.Error())
 	} else if len(photoIds) > 0 {
-		f.Photos = append(f.Photos, photoIds...)
+		frm.Photos = append(frm.Photos, photoIds...)
 	}
 
 	var concat string
@@ -46,7 +46,7 @@ func SelectedPhotos(f form.Selection) (results entity.Photos, err error) {
 
 	s := UnscopedDb().Table("photos").
 		Select("photos.*").
-		Where(where, f.Photos, f.Places, f.Files, f.Files, f.Files, f.Albums, f.Subjects, f.Labels, f.Labels)
+		Where(where, frm.Photos, frm.Places, frm.Files, frm.Files, frm.Files, frm.Albums, frm.Subjects, frm.Labels, frm.Labels)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

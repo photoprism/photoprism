@@ -7,6 +7,8 @@ Package                           License       Copyright
 @babel/register                   MIT           The Babel Team (https://babel.dev/team)
 @babel/runtime                    MIT           The Babel Team (https://babel.dev/team)
 @lcdp/offline-plugin              MIT           Le Comptoir Des Pharmacies <webmaster@lecomptoirdespharmacies.fr>
+@mdi/font                         Apache-2.0    Austin Andrews
+@vue/compiler-sfc                 MIT           Evan You
 @vvo/tzdb                         MIT           Vincent Voyer <vincent@codeagain.com>
 axios                             MIT           Matt Zabriskie
 axios-mock-adapter                MIT           Colin Timmermans <colintimmermans@gmail.com>
@@ -23,7 +25,6 @@ cssnano                           MIT           Ben Briggs beneb.info@gmail.com 
 easygettext                       MIT           Polyconseil
 eslint                            MIT           Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
 eslint-config-prettier            MIT           Simon Lydell
-eslint-config-standard            MIT           Feross Aboukhadijeh feross@feross.org https://feross.org
 eslint-formatter-pretty           MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 eslint-plugin-html                ISC           n/a
 eslint-plugin-import              MIT           Ben Mosher <me@benmosher.com>
@@ -31,10 +32,12 @@ eslint-plugin-node                MIT           Toru Nagashima
 eslint-plugin-prettier            MIT           Teddy Katz
 eslint-plugin-promise             ISC           jden <jason@denizac.org>
 eslint-plugin-vue                 MIT           Toru Nagashima (https://github.com/mysticatea)
+eslint-plugin-vuetify             MIT           Kael Watts-Deuchar <kaelwd@gmail.com>
 eslint-webpack-plugin             MIT           Ricardo Gobbo de Souza <ricardogobbosouza@yahoo.com.br>
 eventsource-polyfill              MIT           amvtek <devel@amvtek.com>
 file-loader                       MIT           Tobias Koppers @sokra
 file-saver                        MIT           Eli Grey <me@eligrey.com>
+floating-vue                      MIT           Guillaume Chau <guillaume.b.chau@gmail.com>
 hls.js                            Apache-2.0    n/a
 i                                 MIT           Pavan Kumar Sunkara <pavan.sss1991@gmail.com> (pksunkara.github.com)
 karma                             MIT           Vojta Jína <vojta.jina@gmail.com>
@@ -51,7 +54,8 @@ mini-css-extract-plugin           MIT           Tobias Koppers @sokra
 minimist                          MIT           James Halliday mail@substack.net http://substack.net
 mocha                             MIT           TJ Holowaychuk <tj@vision-media.ca>
 node-storage-shim                 ISC           Michael Nahkies
-photoswipe                        MIT           Dmitry Semenov (http://dimsemenov.com)
+passive-events-support            MIT           Ignas Damunskis <ignas3run@gmail.com>
+photoswipe                        MIT           Dmytro Semenov (https://dimsemenov.com)
 postcss                           MIT           Andrey Sitnik <andrey@sitnik.ru>
 postcss-import                    MIT           Maxime Thirouin
 postcss-loader                    MIT           Andrey Sitnik <andrey@sitnik.ru>
@@ -62,26 +66,26 @@ prettier                          MIT           James Long
 pubsub-js                         MIT           Morgan Roderick morgan@roderick.dk http://roderick.dk
 regenerator-runtime               MIT           Ben Newman <bn@cs.stanford.edu>
 resolve-url-loader                MIT           bholloway
+sanitize-html                     MIT           Apostrophe Technologies, Inc.
 sass                              MIT           Natalie Weizenbaum nweiz@google.com https://github.com/nex3
 sass-loader                       MIT           J. Tangelder
 server                            MIT           Francisco Presencia <public@francisco.io> (https://francisco.io/)
 sockette                          MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
+standard                          MIT           Feross Aboukhadijeh feross@feross.org https://feross.org
 style-loader                      MIT           Tobias Koppers @sokra
 svg-url-loader                    MIT           Hovhannes Babayan
 tar                               ISC           Isaac Z. Schlueter
 url-loader                        MIT           Tobias Koppers @sokra
 util                              MIT           Joyent http://www.joyent.com
 vue                               MIT           Evan You
-vue-fullscreen                    ISC           mirari
-vue-gettext                       MIT           Marc Hertzog
-vue-infinite-scroll               MIT           long.zhang@ele.me
+vue-3-sanitize                    MIT           Vannsl, Vanessa Otto <mail@vannsl.io>
 vue-loader                        MIT           Evan You
 vue-loader-plugin                 ISC           Ivan liu
 vue-luxon                         MIT           Cas Bloem
-vue-router                        MIT           Evan You
+vue-router                        MIT           Eduardo San Martin Morote posva13@gmail.com
+vue-sanitize-directive            MIT           Leonardo Piccioni de Almeida leopiccionia@gmail.com
 vue-style-loader                  MIT           Evan You
-vue-template-compiler             MIT           Evan You
-vue2-filters                      MIT           Arhey
+vue3-gettext                      MIT           Leo Zurbriggen
 vuetify                           MIT           John Leider john@vuetifyjs.com
 webpack                           MIT           Tobias Koppers @sokra
 webpack-bundle-analyzer           MIT           Yury Grunin <grunin.ya@ya.ru>
@@ -90,3 +94,4 @@ webpack-hot-middleware            MIT           Glen Mailer <glen@stainlessed.co
 webpack-manifest-plugin           MIT           Dane Thurber <dane.thurber@gmail.com>
 webpack-md5-hash                  MIT           Kirill Ermolov
 webpack-merge                     MIT           Juho Vepsalainen <bebraw@gmail.com>
+webpack-plugin-vuetify            MIT           Kael Watts-Deuchar

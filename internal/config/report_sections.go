@@ -7,8 +7,9 @@ type ReportSection struct {
 	Info  string
 }
 
+// see https://docs.photoprism.app/getting-started/config-options/#face-recognition
 var faceFlagsInfo = `!!! info ""
-    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://dl.photoprism.app/pdf/publications/20140820-Pixel_Intensity_Comparisons.pdf). These are then fed into TensorFlow to compute [512-dimensional vectors](https://dl.photoprism.app/pdf/publications/20150101-FaceNet.pdf) for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN) attempts to cluster these so-called face embeddings, so they can be matched to persons with just a few clicks. A reasonable range for the similarity distance between face embeddings is between 0.60 and 0.70, with a higher value being more aggressive and leading to larger clusters with more false positives. To cluster a smaller number of faces, you can reduce the core to 3 or 2 similar faces.
+    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://dl.photoprism.app/pdf/publications/20140820-Pixel_Intensity_Comparisons.pdf). These are then fed into TensorFlow to compute [512-dimensional vectors](https://dl.photoprism.app/pdf/publications/20150101-FaceNet.pdf) for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN) attempts to cluster these so-called face embeddings, so they can be matched to persons with just a few clicks. A reasonable range for the similarity distance between face embeddings is between 0.60 and 0.70, with a higher value being more aggressive and leading to larger clusters with more false positives. To cluster a smaller number of faces, you can reduce the core to 3 or 2 similar faces. It is **strongly recommended** that you run the "photoprism faces reset" command in a terminal to remove existing clusters and mappings after changing any of the clustering parameters, as otherwise inconsistencies may result in unexpected behavior or errors. 
 
 We recommend that only advanced users change these parameters:`
 
@@ -18,6 +19,7 @@ var OptionsReportSections = []ReportSection{
 	{Start: "PHOTOPRISM_LOG_LEVEL", Title: "Logging"},
 	{Start: "PHOTOPRISM_CONFIG_PATH", Title: "Storage"},
 	{Start: "PHOTOPRISM_SIDECAR_PATH", Title: "Sidecar Files"},
+	{Start: "PHOTOPRISM_USAGE_INFO", Title: "Usage"},
 	{Start: "PHOTOPRISM_BACKUP_PATH", Title: "Backup"},
 	{Start: "PHOTOPRISM_INDEX_WORKERS, PHOTOPRISM_WORKERS", Title: "Indexing"},
 	{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},

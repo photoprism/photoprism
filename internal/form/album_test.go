@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewAlbum(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var album = struct {
 			AlbumTitle       string
 			AlbumDescription string

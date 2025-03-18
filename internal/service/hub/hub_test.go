@@ -69,7 +69,7 @@ func TestNewRequest(t *testing.T) {
 }
 
 func TestConfig_Refresh(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		fileName := fmt.Sprintf("testdata/hub.%s.yml", Token(8))
 
 		c := NewConfig("test", fileName, "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")

@@ -3,8 +3,9 @@ package oidc
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 func TestClientConfig(t *testing.T) {

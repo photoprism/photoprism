@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetService(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetService(router)
 		r := PerformRequest(app, "GET", "/api/v1/services/1000000")
@@ -30,7 +30,7 @@ func TestGetService(t *testing.T) {
 }
 
 func TestGetServiceFolders(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetServiceFolders(router)
 		r := PerformRequest(app, "GET", "/api/v1/services/1000000/folders")
@@ -69,7 +69,7 @@ func TestCreateService(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrConnectionFailed), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddService(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/services", `{"AccName": "CreateTest", "AccOwner": "Test", "AccUrl": "http://dummy-webdav/", "AccType": "webdav",
@@ -96,7 +96,7 @@ func TestUpdateService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, r.Code)
 	id := gjson.Get(r.Body.String(), "ID").String()
 
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateService(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/services/"+id, `{"AccName": "CreateTestUpdated", "AccOwner": "TestUpdated123", "SyncInterval": 9}`)
@@ -137,7 +137,7 @@ func TestDeleteService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, r.Code)
 	id := gjson.Get(r.Body.String(), "ID").String()
 
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteService(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/services/"+id)

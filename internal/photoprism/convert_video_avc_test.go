@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/ffmpeg"
+	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -30,7 +30,7 @@ func TestConvert_ToAvc(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		avcFile, err := convert.ToAvc(mf, ffmpeg.SoftwareEncoder, false, false)
+		avcFile, err := convert.ToAvc(mf, encode.SoftwareAvc, false, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -71,7 +71,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 	conf := config.TestConfig()
 	convert := NewConvert(conf)
 
-	t.Run("low", func(t *testing.T) {
+	t.Run("Low", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -85,7 +85,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "1M", convert.AvcBitrate(mf))
 	})
 
-	t.Run("medium", func(t *testing.T) {
+	t.Run("Medium", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -102,7 +102,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "16M", convert.AvcBitrate(mf))
 	})
 
-	t.Run("high", func(t *testing.T) {
+	t.Run("High", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -119,7 +119,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "25M", convert.AvcBitrate(mf))
 	})
 
-	t.Run("very_high", func(t *testing.T) {
+	t.Run("VeryHigh", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -137,7 +137,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 	})
 }
 
-func TestConvert_AvcConvertCommand(t *testing.T) {
+func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 	conf := config.TestConfig()
 	convert := NewConvert(conf)
 
@@ -149,7 +149,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		r, _, err := convert.AvcConvertCommand(mf, "avc1", ffmpeg.SoftwareEncoder)
+		r, _, err := convert.TranscodeToAvcCmd(mf, "avc1", encode.SoftwareAvc)
 
 		if err != nil {
 			t.Fatal(err)
@@ -158,7 +158,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 		assert.Contains(t, r.Path, "ffmpeg")
 		assert.Contains(t, r.Args, "mp4")
 	})
-	t.Run("JPEG", func(t *testing.T) {
+	t.Run("Jpeg", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "cat_black.jpg")
 		mf, err := NewMediaFile(fileName)
 
@@ -166,7 +166,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		r, useMutex, err := convert.AvcConvertCommand(mf, "avc1", ffmpeg.SoftwareEncoder)
+		r, useMutex, err := convert.TranscodeToAvcCmd(mf, "avc1", encode.SoftwareAvc)
 
 		assert.False(t, useMutex)
 		assert.Error(t, err)
@@ -181,7 +181,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		r, useMutex, err := convert.AvcConvertCommand(mf, avcName, ffmpeg.SoftwareEncoder)
+		r, useMutex, err := convert.TranscodeToAvcCmd(mf, avcName, encode.SoftwareAvc)
 
 		if err != nil {
 			t.Fatal(err)

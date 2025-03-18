@@ -4,8 +4,6 @@ import "github.com/ulule/deepcopier"
 
 // Album represents an album edit form.
 type Album struct {
-	Thumb            string `json:"Thumb"`
-	ThumbSrc         string `json:"ThumbSrc"`
 	AlbumType        string `json:"Type"`
 	AlbumTitle       string `json:"Title"`
 	AlbumLocation    string `json:"Location"`
@@ -19,10 +17,14 @@ type Album struct {
 	AlbumCountry     string `json:"Country"`
 	AlbumFavorite    bool   `json:"Favorite"`
 	AlbumPrivate     bool   `json:"Private"`
+	Thumb            string `json:"Thumb"`
+	ThumbSrc         string `json:"ThumbSrc"`
 }
 
-func NewAlbum(m interface{}) (f Album, err error) {
-	err = deepcopier.Copy(m).To(&f)
+// NewAlbum creates a new form struct based on the interface values.
+func NewAlbum(m interface{}) (*Album, error) {
+	frm := &Album{}
+	err := deepcopier.Copy(m).To(frm)
 
-	return f, err
+	return frm, err
 }

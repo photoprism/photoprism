@@ -1,0 +1,183 @@
+services:
+  ## PhotoPrism (Development Environment for Nvidia)
+  photoprism:
+    build: .
+    image: photoprism/photoprism:develop
+    depends_on:
+      - mariadb
+      - dummy-webdav
+      - dummy-oidc
+    stop_grace_period: 10s
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    ## Expose HTTP and debug ports
+    ports:
+      - "2342:2342"   # Default HTTP port (host:container)
+      - "2443:2443"   # Default TLS port (host:container)
+      - "2343:2343"   # Acceptance Test HTTP port (host:container)
+      - "40000:40000" # Go Debugger (host:container)
+    shm_size: "2gb"
+    ## Set links and labels for use with Traefik reverse proxy
+    links:
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
+      - "traefik:keycloak.localssl.dev"
+      - "traefik:dummy-oidc.localssl.dev"
+      - "traefik:dummy-webdav.localssl.dev"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.photoprism.entrypoints=websecure"
+      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`) || HostRegexp(`^.+\\.localssl\\.dev`)"
+      - "traefik.http.routers.photoprism.priority=2"
+      - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.photoprism.tls=true"
+    ## Configure development environment
+    environment:
+      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
+      PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
+      PHOTOPRISM_GID: ${GID:-1000}                         # group id
+      ## Access Management:
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
+      PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
+      PHOTOPRISM_USAGE_INFO: "true"
+      PHOTOPRISM_FILES_QUOTA: "100"
+      ## OpenID Connect (pre-configured for local tests):
+      ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
+      PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
+      PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
+      PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      PHOTOPRISM_OIDC_PROVIDER: "Keycloak"
+      PHOTOPRISM_OIDC_REGISTER: "true"
+      PHOTOPRISM_OIDC_WEBDAV: "true"
+      PHOTOPRISM_DISABLE_OIDC: "false"
+      ## LDAP Authentication (pre-configured for local tests):
+      PHOTOPRISM_LDAP_URI: "ldap://dummy-ldap:389"
+      PHOTOPRISM_LDAP_INSECURE: "true"
+      PHOTOPRISM_LDAP_SYNC: "true"
+      PHOTOPRISM_LDAP_BIND: "simple"
+      PHOTOPRISM_LDAP_BIND_DN: "cn"
+      PHOTOPRISM_LDAP_BASE_DN: "dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_ROLE: ""
+      PHOTOPRISM_LDAP_ROLE_DN: "ou=photoprism-*,ou=groups,dc=localssl,dc=dev"
+      PHOTOPRISM_LDAP_WEBDAV_DN: "ou=photoprism-webdav,ou=groups,dc=localssl,dc=dev"
+      ## HTTPS/TLS Options:
+      ## see https://docs.photoprism.app/getting-started/using-https/
+      PHOTOPRISM_DISABLE_TLS: "true"
+      PHOTOPRISM_DEFAULT_TLS: "true"
+      ## Site Information:
+      PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+      PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
+      PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
+      PHOTOPRISM_DEBUG: "true"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_EXPERIMENTAL: "true"
+      PHOTOPRISM_HTTP_MODE: "debug"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_NAME: "photoprism"
+      PHOTOPRISM_DATABASE_USER: "root"
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
+      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
+      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
+      PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
+      PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
+      PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
+      PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
+      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
+      PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
+      PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
+      TF_CPP_MIN_LOG_LEVEL: 0                        # show TensorFlow log messages for development
+      ## Nvidia Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit):
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
+      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
+      PHOTOPRISM_FFMPEG_BITRATE: "50"                # video bitrate limit in Mbit/s (default: 50)
+      ## Run/install on first startup (options: update https gpu ffmpeg tensorflow davfs clitools clean):
+      PHOTOPRISM_INIT: "https tensorflow"
+    ## Share hardware devices with FFmpeg and TensorFlow (optional):
+    # devices:
+    #  - "/dev/dri:/dev/dri"                         # Intel QSV (Broadwell and later) or VAAPI (Haswell and earlier)
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia CUDA
+    #  - "/dev/nvidiactl:/dev/nvidiactl"
+    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
+    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
+    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
+    working_dir: "/go/src/github.com/photoprism/photoprism"
+    volumes:
+      - ".:/go/src/github.com/photoprism/photoprism"
+      - "./storage:/photoprism"
+      - "go-mod:/go/pkg/mod"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              count: 1
+              capabilities: [ gpu ]
+  mariadb:
+    extends:
+      file: ./compose.yaml
+      service: mariadb
+  traefik:
+    extends:
+      file: ./compose.yaml
+      service: traefik
+  dummy-webdav:
+    extends:
+      file: ./compose.yaml
+      service: dummy-webdav
+  dummy-oidc:
+    extends:
+      file: ./compose.yaml
+      service: dummy-oidc
+  dummy-ldap:
+    extends:
+      file: ./compose.yaml
+      service: dummy-ldap
+  keycloak:
+    extends:
+      file: ./compose.yaml
+      service: keycloak
+  prometheus:
+    extends:
+      file: ./compose.yaml
+      service: prometheus
+
+## Create named volume for Go module cache
+volumes:
+  go-mod:
+    driver: local
+  mariadb:
+    driver: local
+
+## Create shared "photoprism-develop" network for connecting with services in other compose.yaml files
+networks:
+  default:
+    name: photoprism
+    driver: bridge

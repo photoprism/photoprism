@@ -142,11 +142,11 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, time.Duration(2410000000), data.Duration)
-		assert.Equal(t, meta.CodecAvc1, data.Codec)
+		assert.Equal(t, video.CodecAvc1, data.Codec)
 		assert.Equal(t, 270, data.Width)
 		assert.Equal(t, 480, data.Height)
 		assert.Equal(t, false, data.Flash)
-		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Caption)
 
 		if err = os.Remove(jsonName); err != nil {
 			t.Error(err)
@@ -154,7 +154,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 	})
 }
 
-func TestMediaFile_Exif_JPEG(t *testing.T) {
+func TestMediaFile_Exif_Jpeg(t *testing.T) {
 	conf := config.TestConfig()
 
 	t.Run("elephants.jpg", func(t *testing.T) {
@@ -191,7 +191,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 497, data.Width)
 		assert.Equal(t, 331, data.Height)
 		assert.Equal(t, false, data.Flash)
-		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Caption)
 		t.Logf("UTC: %s", data.TakenAt.String())
 		t.Logf("Local: %s", data.TakenAtLocal.String())
 	})
@@ -226,7 +226,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 331, info.Width)
 		assert.Equal(t, 331, info.Height)
 		assert.Equal(t, true, info.Flash)
-		assert.Equal(t, "", info.Description)
+		assert.Equal(t, "", info.Caption)
 		t.Logf("UTC: %s", info.TakenAt.String())
 		t.Logf("Local: %s", info.TakenAtLocal.String())
 	})
@@ -263,7 +263,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
 		assert.Equal(t, "panorama", data.Keywords.String())
-		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Caption)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 3600, data.Height)
 		assert.Equal(t, 7200, data.Width)
@@ -300,7 +300,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, "", data.Title)
 		assert.Equal(t, "berlin, shop", data.Keywords.String())
-		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Caption)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 375, data.Height)
 		assert.Equal(t, 500, data.Width)
@@ -319,7 +319,7 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 	})
 }
 
-func TestMediaFile_Exif_DNG(t *testing.T) {
+func TestMediaFile_Exif_Dng(t *testing.T) {
 	c := config.TestConfig()
 
 	img, err := NewMediaFile(c.ExamplesPath() + "/canon_eos_6d.dng")
@@ -351,7 +351,7 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 	assert.Equal(t, 0.0, info.Lng)
 	assert.Equal(t, 0.0, info.Altitude)
 	assert.Equal(t, false, info.Flash)
-	assert.Equal(t, "", info.Description)
+	assert.Equal(t, "", info.Caption)
 
 	// TODO: Unstable results, depending on test order!
 	// assert.Equal(t, 1224, info.Width)
@@ -375,14 +375,14 @@ func TestMediaFile_VideoInfo(t *testing.T) {
 
 			info := mf.VideoInfo()
 
-			assert.Equal(t, video.MP4, info.VideoType)
-			assert.Equal(t, video.CodecAVC, info.VideoCodec)
+			assert.Equal(t, video.Mp4, info.VideoType)
+			assert.Equal(t, video.CodecAvc1, info.VideoCodec)
 			assert.Equal(t, 1440, info.VideoWidth)
 			assert.Equal(t, 1080, info.VideoHeight)
 			assert.Equal(t, int64(2685814), info.VideoOffset)
 			assert.Equal(t, int64(0), info.ThumbOffset)
 			assert.Equal(t, "2.933s", info.Duration.String())
-			assert.Equal(t, fs.ImageJPEG, info.FileType)
+			assert.Equal(t, fs.ImageJpeg, info.FileType)
 			assert.Equal(t, media.Live, info.MediaType)
 		},
 	)
@@ -405,7 +405,7 @@ func TestMediaFile_VideoInfo(t *testing.T) {
 			assert.Equal(t, int64(-1), info.VideoOffset)
 			assert.Equal(t, int64(-1), info.ThumbOffset)
 			assert.Equal(t, time.Duration(0), info.Duration)
-			assert.Equal(t, fs.ImageJPEG, info.FileType)
+			assert.Equal(t, fs.ImageJpeg, info.FileType)
 			assert.Equal(t, media.Image, info.MediaType)
 		},
 	)

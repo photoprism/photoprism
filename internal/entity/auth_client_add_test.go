@@ -3,8 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func Test_AddClient(t *testing.T) {

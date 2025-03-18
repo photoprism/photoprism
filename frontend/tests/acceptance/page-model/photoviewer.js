@@ -12,47 +12,35 @@ export default class Page {
   async openPhotoViewer(mode, uidOrNth) {
     if (mode === "uid") {
       await t.hover(Selector("div.is-photo").withAttribute("data-uid", uidOrNth));
-      if (await Selector(`.uid-${uidOrNth} .action-fullscreen`).visible) {
-        await t.click(Selector(`.uid-${uidOrNth} .action-fullscreen`));
+      if (await Selector(`.uid-${uidOrNth} button.input-open`).visible) {
+        await t.click(Selector(`.uid-${uidOrNth} button.input-open`));
       } else {
         await t.click(Selector("div.is-photo").withAttribute("data-uid", uidOrNth));
       }
     } else if (mode === "nth") {
       await t.hover(Selector("div.is-photo").nth(uidOrNth));
-      if (await Selector(`div.is-photo .action-fullscreen`).visible) {
-        await t.click(Selector(`div.is-photo .action-fullscreen`));
+      if (await Selector(`div.is-photo button.input-open`).visible) {
+        await t.click(Selector(`div.is-photo button.input-open`));
       } else {
         await t.click(Selector("div.is-photo").nth(uidOrNth));
       }
     }
-    await t.expect(Selector("#photo-viewer").visible).ok();
+    await t.expect(Selector("div.p-lightbox__pswp").visible).ok();
   }
 
   async checkPhotoViewerActionAvailability(action, visible) {
     if (visible) {
-      await t.expect(Selector("button.pswp__button.action-" + action).visible).ok();
+      await t.expect(Selector("button.pswp__button--" + action).visible).ok();
     } else {
-      await t.expect(Selector("button.pswp__button.action-" + action).visible).notOk();
+      await t.expect(Selector("button.pswp__button--" + action).visible).notOk();
     }
   }
 
   async triggerPhotoViewerAction(action) {
-    await t.hover(Selector("button.pswp__button.action-" + action));
-    await t.click(Selector("button.pswp__button.action-" + action));
+    await t.hover(Selector("button.pswp__button--" + action));
+    await t.click(Selector("button.pswp__button--" + action));
     if (t.browser.platform === "mobile") {
       await t.wait(5000);
-    }
-    if (action === "close") {
-      if (await Selector("button.pswp__button.action-" + action).visible) {
-        await t.click(Selector("button.pswp__button.action-" + action));
-      } else {
-        await t.wait(8000);
-        if (await Selector("button.pswp__button.action-" + action).visible) {
-          await t.click(Selector("button.pswp__button.action-" + action));
-        } else {
-          console.log("Could not close Photoviewer");
-        }
-      }
     }
   }
 }

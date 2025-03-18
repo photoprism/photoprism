@@ -21,11 +21,7 @@ test.meta("testID", "authentication-001").meta({ type: "short", mode: "auth" })(
   async (t) => {
     await t.navigateTo("/library/browse");
 
-    await t
-      .expect(page.usernameInput.visible)
-      .ok()
-      .expect(Selector(".input-search input").visible)
-      .notOk();
+    await t.expect(page.usernameInput.visible).ok().expect(Selector(".input-search input").visible).notOk();
 
     await t.typeText(page.usernameInput, "admin", { replace: true });
 
@@ -49,18 +45,10 @@ test.meta("testID", "authentication-001").meta({ type: "short", mode: "auth" })(
 
     await page.logout();
 
-    await t
-      .expect(page.usernameInput.visible)
-      .ok()
-      .expect(Selector(".input-search input").visible)
-      .notOk();
+    await t.expect(page.usernameInput.visible).ok().expect(Selector(".input-search input").visible).notOk();
 
     await t.navigateTo("/library/settings");
-    await t
-      .expect(page.usernameInput.visible)
-      .ok()
-      .expect(Selector(".input-search input").visible)
-      .notOk();
+    await t.expect(page.usernameInput.visible).ok().expect(Selector(".input-search input").visible).notOk();
   }
 );
 
@@ -70,20 +58,12 @@ test.meta("testID", "authentication-002").meta({ type: "short", mode: "auth" })(
     await page.login("wrong", "photoprism");
     await t.navigateTo("/library/favorites");
 
-    await t
-      .expect(page.usernameInput.visible)
-      .ok()
-      .expect(Selector(".input-search input").visible)
-      .notOk();
+    await t.expect(page.usernameInput.visible).ok().expect(Selector(".input-search input").visible).notOk();
 
     await page.login("admin", "abcdefg");
     await t.navigateTo("/library/archive");
 
-    await t
-      .expect(page.usernameInput.visible)
-      .ok()
-      .expect(Selector(".input-search input").visible)
-      .notOk();
+    await t.expect(page.usernameInput.visible).ok().expect(Selector(".input-search input").visible).notOk();
   }
 );
 
@@ -133,11 +113,7 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
     await page.login("admin", "photoprism");
     await t.navigateTo("/library/archive");
 
-    await t
-      .expect(page.usernameInput.visible)
-      .ok()
-      .expect(Selector(".input-search input").visible)
-      .notOk();
+    await t.expect(page.usernameInput.visible).ok().expect(Selector(".input-search input").visible).notOk();
 
     await page.login("admin", "photoprism123");
     await t.expect(Selector(".input-search input").visible).ok();

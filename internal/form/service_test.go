@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewService(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		service := Service{AccName: "Foo", AccOwner: "bar", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
 			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
@@ -43,7 +43,7 @@ func TestNewService(t *testing.T) {
 
 func TestService_Discovery(t *testing.T) {
 	t.Run("error = nil", func(t *testing.T) {
-		service := Service{AccName: "Foo", AccOwner: "bar", AccURL: "photoprism.app", AccType: "test", SyncDownload: false, AccShare: true}
+		service := Service{AccName: "Foo", AccOwner: "bar", AccURL: "https://www.photoprism.app/", AccType: "test", SyncDownload: false, AccShare: true}
 
 		err := service.Discovery()
 		assert.Equal(t, nil, err)

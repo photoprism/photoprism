@@ -15,7 +15,14 @@ import (
 
 // SearchServices finds account settings and returns them as JSON.
 //
-// GET /api/v1/services
+//	@Summary	finds services and returns them as JSON
+//	@Id			SearchServices
+//	@Tags		Services
+//	@Produce	json
+//	@Success	200				{object}	entity.Services
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		count			query		int	true	"maximum number of results"	minimum(1)	maximum(100000)
+//	@Router		/api/v1/services [get]
 func SearchServices(router *gin.RouterGroup) {
 	router.GET("/services", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceServices, acl.ActionSearch)
@@ -31,16 +38,16 @@ func SearchServices(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SearchServices
+		var frm form.SearchServices
 
-		err := c.MustBindWith(&f, binding.Form)
+		err := c.MustBindWith(&frm, binding.Form)
 
 		if err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		result, err := search.Accounts(f)
+		result, err := search.Accounts(frm)
 
 		if err != nil {
 			AbortBadRequest(c)
@@ -48,8 +55,8 @@ func SearchServices(router *gin.RouterGroup) {
 		}
 
 		// TODO c.Header("X-Count", strconv.Itoa(count))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 
 		c.JSON(http.StatusOK, result)
 	})

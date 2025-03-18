@@ -3,8 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config/customize"
 )
 
 func TestCreateUserSettings(t *testing.T) {
@@ -75,6 +76,13 @@ func TestUserSettings_Apply(t *testing.T) {
 		Import: customize.ImportSettings{
 			Path: "imports/2023",
 			Move: false,
+			Dest: customize.DefaultImportDest,
+		},
+		Search: customize.SearchSettings{
+			BatchSize:    -1,
+			ListView:     true,
+			ShowTitles:   false,
+			ShowCaptions: true,
 		},
 	}
 	r := m.Apply(s)
@@ -91,6 +99,9 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, "index-path", r.IndexPath)
 	assert.Equal(t, -1, r.ImportMove)
 	assert.Equal(t, "imports/2023", r.ImportPath)
+	assert.Equal(t, 1, r.SearchListView)
+	assert.Equal(t, -1, r.SearchShowTitles)
+	assert.Equal(t, 1, r.SearchShowCaptions)
 
 	s2 := &customize.Settings{
 		Download: customize.DownloadSettings{

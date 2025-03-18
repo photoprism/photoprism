@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewSubject(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var m = struct {
 			SubjName     string `json:"Name"`
 			SubjAlias    string `json:"Alias"`

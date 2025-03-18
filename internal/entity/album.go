@@ -28,6 +28,14 @@ const (
 	AlbumState  = "state"
 )
 
+var (
+	DefaultOrderAlbum  = sortby.Oldest
+	DefaultOrderFolder = sortby.Added
+	DefaultOrderMoment = sortby.Oldest
+	DefaultOrderState  = sortby.Newest
+	DefaultOrderMonth  = sortby.Oldest
+)
+
 type Albums []Album
 
 // Album represents a photo album
@@ -119,7 +127,7 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 		if rnd.IsUID(album, AlbumUID) {
 			albumUid = album
 		} else {
-			a := NewUserAlbum(album, AlbumManual, userUid)
+			a := NewUserAlbum(album, AlbumManual, sortby.Oldest, userUid)
 
 			if found := a.Find(); found != nil {
 				albumUid = found.AlbumUID
@@ -147,11 +155,11 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 
 // NewAlbum creates a new album of the given type.
 func NewAlbum(albumTitle, albumType string) *Album {
-	return NewUserAlbum(albumTitle, albumType, OwnerUnknown)
+	return NewUserAlbum(albumTitle, albumType, sortby.Oldest, OwnerUnknown)
 }
 
 // NewUserAlbum creates a new album owned by a user.
-func NewUserAlbum(albumTitle, albumType, userUid string) *Album {
+func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 	now := Now()
 
 	// Set default type.
@@ -159,9 +167,14 @@ func NewUserAlbum(albumTitle, albumType, userUid string) *Album {
 		albumType = AlbumManual
 	}
 
+	// Set default sort order.
+	if sortOrder == "" {
+		sortOrder = DefaultOrderAlbum
+	}
+
 	// Set default values.
 	result := &Album{
-		AlbumOrder: sortby.Oldest,
+		AlbumOrder: sortOrder,
 		AlbumType:  albumType,
 		CreatedAt:  now,
 		UpdatedAt:  now,
@@ -185,7 +198,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	now := Now()
 
 	result := &Album{
-		AlbumOrder:  sortby.Added,
+		AlbumOrder:  DefaultOrderFolder,
 		AlbumType:   AlbumFolder,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
@@ -208,7 +221,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := Now()
 
 	result := &Album{
-		AlbumOrder:  sortby.Oldest,
+		AlbumOrder:  DefaultOrderMoment,
 		AlbumType:   AlbumMoment,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
@@ -233,7 +246,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	now := Now()
 
 	result := &Album{
-		AlbumOrder:  sortby.Newest,
+		AlbumOrder:  DefaultOrderState,
 		AlbumType:   AlbumState,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
 		AlbumFilter: albumFilter,
@@ -264,7 +277,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	now := Now()
 
 	result := &Album{
-		AlbumOrder:  sortby.Oldest,
+		AlbumOrder:  DefaultOrderMonth,
 		AlbumType:   AlbumMonth,
 		AlbumSlug:   albumSlug,
 		AlbumFilter: f.Serialize(),
@@ -603,7 +616,11 @@ func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) 
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *Album) SaveForm(f form.Album) error {
+func (m *Album) SaveForm(f *form.Album) error {
+	if f == nil {
+		return fmt.Errorf("form is nil")
+	}
+
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
 	}

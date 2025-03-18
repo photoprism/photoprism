@@ -39,6 +39,7 @@ func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
 		if label.Uncertainty >= 100 ||
 			label.Source == SrcTitle ||
+			label.Source == SrcCaption ||
 			label.Source == SrcSubject ||
 			label.Source == SrcKeyword {
 			continue

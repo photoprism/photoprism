@@ -10,7 +10,7 @@ import (
 )
 
 func TestSearchLabels(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchLabels(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels?count=15")
@@ -18,7 +18,7 @@ func TestSearchLabels(t *testing.T) {
 		assert.LessOrEqual(t, int64(4), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchLabels(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels?xxx=15")

@@ -321,13 +321,14 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		})
 
 		// Update precalculated photo and file counts.
-		if err := entity.UpdateCounts(); err != nil {
+		if err = entity.UpdateCounts(); err != nil {
 			log.Warnf("index: %s (update counts)", err)
 		}
 	} else {
 		log.Infof("index: found no new or modified files")
 	}
 
+	config.FlushUsageCache()
 	runtime.GC()
 
 	ind.lastRun = entity.Now()

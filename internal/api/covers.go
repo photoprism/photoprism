@@ -201,7 +201,6 @@ func LabelCover(router *gin.RouterGroup) {
 		f, err := query.LabelThumbByUID(uid)
 
 		if err != nil {
-			log.Errorf(err.Error())
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}

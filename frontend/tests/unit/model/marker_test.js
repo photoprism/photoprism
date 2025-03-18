@@ -1,5 +1,5 @@
 import "../fixtures";
-import Marker from "model/marker";
+import { Marker, BatchSize } from "model/marker";
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -156,7 +156,7 @@ describe("model/marker", () => {
     };
     const marker = new Marker(values);
     assert.equal(marker.Name, "");
-    marker.rename();
+    marker.setName();
     assert.equal(marker.Name, "");
     const values2 = {
       UID: "mDC123ghytr",
@@ -170,7 +170,7 @@ describe("model/marker", () => {
     const marker2 = new Marker(values2);
     assert.equal(marker2.Name, "testname");
     marker2
-      .rename()
+      .setName()
       .then((response) => {
         assert.equal(response.success, "ok");
         done();
@@ -203,10 +203,10 @@ describe("model/marker", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Marker.batchSize(), 48);
+    assert.equal(Marker.batchSize(), BatchSize);
     Marker.setBatchSize(30);
     assert.equal(Marker.batchSize(), 30);
-    Marker.setBatchSize(48);
+    Marker.setBatchSize(BatchSize);
   });
 
   it("should get collection resource", () => {

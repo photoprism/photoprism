@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -26,12 +26,12 @@ Additional information can be found in our Developer Guide:
 import Marker from "model/marker";
 import RestModel from "model/rest";
 import { DateTime } from "luxon";
-import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $config } from "app/session";
+import { $gettext } from "common/gettext";
 import * as src from "common/src";
-import Api from "common/api";
+import $api from "common/api";
 
-export let BatchSize = 24;
+export let BatchSize = 60;
 
 export class Face extends RestModel {
   constructor(values) {
@@ -91,9 +91,9 @@ export class Face extends RestModel {
     }
 
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+      return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
     } else {
-      return `${config.contentUri}/svg/portrait`;
+      return `${$config.contentUri}/svg/portrait`;
     }
   }
 
@@ -114,7 +114,7 @@ export class Face extends RestModel {
   toggleHidden() {
     this.Hidden = !this.Hidden;
 
-    return Api.put(this.getEntityResource(), { Hidden: this.Hidden });
+    return $api.put(this.getEntityResource(), { Hidden: this.Hidden });
   }
 
   setName(newName = this.Name) {
@@ -127,7 +127,7 @@ export class Face extends RestModel {
 
     const payload = { SubjSrc: this.SubjSrc, Name: newName };
 
-    return Api.put(Marker.getCollectionResource() + "/" + this.MarkerUID, payload).then((resp) => {
+    return $api.put(Marker.getCollectionResource() + "/" + this.MarkerUID, payload).then((resp) => {
       if (resp && resp.data && resp.data.Name) {
         const data = resp.data;
         this.setValues({

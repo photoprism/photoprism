@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -13,22 +13,24 @@ import (
 )
 
 // PlacesCommands configures the command name, flags, and action.
-var PlacesCommands = cli.Command{
+var PlacesCommands = &cli.Command{
 	Name:  "places",
 	Usage: "Maps and location information subcommands",
-	Subcommands: []cli.Command{
+	Subcommands: []*cli.Command{
 		{
 			Name:        "update",
 			Usage:       "Updates location information",
 			Description: "Updates missing location information only if used without the --force flag.",
 			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "force, f",
-					Usage: "forces the location of all pictures to be updated",
+				&cli.BoolFlag{
+					Name:    "force",
+					Aliases: []string{"f"},
+					Usage:   "forces the location of all pictures to be updated",
 				},
-				cli.BoolFlag{
-					Name:  "yes, y",
-					Usage: "assume \"yes\" and run non-interactively",
+				&cli.BoolFlag{
+					Name:    "yes",
+					Aliases: []string{"y"},
+					Usage:   "assume \"yes\" and run non-interactively",
 				},
 			},
 			Action: placesUpdateAction,

@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
 FROM ubuntu:jammy
 
-# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -31,7 +31,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
     MALLOC_ARENA_MAX="4" \
-    PROG="photoprism"
+    PROG="photoprism" \
+    S6_KEEP_ENV=1 \
+    S6_LOGGING=0
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
@@ -46,7 +48,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
-        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
+        xz-utils exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
         imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
         libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
         iputils-ping dnsutils \
@@ -57,6 +59,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
@@ -68,13 +71,15 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/backups \
         /photoprism/storage/config \
         /photoprism/storage/cache && \
+    /scripts/install-s6.sh && \
     /scripts/cleanup.sh
 
-# Default working directory.
+# Set default working directory.
 WORKDIR /photoprism
 
 # Expose HTTP and HTTPS ports.
 EXPOSE 2342 2442 2443
 
-# Keep container running.
-CMD ["tail", "-f", "/dev/null"]
+# Set default entrypoint and command.
+ENTRYPOINT ["/init"]
+CMD ["/scripts/cmd.sh", "tail", "-f", "/dev/null"]

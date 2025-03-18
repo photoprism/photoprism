@@ -3,10 +3,10 @@ package acl
 // Roles that can be granted Permissions to use a Resource.
 const (
 	RoleDefault Role = "default"
+	RoleAdmin   Role = "admin"
 	RoleUser    Role = "user"
 	RoleViewer  Role = "viewer"
 	RoleGuest   Role = "guest"
-	RoleAdmin   Role = "admin"
 	RoleVisitor Role = "visitor"
 	RoleClient  Role = "client"
 	RoleNone    Role = ""
@@ -44,8 +44,8 @@ const (
 	ResourceVideos    Resource = "videos"
 	ResourceFavorites Resource = "favorites"
 	ResourceAlbums    Resource = "albums"
-	ResourceMoments   Resource = "moments"
 	ResourceCalendar  Resource = "calendar"
+	ResourceMoments   Resource = "moments"
 	ResourcePeople    Resource = "people"
 	ResourcePlaces    Resource = "places"
 	ResourceLabels    Resource = "labels"

@@ -55,21 +55,27 @@ func GetAlbum(router *gin.RouterGroup) {
 		// Get sanitized album UID from request path.
 		uid := clean.UID(c.Param("uid"))
 
-		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		// Visitors can only access shared content.
+		if (s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
 		}
 
-		c.JSON(http.StatusOK, a)
+		// Other restricted users can only access their own or shared content.
+		if s.User().HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(uid) {
+			AbortForbidden(c)
+			return
+		}
+
+		c.JSON(http.StatusOK, album)
 	})
 }
 
@@ -78,6 +84,7 @@ func GetAlbum(router *gin.RouterGroup) {
 //	@Summary	creates a new album
 //	@Id			CreateAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	entity.Album
 //	@Failure	400,401,403,429,500	{object}	i18n.Response
@@ -91,10 +98,10 @@ func CreateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Album
+		var frm form.Album
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -102,13 +109,15 @@ func CreateAlbum(router *gin.RouterGroup) {
 		albumMutex.Lock()
 		defer albumMutex.Unlock()
 
-		a := entity.NewUserAlbum(f.AlbumTitle, entity.AlbumManual, s.UserUID)
-		a.AlbumFavorite = f.AlbumFavorite
+		conf := get.Config()
+
+		album := entity.NewUserAlbum(frm.AlbumTitle, entity.AlbumManual, conf.Settings().Albums.Order.Album, s.UserUID)
+		album.AlbumFavorite = frm.AlbumFavorite
 
 		// Existing album?
-		if found := a.Find(); found == nil {
+		if found := album.Find(); found == nil {
 			// Not found, create new album.
-			if err := a.Create(); err != nil {
+			if err := album.Create(); err != nil {
 				// Report unexpected error.
 				log.Errorf("album: %s (create)", err)
 				AbortUnexpectedError(c)
@@ -116,11 +125,11 @@ func CreateAlbum(router *gin.RouterGroup) {
 			}
 		} else {
 			// Exists, restore if necessary.
-			a = found
-			if !a.Deleted() {
-				c.JSON(http.StatusOK, a)
+			album = found
+			if !album.Deleted() {
+				c.JSON(http.StatusOK, album)
 				return
-			} else if err := a.Restore(); err != nil {
+			} else if err := album.Restore(); err != nil {
 				// Report unexpected error.
 				log.Errorf("album: %s (restore)", err)
 				AbortUnexpectedError(c)
@@ -131,10 +140,10 @@ func CreateAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Update album YAML backup.
-		SaveAlbumYaml(*a)
+		SaveAlbumYaml(*album)
 
 		// Return as JSON.
-		c.JSON(http.StatusOK, a)
+		c.JSON(http.StatusOK, album)
 	})
 }
 
@@ -143,6 +152,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 //	@Summary	updates album metadata like title and description
 //	@Id			UpdateAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Album
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -167,14 +177,14 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
 		}
 
-		f, err := form.NewAlbum(a)
+		frm, err := form.NewAlbum(album)
 
 		if err != nil {
 			log.Error(err)
@@ -183,7 +193,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
-		if err = c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(frm); err != nil {
 			log.Error(err)
 			AbortBadRequest(c)
 			return
@@ -192,7 +202,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		albumMutex.Lock()
 		defer albumMutex.Unlock()
 
-		if err = a.SaveForm(f); err != nil {
+		if err = album.SaveForm(frm); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)
 			return
@@ -205,9 +215,9 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Update album YAML backup.
-		SaveAlbumYaml(a)
+		SaveAlbumYaml(album)
 
-		c.JSON(http.StatusOK, a)
+		c.JSON(http.StatusOK, album)
 	})
 }
 
@@ -216,6 +226,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 //	@Summary	deletes an existing album
 //	@Id			DeleteAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
 //	@Param		uid					path		string	true	"Album UID"
@@ -238,7 +249,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
@@ -249,9 +260,9 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		defer albumMutex.Unlock()
 
 		// Regular, manually created album?
-		if a.IsDefault() {
+		if album.IsDefault() {
 			// Soft delete manually created albums.
-			err = a.Delete()
+			err = album.Delete()
 
 			// Also update album YAML backup.
 			if err != nil {
@@ -259,18 +270,18 @@ func DeleteAlbum(router *gin.RouterGroup) {
 				AbortDeleteFailed(c)
 				return
 			} else {
-				SaveAlbumYaml(a)
+				SaveAlbumYaml(album)
 			}
 		} else {
 			// Permanently delete automatically created albums.
-			err = a.DeletePermanently()
+			err = album.DeletePermanently()
 
 			// Also remove YAML backup file, if it exists.
 			if err != nil {
 				log.Errorf("album: %s (delete permanently)", err)
 				AbortDeleteFailed(c)
 				return
-			} else if fileName, relName, nameErr := a.YamlFileName(get.Config().BackupAlbumsPath()); nameErr != nil {
+			} else if fileName, relName, nameErr := album.YamlFileName(get.Config().BackupAlbumsPath()); nameErr != nil {
 				log.Warnf("album: %s (delete %s)", err, clean.Log(relName))
 			} else if !fs.FileExists(fileName) {
 				// Do nothing.
@@ -281,7 +292,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, a)
+		c.JSON(http.StatusOK, album)
 	})
 }
 
@@ -290,6 +301,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 //	@Summary	sets the favorite flag for an album
 //	@Id			LikeAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
 //	@Param		uid					path		string	true	"Album UID"
@@ -312,14 +324,14 @@ func LikeAlbum(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
 		}
 
-		if err := a.Update("AlbumFavorite", true); err != nil {
+		if err = album.Update("AlbumFavorite", true); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
@@ -329,7 +341,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
-		SaveAlbumYaml(a)
+		SaveAlbumYaml(album)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -340,6 +352,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 //	@Summary	removes the favorite flag from an album
 //	@Id			DislikeAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
 //	@Param		uid					path		string	true	"Album UID"
@@ -362,14 +375,14 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
 		}
 
-		if err = a.Update("AlbumFavorite", false); err != nil {
+		if err = album.Update("AlbumFavorite", false); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
@@ -379,7 +392,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
-		SaveAlbumYaml(a)
+		SaveAlbumYaml(album)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -390,6 +403,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 //	@Summary	creates a new album containing pictures from other albums
 //	@Id			CloneAlbums
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	gin.H
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
@@ -414,24 +428,24 @@ func CloneAlbums(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
 		}
 
-		var f form.Selection
+		var frm form.Selection
 
 		// Assign and validate request form values.
-		if err = c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
 		var added []entity.PhotoAlbum
 
-		for _, albumUid := range f.Albums {
+		for _, albumUid := range frm.Albums {
 			cloneAlbum, queryErr := query.AlbumByUID(albumUid)
 
 			if queryErr != nil {
@@ -446,19 +460,19 @@ func CloneAlbums(router *gin.RouterGroup) {
 				continue
 			}
 
-			added = append(added, a.AddPhotos(photos)...)
+			added = append(added, album.AddPhotos(photos)...)
 		}
 
 		if len(added) > 0 {
-			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(a.Title()))
+			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(album.Title()))
 
-			PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(a)
+			SaveAlbumYaml(album)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": a, "added": added})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": album, "added": added})
 	})
 }
 
@@ -467,6 +481,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 //	@Summary	adds photos to an album
 //	@Id			AddPhotosToAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	gin.H
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
@@ -481,10 +496,10 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Selection
+		var frm form.Selection
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -499,21 +514,21 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
-		} else if !a.HasID() {
+		} else if !album.HasID() {
 			AbortAlbumNotFound(c)
 			return
-		} else if f.Empty() {
+		} else if frm.Empty() {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
 		// Fetch selection from index.
-		photos, err := query.SelectedPhotos(f)
+		photos, err := query.SelectedPhotos(frm)
 
 		if err != nil {
 			log.Errorf("album: %s", err)
@@ -523,21 +538,21 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		added := a.AddPhotos(photos)
+		added := album.AddPhotos(photos)
 
 		if len(added) > 0 {
 			if len(added) == 1 {
-				event.SuccessMsg(i18n.MsgEntryAddedTo, clean.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryAddedTo, clean.Log(album.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), clean.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), clean.Log(album.Title()))
 			}
 
-			RemoveFromAlbumCoverCache(a.AlbumUID)
+			RemoveFromAlbumCoverCache(album.AlbumUID)
 
-			PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(a)
+			SaveAlbumYaml(album)
 
 			// Auto-approve photos that have been added to an album,
 			// see https://github.com/photoprism/photoprism/issues/4229
@@ -568,7 +583,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			}
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": photos.UIDs(), "added": added})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": album, "photos": photos.UIDs(), "added": added})
 	})
 }
 
@@ -577,6 +592,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 //	@Summary	removes photos from an album
 //	@Id			RemovePhotosFromAlbum
 //	@Tags		Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	gin.H
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
@@ -591,15 +607,15 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Selection
+		var frm form.Selection
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		if len(f.Photos) == 0 {
+		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
@@ -614,33 +630,33 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		}
 
 		// Find album by UID.
-		a, err := query.AlbumByUID(uid)
+		album, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
-		} else if !a.HasID() {
+		} else if !album.HasID() {
 			AbortAlbumNotFound(c)
 			return
 		}
 
-		removed := a.RemovePhotos(f.Photos)
+		removed := album.RemovePhotos(frm.Photos)
 
 		if len(removed) > 0 {
 			if len(removed) == 1 {
-				event.SuccessMsg(i18n.MsgEntryRemovedFrom, clean.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryRemovedFrom, clean.Log(album.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), clean.Log(a.Title()))
+				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), clean.Log(album.Title()))
 			}
 
-			RemoveFromAlbumCoverCache(a.AlbumUID)
+			RemoveFromAlbumCoverCache(album.AlbumUID)
 
-			PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(a)
+			SaveAlbumYaml(album)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": album, "photos": frm.Photos, "removed": removed})
 	})
 }

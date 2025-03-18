@@ -52,10 +52,10 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			return
 		}
 
-		var f form.SearchFolders
+		var frm form.SearchFolders
 
 		start := time.Now()
-		err := c.MustBindWith(&f, binding.Form)
+		err := c.MustBindWith(&frm, binding.Form)
 
 		if err != nil {
 			AbortBadRequest(c)
@@ -67,19 +67,19 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 
 		// Exclude private content?
 		if !get.Config().Settings().Features.Private {
-			f.Public = false
+			frm.Public = false
 		} else if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
-			f.Public = true
+			frm.Public = true
 		}
 
 		cache := get.FolderCache()
-		recursive := f.Recursive
-		listFiles := f.Files
-		uncached := listFiles || f.Uncached
+		recursive := frm.Recursive
+		listFiles := frm.Files
+		uncached := listFiles || frm.Uncached
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
 		path := clean.UserPath(c.Param("path"))
 
-		cacheKey := fmt.Sprintf("folder:%s:%t:%t:%t", filepath.Join(rootName, path), recursive, listFiles, f.Public)
+		cacheKey := fmt.Sprintf("folder:%s:%t:%t:%t", filepath.Join(rootName, path), recursive, listFiles, frm.Public)
 
 		if !uncached {
 			if cacheData, ok := cache.Get(cacheKey); ok {
@@ -101,7 +101,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		}
 
 		if listFiles {
-			if files, err := query.FilesByPath(f.Count, f.Offset, rootName, path, f.Public); err != nil {
+			if files, err := query.FilesByPath(frm.Count, frm.Offset, rootName, path, frm.Public); err != nil {
 				log.Errorf("folder: %s", err)
 			} else {
 				resp.Files = files
@@ -115,8 +115,8 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 
 		AddFileCountHeaders(c, len(resp.Files), len(resp.Folders))
 		AddCountHeader(c, len(resp.Files)+len(resp.Folders))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 		AddTokenHeaders(c, s)
 
 		c.JSON(http.StatusOK, resp)

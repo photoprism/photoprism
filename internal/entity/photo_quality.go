@@ -64,7 +64,7 @@ func (m *Photo) UpdateQuality() error {
 
 // IsNonPhotographic checks whether the image appears to be non-photographic.
 func (m *Photo) IsNonPhotographic() (result bool) {
-	if m.PhotoType == MediaUnknown || m.PhotoType == MediaVector || m.PhotoType == MediaAnimated {
+	if m.PhotoType == MediaUnknown || m.PhotoType == MediaVector || m.PhotoType == MediaAnimated || m.PhotoType == MediaDocument {
 		return true
 	}
 

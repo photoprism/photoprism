@@ -50,7 +50,7 @@ func TestSavePhotoForm(t *testing.T) {
 
 		m := PhotoFixtures.Get("Photo08")
 
-		if err := SavePhotoForm(m, f); err != nil {
+		if err := SavePhotoForm(&m, f); err != nil {
 			t.Fatal(err)
 		}
 
@@ -275,27 +275,6 @@ func TestPhoto_AddLabels(t *testing.T) {
 	})
 }
 
-func TestPhoto_SetDescription(t *testing.T) {
-	t.Run("EmptyDescription", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
-		m.SetDescription("", SrcManual)
-		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
-	})
-	t.Run("DescriptionNotFromTheSameSource", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
-		m.SetDescription("new photo description", SrcName)
-		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
-	})
-	t.Run("Ok", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
-		m.SetDescription("new photo description", SrcMeta)
-		assert.Equal(t, "new photo description", m.PhotoDescription)
-	})
-}
-
 func TestPhoto_Delete(t *testing.T) {
 	t.Run("NotPermanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
@@ -475,74 +454,31 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 	})
 }
 
-func TestPhoto_UpdateTitleLabels(t *testing.T) {
-	labelFood := Label{LabelName: "Food", LabelSlug: "food"}
-	labelWine := Label{LabelName: "Wine", LabelSlug: "wine"}
-	labelBar := Label{LabelName: "Bar", LabelSlug: "bar", DeletedAt: TimeStamp()}
+func TestPhoto_SubjectNames(t *testing.T) {
+	t.Run("Photo09", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo09")
 
-	err := labelFood.Save()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = labelWine.Save()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = labelBar.Save()
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Run("Success", func(t *testing.T) {
-		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
-		photo := Photo{ID: 234567, PhotoTitle: "I was in a nice Wine Bar!", TitleSrc: SrcName, PhotoDescription: "cow, flower, food", DescriptionSrc: SrcMeta, Details: details}
-
-		err = photo.Save()
-		if err != nil {
-			t.Fatal(err)
+		if names := m.SubjectNames(); len(names) > 0 {
+			t.Errorf("no name expected: %#v", names)
 		}
-
-		p := FindPhoto(photo)
-
-		assert.Equal(t, 0, len(p.Labels))
-
-		err = p.UpdateTitleLabels()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		p = FindPhoto(*p)
-
-		assert.Equal(t, "I was in a nice Wine Bar!", p.PhotoTitle)
-		assert.Equal(t, "cow, flower, food", p.PhotoDescription)
-		assert.Equal(t, "snake, otter, food", p.Details.Keywords)
-		assert.Equal(t, 1, len(p.Labels))
 	})
-	t.Run("EmptyTitle", func(t *testing.T) {
-		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
-		photo := Photo{ID: 234568, PhotoTitle: "", TitleSrc: SrcName, PhotoDescription: "cow, flower, food", DescriptionSrc: SrcMeta, Details: details}
+	t.Run("Photo10", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo10")
 
-		err = photo.Save()
-		if err != nil {
-			t.Fatal(err)
+		if names := m.SubjectNames(); len(names) == 1 {
+			assert.Equal(t, "Actor A", names[0])
+		} else {
+			t.Logf("unstable subject list: %#v", names)
 		}
+	})
+	t.Run("Photo04", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo04")
 
-		p := FindPhoto(photo)
-
-		assert.Equal(t, 0, len(p.Labels))
-
-		err = p.UpdateTitleLabels()
-		if err != nil {
-			t.Fatal(err)
+		if names := m.SubjectNames(); len(names) != 2 {
+			t.Errorf("two names expected: %#v", names)
+		} else {
+			assert.Equal(t, []string{"Corn McCornface", "Jens Mander"}, names)
 		}
-
-		p = FindPhoto(*p)
-
-		assert.Equal(t, "", p.PhotoTitle)
-		assert.Equal(t, "cow, flower, food", p.PhotoDescription)
-		assert.Equal(t, "snake, otter, food", p.Details.Keywords)
-		assert.Equal(t, 0, len(p.Labels))
 	})
 }
 
@@ -551,21 +487,19 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	labelBird := Label{LabelName: "Bird", LabelSlug: "bird", DeletedAt: &deletedTime}
 
-	err := labelBird.Save()
-	if err != nil {
+	if err := labelBird.Save(); err != nil {
 		t.Fatal(err)
 	}
 
-	err = labelEgg.Save()
-	if err != nil {
+	if err := labelEgg.Save(); err != nil {
 		t.Fatal(err)
 	}
+
 	t.Run(`Success`, func(t *testing.T) {
 		details := &Details{Subject: "cow, egg, bird", SubjectSrc: SrcMeta}
 		photo := Photo{ID: 334567, TitleSrc: SrcName, Details: details}
 
-		err = photo.Save()
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -573,8 +507,7 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 
 		assert.Equal(t, 0, len(p.Labels))
 
-		err = p.UpdateSubjectLabels()
-		if err != nil {
+		if err := p.UpdateSubjectLabels(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -587,8 +520,7 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 		details := &Details{Subject: "", SubjectSrc: SrcMeta}
 		photo := Photo{ID: 334568, TitleSrc: SrcName, Details: details}
 
-		err = photo.Save()
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -596,8 +528,7 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 
 		assert.Equal(t, 0, len(p.Labels))
 
-		err = p.UpdateSubjectLabels()
-		if err != nil {
+		if err := p.UpdateSubjectLabels(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -613,21 +544,19 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	labelSnake := Label{LabelName: "Snake", LabelSlug: "snake", DeletedAt: &deletedTime}
 
-	err := labelSnake.Save()
-	if err != nil {
+	if err := labelSnake.Save(); err != nil {
 		t.Fatal(err)
 	}
 
-	err = labelOtter.Save()
-	if err != nil {
+	if err := labelOtter.Save(); err != nil {
 		t.Fatal(err)
 	}
+
 	t.Run("Success", func(t *testing.T) {
 		details := &Details{Keywords: "cow, flower, snake, otter", KeywordsSrc: SrcAuto}
 		photo := Photo{ID: 434567, Details: details}
 
-		err = photo.Save()
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -635,8 +564,7 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 
 		assert.Equal(t, 0, len(p.Labels))
 
-		err = p.UpdateKeywordLabels()
-		if err != nil {
+		if err := p.UpdateKeywordLabels(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -649,8 +577,7 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 		details := &Details{Keywords: "", KeywordsSrc: SrcAuto}
 		photo := Photo{ID: 434568, Details: details}
 
-		err = photo.Save()
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -658,8 +585,7 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 
 		assert.Equal(t, 0, len(p.Labels))
 
-		err = p.UpdateKeywordLabels()
-		if err != nil {
+		if err := p.UpdateKeywordLabels(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -723,28 +649,6 @@ func TestPhoto_LoadPlace(t *testing.T) {
 	})
 }
 
-func TestPhoto_HasDescription(t *testing.T) {
-	t.Run("False", func(t *testing.T) {
-		photo := Photo{PhotoDescription: ""}
-		assert.False(t, photo.HasDescription())
-	})
-	t.Run("True", func(t *testing.T) {
-		photo := Photo{PhotoDescription: "bcss"}
-		assert.True(t, photo.HasDescription())
-	})
-}
-
-func TestPhoto_NoDescription(t *testing.T) {
-	t.Run("True", func(t *testing.T) {
-		photo := Photo{PhotoDescription: ""}
-		assert.True(t, photo.NoDescription())
-	})
-	t.Run("False", func(t *testing.T) {
-		photo := Photo{PhotoDescription: "bcss"}
-		assert.False(t, photo.NoDescription())
-	})
-}
-
 func TestPhoto_AllFilesMissing(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
 		photo := Photo{ID: 6969866}
@@ -754,21 +658,21 @@ func TestPhoto_AllFilesMissing(t *testing.T) {
 
 func TestPhoto_Updates(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		photo := Photo{PhotoDescription: "bcss", PhotoName: "InitialName"}
+		photo := Photo{PhotoCaption: "bcss", PhotoName: "InitialName"}
 
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, "InitialName", photo.PhotoName)
-		assert.Equal(t, "bcss", photo.PhotoDescription)
+		assert.Equal(t, "bcss", photo.PhotoCaption)
 
-		if err := photo.Updates(Photo{PhotoName: "UpdatedName", PhotoDescription: "UpdatedDesc"}); err != nil {
+		if err := photo.Updates(Photo{PhotoName: "UpdatedName", PhotoCaption: "UpdatedDesc"}); err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, "UpdatedName", photo.PhotoName)
-		assert.Equal(t, "UpdatedDesc", photo.PhotoDescription)
+		assert.Equal(t, "UpdatedDesc", photo.PhotoCaption)
 
 	})
 }

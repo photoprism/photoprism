@@ -108,8 +108,10 @@ func (c *Config) ShareSettings() *customize.Settings {
 	return &customize.Settings{
 		UI:       settings.UI,
 		Search:   settings.Search,
+		Albums:   settings.Albums,
 		Maps:     settings.Maps,
 		Features: settings.Features,
 		Share:    settings.Share,
+		Download: settings.Download,
 	}
 }

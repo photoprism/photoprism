@@ -17,9 +17,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// UploadToService uploads files to the selected account.
+// UploadToService uploads files to the selected service account.
 //
-// GET /api/v1/services/:id/upload
+//	@Summary	uploads files to the selected service account
+//	@Id			UploadToService
+//	@Tags		Services
+//	@Accept		json
+//	@Produce	json
+//	@Param		id				path		string	true	"service id"
+//	@Success	200				{object}	entity.Files
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/services/{id}/upload [post]
 func UploadToService(router *gin.RouterGroup) {
 	router.POST("/services/:id/upload", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceServices, acl.ActionUpload)
@@ -37,19 +45,19 @@ func UploadToService(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SyncUpload
+		var frm form.SyncUpload
 
 		// Assign and validate request form values.
-		if err = c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		folder := f.Folder
+		folder := frm.Folder
 
 		// Find files to share.
 		selection := query.ShareSelection(m.ShareOriginals())
-		files, err := query.SelectedFiles(f.Selection, selection)
+		files, err := query.SelectedFiles(frm.Selection, selection)
 
 		if err != nil {
 			AbortEntityNotFound(c)

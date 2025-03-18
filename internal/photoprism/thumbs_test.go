@@ -52,17 +52,17 @@ func TestResample_Start(t *testing.T) {
 }
 
 func TestThumb_Filename(t *testing.T) {
-	conf := config.TestConfig()
+	c := config.TestConfig()
 
-	thumbsPath := conf.CachePath() + "/_tmp"
+	thumbsPath := c.CachePath() + "/_tmp"
 
 	defer os.RemoveAll(thumbsPath)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := c.CreateDirectories(); err != nil {
 		t.Error(err)
 	}
 
-	t.Run("", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		filename, err := thumb.FileName("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
@@ -71,7 +71,7 @@ func TestThumb_Filename(t *testing.T) {
 
 		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
 	})
-	t.Run("hash too short", func(t *testing.T) {
+	t.Run("InvalidHash", func(t *testing.T) {
 		_, err := thumb.FileName("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err == nil {
@@ -80,21 +80,21 @@ func TestThumb_Filename(t *testing.T) {
 
 		assert.Equal(t, "thumb: file hash is empty or too short (999)", err.Error())
 	})
-	t.Run("invalid width", func(t *testing.T) {
+	t.Run("InvalidWidth", func(t *testing.T) {
 		_, err := thumb.FileName("99988", thumbsPath, -4, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
 		assert.Equal(t, "thumb: width exceeds limit (-4)", err.Error())
 	})
-	t.Run("invalid height", func(t *testing.T) {
+	t.Run("InvalidHeight", func(t *testing.T) {
 		_, err := thumb.FileName("99988", thumbsPath, 200, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
 		assert.Equal(t, "thumb: height exceeds limit (-1)", err.Error())
 	})
-	t.Run("empty thumbpath", func(t *testing.T) {
+	t.Run("EmptyPath", func(t *testing.T) {
 		path := ""
 		_, err := thumb.FileName("99988", path, 200, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
@@ -105,19 +105,19 @@ func TestThumb_Filename(t *testing.T) {
 }
 
 func TestThumb_FromFile(t *testing.T) {
-	conf := config.TestConfig()
+	c := config.TestConfig()
 
-	thumbsPath := conf.CachePath() + "/_tmp"
+	thumbsPath := c.CachePath() + "/_tmp"
 
 	defer os.RemoveAll(thumbsPath)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := c.CreateDirectories(); err != nil {
 		t.Error(err)
 	}
 
 	t.Run("valid parameter", func(t *testing.T) {
 		file := &entity.File{
-			FileName: conf.ExamplesPath() + "/elephants.jpg",
+			FileName: c.ExamplesPath() + "/elephants.jpg",
 			FileHash: "1234568889",
 		}
 
@@ -128,7 +128,7 @@ func TestThumb_FromFile(t *testing.T) {
 
 	t.Run("hash too short", func(t *testing.T) {
 		file := &entity.File{
-			FileName: conf.ExamplesPath() + "/elephants.jpg",
+			FileName: c.ExamplesPath() + "/elephants.jpg",
 			FileHash: "123",
 		}
 

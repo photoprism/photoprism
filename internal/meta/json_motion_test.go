@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 func TestJSON_Motion(t *testing.T) {
@@ -178,7 +179,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, media.Unknown, data.MediaType)
 		assert.Equal(t, false, data.HasThumbEmbedded)
 		assert.Equal(t, false, data.HasVideoEmbedded)
-		assert.Equal(t, CodecAvc1, data.Codec)
+		assert.Equal(t, video.CodecAvc1, data.Codec)
 		assert.Equal(t, int64(2990), data.Duration.Milliseconds())
 		assert.Equal(t, "2.99s", data.Duration.String())
 		assert.Equal(t, "2023-08-22 14:38:06 +0000 UTC", data.TakenAtLocal.String())
@@ -272,7 +273,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, media.Unknown, data.MediaType)
 		assert.Equal(t, false, data.HasThumbEmbedded)
 		assert.Equal(t, false, data.HasVideoEmbedded)
-		assert.Equal(t, CodecAvc1, data.Codec)
+		assert.Equal(t, video.CodecAvc1, data.Codec)
 		assert.Equal(t, int64(2670), data.Duration.Milliseconds())
 		assert.Equal(t, "2.67s", data.Duration.String())
 		assert.Equal(t, "2021-10-11 09:34:29 +0000 UTC", data.TakenAtLocal.String())

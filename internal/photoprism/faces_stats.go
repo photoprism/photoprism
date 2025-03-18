@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"github.com/montanaflynn/stats"
+
 	"github.com/photoprism/photoprism/internal/entity/query"
 )
 

@@ -1,98 +1,144 @@
 <template>
-  <div class="p-page p-page-support">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+  <div class="p-page p-page-support" tabindex="1">
+    <v-toolbar
+      flat
+      :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+      color="secondary"
+      class="page-toolbar p-page__navigation"
+    >
       <v-toolbar-title>
-        <translate>Contact Us</translate>
+        {{ $gettext(`Contact Us`) }}
       </v-toolbar-title>
-      <v-spacer></v-spacer>
+
       <v-btn icon>
-        <v-icon size="26" color="secondary-dark">chat</v-icon>
+        <v-icon size="26" color="surface-variant">mdi-message-text</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container v-if="sent" fluid class="pa-4">
-      <h3 class="title font-weight-bold pt-4 pb-2 text-xs-center">
-        <translate>We appreciate your feedback!</translate>
+    <div v-if="sent" class="pa-6">
+      <h3 class="text-h6 font-weight-bold pt-6 pb-2 text-center">
+        {{ $gettext(`We appreciate your feedback!`) }}
       </h3>
-      <p class="body-2 py-4 text-xs-center">
-        <translate>Due to the high volume of emails we receive, our team may be unable to get back to you immediately.</translate>
-        <translate>We do our best to respond within five business days or less.</translate>
+      <p class="text-body-2 py-6 text-center">
+        {{
+          $gettext(
+            `Due to the high volume of emails we receive, our team may be unable to get back to you immediately.`
+          )
+        }}
+        {{ $gettext(`We do our best to respond within five business days or less.`) }}
       </p>
-      <p class="mt-4 text-xs-center">
-        <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU" />
-      </p>
-    </v-container>
-    <v-form v-else ref="form" v-model="valid" autocomplete="off" class="pa-3" lazy-validation>
-      <v-layout row wrap>
-        <v-flex xs12 class="pa-2">
+    </div>
+    <v-form v-else ref="form" v-model="valid" autocomplete="off" class="pa-4" validate-on="invalid-input">
+      <v-row dense>
+        <v-col cols="12">
           <v-select
             v-model="form.Category"
-            :disabled="busy"
-            :items="options.FeedbackCategories()"
             :label="$gettext('Category')"
-            color="secondary-dark"
-            background-color="secondary-light"
-            flat
-            solo
+            :rules="rules.text(true, 1, 32, $gettext('Category'))"
+            :items="options.FeedbackCategories()"
+            :disabled="busy"
+            validate-on="invalid-input"
+            item-title="text"
+            item-value="value"
+            color="surface-variant"
             hide-details
-            required
-            browser-autocomplete="off"
+            autocomplete="off"
             class="input-category"
-            :rules="[(v) => !!v || $gettext('Required')]"
           ></v-select>
-        </v-flex>
+        </v-col>
 
-        <v-flex xs12 class="pa-2">
-          <v-textarea v-model="form.Message" required auto-grow flat solo hide-details browser-autocomplete="off" rows="10" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('How can we help?')"></v-textarea>
-        </v-flex>
+        <v-col cols="12">
+          <v-textarea
+            v-model="form.Message"
+            :rules="rules.text(true, 1, 1000, $gettext('Message'))"
+            :placeholder="$gettext('How can we help?')"
+            validate-on="invalid-input"
+            auto-grow
+            hide-details
+            autocomplete="off"
+            rows="10"
+          ></v-textarea>
+        </v-col>
 
-        <v-flex xs12 sm6 class="pa-2">
-          <v-text-field v-model="form.UserName" flat solo hide-details browser-autocomplete="off" color="secondary-dark" background-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
-        </v-flex>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="form.UserName"
+            :rules="rules.text(true, 1, 100, $gettext('Name'))"
+            :label="$gettext('Name')"
+            validate-on="blur"
+            hide-details
+            autocomplete="off"
+            color="surface-variant"
+            type="text"
+          >
+          </v-text-field>
+        </v-col>
 
-        <v-flex xs12 sm6 class="pa-2">
-          <v-text-field v-model="form.UserEmail" flat solo hide-details required autocapitalize="none" color="secondary-dark" :rules="[(v) => !!v || $gettext('Required')]" background-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
-        </v-flex>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="form.UserEmail"
+            :label="$gettext('E-Mail')"
+            :rules="rules.email(true)"
+            validate-on="blur"
+            hide-details
+            autocapitalize="none"
+            color="surface-variant"
+            type="email"
+          >
+          </v-text-field>
+        </v-col>
 
-        <v-flex xs12 grow class="px-2 py-1">
-          <v-btn color="primary-button" class="white--text ml-0" depressed :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
-            <translate>Send</translate>
-            <v-icon :right="!rtl" :left="rtl" dark>send</v-icon>
+        <v-col cols="12" class="d-flex grow">
+          <v-btn :disabled="!valid" color="highlight" class="ml-0" @click.stop="send">
+            {{ $gettext(`Submit`) }}
+            <v-icon end>mdi-send</v-icon>
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-form>
-
     <p-about-footer></p-about-footer>
   </div>
 </template>
 
 <script>
 import * as options from "options/options";
-import Api from "common/api";
+import $api from "common/api";
+import { rules } from "common/form";
+
+import PAboutFooter from "component/about/footer.vue";
 
 export default {
   name: "PPageSupport",
+  components: {
+    PAboutFooter,
+  },
   data() {
     return {
+      rules,
       sent: false,
       busy: false,
       valid: false,
       options: options,
       form: {
-        Category: "",
+        Category: "feedback",
         Message: "",
         UserName: "",
         UserEmail: "",
         UserAgent: navigator.userAgent,
         UserLocales: navigator.language,
       },
-      rtl: this.$rtl,
+      rtl: this.$isRtl,
     };
+  },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     send() {
       if (this.$refs.form.validate()) {
-        Api.post("feedback", this.form).then(() => {
+        $api.post("feedback", this.form).then(() => {
           this.$notify.success(this.$gettext("Message sent"));
           this.sent = true;
         });

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs the Nuclei Vulnerability Scanner on Linux.
+# Installs the Nuclei Vulnerability Scanner on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-nuclei.sh)
 
 # Abort if not executed as root..

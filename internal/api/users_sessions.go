@@ -42,8 +42,8 @@ func FindUserSessions(router *gin.RouterGroup) {
 		}
 
 		// Init search request form.
-		var f form.SearchSessions
-		err := c.MustBindWith(&f, binding.Form)
+		var frm form.SearchSessions
+		err := c.MustBindWith(&frm, binding.Form)
 
 		// Abort if invalid.
 		if err != nil {
@@ -52,21 +52,21 @@ func FindUserSessions(router *gin.RouterGroup) {
 		}
 
 		// Find applications that belong to the current user and sort them by name.
-		f.UID = s.UserUID
-		f.Order = sortby.ClientName
-		f.Provider = authn.ProviderApplication.String()
-		f.Method = authn.MethodDefault.String()
+		frm.UID = s.UserUID
+		frm.Order = sortby.ClientName
+		frm.Provider = authn.ProviderApplication.String()
+		frm.Method = authn.MethodDefault.String()
 
 		// Perform search.
-		result, err := search.Sessions(f)
+		result, err := search.Sessions(frm)
 
 		if err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 
 		c.JSON(http.StatusOK, result)
 	})

@@ -7,7 +7,7 @@ import (
 )
 
 func TestConfig_MapKey(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		c := NewConfig("test", "testdata/new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 		assert.Equal(t, "", c.MapKey())
 	})

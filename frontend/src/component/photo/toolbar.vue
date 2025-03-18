@@ -1,273 +1,301 @@
 <template>
-  <v-form ref="form" lazy-validation dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8" :class="{ embedded: embedded }" @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" :height="embedded ? 45 : undefined" class="page-toolbar" color="secondary">
+  <v-form
+    ref="form"
+    validate-on="invalid-input"
+    autocomplete="off"
+    class="p-photo-toolbar"
+    accept-charset="UTF-8"
+    :class="{ embedded: embedded }"
+    @submit.prevent="updateQuery()"
+  >
+    <v-toolbar
+      :density="$vuetify.display.smAndDown && !embedded ? 'compact' : 'default'"
+      :height="embedded ? 45 : undefined"
+      class="page-toolbar"
+      color="secondary"
+    >
       <template v-if="!embedded">
         <v-text-field
-          :value="filter.q"
-          class="input-search background-inherit elevation-0"
-          solo
+          :model-value="filter.q"
+          :density="density"
           hide-details
           clearable
-          overflow
           single-line
-          validate-on-blur
+          overflow
+          rounded="pill"
+          variant="solo-filled"
+          color="surface-variant"
+          validate-on="invalid-input"
           autocorrect="off"
           autocapitalize="none"
-          browser-autocomplete="off"
-          :label="$gettext('Search')"
-          prepend-inner-icon="search"
-          color="secondary-dark"
-          @change="
+          autocomplete="off"
+          prepend-inner-icon="mdi-tune"
+          :append-inner-icon="filter.latlng ? 'mdi-map-marker-off' : ''"
+          :placeholder="$gettext('Search')"
+          class="input-search background-inherit elevation-0"
+          :class="{ 'input-search--expanded': expanded }"
+          @update:model-value="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => onUpdate()"
+          @click:prepend-inner.stop="toggleExpansionPanel"
+          @click:append-inner.stop="clearLocation"
           @click:clear="
             () => {
-              updateQuery({ q: '' });
+              onUpdate({ q: '' });
             }
           "
         ></v-text-field>
 
-        <v-btn v-if="filter.latlng" icon :title="$gettext('Show more')" class="action-clear-location" @click.stop="clearLocation()">
-          <v-icon>location_off</v-icon>
+        <v-btn-toggle
+          :model-value="settings.view"
+          :title="$gettext('Toggle View')"
+          :density="$vuetify.display.smAndDown ? 'comfortable' : 'default'"
+          base-color="secondary"
+          variant="flat"
+          rounded="pill"
+          mandatory
+          border
+          group
+          class="ms-1"
+        >
+          <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
+          <v-btn v-if="listView" value="list" icon="mdi-view-list" class="action-view-list" @click="setView('list')"></v-btn>
+          <v-btn value="mosaic" icon="mdi-view-comfy" class="pe-1 action-view-mosaic" @click="setView('mosaic')"></v-btn>
+        </v-btn-toggle>
+
+        <v-btn
+          v-if="canDelete && context === 'archive' && config.count.archived > 0"
+          :title="$gettext('Delete All')"
+          icon="mdi-delete-sweep"
+          class="action-delete-all ms-1"
+          @click.stop="deleteAll"
+        >
         </v-btn>
 
-        <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
-        </v-btn>
-
-        <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-          <v-icon>view_comfy</v-icon>
-        </v-btn>
-        <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
-          <v-icon>view_list</v-icon>
-        </v-btn>
-        <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-          <v-icon>view_comfy</v-icon>
-        </v-btn>
-        <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
-          <v-icon>view_column</v-icon>
-        </v-btn>
-
-        <v-btn v-if="canDelete && context === 'archive' && config.count.archived > 0" icon class="hidden-sm-and-down action-delete-all" :title="$gettext('Delete All')" @click.stop="deleteAll()">
-          <v-icon>delete_sweep</v-icon>
-        </v-btn>
-        <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-          <v-icon>cloud_upload</v-icon>
-        </v-btn>
-
-        <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')" @click.stop="searchExpanded = !searchExpanded">
-          <v-icon>{{ searchExpanded ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
-        </v-btn>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
       </template>
       <template v-else>
         <v-spacer></v-spacer>
         <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-browse" @click.stop="onBrowse">
-          <v-icon size="20">tab</v-icon>
+          <v-icon size="20">mdi-tab</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
-          <v-icon>close</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
     </v-toolbar>
 
-    <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
-      <v-card-text>
-        <v-layout row wrap>
-          <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
-            <v-select
-              :value="filter.country"
-              :label="$gettext('Country')"
-              :menu-props="{ maxHeight: 346 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              item-value="ID"
-              item-text="Name"
-              :items="countryOptions"
-              class="input-countries"
-              @change="
-                (v) => {
-                  updateQuery({ country: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
-            <v-select
-              :value="filter.camera"
-              :label="$gettext('Camera')"
-              :menu-props="{ maxHeight: 346 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              item-value="ID"
-              item-text="Name"
-              :items="cameraOptions"
-              @change="
-                (v) => {
-                  updateQuery({ camera: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
-            <v-select
-              id="viewSelect"
-              :value="settings.view"
-              :label="$gettext('View')"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              :items="viewOptions"
-              @change="
-                (v) => {
-                  setView(v);
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
-            <v-select
-              :value="filter.order"
-              :label="$gettext('Sort Order')"
-              :menu-props="{ maxHeight: 400 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              :items="sortOptions"
-              @change="
-                (v) => {
-                  updateQuery({ order: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
-            <v-select
-              :value="filter.year"
-              :label="$gettext('Year')"
-              :menu-props="{ maxHeight: 346 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              item-value="value"
-              item-text="text"
-              :items="yearOptions()"
-              @change="
-                (v) => {
-                  updateQuery({ year: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
-            <v-select
-              :value="filter.month"
-              :label="$gettext('Month')"
-              :menu-props="{ maxHeight: 346 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              item-value="value"
-              item-text="text"
-              :items="monthOptions()"
-              @change="
-                (v) => {
-                  updateQuery({ month: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <!-- v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
-              <v-select @change="dropdownChange"
-                        :label="labels.lens"
-                        flat solo hide-details
-                        color="secondary-dark"
-                        background-color="secondary-light"
-                        item-value="ID"
-                        item-text="Model"
-                        v-model="filter.lens"
-                        :items="lensOptions">
-              </v-select>
-          </v-flex -->
-          <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
-            <v-select
-              :value="filter.color"
-              :label="$gettext('Color')"
-              :menu-props="{ maxHeight: 346 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              item-value="Slug"
-              item-text="Name"
-              :items="colorOptions()"
-              @change="
-                (v) => {
-                  updateQuery({ color: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
-            <v-select
-              :value="filter.label"
-              :label="$gettext('Category')"
-              :menu-props="{ maxHeight: 346 }"
-              flat
-              solo
-              hide-details
-              color="secondary-dark"
-              background-color="secondary"
-              item-value="Slug"
-              item-text="Name"
-              :items="categoryOptions"
-              @change="
-                (v) => {
-                  updateQuery({ label: v });
-                }
-              "
-            >
-            </v-select>
-          </v-flex>
-        </v-layout>
-      </v-card-text>
-    </v-card>
-    <p-photo-delete-dialog :show="dialog.delete" :text="$gettext('Are you sure you want to delete all archived pictures?')" :action="$gettext('Delete All')" @cancel="dialog.delete = false" @confirm="batchDelete">
-</p-photo-delete-dialog>
+    <div class="toolbar-expansion-panel">
+      <v-expand-transition>
+        <v-card v-show="expanded" flat color="secondary">
+          <v-card-text class="dense">
+            <v-row align="center" dense>
+              <v-col cols="12" sm="6" md="3" class="p-countries-select">
+                <v-select
+                  :model-value="filter.country"
+                  :label="$gettext('Country')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="countryOptions"
+                  item-title="Name"
+                  item-value="ID"
+                  class="input-countries"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ country: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-camera-select">
+                <v-select
+                  :model-value="filter.camera"
+                  :label="$gettext('Camera')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="cameraOptions"
+                  item-title="Name"
+                  item-value="ID"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ camera: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-view-select">
+                <v-select
+                  id="viewSelect"
+                  :model-value="settings.view"
+                  :label="$gettext('View')"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="viewOptions"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      setView(v);
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-time-select">
+                <v-select
+                  :model-value="filter.order"
+                  :label="$gettext('Sort Order')"
+                  :menu-props="{ maxHeight: 400 }"
+                  single-line
+                  variant="solo-filled"
+                  :density="density"
+                  :items="sortOptions"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ order: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-year-select">
+                <v-select
+                  :model-value="filter.year"
+                  :label="$gettext('Year')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  variant="solo-filled"
+                  :density="density"
+                  :items="yearOptions()"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ year: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-month-select">
+                <v-select
+                  :model-value="filter.month"
+                  :label="$gettext('Month')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  variant="solo-filled"
+                  :density="density"
+                  :items="monthOptions()"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ month: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <!-- v-col cols="12" sm="6" md="3" class="p-lens-select">
+                <v-select @change="dropdownChange"
+                          :label="labels.lens"
+                          flat
+                          variant="solo-filled"
+                          hide-details
+                          color="surface-variant"
+                          bg-color="secondary-light"
+                          item-value="ID"
+                          item-title="Model"
+                          v-model="filter.lens"
+                          :items="lensOptions">
+                </v-select>
+            </v-col -->
+              <v-col cols="12" sm="6" md="3" class="p-color-select">
+                <v-select
+                  :model-value="filter.color"
+                  :label="$gettext('Color')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="colorOptions()"
+                  item-title="Name"
+                  item-value="Slug"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ color: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-category-select">
+                <v-select
+                  :model-value="filter.label"
+                  :label="$gettext('Category')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  hide-details
+                  variant="solo-filled"
+                  :density="density"
+                  :items="categoryOptions"
+                  item-title="Name"
+                  item-value="Slug"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ label: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-expand-transition>
+    </div>
+    <p-confirm-dialog
+      :visible="dialog.delete"
+      :text="$gettext(`Delete all?`)"
+      :action="$gettext('Yes')"
+      icon="mdi-delete-sweep-outline"
+      @close="dialog.delete = false"
+      @confirm="batchDelete"
+    >
+    </p-confirm-dialog>
   </v-form>
 </template>
 <script>
-import Event from "pubsub-js";
 import * as options from "options/options";
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
+import links from "common/links";
+
+import PActionMenu from "component/action/menu.vue";
+import PConfirmDialog from "component/confirm/dialog.vue";
 
 export default {
   name: "PPhotoToolbar",
+  components: {
+    PActionMenu,
+    PConfirmDialog,
+  },
   props: {
     context: {
       type: String,
@@ -307,19 +335,21 @@ export default {
     },
   },
   data() {
-    const features = this.$config.settings().features;
+    const features = this.$config.getSettings().features;
     const readonly = this.$config.get("readonly");
 
     return {
+      expanded: false,
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
+      isSuperAdmin: this.$session.isSuperAdmin(),
       config: this.$config.values,
       readonly: readonly,
       canUpload: !readonly && !this.embedded && this.$config.allow("files", "upload") && features.upload,
       canDelete: !readonly && !this.embedded && this.$config.allow("photos", "delete") && features.delete,
       canAccessLibrary: this.$config.allow("photos", "access_library"),
-      searchExpanded: false,
-      listView: this.$config.settings()?.search?.listView,
+      featSettings: features.settings,
+      listView: this.$config.getSettings()?.search?.listView,
       all: {
         countries: [{ ID: "", Name: this.$gettext("All Countries") }],
         cameras: [{ ID: 0, Name: this.$gettext("All Cameras") }],
@@ -335,6 +365,9 @@ export default {
     };
   },
   computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
     countryOptions() {
       return this.all.countries.concat(this.config.countries);
     },
@@ -345,7 +378,7 @@ export default {
       return this.all.categories.concat(this.config.categories);
     },
     viewOptions() {
-      if (this.$config.settings()?.search?.listView) {
+      if (this.$config.getSettings()?.search?.listView) {
         return [
           { value: "mosaic", text: this.$gettext("Mosaic") },
           { value: "cards", text: this.$gettext("Cards") },
@@ -399,6 +432,52 @@ export default {
     },
   },
   methods: {
+    hideExpansionPanel() {
+      if (this.expanded) {
+        this.expanded = false;
+      }
+    },
+    toggleExpansionPanel() {
+      this.expanded = !this.expanded;
+    },
+    menuActions() {
+      return [
+        {
+          name: "refresh",
+          icon: "mdi-refresh",
+          text: this.$gettext("Refresh"),
+          visible: true,
+          click: () => {
+            this.refresh();
+          },
+        },
+        {
+          name: "upload",
+          icon: "mdi-cloud-upload",
+          text: this.$gettext("Upload"),
+          visible: this.canUpload && this.context !== "archive" && this.context !== "hidden",
+          click: () => {
+            this.showUpload();
+          },
+        },
+        {
+          name: "docs",
+          icon: "mdi-book-open-page-variant-outline",
+          text: this.$gettext("Get Started"),
+          visible: this.context !== "hidden",
+          href: links.firstSteps,
+          target: "_blank",
+        },
+        {
+          name: "troubleshooting",
+          icon: "mdi-book-open-page-variant-outline",
+          text: this.$gettext("Troubleshooting"),
+          visible: this.context === "hidden",
+          href: links.missingPictures,
+          target: "_blank",
+        },
+      ];
+    },
     colorOptions() {
       return this.all.colors.concat(options.Colors());
     },
@@ -413,12 +492,12 @@ export default {
         if (name === "list" && !this.listView) {
           name = "mosaic";
         }
-
+        this.hideExpansionPanel();
         this.refresh({ view: name });
       }
     },
     showUpload() {
-      Event.publish("dialog.upload");
+      this.$event.publish("dialog.upload");
     },
     deleteAll() {
       if (!this.canDelete) {
@@ -432,10 +511,20 @@ export default {
     },
     onBrowse() {
       const route = { name: "places_browse", query: this.staticFilter };
-      const routeUrl = this.$router.resolve(route).href;
-      if (routeUrl) {
-        window.open(routeUrl, "_blank");
+
+      if (this.$isMobile) {
+        this.$router.push(route);
+      } else {
+        // Open in a new tab on desktop browsers.
+        const routeUrl = this.$router.resolve(route).href;
+
+        if (routeUrl) {
+          window.open(routeUrl, "_blank");
+        }
       }
+    },
+    onUpdate(v) {
+      this.updateQuery(v);
     },
     batchDelete() {
       if (!this.canDelete) {
@@ -444,10 +533,10 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/photos/delete", { all: true }).then(() => this.onDeleted());
+      $api.post("batch/photos/delete", { all: true }).then(() => this.onDeleted());
     },
     onDeleted() {
-      Notify.success(this.$gettext("Permanently deleted"));
+      $notify.success(this.$gettext("Permanently deleted"));
       this.$clipboard.clear();
     },
   },

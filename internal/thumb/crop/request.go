@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/disintegration/imaging"
+
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -27,7 +28,7 @@ func FromRequest(hash, area string, size Size, thumbPath string) (fileName strin
 	}
 
 	// Compose cached crop image file name.
-	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area, fs.ExtJPEG)
+	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area, fs.ExtJpeg)
 	cropName := filepath.Join(filepath.Dir(thumbName), cropBase)
 
 	imageBuffer, err := os.ReadFile(thumbName)

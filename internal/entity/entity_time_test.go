@@ -42,6 +42,27 @@ func TestNow(t *testing.T) {
 			t.Fatal("timestamp zone must be UTC")
 		}
 	})
+	t.Run("GMT", func(t *testing.T) {
+		if location, err := time.LoadLocation("GMT"); err != nil {
+			t.Error(err)
+		} else if Now().In(location).Location().String() != "GMT" {
+			t.Fatal("timestamp zone must be GMT")
+		}
+	})
+	t.Run("Etc/GMT", func(t *testing.T) {
+		if location, err := time.LoadLocation("Etc/GMT"); err != nil {
+			t.Error(err)
+		} else if Now().In(location).Location().String() != "Etc/GMT" {
+			t.Fatal("timestamp zone must be Etc/GMT")
+		}
+	})
+	t.Run("Etc/GMT+6", func(t *testing.T) {
+		if location, err := time.LoadLocation("Etc/GMT+6"); err != nil {
+			t.Error(err)
+		} else if Now().In(location).Location().String() != "Etc/GMT+6" {
+			t.Fatal("timestamp zone must be Etc/GMT+6")
+		}
+	})
 	t.Run("Past", func(t *testing.T) {
 		if Now().After(time.Now().Add(time.Second)) {
 			t.Fatal("timestamp should be in the past from now")

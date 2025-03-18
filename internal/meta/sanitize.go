@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var UnwantedDescriptions = map[string]bool{
+var UnwantedStrings = map[string]bool{
 	"Created by Imlib":         true, // Apps
 	"iClarified":               true,
 	"OLYMPUS DIGITAL CAMERA":   true, // Olympus
@@ -123,14 +123,14 @@ func SanitizeTitle(title string) string {
 	return result
 }
 
-// SanitizeDescription normalizes descriptions and removes unwanted information.
-func SanitizeDescription(s string) string {
+// SanitizeCaption normalizes metadata captions and removes unwanted text.
+func SanitizeCaption(s string) string {
 	s = SanitizeString(s)
 
 	switch {
 	case s == "":
 		return ""
-	case UnwantedDescriptions[s]:
+	case UnwantedStrings[s]:
 		return ""
 	case strings.HasPrefix(s, "DCIM\\") && !strings.Contains(s, " "):
 		return ""

@@ -1,6 +1,6 @@
 package customize
 
-type DownloadName string
+type DownloadName = string
 
 const (
 	DownloadNameFile     DownloadName = "file"

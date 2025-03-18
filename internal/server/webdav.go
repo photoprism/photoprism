@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -81,7 +81,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 		}
 	}
 
-	// WebDAV request handler.
+	// Create WebDAV request handler.
 	srv := &webdav.Handler{
 		Prefix:     router.BasePath(),
 		FileSystem: fileSystem,
@@ -89,8 +89,19 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 		Logger:     loggerFunc,
 	}
 
-	// Request handler wrapper function.
+	// Wrap handler to check quota and permissions.
 	handlerFunc := func(c *gin.Context) {
+		// Abort PUT, POST, PATCH, and COPY requests if there
+		// is not enough free storage to upload new files.
+		switch c.Request.Method {
+		case MethodPut, MethodPost, MethodPatch, MethodCopy:
+			if conf.FilesQuotaReached() {
+				c.AbortWithStatus(http.StatusInsufficientStorage)
+				return
+			}
+		}
+
+		// Invoke handler callback.
 		WebDAVHandler(c, router, srv)
 	}
 
@@ -158,7 +169,7 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 
 // WebDAVSetFavoriteFlag adds the favorite flag to files uploaded via WebDAV.
 func WebDAVSetFavoriteFlag(fileName string) {
-	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYAML
+	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYaml
 
 	// Abort if YAML file already exists to avoid overwriting metadata.
 	if fs.FileExists(yamlName) {

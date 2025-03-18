@@ -35,11 +35,12 @@ func TestNewConfig(t *testing.T) {
 	c := NewConfig(ctx)
 
 	assert.IsType(t, new(Config), c)
-
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath())
 	assert.False(t, c.Prod())
 	assert.False(t, c.Debug())
 	assert.False(t, c.ReadOnly())
+	assert.Equal(t, Develop, c.Develop())
+	assert.False(t, c.Experimental())
 }
 
 func TestConfig_Prod(t *testing.T) {
@@ -48,15 +49,21 @@ func TestConfig_Prod(t *testing.T) {
 	assert.False(t, c.Prod())
 	assert.False(t, c.Debug())
 	assert.False(t, c.Trace())
+
 	c.options.Prod = true
 	c.options.Debug = true
+
 	assert.True(t, c.Prod())
 	assert.False(t, c.Debug())
 	assert.False(t, c.Trace())
+
 	c.options.Prod = false
+
 	assert.True(t, c.Debug())
 	assert.False(t, c.Trace())
+
 	c.options.Debug = false
+
 	assert.False(t, c.Debug())
 	assert.False(t, c.Debug())
 	assert.False(t, c.Trace())
@@ -286,14 +293,23 @@ func TestConfig_IndexSchedule(t *testing.T) {
 func TestConfig_WakeupInterval(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	i := c.WakeupInterval()
+
 	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
+
 	c.options.WakeupInterval = 45
+
 	assert.Equal(t, "1m0s", c.WakeupInterval().String())
+
 	c.options.WakeupInterval = 0
+
 	assert.Equal(t, "15m0s", c.WakeupInterval().String())
+
 	c.options.WakeupInterval = 150
+
 	assert.Equal(t, "2m30s", c.WakeupInterval().String())
+
 	c.options.WakeupInterval = i
+
 	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
 }
 
@@ -323,12 +339,12 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	assert.Equal(t, 800, c.OriginalsLimit())
 }
 
-func TestConfig_OriginalsByteLimit(t *testing.T) {
+func TestConfig_OriginalsLimitBytes(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int64(-1), c.OriginalsByteLimit())
+	assert.Equal(t, int64(-1), c.OriginalsLimitBytes())
 	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(838860800), c.OriginalsByteLimit())
+	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
 }
 
 func TestConfig_ResolutionLimit(t *testing.T) {
@@ -378,77 +394,107 @@ func TestConfig_SerialChecksum(t *testing.T) {
 
 func TestConfig_Public(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
 	c.options.Demo = false
 	c.options.Public = false
 	c.options.AuthMode = "public"
+
 	assert.True(t, c.Public())
+
 	c.options.Demo = true
 	c.options.Public = false
 	c.options.AuthMode = "public"
+
 	assert.True(t, c.Public())
+
 	c.options.Demo = true
 	c.options.Public = true
 	c.options.AuthMode = "public"
+
 	assert.True(t, c.Public())
+
 	c.options.Demo = false
 	c.options.Public = false
 	c.options.AuthMode = "other"
+
 	assert.False(t, c.Public())
+
 	c.options.Demo = false
 	c.options.Public = false
 	c.options.AuthMode = "password"
+
 	assert.False(t, c.Public())
+
 	c.options.Demo = false
 	c.options.Public = true
 	c.options.AuthMode = "password"
+
 	assert.True(t, c.Public())
+
 	c.options.Demo = true
 	c.options.Public = false
 	c.options.AuthMode = "password"
+
 	assert.True(t, c.Public())
 }
 
 func TestConfig_Auth(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
 	c.options.Demo = false
 	c.options.Public = false
 	c.options.AuthMode = "public"
+
 	assert.False(t, c.Auth())
+
 	c.options.Demo = true
 	c.options.Public = false
 	c.options.AuthMode = "public"
+
 	assert.False(t, c.Auth())
+
 	c.options.Demo = true
 	c.options.Public = true
 	c.options.AuthMode = "public"
+
 	assert.False(t, c.Auth())
+
 	c.options.Demo = false
 	c.options.Public = false
 	c.options.AuthMode = "other"
+
 	assert.True(t, c.Auth())
+
 	c.options.Demo = false
 	c.options.Public = false
 	c.options.AuthMode = "password"
+
 	assert.True(t, c.Auth())
+
 	c.options.Demo = false
 	c.options.Public = true
 	c.options.AuthMode = "password"
+
 	assert.False(t, c.Auth())
+
 	c.options.Demo = true
 	c.options.Public = false
 	c.options.AuthMode = "password"
+
 	assert.False(t, c.Auth())
 }
 
 func TestConfigOptions(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	r := c.Options()
+
 	assert.False(t, r.DisableExifTool)
 	assert.Equal(t, r.AutoImport, 7200)
 	assert.Equal(t, r.AutoIndex, -1)
 
 	c.options = nil
 	r2 := c.Options()
+
 	assert.Equal(t, r2.AutoImport, 0)
 	assert.Equal(t, r2.AutoIndex, 0)
 }

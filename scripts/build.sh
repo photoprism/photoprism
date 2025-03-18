@@ -20,13 +20,13 @@ GO_VER=$($GO_BIN version)
 echo "Building PhotoPrism ${BUILD_ID} ($1)..."
 
 if [[ $1 == "develop" ]]; then
-  BUILD_CMD=("$GO_BIN" build -tags=debug -ldflags "-X main.version=${BUILD_ID}-DEVELOP" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -tags="debug,develop" -ldflags "-X main.version=${BUILD_ID}-DEVELOP" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "race" ]]; then
-  BUILD_CMD=("$GO_BIN" build -tags=debug -race -ldflags "-X main.version=${BUILD_ID}-RACE" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -tags="debug" -race -ldflags "-X main.version=${BUILD_ID}-RACE" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "static" ]]; then
   BUILD_CMD=("$GO_BIN" build -a -v -ldflags "-linkmode external -extldflags \"-static -L /usr/lib -ltensorflow\" -s -w -X main.version=${BUILD_ID}-STATIC" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "debug" ]]; then
-  BUILD_CMD=("$GO_BIN" build -tags=debug -ldflags "-extldflags \"-Wl,-rpath -Wl,\$ORIGIN/../lib\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}-DEBUG" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -tags="debug" -ldflags "-extldflags \"-Wl,-rpath -Wl,\$ORIGIN/../lib\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}-DEBUG" cmd/photoprism/photoprism.go)
 else
   BUILD_CMD=("$GO_BIN" build -ldflags "-extldflags \"-Wl,-rpath -Wl,\$ORIGIN/../lib\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 fi

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs the heif-convert, heif-enc, heif-info, and heif-thumbnailer binaries on Linux.
+# Installs the heif-convert, heif-enc, heif-info, and heif-thumbnailer binaries on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libheif.sh)
 
 set -e
@@ -17,7 +17,7 @@ DESTDIR=$(realpath "${1:-/usr/local}")
 # In addition, you can specify a custom version to be installed as the second argument.
 LIBHEIF_VERSION=${2:-v1.19.5}
 
-# Determine the system architecture.
+# Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
@@ -74,7 +74,7 @@ echo "DESTDIR: $DESTDIR"
 echo "------------------------------------------------"
 
 echo "Extracting \"$URL\" to \"$DESTDIR\"."
-wget --inet4-only -c "$URL" -O - | tar --overwrite --mode=755 -xz -C "$DESTDIR"
+curl -fsSL "$URL" | tar --overwrite --mode=755 -xz -C "$DESTDIR"
 
 if [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
   echo "Running \"ldconfig\"."

@@ -14,12 +14,14 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    ## Expose HTTP and debug ports
     ports:
       - "2342:2342"   # Default HTTP port (host:container)
       - "2443:2443"   # Default TLS port (host:container)
       - "2343:2343"   # Acceptance Test HTTP port (host:container)
       - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
+    ## Set links and labels for use with Traefik reverse proxy
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
@@ -36,6 +38,11 @@ services:
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
+    ## Override variables with optional env file, see https://docs.docker.com/reference/compose-file/services/#required
+    env_file:
+      - path: ".env"
+        required: false
+    ## Configure development environment
     environment:
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
@@ -46,6 +53,8 @@ services:
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
       PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
+      PHOTOPRISM_USAGE_INFO: "true"
+      PHOTOPRISM_FILES_QUOTA: "100"
       ## OpenID Connect (pre-configured for local tests):
       ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
@@ -91,6 +100,7 @@ services:
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
@@ -127,6 +137,7 @@ services:
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
+      - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
 
   ## MariaDB (Database Server)
@@ -143,6 +154,7 @@ services:
     ports:
       - "4001:4001" # database port (host:container)
     volumes:
+      - "mariadb:/var/lib/mysql"
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MARIADB_AUTO_UPGRADE: "1"
@@ -267,9 +279,11 @@ services:
 volumes:
   go-mod:
     driver: local
+  mariadb:
+    driver: local
 
 ## Create shared "photoprism-develop" network for connecting with services in other compose.yaml files
 networks:
   default:
-    name: photoprism-develop
+    name: photoprism
     driver: bridge

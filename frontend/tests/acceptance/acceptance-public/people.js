@@ -51,7 +51,7 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
     const JaneUID = await subject.getNthSubjectUid(0);
 
     await t
-      .expect(Selector("a[data-uid=" + JaneUID + "] div.caption").innerText)
+      .expect(Selector("div[data-uid=" + JaneUID + "] div.meta-count").innerText)
       .contains(PhotosInFaceCount.toString());
 
     await subject.openSubjectWithUid(JaneUID);
@@ -69,11 +69,14 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
 
     await t.click(photoedit.dialogClose);
     await menu.openPage("people");
+    await subject.renameSubject(JaneUID, "Otto Visible");
+    await t
+      .expect(Selector("p").withText("Merge Jane Doe with Otto Visible").visible)
+      .ok()
+      .click(Selector("div.dialog-merge button.action-cancel"));
     await subject.renameSubject(JaneUID, "Max Mu");
 
-    await t
-      .expect(Selector("a[data-uid=" + JaneUID + "] div.v-card__title").innerText)
-      .contains("Max Mu");
+    await t.expect(Selector("div[data-uid=" + JaneUID + "] div.meta-title").innerText).contains("Max Mu");
 
     await subject.openSubjectWithUid(JaneUID);
     await t.eval(() => location.reload());
@@ -86,10 +89,7 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
     await t.click(photoedit.dialogNext);
 
     await t.expect(photoedit.inputName.nth(0).value).contains("Max Mu").click(photoedit.dialogNext);
-    await t
-      .expect(photoedit.inputName.nth(0).value)
-      .contains("Max Mu")
-      .click(photoedit.dialogClose);
+    await t.expect(photoedit.inputName.nth(0).value).contains("Max Mu").click(photoedit.dialogClose);
 
     await contextmenu.clearSelection();
     await toolbar.search("person:max-mu");
@@ -141,43 +141,41 @@ test.meta("testID", "people-002").meta({ type: "short", mode: "public" })(
   }
 );
 
-test.meta("testID", "people-003").meta({ mode: "public" })(
-  "Common: Test mark subject as favorite",
-  async (t) => {
-    await menu.openPage("people");
-    const FirstSubjectUid = await subject.getNthSubjectUid(0);
-    const SecondSubjectUid = await subject.getNthSubjectUid(1);
-    await subject.triggerHoverAction("uid", SecondSubjectUid, "favorite");
-    await subject.triggerToolbarAction("reload");
-    const FirstSubjectUidAfterFavorite = await subject.getNthSubjectUid(0);
+test.meta("testID", "people-003").meta({ mode: "public" })("Common: Test mark subject as favorite", async (t) => {
+  await menu.openPage("people");
+  const FirstSubjectUid = await subject.getNthSubjectUid(0);
+  const SecondSubjectUid = await subject.getNthSubjectUid(1);
+  await subject.triggerHoverAction("uid", SecondSubjectUid, "favorite");
+  await subject.triggerToolbarAction("reload");
+  const FirstSubjectUidAfterFavorite = await subject.getNthSubjectUid(0);
 
-    await t.expect(FirstSubjectUid).notEql(FirstSubjectUidAfterFavorite);
-    await t.expect(SecondSubjectUid).eql(FirstSubjectUidAfterFavorite);
+  await t.expect(FirstSubjectUid).notEql(FirstSubjectUidAfterFavorite);
+  await t.expect(SecondSubjectUid).eql(FirstSubjectUidAfterFavorite);
 
-    await subject.checkHoverActionState("uid", SecondSubjectUid, "favorite", true);
-    await subject.triggerHoverAction("uid", SecondSubjectUid, "favorite");
-    await subject.checkHoverActionState("uid", SecondSubjectUid, "favorite", false);
-  }
-);
+  await subject.checkHoverActionState("uid", SecondSubjectUid, "favorite", true);
+  await subject.triggerHoverAction("uid", SecondSubjectUid, "favorite");
+  await subject.checkHoverActionState("uid", SecondSubjectUid, "favorite", false);
+  await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
+  await t
+    .click(Selector("div[data-uid=" + FirstSubjectUid + "] div.meta-title"))
+    .click(Selector('input[aria-label="Favorite"]'))
+    .click(Selector("button.action-confirm"));
+  await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
+});
 
-test.meta("testID", "people-004").meta({ mode: "public" })(
-  "Common: Test new face autocomplete",
-  async (t) => {
-    await menu.openPage("people");
-    await t.click(subject.newTab);
-    await subject.triggerToolbarAction("reload");
-    const FirstFaceID = await subject.getNthFaceUid(0);
-    await t
-      .expect(Selector("div.menuable__content__active").nth(0).visible)
-      .notOk()
-      .click(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"))
-      .typeText(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"), "Otto");
+test.meta("testID", "people-004").meta({ mode: "public" })("Common: Test new face autocomplete", async (t) => {
+  await menu.openPage("people");
+  await t.click(subject.newTab);
+  await subject.triggerToolbarAction("reload");
+  const FirstFaceID = await subject.getNthFaceUid(0);
+  await t
+    .expect(Selector('div[role="option"]').nth(0).visible)
+    .notOk()
+    .click(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"))
+    .typeText(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"), "Otto");
 
-    await t
-      .expect(Selector("div.menuable__content__active").nth(0).withText("Otto Visible").visible)
-      .ok();
-  }
-);
+  await t.expect(Selector('div[role="option"]').nth(0).withText("Otto Visible").visible).ok();
+});
 
 test.meta("testID", "people-005").meta({ mode: "public" })("Common: Remove face", async (t) => {
   await toolbar.search("face:new");

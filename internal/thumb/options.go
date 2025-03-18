@@ -44,12 +44,12 @@ func (o Options) Contains(option ResampleOption) bool {
 func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter ResampleFilter, format fs.Type) {
 	method = ResampleFit
 	filter = Filter
-	format = fs.ImageJPEG
+	format = fs.ImageJpeg
 
 	for _, option := range opts {
 		switch option {
 		case ResamplePng:
-			format = fs.ImagePNG
+			format = fs.ImagePng
 		case ResampleNearestNeighbor:
 			filter = ResampleNearest
 		case ResampleDefault:

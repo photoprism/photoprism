@@ -11,9 +11,10 @@ import (
 	"text/template"
 	"unicode"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"gopkg.in/yaml.v2"
 )
 
 // LabelRule defines the rule for a given Label

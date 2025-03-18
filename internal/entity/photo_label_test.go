@@ -3,8 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
 func TestNewPhotoLabel(t *testing.T) {
@@ -16,6 +17,7 @@ func TestNewPhotoLabel(t *testing.T) {
 		assert.Equal(t, "source", photoLabel.LabelSrc)
 	})
 }
+
 func TestPhotoLabel_TableName(t *testing.T) {
 	photoLabel := &PhotoLabel{}
 	tableName := photoLabel.TableName()
@@ -24,20 +26,26 @@ func TestPhotoLabel_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoLabel(t *testing.T) {
-	model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
-	result := FirstOrCreatePhotoLabel(&model)
+	t.Run("Success", func(t *testing.T) {
+		model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
+		result := FirstOrCreatePhotoLabel(&model)
 
-	if result == nil {
-		t.Fatal("result should not be nil")
-	}
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
 
-	if result.PhotoID != model.PhotoID {
-		t.Errorf("PhotoID should be the same: %d %d", result.PhotoID, model.PhotoID)
-	}
+		if result.PhotoID != model.PhotoID {
+			t.Errorf("PhotoID should be the same: %d %d", result.PhotoID, model.PhotoID)
+		}
 
-	if result.LabelID != model.LabelID {
-		t.Errorf("LabelID should be the same: %d %d", result.LabelID, model.LabelID)
-	}
+		if result.LabelID != model.LabelID {
+			t.Errorf("LabelID should be the same: %d %d", result.LabelID, model.LabelID)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Nil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(0, 1, 38, "image")))
+		assert.Nil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(1, 0, 38, "image")))
+	})
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
@@ -48,8 +56,7 @@ func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 		assert.Equal(t, 38, r.Uncertainty)
 		assert.Equal(t, "image", r.Source)
 	})
-
-	t.Run("label = nil", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(1, 3, 80, "source")
 		result := photoLabel.ClassifyLabel()
 		assert.Equal(t, classify.Label{}, result)

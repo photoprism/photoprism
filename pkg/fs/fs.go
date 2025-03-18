@@ -1,7 +1,7 @@
 /*
 Package fs provides filesystem related constants and functions.
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -42,7 +42,32 @@ const (
 	HomePath      = Home + PathSeparator
 )
 
-// FileExists returns true if file exists and is not a directory.
+// Stat returns the os.FileInfo for the given file path, or an error if it does not exist.
+func Stat(filePath string) (os.FileInfo, error) {
+	if filePath == "" {
+		return nil, fmt.Errorf("empty filepath")
+	}
+
+	return os.Stat(filePath)
+}
+
+// SocketExists returns true if the specified socket exists and is not a regular file or directory.
+func SocketExists(socketName string) bool {
+	if socketName == "" {
+		return false
+	}
+
+	// Check if path exists and is a socket.
+	if info, err := os.Stat(socketName); err != nil {
+		return false
+	} else if mode := info.Mode(); info.IsDir() || mode.IsRegular() || mode.Type() != os.ModeSocket {
+		return false
+	}
+
+	return true
+}
+
+// FileExists returns true if specified file exists and is not a directory.
 func FileExists(fileName string) bool {
 	if fileName == "" {
 		return false
@@ -79,6 +104,23 @@ func PathExists(path string) bool {
 	m := info.Mode()
 
 	return m&os.ModeDir != 0 || m&os.ModeSymlink != 0
+}
+
+// DeviceExists tests if a path exists, and is a device.
+func DeviceExists(path string) bool {
+	if path == "" {
+		return false
+	}
+
+	info, err := os.Stat(path)
+
+	if err != nil {
+		return false
+	}
+
+	m := info.Mode()
+
+	return m&os.ModeDevice != 0 || m&os.ModeCharDevice != 0
 }
 
 // Writable checks if the path is accessible for reading and writing.

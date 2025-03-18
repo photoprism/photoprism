@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestPurgeOrphans(t *testing.T) {

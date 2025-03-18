@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs the TensorFlow libraries on Linux.
+# Installs the TensorFlow libraries on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-tensorflow.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -9,7 +9,7 @@ set -e
 
 TF_VERSION=${TF_VERSION:-1.15.2}
 
-# Determine the system architecture.
+# Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else

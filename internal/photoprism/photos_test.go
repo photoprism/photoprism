@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 )
 
 func TestPhotos_Init(t *testing.T) {

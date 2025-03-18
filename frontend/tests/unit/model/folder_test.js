@@ -116,10 +116,7 @@ describe("model/folder", () => {
       Title: "Halloween Party",
     };
     const folder = new Folder(values);
-    assert.equal(
-      folder.thumbnailUrl("tile_224"),
-      "/api/v1/folders/t/dqbevau2zlhxrxww/public/tile_224"
-    );
+    assert.equal(folder.thumbnailUrl("tile_224"), "/api/v1/folders/t/dqbevau2zlhxrxww/public/tile_224");
   });
 
   it("should get date string", () => {

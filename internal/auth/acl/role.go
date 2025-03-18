@@ -3,6 +3,7 @@ package acl
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -46,4 +47,16 @@ func (r Role) Valid(s string) bool {
 // Invalid checks if the role is invalid.
 func (r Role) Invalid(s string) bool {
 	return !r.Valid(s)
+}
+
+// ParseRole returns the account role matching the specified string.
+func ParseRole(s string) Role {
+	s = clean.Role(s)
+
+	switch s {
+	case "", "0", "false", "nil", "null", "nan":
+		return RoleNone
+	default:
+		return UserRoles[s]
+	}
 }

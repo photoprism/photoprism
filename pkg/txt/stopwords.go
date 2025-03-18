@@ -148,7 +148,6 @@ var StopWords = map[string]bool{
 	"ain't":            true,
 	"aint":             true,
 	"al":               true,
-	"all":              true,
 	"allow":            true,
 	"allows":           true,
 	"almost":           true,

@@ -1,34 +1,35 @@
 <template>
-  <v-snackbar id="p-notify" v-model="visible" :color="color" :timeout="0" :class="textColor" :bottom="true">
-    <span :dir="!rtl ? 'let' : 'rtl'">{{ text }}</span>
-    <v-btn :class="textColor + ' pr-0'" icon flat @click="close">
-      <v-icon :class="textColor">close</v-icon>
-    </v-btn>
+  <v-snackbar id="p-notify" v-model="visible" :timeout="-1" :class="'p-notify--' + message.color">
+    <v-icon v-if="message.icon" :icon="'mdi-' + message.icon" :color="message.color" start></v-icon>
+    {{ message.text }}
+    <template #actions>
+      <v-btn icon="mdi-close" :color="'on-' + message.color" variant="text" @click="close"></v-btn>
+    </template>
   </v-snackbar>
 </template>
 <script>
-import Event from "pubsub-js";
-
 export default {
   name: "PNotify",
   data() {
     return {
-      text: "",
-      color: "primary",
-      textColor: "",
       visible: false,
+      message: {
+        icon: "",
+        color: "transparent",
+        text: "",
+      },
       messages: [],
-      lastMessageId: 1,
-      lastMessage: "",
+      lastText: "",
+      lastId: 1,
       subscriptionId: "",
-      rtl: this.$rtl,
+      defaultColor: "info",
     };
   },
   created() {
-    this.subscriptionId = Event.subscribe("notify", this.onNotify);
+    this.subscriptionId = this.$event.subscribe("notify", this.onNotify);
   },
-  destroyed() {
-    Event.unsubscribe(this.subscriptionId);
+  beforeUnmount() {
+    this.$event.unsubscribe(this.subscriptionId);
   },
   methods: {
     onNotify: function (ev, data) {
@@ -70,34 +71,34 @@ export default {
       }
     },
 
-    addWarningMessage: function (message) {
-      this.addMessage("warning", "black--text", message, 3000);
-    },
-
-    addErrorMessage: function (message) {
-      this.addMessage("error", "white--text", message, 8000);
-    },
-
     addSuccessMessage: function (message) {
-      this.addMessage("success", "white--text", message, 2000);
+      this.addMessage("success", "check-circle", message, 2000);
     },
 
     addInfoMessage: function (message) {
-      this.addMessage("info", "white--text", message, 2000);
+      this.addMessage("info", "information-outline", message, 2000);
     },
 
-    addMessage: function (color, textColor, message, delay) {
-      if (message === this.lastMessage) return;
+    addWarningMessage: function (message) {
+      this.addMessage("warning", "alert", message, 3000);
+    },
 
-      this.lastMessageId++;
-      this.lastMessage = message;
+    addErrorMessage: function (message) {
+      this.addMessage("error", "alert-circle-outline", message, 8000);
+    },
+
+    addMessage: function (color, icon, text, delay) {
+      if (text === this.lastText) return;
+
+      this.lastId++;
+      this.lastText = text;
 
       const m = {
-        id: this.lastMessageId,
-        color: color,
-        textColor: textColor,
-        delay: delay,
-        message: message,
+        id: this.lastId,
+        color,
+        icon,
+        text,
+        delay,
       };
 
       this.messages.push(m);
@@ -106,7 +107,6 @@ export default {
         this.show();
       }
     },
-
     close: function () {
       this.visible = false;
       this.show();
@@ -115,18 +115,26 @@ export default {
       const message = this.messages.shift();
 
       if (message) {
-        this.text = message.message;
-        this.color = message.color;
-        this.textColor = message.textColor;
+        this.message = message;
+
+        if (!this.message.color) {
+          this.message.color = this.defaultColor;
+        }
+
+        if (!this.message.icon) {
+          this.message.icon = "";
+        }
+
         this.visible = true;
 
-        setTimeout(() => {
-          this.lastMessage = "";
-          this.show();
-        }, message.delay);
+        if (message.delay > 0) {
+          setTimeout(() => {
+            this.lastText = "";
+            this.show();
+          }, message.delay);
+        }
       } else {
         this.visible = false;
-        this.text = "";
       }
     },
   },

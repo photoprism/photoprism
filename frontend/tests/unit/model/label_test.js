@@ -1,5 +1,5 @@
 import "../fixtures";
-import Label from "model/label";
+import { Label, BatchSize } from "model/label";
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -14,10 +14,10 @@ describe("model/label", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Label.batchSize(), 24);
+    assert.equal(Label.batchSize(), BatchSize);
     Label.setBatchSize(30);
     assert.equal(Label.batchSize(), 30);
-    Label.setBatchSize(24);
+    Label.setBatchSize(BatchSize);
   });
 
   it("should return classes", () => {

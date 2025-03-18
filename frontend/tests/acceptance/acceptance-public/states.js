@@ -18,92 +18,89 @@ const photo = new Photo();
 const page = new Page();
 const albumdialog = new AlbumDialog();
 
-test.meta("testID", "states-001").meta({ mode: "public" })(
-  "Common: Update state details",
-  async (t) => {
-    await menu.openPage("states");
-    await toolbar.search("Canada");
-    const AlbumUid = await album.getNthAlbumUid("all", 0);
+test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state details", async (t) => {
+  await menu.openPage("states");
+  await toolbar.search("Canada");
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
 
-    await t.expect(page.cardTitle.nth(0).innerText).contains("British Columbia");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("British Columbia");
 
-    await t.click(page.cardTitle.nth(0));
+  await t.click(page.cardTitle.nth(0));
 
-    await t
-      .expect(albumdialog.title.value)
-      .eql("British Columbia")
-      .expect(albumdialog.location.value)
-      .eql("Canada")
-      .expect(albumdialog.description.value)
-      .eql("")
-      .expect(albumdialog.category.value)
-      .eql("");
+  await t
+    .expect(albumdialog.title.value)
+    .eql("British Columbia")
+    .expect(albumdialog.location.value)
+    .eql("Canada")
+    .expect(albumdialog.description.value)
+    .eql("")
+    .expect(albumdialog.category.value)
+    .eql("");
 
-    await t
-      .typeText(albumdialog.title, "Wonderland", { replace: true })
-      .typeText(albumdialog.location, "Earth", { replace: true })
-      .typeText(albumdialog.description, "We love earth")
-      .typeText(albumdialog.category, "Mountains")
-      .pressKey("enter")
-      .click(albumdialog.dialogSave);
+  await t
+    .typeText(albumdialog.title, "Wonderland", { replace: true })
+    .typeText(albumdialog.location, "Earth", { replace: true })
+    .typeText(albumdialog.description, "We love earth")
+    .typeText(albumdialog.category, "Mountains")
+    .pressKey("enter")
+    .click(albumdialog.dialogSave);
 
-    await t
-      .expect(page.cardTitle.nth(0).innerText)
-      .contains("Wonderland")
-      .expect(page.cardDescription.nth(0).innerText)
-      .contains("We love earth")
-      .expect(Selector("div.caption").nth(1).innerText)
-      .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
-      .contains("Earth");
+  await t
+    .expect(page.cardTitle.nth(0).innerText)
+    .contains("Wonderland")
+    .expect(page.cardDescription.nth(0).innerText)
+    .contains("We love earth")
+    .expect(Selector("button.meta-category").innerText)
+    .contains("Mountains")
+    .expect(Selector("button.meta-location").innerText)
+    .contains("Earth");
 
-    await album.openNthAlbum(0);
+  await album.openNthAlbum(0);
 
-    await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Wonderland");
-    await t.expect(toolbar.toolbarDescription.innerText).contains("We love earth");
+  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Wonderland");
+  await t.expect(toolbar.toolbarDescription.innerText).contains("We love earth");
 
-    await menu.openPage("states");
-    if (t.browser.platform === "mobile") {
-      await toolbar.search("category:Mountains");
-    } else {
-      await toolbar.setFilter("category", "Mountains");
-    }
-
-    await t.expect(page.cardTitle.nth(0).innerText).contains("Wonderland");
-
-    await album.openAlbumWithUid(AlbumUid);
-    await toolbar.triggerToolbarAction("edit");
-
-    await t
-      .expect(albumdialog.description.value)
-      .eql("We love earth")
-      .expect(albumdialog.category.value)
-      .eql("Mountains")
-      .expect(albumdialog.location.value)
-      .eql("Earth");
-
-    await t
-      .typeText(albumdialog.title, "British Columbia", { replace: true })
-      .click(albumdialog.category)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.description)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .typeText(albumdialog.location, "Canada", { replace: true })
-      .click(albumdialog.dialogSave);
-    await menu.openPage("states");
-    await toolbar.search("Canada");
-
-    await t
-      .expect(page.cardTitle.nth(0).innerText)
-      .contains("British Columbia")
-      .expect(page.cardDescription.innerText)
-      .notContains("We love earth")
-      .expect(Selector("div.caption").nth(0).innerText)
-      .notContains("Earth");
+  await menu.openPage("states");
+  if (t.browser.platform === "mobile") {
+    await toolbar.search("category:Mountains");
+  } else {
+    await toolbar.setFilter("category", "Mountains");
   }
-);
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Wonderland");
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+
+  await t
+    .expect(albumdialog.description.value)
+    .eql("We love earth")
+    .expect(albumdialog.category.value)
+    .eql("Mountains")
+    .expect(albumdialog.location.value)
+    .eql("Earth");
+
+  await t
+    .typeText(albumdialog.title, "British Columbia", { replace: true })
+    .click(albumdialog.category)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.description)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .typeText(albumdialog.location, "Canada", { replace: true })
+    .click(albumdialog.dialogSave);
+  await menu.openPage("states");
+  await toolbar.search("Canada");
+
+  await t
+    .expect(page.cardTitle.nth(0).innerText)
+    .contains("British Columbia")
+    .expect(page.cardDescription.innerText)
+    .notContains("We love earth")
+    .expect(Selector("button.meta-location").innerText)
+    .notContains("Earth");
+});
 
 test.meta("testID", "states-002").meta({ mode: "public" })(
   "Common: Create, Edit, delete sharing link for state",

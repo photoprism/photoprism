@@ -1,7 +1,7 @@
 /*
 Package pluscode provides an abstraction for Google's Open Location Code package.
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -28,6 +28,7 @@ import (
 	"fmt"
 
 	olc "github.com/google/open-location-code/go"
+
 	"github.com/photoprism/photoprism/pkg/geo/s2"
 )
 

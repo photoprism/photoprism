@@ -13,7 +13,7 @@ import (
 	swagger "github.com/swaggo/gin-swagger"
 
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 //go:embed swagger.json

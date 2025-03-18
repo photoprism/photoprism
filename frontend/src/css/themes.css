@@ -1,18 +1,4 @@
-@import url("themes/default.css");
-@import url("themes/abyss.css");
-@import url("themes/carbon.css");
-@import url("themes/chrome.css");
-@import url("themes/gemstone.css");
-@import url("themes/grayscale.css");
-@import url("themes/lavender.css");
-@import url("themes/mint.css");
-@import url("themes/neon.css");
-@import url("themes/nordic.css");
-@import url("themes/shadow.css");
-@import url("themes/vanta.css");
-@import url("themes/yellowstone.css");
-
-/* Input Style Overrides */
+/* Global Theme Styles */
 
 :-webkit-autofill,
 :-webkit-autofill:hover,
@@ -21,18 +7,4 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
     transition: background-color 9999s !important;
-}
-
-.v-text-field>.v-input__control>.v-input__slot:after,
-.v-text-field>.v-input__control>.v-input__slot:before {
-    display: none !important;
-}
-
-#photoprism .v-select.v-text-field--box .v-select__selections {
-    padding-top: 20px;
-}
-
-#photoprism .theme--light.v-text-field--solo.background-inherit>.v-input__control>.v-input__slot {
-    background: inherit;
-    box-shadow: none;
 }

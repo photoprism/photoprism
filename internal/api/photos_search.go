@@ -38,36 +38,36 @@ import (
 //	@Router			/api/v1/photos [get]
 func SearchPhotos(router *gin.RouterGroup) {
 	// searchPhotos checking authorization and parses the search request.
-	searchForm := func(c *gin.Context) (f form.SearchPhotos, s *entity.Session, err error) {
+	searchForm := func(c *gin.Context) (frm form.SearchPhotos, s *entity.Session, err error) {
 		s = AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
 
 		// Abort if permission was not granted.
 		if s.Abort(c) {
-			return f, s, i18n.Error(i18n.ErrForbidden)
+			return frm, s, i18n.Error(i18n.ErrForbidden)
 		}
 
 		// Abort if request params are invalid.
-		if err = c.MustBindWith(&f, binding.Form); err != nil {
+		if err = c.MustBindWith(&frm, binding.Form); err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
-			return f, s, err
+			return frm, s, err
 		}
 
 		settings := get.Config().Settings()
 
 		// Ignore private flag if feature is disabled.
 		if !settings.Features.Private {
-			f.Public = false
+			frm.Public = false
 		}
 
 		// Ignore private flag if feature is disabled.
-		if f.Scope == "" &&
+		if frm.Scope == "" &&
 			settings.Features.Review &&
 			acl.Rules.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
-			f.Quality = 3
+			frm.Quality = 3
 		}
 
-		return f, s, nil
+		return frm, s, nil
 	}
 
 	// defaultHandler a standard JSON result with all fields.

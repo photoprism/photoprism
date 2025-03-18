@@ -7,6 +7,7 @@
         flex-grow: 0;
         max-width: 16.666666666666664%;
     }
+
     .flex.xlg10 {
         flex-basis: 83.333333333333332%;
         flex-grow: 0;
@@ -21,6 +22,7 @@
         flex-grow: 0;
         max-width: 8.333333333333332%;
     }
+
     .flex.xxl11 {
         flex-basis: 91.66666666666667%;
         flex-grow: 0;
@@ -35,6 +37,7 @@
         flex-grow: 0;
         max-width: 8.333333333333332%;
     }
+
     .flex.ul11 {
         flex-basis: 91.66666666666667%;
         flex-grow: 0;
@@ -91,29 +94,27 @@
 
 /* Rounded Elements */
 
-.v-progress-linear,
-.v-progress-linear .v-progress-linear__bar__determinate,
-.v-progress-linear .v-progress-linear__bar__indeterminate--active {
-    border-radius: 3px;
-}
-
 .v-menu__content,
 .v-btn.v-btn--depressed:not(.v-btn--round):not(.v-btn--icon),
 .v-text-field.v-text-field--box > .v-input__control > .v-input__slot,
 .v-text-field.v-text-field--solo > .v-input__control > .v-input__slot,
-#photoprism .v-dialog .v-responsive.v-image,
-#photoprism .mosaic-view .result.image,
-#photoprism .list-view .result .image {
+.v-dialog .v-responsive.v-image,
+.mosaic-view .result.preview,
+.list-view .result .preview {
     border-radius: 4px;
 }
 
 .v-alert,
-#photoprism .cards-view .result,
-#photoprism div.v-dialog > div.v-card,
-#photoprism div.v-dialog > div.v-card > .v-card__text .v-expansion-panel__container,
-#photoprism div.v-dialog > form > div.v-card,
-#photoprism div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panel__container {
-    border-radius: 6px;
+.cards-view .result,
+div.v-dialog > div.v-card,
+div.v-dialog > div.v-card > .v-card__text .v-expansion-panels__container,
+div.v-dialog > form > div.v-card,
+div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panels__container {
+    border-radius: 6px !important;
+}
+
+.cards-view .result {
+    height: 100%;
 }
 
 .ra-2,
@@ -172,10 +173,6 @@
     border-radius: 24px !important;
 }
 
-#photoprism div.v-dialog.v-dialog--fullscreen > div.v-card {
-    border-radius: 0;
-}
-
 .v-autocomplete__content.v-menu__content,
 .v-autocomplete__content.v-menu__content .v-card {
     border-radius: 0 0 4px 4px;
@@ -189,19 +186,19 @@
 
 @media only screen and (min-width: 960px) {
     .pa-1-md-and-up {
-        padding: 4px!important;
+        padding: 4px !important;
     }
 
     .pa-2-md-and-up {
-        padding: 8px!important;
+        padding: 8px !important;
     }
 
     .pa-3-md-and-up {
-        padding: 16px!important;
+        padding: 16px !important;
     }
 
     .pa-3-md-and-up {
-        padding: 24px!important;
+        padding: 24px !important;
     }
 
     .ra-4-table-md-and-up table.v-table {
@@ -209,43 +206,51 @@
     }
 }
 
-/* Page Footer */
+/* Footer */
 
 footer {
     clear: both;
     padding: 1rem 2rem;
 }
 
-#photoprism .footer {
+footer.p-about-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
     margin: 0;
-    padding: 6px 24px 12px;
+    padding: 12px 24px 4px;
 }
 
-#photoprism .footer div > span,
-#photoprism .footer div > a {
-    display: block;
+footer.p-about-footer>div {
+    user-select: text;
+    font-size: .875rem;
+    font-weight: 400;
+    letter-spacing: .0178571429em;
+    line-height: 1.425;
+    margin-bottom: .85rem;
+    text-transform: none;
+    text-align: center;
 }
 
-@media only screen and (max-width: 599px) {
-    #photoprism .footer div > span,
-    #photoprism .footer div > a {
-        display: inline-block;
+footer.p-about-footer > div > * {
+    display: inline;
+    float: right;
+    max-width: 45vw;
+    text-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+footer.p-about-footer > div > strong {
+    float: left;
+}
+
+@media only screen and (min-width: 600px) {
+    footer.p-about-footer>div > * {
+        display: block;
+        float: none!important;
+        margin: 0;
+        padding: 0;
     }
-
-    #photoprism .footer .text-link {
-        float: left;
-    }
-
-    #photoprism .footer .body-link {
-        float: right;
-    }
-}
-
-#photoprism .footer .footer-actions {
-    padding: 0;
-    margin: 0;
-}
-
-#photoprism .p-about-footer .body-1 {
-    line-height: 1.8em;
 }

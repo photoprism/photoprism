@@ -1,19 +1,27 @@
 <template>
-  <div :class="$config.aclClasses('library')" class="p-page p-page-library">
-    <v-tabs v-model="active" flat grow color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
-      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click="changePath(item.path)">
-        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
+  <div ref="page" tabindex="1" :class="$config.aclClasses('library')" class="p-page p-page-library">
+    <v-tabs
+      v-model="active"
+      elevation="0"
+      grow
+      bg-color="secondary"
+      slider-color="surface-variant"
+      :height="$vuetify.display.smAndDown ? 48 : 64"
+      class="bg-transparent p-page__navigation"
+    >
+      <v-tab v-for="t in tabs" :id="'tab-' + t.name" :key="t.name" :class="t.class" ripple @click="changePath(t.path)">
+        <v-icon v-if="$vuetify.display.smAndDown" :title="t.label">{{ t.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
+          <v-icon :size="18" start>{{ t.icon }}</v-icon> {{ t.label }}
         </template>
       </v-tab>
-
-      <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
-          <component :is="item.component"></component>
-        </v-tab-item>
-      </v-tabs-items>
     </v-tabs>
+
+    <v-tabs-window v-model="active">
+      <v-tabs-window-item v-for="t in tabs" :key="t.name">
+        <component :is="t.component"></component>
+      </v-tabs-window-item>
+    </v-tabs-window>
   </div>
 </template>
 
@@ -21,6 +29,7 @@
 import Import from "page/library/import.vue";
 import Index from "page/library/index.vue";
 import Logs from "page/library/logs.vue";
+import { markRaw } from "vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -51,21 +60,21 @@ export default {
     const tabs = [
       {
         name: "library_index",
-        component: Index,
+        component: markRaw(Index),
         label: this.$gettext("Index"),
         class: "",
         path: "/index",
-        icon: "camera_roll",
+        icon: "mdi-film",
         readonly: true,
         demo: true,
       },
       {
         name: "library_import",
-        component: Import,
+        component: markRaw(Import),
         label: this.$gettext("Import"),
         class: "",
         path: "/import",
-        icon: "create_new_folder",
+        icon: "mdi-folder-plus",
         readonly: false,
         demo: true,
       },
@@ -74,11 +83,11 @@ export default {
     if (this.$config.feature("logs")) {
       tabs.push({
         name: "library_logs",
-        component: Logs,
+        component: markRaw(Logs),
         label: this.$gettext("Logs"),
         class: "",
         path: "/logs",
-        icon: "feed",
+        icon: "mdi-file-document",
         readonly: true,
         demo: true,
       });
@@ -111,11 +120,17 @@ export default {
       config: config,
       readonly: isReadOnly,
       active: active,
-      rtl: this.$rtl,
+      rtl: this.$isRtl,
     };
   },
   watch: {
     $route() {
+      if (!this.$view.isActive(this)) {
+        return;
+      }
+
+      this.$view.focus(this.$refs?.page);
+
       let active = this.active;
 
       if (typeof this.$route.name === "string" && this.$route.name !== "") {
@@ -131,6 +146,12 @@ export default {
     if (!this.tabs || this.tabs.length === 0) {
       this.$router.push({ name: "albums" });
     }
+  },
+  mounted() {
+    this.$view.enter(this, this.$refs?.page);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     changePath: function (path) {

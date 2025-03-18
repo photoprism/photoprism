@@ -177,18 +177,18 @@ func (m *Marker) SetName(name, src string) (changed bool, err error) {
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *Marker) SaveForm(f form.Marker) (changed bool, err error) {
-	if m.MarkerInvalid != f.MarkerInvalid {
-		m.MarkerInvalid = f.MarkerInvalid
+func (m *Marker) SaveForm(frm form.Marker) (changed bool, err error) {
+	if m.MarkerInvalid != frm.MarkerInvalid {
+		m.MarkerInvalid = frm.MarkerInvalid
 		changed = true
 	}
 
-	if m.MarkerReview != f.MarkerReview {
-		m.MarkerReview = f.MarkerReview
+	if m.MarkerReview != frm.MarkerReview {
+		m.MarkerReview = frm.MarkerReview
 		changed = true
 	}
 
-	if nameChanged, err := m.SetName(f.MarkerName, f.SubjSrc); err != nil {
+	if nameChanged, err := m.SetName(frm.MarkerName, frm.SubjSrc); err != nil {
 		return changed, err
 	} else if nameChanged {
 		changed = true

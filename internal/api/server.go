@@ -2,16 +2,15 @@ package api
 
 import (
 	"net/http"
-	"os"
-	"syscall"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/process"
 )
 
-// StopServer shuts down the server.
+// StopServer initiates a server restart if the user is authorized.
 //
 // POST /api/v1/server/stop
 func StopServer(router *gin.RouterGroup) {
@@ -25,16 +24,11 @@ func StopServer(router *gin.RouterGroup) {
 			return
 		}
 
-		process, err := os.FindProcess(os.Getpid())
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, NewResponse(http.StatusInternalServerError, err, ""))
-			return
-		} else {
-			c.JSON(http.StatusOK, conf.Options())
-		}
-
-		if err = process.Signal(syscall.SIGTERM); err != nil {
-			log.Errorf("server: %s", err)
-		}
+		// Trigger restart.
+		//
+		// Note that this requires an entrypoint script or other process to
+		// spawns a new instance when the server exists with status code 1.
+		c.JSON(http.StatusOK, conf.Options())
+		process.Restart()
 	})
 }

@@ -10,8 +10,14 @@ export default {
   components: { PPageAbout },
   data() {
     return {
-      rtl: this.$rtl,
+      rtl: this.$isRtl,
     };
+  },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {},
 };

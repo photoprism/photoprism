@@ -1,78 +1,130 @@
-/*
-
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
-
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
-
-Feel free to send an email to hello@photoprism.app if you have questions,
-want to support our work, or just want to say hello.
-
-Additional information can be found in our Developer Guide:
-<https://docs.photoprism.app/developer-guide/>
-
-*/
-
+// Global site components.
 import PNotify from "component/notify.vue";
+import PScroll from "component/scroll.vue";
 import PNavigation from "component/navigation.vue";
-import PScrollTop from "component/scroll-top.vue";
+import PUpdate from "component/update.vue";
+import PLoading from "component/loading.vue";
 import PLoadingBar from "component/loading-bar.vue";
-import PPhotoViewer from "component/photo-viewer.vue";
-import PVideoPlayer from "component/video/player.vue";
-import PPhotoToolbar from "component/photo/toolbar.vue";
-import PPhotoCards from "component/photo/cards.vue";
-import PPhotoMosaic from "component/photo/mosaic.vue";
-import PPhotoList from "component/photo/list.vue";
-import PPhotoPreview from "component/photo/preview.vue";
-import PPhotoClipboard from "component/photo/clipboard.vue";
-import PAlbumClipboard from "component/album/clipboard.vue";
-import PAlbumToolbar from "component/album/toolbar.vue";
-import PLabelClipboard from "component/label/clipboard.vue";
-import PFileClipboard from "component/file/clipboard.vue";
-import PSubjectClipboard from "component/subject/clipboard.vue";
-import PAuthHeader from "component/auth/header.vue";
-import PAuthFooter from "component/auth/footer.vue";
-import PAboutFooter from "component/footer.vue";
+import PLightbox from "component/lightbox.vue";
+
+// Icons.
 import IconLivePhoto from "component/icon/live-photo.vue";
 import IconSponsor from "component/icon/sponsor.vue";
 import IconPrism from "component/icon/prism.vue";
 
-const components = {};
+// User account management.
+import PSettingsApps from "component/settings/apps.vue";
+import PSettingsPasscode from "component/settings/passcode.vue";
+import PSettingsPassword from "component/settings/password.vue";
 
-components.install = (Vue) => {
-  Vue.component("PNotify", PNotify);
-  Vue.component("PNavigation", PNavigation);
-  Vue.component("PScrollTop", PScrollTop);
-  Vue.component("PLoadingBar", PLoadingBar);
-  Vue.component("PVideoPlayer", PVideoPlayer);
-  Vue.component("PPhotoViewer", PPhotoViewer);
-  Vue.component("PPhotoToolbar", PPhotoToolbar);
-  Vue.component("PPhotoCards", PPhotoCards);
-  Vue.component("PPhotoMosaic", PPhotoMosaic);
-  Vue.component("PPhotoList", PPhotoList);
-  Vue.component("PPhotoPreview", PPhotoPreview);
-  Vue.component("PPhotoClipboard", PPhotoClipboard);
-  Vue.component("PAlbumClipboard", PAlbumClipboard);
-  Vue.component("PAlbumToolbar", PAlbumToolbar);
-  Vue.component("PLabelClipboard", PLabelClipboard);
-  Vue.component("PFileClipboard", PFileClipboard);
-  Vue.component("PSubjectClipboard", PSubjectClipboard);
-  Vue.component("PAuthHeader", PAuthHeader);
-  Vue.component("PAuthFooter", PAuthFooter);
-  Vue.component("PAboutFooter", PAboutFooter);
-  Vue.component("IconLivePhoto", IconLivePhoto);
-  Vue.component("IconSponsor", IconSponsor);
-  Vue.component("IconPrism", IconPrism);
-};
+// Albums.
+import PAlbumClipboard from "component/album/clipboard.vue";
+import PAlbumToolbar from "component/album/toolbar.vue";
+import PAlbumEditDialog from "component/album/edit/dialog.vue";
+import PAlbumDeleteDialog from "component/album/delete/dialog.vue";
 
-export default components;
+// Login.
+import PAuthHeader from "component/auth/header.vue";
+import PAuthFooter from "component/auth/footer.vue";
+
+// Sharing.
+import PShareDialog from "component/share/dialog.vue";
+
+// Settings.
+import PSettingsWebdav from "component/settings/webdav.vue";
+
+// Confirm.
+import PConfirmDialog from "component/confirm/dialog.vue";
+import PConfirmSponsor from "component/confirm/sponsor.vue";
+
+// Originals.
+import PFileClipboard from "component/file/clipboard.vue";
+import PFileDeleteDialog from "component/file/delete/dialog.vue";
+
+// Labels.
+import PLabelClipboard from "component/label/clipboard.vue";
+import PLabelDeleteDialog from "component/label/delete/dialog.vue";
+import PLabelEditDialog from "component/label/edit/dialog.vue";
+
+// People.
+import PPeopleMergeDialog from "component/people/merge/dialog.vue";
+import PPeopleEditDialog from "component/people/edit/dialog.vue";
+import PPeopleClipboard from "component/people/clipboard.vue";
+
+// Photos.
+import PPhotoViewCards from "component/photo/view/cards.vue";
+import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
+import PPhotoViewList from "component/photo/view/list.vue";
+import PPhotoClipboard from "component/photo/clipboard.vue";
+import PPhotoToolbar from "component/photo/toolbar.vue";
+import PPhotoPreview from "component/photo/preview.vue";
+import PPhotoArchiveDialog from "component/photo/archive/dialog.vue";
+import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
+import PPhotoEditDialog from "component/photo/edit/dialog.vue";
+import PPhotoUploadDialog from "component/photo/upload/dialog.vue";
+
+// Services.
+import PServiceAdd from "component/service/add.vue";
+import PServiceRemove from "component/service/remove.vue";
+import PServiceEdit from "component/service/edit.vue";
+import PServiceUpload from "component/service/upload.vue";
+
+// Installs the components imported above.
+export function install(app) {
+  app.component("PNotify", PNotify);
+  app.component("PScroll", PScroll);
+  app.component("PNavigation", PNavigation);
+  app.component("PLoading", PLoading);
+  app.component("PLoadingBar", PLoadingBar);
+  app.component("PLightbox", PLightbox);
+  app.component("PUpdate", PUpdate);
+
+  app.component("IconLivePhoto", IconLivePhoto);
+  app.component("IconSponsor", IconSponsor);
+  app.component("IconPrism", IconPrism);
+
+  app.component("PSettingsApps", PSettingsApps);
+  app.component("PSettingsPasscode", PSettingsPasscode);
+  app.component("PSettingsPassword", PSettingsPassword);
+  app.component("PSettingsWebdav", PSettingsWebdav);
+
+  app.component("PAlbumClipboard", PAlbumClipboard);
+  app.component("PAlbumToolbar", PAlbumToolbar);
+  app.component("PAlbumEditDialog", PAlbumEditDialog);
+  app.component("PAlbumDeleteDialog", PAlbumDeleteDialog);
+
+  app.component("PAuthHeader", PAuthHeader);
+  app.component("PAuthFooter", PAuthFooter);
+
+  app.component("PShareDialog", PShareDialog);
+
+  app.component("PConfirmDialog", PConfirmDialog);
+  app.component("PConfirmSponsor", PConfirmSponsor);
+
+  app.component("PFileClipboard", PFileClipboard);
+  app.component("PFileDeleteDialog", PFileDeleteDialog);
+
+  app.component("PLabelClipboard", PLabelClipboard);
+  app.component("PLabelDeleteDialog", PLabelDeleteDialog);
+  app.component("PLabelEditDialog", PLabelEditDialog);
+
+  app.component("PPeopleMergeDialog", PPeopleMergeDialog);
+  app.component("PPeopleEditDialog", PPeopleEditDialog);
+  app.component("PPeopleClipboard", PPeopleClipboard);
+
+  app.component("PPhotoViewCards", PPhotoViewCards);
+  app.component("PPhotoViewMosaic", PPhotoViewMosaic);
+  app.component("PPhotoViewList", PPhotoViewList);
+  app.component("PPhotoClipboard", PPhotoClipboard);
+  app.component("PPhotoToolbar", PPhotoToolbar);
+  app.component("PPhotoPreview", PPhotoPreview);
+  app.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
+  app.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
+  app.component("PPhotoEditDialog", PPhotoEditDialog);
+  app.component("PPhotoUploadDialog", PPhotoUploadDialog);
+
+  app.component("PServiceAdd", PServiceAdd);
+  app.component("PServiceRemove", PServiceRemove);
+  app.component("PServiceEdit", PServiceEdit);
+  app.component("PServiceUpload", PServiceUpload);
+}

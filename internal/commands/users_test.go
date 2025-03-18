@@ -3,33 +3,22 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUsersCommand(t *testing.T) {
 	t.Run("AddModifyAndRemoveJohn", func(t *testing.T) {
-		var err error
-
-		//Add John
-		ctx := NewTestContext([]string{"add", "--name=John", "--email=john@test.de", "--password=test1234", "--role=admin", "john"})
-
+		// Add John
 		// Run command with test context.
-		output := capture.Output(func() {
-			err = UsersAddCommand.Run(ctx)
-		})
+		output, err := RunWithTestContext(UsersAddCommand, []string{"add", "--name=John", "--email=john@test.de", "--password=test1234", "--role=admin", "john"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
-		ctx2 := NewTestContext([]string{"show", "john"})
-
 		// Run command with test context.
-		output2 := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx2)
-		})
+		output2, err := RunWithTestContext(UsersShowCommand, []string{"show", "john"})
 
 		//t.Logf(output2)
 		assert.NoError(t, err)
@@ -38,23 +27,16 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output2, "john@test.de")
 
 		//Modify John
-
-		// Create test context with flags and arguments.
-		ctx3 := NewTestContext([]string{"mod", "--name=Johnny", "--email=johnnny@test.de", "--password=test12345", "john"})
-
 		// Run command with test context.
-		output3 := capture.Output(func() {
-			err = UsersModCommand.Run(ctx3)
-		})
+		output3, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=Johnny", "--email=johnnny@test.de", "--password=test12345", "john"})
 
 		// Check command output for plausibility.
 		// t.Logf(output3)
 		assert.NoError(t, err)
 		assert.Empty(t, output3)
 
-		output4 := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx2)
-		})
+		// Run command with test context.
+		output4, err := RunWithTestContext(UsersShowCommand, []string{"show", "john"})
 
 		//t.Logf(output4)
 		assert.NoError(t, err)
@@ -64,22 +46,16 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output4, "| DeletedAt     | <nil>")
 
 		//Remove John
-		// Create test context with flags and arguments.
-		ctx5 := NewTestContext([]string{"rm", "--force", "john"})
-
 		// Run command with test context.
-		output5 := capture.Output(func() {
-			err = UsersRemoveCommand.Run(ctx5)
-		})
+		output5, err := RunWithTestContext(UsersRemoveCommand, []string{"rm", "--force", "john"})
 
 		// Check command output for plausibility.
 		// t.Logf(output5)
 		assert.NoError(t, err)
 		assert.Empty(t, output5)
 
-		output6 := capture.Output(func() {
-			err = UsersShowCommand.Run(ctx2)
-		})
+		// Run command with test context.
+		output6, err := RunWithTestContext(UsersShowCommand, []string{"show", "john"})
 
 		//t.Logf(output6)
 		assert.NoError(t, err)

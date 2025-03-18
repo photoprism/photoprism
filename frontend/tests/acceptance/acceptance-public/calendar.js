@@ -18,97 +18,87 @@ const photo = new Photo();
 const page = new Page();
 const albumdialog = new AlbumDialog();
 
-test.meta("testID", "calendar-001").meta({ type: "short", mode: "public" })(
-  "Common: View calendar",
-  async (t) => {
-    await menu.openPage("calendar");
+test.meta("testID", "calendar-001").meta({ type: "short", mode: "public" })("Common: View calendar", async (t) => {
+  await menu.openPage("calendar");
 
-    await t
-      .expect(Selector("a").withText("May 2019").visible)
-      .ok()
-      .expect(Selector("a").withText("October 2019").visible)
-      .ok();
+  await t
+    .expect(Selector("button").withText("May 2019").visible)
+    .ok()
+    .expect(Selector("button").withText("October 2019").visible)
+    .ok();
+});
+
+test.meta("testID", "calendar-002").meta({ mode: "public" })("Common: Update calendar details", async (t) => {
+  await menu.openPage("calendar");
+  await toolbar.search("March 2014");
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("March 2014");
+
+  await t.click(page.cardTitle.nth(0)).typeText(albumdialog.location, "Snow", { replace: true });
+
+  await t.expect(albumdialog.description.value).eql("").expect(albumdialog.category.value).eql("");
+
+  await t
+    .typeText(albumdialog.description, "We went to ski")
+    .typeText(albumdialog.category, "Mountains")
+    .pressKey("enter")
+    .click(albumdialog.dialogSave);
+
+  await t
+    .expect(page.cardTitle.nth(0).innerText)
+    .contains("March 2014")
+    .expect(page.cardDescription.nth(0).innerText)
+    .contains("We went to ski")
+    .expect(Selector("button.meta-category").innerText)
+    .contains("Mountains")
+    .expect(Selector("button.meta-location").innerText)
+    .contains("Snow");
+
+  await album.openNthAlbum(0);
+
+  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("March 2014");
+  await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
+  await menu.openPage("calendar");
+  if (t.browser.platform === "mobile") {
+    await toolbar.search("category:Mountains");
+  } else {
+    await toolbar.setFilter("category", "Mountains");
   }
-);
 
-test.meta("testID", "calendar-002").meta({ mode: "public" })(
-  "Common: Update calendar details",
-  async (t) => {
-    await menu.openPage("calendar");
-    await toolbar.search("March 2014");
-    const AlbumUid = await album.getNthAlbumUid("all", 0);
+  await t.expect(page.cardTitle.nth(0).innerText).contains("March 2014");
 
-    await t.expect(page.cardTitle.nth(0).innerText).contains("March 2014");
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
 
-    await t.click(page.cardTitle.nth(0)).typeText(albumdialog.location, "Snow", { replace: true });
+  await t
+    .expect(albumdialog.description.value)
+    .eql("We went to ski")
+    .expect(albumdialog.category.value)
+    .eql("Mountains")
+    .expect(albumdialog.location.value)
+    .eql("Snow");
 
-    await t
-      .expect(albumdialog.description.value)
-      .eql("")
-      .expect(albumdialog.category.value)
-      .eql("");
+  await t
+    .click(albumdialog.category)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.description)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.location)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.dialogSave);
+  await menu.openPage("calendar");
+  await toolbar.search("March 2014");
 
-    await t
-      .typeText(albumdialog.description, "We went to ski")
-      .typeText(albumdialog.category, "Mountains")
-      .pressKey("enter")
-      .click(albumdialog.dialogSave);
-
-    await t
-      .expect(page.cardTitle.nth(0).innerText)
-      .contains("March 2014")
-      .expect(page.cardDescription.nth(0).innerText)
-      .contains("We went to ski")
-      .expect(Selector("div.caption").nth(1).innerText)
-      .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
-      .contains("Snow");
-
-    await album.openNthAlbum(0);
-
-    await t.expect(toolbar.toolbarSecondTitle.innerText).contains("March 2014");
-    await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
-    await menu.openPage("calendar");
-    if (t.browser.platform === "mobile") {
-      await toolbar.search("category:Mountains");
-    } else {
-      await toolbar.setFilter("category", "Mountains");
-    }
-
-    await t.expect(page.cardTitle.nth(0).innerText).contains("March 2014");
-
-    await album.openAlbumWithUid(AlbumUid);
-    await toolbar.triggerToolbarAction("edit");
-
-    await t
-      .expect(albumdialog.description.value)
-      .eql("We went to ski")
-      .expect(albumdialog.category.value)
-      .eql("Mountains")
-      .expect(albumdialog.location.value)
-      .eql("Snow");
-
-    await t
-      .click(albumdialog.category)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.description)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.location)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.dialogSave);
-    await menu.openPage("calendar");
-    await toolbar.search("March 2014");
-
-    await t
-      .expect(page.cardDescription.innerText)
-      .notContains("We went to ski")
-      .expect(Selector("div.caption").nth(0).innerText)
-      .notContains("Snow");
-  }
-);
+  await t
+    .expect(page.cardDescription.innerText)
+    .notContains("We went to ski")
+    .expect(Selector("button.meta-location").exists)
+    .notOk();
+});
 
 test.meta("testID", "calendar-003").meta({ mode: "public" })(
   "Common: Create, Edit, delete sharing link for calendar",

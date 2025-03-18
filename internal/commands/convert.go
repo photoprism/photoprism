@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -14,18 +14,20 @@ import (
 )
 
 // ConvertCommand configures the command name, flags, and action.
-var ConvertCommand = cli.Command{
+var ConvertCommand = &cli.Command{
 	Name:      "convert",
 	Usage:     "Converts files in other formats to JPEG and AVC as needed",
 	ArgsUsage: "[subfolder]",
 	Flags: []cli.Flag{
-		cli.StringSliceFlag{
-			Name:  "ext, e",
-			Usage: "only process files with the specified extensions, e.g. mp4",
+		&cli.StringSliceFlag{
+			Name:    "ext",
+			Aliases: []string{"e"},
+			Usage:   "only process files with the specified extensions, e.g. mp4",
 		},
-		cli.BoolFlag{
-			Name:  "force, f",
-			Usage: "replace existing JPEG files in the sidecar folder",
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "replace existing JPEG files in the sidecar folder",
 		},
 	},
 	Action: convertAction,

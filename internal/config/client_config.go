@@ -32,6 +32,7 @@ type ClientConfig struct {
 	Flags            string              `json:"flags"`
 	BaseUri          string              `json:"baseUri"`
 	StaticUri        string              `json:"staticUri"`
+	ClientAssets     *ClientAssets       `json:"-"`
 	CssUri           string              `json:"cssUri"`
 	JsUri            string              `json:"jsUri"`
 	ManifestUri      string              `json:"manifestUri"`
@@ -67,6 +68,7 @@ type ClientConfig struct {
 	RegisterUri      string              `json:"registerUri"`
 	PasswordLength   int                 `json:"passwordLength"`
 	PasswordResetUri string              `json:"passwordResetUri"`
+	Develop          bool                `json:"develop"`
 	Experimental     bool                `json:"experimental"`
 	AlbumCategories  []string            `json:"albumCategories"`
 	Albums           entity.Albums       `json:"albums"`
@@ -89,18 +91,24 @@ type ClientConfig struct {
 	Categories       CategoryLabels      `json:"categories"`
 	Clip             int                 `json:"clip"`
 	Server           env.Resources       `json:"server"`
+	Usage            Usage               `json:"usage"`
 	Settings         *customize.Settings `json:"settings,omitempty"`
 	ACL              acl.Grants          `json:"acl,omitempty"`
 	Ext              Map                 `json:"ext"`
 }
 
 // ApplyACL updates the client config values based on the ACL and Role provided.
-func (c ClientConfig) ApplyACL(a acl.ACL, r acl.Role) ClientConfig {
+func (c *ClientConfig) ApplyACL(a acl.ACL, r acl.Role) *ClientConfig {
 	if c.Settings != nil {
 		c.Settings = c.Settings.ApplyACL(a, r)
 	}
 
 	c.ACL = a.Grants(r)
+
+	if !c.ACL[acl.ResourceUsers].Allow(acl.ActionView) {
+		c.Usage.UsersFreePct = -1
+		c.Usage.UsersUsedPct = -1
+	}
 
 	return c
 }
@@ -201,6 +209,10 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "sponsor")
 	}
 
+	if c.Develop() {
+		flags = append(flags, "develop")
+	}
+
 	if c.Experimental() {
 		flags = append(flags, "experimental")
 	}
@@ -221,14 +233,14 @@ func (c *Config) Flags() (flags []string) {
 }
 
 // ClientPublic returns config values for use by the JavaScript UI and other clients.
-func (c *Config) ClientPublic() ClientConfig {
+func (c *Config) ClientPublic() *ClientConfig {
 	if c.Public() {
 		return c.ClientUser(true).ApplyACL(acl.Rules, acl.RoleAdmin)
 	}
 
 	a := c.ClientAssets()
 
-	cfg := ClientConfig{
+	cfg := &ClientConfig{
 		Settings: c.PublicSettings(),
 		ACL:      acl.Rules.Grants(acl.RoleNone),
 		Disable: ClientDisable{
@@ -258,6 +270,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
 		StaticUri:        c.StaticUri(),
+		ClientAssets:     a,
 		CssUri:           a.AppCssUri(),
 		JsUri:            a.AppJsUri(),
 		ApiUri:           c.ApiUri(),
@@ -292,6 +305,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		LoginUri:         c.LoginUri(),
 		RegisterUri:      c.RegisterUri(),
 		PasswordResetUri: c.PasswordResetUri(),
+		Develop:          c.Develop(),
 		Experimental:     c.Experimental(),
 		Albums:           entity.Albums{},
 		Cameras:          entity.Cameras{},
@@ -315,10 +329,10 @@ func (c *Config) ClientPublic() ClientConfig {
 }
 
 // ClientShare returns reduced client config values for share link visitors.
-func (c *Config) ClientShare() ClientConfig {
+func (c *Config) ClientShare() *ClientConfig {
 	a := c.ClientAssets()
 
-	cfg := ClientConfig{
+	cfg := &ClientConfig{
 		Settings: c.ShareSettings(),
 		ACL:      acl.Rules.Grants(acl.RoleVisitor),
 		Disable: ClientDisable{
@@ -348,6 +362,7 @@ func (c *Config) ClientShare() ClientConfig {
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
 		StaticUri:        c.StaticUri(),
+		ClientAssets:     a,
 		CssUri:           a.AppCssUri(),
 		JsUri:            a.ShareJsUri(),
 		ApiUri:           c.ApiUri(),
@@ -383,6 +398,7 @@ func (c *Config) ClientShare() ClientConfig {
 		LoginUri:         c.LoginUri(),
 		RegisterUri:      c.RegisterUri(),
 		PasswordResetUri: c.PasswordResetUri(),
+		Develop:          c.Develop(),
 		Experimental:     c.Experimental(),
 		Albums:           entity.Albums{},
 		Cameras:          entity.Cameras{},
@@ -406,7 +422,7 @@ func (c *Config) ClientShare() ClientConfig {
 }
 
 // ClientUser returns complete client config values for users with full access.
-func (c *Config) ClientUser(withSettings bool) ClientConfig {
+func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 	a := c.ClientAssets()
 
 	var s *customize.Settings
@@ -415,7 +431,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		s = c.Settings()
 	}
 
-	cfg := ClientConfig{
+	cfg := &ClientConfig{
 		Settings: s,
 		Disable: ClientDisable{
 			Settings:       c.DisableSettings(),
@@ -445,6 +461,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
 		StaticUri:        c.StaticUri(),
+		ClientAssets:     a,
 		CssUri:           a.AppCssUri(),
 		JsUri:            a.AppJsUri(),
 		ApiUri:           c.ApiUri(),
@@ -481,6 +498,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		RegisterUri:      c.RegisterUri(),
 		PasswordLength:   c.PasswordLength(),
 		PasswordResetUri: c.PasswordResetUri(),
+		Develop:          c.Develop(),
 		Experimental:     c.Experimental(),
 		Albums:           entity.Albums{},
 		Cameras:          entity.Cameras{},
@@ -498,6 +516,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		ManifestUri:      c.ClientManifestUri(),
 		Clip:             txt.ClipDefault,
 		Server:           env.Info(),
+		Usage:            c.Usage(),
 		Ext:              ClientExt(c, ClientUser),
 	}
 
@@ -682,12 +701,12 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 }
 
 // ClientRole provides the client config values for the specified user role.
-func (c *Config) ClientRole(role acl.Role) ClientConfig {
+func (c *Config) ClientRole(role acl.Role) *ClientConfig {
 	return c.ClientUser(true).ApplyACL(acl.Rules, role)
 }
 
 // ClientSession provides the client config values for the specified session.
-func (c *Config) ClientSession(sess *entity.Session) (cfg ClientConfig) {
+func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 	if sess.NoUser() && sess.IsClient() {
 		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.ClientRole())
 		cfg.Settings = c.SessionSettings(sess)

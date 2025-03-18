@@ -10,6 +10,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -27,9 +29,8 @@ type Photo struct {
 	TimeZone         string        `json:"TimeZone" select:"photos.time_zone"`
 	PhotoPath        string        `json:"Path" select:"photos.photo_path"`
 	PhotoName        string        `json:"Name" select:"photos.photo_name"`
-	OriginalName     string        `json:"OriginalName" select:"photos.original_name"`
 	PhotoTitle       string        `json:"Title" select:"photos.photo_title"`
-	PhotoDescription string        `json:"Description" select:"photos.photo_description"`
+	PhotoCaption     string        `json:"Caption" select:"photos.photo_caption"`
 	PhotoYear        int           `json:"Year" select:"photos.photo_year"`
 	PhotoMonth       int           `json:"Month" select:"photos.photo_month"`
 	PhotoDay         int           `json:"Day" select:"photos.photo_day"`
@@ -44,7 +45,7 @@ type Photo struct {
 	PhotoFaces       int           `json:"Faces,omitempty" select:"photos.photo_faces"`
 	PhotoQuality     int           `json:"Quality" select:"photos.photo_quality"`
 	PhotoResolution  int           `json:"Resolution" select:"photos.photo_resolution"`
-	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"photos.photo_duration"`
+	PhotoDuration    time.Duration `json:"Duration,omitempty" select:"photos.photo_duration"`
 	PhotoColor       int16         `json:"Color" select:"photos.photo_color"`
 	PhotoScan        bool          `json:"Scan" select:"photos.photo_scan"`
 	PhotoPanorama    bool          `json:"Panorama" select:"photos.photo_panorama"`
@@ -73,6 +74,7 @@ type Photo struct {
 	FileUID          string        `json:"FileUID" select:"files.file_uid"`
 	FileRoot         string        `json:"FileRoot" select:"files.file_root"`
 	FileName         string        `json:"FileName" select:"files.file_name"`
+	OriginalName     string        `json:"OriginalName" select:"files.original_name"`
 	FileHash         string        `json:"Hash" select:"files.file_hash"`
 	FileWidth        int           `json:"Width" select:"files.file_width"`
 	FileHeight       int           `json:"Height" select:"files.file_height"`
@@ -84,6 +86,7 @@ type Photo struct {
 	FileDuration     time.Duration `json:"-" select:"files.file_duration"`
 	FileFPS          float64       `json:"-" select:"files.file_fps"`
 	FileFrames       int           `json:"-" select:"files.file_frames"`
+	FilePages        int           `json:"-" select:"files.file_pages"`
 	FileCodec        string        `json:"-" select:"files.file_codec"`
 	FileType         string        `json:"-" select:"files.file_type"`
 	MediaType        string        `json:"-" select:"files.media_type"`
@@ -191,6 +194,31 @@ func (m *Photo) IsPlayable() bool {
 	default:
 		return false
 	}
+}
+
+// MediaInfo returns the media file hash and codec depending on the media type.
+func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string) {
+	if m.PhotoType == entity.MediaVideo || m.PhotoType == entity.MediaLive {
+		for _, f := range m.Files {
+			if f.FileVideo && f.FileHash != "" {
+				return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR())
+			}
+		}
+	} else if m.PhotoType == entity.MediaVector {
+		for _, f := range m.Files {
+			if f.MediaType == entity.MediaVector && f.FileHash != "" {
+				return f.FileHash, f.FileCodec, clean.ContentType(f.FileMime)
+			}
+		}
+	} else if m.PhotoType == entity.MediaDocument {
+		for _, f := range m.Files {
+			if f.MediaType == entity.MediaDocument && f.FileHash != "" {
+				return f.FileHash, f.FileCodec, clean.ContentType(f.FileMime)
+			}
+		}
+	}
+
+	return m.FileHash, "", m.FileMime
 }
 
 // ShareBase returns a meaningful file name for sharing.

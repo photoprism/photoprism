@@ -21,16 +21,11 @@ test.meta("testID", "originals-001").meta({ type: "short", mode: "public" })(
   async (t) => {
     await menu.openPage("originals");
     await t.click(Selector("button").withText("Vacation"));
-    const FirstItemInVacationName = await Selector("div.result", { timeout: 15000 }).nth(0)
-      .innerText;
+    const FirstItemInVacationName = await Selector("div.result", { timeout: 15000 }).nth(0).innerText;
     const KanadaFolderUid = await originals.getNthFolderUid(0);
     const SecondItemInVacationName = await Selector("div.result").nth(1).innerText;
 
-    await t
-      .expect(FirstItemInVacationName)
-      .contains("Kanada")
-      .expect(SecondItemInVacationName)
-      .contains("Korsika");
+    await t.expect(FirstItemInVacationName).contains("Kanada").expect(SecondItemInVacationName).contains("Korsika");
 
     await originals.openFolderWithUid(KanadaFolderUid);
 
@@ -44,8 +39,7 @@ test.meta("testID", "originals-001").meta({ type: "short", mode: "public" })(
       .contains("originals-001_2.jpg");
 
     await t.click(Selector("button").withText("BotanicalGarden"));
-    const FirstItemInBotanicalGardenName = await Selector("div.result", { timeout: 15000 }).nth(0)
-      .innerText;
+    const FirstItemInBotanicalGardenName = await Selector("div.result", { timeout: 15000 }).nth(0).innerText;
     await t.expect(FirstItemInBotanicalGardenName).contains("originals-001_1.jpg");
     await t.click(Selector('a[href="/library/index/files/Vacation"]'));
     const FolderCount = await originals.getFolderCount();
@@ -88,19 +82,16 @@ test.meta("testID", "originals-002").meta({ type: "short", mode: "public" })(
   }
 );
 
-test.meta("testID", "originals-003").meta({ mode: "public" })(
-  "Common: Download available in originals",
-  async (t) => {
-    await menu.openPage("originals");
-    const FirstFile = await originals.getNthFileUid(0);
-    await originals.triggerHoverAction("is-file", "uid", FirstFile, "select");
-    await contextmenu.checkContextMenuCount("1");
-    await contextmenu.checkContextMenuActionAvailability("download", true);
-    await contextmenu.clearSelection();
-    const FirstFolder = await originals.getNthFolderUid(0);
-    await originals.triggerHoverAction("is-folder", "uid", FirstFolder, "select");
-    await contextmenu.checkContextMenuCount("1");
-    await contextmenu.checkContextMenuActionAvailability("download", true);
-    await contextmenu.clearSelection();
-  }
-);
+test.meta("testID", "originals-003").meta({ mode: "public" })("Common: Download available in originals", async (t) => {
+  await menu.openPage("originals");
+  const FirstFile = await originals.getNthFileUid(0);
+  await originals.triggerHoverAction("is-file", "uid", FirstFile, "select");
+  await contextmenu.checkContextMenuCount("1");
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.clearSelection();
+  const FirstFolder = await originals.getNthFolderUid(0);
+  await originals.triggerHoverAction("is-folder", "uid", FirstFolder, "select");
+  await contextmenu.checkContextMenuCount("1");
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.clearSelection();
+});

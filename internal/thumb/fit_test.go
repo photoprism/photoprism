@@ -17,7 +17,9 @@ func TestFit(t *testing.T) {
 	assert.Equal(t, Sizes[Fit2560], Fit(1600, 1600))
 	assert.Equal(t, Sizes[Fit4096], Fit(1000, 3000))
 	assert.Equal(t, Sizes[Fit4096], Fit(2300, 2000))
-	assert.Equal(t, Sizes[Fit7680], Fit(5000, 5000))
+	assert.Equal(t, Sizes[Fit5120], Fit(5000, 2000))
+	assert.Equal(t, Sizes[Fit7680], Fit(6020, 2000))
+	assert.Equal(t, Sizes[Fit7680], Fit(8000, 8000))
 }
 
 func TestFitBounds(t *testing.T) {

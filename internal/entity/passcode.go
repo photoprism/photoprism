@@ -8,12 +8,12 @@ import (
 	"image/png"
 	"time"
 
+	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/pquerna/otp"
 )
 
 // Passcode represents a two-factor authentication key.
@@ -326,7 +326,7 @@ func (m *Passcode) Image(size int) (image.Image, error) {
 }
 
 // PNG returns a PNG image buffer with a QR Code that can be used to initialize compatible authenticator apps.
-func (m *Passcode) PNG(size int) *bytes.Buffer {
+func (m *Passcode) Png(size int) *bytes.Buffer {
 	if m == nil {
 		return nil
 	}

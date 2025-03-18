@@ -21,6 +21,7 @@ import (
 //	@Summary	adds a label to a photo
 //	@Id			AddPhotoLabel
 //	@Tags		Labels, Photos
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Photo
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -42,18 +43,21 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Label
+		frm := &form.Label{}
 
 		// Assign and validate request form values.
-		if err = c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(frm); err != nil {
 			AbortBadRequest(c)
+			return
+		} else if err = frm.Validate(); err != nil {
+			AbortInvalidName(c)
 			return
 		}
 
-		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(f.LabelName, f.LabelPriority))
+		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(frm.LabelName, frm.LabelPriority))
 
 		if labelEntity == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create label"})
+			AbortInvalidName(c)
 			return
 		}
 
@@ -62,19 +66,19 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, f.Uncertainty, "manual"))
+		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, frm.Uncertainty, "manual"))
 
 		if photoLabel == nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to update photo label"})
 			return
 		}
 
-		if photoLabel.Uncertainty > f.Uncertainty {
-			if err := photoLabel.Updates(map[string]interface{}{
-				"Uncertainty": f.Uncertainty,
+		if photoLabel.Uncertainty > frm.Uncertainty {
+			if updateErr := photoLabel.Updates(map[string]interface{}{
+				"Uncertainty": frm.Uncertainty,
 				"LabelSrc":    entity.SrcManual,
-			}); err != nil {
-				log.Errorf("label: %s", err)
+			}); updateErr != nil {
+				log.Errorf("label: %s", updateErr)
 			}
 		}
 
@@ -103,6 +107,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 //	@Summary	removes a label from a photo
 //	@Id			RemovePhotoLabel
 //	@Tags		Labels, Photos
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Photo
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -140,6 +145,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 
 		if label.LabelSrc == classify.SrcManual ||
 			label.LabelSrc == classify.SrcTitle ||
+			label.LabelSrc == classify.SrcCaption ||
 			label.LabelSrc == classify.SrcSubject ||
 			label.LabelSrc == classify.SrcKeyword {
 			logErr("label", entity.Db().Delete(&label).Error)
@@ -175,6 +181,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 //	@Summary	changes a photo label
 //	@Id			UpdatePhotoLabel
 //	@Tags		Labels, Photos
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Photo
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -190,7 +197,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		// TODO: Code clean-up, simplify
+		// TODO: Clean up and simplify this.
 
 		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
 
@@ -213,12 +220,12 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := c.BindJSON(&label); err != nil {
+		if err = c.BindJSON(label); err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		if err := label.Save(); err != nil {
+		if err = label.Save(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
@@ -230,7 +237,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := p.SaveLabels(); err != nil {
+		if err = p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}

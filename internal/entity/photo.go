@@ -49,8 +49,10 @@ type Photo struct {
 	TypeSrc          string        `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
 	PhotoTitle       string        `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
 	TitleSrc         string        `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
-	PhotoDescription string        `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
-	DescriptionSrc   string        `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
+	PhotoCaption     string        `gorm:"type:VARCHAR(4096);" json:"Caption" yaml:"Caption,omitempty"`
+	CaptionSrc       string        `gorm:"type:VARBINARY(8);" json:"CaptionSrc" yaml:"CaptionSrc,omitempty"`
+	PhotoDescription string        `gorm:"-" json:"Description,omitempty" yaml:"Description,omitempty"`
+	DescriptionSrc   string        `gorm:"-" json:"DescriptionSrc,omitempty" yaml:"DescriptionSrc,omitempty"`
 	PhotoPath        string        `gorm:"type:VARBINARY(1024);index:idx_photos_path_name;" json:"Path" yaml:"-"`
 	PhotoName        string        `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
@@ -140,29 +142,35 @@ func NewUserPhoto(stackable bool, userUid string) Photo {
 }
 
 // SavePhotoForm saves a model in the database using form data.
-func SavePhotoForm(model Photo, form form.Photo) error {
-	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng || model.PhotoCountry != form.PhotoCountry
+func SavePhotoForm(m *Photo, form form.Photo) error {
+	if m == nil {
+		return fmt.Errorf("photo is nil")
+	}
 
-	if err := deepcopier.Copy(&model).From(form); err != nil {
+	locChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng || m.PhotoCountry != form.PhotoCountry
+
+	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
 	}
 
-	if !model.HasID() {
+	m.NormalizeValues()
+
+	if !m.HasID() {
 		return errors.New("cannot save form when photo id is missing")
 	}
 
 	// Update time fields.
-	if model.TimeZoneUTC() {
-		model.TakenAtLocal = model.TakenAt
+	if m.TimeZoneUTC() {
+		m.TakenAtLocal = m.TakenAt
 	} else {
-		model.TakenAt = model.GetTakenAt()
+		m.TakenAt = m.GetTakenAt()
 	}
 
-	model.UpdateDateFields()
+	m.UpdateDateFields()
 
-	details := model.GetDetails()
+	details := m.GetDetails()
 
-	if form.Details.PhotoID == model.ID {
+	if form.Details.PhotoID == m.ID {
 		if err := deepcopier.Copy(details).From(form.Details); err != nil {
 			return err
 		}
@@ -170,10 +178,10 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		details.Keywords = strings.Join(txt.UniqueWords(txt.Words(details.Keywords)), ", ")
 	}
 
-	if locChanged && model.PlaceSrc == SrcManual {
-		locKeywords, labels := model.UpdateLocation()
+	if locChanged && m.PlaceSrc == SrcManual {
+		locKeywords, labels := m.UpdateLocation()
 
-		model.AddLabels(labels)
+		m.AddLabels(labels)
 
 		w := txt.UniqueWords(txt.Words(details.Keywords))
 		w = append(w, locKeywords...)
@@ -181,23 +189,23 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 	}
 
-	if err := model.UpdateLabels(); err != nil {
-		log.Errorf("photo: %s %s while updating labels", model.String(), err)
+	if err := m.UpdateLabels(); err != nil {
+		log.Errorf("photo: %s %s while updating labels", m.String(), err)
 	}
 
-	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
+	if err := m.GenerateTitle(m.ClassifyLabels()); err != nil {
 		log.Info(err)
 	}
 
-	if err := model.IndexKeywords(); err != nil {
-		log.Errorf("photo: %s %s while indexing keywords", model.String(), err.Error())
+	if err := m.IndexKeywords(); err != nil {
+		log.Errorf("photo: %s %s while indexing keywords", m.String(), err.Error())
 	}
 
 	edited := Now()
-	model.EditedAt = &edited
-	model.PhotoQuality = model.QualityScore()
+	m.EditedAt = &edited
+	m.PhotoQuality = m.QualityScore()
 
-	if err := model.Save(); err != nil {
+	if err := m.Save(); err != nil {
 		return err
 	}
 
@@ -352,7 +360,7 @@ func (m *Photo) SaveLabels() error {
 
 	m.UpdateDateFields()
 
-	if err := m.UpdateTitle(labels); err != nil {
+	if err := m.GenerateTitle(labels); err != nil {
 		log.Info(err)
 	}
 
@@ -452,6 +460,10 @@ func (m *Photo) UpdateLabels() error {
 		return err
 	}
 
+	if err := m.UpdateCaptionLabels(); err != nil {
+		return err
+	}
+
 	if err := m.UpdateSubjectLabels(); err != nil {
 		return err
 	}
@@ -463,32 +475,18 @@ func (m *Photo) UpdateLabels() error {
 	return nil
 }
 
-// UpdateTitleLabels updates the labels assigned based on the photo title.
-func (m *Photo) UpdateTitleLabels() error {
-	if m == nil {
-		return nil
-	} else if m.PhotoTitle == "" {
-		return nil
-	} else if SrcPriority[m.TitleSrc] < SrcPriority[SrcName] {
-		return nil
+// SubjectNames returns all known subject names.
+func (m *Photo) SubjectNames() []string {
+	if f, err := m.PrimaryFile(); err == nil {
+		return f.SubjectNames()
 	}
 
-	keywords := txt.UniqueKeywords(m.PhotoTitle)
+	return nil
+}
 
-	var labelIds []uint
-
-	for _, w := range keywords {
-		if label, err := FindLabel(w, true); err == nil {
-			if label.Deleted() {
-				continue
-			}
-
-			labelIds = append(labelIds, label.ID)
-			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 10, classify.SrcTitle))
-		}
-	}
-
-	return Db().Where("label_src = ? AND photo_id = ? AND label_id NOT IN (?)", classify.SrcTitle, m.ID, labelIds).Delete(&PhotoLabel{}).Error
+// SubjectKeywords returns keywords for all known subject names.
+func (m *Photo) SubjectKeywords() []string {
+	return txt.Words(strings.Join(m.SubjectNames(), " "))
 }
 
 // UpdateSubjectLabels updates the labels assigned based on photo subject metadata.
@@ -499,7 +497,7 @@ func (m *Photo) UpdateSubjectLabels() error {
 		return nil
 	} else if details.Subject == "" {
 		return nil
-	} else if SrcPriority[details.SubjectSrc] < SrcPriority[SrcName] {
+	} else if SrcPriority[details.SubjectSrc] < SrcPriority[SrcMeta] {
 		return nil
 	}
 
@@ -509,12 +507,12 @@ func (m *Photo) UpdateSubjectLabels() error {
 
 	for _, w := range keywords {
 		if label, err := FindLabel(w, true); err == nil {
-			if label.Deleted() {
+			if label.Skip() {
 				continue
 			}
 
 			labelIds = append(labelIds, label.ID)
-			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 15, classify.SrcSubject))
+			FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, label.ID, 20, classify.SrcSubject))
 		}
 	}
 
@@ -537,7 +535,7 @@ func (m *Photo) UpdateKeywordLabels() error {
 
 	for _, w := range keywords {
 		if label, err := FindLabel(w, true); err == nil {
-			if label.Deleted() {
+			if label.Skip() {
 				continue
 			}
 
@@ -557,9 +555,9 @@ func (m *Photo) IndexKeywords() error {
 	var keywordIds []uint
 	var keywords []string
 
-	// Add title, description and other keywords
-	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
-	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
+	// Extract keywords from title, caption, and other sources.
+	keywords = append(keywords, txt.Keywords(m.GetTitle())...)
+	keywords = append(keywords, txt.Keywords(m.GetCaption())...)
 	keywords = append(keywords, m.SubjectKeywords()...)
 	keywords = append(keywords, txt.Words(details.Keywords)...)
 	keywords = append(keywords, txt.Keywords(details.Subject)...)
@@ -628,6 +626,19 @@ func (m *Photo) PreloadMany() {
 	m.PreloadAlbums()
 }
 
+// NormalizeValues updates the model values with the values from deprecated fields, if any.
+func (m *Photo) NormalizeValues() (normalized bool) {
+	if m.PhotoCaption == "" && m.PhotoDescription != "" {
+		m.PhotoCaption = m.PhotoDescription
+		m.CaptionSrc = m.DescriptionSrc
+		m.PhotoDescription = ""
+		m.DescriptionSrc = ""
+		normalized = true
+	}
+
+	return normalized
+}
+
 // NoCameraSerial checks if the photo has no CameraSerial
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
@@ -643,12 +654,7 @@ func (m *Photo) UnknownLens() bool {
 	return m.LensID == 0 || m.LensID == UnknownLens.ID
 }
 
-// HasDescription checks if the photo has a description.
-func (m *Photo) HasDescription() bool {
-	return m.PhotoDescription != ""
-}
-
-// GetDetails returns the photo description details.
+// GetDetails returns optional photo metadata.
 func (m *Photo) GetDetails() *Details {
 	if m.Details != nil {
 		m.Details.PhotoID = m.ID
@@ -686,7 +692,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
 
 		if labelEntity == nil {
-			log.Errorf("index: label %s should not be nil - you may have found a bug (%s)", clean.Log(classifyLabel.Title()), m)
+			log.Errorf("index: label %s coud not be created (%s)", clean.Log(classifyLabel.Title()), m)
 			continue
 		}
 
@@ -717,22 +723,6 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 	}
 
 	Db().Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
-}
-
-// SetDescription changes the photo description if not empty and from the same source.
-func (m *Photo) SetDescription(desc, source string) {
-	newDesc := txt.Clip(desc, txt.ClipLongText)
-
-	if newDesc == "" {
-		return
-	}
-
-	if (SrcPriority[source] < SrcPriority[m.DescriptionSrc]) && m.HasDescription() {
-		return
-	}
-
-	m.PhotoDescription = newDesc
-	m.DescriptionSrc = source
 }
 
 // SetCamera updates the camera.
@@ -915,11 +905,6 @@ func (m *Photo) DeletePermanently() (files Files, err error) {
 	}
 
 	return files, UnscopedDb().Delete(m).Error
-}
-
-// NoDescription returns true if the photo has no description.
-func (m *Photo) NoDescription() bool {
-	return m.PhotoDescription == ""
 }
 
 // Update a column in the database.

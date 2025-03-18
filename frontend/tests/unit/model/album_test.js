@@ -1,5 +1,5 @@
 import "../fixtures";
-import Album from "model/album";
+import { Album, BatchSize } from "model/album";
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -311,10 +311,10 @@ describe("model/album", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Album.batchSize(), 24);
+    assert.equal(Album.batchSize(), BatchSize);
     Album.setBatchSize(30);
     assert.equal(Album.batchSize(), 30);
-    Album.setBatchSize(24);
+    Album.setBatchSize(BatchSize);
   });
 
   it("should like album", () => {

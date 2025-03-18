@@ -69,6 +69,7 @@ func GetPhoto(router *gin.RouterGroup) {
 //	@Summary	updates picture details and returns them as JSON
 //	@Id			UpdatePhoto
 //	@Tags		Photos
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Photo
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -92,7 +93,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		// 1) Init form with model values
-		f, err := form.NewPhoto(m)
+		frm, err := form.NewPhoto(m)
 
 		if err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
@@ -100,16 +101,16 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		// 2) Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&frm); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
 
 		// 3) Save model with values from form
-		if err := entity.SavePhotoForm(m, f); err != nil {
+		if err = entity.SavePhotoForm(&m, frm); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
-		} else if f.PhotoPrivate {
+		} else if frm.PhotoPrivate {
 			FlushCoverCache()
 		}
 
@@ -205,7 +206,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		}
 
 		if c.Query("download") != "" {
-			AddDownloadHeader(c, clean.UID(c.Param("uid"))+fs.ExtYAML)
+			AddDownloadHeader(c, clean.UID(c.Param("uid"))+fs.ExtYaml)
 		}
 
 		c.Data(http.StatusOK, "text/x-yaml; charset=utf-8", data)
@@ -217,6 +218,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 //	@Summary	marks a photo in review as approved
 //	@Id			ApprovePhoto
 //	@Tags		Photos
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	gin.H
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
@@ -257,6 +259,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 //	@Summary	sets the primary file for a photo
 //	@Id			PhotoPrimary
 //	@Tags		Photos, Stacks
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	entity.Photo
 //	@Failure	401,403,404,429,500	{object}	i18n.Response

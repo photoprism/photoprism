@@ -1,5 +1,5 @@
-#photoprism .p-folders-cards .p-folder-like,
-#photoprism .p-files-cards .p-files-like {
+.p-folders-cards .p-folder-like,
+.p-files-cards .p-files-like {
     left: 4px;
     bottom: 4px;
 }

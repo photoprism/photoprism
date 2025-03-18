@@ -95,10 +95,7 @@ describe("model/file", () => {
       FileType: "raw",
     };
     const file3 = new File(values3);
-    assert.equal(
-      file3.thumbnailUrl("tile_224"),
-      "/api/v1/t/bd66bd2c304f45f6c160df375f34b49eb7aef321/public/tile_224"
-    );
+    assert.equal(file3.thumbnailUrl("tile_224"), "/api/v1/t/bd66bd2c304f45f6c160df375f34b49eb7aef321/public/tile_224");
     const values4 = {
       InstanceID: 5,
       UID: "ABC123",
@@ -335,7 +332,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file5 = new File(values5);
-    assert.equal(file5.typeInfo(), "Scalable Vector Graphics");
+    assert.equal(file5.typeInfo(), "SVG");
   });
 
   it("should get size info", () => {
@@ -350,7 +347,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file = new File(values);
-    assert.equal(file.sizeInfo(), "7.8 KB");
+    assert.equal(file.sizeInfo(), "8 KB");
     const values2 = {
       InstanceID: 5,
       UID: "ABC123",
@@ -362,7 +359,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file2 = new File(values2);
-    assert.equal(file2.sizeInfo(), "7638.9 MB");
+    assert.equal(file2.sizeInfo(), "7.5 GB");
     const values3 = {
       InstanceID: 5,
       UID: "ABC123",
@@ -376,7 +373,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file3 = new File(values3);
-    assert.equal(file3.sizeInfo(), "500 × 800, 7638.9 MB");
+    assert.equal(file3.sizeInfo(), "500 × 800, 7.5 GB");
   });
 
   it("should like file", () => {

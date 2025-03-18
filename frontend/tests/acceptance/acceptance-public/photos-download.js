@@ -44,7 +44,7 @@ test.meta("testID", "photos-download-001").meta({ type: "short", mode: "public" 
     await t.click(Selector("div").withAttribute("data-uid", SecondPhotoUid));
     await photoviewer.openPhotoViewer("uid", SecondPhotoUid);
     await logger.clear();
-    await photoviewer.triggerPhotoViewerAction("download");
+    await photoviewer.triggerPhotoViewerAction("download-button");
     await logger.clear();
     await photoviewer.triggerPhotoViewerAction("close");
   }
@@ -107,7 +107,7 @@ test.meta("testID", "photos-download-004").meta({ mode: "public" })(
     await logger.clear();
     await contextmenu.clearSelection();
     await t.click(Selector("div").withAttribute("data-uid", Photo));
-    await t.expect(Selector("#photo-viewer").visible).ok().hover(Selector(".action-download"));
+    await t.expect(Selector("div.p-lightbox__pswp").visible).ok().hover(Selector(".action-download"));
     await logger.clear();
     await t.click(Selector(".action-download"));
     const requestInfo3 = await logger.requests[1].response;

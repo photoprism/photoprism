@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -23,36 +23,36 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Event from "pubsub-js";
-import { $gettext } from "vm.js";
+import $event from "common/event";
+import { $gettext } from "common/gettext";
 
 let ajaxPending = 0;
 let ajaxCallbacks = [];
 
-const Notify = {
+const $notify = {
   info: function (message) {
-    Event.publish("notify.info", { message });
+    $event.publish("notify.info", { message });
   },
   warn: function (message) {
-    Event.publish("notify.warning", { message });
+    $event.publish("notify.warning", { message });
   },
   error: function (message) {
-    Event.publish("notify.error", { message });
+    $event.publish("notify.error", { message });
   },
   success: function (message) {
-    Event.publish("notify.success", { message });
+    $event.publish("notify.success", { message });
   },
   logout: function (message) {
-    Event.publish("notify.error", { message });
-    Event.publish("session.logout", { message });
+    $event.publish("notify.error", { message });
+    $event.publish("session.logout", { message });
   },
   ajaxStart: function () {
     ajaxPending++;
-    Event.publish("ajax.start");
+    $event.publish("ajax.start");
   },
   ajaxEnd: function () {
     ajaxPending--;
-    Event.publish("ajax.end");
+    $event.publish("ajax.end");
 
     if (!this.ajaxBusy()) {
       ajaxCallbacks.forEach((resolve) => {
@@ -102,4 +102,4 @@ const Notify = {
   },
 };
 
-export default Notify;
+export default $notify;

@@ -10,6 +10,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/mandykoh/prism/meta"
 	"github.com/mandykoh/prism/meta/autometa"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media/colors"
 )

@@ -3,8 +3,9 @@ package entity
 import (
 	"time"
 
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 // Error represents an error message log.

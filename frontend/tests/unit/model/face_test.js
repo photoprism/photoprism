@@ -1,5 +1,5 @@
 import "../fixtures";
-import Face from "model/face";
+import { Face, BatchSize } from "model/face";
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -159,10 +159,10 @@ describe("model/face", () => {
   });
 
   it("should return batch size", () => {
-    assert.equal(Face.batchSize(), 24);
+    assert.equal(Face.batchSize(), BatchSize);
     Face.setBatchSize(30);
     assert.equal(Face.batchSize(), 30);
-    Face.setBatchSize(24);
+    Face.setBatchSize(BatchSize);
   });
 
   it("should get collection resource", () => {

@@ -9,12 +9,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-func TestNewConvertCommand(t *testing.T) {
+func TestNewConvertCmd(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
-		assert.Nil(t, NewConvertCommand(nil))
+		assert.Nil(t, NewConvertCmd(nil))
 	})
 	t.Run("Default", func(t *testing.T) {
-		result := NewConvertCommand(
+		result := NewConvertCmd(
 			exec.Command("/usr/bin/sips", "-Z", "123", "-s", "format", "jpeg", "--out", "file.jpeg", "file.heic"),
 		)
 		assert.NotNil(t, result)
@@ -23,7 +23,7 @@ func TestNewConvertCommand(t *testing.T) {
 		assert.Equal(t, media.KeepOrientation, result.Orientation)
 	})
 	t.Run("WithOrientation", func(t *testing.T) {
-		result := NewConvertCommand(
+		result := NewConvertCmd(
 			exec.Command("/usr/bin/sips", "-Z", "123", "-s", "format", "jpeg", "--out", "file.jpeg", "file.heic"),
 		)
 		result.WithOrientation(media.ResetOrientation)
@@ -34,9 +34,9 @@ func TestNewConvertCommand(t *testing.T) {
 	})
 }
 
-func TestNewConvertCommands(t *testing.T) {
+func TestNewConvertCmds(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		result := NewConvertCommands()
+		result := NewConvertCmds()
 		assert.NotNil(t, result)
 	})
 }

@@ -1,11 +1,15 @@
 package config
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestConfig_HttpServerHost(t *testing.T) {
@@ -20,10 +24,62 @@ func TestConfig_HttpServerHost(t *testing.T) {
 
 func TestConfig_HttpSocket(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	assert.Nil(t, c.HttpSocket())
 
-	assert.Equal(t, "", c.HttpSocket())
-	c.options.HttpHost = "unix:/tmp/photoprism.sock"
-	assert.Equal(t, "/tmp/photoprism.sock", c.HttpSocket())
+	t.Run("Empty", func(t *testing.T) {
+		c.options.HttpSocket = nil
+		c.options.HttpHost = ""
+
+		result := c.HttpSocket()
+
+		assert.Nil(t, result)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		c.options.HttpSocket = nil
+		c.options.HttpHost = "unix:http.sock"
+
+		result := c.HttpSocket()
+
+		assert.Nil(t, result)
+	})
+	t.Run("UnixHost", func(t *testing.T) {
+		c.options.HttpSocket = nil
+		c.options.HttpHost = "unix://http.sock"
+
+		result := c.HttpSocket()
+
+		assert.NotNil(t, result)
+		assert.Equal(t, scheme.Unix, result.Scheme)
+		assert.Contains(t, result.Path, "/internal/config/http.sock")
+		assert.False(t, txt.Bool(result.Query().Get("force")))
+		assert.Equal(t, fs.ModeSocket, fs.ParseMode(result.Query().Get("mode"), fs.ModeSocket))
+	})
+	t.Run("UnixPath", func(t *testing.T) {
+		c.options.HttpSocket = nil
+		c.options.HttpHost = "unix:/var/run/photoprism.sock?force=false&mode=0640"
+
+		result := c.HttpSocket()
+
+		assert.NotNil(t, result)
+		assert.Equal(t, scheme.Unix, result.Scheme)
+		assert.Equal(t, "/var/run/photoprism.sock", result.Path)
+		assert.Equal(t, "false", result.Query().Get("force"))
+		assert.False(t, txt.Bool(result.Query().Get("force")))
+		assert.Equal(t, os.FileMode(0o640), fs.ParseMode(result.Query().Get("mode"), fs.ModeSocket))
+	})
+	t.Run("Force", func(t *testing.T) {
+		c.options.HttpSocket = nil
+		c.options.HttpHost = "unix:/tmp/photoprism.sock?force=true&mode=660"
+
+		result := c.HttpSocket()
+
+		assert.NotNil(t, result)
+		assert.Equal(t, scheme.Unix, result.Scheme)
+		assert.Equal(t, "/tmp/photoprism.sock", result.Path)
+		assert.Equal(t, "true", result.Query().Get("force"))
+		assert.True(t, txt.Bool(result.Query().Get("force")))
+		assert.Equal(t, os.FileMode(0o660), fs.ParseMode(result.Query().Get("mode"), 0o000))
+	})
 }
 
 func TestConfig_HttpServerPort(t *testing.T) {

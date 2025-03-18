@@ -1,21 +1,15 @@
 #!/usr/bin/env bash
 
-# This installs the static FFmpeg build available at https://johnvansickle.com/ffmpeg/.
+# Installs the static FFmpeg build available at https://johnvansickle.com/ffmpeg/.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-ffmpeg.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 # Show usage information if first argument is --help.
 if [[ ${1} == "--help" ]]; then
-  echo "This installs the static FFmpeg build available at https://johnvansickle.com/ffmpeg/." 1>&2
+  echo "Installs the release or latest static build of FFmpeg from the internet." 1>&2
   echo "Usage: ${0##*/} [destdir] [version]" 1>&2
   exit 0
-fi
-
-# Abort if not executed as root.
-if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run ${0##*/} as root" 1>&2
-  exit 1
 fi
 
 # You can provide a custom installation directory as the first argument.
@@ -24,7 +18,7 @@ DESTDIR=$(realpath "${1:-/opt/ffmpeg}")
 # In addition, you can specify a custom version as the second argument.
 FFMPEG_VERSION=${2:-release}
 
-# Determine the system architecture.
+# Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
@@ -56,8 +50,19 @@ esac
 
 echo "Installing FFmpeg..."
 
-ARCHIVE="ffmpeg-${FFMPEG_VERSION}-${DESTARCH}-static.tar.xz"
-URL="https://johnvansickle.com/ffmpeg/releases/${ARCHIVE}"
+if [[ $FFMPEG_VERSION == "latest" ]] && [[ $DESTARCH == "amd64" ]]; then
+  # https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
+  ARCHIVE="ffmpeg-master-${FFMPEG_VERSION}-linux64-gpl.tar.xz"
+  URL="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${ARCHIVE}"
+elif [[ $FFMPEG_VERSION == "latest" ]] && [[ $DESTARCH == "arm64" ]]; then
+  # https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linuxarm64-gpl.tar.xz
+  ARCHIVE="ffmpeg-master-${FFMPEG_VERSION}-linuxarm64-gpl.tar.xz"
+  URL="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${ARCHIVE}"
+else
+  ARCHIVE="ffmpeg-${FFMPEG_VERSION}-${DESTARCH}-static.tar.xz"
+  URL="https://johnvansickle.com/ffmpeg/releases/${ARCHIVE}"
+  DESTDIR="${DESTDIR}/bin"
+fi
 
 echo "------------------------------------------------"
 echo "VERSION: $FFMPEG_VERSION"
@@ -66,11 +71,11 @@ echo "DESTDIR: $DESTDIR"
 echo "------------------------------------------------"
 
 echo "Extracting \"$URL\" to \"$DESTDIR\"."
-mkdir -p "${DESTDIR}"
-wget --inet4-only -c "$URL" -O - | tar --strip-components=1 --overwrite --mode=755 -x --xz -C "$DESTDIR"
-chown -R root:root "${DESTDIR}"
+sudo mkdir -p "${DESTDIR}"
+curl -fsSL "$URL" | sudo tar --strip-components=1 --overwrite --mode=755 -x --xz -C "$DESTDIR"
+sudo chown -R root:root "${DESTDIR}"
 
 # Create a symbolic link to the static ffmpeg binary.
-ln -sf "${DESTDIR}/ffmpeg" /usr/local/bin/ffmpeg
+sudo ln -sf "${DESTDIR}/bin/ffmpeg" /usr/local/bin/ffmpeg
 
 echo "Done."

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,9 +24,11 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Notify from "common/notify";
-import { $gettext } from "vm.js";
-import { config } from "app/session";
+import $notify from "common/notify";
+import { $gettext } from "common/gettext";
+import { $config } from "app/session";
+import { reactive } from "vue";
+
 export const MaxItems = 999;
 
 export class Clipboard {
@@ -39,7 +41,7 @@ export class Clipboard {
 
     this.storage = storage;
     this.selectionMap = {};
-    this.selection = [];
+    this.selection = reactive([]);
     this.lastId = "";
     this.maxItems = MaxItems;
 
@@ -48,14 +50,14 @@ export class Clipboard {
 
   isModel(model) {
     if (!model) {
-      if (config.debug) {
+      if ($config.debug) {
         console.warn("Clipboard::isModel() - empty model", model);
       }
       return false;
     }
 
     if (typeof model.getId !== "function") {
-      if (config.debug) {
+      if ($config.debug) {
         console.warn("Clipboard::isModel() - model.getId() is not a function", model);
       }
       return false;
@@ -97,7 +99,7 @@ export class Clipboard {
 
     if (index === -1) {
       if (this.selection.length >= this.maxItems) {
-        Notify.warn($gettext("Can't select more items"));
+        $notify.warn($gettext("Can't select more items"));
         return;
       }
 
@@ -134,7 +136,7 @@ export class Clipboard {
     }
 
     if (this.selection.length >= this.maxItems) {
-      Notify.warn($gettext("Can't select more items"));
+      $notify.warn($gettext("Can't select more items"));
       return false;
     }
 
@@ -149,7 +151,7 @@ export class Clipboard {
 
   addRange(rangeEnd, models) {
     if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
-      if (config.debug) {
+      if ($config.debug) {
         console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
       }
       return;
@@ -257,6 +259,4 @@ export class Clipboard {
   }
 }
 
-const PhotoClipboard = new Clipboard(window.localStorage, "photo_clipboard");
-
-export default PhotoClipboard;
+export const PhotoClipboard = reactive(new Clipboard(window.localStorage, "photo_clipboard"));

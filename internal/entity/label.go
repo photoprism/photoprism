@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/event"
-
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -63,6 +64,13 @@ func (m *Label) AfterDelete(tx *gorm.DB) (err error) {
 	return
 }
 
+// AfterCreate sets the New column used for database callback
+func (m *Label) AfterCreate(scope *gorm.Scope) error {
+	m.New = true
+	FlushLabelCache()
+	return nil
+}
+
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsUnique(m.LabelUID, LabelUID) {
@@ -102,12 +110,34 @@ func (m *Label) Save() error {
 	return Db().Save(m).Error
 }
 
+// SaveForm updates the entity using form data and stores it in the database.
+func (m *Label) SaveForm(f *form.Label) error {
+	if f == nil {
+		return fmt.Errorf("form is nil")
+	} else if f.LabelName == "" || txt.Slug(f.LabelName) == "" {
+		return ErrInvalidName
+	}
+
+	labelMutex.Lock()
+	defer labelMutex.Unlock()
+
+	if err := deepcopier.Copy(m).From(f); err != nil {
+		return err
+	}
+
+	if m.SetName(f.LabelName) {
+		return Db().Save(m).Error
+	} else {
+		return ErrInvalidName
+	}
+}
+
 // Create inserts the label to the database.
 func (m *Label) Create() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()
 
-	return Db().Create(m).Error
+	return UnscopedDb().Create(m).Error
 }
 
 // Delete removes the label from the database.
@@ -136,6 +166,37 @@ func (m *Label) Restore() error {
 	return nil
 }
 
+// HasID tests if the entity has an ID and a valid UID.
+func (m *Label) HasID() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.ID > 0 && m.HasUID()
+}
+
+// HasUID tests if the entity has a valid UID.
+func (m *Label) HasUID() bool {
+	if m == nil {
+		return false
+	}
+
+	return rnd.IsUID(m.LabelUID, LabelUID)
+}
+
+// Skip tests if the entity has invalid IDs or has been deleted and therefore should not be assigned.
+func (m *Label) Skip() bool {
+	if m == nil {
+		return true
+	} else if !m.HasID() {
+		return true
+	} else if m.Deleted() {
+		return true
+	}
+
+	return false
+}
+
 // Update a label property in the database.
 func (m *Label) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
@@ -143,10 +204,16 @@ func (m *Label) Update(attr string, value interface{}) error {
 
 // FirstOrCreateLabel returns the existing label, inserts a new label or nil in case of errors.
 func FirstOrCreateLabel(m *Label) *Label {
-	result := Label{}
+	if m.LabelSlug == "" && m.CustomSlug == "" {
+		return nil
+	}
 
-	if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
-		return &result
+	result := &Label{}
+
+	if err := UnscopedDb().
+		Where("(custom_slug <> '' AND custom_slug = ? OR label_slug <> '' AND label_slug = ?)", m.CustomSlug, m.LabelSlug).
+		First(result).Error; err == nil {
+		return result
 	} else if createErr := m.Create(); createErr == nil {
 		if m.LabelPriority >= 0 {
 			event.EntitiesCreated("labels", []*Label{m})
@@ -157,8 +224,10 @@ func FirstOrCreateLabel(m *Label) *Label {
 		}
 
 		return m
-	} else if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
-		return &result
+	} else if err = UnscopedDb().
+		Where("(custom_slug <> '' AND custom_slug = ? OR label_slug <> '' AND label_slug = ?)", m.CustomSlug, m.LabelSlug).
+		First(result).Error; err == nil {
+		return result
 	} else {
 		log.Errorf("label: %s (find or create %s)", createErr, m.LabelSlug)
 	}
@@ -166,53 +235,56 @@ func FirstOrCreateLabel(m *Label) *Label {
 	return nil
 }
 
-// FindLabel find the matching label based on the string provided or an error if not found.
-func FindLabel(s string, cached bool) (m Label, err error) {
-	labelSlug := txt.Slug(s)
+// SetName changes the label name.
+func (m *Label) SetName(name string) bool {
+	labelName := txt.Clip(clean.NameCapitalized(name), txt.ClipName)
+
+	if labelName == "" {
+		return false
+	}
+
+	labelSlug := txt.Slug(labelName)
 
 	if labelSlug == "" {
-		return m, fmt.Errorf("invalid label slug %s", clean.LogQuote(labelSlug))
+		return false
 	}
 
-	// Return cached label, if found.
-	if cached {
-		if cacheData, ok := labelCache.Get(labelSlug); ok {
-			log.Tracef("label: cache hit for %s", labelSlug)
-			return cacheData.(Label), nil
-		}
+	m.LabelName = labelName
+	m.CustomSlug = labelSlug
+
+	if m.LabelSlug == "" {
+		m.LabelSlug = labelSlug
 	}
 
-	// Fetch and cache label from database.
-	m = Label{}
-
-	if r := Db().First(&m, "label_slug = ? OR custom_slug = ?", labelSlug, labelSlug); r.RecordNotFound() {
-		labelCache.Delete(labelSlug)
-		return m, fmt.Errorf("label not found")
-	} else if r.Error != nil {
-		labelCache.Delete(labelSlug)
-		return m, r.Error
-	} else {
-		labelCache.SetDefault(m.LabelSlug, m)
-		return m, nil
-	}
+	return true
 }
 
-// AfterCreate sets the New column used for database callback
-func (m *Label) AfterCreate(scope *gorm.Scope) error {
-	m.New = true
-	return nil
-}
+// InvalidName checks if the label name is invalid.
+func (m *Label) InvalidName() bool {
+	labelName := txt.Clip(clean.NameCapitalized(m.LabelName), txt.ClipName)
 
-// SetName changes the label name.
-func (m *Label) SetName(name string) {
-	name = clean.NameCapitalized(name)
-
-	if name == "" {
-		return
+	if labelName == "" {
+		return true
 	}
 
-	m.LabelName = txt.Clip(name, txt.ClipName)
-	m.CustomSlug = txt.Slug(name)
+	labelSlug := txt.Slug(labelName)
+
+	if labelSlug == "" {
+		return true
+	}
+
+	return false
+}
+
+// GetSlug returns the label slug.
+func (m *Label) GetSlug() string {
+	if m.CustomSlug != "" {
+		return m.CustomSlug
+	} else if m.LabelSlug != "" {
+		return m.LabelSlug
+	}
+
+	return txt.Slug(m.LabelName)
 }
 
 // UpdateClassify updates a label if necessary
@@ -234,8 +306,11 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 	}
 
 	if m.CustomSlug == m.LabelSlug && label.Title() != m.LabelName {
-		m.SetName(label.Title())
-		save = true
+		if m.SetName(label.Title()) {
+			save = true
+		} else {
+			return ErrInvalidName
+		}
 	}
 
 	// Save label.
@@ -257,7 +332,7 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 				continue
 			}
 
-			if sn.Deleted() {
+			if sn.Skip() {
 				continue
 			}
 

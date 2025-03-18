@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -11,13 +11,14 @@ import (
 )
 
 // ShowFileFormatsCommand configures the command name, flags, and action.
-var ShowFileFormatsCommand = cli.Command{
+var ShowFileFormatsCommand = &cli.Command{
 	Name:    "file-formats",
 	Aliases: []string{"formats"},
 	Usage:   "Displays supported media and sidecar file formats",
-	Flags: append(report.CliFlags, cli.BoolFlag{
-		Name:  "short, s",
-		Usage: "hide format descriptions",
+	Flags: append(report.CliFlags, &cli.BoolFlag{
+		Name:    "short",
+		Aliases: []string{"s"},
+		Usage:   "hide format descriptions",
 	}),
 	Action: showFileFormatsAction,
 }

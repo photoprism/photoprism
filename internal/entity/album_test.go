@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -736,18 +736,19 @@ func TestAlbum_SaveForm(t *testing.T) {
 
 		album2 := Album{ID: 123, AlbumTitle: "New name", AlbumDescription: "new description", AlbumCategory: "family"}
 
-		albumForm, err := form.NewAlbum(album2)
+		frm, err := form.NewAlbum(album2)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		err = album.SaveForm(albumForm)
+		err = album.SaveForm(frm)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
+		assert.IsType(t, &form.Album{}, frm)
 		assert.Equal(t, "New name", album.AlbumTitle)
 		assert.Equal(t, "new description", album.AlbumDescription)
 		assert.Equal(t, "Family", album.AlbumCategory)

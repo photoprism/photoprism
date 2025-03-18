@@ -18,94 +18,91 @@ const photo = new Photo();
 const page = new Page();
 const albumdialog = new AlbumDialog();
 
-test.meta("testID", "moments-001").meta({ mode: "public" })(
-  "Common: Update moment details",
-  async (t) => {
-    await menu.openPage("moments");
-    await toolbar.search("Nature");
-    const AlbumUid = await album.getNthAlbumUid("all", 0);
+test.meta("testID", "moments-001").meta({ mode: "public" })("Common: Update moment details", async (t) => {
+  await menu.openPage("moments");
+  await toolbar.search("Nature");
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
 
-    await t.expect(page.cardTitle.nth(0).innerText).contains("Nature");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Nature");
 
-    await t.click(page.cardTitle.nth(0));
+  await t.click(page.cardTitle.nth(0));
 
-    await t
-      .expect(albumdialog.title.value)
-      .eql("Nature & Landscape")
-      .expect(albumdialog.location.value)
-      .eql("")
-      .expect(albumdialog.description.value)
-      .eql("")
-      .expect(albumdialog.category.value)
-      .eql("");
+  await t
+    .expect(albumdialog.title.value)
+    .eql("Nature & Landscape")
+    .expect(albumdialog.location.value)
+    .eql("")
+    .expect(albumdialog.description.value)
+    .eql("")
+    .expect(albumdialog.category.value)
+    .eql("");
 
-    await t
-      .typeText(albumdialog.title, "Winter", { replace: true })
-      .typeText(albumdialog.location, "Snow-Land", { replace: true })
-      .typeText(albumdialog.description, "We went to ski")
-      .typeText(albumdialog.category, "Mountains")
-      .pressKey("enter")
-      .click(albumdialog.dialogSave);
+  await t
+    .typeText(albumdialog.title, "Winter", { replace: true })
+    .typeText(albumdialog.location, "Snow-Land", { replace: true })
+    .typeText(albumdialog.description, "We went to ski")
+    .typeText(albumdialog.category, "Mountains")
+    .pressKey("enter")
+    .click(albumdialog.dialogSave);
 
-    await t
-      .expect(page.cardTitle.nth(0).innerText)
-      .contains("Winter")
-      .expect(page.cardDescription.nth(0).innerText)
-      .contains("We went to ski")
-      .expect(Selector("div.caption").nth(1).innerText)
-      .contains("Mountains")
-      .expect(Selector("div.caption").nth(2).innerText)
-      .contains("Snow-Land");
+  await t
+    .expect(page.cardTitle.nth(0).innerText)
+    .contains("Winter")
+    .expect(page.cardDescription.nth(0).innerText)
+    .contains("We went to ski")
+    .expect(Selector("button.meta-category").innerText)
+    .contains("Mountains")
+    .expect(Selector("button.meta-location").innerText)
+    .contains("Snow-Land");
 
-    await album.openNthAlbum(0);
+  await album.openNthAlbum(0);
 
-    await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Winter");
-    await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
+  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Winter");
+  await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
 
-    await menu.openPage("moments");
-    if (t.browser.platform === "mobile") {
-      await toolbar.search("category:Mountains");
-    } else {
-      await toolbar.setFilter("category", "Mountains");
-    }
-
-    await t.expect(page.cardTitle.nth(0).innerText).contains("Winter");
-
-    await album.openAlbumWithUid(AlbumUid);
-    await toolbar.triggerToolbarAction("edit");
-
-    await t
-      .expect(albumdialog.description.value)
-      .eql("We went to ski")
-      .expect(albumdialog.category.value)
-      .eql("Mountains")
-      .expect(albumdialog.location.value)
-      .eql("Snow-Land");
-
-    await t
-      .typeText(albumdialog.title, "Nature & Landscape", { replace: true })
-      .click(albumdialog.category)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.description)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.location)
-      .pressKey("ctrl+a delete")
-      .pressKey("enter")
-      .click(albumdialog.dialogSave);
-    await menu.openPage("moments");
-    await toolbar.search("Nature");
-
-    await t
-      .expect(page.cardTitle.nth(0).innerText)
-      .contains("Nature & Landscape")
-      .expect(page.cardDescription.innerText)
-      .notContains("We went to ski")
-      .expect(Selector("div.caption").nth(0).innerText)
-      .notContains("Snow-Land");
+  await menu.openPage("moments");
+  if (t.browser.platform === "mobile") {
+    await toolbar.search("category:Mountains");
+  } else {
+    await toolbar.setFilter("category", "Mountains");
   }
-);
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Winter");
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+
+  await t
+    .expect(albumdialog.description.value)
+    .eql("We went to ski")
+    .expect(albumdialog.category.value)
+    .eql("Mountains")
+    .expect(albumdialog.location.value)
+    .eql("Snow-Land");
+
+  await t
+    .typeText(albumdialog.title, "Nature & Landscape", { replace: true })
+    .click(albumdialog.category)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.description)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.location)
+    .pressKey("ctrl+a delete")
+    .pressKey("enter")
+    .click(albumdialog.dialogSave);
+  await menu.openPage("moments");
+  await toolbar.search("Nature");
+
+  await t
+    .expect(page.cardTitle.nth(0).innerText)
+    .contains("Nature & Landscape")
+    .expect(page.cardDescription.innerText)
+    .notContains("We went to ski")
+    .expect(Selector("button.meta-location").exists)
+    .notOk();
+});
 
 test.meta("testID", "moments-002").meta({ mode: "public" })(
   "Common: Create, Edit, delete sharing link for moment",

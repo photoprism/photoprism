@@ -26,14 +26,19 @@ export default class Page {
     });
     this.keywords = Selector(".input-keywords textarea", { timeout: 15000 });
     this.title = Selector(".input-title input", { timeout: 15000 });
-    this.latitude = Selector('input[aria-label="Latitude"]', { timeout: 15000 });
-    this.longitude = Selector('input[aria-label="Longitude"]', { timeout: 15000 });
+    this.latitude = Selector(".input-latitude input", { timeout: 15000 });
+    this.longitude = Selector(".input-longitude input", { timeout: 15000 });
     this.localTime = Selector(".input-local-time input", { timeout: 15000 });
-    this.day = Selector(".input-day input", { timeout: 15000 });
+    this.day = Selector("div.input-day input", { timeout: 15000 });
     this.month = Selector(".input-month input", { timeout: 15000 });
     this.year = Selector(".input-year input", { timeout: 15000 });
     this.timezone = Selector(".input-timezone input", { timeout: 15000 });
+    this.dayValue = Selector(".input-day .v-combobox__selection", { timeout: 15000 });
+    this.monthValue = Selector(".input-month .v-combobox__selection", { timeout: 15000 });
+    this.yearValue = Selector(".input-year .v-combobox__selection", { timeout: 15000 });
+    this.timezoneValue = Selector(".input-timezone .v-autocomplete__selection", { timeout: 15000 });
     this.altitude = Selector(".input-altitude input", { timeout: 15000 });
+    this.countryValue = Selector(".input-country .v-autocomplete__selection", { timeout: 15000 });
     this.country = Selector(".input-country input", { timeout: 15000 });
     this.iso = Selector(".input-iso input", { timeout: 15000 });
     this.exposure = Selector(".input-exposure input", { timeout: 15000 });
@@ -43,14 +48,14 @@ export default class Page {
     this.artist = Selector(".input-artist input", { timeout: 15000 });
     this.copyright = Selector(".input-copyright input", { timeout: 15000 });
     this.license = Selector(".input-license textarea", { timeout: 15000 });
-    this.description = Selector(".input-description textarea", { timeout: 15000 });
+    this.description = Selector(".input-caption textarea", { timeout: 15000 });
     this.notes = Selector(".input-notes textarea", { timeout: 15000 });
     this.camera = Selector(".input-camera input", { timeout: 15000 });
     this.lens = Selector(".input-lens input", { timeout: 15000 });
-    //this.camera = Selector("div.p-camera-select div.v-select__selection", { timeout: 15000 });
-    //this.lens = Selector("div.p-lens-select div.v-select__selection", { timeout: 15000 });
+    this.cameraValue = Selector(".input-camera .v-select__selection-text", { timeout: 15000 });
+    this.lensValue = Selector(".input-lens .v-select__selection-text", { timeout: 15000 });
 
-    this.rejectName = Selector("div.input-name div.v-input__icon--clear", { timeout: 15000 });
+    this.rejectName = Selector("i.mdi-eject", { timeout: 15000 });
     this.removeMarker = Selector("button.input-reject", { timeout: 15000 });
     this.undoRemoveMarker = Selector("button.action-undo", { timeout: 15000 });
     this.inputName = Selector("div.input-name input", { timeout: 15000 });
@@ -61,13 +66,13 @@ export default class Page {
     this.deleteLabel = Selector(".action-delete", { timeout: 15000 });
     this.inputLabelName = Selector(".input-label input", { timeout: 15000 });
     this.openInlineEdit = Selector("div.p-inline-edit", { timeout: 15000 });
-    this.inputLabelRename = Selector(".input-rename input", { timeout: 15000 });
+    this.inputLabelRename = Selector(".input-title input", { timeout: 15000 });
 
     this.downloadFile = Selector("button.action-download", { timeout: 15000 });
     this.unstackFile = Selector(".action-unstack", { timeout: 15000 });
     this.deleteFile = Selector(".action-delete", { timeout: 15000 });
     this.makeFilePrimary = Selector(".action-primary", { timeout: 15000 });
-    this.toggleExpandFile = Selector("li.v-expansion-panel__container", { timeout: 15000 });
+    this.toggleExpandFile = Selector("button.v-expansion-panel-title", { timeout: 15000 });
 
     this.favoriteInput = Selector(".input-favorite input");
     this.privateInput = Selector(".input-private input");
@@ -135,170 +140,52 @@ export default class Page {
       this.checkFieldDisabled(item, disabled);
     });
   }
-  // check edit form values // get all current edit form values // set edit form values
-  //edit dialog disabled --funcionalities
 
   async getFileCount() {
-    const FileCount = await Selector("li.v-expansion-panel__container", { timeout: 5000 }).count;
+    const FileCount = await Selector("div.v-expansion-panel", { timeout: 5000 }).count;
     return FileCount;
   }
 
   async turnSwitchOff(type) {
-    await t
-      .click("#tab-info")
-      .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
-          "aria-checked",
-          "true"
-        )
-      )
-      .ok()
-      .click(Selector(".input-" + type + " input + div.v-input--selection-controls__ripple"))
-      .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
-          "aria-checked",
-          "false"
-        )
-      )
-      .ok();
+    await t.click("#tab-info");
+    const initialState = await Selector("td .input-" + type + " input", { timeout: 8000 }).hasAttribute("checked");
+    if (initialState === true) {
+      await t.click(Selector("td .input-" + type + " div.v-switch__track"));
+    }
+    const finalState = await Selector("td .input-" + type + " input", { timeout: 8000 }).hasAttribute("checked");
+    await t.expect(finalState).eql(false);
   }
 
   async turnSwitchOn(type) {
-    await t
-      .click("#tab-info")
-      .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
-          "aria-checked",
-          "false"
-        )
-      )
-      .ok()
-      .click(Selector(".input-" + type + " input + div.v-input--selection-controls__ripple"))
-      .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
-          "aria-checked",
-          "true"
-        )
-      )
-      .ok();
+    await t.click("#tab-info");
+    const initialState = await Selector("td .input-" + type + " input", { timeout: 8000 }).hasAttribute("checked");
+    if (initialState === false) {
+      await t.click(Selector("td .input-" + type + " div.v-selection-control__input"));
+    }
+    const finalState = await Selector("td .input-" + type + " input", { timeout: 8000 }).hasAttribute("checked");
+    await t.expect(finalState).eql(true);
   }
 
-  async checkEditFormValue(field, value) {
-    if (value !== "") {
-      console.log(value);
-      await t.expect(field.value).eql(value);
+  async checkEditFormInputValue(field, val) {
+    if (val !== "") {
+      await t.expect(this[field].value).eql(val);
     }
   }
 
-  async checkEditFormValuesNewNew(expectedValues) {
-    if (!expectedValues) {
-      return;
+  async checkEditFormSelectValue(field, val) {
+    if (val !== "") {
+      await t.expect(this[field + "Value"].innerText).eql(val);
     }
-    expectedValues.forEach((el) => {
-      this.checkEditFormValue(el[1], el[0]);
+  }
+
+  async checkEditFormValues(expectedInputValues, expectedSelectValues) {
+    expectedInputValues.forEach((el) => {
+      this.checkEditFormInputValue(el[0], el[1]);
     });
-  }
 
-  /* async checkEditFormValuesNew(expectedValues) {
-    expectedValues.forEach((el) => {
-      this.checkEditFormValue(el, el.key);
+    expectedSelectValues.forEach((x) => {
+      this.checkEditFormSelectValue(x[0], x[1]);
     });
-  }*/
-  //TODO refactor
-  async checkEditFormValues(
-    title,
-    day,
-    month,
-    year,
-    localTime,
-    timezone,
-    country,
-    altitude,
-    lat,
-    lng,
-    camera,
-    iso,
-    exposure,
-    lens,
-    fnumber,
-    flength,
-    subject,
-    artist,
-    copyright,
-    license,
-    description,
-    keywords,
-    notes
-  ) {
-    if (title !== "") {
-      await t.expect(Selector(".input-title input").value).eql(title);
-    }
-    if (day !== "") {
-      await t.expect(Selector(".input-day input").value).eql(day);
-    }
-    if (month !== "") {
-      await t.expect(Selector(".input-month input").value).eql(month);
-    }
-    if (year !== "") {
-      await t.expect(Selector(".input-year input").value).eql(year);
-    }
-    if (timezone !== "") {
-      await t.expect(Selector(".input-timezone input").value).eql(timezone);
-    }
-    if (localTime !== "") {
-      await t.expect(Selector(".input-local-time input").value).eql(localTime);
-    }
-    if (altitude !== "") {
-      await t.expect(Selector(".input-altitude input").value).eql(altitude);
-    }
-    if (country !== "") {
-      await t.expect(Selector("div").withText(country).visible).ok();
-    }
-    if (lat !== "") {
-      await t.expect(Selector(".input-latitude input").value).eql(lat);
-    }
-    if (lng !== "") {
-      await t.expect(Selector(".input-longitude input").value).eql(lng);
-    }
-    if (camera !== "") {
-      await t.expect(Selector("div").withText(camera).visible).ok();
-    }
-    if (lens !== "") {
-      await t.expect(Selector("div").withText(lens).visible).ok();
-    }
-    if (iso !== "") {
-      await t.expect(Selector(".input-iso input").value).eql(iso);
-    }
-    if (exposure !== "") {
-      await t.expect(Selector(".input-exposure input").value).eql(exposure);
-    }
-    if (fnumber !== "") {
-      await t.expect(Selector(".input-fnumber input").value).eql(fnumber);
-    }
-    if (flength !== "") {
-      await t.expect(Selector(".input-focal-length input").value).eql(flength);
-    }
-    if (subject !== "") {
-      await t.expect(Selector(".input-subject textarea").value).eql(subject);
-    }
-    if (artist !== "") {
-      await t.expect(Selector(".input-artist input").value).eql(artist);
-    }
-    if (copyright !== "") {
-      await t.expect(Selector(".input-copyright input").value).eql(copyright);
-    }
-    if (license !== "") {
-      await t.expect(Selector(".input-license textarea").value).eql(license);
-    }
-    if (description !== "") {
-      await t.expect(Selector(".input-description textarea").value).eql(description);
-    }
-    if (notes !== "") {
-      await t.expect(Selector(".input-notes textarea").value).contains(notes);
-    }
-    if (keywords !== "") {
-      await t.expect(Selector(".input-keywords textarea").value).contains(keywords);
-    }
   }
 
   async editPhoto(
@@ -321,53 +208,49 @@ export default class Page {
     license,
     description,
     keywords,
-    notes
+    notes,
+    camera,
+    lens
   ) {
     await t
-      .typeText(Selector(".input-title input"), title, { replace: true })
-      .typeText(Selector(".input-timezone input"), timezone, { replace: true })
-      .click(Selector("div").withText(timezone).parent('div[role="listitem"]'))
-      .typeText(Selector(".input-day input"), day, { replace: true })
-      .pressKey("enter")
-      .typeText(Selector(".input-month input"), month, { replace: true })
-      .pressKey("enter")
-
-      .typeText(Selector(".input-year input"), year, { replace: true })
-      .click(Selector("div").withText(year).parent('div[role="listitem"]'))
-      .click(Selector(".input-local-time input"))
+      .typeText(this.title, title, { replace: true })
+      .typeText(this.timezone, timezone, { replace: true })
+      .click(Selector("div").withText(timezone).parent('div[role="option"]'))
+      .typeText(this.day, day, { replace: true })
+      .click(Selector("div").withText(day).parent('div[role="option"]'))
+      .typeText(this.month, month, { replace: true })
+      .click(Selector("div").withText(month).parent('div[role="option"]'))
+      .typeText(this.year, year, { replace: true })
+      .click(Selector("div").withText(year).parent('div[role="option"]'))
+      .click(this.localTime)
       .pressKey("ctrl+a delete")
-      .typeText(Selector(".input-local-time input"), localTime, { replace: true })
+      .typeText(this.localTime, localTime, { replace: true })
       .pressKey("enter")
 
-      .typeText(Selector(".input-altitude input"), altitude, { replace: true })
-      .typeText(Selector(".input-latitude input"), lat, { replace: true })
-      .typeText(Selector(".input-longitude input"), lng, { replace: true })
-      //.click(Selector('.input-camera input'))
-      //.hover(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
-      //.click(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
-      //.click(Selector('.input-lens input'))
-      //.click(Selector('div').withText('Apple iPhone 5s back camera 4.15mm f/2.2').parent('div[role="listitem"]'))
-      .typeText(Selector(".input-iso input"), iso, { replace: true })
-      .typeText(Selector(".input-exposure input"), exposure, { replace: true })
-      .typeText(Selector(".input-fnumber input"), fnumber, { replace: true })
-      .typeText(Selector(".input-focal-length input"), flength, { replace: true })
-      .typeText(Selector(".input-subject textarea"), subject, { replace: true })
-      .typeText(Selector(".input-artist input"), artist, { replace: true })
-      .typeText(Selector(".input-copyright input"), copyright, { replace: true })
-      .typeText(Selector(".input-license textarea"), license, { replace: true })
-      .typeText(Selector(".input-description textarea"), description, {
+      .typeText(this.altitude, altitude, { replace: true })
+      .typeText(this.latitude, lat, { replace: true })
+      .typeText(this.longitude, lng, { replace: true })
+      .typeText(this.camera, camera, { replace: true })
+      .click(Selector("div").withText(camera).parent('div[role="option"]'))
+      .typeText(this.lens, timezone, { replace: true })
+      .click(Selector("div").withText(lens).parent('div[role="option"]'))
+      .typeText(this.iso, iso, { replace: true })
+      .typeText(this.exposure, exposure, { replace: true })
+      .typeText(this.fnumber, fnumber, { replace: true })
+      .typeText(this.focallength, flength, { replace: true })
+      .typeText(this.subject, subject, { replace: true })
+      .typeText(this.artist, artist, { replace: true })
+      .typeText(this.copyright, copyright, { replace: true })
+      .typeText(this.license, license, { replace: true })
+      .typeText(this.description, description, {
         replace: true,
       })
-      .typeText(Selector(".input-keywords textarea"), keywords)
-      .typeText(Selector(".input-notes textarea"), notes, { replace: true })
+      .typeText(this.keywords, keywords)
+      .typeText(this.notes, notes, { replace: true })
 
       .click(Selector("button.action-approve"));
-    await t.expect(Selector(".input-latitude input").visible, { timeout: 5000 }).ok();
-    if (t.browser.platform === "mobile") {
-      await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
-    } else {
-      await t.click(Selector("button.action-done", { timeout: 5000 }));
-    }
+    await t.expect(this.latitude.visible, { timeout: 5000 }).ok();
+    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
   }
 
   async undoPhotoEdit(
@@ -420,9 +303,7 @@ export default class Page {
         .typeText(Selector(".input-timezone input"), "UTC", { replace: true })
         .pressKey("enter");
     } else {
-      await t
-        .typeText(Selector(".input-timezone input"), timezone, { replace: true })
-        .pressKey("enter");
+      await t.typeText(Selector(".input-timezone input"), timezone, { replace: true }).pressKey("enter");
     }
     if (lat.empty || lat === "") {
       await t.click(Selector(".input-latitude input")).pressKey("ctrl+a delete");
@@ -451,21 +332,21 @@ export default class Page {
     // if (FirstPhotoCamera.empty || FirstPhotoCamera === "")
     //{ await t
     //.click(Selector('.input-camera input'))
-    // .hover(Selector('div').withText('Unknown').parent('div[role="listitem"]'))
-    //  .click(Selector('div').withText('Unknown').parent('div[role="listitem"]'))}
+    // .hover(Selector('div').withText('Unknown').parent('div[role="option"]'))
+    //  .click(Selector('div').withText('Unknown').parent('div[role="option"]'))}
     //else
     //{await t
     //  .click(Selector('.input-camera input'))
-    //   .hover(Selector('div').withText(FirstPhotoCamera).parent('div[role="listitem"]'))
-    //    .click(Selector('div').withText(FirstPhotoCamera).parent('div[role="listitem"]'))}
+    //   .hover(Selector('div').withText(FirstPhotoCamera).parent('div[role="option"]'))
+    //    .click(Selector('div').withText(FirstPhotoCamera).parent('div[role="option"]'))}
     //if (FirstPhotoLens.empty || FirstPhotoLens === "")
     //{ await t
     //  .click(Selector('.input-lens input'))
-    //   .click(Selector('div').withText('Unknown').parent('div[role="listitem"]'))}
+    //   .click(Selector('div').withText('Unknown').parent('div[role="option"]'))}
     //else
     //{await t
     //   .click(Selector('.input-lens input'))
-    //    .click(Selector('div').withText(FirstPhotoLens).parent('div[role="listitem"]'))}
+    //    .click(Selector('div').withText(FirstPhotoLens).parent('div[role="option"]'))}
     if (iso.empty || iso === "") {
       await t.click(Selector(".input-iso input")).pressKey("ctrl+a delete");
     } else {
@@ -509,9 +390,9 @@ export default class Page {
       await t.typeText(Selector(".input-license textarea"), license, { replace: true });
     }
     if (description.empty || description === "") {
-      await t.click(Selector(".input-description textarea")).pressKey("ctrl+a delete");
+      await t.click(Selector(".input-caption textarea")).pressKey("ctrl+a delete");
     } else {
-      await t.typeText(Selector(".input-description textarea"), description, {
+      await t.typeText(Selector(".input-caption textarea"), description, {
         replace: true,
       });
     }
@@ -525,10 +406,6 @@ export default class Page {
     } else {
       await t.typeText(Selector(".input-notes textarea"), notes, { replace: true });
     }
-    if (t.browser.platform === "mobile") {
-      await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
-    } else {
-      await t.click(Selector("button.action-done", { timeout: 5000 }));
-    }
+    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
   }
 }

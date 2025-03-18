@@ -1,5 +1,5 @@
 import "../fixtures";
-import { config } from "app/session";
+import { $config } from "app/session";
 import Session from "common/session";
 import StorageShim from "node-storage-shim";
 
@@ -13,13 +13,13 @@ describe("common/session", () => {
 
   it("should construct session", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     assert.equal(session.authToken, null);
   });
 
   it("should set, get and delete token", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     assert.equal(session.hasToken("2lbh9x09"), false);
     session.setAuthToken("999900000000000000000000000000000000000000000000");
     assert.equal(session.authToken, "999900000000000000000000000000000000000000000000");
@@ -31,7 +31,7 @@ describe("common/session", () => {
 
   it("should set, get and delete user", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     assert.isFalse(session.user.hasId());
 
     const user = {
@@ -92,7 +92,7 @@ describe("common/session", () => {
 
   it("should get user email", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
 
     session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
     session.setAuthToken("234200000000000000000000000000000000000000000000");
@@ -127,7 +127,7 @@ describe("common/session", () => {
 
   it("should get user display name", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     const values = {
       user: {
         ID: 5,
@@ -161,7 +161,7 @@ describe("common/session", () => {
 
   it("should get user full name", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     const values = {
       user: {
         ID: 5,
@@ -190,7 +190,7 @@ describe("common/session", () => {
 
   it("should test whether user is set", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     const values = {
       user: {
         ID: 5,
@@ -208,7 +208,7 @@ describe("common/session", () => {
 
   it("should test whether user is admin", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     const values = {
       user: {
         ID: 5,
@@ -226,7 +226,7 @@ describe("common/session", () => {
 
   it("should test whether user is anonymous", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     const values = {
       user: {
         ID: 5,
@@ -244,7 +244,7 @@ describe("common/session", () => {
 
   it("should use session storage", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     assert.equal(storage.getItem("sessionStorage"), null);
     session.useSessionStorage();
     assert.equal(storage.getItem("sessionStorage"), "true");
@@ -253,7 +253,7 @@ describe("common/session", () => {
 
   it("should use local storage", () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     assert.equal(storage.getItem("sessionStorage"), null);
     session.useLocalStorage();
     assert.equal(storage.getItem("sessionStorage"), "false");
@@ -262,7 +262,7 @@ describe("common/session", () => {
 
   it("should test redeem token", async () => {
     const storage = new StorageShim();
-    const session = new Session(storage, config);
+    const session = new Session(storage, $config);
     assert.equal(session.data, null);
     await session.redeemToken("token123");
     assert.equal(session.data.token, "123token");

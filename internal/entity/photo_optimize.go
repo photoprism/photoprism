@@ -38,7 +38,7 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (up
 
 	m.UpdateDateFields()
 
-	if updateErr := m.UpdateTitle(labels); updateErr != nil {
+	if updateErr := m.GenerateTitle(labels); updateErr != nil {
 		log.Info(updateErr)
 	}
 

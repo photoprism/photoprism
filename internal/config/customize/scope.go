@@ -26,6 +26,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 	m.Features.Favorites = s.Features.Favorites && scopes.Contains(acl.ResourceFavorites.String())
 	m.Features.Folders = s.Features.Folders && scopes.Contains(acl.ResourceFolders.String())
 	m.Features.Labels = s.Features.Labels && scopes.Contains(acl.ResourceLabels.String())
+	m.Features.Calendar = s.Features.Calendar && scopes.Contains(acl.ResourceCalendar.String())
 	m.Features.Moments = s.Features.Moments && scopes.Contains(acl.ResourceMoments.String())
 	m.Features.People = s.Features.People && scopes.Contains(acl.ResourcePeople.String())
 	m.Features.Places = s.Features.Places && scopes.Contains(acl.ResourcePlaces.String())

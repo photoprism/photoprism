@@ -1,31 +1,100 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <p-album-toolbar :filter="filter" :album="model" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery"></p-album-toolbar>
+  <div
+    ref="page"
+    tabindex="1"
+    class="p-page p-page-album-photos"
+    :class="$config.aclClasses('photos')"
+    @keydown.ctrl="onCtrl"
+  >
+    <p-album-toolbar
+      ref="toolbar"
+      :filter="filter"
+      :album="model"
+      :settings="settings"
+      :refresh="refresh"
+      :update-filter="updateFilter"
+      :update-query="updateQuery"
+      class="p-page__navigation"
+    ></p-album-toolbar>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-    </v-container>
-    <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+    <div v-if="loading" class="p-page__loading">
+      <p-loading></p-loading>
+    </div>
+    <div v-else class="p-page__content">
+      <p-scroll
+        :load-more="loadMore"
+        :load-disabled="scrollDisabled"
+        :load-distance="scrollDistance"
+        :loading="loading"
+      >
+      </p-scroll>
 
-      <p-photo-clipboard :refresh="refresh" :selection="selection" :album="model" context="album"></p-photo-clipboard>
+      <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
 
-      <p-photo-mosaic v-if="settings.view === 'mosaic'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :edit-photo="editPhoto" :open-photo="openPhoto" :is-shared-view="isShared"></p-photo-mosaic>
-      <p-photo-list v-else-if="settings.view === 'list'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
-      <p-photo-cards v-else context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-cards>
-    </v-container>
+      <p-photo-view-mosaic
+        v-if="settings.view === 'mosaic'"
+        context="album"
+        :photos="results"
+        :select-mode="selectMode"
+        :filter="filter"
+        :album="model"
+        :edit-photo="editPhoto"
+        :open-photo="openPhoto"
+        :is-shared-view="isShared"
+      ></p-photo-view-mosaic>
+      <p-photo-view-list
+        v-else-if="settings.view === 'list'"
+        context="album"
+        :photos="results"
+        :select-mode="selectMode"
+        :filter="filter"
+        :album="model"
+        :open-photo="openPhoto"
+        :edit-photo="editPhoto"
+        :open-date="openDate"
+        :open-location="openLocation"
+        :is-shared-view="isShared"
+      ></p-photo-view-list>
+      <p-photo-view-cards
+        v-else
+        context="album"
+        :photos="results"
+        :select-mode="selectMode"
+        :filter="filter"
+        :album="model"
+        :open-photo="openPhoto"
+        :edit-photo="editPhoto"
+        :open-date="openDate"
+        :open-location="openLocation"
+        :is-shared-view="isShared"
+      ></p-photo-view-cards>
+    </div>
   </div>
 </template>
 
 <script>
-import { Photo, MediaLive, MediaRaw, MediaVideo, MediaAnimated } from "model/photo";
+import { Photo } from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
-import Event from "pubsub-js";
-import Viewer from "common/viewer";
+import PAlbumToolbar from "component/album/toolbar.vue";
+import PPhotoClipboard from "component/photo/clipboard.vue";
+import PPhotoViewCards from "component/photo/view/cards.vue";
+import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
+import PPhotoViewList from "component/photo/view/list.vue";
+import PScroll from "component/scroll.vue";
+import PLoading from "component/loading.vue";
 
 export default {
   name: "PPageAlbumPhotos",
+  components: {
+    PLoading,
+    PAlbumToolbar,
+    PPhotoClipboard,
+    PPhotoViewCards,
+    PPhotoViewMosaic,
+    PPhotoViewList,
+    PScroll,
+  },
   props: {
     staticFilter: {
       type: Object,
@@ -36,12 +105,11 @@ export default {
     const uid = this.$route.params.album;
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const order = query["order"] ? query["order"] : "oldest";
     const camera = query["camera"] ? parseInt(query["camera"]) : 0;
     const q = query["q"] ? query["q"] : "";
     const country = query["country"] ? query["country"] : "";
     const view = this.getViewType();
-    const filter = { country: country, camera: camera, order: order, q: q };
+    const filter = { country: country, camera: camera, q: q };
     const settings = { view: view };
     const batchSize = Photo.batchSize();
 
@@ -59,7 +127,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight * 6,
+      scrollDistance: window.innerHeight * 4,
       batchSize: batchSize,
       offset: 0,
       page: 0,
@@ -67,13 +135,15 @@ export default {
       settings: settings,
       filter: filter,
       lastFilter: {},
+      lastParams: {},
       routeName: routeName,
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       loading: true,
-      viewer: {
+      lightbox: {
         results: [],
         loading: false,
         complete: false,
+        open: false,
         dirty: false,
         batchSize: 6000,
       },
@@ -86,6 +156,12 @@ export default {
   },
   watch: {
     $route() {
+      if (!this.$view.isActive(this)) {
+        return;
+      }
+
+      this.$view.focus(this.$refs?.page);
+
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
@@ -107,8 +183,9 @@ export default {
        * https://github.com/photoprism/photoprism/pull/2782#issue-1409954466
        */
       const routeChanged = this.routeName !== this.$route.name;
+
       if (routeChanged) {
-        this.lastFilter = {};
+        this.resetLastFilter();
       }
 
       this.routeName = this.$route.name;
@@ -124,18 +201,53 @@ export default {
   created() {
     this.findAlbum().then(() => this.search());
 
-    this.subscriptions.push(Event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
-    this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+    this.subscriptions.push(
+      this.$event.subscribe("lightbox.opened", (ev, data) => {
+        this.lightbox.open = true;
+      })
+    );
+    this.subscriptions.push(
+      this.$event.subscribe("lightbox.closed", (ev, data) => {
+        this.lightbox.open = false;
+      })
+    );
+
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  mounted() {
+    this.$view.enter(this, this.$refs?.page);
+  },
+  beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
   },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
+    resetLastFilter() {
+      this.lastFilter = {};
+    },
+    onCtrl(ev) {
+      if (!ev || !(ev instanceof KeyboardEvent) || !ev.ctrlKey || !this.$view.isActive(this)) {
+        return;
+      }
+
+      switch (ev.code) {
+        case "KeyR":
+          ev.preventDefault();
+          this.refresh();
+          break;
+      }
+    },
+    hideExpansionPanel() {
+      return this.$refs?.toolbar?.hideExpansionPanel();
+    },
     getViewType() {
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
       let defaultType = window.localStorage.getItem("photos_view");
@@ -154,6 +266,10 @@ export default {
 
       return "cards";
     },
+    getSortOrder() {
+      const query = this.$route.query;
+      return query["order"] ? query["order"] : this.model?.Order;
+    },
     openDate(index) {
       if (!this.canEdit) {
         return this.openPhoto(index);
@@ -168,7 +284,7 @@ export default {
         return;
       }
 
-      this.$router.push({ query: { q: "taken:" + photo.TakenAt.substring(0, 10) }});
+      this.$router.push({ query: { q: "taken:" + photo.TakenAt.substring(0, 10) } });
     },
     openLocation(index) {
       if (!this.hasPlaces) {
@@ -187,7 +303,7 @@ export default {
         this.$router.push({ name: "places_view", params: { s: this.uid }, query: { q: photo.CellID } });
       }
     },
-    editPhoto(index) {
+    editPhoto(index, tab) {
       if (!this.canEdit) {
         return this.openPhoto(index);
       }
@@ -197,56 +313,38 @@ export default {
       });
 
       // Open Edit Dialog
-      Event.publish("dialog.edit", { selection: selection, album: this.album, index: index });
+      this.$event.publish("dialog.edit", { selection, album: this.album, index, tab });
     },
-    openPhoto(index, showMerged = false, preferVideo = false) {
-      if (this.loading || !this.listen || this.viewer.loading || !this.results[index]) {
+    openPhoto(index, showMerged = false) {
+      if (this.loading || !this.listen || this.lightbox.loading || !this.results[index]) {
         return false;
       }
 
       const selected = this.results[index];
 
-      // Don't open as stack when user is selecting pictures, or a RAW has only one JPEG.
-      if (this.selection.length > 0 || (selected.Type === MediaRaw && selected.jpegFiles().length < 2)) {
+      // Do not open as stack if there is only one JPEG or if multiple pictures are selected.
+      if (this.selection.length > 0 || selected.jpegFiles().length < 2) {
         showMerged = false;
       }
 
-      /**
-       * If the file is a video or an animation (like gif), then we always play
-       * it in the video-player.
-       * If the file is a live-image (an image with an embedded video), then we only
-       * play it in the video-player if specifically requested.
-       * This is because:
-       * 1. the lower-resolution video in these files is already
-       *    played when hovering the element (which does not happen for regular
-       *    video files)
-       * 2. The video in live-images is an addon. The main focus is usually still
-       *    the high resolution image inside
-       *
-       * preferVideo is true, when the user explicitly clicks the live-image-icon.
-       */
-      if ((preferVideo && selected.Type === MediaLive) || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
-        if (selected.isPlayable()) {
-          this.$viewer.play({ video: selected, album: this.album });
-        } else {
-          this.$viewer.show(Thumb.fromPhotos(this.results), index);
-        }
-      } else if (showMerged) {
-        this.$viewer.show(Thumb.fromFiles([selected]), 0);
+      if (showMerged) {
+        this.$lightbox.openModels(Thumb.fromFiles([selected]), 0);
       } else {
-        Viewer.show(this, index);
+        this.$lightbox.openView(this, index);
       }
 
       return true;
     },
-    loadMore() {
-      if (this.scrollDisabled || this.$scrollbar.disabled()) return;
+    loadMore(force) {
+      if (!force && (this.scrollDisabled || this.$view.isHidden(this))) {
+        return;
+      }
 
       this.scrollDisabled = true;
       this.listen = false;
 
       if (this.dirty) {
-        this.viewer.dirty = true;
+        this.lightbox.dirty = true;
       }
 
       const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
@@ -257,6 +355,7 @@ export default {
         offset: offset,
         s: this.uid,
         merged: true,
+        order: this.getSortOrder(),
       };
 
       Object.assign(params, this.lastFilter);
@@ -264,6 +363,8 @@ export default {
       if (this.staticFilter) {
         Object.assign(params, this.staticFilter);
       }
+
+      this.lastParams = params;
 
       Photo.search(params)
         .then((response) => {
@@ -275,7 +376,9 @@ export default {
             this.offset = offset;
 
             if (this.results.length > 1) {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length }));
+              this.$notify.info(
+                this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
+              );
             }
           } else if (this.results.length >= Photo.limit()) {
             this.offset = offset;
@@ -288,7 +391,7 @@ export default {
 
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -343,12 +446,9 @@ export default {
     updateQuery(props) {
       this.updateFilter(props);
 
-      if (this.model.Order !== this.filter.order) {
-        this.model.Order = this.filter.order;
-        this.updateAlbum();
+      if (this.loading) {
+        return;
       }
-
-      if (this.loading) return;
 
       const query = {
         view: this.settings.view,
@@ -374,6 +474,7 @@ export default {
         offset: this.offset,
         s: this.uid,
         merged: true,
+        order: this.getSortOrder(),
       };
 
       Object.assign(params, this.filter);
@@ -387,7 +488,9 @@ export default {
     refresh(props) {
       this.updateSettings(props);
 
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
 
       this.loading = true;
       this.page = 0;
@@ -395,14 +498,23 @@ export default {
       this.complete = false;
       this.scrollDisabled = false;
 
-      this.loadMore();
+      this.loadMore(true);
     },
     search() {
+      /**
+       * search is called on mount or route change. If the route changed to an
+       * open lightbox, no search is required. There is no reason to do an
+       * initial results load, if the results aren't currently visible
+       */
+      if (this.lightbox.open) {
+        return;
+      }
+
       this.scrollDisabled = true;
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -416,12 +528,19 @@ export default {
 
       const params = this.searchParams();
 
+      this.lastParams = params;
+
       Photo.search(params)
         .then((response) => {
+          // Hide search toolbar expansion panel when matching pictures were found.
+          if (this.offset === 0 && response.count > 0) {
+            this.hideExpansionPanel();
+          }
+
           this.offset = this.batchSize;
           this.results = response.models;
-          this.viewer.results = [];
-          this.viewer.complete = false;
+          this.lightbox.results = [];
+          this.lightbox.complete = false;
           this.complete = response.count < this.batchSize;
           this.scrollDisabled = this.complete;
 
@@ -431,13 +550,15 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One picture found"));
             } else {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length }));
+              this.$notify.info(
+                this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
+              );
             }
           } else {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -454,7 +575,6 @@ export default {
         .then((m) => {
           this.model = m;
 
-          this.filter.order = m.Order;
           window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
 
           return Promise.resolve(this.model);
@@ -465,7 +585,9 @@ export default {
         });
     },
     onAlbumsUpdated(ev, data) {
-      if (!this.listen) return;
+      if (!this.listen) {
+        return;
+      }
 
       if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
@@ -487,11 +609,9 @@ export default {
           this.complete = false;
           this.scrollDisabled = false;
 
-          if (this.filter.order !== this.model.Order) {
-            this.filter.order = this.model.Order;
+          if (this.lastParams?.order !== this.model?.Order) {
             this.updateQuery();
-          } else {
-            this.loadMore();
+            this.loadMore(true);
           }
 
           return;
@@ -509,7 +629,7 @@ export default {
           }
         });
 
-      this.viewer.results
+      this.lightbox.results
         .filter((m) => m.UID === entity.UID)
         .forEach((m) => {
           for (let key in entity) {
@@ -527,7 +647,9 @@ export default {
       }
     },
     onUpdate(ev, data) {
-      if (!this.listen) return;
+      if (!this.listen) {
+        return;
+      }
 
       if (!data || !data.entities) {
         return;
@@ -558,7 +680,7 @@ export default {
             const uid = data.entities[i];
 
             this.removeResult(this.results, uid);
-            this.removeResult(this.viewer.results, uid);
+            this.removeResult(this.lightbox.results, uid);
             this.$clipboard.removeId(uid);
           }
 

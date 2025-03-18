@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
-	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
@@ -29,12 +29,12 @@ func CreateSession(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Login
+		var frm form.Login
 
 		clientIp := ClientIP(c)
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			event.AuditWarn([]string{clientIp, "create session", "invalid request", "%s"}, err)
 			AbortBadRequest(c)
 			return
@@ -59,7 +59,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Check request rate limit.
 		var r *limiter.Request
-		if f.HasPasscode() {
+		if frm.HasPasscode() {
 			r = limiter.Login.RequestN(clientIp, 3)
 		} else {
 			r = limiter.Login.Request(clientIp)
@@ -86,7 +86,7 @@ func CreateSession(router *gin.RouterGroup) {
 		}
 
 		// Check authentication credentials.
-		if err = sess.LogIn(f, c); err != nil {
+		if err = sess.LogIn(frm, c); err != nil {
 			if sess.Method().IsNot(authn.Method2FA) {
 				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			} else if errors.Is(err, authn.ErrPasscodeRequired) {

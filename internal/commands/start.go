@@ -11,12 +11,14 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/sevlyar/go-daemon"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/session"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/server"
+	"github.com/photoprism/photoprism/internal/server/process"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -25,7 +27,7 @@ import (
 )
 
 // StartCommand configures the command name, flags, and action.
-var StartCommand = cli.Command{
+var StartCommand = &cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
 	Usage:   "Starts the Web server",
@@ -35,14 +37,16 @@ var StartCommand = cli.Command{
 
 // startFlags specifies the start command parameters.
 var startFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:   "detach-server, d",
-		Usage:  "detach from the console (daemon mode)",
-		EnvVar: "PHOTOPRISM_DETACH_SERVER",
+	&cli.BoolFlag{
+		Name:    "detach-server",
+		Aliases: []string{"d"},
+		Usage:   "detach from the console (daemon mode)",
+		EnvVars: config.EnvVars("DETACH_SERVER"),
 	},
-	cli.BoolFlag{
-		Name:  "config, c",
-		Usage: "show config",
+	&cli.BoolFlag{
+		Name:    "config",
+		Aliases: []string{"c"},
+		Usage:   "show config",
 	},
 }
 
@@ -89,7 +93,7 @@ func startAction(ctx *cli.Context) error {
 	dctx := new(daemon.Context)
 	dctx.LogFileName = conf.LogFilename()
 	dctx.PidFileName = conf.PIDFilename()
-	dctx.Args = ctx.Args()
+	dctx.Args = ctx.Args().Slice()
 
 	if !daemon.WasReborn() && conf.DetachServer() {
 		conf.Shutdown()
@@ -141,11 +145,9 @@ func startAction(ctx *cli.Context) error {
 	// Start auto-indexing background worker.
 	auto.Start(conf)
 
-	// Wait for signal to initiate server shutdown.
-	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
-
-	sig := <-quit
+	// Wait for signal to trigger server shutdown or restart.
+	signal.Notify(process.Signal, os.Interrupt, syscall.SIGTERM, syscall.SIGUSR1)
+	sig := <-process.Signal
 
 	// Stop all background activity.
 	auto.Shutdown()
@@ -164,7 +166,10 @@ func startAction(ctx *cli.Context) error {
 	time.Sleep(2 * time.Second)
 	conf.Shutdown()
 
-	// Don't exit with 0 if SIGUSR1 was received to avoid restarts.
+	// Exit with status code 1 if the shutdown was initiated with SIGUSR1 to request a restart.
+	//
+	// Note that this requires an entrypoint script or other process to
+	// spawns a new instance when the server exists with status code 1.
 	if sig == syscall.SIGUSR1 {
 		os.Exit(1)
 		return nil

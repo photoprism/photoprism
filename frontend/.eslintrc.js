@@ -6,8 +6,13 @@ module.exports = {
     node: true,
     mocha: true,
   },
-  extends: ["eslint:recommended", "plugin:vue/recommended", "plugin:prettier/recommended"],
-
+  extends: [
+    "eslint:recommended",
+    "plugin:vue/recommended",
+    "plugin:prettier/recommended",
+    "plugin:vue/base",
+    "plugin:vuetify/base",
+  ],
   settings: {
     "prettier/prettier": {
       // Settings for how to process Vue SFC Blocks
@@ -32,22 +37,29 @@ module.exports = {
       },
     },
   },
-
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
   },
   rules: {
     // 'comma-dangle': ['error', 'always-multiline'],
-    indent: ["error", 2, { SwitchCase: 1 }],
+    "indent": ["error", 2, { SwitchCase: 1 }],
     "linebreak-style": ["error", "unix"],
-    quotes: ["off", "double"], // Easier for Go developers!
-    semi: ["error", "always"],
+    "quotes": [
+      "off",
+      "double",
+      {
+        avoidEscape: true,
+        allowTemplateLiterals: true,
+      },
+    ],
+    "semi": ["error", "always"],
     "no-unused-vars": ["warn"],
     "no-console": 0,
     "no-case-declarations": 0,
     "no-prototype-builtins": 0,
     "vue/no-v-text-v-html-on-component": 0,
+    "vue/no-v-model-argument": 0,
     "vue/valid-model-definition": 0,
     "vue/valid-attribute-name": 0,
     "vue/singleline-html-element-content-newline": [
@@ -55,7 +67,20 @@ module.exports = {
       {
         ignoreWhenNoAttributes: true,
         ignoreWhenEmpty: true,
-        ignores: ["pre", "textarea", "span", "translate", "a", "v-icon", "v-text-field", "v-input", "v-select", "v-switch", "v-checkbox", "v-img"],
+        ignores: [
+          "pre",
+          "textarea",
+          "span",
+          "translate",
+          "a",
+          "v-icon",
+          "v-text-field",
+          "v-input",
+          "v-select",
+          "v-switch",
+          "v-checkbox",
+          "v-img",
+        ],
         externalIgnores: [],
       },
     ],
@@ -69,11 +94,14 @@ module.exports = {
     "prettier/prettier": [
       "warn",
       {
-        printWidth: 300,
-        singleQuote: false,
+        printWidth: 120,
         semi: true,
+        singleQuote: false,
+        bracketSpacing: true,
         trailingComma: "es5",
-        htmlWhitespaceSensitivity: "strict",
+        htmlWhitespaceSensitivity: "css",
+        quoteProps: "consistent",
+        proseWrap: "never",
       },
     ],
   },

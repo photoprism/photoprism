@@ -3,6 +3,7 @@ package thumb
 import (
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/disintegration/imaging"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

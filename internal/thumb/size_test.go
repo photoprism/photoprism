@@ -100,6 +100,19 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.True(t, size.Skip(img))
 	})
+	t.Run("Fit5120", func(t *testing.T) {
+		size := Sizes[Fit5120]
+
+		assert.FileExists(t, src)
+
+		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, size.Skip(img))
+	})
 }
 
 func TestSize_FileName(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -12,7 +12,7 @@ import (
 )
 
 // UsersLegacyCommand configures the command name, flags, and action.
-var UsersLegacyCommand = cli.Command{
+var UsersLegacyCommand = &cli.Command{
 	Name:      "legacy",
 	Usage:     "Lists legacy user accounts",
 	ArgsUsage: "[search]",

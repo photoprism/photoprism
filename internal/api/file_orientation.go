@@ -19,6 +19,7 @@ import (
 //	@Summary	changes the orientation of a file
 //	@Id			ChangeFileOrientation
 //	@Tags		Files
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Photo
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -57,7 +58,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 		}
 
 		// Init form with model values
-		f, err := form.NewFile(m)
+		frm, err := form.NewFile(m)
 
 		if err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
@@ -65,25 +66,25 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
-		if err = c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&frm); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
 
 		// Update orientation if it was changed.
-		if m.Orientation() != f.Orientation() {
+		if m.Orientation() != frm.Orientation() {
 			fileName := photoprism.FileName(m.FileRoot, m.FileName)
-			mf, err := photoprism.NewMediaFile(fileName)
+			mf, fileErr := photoprism.NewMediaFile(fileName)
 
 			// Check if file exists.
-			if err != nil {
+			if fileErr != nil {
 				Abort(c, http.StatusInternalServerError, i18n.ErrFileNotFound)
 				return
 			}
 
 			// Update file header.
-			if err = mf.ChangeOrientation(f.Orientation()); err != nil {
-				log.Debugf("file: %s in %s (change orientation)", err, clean.Log(mf.BaseName()))
+			if fileErr = mf.ChangeOrientation(frm.Orientation()); fileErr != nil {
+				log.Debugf("file: %s in %s (change orientation)", fileErr, clean.Log(mf.BaseName()))
 				Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 				return
 			}

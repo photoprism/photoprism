@@ -10,8 +10,8 @@ import (
 )
 
 // Faces searches faces and returns them.
-func Faces(f form.SearchFaces) (results FaceResults, err error) {
-	if err := f.ParseQueryString(); err != nil {
+func Faces(frm form.SearchFaces) (results FaceResults, err error) {
+	if err = frm.ParseQueryString(); err != nil {
 		return results, err
 	}
 
@@ -20,18 +20,18 @@ func Faces(f form.SearchFaces) (results FaceResults, err error) {
 	// Base query.
 	s := UnscopedDb().Table(facesTable)
 
-	if f.Markers {
+	if frm.Markers {
 		s = s.Select(fmt.Sprintf(`%s.*, m.marker_uid, m.file_uid, m.marker_name, m.subj_src, m.marker_src, 
 			m.marker_type, m.marker_review, m.marker_invalid, m.size, m.score, m.thumb, m.face_dist`, facesTable))
 
-		if txt.Yes(f.Unknown) {
+		if txt.Yes(frm.Unknown) {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
 	        WHERE face_id <> '' AND subj_uid = '' AND marker_name = '' AND marker_type = 'face' AND marker_src = 'image'
 	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
-		} else if txt.No(f.Unknown) {
+		} else if txt.No(frm.Unknown) {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
 	        WHERE face_id <> '' AND subj_uid <> '' AND marker_name <> '' AND marker_type = 'face' AND marker_src = 'image'
@@ -53,14 +53,14 @@ func Faces(f form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	// Limit result count.
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	if frm.Count > 0 && frm.Count <= MaxResults {
+		s = s.Limit(frm.Count).Offset(frm.Offset)
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		s = s.Limit(MaxResults).Offset(frm.Offset)
 	}
 
 	// Set sort order.
-	switch f.Order {
+	switch frm.Order {
 	case "subject":
 		s = s.Order(fmt.Sprintf("%s.subj_uid", facesTable))
 	case "added":
@@ -72,8 +72,8 @@ func Faces(f form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	// Find specific IDs?
-	if f.UID != "" {
-		s = s.Where(fmt.Sprintf("%s.id IN (?)", facesTable), strings.Split(strings.ToUpper(f.UID), txt.Or))
+	if frm.UID != "" {
+		s = s.Where(fmt.Sprintf("%s.id IN (?)", facesTable), strings.Split(strings.ToUpper(frm.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -83,14 +83,14 @@ func Faces(f form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	// Exclude unknown faces?
-	if txt.Yes(f.Unknown) {
+	if txt.Yes(frm.Unknown) {
 		s = s.Where(fmt.Sprintf("%s.subj_uid = '' OR %s.subj_uid IS NULL", facesTable, facesTable))
-	} else if txt.No(f.Unknown) {
+	} else if txt.No(frm.Unknown) {
 		s = s.Where(fmt.Sprintf("%s.subj_uid <> '' AND %s.subj_uid IS NOT NULL", facesTable, facesTable))
 	}
 
 	// Show hidden faces?
-	if !txt.Yes(f.Hidden) {
+	if !txt.Yes(frm.Hidden) {
 		s = s.Where(fmt.Sprintf("%s.face_hidden = 0", facesTable))
 	}
 

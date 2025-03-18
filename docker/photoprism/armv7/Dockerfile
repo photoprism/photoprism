@@ -1,7 +1,7 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:armv7 AS build
 
-# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -90,7 +90,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_PNG_SIZE=7680 \
     PHOTOPRISM_AUTO_INDEX="300" \
     PHOTOPRISM_AUTO_IMPORT="-1" \
-    PHOTOPRISM_INIT="https"
+    PHOTOPRISM_INIT="https" \
+    S6_KEEP_ENV=1 \
+    S6_LOGGING=0
 
 # Copy dist files, scripts, and debian backports sources list.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
@@ -116,6 +118,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
@@ -127,16 +130,15 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/backups \
         /photoprism/storage/config \
         /photoprism/storage/cache && \
+    /scripts/install-s6.sh && \
     /scripts/cleanup.sh
 
-# Default working directory.
+# Set default working directory.
 WORKDIR /photoprism
 
 # Expose HTTP(S) ports.
 EXPOSE 2342 2443
 
-# Declare container entrypoint script.
-ENTRYPOINT ["/scripts/entrypoint.sh"]
-
-# Start app.
-CMD ["/opt/photoprism/bin/photoprism", "start"]
+# Set default entrypoint and command.
+ENTRYPOINT ["/init"]
+CMD ["/scripts/cmd.sh", "/opt/photoprism/bin/photoprism", "start"]

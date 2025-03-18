@@ -13,10 +13,13 @@ type Subject struct {
 	SubjHidden   bool   `json:"Hidden"`
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
+	Thumb        string `json:"Thumb"`
+	ThumbSrc     string `json:"ThumbSrc"`
 }
 
-func NewSubject(m interface{}) (f Subject, err error) {
-	err = deepcopier.Copy(m).To(&f)
+func NewSubject(m interface{}) (*Subject, error) {
+	frm := &Subject{}
+	err := deepcopier.Copy(m).To(frm)
 
-	return f, err
+	return frm, err
 }

@@ -27,7 +27,7 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 		Stack:           stack,
 		FacesOnly:       facesOnly,
 		SkipArchived:    skipArchived,
-		ByteLimit:       Config().OriginalsByteLimit(),
+		ByteLimit:       Config().OriginalsLimitBytes(),
 		ResolutionLimit: Config().ResolutionLimit(),
 	}
 

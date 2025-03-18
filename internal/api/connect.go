@@ -26,17 +26,17 @@ func Connect(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Connect
+		var frm form.Connect
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			log.Warnf("connect: invalid form values (%s)", clean.Log(name))
 			Abort(c, http.StatusBadRequest, i18n.ErrAccountConnect)
 			return
 		}
 
-		if f.Invalid() {
-			log.Warnf("connect: invalid token %s", clean.Log(f.Token))
+		if frm.Invalid() {
+			log.Warnf("connect: invalid token %s", clean.Log(frm.Token))
 			Abort(c, http.StatusBadRequest, i18n.ErrAccountConnect)
 			return
 		}
@@ -62,7 +62,7 @@ func Connect(router *gin.RouterGroup) {
 		switch name {
 		case "hub":
 			old := conf.Hub().Session
-			err = conf.RenewApiKeysWithToken(f.Token)
+			err = conf.RenewApiKeysWithToken(frm.Token)
 			restart = old != conf.Hub().Session
 		default:
 			log.Errorf("connect: invalid service %s", clean.Log(name))

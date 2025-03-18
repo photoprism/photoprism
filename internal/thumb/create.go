@@ -136,7 +136,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	var quality imaging.EncodeOption
 
-	if fs.FileType(fileName) == fs.ImagePNG {
+	if fs.FileType(fileName) == fs.ImagePng {
 		quality = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else {
 		quality = JpegQuality(width, height).EncodeOption()

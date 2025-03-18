@@ -50,6 +50,7 @@ func GetFace(router *gin.RouterGroup) {
 //	@Summary	updates face properties
 //	@Id			UpdateFace
 //	@Tags		Faces
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Face
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
@@ -65,10 +66,10 @@ func UpdateFace(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Face
+		var frm form.Face
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -82,17 +83,17 @@ func UpdateFace(router *gin.RouterGroup) {
 		}
 
 		// Change visibility?
-		if !f.FaceHidden && f.FaceHidden == m.FaceHidden {
+		if !frm.FaceHidden && frm.FaceHidden == m.FaceHidden {
 			// Do nothing.
-		} else if err := m.Update("FaceHidden", f.FaceHidden); err != nil {
+		} else if err := m.Update("FaceHidden", frm.FaceHidden); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
 		// Change subject?
-		if f.SubjUID == "" {
+		if frm.SubjUID == "" {
 			// Do nothing.
-		} else if err := m.SetSubjectUID(f.SubjUID); err != nil {
+		} else if err := m.SetSubjectUID(frm.SubjUID); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}

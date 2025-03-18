@@ -1,39 +1,47 @@
 <template>
-  <div class="p-page p-page-discover">
-    <v-tabs v-model="active" flat grow color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+  <div class="p-page p-page-discover" tabindex="1">
+    <v-tabs
+      v-model="active"
+      elevation="0"
+      grow
+      class="bg-transparent"
+      bg-color="secondary"
+      slider-color="surface-variant"
+      :height="$vuetify.display.smAndDown ? 48 : 64"
+    >
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
-        <translate>Colors</translate>
+        {{ $gettext(`Colors`) }}
       </v-tab>
 
       <v-tab id="tab-discover-similar" ripple @click="changePath('/discover/similar')">
-        <translate>Similar</translate>
+        {{ $gettext(`Similar`) }}
       </v-tab>
 
       <v-tab id="tab-discover-season" ripple @click="changePath('/discover/season')">
-        <translate>Season</translate>
+        {{ $gettext(`Season`) }}
       </v-tab>
 
       <v-tab id="tab-discover-random" ripple @click="changePath('/discover/random')">
-        <translate>Random</translate>
+        {{ $gettext(`Random`) }}
       </v-tab>
 
-      <v-tabs-items touchless>
-        <v-tab-item>
+      <v-tabs-window v-model="active">
+        <v-tabs-window-item>
           <p-tab-discover-colors></p-tab-discover-colors>
-        </v-tab-item>
+        </v-tabs-window-item>
 
-        <v-tab-item>
+        <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-tabs-window-item>
 
-        <v-tab-item>
+        <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
+        </v-tabs-window-item>
 
-        <v-tab-item>
+        <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
-        </v-tab-item>
-      </v-tabs-items>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-tabs>
   </div>
 </template>
@@ -56,6 +64,12 @@ export default {
       readonly: this.$config.get("readonly"),
       active: this.tab,
     };
+  },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     changePath: function (path) {

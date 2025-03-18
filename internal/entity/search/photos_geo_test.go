@@ -853,6 +853,26 @@ func TestGeo(t *testing.T) {
 			assert.NotEmpty(t, r.ID)
 		}
 	})
+	t.Run("Codec", func(t *testing.T) {
+		var frm form.SearchPhotosGeo
+
+		frm.Codec = "avc1"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 0, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEqual(t, r.PhotoType, "photo")
+			assert.NotEqual(t, r.PhotoType, "raw")
+		}
+	})
 	t.Run("f.Live = true", func(t *testing.T) {
 		var frm form.SearchPhotosGeo
 

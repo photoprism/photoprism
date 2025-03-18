@@ -38,7 +38,7 @@ func TestActivity_Start(t *testing.T) {
 
 		assert.Error(t, b.Start(), "already running")
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		b := Activity{}
 
 		assert.Nil(t, b.Start())

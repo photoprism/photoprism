@@ -10,8 +10,8 @@ import (
 )
 
 // Labels searches labels based on their name.
-func Labels(f form.SearchLabels) (results []Label, err error) {
-	if err := f.ParseQueryString(); err != nil {
+func Labels(frm form.SearchLabels) (results []Label, err error) {
+	if err = frm.ParseQueryString(); err != nil {
 		return results, err
 	}
 
@@ -26,22 +26,22 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 		Group("labels.id")
 
 	// Limit result count.
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	if frm.Count > 0 && frm.Count <= MaxResults {
+		s = s.Limit(frm.Count).Offset(frm.Offset)
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		s = s.Limit(MaxResults).Offset(frm.Offset)
 	}
 
 	// Set sort order.
-	switch f.Order {
+	switch frm.Order {
 	case "slug":
 		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	default:
 		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	}
 
-	if f.UID != "" {
-		s = s.Where("labels.label_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
+	if frm.UID != "" {
+		s = s.Where("labels.label_uid IN (?)", strings.Split(strings.ToLower(frm.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -50,16 +50,16 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 		return results, nil
 	}
 
-	if f.Query != "" {
+	if frm.Query != "" {
 		var labelIds []uint
 		var categories []entity.Category
 		var label entity.Label
 
-		slugString := txt.Slug(f.Query)
-		likeString := "%" + f.Query + "%"
+		slugString := txt.Slug(frm.Query)
+		likeString := "%" + frm.Query + "%"
 
 		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Infof("search: label %s not found", clean.Log(f.Query))
+			log.Infof("search: label %s not found", clean.Log(frm.Query))
 
 			s = s.Where("labels.label_name LIKE ?", likeString)
 		} else {
@@ -77,11 +77,11 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 		}
 	}
 
-	if f.Favorite {
+	if frm.Favorite {
 		s = s.Where("labels.label_favorite = 1")
 	}
 
-	if !f.All {
+	if !frm.All {
 		s = s.Where("labels.label_priority >= 0 OR labels.label_favorite = 1")
 	}
 

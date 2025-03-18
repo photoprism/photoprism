@@ -1,6 +1,7 @@
 package config
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -72,7 +73,7 @@ func TestConfig_CreateDarktableCachePath(t *testing.T) {
 
 	assert.Equal(t, path, "")
 
-	c.options.DarktableCachePath = "test"
+	c.options.DarktableCachePath = filepath.Join(c.StoragePath(), "darktable/cache")
 
 	path, err = c.CreateDarktableCachePath()
 
@@ -80,7 +81,7 @@ func TestConfig_CreateDarktableCachePath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Contains(t, path, "test")
+	assert.Contains(t, path, "darktable/cache")
 
 	c.options.DarktableCachePath = ""
 }
@@ -95,7 +96,7 @@ func TestConfig_CreateDarktableConfigPath(t *testing.T) {
 
 	assert.Equal(t, path, "")
 
-	c.options.DarktableConfigPath = "test"
+	c.options.DarktableConfigPath = filepath.Join(c.StoragePath(), "darktable/config")
 
 	path, err = c.CreateDarktableConfigPath()
 
@@ -103,7 +104,7 @@ func TestConfig_CreateDarktableConfigPath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Contains(t, path, "test")
+	assert.Contains(t, path, "darktable/config")
 
 	c.options.DarktableConfigPath = ""
 }

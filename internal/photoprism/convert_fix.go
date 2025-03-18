@@ -21,7 +21,7 @@ func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 
 	logName := clean.Log(f.RootRelName())
 
-	if w.conf.DisableImageMagick() || !w.imageMagickExclude.Allow(fs.ExtJPEG) {
+	if w.conf.DisableImageMagick() || !w.imageMagickExclude.Allow(fs.ExtJpeg) {
 		return nil, fmt.Errorf("convert: ImageMagick must be enabled to re-encode %s", logName)
 	}
 
@@ -42,7 +42,7 @@ func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	cacheDir := w.conf.MediaFileCachePath(fileHash)
 
 	// Compose cache filename.
-	cacheName := filepath.Join(cacheDir, fileHash+fs.ExtJPEG)
+	cacheName := filepath.Join(cacheDir, fileHash+fs.ExtJpeg)
 
 	mediaFile, err := NewMediaFile(cacheName)
 

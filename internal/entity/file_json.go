@@ -31,6 +31,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Duration       time.Duration `json:",omitempty"`
 		FPS            float64       `json:",omitempty"`
 		Frames         int           `json:",omitempty"`
+		Pages          int           `json:",omitempty"`
 		Width          int           `json:",omitempty"`
 		Height         int           `json:",omitempty"`
 		Orientation    int           `json:",omitempty"`
@@ -78,6 +79,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Duration:       m.FileDuration,
 		FPS:            m.FileFPS,
 		Frames:         m.FileFrames,
+		Pages:          m.FilePages,
 		Width:          m.FileWidth,
 		Height:         m.FileHeight,
 		Orientation:    m.FileOrientation,

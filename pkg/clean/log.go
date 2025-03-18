@@ -31,8 +31,10 @@ func Log(s string) string {
 		case ' ':
 			spaces = true
 			return r
-		case '`', '"':
+		case '`':
 			return '\''
+		case '"':
+			return '"'
 		case '\\', '$', '<', '>', '{', '}':
 			return '?'
 		default:

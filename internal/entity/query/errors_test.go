@@ -15,7 +15,7 @@ func TestErrors(t *testing.T) {
 		}
 		assert.Empty(t, errors)
 	})
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		errors, err := Errors(1000, 0, "errors")
 		if err != nil {
 			t.Fatal(err)

@@ -30,7 +30,7 @@ func TestStaticRoutes(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/", nil)
 		r.ServeHTTP(w, req)
 		assert.Equal(t, 307, w.Code)
-		assert.Equal(t, "<a href=\"/library/browse\">Temporary Redirect</a>.\n\n", w.Body.String())
+		assert.Equal(t, "<a href=\"/library/\">Temporary Redirect</a>.\n\n", w.Body.String())
 	})
 	t.Run("HeadRoot", func(t *testing.T) {
 		w := httptest.NewRecorder()

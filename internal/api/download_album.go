@@ -7,7 +7,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ulule/deepcopier"
 
+	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -15,7 +18,22 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media"
 )
+
+// AlbumDownloadName returns the album download file name type.
+func AlbumDownloadName(c *gin.Context) customize.DownloadName {
+	switch c.Query("name") {
+	case "file":
+		return customize.DownloadNameFile
+	case "share":
+		return customize.DownloadNameShare
+	case "original":
+		return customize.DownloadNameOriginal
+	default:
+		return get.Config().Settings().Albums.Download.Name
+	}
+}
 
 // DownloadAlbum streams the album contents as zip archive.
 //
@@ -36,7 +54,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.Settings().Features.Download {
+		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -49,13 +67,16 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		files, err := search.AlbumPhotos(a, 10000, true)
+		results, err := search.AlbumPhotos(a, 10000, true)
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
 
+		// Configure file names.
+		dlName := AlbumDownloadName(c)
+		settings := get.Config().Settings().Albums
 		zipFileName := a.ZipName()
 
 		AddDownloadHeader(c, zipFileName)
@@ -67,40 +88,60 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		var aliases = make(map[string]int)
 
-		for _, file := range files {
-			if file.FileName == "" {
-				log.Warnf("album: %s cannot be downloaded (empty file name)", clean.Log(file.FileUID))
+		for _, result := range results {
+			if result.FileName == "" {
+				log.Warnf("album: %s cannot be downloaded (empty file name)", clean.Log(result.FileUID))
 				continue
-			} else if file.FileHash == "" {
-				log.Warnf("album: %s cannot be downloaded (empty file hash)", clean.Log(file.FileName))
+			} else if result.FileHash == "" {
+				log.Warnf("album: %s cannot be downloaded (empty file hash)", clean.Log(result.FileName))
 				continue
 			}
 
-			if file.FileSidecar {
-				log.Debugf("album: sidecar file %s not included in download", clean.Log(file.FileName))
+			if settings.Download.Originals && result.FileRoot != "/" {
+				log.Debugf("album: generated file %s not included in download", clean.Log(result.FileName))
 				continue
 			}
+
+			if !settings.Download.MediaSidecar && result.FileSidecar {
+				log.Debugf("album: sidecar file %s not included in download", clean.Log(result.FileName))
+				continue
+			}
+
+			if !settings.Download.MediaRaw && media.Raw.Equal(result.MediaType) {
+				log.Debugf("album: raw file %s not included in download", clean.Log(result.FileName))
+				continue
+			}
+
+			// Create file model from search result.
+			file := entity.File{}
+
+			if err = deepcopier.Copy(&file).From(result); err != nil {
+				log.Warnf("album: %s in %s (deepcopier)", err, clean.Log(result.FileName))
+				continue
+			}
+
+			file.ID = result.FileID
 
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
-			alias := file.ShareBase(0)
+			alias := file.DownloadName(dlName, 0)
 			key := strings.ToLower(alias)
 
 			if seq := aliases[key]; seq > 0 {
-				alias = file.ShareBase(seq)
+				alias = file.DownloadName(dlName, seq)
 			}
 
 			aliases[key] += 1
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
-					log.Errorf("download: failed to add %s (%s)", clean.Log(file.FileName), zipErr)
+					log.Errorf("album: failed to zip %s (%s)", clean.Log(result.FileName), zipErr)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("download: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
+				log.Infof("album: zipped %s as %s", clean.Log(result.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("download: %s not found", clean.Log(file.FileName))
+				log.Warnf("album: %s not found", clean.Log(result.FileName))
 			}
 		}
 

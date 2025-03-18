@@ -1,69 +1,90 @@
 /* Feature Flags */
 
-#photoprism .hidden-always,
+.hidden-always,
 body.disconnected .connected,
-body.shared #photoprism .hidden-shared-only {
+body.shared .hidden-shared-only {
     display: none !important;
 }
 
-#photoprism .feature-mobile,
-#photoprism .feature-experimental,
-#photoprism .feature-debug,
-#photoprism .feature-public,
-#photoprism .feature-readonly {
+.feature-mobile,
+.feature-experimental,
+.feature-develop,
+.feature-preview,
+.feature-debug,
+.feature-public,
+.feature-readonly {
     display: none !important;
 }
 
-body.mobile #photoprism .feature-mobile,
-body.experimental #photoprism .feature-experimental,
-body.debug #photoprism .feature-debug,
-body.public #photoprism .feature-public,
-body.readonly #photoprism .feature-readonly {
+body.mobile .feature-mobile,
+body.experimental .feature-experimental,
+body.experimental .feature-preview,
+body.develop .feature-develop,
+body.develop .feature-preview,
+body.debug .feature-debug,
+body.public .feature-public,
+body.readonly .feature-readonly {
     display: block !important;
 }
 
 /* Opacity */
 
-#photoprism .opacity-0 {
+.opacity-0 {
     opacity: 0 !important;
 }
 
-#photoprism .opacity-50 {
+.opacity-10 {
+    opacity: 0.1 !important;
+}
+
+.opacity-20 {
+    opacity: 0.2 !important;
+}
+
+.opacity-30 {
+    opacity: 0.3 !important;
+}
+
+.opacity-40 {
+    opacity: 0.4 !important;
+}
+
+.opacity-50 {
     opacity: 0.5 !important;
 }
 
-#photoprism .opacity-60 {
+.opacity-60 {
     opacity: 0.6 !important;
 }
 
-#photoprism .opacity-70 {
+.opacity-70 {
     opacity: 0.7 !important;
 }
 
-#photoprism .opacity-75 {
+.opacity-75 {
     opacity: 0.75 !important;
 }
 
-#photoprism .opacity-80 {
+.opacity-80 {
     opacity: 0.8 !important;
 }
 
-#photoprism .opacity-85 {
+.opacity-85 {
     opacity: 0.85 !important;
 }
 
-#photoprism .opacity-90 {
+.opacity-90 {
     opacity: 0.9 !important;
 }
 
-#photoprism .opacity-95 {
+.opacity-95 {
     opacity: 0.95 !important;
 }
 
-#photoprism .opacity-98 {
+.opacity-98 {
     opacity: 0.98 !important;
 }
 
-#photoprism .opacity-100 {
+.opacity-100 {
     opacity: 1 !important;
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -14,18 +14,20 @@ import (
 const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
 
 // UsersResetCommand configures the command name, flags, and action.
-var UsersResetCommand = cli.Command{
+var UsersResetCommand = &cli.Command{
 	Name:        "reset",
 	Usage:       "Removes all registered user accounts",
 	Description: UsersResetDescription,
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "trace, t",
-			Usage: "show trace logs for debugging",
+		&cli.BoolFlag{
+			Name:    "trace",
+			Aliases: []string{"t"},
+			Usage:   "show trace logs for debugging",
 		},
-		cli.BoolFlag{
-			Name:  "yes, y",
-			Usage: "assume \"yes\" and run non-interactively",
+		&cli.BoolFlag{
+			Name:    "yes",
+			Aliases: []string{"y"},
+			Usage:   "assume \"yes\" and run non-interactively",
 		},
 	},
 	Action: usersResetAction,

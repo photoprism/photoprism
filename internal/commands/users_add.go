@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -15,7 +15,7 @@ import (
 )
 
 // UsersAddCommand configures the command name, flags, and action.
-var UsersAddCommand = cli.Command{
+var UsersAddCommand = &cli.Command{
 	Name:      "add",
 	Usage:     "Creates a new user account",
 	ArgsUsage: "[username]",

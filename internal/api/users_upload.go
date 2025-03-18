@@ -36,7 +36,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check permission.
+		// Check if the account owner is allowed to upload files.
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
 
 		if s.Abort(c) {
@@ -45,10 +45,17 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		uid := clean.UID(c.Param("uid"))
 
-		// Users may only upload their own files.
+		// Users may only upload files for their own account.
 		if s.User().UserUID != uid {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "user does not match"}, s.RefID)
 			AbortForbidden(c)
+			return
+		}
+
+		// Abort if there is not enough free storage to upload new files.
+		if conf.FilesQuotaReached() {
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "insufficient storage"}, s.RefID)
+			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}
 
@@ -168,10 +175,10 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		start := time.Now()
 
-		var f form.UploadOptions
+		var frm form.UploadOptions
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -198,10 +205,10 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		opt := photoprism.ImportOptionsUpload(uploadPath, destFolder)
 
 		// Add imported files to albums if allowed.
-		if len(f.Albums) > 0 &&
+		if len(frm.Albums) > 0 &&
 			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
-			opt.Albums = f.Albums
+			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(frm.Albums, " and ")))
+			opt.Albums = frm.Albums
 		}
 
 		// Set user UID if known.
@@ -243,7 +250,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
-		for _, uid := range f.Albums {
+		for _, uid := range frm.Albums {
 			PublishAlbumEvent(StatusUpdated, uid, c)
 		}
 

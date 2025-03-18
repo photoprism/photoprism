@@ -37,10 +37,10 @@ func SearchAlbums(router *gin.RouterGroup) {
 		}
 
 		var err error
-		var f form.SearchAlbums
+		var frm form.SearchAlbums
 
 		// Abort if request params are invalid.
-		if err = c.MustBindWith(&f, binding.Form); err != nil {
+		if err = c.MustBindWith(&frm, binding.Form); err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", "form invalid", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
@@ -50,11 +50,11 @@ func SearchAlbums(router *gin.RouterGroup) {
 
 		// Ignore private flag if feature is disabled.
 		if !settings.Features.Private {
-			f.Public = false
+			frm.Public = false
 		}
 
 		// Find matching albums.
-		result, err := search.UserAlbums(f, s)
+		result, err := search.UserAlbums(frm, s)
 
 		// Ok?
 		if err != nil {
@@ -64,8 +64,8 @@ func SearchAlbums(router *gin.RouterGroup) {
 		}
 
 		AddCountHeader(c, len(result))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 		AddTokenHeaders(c, s)
 
 		// Return as JSON.

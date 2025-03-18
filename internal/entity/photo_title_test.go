@@ -3,8 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
 func TestPhoto_HasTitle(t *testing.T) {
@@ -30,32 +31,41 @@ func TestPhoto_NoTitle(t *testing.T) {
 }
 
 func TestPhoto_SetTitle(t *testing.T) {
-	t.Run("empty title", func(t *testing.T) {
+	t.Run("ManuallyDeleteTitle", func(t *testing.T) {
+		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Manually delete existing title.
 		m.SetTitle("", SrcManual)
-		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		assert.Equal(t, "", m.PhotoTitle)
 	})
-	t.Run("title not from the same source", func(t *testing.T) {
+	t.Run("LowerSourcePriority", func(t *testing.T) {
+		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Set title with lower source priority.
 		m.SetTitle("NewTitleSet", SrcAuto)
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
 	})
-	t.Run("Success", func(t *testing.T) {
+	t.Run("SameSourcePriority", func(t *testing.T) {
+		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Try to delete existing title with same source priority.
+		m.SetTitle("", SrcName)
+		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
+		// Replace existing title with same source priority.
 		m.SetTitle("NewTitleSet", SrcName)
 		assert.Equal(t, "NewTitleSet", m.PhotoTitle)
 	})
 }
 
-func TestPhoto_UpdateTitle(t *testing.T) {
+func TestPhoto_GenerateTitle(t *testing.T) {
 	t.Run("wont update title was modified", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Black beach", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err == nil {
 			t.Fatal()
 		}
@@ -65,7 +75,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")
 		classifyLabels := &classify.Labels{{Name: "tree", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -80,7 +90,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
 		classifyLabels := &classify.Labels{{Name: "tree", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -90,7 +100,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo13")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -100,7 +110,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo14")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -111,7 +121,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -121,7 +131,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -138,7 +148,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo11")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -148,7 +158,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -158,17 +168,17 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "Lake / 2790", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Franzilein & Actress / 2008", m.PhotoTitle)
+		assert.Equal(t, "Franzilein & Actress A / 2008", m.PhotoTitle)
 	})
 	t.Run("no location", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -179,7 +189,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo02")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -195,7 +205,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo20")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "", m.PhotoTitle)
-		err := m.UpdateTitle(*classifyLabels)
+		err := m.GenerateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -205,18 +215,18 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")
 
 		assert.Equal(t, SrcAuto, m.TitleSrc)
-		assert.Equal(t, SrcAuto, m.DescriptionSrc)
+		assert.Equal(t, SrcAuto, m.CaptionSrc)
 		assert.Equal(t, "Title", m.PhotoTitle)
-		assert.Equal(t, "", m.PhotoDescription)
+		assert.Equal(t, "", m.PhotoCaption)
 
-		err := m.UpdateTitle(classify.Labels{})
+		err := m.GenerateTitle(classify.Labels{})
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, SrcAuto, m.TitleSrc)
-		assert.Equal(t, SrcAuto, m.DescriptionSrc)
+		assert.Equal(t, SrcAuto, m.CaptionSrc)
 
 		// TODO: Unstable
 		if len(m.SubjectNames()) > 0 {
@@ -225,26 +235,26 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 			assert.Equal(t, "Holiday Park / Germany / 2016", m.PhotoTitle)
 		}
 
-		assert.Equal(t, "", m.PhotoDescription)
+		assert.Equal(t, "", m.PhotoCaption)
 	})
 	t.Run("People", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 
 		assert.Equal(t, SrcAuto, m.TitleSrc)
-		assert.Equal(t, SrcAuto, m.DescriptionSrc)
+		assert.Equal(t, SrcAuto, m.CaptionSrc)
 		assert.Equal(t, "Neckarbrücke", m.PhotoTitle)
-		assert.Equal(t, "", m.PhotoDescription)
+		assert.Equal(t, "", m.PhotoCaption)
 
-		err := m.UpdateTitle(classify.Labels{})
+		err := m.GenerateTitle(classify.Labels{})
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, SrcAuto, m.TitleSrc)
-		assert.Equal(t, SrcAuto, m.DescriptionSrc)
-		assert.Equal(t, "Corn & Jens / Germany / 2014", m.PhotoTitle)
-		assert.Equal(t, "", m.PhotoDescription)
+		assert.Equal(t, SrcAuto, m.CaptionSrc)
+		assert.Equal(t, "Corn McCornface & Jens Mander / 2014", m.PhotoTitle)
+		assert.Equal(t, "", m.PhotoCaption)
 	})
 }
 
@@ -276,30 +286,59 @@ func TestPhoto_FileTitle(t *testing.T) {
 	})
 }
 
-func TestPhoto_SubjectNames(t *testing.T) {
-	t.Run("Photo09", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo09")
+func TestPhoto_UpdateTitleLabels(t *testing.T) {
+	FirstOrCreateLabel(NewLabel("Food", 1))
+	FirstOrCreateLabel(NewLabel("Wine", 2))
+	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
 
-		if names := m.SubjectNames(); len(names) > 0 {
-			t.Errorf("no name expected: %#v", names)
+	t.Run("Success", func(t *testing.T) {
+		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
+		photo := Photo{ID: 234567, PhotoTitle: "I was in a nice Wine Bar!", TitleSrc: SrcName, PhotoCaption: "cow, flower, food", CaptionSrc: SrcMeta, Details: details}
+
+		if err := photo.Save(); err != nil {
+			t.Fatal(err)
 		}
+
+		p := FindPhoto(photo)
+
+		assert.Equal(t, 0, len(p.Labels))
+
+		if err := p.UpdateTitleLabels(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("(1) %#v", p.Labels)
+
+		p = FindPhoto(*p)
+
+		t.Logf("(2) %#v", p.Labels)
+
+		assert.Equal(t, "I was in a nice Wine Bar!", p.PhotoTitle)
+		assert.Equal(t, "cow, flower, food", p.PhotoCaption)
+		assert.Equal(t, "snake, otter, food", p.Details.Keywords)
+		assert.Equal(t, 1, len(p.Labels))
 	})
-	t.Run("Photo10", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo10")
+	t.Run("EmptyTitle", func(t *testing.T) {
+		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
+		photo := Photo{ID: 234568, PhotoTitle: "", TitleSrc: SrcName, PhotoCaption: "cow, flower, food", CaptionSrc: SrcMeta, Details: details}
 
-		if names := m.SubjectNames(); len(names) == 1 {
-			assert.Equal(t, "Actor A", names[0])
-		} else {
-			t.Logf("unstable subject list: %#v", names)
+		if err := photo.Save(); err != nil {
+			t.Fatal(err)
 		}
-	})
-	t.Run("Photo04", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo04")
 
-		if names := m.SubjectNames(); len(names) != 2 {
-			t.Errorf("two names expected: %#v", names)
-		} else {
-			assert.Equal(t, []string{"Corn McCornface", "Jens Mander"}, names)
+		p := FindPhoto(photo)
+
+		assert.Equal(t, 0, len(p.Labels))
+
+		if err := p.UpdateTitleLabels(); err != nil {
+			t.Fatal(err)
 		}
+
+		p = FindPhoto(*p)
+
+		assert.Equal(t, "", p.PhotoTitle)
+		assert.Equal(t, "cow, flower, food", p.PhotoCaption)
+		assert.Equal(t, "snake, otter, food", p.Details.Keywords)
+		assert.Equal(t, 0, len(p.Labels))
 	})
 }

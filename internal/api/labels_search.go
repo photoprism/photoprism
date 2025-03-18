@@ -33,16 +33,16 @@ func SearchLabels(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SearchLabels
+		var frm form.SearchLabels
 
-		err := c.MustBindWith(&f, binding.Form)
+		err := c.MustBindWith(&frm, binding.Form)
 
 		if err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		result, err := search.Labels(f)
+		result, err := search.Labels(frm)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})
@@ -50,8 +50,8 @@ func SearchLabels(router *gin.RouterGroup) {
 		}
 
 		// TODO c.Header("X-Count", strconv.Itoa(count))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 		AddTokenHeaders(c, s)
 
 		c.JSON(http.StatusOK, result)

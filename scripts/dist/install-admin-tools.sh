@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs the "duf" and "muffet" admin tools on Linux.
+# Installs the "duf" and "muffet" admin tools on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-admin-tools.sh)
 
 # Abort if not executed as root..

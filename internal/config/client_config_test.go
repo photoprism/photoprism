@@ -14,9 +14,9 @@ func TestConfig_ClientConfig(t *testing.T) {
 	t.Run("TestConfig", func(t *testing.T) {
 		c := TestConfig()
 		result := c.ClientPublic()
-		assert.IsType(t, ClientConfig{}, result)
+		assert.IsType(t, &ClientConfig{}, result)
 		assert.Equal(t, AuthModePublic, result.AuthMode)
-		assert.Equal(t, c.LibraryUri("/browse"), result.LoginUri)
+		assert.Equal(t, c.LibraryUri("/"), result.LoginUri)
 		assert.Equal(t, "", result.RegisterUri)
 		assert.Equal(t, 0, result.PasswordLength)
 		assert.Equal(t, "", result.PasswordResetUri)
@@ -25,7 +25,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 	t.Run("TestErrorConfig", func(t *testing.T) {
 		c := NewTestErrorConfig()
 		result2 := c.ClientPublic()
-		assert.IsType(t, ClientConfig{}, result2)
+		assert.IsType(t, &ClientConfig{}, result2)
 		assert.Equal(t, AuthModePasswd, result2.AuthMode)
 		assert.Equal(t, false, result2.Public)
 	})
@@ -34,7 +34,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 
 		cfg := c.ClientRole(acl.RoleAdmin)
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 
 		if cfg.JsUri == "" {
 			t.Error("the JavaScript asset URI must not be empty, make sure that the frontend has been built")
@@ -73,7 +73,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 func TestConfig_ClientShareConfig(t *testing.T) {
 	config := TestConfig()
 	result := config.ClientShare()
-	assert.IsType(t, ClientConfig{}, result)
+	assert.IsType(t, &ClientConfig{}, result)
 	assert.Equal(t, true, result.Public)
 	assert.Equal(t, AuthModePublic, result.AuthMode)
 	assert.Equal(t, true, result.Experimental)
@@ -120,7 +120,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 
 	t.Run("RoleAdmin", func(t *testing.T) {
 		cfg := c.ClientRole(acl.RoleAdmin)
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, AuthModePasswd, cfg.AuthMode)
 		assert.Equal(t, false, cfg.Public)
 
@@ -142,6 +142,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Labels:    true,
 			Library:   true,
 			Logs:      true,
+			Calendar:  true,
 			Moments:   true,
 			People:    true,
 			Places:    true,
@@ -180,6 +181,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
+			Calendar:  true,
 			Moments:   true,
 			People:    false,
 			Places:    true,
@@ -218,6 +220,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
+			Calendar:  true,
 			Moments:   true,
 			People:    false,
 			Places:    true,
@@ -243,6 +246,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Search)
 		assert.False(t, f.Videos)
 		assert.False(t, f.Albums)
+		assert.False(t, f.Calendar)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
 		assert.False(t, f.People)
@@ -274,7 +278,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 
 	t.Run("RoleAdmin", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice"))
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -285,6 +289,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Search)
 		assert.True(t, f.Videos)
 		assert.True(t, f.Albums)
+		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
 		assert.True(t, f.People)
@@ -304,7 +309,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("RoleAdminToken", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice_token"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -315,6 +320,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Search)
 		assert.True(t, f.Videos)
 		assert.True(t, f.Albums)
+		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
 		assert.True(t, f.People)
@@ -334,7 +340,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("RoleAdminTokenScope", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice_token_scope"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -364,7 +370,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("RoleVisitor", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("visitor"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -375,6 +381,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Search)
 		assert.False(t, f.Videos)
 		assert.True(t, f.Albums)
+		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
@@ -395,7 +402,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("RoleVisitorTokenMetrics", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("visitor_token_metrics"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -406,6 +413,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Search)
 		assert.False(t, f.Videos)
 		assert.True(t, f.Albums)
+		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
@@ -428,7 +436,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 
 		cfg := c.ClientSession(sess)
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -458,7 +466,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("Bob", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("bob"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -467,6 +475,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Search)
 		assert.True(t, f.Videos)
 		assert.True(t, f.Albums)
+		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
 		assert.True(t, f.People)
@@ -486,7 +495,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("TokenMetrics", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("token_metrics"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -517,7 +526,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	t.Run("TokenSettings", func(t *testing.T) {
 		cfg := c.ClientSession(entity.SessionFixtures.Pointer("token_settings"))
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
@@ -528,6 +537,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Search)
 		assert.True(t, f.Videos)
 		assert.True(t, f.Albums)
+		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
 		assert.True(t, f.People)
@@ -551,7 +561,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		s := &entity.Session{}
 		cfg := c.ClientSession(s)
 
-		assert.IsType(t, ClientConfig{}, cfg)
+		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, cfg.PreviewToken, "public")
 		assert.Equal(t, cfg.DownloadToken, "public")
 
@@ -562,15 +572,29 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 
 func TestConfig_Flags(t *testing.T) {
 	config := TestConfig()
+
+	// Remember flag state.
+	develop := Develop
+	experimental := config.options.Experimental
+	readOnly := config.options.ReadOnly
+	scrollBar := config.settings.UI.Scrollbar
+	demo := config.options.Demo
+
+	// Set flags.
+	Develop = true
 	config.options.Experimental = true
 	config.options.ReadOnly = true
 	config.settings.UI.Scrollbar = false
 	config.options.Demo = true
 
 	result := config.Flags()
-	assert.Equal(t, []string{"public", "debug", "test", "demo", "sponsor", "experimental", "readonly", "settings", "hide-scrollbar"}, result)
 
-	config.options.Experimental = false
-	config.options.ReadOnly = false
-	config.options.Demo = false
+	assert.Equal(t, []string{"public", "debug", "test", "demo", "sponsor", "develop", "experimental", "readonly", "settings", "hide-scrollbar"}, result)
+
+	// Restore flag state.
+	Develop = develop
+	config.options.Experimental = experimental
+	config.options.ReadOnly = readOnly
+	config.settings.UI.Scrollbar = scrollBar
+	config.options.Demo = demo
 }

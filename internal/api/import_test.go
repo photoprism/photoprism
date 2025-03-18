@@ -11,7 +11,7 @@ import (
 )
 
 func TestCancelImport(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CancelImport(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/import")
@@ -27,5 +27,26 @@ func TestCancelImport(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.MsgImportCanceled), resp.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, http.StatusOK, resp.Code)
+	})
+}
+
+func TestStartImport(t *testing.T) {
+	t.Run("ReadOnlyMode", func(t *testing.T) {
+		app, router, config := NewApiTest()
+		config.Options().ReadOnly = true
+		StartImport(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/import/test", "{foo:123}")
+
+		assert.Equal(t, http.StatusForbidden, r.Code)
+		config.Options().ReadOnly = false
+	})
+	t.Run("QuotaExceeded", func(t *testing.T) {
+		app, router, config := NewApiTest()
+		config.Options().FilesQuota = 1
+		StartImport(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/import/test", "{foo:123}")
+
+		assert.Equal(t, http.StatusInsufficientStorage, r.Code)
+		config.Options().FilesQuota = 0
 	})
 }

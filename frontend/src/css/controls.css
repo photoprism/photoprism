@@ -1,0 +1,244 @@
+/* Form Layout */
+
+.p-form {
+    padding: 8px;
+}
+
+.p-form,
+.form-container {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+}
+
+.p-page .p-form {
+    padding: 24px;
+}
+
+.v-dialog .p-tab .p-form {
+    padding: 8px;
+}
+
+.form-header,
+.form-text {
+    gap: 12px;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: start;
+    /* align-items: stretch; */
+    display: flex;
+}
+
+.form-header,
+.form-header p {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: normal;
+}
+
+.form-text,
+.form-text p {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: normal;
+}
+
+.form-body {
+    gap: 12px;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: start;
+    align-items: stretch;
+    display: flex;
+}
+
+.form-body .form-controls {
+    width: auto;
+    flex-grow: 1;
+}
+
+.form-body .form-controls .form-thumb > div {
+    position: relative;
+    min-height: 80px;
+    aspect-ratio: 1;
+}
+
+.form-body .form-controls .form-thumb > div > img {
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    z-index: -1;
+    border-style: none;
+}
+
+.form-actions {
+    padding: 0 0 8px 0;
+}
+
+.form-actions.form-actions--sticky {
+    padding: 8px;
+    background: linear-gradient(0deg, rgba(var(--v-theme-background), 1), rgba(var(--v-theme-background), 0.9), rgba(var(--v-theme-background), 0.8), rgba(var(--v-theme-background), 0));
+    background-size: 100%;
+    position: sticky;
+    bottom: 0;
+}
+
+.form-actions.form-actions--sticky .action-buttons {
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+.form-options {
+    flex-wrap: wrap;
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.form-footer {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 599px) {
+    .p-form.p-form--table {
+        padding: 0;
+    }
+
+    .p-form.p-form--table .form-body .form-controls .form-thumb {
+        display: none;
+    }
+
+    .p-form.p-form--table .form-body .form-controls .flex-column {
+        padding: 0;
+    }
+
+    .p-form.p-form--table .form-body .form-controls .v-table {
+        border-radius: 0;
+    }
+}
+
+/* Focused Elements */
+
+p:focus,
+div:focus,
+img:focus,
+span:focus,
+form:focus,
+body:focus,
+main:focus,
+video:focus,
+canvas:focus,
+button:focus,
+header:focus,
+footer:focus,
+article:focus,
+.p-page:focus,
+.p-dialog:focus,
+.v-dialog:focus {
+    outline: none;
+}
+
+/* Action Buttons */
+
+.action-buttons,
+.action-controls {
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.form-options p,
+.action-buttons p,
+.action-controls p {
+    margin: 0;
+}
+
+.action-buttons {
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.form-actions .action-buttons {
+    margin-top: 8px;
+}
+
+.action-controls {
+    gap: 20px;
+    margin-top: 16px;
+    margin-bottom: 20px;
+}
+
+.form-options .v-btn .v-btn__content,
+.action-buttons .v-btn .v-btn__content,
+.action-controls .v-btn .v-btn__content {
+    min-width: 68px;
+}
+
+.auth-login .action-buttons {
+    margin: 20px auto 16px auto;
+}
+
+table td > .action-buttons {
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 8px 0;
+    padding: 0;
+    gap: 8px;
+}
+
+.p-tab-photo-files table td > .action-buttons > .v-btn,
+.p-tab-photo-files table td > .action-buttons > button {
+    min-width: 150px;
+}
+
+@media (max-width: 599px) {
+    .action-buttons > .v-btn,
+    .action-buttons > button {
+        flex-grow: 1;
+    }
+
+    table td > .action-buttons > .v-btn,
+    table td > .action-buttons > button {
+        flex-grow: 0;
+        min-width: 150px;
+    }
+}
+
+/* Action Menu */
+
+.p-action-menu .v-overlay__content {
+    border-radius: 8px;
+}
+
+.p-action-menu .action-menu__list {
+    min-width: 108px;
+    opacity: 0.97;
+}
+
+/* Table Actions */
+
+table .table-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+@media only screen and (min-width: 1280px) {
+    table .table-actions {
+        gap: 12px;
+    }
+}
+

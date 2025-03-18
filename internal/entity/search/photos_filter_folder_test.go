@@ -3,8 +3,9 @@ package search
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestPhotosFilterFolder(t *testing.T) {

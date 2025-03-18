@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -16,7 +16,7 @@ import (
 )
 
 // PurgeCommand configures the command name, flags, and action.
-var PurgeCommand = cli.Command{
+var PurgeCommand = &cli.Command{
 	Name:   "purge",
 	Usage:  "Updates missing files, photo counts, and album covers",
 	Flags:  purgeFlags,
@@ -24,11 +24,11 @@ var PurgeCommand = cli.Command{
 }
 
 var purgeFlags = []cli.Flag{
-	cli.BoolFlag{
+	&cli.BoolFlag{
 		Name:  "hard",
 		Usage: "permanently remove from index",
 	},
-	cli.BoolFlag{
+	&cli.BoolFlag{
 		Name:  "dry",
 		Usage: "dry run, don't actually remove anything",
 	},

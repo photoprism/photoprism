@@ -1,53 +1,49 @@
-/* Event Logs */
+/* Library Event Logs */
 
-#photoprism .p-logs {
-    color: white;
+.p-logs {
+    color: rgb(var(--v-theme-on-surface));
     border-radius: 4px;
 }
 
-#photoprism .p-log-empty,
-#photoprism .p-log-message {
+.p-log-empty,
+.p-log-message {
     display: block;
     text-align: left;
-    font-size: 1em;
+    font-size: 0.825rem;
     font-family: monospace;
     white-space: normal;
-    color: white;
+    color: rgb(var(--v-theme-on-surface));
     padding: 4px;
     margin: 0;
 }
 
-#photoprism .p-log-empty {
+.p-log-empty {
     font-weight: normal;
 }
 
-#photoprism .p-log-message {
+.p-log-message {
     font-weight: bold;
 }
 
-#photoprism .p-log-message span {
-    color: #FEFEFE;
+.p-log-message span {
+    color: rgba(var(--v-theme-on-surface), .95);
     font-weight: normal;
 }
 
-#photoprism .p-log-fatal,
-#photoprism .p-log-critical,
-#photoprism .p-log-error {
-    color: #F48FB1;
+.p-log-fatal,
+.p-log-critical,
+.p-log-error {
+    color: rgba(var(--v-theme-error), .95);
 }
 
-#photoprism .p-log-warning {
-    color: #FFD600;
+.p-log-warning {
+    color: rgba(var(--v-theme-warning), .95);
 }
 
-#photoprism .p-log-fatal {
-    color: #FFECB3;
+.p-log-info {
+    color: rgba(var(--v-theme-info), .95);
 }
 
-#photoprism .p-log-info {
-    color: #82B1FF;
-}
-
-#photoprism .p-log-debug {
-    color: #DDDDDD;
+.p-log-debug {
+    color: rgba(var(--v-theme-on-surface), .9);
 }

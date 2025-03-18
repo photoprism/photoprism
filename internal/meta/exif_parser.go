@@ -31,7 +31,7 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 
 	// Try Exif parser for specific media file format first.
 	switch fileFormat {
-	case fs.ImageJPEG:
+	case fs.ImageJpeg:
 		jpegMp := jpegstructure.NewJpegMediaParser()
 
 		sl, err := jpegMp.ParseFile(fileName)
@@ -53,7 +53,7 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 				parsed = true
 			}
 		}
-	case fs.ImagePNG:
+	case fs.ImagePng:
 		pngMp := pngstructure.NewPngMediaParser()
 
 		cs, err := pngMp.ParseFile(fileName)
@@ -73,7 +73,7 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 				parsed = true
 			}
 		}
-	case fs.ImageHEIF, fs.ImageHEIC, fs.ImageHEICS, fs.ImageAVIF, fs.ImageAVIFS:
+	case fs.ImageHeif, fs.ImageHeic, fs.ImageHeicS, fs.ImageAvif, fs.ImageAvifS:
 		heicMp := heicexif.NewHeicExifMediaParser()
 
 		cs, err := heicMp.ParseFile(fileName)
@@ -93,7 +93,7 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 				parsed = true
 			}
 		}
-	case fs.ImageTIFF:
+	case fs.ImageTiff:
 		tiffMp := tiffstructure.NewTiffMediaParser()
 
 		cs, err := tiffMp.ParseFile(fileName)

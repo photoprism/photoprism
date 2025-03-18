@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 
 import Model from "model.js";
-import Api from "common/api";
-import { config } from "app/session.js";
-import { $gettext } from "common/vm";
+import $api from "common/api";
+import { $config } from "app/session.js";
+import { $gettext } from "common/gettext";
 
 const thumbs = window.__CONFIG__.thumbs;
 
@@ -36,12 +36,15 @@ export class Thumb extends Model {
       UID: "",
       Title: "",
       TakenAtLocal: "",
-      Description: "",
+      Caption: "",
       Favorite: false,
       Playable: false,
       DownloadUrl: "",
       Width: 0,
       Height: 0,
+      Hash: "",
+      Codec: "",
+      Mime: "",
       Thumbs: {},
     };
   }
@@ -62,9 +65,9 @@ export class Thumb extends Model {
     this.Favorite = !this.Favorite;
 
     if (this.Favorite) {
-      return Api.post("photos/" + this.UID + "/like");
+      return $api.post("photos/" + this.UID + "/like");
     } else {
-      return Api.delete("photos/" + this.UID + "/like");
+      return $api.delete("photos/" + this.UID + "/like");
     }
   }
 
@@ -73,12 +76,13 @@ export class Thumb extends Model {
       UID: "",
       Title: $gettext("Invalid photo selected"),
       TakenAtLocal: "",
-      Description: "",
+      Caption: "",
       Favorite: false,
       Playable: false,
       DownloadUrl: "",
       Width: 0,
       Height: 0,
+      Hash: "",
       Thumbs: {},
     };
 
@@ -86,7 +90,7 @@ export class Thumb extends Model {
       let t = thumbs[i];
 
       result.Thumbs[t.size] = {
-        src: `${config.staticUri}/img/404.jpg`,
+        src: `${$config.staticUri}/img/404.jpg`,
         w: t.w,
         h: t.h,
       };
@@ -108,7 +112,7 @@ export class Thumb extends Model {
 
   static fromPhoto(photo) {
     if (photo.Files) {
-      return this.fromFile(photo, photo.mainFile());
+      return this.fromFile(photo, photo.primaryFile());
     }
 
     if (!photo || !photo.Hash) {
@@ -119,12 +123,13 @@ export class Thumb extends Model {
       UID: photo.UID,
       Title: photo.Title,
       TakenAtLocal: photo.getDateString(),
-      Description: photo.Description,
+      Caption: photo.Caption,
       Favorite: photo.Favorite,
       Playable: photo.isPlayable(),
       DownloadUrl: this.downloadUrl(photo),
       Width: photo.Width,
       Height: photo.Height,
+      Hash: photo.Hash,
       Thumbs: {},
     };
 
@@ -151,12 +156,13 @@ export class Thumb extends Model {
       UID: photo.UID,
       Title: photo.Title,
       TakenAtLocal: photo.getDateString(),
-      Description: photo.Description,
+      Caption: photo.Caption,
       Favorite: photo.Favorite,
       Playable: photo.isPlayable(),
       DownloadUrl: this.downloadUrl(file),
       Width: file.Width,
       Height: file.Height,
+      Hash: file.Hash,
       Thumbs: {},
     };
 
@@ -236,10 +242,10 @@ export class Thumb extends Model {
 
   static thumbnailUrl(file, size) {
     if (!file.Hash) {
-      return `${config.staticUri}/img/404.jpg`;
+      return `${$config.staticUri}/img/404.jpg`;
     }
 
-    return `${config.contentUri}/t/${file.Hash}/${config.previewToken}/${size}`;
+    return `${$config.contentUri}/t/${file.Hash}/${$config.previewToken}/${size}`;
   }
 
   static downloadUrl(file) {
@@ -247,7 +253,7 @@ export class Thumb extends Model {
       return "";
     }
 
-    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken}`;
+    return `${$config.apiUri}/dl/${file.Hash}?t=${$config.downloadToken}`;
   }
 }
 

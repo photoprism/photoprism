@@ -23,7 +23,7 @@ func (m *Passcode) MarshalJSON() ([]byte, error) {
 		UID:          m.UID,
 		Type:         m.KeyType,
 		Secret:       m.Secret(),
-		QRCode:       media.Base64(m.PNG(350)),
+		QRCode:       media.Base64(m.Png(350)),
 		RecoveryCode: m.RecoveryCode,
 		CreatedAt:    m.CreatedAt,
 		UpdatedAt:    m.UpdatedAt,

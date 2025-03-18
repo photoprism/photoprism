@@ -322,7 +322,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 
 	if value, ok := data.exif["ImageDescription"]; ok {
 		data.AutoAddKeywords(value)
-		data.Description = SanitizeDescription(value)
+		data.Caption = SanitizeCaption(value)
 	}
 
 	if value, ok := data.exif["ProjectionType"]; ok {

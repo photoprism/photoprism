@@ -34,6 +34,7 @@ var CameraTypes = map[string]CameraType{
 	ModelScanSnap:      CameraTypeScanner,
 	ModelOpticFilm:     CameraTypeScanner,
 	ModelSlideNScan:    CameraTypeFilm,
+	ModelDigitDia7000:  CameraTypeFilm,
 	"RODFS40":          CameraTypeFilm,
 	"RODFS50":          CameraTypeFilm,
 	"RODFS60":          CameraTypeFilm,

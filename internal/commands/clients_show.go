@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -12,7 +12,7 @@ import (
 )
 
 // ClientsShowCommand configures the command name, flags, and action.
-var ClientsShowCommand = cli.Command{
+var ClientsShowCommand = &cli.Command{
 	Name:      "show",
 	Usage:     "Shows client configuration details",
 	ArgsUsage: "[client id]",

@@ -17,16 +17,19 @@ var (
 // Register registers a new package extension.
 func Register(name string, initConfig func(c *Config) error, clientConfig func(c *Config, t ClientType) Map) {
 	extMutex.Lock()
+	defer extMutex.Unlock()
+
 	n, _ := extensions.Load().(Extensions)
 	extensions.Store(append(n, Extension{name: name, init: initConfig, clientValues: clientConfig}))
-	extMutex.Unlock()
 }
 
 // Ext returns all registered package extensions.
 func Ext() (ext Extensions) {
 	extMutex.Lock()
+	defer extMutex.Unlock()
+
 	ext, _ = extensions.Load().(Extensions)
-	extMutex.Unlock()
+
 	return ext
 }
 

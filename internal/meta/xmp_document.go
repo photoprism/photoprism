@@ -234,7 +234,7 @@ func (doc *XmpDocument) Description() string {
 	d := doc.RDF.Description.Description.Alt.Li.Text
 	d2 := doc.RDF.Description.Description.Text
 	if d != "" {
-		return SanitizeDescription(d)
+		return SanitizeCaption(d)
 	} else if d2 != "" {
 		return SanitizeTitle(d2)
 	}

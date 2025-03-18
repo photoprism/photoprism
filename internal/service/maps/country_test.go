@@ -17,7 +17,7 @@ func TestCountryName(t *testing.T) {
 		assert.Equal(t, "United States", result)
 	})
 
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		result := CountryName("")
 		assert.Equal(t, "Unknown", result)
 	})

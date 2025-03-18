@@ -6,8 +6,9 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/photoprism/go-tz.v2/tz"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type GPhoto struct {
@@ -20,12 +21,12 @@ type GPhoto struct {
 	UpdatedAt   GTime  `json:"modificationTime"`
 }
 
-func (m GPhoto) SanitizedTitle() string {
+func (m GPhoto) GetTitle() string {
 	return SanitizeTitle(m.Title)
 }
 
-func (m GPhoto) SanitizedDescription() string {
-	return SanitizeDescription(m.Description)
+func (m GPhoto) GetCaption() string {
+	return SanitizeCaption(m.Description)
 }
 
 type GMeta struct {
@@ -103,12 +104,12 @@ func (data *Data) GPhoto(jsonData []byte) (err error) {
 		return err
 	}
 
-	if s := p.SanitizedTitle(); s != "" && data.Title == "" {
+	if s := p.GetTitle(); s != "" && data.Title == "" {
 		data.Title = s
 	}
 
-	if s := p.SanitizedDescription(); s != "" && data.Description == "" {
-		data.Description = s
+	if s := p.GetCaption(); s != "" && data.Caption == "" {
+		data.Caption = s
 	}
 
 	if p.Views > 0 && data.Views == 0 {

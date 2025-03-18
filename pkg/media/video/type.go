@@ -8,6 +8,7 @@ import (
 type Type struct {
 	Codec       Codec
 	FileType    fs.Type
+	ContentType string
 	WidthLimit  int
 	HeightLimit int
 	Public      bool

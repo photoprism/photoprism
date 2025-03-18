@@ -1,4 +1,4 @@
-# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -14,7 +14,9 @@ notice:
 install-npm:
 	sudo npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest license-report@latest
 install-testcafe:
-	sudo npm install --unsafe-perm=true --allow-root -g testcafe@3.6.2
+	npm install -g testcafe@latest
+install-eslint:
+	npm install -g eslint@8 eslint-config-prettier eslint-config-standard eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
 install:
 	npm install --no-update-notifier --no-audit
 update:

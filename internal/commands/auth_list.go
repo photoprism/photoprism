@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -12,7 +12,7 @@ import (
 )
 
 // AuthListCommand configures the command name, flags, and action.
-var AuthListCommand = cli.Command{
+var AuthListCommand = &cli.Command{
 	Name:      "ls",
 	Usage:     "Lists currently authenticated users and clients",
 	ArgsUsage: "[search]",
@@ -32,7 +32,7 @@ func authListAction(ctx *cli.Context) error {
 		}
 
 		// Fetch sessions from database.
-		results, err := query.Sessions(ctx.Int("n"), 0, "", ctx.Args().First())
+		results, err := query.Sessions(ctx.Int("count"), 0, "", ctx.Args().First())
 
 		if err != nil {
 			return err

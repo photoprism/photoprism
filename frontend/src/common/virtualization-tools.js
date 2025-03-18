@@ -38,16 +38,16 @@ export const virtualizationTools = {
      * Doing so would break the virtualization though. this.firstVisibleElementIndex
      * would for example always stay at 0
      */
-    let firstVisibleElementIndex, lastVisibileElementIndex;
+    let firstVisibleElementIndex, lastVisibleElementIndex;
     for (const visibleElementIndex of visibleElementIndices.values()) {
       if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
         firstVisibleElementIndex = visibleElementIndex;
       }
-      if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
-        lastVisibileElementIndex = visibleElementIndex;
+      if (lastVisibleElementIndex === undefined || visibleElementIndex > lastVisibleElementIndex) {
+        lastVisibleElementIndex = visibleElementIndex;
       }
     }
 
-    return [firstVisibleElementIndex, lastVisibileElementIndex];
+    return [firstVisibleElementIndex, lastVisibleElementIndex];
   },
 };

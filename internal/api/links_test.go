@@ -46,7 +46,7 @@ func TestCreateAlbumLink(t *testing.T) {
 		val := gjson.Get(resp.Body.String(), "error")
 		assert.Equal(t, "Album not found", val.String())
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		CreateAlbumLink(router)
@@ -73,7 +73,7 @@ func TestUpdateAlbumLink(t *testing.T) {
 	assert.Equal(t, "0", val2.String())
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbumLink(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
@@ -121,7 +121,7 @@ func TestDeleteAlbumLink(t *testing.T) {
 }
 
 func TestGetAlbumLinks(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		CreateAlbumLink(router)
@@ -138,7 +138,7 @@ func TestGetAlbumLinks(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r2.Code)
 	})
 
-	t.Run("not found", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetAlbumLinks(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/xxx/links")
@@ -181,7 +181,7 @@ func TestCreatePhotoLink(t *testing.T) {
 			t.Fatal(resp.Body.String())
 		}
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreatePhotoLink(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"xxx": 123, "Expires": "abc", "CanEdit": "xxx"}`)
@@ -203,7 +203,7 @@ func TestUpdatePhotoLink(t *testing.T) {
 	assert.Equal(t, "0", val2.String())
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhotoLink(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0yh7/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
@@ -253,7 +253,7 @@ func TestDeletePhotoLink(t *testing.T) {
 }
 
 func TestGetPhotoLinks(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		CreatePhotoLink(router)
@@ -269,7 +269,7 @@ func TestGetPhotoLinks(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r2.Code)
 	})
 
-	t.Run("not found", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhotoLinks(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/links")
@@ -308,7 +308,7 @@ func TestCreateLabelLink(t *testing.T) {
 			t.Fatal(resp.Body.String())
 		}
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateLabelLink(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"xxx": 123, "Expires": "abc", "CanEdit": "xxx"}`)
@@ -330,7 +330,7 @@ func TestUpdateLabelLink(t *testing.T) {
 	assert.Equal(t, "0", val2.String())
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateLabelLink(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/ls6sg6b1wowuy3c2/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
@@ -378,7 +378,7 @@ func TestDeleteLabelLink(t *testing.T) {
 }
 
 func TestGetLabelLinks(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		CreateLabelLink(router)
@@ -395,7 +395,7 @@ func TestGetLabelLinks(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r2.Code)
 	})
 
-	t.Run("not found", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetLabelLinks(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/xxx/links")

@@ -7,7 +7,7 @@ type Name string
 
 // Jpeg returns the thumbnail name with a jpeg file extension suffix as string.
 func (n Name) Jpeg() string {
-	return string(n) + fs.ExtJPEG
+	return string(n) + fs.ExtJpeg
 }
 
 // String returns the thumbnail name as string.
@@ -33,12 +33,14 @@ const (
 	Fit2560  Name = "fit_2560"
 	Fit3840  Name = "fit_3840"
 	Fit4096  Name = "fit_4096"
+	Fit5120  Name = "fit_5120"
 	Fit7680  Name = "fit_7680"
 )
 
 // Names contains all default size names.
 var Names = []Name{
 	Fit7680,
+	Fit5120,
 	Fit4096,
 	Fit2560,
 	Fit1920,

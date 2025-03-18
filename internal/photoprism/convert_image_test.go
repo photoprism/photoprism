@@ -6,9 +6,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestConvert_ToImage(t *testing.T) {
@@ -192,7 +193,7 @@ func TestConvert_ToImage(t *testing.T) {
 	})
 }
 
-func TestConvert_PngConvertCommands(t *testing.T) {
+func TestConvert_PngConvertCmds(t *testing.T) {
 	cnf := config.TestConfig()
 	convert := NewConvert(cnf)
 
@@ -208,7 +209,7 @@ func TestConvert_PngConvertCommands(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		cmds, useMutex, err := convert.PngConvertCommands(mediaFile, pngFile)
+		cmds, useMutex, err := convert.PngConvertCmds(mediaFile, pngFile)
 
 		if err != nil {
 			t.Fatal(err)

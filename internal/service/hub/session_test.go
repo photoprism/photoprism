@@ -8,7 +8,7 @@ import (
 )
 
 func TestSession_Expired(t *testing.T) {
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		session := Session{
 			MapKey:    "",
 			ExpiresAt: "",

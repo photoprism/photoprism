@@ -8,8 +8,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/sunfish-shogi/bufseekio"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Chunk represents a fixed length file chunk.
@@ -59,13 +60,13 @@ func (c Chunk) FileOffset(fileName string) (int, error) {
 
 	defer file.Close()
 
-	index, err := c.DataOffset(file)
+	index, err := c.DataOffset(file, -1)
 
 	return index, err
 }
 
 // DataOffset returns the index of the chunk in file, or -1 if it was not found.
-func (c Chunk) DataOffset(file io.ReadSeeker) (int, error) {
+func (c Chunk) DataOffset(file io.ReadSeeker, maxOffset int) (int, error) {
 	if file == nil {
 		return -1, errors.New("file is nil")
 	}
@@ -102,6 +103,11 @@ func (c Chunk) DataOffset(file io.ReadSeeker) (int, error) {
 		}
 
 		offset += n
+
+		// Return if the chunk was not found up to the maximum offset.
+		if maxOffset > 0 && maxOffset <= offset {
+			return -1, nil
+		}
 	}
 
 	return -1, nil

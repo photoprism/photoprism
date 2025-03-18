@@ -4,9 +4,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/geo/s2"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestMediaFile_Location(t *testing.T) {

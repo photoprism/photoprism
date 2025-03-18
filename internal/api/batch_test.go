@@ -13,7 +13,7 @@ import (
 )
 
 func TestBatchPhotosArchive(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7")
@@ -40,7 +40,7 @@ func TestBatchPhotosArchive(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosArchive(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/archive", `{"photos": 123}`)
@@ -49,7 +49,7 @@ func TestBatchPhotosArchive(t *testing.T) {
 }
 
 func TestBatchPhotosRestore(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -85,7 +85,7 @@ func TestBatchPhotosRestore(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosRestore(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/restore", `{"photos": 123}`)
@@ -100,7 +100,7 @@ func TestBatchAlbumsDelete(t *testing.T) {
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -129,7 +129,7 @@ func TestBatchAlbumsDelete(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrNoAlbumsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchAlbumsDelete(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/albums/delete", `{"albums": 123}`)
@@ -138,7 +138,7 @@ func TestBatchAlbumsDelete(t *testing.T) {
 }
 
 func TestBatchPhotosPrivate(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -168,7 +168,7 @@ func TestBatchPhotosPrivate(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosPrivate(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/private", `{"photos": 123}`)
@@ -177,7 +177,7 @@ func TestBatchPhotosPrivate(t *testing.T) {
 }
 
 func TestBatchLabelsDelete(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -214,7 +214,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrNoLabelsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchLabelsDelete(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/labels/delete", `{"labels": 123}`)
@@ -223,7 +223,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 }
 
 func TestBatchPhotosApprove(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -257,7 +257,7 @@ func TestBatchPhotosApprove(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosApprove(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/approve", `{"photos": 123}`)

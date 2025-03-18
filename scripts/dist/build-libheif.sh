@@ -5,7 +5,7 @@
 # To create ARMv7 binaries with Docker on Ubuntu 22.04 LTS, you can e.g. run the following:
 #
 #   docker run --rm --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" \
-#   -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh
+#   -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 
 # Show usage information if first argument is --help.
 if [[ ${1} == "--help" ]]; then
@@ -15,7 +15,7 @@ fi
 
 CURRENT_DIR=$(pwd)
 
-# Determine the system architecture.
+# Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else

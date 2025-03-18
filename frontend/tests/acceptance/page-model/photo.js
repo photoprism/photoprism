@@ -30,9 +30,7 @@ export default class Page {
   }
 
   async selectPhotoFromUID(uid) {
-    await t
-      .hover(Selector("div.is-photo").withAttribute("data-uid", uid))
-      .click(Selector(`.uid-${uid} .input-select`));
+    await t.hover(Selector("div.is-photo").withAttribute("data-uid", uid)).click(Selector(`.uid-${uid} .input-select`));
   }
 
   async toggleSelectNthPhoto(nPhoto, type) {

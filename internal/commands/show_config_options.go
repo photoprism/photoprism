@@ -4,24 +4,19 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowConfigOptionsCommand configures the command name, flags, and action.
-var ShowConfigOptionsCommand = cli.Command{
+var ShowConfigOptionsCommand = &cli.Command{
 	Name:   "config-options",
 	Usage:  "Displays supported environment variables and CLI flags",
 	Flags:  report.CliFlags,
 	Action: showConfigOptionsAction,
 }
-
-var faceFlagsInfo = `!!! info ""
-    To [recognize faces](https://docs.photoprism.app/user-guide/organize/people/), PhotoPrism first extracts crops from your images using a [library](https://github.com/esimov/pigo) based on [pixel intensity comparisons](https://dl.photoprism.app/pdf/publications/20140820-Pixel_Intensity_Comparisons.pdf). These are then fed into TensorFlow to compute [512-dimensional vectors](https://dl.photoprism.app/pdf/publications/20150101-FaceNet.pdf) for characterization. In the final step, the [DBSCAN algorithm](https://en.wikipedia.org/wiki/DBSCAN) attempts to cluster these so-called face embeddings, so they can be matched to persons with just a few clicks. A reasonable range for the similarity distance between face embeddings is between 0.60 and 0.70, with a higher value being more aggressive and leading to larger clusters with more false positives. To cluster a smaller number of faces, you can reduce the core to 3 or 2 similar faces.
-
-We recommend that only advanced users change these parameters:`
 
 // showConfigOptionsAction displays supported environment variables and CLI flags.
 func showConfigOptionsAction(ctx *cli.Context) error {

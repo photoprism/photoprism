@@ -1,78 +1,86 @@
 <template>
-  <v-form ref="form" lazy-validation dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8" @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-toolbar-title :title="album.Title">
-        <span class="hidden-xs-only">
-          <router-link :to="{ name: collectionRoute }">
-            {{ T(collectionTitle) }}
-          </router-link>
+  <v-form
+    ref="form"
+    validate-on="invalid-input"
+    autocomplete="off"
+    class="p-photo-toolbar p-album-toolbar"
+    accept-charset="UTF-8"
+    @submit.prevent="updateQuery()"
+  >
+    <v-toolbar
+      flat
+      :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+      class="page-toolbar"
+      color="secondary"
+    >
+      <v-toolbar-title :title="album.Title" class="page__title">
+        <router-link :to="{ name: collectionRoute }" class="hidden-xs">
+          {{ T(collectionTitle) }}
           <v-icon>{{ navIcon }}</v-icon>
-        </span>
-        {{ album.Title }}
+        </router-link>
+        <router-link :to="{ name: collectionRoute }">
+          {{ album.Title }}
+        </router-link>
       </v-toolbar-title>
 
-      <v-spacer></v-spacer>
+      <v-btn-toggle
+        :model-value="settings.view"
+        :title="$gettext('Toggle View')"
+        :density="$vuetify.display.smAndDown ? 'comfortable' : 'default'"
+        base-color="secondary"
+        variant="flat"
+        rounded="pill"
+        mandatory
+        border
+        group
+        class="ms-1"
+      >
+        <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
+        <v-btn
+          v-if="listView"
+          value="list"
+          icon="mdi-view-list"
+          class="action-view-list"
+          @click="setView('list')"
+        ></v-btn>
+        <v-btn value="mosaic" icon="mdi-view-comfy" class="pe-1 action-view-mosaic" @click="setView('mosaic')"></v-btn>
+      </v-btn-toggle>
 
-      <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-        <v-icon>refresh</v-icon>
-      </v-btn>
-
-      <v-btn v-if="canManage" icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
-        <v-icon>edit</v-icon>
-      </v-btn>
-
-      <v-btn v-if="canShare" icon class="action-share" :title="$gettext('Share')" @click.stop="dialog.share = true">
-        <v-icon>share</v-icon>
-      </v-btn>
-
-      <v-btn v-if="canDownload" icon class="action-download" :title="$gettext('Download')" @click.stop="download()">
-        <v-icon>get_app</v-icon>
-      </v-btn>
-
-      <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-        <v-icon>view_comfy</v-icon>
-      </v-btn>
-      <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
-        <v-icon>view_list</v-icon>
-      </v-btn>
-      <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-        <v-icon>view_comfy</v-icon>
-      </v-btn>
-      <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
-        <v-icon>view_column</v-icon>
-      </v-btn>
-
-      <v-btn v-if="canUpload" icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
-        <v-icon>cloud_upload</v-icon>
-      </v-btn>
+      <p-action-menu :items="menuActions" button-class="ms-1"></p-action-menu>
     </v-toolbar>
 
-    <template v-if="album.Description">
-      <v-card flat class="px-2 py-1 hidden-sm-and-down" color="secondary-light">
-        <v-card-text>
-          {{ album.Description }}
-        </v-card-text>
-      </v-card>
-      <v-card flat class="pa-0 hidden-md-and-up" color="secondary-light">
-        <v-card-text>
-          {{ album.Description }}
-        </v-card-text>
-      </v-card>
-    </template>
+    <div v-if="album.Description" class="toolbar-details-panel">
+      {{ album.Description }}
+    </div>
 
-    <p-share-dialog :show="dialog.share" :model="album" @upload="webdavUpload" @close="dialog.share = false"></p-share-dialog>
-    <p-share-upload-dialog :show="dialog.upload" :items="{ albums: album.getId() }" :model="album" @cancel="dialog.upload = false" @confirm="dialog.upload = false"></p-share-upload-dialog>
-    <p-album-edit-dialog :show="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
+    <p-share-dialog
+      :visible="dialog.share"
+      :model="album"
+      @upload="webdavUpload"
+      @close="dialog.share = false"
+    ></p-share-dialog>
+    <p-service-upload
+      :visible="dialog.upload"
+      :items="{ albums: album.getId() }"
+      :model="album"
+      @close="dialog.upload = false"
+      @confirm="dialog.upload = false"
+    ></p-service-upload>
+    <p-album-edit-dialog :visible="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
   </v-form>
 </template>
 <script>
-import Event from "pubsub-js";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import download from "common/download";
-import { T } from "common/vm";
+import { T } from "common/gettext";
+
+import PActionMenu from "component/action/menu.vue";
 
 export default {
   name: "PAlbumToolbar",
+  components: {
+    PActionMenu,
+  },
   props: {
     album: {
       type: Object,
@@ -112,10 +120,13 @@ export default {
         Name: this.$gettext("All Countries"),
       },
     ].concat(this.$config.get("countries"));
-    const features = this.$config.settings().features;
+    const settings = this.$config.getSettings();
+    const features = settings.features;
     return {
+      expanded: false,
       canUpload: this.$config.allow("files", "upload") && features.upload,
-      canDownload: this.$config.allow("albums", "download") && features.download,
+      canDownload:
+        this.$config.allow("albums", "download") && features.download && !settings?.albums?.download?.disabled,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),
       experimental: this.$config.get("experimental"),
@@ -123,19 +134,72 @@ export default {
       categories: this.$config.albumCategories(),
       collectionTitle: this.$route.meta?.collectionTitle ? this.$route.meta.collectionTitle : this.$gettext("Albums"),
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
-      navIcon: this.$rtl ? "navigate_before" : "navigate_next",
-      searchExpanded: false,
-      listView: this.$config.settings()?.search?.listView,
+      navIcon: this.$isRtl ? "mdi-chevron-left" : "mdi-chevron-right",
+      listView: this.$config.getSettings()?.search?.listView,
       dialog: {
         share: false,
         upload: false,
         edit: false,
       },
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
-      growDesc: false,
     };
   },
   methods: {
+    hideExpansionPanel() {
+      if (this.expanded) {
+        this.expanded = false;
+      }
+    },
+    menuActions() {
+      return [
+        {
+          name: "refresh",
+          icon: "mdi-refresh",
+          text: this.$gettext("Refresh"),
+          visible: true,
+          click: () => {
+            this.refresh();
+          },
+        },
+        {
+          name: "edit",
+          icon: "mdi-pencil",
+          text: this.$gettext("Edit"),
+          visible: this.canManage,
+          click: () => {
+            this.dialog.edit = true;
+          },
+        },
+        {
+          name: "share",
+          icon: "mdi-share-variant",
+          text: this.$gettext("Share"),
+          class: "action-share",
+          visible: this.canShare,
+          click: () => {
+            this.dialog.share = true;
+          },
+        },
+        {
+          name: "download",
+          icon: "mdi-download",
+          text: this.$gettext("Download"),
+          visible: this.canDownload,
+          click: () => {
+            this.download();
+          },
+        },
+        {
+          name: "upload",
+          icon: "mdi-cloud-upload",
+          text: this.$gettext("Upload"),
+          visible: this.canUpload,
+          click: () => {
+            this.showUpload();
+          },
+        },
+      ];
+    },
     T() {
       return T.apply(this, arguments);
     },
@@ -146,14 +210,13 @@ export default {
     showUpload() {
       // Pre-select manually managed albums in upload dialog.
       if (this.album.Type === "album") {
-        Event.publish("dialog.upload", { albums: [this.album] });
+        this.$event.publish("dialog.upload", { albums: [this.album] });
       } else {
-        Event.publish("dialog.upload", { albums: [] });
+        this.$event.publish("dialog.upload", { albums: [] });
       }
     },
-    expand() {
-      this.searchExpanded = !this.searchExpanded;
-      this.growDesc = !this.growDesc;
+    onUpdate(v) {
+      this.updateQuery(v);
     },
     setView(name) {
       if (name) {
@@ -168,7 +231,7 @@ export default {
       this.onDownload(`${this.$config.apiUri}/albums/${this.album.UID}/dl?t=${this.$config.downloadToken}`);
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       download(path, "album.zip");
     },

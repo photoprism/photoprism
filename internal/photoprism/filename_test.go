@@ -30,7 +30,7 @@ func TestCacheName(t *testing.T) {
 		assert.Empty(t, r)
 	})
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		r, err := CacheName("abcdghoj", "test", "juh")
 		if err != nil {
 			t.Fatal(err)

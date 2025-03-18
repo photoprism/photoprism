@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 24.04 LTS (Noble Numbat)
 FROM ubuntu:noble
 
-# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -36,7 +36,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
-    PROG="photoprism"
+    PROG="photoprism" \
+    S6_KEEP_ENV=1 \
+    S6_LOGGING=0
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
@@ -63,13 +65,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-libheif.sh && \
     /scripts/install-tensorflow.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    mkdir -p /etc/skel/.config/go && \
-    echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
+    mkdir -p /etc/skel/.config/go/telemetry && \
+    echo 'off 2025-01-03' > '/etc/skel/.config/go/telemetry/mode' && \
     cp -r /etc/skel/.config /root/.config && \
-    GOLANG_VERSION=go1.22.9 /scripts/install-go.sh && \
+    /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
@@ -82,16 +85,17 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/backups \
         /photoprism/storage/config \
         /photoprism/storage/cache && \
+    /scripts/install-s6.sh && \
     /scripts/cleanup.sh
 
-# Download models and testdata.
+# Download machine learning models and test data.
 RUN mkdir /tmp/photoprism && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Default working directory.
+# Set default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose the following container ports:
@@ -103,9 +107,6 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 # - 40000 (Go Debugger)
 EXPOSE 2342 2343 2442 2443 9515 40000
 
-# Declare container entrypoint script.
-ENTRYPOINT ["/scripts/entrypoint.sh"]
-
-# Keep container running.
-CMD ["tail", "-f", "/dev/null"]
-
+# Set default entrypoint and command.
+ENTRYPOINT ["/init"]
+CMD ["/scripts/cmd.sh", "tail", "-f", "/dev/null"]

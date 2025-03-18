@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDetect(t *testing.T) {

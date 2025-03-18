@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs Docker on Ubuntu Linux
+# Installs Docker on Ubuntu Linux
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-docker.sh)
 
 echo "Installing Docker..."

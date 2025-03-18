@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -44,10 +44,10 @@ func SearchGeo(router *gin.RouterGroup) {
 		}
 
 		var err error
-		var f form.SearchPhotosGeo
+		var frm form.SearchPhotosGeo
 
 		// Abort if request params are invalid.
-		if err = c.MustBindWith(&f, binding.Form); err != nil {
+		if err = c.MustBindWith(&frm, binding.Form); err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePlaces), "form invalid", "%s"}, s.RefID, err)
 			AbortBadRequest(c)
 			return
@@ -58,18 +58,18 @@ func SearchGeo(router *gin.RouterGroup) {
 
 		// Ignore private flag if feature is disabled.
 		if !settings.Features.Private {
-			f.Public = false
+			frm.Public = false
 		}
 
 		// Ignore private flag if feature is disabled.
-		if f.Scope == "" &&
+		if frm.Scope == "" &&
 			settings.Features.Review &&
 			acl.Rules.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
-			f.Quality = 3
+			frm.Quality = 3
 		}
 
 		// Find matching pictures.
-		photos, err := search.UserPhotosGeo(f, s)
+		photos, err := search.UserPhotosGeo(frm, s)
 
 		// Ok?
 		if err != nil {
@@ -80,8 +80,8 @@ func SearchGeo(router *gin.RouterGroup) {
 
 		// Add response headers.
 		AddCountHeader(c, len(photos))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
+		AddLimitHeader(c, frm.Count)
+		AddOffsetHeader(c, frm.Offset)
 		AddTokenHeaders(c, s)
 
 		var resp []byte

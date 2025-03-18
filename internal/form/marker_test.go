@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewMarker(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var m = struct {
 			SubjSrc       string
 			MarkerName    string

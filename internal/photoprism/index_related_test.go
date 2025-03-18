@@ -134,7 +134,7 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, "Botanischer Garten", photo.PhotoTitle)
-			assert.Equal(t, "Tulpen am See", photo.PhotoDescription)
+			assert.Equal(t, "Tulpen am See", photo.PhotoCaption)
 			assert.Contains(t, photo.Details.Keywords, "krokus")
 			assert.Contains(t, photo.Details.Keywords, "blume")
 			assert.Contains(t, photo.Details.Keywords, "schöne")

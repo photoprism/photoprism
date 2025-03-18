@@ -1,5 +1,5 @@
 <template>
-  <div id="photoprism" :class="[isRtl ? 'is-rtl' : '', 'theme-' + themeName]">
+  <div id="photoprism" :class="['theme-' + themeName]">
     <p-loading-bar height="4"></p-loading-bar>
 
     <p-notify></p-notify>
@@ -7,25 +7,31 @@
     <v-app :class="appClass">
       <p-navigation></p-navigation>
 
-      <v-content>
+      <v-main>
         <router-view></router-view>
-      </v-content>
+      </v-main>
     </v-app>
 
-    <p-video-viewer></p-video-viewer>
-    <p-photo-viewer></p-photo-viewer>
+    <p-dialogs></p-dialogs>
   </div>
 </template>
 
 <script>
-import "css/app.css";
-import Event from "pubsub-js";
+import PLoadingBar from "component/loading-bar.vue";
+import PNotify from "component/notify.vue";
+import PNavigation from "component/navigation.vue";
+import PDialogs from "component/dialogs.vue";
 
 export default {
-  name: "PhotoPrism",
+  name: "App",
+  components: {
+    PLoadingBar,
+    PNotify,
+    PNavigation,
+    PDialogs,
+  },
   data() {
     return {
-      isRtl: this.$config.rtl(),
       themeName: this.$config.themeName,
       subscriptions: [],
       touchStart: 0,
@@ -33,44 +39,33 @@ export default {
   },
   computed: {
     appClass: function () {
-      return [this.$route.meta.background, this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen", this.$route.meta.hideNav ? "hide-nav" : "show-nav"];
+      return [
+        this.$route.meta.background,
+        this.$vuetify.display.smAndDown ? "small-screen" : "large-screen",
+        this.$route.meta.hideNav ? "hide-nav" : "show-nav",
+      ];
     },
   },
   created() {
-    window.addEventListener("touchstart", (e) => this.onTouchStart(e), { passive: true });
-    window.addEventListener("touchmove", (e) => this.onTouchMove(e), { passive: true });
-    this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
+    this.subscriptions["view.refresh"] = this.$event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
+    // this.subscriptions["lightbox"] = this.$event.subscribe("lightbox", (ev, data) => { console.log(ev); });
+
     this.$config.setVuetify(this.$vuetify);
   },
-  destroyed() {
+  mounted() {
+    this.$view.enter(this);
+  },
+  beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
-    window.removeEventListener("touchstart", (e) => this.onTouchStart(e), false);
-    window.removeEventListener("touchmove", (e) => this.onTouchMove(e), false);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     onRefresh(config) {
-      this.isRtl = config.rtl();
       this.themeName = config.themeName;
-    },
-    onTouchStart(e) {
-      this.touchStart = e.touches[0].pageY;
-    },
-    onTouchMove(e) {
-      if (!this.touchStart) return;
-      if (document.querySelector(".v-dialog--active") !== null) return;
-
-      const y = e.touches[0].pageY;
-      const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
-
-      if (window.scrollY >= h - 200 && y < this.touchStart) {
-        Event.publish("touchmove.bottom");
-        this.touchStart = 0;
-      } else if (window.scrollY === 0 && y > this.touchStart + 200) {
-        Event.publish("touchmove.top");
-        this.touchStart = 0;
-      }
     },
   },
 };

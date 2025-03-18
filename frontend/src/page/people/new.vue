@@ -1,135 +1,150 @@
 <template>
-  <div class="p-page p-page-faces" style="user-select: none">
-    <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar dense class="page-toolbar" flat color="secondary-light pa-0">
+  <div class="p-page p-page-faces not-selectable">
+    <v-form ref="form" validate-on="invalid-input" class="p-faces-search" @submit.prevent="updateQuery">
+      <v-toolbar density="compact" class="page-toolbar" color="secondary-light">
         <v-spacer></v-spacer>
-        <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
-          <v-icon>refresh</v-icon>
-        </v-btn>
+        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh"> </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
-          <v-icon>visibility</v-icon>
+        <v-btn
+          v-if="!filter.hidden"
+          :title="$gettext('Show hidden')"
+          icon="mdi-eye"
+          class="action-show-hidden"
+          @click.stop="onShowHidden"
+        >
         </v-btn>
-        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
-          <v-icon>visibility_off</v-icon>
+        <v-btn
+          v-else
+          :title="$gettext('Exclude hidden')"
+          icon="mdi-eye-off"
+          class="action-exclude-hidden"
+          @click.stop="onExcludeHidden"
+        >
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-    </v-container>
-    <v-container v-else fluid class="pa-0">
-      <p-scroll-top></p-scroll-top>
+    <div v-if="loading" class="p-page__loading">
+      <p-loading></p-loading>
+    </div>
+    <div v-else class="p-page__content">
+      <p-scroll
+        :load-more="loadMore"
+        :load-disabled="scrollDisabled"
+        :load-distance="scrollDistance"
+        :loading="loading"
+      ></p-scroll>
 
-      <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
-          <h3 class="body-2 ma-0 pa-0">
-            <translate>No people found</translate>
-          </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
-            <translate>You may rescan your library to find additional faces.</translate>
-            <translate>Recognition starts after indexing has been completed.</translate>
-          </p>
+      <div v-if="results.length === 0" class="pa-3">
+        <v-alert color="primary" icon="mdi-check-circle-outline" class="no-results" variant="outlined">
+          <div class="font-weight-bold">
+            {{ $gettext(`No people found`) }}
+          </div>
+          <div class="mt-2">
+            {{ $gettext(`You may rescan your library to find additional faces.`) }}
+            {{ $gettext(`Recognition starts after indexing has been completed.`) }}
+          </div>
         </v-alert>
-        <v-layout row wrap class="search-results face-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="model in results" :key="model.ID" xs12 sm6 md4 lg3 xl2 xxl1 d-flex>
-            <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card">
-              <div class="card-background card"></div>
-              <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1 clickable" @click.stop.prevent="onView(model)">
-                <v-btn :ripple="false" :depressed="false" class="input-hidden" icon flat small absolute @click.stop.prevent="toggleHidden(model)">
-                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
-                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+        <div class="d-flex justify-center my-8">
+          <v-btn color="secondary" rounded variant="flat" :to="{ name: 'all', query: { q: 'face:new' } }">
+            {{ $gettext(`Show all new faces`) }}
+          </v-btn>
+        </div>
+      </div>
+      <div v-else>
+        <div class="v-row search-results face-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <div v-for="m in results" :key="m.ID" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2">
+            <div :data-id="m.ID" :class="m.classes()" class="result flex-grow-1 not-selectable">
+              <v-img :src="m.thumbnailUrl('tile_320')" aspect-ratio="1" class="preview" @click.stop.prevent="onView(m)">
+                <v-btn
+                  :ripple="false"
+                  class="input-hidden"
+                  icon
+                  variant="text"
+                  density="comfortable"
+                  position="absolute"
+                  @click.stop.prevent="toggleHidden(m)"
+                >
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-actions class="card-details pa-0">
-                <v-layout v-if="model.SubjUID" row wrap align-center>
-                  <v-flex xs12 class="text-xs-left pa-0">
-                    <v-text-field
-                      :value="model.Name"
-                      :rules="[textRule]"
-                      :readonly="readonly"
-                      browser-autocomplete="off"
-                      class="input-name pa-0 ma-0"
-                      hide-details
-                      single-line
-                      solo-inverted
-                      @change="
-                        (newName) => {
-                          onRename(model, newName);
-                        }
-                      "
-                      @keyup.enter.native="
-                        (event) => {
-                          onRename(model, event.target.value);
-                        }
-                      "
-                    ></v-text-field>
-                  </v-flex>
-                </v-layout>
-                <v-layout v-else row wrap align-center>
-                  <v-flex xs12 class="text-xs-left pa-0">
-                    <v-combobox
-                      :value="model.Name"
-                      style="z-index: 250"
-                      :items="$config.values.people"
-                      item-value="Name"
-                      item-text="Name"
-                      :readonly="readonly"
-                      :return-object="false"
-                      :menu-props="menuProps"
-                      :allow-overflow="false"
-                      :hint="$gettext('Name')"
-                      hide-details
-                      single-line
-                      solo-inverted
-                      open-on-clear
-                      hide-no-data
-                      append-icon=""
-                      prepend-inner-icon="person_add"
-                      browser-autocomplete="off"
-                      class="input-name pa-0 ma-0"
-                      @change="
-                        (newName) => {
-                          onRename(model, newName);
-                        }
-                      "
-                      @keyup.enter.native="
-                        (event) => {
-                          onRename(model, event.target.value);
-                        }
-                      "
-                    >
-                    </v-combobox>
-                  </v-flex>
-                </v-layout>
+              <v-card-actions class="meta pa-0">
+                <v-text-field
+                  v-if="m.SubjUID"
+                  v-model="m.Name"
+                  :rules="[textRule]"
+                  :readonly="readonly"
+                  autocomplete="off"
+                  hide-details
+                  single-line
+                  density="comfortable"
+                  class="input-name pa-0 ma-0"
+                  @blur="onSetName(m, false)"
+                  @keyup.enter="onSetName(m, false)"
+                ></v-text-field>
+                <v-combobox
+                  v-else
+                  v-model:search="m.Name"
+                  :items="$config.values.people"
+                  item-title="Name"
+                  item-value="Name"
+                  :readonly="readonly"
+                  return-object
+                  hide-no-data
+                  :menu-props="menuProps"
+                  hide-details
+                  single-line
+                  open-on-clear
+                  append-icon=""
+                  prepend-inner-icon="mdi-account-plus"
+                  autocomplete="off"
+                  density="comfortable"
+                  class="input-name pa-0 ma-0"
+                  @blur="onSetName(m, true)"
+                  @update:model-value="(person) => onSetPerson(m, person)"
+                  @keyup.enter.native="onSetName(m, false)"
+                >
+                </v-combobox>
               </v-card-actions>
-            </v-card>
-          </v-flex>
-        </v-layout>
-        <div class="text-xs-center mt-3 mb-2">
-          <v-btn color="secondary" round depressed :to="{ name: 'all', query: { q: 'face:new' } }">
-            <translate>Show all new faces</translate>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-center my-8">
+          <v-btn color="secondary" rounded variant="flat" :to="{ name: 'all', query: { q: 'face:new' } }">
+            {{ $gettext(`Show all new faces`) }}
           </v-btn>
         </div>
-      </v-container>
-    </v-container>
+      </div>
+    </div>
+    <p-confirm-dialog
+      :visible="confirm.visible"
+      icon="mdi-account-plus"
+      :icon-size="42"
+      :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: confirm.model.Name }) : $gettext('Add person?')"
+      @close="onCancelRename"
+      @confirm="onConfirmRename"
+    ></p-confirm-dialog>
   </div>
 </template>
 
 <script>
 import Face from "model/face";
-import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
+import PConfirmDialog from "component/confirm/dialog.vue";
+import PLoading from "component/loading.vue";
 
 export default {
   name: "PPageFaces",
+  components: {
+    PLoading,
+    PConfirmDialog,
+  },
   props: {
     staticFilter: {
       type: Object,
@@ -169,7 +184,18 @@ export default {
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
-      menuProps: { closeOnClick: false, closeOnContentClick: true, openOnClick: false, maxHeight: 300 },
+      confirm: {
+        visible: false,
+        model: new Face(),
+        text: this.$gettext("Add person?"),
+      },
+      menuProps: {
+        closeOnClick: false,
+        closeOnContentClick: true,
+        openOnClick: false,
+        density: "compact",
+        maxHeight: 300,
+      },
       textRule: (v) => {
         if (!v || !v.length) {
           return this.$gettext("Name");
@@ -205,13 +231,12 @@ export default {
   created() {
     this.search();
 
-    this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
   },
-  destroyed() {
+  beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
@@ -313,6 +338,52 @@ export default {
 
       this.$router.push(model.route(this.view));
     },
+    onUpdate(ev, data) {
+      if (!this.listen) return;
+
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
+        return;
+      }
+
+      const type = ev.split(".")[1];
+
+      switch (type) {
+        case "updated":
+          for (let i = 0; i < data.entities.length; i++) {
+            const values = data.entities[i];
+            const model = this.results.find((m) => m.UID === values.UID);
+
+            if (model) {
+              for (let key in values) {
+                if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                  model[key] = values[key];
+                }
+              }
+            }
+          }
+          break;
+        case "deleted":
+          this.dirty = true;
+
+          for (let i = 0; i < data.entities.length; i++) {
+            const uid = data.entities[i];
+            const index = this.results.findIndex((m) => m.UID === uid);
+
+            if (index >= 0) {
+              this.results.splice(index, 1);
+            }
+
+            this.removeSelection(uid);
+          }
+
+          break;
+        case "created":
+          this.dirty = true;
+          break;
+        default:
+          console.warn("unexpected event type", ev);
+      }
+    },
     onSave(m) {
       m.update();
     },
@@ -335,7 +406,7 @@ export default {
 
       if (pos === -1) {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -351,7 +422,7 @@ export default {
         this.lastId = "";
       } else {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -469,7 +540,7 @@ export default {
     search() {
       this.scrollDisabled = true;
 
-      // Don't query the same data more than once
+      // Don't query the same data more than once.
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
         this.refresh();
         return;
@@ -538,7 +609,68 @@ export default {
         }
       });
     },
-    onRename(model, newName) {
+    onSetPerson(model, person) {
+      if (typeof person === "object" && model?.ID && person?.UID && person?.Name) {
+        model.Name = person.Name;
+        model.SubjUID = person.UID;
+        this.setName(model, person.Name);
+      }
+
+      return true;
+    },
+    onSetName(model, confirm) {
+      if (this.busy || !model) {
+        return;
+      }
+
+      const name = model?.Name;
+
+      if (!name) {
+        this.onCancelRename();
+        return;
+      }
+
+      this.confirm.model = model;
+
+      const people = this.$config.values?.people;
+
+      if (people) {
+        const found = people.find((person) => person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+        if (found) {
+          model.Name = found.Name;
+          model.SubjUID = found.UID;
+          if (model.wasChanged()) {
+            this.setName(model, model.Name);
+          }
+          return;
+        }
+      }
+
+      model.Name = name;
+      model.SubjUID = "";
+
+      if (confirm && model.wasChanged()) {
+        this.confirm.visible = true;
+      } else {
+        this.onConfirmRename();
+      }
+    },
+    onConfirmRename() {
+      if (!this.confirm?.model?.Name) {
+        return;
+      }
+
+      if (this.confirm.model.wasChanged()) {
+        this.setName(this.confirm.model, this.confirm?.model?.Name);
+      } else {
+        this.confirm.model = null;
+        this.confirm.visible = false;
+      }
+    },
+    onCancelRename() {
+      this.confirm.visible = false;
+    },
+    setName(model, newName) {
       if (this.busy || !model || !newName || newName.trim() === "") {
         // Ignore if busy, refuse to save empty name.
         return;
@@ -547,9 +679,11 @@ export default {
       this.busy = true;
       this.$notify.blockUI();
 
-      model.setName(newName).finally(() => {
+      return model.setName(newName).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
+        this.confirm.model = null;
+        this.confirm.visible = false;
         this.changeFaceCount(-1);
       });
     },
@@ -560,52 +694,6 @@ export default {
     setFaceCount(count) {
       this.faceCount = count;
       this.$emit("updateFaceCount", this.faceCount);
-    },
-    onUpdate(ev, data) {
-      if (!this.listen) return;
-
-      if (!data || !data.entities || !Array.isArray(data.entities)) {
-        return;
-      }
-
-      const type = ev.split(".")[1];
-
-      switch (type) {
-        case "updated":
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            const model = this.results.find((m) => m.UID === values.UID);
-
-            if (model) {
-              for (let key in values) {
-                if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  model[key] = values[key];
-                }
-              }
-            }
-          }
-          break;
-        case "deleted":
-          this.dirty = true;
-
-          for (let i = 0; i < data.entities.length; i++) {
-            const uid = data.entities[i];
-            const index = this.results.findIndex((m) => m.UID === uid);
-
-            if (index >= 0) {
-              this.results.splice(index, 1);
-            }
-
-            this.removeSelection(uid);
-          }
-
-          break;
-        case "created":
-          this.dirty = true;
-          break;
-        default:
-          console.warn("unexpected event type", ev);
-      }
     },
   },
 };

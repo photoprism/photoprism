@@ -23,7 +23,7 @@ test.meta("testID", "library-import-001").meta({ type: "short", mode: "public" }
     await menu.openPage("library");
     await t
       .click(library.importTab)
-      .typeText(library.openImportFolderSelect, "/B", { replace: true })
+      .typeText(library.openImportFolderSelect, "/Bäck", { replace: true })
       .click(page.selectOption.nth(0))
       .click(library.import)
       //TODO replace wait

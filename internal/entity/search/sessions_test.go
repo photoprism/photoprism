@@ -91,4 +91,33 @@ func TestSessions(t *testing.T) {
 			}
 		}
 	})
+	t.Run("SortByLoginAt", func(t *testing.T) {
+		if results, err := Sessions(form.SearchSessions{Count: 100, Order: sortby.LoginAt}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("sessions: %#v", results)
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, "friend", results[0].UserName)
+				assert.Equal(t, "bob", results[1].UserName)
+			}
+		}
+	})
+	t.Run("SortByCreatedAt", func(t *testing.T) {
+		if results, err := Sessions(form.SearchSessions{Count: 100, Order: sortby.CreatedAt}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("sessions: %#v", results)
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, "bob", results[0].UserName)
+				assert.Equal(t, "friend", results[1].UserName)
+			}
+		}
+	})
+	t.Run("InvalidSortOrder", func(t *testing.T) {
+		results, err := Sessions(form.SearchSessions{Count: 100, Order: "invalid"})
+		assert.Error(t, err)
+		assert.Empty(t, results)
+	})
 }

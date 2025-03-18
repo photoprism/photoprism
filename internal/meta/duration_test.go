@@ -7,7 +7,7 @@ import (
 )
 
 func TestDuration(t *testing.T) {
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		d := Duration("")
 		assert.Equal(t, "0s", d.String())
 	})

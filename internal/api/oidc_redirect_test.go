@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 func TestOIDCRedirect(t *testing.T) {

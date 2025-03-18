@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -63,7 +63,7 @@ func RemoveFromAlbumCoverCache(uid string) {
 	}
 
 	// Delete share preview, if exists.
-	if sharePreview := path.Join(get.Config().ThumbCachePath(), "share", uid+fs.ExtJPEG); fs.FileExists(sharePreview) {
+	if sharePreview := path.Join(get.Config().ThumbCachePath(), "share", uid+fs.ExtJpeg); fs.FileExists(sharePreview) {
 		_ = os.Remove(sharePreview)
 	}
 

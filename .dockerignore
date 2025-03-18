@@ -13,6 +13,7 @@
 /photoprism-*
 /coverage.*
 /frontend/tests/acceptance/screenshots
+/test/
 
 # Custom config, database, log, and temporary files
 /tmp/

@@ -17,7 +17,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/internal/server/process"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Start the REST API server using the configuration provided
@@ -29,6 +33,9 @@ func Start(ctx context.Context, conf *config.Config) {
 	}()
 
 	start := time.Now()
+
+	// Log the server process ID for troubleshooting purposes.
+	log.Infof("server: started as pid %d", process.ID)
 
 	// Set web server mode.
 	if conf.HttpMode() != "" {
@@ -98,30 +105,62 @@ func Start(ctx context.Context, conf *config.Config) {
 		c.String(http.StatusOK, "OK")
 	})
 
-	// Start web server.
+	// Create a new HTTP server instance with no read or write timeout, except for reading the headers:
+	// https://pkg.go.dev/net/http#Server
+	server := &http.Server{
+		ReadHeaderTimeout: time.Minute,
+		ReadTimeout:       -1,
+		WriteTimeout:      -1,
+		Handler:           router,
+	}
+
 	var tlsErr error
 	var tlsManager *autocert.Manager
-	var server *http.Server
 
-	if unixSocket := conf.HttpSocket(); unixSocket != "" {
+	// Listen on a Unix domain socket instead of a TCP port?
+	if unixSocket := conf.HttpSocket(); unixSocket != nil {
 		var listener net.Listener
 		var unixAddr *net.UnixAddr
 		var err error
 
-		if unixAddr, err = net.ResolveUnixAddr("unix", unixSocket); err != nil {
-			log.Errorf("server: invalid unix socket (%s)", err)
+		// Check if the Unix socket already exists and delete it if the force flag is set.
+		if fs.SocketExists(unixSocket.Path) {
+			if txt.Bool(unixSocket.Query().Get("force")) == false {
+				Fail("server: %s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
+				return
+			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil {
+				Fail("server: %s socket %s already exists and cannot be deleted", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
+				return
+			}
+		}
+
+		// Create a Unix socket and listen on it.
+		if unixAddr, err = net.ResolveUnixAddr(unixSocket.Scheme, unixSocket.Path); err != nil {
+			Fail("server: invalid %s socket (%s)", clean.Log(unixSocket.Scheme), err)
 			return
-		} else if listener, err = net.ListenUnix("unix", unixAddr); err != nil {
-			log.Errorf("server: failed to listen on unix socket (%s)", err)
+		} else if listener, err = net.ListenUnix(unixSocket.Scheme, unixAddr); err != nil {
+			Fail("server: failed to listen on %s socket (%s)", clean.Log(unixSocket.Scheme), err)
 			return
 		} else {
-			server = &http.Server{
-				Addr:    unixSocket,
-				Handler: router,
+			// Update socket permissions?
+			if mode := unixSocket.Query().Get("mode"); mode == "" {
+				// Skip, no socket mode was specified.
+			} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil {
+				log.Warnf(
+					"server: failed to change permissions of %s socket %s (%s)",
+					clean.Log(unixSocket.Scheme),
+					clean.Log(unixSocket.Path),
+					modeErr,
+				)
 			}
 
-			log.Infof("server: listening on %s [%s]", unixSocket, time.Since(start))
+			// Listen on Unix socket, which should be automatically closed and removed after use:
+			// https://pkg.go.dev/net#UnixListener.SetUnlinkOnClose.
+			server.Addr = listener.Addr().String()
 
+			log.Infof("server: listening on %s [%s]", unixSocket.Path, time.Since(start))
+
+			// Start Web server.
 			go StartHttp(server, listener)
 		}
 	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
@@ -131,15 +170,15 @@ func Start(ctx context.Context, conf *config.Config) {
 		tlsConfig := tlsManager.TLSConfig()
 		tlsConfig.MinVersion = tls.VersionTLS12
 
-		server = &http.Server{
-			Addr:      tlsSocket,
-			TLSConfig: tlsConfig,
-			Handler:   router,
-		}
+		// Listen on HTTPS socket.
+		server.Addr = tlsSocket
+		server.TLSConfig = tlsConfig
 
 		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
+
+		// Start Web server.
 		go StartAutoTLS(server, tlsManager, conf)
-	} else if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
+	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
 
 		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
@@ -147,13 +186,13 @@ func Start(ctx context.Context, conf *config.Config) {
 			MinVersion: tls.VersionTLS12,
 		}
 
-		server = &http.Server{
-			Addr:      tlsSocket,
-			TLSConfig: tlsConfig,
-			Handler:   router,
-		}
+		// Listen on HTTPS socket.
+		server.Addr = tlsSocket
+		server.TLSConfig = tlsConfig
 
 		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
+
+		// Start Web server.
 		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
@@ -161,16 +200,15 @@ func Start(ctx context.Context, conf *config.Config) {
 		tcpSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
 
 		if listener, err := net.Listen("tcp", tcpSocket); err != nil {
-			log.Errorf("server: %s", err)
+			Fail("server: %s", err)
 			return
 		} else {
-			server = &http.Server{
-				Addr:    tcpSocket,
-				Handler: router,
-			}
+			// Listen on HTTP socket.
+			server.Addr = tcpSocket
 
 			log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 
+			// Start Web server.
 			go StartHttp(server, listener)
 		}
 	}
@@ -181,17 +219,6 @@ func Start(ctx context.Context, conf *config.Config) {
 	err := server.Close()
 	if err != nil {
 		log.Errorf("server: shutdown failed (%s)", err)
-	}
-
-	// Remove the Unix Domain Socket file if it exists on shutdown
-	if unixSocket := conf.HttpSocket(); unixSocket != "" {
-		if _, err := os.Stat(unixSocket); err == nil {
-			if err := os.Remove(unixSocket); err != nil {
-				log.Errorf("server: failed to remove unix socket file %s: %v", unixSocket, err)
-			} else {
-				log.Debugf("server: removed unix socket file %s", unixSocket)
-			}
-		}
 	}
 }
 

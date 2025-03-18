@@ -8,7 +8,8 @@ import (
 
 func TestACL_Allow(t *testing.T) {
 	t.Run("ResourceSessions", func(t *testing.T) {
-		assert.True(t, Rules.Allow(ResourceSessions, RoleAdmin, AccessAll))
+		assert.True(t, Rules.Allow(ResourceSessions, RoleAdmin, AccessOwn))
+		assert.True(t, Rules.Allow(ResourceSessions, RoleAdmin, ActionManageOwn))
 		assert.True(t, Rules.Allow(ResourceSessions, RoleAdmin, AccessOwn))
 		assert.False(t, Rules.Allow(ResourceSessions, RoleVisitor, AccessAll))
 		assert.True(t, Rules.Allow(ResourceSessions, RoleVisitor, AccessOwn))

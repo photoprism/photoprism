@@ -25,10 +25,10 @@ func UpdateLink(c *gin.Context) {
 		return
 	}
 
-	var f form.Link
+	var frm form.Link
 
 	// Assign and validate request form values.
-	if err := c.BindJSON(&f); err != nil {
+	if err := c.BindJSON(&frm); err != nil {
 		log.Debugf("share: %s", err)
 		AbortBadRequest(c)
 		return
@@ -36,16 +36,16 @@ func UpdateLink(c *gin.Context) {
 
 	link := entity.FindLink(clean.Token(c.Param("link")))
 
-	link.SetSlug(f.ShareSlug)
-	link.MaxViews = f.MaxViews
-	link.LinkExpires = f.LinkExpires
+	link.SetSlug(frm.ShareSlug)
+	link.MaxViews = frm.MaxViews
+	link.LinkExpires = frm.LinkExpires
 
-	if f.LinkToken != "" {
-		link.LinkToken = strings.TrimSpace(strings.ToLower(f.LinkToken))
+	if frm.LinkToken != "" {
+		link.LinkToken = strings.TrimSpace(strings.ToLower(frm.LinkToken))
 	}
 
-	if f.Password != "" {
-		if err := link.SetPassword(f.Password); err != nil {
+	if frm.Password != "" {
+		if err := link.SetPassword(frm.Password); err != nil {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
@@ -106,9 +106,9 @@ func CreateLink(c *gin.Context) {
 		return
 	}
 
-	var f form.Link
+	var frm form.Link
 
-	if err := c.BindJSON(&f); err != nil {
+	if err := c.BindJSON(&frm); err != nil {
 		log.Debugf("share: %s", err)
 		AbortBadRequest(c)
 		return
@@ -116,12 +116,12 @@ func CreateLink(c *gin.Context) {
 
 	link := entity.NewUserLink(uid, s.UserUID)
 
-	link.SetSlug(f.ShareSlug)
-	link.MaxViews = f.MaxViews
-	link.LinkExpires = f.LinkExpires
+	link.SetSlug(frm.ShareSlug)
+	link.MaxViews = frm.MaxViews
+	link.LinkExpires = frm.LinkExpires
 
-	if f.Password != "" {
-		if err := link.SetPassword(f.Password); err != nil {
+	if frm.Password != "" {
+		if err := link.SetPassword(frm.Password); err != nil {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
@@ -144,6 +144,7 @@ func CreateLink(c *gin.Context) {
 //	@Summary	adds a new album share link and return it as JSON
 //	@Id			CreateAlbumLink
 //	@Tags		Links, Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Link
 //	@Failure	400,401,403,404,409,429	{object}	i18n.Response
@@ -172,6 +173,7 @@ func CreateAlbumLink(router *gin.RouterGroup) {
 //	@Summary	updates an album share link and return it as JSON
 //	@Id			UpdateAlbumLink
 //	@Tags		Links, Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Link
 //	@Failure	400,401,403,429,409,500	{object}	i18n.Response
@@ -196,6 +198,7 @@ func UpdateAlbumLink(router *gin.RouterGroup) {
 //	@Summary	deletes an album share link
 //	@Id			DeleteAlbumLink
 //	@Tags		Links, Albums
+//	@Accept		json
 //	@Produce	json
 //	@Success	200				{object}	entity.Link
 //	@Failure	401,403,429,409	{object}	i18n.Response

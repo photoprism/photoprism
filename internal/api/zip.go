@@ -42,16 +42,16 @@ func ZipCreate(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Selection
+		var frm form.Selection
 		start := time.Now()
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		if f.Empty() {
+		if frm.Empty() {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
@@ -66,7 +66,7 @@ func ZipCreate(router *gin.RouterGroup) {
 		}
 
 		// Find files to download.
-		files, err := query.SelectedFiles(f, selection)
+		files, err := query.SelectedFiles(frm, selection)
 
 		if err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)

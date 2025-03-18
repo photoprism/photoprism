@@ -44,6 +44,12 @@ func TestPathExists(t *testing.T) {
 	assert.False(t, PathExists(""))
 }
 
+func TestDeviceExists(t *testing.T) {
+	assert.True(t, DeviceExists("/dev/null"))
+	DeviceExists("/dev/nvidia0")
+	assert.False(t, DeviceExists(""))
+}
+
 func TestPathWritable(t *testing.T) {
 	assert.True(t, PathWritable("./testdata"))
 	assert.False(t, PathWritable("./testdata/test.jpg"))

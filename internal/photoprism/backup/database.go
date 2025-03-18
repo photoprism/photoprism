@@ -84,10 +84,27 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 				"-p"+c.DatabasePassword(),
 				c.DatabaseName(),
 			)
-		} else {
+		} else if c.DatabaseSsl() {
+			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
+			log.Infof("backup: server supports zero-configuration ssl")
+
 			cmd = exec.Command(
 				c.MariadbDumpBin(),
 				"--protocol", "tcp",
+				"-h", c.DatabaseHost(),
+				"-P", c.DatabasePortString(),
+				"-u", c.DatabaseUser(),
+				"-p"+c.DatabasePassword(),
+				c.DatabaseName(),
+			)
+		} else {
+			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
+			log.Infof("backup: zero-configuration ssl not supported by the server")
+
+			cmd = exec.Command(
+				c.MariadbDumpBin(),
+				"--protocol", "tcp",
+				"--skip-ssl",
 				"-h", c.DatabaseHost(),
 				"-P", c.DatabasePortString(),
 				"-u", c.DatabaseUser(),
@@ -247,10 +264,28 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				"-f",
 				c.DatabaseName(),
 			)
-		} else {
+		} else if c.DatabaseSsl() {
+			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
+			log.Infof("restore: server supports zero-configuration ssl")
+
 			cmd = exec.Command(
 				c.MariadbBin(),
 				"--protocol", "tcp",
+				"-h", c.DatabaseHost(),
+				"-P", c.DatabasePortString(),
+				"-u", c.DatabaseUser(),
+				"-p"+c.DatabasePassword(),
+				"-f",
+				c.DatabaseName(),
+			)
+		} else {
+			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
+			log.Infof("restore: zero-configuration ssl not supported by the server")
+
+			cmd = exec.Command(
+				c.MariadbBin(),
+				"--protocol", "tcp",
+				"--skip-ssl",
 				"-h", c.DatabaseHost(),
 				"-P", c.DatabasePortString(),
 				"-u", c.DatabaseUser(),

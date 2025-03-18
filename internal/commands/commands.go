@@ -1,7 +1,7 @@
 /*
 Package commands provides the CLI commands of PhotoPrism.
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -30,7 +30,7 @@ import (
 	"syscall"
 
 	"github.com/sevlyar/go-daemon"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
@@ -40,7 +40,7 @@ import (
 var log = event.Log
 
 // PhotoPrism contains the photoprism CLI (sub-)commands.
-var PhotoPrism = []cli.Command{
+var PhotoPrism = []*cli.Command{
 	StartCommand,
 	StopCommand,
 	StatusCommand,
@@ -67,15 +67,17 @@ var PhotoPrism = []cli.Command{
 	AuthCommands,
 	ShowCommands,
 	VersionCommand,
+	EditionCommand,
 	ShowConfigCommand,
 	ConnectCommand,
 }
 
 // CountFlag represents a CLI flag to limit the number of report rows.
-var CountFlag = cli.UintFlag{
-	Name:  "n",
-	Usage: "`LIMIT` number of results",
-	Value: 100,
+var CountFlag = &cli.UintFlag{
+	Name:    "count",
+	Aliases: []string{"n"},
+	Usage:   "`LIMIT` number of results",
+	Value:   100,
 }
 
 // LogErr logs an error if the argument is not nil.

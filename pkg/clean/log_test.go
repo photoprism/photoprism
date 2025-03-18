@@ -25,7 +25,7 @@ func TestLog(t *testing.T) {
 		assert.Equal(t, "?", Log("User-Agent: {jndi:ldap://<host>:<port>/<path>}"))
 	})
 	t.Run("SpecialChars", func(t *testing.T) {
-		assert.Equal(t, "'  The ?quick? ''brown 'fox.   '", Log("  The <quick>\n\r ''brown \"fox. \t  "))
+		assert.Equal(t, "'  The ?quick? ''brown \"fox.   '", Log("  The <quick>\n\r ''brown \"fox. \t  "))
 	})
 	t.Run("LoremIpsum", func(t *testing.T) {
 		assert.Equal(t, "'It is a long established fact that a reader will be distracted by the readable "+

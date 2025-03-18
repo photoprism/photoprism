@@ -7,12 +7,13 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"gopkg.in/photoprism/go-tz.v2/tz"
+
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/service/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
 // SetCoordinates changes the photo lat, lng and altitude if not empty and from an acceptable source.
@@ -458,7 +459,7 @@ func (m *Photo) SaveLocation() error {
 		log.Errorf("photo: %s %s while updating keyword labels", m.String(), err)
 	}
 
-	if err := m.UpdateTitle(m.ClassifyLabels()); err != nil {
+	if err := m.GenerateTitle(m.ClassifyLabels()); err != nil {
 		log.Info(err)
 	}
 

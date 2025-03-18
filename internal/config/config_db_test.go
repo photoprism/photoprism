@@ -13,6 +13,26 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 	assert.Equal(t, SQLite3, driver)
 }
 
+func TestConfig_DatabaseDriverName(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	driver := c.DatabaseDriverName()
+	assert.Equal(t, "SQLite", driver)
+}
+
+func TestConfig_DatabaseVersion(t *testing.T) {
+	c := TestConfig()
+
+	assert.NotEmpty(t, c.DatabaseVersion())
+	assert.True(t, c.IsDatabaseVersion("v3.45"))
+}
+
+func TestConfig_DatabaseSsl(t *testing.T) {
+	c := TestConfig()
+
+	assert.False(t, c.DatabaseSsl())
+}
+
 func TestConfig_ParseDatabaseDsn(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

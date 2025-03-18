@@ -7,9 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
@@ -61,9 +63,16 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the session user is has user management privileges.
+		// Check if the session user has user management privileges.
 		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
+
+		// Check if the user account quota has been exceeded.
+		if f.UserRole != "" && m.UserRole != f.UserRole && !conf.UsersQuotaReached(acl.ParseRole(m.UserRole)) && conf.UsersQuotaReached(acl.ParseRole(f.UserRole)) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", authn.ErrUsersQuotaExceeded.Error()}, s.RefID)
+			AbortQuotaExceeded(c)
+			return
+		}
 
 		// Get user from session.
 		u := s.User()
@@ -91,6 +100,10 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Flush session cache.
 		if isAdmin {
 			entity.FlushSessionCache()
+			if f.UserRole != "" {
+				config.FlushUsageCache()
+				UpdateClientConfig()
+			}
 		} else {
 			s.ClearCache()
 		}

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,13 +24,15 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Form from "common/form";
-import Util from "common/util";
-import Api from "common/api";
-import { T, $gettext } from "common/vm";
-import { config } from "app/session";
 import memoizeOne from "memoize-one";
-import * as auth from "../options/auth";
+import * as auth from "options/auth";
+import $util from "common/util";
+import $api from "common/api";
+import { T, $gettext } from "common/gettext";
+import { Form } from "common/form";
+import { $config } from "app/session";
+
+export let BatchSize = 99999;
 
 export class User extends RestModel {
   getDefaults() {
@@ -91,7 +93,7 @@ export class User extends RestModel {
         About: "",
         Bio: "",
         Location: "",
-        Country: "",
+        Country: "zz",
         Phone: "",
         SiteURL: "",
         ProfileURL: "",
@@ -132,7 +134,7 @@ export class User extends RestModel {
       return "";
     }
 
-    let dir = config.get("usersPath");
+    let dir = $config.get("usersPath");
 
     if (dir) {
       return `${dir}/${handle}`;
@@ -149,7 +151,7 @@ export class User extends RestModel {
     } else if (this.Details && this.Details.GivenName) {
       return this.Details.GivenName;
     } else if (this.Name) {
-      return T(Util.capitalize(this.Name));
+      return T($util.capitalize(this.Name));
     }
 
     return $gettext("Unknown");
@@ -163,7 +165,7 @@ export class User extends RestModel {
     } else if (this.Details && this.Details.JobTitle) {
       return this.Details.JobTitle;
     } else if (this.Role) {
-      return T(Util.capitalize(this.Role));
+      return T($util.capitalize(this.Role));
     }
 
     return $gettext("Account");
@@ -174,12 +176,18 @@ export class User extends RestModel {
   }
 
   getRegisterForm() {
-    return Api.options(this.getEntityResource() + "/register").then((response) => Promise.resolve(new Form(response.data)));
+    return $api
+      .options(this.getEntityResource() + "/register")
+      .then((response) => Promise.resolve(new Form(response.data)));
   }
 
-  getAvatarURL(size) {
+  getAvatarURL(size, config) {
     if (!size) {
       size = "tile_500";
+    }
+
+    if (!config) {
+      config = $config;
     }
 
     if (this.Thumb) {
@@ -202,11 +210,15 @@ export class User extends RestModel {
 
     formData.append("files", file);
 
-    return Api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) => Promise.resolve(this.setValues(response.data)));
+    return $api
+      .post(this.getEntityResource() + `/avatar`, formData, formConf)
+      .then((response) => Promise.resolve(this.setValues(response.data)));
   }
 
   getProfileForm() {
-    return Api.options(this.getEntityResource() + "/profile").then((response) => Promise.resolve(new Form(response.data)));
+    return $api
+      .options(this.getEntityResource() + "/profile")
+      .then((response) => Promise.resolve(new Form(response.data)));
   }
 
   isRemote() {
@@ -239,7 +251,7 @@ export class User extends RestModel {
     if (providerName) {
       providerName = T(providerName);
     } else {
-      providerName = Util.capitalize(this.AuthProvider);
+      providerName = $util.capitalize(this.AuthProvider);
     }
 
     if (!this.AuthMethod || this.AuthMethod === "" || this.AuthMethod === "default") {
@@ -256,37 +268,47 @@ export class User extends RestModel {
   }
 
   changePassword(oldPassword, newPassword) {
-    return Api.put(this.getEntityResource() + "/password", {
-      old: oldPassword,
-      new: newPassword,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .put(this.getEntityResource() + "/password", {
+        old: oldPassword,
+        new: newPassword,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   createPasscode(password) {
-    return Api.post(this.getEntityResource() + "/passcode", {
-      type: "totp",
-      password: password,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode", {
+        type: "totp",
+        password: password,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   confirmPasscode(code) {
-    return Api.post(this.getEntityResource() + "/passcode/confirm", {
-      type: "totp",
-      code: code,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode/confirm", {
+        type: "totp",
+        code: code,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   activatePasscode() {
-    return Api.post(this.getEntityResource() + "/passcode/activate", {
-      type: "totp",
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode/activate", {
+        type: "totp",
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   deactivatePasscode(password) {
-    return Api.post(this.getEntityResource() + "/passcode/deactivate", {
-      type: "totp",
-      password: password,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode/deactivate", {
+        type: "totp",
+        password: password,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   disablePasscodeSetup(hasPassword) {
@@ -320,9 +342,15 @@ export class User extends RestModel {
       order: "client_name",
     };
 
-    return Api.get(this.getEntityResource() + "/sessions", {
-      params,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .get(this.getEntityResource() + "/sessions", {
+        params,
+      })
+      .then((response) => Promise.resolve(response.data));
+  }
+
+  static batchSize() {
+    return BatchSize;
   }
 
   static getCollectionResource() {

@@ -13,9 +13,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/disintegration/imaging"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 
-	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

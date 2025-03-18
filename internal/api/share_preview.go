@@ -49,7 +49,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		previewFilename := filepath.Join(thumbPath, shared+fs.ExtJPEG)
+		previewFilename := filepath.Join(thumbPath, shared+fs.ExtJpeg)
 
 		expires := entity.Now().Add(-1 * time.Hour)
 
@@ -73,28 +73,28 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.SearchPhotos
+		var frm form.SearchPhotos
 
 		// Covers may only contain public content in shared albums.
-		f.Album = shared
-		f.Public = true
-		f.Private = false
-		f.Hidden = false
-		f.Archived = false
-		f.Review = false
-		f.Primary = true
+		frm.Album = shared
+		frm.Public = true
+		frm.Private = false
+		frm.Hidden = false
+		frm.Archived = false
+		frm.Review = false
+		frm.Primary = true
 
 		// Get first 12 album entries.
-		f.Count = 6
-		f.Order = a.AlbumOrder
+		frm.Count = 6
+		frm.Order = a.AlbumOrder
 
-		if parseErr := f.ParseQueryString(); parseErr != nil {
+		if parseErr := frm.ParseQueryString(); parseErr != nil {
 			log.Errorf("preview: %s", parseErr)
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
 
-		p, count, err := search.Photos(f)
+		p, count, err := search.Photos(frm)
 
 		if err != nil {
 			log.Error(err)

@@ -10,7 +10,7 @@ import (
 )
 
 func TestSearchFaces(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchFaces(router)
 		r := PerformRequest(app, "GET", "/api/v1/faces?count=15")

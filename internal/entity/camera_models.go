@@ -1,19 +1,20 @@
 package entity
 
 const (
-	ModelNone       = ""
-	ModelUnknown    = "Unknown"
-	ModelSlideNScan = "Slide N Scan"
-	ModelPhotoScan  = "PhotoScan"
-	ModelCanoScan   = "CanoScan"
-	ModelOpticFilm  = "OpticFilm"
-	ModelScanSnap   = "ScanSnap"
-	ModelMSScanner  = "MS Scanner"
-	ModelIPhone     = "iPhone"
-	ModelIPhoneSE   = "iPhone SE"
-	ModelIPad       = "iPad"
-	ModelIPadAir    = "iPad Air"
-	ModelIPadPro    = "iPad Pro"
+	ModelNone         = ""
+	ModelUnknown      = "Unknown"
+	ModelSlideNScan   = "Slide N Scan"
+	ModelDigitDia7000 = "DigitDia 7000"
+	ModelPhotoScan    = "PhotoScan"
+	ModelCanoScan     = "CanoScan"
+	ModelOpticFilm    = "OpticFilm"
+	ModelScanSnap     = "ScanSnap"
+	ModelMSScanner    = "MS Scanner"
+	ModelIPhone       = "iPhone"
+	ModelIPhoneSE     = "iPhone SE"
+	ModelIPad         = "iPad"
+	ModelIPadAir      = "iPad Air"
+	ModelIPadPro      = "iPad Pro"
 )
 
 // CameraModels maps internal model identifiers to normalized names.

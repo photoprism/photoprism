@@ -77,5 +77,4 @@ export default class Page {
       await t.click(Selector(`div.input-` + action));
     }
   }
-
 }

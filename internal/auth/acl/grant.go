@@ -22,6 +22,15 @@ var (
 		ActionManage:    true,
 		ActionSubscribe: true,
 	}
+	GrantUploadAccess = Grant{
+		AccessOwn:      true,
+		AccessShared:   true,
+		ActionSearch:   true,
+		ActionView:     true,
+		ActionUpload:   true,
+		ActionDownload: true,
+		ActionReact:    true,
+	}
 	GrantOwn = Grant{
 		AccessOwn:       true,
 		ActionView:      true,

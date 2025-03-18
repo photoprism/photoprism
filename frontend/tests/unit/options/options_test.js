@@ -9,8 +9,8 @@ describe("options/options", () => {
     const timezones = options.TimeZones();
     assert.equal(timezones[0].ID, "");
     assert.equal(timezones[0].Name, "Local Time");
-    assert.equal(timezones[1].ID, "UTC-12");
-    assert.equal(timezones[1].Name, "UTC-12:00");
+    assert.equal(timezones[1].ID, "UTC");
+    assert.equal(timezones[1].Name, "UTC");
   });
 
   it("should get days", () => {

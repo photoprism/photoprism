@@ -11,6 +11,7 @@ import (
 	"sort"
 
 	pigo "github.com/esimov/pigo/core"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )

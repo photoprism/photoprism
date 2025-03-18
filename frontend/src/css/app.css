@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -23,21 +23,20 @@ Additional information can be found in our Developer Guide:
 
 */
 
-@import url("vendor/icons/material-design-icons.css");
-@import url("../../node_modules/vuetify/dist/vuetify.min.css");
+@import url("../../node_modules/photoswipe/dist/photoswipe.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
-@import url("typography.css");
+@import url("splash.css");
+@import url("body.css");
+@import url("text.css");
+@import url("lightbox.css");
+@import url("controls.css");
 @import url("wallpapers.css");
-@import url("scrollbar.css");
 @import url("themes.css");
 @import url("effects.css");
-@import url("static.css");
 @import url("navigation.css");
 @import url("logs.css");
 @import url("visibility.css");
-@import url("viewer.css");
-@import url("tables.css");
-@import url("results.css");
+@import url("views.css");
 @import url("places.css");
 @import url("labels.css");
 @import url("files.css");
@@ -45,21 +44,22 @@ Additional information can be found in our Developer Guide:
 @import url("help.css");
 @import url("auth.css");
 @import url("layout.css");
-@import url("rtl.css");
+@import url("vuetify.css");
 
 /* Core Element Styles */
 
 html,
 body {
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     background-color: #fafafa;
     min-width: 320px;
-    min-height: 500px;
-    margin: 0;
-    padding: 0;
 }
 
 main {
@@ -68,107 +68,93 @@ main {
     z-index: 1;
 }
 
-/* Loading Animations */
-
-#busy-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 100;
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-#busy-overlay.progress {
-    cursor: wait;
-    background-color: rgba(0, 0, 0, 0.32);
-}
-
-#busy-overlay.progress .splash-center {
-    display: block;
-}
-
-#busy-overlay .splash-center {
-    display: none;
-}
-
 /* General App Styles */
 
-#photoprism .v-badge__badge {
-    font-size: 12px;
-    height: 19px;
-    width: 19px;
-    right: -20px;
-    top: -8px;
+.v-autocomplete__selection {
+    min-width: 100%;
 }
 
-#photoprism .clickable {
+.v-slide-group {
+    overflow: initial;
+}
+
+.v-expansion-panel-text__wrapper {
+    padding: 0;
+}
+
+.clickable {
     cursor: pointer;
 }
 
-#photoprism button:focus {
+.p-scroll {
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    padding: .6rem 1.2rem;
+    margin: auto;
+    opacity: 1;
+    color: rgb(var(--v-theme-on-button, #000000));
+    background-color: rgba(var(--v-theme-button, #ffffff), 0.5);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
+    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4, 0, .2, 1), opacity 125ms;
+    -webkit-tap-highlight-color: transparent;
+    border: 0;
+    border-radius: 1.6rem;
+    cursor: pointer;
+    display: block;
+    font-family: inherit;
+    font-size: 1rem;
     outline: none;
+    user-select: none;
+    text-decoration: none;
+    z-index: 2;
 }
 
-#photoprism .p-scroll-top {
-    top: 64px;
-    right: 8px;
+.p-scroll svg {
+    display: inline-block;
+    vertical-align: -.4em;
+    fill: currentcolor;
+    height: 1.33rem;
+    width: 1.33rem;
 }
 
-#photoprism .float-left {
+.float-left {
     float: left;
 }
 
-#photoprism .float-right {
+.float-right {
     float: right;
 }
 
-#photoprism a.float-left,
-#photoprism a.float-right {
+a.float-left,
+a.float-right {
     display: inline-block;
 }
 
-#photoprism .p-page {
+.p-page {
     user-select: none !important;
 }
 
-#photoprism .text-selectable,
-#photoprism .p-page .text-selectable {
+.not-selectable {
+    user-select: none !important;
+}
+
+.text-selectable,
+a.text-selectable,
+span.text-selectable,
+.p-page .text-selectable {
     user-select: text !important;
 }
 
-#photoprism .p-page pre {
+.p-page pre {
     overflow: auto;
+    font-size: 0.875rem
 }
 
-#photoprism .body-1,
-#photoprism .body-2,
-#photoprism .break-word,
-#photoprism .v-datatable td,
-#photoprism .v-card button,
-#photoprism .v-card .caption {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-}
-
-#photoprism.is-rtl .v-card .caption {
+.is-rtl .v-card .caption {
     text-align: right;
-}
-
-#photoprism .v-tabs .v-badge__badge {
-    right: -22px;
-    font-size: 9px;
-    width: auto;
-    padding: 0 0.2rem;
-    min-width: 1.1rem;
-    height: 1.1rem;
 }
 
 ol, ul {
@@ -176,12 +162,38 @@ ol, ul {
     padding-right: 24px;
 }
 
-#photoprism .search-results.list-view .result {
-    padding: 1px 0 1px 8px !important;
+body .v-list__item .v-icon {
+    color: inherit;
 }
 
-body #photoprism .v-list__tile .v-icon {
-    color: inherit;
+/* Mouse Cursor */
+
+.cursor-text {
+    cursor: text !important;
+}
+
+.cursor-copy,
+.cursor-copy i,
+.cursor-copy svg,
+.cursor-copy input,
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.cursor-help {
+    cursor: help !important;
+}
+
+.cursor-zoom-in {
+    cursor: zoom-in !important;
+}
+
+.cursor-zoom-out {
+    cursor: zoom-out !important;
+}
+
+.cursor-grab {
+    cursor: grab !important;
 }
 
 /* Image Orientation */

@@ -22,7 +22,7 @@ func Open(fileName string, orientation int) (result image.Image, err error) {
 	}
 
 	// Open JPEG image with color processing?
-	if Color != ColorNone && fs.FileType(fileName) == fs.ImageJPEG {
+	if Color != ColorNone && fs.FileType(fileName) == fs.ImageJpeg {
 		return OpenJpeg(fileName, orientation)
 	}
 

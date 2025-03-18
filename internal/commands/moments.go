@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // MomentsCommand configures the command name, flags, and action.
-var MomentsCommand = cli.Command{
+var MomentsCommand = &cli.Command{
 	Name:   "moments",
 	Usage:  "Creates albums of special moments, trips, and places",
 	Action: momentsAction,

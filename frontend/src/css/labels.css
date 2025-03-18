@@ -1,9 +1,9 @@
-#photoprism .search-results .inline-edit a,
-#photoprism .search-results .inline-edit a span {
+.search-results .inline-edit a,
+.search-results .inline-edit a span {
     cursor: text;
     color: inherit;
 }
 
-#photoprism .v-small-dialog__content {
+.v-small-dialog__content {
     padding: 0;
 }

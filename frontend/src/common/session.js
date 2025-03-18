@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -23,8 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "api.js";
-import Event from "pubsub-js";
+import $api from "common/api";
+import $event from "common/event";
+import { $view } from "common/view";
 import User from "model/user";
 import Socket from "websocket.js";
 
@@ -40,15 +41,15 @@ export default class Session {
    * @param {object} shared
    */
   constructor(storage, config, shared) {
-    this.storage_key = "sessionStorage";
-    this.auth = false;
+    this.storageKey = "sessionStorage";
+    this.loginRedirect = false;
     this.config = config;
     this.provider = "";
     this.user = new User(false);
     this.data = null;
 
     // Set session storage.
-    if (storage.getItem(this.storage_key) === "true") {
+    if (storage.getItem(this.storageKey) === "true") {
       this.storage = window.sessionStorage;
     } else {
       this.storage = storage;
@@ -73,16 +74,14 @@ export default class Session {
     }
 
     // Authenticated?
-    if (this.isUser()) {
-      this.auth = true;
-    }
+    this.auth = this.isUser();
 
     // Subscribe to session events.
-    Event.subscribe("session.logout", () => {
+    $event.subscribe("session.logout", () => {
       return this.onLogout();
     });
 
-    Event.subscribe("websocket.connected", () => {
+    $event.subscribe("websocket.connected", () => {
       this.sendClientInfo();
     });
 
@@ -96,9 +95,7 @@ export default class Session {
         const location = shared.uri ? shared.uri : this.config.baseUri + "/";
 
         // Redirect to URL after one second.
-        setTimeout(() => {
-          window.location = location;
-        }, 1000);
+        this.followRedirect(location, 1000);
       });
     } else {
       this.config.progress(80);
@@ -111,12 +108,12 @@ export default class Session {
 
   useSessionStorage() {
     this.reset();
-    this.storage.setItem(this.storage_key, "true");
+    this.storage.setItem(this.storageKey, "true");
     this.storage = window.sessionStorage;
   }
 
   useLocalStorage() {
-    this.storage.setItem(this.storage_key, "false");
+    this.storage.setItem(this.storageKey, "false");
     this.storage = window.localStorage;
   }
 
@@ -151,7 +148,7 @@ export default class Session {
 
     this.authToken = authToken;
 
-    Api.defaults.headers.common[RequestHeader] = authToken;
+    $api.defaults.headers.common[RequestHeader] = authToken;
 
     return true;
   }
@@ -197,7 +194,7 @@ export default class Session {
     // but should continue to be removed when logging out:
     this.storage.removeItem("session_id");
 
-    delete Api.defaults.headers.common[RequestHeader];
+    delete $api.defaults.headers.common[RequestHeader];
   }
 
   setProvider(provider) {
@@ -316,18 +313,47 @@ export default class Session {
     return !this.config.isPublic() && !this.isUser();
   }
 
+  followLoginRedirectUrl(defaultUrl) {
+    const url = this.getLoginRedirectUrl(defaultUrl);
+    this.clearLoginRedirectUrl();
+    this.followRedirect(url);
+    return this;
+  }
+
+  getLoginRedirectUrl(defaultUrl) {
+    if (!defaultUrl) {
+      defaultUrl = "/";
+    }
+
+    return this.loginRedirect ? this.loginRedirect : defaultUrl;
+  }
+
+  clearLoginRedirectUrl() {
+    this.loginRedirect = false;
+
+    return this;
+  }
+
+  setLoginRedirectUrl(url) {
+    if (!url) {
+      return this.clearLoginRedirectUrl();
+    }
+
+    this.loginRedirect = url;
+
+    return this;
+  }
+
   isUser() {
     return this.user && this.user.hasId();
   }
 
-  getHome() {
+  getDefaultRoute() {
     if (this.loginRequired()) {
       return LoginPage;
-    } else if (this.config.allow("photos", "access_library")) {
-      return "browse";
-    } else {
-      return "albums";
     }
+
+    return this.config.getDefaultRoute();
   }
 
   isAdmin() {
@@ -396,14 +422,15 @@ export default class Session {
     if (!window || !window.location) {
       return true;
     }
+
     return LoginPage === window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
   }
 
   login(username, password, code, token) {
     this.reset();
 
-    return Api.post("session", { username, password, code, token }).then((resp) => {
-      const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
+    return $api.post("session", { username, password, code, token }).then((resp) => {
+      const reload = this.config.getLanguageLocale() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.onLogin();
       return Promise.resolve(reload);
@@ -420,13 +447,14 @@ export default class Session {
       // Use a static auth token in public mode, as no additional authentication is required.
       this.setAuthToken(PublicAuthToken);
       this.setId(PublicSessionID);
-      return Api.get("session").then((resp) => {
+      return $api.get("session").then((resp) => {
         this.setResp(resp);
         return Promise.resolve();
       });
     } else if (this.isAuthenticated()) {
       // Check the auth token by fetching the client session data from the API.
-      return Api.get("session")
+      return $api
+        .get("session")
         .then((resp) => {
           this.setResp(resp);
           return Promise.resolve();
@@ -449,7 +477,7 @@ export default class Session {
       return Promise.reject();
     }
 
-    return Api.post("session", { token }).then((resp) => {
+    return $api.post("session", { token }).then((resp) => {
       this.setResp(resp);
       this.sendClientInfo();
     });
@@ -464,20 +492,38 @@ export default class Session {
       scope = "*";
     }
 
-    return Api.post("oauth/token", {
-      grant_type: password ? "password" : "session",
-      client_name: client_name,
-      scope: scope,
-      expires_in: expires_in,
-      username: this.user.Name,
-      password: password,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post("oauth/token", {
+        grant_type: password ? "password" : "session",
+        client_name: client_name,
+        scope: scope,
+        expires_in: expires_in,
+        username: this.user.Name,
+        password: password,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   deleteApp(token) {
-    return Api.post("oauth/revoke", {
-      token: token,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post("oauth/revoke", {
+        token: token,
+      })
+      .then((response) => Promise.resolve(response.data));
+  }
+
+  followRedirect(url, delay) {
+    if (!url) {
+      return;
+    }
+
+    // Default redirect delay in milliseconds.
+    if (!delay) {
+      delay = 100;
+    }
+
+    // Redirect to URL with the specified delay.
+    $view.redirect(url, delay, true);
   }
 
   onLogout(noRedirect) {
@@ -486,7 +532,7 @@ export default class Session {
 
     // Perform redirect?
     if (noRedirect !== true && !this.isLogin()) {
-      window.location = this.config.loginUri;
+      this.followRedirect(this.config.loginUri);
     }
 
     return Promise.resolve();
@@ -494,7 +540,8 @@ export default class Session {
 
   logout(noRedirect) {
     if (this.isAuthenticated()) {
-      return Api.delete("session")
+      return $api
+        .delete("session")
         .then(() => {
           return this.onLogout(noRedirect);
         })

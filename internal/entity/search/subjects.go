@@ -13,8 +13,8 @@ import (
 )
 
 // Subjects searches subjects and returns them.
-func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
-	if err := f.ParseQueryString(); err != nil {
+func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
+	if err = frm.ParseQueryString(); err != nil {
 		return results, err
 	}
 
@@ -25,14 +25,14 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 		Select(fmt.Sprintf("%s.*", subjTable))
 
 	// Limit result count.
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	if frm.Count > 0 && frm.Count <= MaxResults {
+		s = s.Limit(frm.Count).Offset(frm.Offset)
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		s = s.Limit(MaxResults).Offset(frm.Offset)
 	}
 
 	// Set sort order.
-	switch f.Order {
+	switch frm.Order {
 	case "name":
 		s = s.Order("subj_name")
 	case "count":
@@ -45,8 +45,8 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 		s = s.Order("subj_favorite DESC, subj_name")
 	}
 
-	if f.UID != "" {
-		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(strings.ToLower(f.UID), txt.Or))
+	if frm.UID != "" {
+		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(strings.ToLower(frm.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -55,44 +55,44 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 		return results, nil
 	}
 
-	if f.Query != "" {
-		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Query) {
+	if frm.Query != "" {
+		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query) {
 			s = s.Where("?", gorm.Expr(where))
 		}
 	}
 
-	if f.Files > 0 {
-		s = s.Where("file_count >= ?", f.Files)
+	if frm.Files > 0 {
+		s = s.Where("file_count >= ?", frm.Files)
 	}
 
-	if f.Photos > 0 {
-		s = s.Where("photo_count >= ?", f.Photos)
+	if frm.Photos > 0 {
+		s = s.Where("photo_count >= ?", frm.Photos)
 	}
 
-	if f.Type != "" {
-		s = s.Where("subj_type IN (?)", strings.Split(f.Type, txt.Or))
+	if frm.Type != "" {
+		s = s.Where("subj_type IN (?)", strings.Split(frm.Type, txt.Or))
 	}
 
-	if !f.All {
-		if txt.Yes(f.Favorite) {
+	if !frm.All {
+		if txt.Yes(frm.Favorite) {
 			s = s.Where("subj_favorite = 1")
-		} else if txt.No(f.Favorite) {
+		} else if txt.No(frm.Favorite) {
 			s = s.Where("subj_favorite = 0")
 		}
 
-		if !txt.Yes(f.Hidden) {
+		if !txt.Yes(frm.Hidden) {
 			s = s.Where("subj_hidden = 0")
 		}
 
-		if txt.Yes(f.Private) {
+		if txt.Yes(frm.Private) {
 			s = s.Where("subj_private = 1")
-		} else if txt.No(f.Private) {
+		} else if txt.No(frm.Private) {
 			s = s.Where("subj_private = 0")
 		}
 
-		if txt.Yes(f.Excluded) {
+		if txt.Yes(frm.Excluded) {
 			s = s.Where("subj_excluded = 1")
-		} else if txt.No(f.Excluded) {
+		} else if txt.No(frm.Excluded) {
 			s = s.Where("subj_excluded = 0")
 		}
 	}

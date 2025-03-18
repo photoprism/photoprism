@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 func TestInfo(t *testing.T) {
@@ -25,20 +26,20 @@ func TestInfo(t *testing.T) {
 	})
 	t.Run("VideoContentType", func(t *testing.T) {
 		info := NewInfo()
-		info.VideoMimeType = fs.MimeTypeMP4
-		info.VideoCodec = CodecAVC
-		assert.Equal(t, ContentTypeAVC, info.VideoContentType())
+		info.VideoMimeType = header.ContentTypeMp4
+		info.VideoCodec = CodecAvc1
+		assert.Equal(t, header.ContentTypeMp4AvcMain, info.VideoContentType())
 	})
 	t.Run("VideoFileExt", func(t *testing.T) {
 		info := NewInfo()
-		info.VideoMimeType = fs.MimeTypeMP4
-		info.VideoCodec = CodecAVC
-		assert.Equal(t, fs.ExtMP4, info.VideoFileExt())
+		info.VideoMimeType = header.ContentTypeMp4
+		info.VideoCodec = CodecAvc1
+		assert.Equal(t, fs.ExtMp4, info.VideoFileExt())
 	})
 	t.Run("VideoFileType", func(t *testing.T) {
 		info := NewInfo()
-		info.VideoMimeType = fs.MimeTypeMP4
-		info.VideoCodec = CodecAVC
-		assert.Equal(t, fs.VideoMP4, info.VideoFileType())
+		info.VideoMimeType = header.ContentTypeMp4
+		info.VideoCodec = CodecAvc1
+		assert.Equal(t, fs.VideoMp4, info.VideoFileType())
 	})
 }

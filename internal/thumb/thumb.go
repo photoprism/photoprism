@@ -1,7 +1,7 @@
 /*
 Package thumb provides JPEG resampling and thumbnail generation.
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -26,11 +26,10 @@ package thumb
 
 import (
 	"fmt"
-	"math"
-
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"math"
 
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
@@ -54,10 +53,10 @@ type Thumb struct {
 }
 
 // New creates a new photo thumbnail.
-func New(w, h int, hash string, s Size, contentUri, previewToken string) Thumb {
+func New(w, h int, hash string, s Size, contentUri, previewToken string) *Thumb {
 	if s.Width >= w && s.Height >= h {
 		// Smaller
-		return Thumb{W: w, H: h, Src: Url(hash, s.Name.String(), contentUri, previewToken)}
+		return &Thumb{W: w, H: h, Src: Url(hash, s.Name.String(), contentUri, previewToken)}
 	}
 
 	srcAspectRatio := float64(w) / float64(h)
@@ -67,11 +66,11 @@ func New(w, h int, hash string, s Size, contentUri, previewToken string) Thumb {
 
 	if srcAspectRatio > maxAspectRatio {
 		newW = s.Width
-		newH = int(math.Round(float64(newW) / srcAspectRatio))
+		newH = int(math.Ceil(float64(newW) / srcAspectRatio))
 	} else {
 		newH = s.Height
-		newW = int(math.Round(float64(newH) * srcAspectRatio))
+		newW = int(math.Ceil(float64(newH) * srcAspectRatio))
 	}
 
-	return Thumb{W: newW, H: newH, Src: Url(hash, s.Name.String(), contentUri, previewToken)}
+	return &Thumb{W: newW, H: newH, Src: Url(hash, s.Name.String(), contentUri, previewToken)}
 }

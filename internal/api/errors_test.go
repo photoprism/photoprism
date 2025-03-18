@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetErrors(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetErrors(router)
 		r := PerformRequest(app, "GET", "/api/v1/errors")
@@ -18,7 +18,7 @@ func TestGetErrors(t *testing.T) {
 }
 
 func TestDeleteErrors(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteErrors(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/errors")

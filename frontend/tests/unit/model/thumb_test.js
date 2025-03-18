@@ -12,7 +12,7 @@ describe("model/thumb", () => {
       UID: "55",
       Title: "",
       TakenAtLocal: "",
-      Description: "",
+      Caption: "",
       Favorite: false,
       Playable: false,
       Width: 0,
@@ -51,7 +51,7 @@ describe("model/thumb", () => {
       UID: "55",
       Title: "",
       TakenAtLocal: "",
-      Description: "",
+      Caption: "",
       Favorite: true,
       Playable: false,
       Width: 0,
@@ -88,13 +88,13 @@ describe("model/thumb", () => {
       Title: "Crazy Cat",
       TakenAt: "2012-07-08T14:45:39Z",
       TakenAtLocal: "2012-07-08T14:45:39Z",
-      Description: "Nice description",
+      Caption: "Nice description",
       Favorite: true,
     };
     const photo = new Photo(values2);
     const result = Thumb.fromFile(photo, file);
     assert.equal(result.UID, "5");
-    assert.equal(result.Description, "Nice description");
+    assert.equal(result.Caption, "Nice description");
     assert.equal(result.Width, 500);
     const result2 = Thumb.fromFile();
     assert.equal(result2.UID, "");
@@ -106,7 +106,7 @@ describe("model/thumb", () => {
       Title: "Crazy Cat",
       TakenAt: "2012-07-08T14:45:39Z",
       TakenAtLocal: "2012-07-08T14:45:39Z",
-      Description: "Nice description",
+      Caption: "Nice description",
       Favorite: true,
     };
     const photo = new Photo(values2);
@@ -116,7 +116,7 @@ describe("model/thumb", () => {
       Title: "Crazy Cat",
       TakenAt: "2012-07-08T14:45:39Z",
       TakenAtLocal: "2012-07-08T14:45:39Z",
-      Description: "Nice description",
+      Caption: "Nice description",
       Favorite: true,
     };
     const photo2 = new Photo(values3);
@@ -126,7 +126,7 @@ describe("model/thumb", () => {
     const values4 = {
       ID: 8,
       UID: "ABC123",
-      Description: "Nice description 2",
+      Caption: "Nice description 2",
       Hash: "abc345",
       Files: [
         {
@@ -144,13 +144,13 @@ describe("model/thumb", () => {
     const Photos2 = [photo, photo2, photo3];
     const result2 = Thumb.fromFiles(Photos2);
     assert.equal(result2[0].UID, "ABC123");
-    assert.equal(result2[0].Description, "Nice description 2");
+    assert.equal(result2[0].Caption, "Nice description 2");
     assert.equal(result2[0].Width, 500);
     assert.equal(result2.length, 1);
     const values5 = {
       ID: 8,
       UID: "ABC123",
-      Description: "Nice description 2",
+      Caption: "Nice description 2",
       Hash: "abc345",
       Files: [
         {
@@ -169,7 +169,7 @@ describe("model/thumb", () => {
     const result3 = Thumb.fromFiles(Photos3);
     assert.equal(result3.length, 1);
     assert.equal(result3[0].UID, "ABC123");
-    assert.equal(result3[0].Description, "Nice description 2");
+    assert.equal(result3[0].Caption, "Nice description 2");
     assert.equal(result3[0].Width, 500);
   });
 
@@ -183,7 +183,7 @@ describe("model/thumb", () => {
     const values = {
       ID: 8,
       UID: "ABC123",
-      Description: "Nice description 3",
+      Caption: "Nice description 3",
       Hash: "345ggh",
       Files: [
         {
@@ -200,12 +200,12 @@ describe("model/thumb", () => {
     const photo = new Photo(values);
     const result = Thumb.fromPhoto(photo);
     assert.equal(result.UID, "ABC123");
-    assert.equal(result.Description, "Nice description 3");
+    assert.equal(result.Caption, "Nice description 3");
     assert.equal(result.Width, 500);
     const values3 = {
       ID: 8,
       UID: "ABC124",
-      Description: "Nice description 3",
+      Caption: "Nice description 3",
     };
     const photo3 = new Photo(values3);
     const result2 = Thumb.fromPhoto(photo3);
@@ -216,7 +216,7 @@ describe("model/thumb", () => {
       Title: "Crazy Cat",
       TakenAt: "2012-07-08T14:45:39Z",
       TakenAtLocal: "2012-07-08T14:45:39Z",
-      Description: "Nice description",
+      Caption: "Nice description",
       Favorite: true,
       Hash: "xdf45m",
     };
@@ -224,14 +224,14 @@ describe("model/thumb", () => {
     const result3 = Thumb.fromPhoto(photo2);
     assert.equal(result3.UID, "ABC123");
     assert.equal(result3.Title, "Crazy Cat");
-    assert.equal(result3.Description, "Nice description");
+    assert.equal(result3.Caption, "Nice description");
   });
 
   it("should test from photos", () => {
     const values = {
       ID: 8,
       UID: "ABC123",
-      Description: "Nice description 3",
+      Caption: "Nice description 3",
       Hash: "345ggh",
       Files: [
         {
@@ -249,7 +249,7 @@ describe("model/thumb", () => {
     const Photos = [photo];
     const result = Thumb.fromPhotos(Photos);
     assert.equal(result[0].UID, "ABC123");
-    assert.equal(result[0].Description, "Nice description 3");
+    assert.equal(result[0].Caption, "Nice description 3");
     assert.equal(result[0].Width, 500);
   });
 

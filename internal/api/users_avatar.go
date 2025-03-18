@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb/avatar"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // UploadUserAvatar updates the avatar image of the currently authenticated user.
@@ -99,9 +99,9 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			return
 		} else {
 			switch {
-			case mimeType.Is(fs.MimeTypePNG):
+			case mimeType.Is(header.ContentTypePng):
 				fileName = "avatar.png"
-			case mimeType.Is(fs.MimeTypeJPEG):
+			case mimeType.Is(header.ContentTypeJpeg):
 				fileName = "avatar.jpg"
 			default:
 				event.AuditWarn([]string{ClientIP(c), "session %s", "upload avatar", " %s not supported"}, s.RefID, mimeType)

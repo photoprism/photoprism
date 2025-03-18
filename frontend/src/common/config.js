@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -23,13 +23,14 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "api.js";
-import Event from "pubsub-js";
+import $api from "common/api";
+import $event from "common/event";
 import * as themes from "options/themes";
 import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
+import { ref, reactive } from "vue";
 
 onInit();
 
@@ -39,9 +40,9 @@ export default class Config {
    * @param {object} values
    */
   constructor(storage, values) {
-    this.disconnected = false;
+    this.disconnected = ref(false);
     this.storage = storage;
-    this.storage_key = "config";
+    this.storageKey = "config";
     this.previewToken = "";
     this.downloadToken = "";
     this.updating = false;
@@ -55,9 +56,14 @@ export default class Config {
         console.warn("config: values missing");
       }
 
+      const now = new Date();
+
       this.debug = true;
+      this.trace = false;
       this.test = true;
       this.demo = false;
+      this.version = `${now.getUTCFullYear().toString().substr(-2)}${now.getMonth() + 1}${now.getDate()}-TEST`;
+      this.theme = themes.Get("default");
       this.themeName = "";
       this.baseUri = "";
       this.staticUri = "/static";
@@ -101,22 +107,24 @@ export default class Config {
       }
     }
 
-    this.page = {
+    this.page = reactive({
       title: values.siteTitle,
       caption: values.siteCaption,
-    };
+    });
 
-    this.values = values;
+    this.values = reactive(values);
     this.debug = !!values.debug;
+    this.trace = !!values.trace;
     this.test = !!values.test;
     this.demo = !!values.demo;
+    this.version = values.version;
 
     this.updateTokens();
 
-    Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
-    Event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
-    Event.subscribe("count", (ev, data) => this.onCount(ev, data));
-    Event.subscribe("people", (ev, data) => this.onPeople(ev, data));
+    $event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
+    $event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
+    $event.subscribe("count", (ev, data) => this.onCount(ev, data));
+    $event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
     if (this.has("settings")) {
       this.setTheme(this.get("settings").ui.theme);
@@ -142,7 +150,8 @@ export default class Config {
       return this.updating;
     }
 
-    this.updating = Api.get("config")
+    this.updating = $api
+      .get("config")
       .then(
         (resp) => {
           return this.setValues(resp.data);
@@ -158,14 +167,12 @@ export default class Config {
   }
 
   setValues(values) {
-    if (!values) return;
-
-    if (this.debug) {
-      console.log("config: updated", values);
+    if (!values || typeof values !== "object") {
+      return;
     }
 
-    if (values.jsUri && this.values.jsUri !== values.jsUri) {
-      Event.publish("dialog.reload", { values });
+    if (values.jsUri && values.mode === "user" && this.values.jsUri && this.values.jsUri !== values.jsUri) {
+      $event.publish("dialog.update", { values });
     }
 
     for (let key in values) {
@@ -178,7 +185,7 @@ export default class Config {
 
     if (values.settings) {
       this.setBatchSize(values.settings);
-      this.setLanguage(values.settings.ui.language);
+      this.setLanguage(values.settings.ui.language, true);
       this.setTheme(values.settings.ui.theme);
     }
 
@@ -199,7 +206,7 @@ export default class Config {
       return;
     }
 
-    if (settings.search.batchSize) {
+    if (settings?.search?.batchSize > 0) {
       Photo.setBatchSize(settings.search.batchSize);
     }
   }
@@ -231,7 +238,12 @@ export default class Config {
             .filter((m) => m.UID === values.UID)
             .forEach((m) => {
               for (let key in values) {
-                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                if (
+                  key !== "UID" &&
+                  values.hasOwnProperty(key) &&
+                  values[key] != null &&
+                  typeof values[key] !== "object"
+                ) {
                   m[key] = values[key];
                 }
               }
@@ -250,6 +262,8 @@ export default class Config {
     }
   }
 
+  // getPerson returns the details of a person by name
+  // (case-insensitive), or null if it does not exist.
   getPerson(name) {
     name = name.toLowerCase();
 
@@ -268,6 +282,8 @@ export default class Config {
     }
   }
 
+  // onCount updates the media type, location, people and other
+  // counters used e.g. in the expanded sidebar navigation.
   onCount(ev, data) {
     const type = ev.split(".")[1];
 
@@ -346,39 +362,9 @@ export default class Config {
     this.values.count;
   }
 
+  // setVuetify sets a reference to the current Vuetify instance.
   setVuetify(instance) {
     this.$vuetify = instance;
-  }
-
-  setBodyTheme(name) {
-    if (!document || !document.body) {
-      return;
-    }
-    document.body.classList.forEach((c) => {
-      if (c.startsWith("theme-")) {
-        document.body.classList.remove(c);
-      }
-    });
-
-    document.body.classList.add("theme-" + name);
-  }
-
-  setColorMode(value) {
-    if (!document || !document.body) {
-      return;
-    }
-
-    const tags = document.getElementsByTagName("html");
-
-    if (tags && tags.length > 0) {
-      tags[0].setAttribute("data-color-mode", value);
-    }
-
-    if (value === "dark") {
-      document.body.classList.add("dark-theme");
-    } else {
-      document.body.classList.remove("dark-theme");
-    }
   }
 
   aclClasses(resource) {
@@ -431,45 +417,61 @@ export default class Config {
     return !this.allowAny(resource, perm);
   }
 
-  settings() {
-    return this.values.settings;
-  }
-
-  setSettings(settings) {
-    if (!settings) return;
-
-    if (this.debug) {
-      console.log("config: new settings", settings);
+  // setLanguage sets the ISO/IEC 15897 locale,
+  // e.g. "en" or "zh_TW" (minimum 2 letters).
+  setLanguage(locale, apply) {
+    // Skip setting language if no locale is specified.
+    if (!locale) {
+      return this;
     }
 
-    this.values.settings = settings;
+    // Apply locale to browser window?
+    if (apply) {
+      // Update the Accept-Language header for XHR requests.
+      if ($api) {
+        $api.defaults.headers.common["Accept-Language"] = locale;
+      }
 
-    this.setBatchSize(settings);
-    this.setLanguage(settings.ui.language);
-    this.setTheme(settings.ui.theme);
+      // Update the language-specific attributes of the <html> and <body> elements.
+      if (document && document.body) {
+        const isRtl = this.isRtl(locale);
 
-    return this;
-  }
+        // Update <html> lang attribute and dir attribute to match the current locale.
+        document.documentElement.setAttribute("lang", locale);
+        document.documentElement.setAttribute("dir", this.dir(isRtl));
 
-  setLanguage(locale) {
-    if (!locale || this.loading()) {
-      return;
+        // Set body.is-rtl or .is-ltr, depending on the writing direction of the current locale.
+        if (isRtl) {
+          document.body.classList.add("is-rtl");
+          document.body.classList.remove("is-ltr");
+        } else {
+          document.body.classList.remove("is-rtl");
+          document.body.classList.add("is-ltr");
+        }
+      }
     }
 
+    // Don't update the configuration settings if they haven't been loaded yet.
+    if (this.loading()) {
+      return this;
+    }
+
+    // Update the configuration settings and save them to window.localStorage.
     if (this.values.settings && this.values.settings.ui) {
       this.values.settings.ui.language = locale;
-      this.storage.setItem(this.storage_key + ".locale", locale);
-      Api.defaults.headers.common["Accept-Language"] = locale;
+      this.storage.setItem(this.storageKey + ".locale", locale);
     }
 
     return this;
   }
 
-  getLanguage() {
+  // getLanguageLocale returns the ISO/IEC 15897 locale,
+  // e.g. "en" or "zh_TW" (minimum 2 letters).
+  getLanguageLocale() {
     let locale = "en";
 
     if (this.loading()) {
-      const stored = this.storage.getItem(this.storage_key + ".locale");
+      const stored = this.storage.getItem(this.storageKey + ".locale");
       if (stored) {
         locale = stored;
       }
@@ -480,6 +482,31 @@ export default class Config {
     return locale;
   }
 
+  // getLanguageCode returns the ISO 639-1 language code (2 letters),
+  // see https://www.loc.gov/standards/iso639-2/php/code_list.php.
+  getLanguageCode() {
+    return this.getLanguageLocale().substring(0, 2);
+  }
+
+  // isRtl returns true if a right-to-left language is currently used.
+  isRtl(locale) {
+    if (!locale) {
+      locale = this.getLanguageLocale();
+    }
+
+    return Languages().some((l) => l.value === locale && l.rtl);
+  }
+
+  // dir returns the user interface direction (for the current locale if no argument is given).
+  dir(isRtl) {
+    if (typeof isRtl === "undefined") {
+      isRtl = this.isRtl();
+    }
+
+    return isRtl ? "rtl" : "ltr";
+  }
+
+  // setTheme set the current UI theme based on the specified name.
   setTheme(name) {
     let theme = onSetTheme(name, this);
 
@@ -492,7 +519,7 @@ export default class Config {
       this.values.settings.ui.theme = this.themeName;
     }
 
-    Event.publish("view.refresh", this);
+    $event.publish("view.refresh", this);
 
     this.theme = theme;
 
@@ -504,65 +531,202 @@ export default class Config {
       this.setColorMode("light");
     }
 
-    if (this.$vuetify) {
-      this.$vuetify.theme = this.theme.colors;
+    if (this.themeName && this.$vuetify) {
+      this.$vuetify.theme.name = this.themeName;
     }
 
     return this;
   }
 
+  // setBodyTheme updates the classes of the <body> element based on the specified theme name.
+  setBodyTheme(name) {
+    if (!document || !document.body) {
+      return;
+    }
+
+    document.body.classList.forEach((c) => {
+      if (c.startsWith("theme-")) {
+        document.body.classList.remove(c);
+      }
+    });
+
+    document.body.classList.add("theme-" + name);
+  }
+
+  // setColorMode updates the dark/light mode attributes of the <html> and <body> elements.
+  setColorMode(value) {
+    if (!document || !document.body) {
+      return;
+    }
+
+    if (document.documentElement) {
+      document.documentElement.setAttribute("data-color-mode", value);
+    }
+
+    if (value === "dark") {
+      document.body.classList.add("dark-theme");
+    } else {
+      document.body.classList.remove("dark-theme");
+    }
+  }
+
+  // getSettings returns the current user's configuration settings.
+  getSettings() {
+    return this.values.settings;
+  }
+
+  // setSettings updates the current user's configuration settings
+  // and then changes the UI language and theme as needed.
+  setSettings(settings) {
+    if (!settings) {
+      return;
+    }
+
+    if (this.debug) {
+      console.log("config: new settings", settings);
+    }
+
+    this.values.settings = settings;
+
+    this.setBatchSize(settings);
+    this.setLanguage(settings.ui.language, false);
+    this.setTheme(settings.ui.theme);
+
+    return this;
+  }
+
+  // getDefaultRoute returns the default route to use after login or in case of routing errors.
+  getDefaultRoute() {
+    const albumsRoute = "albums";
+    const browseRoute = "browse";
+    const defaultRoute = this.deny("photos", "access_library") ? albumsRoute : browseRoute;
+
+    if (this.allow("settings", "update")) {
+      const features = this.getSettings()?.features;
+      const startPage = this.getSettings()?.ui?.startPage;
+
+      if (features && typeof features === "object" && startPage && typeof startPage === "string") {
+        switch (startPage) {
+          case "browse":
+            return defaultRoute;
+          case "albums":
+            return features.albums ? startPage : defaultRoute;
+          case "photos":
+            return features.albums ? startPage : defaultRoute;
+          case "videos":
+            return features.library ? startPage : defaultRoute;
+          case "people":
+            return features.people && features.edit ? startPage : defaultRoute;
+          case "favorites":
+            return features.favorites ? startPage : defaultRoute;
+          case "places":
+            return features.places ? startPage : defaultRoute;
+          case "calendar":
+            return features.calendar ? startPage : defaultRoute;
+          case "moments":
+            return features.moments ? startPage : defaultRoute;
+          case "labels":
+            return features.labels ? startPage : defaultRoute;
+          case "folders":
+            return features.folders ? startPage : defaultRoute;
+          default:
+            return defaultRoute;
+        }
+      }
+    }
+
+    return defaultRoute;
+  }
+
+  // getValues returns all client configuration values as exposed by the backend.
   getValues() {
     return this.values;
   }
 
+  // storeValues saves the current configuration values in window.localStorage.
   storeValues() {
-    this.storage.setItem(this.storage_key, JSON.stringify(this.getValues()));
+    this.storage.setItem(this.storageKey, JSON.stringify(this.getValues()));
     return this;
   }
 
+  // restoreValues restores the configuration values from window.localStorage.
   restoreValues() {
-    const json = this.storage.getItem(this.storage_key);
+    const json = this.storage.getItem(this.storageKey);
     if (json !== "undefined") {
       this.setValues(JSON.parse(json));
     }
     return this;
   }
 
+  // set updates a top-level config value.
   set(key, value) {
     this.values[key] = value;
     return this;
   }
 
+  // has checks if the specified top-level config value exists.
   has(key) {
     return !!this.values[key];
   }
 
+  // get returns a top-level config value.
   get(key) {
     return this.values[key];
   }
 
+  // featDevelop checks if features under development should be enabled.
+  featDevelop() {
+    return this.values?.develop === true;
+  }
+
+  // featExperimental checks if new features that may be incomplete or unstable should be enabled.
+  featExperimental() {
+    return this.values?.experimental === true;
+  }
+
+  // featPreview checks if features available for preview should be enabled.
+  featPreview() {
+    return this.featDevelop() || this.featExperimental();
+  }
+
+  // feature checks a single feature flag by name and returns true if it is set.
   feature(name) {
     return this.values.settings.features[name] === true;
   }
 
-  rtl() {
-    if (!this.values || !this.values.settings || !this.values.settings.ui.language) {
-      return false;
-    }
-
-    return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
+  // filesQuotaReached returns true if the filesystem quota is reached or exceeded.
+  filesQuotaReached() {
+    return this.values?.usage?.filesUsedPct >= 100;
   }
 
+  // setTokens sets the security tokens required to load thumbnails and download files from the server.
   setTokens(tokens) {
-    if (!tokens || !tokens.previewToken || !tokens.downloadToken) {
+    if (!tokens || typeof tokens !== "object") {
       return;
     }
-    this.previewToken = tokens.previewToken;
-    this.values.previewToken = tokens.previewToken;
-    this.downloadToken = tokens.downloadToken;
-    this.values.downloadToken = tokens.downloadToken;
+
+    if (tokens.previewToken) {
+      if (this.previewToken !== tokens.previewToken) {
+        this.previewToken = tokens.previewToken;
+      }
+
+      if (this.values.previewToken !== tokens.previewToken) {
+        this.values.previewToken = tokens.previewToken;
+      }
+    }
+
+    if (tokens.downloadToken) {
+      if (this.downloadToken !== tokens.downloadToken) {
+        this.downloadToken = tokens.downloadToken;
+      }
+
+      if ((this.values.downloadToken = tokens.downloadToken)) {
+        this.values.downloadToken = tokens.downloadToken;
+      }
+    }
   }
 
+  // updateTokens updates the security tokens required to load thumbnails and download files from the server.
   updateTokens() {
     if (this.values["previewToken"]) {
       this.previewToken = this.values.previewToken;
@@ -572,6 +736,8 @@ export default class Config {
     }
   }
 
+  // albumCategories returns an array containing the categories
+  // assigned to albums, or an empty array if there are none.
   albumCategories() {
     if (this.values["albumCategories"]) {
       return this.values["albumCategories"];
@@ -580,10 +746,12 @@ export default class Config {
     return [];
   }
 
+  // isPublic returns true if the instance is running in public mode, i.e. without authentication.
   isPublic() {
     return this.values && this.values.public;
   }
 
+  // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
     return this.values && this.values.demo;
   }
@@ -674,7 +842,11 @@ export default class Config {
   }
 
   getVersion() {
-    return this.get("version");
+    return this.version;
+  }
+
+  getServerVersion() {
+    return this.values?.version;
   }
 
   getSiteDescription() {

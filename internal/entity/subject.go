@@ -320,13 +320,15 @@ func (m *Subject) Visible() bool {
 }
 
 // SaveForm updates the subject from form values.
-func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
-	if m.SubjUID == "" {
+func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
+	if frm == nil {
+		return false, fmt.Errorf("form is nil")
+	} else if m.SubjUID == "" {
 		return false, fmt.Errorf("subject has no uid")
 	}
 
 	// Change name?
-	if name := clean.Name(f.SubjName); name != "" && name != m.SubjName {
+	if name := clean.Name(frm.SubjName); name != "" && name != m.SubjName {
 		existing, err := m.UpdateName(name)
 
 		if existing.SubjUID != m.SubjUID || err != nil {
@@ -337,16 +339,16 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	}
 
 	// Change favorite status?
-	if m.SubjFavorite != f.SubjFavorite {
-		m.SubjFavorite = f.SubjFavorite
+	if m.SubjFavorite != frm.SubjFavorite {
+		m.SubjFavorite = frm.SubjFavorite
 		changed = true
 	}
 
 	// Change visibility?
-	if m.SubjHidden != f.SubjHidden || m.SubjPrivate != f.SubjPrivate || m.SubjExcluded != f.SubjExcluded {
-		m.SubjHidden = f.SubjHidden
-		m.SubjPrivate = f.SubjPrivate
-		m.SubjExcluded = f.SubjExcluded
+	if m.SubjHidden != frm.SubjHidden || m.SubjPrivate != frm.SubjPrivate || m.SubjExcluded != frm.SubjExcluded {
+		m.SubjHidden = frm.SubjHidden
+		m.SubjPrivate = frm.SubjPrivate
+		m.SubjExcluded = frm.SubjExcluded
 
 		// Update counter.
 		if !m.IsPerson() {

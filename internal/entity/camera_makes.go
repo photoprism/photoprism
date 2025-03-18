@@ -36,6 +36,7 @@ const (
 	MakeRicoh          = "RICOH"
 	MakeReolink        = "Reolink"
 	MakeVenTrade       = "VenTrade"
+	MakeReflecta       = "Reflecta"
 )
 
 // CameraMakes maps internal make identifiers to normalized names.

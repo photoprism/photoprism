@@ -160,6 +160,7 @@ classDiagram
     }
     class auth_users_settings {
         varbinary(32) ui_theme
+        varchar(64) ui_start_page
         varbinary(32) ui_language
         varbinary(64) ui_time_zone
         varbinary(32) maps_style
@@ -172,7 +173,6 @@ classDiagram
         int(11) download_media_raw
         int(11) download_media_sidecar
         varbinary(1024) upload_path
-        varbinary(128) default_page
         datetime created_at
         datetime updated_at
         varbinary(42) user_uid
@@ -479,8 +479,8 @@ classDiagram
         varbinary(8) type_src
         varchar(200) photo_title
         varbinary(8) title_src
-        varchar(4096) photo_description
-        varbinary(8) description_src
+        varchar(4096) photo_caption
+        varbinary(8) caption_src
         varbinary(1024) photo_path
         varbinary(255) photo_name
         varbinary(755) original_name

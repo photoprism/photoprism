@@ -4,9 +4,10 @@ import (
 	"testing"
 
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestConfig_TestdataPath2(t *testing.T) {

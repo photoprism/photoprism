@@ -16,15 +16,15 @@ import (
 )
 
 // Albums finds AlbumResults based on the search form without checking rights or permissions.
-func Albums(f form.SearchAlbums) (results AlbumResults, err error) {
-	return UserAlbums(f, nil)
+func Albums(frm form.SearchAlbums) (results AlbumResults, err error) {
+	return UserAlbums(frm, nil)
 }
 
 // UserAlbums finds AlbumResults based on the search form and user session.
-func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults, err error) {
+func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResults, err error) {
 	start := time.Now()
 
-	if err = f.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); err != nil {
 		log.Debugf("albums: %s", err)
 		return AlbumResults{}, err
 	}
@@ -43,7 +43,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 		// Determine resource to check.
 		var aclResource acl.Resource
-		switch f.Type {
+		switch frm.Type {
 		case entity.AlbumManual:
 			aclResource = acl.ResourceAlbums
 		case entity.AlbumFolder:
@@ -70,27 +70,27 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 		// Exclude private content?
 		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) || acl.Rules.Deny(aclResource, aclRole, acl.AccessPrivate) {
-			f.Public = true
-			f.Private = false
+			frm.Public = true
+			frm.Private = false
 		}
 	}
 
 	// Set sort order.
-	switch f.Order {
+	switch frm.Order {
 	case sortby.Count:
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
 	case sortby.Moment, sortby.Newest:
-		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
+		if frm.Type == entity.AlbumManual || frm.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid DESC")
-		} else if f.Type == entity.AlbumMoment {
+		} else if frm.Type == entity.AlbumMoment {
 			s = s.Order("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		}
 	case sortby.Oldest:
-		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
+		if frm.Type == entity.AlbumManual || frm.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid ASC")
-		} else if f.Type == entity.AlbumMoment {
+		} else if frm.Type == entity.AlbumMoment {
 			s = s.Order("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		} else {
 			s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
@@ -108,21 +108,21 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	case sortby.Slug:
 		s = s.Order("albums.album_slug ASC, albums.album_uid DESC")
 	case sortby.Favorites:
-		if f.Type == entity.AlbumFolder {
+		if frm.Type == entity.AlbumFolder {
 			s = s.Order("albums.album_favorite DESC, albums.album_path ASC, albums.album_uid DESC")
-		} else if f.Type == entity.AlbumMonth {
+		} else if frm.Type == entity.AlbumMonth {
 			s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
 		}
 	case sortby.Name:
-		if f.Type == entity.AlbumFolder {
+		if frm.Type == entity.AlbumFolder {
 			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_title ASC, albums.album_uid DESC")
 		}
 	case sortby.NameReverse:
-		if f.Type == entity.AlbumFolder {
+		if frm.Type == entity.AlbumFolder {
 			s = s.Order("albums.album_path DESC, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_title DESC, albums.album_uid DESC")
@@ -132,8 +132,8 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	}
 
 	// Find specific UIDs only?
-	if txt.NotEmpty(f.UID) {
-		ids := SplitOr(strings.ToLower(f.UID))
+	if txt.NotEmpty(frm.UID) {
+		ids := SplitOr(strings.ToLower(frm.UID))
 
 		if rnd.ContainsUID(ids, entity.AlbumUID) {
 			s = s.Where("albums.album_uid IN (?)", ids)
@@ -141,10 +141,10 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	}
 
 	// Filter by title or path?
-	if txt.NotEmpty(f.Query) {
-		q := "%" + strings.Trim(f.Query, " *%") + "%"
+	if txt.NotEmpty(frm.Query) {
+		q := "%" + strings.Trim(frm.Query, " *%") + "%"
 
-		if f.Type == entity.AlbumFolder {
+		if frm.Type == entity.AlbumFolder {
 			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR albums.album_path LIKE ?", q, q, q)
 		} else {
 			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
@@ -152,61 +152,61 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	}
 
 	// Albums with public pictures only?
-	if f.Public {
+	if frm.Public {
 		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {
 		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_quality > -1 AND deleted_at IS NULL)")
 	}
 
-	if txt.NotEmpty(f.Type) {
-		s = s.Where("albums.album_type IN (?)", strings.Split(f.Type, txt.Or))
+	if txt.NotEmpty(frm.Type) {
+		s = s.Where("albums.album_type IN (?)", strings.Split(frm.Type, txt.Or))
 	}
 
-	if txt.NotEmpty(f.Category) {
-		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, txt.Or))
+	if txt.NotEmpty(frm.Category) {
+		s = s.Where("albums.album_category IN (?)", strings.Split(frm.Category, txt.Or))
 	}
 
-	if txt.NotEmpty(f.Location) {
-		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, txt.Or))
+	if txt.NotEmpty(frm.Location) {
+		s = s.Where("albums.album_location IN (?)", strings.Split(frm.Location, txt.Or))
 	}
 
-	if txt.NotEmpty(f.Country) {
-		s = s.Where("albums.album_country IN (?)", strings.Split(f.Country, txt.Or))
+	if txt.NotEmpty(frm.Country) {
+		s = s.Where("albums.album_country IN (?)", strings.Split(frm.Country, txt.Or))
 	}
 
 	// Favorites only?
-	if f.Favorite {
+	if frm.Favorite {
 		s = s.Where("albums.album_favorite = 1")
 	}
 
 	// Filter by year?
-	if txt.NotEmpty(f.Year) {
+	if txt.NotEmpty(frm.Year) {
 		// Filter by the pictures included if it is a manually managed album, as these do not have an explicit
 		// year assigned to them, unlike calendar albums and moments for example.
-		if f.Type == entity.AlbumManual {
+		if frm.Type == entity.AlbumManual {
 			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
 				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
-				gorm.Expr(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax)), strings.Split(f.Year, txt.Or))
+				gorm.Expr(AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax)), strings.Split(frm.Year, txt.Or))
 		} else {
-			s = s.Where(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
+			s = s.Where(AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax))
 		}
 	}
 
 	// Filter by month?
-	if txt.NotEmpty(f.Month) {
-		s = s.Where(AnyInt("albums.album_month", f.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
+	if txt.NotEmpty(frm.Month) {
+		s = s.Where(AnyInt("albums.album_month", frm.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
 	}
 
 	// Filter by day?
-	if txt.NotEmpty(f.Day) {
-		s = s.Where(AnyInt("albums.album_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
+	if txt.NotEmpty(frm.Day) {
+		s = s.Where(AnyInt("albums.album_day", frm.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
 	// Limit result count.
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	if frm.Count > 0 && frm.Count <= MaxResults {
+		s = s.Limit(frm.Count).Offset(frm.Offset)
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		s = s.Limit(MaxResults).Offset(frm.Offset)
 	}
 
 	// Query database.

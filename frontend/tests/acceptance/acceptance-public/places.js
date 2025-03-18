@@ -15,11 +15,11 @@ const places = new Places();
 const photo = new Photo();
 const toolbar = new Toolbar();
 
-test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places", async (t) => {
+test.meta("testID", "places-001").meta({ mode: "public" })("Multi-Window: Test places", async (t) => {
   await menu.openPage("places");
 
   await t
-    .expect(Selector("#map").exists, { timeout: 15000 })
+    .expect(Selector("div.map-loaded").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.map-control").visible)
     .ok();
@@ -31,7 +31,7 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places"
   await menu.openPage("places");
 
   await t
-    .expect(Selector("#map").exists, { timeout: 15000 })
+    .expect(Selector("div.map-loaded").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.map-control").visible)
     .ok()
@@ -42,11 +42,7 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places"
 
   await places.search("canada");
 
-  await t
-      .click(places.zoomOut)
-      .click(places.zoomOut)
-      .click(places.zoomOut)
-      .click(places.zoomOut);
+  await t.click(places.zoomOut).click(places.zoomOut).click(places.zoomOut).click(places.zoomOut);
 
   const clusterCountCanada = await Selector("div.cluster-marker").count;
 
@@ -56,7 +52,6 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Common: Test places"
 
   await t.expect(await photo.getPhotoCount("all")).eql(2);
   await t.expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible).ok();
-
   await t.click(places.openClusterInSearch);
 
   await t.expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible).ok();

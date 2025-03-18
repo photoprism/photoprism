@@ -78,7 +78,7 @@ func registerCountMetrics(factory promauto.Factory, counts config.ClientCounts) 
 }
 
 // registerBuildInfoMetric registers a metric that provides build information.
-func registerBuildInfoMetric(factory promauto.Factory, conf config.ClientConfig) {
+func registerBuildInfoMetric(factory promauto.Factory, conf *config.ClientConfig) {
 	factory.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: "photoprism",

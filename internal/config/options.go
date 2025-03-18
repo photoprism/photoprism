@@ -3,10 +3,11 @@ package config
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -25,6 +26,7 @@ type Options struct {
 	PartnerID              string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode               string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
 	Public                 bool          `yaml:"Public" json:"-" flag:"public"`
+	NoHub                  bool          `yaml:"-" json:"-" flag:"no-hub"`
 	AdminUser              string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword          string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	PasswordLength         int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
@@ -70,6 +72,9 @@ type Options struct {
 	CustomAssetsPath       string        `yaml:"-" json:"-" flag:"custom-assets-path"`
 	SidecarPath            string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
 	SidecarYaml            bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml" default:"true"`
+	UsageInfo              bool          `yaml:"UsageInfo" json:"UsageInfo" flag:"usage-info"`
+	FilesQuota             uint64        `yaml:"FilesQuota" json:"-" flag:"files-quota"`
+	UsersQuota             int           `yaml:"UsersQuota" json:"-" flag:"users-quota"`
 	BackupPath             string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	BackupSchedule         string        `yaml:"BackupSchedule" json:"BackupSchedule" flag:"backup-schedule"`
 	BackupRetain           int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
@@ -143,7 +148,7 @@ type Options struct {
 	HttpVideoMaxAge        int           `yaml:"HttpVideoMaxAge" json:"HttpVideoMaxAge" flag:"http-video-maxage"`
 	HttpHost               string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort               int           `yaml:"HttpPort" json:"-" flag:"http-port"`
-	HttpSocket             string        `yaml:"-" json:"-" flag:"-"`
+	HttpSocket             *url.URL      `yaml:"-" json:"-" flag:"-"`
 	DatabaseDriver         string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn            string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName           string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
@@ -236,7 +241,7 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.BackupAlbums = true
 
 	// Initialize options with the values from the "defaults.yml" file, if it exists.
-	if defaultsYaml := ctx.GlobalString("defaults-yaml"); defaultsYaml == "" {
+	if defaultsYaml := ctx.String("defaults-yaml"); defaultsYaml == "" {
 		log.Tracef("config: defaults file was not specified")
 	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
 		log.Tracef("config: defaults file %s does not exist", clean.Log(c.DefaultsYaml))

@@ -50,8 +50,10 @@ func (m *PhotoLabel) Save() error {
 		m.Photo = nil
 	}
 
-	if m.Label != nil {
-		m.Label.SetName(m.Label.LabelName)
+	if m.Label == nil {
+		// Do nothing.
+	} else if !m.Label.SetName(m.Label.LabelName) {
+		return ErrInvalidName
 	}
 
 	return Db().Save(m).Error
@@ -69,14 +71,20 @@ func (m *PhotoLabel) Delete() error {
 
 // FirstOrCreatePhotoLabel returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
-	result := PhotoLabel{}
+	if m == nil {
+		return nil
+	} else if m.PhotoID < 1 || m.LabelID < 1 {
+		return nil
+	}
 
-	if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
-		return &result
+	result := &PhotoLabel{}
+
+	if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(result).Error; err == nil {
+		return result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
-		return &result
+	} else if err = Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(result).Error; err == nil {
+		return result
 	} else {
 		log.Errorf("photo-label: %s (find or create)", createErr)
 	}

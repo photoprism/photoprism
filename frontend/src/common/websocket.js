@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,31 +24,31 @@ Additional information can be found in our Developer Guide:
 */
 
 import Sockette from "sockette";
-import Event from "pubsub-js";
-import { config } from "app/session";
+import $event from "common/event";
+import { $config } from "app/session";
 
 const host = window.location.host;
-const prot = "https:" === document.location.protocol ? "wss://" : "ws://";
+const protocol = "https:" === document.location.protocol ? "wss://" : "ws://";
 const apiUri = window.__CONFIG__ ? window.__CONFIG__.apiUri : "/api/v1";
-const url = prot + host + apiUri + "/ws";
+const socketUrl = protocol + host + apiUri + "/ws";
 
-const Socket = new Sockette(url, {
+const Socket = new Sockette(socketUrl, {
   timeout: 5e3,
   onopen: (e) => {
     console.log("websocket: connected");
-    config.disconnected = false;
+    $config.disconnected.value = false;
     document.body.classList.remove("disconnected");
-    Event.publish("websocket.connected", e);
+    $event.publish("websocket.connected", e);
   },
   onmessage: (e) => {
     const m = JSON.parse(e.data);
-    Event.publish(m.event, m.data);
+    $event.publish(m.event, m.data);
   },
   onreconnect: () => console.log("websocket: reconnecting"),
   onmaximum: () => console.warn("websocket: hit max reconnect limit"),
   onclose: () => {
     console.warn("websocket: disconnected");
-    config.disconnected = true;
+    $config.disconnected.value = true;
     document.body.classList.add("disconnected");
   },
 });

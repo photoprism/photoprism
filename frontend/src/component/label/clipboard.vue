@@ -1,49 +1,87 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`">
-        <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
-            <v-icon v-if="selection.length === 0">menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+    <div v-if="selection.length > 0" class="clipboard-container">
+      <v-speed-dial
+        id="t-clipboard"
+        v-model="expanded"
+        :class="`p-clipboard p-label-clipboard`"
+        :end="!rtl"
+        :start="rtl"
+        :attach="true"
+        location="top"
+        transition="slide-y-reverse-transition"
+        offset="12"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon
+            size="52"
+            color="highlight"
+            variant="elevated"
+            density="comfortable"
+            class="action-menu opacity-95 ma-5"
+          >
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <!-- v-btn
-                fab
-                dark
-                small
-                :title="$gettext('Download')"
-                color="download"
-                @click.stop="download()"
-                class="p-label-clipboard-download"
-                :disabled="selection.length !== 1"
-        >
-            <v-icon>cloud_download</v-icon>
-        </v-btn -->
-        <v-btn fab dark small :title="$gettext('Add to album')" color="album" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
-        </v-btn>
-        <v-btn fab dark small color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
-          <v-icon>delete</v-icon>
-        </v-btn>
-
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
-        </v-btn>
+        <!-- v-btn key="download" :title="$gettext('Download')" icon="mdi-download" color="download" density="comfortable class="action-download" :disabled="selection.length !== 1" @click.stop="download()"></v-btn -->
+        <v-btn
+          key="action-album"
+          :title="$gettext('Add to album')"
+          icon="mdi-bookmark"
+          color="album"
+          density="comfortable"
+          :disabled="!canAddAlbums || selection.length === 0"
+          class="action-album"
+          @click.stop="dialog.album = true"
+        ></v-btn>
+        <v-btn
+          key="action-delete"
+          :title="$gettext('Delete')"
+          icon="mdi-delete"
+          color="remove"
+          density="comfortable"
+          :disabled="!canManage || selection.length === 0"
+          class="action-delete"
+          @click.stop="dialog.delete = true"
+        ></v-btn>
+        <v-btn
+          key="action-close"
+          icon="mdi-close"
+          color="grey-darken-2"
+          density="comfortable"
+          class="action-clear"
+          @click.stop="clearClipboard()"
+        ></v-btn>
       </v-speed-dial>
-    </v-container>
-    <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
-    <p-label-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-label-delete-dialog>
+    </div>
+    <p-photo-album-dialog
+      :visible="dialog.album"
+      @close="dialog.album = false"
+      @confirm="addToAlbum"
+    ></p-photo-album-dialog>
+    <p-label-delete-dialog
+      :visible="dialog.delete"
+      @close="dialog.delete = false"
+      @confirm="batchDelete"
+    ></p-label-delete-dialog>
   </div>
 </template>
 <script>
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
 import download from "common/download";
+import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
+import PLabelDeleteDialog from "component/label/delete/dialog.vue";
 
 export default {
   name: "PLabelClipboard",
+  components: {
+    PPhotoAlbumDialog,
+    PLabelDeleteDialog,
+  },
   props: {
     selection: {
       type: Array,
@@ -69,7 +107,7 @@ export default {
         album: false,
         edit: false,
       },
-      rtl: this.$rtl,
+      rtl: this.$isRtl,
     };
   },
   methods: {
@@ -84,7 +122,7 @@ export default {
 
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, { labels: this.selection }).then(() => this.onAdded());
+      $api.post(`albums/${ppid}/photos`, { labels: this.selection }).then(() => this.onAdded());
     },
     onAdded() {
       this.clearClipboard();
@@ -96,10 +134,10 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/labels/delete", { labels: this.selection }).then(this.onDeleted.bind(this));
+      $api.post("batch/labels/delete", { labels: this.selection }).then(this.onDeleted.bind(this));
     },
     onDeleted() {
-      Notify.success(this.$gettext("Labels deleted"));
+      $notify.success(this.$gettext("Labels deleted"));
       this.clearClipboard();
     },
     download() {
@@ -108,7 +146,7 @@ export default {
       }
 
       if (this.selection.length !== 1) {
-        Notify.error(this.$gettext("You can only download one label"));
+        $notify.error(this.$gettext("You can only download one label"));
         return;
       }
 
@@ -117,7 +155,7 @@ export default {
       this.expanded = false;
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       download(path, "label.zip");
     },

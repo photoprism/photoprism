@@ -46,7 +46,7 @@ func (data *Data) XMP(fileName string) (err error) {
 	}
 
 	if doc.Description() != "" {
-		data.Description = doc.Description()
+		data.Caption = doc.Description()
 	}
 
 	if doc.Copyright() != "" {

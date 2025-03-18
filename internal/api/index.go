@@ -24,6 +24,7 @@ import (
 //	@Summary	start indexing
 //	@Id			StartIndexing
 //	@Tags		Library
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	i18n.Response
 //	@Failure	400,401,403,429,500	{object}	i18n.Response
@@ -47,10 +48,10 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		start := time.Now()
 
-		var f form.IndexOptions
+		var frm form.IndexOptions
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -60,7 +61,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		skipArchived := settings.Index.SkipArchived
 
-		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false, skipArchived)
+		indOpt := photoprism.NewIndexOptions(filepath.Clean(frm.Path), frm.Rescan, convert, true, false, skipArchived)
 		indOpt.SetUser(s.User())
 
 		if len(indOpt.Path) > 1 {
@@ -103,7 +104,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 			// Purge worker options.
 			opt := photoprism.PurgeOptions{
-				Path:   filepath.Clean(f.Path),
+				Path:   filepath.Clean(frm.Path),
 				Ignore: found,
 				Force:  forceUpdate,
 			}
@@ -119,7 +120,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		// Delete orphaned index entries, sidecar files and thumbnails?
-		if f.Cleanup && s.User().IsAdmin() {
+		if frm.Cleanup && s.User().IsAdmin() {
 			event.Publish("index.updating", event.Data{
 				"uid":    indOpt.UID,
 				"action": indOpt.Action,

@@ -65,7 +65,7 @@ func (c *Config) WallpaperUri() string {
 
 		wallpaperUri = "welcome.jpg"
 	} else if !strings.Contains(wallpaperUri, ".") {
-		wallpaperUri += fs.ExtJPEG
+		wallpaperUri += fs.ExtJpeg
 	}
 
 	// Complete URI as needed if file path is valid.

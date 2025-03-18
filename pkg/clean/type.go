@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
-// Type omits invalid runes, ensures a maximum length of 32 characters, and returns the result.
+// Type omits invalid runes, ensures a maximum length of 64 characters, and returns the result.
 func Type(s string) string {
 	if s == "" {
 		return s

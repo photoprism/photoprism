@@ -39,6 +39,11 @@ func (t Type) String() string {
 	return string(t)
 }
 
+// ToUpper returns the file format as uppercase string.
+func (t Type) ToUpper() string {
+	return strings.ToUpper(t.String())
+}
+
 // Equal checks if the type matches.
 func (t Type) Equal(s string) bool {
 	return strings.EqualFold(s, t.String())

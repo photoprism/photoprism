@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // OAuthToken creates a new access token for clients that authenticate with valid OAuth2 client credentials.
@@ -47,24 +47,24 @@ func OAuthToken(router *gin.RouterGroup) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
 		// Token create request form.
-		var f form.OAuthCreateToken
+		var frm form.OAuthCreateToken
 		var sess *entity.Session
 		var client *entity.Client
 		var err error
 
 		// Allow authentication with basic auth and form values.
 		if clientId, clientSecret, _ := header.BasicAuth(c); clientId != "" && clientSecret != "" {
-			f.GrantType = authn.GrantClientCredentials
-			f.ClientID = clientId
-			f.ClientSecret = clientSecret
-		} else if err = c.ShouldBind(&f); err != nil {
+			frm.GrantType = authn.GrantClientCredentials
+			frm.ClientID = clientId
+			frm.ClientSecret = clientSecret
+		} else if err = c.ShouldBind(&frm); err != nil {
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// Check the credentials for completeness and the correct format.
-		if err = f.Validate(); err != nil {
+		if err = frm.Validate(); err != nil {
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
 			AbortInvalidCredentials(c)
 			return
@@ -79,19 +79,19 @@ func OAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
-		if f.ClientID != "" {
-			actor = fmt.Sprintf("client %s", clean.Log(f.ClientID))
-		} else if f.Username != "" {
-			actor = fmt.Sprintf("user %s", clean.Log(f.Username))
-		} else if f.GrantType == authn.GrantPassword {
+		if frm.ClientID != "" {
+			actor = fmt.Sprintf("client %s", clean.Log(frm.ClientID))
+		} else if frm.Username != "" {
+			actor = fmt.Sprintf("user %s", clean.Log(frm.Username))
+		} else if frm.GrantType == authn.GrantPassword {
 			actor = "unknown user"
 		}
 
 		// Create a new session (access token) based on the grant type specified in the request.
-		switch f.GrantType {
+		switch frm.GrantType {
 		case authn.GrantClientCredentials, authn.GrantUndefined:
 			// Find client with the specified ID.
-			client = entity.FindClientByUID(f.ClientID)
+			client = entity.FindClientByUID(frm.ClientID)
 
 			// Check if a client has been found, it is enabled, and the credentials are valid.
 			if client == nil {
@@ -106,7 +106,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "method %s not supported"}, clean.LogQuote(method.String()))
 				AbortInvalidCredentials(c)
 				return
-			} else if client.InvalidSecret(f.ClientSecret) {
+			} else if client.InvalidSecret(frm.ClientSecret) {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientSecret.Error()})
 				AbortInvalidCredentials(c)
 				return
@@ -138,7 +138,7 @@ func OAuthToken(router *gin.RouterGroup) {
 			if s.User().Provider().SupportsPasswordAuthentication() {
 				loginForm := form.Login{
 					Username: s.Username(),
-					Password: f.Password,
+					Password: frm.Password,
 				}
 
 				authUser, authProvider, authMethod, authErr := entity.Auth(loginForm, nil, c)
@@ -159,12 +159,12 @@ func OAuthToken(router *gin.RouterGroup) {
 					return
 				}
 
-				f.GrantType = authn.GrantPassword
+				frm.GrantType = authn.GrantPassword
 			} else {
-				f.GrantType = authn.GrantSession
+				frm.GrantType = authn.GrantSession
 			}
 
-			sess = entity.NewClientSession(f.ClientName, f.ExpiresIn, f.Scope, f.GrantType, s.User())
+			sess = entity.NewClientSession(frm.ClientName, frm.ExpiresIn, frm.Scope, frm.GrantType, s.User())
 
 			// Return the reserved request rate limit tokens after successful authentication.
 			r.Success()

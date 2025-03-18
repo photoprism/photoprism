@@ -55,6 +55,7 @@ func GetErrors(router *gin.RouterGroup) {
 //	@Summary	removes all entries from the error logs
 //	@Id			DeleteErrors
 //	@Tags		Errors
+//	@Accept		json
 //	@Produce	json
 //	@Failure	401,403,429,500	{object}	i18n.Response
 //	@Router		/api/v1/errors [delete]

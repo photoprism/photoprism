@@ -157,7 +157,7 @@ func CreateMarker(router *gin.RouterGroup) {
 			log.Infof("faces: skipped updating photo for non-primary file")
 		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
-		} else if err := p.UpdateAndSaveTitle(); err != nil {
+		} else if err := p.GenerateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Publish updated photo entity.
@@ -249,7 +249,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Infof("faces: skipped updating photo for non-primary file")
 		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
-		} else if err := p.UpdateAndSaveTitle(); err != nil {
+		} else if err := p.GenerateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
@@ -310,7 +310,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Infof("faces: skipped updating photo for non-primary file")
 		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
-		} else if err := p.UpdateAndSaveTitle(); err != nil {
+		} else if err := p.GenerateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.

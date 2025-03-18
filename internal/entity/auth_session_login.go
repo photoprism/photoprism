@@ -12,22 +12,22 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Auth checks if the credentials are valid and returns the user and authentication provider.
-var Auth = func(f form.Login, s *Session, c *gin.Context) (user *User, provider authn.ProviderType, method authn.MethodType, err error) {
+var Auth = func(frm form.Login, s *Session, c *gin.Context) (user *User, provider authn.ProviderType, method authn.MethodType, err error) {
 	// Get sanitized username from login form.
-	nameName := f.CleanUsername()
+	nameName := frm.CleanUsername()
 
 	// Find registered user account.
 	user = FindUserByName(nameName)
 
 	// Try local authentication.
-	provider, method, err = AuthLocal(user, f, s, c)
+	provider, method, err = AuthLocal(user, frm, s, c)
 
 	if err != nil {
 		return user, provider, method, err
@@ -40,17 +40,17 @@ var Auth = func(f form.Login, s *Session, c *gin.Context) (user *User, provider 
 }
 
 // AuthSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
-func AuthSession(f form.Login, c *gin.Context) (sess *Session, user *User, err error) {
-	if f.Password == "" {
+func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err error) {
+	if frm.Password == "" {
 		// Abort authentication if no token was provided.
 		return nil, nil, authn.ErrPasscodeRequired
-	} else if !rnd.IsAppPassword(f.Password, true) {
+	} else if !rnd.IsAppPassword(frm.Password, true) {
 		// Abort authentication if token doesn't match expected format.
 		return nil, nil, authn.ErrInvalidPassword
 	}
 
 	// Get session ID for the auth token provided.
-	sid := rnd.SessionID(f.Password)
+	sid := rnd.SessionID(frm.Password)
 
 	// Find the session based on the hashed token used as session ID and return it.
 	sess, err = FindSession(sid)
@@ -69,7 +69,7 @@ func AuthSession(f form.Login, c *gin.Context) (sess *Session, user *User, err e
 }
 
 // AuthLocal authenticates against the local user database with the specified username and password.
-func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider authn.ProviderType, method authn.MethodType, err error) {
+func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider authn.ProviderType, method authn.MethodType, err error) {
 	// Set defaults.
 	provider = authn.ProviderNone
 	method = authn.MethodUndefined
@@ -78,7 +78,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 	clientIp := header.ClientIP(c)
 
 	// Get sanitized username from login form.
-	username := f.CleanUsername()
+	username := frm.CleanUsername()
 
 	// Check if user account exists.
 	if user == nil {
@@ -107,7 +107,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 	}
 
 	// Authentication with personal access token if a valid secret has been provided as password.
-	if authSess, authUser, authErr := AuthSession(f, c); authSess != nil && authUser != nil && authErr == nil {
+	if authSess, authUser, authErr := AuthSession(frm, c); authSess != nil && authUser != nil && authErr == nil {
 		if !authUser.IsRegistered() || authUser.UserUID != user.UserUID {
 			message := authn.ErrInvalidUser.Error()
 
@@ -177,7 +177,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 	}
 
 	// Check password.
-	if user.InvalidPassword(f.Password) {
+	if user.InvalidPassword(frm.Password) {
 		message := authn.ErrInvalidPassword.Error()
 
 		if s != nil {
@@ -193,7 +193,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 
 	// Check two-factor authentication, if enabled.
 	if method = user.Method(); method.Is(authn.Method2FA) {
-		if code := f.Passcode(); code == "" {
+		if code := frm.Passcode(); code == "" {
 			err = authn.ErrPasscodeRequired
 
 			if s != nil {
@@ -234,7 +234,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 }
 
 // LogIn performs authentication checks against the specified login form.
-func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
+func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 	if c != nil {
 		m.SetContext(c)
 	}
@@ -247,12 +247,12 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 	var method authn.MethodType
 
 	// Log in with username and password?
-	if f.HasCredentials() {
+	if frm.HasCredentials() {
 		if m.IsRegistered() {
 			m.Regenerate()
 		}
 
-		user, provider, method, err = Auth(f, m, c)
+		user, provider, method, err = Auth(frm, m, c)
 
 		m.SetProvider(provider)
 		m.SetMethod(method)
@@ -266,23 +266,23 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 	}
 
 	// Try to redeem link share token, if provided.
-	if f.HasShareToken() {
+	if frm.HasShareToken() {
 		user = m.User()
 
 		// Redeem token.
 		if user.IsRegistered() {
-			if shares := user.RedeemToken(f.Token); shares == 0 {
+			if shares := user.RedeemToken(frm.Token); shares == 0 {
 				message := authn.ErrInvalidShareToken.Error()
 				event.AuditWarn([]string{m.IP(), "session %s", message}, m.RefID)
 				m.Status = http.StatusNotFound
 				return i18n.Error(i18n.ErrInvalidLink)
 			} else {
-				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(f.Token))
+				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(frm.Token))
 			}
 		} else if data := m.Data(); data == nil {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
-		} else if shares := data.RedeemToken(f.Token); shares == 0 {
+		} else if shares := data.RedeemToken(frm.Token); shares == 0 {
 			message := authn.ErrInvalidShareToken.Error()
 			event.AuditWarn([]string{m.IP(), "session %s", message}, m.RefID)
 			event.LoginError(m.IP(), "api", "", m.UserAgent, message)

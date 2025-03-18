@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -23,16 +23,16 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "common/api";
+import $api from "common/api";
 import Model from "./model";
-import { config } from "app/session";
+import { $config } from "app/session";
 
 export class ConfigOptions extends Model {
   getDefaults() {
     return {
-      Debug: config.values.debug,
-      ReadOnly: config.values.readonly,
-      Experimental: config.values.experimental,
+      Debug: $config.values.debug,
+      ReadOnly: $config.values.readonly,
+      Experimental: $config.values.experimental,
       OriginalsLimit: 0,
       Workers: 0,
       WakeupInterval: 0,
@@ -42,23 +42,23 @@ export class ConfigOptions extends Model {
       BackupRetain: 3,
       SidecarYaml: true,
       DisableRestart: true,
-      DisableWebDAV: config.values.disable.webdav,
-      DisableSettings: config.values.disable.settings,
-      DisablePlaces: config.values.disable.places,
-      DisableBackups: config.values.disable.backups,
-      DisableTensorFlow: config.values.disable.tensorflow,
-      DisableSips: config.values.disable.sips,
-      DisableFFmpeg: config.values.disable.ffmpeg,
-      DisableExifTool: config.values.disable.exiftool,
-      DisableDarktable: config.values.disable.darktable,
-      DisableRawTherapee: config.values.disable.rawtherapee,
-      DisableImageMagick: config.values.disable.imagemagick,
-      DisableHeifConvert: config.values.disable.heifconvert,
-      DisableVectors: config.values.disable.vectors,
-      DisableJpegXL: config.values.disable.jpegxl,
-      DisableRaw: config.values.disable.raw,
+      DisableWebDAV: $config.values.disable.webdav,
+      DisableSettings: $config.values.disable.settings,
+      DisablePlaces: $config.values.disable.places,
+      DisableBackups: $config.values.disable.backups,
+      DisableTensorFlow: $config.values.disable.tensorflow,
+      DisableSips: $config.values.disable.sips,
+      DisableFFmpeg: $config.values.disable.ffmpeg,
+      DisableExifTool: $config.values.disable.exiftool,
+      DisableDarktable: $config.values.disable.darktable,
+      DisableRawTherapee: $config.values.disable.rawtherapee,
+      DisableImageMagick: $config.values.disable.imagemagick,
+      DisableHeifConvert: $config.values.disable.heifconvert,
+      DisableVectors: $config.values.disable.vectors,
+      DisableJpegXL: $config.values.disable.jpegxl,
+      DisableRaw: $config.values.disable.raw,
       DetectNSFW: false,
-      UploadNSFW: config.values.uploadNSFW,
+      UploadNSFW: $config.values.uploadNSFW,
       RawPresets: false,
       ThumbUncached: true,
       ThumbLibrary: "",
@@ -69,12 +69,12 @@ export class ConfigOptions extends Model {
       JpegSize: 0,
       PngSize: 0,
       JpegQuality: 0,
-      SiteUrl: config.values.siteUrl,
-      SitePreview: config.values.siteUrl,
-      SiteTitle: config.values.siteTitle,
-      SiteCaption: config.values.siteCaption,
-      SiteDescription: config.values.siteDescription,
-      SiteAuthor: config.values.siteAuthor,
+      SiteUrl: $config.values.siteUrl,
+      SitePreview: $config.values.siteUrl,
+      SiteTitle: $config.values.siteTitle,
+      SiteCaption: $config.values.siteCaption,
+      SiteDescription: $config.values.siteDescription,
+      SiteAuthor: $config.values.siteAuthor,
     };
   }
 
@@ -87,13 +87,15 @@ export class ConfigOptions extends Model {
   }
 
   load() {
-    return Api.get("config/options").then((response) => {
+    return $api.get("config/options").then((response) => {
       return Promise.resolve(this.setValues(response.data));
     });
   }
 
   save() {
-    return Api.post("config/options", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
+    return $api
+      .post("config/options", this.getValues(true))
+      .then((response) => Promise.resolve(this.setValues(response.data)));
   }
 }
 

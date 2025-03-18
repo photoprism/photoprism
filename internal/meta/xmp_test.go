@@ -17,7 +17,7 @@ func TestXMP(t *testing.T) {
 
 		assert.Equal(t, "Botanischer Garten", data.Title)
 		assert.Equal(t, time.Date(2021, 3, 24, 13, 07, 29, 0, time.FixedZone("", +3600)).UTC(), data.TakenAt.UTC())
-		assert.Equal(t, "Tulpen am See", data.Description)
+		assert.Equal(t, "Tulpen am See", data.Caption)
 		assert.Equal(t, Keywords{"blume", "krokus", "schöne", "wiese"}, data.Keywords)
 	})
 
@@ -31,7 +31,7 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Night Shift / Berlin / 2020", data.Title)
 		assert.Equal(t, time.Date(2020, 1, 1, 17, 28, 25, 729626112, time.UTC), data.TakenAt)
 		assert.Equal(t, "Michael Mayer", data.Artist)
-		assert.Equal(t, "Example file for development", data.Description)
+		assert.Equal(t, "Example file for development", data.Caption)
 		assert.Equal(t, "This is an (edited) legal notice", data.Copyright)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
@@ -47,7 +47,7 @@ func TestXMP(t *testing.T) {
 
 		assert.Equal(t, "", data.Title)
 		assert.Equal(t, "", data.Artist)
-		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Caption)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, "Canon", data.CameraMake)
 		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
@@ -63,7 +63,7 @@ func TestXMP(t *testing.T) {
 
 		assert.Equal(t, "iPhone 7 / September 2018", data.Title)
 		assert.Equal(t, "", data.Artist)
-		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Caption)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 7", data.CameraModel)

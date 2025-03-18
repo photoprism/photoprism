@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 
 import Axios from "axios";
-import Notify from "common/notify";
-import { $gettext } from "vm.js";
-import Event from "pubsub-js";
+import $notify from "common/notify";
+import { $gettext } from "common/gettext";
+import $event from "common/event";
 
 const testConfig = {
   baseUri: "",
@@ -43,7 +43,7 @@ const testConfig = {
 
 const c = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
-const Api = Axios.create({
+const $api = Axios.create({
   baseURL: c.apiUri,
   headers: {
     common: {
@@ -54,10 +54,10 @@ const Api = Axios.create({
   },
 });
 
-Api.interceptors.request.use(
+$api.interceptors.request.use(
   function (req) {
     // Do something before request is sent
-    Notify.ajaxStart();
+    $notify.ajaxStart();
     return req;
   },
   function (error) {
@@ -66,18 +66,18 @@ Api.interceptors.request.use(
   }
 );
 
-Api.interceptors.response.use(
+$api.interceptors.response.use(
   function (resp) {
-    Notify.ajaxEnd();
+    $notify.ajaxEnd();
 
     if (typeof resp.data == "string") {
-      Notify.error($gettext("Request failed - invalid response"));
+      $notify.error($gettext("Request failed - invalid response"));
       console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?");
     }
 
     // Update tokens if provided.
     if (resp.headers && resp.headers["x-preview-token"] && resp.headers["x-download-token"]) {
-      Event.publish("config.tokens", {
+      $event.publish("config.tokens", {
         previewToken: resp.headers["x-preview-token"],
         downloadToken: resp.headers["x-download-token"],
       });
@@ -86,7 +86,7 @@ Api.interceptors.response.use(
     return resp;
   },
   function (error) {
-    Notify.ajaxEnd();
+    $notify.ajaxEnd();
 
     // Skip error handling if request was canceled.
     if (Axios.isCancel(error)) {
@@ -119,14 +119,14 @@ Api.interceptors.response.use(
 
     // Show error notification.
     if (code === 32) {
-      Notify.info($gettext("Enter verification code"));
+      $notify.info($gettext("Enter verification code"));
     } else if (code === 429) {
-      Notify.error($gettext("Too many requests"));
+      $notify.error($gettext("Too many requests"));
     } else if (errorMessage) {
       if (code === 401) {
-        Notify.logout(errorMessage);
+        $notify.logout(errorMessage);
       } else {
-        Notify.error(errorMessage);
+        $notify.error(errorMessage);
       }
     }
 
@@ -134,4 +134,4 @@ Api.interceptors.response.use(
   }
 );
 
-export default Api;
+export default $api;

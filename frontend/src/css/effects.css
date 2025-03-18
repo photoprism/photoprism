@@ -42,15 +42,15 @@
     }
 }
 
-#photoprism .animate-rainbow {
-    background: repeating-linear-gradient(127deg,#5a2a97, #564dad, #006caa, #34bbc1, #5cba50, #ebdd08, #f49d08, #f03933, #ed1b36);
+.animate-rainbow {
+    background: repeating-linear-gradient(127deg, #5a2a97, #564dad, #006caa, #34bbc1, #5cba50, #ebdd08, #f49d08, #f03933, #ed1b36);
     background-size: 110% 110%;
     -webkit-animation: rainbow 10s ease infinite;
     -moz-animation: rainbow 10s ease infinite;
     animation: rainbow 10s ease infinite;
 }
 
-#photoprism .static-rainbow {
+.static-rainbow {
     background-size: 200% 200%;
     background: repeating-linear-gradient(127deg, #5a2a97, #564dad, #006caa, #34bbc1, #5cba50, #ebdd08, #f49d08, #f03933, #ed1b36) 100% 100%;
 }
@@ -64,8 +64,12 @@
     }
 }
 
-#photoprism .animate-rotate {
+.animate-rotate {
     animation: rotation 8s infinite linear;
+}
+
+.animate-loading {
+    animation: rotation 1s infinite linear;
 }
 
 @keyframes pulse {
@@ -80,7 +84,7 @@
     }
 }
 
-#photoprism .animate-pulse {
+.animate-pulse {
     animation: pulse 5s infinite;
 }
 
@@ -96,20 +100,20 @@
     }
 }
 
-#photoprism .animate-stretch {
+.animate-stretch {
     animation: stretch 1.5s ease-out 0s alternate infinite none running;
 }
 
 @keyframes slide-left {
     0% {
-        transform:  translateX(105%);;
+        transform: translateX(105%);;
     }
     100% {
         transform: translateX(0%);
     }
 }
 
-#photoprism .animate-slide-left {
+.animate-slide-left {
     animation: slide-left 300ms ease-in-out forwards;
 }
 
@@ -122,12 +126,16 @@
     }
 }
 
-#photoprism .grow-top-right {
+.grow-top-end {
     transform-origin: top right;
     animation: grow 200ms ease-in-out forwards;
 }
 
-#photoprism .select-transition {
+.is-rtl .grow-top-end {
+    transform-origin: top left;
+}
+
+.select-transition {
     -webkit-transition-duration: 15ms !important;
     -moz-transition-duration: 15ms !important;
     -o-transition-duration: 15ms !important;
@@ -162,28 +170,35 @@
 
 /* Backdrop Blur Filters */
 
-#photoprism .blur-1 {
+.blur-1 {
     backdrop-filter: blur(2px);
 }
-#photoprism .blur-2 {
+
+.blur-2 {
     backdrop-filter: blur(3px);
 }
-#photoprism .blur-3 {
+
+.blur-3 {
     backdrop-filter: blur(4px);
 }
-#photoprism .blur-4 {
+
+.blur-4 {
     backdrop-filter: blur(6px);
 }
-#photoprism .blur-5 {
+
+.blur-5 {
     backdrop-filter: blur(8px);
 }
-#photoprism .blur-6 {
+
+.blur-6 {
     backdrop-filter: blur(10px);
 }
-#photoprism .blur-7 {
+
+.blur-7 {
     backdrop-filter: blur(12px);
 }
-#photoprism .blur-8 {
+
+.blur-8 {
     backdrop-filter: blur(14px);
 }
 
@@ -256,13 +271,13 @@
 /* Beating Heart Animation */
 
 @keyframes heart {
-     0%, 40%, 80%, 100% {
-         transform: scale(1);
-     }
-     20%, 60% {
-         transform: scale(1.15);
-     }
- }
+    0%, 40%, 80%, 100% {
+        transform: scale(1);
+    }
+    20%, 60% {
+        transform: scale(1.15);
+    }
+}
 
 .animate-heart {
     animation: heart 1000ms infinite;
@@ -271,17 +286,33 @@
 /* Loading Dots Animation */
 
 @keyframes dots {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    60% { opacity: 1; }
-    100% { opacity: 0; }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 .dots-animation {
     animation: dots 2.5s ease-in-out infinite;
 }
 
-.dots-animation.one { animation-delay: 0.2s; }
-.dots-animation.two { animation-delay: 0.4s; }
-.dots-animation.three { animation-delay: 0.6s; }
+.dots-animation.one {
+    animation-delay: 0.2s;
+}
+
+.dots-animation.two {
+    animation-delay: 0.4s;
+}
+
+.dots-animation.three {
+    animation-delay: 0.6s;
+}
 

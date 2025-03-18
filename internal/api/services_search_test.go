@@ -10,7 +10,7 @@ import (
 )
 
 func TestSearchServices(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchServices(router)
 		sess := AuthenticateAdmin(app, router)
@@ -21,7 +21,7 @@ func TestSearchServices(t *testing.T) {
 		assert.Equal(t, "http://dummy-webdav/", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchServices(router)
 		r := PerformRequest(app, "GET", "/api/v1/services?xxx=10")

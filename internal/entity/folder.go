@@ -235,8 +235,8 @@ func (m *Folder) Updates(values interface{}) error {
 }
 
 // SetForm updates the entity properties based on form values.
-func (m *Folder) SetForm(f form.Folder) error {
-	if err := deepcopier.Copy(m).From(f); err != nil {
+func (m *Folder) SetForm(frm form.Folder) error {
+	if err := deepcopier.Copy(m).From(frm); err != nil {
 		return err
 	}
 

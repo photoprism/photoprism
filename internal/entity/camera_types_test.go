@@ -201,12 +201,21 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.True(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("KODAKSlideNScan", func(t *testing.T) {
+	t.Run("SlideNScan", func(t *testing.T) {
 		camera := NewCamera("GCMC", "RODFS50")
 		assert.Equal(t, MakeKodak+" "+ModelSlideNScan, camera.CameraName)
 		assert.Equal(t, CameraTypeFilm, camera.CameraType)
 		assert.Equal(t, MakeKodak, camera.CameraMake)
 		assert.Equal(t, ModelSlideNScan, camera.CameraModel)
+		assert.True(t, camera.Scanner())
+		assert.False(t, camera.Mobile())
+	})
+	t.Run("DigitDia7000", func(t *testing.T) {
+		camera := NewCamera(MakeReflecta, ModelDigitDia7000)
+		assert.Equal(t, MakeReflecta+" "+ModelDigitDia7000, camera.CameraName)
+		assert.Equal(t, CameraTypeFilm, camera.CameraType)
+		assert.Equal(t, MakeReflecta, camera.CameraMake)
+		assert.Equal(t, ModelDigitDia7000, camera.CameraModel)
 		assert.True(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})

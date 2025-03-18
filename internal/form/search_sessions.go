@@ -8,9 +8,9 @@ type SearchSessions struct {
 	UID      string `form:"uid"`
 	Provider string `form:"provider"`
 	Method   string `form:"method"`
+	Order    string `form:"order" serialize:"-"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`
 	Offset   int    `form:"offset" serialize:"-"`
-	Order    string `form:"order" serialize:"-"`
 }
 
 // AuthProviders returns the normalized authentication provider types.

@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 

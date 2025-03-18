@@ -118,7 +118,7 @@ func TestClient_UploadAndDelete(t *testing.T) {
 
 	assert.IsType(t, &Client{}, c)
 
-	tempName := rnd.UUID() + fs.ExtJPEG
+	tempName := rnd.UUID() + fs.ExtJpeg
 
 	if err := c.Upload(fs.Abs("testdata/example.jpg"), tempName); err != nil {
 		t.Fatal(err)

@@ -335,23 +335,23 @@ func RemovePeopleAndFaces() (err error) {
 	}
 
 	// Reset people label.
-	if label, err := LabelBySlug("people"); err != nil {
-		return err
-	} else if err = UnscopedDb().
-		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; err != nil {
-		return err
-	} else if err = label.Update("PhotoCount", 0); err != nil {
-		return err
+	if label, labelErr := LabelBySlug("people"); labelErr != nil {
+		return labelErr
+	} else if labelErr = UnscopedDb().
+		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
+		return labelErr
+	} else if labelErr = label.Update("PhotoCount", 0); labelErr != nil {
+		return labelErr
 	}
 
 	// Reset portrait label.
-	if label, err := LabelBySlug("portrait"); err != nil {
-		return err
-	} else if err = UnscopedDb().
-		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; err != nil {
-		return err
-	} else if err = label.Update("PhotoCount", 0); err != nil {
-		return err
+	if label, labelErr := LabelBySlug("portrait"); labelErr != nil {
+		return labelErr
+	} else if labelErr = UnscopedDb().
+		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
+		return labelErr
+	} else if labelErr = label.Update("PhotoCount", 0); labelErr != nil {
+		return labelErr
 	}
 
 	return nil

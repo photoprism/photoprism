@@ -24,7 +24,7 @@ func TestFirstOrCreateDetails(t *testing.T) {
 			t.Fatal("details should not be nil")
 		}
 	})
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		details := &Details{PhotoID: 0}
 		assert.Nil(t, FirstOrCreateDetails(details))
 	})
@@ -145,7 +145,7 @@ func TestNewDetails(t *testing.T) {
 
 // TODO fails on mariadb
 func TestDetails_Create(t *testing.T) {
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
 
 		assert.Error(t, details.Create())
@@ -177,7 +177,7 @@ func TestDetails_Save(t *testing.T) {
 		assert.True(t, afterDate.After(initialDate))
 	})
 
-	t.Run("error", func(t *testing.T) {
+	t.Run("Error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
 
 		assert.Error(t, details.Save())

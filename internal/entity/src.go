@@ -17,6 +17,7 @@ const (
 	SrcMarker   = "marker"             // Prio 8
 	SrcImage    = classify.SrcImage    // Prio 8
 	SrcTitle    = classify.SrcTitle    // Prio 16
+	SrcCaption  = classify.SrcCaption  // Prio 16
 	SrcSubject  = classify.SrcSubject  // Prio 16
 	SrcKeyword  = classify.SrcKeyword  // Prio 16
 	SrcMeta     = "meta"               // Prio 16
@@ -47,6 +48,7 @@ var SrcPriority = Priorities{
 	SrcMarker:   8,
 	SrcImage:    8,
 	SrcTitle:    16,
+	SrcCaption:  16,
 	SrcSubject:  16,
 	SrcKeyword:  16,
 	SrcMeta:     16,

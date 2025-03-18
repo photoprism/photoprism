@@ -4,20 +4,19 @@ import (
 	"encoding/json"
 
 	"github.com/photoprism/photoprism/internal/entity"
-
 	"github.com/photoprism/photoprism/internal/entity/search/viewer"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
-func PhotosViewerResults(f form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
-	return UserPhotosViewerResults(f, nil, contentUri, apiUri, previewToken, downloadToken)
+func PhotosViewerResults(frm form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
+	return UserPhotosViewerResults(frm, nil, contentUri, apiUri, previewToken, downloadToken)
 }
 
 // UserPhotosViewerResults finds photos based on the search form and user session and returns them as viewer.Results.
-func UserPhotosViewerResults(f form.SearchPhotos, sess *entity.Session, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
-	if results, count, err := searchPhotos(f, sess, PhotosColsView); err != nil {
+func UserPhotosViewerResults(frm form.SearchPhotos, sess *entity.Session, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
+	if results, count, err := searchPhotos(frm, sess, PhotosColsView); err != nil {
 		return viewer.Results{}, count, err
 	} else {
 		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err
@@ -25,25 +24,26 @@ func UserPhotosViewerResults(f form.SearchPhotos, sess *entity.Session, contentU
 }
 
 // ViewerResult returns a new photo viewer result.
-func (m Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
+func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
+	mediaHash, mediaCodec, mediaMime := m.MediaInfo()
 	return viewer.Result{
 		UID:          m.PhotoUID,
+		Type:         m.PhotoType,
 		Title:        m.PhotoTitle,
+		Caption:      m.PhotoCaption,
+		Lat:          m.PhotoLat,
+		Lng:          m.PhotoLng,
 		TakenAtLocal: m.TakenAtLocal,
-		Description:  m.PhotoDescription,
 		Favorite:     m.PhotoFavorite,
 		Playable:     m.IsPlayable(),
-		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
+		Duration:     m.PhotoDuration,
 		Width:        m.FileWidth,
 		Height:       m.FileHeight,
-		Thumbs: thumb.Public{
-			Fit720:  thumb.New(m.FileWidth, m.FileHeight, m.FileHash, thumb.Sizes[thumb.Fit720], contentUri, previewToken),
-			Fit1280: thumb.New(m.FileWidth, m.FileHeight, m.FileHash, thumb.Sizes[thumb.Fit1280], contentUri, previewToken),
-			Fit1920: thumb.New(m.FileWidth, m.FileHeight, m.FileHash, thumb.Sizes[thumb.Fit1920], contentUri, previewToken),
-			Fit2560: thumb.New(m.FileWidth, m.FileHeight, m.FileHash, thumb.Sizes[thumb.Fit2560], contentUri, previewToken),
-			Fit4096: thumb.New(m.FileWidth, m.FileHeight, m.FileHash, thumb.Sizes[thumb.Fit4096], contentUri, previewToken),
-			Fit7680: thumb.New(m.FileWidth, m.FileHeight, m.FileHash, thumb.Sizes[thumb.Fit7680], contentUri, previewToken),
-		},
+		Hash:         mediaHash,
+		Codec:        mediaCodec,
+		Mime:         mediaMime,
+		Thumbs:       thumb.ViewerThumbs(m.FileWidth, m.FileHeight, m.FileHash, contentUri, previewToken),
+		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
 	}
 }
 
@@ -64,25 +64,25 @@ func (m PhotoResults) ViewerResults(contentUri, apiUri, previewToken, downloadTo
 }
 
 // ViewerResult creates a new photo viewer result.
-func (photo GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
+func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
 	return viewer.Result{
-		UID:          photo.PhotoUID,
-		Title:        photo.PhotoTitle,
-		TakenAtLocal: photo.TakenAtLocal,
-		Description:  photo.PhotoDescription,
-		Favorite:     photo.PhotoFavorite,
-		Playable:     photo.IsPlayable(),
-		DownloadUrl:  viewer.DownloadUrl(photo.FileHash, apiUri, downloadToken),
-		Width:        photo.FileWidth,
-		Height:       photo.FileHeight,
-		Thumbs: thumb.Public{
-			Fit720:  thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit720], contentUri, previewToken),
-			Fit1280: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1280], contentUri, previewToken),
-			Fit1920: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit1920], contentUri, previewToken),
-			Fit2560: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit2560], contentUri, previewToken),
-			Fit4096: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit4096], contentUri, previewToken),
-			Fit7680: thumb.New(photo.FileWidth, photo.FileHeight, photo.FileHash, thumb.Sizes[thumb.Fit7680], contentUri, previewToken),
-		},
+		UID:          m.PhotoUID,
+		Type:         m.PhotoType,
+		Title:        m.PhotoTitle,
+		Caption:      m.PhotoCaption,
+		Lat:          m.PhotoLat,
+		Lng:          m.PhotoLng,
+		TakenAtLocal: m.TakenAtLocal,
+		Favorite:     m.PhotoFavorite,
+		Playable:     m.IsPlayable(),
+		Duration:     m.PhotoDuration,
+		Width:        m.FileWidth,
+		Height:       m.FileHeight,
+		Hash:         m.FileHash,
+		Codec:        m.FileCodec,
+		Mime:         m.FileMime,
+		Thumbs:       thumb.ViewerThumbs(m.FileWidth, m.FileHeight, m.FileHash, contentUri, previewToken),
+		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
 	}
 }
 

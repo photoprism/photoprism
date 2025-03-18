@@ -25,7 +25,7 @@ func CachedAlbumByUID(uid string) (m Album, err error) {
 	}
 
 	// Cached?
-	if cacheData, ok := albumCache.Get(uid); ok {
+	if cacheData, hit := albumCache.Get(uid); hit {
 		log.Tracef("album: cache hit for %s", uid)
 		return cacheData.(Album), nil
 	}

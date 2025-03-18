@@ -1,0 +1,12 @@
+coverage/
+node_modules/
+tests/screenshots/
+tests/acceptance/screenshots/
+tests/upload-files/
+*.html
+.idea
+.github
+.tmp
+.local
+.cache
+.var

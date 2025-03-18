@@ -1,53 +1,111 @@
 <template>
   <div>
-    <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`">
-        <template #activator>
-          <v-btn fab dark color="accent darken-2" class="action-menu">
-            <v-icon v-if="selection.length === 0">menu</v-icon>
-            <span v-else class="count-clipboard">{{ selection.length }}</span>
+    <div v-if="selection.length > 0" class="clipboard-container">
+      <v-speed-dial
+        id="t-clipboard"
+        v-model="expanded"
+        :class="`p-clipboard p-file-clipboard`"
+        :end="!rtl"
+        :start="rtl"
+        :attach="true"
+        location="top"
+        transition="slide-y-reverse-transition"
+        offset="12"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon
+            size="52"
+            color="highlight"
+            variant="elevated"
+            density="comfortable"
+            class="action-menu opacity-95 ma-5"
+          >
+            <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
-        <v-btn v-if="$config.feature('download')" fab dark small :title="$gettext('Download')" color="download" class="action-download" :disabled="selection.length === 0" @click.stop="download()">
-          <v-icon>get_app</v-icon>
-        </v-btn>
-
-        <v-btn v-if="$config.feature('albums')" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0" class="action-album" @click.stop="dialog.album = true">
-          <v-icon>bookmark</v-icon>
-        </v-btn>
-
-        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
-          <v-icon>clear</v-icon>
-        </v-btn>
+        <v-btn
+          v-if="canDownload"
+          key="action-download"
+          :title="$gettext('Download')"
+          icon="mdi-download"
+          color="download"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0"
+          class="action-download"
+          @click.stop="download()"
+        ></v-btn>
+        <v-btn
+          v-if="canManage"
+          key="action-album"
+          :title="$gettext('Add to album')"
+          icon="mdi-bookmark"
+          color="album"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length === 0"
+          class="action-album"
+          @click.stop="dialog.album = true"
+        ></v-btn>
+        <v-btn
+          key="action-close"
+          icon="mdi-close"
+          color="grey-darken-2"
+          variant="elevated"
+          density="comfortable"
+          class="action-clear"
+          @click.stop="clearClipboard()"
+        ></v-btn>
       </v-speed-dial>
-    </v-container>
-    <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
+    </div>
+    <p-photo-album-dialog
+      :visible="dialog.album"
+      @close="dialog.album = false"
+      @confirm="addToAlbum"
+    ></p-photo-album-dialog>
   </div>
 </template>
 <script>
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
 import download from "common/download";
+import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
 
 export default {
   name: "PFileClipboard",
+  components: {
+    PPhotoAlbumDialog,
+  },
   props: {
     selection: {
       type: Array,
       default: () => [],
     },
-    refresh: Function,
-    clearSelection: Function,
+    refresh: {
+      type: Function,
+      default: () => {},
+    },
+    clearSelection: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
+    const features = this.$config.getSettings().features;
+
     return {
       expanded: false,
+      canDownload: this.$config.allow("photos", "download") && features.download,
+      canShare: this.$config.allow("photos", "share") && features.share,
+      canManage: this.$config.allow("photos", "manage") && features.albums,
       dialog: {
         album: false,
         edit: false,
       },
-      rtl: this.$rtl,
+      rtl: this.$isRtl,
     };
   },
   methods: {
@@ -58,20 +116,20 @@ export default {
     addToAlbum(ppid) {
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, { files: this.selection }).then(() => this.onAdded());
+      $api.post(`albums/${ppid}/photos`, { files: this.selection }).then(() => this.onAdded());
     },
     onAdded() {
       this.clearClipboard();
     },
     download() {
-      Api.post("zip", { files: this.selection }).then((r) => {
+      $api.post("zip", { files: this.selection }).then((r) => {
         this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
       });
 
       this.expanded = false;
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       download(path, "photos.zip");
     },

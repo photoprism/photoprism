@@ -28,6 +28,7 @@ var (
 	ErrDisabledInPublicMode   = errors.New("disabled in public mode")
 	ErrAuthenticationDisabled = errors.New("authentication disabled")
 	ErrRateLimitExceeded      = errors.New("rate limit exceeded")
+	ErrUsersQuotaExceeded     = errors.New("users quota exceeded")
 )
 
 // OIDC and OAuth2-related error messages:

@@ -33,6 +33,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Labels:    true,
 			Library:   true,
 			Logs:      true,
+			Calendar:  true,
 			Moments:   true,
 			People:    true,
 			Places:    true,
@@ -73,6 +74,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
+			Calendar:  true,
 			Moments:   true,
 			People:    true,
 			Places:    true,
@@ -89,7 +91,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		result := client.ApplyScope("photos videos albums places people moments")
+		result := client.ApplyScope("photos videos albums places people calendar moments")
 
 		t.Logf("ClientScoped: %#v", result)
 		assert.Equal(t, expected, result.Features)
@@ -113,6 +115,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
+			Calendar:  true,
 			Moments:   true,
 			People:    false,
 			Places:    true,
@@ -152,6 +155,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
+			Calendar:  true,
 			Moments:   true,
 			People:    false,
 			Places:    true,
@@ -191,6 +195,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Labels:    false,
 			Library:   false,
 			Logs:      false,
+			Calendar:  false,
 			Moments:   false,
 			People:    false,
 			Places:    false,

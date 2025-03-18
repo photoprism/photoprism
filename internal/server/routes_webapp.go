@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // registerWebAppRoutes adds routes for the web user interface.
@@ -21,13 +21,17 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 			return
 		}
 
-		// Set values for UI bootstrap template.
+		// Get client configuration.
+		clientConfig := conf.ClientPublic()
+
+		// Set bootstrap template values.
 		values := gin.H{
-			"signUp": config.SignUp,
-			"config": conf.ClientPublic(),
+			"signUp":    config.SignUp,
+			"config":    clientConfig,
+			"splashCss": clientConfig.ClientAssets.SplashCssFileContents(),
 		}
 
-		// Render UI bootstrap template.
+		// Render bootstrap template.
 		c.HTML(http.StatusOK, conf.TemplateName(), values)
 	}
 	router.Any(conf.LibraryUri("/*path"), ui)

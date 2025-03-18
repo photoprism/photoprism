@@ -165,7 +165,7 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 }
 
 func TestData_CellID(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		data := Data{
 			Lat:     1.334,
 			Lng:     4.567,

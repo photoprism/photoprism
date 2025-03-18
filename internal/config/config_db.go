@@ -13,12 +13,12 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"golang.org/x/mod/semver"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
@@ -54,6 +54,49 @@ func (c *Config) DatabaseDriver() string {
 	}
 
 	return c.options.DatabaseDriver
+}
+
+// DatabaseDriverName returns the formatted database driver name.
+func (c *Config) DatabaseDriverName() string {
+	switch c.DatabaseDriver() {
+	case MySQL, MariaDB:
+		return "MariaDB"
+	case SQLite3, "sqlite", "sqllite", "test", "file", "":
+		return "SQLite"
+	case "tidb":
+		return "TiDB"
+	default:
+		return "unsupported database"
+	}
+}
+
+// DatabaseVersion returns the database version string, if known.
+func (c *Config) DatabaseVersion() string {
+	return c.dbVersion
+}
+
+// IsDatabaseVersion checks if the database version is at least the specified version in semver format.
+func (c *Config) IsDatabaseVersion(semverVersion string) bool {
+	if semverVersion == "" {
+		return true
+	}
+
+	return semver.Compare(c.DatabaseVersion(), semverVersion) >= 0
+}
+
+// DatabaseSsl checks if the database supports SSL connections for backup and restore.
+func (c *Config) DatabaseSsl() bool {
+	if c.dbVersion == "" {
+		return false
+	}
+
+	switch c.DatabaseDriver() {
+	case MySQL:
+		// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
+		return c.IsDatabaseVersion("v11.4")
+	default:
+		return false
+	}
 }
 
 // DatabaseDsn returns the database data source name (DSN).
@@ -343,15 +386,49 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		type Res struct {
 			Value string `gorm:"column:Value;"`
 		}
+
 		var res Res
-		if err := db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
+
+		err := db.Raw("SELECT VERSION() AS Value").Scan(&res).Error
+
+		if err != nil {
+			err = db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error
+		}
+
+		// Version query not supported.
+		if err != nil {
+			log.Tracef("config: failed to detect database version (%s)", err)
 			return nil
-		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
+		}
+
+		c.dbVersion = clean.Version(res.Value)
+
+		if c.dbVersion == "" {
 			log.Warnf("config: unknown database server version")
-		} else if major := txt.UInt(v[0]); major < 10 {
-			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
-		} else if sub := txt.UInt(v[1]); sub < 5 || sub == 5 && txt.UInt(v[2]) < 12 {
-			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+		} else if !c.IsDatabaseVersion("v10.0.0") {
+			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+		} else if !c.IsDatabaseVersion("v10.5.12") {
+			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+		}
+	case SQLite3:
+		type Res struct {
+			Value string `gorm:"column:Value;"`
+		}
+
+		var res Res
+
+		err := db.Raw("SELECT sqlite_version() AS Value").Scan(&res).Error
+
+		// Version query not supported.
+		if err != nil {
+			log.Warnf("config: failed to detect database version (%s)", err)
+			return nil
+		}
+
+		c.dbVersion = clean.Version(res.Value)
+
+		if c.dbVersion == "" {
+			log.Warnf("config: unknown database server version")
 		}
 	}
 
@@ -412,6 +489,10 @@ func (c *Config) connectDb() error {
 		} else {
 			return err
 		}
+	}
+
+	if dbVersion := c.DatabaseVersion(); dbVersion != "" {
+		log.Infof("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
 	}
 
 	// Ok.

@@ -752,14 +752,7 @@ func (m *User) FullName() string {
 
 // SetRole sets the user role specified as string.
 func (m *User) SetRole(role string) *User {
-	role = clean.Role(role)
-
-	switch role {
-	case "", "0", "false", "nil", "null", "nan":
-		m.UserRole = acl.RoleNone.String()
-	default:
-		m.UserRole = acl.UserRoles[role].String()
-	}
+	m.UserRole = acl.ParseRole(role).String()
 
 	return m
 }
@@ -1274,36 +1267,36 @@ func (m *User) Form() (form.User, error) {
 }
 
 // PrivilegeLevelChange checks if saving the form changes the user privileges.
-func (m *User) PrivilegeLevelChange(f form.User) bool {
-	return m.UserRole != f.Role() ||
-		m.SuperAdmin != f.SuperAdmin ||
-		m.CanLogin != f.CanLogin ||
-		m.WebDAV != f.WebDAV ||
-		m.UserAttr != f.Attr() ||
-		m.AuthProvider != f.AuthProvider ||
-		m.AuthMethod != f.AuthMethod ||
-		m.AuthIssuer != f.AuthIssuer ||
-		m.AuthID != f.AuthID ||
-		m.BasePath != f.BasePath ||
-		m.UploadPath != f.UploadPath
+func (m *User) PrivilegeLevelChange(frm form.User) bool {
+	return m.UserRole != frm.Role() ||
+		m.SuperAdmin != frm.SuperAdmin ||
+		m.CanLogin != frm.CanLogin ||
+		m.WebDAV != frm.WebDAV ||
+		m.UserAttr != frm.Attr() ||
+		m.AuthProvider != frm.AuthProvider ||
+		m.AuthMethod != frm.AuthMethod ||
+		m.AuthIssuer != frm.AuthIssuer ||
+		m.AuthID != frm.AuthID ||
+		m.BasePath != frm.BasePath ||
+		m.UploadPath != frm.UploadPath
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *User) SaveForm(f form.User, u *User) error {
+func (m *User) SaveForm(frm form.User, u *User) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be modified")
-	} else if (m.ID == 1 || f.SuperAdmin) && acl.RoleAdmin.NotEqual(f.Role()) {
+	} else if (m.ID == 1 || frm.SuperAdmin) && acl.RoleAdmin.NotEqual(frm.Role()) {
 		return fmt.Errorf("super admin must not have a non-admin role")
-	} else if f.BasePath != "" && clean.UserPath(f.BasePath) == "" {
+	} else if frm.BasePath != "" && clean.UserPath(frm.BasePath) == "" {
 		return fmt.Errorf("invalid base folder")
-	} else if f.UploadPath != "" && clean.UserPath(f.UploadPath) == "" {
+	} else if frm.UploadPath != "" && clean.UserPath(frm.UploadPath) == "" {
 		return fmt.Errorf("invalid upload folder")
 	}
 
 	// Ignore details if not set.
-	if f.UserDetails == nil {
+	if frm.UserDetails == nil {
 		// Ignore.
-	} else if err := deepcopier.Copy(f.UserDetails).To(m.UserDetails); err != nil {
+	} else if err := deepcopier.Copy(frm.UserDetails).To(m.UserDetails); err != nil {
 		return err
 	} else {
 		m.UserDetails.UserAbout = txt.Clip(m.UserDetails.UserAbout, txt.ClipComment)
@@ -1311,7 +1304,7 @@ func (m *User) SaveForm(f form.User, u *User) error {
 	}
 
 	// Sanitize display name.
-	if n := clean.Name(f.DisplayName); n != "" && n != m.DisplayName {
+	if n := clean.Name(frm.DisplayName); n != "" && n != m.DisplayName {
 		m.SetDisplayName(n, SrcManual)
 	}
 
@@ -1321,7 +1314,7 @@ func (m *User) SaveForm(f form.User, u *User) error {
 	}
 
 	// Sanitize email address.
-	if email := f.Email(); email != "" && email != m.UserEmail {
+	if email := frm.Email(); email != "" && email != m.UserEmail {
 		m.UserEmail = email
 		m.VerifiedAt = nil
 		m.VerifyToken = GenerateToken()
@@ -1331,34 +1324,39 @@ func (m *User) SaveForm(f form.User, u *User) error {
 	if u == nil {
 		// Do nothing.
 	} else if u.IsAdmin() {
+		// Restore account.
+		if frm.DeletedAt == nil {
+			m.DeletedAt = nil
+		}
+
 		// Prevent admins from locking themselves out.
 		if u.Equal(m) {
 			m.SetRole(acl.RoleAdmin.String())
 			m.CanLogin = true
 		} else {
-			m.SetRole(f.Role())
-			m.CanLogin = f.CanLogin
+			m.SetRole(frm.Role())
+			m.CanLogin = frm.CanLogin
 		}
 
-		m.WebDAV = f.WebDAV
-		m.UserAttr = f.Attr()
+		m.WebDAV = frm.WebDAV
+		m.UserAttr = frm.Attr()
 
 		// Only allow super admins to change the authentication method and make other users super admins.
 		if u.IsSuperAdmin() {
 			if !u.Equal(m) {
-				m.SuperAdmin = f.SuperAdmin
+				m.SuperAdmin = frm.SuperAdmin
 			}
 
-			if !u.Equal(m) || f.Provider() != authn.ProviderNone {
-				m.SetProvider(f.Provider())
+			if !u.Equal(m) || frm.Provider() != authn.ProviderNone {
+				m.SetProvider(frm.Provider())
 			}
 
-			m.SetMethod(f.Method())
-			m.SetAuthID(f.AuthID, f.AuthIssuer)
+			m.SetMethod(frm.Method())
+			m.SetAuthID(frm.AuthID, frm.AuthIssuer)
 		}
 
-		m.SetBasePath(f.BasePath)
-		m.SetUploadPath(f.UploadPath)
+		m.SetBasePath(frm.BasePath)
+		m.SetUploadPath(frm.UploadPath)
 	}
 
 	// Ensure super admins never have a non-admin role.

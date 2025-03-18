@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,10 +24,10 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Api from "common/api";
+import $api from "common/api";
 import { DateTime } from "luxon";
-import { config } from "app/session";
-import { $gettext } from "common/vm";
+import { $config } from "app/session";
+import { $gettext } from "common/gettext";
 
 const SubjPerson = "person";
 
@@ -89,14 +89,14 @@ export class Subject extends RestModel {
 
   thumbnailUrl(size) {
     if (!this.Thumb) {
-      return `${config.contentUri}/svg/portrait`;
+      return `${$config.contentUri}/svg/portrait`;
     }
 
     if (!size) {
       size = "tile_160";
     }
 
-    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+    return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
   }
 
   getDateString() {
@@ -116,27 +116,27 @@ export class Subject extends RestModel {
   toggleHidden() {
     this.Hidden = !this.Hidden;
 
-    return Api.put(this.getEntityResource(), { Hidden: this.Hidden });
+    return $api.put(this.getEntityResource(), { Hidden: this.Hidden });
   }
 
   toggleLike() {
     this.Favorite = !this.Favorite;
 
     if (this.Favorite) {
-      return Api.post(this.getEntityResource() + "/like");
+      return $api.post(this.getEntityResource() + "/like");
     } else {
-      return Api.delete(this.getEntityResource() + "/like");
+      return $api.delete(this.getEntityResource() + "/like");
     }
   }
 
   like() {
     this.Favorite = true;
-    return Api.post(this.getEntityResource() + "/like");
+    return $api.post(this.getEntityResource() + "/like");
   }
 
   unlike() {
     this.Favorite = false;
-    return Api.delete(this.getEntityResource() + "/like");
+    return $api.delete(this.getEntityResource() + "/like");
   }
 
   static batchSize() {
@@ -155,7 +155,7 @@ export class Subject extends RestModel {
   }
 
   static getModelName() {
-    return $gettext("Subject");
+    return $gettext("Person");
   }
 }
 

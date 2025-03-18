@@ -1,3 +1,44 @@
+.v-main > .p-page {
+    position: relative;
+}
+
+.v-main > .p-page .p-page__navigation {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    overflow: visible;
+    margin-bottom: 1px;
+}
+
+.v-main > .p-page .p-page__navigation,
+.v-main > .p-page .p-page__navigation .toolbar-expansion-panel .v-card {
+    box-shadow: 0 2px 1px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 1px 1px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 3px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+}
+
+.v-main > .p-page .p-page__loading {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30vh 24px;
+}
+
+.p-page .v-toolbar-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.75rem;
+    letter-spacing: normal;
+    vertical-align: baseline;
+}
+
+.p-page .v-toolbar-title .v-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
 .p-page-about {
     line-height: 1.5rem;
 }
@@ -20,4 +61,30 @@
 
 .p-page .h70 {
     min-height: 70vh;
+}
+
+.toolbar-details-panel {
+    padding: 10px 14px 12px 14px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    font-size: .75rem;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    margin-bottom: 2px;
+    user-select: text;
+    overflow: hidden;
+    color: rgb(var(--v-theme-on-secondary-light));
+    background-color: rgb(var(--v-theme-secondary-light));
+}
+
+@media only screen and (min-width: 960px) {
+    .toolbar-details-panel {
+        font-size: .875rem;
+        line-height: normal !important;
+        letter-spacing: normal !important;
+        padding: 12px 16px 14px 16px;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        margin-bottom: 4px;
+    }
 }

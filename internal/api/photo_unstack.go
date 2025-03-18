@@ -22,6 +22,7 @@ import (
 //	@Summary	removes a file from an existing photo stack
 //	@Id			PhotoUnstack
 //	@Tags		Photos, Stacks
+//	@Accept		json
 //	@Produce	json
 //	@Success	200						{object}	entity.Photo
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response

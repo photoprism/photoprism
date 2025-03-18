@@ -4,8 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config/pwa"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config/pwa"
 )
 
 func TestConfig_AppName(t *testing.T) {

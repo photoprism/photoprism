@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -48,14 +48,14 @@ func NewFeedback(version, serial, env, partnerId string) *Feedback {
 }
 
 // SendFeedback sends a feedback message.
-func (c *Config) SendFeedback(f form.Feedback) (err error) {
+func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	feedback := NewFeedback(c.Version, c.Serial, c.Env, c.PartnerID)
-	feedback.Category = f.Category
-	feedback.Subject = txt.Shorten(f.Message, 50, "...")
-	feedback.Message = f.Message
-	feedback.UserName = f.UserName
-	feedback.UserEmail = f.UserEmail
-	feedback.UserAgent = f.UserAgent
+	feedback.Category = frm.Category
+	feedback.Subject = txt.Shorten(frm.Message, 50, "...")
+	feedback.Message = frm.Message
+	feedback.UserName = frm.UserName
+	feedback.UserEmail = frm.UserEmail
+	feedback.UserAgent = frm.UserAgent
 	feedback.ApiKey = c.Key
 
 	// Create new http.Client instance.
@@ -87,7 +87,7 @@ func (c *Config) SendFeedback(f form.Feedback) (err error) {
 		req.Header.Set("User-Agent", "PhotoPrism/Test")
 	}
 
-	req.Header.Add("Accept-Language", f.UserLocales)
+	req.Header.Add("Accept-Language", frm.UserLocales)
 	req.Header.Add(header.ContentType, header.ContentTypeJson)
 
 	var r *http.Response

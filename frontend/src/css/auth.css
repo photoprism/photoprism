@@ -1,56 +1,71 @@
 /* Auth Form Styles */
 
-#photoprism main .auth-login {
-    min-height: 500px;
-    position: relative;
+main .auth-login {
+    min-height: 100px;
+    position: absolute;
     color-scheme: light;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
 }
 
 /* Auth Form Colors */
 
-#photoprism main .auth-login .accent {
+main .auth-login .accent {
     background-color: #05dde1 !important;
 }
 
-#photoprism main .auth-login .accent--text {
+main .auth-login .accent--text {
     caret-color: #05dde1 !important;
     color: #05dde1 !important;
 }
 
-#photoprism main .auth-login .primary {
+main .auth-login .primary {
     background-color: #00a6a9 !important;
 }
 
-#photoprism main .auth-login .primary--text {
+main .auth-login .primary--text {
     caret-color: #00a6a9 !important;
     color: #00a6a9 !important;
 }
 
-#photoprism main .auth-login .secondary {
+main .auth-login .secondary {
     background-color: #505050 !important;
 }
 
-#photoprism main .auth-login .secondary--text {
+main .auth-login .secondary--text {
     caret-color: #505050 !important;
     color: #505050 !important;
 }
 
-#photoprism main .auth-login .link {
+main .auth-login .link {
     background-color: #c8e3e7 !important;
 }
 
-#photoprism main .auth-login .link--text {
+main .auth-login .link--text {
     caret-color: #c8e3e7 !important;
     color: #c8e3e7 !important;
 }
 
-#photoprism main .auth-actions .auth-links {
-    min-height: 42px;
+main .auth-actions .auth-links {
+    min-height: 24px;
+}
+
+main .auth-login a,
+main .auth-login .clickable {
+    color: rgb(var(--v-theme-secondary, #c8e3e7));
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* Auth Form Logo */
 
-#photoprism .auth-login .logo {
+.auth-login .logo {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -62,16 +77,16 @@
     left: unset;
 }
 
-#photoprism .auth-layout {
+.auth-layout {
     justify-content: center;
     align-items: center;
 }
 
-#photoprism .auth-login .action-buttons {
+.auth-login .action-buttons {
     margin: 20px auto 16px auto;
 }
 
-#photoprism .oidc-actions .oidc-icon {
+.oidc-actions .oidc-icon {
     height: 18px;
     width: auto;
     align-items: center;
@@ -80,37 +95,46 @@
     font-size: 24px;
     justify-content: center;
     line-height: 1;
-    transition: .3s cubic-bezier(.25,.8,.5,1);
+    transition: .3s cubic-bezier(.25, .8, .5, 1);
     vertical-align: text-bottom;
     border-style: none;
 }
 
-#photoprism main .auth-login .logo img {
+main .auth-login .logo img {
     height: 100%;
 }
 
-#photoprism main .auth-login .auth-login-form .v-card {
+main .auth-login .auth-login-form .v-card {
     background: #ccc1 !important;
     border-radius: 16px;
     z-index: 1;
 }
 
-#photoprism main .auth-login .auth-login-form .v-text-field input {
+main .auth-login .auth-login-form .v-text-field input {
     color: #000000de !important;
 }
 
-#photoprism main .auth-login a {
+main .auth-login a {
     text-decoration: none !important;
 }
 
-#photoprism main .auth-login,
-#photoprism main .auth-login form,
-#photoprism main .auth-login footer,
-#photoprism main .auth-login .v-input__prepend-outer .v-icon,
-#photoprism main .auth-login .body-1,
-#photoprism main .auth-login .body-2 {
-    caret-color: #fff;
-    color: #fff;
+main .auth-login,
+main .auth-login form,
+main .auth-login footer,
+main .auth-login .v-input__prepend-outer .v-icon,
+main .auth-login .text-subtitle-1,
+main .auth-login .text-subtitle-2,
+#photoprism main .auth-login .text-body-1,
+#photoprism main .auth-login .text-body-2,
+#photoprism main .auth-login .text-body-2,
+#photoprism main .auth-login .text-subtitle-2 {
+    caret-color: #ffffff;
+    color: #ffffff;
+}
+
+#photoprism main .auth-login form input {
+    color: rgb(var(--v-theme-on-surface));
+    caret-color: rgb(var(--v-theme-on-surface));
 }
 
 #photoprism main .auth-login .theme--light.v-icon,
@@ -119,12 +143,12 @@
     color: rgba(0, 0, 0, .54);
 }
 
-#photoprism #app main .auth-login .v-btn.v-btn--disabled,
-#photoprism #app main .auth-login .v-btn.v-btn--disabled .v-icon {
+#photoprism .v-application main .auth-login .v-btn.v-btn--disabled,
+#photoprism .v-application main .auth-login .v-btn.v-btn--disabled .v-icon {
     color: rgba(255, 255, 255, .36) !important;
 }
 
-#photoprism #app main .auth-login .v-btn.v-btn--disabled {
+#photoprism .v-application main .auth-login .v-btn.v-btn--disabled {
     background-color: rgba(255, 255, 255, .16) !important;
 }
 

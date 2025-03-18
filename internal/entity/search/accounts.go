@@ -6,27 +6,27 @@ import (
 )
 
 // Accounts returns a list of accounts.
-func Accounts(f form.SearchServices) (result entity.Services, err error) {
+func Accounts(frm form.SearchServices) (result entity.Services, err error) {
 	s := Db().Where(&entity.Service{})
 
-	if f.Share {
+	if frm.Share {
 		s = s.Where("acc_share = 1")
 	}
 
-	if f.Sync {
+	if frm.Sync {
 		s = s.Where("acc_sync = 1")
 	}
 
-	if f.Status != "" {
-		s = s.Where("sync_status = ?", f.Status)
+	if frm.Status != "" {
+		s = s.Where("sync_status = ?", frm.Status)
 	}
 
 	s = s.Order("acc_name ASC")
 
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	if frm.Count > 0 && frm.Count <= MaxResults {
+		s = s.Limit(frm.Count).Offset(frm.Offset)
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		s = s.Limit(MaxResults).Offset(frm.Offset)
 	}
 
 	if err := s.Find(&result).Error; err != nil {

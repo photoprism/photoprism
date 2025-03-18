@@ -2,9 +2,8 @@ package crop
 
 import (
 	"fmt"
-	"path/filepath"
-
 	"path"
+	"path/filepath"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -39,7 +38,7 @@ func FileName(hash, area string, width, height int, thumbPath string) (fileName 
 		return "", fmt.Errorf("crop: invalid size %dx%d", width, height)
 	}
 
-	fileName = path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3], fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, width, height, area, fs.ExtJPEG))
+	fileName = path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3], fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, width, height, area, fs.ExtJpeg))
 
 	return fileName, nil
 }

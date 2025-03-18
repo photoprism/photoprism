@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetPhoto(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7")
@@ -30,7 +30,7 @@ func TestGetPhoto(t *testing.T) {
 }
 
 func TestUpdatePhoto(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Title": "Updated01", "Country": "de"}`)
@@ -84,7 +84,7 @@ func TestGetPhotoDownload(t *testing.T) {
 }
 
 func TestLikePhoto(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikePhoto(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh9/like")
@@ -104,7 +104,7 @@ func TestLikePhoto(t *testing.T) {
 }
 
 func TestDislikePhoto(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikePhoto(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/ps6sg6be2lvl0yh8/like")
@@ -124,7 +124,7 @@ func TestDislikePhoto(t *testing.T) {
 }
 
 func TestPhotoPrimary(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoPrimary(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh8/files/fs6sg6bw45bn0003/primary")
@@ -149,7 +149,7 @@ func TestPhotoPrimary(t *testing.T) {
 }
 
 func TestGetPhotoYaml(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhotoYaml(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7/yaml")
@@ -165,7 +165,7 @@ func TestGetPhotoYaml(t *testing.T) {
 }
 
 func TestApprovePhoto(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r3 := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6bexxvl0y20")

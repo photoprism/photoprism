@@ -10,7 +10,7 @@ import (
 )
 
 func TestSearchSubjects(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchSubjects(router)
 		r := PerformRequest(app, "GET", "/api/v1/subjects?count=10")

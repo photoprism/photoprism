@@ -1,7 +1,7 @@
 /*
 Package config provides global options, command-line flags, and user settings.
 
-Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -42,7 +42,7 @@ import (
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -62,19 +62,21 @@ import (
 
 // log points to the global logger.
 var log = event.Log
+var initThumbsMutex sync.Mutex
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
-	once     sync.Once
-	cliCtx   *cli.Context
-	options  *Options
-	settings *customize.Settings
-	db       *gorm.DB
-	hub      *hub.Config
-	token    string
-	serial   string
-	env      string
-	start    bool
+	once      sync.Once
+	cliCtx    *cli.Context
+	options   *Options
+	settings  *customize.Settings
+	db        *gorm.DB
+	dbVersion string
+	hub       *hub.Config
+	token     string
+	serial    string
+	env       string
+	start     bool
 }
 
 func init() {
@@ -86,10 +88,24 @@ func init() {
 		LowMem = TotalMem < MinMem
 	}
 
+	initThumbs()
+}
+
+func initThumbs() {
+	initThumbsMutex.Lock()
+	defer initThumbsMutex.Unlock()
+
+	maxSize := thumb.MaxSize()
+	Thumbs = ThumbSizes{}
+
 	// Init public thumb sizes for use in client apps.
 	for i := len(thumb.Names) - 1; i >= 0; i-- {
 		name := thumb.Names[i]
 		t := thumb.Sizes[name]
+
+		if t.Width > maxSize {
+			continue
+		}
 
 		if t.Public {
 			Thumbs = append(Thumbs, ThumbSize{Size: string(name), Usage: t.Usage, Width: t.Width, Height: t.Height})
@@ -254,6 +270,7 @@ func (c *Config) Propagate() {
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
+	initThumbs()
 
 	// Set cache expiration defaults.
 	ttl.CacheDefault = c.HttpCacheMaxAge()
@@ -290,7 +307,30 @@ func (c *Config) Propagate() {
 	customize.DefaultTheme = c.DefaultTheme()
 	customize.DefaultLocale = c.DefaultLocale()
 
+	// Propagate settings.
 	c.Settings().Propagate()
+
+	// Set default album sort orders.
+	if c.settings.Albums.Order.Album != "" {
+		entity.DefaultOrderAlbum = c.settings.Albums.Order.Album
+	}
+
+	if c.settings.Albums.Order.Folder != "" {
+		entity.DefaultOrderFolder = c.settings.Albums.Order.Folder
+	}
+
+	if c.settings.Albums.Order.Moment != "" {
+		entity.DefaultOrderMoment = c.settings.Albums.Order.Moment
+	}
+
+	if c.settings.Albums.Order.State != "" {
+		entity.DefaultOrderState = c.settings.Albums.Order.State
+	}
+
+	if c.settings.Albums.Order.Month != "" {
+		entity.DefaultOrderMonth = c.settings.Albums.Order.Month
+	}
+
 	c.Hub().Propagate()
 }
 
@@ -323,13 +363,13 @@ func (c *Config) CliContext() *cli.Context {
 	return c.cliCtx
 }
 
-// CliGlobalString returns a global cli string flag value if set.
-func (c *Config) CliGlobalString(name string) string {
+// CliContextString returns a global cli string flag value if set.
+func (c *Config) CliContextString(name string) string {
 	if c.cliCtx == nil {
 		return ""
 	}
 
-	return c.cliCtx.GlobalString(name)
+	return c.cliCtx.String(name)
 }
 
 // readSerial reads and returns the current storage serial.
@@ -485,7 +525,12 @@ func (c *Config) Sponsor() bool {
 	return Sponsor
 }
 
-// Experimental checks if experimental features should be enabled.
+// Develop checks if features under development should be enabled.
+func (c *Config) Develop() bool {
+	return Develop || Env(EnvDevelop)
+}
+
+// Experimental checks if new features that may be incomplete or unstable should be enabled.
 func (c *Config) Experimental() bool {
 	return c.options.Experimental
 }
@@ -642,8 +687,8 @@ func (c *Config) OriginalsLimit() int {
 	return c.options.OriginalsLimit
 }
 
-// OriginalsByteLimit returns the maximum size of originals in bytes.
-func (c *Config) OriginalsByteLimit() int64 {
+// OriginalsLimitBytes returns the maximum size of originals in bytes.
+func (c *Config) OriginalsLimitBytes() int64 {
 	if result := c.OriginalsLimit(); result <= 0 {
 		return -1
 	} else {

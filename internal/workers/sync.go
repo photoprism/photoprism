@@ -106,9 +106,9 @@ func (w *Sync) Start() (err error) {
 				}
 			}
 		case entity.SyncStatusDownload:
-			if complete, err := w.download(a); err != nil {
+			if complete, downloadErr := w.download(a); downloadErr != nil {
 				accErrors++
-				accError = err.Error()
+				accError = downloadErr.Error()
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				if a.SyncUpload {

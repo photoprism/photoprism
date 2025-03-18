@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -39,10 +40,10 @@ func SetUserImageURL(m *entity.User, imageUrl, imageSrc, thumbPath string) error
 		return fmt.Errorf("failed to detect avatar type (%w)", mimeErr)
 	} else {
 		switch {
-		case mimeType.Is(fs.MimeTypePNG):
-			imageName = tmpName + fs.ExtPNG
-		case mimeType.Is(fs.MimeTypeJPEG):
-			imageName = tmpName + fs.ExtJPEG
+		case mimeType.Is(header.ContentTypePng):
+			imageName = tmpName + fs.ExtPng
+		case mimeType.Is(header.ContentTypeJpeg):
+			imageName = tmpName + fs.ExtJpeg
 		default:
 			return fmt.Errorf("invalid avatar image type %s", mimeType)
 		}

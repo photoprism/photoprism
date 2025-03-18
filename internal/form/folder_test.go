@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewFolder(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var folder = struct {
 			Path              string
 			Root              string

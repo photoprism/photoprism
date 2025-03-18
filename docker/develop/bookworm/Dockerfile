@@ -1,7 +1,7 @@
 #### Base Image: Debian 12 (Bookworm)
 FROM debian:bookworm-slim
 
-# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -53,7 +53,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 ca-certificates sudo bash tzdata \
-        gpg zip unzip wget curl rsync make nano \
+        xz-utils gpg zip unzip wget curl rsync make nano \
         jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev libyuv0 \
         exiftool rawtherapee libheif-examples librsvg2-bin librav1e-dev \
         ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
@@ -72,13 +72,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-darktable.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    mkdir -p /etc/skel/.config/go && \
-    echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
+    mkdir -p /etc/skel/.config/go/telemetry && \
+    echo 'off 2025-01-03' > '/etc/skel/.config/go/telemetry/mode' && \
     cp -r /etc/skel/.config /root/.config && \
-    GOLANG_VERSION=go1.22.9 /scripts/install-go.sh && \
+    /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
@@ -93,14 +94,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# Download models and testdata.
+# Download machine learning models and test data.
 RUN mkdir /tmp/photoprism && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Default working directory.
+# Set default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose the following container ports:

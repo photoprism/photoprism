@@ -10,7 +10,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -19,18 +19,20 @@ import (
 )
 
 // PasswdCommand configures the command name, flags, and action.
-var PasswdCommand = cli.Command{
+var PasswdCommand = &cli.Command{
 	Name:      "passwd",
 	Usage:     "Changes the local account password of a registered user",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "show, s",
-			Usage: "show bcrypt hash of new password",
+		&cli.BoolFlag{
+			Name:    "show",
+			Aliases: []string{"s"},
+			Usage:   "show bcrypt hash of new password",
 		},
-		cli.BoolFlag{
-			Name:  "remove, rm",
-			Usage: "remove password to disable local authentication",
+		&cli.BoolFlag{
+			Name:    "remove",
+			Aliases: []string{"rm"},
+			Usage:   "remove password to disable local authentication",
 		},
 	},
 	Action: passwdAction,

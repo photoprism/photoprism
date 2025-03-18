@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // ProbeFile returns information for the given filename.
@@ -85,7 +86,7 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 
 	var video *mp4.ProbeInfo
 
-	// Detect MP4 video metadata.
+	// Detect Mp4 video metadata.
 	if video, err = mp4.Probe(videoFile); err != nil {
 		return info, err
 	}
@@ -93,8 +94,8 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 	// Check compatibility.
 	if CompatibleBrands.ContainsAny(video.CompatibleBrands) {
 		info.Compatible = true
-		info.VideoType = MP4
-		info.VideoMimeType = fs.MimeTypeMP4
+		info.VideoType = Mp4
+		info.VideoMimeType = header.ContentTypeMp4
 		info.FPS = 30.0 // TODO: Detect actual frames per second!
 
 		if info.VideoOffset > 0 {
@@ -102,17 +103,17 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 			info.ThumbOffset = 0
 		} else {
 			info.MediaType = media.Video
-			info.FileType = fs.VideoMP4
+			info.FileType = fs.VideoMp4
 		}
 	}
 
 	// Check major brand.
 	switch video.MajorBrand {
 	case ChunkQT.Get():
-		info.VideoType = MOV
-		info.VideoMimeType = fs.MimeTypeMOV
+		info.VideoType = Mov
+		info.VideoMimeType = header.ContentTypeMov
 		if info.MediaType == media.Video {
-			info.FileType = fs.VideoMOV
+			info.FileType = fs.VideoMov
 		}
 	}
 
@@ -128,12 +129,12 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 
 		switch track.Codec {
 		case mp4.CodecAVC1:
-			info.VideoCodec = CodecAVC
+			info.VideoCodec = CodecAvc1
 		}
 
 		if avc := track.AVC; avc != nil {
 			if info.VideoMimeType == "" {
-				info.VideoMimeType = fs.MimeTypeMP4
+				info.VideoMimeType = header.ContentTypeMp4
 			}
 			if w := int(avc.Width); w > info.VideoWidth {
 				info.VideoWidth = w
@@ -144,17 +145,21 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 		}
 	}
 
-	// Detect codec by searching for matching chunks.
+	// If no AVC video was found, search the video data for High Efficiency Video Coding (HEVC) chunks,
+	// see https://stackoverflow.com/questions/63468587/what-hevc-codec-tag-to-use-with-fmp4-hvc1-or-hev1.
 	if info.VideoCodec == "" {
-		if found, _ := ChunkHVC1.DataOffset(file); found > 0 {
-			info.VideoCodec = CodecHVC
+		// To improve performance, only search for "hvc1" as that is the most common HEVC video identifier.
+		if fileOffset, fileErr := ChunkHVC1.DataOffset(file, -1); fileOffset > 0 && fileErr == nil {
+			info.VideoCodec = CodecHvc1
 		}
 	}
 
 	// Calculate video duration in seconds.
 	if video.Duration > 0 {
 		s := float64(video.Duration) / float64(video.Timescale)
+
 		info.Duration = time.Duration(s * float64(time.Second))
+
 		if info.FPS > 0 {
 			info.Frames = int(math.Round(info.FPS * s))
 		}

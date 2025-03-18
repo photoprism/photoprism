@@ -19,6 +19,7 @@ const (
 type Settings struct {
 	UI        UISettings       `json:"ui" yaml:"UI"`
 	Search    SearchSettings   `json:"search" yaml:"Search"`
+	Albums    AlbumsSettings   `json:"albums" yaml:"Albums"`
 	Maps      MapsSettings     `json:"maps" yaml:"Maps"`
 	Features  FeatureSettings  `json:"features" yaml:"Features"`
 	Import    ImportSettings   `json:"import" yaml:"Import"`
@@ -42,10 +43,14 @@ func NewSettings(theme, lang string) *Settings {
 			Zoom:      false,
 			Theme:     theme,
 			Language:  lang,
+			TimeZone:  "",
+			StartPage: "default",
 		},
 		Search: SearchSettings{
-			BatchSize: 0,
-			ListView:  true,
+			BatchSize:    -1,
+			ListView:     true,
+			ShowTitles:   true,
+			ShowCaptions: true,
 		},
 		Maps: MapsSettings{
 			Animate: 0,
@@ -62,6 +67,7 @@ func NewSettings(theme, lang string) *Settings {
 			Videos:    true,
 			Folders:   true,
 			Albums:    true,
+			Calendar:  true,
 			Moments:   true,
 			Estimates: true,
 			People:    true,
@@ -83,6 +89,7 @@ func NewSettings(theme, lang string) *Settings {
 		Import: ImportSettings{
 			Path: RootPath,
 			Move: false,
+			Dest: "",
 		},
 		Index: IndexSettings{
 			Path:    RootPath,
@@ -97,6 +104,7 @@ func NewSettings(theme, lang string) *Settings {
 		Share: ShareSettings{
 			Title: "",
 		},
+		Albums:   NewAlbumSettings(),
 		Download: NewDownloadSettings(),
 		Templates: TemplateSettings{
 			Default: "index.gohtml",

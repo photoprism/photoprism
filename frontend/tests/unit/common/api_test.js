@@ -1,4 +1,4 @@
-import { Api } from "../fixtures";
+import { $api } from "../fixtures";
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -25,7 +25,8 @@ describe("common/api", () => {
   const deleteEntityResponse = null;
 
   it("get should return a list of results and return with HTTP code 200", (done) => {
-    Api.get("foo")
+    $api
+      .get("foo")
       .then((response) => {
         assert.equal(200, response.status);
         assert.deepEqual(getCollectionResponse, response.data);
@@ -37,7 +38,8 @@ describe("common/api", () => {
   });
 
   it("get should return one item and return with HTTP code 200", (done) => {
-    Api.get("foo/123")
+    $api
+      .get("foo/123")
       .then((response) => {
         assert.equal(200, response.status);
         assert.deepEqual(getEntityResponse, response.data);
@@ -49,7 +51,8 @@ describe("common/api", () => {
   });
 
   it("post should create one item and return with HTTP code 201", (done) => {
-    Api.post("foo", postEntityResponse)
+    $api
+      .post("foo", postEntityResponse)
       .then((response) => {
         assert.equal(201, response.status);
         assert.deepEqual(postEntityResponse, response.data);
@@ -61,7 +64,8 @@ describe("common/api", () => {
   });
 
   it("put should update one item and return with HTTP code 200", (done) => {
-    Api.put("foo/2", putEntityResponse)
+    $api
+      .put("foo/2", putEntityResponse)
       .then((response) => {
         assert.equal(200, response.status);
         assert.deepEqual(putEntityResponse, response.data);
@@ -73,7 +77,8 @@ describe("common/api", () => {
   });
 
   it("delete should delete one item and return with HTTP code 204", (done) => {
-    Api.delete("foo/2", deleteEntityResponse)
+    $api
+      .delete("foo/2", deleteEntityResponse)
       .then((response) => {
         assert.equal(204, response.status);
         assert.deepEqual(deleteEntityResponse, response.data);

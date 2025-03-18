@@ -45,6 +45,7 @@ func GetConfigOptions(router *gin.RouterGroup) {
 //	@Summary	updates backend config options
 //	@Id			SaveConfigOptions
 //	@Tags		Config, Settings
+//	@Accept		json
 //	@Produce	json
 //	@Success	200					{object}	config.Options
 //	@Failure	400,401,403,429,500	{object}	i18n.Response

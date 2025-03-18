@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
+
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -22,6 +23,7 @@ var thumbFileNames = []string{
 	"%s_1920x1200_fit.jpg",
 	"%s_2560x1600_fit.jpg",
 	"%s_4096x4096_fit.jpg",
+	"%s_5120x5120_fit.jpg",
 	"%s_7680x4320_fit.jpg",
 }
 
@@ -32,6 +34,7 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit1920],
 	thumb.Sizes[thumb.Fit2560],
 	thumb.Sizes[thumb.Fit4096],
+	thumb.Sizes[thumb.Fit5120],
 	thumb.Sizes[thumb.Fit7680],
 }
 
@@ -49,16 +52,16 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	}
 
 	// Compose cached crop image file name.
-	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.ExtJPEG)
+	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.ExtJpeg)
 	cropName := filepath.Join(filePath, cropBase)
 
 	// Cached?
 	if !fs.FileExists(cropName) {
 		// Do nothing.
-	} else if img, err := imaging.Open(cropName); err != nil {
+	} else if cropImg, cropErr := imaging.Open(cropName); cropErr != nil {
 		log.Errorf("crop: failed loading %s", filepath.Base(cropName))
 	} else {
-		return img, nil
+		return cropImg, nil
 	}
 
 	// Open thumb image file.
@@ -69,21 +72,21 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	}
 
 	// Get absolute crop coordinates and dimension.
-	min, max, dim := area.Bounds(img)
+	posMin, posMax, dim := area.Bounds(img)
 
 	if dim < size.Width {
 		log.Debugf("crop: %s is too small, upscaling %dpx to %dpx", filepath.Base(thumbName), dim, size.Width)
 	}
 
 	// Crop area from image.
-	img = imaging.Crop(img, image.Rect(min.X, min.Y, max.X, max.Y))
+	img = imaging.Crop(img, image.Rect(posMin.X, posMin.Y, posMax.X, posMax.Y))
 
 	// Resample crop area.
 	img = thumb.Resample(img, size.Width, size.Height, size.Options...)
 
 	// Cache crop image?
 	if cache {
-		if err := imaging.Save(img, cropName); err != nil {
+		if err = imaging.Save(img, cropName); err != nil {
 			log.Errorf("crop: failed caching %s", filepath.Base(cropName))
 		} else {
 			log.Debugf("crop: saved %s", filepath.Base(cropName))

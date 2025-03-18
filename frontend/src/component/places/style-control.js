@@ -76,7 +76,12 @@ export default class MapStyleControl {
   }
 
   onDocumentClick(event) {
-    if (this.controlContainer && !this.controlContainer.contains(event.target) && this.mapStyleContainer && this.styleButton) {
+    if (
+      this.controlContainer &&
+      !this.controlContainer.contains(event.target) &&
+      this.mapStyleContainer &&
+      this.styleButton
+    ) {
       this.mapStyleContainer.style.display = "none";
       this.styleButton.style.display = "block";
     }

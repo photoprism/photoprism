@@ -1,5 +1,9 @@
 package acl
 
+import "sync"
+
+var RulesMutex = &sync.Mutex{}
+
 // Rules specifies granted permissions by Resource and Role.
 var Rules = ACL{
 	ResourceFiles: Roles{
@@ -71,12 +75,12 @@ var Rules = ACL{
 		RoleGuest: GrantUpdateOwn,
 	},
 	ResourceUsers: Roles{
-		RoleAdmin:  GrantAll,
+		RoleAdmin:  GrantManageOwn,
 		RoleGuest:  GrantViewUpdateOwn,
 		RoleClient: GrantViewOwn,
 	},
 	ResourceSessions: Roles{
-		RoleAdmin:   GrantFullAccess,
+		RoleAdmin:   GrantManageOwn,
 		RoleDefault: GrantOwn,
 	},
 	ResourceLogs: Roles{

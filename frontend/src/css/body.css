@@ -1,0 +1,58 @@
+/* Browser Scrollbar, see https://css-tricks.com/custom-scrollbars-in-webkit/#aa-the-different-pieces */
+
+#p-navigation ::-webkit-scrollbar {
+    /* Hides scrollbar in sidebar navigation to save space */
+    width: 0;
+    background: transparent;
+}
+
+body.dark-theme {
+    color-scheme: dark !important;
+}
+
+/* Scrollbar Styles for Mozilla Firefox: */
+
+body.firefox.dark-theme {
+    scrollbar-color: dark !important;
+}
+
+/* Scrollbar Styles for Google Chrome (and compatible browsers): */
+
+::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+    overflow: visible;
+}
+
+::-webkit-scrollbar-button {
+    height: 0;
+    width: 0;
+}
+
+@media only screen and (min-width: 600px) {
+    ::-webkit-scrollbar {
+        height: 11px;
+        width: 11px;
+        overflow: visible;
+    }
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(var(--v-theme-secondary), .20);
+    border: solid transparent;
+    border-width: 0 0 0 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--v-theme-on-surface), .28);
+    border-style: solid;
+    border-color: rgba(var(--v-theme-secondary), .56);
+    border-width: 1px;
+    border-radius: 6px;
+    min-height: 28px;
+    padding: 100px 0 0;
+}

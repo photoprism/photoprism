@@ -108,9 +108,9 @@ func TestSanitizeTitle(t *testing.T) {
 	})
 }
 
-func TestSanitizeDescription(t *testing.T) {
+func TestSanitizeCaption(t *testing.T) {
 	t.Run("IMG_0599", func(t *testing.T) {
-		result := SanitizeDescription("IMG_0599")
+		result := SanitizeCaption("IMG_0599")
 
 		if result == "" {
 			t.Fatal("result should not be empty")
@@ -118,7 +118,7 @@ func TestSanitizeDescription(t *testing.T) {
 	})
 
 	t.Run("OLYMPUS DIGITAL CAMERA", func(t *testing.T) {
-		result := SanitizeDescription("OLYMPUS DIGITAL CAMERA")
+		result := SanitizeCaption("OLYMPUS DIGITAL CAMERA")
 
 		if result != "" {
 			t.Fatal("result should be empty")
@@ -126,7 +126,7 @@ func TestSanitizeDescription(t *testing.T) {
 	})
 
 	t.Run("GoPro", func(t *testing.T) {
-		result := SanitizeDescription("DCIM\\108GOPRO\\GOPR2137.JPG")
+		result := SanitizeCaption("DCIM\\108GOPRO\\GOPR2137.JPG")
 
 		if result != "" {
 			t.Fatal("result should be empty")
@@ -134,7 +134,7 @@ func TestSanitizeDescription(t *testing.T) {
 	})
 
 	t.Run("hdrpl", func(t *testing.T) {
-		result := SanitizeDescription("hdrpl")
+		result := SanitizeCaption("hdrpl")
 
 		if result != "" {
 			t.Fatal("result should be empty")
@@ -142,7 +142,7 @@ func TestSanitizeDescription(t *testing.T) {
 	})
 
 	t.Run("btf", func(t *testing.T) {
-		result := SanitizeDescription("btf")
+		result := SanitizeCaption("btf")
 
 		if result != "" {
 			t.Fatal("result should be empty")
@@ -150,7 +150,7 @@ func TestSanitizeDescription(t *testing.T) {
 	})
 
 	t.Run("wtf", func(t *testing.T) {
-		result := SanitizeDescription("wtf")
+		result := SanitizeCaption("wtf")
 
 		if result != "wtf" {
 			t.Fatal("result should be 'wtf'")

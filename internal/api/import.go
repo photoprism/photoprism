@@ -33,6 +33,7 @@ const (
 //	@Summary	start import
 //	@Id			StartImport
 //	@Tags		Library
+//	@Accept		json
 //	@Produce	json
 //	@Success	200			{object}	i18n.Response
 //	@Failure	400,401,403	{object}	i18n.Response
@@ -48,17 +49,25 @@ func StartImport(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
+		// Abort in read-only mode and/or when the import feature is disabled.
 		if conf.ReadOnly() || !conf.Settings().Features.Import {
 			AbortFeatureDisabled(c)
 			return
 		}
 
+		// Abort if there is not enough free storage to import new files.
+		if conf.FilesQuotaReached() {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files", "insufficient storage"}, s.RefID)
+			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+			return
+		}
+
 		start := time.Now()
 
-		var f form.ImportOptions
+		var frm form.ImportOptions
 
 		// Assign and validate request form values.
-		if err := c.BindJSON(&f); err != nil {
+		if err := c.BindJSON(&frm); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -69,8 +78,8 @@ func StartImport(router *gin.RouterGroup) {
 		// Import from subfolder?
 		if srcFolder = c.Param("path"); srcFolder != "" && srcFolder != "/" {
 			srcFolder = clean.UserPath(srcFolder)
-		} else if f.Path != "" {
-			srcFolder = clean.UserPath(f.Path)
+		} else if frm.Path != "" {
+			srcFolder = clean.UserPath(frm.Path)
 		}
 
 		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
@@ -98,7 +107,7 @@ func StartImport(router *gin.RouterGroup) {
 		var opt photoprism.ImportOptions
 
 		// Copy or move files to the destination folder?
-		if f.Move {
+		if frm.Move {
 			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(importPath)))
 			opt = photoprism.ImportOptionsMove(importPath, destFolder)
 		} else {
@@ -107,10 +116,10 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		// Add imported files to albums if allowed.
-		if len(f.Albums) > 0 &&
+		if len(frm.Albums) > 0 &&
 			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
-			opt.Albums = f.Albums
+			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(frm.Albums, " and ")))
+			opt.Albums = frm.Albums
 		}
 
 		// Set user UID if known.
@@ -159,7 +168,7 @@ func StartImport(router *gin.RouterGroup) {
 		event.Publish("import.completed", eventData)
 		event.Publish("index.completed", eventData)
 
-		for _, uid := range f.Albums {
+		for _, uid := range frm.Albums {
 			PublishAlbumEvent(StatusUpdated, uid, c)
 		}
 

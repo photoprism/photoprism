@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs the Caddy web server on Linux.
+# Installs the Caddy web server on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-caddy.sh)
 
 set -e

@@ -90,7 +90,7 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 
 	// Export to standard image format.
 	switch fs.FileType(thumbName) {
-	case fs.ImagePNG:
+	case fs.ImagePng:
 		thumbBuffer, _, err = img.ExportPng(VipsPngExportParams(width, height))
 	default:
 		thumbBuffer, _, err = img.ExportJpeg(VipsJpegExportParams(width, height))

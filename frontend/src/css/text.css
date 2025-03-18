@@ -1,0 +1,197 @@
+/* UI Font Presets */
+
+body #app,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6,
+.text-subtitle-1,
+.text-subtitle-2,
+.text-body-1,
+.text-body-2,
+.text-caption,
+.text-button,
+.text-overline {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+}
+
+body #app,
+.text-subtitle-1,
+.text-subtitle-2,
+.text-body-1,
+.text-body-2,
+.text-caption {
+    /* Text rendering defaults. */
+    letter-spacing: normal !important;
+    line-height: normal;
+    text-justify: inter-word;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+
+    /* Support for Safari and Chrome. */
+
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Enable font features. */
+    font-feature-settings: 'kern', 'liga';
+}
+
+.text-body-3,
+.text-subtitle-3 {
+    font-size: .8125rem;
+    letter-spacing: normal;
+    line-height: normal;
+}
+
+.text-body-3 {
+    font-weight: 400;
+}
+
+.text-subtitle-3 {
+    font-weight: 500;
+}
+
+.text-flex {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.text-flex > * {
+    display: inline-flex;
+}
+
+.text-flex > i,
+.text-flex > .v-icon {
+    font-size: 1.25em;
+}
+
+.text-ltr {
+    direction: ltr !important;
+}
+
+.text-rtl {
+    direction: rtl !important;
+}
+
+@media (min-width: 600px) {
+    .text-columns {
+        column-count: 2;
+        column-gap: 2em;
+        orphans: 3;
+        widows: 0;
+    }
+}
+
+.caption.filename {
+    font-weight: 500;
+}
+
+.text-break,
+.break-word,
+.v-datatable td,
+.v-card button,
+.v-card .caption {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
+.text-monospace {
+    white-space: pre;
+    font-family: monospace;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.425;
+    letter-spacing: 0.0178571429em;
+}
+
+/* Line Height Styles */
+
+.lh-15 {
+    line-height: 1.5rem !important;
+}
+
+.lh-16 {
+    line-height: 1.6rem !important;
+}
+
+.lh-17 {
+    line-height: 1.7rem !important;
+}
+
+.lh-18 {
+    line-height: 1.8rem !important;
+}
+
+.lh-19 {
+    line-height: 1.9rem !important;
+}
+
+.lh-20 {
+    line-height: 2.0rem !important;
+}
+
+/* Headings */
+
+.p-page h2 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: normal;
+    margin-bottom: 0.5rem;
+}
+
+.p-page h3,
+.p-page h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: normal;
+    margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+
+.p-page p,
+.p-help-websockets p,
+.p-page li {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: normal;
+    margin-bottom: 0.85rem;
+}
+
+/* Links */
+
+.text-link,
+p a.text-link {
+    color: rgb(var(--v-theme-primary, #ffffff));
+    text-decoration: none;
+}
+
+.p-page a,
+.p-page footer .text-link,
+.p-page footer .body-link {
+    color: rgb(var(--v-theme-on-surface, #ffffff));
+    text-decoration: none;
+}
+
+/* Footers */
+
+.footer p {
+    margin: 0;
+    padding: 0;
+}

@@ -1,28 +1,46 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.stop.prevent="updateQuery()">
-      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
+  <div
+    ref="page"
+    tabindex="1"
+    class="p-page p-page-labels not-selectable"
+    :class="$config.aclClasses('labels')"
+    @keydown.ctrl="onCtrl"
+  >
+    <v-form
+      ref="form"
+      validate-on="invalid-input"
+      class="p-labels-search p-page__navigation"
+      @submit.stop.prevent="updateQuery()"
+    >
+      <v-toolbar
+        flat
+        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+        color="secondary"
+        class="page-toolbar"
+      >
         <v-text-field
-          :value="filter.q"
-          solo
+          :model-value="filter.q"
           hide-details
           clearable
           overflow
           single-line
-          validate-on-blur
-          class="input-search background-inherit elevation-0"
-          :label="$gettext('Search')"
-          prepend-inner-icon="search"
-          browser-autocomplete="off"
+          rounded
+          variant="solo-filled"
+          :density="density"
+          validate-on="invalid-input"
+          :placeholder="$gettext('Search')"
+          prepend-inner-icon="mdi-magnify"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          color="secondary-dark"
-          @change="
+          color="surface-variant"
+          class="input-search input-search--focus background-inherit elevation-0"
+          @update:model-value="
             (v) => {
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="() => updateQuery()"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -30,109 +48,150 @@
           "
         ></v-text-field>
 
-        <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-          <v-icon>refresh</v-icon>
+        <v-btn
+          v-if="!filter.all"
+          icon="mdi-eye"
+          :title="$gettext('Show more')"
+          class="action-show-all ms-1"
+          @click.stop="showAll"
+        >
         </v-btn>
-
-        <v-btn v-if="!filter.all" icon class="action-show-all" :title="$gettext('Show more')" @click.stop="showAll()">
-          <v-icon>unfold_more</v-icon>
+        <v-btn
+          v-else
+          icon="mdi-eye-off"
+          :title="$gettext('Show less')"
+          class="action-show-important ms-1"
+          @click.stop="showImportant"
+        >
         </v-btn>
-        <v-btn v-else icon class="action-show-important" :title="$gettext('Show less')" @click.stop="showImportant()">
-          <v-icon>unfold_less</v-icon>
-        </v-btn>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
-      <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-    </v-container>
-    <v-container v-else fluid class="pa-0">
-      <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-label-clipboard>
+    <div v-if="loading" class="p-page__loading">
+      <p-loading></p-loading>
+    </div>
+    <div v-else class="p-page__content">
+      <p-label-clipboard
+        v-if="canSelect"
+        :refresh="refresh"
+        :selection="selection"
+        :clear-selection="clearSelection"
+      ></p-label-clipboard>
 
-      <p-scroll-top></p-scroll-top>
+      <p-scroll
+        :load-more="loadMore"
+        :load-disabled="scrollDisabled"
+        :load-distance="scrollDistance"
+        :loading="loading"
+      ></p-scroll>
 
-      <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
-          <h3 class="body-2 ma-0 pa-0">
-            <translate>No labels found</translate>
-          </h3>
-          <p class="body-1 mt-2 mb-0 pa-0">
-            <translate>Try again using other filters or keywords.</translate>
-            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
-          </p>
+      <div v-if="results.length === 0" class="pa-3">
+        <v-alert color="surface-variant" icon="mdi-lightbulb-outline" class="no-results" variant="outlined">
+          <div class="font-weight-bold">
+            {{ $gettext(`No labels found`) }}
+          </div>
+          <div class="mt-2">
+            {{ $gettext(`Try again using other filters or keywords.`) }}
+            {{
+              $gettext(
+                `In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`
+              )
+            }}
+          </div>
         </v-alert>
-        <v-layout row wrap class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(label, index) in results" :key="label.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card" :class="label.classes(selection.includes(label.UID))" :to="label.route(view)" @contextmenu.stop="onContextMenu($event, index)">
-              <div class="card-background card"></div>
-              <v-img
-                :src="label.thumbnailUrl('tile_500')"
-                :alt="label.Name"
-                :transition="false"
-                aspect-ratio="1"
-                style="user-select: none"
-                class="card darken-1 clickable"
-                @touchstart.passive="input.touchStart($event, index)"
-                @touchend.stop.prevent="onClick($event, index)"
-                @mousedown.stop.prevent="input.mouseDown($event, index)"
-                @click.stop.prevent="onClick($event, index)"
+      </div>
+      <div
+        v-else
+        class="v-row search-results label-results cards-view"
+        :class="{ 'select-results': selection.length > 0 }"
+      >
+        <div
+          v-for="(label, index) in results"
+          :key="label.UID"
+          ref="items"
+          class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2"
+        >
+          <div
+            :data-uid="label.UID"
+            class="result not-selectable"
+            :class="label.classes(selection.includes(label.UID))"
+            @click="$router.push(label.route(view))"
+            @contextmenu.stop="onContextMenu($event, index)"
+          >
+            <div
+              :title="label.Name"
+              :style="`background-image: url(${label.thumbnailUrl('tile_500')})`"
+              class="preview"
+              @touchstart.passive="input.touchStart($event, index)"
+              @touchend.stop="onClick($event, index)"
+              @mousedown.stop.prevent="input.mouseDown($event, index)"
+              @click.stop.prevent="onClick($event, index)"
+            >
+              <div class="preview__overlay"></div>
+              <button
+                v-if="canSelect"
+                class="input-select"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onSelect($event, index)"
+                @touchmove.stop.prevent
+                @click.stop.prevent="onSelect($event, index)"
               >
-                <v-btn v-if="canSelect" :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
-                </v-btn>
+                <i class="mdi mdi-check-circle select-on" />
+                <i class="mdi mdi-circle-outline select-off" />
+              </button>
+              <button
+                class="input-favorite"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="toggleLike($event, index)"
+                @touchmove.stop.prevent
+                @click.stop.prevent="toggleLike($event, index)"
+              >
+                <i v-if="label.Favorite" class="mdi mdi-star text-favorite" />
+                <i v-else class="mdi mdi-star-outline" />
+              </button>
+            </div>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
-                </v-btn>
-              </v-img>
+            <div class="meta" @click.stop.prevent="">
+              <div v-if="canManage" class="meta-title inline-edit clickable" @click.stop.prevent="edit(label)">
+                {{ label.Name }}
+              </div>
+              <div v-else class="meta-title">
+                {{ label.Name }}
+              </div>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="label.Name" lazy class="inline-edit" @save="onSave(label)">
-                  <span v-if="label.Name" class="body-2 ma-0">
-                    {{ label.Name }}
-                  </span>
-                  <span v-else>
-                    <v-icon>edit</v-icon>
-                  </span>
-                  <template #input>
-                    <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
-                  </template>
-                </v-edit-dialog>
-                <span v-else class="body-2 ma-0">
-                  {{ label.Name }}
-                </span>
-              </v-card-title>
+              <div v-if="label.PhotoCount === 1" class="meta-count" @click.stop.prevent="">
+                {{ $gettext(`Contains one picture.`) }}
+              </div>
+              <div v-else-if="label.PhotoCount > 0" class="meta-count" @click.stop.prevent="">
+                {{ $gettext(`Contains %{n} pictures.`, { n: label.PhotoCount }) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
-                <div class="caption mb-2">
-                  <button v-if="label.PhotoCount === 1">
-                    <translate>Contains one picture.</translate>
-                  </button>
-                  <button v-else-if="label.PhotoCount > 0">
-                    <translate :translate-params="{ n: label.PhotoCount }">Contains %{n} pictures.</translate>
-                  </button>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-container>
+    <p-label-edit-dialog :visible="dialog.edit" :label="model" @close="dialog.edit = false"></p-label-edit-dialog>
   </div>
 </template>
 
 <script>
 import Label from "model/label";
-import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
+
+import PLoading from "component/loading.vue";
+import PActionMenu from "component/action/menu.vue";
 
 export default {
   name: "PPageLabels",
+  components: {
+    PLoading,
+    PActionMenu,
+  },
   props: {
     staticFilter: {
       type: Object,
@@ -171,10 +230,26 @@ export default {
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      labelToRename: "",
+      dialog: {
+        edit: false,
+      },
+      model: new Label(false),
     };
+  },
+  computed: {
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
   },
   watch: {
     $route() {
+      if (!this.$view.isActive(this)) {
+        return;
+      }
+
+      this.$view.focus(this.$refs?.page);
+
       const query = this.$route.query;
 
       this.routeName = this.$route.name;
@@ -188,17 +263,71 @@ export default {
   created() {
     this.search();
 
-    this.subscriptions.push(Event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
 
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
-  destroyed() {
+  mounted() {
+    this.$view.enter(this, this.$refs?.page);
+  },
+  beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
   },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
+    menuActions() {
+      return [
+        {
+          name: "refresh",
+          icon: "mdi-refresh",
+          text: this.$gettext("Refresh"),
+          visible: true,
+          click: () => {
+            this.refresh();
+          },
+        },
+        {
+          name: "docs",
+          icon: "mdi-book-open-page-variant-outline",
+          text: this.$gettext("Learn More"),
+          visible: true,
+          href: "https://docs.photoprism.app/user-guide/organize/labels/",
+          target: "_blank",
+        },
+      ];
+    },
+    onCtrl(ev) {
+      if (!ev || !(ev instanceof KeyboardEvent) || !ev.ctrlKey || !this.$view.isActive(this)) {
+        return;
+      }
+
+      switch (ev.code) {
+        case "KeyR":
+          ev.preventDefault();
+          this.refresh();
+          break;
+        case "KeyF":
+          ev.preventDefault();
+          this.$view.focus(this.$refs?.form, ".input-search input", true);
+          break;
+      }
+    },
+    edit(label) {
+      if (!label) {
+        return;
+      } else if (!this.canManage) {
+        this.$router.push(label.route(this.view));
+        return;
+      }
+
+      this.model = label;
+      this.dialog.edit = true;
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("labels_offset"));
 
@@ -311,7 +440,7 @@ export default {
       if (!this.canManage) {
         return;
       }
-
+      label.Name = this.labelToRename;
       label.update();
     },
     showAll() {
@@ -327,7 +456,7 @@ export default {
 
       if (pos === -1) {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -347,7 +476,7 @@ export default {
         this.lastId = "";
       } else {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -368,7 +497,7 @@ export default {
       this.lastId = "";
     },
     loadMore() {
-      if (this.scrollDisabled || this.$scrollbar.disabled()) return;
+      if (this.scrollDisabled || this.$view.isHidden(this)) return;
 
       this.scrollDisabled = true;
       this.listen = false;
@@ -400,7 +529,9 @@ export default {
           if (this.scrollDisabled) {
             this.setOffset(resp.offset);
             if (this.results.length > 1) {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), { n: this.results.length }));
+              this.$notify.info(
+                this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), { n: this.results.length })
+              );
             }
           } else {
             this.setOffset(resp.offset + resp.limit);
@@ -408,7 +539,7 @@ export default {
 
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }
@@ -523,7 +654,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
@@ -549,13 +680,15 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One label found"));
             } else {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), { n: this.results.length }));
+              this.$notify.info(
+                this.$gettextInterpolate(this.$gettext("%{n} labels found"), { n: this.results.length })
+              );
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 labels found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-                this.$emit("scrollRefresh");
+                this.loadMore();
               }
             });
           }

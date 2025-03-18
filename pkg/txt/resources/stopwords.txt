@@ -142,7 +142,6 @@ ai
 ain't
 aint
 al
-all
 allow
 allows
 almost

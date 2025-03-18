@@ -54,7 +54,7 @@ func TestDialectMysql(t *testing.T) {
 		t.Error(err)
 	}
 
-	stmt := db.Table("photos").Where("photo_description = '' OR photo_description IS NULL")
+	stmt := db.Table("photos").Where("photo_caption = '' OR photo_caption IS NULL")
 
 	count := 0
 

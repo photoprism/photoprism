@@ -1,8 +1,9 @@
 package thumb
 
+// Default thumbnail size limits (cached and uncached).
 var (
 	SizeCached   = SizeFit1920.Width
-	SizeOnDemand = SizeFit7680.Width
+	SizeOnDemand = SizeFit5120.Width
 )
 
 // MaxSize returns the max supported size in pixels.
@@ -50,9 +51,10 @@ var (
 	SizeFit1600  = Size{Fit1600, Fit1920, "Social Media", 1600, 900, false, true, true, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit1920  = Size{Fit1920, "", "Full HD", 1920, 1200, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit2048  = Size{Fit2048, Fit4096, "DCI 2K, Tablets", 2048, 2048, false, true, true, false, Options{ResampleFit, ResampleDefault}}
-	SizeFit2560  = Size{Fit2560, Fit4096, "Quad HD, Notebooks", 2560, 1600, true, true, false, false, Options{ResampleFit, ResampleDefault}}
+	SizeFit2560  = Size{Fit2560, Fit4096, "Quad HD", 2560, 1600, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit3840  = Size{Fit3840, Fit4096, "4K Ultra HD", 3840, 2400, false, true, true, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit4096  = Size{Fit4096, "", "DCI 4K, Retina 4K", 4096, 4096, true, true, false, false, Options{ResampleFit, ResampleDefault}}
+	SizeFit5120  = Size{Fit5120, "", "Retina 5K", 5120, 5120, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit7680  = Size{Fit7680, "", "8K Ultra HD 2", 7680, 4320, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 )
 
@@ -74,5 +76,6 @@ var Sizes = SizeMap{
 	Fit2560:  SizeFit2560,
 	Fit3840:  SizeFit3840, // Deprecated in favor of Fit4096
 	Fit4096:  SizeFit4096,
+	Fit5120:  SizeFit5120,
 	Fit7680:  SizeFit7680,
 }
