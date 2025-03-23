@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-18 08:04+0000\n"
+"PO-Revision-Date: 2025-03-23 13:45+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -999,11 +999,11 @@ msgstr "顯示名稱"
 
 #: src/page/settings/content.vue:305
 msgid "Display picture captions in search results."
-msgstr ""
+msgstr "在搜尋結果中顯示圖片標題。"
 
 #: src/page/settings/content.vue:283
 msgid "Display picture titles in search results."
-msgstr ""
+msgstr "在搜尋結果中顯示圖片標題。"
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
@@ -2721,7 +2721,7 @@ msgstr "顯示所有新面孔"
 
 #: src/page/settings/content.vue:304
 msgid "Show Captions"
-msgstr ""
+msgstr "顯示字幕"
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2741,7 +2741,7 @@ msgstr "在收藏庫中顯示伺服器日誌。"
 
 #: src/page/settings/content.vue:282
 msgid "Show Titles"
-msgstr ""
+msgstr "顯示標題"
 
 #: src/component/lightbox.vue:952 src/component/lightbox.vue:953
 msgid "Show/Hide Sidebar"

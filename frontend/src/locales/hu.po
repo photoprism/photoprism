@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-18 08:04+0000\n"
+"PO-Revision-Date: 2025-03-23 13:45+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -998,11 +998,11 @@ msgstr "Megjelenített név"
 
 #: src/page/settings/content.vue:305
 msgid "Display picture captions in search results."
-msgstr ""
+msgstr "Képaláírások megjelenítése a keresési eredményekben."
 
 #: src/page/settings/content.vue:283
 msgid "Display picture titles in search results."
-msgstr ""
+msgstr "Képcímek megjelenítése a keresési eredményekben."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
@@ -2720,7 +2720,7 @@ msgstr "Az összes új arc megjelenítése"
 
 #: src/page/settings/content.vue:304
 msgid "Show Captions"
-msgstr ""
+msgstr "Feliratok megjelenítése"
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2740,7 +2740,7 @@ msgstr "Szervernaplók megjelenítése a Könyvtárban."
 
 #: src/page/settings/content.vue:282
 msgid "Show Titles"
-msgstr ""
+msgstr "Címek megjelenítése"
 
 #: src/component/lightbox.vue:952 src/component/lightbox.vue:953
 msgid "Show/Hide Sidebar"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-18 08:04+0000\n"
+"PO-Revision-Date: 2025-03-23 13:45+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1009,11 +1009,11 @@ msgstr "Nom affiché"
 
 #: src/page/settings/content.vue:305
 msgid "Display picture captions in search results."
-msgstr ""
+msgstr "Affiche les légendes des images dans les résultats de recherche."
 
 #: src/page/settings/content.vue:283
 msgid "Display picture titles in search results."
-msgstr ""
+msgstr "Affiche les titres des images dans les résultats de recherche."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
@@ -2744,7 +2744,7 @@ msgstr "Montrer tous les nouveaux visages"
 
 #: src/page/settings/content.vue:304
 msgid "Show Captions"
-msgstr ""
+msgstr "Afficher les légendes"
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2764,7 +2764,7 @@ msgstr "Afficher les journaux serveurs dans Bibliothèque."
 
 #: src/page/settings/content.vue:282
 msgid "Show Titles"
-msgstr ""
+msgstr "Afficher les titres"
 
 #: src/component/lightbox.vue:952 src/component/lightbox.vue:953
 #, fuzzy

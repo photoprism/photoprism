@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-18 08:04+0000\n"
+"PO-Revision-Date: 2025-03-23 13:45+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -996,11 +996,11 @@ msgstr "Bistaratzeko izena"
 
 #: src/page/settings/content.vue:305
 msgid "Display picture captions in search results."
-msgstr ""
+msgstr "Bistaratu irudi-oinak bilaketa-emaitzetan."
 
 #: src/page/settings/content.vue:283
 msgid "Display picture titles in search results."
-msgstr ""
+msgstr "Bistaratu irudien izenburuak bilaketa-emaitzetan."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
@@ -2718,7 +2718,7 @@ msgstr "Erakutsi aurpegi berri guztiak"
 
 #: src/page/settings/content.vue:304
 msgid "Show Captions"
-msgstr ""
+msgstr "Erakutsi epigrafeak"
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2738,7 +2738,7 @@ msgstr "Erakutsi zerbitzariaren erregistroak Liburutegian."
 
 #: src/page/settings/content.vue:282
 msgid "Show Titles"
-msgstr ""
+msgstr "Erakutsi Izenburuak"
 
 #: src/component/lightbox.vue:952 src/component/lightbox.vue:953
 msgid "Show/Hide Sidebar"

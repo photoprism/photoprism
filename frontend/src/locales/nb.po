@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-18 08:04+0000\n"
+"PO-Revision-Date: 2025-03-23 13:45+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
@@ -999,11 +999,11 @@ msgstr "Vist navn"
 
 #: src/page/settings/content.vue:305
 msgid "Display picture captions in search results."
-msgstr ""
+msgstr "Vis bildetekster i søkeresultatene."
 
 #: src/page/settings/content.vue:283
 msgid "Display picture titles in search results."
-msgstr ""
+msgstr "Vis bildetitler i søkeresultatene."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
@@ -2721,7 +2721,7 @@ msgstr "Vis alle nye ansikter"
 
 #: src/page/settings/content.vue:304
 msgid "Show Captions"
-msgstr ""
+msgstr "Vis bildetekster"
 
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
@@ -2741,7 +2741,7 @@ msgstr "Vis server-logger i Biblioteket."
 
 #: src/page/settings/content.vue:282
 msgid "Show Titles"
-msgstr ""
+msgstr "Vis titler"
 
 #: src/component/lightbox.vue:952 src/component/lightbox.vue:953
 msgid "Show/Hide Sidebar"
