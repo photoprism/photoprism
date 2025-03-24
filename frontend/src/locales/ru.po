@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-23 13:45+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-24 20:20+0000\n"
+"Last-Translator: Anastasiia <andreevu88@gmail.com>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -433,7 +433,7 @@ msgstr "Вы уверены, что хотите навсегда удалить
 
 #: src/component/file/delete/dialog.vue:34
 msgid "Are you sure you want to permanently delete this file?"
-msgstr "Вы уверены, что хотите удалить этот файл?"
+msgstr "Вы уверены, что хотите навсегда удалить этот файл?"
 
 #: src/component/session/remove/dialog.vue:32
 #: src/component/confirm/dialog.vue:30
@@ -627,11 +627,11 @@ msgstr "Изменить пароль"
 
 #: src/page/settings/general.vue:562
 msgid "Change personal profile and security settings."
-msgstr "Изменение личного профиля и настроек безопасности."
+msgstr "Изменить личный профиль и настройки безопасности."
 
 #: src/page/settings/general.vue:394
 msgid "Change photo titles, locations, and other metadata."
-msgstr "Изменяйте названия фотографий, местоположения и другие метаданные."
+msgstr "Изменить названия фотографий, местоположения и другие метаданные."
 
 #: src/component/photo/clipboard.vue:103
 msgid "Change private flag"
@@ -771,11 +771,11 @@ msgstr "Содержание"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"
-msgstr "Продолжать"
+msgstr "Продолжить"
 
 #: src/page/auth/login.vue:291
 msgid "Continue with %{provider}"
-msgstr "Продолжай с %{provider}"
+msgstr "Продолжить с %{provider}"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -816,15 +816,15 @@ msgstr "Создать альбом"
 
 #: src/page/settings/advanced.vue:321
 msgid "Create regular backups based on the configured schedule."
-msgstr "Создавай резервные копии индексов по настроенному расписанию."
+msgstr "Создать резервные копии индексов по настроенному расписанию."
 
 #: src/page/settings/advanced.vue:344
 msgid "Create YAML files to back up album metadata."
-msgstr "Создай YAML-файлы для резервного копирования метаданных альбома."
+msgstr "Создать YAML-файлы для резервного копирования метаданных альбома."
 
 #: src/page/settings/advanced.vue:367
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "Создавай побочные файлы YAML для резервного копирования метаданных картинок."
+msgstr "Создать побочные файлы YAML для резервного копирования метаданных картинок."
 
 #: src/page/admin/sessions.vue:417 src/component/photo/edit/info.vue:412
 msgid "Created"
@@ -906,7 +906,7 @@ msgstr "Удалить все?"
 
 #: src/page/library/index.vue:111
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "Удаление бесхозных записей в индексе, файлов sidecar и миниатюр."
+msgstr "Удалить бесхозные записи в индексе, файлы sidecar и миниатюры."
 
 #: src/component/album/edit/dialog.vue:107 src/page/albums.vue:403
 msgid "Description"
@@ -919,7 +919,7 @@ msgstr "Подробные инструкции можно найти в наш�
 #: src/component/photo/edit/dialog.vue:150
 #: src/component/photo/edit/dialog.vue:167
 msgid "Details"
-msgstr "Подробно"
+msgstr "Детали"
 
 #: src/component/photo/edit/files.vue:41
 msgid "Dimensions"
@@ -951,7 +951,7 @@ msgstr "Отключить ImageMagick"
 
 #: src/page/settings/advanced.vue:225
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr "Отключи интерактивные карты мира и обратное геокодирование."
+msgstr "Отключить интерактивные карты мира и обратное геокодирование."
 
 #: src/page/settings/advanced.vue:224
 msgid "Disable Places"
@@ -988,7 +988,7 @@ msgstr "Исследование"
 
 #: src/locales.js:23
 msgid "Dismiss"
-msgstr "Откажись от"
+msgstr "Отклонить"
 
 #: src/component/user/add/dialog.vue:133 src/component/user/add/dialog.vue:134
 #: src/component/user/edit/dialog.vue:163
