@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-24 23:21+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-25 13:02+0000\n"
+"Last-Translator: Master3395 <kimskorgenes@hotmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
@@ -189,7 +189,7 @@ msgstr "Legg til %{s}?"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
-msgstr "Opprett Bruker"
+msgstr "Legg til konto"
 
 #: src/page/albums.vue:118 src/page/albums.vue:302
 msgid "Add Album"
@@ -1297,7 +1297,7 @@ msgstr "Filnavn"
 #: src/component/album/edit/dialog.vue:29 src/component/photo/toolbar.vue:120
 #: src/component/photo/toolbar.vue:131 src/component/photo/toolbar.vue:142
 msgid "File Size"
-msgstr "Fil"
+msgstr "Filstørrelse"
 
 #: src/component/photo/edit/files.vue:302
 msgid "Filename"
@@ -1388,7 +1388,7 @@ msgstr "Kom i gang"
 #: src/component/user/edit/dialog.vue:121 src/page/settings/account.vue:106
 #: src/page/settings/account.vue:108
 msgid "Given Name"
-msgstr "Originalnavn"
+msgstr "Fornavn"
 
 #: src/page/settings/advanced.vue:77
 msgid "Global Options"
@@ -1555,7 +1555,7 @@ msgstr "Intervall"
 #: src/common/form.js:318 src/common/form.js:326 src/common/form.js:329
 #: src/common/form.js:345 src/common/form.js:348
 msgid "Invalid"
-msgstr "Ugyldig dato"
+msgstr "Ugyldig"
 
 #: src/common/form.js:239 src/common/form.js:242
 msgid "Invalid address"
@@ -2023,7 +2023,7 @@ msgstr "Ingen servere konfigurert."
 
 #: src/page/settings/services.vue:37
 msgid "No services configured."
-msgstr "Ingen servere konfigurert."
+msgstr "Ingen tjenester konfigurert."
 
 #: src/component/confirm/sponsor.vue:72
 msgid "No thanks"
@@ -2080,7 +2080,7 @@ msgstr "Notater"
 
 #: src/page/library/logs.vue:23
 msgid "Nothing to see here yet."
-msgstr "Ingenting å se her ennå. Vær tålmodig."
+msgstr "Ingenting å se her ennå."
 
 #: src/page/admin/sessions.vue:116 src/page/admin/users.vue:115
 #: src/component/settings/apps.vue:390
@@ -3118,7 +3118,7 @@ msgstr "Oppdaterer øyeblikk"
 
 #: src/component/user/edit/dialog.vue:154
 msgid "Updating picture…"
-msgstr "Oppdaterer forhåndsvisninger"
+msgstr "Oppdaterer bildet …"
 
 #: src/page/library/index.vue:167
 msgid "Updating previews"
@@ -3187,7 +3187,7 @@ msgstr "Laster opp bilder…"
 
 #: src/page/settings/account.vue:137
 msgid "Uploading…"
-msgstr "Oppdaterer…"
+msgstr "Laster opp …"
 
 #: src/component/photo/upload/dialog.vue:203
 msgid "Uploads that may contain such images will be rejected automatically."
@@ -3392,7 +3392,7 @@ msgstr "Nettleseren din støtter ikke WebGL"
 #: src/component/confirm/sponsor.vue:43 src/page/about/about.vue:97
 #: src/page/about/about.vue:156 src/page/connect.vue:220
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Din fortsatte støtte hjelper oss med å finansiere driftskostnader, tilby tjenester som satellittkart og utvikle nye funksjoner."
+msgstr "Din fortsatte støtte hjelper oss med å gi regelmessige oppdateringer og forbli uavhengige, slik at vi kan oppfylle vårt oppdrag og beskytte personvernet ditt."
 
 #: src/page/albums.vue:284
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
