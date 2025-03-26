@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-24 23:21+0000\n"
+"PO-Revision-Date: 2025-03-26 11:54+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -449,7 +449,7 @@ msgstr "Küljesuhe"
 #: src/app/routes.js:250 src/component/navigation.vue:768
 #: src/options/options.js:217
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #: src/component/user/add/dialog.vue:190 src/component/user/edit/dialog.vue:309
 #: src/page/admin/sessions.vue:58 src/page/admin/sessions.vue:281
@@ -1841,7 +1841,7 @@ msgstr "Maksimaalne kontode arv on saavutatud."
 #: src/app/routes.js:229 src/component/navigation.vue:686
 #: src/options/options.js:131
 msgid "Media"
-msgstr ""
+msgstr "Meedia"
 
 #: src/options/options.js:152
 msgid "Medium"

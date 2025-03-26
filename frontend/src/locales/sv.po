@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-24 23:21+0000\n"
+"PO-Revision-Date: 2025-03-26 11:54+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
 "Language: sv\n"
@@ -452,7 +452,7 @@ msgstr "Bildförhållande"
 #: src/app/routes.js:250 src/component/navigation.vue:768
 #: src/options/options.js:217
 msgid "Audio"
-msgstr ""
+msgstr "Ljud"
 
 #: src/component/user/add/dialog.vue:190 src/component/user/edit/dialog.vue:309
 #: src/page/admin/sessions.vue:58 src/page/admin/sessions.vue:281
@@ -1844,7 +1844,7 @@ msgstr "Det maximala antalet konton har uppnåtts."
 #: src/app/routes.js:229 src/component/navigation.vue:686
 #: src/options/options.js:131
 msgid "Media"
-msgstr ""
+msgstr "Media"
 
 #: src/options/options.js:152
 msgid "Medium"
