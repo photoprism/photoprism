@@ -133,7 +133,7 @@ func TestIsNumeral(t *testing.T) {
 		assert.True(t, IsNumeral("1st"))
 	})
 	t.Run("2ND", func(t *testing.T) {
-		assert.True(t, IsNumeral("1ND"))
+		assert.True(t, IsNumeral("1ND"))  # codespell:ignore
 	})
 	t.Run("40th", func(t *testing.T) {
 		assert.True(t, IsNumeral("40th"))
