@@ -37,7 +37,7 @@ func AlbumDownloadName(c *gin.Context) customize.DownloadName {
 
 // DownloadAlbum streams the album contents as zip archive.
 //
-//	@Summary	streams the album contents as zip archiv
+//	@Summary	streams the album contents as zip archive
 //	@Id			DownloadAlbum
 //	@Tags		Images, Albums
 //	@Produce	application/zip

@@ -67,7 +67,7 @@ func GetVideo(router *gin.RouterGroup) {
 			return
 		}
 
-		// If file is not a video, try to find the realted video file.
+		// If file is not a video, try to find the related video file.
 		if !f.FileVideo {
 			f, err = query.VideoByPhotoUID(f.PhotoUID)
 
