@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-26 11:54+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-03-30 13:02+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.10.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:269
@@ -2557,7 +2557,7 @@ msgstr "Wiederherstellen"
 
 #: src/component/lightbox.vue:1813
 msgid "Restored"
-msgstr ""
+msgstr "Wiederhergestellt"
 
 #: src/component/service/edit.vue:428
 msgid "Retry Limit"
@@ -2706,7 +2706,7 @@ msgstr "Sessions"
 
 #: src/component/lightbox.vue:1142
 msgid "Set as Album Cover"
-msgstr ""
+msgstr "Als Albumcover verwenden"
 
 #: src/app/routes.js:101 src/app/routes.js:492 src/app/routes.js:504
 #: src/app/routes.js:521 src/app/routes.js:534 src/app/routes.js:547

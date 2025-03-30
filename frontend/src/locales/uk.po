@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-26 11:54+0000\n"
+"PO-Revision-Date: 2025-03-30 13:01+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.10.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:269
@@ -2557,7 +2557,7 @@ msgstr "Відновити"
 
 #: src/component/lightbox.vue:1813
 msgid "Restored"
-msgstr ""
+msgstr "Відновлено"
 
 #: src/component/service/edit.vue:428
 msgid "Retry Limit"
@@ -2706,7 +2706,7 @@ msgstr "Сесії"
 
 #: src/component/lightbox.vue:1142
 msgid "Set as Album Cover"
-msgstr ""
+msgstr "Встановити як обкладинку альбому"
 
 #: src/app/routes.js:101 src/app/routes.js:492 src/app/routes.js:504
 #: src/app/routes.js:521 src/app/routes.js:534 src/app/routes.js:547
