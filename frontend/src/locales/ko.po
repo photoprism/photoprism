@@ -2522,7 +2522,8 @@ msgid "remove failed: unknown album"
 msgstr "제거 실패 - 잘못된 앨범"
 
 #: src/component/photo/clipboard.vue:155
-msgid "Remove from album"
+#, fuzzy
+msgid "Remove from Album"
 msgstr "앨범에서 제거"
 
 #: src/page/library/import.vue:99

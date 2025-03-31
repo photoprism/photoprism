@@ -2522,7 +2522,8 @@ msgid "remove failed: unknown album"
 msgstr "निकालें विफल: अज्ञात एल्बम"
 
 #: src/component/photo/clipboard.vue:155
-msgid "Remove from album"
+#, fuzzy
+msgid "Remove from Album"
 msgstr "एल्बम से निकालें"
 
 #: src/page/library/import.vue:99
