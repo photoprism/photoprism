@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-31 19:42+0000\n"
+"PO-Revision-Date: 2025-03-31 23:53+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -189,11 +189,11 @@ msgstr "添加 %{s}?"
 
 #: src/component/sidebar/metadata.vue:59
 msgid "Add a caption"
-msgstr ""
+msgstr "添加标题"
 
 #: src/component/sidebar/metadata.vue:46
 msgid "Add a title"
-msgstr ""
+msgstr "添加标题"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
@@ -1557,7 +1557,7 @@ msgstr "索引媒体和附属文件…"
 
 #: src/component/sidebar/metadata.vue:27
 msgid "Info"
-msgstr ""
+msgstr "信息"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"

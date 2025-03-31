@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-31 19:42+0000\n"
+"PO-Revision-Date: 2025-03-31 23:53+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -186,11 +186,11 @@ msgstr "Voeg %{s} by?"
 
 #: src/component/sidebar/metadata.vue:59
 msgid "Add a caption"
-msgstr ""
+msgstr "Voeg 'n byskrif by"
 
 #: src/component/sidebar/metadata.vue:46
 msgid "Add a title"
-msgstr ""
+msgstr "Voeg 'n titel by"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
@@ -1554,7 +1554,7 @@ msgstr "Indekseer tans media- en syspanlêers …"
 
 #: src/component/sidebar/metadata.vue:27
 msgid "Info"
-msgstr ""
+msgstr "Inligting"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"

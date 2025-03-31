@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-31 19:42+0000\n"
+"PO-Revision-Date: 2025-03-31 23:53+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -189,11 +189,11 @@ msgstr "Tambah %{s}?"
 
 #: src/component/sidebar/metadata.vue:59
 msgid "Add a caption"
-msgstr ""
+msgstr "Tambah kapsyen"
 
 #: src/component/sidebar/metadata.vue:46
 msgid "Add a title"
-msgstr ""
+msgstr "Tambah tajuk"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
@@ -1557,7 +1557,7 @@ msgstr "Mengindeks media dan fail sampingan…"
 
 #: src/component/sidebar/metadata.vue:27
 msgid "Info"
-msgstr ""
+msgstr "info"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"

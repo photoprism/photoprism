@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-31 19:42+0000\n"
+"PO-Revision-Date: 2025-03-31 23:53+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -186,11 +186,11 @@ msgstr "Lisää %{s}?"
 
 #: src/component/sidebar/metadata.vue:59
 msgid "Add a caption"
-msgstr ""
+msgstr "Lisää kuvateksti"
 
 #: src/component/sidebar/metadata.vue:46
 msgid "Add a title"
-msgstr ""
+msgstr "Lisää otsikko"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
@@ -1554,7 +1554,7 @@ msgstr "Indeksoidaan media- ja sivutiedostoja…"
 
 #: src/component/sidebar/metadata.vue:27
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"
