@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-30 13:01+0000\n"
+"PO-Revision-Date: 2025-03-31 19:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
@@ -2944,7 +2944,7 @@ msgstr "TensorFlow er nødvendig for bildeklassifisering, ansiktsgjenkjenning og
 
 #: src/options/options.js:193
 msgid "Terrain"
-msgstr ""
+msgstr "Terreng"
 
 #: src/common/form.js:256
 msgid "Text"

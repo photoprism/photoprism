@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-30 13:01+0000\n"
+"PO-Revision-Date: 2025-03-31 19:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -2943,7 +2943,7 @@ msgstr "A TensorFlow-ra a képosztályozáshoz, az arcfelismeréshez és a nem b
 
 #: src/options/options.js:193
 msgid "Terrain"
-msgstr ""
+msgstr "Terep"
 
 #: src/common/form.js:256
 msgid "Text"

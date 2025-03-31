@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-30 13:01+0000\n"
+"PO-Revision-Date: 2025-03-31 19:41+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -2945,7 +2945,7 @@ msgstr "छवि वर्गीकरण, चेहरे की पहचा�
 
 #: src/options/options.js:193
 msgid "Terrain"
-msgstr ""
+msgstr "इलाके"
 
 #: src/common/form.js:256
 msgid "Text"

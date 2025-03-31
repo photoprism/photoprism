@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-30 13:01+0000\n"
+"PO-Revision-Date: 2025-03-31 19:42+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -2944,7 +2944,7 @@ msgstr "TensorFlow görüntü sınıflandırma, yüz tanıma ve güvenli olmayan
 
 #: src/options/options.js:193
 msgid "Terrain"
-msgstr ""
+msgstr "Arazi"
 
 #: src/common/form.js:256
 msgid "Text"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-30 13:01+0000\n"
+"PO-Revision-Date: 2025-03-31 19:42+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -2946,7 +2946,7 @@ msgstr "图像分类、面部识别和检测不安全内容都需要使用 Tenso
 
 #: src/options/options.js:193
 msgid "Terrain"
-msgstr ""
+msgstr "地形"
 
 #: src/common/form.js:256
 msgid "Text"
