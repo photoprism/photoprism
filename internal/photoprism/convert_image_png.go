@@ -14,7 +14,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	result = NewConvertCmds()
 
 	if f == nil {
-		return result, useMutex, fmt.Errorf("file is nil - you may have found a bug")
+		return result, useMutex, fmt.Errorf("no media file provided for processing - you may have found a bug")
 	}
 
 	// Find conversion command depending on the file type and runtime environment.

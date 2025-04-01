@@ -4,7 +4,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Develop indicates whether the application is running in development mode.
@@ -38,13 +40,31 @@ func EnvVars(flags ...string) (vars []string) {
 	return vars
 }
 
-// Env checks the presence of environment and command-line flags.
+// Env checks whether the specified boolean command-line or environment flag is set and can be used independently,
+// i.e. before the options are initialized with the values found in config files, the environment or CLI flags.
 func Env(vars ...string) bool {
 	for _, s := range vars {
-		if (os.Getenv(EnvVar(s)) == "true" || list.Contains(os.Args, "--"+s)) && !list.Contains(os.Args, "--"+s+"=false") {
+		if (txt.Bool(os.Getenv(EnvVar(s))) || list.Contains(os.Args, "--"+s)) &&
+			!list.Contains(os.Args, "--"+s+"=false") {
 			return true
 		}
 	}
 
 	return false
+}
+
+// FlagFileVar returns the name of the environment variable that can contain a filename to load a config value from.
+func FlagFileVar(flag string) string {
+	return EnvVar(flag) + "_FILE"
+}
+
+// FlagFilePath returns the name of the that contains the value of the specified config flag, if any.
+func FlagFilePath(flag string) string {
+	if envVar := os.Getenv(FlagFileVar(flag)); envVar == "" {
+		return ""
+	} else if absName := fs.Abs(envVar); fs.FileExistsNotEmpty(absName) {
+		return absName
+	}
+
+	return ""
 }

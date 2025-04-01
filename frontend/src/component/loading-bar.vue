@@ -1,9 +1,11 @@
 <template>
-  <transition id="p-loading-bar" :css="false" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
-    <div v-if="visible" class="top-progress" :style="barStyle">
-      <div class="peg" :style="pegStyle"></div>
-    </div>
-  </transition>
+  <div id="p-loading-bar" tabindex="-1">
+    <transition :css="false" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
+      <div v-if="visible" class="top-progress" :style="barStyle">
+        <div class="peg" :style="pegStyle"></div>
+      </div>
+    </transition>
+  </div>
 </template>
 <script>
 function clamp(n, min, max) {

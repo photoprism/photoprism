@@ -389,6 +389,13 @@ docker-build:
 docker-nvidia: docker-nvidia-up
 docker-nvidia-up:
 	docker compose -f compose.nvidia.yaml up
+docker-nvidia-build:
+	docker compose -f compose.nvidia.yaml up
+docker-intel: docker-intel-up
+docker-intel-up:
+	docker compose -f compose.intel.yaml up
+docker-intel-build:
+	docker compose -f compose.intel.yaml build
 docker-local-up:
 	$(DOCKER_COMPOSE) -f compose.local.yaml up --force-recreate
 docker-local-down:

@@ -25,15 +25,16 @@ type SearchPhotos struct {
 	Stack     bool      `form:"stack" notes:"Finds pictures with more than one media file"`
 	Unstacked bool      `form:"unstacked" notes:"Finds pictures with a file that has been removed from a stack"`
 	Stackable bool      `form:"stackable" notes:"Finds pictures that can be stacked with additional media files"`
-	Animated  bool      `form:"animated" notes:"Finds animations only"`
-	Audio     bool      `form:"audio" notes:"Finds audio recordings only"`
-	Document  bool      `form:"document" notes:"Finds documents only"`
-	Image     bool      `form:"image" notes:"Finds regular images only"`
-	Raw       bool      `form:"raw" notes:"Finds RAW images only"`
+	Photo     bool      `form:"photo" notes:"Finds regular photos and images, as well as RAW and Live Photos"`
+	Image     bool      `form:"image" notes:"Finds regular photos and images only"`
+	Raw       bool      `form:"raw" notes:"Finds RAW photos only"`
+	Media     bool      `form:"media" notes:"Finds Live Photos, videos, audio and animated content"`
+	Animated  bool      `form:"animated" notes:"Finds animated content only"`
+	Audio     bool      `form:"audio" notes:"Finds audio content only"`
+	Video     bool      `form:"video" notes:"Finds videos not categorized as Live Photos"`
 	Live      bool      `form:"live" notes:"Finds Live Photos and short videos"`
 	Vector    bool      `form:"vector" notes:"Finds vector graphics only"`
-	Video     bool      `form:"video" notes:"Finds videos only"`
-	Photo     bool      `form:"photo" notes:"Excludes videos and documents from search results"`
+	Document  bool      `form:"document" notes:"Finds PDF documents only"`
 	Scan      string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
 	Mp        string    `form:"mp" example:"mp:3-6" notes:"Resolution in Megapixels (MP)"`
 	Panorama  bool      `form:"panorama" notes:"Finds pictures with an aspect ratio > 1.9:1"`

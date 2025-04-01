@@ -27,7 +27,7 @@ func TestGPSBounds(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("China", func(t *testing.T) {
-		// Actual postion: Lat 39.8922, Lng 116.315
+		// Actual position: Lat 39.8922, Lng 116.315
 		latNorth, lngEast, latSouth, lngWest, err := GPSBounds("39.8922004699707,116.31500244140625,39.8922004699707,116.31500244140625")
 		assert.InEpsilon(t, 39.8924, latNorth, 0.00001)
 		assert.InEpsilon(t, 116.3152, lngEast, 0.00001)

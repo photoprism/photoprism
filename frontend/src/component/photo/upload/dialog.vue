@@ -11,7 +11,7 @@
     @after-leave="afterLeave"
   >
     <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="1" @submit.prevent="submit">
-      <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
+      <input ref="upload" type="file" multiple :accept="accept" class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
         <v-toolbar
           v-if="$vuetify.display.mdAndDown"
@@ -151,6 +151,7 @@ export default {
   data() {
     const isDemo = this.$config.get("demo");
     return {
+      accept: this.$config.get("uploadAllow"),
       albums: [],
       selectedAlbums: [],
       selected: [],

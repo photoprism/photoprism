@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/sirupsen/logrus"
 
 	"github.com/manifoldco/promptui"
@@ -42,7 +40,7 @@ func authResetAction(ctx *cli.Context) error {
 		// Show prompt?
 		if !confirmed {
 			actionPrompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Remove all sessions and reset the database table to a clean state?"),
+				Label:     "Remove all sessions and reset the database table to a clean state?",
 				IsConfirm: true,
 			}
 

@@ -1,0 +1,9 @@
+[codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git*,*.svg,go.sum,package-lock.json,*.css,.codespellrc,locales,stopwords.*,shortwords.*,countries.*,keywords.json,smallwords.*
+check-hidden = true
+# ACRONYMS and generally mixed case/Capitalized words
+# Also ignore some German
+ignore-regex = ^(SMethod=shal|biuld: build)$|https://\S+|\b([A-Z][a-zA-Z]+|ist auf)\b|"(datin|alis|hel)"|\bfixe == false\b
+# common variables or other tricky cases
+ignore-words-list = renderd,nd,folde,crate,ue,fo,ist,alo,mot,te,admiraal

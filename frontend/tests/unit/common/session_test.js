@@ -245,18 +245,18 @@ describe("common/session", () => {
   it("should use session storage", () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);
-    assert.equal(storage.getItem("sessionStorage"), null);
+    assert.equal(storage.getItem("session"), null);
     session.useSessionStorage();
-    assert.equal(storage.getItem("sessionStorage"), "true");
+    assert.equal(storage.getItem("session"), "true");
     session.deleteData();
   });
 
   it("should use local storage", () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);
-    assert.equal(storage.getItem("sessionStorage"), null);
+    assert.equal(storage.getItem("session"), null);
     session.useLocalStorage();
-    assert.equal(storage.getItem("sessionStorage"), "false");
+    assert.equal(storage.getItem("session"), "false");
     session.deleteData();
   });
 

@@ -22,7 +22,7 @@ import (
 // ToImage converts a media file to a directly supported image file format.
 func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err error) {
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil - you may have found a bug")
+		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
 	}
 
 	if !f.Exists() {
@@ -94,7 +94,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		case fs.ExtJpeg:
 			_, err = thumb.Jpeg(f.FileName(), imageName, f.Orientation())
 		default:
-			return nil, fmt.Errorf("convert: unspported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
+			return nil, fmt.Errorf("convert: unsupported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
 		}
 
 		// Check result.
@@ -121,7 +121,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		cmds, useMutex, err = w.JpegConvertCmds(f, imageName, xmpName)
 		expectedMime = header.ContentTypeJpeg
 	default:
-		return nil, fmt.Errorf("convert: unspported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
+		return nil, fmt.Errorf("convert: unsupported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
 	}
 
 	if err != nil {

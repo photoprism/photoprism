@@ -20,6 +20,7 @@ type GeoResult struct {
 	PhotoLng      float64       `json:"Lng" select:"photos.photo_lng"`
 	TakenAt       time.Time     `json:"TakenAt" select:"photos.taken_at"`
 	TakenAtLocal  time.Time     `json:"TakenAtLocal" select:"photos.taken_at_local"`
+	TimeZone      string        `json:"TimeZone" select:"photos.time_zone"`
 	PhotoFavorite bool          `json:"Favorite,omitempty" select:"photos.photo_favorite"`
 	PhotoDuration time.Duration `json:"Duration,omitempty" select:"photos.photo_duration"`
 	FileID        uint          `json:"-" select:"files.id AS file_id"` // File
@@ -45,7 +46,7 @@ func (m GeoResult) Lng() float64 {
 // IsPlayable returns true if the photo has a related video/animation that is playable.
 func (m GeoResult) IsPlayable() bool {
 	switch m.PhotoType {
-	case entity.MediaVideo, entity.MediaLive, entity.MediaAnimated:
+	case entity.MediaLive, entity.MediaVideo, entity.MediaAudio, entity.MediaAnimated:
 		return true
 	default:
 		return false

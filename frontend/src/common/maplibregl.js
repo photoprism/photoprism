@@ -168,3 +168,5 @@ maplibregl.setRTLTextPlugin(
   `${$config.staticUri}/plugins/maplibre-gl-rtl-text/v0.2.3/maplibre-gl-rtl-text.js`,
   true // Lazy load the plugin
 );
+
+export default maplibregl;

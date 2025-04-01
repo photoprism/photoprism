@@ -33,12 +33,12 @@
             </v-col>
             <v-col cols="12">
               <v-autocomplete
+                v-model:search="search"
                 :model-value="service ? path : null"
                 hide-details
                 hide-no-data
                 autocomplete="off"
                 :hint="$gettext('Folder')"
-                :search.sync="search"
                 :items="pathItems"
                 :loading="loading"
                 :disabled="loading || noServices"

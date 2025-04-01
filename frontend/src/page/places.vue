@@ -6,7 +6,7 @@
     :class="$config.aclClasses('places')"
     @keydown="onKeyDown"
   >
-    <div class="places">
+    <div class="places" :class="'places--' + projection">
       <div v-if="mapError">
         <v-toolbar
           flat
@@ -50,7 +50,7 @@
         </div>
       </div>
       <div ref="background" class="map-background"></div>
-      <div ref="map" class="map-container" :class="{ 'map-loaded': initialized }"></div>
+      <div ref="map" class="map-container" :class="{ 'map-loaded': mapLoaded }"></div>
       <div v-if="showCluster" class="cluster-control">
         <v-card class="cluster-control-container">
           <p-page-photos ref="cluster" :static-filter="cluster" :on-close="closeCluster" :embedded="true" />
@@ -61,13 +61,17 @@
 </template>
 
 <script>
-import maplibregl from "maplibre-gl";
 import $api from "common/api";
 import $fullscreen from "common/fullscreen";
 import * as sky from "common/sky";
+import * as options from "options/options";
 import Thumb from "model/thumb";
 import PPagePhotos from "page/photos.vue";
 import MapStyleControl from "component/places/style-control";
+
+const ProjectionGlobe = "globe";
+const ProjectionMercator = "mercator";
+const ProjectionVertical = "vertical-perspective";
 
 // Pixels the map pans when the up or down arrow is clicked:
 const deltaDistance = 100;
@@ -79,6 +83,9 @@ const deltaDegrees = 25;
 const easing = (t) => {
   return t * (2 - t);
 };
+
+// MapLibre GL.
+let maplibregl;
 
 export default {
   name: "PPagePlaces",
@@ -98,10 +105,9 @@ export default {
     };
 
     const settings = this.$config.getSettings();
+    const features = settings.features;
 
-    if (settings) {
-      const features = settings.features;
-
+    if (features) {
       if (features.private) {
         filter.public = "true";
       }
@@ -114,6 +120,8 @@ export default {
     return {
       isRtl: this.$config.isRtl(),
       canSearch: this.$config.allow("places", "search"),
+      canUpload: this.$config.allow("files", "upload") && features.upload,
+      featExperimental: this.$config.featExperimental(),
       initialized: false,
       map: null,
       mapError: false,
@@ -122,10 +130,12 @@ export default {
       clusterIds: [],
       loading: false,
       style: "",
+      projection: "",
       mapStyles: [],
       terrain: {
         "topo-v2": "terrain_rgb",
         "outdoor-v2": "terrain-rgb",
+        "0195eda5-6f09-7acd-8520-ab103fc75810": "terrain-rgb-v2",
         "414c531c-926d-4164-a057-455a215c0eee": "terrain_rgb_virtual",
       },
       attribution:
@@ -141,6 +151,8 @@ export default {
       config: this.$config.values,
       settings: settings.maps,
       animate: settings.maps.animate,
+      mapLoaded: false,
+      skyRendered: false,
     };
   },
   watch: {
@@ -158,17 +170,38 @@ export default {
       this.search();
     },
   },
+  created() {
+    if (this.$config.has("mapKey")) {
+      this.mapStyles = options.MapsStyle(this.featExperimental);
+    } else {
+      this.mapStyles = options.MapsStyle(this.featExperimental).filter((s) => !s.Sponsor);
+    }
+  },
   mounted() {
     this.$view.enter(this);
-    this.initMap()
-      .then(() => {
-        this.renderMap();
-        this.openClusterFromUrl();
-        this.renderSky();
-      })
-      .catch((err) => {
-        this.mapError = err;
+
+    // Dynamically import MapLibre GL JS to reduce bundle size:
+    // https://maplibre.org/maplibre-gl-js/docs/
+    try {
+      import(
+        /* webpackChunkName: "maplibregl" */
+        /* webpackMode: "lazy" */
+        "../common/maplibregl.js"
+      ).then((module) => {
+        maplibregl = module.default;
+
+        this.initMap()
+          .then(() => {
+            this.renderMap();
+            this.openClusterFromUrl();
+          })
+          .catch((err) => {
+            this.mapError = err;
+          });
       });
+    } catch (error) {
+      console.error(`failed to load maplibregl:`, error);
+    }
   },
   beforeUnmount() {
     // Exit fullscreen mode if enabled, has no effect otherwise.
@@ -179,9 +212,10 @@ export default {
   },
   methods: {
     renderSky() {
-      if (sky.render && this.$refs.background) {
+      if (!this.skyRendered && sky.render && this.$refs.background) {
         this.$nextTick(() => {
           sky.render(this.$refs.background, 320);
+          this.skyRendered = true;
         });
       }
     },
@@ -203,6 +237,12 @@ export default {
           case "KeyF":
             ev.preventDefault();
             this.$view.focus(this.$refs?.search, ".input-search input", false);
+            break;
+          case "KeyU":
+            ev.preventDefault();
+            if (this.canUpload) {
+              this.$event.publish("dialog.upload");
+            }
             break;
         }
       } else if (this.initialized) {
@@ -242,18 +282,41 @@ export default {
         return;
       }
 
-      const currentProjection = this.map.getProjection()?.type;
+      const currentProjection = this.getProjection();
 
-      let newProjection;
-
-      if (currentProjection === "mercator" || !currentProjection) {
-        newProjection = "globe";
-        this.map.setZoom(3);
+      if (currentProjection === ProjectionMercator || !currentProjection) {
+        this.setProjection(ProjectionGlobe);
       } else {
-        newProjection = "mercator";
+        this.setProjection(ProjectionMercator);
+      }
+    },
+    getProjection(fromStorage) {
+      if (fromStorage || !this.map || typeof this.map.getProjection !== "function") {
+        const lastProjection = localStorage.getItem("places.projection");
+        return lastProjection ? lastProjection : "";
+      }
+
+      return this.map.getProjection()?.type;
+    },
+    setProjection(newProjection) {
+      const currentProjection = this.getProjection();
+
+      if (currentProjection === newProjection) {
+        return;
+      }
+
+      switch (newProjection) {
+        case ProjectionGlobe:
+          this.map.setZoom(3);
+          break;
+        case ProjectionMercator:
+          break;
+        case ProjectionVertical:
+          break;
       }
 
       this.map.setProjection({ type: newProjection });
+      this.projection = newProjection;
 
       if (!(this.$refs?.map instanceof HTMLElement)) {
         return;
@@ -263,7 +326,7 @@ export default {
 
       if (btn && btn instanceof HTMLElement) {
         switch (newProjection) {
-          case "globe":
+          case ProjectionGlobe:
             btn.classList.add("maplibregl-ctrl-globe-enabled");
             btn.classList.remove("maplibregl-ctrl-globe");
             btn.classList.title = this.map._getUIString("GlobeControl.Disable");
@@ -274,6 +337,18 @@ export default {
             btn.classList.title = this.map._getUIString("GlobeControl.Enable");
             break;
         }
+      }
+    },
+    onProjectionChange(ev) {
+      // Update current projection.
+      this.projection = ev.newProjection;
+
+      // Remember last used projection.
+      localStorage.setItem("places.projection", ev.newProjection);
+
+      // Render sky if new project is globe.
+      if (ev.newProjection === ProjectionGlobe) {
+        this.renderSky();
       }
     },
     noWebGlSupport() {
@@ -355,13 +430,16 @@ export default {
       switch (style) {
         case "basic":
         case "offline":
-          this.style = "";
+          this.style = this.featExperimental ? "low-resolution" : "default";
           break;
         case "streets":
           this.style = "streets-v2";
           break;
         case "hybrid":
           this.style = "414c531c-926d-4164-a057-455a215c0eee";
+          break;
+        case "satellite":
+          this.style = "0195eda5-6f09-7acd-8520-ab103fc75810";
           break;
         case "outdoor":
           this.style = "outdoor-v2";
@@ -378,35 +456,6 @@ export default {
 
       if (!mapKey && this.style !== "low-resolution") {
         this.style = "default";
-      }
-
-      // Set available map styles.
-      this.mapStyles = [
-        {
-          title: this.$gettext("Default"),
-          style: "default",
-        },
-      ];
-
-      if (mapKey) {
-        this.mapStyles.push(
-          {
-            title: this.$gettext("Streets"),
-            style: "streets",
-          },
-          {
-            title: this.$gettext("Satellite"),
-            style: "414c531c-926d-4164-a057-455a215c0eee",
-          },
-          {
-            title: this.$gettext("Outdoor"),
-            style: "outdoor-v2",
-          },
-          {
-            title: this.$gettext("Topographic"),
-            style: "topo-v2",
-          }
-        );
       }
 
       let mapOptions = {
@@ -729,6 +778,7 @@ export default {
         .get("geo", options)
         .then((response) => {
           if (!response.data.features || response.data.features.length === 0) {
+            this.initialized = true;
             this.loading = false;
 
             this.$notify.warn(this.$gettext("No pictures found"));
@@ -756,12 +806,30 @@ export default {
           this.updateMarkers();
         })
         .catch(() => {
+          this.initialized = true;
           this.loading = false;
         });
     },
     renderMap() {
+      const lastProjection = this.getProjection(true);
+
       this.map = new maplibregl.Map(this.options);
       this.map.setLanguage(this.$config.values.settings.ui.language.split("-")[0]);
+
+      // Get informed about projection type changes.
+      this.map.on("projectiontransition", (ev) => this.onProjectionChange(ev));
+
+      // Restore last used projection type, if any.
+      if (lastProjection) {
+        this.projection = lastProjection;
+
+        // Restore last used projection type.
+        this.map.on("style.load", () => {
+          this.map.setProjection({
+            type: lastProjection,
+          });
+        });
+      }
 
       const controlPos = "top-right";
 
@@ -982,6 +1050,9 @@ export default {
     onMapLoad() {
       this.minimizeAttribCtrl();
 
+      // Get projection type from map.
+      this.projection = this.getProjection();
+
       // Add 'photos' data source.
       this.map.addSource("photos", {
         type: "geojson",
@@ -1019,7 +1090,9 @@ export default {
       this.map.on("idle", this.updateMarkers);
 
       // Load pictures.
-      this.search();
+      this.search().finally(() => {
+        this.mapLoaded = true;
+      });
     },
   },
 };

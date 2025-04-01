@@ -1,6 +1,6 @@
 <template>
   <v-menu
-    class="p-action-menu action-menu"
+    class="p-action-menu action-menu action-menu--default"
     transition="slide-y-transition"
     open-on-click
     open-on-hover
@@ -8,9 +8,9 @@
   >
     <template #activator="{ props }">
       <v-btn
-        density="comfortable"
-        icon="mdi-dots-vertical"
         v-bind="props"
+        density="comfortable"
+        :icon="buttonIcon"
         class="action-menu__btn"
         :class="buttonClass"
       ></v-btn>
@@ -33,6 +33,9 @@
         class="action-menu__item"
         @click="action.click"
       >
+        <template v-if="action.shortcut && !$isMobile" #append>
+          <div class="action-menu__shortcut">{{ action.shortcut }}</div>
+        </template>
       </v-list-item>
     </v-list>
   </v-menu>

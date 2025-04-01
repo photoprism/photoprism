@@ -49,7 +49,7 @@ func TestExtList_Ok(t *testing.T) {
 }
 
 func TestExtList_Contains(t *testing.T) {
-	t.Run("DNG", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
@@ -60,8 +60,22 @@ func TestExtList_Contains(t *testing.T) {
 	})
 }
 
+func TestExtList_Excludes(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		list := NewExtList("dng")
+		assert.False(t, list.Excludes("dng"))
+		assert.True(t, list.Excludes("cr2"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		list := NewExtList("")
+		assert.False(t, list.Excludes(""))
+		assert.False(t, list.Excludes("dng"))
+		assert.False(t, list.Excludes("cr2"))
+	})
+}
+
 func TestExtList_Set(t *testing.T) {
-	t.Run("DNG, CR2", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
@@ -69,7 +83,7 @@ func TestExtList_Set(t *testing.T) {
 		assert.True(t, list.Contains("dng"))
 		assert.True(t, list.Contains("cr2"))
 	})
-	t.Run("DNG", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
@@ -80,7 +94,7 @@ func TestExtList_Set(t *testing.T) {
 }
 
 func TestExtList_Add(t *testing.T) {
-	t.Run("DNG, CR2", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
@@ -88,12 +102,46 @@ func TestExtList_Add(t *testing.T) {
 		assert.True(t, list.Contains("dng"))
 		assert.True(t, list.Contains("cr2"))
 	})
-	t.Run("DNG", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
 		list.Add("")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
+	})
+}
+
+func TestExtList_String(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
+		list := NewExtList("jpg")
+		assert.Equal(t, "jpg", list.String())
+	})
+	t.Run("Two", func(t *testing.T) {
+		list := NewExtList("dng, CR2")
+		assert.Equal(t, "cr2, dng", list.String())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		list := NewExtList("")
+		assert.Equal(t, "", list.String())
+	})
+}
+
+func TestExtList_Accept(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
+		list := NewExtList("jpg")
+		assert.Equal(t, ".jpg", list.Accept())
+	})
+	t.Run("Two", func(t *testing.T) {
+		list := NewExtList("mp4, avi")
+		assert.Equal(t, ".avi,.mp4", list.Accept())
+	})
+	t.Run("Jpeg", func(t *testing.T) {
+		list := NewExtList("jpg,jpeg,jxl")
+		assert.Equal(t, ".jpeg,.jpg,.jxl", list.Accept())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		list := NewExtList("")
+		assert.Equal(t, "", list.Accept())
 	})
 }

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-18 08:04+0000\n"
+"PO-Revision-Date: 2025-03-31 23:53+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
@@ -11,38 +11,38 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.10.4\n"
 "Generated-By: easygettext\n"
 
-#: src/locales.js:84
+#: src/locales.js:269
 msgid "{0} appended action"
 msgstr "{0} acțiune anexată"
 
-#: src/locales.js:88
+#: src/locales.js:273
 msgid "{0} files"
 msgstr "{0} fișiere"
 
-#: src/locales.js:89
+#: src/locales.js:274
 msgid "{0} files ({1} in total)"
 msgstr "{0} fișiere ({1} în total)"
 
-#: src/locales.js:78
+#: src/locales.js:263
 msgid "{0} more"
 msgstr "{0} mai mult"
 
-#: src/locales.js:83
+#: src/locales.js:268
 msgid "{0} prepended action"
 msgstr "{0} acțiune precedată"
 
-#: src/locales.js:58
+#: src/locales.js:243
 msgid "{0} selected"
 msgstr "{0} selectat"
 
-#: src/locales.js:52
+#: src/locales.js:237
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} din {2}"
 
-#: src/page/albums.vue:593
+#: src/page/albums.vue:601
 msgid "%{n} albums found"
 msgstr "%{n} albume găsite"
 
@@ -54,11 +54,11 @@ msgstr "%{n} fișiere încărcate"
 msgid "%{n} folders found"
 msgstr "%{n} foldere găsite"
 
-#: src/component/navigation.vue:1624
+#: src/component/navigation.vue:1674
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB de %{q} GB utilizați"
 
-#: src/page/labels.vue:505
+#: src/page/labels.vue:524
 msgid "%{n} labels found"
 msgstr "%{n} etichete găsite"
 
@@ -67,8 +67,8 @@ msgstr "%{n} etichete găsite"
 msgid "%{n} people found"
 msgstr "%{n} persoane găsite"
 
-#: src/page/album/photos.vue:305 src/page/album/photos.vue:479
-#: src/page/photos.vue:427 src/page/photos.vue:606
+#: src/page/album/photos.vue:313 src/page/album/photos.vue:489
+#: src/page/photos.vue:435 src/page/photos.vue:616
 msgid "%{n} pictures found"
 msgstr "%{n} imagini găsite"
 
@@ -80,11 +80,11 @@ msgstr "%{s} este prea lung"
 msgid "%{s} is too short"
 msgstr "%{s} este prea scurt"
 
-#: src/options/options.js:458
+#: src/options/options.js:294
 msgid "1 hour"
 msgstr "1 oră"
 
-#: src/options/options.js:460
+#: src/options/options.js:296
 msgid "12 hours"
 msgstr "12 ore"
 
@@ -97,7 +97,7 @@ msgstr "Autentificare cu 2 factori"
 msgid "2FA"
 msgstr "2FA"
 
-#: src/options/options.js:459
+#: src/options/options.js:295
 msgid "4 hours"
 msgstr "4 ore"
 
@@ -112,7 +112,7 @@ msgstr "O nouă versiune a %{s} este disponibilă:"
 #: src/component/user/edit/dialog.vue:233
 #: src/component/user/edit/dialog.vue:234 src/page/about/about.vue:56
 #: src/page/settings/account.vue:248 src/page/settings/account.vue:249
-#: src/app/routes.js:63 src/component/navigation.vue:1469
+#: src/app/routes.js:63 src/component/navigation.vue:1519
 #: src/page/people/recognized.vue:288
 msgid "About"
 msgstr "Despre"
@@ -121,7 +121,7 @@ msgstr "Despre"
 msgid "Access Token"
 msgstr "Token de acces"
 
-#: src/component/navigation.vue:87 src/component/navigation.vue:1736
+#: src/component/navigation.vue:87 src/component/navigation.vue:1786
 #: src/component/service/upload.vue:71 src/model/service.js:96
 #: src/model/user.js:171 src/page/settings.vue:85
 #: src/page/settings/general.vue:561
@@ -162,15 +162,15 @@ msgstr "Acțiuni"
 msgid "Activate"
 msgstr "Activați"
 
-#: src/locales.js:39
+#: src/locales.js:224
 msgid "Activate to remove sorting."
 msgstr "Activați pentru a elimina sortarea."
 
-#: src/locales.js:41
+#: src/locales.js:226
 msgid "Activate to sort ascending."
 msgstr "Activați pentru sortare crescătoare."
 
-#: src/locales.js:40
+#: src/locales.js:225
 msgid "Activate to sort descending."
 msgstr "Activați pentru a sorta descrescător."
 
@@ -186,6 +186,14 @@ msgstr "Adăugați"
 #: src/component/photo/edit/people.vue:162 src/page/people/new.vue:241
 msgid "Add %{s}?"
 msgstr "Adaugă %{s}?"
+
+#: src/component/sidebar/metadata.vue:59
+msgid "Add a caption"
+msgstr "Adăugați o legendă"
+
+#: src/component/sidebar/metadata.vue:46
+msgid "Add a title"
+msgstr "Adăugați un titlu"
 
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
@@ -233,15 +241,15 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Avansat"
 
-#: src/options/options.js:468
+#: src/options/options.js:304
 msgid "After 1 day"
 msgstr "După 1 zi"
 
-#: src/options/options.js:469
+#: src/options/options.js:305
 msgid "After 3 days"
 msgstr "După 3 zile"
 
-#: src/options/options.js:470
+#: src/options/options.js:306
 msgid "After 7 days"
 msgstr "După 7 zile"
 
@@ -249,11 +257,11 @@ msgstr "După 7 zile"
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "După ce ați introdus parola pentru confirmare, puteți configura autentificarea cu doi factori cu o aplicație sau un dispozitiv de autentificare compatibil:"
 
-#: src/options/options.js:472
+#: src/options/options.js:308
 msgid "After one month"
 msgstr "După o lună"
 
-#: src/options/options.js:474
+#: src/options/options.js:310
 msgid "After one year"
 msgstr "După un an"
 
@@ -261,15 +269,15 @@ msgstr "După un an"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "După selectarea imaginilor din rezultatele căutării, le puteți adăuga la un album utilizând meniul contextual."
 
-#: src/options/options.js:473
+#: src/options/options.js:309
 msgid "After two months"
 msgstr "După două luni"
 
-#: src/options/options.js:471
+#: src/options/options.js:307
 msgid "After two weeks"
 msgstr "După două săptămâni"
 
-#: src/model/album.js:229
+#: src/model/album.js:243
 msgid "Album"
 msgstr "Album"
 
@@ -277,13 +285,13 @@ msgstr "Album"
 msgid "Album Backups"
 msgstr "Copii de rezervă ale albumelor"
 
-#: src/page/albums.vue:645
+#: src/page/albums.vue:653
 msgid "Album created"
 msgstr "Album creat"
 
-#: src/app/routes.js:176 src/component/album/toolbar.vue:63
-#: src/component/navigation.vue:617 src/component/navigation.vue:1830
-#: src/component/photo/edit/info.vue:220 src/options/options.js:311
+#: src/app/routes.js:176 src/component/album/toolbar.vue:51
+#: src/component/navigation.vue:602 src/component/navigation.vue:1880
+#: src/component/photo/edit/info.vue:220 src/options/options.js:130
 msgid "Albums"
 msgstr "Albume"
 
@@ -291,15 +299,15 @@ msgstr "Albume"
 msgid "Albums deleted"
 msgstr "Albume șterse"
 
-#: src/locales.js:34 src/locales.js:47
+#: src/locales.js:219 src/locales.js:232
 msgid "All"
 msgstr "Toate"
 
-#: src/page/albums.vue:449
+#: src/page/albums.vue:457
 msgid "All %{n} albums loaded"
 msgstr "Toate albumele %{n} încărcate"
 
-#: src/page/labels.vue:354
+#: src/page/labels.vue:373
 msgid "All %{n} labels loaded"
 msgstr "Toate etichetele %{n} încărcate"
 
@@ -307,12 +315,12 @@ msgstr "Toate etichetele %{n} încărcate"
 msgid "All %{n} people loaded"
 msgstr "Toate %{n} persoane încărcate"
 
-#: src/component/album/toolbar.vue:42 src/component/photo/toolbar.vue:71
+#: src/component/photo/toolbar.vue:71
 msgid "All Cameras"
 msgstr "Toate camerele de luat vederi"
 
 #: src/component/photo/toolbar.vue:74 src/page/albums.vue:43
-#: src/page/albums.vue:224 src/page/albums.vue:717
+#: src/page/albums.vue:232 src/page/albums.vue:725
 msgid "All Categories"
 msgstr "Toate categoriile"
 
@@ -320,7 +328,7 @@ msgstr "Toate categoriile"
 msgid "All Colors"
 msgstr "Toate culorile"
 
-#: src/component/album/toolbar.vue:48 src/component/photo/toolbar.vue:70
+#: src/component/photo/toolbar.vue:70
 msgid "All Countries"
 msgstr "Toate țările"
 
@@ -360,14 +368,15 @@ msgstr "Altitudine"
 msgid "Altitude (m)"
 msgstr "Altitudine (m)"
 
-#: src/locales.js:97
+#: src/locales.js:282
 msgid "AM"
 msgstr "AM"
 
-#: src/component/navigation.vue:418 src/component/photo/edit/files.vue:364
+#: src/app/routes.js:257 src/component/navigation.vue:789
+#: src/component/photo/edit/files.vue:364
 #: src/component/photo/view/cards.vue:327
 #: src/component/photo/view/cards.vue:511 src/component/photo/view/list.vue:184
-#: src/component/photo/view/mosaic.vue:171 src/options/options.js:389
+#: src/component/photo/view/mosaic.vue:171 src/options/options.js:233
 msgid "Animated"
 msgstr "Animat"
 
@@ -379,7 +388,7 @@ msgstr "Animație"
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Orice fotografii și videoclipuri private rămân private și nu vor fi partajate."
 
-#: src/component/service/edit.vue:370
+#: src/component/service/edit.vue:372
 msgid "API Key"
 msgstr "Cheie API"
 
@@ -401,13 +410,13 @@ msgstr "Aprobarea"
 msgid "Apps and Devices"
 msgstr "Aplicații și dispozitive"
 
-#: src/app/routes.js:266 src/component/navigation.vue:568
-#: src/component/photo/clipboard.vue:142 src/component/photo/view/cards.vue:398
-#: src/page/settings/general.vue:417
+#: src/app/routes.js:287 src/component/lightbox.vue:1173
+#: src/component/navigation.vue:553 src/component/photo/clipboard.vue:142
+#: src/component/photo/view/cards.vue:398 src/page/settings/general.vue:417
 msgid "Archive"
 msgstr "Arhiva"
 
-#: src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:1851 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "Arhivat"
 
@@ -448,6 +457,11 @@ msgstr "Artist"
 msgid "Aspect Ratio"
 msgstr "Raportul de aspect"
 
+#: src/app/routes.js:250 src/component/navigation.vue:768
+#: src/options/options.js:229
+msgid "Audio"
+msgstr "Audio"
+
 #: src/component/user/add/dialog.vue:190 src/component/user/edit/dialog.vue:309
 #: src/page/admin/sessions.vue:58 src/page/admin/sessions.vue:281
 #: src/page/admin/users.vue:73
@@ -470,7 +484,7 @@ msgstr "Înapoi la începutul paginii"
 msgid "Backup"
 msgstr "Backup"
 
-#: src/locales.js:20
+#: src/locales.js:205
 msgid "Badge"
 msgstr "Insignă"
 
@@ -497,24 +511,24 @@ msgstr "Biografie"
 msgid "Birth Date"
 msgstr "Data nașterii"
 
-#: src/options/options.js:493
+#: src/options/options.js:329
 msgid "Black"
 msgstr "Negru"
 
-#: src/options/options.js:521
+#: src/options/options.js:357
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: modificarea Lanczos, mai puține artefacte care sună"
 
-#: src/options/options.js:489
+#: src/options/options.js:325
 msgid "Blue"
 msgstr "Albastru"
 
-#: src/options/options.js:490
+#: src/options/options.js:326
 msgid "Brown"
 msgstr "Maro"
 
 #: src/component/photo/edit/files.vue:263 src/component/photo/toolbar.vue:132
-#: src/component/photo/upload/dialog.vue:238
+#: src/component/photo/upload/dialog.vue:240
 msgid "Browse"
 msgstr "Răsfoiți"
 
@@ -526,7 +540,7 @@ msgstr "Răsfoiți și editați etichetele de clasificare a imaginilor."
 msgid "Browse and share your pictures organized into monthly albums."
 msgstr "Răsfoiți și partajați imaginile dvs. organizate în albume lunare."
 
-#: src/locales.js:94
+#: src/locales.js:279
 msgid "Browse Files"
 msgstr "Răsfoiți fișierele"
 
@@ -534,7 +548,7 @@ msgstr "Răsfoiți fișierele"
 msgid "Browse indexed files and folders in Library."
 msgstr "Răsfoiți fișierele și folderele indexate din Bibliotecă."
 
-#: src/page/about/feedback.vue:10 src/options/options.js:499
+#: src/page/about/feedback.vue:10 src/options/options.js:335
 msgid "Bug Report"
 msgstr "Raport de eroare"
 
@@ -546,8 +560,8 @@ msgstr "Ocupat, vă rugăm să așteptați…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Prin utilizarea software-ului și a serviciilor pe care le furnizăm, sunteți de acord cu termenii și condițiile noastre de utilizare, cu politica de confidențialitate și cu codul de conduită."
 
-#: src/app/routes.js:189 src/component/navigation.vue:1029
-#: src/options/options.js:316 src/page/settings/general.vue:199
+#: src/app/routes.js:189 src/component/navigation.vue:1079
+#: src/options/options.js:136 src/page/settings/general.vue:199
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -564,13 +578,13 @@ msgstr "Numărul de serie a Camerei"
 msgid "Can't access your authenticator app or device?"
 msgstr "Nu vă puteți accesa aplicația sau dispozitivul de autentificare?"
 
-#: src/page/album/photos.vue:312 src/page/photos.vue:434
+#: src/page/album/photos.vue:322 src/page/photos.vue:444
 msgid "Can't load more, limit reached"
 msgstr "Nu se poate încărca mai mult, limita a fost atinsă"
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:655 src/page/albums.vue:671 src/page/labels.vue:280
-#: src/page/labels.vue:300 src/page/library/browse.vue:220
+#: src/page/albums.vue:663 src/page/albums.vue:679 src/page/labels.vue:299
+#: src/page/labels.vue:319 src/page/library/browse.vue:220
 #: src/page/library/browse.vue:236 src/page/people/new.vue:276
 #: src/page/people/new.vue:292 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
@@ -581,18 +595,18 @@ msgstr "Nu se pot selecta mai multe articole"
 #: src/component/user/add/dialog.vue:27 src/component/user/edit/dialog.vue:473
 #: src/component/user/remove/dialog.vue:45 src/page/connect.vue:119
 #: src/component/album/delete/dialog.vue:43
-#: src/component/album/edit/dialog.vue:198 src/component/confirm/dialog.vue:43
+#: src/component/album/edit/dialog.vue:199 src/component/confirm/dialog.vue:43
 #: src/component/file/delete/dialog.vue:47
 #: src/component/label/delete/dialog.vue:47
 #: src/component/label/edit/dialog.vue:107
 #: src/component/people/edit/dialog.vue:120
 #: src/component/photo/album/dialog.vue:78 src/component/service/add.vue:19
-#: src/component/service/edit.vue:453 src/component/service/remove.vue:49
-#: src/component/service/upload.vue:116 src/component/settings/apps.vue:352
+#: src/component/service/edit.vue:455 src/component/service/remove.vue:49
+#: src/component/service/upload.vue:117 src/component/settings/apps.vue:352
 #: src/component/settings/passcode.vue:249
 #: src/component/settings/passcode.vue:333
 #: src/component/settings/password.vue:159 src/component/share/dialog.vue:28
-#: src/locales.js:26 src/page/auth/login.vue:209 src/page/connect.vue:123
+#: src/locales.js:211 src/page/auth/login.vue:209 src/page/connect.vue:123
 #: src/page/library/import.vue:119 src/page/library/index.vue:128
 msgid "Cancel"
 msgstr "Anulează"
@@ -603,20 +617,16 @@ msgstr "Anulează"
 msgid "Caption"
 msgstr "Legenda"
 
-#: src/page/settings/content.vue:312
-msgid "Captions"
-msgstr "Subtitrări"
-
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
 msgstr "Cărți"
 
-#: src/locales.js:74
+#: src/locales.js:259
 msgid "Carousel slide {0} of {1}"
 msgstr "Diapozitiv carusel {0} de {1}"
 
 #: src/page/about/feedback.vue:82 src/page/about/feedback.vue:83
-#: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:381
+#: src/component/album/edit/dialog.vue:128 src/component/photo/toolbar.vue:381
 #: src/page/albums.vue:181
 msgid "Category"
 msgstr "Categoria"
@@ -649,11 +659,11 @@ msgstr "Modificările nu au putut fi salvate"
 
 #: src/component/user/edit/dialog.vue:83 src/component/user/edit/dialog.vue:159
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1810
 #: src/component/photo/edit/files.vue:160 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
-#: src/page/albums.vue:648 src/page/people/recognized.vue:119
-#: src/page/settings/advanced.vue:58 src/page/settings/content.vue:57
+#: src/page/albums.vue:656 src/page/people/recognized.vue:119
+#: src/page/settings/advanced.vue:62 src/page/settings/content.vue:62
 #: src/page/settings/general.vue:108
 msgid "Changes successfully saved"
 msgstr "Modificări salvate cu succes"
@@ -678,7 +688,7 @@ msgstr "Curățarea indexului și a cache-ului"
 msgid "Cleanup"
 msgstr "Curățare"
 
-#: src/locales.js:82
+#: src/locales.js:267
 msgid "Clear {0}"
 msgstr "Șterge {0}"
 
@@ -690,15 +700,16 @@ msgstr "Client"
 msgid "Client Credentials"
 msgstr "Acreditarea clienților"
 
-#: src/page/admin/sessions.vue:529 src/component/lightbox.vue:238
+#: src/page/admin/sessions.vue:529 src/component/lightbox.vue:253
+#: src/component/lightbox.vue:975 src/component/lightbox.vue:976
 #: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:151
-#: src/component/photo/upload/dialog.vue:226
+#: src/component/photo/upload/dialog.vue:228
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
 #: src/component/settings/passcode.vue:148
 #: src/component/settings/passcode.vue:456
 #: src/component/settings/passcode.vue:497
 #: src/component/settings/webdav.vue:131 src/component/share/dialog.vue:231
-#: src/component/update.vue:57 src/locales.js:22
+#: src/component/update.vue:57 src/locales.js:207
 #: src/page/library/errors.vue:248
 msgid "Close"
 msgstr "Închideți"
@@ -789,7 +800,7 @@ msgstr "Colaborator"
 msgid "Converting"
 msgstr "Conversia"
 
-#: src/common/util.js:752
+#: src/common/util.js:784
 msgid "Copied to clipboard"
 msgstr "Copiat în clipboard"
 
@@ -838,7 +849,7 @@ msgstr "Creat"
 msgid "Creating thumbnails for"
 msgstr "Crearea de miniaturi pentru"
 
-#: src/options/options.js:523
+#: src/options/options.js:359
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Calitate moderată, performanță bună"
 
@@ -850,11 +861,11 @@ msgstr "Parola curentă"
 msgid "Custom"
 msgstr "Personalizat"
 
-#: src/options/options.js:488
+#: src/options/options.js:324
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/options.js:461
+#: src/options/options.js:297
 msgid "Daily"
 msgstr "Zilnic"
 
@@ -878,14 +889,13 @@ msgstr "Jurnalele de depanare"
 #: src/page/admin/users.vue:174 src/component/photo/edit/info.vue:45
 #: src/component/photo/edit/info.vue:110 src/model/session.js:66
 #: src/model/user.js:246 src/options/auth.js:20 src/options/auth.js:21
-#: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:309
-#: src/options/options.js:344 src/options/options.js:412
-#: src/options/themes.js:727 src/page/places.vue:323
-#: src/page/settings/general.vue:104
+#: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:128
+#: src/options/options.js:164 src/options/options.js:248
+#: src/options/themes.js:727 src/page/settings/general.vue:104
 msgid "Default"
 msgstr "Implicit"
 
-#: src/component/service/edit.vue:122
+#: src/component/service/edit.vue:123
 msgid "Default Folder"
 msgstr "Dosar implicit"
 
@@ -920,8 +930,8 @@ msgstr "Descriere"
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "Instrucțiuni detaliate pot fi găsite în Ghidul utilizatorului."
 
-#: src/component/photo/edit/dialog.vue:150
-#: src/component/photo/edit/dialog.vue:167
+#: src/component/photo/edit/dialog.vue:154
+#: src/component/photo/edit/dialog.vue:171
 msgid "Details"
 msgstr "Detalii"
 
@@ -985,12 +995,12 @@ msgstr "Dezactivează suportul pentru grafica vectorială."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Dezactivează transcodarea video și extragerea miniaturilor."
 
-#: src/app/routes.js:537 src/app/routes.js:544 src/app/routes.js:551
-#: src/app/routes.js:558
+#: src/app/routes.js:558 src/app/routes.js:565 src/app/routes.js:572
+#: src/app/routes.js:579
 msgid "Discover"
 msgstr "Descoperiți"
 
-#: src/locales.js:23
+#: src/locales.js:208
 msgid "Dismiss"
 msgstr "Respinge"
 
@@ -1001,13 +1011,22 @@ msgstr "Respinge"
 msgid "Display Name"
 msgstr "Afișați numele"
 
+#: src/page/settings/content.vue:305
+msgid "Display picture captions in search results."
+msgstr "Afișați legendele imaginilor în rezultatele căutării."
+
+#: src/page/settings/content.vue:283
+msgid "Display picture titles in search results."
+msgstr "Afișați titlurile imaginilor în rezultatele căutării."
+
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183 src/options/options.js:405
+#: src/component/photo/view/mosaic.vue:183
+#: src/component/sidebar/metadata.vue:108 src/options/options.js:241
 msgid "Document"
 msgstr "Document"
 
-#: src/component/navigation.vue:496
+#: src/component/navigation.vue:478
 msgid "Documents"
 msgstr "Documente"
 
@@ -1027,24 +1046,24 @@ msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 msgid "Done"
 msgstr "Realizat"
 
-#: src/component/photo/upload/dialog.vue:132 src/page/library/import.vue:46
+#: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:46
 #: src/page/library/index.vue:52
 msgid "Done."
 msgstr "S-a făcut."
 
-#: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:114
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1075
-#: src/component/lightbox.vue:1076 src/component/people/clipboard.vue:47
-#: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:168
-#: src/page/settings/content.vue:339 src/page/settings/general.vue:321
+#: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:113
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1201
+#: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
+#: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
+#: src/page/settings/general.vue:321
 msgid "Download"
 msgstr "Descărcați"
 
-#: src/page/settings/content.vue:366
+#: src/page/settings/content.vue:357
 msgid "Download only original media files, without any automatically generated files."
 msgstr "Descărcați numai fișiere media originale, fără fișiere generate automat."
 
-#: src/component/service/edit.vue:235
+#: src/component/service/edit.vue:237
 msgid "Download remote files"
 msgstr "Descărcarea fișierelor de la distanță"
 
@@ -1052,9 +1071,9 @@ msgstr "Descărcarea fișierelor de la distanță"
 msgid "Download single files and zip archives."
 msgstr "Descărcați fișiere individuale și arhive zip."
 
-#: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:162
+#: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:152
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:1643 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:1890 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:117
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:126
@@ -1065,7 +1084,7 @@ msgstr "Descărcarea…"
 msgid "Downscaling Filter"
 msgstr "Filtru de reducere a scării"
 
-#: src/locales.js:92
+#: src/locales.js:277
 msgid "Drag and drop files here"
 msgstr "Drag and drop fișiere aici"
 
@@ -1093,8 +1112,8 @@ msgstr "Limita dimensiunii dinamice: %{n}px"
 msgid "E-Mail"
 msgstr "E-mail"
 
-#: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:95
-#: src/component/lightbox.vue:1056 src/component/lightbox.vue:1057
+#: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:84
+#: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:393
 msgid "Edit"
 msgstr "Editați"
@@ -1109,7 +1128,7 @@ msgstr "Editează %{s}"
 msgid "Edit Account"
 msgstr "Editare cont"
 
-#: src/component/photo/edit/dialog.vue:63
+#: src/component/photo/edit/dialog.vue:64
 msgid "Edit Photo"
 msgstr "Editare fotografie"
 
@@ -1138,11 +1157,11 @@ msgstr "Activează presetările convertorului RAW. Poate reduce performanța."
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr "Activarea autentificării cu doi factori înseamnă că veți avea nevoie de un cod de verificare generat aleatoriu pentru a vă conecta, așa că, chiar dacă cineva obține acces la parola dvs., nu va putea accesa contul dvs."
 
-#: src/locales.js:64 src/locales.js:66
+#: src/locales.js:249 src/locales.js:251
 msgid "Enter date"
 msgstr "Introduceți data"
 
-#: src/locales.js:61
+#: src/locales.js:246
 msgid "Enter dates"
 msgstr "Introduceți datele"
 
@@ -1158,12 +1177,12 @@ msgstr "Introduceți codul de verificare"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Introduceți parola pentru a confirma acțiunea și continuați:"
 
-#: src/page/connect.vue:54 src/component/lightbox.vue:242
-#: src/page/connect.vue:57 src/page/library/errors.vue:252
+#: src/page/connect.vue:54 src/component/lightbox.vue:257
+#: src/page/connect.vue:57 src/page/library/errors.vue:253
 msgid "Error"
 msgstr "Eroare"
 
-#: src/app/routes.js:353 src/component/navigation.vue:1296
+#: src/app/routes.js:374 src/component/navigation.vue:1346
 msgid "Errors"
 msgstr "Erori"
 
@@ -1171,15 +1190,15 @@ msgstr "Erori"
 msgid "Estimate"
 msgstr "Estimare"
 
-#: src/page/settings/content.vue:87
+#: src/page/settings/content.vue:85
 msgid "Estimate Locations"
 msgstr "Estimarea locațiilor"
 
-#: src/page/settings/content.vue:88
+#: src/page/settings/content.vue:86
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "Estimarea locației aproximative a imaginilor fără coordonate GPS."
 
-#: src/options/options.js:462
+#: src/options/options.js:298
 msgid "Every two days"
 msgstr "La fiecare două zile"
 
@@ -1200,7 +1219,7 @@ msgid "Experimental Features"
 msgstr "Caracteristici experimentale"
 
 #: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:453
-#: src/component/service/edit.vue:156 src/component/settings/apps.vue:72
+#: src/component/service/edit.vue:157 src/component/settings/apps.vue:72
 #: src/component/settings/apps.vue:326 src/component/share/dialog.vue:62
 msgid "Expires"
 msgstr "Expiră"
@@ -1209,7 +1228,7 @@ msgstr "Expiră"
 msgid "Exposure"
 msgstr "Expunere"
 
-#: src/page/settings/content.vue:111
+#: src/page/settings/content.vue:109
 msgid "Extract still images and generate thumbnails while indexing."
 msgstr "Extrageți imagini statice și generați miniaturi în timpul indexării."
 
@@ -1243,31 +1262,31 @@ msgstr "Link de actualizare eșuat"
 msgid "Family Name"
 msgstr "Nume de familie"
 
-#: src/options/options.js:328
+#: src/options/options.js:148
 msgid "Fast"
 msgstr "Rapid"
 
-#: src/component/album/edit/dialog.vue:158
+#: src/component/album/edit/dialog.vue:159
 #: src/component/label/edit/dialog.vue:85
 #: src/component/people/edit/dialog.vue:85
 #: src/component/photo/edit/info.vue:287
 msgid "Favorite"
 msgstr "Favorit"
 
-#: src/app/routes.js:222 src/component/navigation.vue:841
-#: src/options/options.js:314 src/page/albums.vue:96
+#: src/app/routes.js:222 src/component/navigation.vue:891
+#: src/options/options.js:134 src/page/albums.vue:96
 msgid "Favorites"
 msgstr "Favorite"
 
-#: src/page/about/feedback.vue:9 src/options/options.js:498
+#: src/page/about/feedback.vue:9 src/options/options.js:334
 msgid "Feature Request"
 msgstr "Cerere de caracteristici"
 
-#: src/component/navigation.vue:1404
+#: src/component/navigation.vue:1454
 msgid "Feedback"
 msgstr "Părere"
 
-#: src/options/options.js:529
+#: src/options/options.js:365
 msgid "Female"
 msgstr "Femeie"
 
@@ -1275,7 +1294,7 @@ msgstr "Femeie"
 msgid "File"
 msgstr "Fișier"
 
-#: src/app/routes.js:322
+#: src/app/routes.js:343
 msgid "File Browser"
 msgstr "Browser de fișiere"
 
@@ -1298,16 +1317,16 @@ msgstr "Dimensiunea fișierului"
 msgid "Filename"
 msgstr "Nume fisier"
 
-#: src/component/navigation.vue:1878 src/component/photo/edit/dialog.vue:261
-#: src/component/photo/edit/dialog.vue:278
+#: src/component/navigation.vue:1928 src/component/photo/edit/dialog.vue:265
+#: src/component/photo/edit/dialog.vue:282
 msgid "Files"
 msgstr "Fișiere"
 
-#: src/page/settings/content.vue:212
+#: src/page/settings/content.vue:207
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "Fișierele cu nume secvențiale, cum ar fi 'IMG_1234 (2)' și 'IMG_1234 (3)' aparțin aceleiași imagini."
 
-#: src/locales.js:50 src/locales.js:108
+#: src/locales.js:235 src/locales.js:293
 msgid "First page"
 msgstr "Prima pagină"
 
@@ -1315,9 +1334,9 @@ msgstr "Prima pagină"
 msgid "Focal Length"
 msgstr "Lungime focală"
 
-#: src/component/photo/edit/info.vue:115 src/component/service/edit.vue:116
-#: src/component/service/edit.vue:186 src/component/service/edit.vue:192
-#: src/component/service/upload.vue:88 src/component/service/upload.vue:95
+#: src/component/photo/edit/info.vue:115 src/component/service/edit.vue:118
+#: src/component/service/edit.vue:189 src/component/service/edit.vue:194
+#: src/component/service/upload.vue:90 src/component/service/upload.vue:96
 #: src/model/folder.js:199 src/page/library/browse.vue:181
 msgid "Folder"
 msgstr "Dosar"
@@ -1330,8 +1349,8 @@ msgstr "Dosarul conține %{n} fișiere"
 msgid "Folder is empty"
 msgstr "Dosarul este gol"
 
-#: src/app/routes.js:202 src/component/navigation.vue:1173
-#: src/options/options.js:319
+#: src/app/routes.js:202 src/component/navigation.vue:1223
+#: src/options/options.js:139
 msgid "Folders"
 msgstr "Dosare"
 
@@ -1351,7 +1370,7 @@ msgstr "Cadre"
 msgid "Full Access"
 msgstr "Acces complet"
 
-#: src/component/lightbox.vue:1004 src/component/lightbox.vue:1005
+#: src/component/lightbox.vue:1050 src/component/lightbox.vue:1051
 msgid "Fullscreen"
 msgstr "Ecran complet"
 
@@ -1367,7 +1386,7 @@ msgstr "Genera"
 msgid "Generate albums of special moments, journeys, and places."
 msgstr "Creează automat albume cu momente, călătorii și locuri speciale."
 
-#: src/page/settings/content.vue:110
+#: src/page/settings/content.vue:108
 msgid "Generate Previews"
 msgstr "Generați previzualizări"
 
@@ -1375,7 +1394,7 @@ msgstr "Generați previzualizări"
 msgid "Generated"
 msgstr "Generate"
 
-#: src/component/photo/toolbar.vue:182
+#: src/component/photo/toolbar.vue:184
 msgid "Get Started"
 msgstr "Începeți"
 
@@ -1389,19 +1408,19 @@ msgstr "Numele dat"
 msgid "Global Options"
 msgstr "Opțiuni globale"
 
-#: src/locales.js:106
+#: src/locales.js:291
 msgid "Go to page {0}"
 msgstr "Mergeți la pagina {0}"
 
-#: src/options/options.js:483
+#: src/options/options.js:319
 msgid "Gold"
 msgstr "Aur"
 
-#: src/options/options.js:486
+#: src/options/options.js:322
 msgid "Green"
 msgstr "Verde"
 
-#: src/options/options.js:492
+#: src/options/options.js:328
 msgid "Grey"
 msgstr "Gri"
 
@@ -1421,11 +1440,11 @@ msgstr "Ajutor"
 msgid "Help & Support"
 msgstr "Suport"
 
-#: src/component/navigation.vue:1275 src/component/people/edit/dialog.vue:98
+#: src/component/navigation.vue:1325 src/component/people/edit/dialog.vue:98
 msgid "Hidden"
 msgstr "Ascuns"
 
-#: src/app/routes.js:337
+#: src/app/routes.js:358
 msgid "Hidden Files"
 msgstr "Fișiere ascunse"
 
@@ -1437,7 +1456,7 @@ msgstr "Ascundeți"
 msgid "Hide photos that have been moved to archive."
 msgstr "Ascundeți fotografiile care au fost mutate în arhivă."
 
-#: src/options/options.js:416
+#: src/options/options.js:252
 msgid "High"
 msgstr "Mare"
 
@@ -1449,13 +1468,17 @@ msgstr "Gama dinamică înaltă (HDR)"
 msgid "How can we help?"
 msgstr "Cum vă putem ajuta?"
 
+#: src/options/options.js:175
+msgid "Hybrid"
+msgstr "Hibrid"
+
 #: src/component/settings/passcode.vue:389
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Dacă pierdeți accesul la aplicația sau dispozitivul dvs. de autentificare, puteți utiliza codul de recuperare pentru a recâștiga accesul la contul dvs."
 
 #: src/component/photo/edit/info.vue:61 src/component/photo/edit/labels.vue:46
 #: src/component/photo/view/cards.vue:532 src/model/file.js:218
-#: src/options/options.js:381
+#: src/options/options.js:213
 msgid "Image"
 msgstr "Imagine"
 
@@ -1499,19 +1522,19 @@ msgstr "în"
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "În cazul în care imaginile pe care le așteptați lipsesc, vă rugăm să scanați din nou biblioteca dvs. și să așteptați până când indexarea va fi finalizată."
 
-#: src/page/settings/content.vue:389
+#: src/page/settings/content.vue:379
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "Includeți fișiere de imagine RAW atunci când descărcați stive și arhive."
 
-#: src/page/settings/content.vue:412
+#: src/page/settings/content.vue:401
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Includeți fișiere sidecar atunci când descărcați stive și arhive."
 
-#: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
+#: src/component/photo/upload/dialog.vue:136 src/page/library/import.vue:48
 msgid "Increase storage size or delete files to continue."
 msgstr "Creșteți dimensiunea de stocare sau ștergeți fișierele pentru a continua."
 
-#: src/component/navigation.vue:1894 src/page/library.vue:36
+#: src/component/navigation.vue:1944 src/page/library.vue:36
 #: src/page/settings/content.vue:34
 msgid "Index"
 msgstr "Index"
@@ -1532,15 +1555,19 @@ msgstr "Indexarea a eșuat"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexarea fișierelor media și a fișierelor sidecar…"
 
+#: src/component/sidebar/metadata.vue:27
+msgid "Info"
+msgstr "Info"
+
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"
 msgstr "ID-ul instanței"
 
-#: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:48
+#: src/component/photo/upload/dialog.vue:136 src/page/library/import.vue:48
 msgid "Insufficient storage."
 msgstr "Depozitare insuficientă."
 
-#: src/component/service/edit.vue:207
+#: src/component/service/edit.vue:209
 msgid "Interval"
 msgstr "Interval"
 
@@ -1561,7 +1588,7 @@ msgstr "Adresă invalidă"
 msgid "Invalid country"
 msgstr "Țară invalidă"
 
-#: src/component/photo/edit/details.vue:179
+#: src/component/photo/edit/details.vue:180
 msgid "Invalid date"
 msgstr "Dată invalidă"
 
@@ -1570,7 +1597,7 @@ msgstr "Dată invalidă"
 msgid "Invalid parameters"
 msgstr "Parametrii nevalabili"
 
-#: src/component/photo/edit/dialog.vue:156 src/model/thumb.js:77
+#: src/component/photo/edit/dialog.vue:180 src/model/thumb.js:83
 msgid "Invalid photo selected"
 msgstr "Fotografie invalidă selectată"
 
@@ -1591,7 +1618,7 @@ msgstr "Este un cod de unică folosință care va dezactiva 2FA pentru contul dv
 msgid "Item"
 msgstr "Articolul"
 
-#: src/locales.js:46
+#: src/locales.js:231
 msgid "Items per page:"
 msgstr "Articole pe pagină:"
 
@@ -1616,9 +1643,9 @@ msgstr "Cuvinte cheie"
 msgid "Label"
 msgstr "Etichetă"
 
-#: src/app/routes.js:368 src/component/navigation.vue:1125
-#: src/component/photo/edit/dialog.vue:182
-#: src/component/photo/edit/dialog.vue:199 src/options/options.js:318
+#: src/app/routes.js:389 src/component/navigation.vue:1175
+#: src/component/photo/edit/dialog.vue:186
+#: src/component/photo/edit/dialog.vue:203 src/options/options.js:138
 #: src/page/settings/general.vue:247
 msgid "Labels"
 msgstr "Etichete"
@@ -1627,7 +1654,7 @@ msgstr "Etichete"
 msgid "Labels deleted"
 msgstr "Etichete șterse"
 
-#: src/options/options.js:522
+#: src/options/options.js:358
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Conservarea detaliilor, artefacte minime"
 
@@ -1643,7 +1670,7 @@ msgstr "Ultimul activ"
 msgid "Last Login"
 msgstr "Ultima autentificare"
 
-#: src/locales.js:51 src/locales.js:109
+#: src/locales.js:236 src/locales.js:294
 msgid "Last page"
 msgstr "Ultima pagină"
 
@@ -1671,11 +1698,11 @@ msgid "Learn more"
 msgstr "Aflați mai multe"
 
 #: src/page/admin/sessions.vue:108 src/page/admin/users.vue:133
-#: src/page/labels.vue:118
+#: src/page/labels.vue:131
 msgid "Learn More"
 msgstr "Aflați mai multe"
 
-#: src/component/navigation.vue:1965
+#: src/component/navigation.vue:2015
 msgid "Legal Information"
 msgstr "Informații juridice"
 
@@ -1684,22 +1711,22 @@ msgstr "Informații juridice"
 msgid "Lens"
 msgstr "Obiectiv"
 
-#: src/app/routes.js:422 src/app/routes.js:438 src/app/routes.js:454
-#: src/component/navigation.vue:1215 src/page/settings/general.vue:489
+#: src/app/routes.js:443 src/app/routes.js:459 src/app/routes.js:475
+#: src/component/navigation.vue:1265 src/page/settings/general.vue:489
 msgid "Library"
 msgstr "Bibliotecă"
 
 #: src/page/connect.vue:45 src/app/routes.js:69
-#: src/component/navigation.vue:1426 src/component/photo/edit/details.vue:559
+#: src/component/navigation.vue:1476 src/component/photo/edit/details.vue:559
 #: src/page/about/license.vue:28
 msgid "License"
 msgstr "Licență"
 
-#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
+#: src/component/lightbox.vue:1068 src/component/lightbox.vue:1069
 msgid "Like"
 msgstr "Ca"
 
-#: src/options/options.js:485
+#: src/options/options.js:321
 msgid "Lime"
 msgstr "Lămâie verde"
 
@@ -1707,7 +1734,7 @@ msgstr "Lămâie verde"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limita a fost atinsă, afișând primele %{n} fișiere"
 
-#: src/options/options.js:524
+#: src/options/options.js:360
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Liniare: Foarte netedă, cea mai bună performanță"
 
@@ -1719,29 +1746,30 @@ msgstr "Link"
 msgid "List"
 msgstr "Listă"
 
-#: src/page/settings/content.vue:266
+#: src/page/settings/content.vue:260
 msgid "List View"
 msgstr "Vizualizare listă"
 
-#: src/app/routes.js:229 src/component/photo/view/cards.vue:319
+#: src/component/photo/view/cards.vue:319
 #: src/component/photo/view/cards.vue:501 src/component/photo/view/list.vue:176
-#: src/component/photo/view/mosaic.vue:163 src/options/options.js:393
+#: src/component/photo/view/mosaic.vue:163
+#: src/component/sidebar/metadata.vue:99 src/options/options.js:221
 msgid "Live"
 msgstr "Live"
 
-#: src/component/navigation.vue:741
+#: src/app/routes.js:236 src/component/navigation.vue:747
 msgid "Live Photos"
 msgstr "Fotografii în direct"
 
-#: src/locales.js:123
+#: src/locales.js:308
 msgid "Load more"
 msgstr "Încărcați mai mult"
 
-#: src/locales.js:30
+#: src/locales.js:215
 msgid "Loading items..."
 msgstr "Încărcare articole..."
 
-#: src/locales.js:121
+#: src/locales.js:306
 msgid "Loading..."
 msgstr "Încărcare..."
 
@@ -1749,7 +1777,7 @@ msgstr "Încărcare..."
 msgid "Local"
 msgstr "Local"
 
-#: src/component/photo/edit/details.vue:193 src/options/options.js:37
+#: src/component/photo/edit/details.vue:193 src/options/options.js:38
 msgid "Local Time"
 msgstr "Ora locală"
 
@@ -1766,15 +1794,15 @@ msgstr "Locație"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Mesajele de jurnal apar aici ori de câte ori PhotoPrism întâlnește fișiere sparte sau există alte probleme potențiale."
 
-#: src/component/navigation.vue:1500 src/component/navigation.vue:1788
+#: src/component/navigation.vue:1550 src/component/navigation.vue:1838
 msgid "Login"
 msgstr "Autentificare"
 
-#: src/component/navigation.vue:1707
+#: src/component/navigation.vue:1757
 msgid "Logout"
 msgstr "Logout"
 
-#: src/component/navigation.vue:1910 src/page/library.vue:59
+#: src/component/navigation.vue:1960 src/page/library.vue:59
 #: src/page/settings/general.vue:537
 msgid "Logs"
 msgstr "Jurnale"
@@ -1784,15 +1812,11 @@ msgstr "Jurnale"
 msgid "Longitude"
 msgstr "Longitudine"
 
-#: src/options/options.js:420
+#: src/options/options.js:256
 msgid "Low"
 msgstr "Scăzut"
 
-#: src/options/options.js:371
-msgid "Low Resolution"
-msgstr "Rezoluție redusă"
-
-#: src/options/options.js:479
+#: src/options/options.js:315
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1800,7 +1824,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Culoare principală"
 
-#: src/options/options.js:528
+#: src/options/options.js:364
 msgid "Male"
 msgstr "Bărbat"
 
@@ -1830,7 +1854,12 @@ msgstr "Marker"
 msgid "Maximum number of accounts has been reached."
 msgstr "Numărul maxim de conturi a fost atins."
 
-#: src/options/options.js:332
+#: src/app/routes.js:229 src/component/navigation.vue:686
+#: src/options/options.js:131
+msgid "Media"
+msgstr "Media"
+
+#: src/options/options.js:152
 msgid "Medium"
 msgstr "Mediu"
 
@@ -1858,7 +1887,7 @@ msgstr "Metadate"
 msgid "Metrics"
 msgstr "Metrici"
 
-#: src/component/navigation.vue:257
+#: src/component/navigation.vue:258
 msgid "Minimize"
 msgstr "Minimizați"
 
@@ -1870,12 +1899,12 @@ msgstr "Lipsesc"
 msgid "Missing or invalid configuration"
 msgstr "Configurație lipsă sau invalidă"
 
-#: src/app/routes.js:163 src/component/navigation.vue:1077
-#: src/options/options.js:317 src/page/settings/general.vue:223
+#: src/app/routes.js:163 src/component/navigation.vue:1127
+#: src/options/options.js:137 src/page/settings/general.vue:223
 msgid "Moments"
 msgstr "Momente"
 
-#: src/component/navigation.vue:380
+#: src/component/navigation.vue:381
 msgid "Monochrome"
 msgstr "Monocromie"
 
@@ -1883,6 +1912,10 @@ msgstr "Monocromie"
 #: src/component/photo/toolbar.vue:328
 msgid "Month"
 msgstr "Luna"
+
+#: src/component/lightbox.vue:1121
+msgid "More options"
+msgstr "Mai multe opțiuni"
 
 #: src/component/photo/toolbar.vue:99 src/component/photo/toolbar.vue:105
 msgid "Mosaic"
@@ -1900,7 +1933,7 @@ msgstr "Muta fișierele"
 msgid "Must have at least %{n} characters."
 msgstr "Trebuie să aibă cel puțin %{n} caractere."
 
-#: src/component/lightbox.vue:971 src/component/lightbox.vue:972
+#: src/component/lightbox.vue:1017 src/component/lightbox.vue:1018
 msgid "Mute"
 msgstr "Mută"
 
@@ -1910,25 +1943,25 @@ msgstr "Mută"
 #: src/component/people/edit/dialog.vue:71
 #: src/component/photo/edit/files.vue:39 src/component/photo/edit/info.vue:55
 #: src/component/photo/edit/info.vue:125 src/component/photo/edit/people.vue:36
-#: src/component/photo/view/list.vue:117 src/component/service/edit.vue:308
+#: src/component/photo/view/list.vue:117 src/component/service/edit.vue:310
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:286
 #: src/page/albums.vue:97 src/page/auth/login.vue:145
 #: src/page/people/new.vue:68 src/page/settings/services.vue:36
 msgid "Name"
 msgstr "Nume"
 
-#: src/component/album/edit/dialog.vue:35 src/component/album/toolbar.vue:72
+#: src/component/album/edit/dialog.vue:35 src/component/album/toolbar.vue:60
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:30
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:51
+#: src/component/photo/edit/people.vue:39 src/page/labels.vue:53
 #: src/page/library/browse.vue:45 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
 msgstr "Nume prea lung"
 
-#: src/page/admin/users.vue:202 src/options/options.js:457
-#: src/options/options.js:467 src/page/settings/services.vue:74
+#: src/page/admin/users.vue:202 src/options/options.js:293
+#: src/options/options.js:303 src/page/settings/services.vue:74
 msgid "Never"
 msgstr "Niciodată"
 
@@ -1946,15 +1979,15 @@ msgstr "Parolă nouă"
 msgid "Newest First"
 msgstr "Cel mai nou Mai întâi"
 
-#: src/component/lightbox.vue:241 src/locales.js:113
+#: src/component/lightbox.vue:256 src/locales.js:298
 msgid "Next"
 msgstr "Următorul"
 
-#: src/locales.js:48 src/locales.js:104
+#: src/locales.js:233 src/locales.js:289
 msgid "Next page"
 msgstr "Pagina următoare"
 
-#: src/locales.js:72
+#: src/locales.js:257
 msgid "Next visual"
 msgstr "Următorul vizual"
 
@@ -1966,23 +1999,23 @@ msgstr "Următorul vizual"
 msgid "No"
 msgstr "Nu"
 
-#: src/page/albums.vue:588 src/page/albums.vue:274
+#: src/page/albums.vue:596 src/page/albums.vue:274
 msgid "No albums found"
 msgstr "Nu s-au găsit albume"
 
-#: src/locales.js:69
+#: src/locales.js:254
 msgid "No data available"
 msgstr "Nu există date disponibile"
 
-#: src/page/labels.vue:500 src/page/labels.vue:152
+#: src/page/labels.vue:519 src/page/labels.vue:152
 msgid "No labels found"
 msgstr "Nu s-au găsit etichete"
 
-#: src/locales.js:29
+#: src/locales.js:214
 msgid "No matching records found"
 msgstr "Nu s-au găsit înregistrări corespunzătoare"
 
-#: src/locales.js:124
+#: src/locales.js:309
 msgid "No more"
 msgstr "Nu mai mult"
 
@@ -1992,10 +2025,10 @@ msgstr "Nu mai mult"
 msgid "No people found"
 msgstr "Nu s-au găsit persoane"
 
-#: src/component/lightbox.vue:316 src/component/photo/view/cards.vue:144
+#: src/component/lightbox.vue:334 src/component/photo/view/cards.vue:144
 #: src/component/photo/view/list.vue:82 src/component/photo/view/mosaic.vue:68
-#: src/page/album/photos.vue:474 src/page/library/browse.vue:122
-#: src/page/photos.vue:601 src/page/places.vue:574 src/page/places.vue:671
+#: src/page/album/photos.vue:484 src/page/library/browse.vue:122
+#: src/page/photos.vue:611 src/page/places.vue:623 src/page/places.vue:721
 msgid "No pictures found"
 msgstr "Nu s-au găsit imagini"
 
@@ -2004,7 +2037,7 @@ msgstr "Nu s-au găsit imagini"
 msgid "No recently edited pictures"
 msgstr "Nu există imagini editate recent"
 
-#: src/component/navigation.vue:1603
+#: src/component/navigation.vue:1653
 msgid "No server connection"
 msgstr "Nu există conexiune la server"
 
@@ -2024,32 +2057,32 @@ msgstr "Nu, mulțumesc"
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr "Nu există avertismente sau erori care să conțină acest cuvânt cheie. Rețineți că căutarea este sensibilă la majuscule și minuscule."
 
-#: src/component/photo/upload/dialog.vue:206
+#: src/component/photo/upload/dialog.vue:208
 #: src/component/photo/view/cards.vue:154 src/component/photo/view/list.vue:59
 #: src/component/photo/view/list.vue:92 src/component/photo/view/mosaic.vue:78
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Imaginile nefotografice și de slabă calitate necesită o revizuire înainte de a apărea în rezultatele căutării."
 
-#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:324
-#: src/options/options.js:424
+#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:144
+#: src/options/options.js:260
 msgid "None"
 msgstr "Nici unul"
 
-#: src/common/util.js:759 src/component/lightbox.vue:581
+#: src/common/util.js:791 src/component/lightbox.vue:599
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Nu este permis"
 
-#: src/component/lightbox.vue:578
+#: src/component/lightbox.vue:596
 msgid "Not found"
 msgstr "Nu a fost găsit"
 
-#: src/locales.js:38
+#: src/locales.js:223
 msgid "Not sorted."
 msgstr "Nu sortate."
 
-#: src/common/util.js:764 src/component/lightbox.vue:575
-#: src/component/lightbox.vue:692
+#: src/common/util.js:796 src/component/lightbox.vue:593
+#: src/component/lightbox.vue:710
 msgid "Not supported"
 msgstr "Nu este acceptat"
 
@@ -2078,11 +2111,15 @@ msgstr "Încă nu este nimic de văzut aici."
 msgid "Nothing was found."
 msgstr "Nu s-a găsit nimic."
 
+#: src/options/options.js:202
+msgid "Offline"
+msgstr "Deconectat"
+
 #: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
 msgstr "OIDC"
 
-#: src/locales.js:25
+#: src/locales.js:210
 msgid "OK"
 msgstr "OK"
 
@@ -2100,11 +2137,11 @@ msgstr "Pe Windows, introduceți următoarea resursă în fereastra de dialog de
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generarea la cerere a miniaturilor poate cauza o utilizare ridicată a procesorului și a memoriei. Nu este recomandată pentru serverele și dispozitivele NAS cu resurse limitate."
 
-#: src/options/options.js:463
+#: src/options/options.js:299
 msgid "Once a week"
 msgstr "O dată pe săptămână"
 
-#: src/page/albums.vue:590
+#: src/page/albums.vue:598
 msgid "One album found"
 msgstr "Un album găsit"
 
@@ -2120,7 +2157,7 @@ msgstr "Un fișier încărcat"
 msgid "One folder found"
 msgstr "Un dosar găsit"
 
-#: src/page/labels.vue:502
+#: src/page/labels.vue:521
 msgid "One label found"
 msgstr "O etichetă găsită"
 
@@ -2129,7 +2166,7 @@ msgstr "O etichetă găsită"
 msgid "One person found"
 msgstr "O persoană găsită"
 
-#: src/page/album/photos.vue:476 src/page/photos.vue:603
+#: src/page/album/photos.vue:486 src/page/photos.vue:613
 msgid "One picture found"
 msgstr "O imagine găsită"
 
@@ -2137,7 +2174,7 @@ msgstr "O imagine găsită"
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "Numai conturile gestionate local pot fi configurate pentru autentificare cu 2FA."
 
-#: src/locales.js:21
+#: src/locales.js:206
 msgid "Open"
 msgstr "Deschideți"
 
@@ -2145,11 +2182,11 @@ msgstr "Deschideți"
 msgid "optional"
 msgstr "opțional"
 
-#: src/locales.js:93
+#: src/locales.js:278
 msgid "or"
 msgstr "sau"
 
-#: src/options/options.js:482
+#: src/options/options.js:318
 msgid "Orange"
 msgstr "Portocaliu"
 
@@ -2169,14 +2206,14 @@ msgstr "Numele originale ale fișierelor vor fi stocate și indexate."
 msgid "Original Name"
 msgstr "Denumire originală"
 
-#: src/component/navigation.vue:1252 src/model/file.js:196
-#: src/options/options.js:509 src/page/library/browse.vue:65
-#: src/page/settings/content.vue:365 src/page/settings/general.vue:513
+#: src/component/navigation.vue:1302 src/model/file.js:196
+#: src/options/options.js:345 src/page/library/browse.vue:65
+#: src/page/settings/content.vue:356 src/page/settings/general.vue:513
 msgid "Originals"
 msgstr "Originale"
 
-#: src/page/about/feedback.vue:11 src/options/options.js:500
-#: src/options/options.js:530
+#: src/page/about/feedback.vue:11 src/options/options.js:336
+#: src/options/options.js:366
 msgid "Other"
 msgstr "Altele"
 
@@ -2184,19 +2221,19 @@ msgstr "Altele"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Viziunea noastră este să oferim cea mai prietenoasă soluție pentru utilizator și confidențialitate pentru a vă păstra fotografiile organizate și accesibile."
 
-#: src/options/options.js:358 src/page/places.vue:339
+#: src/options/options.js:187
 msgid "Outdoor"
 msgstr "În aer liber"
 
-#: src/locales.js:107
+#: src/locales.js:292
 msgid "Page {0}, Current page"
 msgstr "Pagina {0}, Pagina curentă"
 
-#: src/component/photo/edit/files.vue:352 src/model/photo.js:866
+#: src/component/photo/edit/files.vue:352 src/model/photo.js:854
 msgid "Pages"
 msgstr "Pagini"
 
-#: src/locales.js:103
+#: src/locales.js:288
 msgid "Pagination Navigation"
 msgstr "Paginare Navigare"
 
@@ -2204,12 +2241,12 @@ msgstr "Paginare Navigare"
 msgid "Panorama"
 msgstr "Panoramă"
 
-#: src/component/navigation.vue:399
+#: src/component/navigation.vue:400
 msgid "Panoramas"
 msgstr "Panorame"
 
 #: src/component/user/add/dialog.vue:114 src/component/user/add/dialog.vue:115
-#: src/component/service/add.vue:106 src/component/service/edit.vue:350
+#: src/component/service/add.vue:106 src/component/service/edit.vue:352
 #: src/component/settings/apps.vue:121 src/component/settings/passcode.vue:106
 #: src/component/settings/passcode.vue:413 src/component/share/dialog.vue:27
 #: src/options/auth.js:91 src/page/auth/login.vue:173
@@ -2220,9 +2257,9 @@ msgstr "Parola"
 msgid "Password changed"
 msgstr "Parola a fost schimbată"
 
-#: src/app/routes.js:383 src/app/routes.js:407 src/component/navigation.vue:793
-#: src/component/navigation.vue:1846 src/component/photo/edit/dialog.vue:222
-#: src/component/photo/edit/dialog.vue:239 src/options/options.js:313
+#: src/app/routes.js:404 src/app/routes.js:428 src/component/navigation.vue:843
+#: src/component/navigation.vue:1896 src/component/photo/edit/dialog.vue:226
+#: src/component/photo/edit/dialog.vue:243 src/options/options.js:133
 #: src/page/settings/general.vue:175
 msgid "People"
 msgstr "Oameni"
@@ -2231,7 +2268,7 @@ msgstr "Oameni"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Persoanele cu care partajați un link vor putea vizualiza conținutul public."
 
-#: src/component/photo/clipboard.vue:126 src/component/photo/toolbar.vue:255
+#: src/component/photo/clipboard.vue:126 src/component/photo/toolbar.vue:257
 msgid "Permanently deleted"
 msgstr "Șterse definitiv"
 
@@ -2247,7 +2284,7 @@ msgstr "Persoană"
 msgid "Personal"
 msgstr "Personal"
 
-#: src/model/photo.js:1280
+#: src/model/photo.js:1268
 msgid "Photo"
 msgstr "Fotografie"
 
@@ -2268,7 +2305,7 @@ msgstr "Fotografii"
 msgid "Picture Title"
 msgstr "Titlu imagine"
 
-#: src/options/options.js:480
+#: src/options/options.js:316
 msgid "Pink"
 msgstr "Roz"
 
@@ -2276,14 +2313,14 @@ msgstr "Roz"
 msgid "Place"
 msgstr "Locul"
 
-#: src/page/settings/content.vue:164
+#: src/page/settings/content.vue:161
 msgid "Place & Time"
 msgstr "Locul și Ora"
 
-#: src/app/routes.js:282 src/app/routes.js:288 src/app/routes.js:294
-#: src/app/routes.js:309 src/component/navigation.vue:934
-#: src/component/navigation.vue:1862 src/options/options.js:315
-#: src/page/places.vue:50 src/page/settings/general.vue:587
+#: src/app/routes.js:303 src/app/routes.js:309 src/app/routes.js:315
+#: src/app/routes.js:330 src/component/navigation.vue:984
+#: src/component/navigation.vue:1912 src/options/options.js:135
+#: src/page/places.vue:51 src/page/settings/general.vue:587
 #: src/page/settings/general.vue:616
 msgid "Places"
 msgstr "Locuri"
@@ -2296,15 +2333,15 @@ msgstr "Vă rugăm să confirmați noua parolă."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Vă rugăm să copiați următoarea parolă a aplicației generată aleatoriu și să o păstrați într-un loc sigur, deoarece nu o veți putea vedea din nou:"
 
-#: src/component/photo/upload/dialog.vue:201
+#: src/component/photo/upload/dialog.vue:203
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Vă rugăm să nu încărcați imagini private, ilegale sau ofensatoare."
 
-#: src/component/photo/upload/dialog.vue:203
+#: src/component/photo/upload/dialog.vue:205
 msgid "Please don't upload photos containing offensive content."
 msgstr "Vă rugăm să nu încărcați fotografii cu conținut ofensator."
 
-#: src/locales.js:85
+#: src/locales.js:270
 msgid "Please enter OTP character {0}"
 msgstr "Vă rugăm să introduceți caracterul OTP {0}"
 
@@ -2320,7 +2357,7 @@ msgstr "Vă rugăm să reporniți instanța pentru ca modificările să intre î
 msgid "Please wait…"
 msgstr "Vă rugăm să așteptați…"
 
-#: src/locales.js:98
+#: src/locales.js:283
 msgid "PM"
 msgstr "PM"
 
@@ -2332,11 +2369,11 @@ msgstr "Limita de dimensiune PNG: %{n}px"
 msgid "Portrait"
 msgstr "Portret"
 
-#: src/component/service/edit.vue:271
+#: src/component/service/edit.vue:273
 msgid "Preserve filenames"
 msgstr "Păstrați numele fișierelor"
 
-#: src/component/photo/upload/dialog.vue:160
+#: src/component/photo/upload/dialog.vue:162
 msgid "Press enter to create a new album."
 msgstr "Apăsați enter pentru a crea un album nou."
 
@@ -2356,15 +2393,15 @@ msgstr "Previzualizare"
 msgid "Preview Images"
 msgstr "Imagini de previzualizare"
 
-#: src/component/lightbox.vue:240 src/locales.js:114
+#: src/component/lightbox.vue:255 src/locales.js:299
 msgid "Previous"
 msgstr "Articolul precedent"
 
-#: src/locales.js:49 src/locales.js:105
+#: src/locales.js:234 src/locales.js:290
 msgid "Previous page"
 msgstr "Pagina anterioară"
 
-#: src/locales.js:71
+#: src/locales.js:256
 msgid "Previous visual"
 msgstr "Vizual anterior"
 
@@ -2373,13 +2410,13 @@ msgstr "Vizual anterior"
 msgid "Primary"
 msgstr "Primare"
 
-#: src/app/routes.js:250 src/component/album/edit/dialog.vue:175
-#: src/component/navigation.vue:544 src/component/photo/edit/info.vue:303
+#: src/app/routes.js:271 src/component/album/edit/dialog.vue:176
+#: src/component/navigation.vue:529 src/component/photo/edit/info.vue:303
 #: src/page/settings/general.vue:271
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/about/feedback.vue:8 src/options/options.js:497
+#: src/page/about/feedback.vue:8 src/options/options.js:333
 msgid "Product Feedback"
 msgstr "Feedback despre produs"
 
@@ -2387,11 +2424,11 @@ msgstr "Feedback despre produs"
 msgid "Projection"
 msgstr "Proiecție"
 
-#: src/options/options.js:478
+#: src/options/options.js:314
 msgid "Purple"
 msgstr "Violet"
 
-#: src/page/settings/content.vue:60
+#: src/page/settings/content.vue:59
 msgid "Quality Filter"
 msgstr "Filtru de calitate"
 
@@ -2407,16 +2444,17 @@ msgstr "r"
 msgid "Random"
 msgstr "Aleatoriu"
 
-#: src/locales.js:118
+#: src/locales.js:303
 msgid "Rating {0} of {1}"
 msgstr "Evaluare {0} din {1}"
 
-#: src/options/options.js:385
+#: src/options/options.js:217
 msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/view/cards.vue:313
-#: src/component/photo/view/mosaic.vue:157 src/page/settings/content.vue:388
+#: src/component/photo/view/mosaic.vue:157
+#: src/component/sidebar/metadata.vue:89 src/page/settings/content.vue:378
 msgid "RAW"
 msgstr "RAW"
 
@@ -2459,20 +2497,20 @@ msgstr "Recunoscută"
 msgid "Recovery Code"
 msgstr "Cod de recuperare"
 
-#: src/options/options.js:481
+#: src/options/options.js:317
 msgid "Red"
 msgstr "Roșu"
 
 #: src/page/admin/sessions.vue:99 src/page/admin/users.vue:124
-#: src/component/album/toolbar.vue:86 src/component/photo/toolbar.vue:164
-#: src/page/albums.vue:172 src/page/labels.vue:109
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:164
+#: src/page/albums.vue:172 src/page/labels.vue:111
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:78
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:87
 msgid "Refresh"
 msgstr "Reîmprospătare"
 
-#: src/app/routes.js:316 src/component/navigation.vue:891
-#: src/component/navigation.vue:974
+#: src/app/routes.js:337 src/component/navigation.vue:941
+#: src/component/navigation.vue:1024
 msgid "Regions"
 msgstr "Regiuni"
 
@@ -2480,12 +2518,12 @@ msgstr "Regiuni"
 msgid "Register"
 msgstr "Înregistrare"
 
-#: src/component/navigation.vue:1721 src/component/update.vue:68
+#: src/component/navigation.vue:1771 src/component/update.vue:68
 msgid "Reload"
 msgstr "Reîncărcare"
 
 #: src/component/navigation.vue:108 src/component/update.vue:26
-#: src/page/settings/content.vue:53 src/page/settings/general.vue:104
+#: src/page/settings/general.vue:104
 msgid "Reloading…"
 msgstr "Se reîncarcă…"
 
@@ -2501,15 +2539,15 @@ msgstr "Eliminați"
 msgid "remove failed: unknown album"
 msgstr "eliminarea eșuată: album necunoscut"
 
-#: src/component/photo/clipboard.vue:155
-msgid "Remove from album"
+#: src/component/lightbox.vue:1158 src/component/photo/clipboard.vue:155
+msgid "Remove from Album"
 msgstr "Eliminați din album"
 
 #: src/page/library/import.vue:99
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Eliminați fișierele importate pentru a economisi spațiu de stocare. Tipurile de fișiere neacceptate nu vor fi niciodată șterse, ele rămân în locația lor curentă."
 
-#: src/common/api.js:102 src/component/lightbox.vue:688
+#: src/common/api.js:102 src/component/lightbox.vue:706
 msgid "Request failed - are you offline?"
 msgstr "Cerere eșuată - sunteți offline?"
 
@@ -2517,7 +2555,7 @@ msgstr "Cerere eșuată - sunteți offline?"
 msgid "Request failed - invalid response"
 msgstr "Cerere eșuată - răspuns invalid"
 
-#: src/page/settings/content.vue:62
+#: src/page/settings/content.vue:61
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
 msgstr "Cereți ca imaginile non-fotografice și de calitate scăzută să fie revizuite înainte de a apărea în rezultatele căutării."
 
@@ -2530,11 +2568,16 @@ msgstr "Rezoluție"
 msgid "Restart"
 msgstr "Reporniți"
 
-#: src/component/user/edit/dialog.vue:485 src/component/photo/clipboard.vue:77
+#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1187
+#: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "Restaurați"
 
-#: src/component/service/edit.vue:426
+#: src/component/lightbox.vue:1869
+msgid "Restored"
+msgstr "Restaurat"
+
+#: src/component/service/edit.vue:428
 msgid "Retry Limit"
 msgstr "Limita de reintroducere"
 
@@ -2542,7 +2585,7 @@ msgstr "Limita de reintroducere"
 msgid "Retype Password"
 msgstr "Repeta parola"
 
-#: src/app/routes.js:243 src/component/navigation.vue:518
+#: src/app/routes.js:264 src/component/navigation.vue:503
 msgid "Review"
 msgstr "Revizuire"
 
@@ -2551,18 +2594,18 @@ msgstr "Revizuire"
 msgid "Role"
 msgstr "Rol"
 
-#: src/locales.js:33
+#: src/locales.js:218
 msgid "Rows per page:"
 msgstr "Rânduri pe pagină:"
 
-#: src/options/options.js:353 src/page/places.vue:335
+#: src/options/options.js:181
 msgid "Satellite"
 msgstr "Satelit"
 
 #: src/component/user/edit/dialog.vue:485
-#: src/component/album/edit/dialog.vue:210
+#: src/component/album/edit/dialog.vue:211
 #: src/component/label/edit/dialog.vue:119
-#: src/component/people/edit/dialog.vue:132 src/component/service/edit.vue:464
+#: src/component/people/edit/dialog.vue:132 src/component/service/edit.vue:466
 #: src/component/settings/password.vue:172 src/component/share/dialog.vue:181
 msgid "Save"
 msgstr "Salvați"
@@ -2575,7 +2618,7 @@ msgstr "Scanare"
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
 msgstr "Scanați codul QR cu aplicația dvs. de autentificare sau utilizați cheia de configurare afișată mai jos și apoi introduceți codul de verificare generat:"
 
-#: src/component/navigation.vue:477
+#: src/component/navigation.vue:459
 msgid "Scans"
 msgstr "Scanări"
 
@@ -2585,11 +2628,11 @@ msgid "Scope"
 msgstr "Domeniul de aplicare"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:62
-#: src/component/navigation.vue:339 src/component/navigation.vue:1814
-#: src/component/photo/toolbar.vue:56 src/options/options.js:310
+#: src/component/navigation.vue:340 src/component/navigation.vue:1864
+#: src/component/photo/toolbar.vue:56 src/options/options.js:129
 #: src/page/albums.vue:100 src/page/labels.vue:77
 #: src/page/library/errors.vue:75 src/page/people/recognized.vue:65
-#: src/page/places.vue:78 src/page/settings/content.vue:240
+#: src/page/places.vue:79 src/page/settings/content.vue:235
 msgid "Search"
 msgstr "Căutare"
 
@@ -2609,7 +2652,7 @@ msgstr "Secret"
 msgid "Security and Access"
 msgstr "Securitate și acces"
 
-#: src/component/lightbox.vue:1039 src/component/lightbox.vue:1040
+#: src/component/lightbox.vue:1085 src/component/lightbox.vue:1086
 msgid "Select"
 msgstr "Selectați"
 
@@ -2617,20 +2660,20 @@ msgstr "Selectați"
 msgid "Select a source folder to import files…"
 msgstr "Selectați un folder sursă pentru a importa fișiere…"
 
-#: src/locales.js:63
+#: src/locales.js:248
 msgid "Select date"
 msgstr "Selectați data"
 
-#: src/locales.js:60
+#: src/locales.js:245
 msgid "Select dates"
 msgstr "Selectați datele"
 
 #: src/component/photo/album/dialog.vue:54
-#: src/component/photo/upload/dialog.vue:152
+#: src/component/photo/upload/dialog.vue:154
 msgid "Select or create an album"
 msgstr "Selectați sau creați un album"
 
-#: src/component/photo/upload/dialog.vue:135
+#: src/component/photo/upload/dialog.vue:137
 msgid "Select the files to upload…"
 msgstr "Selectați fișierele pentru încărcare…"
 
@@ -2638,7 +2681,7 @@ msgstr "Selectați fișierele pentru încărcare…"
 msgid "Select the folder to be indexed…"
 msgstr "Selectați folderul care urmează să fie indexat…"
 
-#: src/locales.js:99
+#: src/locales.js:284
 msgid "Select Time"
 msgstr "Selectați ora"
 
@@ -2654,11 +2697,11 @@ msgstr "Selecție arhivată"
 msgid "Selection restored"
 msgstr "Selecție restabilită"
 
-#: src/page/settings/content.vue:210
+#: src/page/settings/content.vue:205
 msgid "Sequential Name"
 msgstr "Denumire secvențială"
 
-#: src/component/service/add.vue:67 src/component/service/edit.vue:320
+#: src/component/service/add.vue:67 src/component/service/edit.vue:322
 #: src/component/share/dialog.vue:25
 msgid "Service URL"
 msgstr "URL de serviciu"
@@ -2679,9 +2722,13 @@ msgstr "ID-ul sesiunii"
 msgid "Sessions"
 msgstr "Sesiuni"
 
-#: src/app/routes.js:101 src/app/routes.js:471 src/app/routes.js:483
-#: src/app/routes.js:500 src/app/routes.js:513 src/app/routes.js:526
-#: src/component/navigation.vue:1342 src/component/navigation.vue:1754
+#: src/component/lightbox.vue:1143
+msgid "Set as Album Cover"
+msgstr "Setați ca copertă de album"
+
+#: src/app/routes.js:101 src/app/routes.js:492 src/app/routes.js:504
+#: src/app/routes.js:521 src/app/routes.js:534 src/app/routes.js:547
+#: src/component/navigation.vue:1392 src/component/navigation.vue:1804
 msgid "Settings"
 msgstr "Setări"
 
@@ -2690,11 +2737,11 @@ msgstr "Setări"
 msgid "Settings saved"
 msgstr "Setări salvate"
 
-#: src/component/service/upload.vue:130 src/component/settings/passcode.vue:160
+#: src/component/service/upload.vue:131 src/component/settings/passcode.vue:160
 msgid "Setup"
 msgstr "Configurare"
 
-#: src/component/album/clipboard.vue:49 src/component/album/toolbar.vue:104
+#: src/component/album/clipboard.vue:49 src/component/album/toolbar.vue:93
 #: src/component/photo/clipboard.vue:51 src/page/settings/general.vue:369
 msgid "Share"
 msgstr "Distribuie"
@@ -2715,6 +2762,10 @@ msgstr "Arată"
 msgid "Show all new faces"
 msgstr "Afișați toate fețele noi"
 
+#: src/page/settings/content.vue:304
+msgid "Show Captions"
+msgstr "Afișați subtitrări"
+
 #: src/page/people/new.vue:62 src/page/people/recognized.vue:97
 msgid "Show hidden"
 msgstr "Arată ascuns"
@@ -2727,23 +2778,19 @@ msgstr "Arată mai puțin"
 msgid "Show more"
 msgstr "Arată mai mult"
 
-#: src/page/settings/content.vue:313
-msgid "Show picture captions in search results."
-msgstr "Afișați legendele imaginilor în rezultatele căutării."
-
-#: src/page/settings/content.vue:290
-msgid "Show picture titles in search results."
-msgstr "Afișați titlurile imaginilor în rezultatele căutării."
-
 #: src/page/settings/general.vue:538
 msgid "Show server logs in Library."
 msgstr "Afișați jurnalele serverului în Bibliotecă."
 
-#: src/component/lightbox.vue:952 src/component/lightbox.vue:953
+#: src/page/settings/content.vue:282
+msgid "Show Titles"
+msgstr "Afișați titlurile"
+
+#: src/component/lightbox.vue:998 src/component/lightbox.vue:999
 msgid "Show/Hide Sidebar"
 msgstr "Afișare/ascundere bară laterală"
 
-#: src/model/file.js:214 src/page/settings/content.vue:411
+#: src/model/file.js:214 src/page/settings/content.vue:400
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2760,11 +2807,11 @@ msgid "Similar"
 msgstr "Similar"
 
 #: src/component/photo/edit/files.vue:49 src/component/photo/edit/files.vue:341
-#: src/component/service/edit.vue:138
+#: src/component/service/edit.vue:139
 msgid "Size"
 msgstr "Dimensiune"
 
-#: src/options/options.js:336
+#: src/options/options.js:156
 msgid "Slow"
 msgstr "Încet"
 
@@ -2776,24 +2823,24 @@ msgstr "Software"
 msgid "Software Update"
 msgstr "Actualizare software"
 
-#: src/component/lightbox.vue:685
+#: src/component/lightbox.vue:703
 msgid "Something went wrong, try again"
 msgstr "Ceva nu a mers bine, încercați din nou"
 
-#: src/locales.js:43
+#: src/locales.js:228
 msgid "Sort by"
 msgstr "Sortare după"
 
-#: src/component/album/edit/dialog.vue:141 src/component/photo/toolbar.vue:276
+#: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:276
 #: src/page/albums.vue:207
 msgid "Sort Order"
 msgstr "Ordinea de sortare"
 
-#: src/locales.js:37
+#: src/locales.js:222
 msgid "Sorted ascending."
 msgstr "Sortate crescător."
 
-#: src/locales.js:36
+#: src/locales.js:221
 msgid "Sorted descending."
 msgstr "Sortate descrescător."
 
@@ -2807,11 +2854,11 @@ msgstr "Sursă"
 msgid "Stack"
 msgstr "Stivă"
 
-#: src/page/settings/content.vue:188
+#: src/page/settings/content.vue:184
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Stivuiți fișiere care partajează aceeași imagine unică sau identificator de instanță."
 
-#: src/page/settings/content.vue:165
+#: src/page/settings/content.vue:162
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Stivuiți fotografiile realizate exact în același moment și în aceeași locație, pe baza metadatelor."
 
@@ -2819,7 +2866,7 @@ msgstr "Stivuiți fotografiile realizate exact în același moment și în aceea
 msgid "Stackable"
 msgstr "Stivuibil"
 
-#: src/component/navigation.vue:437 src/page/settings/content.vue:138
+#: src/component/navigation.vue:419 src/page/settings/content.vue:136
 msgid "Stacks"
 msgstr "Stive"
 
@@ -2831,7 +2878,7 @@ msgstr "Start"
 msgid "Start Page"
 msgstr "Pagina de start"
 
-#: src/component/lightbox.vue:987 src/component/lightbox.vue:988
+#: src/component/lightbox.vue:1033 src/component/lightbox.vue:1034
 msgid "Start/Stop Slideshow"
 msgstr "Porniți/Opriți prezentarea"
 
@@ -2847,7 +2894,7 @@ msgstr "Stare"
 msgid "Storage"
 msgstr "Spațiu de stocare"
 
-#: src/options/options.js:348 src/page/places.vue:331
+#: src/options/options.js:169
 msgid "Streets"
 msgstr "Străzi"
 
@@ -2885,7 +2932,7 @@ msgstr "Super Admin"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Suportul pentru servicii suplimentare, cum ar fi Google Drive, va fi adăugat în timp."
 
-#: src/component/confirm/sponsor.vue:37 src/component/navigation.vue:1577
+#: src/component/confirm/sponsor.vue:37 src/component/navigation.vue:1627
 msgid "Support Our Mission"
 msgstr "Susține misiunea noastră"
 
@@ -2893,7 +2940,7 @@ msgstr "Susține misiunea noastră"
 msgid "Sync"
 msgstr "Sincronizare"
 
-#: src/component/service/edit.vue:287
+#: src/component/service/edit.vue:289
 msgid "Sync raw and video files"
 msgstr "Sincronizarea fișierelor raw și video"
 
@@ -2902,7 +2949,7 @@ msgstr "Sincronizarea fișierelor raw și video"
 msgid "Taken"
 msgstr "Luat"
 
-#: src/options/options.js:487
+#: src/options/options.js:323
 msgid "Teal"
 msgstr "Turcoaz"
 
@@ -2910,11 +2957,15 @@ msgstr "Turcoaz"
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
 msgstr "TensorFlow este necesar pentru clasificarea imaginilor, recunoașterea facială și detectarea conținutului nesigur."
 
+#: src/options/options.js:193
+msgid "Terrain"
+msgstr "Teren"
+
 #: src/common/form.js:256
 msgid "Text"
 msgstr "Text"
 
-#: src/component/photo/edit/details.vue:31 src/page/people/new.vue:71
+#: src/component/photo/edit/details.vue:32 src/page/people/new.vue:71
 msgid "Text too long"
 msgstr "Text prea lung"
 
@@ -2957,7 +3008,7 @@ msgstr "Ora UTC"
 msgid "Time Zone"
 msgstr "Fusul orar"
 
-#: src/component/service/edit.vue:406
+#: src/component/service/edit.vue:408
 msgid "Timeout"
 msgstr "Pauză"
 
@@ -2985,11 +3036,7 @@ msgstr "Titlul / Poziția"
 msgid "Title too long"
 msgstr "Titlu prea lung"
 
-#: src/page/settings/content.vue:289
-msgid "Titles"
-msgstr "Titluri"
-
-#: src/locales.js:55
+#: src/locales.js:240
 msgid "to"
 msgstr "la"
 
@@ -3009,7 +3056,7 @@ msgstr "Pentru a comuta la o nouă aplicație sau dispozitiv de autentificare, m
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți face clic pe \"Înregistrare\" pentru a vă înscrie pe site-ul nostru:"
 
-#: src/locales.js:79
+#: src/locales.js:264
 msgid "Today"
 msgstr "Astăzi"
 
@@ -3021,7 +3068,7 @@ msgstr "Schimbă vizualizarea"
 msgid "Token"
 msgstr "Jeton"
 
-#: src/component/photo/upload/dialog.vue:201
+#: src/component/photo/upload/dialog.vue:202
 msgid "Too many files selected"
 msgstr "Prea multe fișiere selectate"
 
@@ -3029,11 +3076,7 @@ msgstr "Prea multe fișiere selectate"
 msgid "Too many requests"
 msgstr "Prea multe cereri"
 
-#: src/options/options.js:363 src/page/places.vue:343
-msgid "Topographic"
-msgstr "Topografic"
-
-#: src/component/photo/toolbar.vue:190 src/page/library/errors.vue:87
+#: src/component/photo/toolbar.vue:192 src/page/library/errors.vue:88
 msgid "Troubleshooting"
 msgstr "Rezolvarea problemelor"
 
@@ -3049,7 +3092,7 @@ msgid "Two-factor authentication has been enabled for your account."
 msgstr "Autentificarea cu doi factori a fost activată pentru contul dvs."
 
 #: src/component/photo/edit/files.vue:56 src/component/photo/edit/files.vue:330
-#: src/component/photo/edit/info.vue:87 src/component/service/edit.vue:386
+#: src/component/photo/edit/info.vue:87 src/component/service/edit.vue:388
 msgid "Type"
 msgstr "Tip"
 
@@ -3061,24 +3104,24 @@ msgstr "Neautorizat"
 msgid "Undo"
 msgstr "Înapoi"
 
-#: src/page/settings/content.vue:187
+#: src/page/settings/content.vue:183
 msgid "Unique ID"
 msgstr "ID unic"
 
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
-#: src/page/settings/account.vue:501 src/common/util.js:432
-#: src/component/photo/edit/details.vue:20
+#: src/page/settings/account.vue:501 src/common/util.js:464
+#: src/component/photo/edit/details.vue:21
 #: src/component/photo/edit/details.vue:111
 #: src/component/photo/edit/details.vue:138
-#: src/component/photo/edit/details.vue:164 src/model/album.js:179
-#: src/model/photo.js:344 src/model/photo.js:795 src/model/photo.js:816
-#: src/model/photo.js:839 src/model/photo.js:857 src/model/photo.js:904
-#: src/model/photo.js:912 src/model/photo.js:1001 src/model/photo.js:1023
-#: src/model/photo.js:1068 src/model/photo.js:1081 src/model/user.js:157
-#: src/options/options.js:50 src/options/options.js:68
-#: src/options/options.js:85 src/options/options.js:99
-#: src/options/options.js:111 src/page/library/errors.vue:244
-#: src/page/library/errors.vue:261
+#: src/component/photo/edit/details.vue:164 src/model/album.js:193
+#: src/model/photo.js:322 src/model/photo.js:783 src/model/photo.js:804
+#: src/model/photo.js:827 src/model/photo.js:845 src/model/photo.js:892
+#: src/model/photo.js:900 src/model/photo.js:989 src/model/photo.js:1011
+#: src/model/photo.js:1056 src/model/photo.js:1069 src/model/user.js:157
+#: src/options/options.js:51 src/options/options.js:69
+#: src/options/options.js:86 src/options/options.js:100
+#: src/options/options.js:112 src/page/library/errors.vue:245
+#: src/page/library/errors.vue:262
 msgid "Unknown"
 msgstr "Necunoscut"
 
@@ -3087,7 +3130,7 @@ msgstr "Necunoscut"
 msgid "Unregistered"
 msgstr "Neînregistrat"
 
-#: src/app/routes.js:215 src/component/navigation.vue:657
+#: src/app/routes.js:215 src/component/navigation.vue:642
 msgid "Unsorted"
 msgstr "Nesortat"
 
@@ -3123,8 +3166,8 @@ msgstr "Actualizarea previziunilor"
 msgid "Updating stacks"
 msgstr "Actualizarea stivelor"
 
-#: src/page/connect.vue:57 src/component/navigation.vue:1448
-#: src/component/navigation.vue:1562 src/component/navigation.vue:1947
+#: src/page/connect.vue:57 src/component/navigation.vue:1498
+#: src/component/navigation.vue:1612 src/component/navigation.vue:1997
 #: src/page/connect.vue:58
 msgid "Upgrade"
 msgstr "Actualizare"
@@ -3135,29 +3178,29 @@ msgstr "Actualizare"
 msgid "Upgrade Now"
 msgstr "Actualizați acum"
 
-#: src/component/album/toolbar.vue:123 src/component/navigation.vue:1772
-#: src/component/photo/toolbar.vue:173 src/component/photo/upload/dialog.vue:49
-#: src/component/service/upload.vue:143 src/page/albums.vue:181
-#: src/page/library/import.vue:133 src/page/settings/general.vue:297
-#: src/page/settings/services.vue:37
+#: src/component/album/toolbar.vue:103 src/component/navigation.vue:1822
+#: src/component/photo/toolbar.vue:174 src/component/photo/upload/dialog.vue:50
+#: src/component/service/upload.vue:144 src/page/albums.vue:182
+#: src/page/labels.vue:121 src/page/library/import.vue:133
+#: src/page/settings/general.vue:297 src/page/settings/services.vue:37
 msgid "Upload"
 msgstr "Încărcați"
 
-#: src/component/photo/upload/dialog.vue:294
+#: src/component/photo/upload/dialog.vue:295
 msgid "Upload complete"
 msgstr "Încărcare completă"
 
-#: src/component/photo/upload/dialog.vue:130
+#: src/component/photo/upload/dialog.vue:132
 msgid "Upload complete. Indexing…"
 msgstr "Încărcare completă. Se indexează…"
 
-#: src/component/photo/upload/dialog.vue:280
-#: src/component/photo/upload/dialog.vue:299
-#: src/component/photo/upload/dialog.vue:126
+#: src/component/photo/upload/dialog.vue:281
+#: src/component/photo/upload/dialog.vue:300
+#: src/component/photo/upload/dialog.vue:128
 msgid "Upload failed"
 msgstr "Încărcarea a eșuat"
 
-#: src/component/service/edit.vue:255
+#: src/component/service/edit.vue:257
 msgid "Upload local files"
 msgstr "Încărcați fișiere locale"
 
@@ -3170,13 +3213,13 @@ msgstr "Cale de încărcare"
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Încărcați pe WebDAV și partajați linkuri cu prietenii."
 
-#: src/component/photo/upload/dialog.vue:128
+#: src/component/photo/upload/dialog.vue:130
 msgid "Uploading %{n} of %{t}…"
 msgstr "Se încarcă %{n} din %{t}…"
 
-#: src/component/photo/upload/dialog.vue:115
-#: src/component/photo/upload/dialog.vue:123
-#: src/component/photo/upload/dialog.vue:237
+#: src/component/photo/upload/dialog.vue:116
+#: src/component/photo/upload/dialog.vue:124
+#: src/component/photo/upload/dialog.vue:238
 msgid "Uploading photos…"
 msgstr "Se încarcă fotografii…"
 
@@ -3184,7 +3227,7 @@ msgstr "Se încarcă fotografii…"
 msgid "Uploading…"
 msgstr "Se încarcă…"
 
-#: src/component/photo/upload/dialog.vue:203
+#: src/component/photo/upload/dialog.vue:205
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Încărcările care pot conține astfel de imagini vor fi respinse automat."
 
@@ -3205,7 +3248,7 @@ msgstr "Utilizați codul de recuperare sau contactați un administrator pentru a
 msgid "User"
 msgstr "Utilizator"
 
-#: src/component/navigation.vue:1927
+#: src/component/navigation.vue:1977
 msgid "User Guide"
 msgstr "Ghidul utilizatorului"
 
@@ -3215,22 +3258,22 @@ msgstr "Interfața utilizatorului"
 
 #: src/component/user/add/dialog.vue:87 src/component/user/add/dialog.vue:88
 #: src/page/admin/sessions.vue:220 src/page/admin/users.vue:69
-#: src/component/service/add.vue:85 src/component/service/edit.vue:335
+#: src/component/service/add.vue:85 src/component/service/edit.vue:337
 #: src/component/share/dialog.vue:26
 msgid "Username"
 msgstr "Numele utilizatorului"
 
-#: src/component/navigation.vue:1383
+#: src/component/navigation.vue:1433
 msgid "Users"
 msgstr "Utilizatori"
 
 #: src/component/photo/view/cards.vue:333
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:177 src/options/options.js:401
+#: src/component/photo/view/mosaic.vue:177 src/options/options.js:237
 msgid "Vector"
 msgstr "Vector"
 
-#: src/component/navigation.vue:456
+#: src/component/navigation.vue:438
 msgid "Vectors"
 msgstr "Vectori"
 
@@ -3241,7 +3284,7 @@ msgstr "Cod de verificare"
 #: src/component/photo/view/cards.vue:363
 #: src/component/photo/view/cards.vue:491 src/component/photo/view/list.vue:190
 #: src/component/photo/view/mosaic.vue:207 src/model/file.js:221
-#: src/model/photo.js:928 src/model/photo.js:946 src/options/options.js:397
+#: src/model/photo.js:916 src/model/photo.js:934 src/options/options.js:225
 msgid "Video"
 msgstr "Clip"
 
@@ -3250,8 +3293,8 @@ msgstr "Clip"
 msgid "Video Duration"
 msgstr "Durata Videoclipului"
 
-#: src/app/routes.js:236 src/component/navigation.vue:701
-#: src/options/options.js:312
+#: src/app/routes.js:243 src/component/navigation.vue:726
+#: src/options/options.js:132
 msgid "Videos"
 msgstr "Videoclipuri"
 
@@ -3260,7 +3303,7 @@ msgstr "Videoclipuri"
 msgid "View"
 msgstr "Vedere"
 
-#: src/page/settings/content.vue:267
+#: src/page/settings/content.vue:261
 msgid "View search results as a list."
 msgstr "Vizualizați rezultatele căutării ca o listă."
 
@@ -3276,7 +3319,7 @@ msgstr "Vizitator"
 msgid "Visual Similarity"
 msgstr "Similaritate vizuală"
 
-#: src/page/library/errors.vue:254
+#: src/page/library/errors.vue:255
 msgid "Warning"
 msgstr "Avertisment"
 
@@ -3295,7 +3338,7 @@ msgstr "Autentificare Web"
 
 #: src/component/user/add/dialog.vue:248 src/component/user/edit/dialog.vue:432
 #: src/page/admin/users.vue:80 src/options/auth.js:55 src/options/auth.js:68
-#: src/options/options.js:540
+#: src/options/options.js:376
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -3311,7 +3354,7 @@ msgstr "Clienții WebDAV, cum ar fi Microsoft Windows Explorer sau Apple Finder,
 msgid "WebDAV Upload"
 msgstr "Încărcare WebDAV"
 
-#: src/page/places.vue:232
+#: src/page/places.vue:307
 msgid "WebGL support is disabled in your browser"
 msgstr "Suportul WebGL este dezactivat în browserul dvs."
 
@@ -3320,7 +3363,7 @@ msgstr "Suportul WebGL este dezactivat în browserul dvs."
 msgid "Website"
 msgstr "Site web"
 
-#: src/options/options.js:491
+#: src/options/options.js:327
 msgid "White"
 msgstr "Alb"
 
@@ -3333,7 +3376,7 @@ msgstr "Detalii de lucru"
 msgid "Year"
 msgstr "Anul"
 
-#: src/options/options.js:484
+#: src/options/options.js:320
 msgid "Yellow"
 msgstr "Galben"
 
@@ -3363,7 +3406,7 @@ msgstr "Poți descărca doar un singur album"
 msgid "You can only download one label"
 msgstr "Puteți descărca doar o singură etichetă"
 
-#: src/component/photo/upload/dialog.vue:201
+#: src/component/photo/upload/dialog.vue:203
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Puteți încărca până la %{n} fișiere în scopuri de testare."
 
@@ -3380,7 +3423,7 @@ msgstr "Puteți să scanați din nou biblioteca dumneavoastră pentru a găsi al
 msgid "Your account has been successfully connected."
 msgstr "Contul dvs. a fost conectat cu succes."
 
-#: src/page/places.vue:236
+#: src/page/places.vue:311
 msgid "Your browser does not support WebGL"
 msgstr "Browserul dvs. nu acceptă WebGL"
 
@@ -3393,9 +3436,27 @@ msgstr "Sprijinul dvs. continuu ne ajută să furnizăm actualizări regulate ș
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Biblioteca dvs. este analizată în permanență pentru a crea automat albume cu momente, călătorii și locuri speciale."
 
-#: src/component/lightbox.vue:239
+#: src/component/lightbox.vue:254
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#~ msgid "Topographic"
+#~ msgstr "Topografic"
+
+#~ msgid "Low Resolution"
+#~ msgstr "Rezoluție redusă"
+
+#~ msgid "Captions"
+#~ msgstr "Subtitrări"
+
+#~ msgid "Show picture captions in search results."
+#~ msgstr "Afișați legendele imaginilor în rezultatele căutării."
+
+#~ msgid "Show picture titles in search results."
+#~ msgstr "Afișați titlurile imaginilor în rezultatele căutării."
+
+#~ msgid "Titles"
+#~ msgstr "Titluri"
 
 #~ msgid "Customer Support"
 #~ msgstr "Asistență pentru clienți"
@@ -3528,9 +3589,6 @@ msgstr "Măriți/micșorați"
 
 #~ msgid "Gender"
 #~ msgstr "Sex"
-
-#~ msgid "Offline"
-#~ msgstr "Deconectat"
 
 #~ msgid "Phone"
 #~ msgstr "Telefon"
@@ -3925,9 +3983,6 @@ msgstr "Măriți/micșorați"
 
 #~ msgid "Style"
 #~ msgstr "Stil"
-
-#~ msgid "Hybrid"
-#~ msgstr "Hibrid"
 
 #~ msgid "Add Server"
 #~ msgstr "Adăugați un server"

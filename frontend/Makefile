@@ -16,7 +16,7 @@ install-npm:
 install-testcafe:
 	npm install -g testcafe@latest
 install-eslint:
-	npm install -g eslint@8 eslint-config-prettier eslint-config-standard eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
+	npm install -g eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
 install:
 	npm install --no-update-notifier --no-audit
 update:

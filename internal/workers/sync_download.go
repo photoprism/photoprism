@@ -29,7 +29,7 @@ func (w *Sync) relatedDownloads(a entity.Service) (result Downloads, err error) 
 	result = make(Downloads)
 	maxResults := 1000
 
-	// Get remote files from database
+	// Get list of remote files from database.
 	files, err := query.FileSyncs(a.ID, entity.FileSyncNew, maxResults)
 
 	if err != nil {
@@ -132,6 +132,10 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				if err = client.Download(file.RemoteName, localName, false); err != nil {
 					file.Errors++
 					file.Error = err.Error()
+
+					if file.Errors > a.RetryLimit {
+						file.Status = entity.FileSyncFailed
+					}
 				} else {
 					log.Infof("sync: downloaded %s from %s", file.RemoteName, clean.Log(a.AccName))
 					file.Status = entity.FileSyncDownloaded

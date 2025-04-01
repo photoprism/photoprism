@@ -317,7 +317,7 @@ describe("model/thumb", () => {
     };
     const file3 = new File(values3);
     const result2 = Thumb.calculateSize(file3, 900, 450);
-    assert.equal(result2.width, 397);
+    assert.equal(result2.width, 398);
     assert.equal(result2.height, 450);
     const result4 = Thumb.calculateSize(file3, 900, 950);
     assert.equal(result4.width, 750);

@@ -15,3 +15,4 @@ type TypesExt map[Type][]string
 
 // FileTypes contains the default file type extensions.
 var FileTypes = Extensions.Types(ignoreCase)
+var FileTypesLower = Extensions.Types(true)

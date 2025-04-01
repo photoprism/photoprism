@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -38,7 +36,7 @@ func clientsResetAction(ctx *cli.Context) error {
 		// Show prompt?
 		if !confirmed {
 			actionPrompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Reset the client database to a clean state?"),
+				Label:     "Reset the client database to a clean state?",
 				IsConfirm: true,
 			}
 

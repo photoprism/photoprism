@@ -13,30 +13,30 @@ import (
 )
 
 func TestImportWorker_OriginalFileNames(t *testing.T) {
-	conf := config.TestConfig()
+	c := config.TestConfig()
 
-	if err := conf.InitializeTestData(); err != nil {
+	if err := c.InitializeTestData(); err != nil {
 		t.Fatal(err)
 	}
 
-	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
-	nd := nsfw.New(conf.NSFWModelPath())
-	fn := face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-	convert := NewConvert(conf)
-	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
-	imp := &Import{conf, ind, convert}
+	tf := classify.New(c.AssetsPath(), c.DisableTensorFlow())
+	nd := nsfw.New(c.NSFWModelPath())
+	fn := face.NewNet(c.FaceNetModelPath(), "", c.DisableTensorFlow())
+	convert := NewConvert(c)
+	ind := NewIndex(c, tf, nd, fn, convert, NewFiles(), NewPhotos())
+	imp := &Import{c, ind, convert, c.ImportAllow()}
 
-	mediaFileName := conf.ExamplesPath() + "/beach_sand.jpg"
+	mediaFileName := c.ExamplesPath() + "/beach_sand.jpg"
 	mediaFile, err := NewMediaFile(mediaFileName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	mediaFileName2 := conf.ExamplesPath() + "/beach_wood.jpg"
+	mediaFileName2 := c.ExamplesPath() + "/beach_wood.jpg"
 	mediaFile2, err2 := NewMediaFile(mediaFileName2)
 	if err2 != nil {
 		t.Fatal(err2)
 	}
-	mediaFileName3 := conf.ExamplesPath() + "/beach_colorfilter.jpg"
+	mediaFileName3 := c.ExamplesPath() + "/beach_colorfilter.jpg"
 	mediaFile3, err3 := NewMediaFile(mediaFileName3)
 	if err3 != nil {
 		t.Fatal(err3)
@@ -58,7 +58,7 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 		FileName:  mediaFile.FileName(),
 		Related:   relatedFiles,
 		IndexOpt:  IndexOptionsAll(),
-		ImportOpt: ImportOptionsCopy(conf.ImportPath(), conf.ImportDest()),
+		ImportOpt: ImportOptionsCopy(c.ImportPath(), c.ImportDest()),
 		Imp:       imp,
 	}
 

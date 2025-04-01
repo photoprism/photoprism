@@ -137,7 +137,7 @@ services:
       PHOTOPRISM_AUTH_MODE: "password"                 # authentication mode (public, password)
       PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # file size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, error, fatal, or panic
+      PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, or error
       PHOTOPRISM_READONLY: "false"                     # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # enables experimental features
       PHOTOPRISM_DISABLE_TLS: "false"                  # disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available
@@ -163,7 +163,7 @@ services:
       # PHOTOPRISM_FFMPEG_ENCODER: "software"          # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"                # video bitrate limit in Mbit/s (default: 50)
-      ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
+      ## Optional commands to run during the first start, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
       PHOTOPRISM_INIT: "update tensorflow clean"
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory

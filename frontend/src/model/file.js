@@ -154,10 +154,10 @@ export class File extends RestModel {
 
     if (srcAspectRatio > maxAspectRatio) {
       newW = width;
-      newH = Math.round(newW / srcAspectRatio);
+      newH = Math.ceil(newW / srcAspectRatio);
     } else {
       newH = height;
-      newW = Math.round(newH * srcAspectRatio);
+      newW = Math.ceil(newH * srcAspectRatio);
     }
 
     return { width: newW, height: newH };

@@ -44,6 +44,7 @@ var YamlReportSections = []ReportSection{
 	{Start: "LogLevel", Title: "Logging"},
 	{Start: "ConfigPath", Title: "Storage"},
 	{Start: "SidecarPath", Title: "Sidecar Files"},
+	{Start: "UsageInfo", Title: "Usage"},
 	{Start: "BackupPath", Title: "Backup"},
 	{Start: "IndexWorkers", Title: "Indexing"},
 	{Start: "ReadOnly", Title: "Feature Flags"},

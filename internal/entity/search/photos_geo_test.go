@@ -979,4 +979,114 @@ func TestGeo(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
+	t.Run("QueryDocuments", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "documents"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryDocument", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "document"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryVectors", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "vectors"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryVector", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "vector"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryAnimated", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "animated"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryGifs", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "gifs"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryGif", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "gif"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 1)
+	})
+	t.Run("QueryRaw", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "raw"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, "raw", r.PhotoType)
+		}
+	})
 }

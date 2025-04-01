@@ -16,12 +16,17 @@
 }
 
 .v-main > .p-page .p-page__loading {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    padding: 30vh 24px;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    top: 38vh;
+    z-index: 2;
+}
+
+.v-main > .p-page .cluster-control .p-page__loading {
+    top: 156px;
 }
 
 .p-page .v-toolbar-title {

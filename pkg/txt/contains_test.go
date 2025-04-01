@@ -95,3 +95,19 @@ func TestContainsASCIILetters(t *testing.T) {
 		assert.False(t, ContainsASCIILetters("réseau"))
 	})
 }
+
+func TestContainsAlnumLower(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		assert.True(t, ContainsAlnumLower(""))
+		assert.True(t, ContainsAlnumLower("a"))
+		assert.True(t, ContainsAlnumLower("3kmib24yr3"))
+		assert.True(t, ContainsAlnumLower("123"))
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, ContainsAlnumLower("-"))
+		assert.False(t, ContainsAlnumLower(" "))
+		assert.False(t, ContainsAlnumLower("B"))
+		assert.False(t, ContainsAlnumLower("3Km"))
+		assert.False(t, ContainsAlnumLower("_3kmib24yr3"))
+	})
+}

@@ -363,7 +363,7 @@
                 v-model="settings.maps.style"
                 :disabled="busy"
                 :items="mapsStyle"
-                item-title="text"
+                item-title="title"
                 item-value="value"
                 :label="$gettext('Maps')"
                 :menu-props="{ maxHeight: 346 }"

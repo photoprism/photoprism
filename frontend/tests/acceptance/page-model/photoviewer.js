@@ -30,15 +30,30 @@ export default class Page {
 
   async checkPhotoViewerActionAvailability(action, visible) {
     if (visible) {
-      await t.expect(Selector("button.pswp__button--" + action).visible).ok();
+      if (action === "download") {
+        await t.hover(Selector("button.action-menu__btn"));
+        await t.expect(Selector("div.action-" + action).visible).ok();
+      } else {
+        await t.expect(Selector("button.pswp__button--" + action).visible).ok();
+      }
     } else {
-      await t.expect(Selector("button.pswp__button--" + action).visible).notOk();
+      if (action === "download") {
+        await t.hover(Selector("button.action-menu__btn"));
+        await t.expect(Selector("div.action-" + action).visible).notOk();
+      } else {
+        await t.expect(Selector("button.pswp__button--" + action).visible).notOk();
+      }
     }
   }
 
   async triggerPhotoViewerAction(action) {
-    await t.hover(Selector("button.pswp__button--" + action));
-    await t.click(Selector("button.pswp__button--" + action));
+    if (action === "download") {
+      await t.hover(Selector("button.action-menu__btn"));
+      await t.click(Selector("div.action-" + action));
+    } else {
+      await t.hover(Selector("button.pswp__button--" + action));
+      await t.click(Selector("button.pswp__button--" + action));
+    }
     if (t.browser.platform === "mobile") {
       await t.wait(5000);
     }

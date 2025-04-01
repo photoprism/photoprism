@@ -66,6 +66,9 @@ type Options struct {
 	StoragePath            string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	ImportPath             string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	ImportDest             string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
+	ImportAllow            string        `yaml:"ImportAllow" json:"ImportAllow" flag:"import-allow"`
+	UploadNSFW             bool          `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
+	UploadAllow            string        `yaml:"UploadAllow" json:"UploadAllow" flag:"upload-allow"`
 	CachePath              string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	TempPath               string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath             string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
@@ -109,7 +112,6 @@ type Options struct {
 	RawPresets             bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
 	ExifBruteForce         bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
 	DetectNSFW             bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
-	UploadNSFW             bool          `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
 	DefaultLocale          string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
 	DefaultTimezone        string        `yaml:"DefaultTimezone" json:"DefaultTimezone" flag:"default-timezone"`
 	DefaultTheme           string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`

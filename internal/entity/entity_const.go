@@ -12,6 +12,7 @@ const (
 	UnknownMonth = -1
 	UnknownDay   = -1
 	UnknownID    = "zz"
+	UnknownSlug  = "-"
 )
 
 // Media types.

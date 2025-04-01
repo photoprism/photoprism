@@ -158,8 +158,9 @@ export default {
       }
     },
     scrollToTop() {
-      // Scroll smoothly to the top of the browser window.
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Scroll instantly to the top of the browser window:
+      // https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollTo
+      window.scrollTo({ top: 0, behavior: "instant" });
     },
   },
 };

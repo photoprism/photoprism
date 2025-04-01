@@ -6,8 +6,8 @@ export class Lightbox {
     $event.publish("lightbox.open", options);
   }
 
-  openModels(models, index) {
-    $event.publish("lightbox.open", { models, index });
+  openModels(models, index, album) {
+    $event.publish("lightbox.open", { models, index, album });
   }
 
   openView(view, index) {

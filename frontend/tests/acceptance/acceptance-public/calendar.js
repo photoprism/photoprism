@@ -141,7 +141,7 @@ test.meta("testID", "calendar-004").meta({ type: "short", mode: "public" })(
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);

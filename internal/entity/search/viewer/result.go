@@ -15,6 +15,7 @@ type Result struct {
 	Lat          float64       `json:"Lat,omitempty"`
 	Lng          float64       `json:"Lng,omitempty"`
 	TakenAtLocal time.Time     `json:"TakenAtLocal"`
+	TimeZone     string        `json:"TimeZone,omitempty"`
 	Favorite     bool          `json:"Favorite"`
 	Playable     bool          `json:"Playable"`
 	Duration     time.Duration `json:"Duration,omitempty"`

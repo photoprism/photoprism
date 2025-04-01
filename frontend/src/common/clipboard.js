@@ -259,4 +259,4 @@ export class Clipboard {
   }
 }
 
-export const PhotoClipboard = reactive(new Clipboard(window.localStorage, "photo_clipboard"));
+export const PhotoClipboard = reactive(new Clipboard(window.localStorage, "clipboard.photos"));

@@ -250,6 +250,12 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		case terms["video"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "video", "")
 			frm.Video = true
+		case terms["audio"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "audio", "")
+			frm.Audio = true
+		case terms["sounds"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "sounds", "")
+			frm.Audio = true
 		case terms["documents"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "documents", "")
 			frm.Document = true
@@ -524,24 +530,26 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	// Filter by media type.
 	if txt.NotEmpty(frm.Type) {
 		s = s.Where("photos.photo_type IN (?)", SplitOr(strings.ToLower(frm.Type)))
-	} else if frm.Animated {
-		s = s.Where("photos.photo_type = ?", media.Animated)
-	} else if frm.Audio {
-		s = s.Where("photos.photo_type = ?", media.Audio)
 	} else if frm.Document {
 		s = s.Where("photos.photo_type = ?", media.Document)
 	} else if frm.Image {
 		s = s.Where("photos.photo_type = ?", media.Image)
-	} else if frm.Live {
-		s = s.Where("photos.photo_type = ?", media.Live)
 	} else if frm.Raw {
 		s = s.Where("photos.photo_type = ?", media.Raw)
 	} else if frm.Vector {
 		s = s.Where("photos.photo_type = ?", media.Vector)
+	} else if frm.Animated {
+		s = s.Where("photos.photo_type = ?", media.Animated)
+	} else if frm.Audio {
+		s = s.Where("photos.photo_type = ?", media.Audio)
 	} else if frm.Video {
 		s = s.Where("photos.photo_type = ?", media.Video)
+	} else if frm.Live {
+		s = s.Where("photos.photo_type = ?", media.Live)
+	} else if frm.Media {
+		s = s.Where("photos.photo_type IN ('live','video','audio','animated')")
 	} else if frm.Photo {
-		s = s.Where("photos.photo_type IN ('image','raw','live','animated','vector')")
+		s = s.Where("photos.photo_type IN ('image','raw','live')")
 	}
 
 	// Filter by storage path.

@@ -875,14 +875,14 @@ func (m *MediaFile) CheckType() error {
 	extension := m.Extension()
 
 	if extension == "" {
-		return fmt.Errorf("missing extension")
+		return fmt.Errorf("has no file extension")
 	}
 
 	// Detect file type and return error if unknown.
 	fileType := fs.FileType(m.fileName)
 
 	if fileType == fs.TypeUnknown {
-		return fmt.Errorf("unknown file type")
+		return fmt.Errorf("is an unknown file type")
 	}
 
 	// Detect media type (formerly known as a MIME type),
@@ -915,10 +915,10 @@ func (m *MediaFile) CheckType() error {
 
 	// Exclude mime type from the error message if it could not be detected.
 	if mimeType == fs.MimeTypeUnknown {
-		return fmt.Errorf("invalid extension (unknown media type)")
+		return fmt.Errorf("has an invalid extension (unknown media type)")
 	}
 
-	return fmt.Errorf("invalid extension for media type %s", clean.LogQuote(mimeType))
+	return fmt.Errorf("has an invalid extension for media type %s", clean.LogQuote(mimeType))
 }
 
 // Media returns the media content type (video, image, raw, sidecar,...).

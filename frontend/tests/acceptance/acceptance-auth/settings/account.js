@@ -188,3 +188,15 @@ test.meta("testID", "account-006").meta({ type: "short", mode: "auth" })(
     await page.logout();
   }
 );
+
+test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })(
+    "Common: Display usage info",
+    async (t) => {
+        await page.login("admin", "photoprism");
+        await menu.openNav();
+        await t
+            .expect(Selector("div.text-caption").withText("1 GB of 2 GB used").visible)
+            .ok()
+        await page.logout();
+    }
+);

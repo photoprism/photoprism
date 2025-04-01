@@ -144,6 +144,20 @@ export class Album extends RestModel {
     }
   }
 
+  setCover(hash) {
+    if (!hash || typeof hash !== "string" || hash.length < 40) {
+      console.warn("album: could not change cover because an invalid hash was specified");
+      return;
+    }
+
+    const values = {
+      Thumb: hash,
+      ThumbSrc: "manual",
+    };
+
+    return $api.put(this.getEntityResource(), values).then((resp) => Promise.resolve(this.setValues(resp.data)));
+  }
+
   dayString() {
     if (!this.Day || this.Day <= 0) {
       return "01";

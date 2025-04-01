@@ -108,18 +108,6 @@ export default {
     },
   },
   data() {
-    const cameras = [
-      {
-        ID: 0,
-        Name: this.$gettext("All Cameras"),
-      },
-    ].concat(this.$config.get("cameras"));
-    const countries = [
-      {
-        ID: "",
-        Name: this.$gettext("All Countries"),
-      },
-    ].concat(this.$config.get("countries"));
     const settings = this.$config.getSettings();
     const features = settings.features;
     return {
@@ -156,6 +144,7 @@ export default {
           name: "refresh",
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
+          shortcut: "Ctrl-R",
           visible: true,
           click: () => {
             this.refresh();
@@ -181,21 +170,22 @@ export default {
           },
         },
         {
+          name: "upload",
+          icon: "mdi-cloud-upload",
+          text: this.$gettext("Upload"),
+          shortcut: "Ctrl-U",
+          visible: this.canUpload,
+          click: () => {
+            this.showUpload();
+          },
+        },
+        {
           name: "download",
           icon: "mdi-download",
           text: this.$gettext("Download"),
           visible: this.canDownload,
           click: () => {
             this.download();
-          },
-        },
-        {
-          name: "upload",
-          icon: "mdi-cloud-upload",
-          text: this.$gettext("Upload"),
-          visible: this.canUpload,
-          click: () => {
-            this.showUpload();
           },
         },
       ];

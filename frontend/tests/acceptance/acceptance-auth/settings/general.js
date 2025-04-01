@@ -1,4 +1,5 @@
 import { Selector } from "testcafe";
+import { ClientFunction } from "testcafe";
 import testcafeconfig from "../../../testcafeconfig.json";
 import Menu from "../../page-model/menu";
 import Toolbar from "../../page-model/toolbar";
@@ -25,6 +26,7 @@ const photoedit = new PhotoEdit();
 const album = new Album();
 const settings = new Settings();
 const library = new Library();
+const getPageUrl = ClientFunction(() => window.location.href);
 
 test.meta("testID", "settings-general-001").meta({ type: "short", mode: "auth" })(
   "Common: Disable delete",
@@ -94,7 +96,7 @@ test.meta("testID", "settings-general-002").meta({ type: "short", mode: "auth" }
 );
 
 test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" })(
-  "Common: Disable pages: import, originals, logs, moments, places, library",
+  "Common: Disable pages: import, originals, logs, moments, places, library, calendar, services, account",
   async (t) => {
     await toolbar.setFilter("view", "Cards");
 
@@ -131,19 +133,26 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
       .ok()
       .expect(library.indexTab.visible)
       .ok();
+    await menu.openPage("settings");
+
+    await t.expect(settings.accountTab.visible).ok().expect(settings.servicesTab.visible).ok();
     await menu.checkMenuItemAvailability("originals", true);
     await menu.checkMenuItemAvailability("folders", true);
     await menu.checkMenuItemAvailability("moments", true);
     await menu.checkMenuItemAvailability("places", true);
     await menu.checkMenuItemAvailability("library", true);
+    await menu.checkMenuItemAvailability("calendar", true);
 
     await menu.openPage("settings");
     await t
       .click(settings.importCheckbox)
       .click(settings.filesCheckbox)
       .click(settings.momentsCheckbox)
+      .click(settings.calendarCheckbox)
       .click(settings.logsCheckbox)
-      .click(settings.placesCheckbox);
+      .click(settings.placesCheckbox)
+      .click(settings.accountCheckbox)
+      .click(settings.servicesCheckbox);
     await t.eval(() => location.reload());
 
     if (t.browser.platform === "mobile") {
@@ -180,25 +189,48 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
     await menu.checkMenuItemAvailability("originals", false);
     await menu.checkMenuItemAvailability("folders", true);
     await menu.checkMenuItemAvailability("moments", false);
+    await menu.checkMenuItemAvailability("calendar", false);
     await menu.checkMenuItemAvailability("places", false);
     await menu.checkMenuItemAvailability("library", true);
 
     await menu.openPage("settings");
+
+    await t
+      .expect(settings.accountTab.visible)
+      .notOk()
+      .expect(settings.servicesTab.visible)
+      .notOk()
+      .expect(settings.generalTab.visible)
+      .ok();
+
     await t
       .click(settings.importCheckbox)
       .click(settings.filesCheckbox)
       .click(settings.momentsCheckbox)
+      .click(settings.calendarCheckbox)
       .click(settings.logsCheckbox)
       .click(settings.placesCheckbox)
-      .click(settings.libraryCheckbox);
+      .click(settings.libraryCheckbox)
+      .click(settings.accountCheckbox)
+      .click(settings.servicesCheckbox);
 
     await menu.checkMenuItemAvailability("originals", false);
     await menu.checkMenuItemAvailability("folders", true);
     await menu.checkMenuItemAvailability("moments", true);
+    await menu.checkMenuItemAvailability("calendar", true);
     await menu.checkMenuItemAvailability("places", true);
     await menu.checkMenuItemAvailability("library", false);
 
+    await menu.openPage("albums");
     await menu.openPage("settings");
+
+    await t
+      .expect(settings.accountTab.visible)
+      .ok()
+      .expect(settings.servicesTab.visible)
+      .ok()
+      .expect(settings.generalTab.visible)
+      .ok();
 
     if (t.browser.platform === "mobile") {
       if (await toolbar.openMobileToolbar.visible) {
@@ -402,10 +434,17 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await toolbar.search("photo:true");
     await photoviewer.openPhotoViewer("nth", 0);
 
-    await photoviewer.checkPhotoViewerActionAvailability("download-button", true);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
 
-    await photoviewer.triggerPhotoViewerAction("close");
+    await photoviewer.triggerPhotoViewerAction("close-button");
     await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
+
+    await menu.openPage("albums");
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.triggerContextMenuAction("clear");
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("download", true);
 
     await menu.openPage("settings");
 
@@ -489,9 +528,9 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
 
     await toolbar.search("photo:true");
     await photoviewer.openPhotoViewer("nth", 0);
-    await photoviewer.checkPhotoViewerActionAvailability("download-button", false);
+    await photoviewer.checkPhotoViewerActionAvailability("download", false);
     await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
-    await photoviewer.triggerPhotoViewerAction("close");
+    await photoviewer.triggerPhotoViewerAction("close-button");
     await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
     await menu.openPage("settings");
@@ -500,5 +539,50 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
       .click(settings.downloadCheckbox)
       .click(settings.editCheckbox)
       .click(settings.shareCheckbox);
+  }
+);
+
+test.meta("testID", "settings-general-007").meta({ type: "short", mode: "auth" })(
+  "Common: Configure start page",
+  async (t) => {
+    await t.expect(getPageUrl()).contains("browse");
+
+    await menu.openPage("settings");
+    await t
+      .click(settings.startpageOpenSelection)
+      .hover(Selector("div").withText("Places").parent('div[role="option"]'))
+      .click(Selector("div").withText("Places").parent('div[role="option"]'));
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.expect(getPageUrl()).contains("places");
+    await menu.openPage("settings");
+    await t.click(settings.placesCheckbox);
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.expect(getPageUrl()).contains("browse");
+    await menu.openPage("settings");
+    await t.click(settings.placesCheckbox);
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.expect(getPageUrl()).contains("places");
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.expect(getPageUrl()).contains("places");
+    await menu.openPage("settings");
+    await t
+      .click(settings.startpageOpenSelection)
+      .hover(Selector("div").withText("Albums").parent('div[role="option"]'))
+      .click(Selector("div").withText("Albums").parent('div[role="option"]'));
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.expect(getPageUrl()).contains("albums");
+    await menu.openPage("settings");
+    await t
+      .click(settings.startpageOpenSelection)
+      .hover(Selector("div").withText("Default").parent('div[role="option"]'))
+      .click(Selector("div").withText("Default").parent('div[role="option"]'));
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.expect(getPageUrl()).contains("browse");
   }
 );

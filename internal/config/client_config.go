@@ -61,6 +61,7 @@ type ClientConfig struct {
 	Sponsor          bool                `json:"sponsor"`
 	ReadOnly         bool                `json:"readonly"`
 	UploadNSFW       bool                `json:"uploadNSFW"`
+	UploadAllow      string              `json:"uploadAllow"`
 	Public           bool                `json:"public"`
 	AuthMode         string              `json:"authMode"`
 	UsersPath        string              `json:"usersPath"`
@@ -143,8 +144,12 @@ type ClientDisable struct {
 type ClientCounts struct {
 	All            int `json:"all"`
 	Photos         int `json:"photos"`
+	Media          int `json:"media"`
+	Animated       int `json:"animated"`
 	Live           int `json:"live"`
+	Audio          int `json:"audio"`
 	Videos         int `json:"videos"`
+	Documents      int `json:"documents"`
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
 	Countries      int `json:"countries"`
@@ -392,6 +397,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
+		UploadAllow:      c.UploadAllow().Accept(),
 		Public:           c.Public(),
 		AuthMode:         c.AuthMode(),
 		UsersPath:        "",
@@ -491,6 +497,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
+		UploadAllow:      c.UploadAllow().Accept(),
 		Public:           c.Public(),
 		AuthMode:         c.AuthMode(),
 		UsersPath:        c.UsersPath(),
@@ -548,10 +555,13 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 	if hidePrivate {
 		c.Db().
 			Table("photos").
-			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
+			Select("SUM(photo_type = 'animated' AND photo_quality > -1 AND photo_private = 0) AS animated, " +
+				"SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
+				"SUM(photo_type = 'audio' AND photo_quality > -1 AND photo_private = 0) AS audio, " +
+				"SUM(photo_type = 'document' AND photo_quality > -1 AND photo_private = 0) AS documents, " +
 				"SUM(photo_quality = -1) AS hidden, " +
-				"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1 AND photo_private = 0) AS photos, " +
+				"SUM(photo_type NOT IN ('animated','video','live','audio','document') AND photo_quality > -1 AND photo_private = 0) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
 				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
@@ -561,10 +571,13 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 	} else {
 		c.Db().
 			Table("photos").
-			Select("SUM(photo_type = 'video' AND photo_quality > -1) AS videos, " +
+			Select("SUM(photo_type = 'animated' AND photo_quality > -1) AS animated, " +
+				"SUM(photo_type = 'video' AND photo_quality > -1) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1) AS live, " +
+				"SUM(photo_type = 'audio' AND photo_quality > -1) AS audio, " +
+				"SUM(photo_type = 'document' AND photo_quality > -1) AS documents, " +
 				"SUM(photo_quality = -1) AS hidden, " +
-				"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type NOT IN ('animated','video','live','audio','document') AND photo_quality > -1) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, " +
 				"0 AS private").
@@ -582,8 +595,9 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 			Take(&cfg.Count)
 	}
 
-	// Calculate total count.
-	cfg.Count.All = cfg.Count.Photos + cfg.Count.Live + cfg.Count.Videos
+	// Calculate total counts.
+	cfg.Count.Media = cfg.Count.Animated + cfg.Count.Live + cfg.Count.Videos + cfg.Count.Audio
+	cfg.Count.All = cfg.Count.Photos + cfg.Count.Media + cfg.Count.Documents
 
 	// Exclude pictures in review from total count.
 	if c.Settings().Features.Review {

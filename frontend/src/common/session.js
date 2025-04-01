@@ -41,7 +41,7 @@ export default class Session {
    * @param {object} shared
    */
   constructor(storage, config, shared) {
-    this.storageKey = "sessionStorage";
+    this.storageKey = "session";
     this.loginRedirect = false;
     this.config = config;
     this.provider = "";
@@ -55,20 +55,55 @@ export default class Session {
       this.storage = storage;
     }
 
-    // Restore authentication from session storage.
-    if (this.applyAuthToken(this.storage.getItem("authToken")) && this.applyId(this.storage.getItem("sessionId"))) {
+    // Restore authentication data stored under previously used keys.
+    if (
+      !this.storage.getItem(this.storageKey + ".token") &&
+      this.storage.getItem("authToken") &&
+      !this.storage.getItem(this.storageKey + ".id") &&
+      this.storage.getItem("sessionId")
+    ) {
+      this.storage.setItem(this.storageKey + ".token", this.storage.getItem("authToken"));
+      this.storage.removeItem("authToken");
+
+      this.storage.setItem(this.storageKey + ".id", this.storage.getItem("sessionId"));
+      this.storage.removeItem("sessionId");
+
       const dataJson = this.storage.getItem("sessionData");
-      if (dataJson !== "undefined") {
-        this.data = JSON.parse(dataJson);
+      if (dataJson && dataJson !== "undefined") {
+        this.storage.setItem(this.storageKey + ".data", dataJson);
+        this.storage.removeItem("sessionData");
       }
 
       const userJson = this.storage.getItem("user");
-      if (userJson !== "undefined") {
-        this.user = new User(JSON.parse(userJson));
+      if (userJson && userJson !== "undefined") {
+        this.storage.setItem(this.storageKey + ".user", userJson);
+        this.storage.removeItem("user");
       }
 
       const provider = this.storage.getItem("provider");
-      if (provider !== null) {
+      if (provider !== null && provider !== "undefined") {
+        this.storage.setItem(this.storageKey + ".provider", provider);
+        this.storage.removeItem("provider");
+      }
+    }
+
+    // Restore authentication from session storage.
+    if (
+      this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) &&
+      this.applyId(this.storage.getItem(this.storageKey + ".id"))
+    ) {
+      const dataJson = this.storage.getItem(this.storageKey + ".data");
+      if (dataJson && dataJson !== "undefined") {
+        this.data = JSON.parse(dataJson);
+      }
+
+      const userJson = this.storage.getItem(this.storageKey + ".user");
+      if (userJson && userJson !== "undefined") {
+        this.user = new User(JSON.parse(userJson));
+      }
+
+      const provider = this.storage.getItem(this.storageKey + ".provider");
+      if (provider !== null && provider !== "undefined") {
         this.provider = provider;
       }
     }
@@ -123,7 +158,7 @@ export default class Session {
 
   setAuthToken(authToken) {
     if (authToken) {
-      this.storage.setItem("authToken", authToken);
+      this.storage.setItem(this.storageKey + ".token", authToken);
       if (authToken === PublicAuthToken) {
         this.setId(PublicSessionID);
       }
@@ -154,7 +189,7 @@ export default class Session {
   }
 
   setId(id) {
-    this.storage.setItem("sessionId", id);
+    this.storage.setItem(this.storageKey + ".id", id);
     this.id = id;
   }
 
@@ -185,20 +220,24 @@ export default class Session {
     this.authToken = null;
     this.provider = "";
 
-    // "sessionId" is the SHA256 hash of the auth token.
+    // "session.id" is the SHA256 hash of the auth token.
+    this.storage.removeItem(this.storageKey + ".id");
+    this.storage.removeItem(this.storageKey + ".token");
+    this.storage.removeItem(this.storageKey + ".provider");
+
+    // Remove previously used data e.g. "session_id"
+    // is deprecated in favor of "session.token".
+    this.storage.removeItem("session_id");
     this.storage.removeItem("sessionId");
     this.storage.removeItem("authToken");
+    this.storage.removeItem("authError");
     this.storage.removeItem("provider");
-
-    // The "session_id" storage key is deprecated in favor of "authToken",
-    // but should continue to be removed when logging out:
-    this.storage.removeItem("session_id");
 
     delete $api.defaults.headers.common[RequestHeader];
   }
 
   setProvider(provider) {
-    this.storage.setItem("provider", provider);
+    this.storage.setItem(this.storageKey + ".provider", provider);
     this.provider = provider;
   }
 
@@ -264,7 +303,7 @@ export default class Session {
     }
 
     this.data = data;
-    this.storage.setItem("sessionData", JSON.stringify(data));
+    this.storage.setItem(this.storageKey + ".data", JSON.stringify(data));
 
     if (data.user) {
       this.setUser(data.user);
@@ -293,7 +332,7 @@ export default class Session {
     }
 
     this.user = new User(user);
-    this.storage.setItem("user", JSON.stringify(user));
+    this.storage.setItem(this.storageKey + ".user", JSON.stringify(user));
     this.auth = this.isUser();
   }
 
@@ -378,19 +417,21 @@ export default class Session {
 
   deleteData() {
     this.data = null;
+    this.storage.removeItem(this.storageKey + ".data");
     this.storage.removeItem("sessionData");
   }
 
   deleteUser() {
     this.auth = false;
     this.user = new User(false);
+    this.storage.removeItem(this.storageKey + ".user");
     this.storage.removeItem("user");
   }
 
   deleteClipboard() {
     this.storage.removeItem("clipboard");
-    this.storage.removeItem("photo_clipboard");
-    this.storage.removeItem("album_clipboard");
+    this.storage.removeItem("clipboard.photos");
+    this.storage.removeItem("clipboard.albums");
   }
 
   reset() {

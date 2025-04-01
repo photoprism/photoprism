@@ -453,6 +453,19 @@ func TestConfig_ImportPath2(t *testing.T) {
 	}
 }
 
+func TestConfig_ImportAllow(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.ImportAllow = "jpg, PNG,pdf"
+
+	assert.Equal(t, "jpg, pdf, png", c.ImportAllow().String())
+
+	c.options.ImportAllow = ""
+
+	assert.Len(t, c.ImportAllow(), 0)
+	assert.Equal(t, "", c.ImportAllow().String())
+}
+
 func TestConfig_AssetsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets", c.AssetsPath())

@@ -62,7 +62,7 @@ func Shares(router *gin.RouterGroup) {
 			}
 		}
 
-		uri := conf.LibraryUri(path.Join("/albums", uid, shared))
+		uri := conf.LibraryUri(path.Join("/albums", uid, "view"))
 
 		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})

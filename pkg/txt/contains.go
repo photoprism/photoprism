@@ -38,6 +38,17 @@ func ContainsASCIILetters(s string) bool {
 	return true
 }
 
+// ContainsAlnumLower reports if the string only contains lower case ascii letters or numbers.
+func ContainsAlnumLower(s string) bool {
+	for _, r := range s {
+		if (r < 48 || r > 57) && (r < 97 || r > 122) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // ContainsSymbols reports whether the string only contains symbolic characters.
 func ContainsSymbols(s string) bool {
 	if s == "" {

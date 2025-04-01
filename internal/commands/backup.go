@@ -40,19 +40,21 @@ var backupFlags = []cli.Flag{
 		Aliases: []string{"a"},
 		Usage:   "create YAML files to back up album metadata (in the standard backup path if no other path is specified)",
 	},
-	&cli.StringFlag{
-		Name:  "albums-path",
-		Usage: "custom album backup `PATH`",
+	&cli.PathFlag{
+		Name:      "albums-path",
+		Usage:     "custom album backup `PATH`",
+		TakesFile: true,
 	},
 	&cli.BoolFlag{
 		Name:    "database",
 		Aliases: []string{"index", "i"},
 		Usage:   "create index database backup (in the backup path with the date as filename if no filename is passed, or sent to stdout if - is passed as filename)",
 	},
-	&cli.StringFlag{
-		Name:    "database-path",
-		Aliases: []string{"index-path"},
-		Usage:   "custom database backup `PATH`",
+	&cli.PathFlag{
+		Name:      "database-path",
+		Aliases:   []string{"index-path"},
+		Usage:     "custom database backup `PATH`",
+		TakesFile: true,
 	},
 	&cli.IntFlag{
 		Name:    "retain",

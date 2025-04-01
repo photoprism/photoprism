@@ -145,7 +145,7 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
     await toolbar.checkToolbarActionAvailability("edit", false);
     await toolbar.checkToolbarActionAvailability("share", false);
     await toolbar.checkToolbarActionAvailability("upload", false);
-    await toolbar.checkToolbarActionAvailability("reload", true);
+    await toolbar.checkToolbarActionAvailability("refresh", true);
     await toolbar.checkToolbarActionAvailability("download", true);
 
     await photo.triggerHoverAction("nth", 0, "select");
@@ -161,14 +161,14 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
 
     await photoviewer.openPhotoViewer("nth", 0);
 
-    await photoviewer.checkPhotoViewerActionAvailability("download-button", true);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
     await photoviewer.checkPhotoViewerActionAvailability("select-toggle", true);
     await photoviewer.checkPhotoViewerActionAvailability("fullscreen-toggle", true);
     await photoviewer.checkPhotoViewerActionAvailability("slideshow-toggle", true);
     await photoviewer.checkPhotoViewerActionAvailability("favorite-toggle", false);
     await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
 
-    await photoviewer.triggerPhotoViewerAction("close");
+    await photoviewer.triggerPhotoViewerAction("close-button");
     await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
     await photo.checkHoverActionAvailability("nth", 0, "favorite", false);

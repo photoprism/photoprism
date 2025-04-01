@@ -32,7 +32,7 @@ test.meta("testID", "library-import-001").meta({ type: "short", mode: "public" }
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     await toolbar.search("bakery");
 

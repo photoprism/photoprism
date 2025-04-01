@@ -12,6 +12,7 @@ type ImportOptions struct {
 	NonBlocking            bool
 	DestFolder             string
 	RemoveDotFiles         bool
+	RemoveInvalidFiles     bool
 	RemoveExistingFiles    bool
 	RemoveEmptyDirectories bool
 }
@@ -35,6 +36,7 @@ func ImportOptionsCopy(importPath, destFolder string) ImportOptions {
 		NonBlocking:            false,
 		DestFolder:             destFolder,
 		RemoveDotFiles:         false,
+		RemoveInvalidFiles:     false,
 		RemoveExistingFiles:    false,
 		RemoveEmptyDirectories: false,
 	}
@@ -52,6 +54,7 @@ func ImportOptionsMove(importPath, destFolder string) ImportOptions {
 		NonBlocking:            false,
 		DestFolder:             destFolder,
 		RemoveDotFiles:         true,
+		RemoveInvalidFiles:     false,
 		RemoveExistingFiles:    true,
 		RemoveEmptyDirectories: true,
 	}
@@ -69,6 +72,7 @@ func ImportOptionsUpload(uploadPath, destFolder string) ImportOptions {
 		NonBlocking:            true,
 		DestFolder:             destFolder,
 		RemoveDotFiles:         true,
+		RemoveInvalidFiles:     true,
 		RemoveExistingFiles:    true,
 		RemoveEmptyDirectories: true,
 	}

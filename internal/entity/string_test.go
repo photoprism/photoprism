@@ -42,12 +42,12 @@ func TestClip(t *testing.T) {
 
 func TestSanitizeStringType(t *testing.T) {
 	result := SanitizeStringType(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
-	assert.Equal(t, "Hanzi are logograms developed for the writing of Chinese! Expres", result)
+	assert.Equal(t, "Hanzi are logograms developed for the writing of Chinese! Expres", result) // codespell:ignore
 	assert.Equal(t, ClipStringType, len(result))
 }
 
 func TestSanitizeStringTypeLower(t *testing.T) {
 	result := SanitizeStringTypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
-	assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
+	assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result) // codespell:ignore
 	assert.Equal(t, ClipStringType, len(result))
 }

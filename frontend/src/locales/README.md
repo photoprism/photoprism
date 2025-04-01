@@ -26,13 +26,13 @@ In addition, the new language needs to be added to the `Languages` function in `
 
 A binary `*.mo` (machine object) file will be automatically saved along with every `*.po` file. 
 You won't be able to open those in a text editor, but please include them in git commits or when sending
-translations via email. The compiled `translations.json` file is not required for pull requests 
+translations via email. The compiled `*.json` files are not required for pull requests 
 and often causes merge conflicts.
 
 If you have a working development environment in place:
 
-Running `npm run gettext-compile` in the `frontend` directory compiles existing translations into 
-a single `translations.json` file.
+Running `npm run gettext-compile` in the `frontend` directory compiles existing translations into `*.json` files that
+can be imported by the frontend.
 
 Now start a frontend build using `npm run build` or keep 
 

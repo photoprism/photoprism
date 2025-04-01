@@ -125,7 +125,7 @@ func (v Vector) variance(mean float64) float64 {
 // Product returns a vector of element-wise products of two input vectors.
 func Product(a, b Vector) (Vector, error) {
 	if len(a) != len(b) {
-		return nil, fmt.Errorf("vector dimentions do not match (%d, %d)", len(a), len(b))
+		return nil, fmt.Errorf("vector dimensions do not match (%d, %d)", len(a), len(b))
 	}
 
 	p := make(Vector, len(a))

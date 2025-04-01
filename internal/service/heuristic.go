@@ -5,24 +5,34 @@ import (
 	"strings"
 )
 
+type Headers = map[string]string
+
+// Heuristic represents a heuristic for detecting a remote service type, e.g. WebDAV.
 type Heuristic struct {
-	ServiceType string
-	Domains     []string
-	Paths       []string
-	Method      string
+	Type    Type
+	Domains []string
+	Paths   []string
+	Method  string
+	Headers Headers
 }
 
+// Heuristics for common remote service types.
 var Heuristics = []Heuristic{
-	{Facebook, []string{"facebook.com", "www.facebook.com"}, []string{}, "GET"},
-	{Twitter, []string{"twitter.com"}, []string{}, "GET"},
-	{Flickr, []string{"flickr.com", "www.flickr.com"}, []string{}, "GET"},
-	{Instagram, []string{"instagram.com", "www.instagram.com"}, []string{}, "GET"},
-	{Telegram, []string{"web.telegram.org", "www.telegram.org", "telegram.org"}, []string{}, "GET"},
-	{WhatsApp, []string{"web.whatsapp.com", "www.whatsapp.com", "whatsapp.com"}, []string{}, "GET"},
-	{OneDrive, []string{"onedrive.live.com"}, []string{}, "GET"},
-	{GDrive, []string{"drive.google.com"}, []string{}, "GET"},
-	{GPhotos, []string{"photos.google.com"}, []string{}, "GET"},
-	{WebDAV, []string{}, []string{"/", "/webdav/", "/originals/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"}, "PROPFIND"},
+	{Type: Facebook, Domains: []string{"facebook.com", "www.facebook.com"}, Paths: []string{}, Method: "GET"},
+	{Type: Twitter, Domains: []string{"twitter.com"}, Paths: []string{}, Method: "GET"},
+	{Type: Flickr, Domains: []string{"flickr.com", "www.flickr.com"}, Paths: []string{}, Method: "GET"},
+	{Type: Instagram, Domains: []string{"instagram.com", "www.instagram.com"}, Paths: []string{}, Method: "GET"},
+	{Type: Telegram, Domains: []string{"web.telegram.org", "www.telegram.org", "telegram.org"}, Paths: []string{}, Method: "GET"},
+	{Type: WhatsApp, Domains: []string{"web.whatsapp.com", "www.whatsapp.com", "whatsapp.com"}, Paths: []string{}, Method: "GET"},
+	{Type: OneDrive, Domains: []string{"onedrive.live.com"}, Paths: []string{}, Method: "GET"},
+	{Type: GDrive, Domains: []string{"drive.google.com"}, Paths: []string{}, Method: "GET"},
+	{Type: GPhotos, Domains: []string{"photos.google.com"}, Paths: []string{}, Method: "GET"},
+	{Type: WebDAV,
+		Domains: []string{},
+		Paths:   []string{"/", "/webdav/", "/originals/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"},
+		Method:  "PROPFIND",
+		Headers: Headers{"Depth": "1"},
+	},
 }
 
 func (h Heuristic) MatchDomain(match string) bool {
@@ -46,14 +56,14 @@ func (h Heuristic) Discover(rawUrl, user string) *url.URL {
 		return nil
 	}
 
-	if HttpOk(h.Method, u.String()) {
+	if h.TestRequest(h.Method, u.String()) {
 		return u
 	}
 
 	for _, p := range h.Paths {
 		u.Path = strings.Replace(p, "{user}", user, -1)
 
-		if HttpOk(h.Method, u.String()) {
+		if h.TestRequest(h.Method, u.String()) {
 			return u
 		}
 	}

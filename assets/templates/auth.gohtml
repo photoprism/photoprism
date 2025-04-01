@@ -15,19 +15,19 @@
 {{template "app.gohtml" .}}
 
 <script>{{ if eq .status "success" }}
-  window.localStorage.setItem("sessionId", {{ .session_id }});
-  window.localStorage.setItem("authToken", {{ .access_token }});
-  window.localStorage.setItem("provider", {{ .provider }});
-  window.localStorage.setItem("user", JSON.stringify({{ .user }}));
-  window.localStorage.removeItem("authError");
+  window.localStorage.setItem("session.id", {{ .session_id }});
+  window.localStorage.setItem("session.token", {{ .access_token }});
+  window.localStorage.setItem("session.provider", {{ .provider }});
+  window.localStorage.setItem("session.user", JSON.stringify({{ .user }}));
+  window.localStorage.removeItem("session.error");
   {{ else if eq .status "failed" }}
-  window.localStorage.setItem("authError", {{ .error }});
+  window.localStorage.setItem("session.error", {{ .error }});
   {{ else }}
-  window.localStorage.removeItem("sessionId");
-  window.localStorage.removeItem("authToken");
-  window.localStorage.removeItem("provider");
-  window.localStorage.removeItem("user");
-  window.localStorage.removeItem("authError");
+  window.localStorage.removeItem("session.id");
+  window.localStorage.removeItem("session.token");
+  window.localStorage.removeItem("session.provider");
+  window.localStorage.removeItem("session.user");
+  window.localStorage.removeItem("session.error");
   {{ end }}
   window.location.href = {{ .config.LoginUri }};
 </script>

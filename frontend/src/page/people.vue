@@ -38,7 +38,7 @@
           :is="t.component"
           :static-filter="t.filter"
           :active="active === index"
-          @updateFaceCount="onUpdateFaceCount"
+          @update-face-count="onUpdateFaceCount"
         ></component>
       </v-tabs-window-item>
     </v-tabs-window>

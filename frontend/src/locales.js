@@ -14,6 +14,191 @@ export const Locale = () => {
   };
 };
 
+// Contains the supported locales, their names and properties.
+export let Options = [
+  {
+    text: "English", // English
+    translated: "English",
+    value: "en",
+  },
+  {
+    text: "Afrikaans", // Afrikaans (South Africa)
+    value: "af",
+  },
+  {
+    text: "Bahasa Indonesia", // Bahasa Indonesia
+    value: "id",
+  },
+  {
+    text: "Català", // Catalan
+    value: "ca",
+  },
+  {
+    text: "Čeština", // Czech
+    value: "cs",
+  },
+  {
+    text: "Dansk", // Danish
+    value: "da",
+  },
+  {
+    text: "Deutsch", // German
+    value: "de",
+  },
+  {
+    text: "Eesti", // Estonian
+    value: "et",
+  },
+  {
+    text: "Español", // Spanish
+    value: "es",
+  },
+  {
+    text: "Euskara", // Basque
+    value: "eu",
+  },
+  {
+    text: "Français", // French
+    value: "fr",
+  },
+  {
+    text: "Gaeilge", // Irish
+    value: "ga",
+  },
+  {
+    text: "Ελληνικά", // Greek
+    value: "el",
+  },
+  {
+    text: "עברית", // Hebrew
+    value: "he",
+    rtl: true,
+  },
+  {
+    text: "Hrvatski", // Croatian
+    value: "hr",
+  },
+  {
+    text: "Lietuvis", // Lithuanian
+    value: "lt",
+  },
+  {
+    text: "Magyar", // Hungarian
+    value: "hu",
+  },
+  {
+    text: "Melayu", // Malay
+    value: "ms",
+  },
+  {
+    text: "Norsk (Bokmål)", // Norwegian
+    value: "nb",
+  },
+  {
+    text: "Italiano", // Italian
+    value: "it",
+  },
+  {
+    text: "Nederlands", // Dutch
+    value: "nl",
+  },
+  {
+    text: "Polski", // Polish
+    value: "pl",
+  },
+  {
+    text: "Português", // Portuguese (Portugal)
+    value: "pt",
+  },
+  {
+    text: "Português do Brasil", // Portuguese (Brazil)
+    value: "pt_BR",
+  },
+  {
+    text: "Slovenčina", // Slovak
+    value: "sk",
+  },
+  {
+    text: "Slovenščina", // Slovene
+    value: "sl",
+  },
+  {
+    text: "Suomi", // Finnish
+    value: "fi",
+  },
+  {
+    text: "Svenska", // Swedish
+    value: "sv",
+  },
+  {
+    text: "Română", // Romanian
+    value: "ro",
+  },
+  {
+    text: "Türkçe", // Turkish
+    value: "tr",
+  },
+  {
+    text: "عربى", // Arabic
+    value: "ar",
+    rtl: true,
+  },
+  {
+    text: "کوردی", // Kurdish
+    value: "ku",
+    rtl: true,
+  },
+  {
+    text: "Беларуская", // Belarusian
+    value: "be",
+  },
+  {
+    text: "Български", // Bulgarian
+    value: "bg",
+  },
+  {
+    text: "Українська", // Ukrainian
+    value: "uk",
+  },
+  {
+    text: "Русский", // Russian
+    value: "ru",
+  },
+  {
+    text: "简体中文", // Chinese (Simplified)
+    value: "zh",
+  },
+  {
+    text: "繁體中文", // Chinese (Traditional)
+    value: "zh_TW",
+  },
+  {
+    text: "日本語", // Japanese
+    value: "ja_JP",
+  },
+  {
+    text: "한국어", // Korean
+    value: "ko",
+  },
+  {
+    text: "Tiếng Việt", // Vietnamese
+    value: "vi",
+  },
+  {
+    text: "हिन्दी", // Hindi
+    value: "hi",
+  },
+  {
+    text: "ภาษาไทย", // Thai
+    value: "th",
+  },
+  {
+    text: "فارسی", // Persian
+    value: "fa",
+    rtl: true,
+  },
+];
+
 // Returns the Vuetify UI messages translated with Gettext.
 export const Messages = ($gettext) => {
   return {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"gopkg.in/photoprism/go-tz.v2/tz"
+	"github.com/ugjka/go-tz/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/service/maps"

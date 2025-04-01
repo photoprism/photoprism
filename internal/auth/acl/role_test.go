@@ -86,3 +86,15 @@ func TestRole_Invalid(t *testing.T) {
 		assert.True(t, RoleClient.Invalid("client"))
 	})
 }
+
+func TestParseRole(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, RoleAdmin, ParseRole("admin"))
+	})
+	t.Run("Guest", func(t *testing.T) {
+		assert.Equal(t, RoleGuest, ParseRole("Guest"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, RoleNone, ParseRole(""))
+	})
+}

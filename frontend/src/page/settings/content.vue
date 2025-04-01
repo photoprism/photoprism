@@ -17,7 +17,6 @@
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.review"
-                :disabled="busy"
                 class="ma-0 pa-0 input-review"
                 density="compact"
                 color="surface-variant"
@@ -37,7 +36,6 @@
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.estimates"
-                :disabled="busy"
                 class="ma-0 pa-0 input-estimates"
                 density="compact"
                 color="surface-variant"
@@ -53,7 +51,7 @@
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.index.convert"
-                :disabled="busy || isDemo || (!experimental && settings.index.convert)"
+                :disabled="isDemo || (!experimental && settings.index.convert)"
                 class="ma-0 pa-0 input-convert"
                 density="compact"
                 color="surface-variant"
@@ -79,7 +77,6 @@
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.meta"
-                :disabled="busy"
                 class="ma-0 pa-0 input-stack-meta"
                 density="compact"
                 color="surface-variant"
@@ -95,7 +92,6 @@
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.uuid"
-                :disabled="busy"
                 class="ma-0 pa-0 input-stack-uuid"
                 density="compact"
                 color="surface-variant"
@@ -111,7 +107,6 @@
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.name"
-                :disabled="busy"
                 class="ma-0 pa-0 input-stack-name"
                 density="compact"
                 color="surface-variant"
@@ -141,7 +136,6 @@
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.search.listView"
-                :disabled="busy"
                 class="ma-0 pa-0 input-search-listview"
                 density="compact"
                 :label="$gettext('List View')"
@@ -156,11 +150,10 @@
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.search.showTitles"
-                :disabled="busy"
                 class="ma-0 pa-0 input-search-titles"
                 density="compact"
-                :label="$gettext('Titles')"
-                :hint="$gettext('Show picture titles in search results.')"
+                :label="$gettext('Show Titles')"
+                :hint="$gettext('Display picture titles in search results.')"
                 prepend-icon="mdi-format-text"
                 persistent-hint
                 @update:model-value="onChange"
@@ -171,11 +164,10 @@
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.search.showCaptions"
-                :disabled="busy"
                 class="ma-0 pa-0 input-search-captions"
                 density="compact"
-                :label="$gettext('Captions')"
-                :hint="$gettext('Show picture captions in search results.')"
+                :label="$gettext('Show Captions')"
+                :hint="$gettext('Display picture captions in search results.')"
                 prepend-icon="mdi-text"
                 persistent-hint
                 @update:model-value="onChange"
@@ -196,7 +188,6 @@
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"
-                :disabled="busy"
                 class="ma-0 pa-0 input-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
@@ -211,7 +202,6 @@
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
-                :disabled="busy"
                 class="ma-0 pa-0 input-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
@@ -226,7 +216,6 @@
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
-                :disabled="busy"
                 class="ma-0 pa-0 input-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
@@ -283,30 +272,37 @@ export default {
   },
   methods: {
     load() {
-      this.$config.load().then(() => {
-        this.settings.setValues(this.$config.getSettings());
-        this.busy = false;
-      });
+      this.busy = true;
+      this.$notify.blockUI();
+
+      this.$config
+        .load()
+        .then(() => {
+          this.settings.setValues(this.$config.getSettings());
+        })
+        .finally(() => {
+          this.busy = false;
+          this.$notify.unblockUI();
+        });
     },
     onChange() {
-      const reload = this.settings.changed("ui", "language");
-
-      if (reload) {
-        this.busy = true;
+      if (this.busy) {
+        return;
       }
+
+      this.busy = true;
+      this.$notify.blockUI();
 
       this.settings
         .save()
         .then(() => {
-          if (reload) {
-            this.$notify.info(this.$gettext("Reloading…"));
-            this.$notify.blockUI();
-            setTimeout(() => window.location.reload(), 100);
-          } else {
-            this.$notify.success(this.$gettext("Changes successfully saved"));
-          }
+          this.$config.setSettings(this.settings);
+          this.$notify.success(this.$gettext("Changes successfully saved"));
         })
-        .finally(() => (this.busy = false));
+        .finally(() => {
+          this.busy = false;
+          this.$notify.unblockUI();
+        });
     },
   },
 };

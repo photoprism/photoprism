@@ -44,7 +44,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
           "../../upload-files/digikam.json",
         ])
         .wait(15000);
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
       const PhotoCountAfterUpload = await photo.getPhotoCount("all");
 
       await t.expect(PhotoCountAfterUpload).eql(1);
@@ -113,7 +113,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })("Core: 
 
     await toolbar.triggerToolbarAction("upload");
     await t.setFilesToUpload(Selector(".input-upload"), ["../../upload-files/korn.mp4"]).wait(15000);
-    await toolbar.triggerToolbarAction("reload");
+    await toolbar.triggerToolbarAction("refresh");
     const PhotoCountAfterUpload = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountAfterUpload).eql(1);
@@ -181,7 +181,7 @@ test.meta("testID", "photos-upload-delete-003").meta({ mode: "public" })(
       const PhotoCount = await photo.getPhotoCount("all");
       await toolbar.triggerToolbarAction("upload");
       await t.setFilesToUpload(Selector(".input-upload"), ["../../upload-files/ladybug.jpg"]).wait(15000);
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
       await t.wait(5000);
       const PhotoCountAfterUpload = await photo.getPhotoCount("all");
 
@@ -226,7 +226,7 @@ test.meta("testID", "photos-upload-delete-004").meta({ mode: "public" })(
       if (t.browser.platform === "mobile") {
         await t.eval(() => location.reload());
       } else {
-        await toolbar.triggerToolbarAction("reload");
+        await toolbar.triggerToolbarAction("refresh");
       }
       const AlbumCountAfterUpload = await album.getAlbumCount("all");
 

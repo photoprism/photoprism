@@ -62,8 +62,19 @@
           class="ms-1"
         >
           <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
-          <v-btn v-if="listView" value="list" icon="mdi-view-list" class="action-view-list" @click="setView('list')"></v-btn>
-          <v-btn value="mosaic" icon="mdi-view-comfy" class="pe-1 action-view-mosaic" @click="setView('mosaic')"></v-btn>
+          <v-btn
+            v-if="listView"
+            value="list"
+            icon="mdi-view-list"
+            class="action-view-list"
+            @click="setView('list')"
+          ></v-btn>
+          <v-btn
+            value="mosaic"
+            icon="mdi-view-comfy"
+            class="pe-1 action-view-mosaic"
+            @click="setView('mosaic')"
+          ></v-btn>
         </v-btn-toggle>
 
         <v-btn
@@ -446,6 +457,7 @@ export default {
           name: "refresh",
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
+          shortcut: "Ctrl-R",
           visible: true,
           click: () => {
             this.refresh();
@@ -455,6 +467,7 @@ export default {
           name: "upload",
           icon: "mdi-cloud-upload",
           text: this.$gettext("Upload"),
+          shortcut: "Ctrl-U",
           visible: this.canUpload && this.context !== "archive" && this.context !== "hidden",
           click: () => {
             this.showUpload();

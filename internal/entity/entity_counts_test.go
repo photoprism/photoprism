@@ -2,6 +2,8 @@ package entity
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLabelCounts(t *testing.T) {
@@ -17,9 +19,7 @@ func TestLabelCounts(t *testing.T) {
 }
 
 func TestUpdateCounts(t *testing.T) {
-	err := UpdateCounts()
-
-	if err != nil {
-		t.Fatal(err)
-	}
+	// countsBusy.Store(true)
+	UpdateCountsAsync()
+	assert.NoError(t, UpdateCounts())
 }

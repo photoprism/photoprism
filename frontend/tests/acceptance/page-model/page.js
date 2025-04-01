@@ -22,6 +22,7 @@ export default class Page {
     this.selectOption = Selector('div[role="option"]', { timeout: 15000 });
     this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
     this.cardDescription = Selector("button.meta-description", { timeout: 7000 });
+    this.cardCaption = Selector("button.meta-caption", { timeout: 7000 });
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
     this.cardTaken = Selector("button.action-open-date", { timeout: 7000 });
     this.usernameInput = Selector(".input-username input", { timeout: 7000 });
@@ -41,6 +42,10 @@ export default class Page {
   async logout() {
     await menu.openNav();
     await t.click(Selector("button i.mdi-power"));
+  }
+
+  async clickCardTitleOfUID(uid) {
+    await t.click(Selector('div[data-uid="' +uid +'"] button.action-title-edit'));
   }
 
   async testCreateEditDeleteSharingLink(type) {
@@ -94,7 +99,7 @@ export default class Page {
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     await album.triggerHoverAction("uid", FirstAlbum, "share");
     await t.click(sharedialog.deleteLink);

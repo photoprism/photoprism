@@ -15,7 +15,7 @@ import (
 // ToJson uses exiftool to export metadata to a json file.
 func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) {
 	if f == nil {
-		return "", fmt.Errorf("exiftool: file is nil - you may have found a bug")
+		return "", fmt.Errorf("exiftool: no media file provided for processing - you may have found a bug")
 	}
 
 	jsonName, err = f.ExifToolJsonName()

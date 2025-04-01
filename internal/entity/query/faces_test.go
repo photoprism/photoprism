@@ -61,7 +61,7 @@ func TestFaces(t *testing.T) {
 
 func TestManuallyAddedFaces(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		results, err := ManuallyAddedFaces(false, false)
+		results, err := ManuallyAddedFaces(false, false, "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -74,7 +74,16 @@ func TestManuallyAddedFaces(t *testing.T) {
 		}
 	})
 	t.Run("Hidden", func(t *testing.T) {
-		results, err := ManuallyAddedFaces(true, false)
+		results, err := ManuallyAddedFaces(true, false, "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Empty(t, results)
+	})
+	t.Run("Specific Subject", func(t *testing.T) {
+		results, err := ManuallyAddedFaces(false, false, "foobar")
 
 		if err != nil {
 			t.Fatal(err)

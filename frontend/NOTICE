@@ -6,6 +6,8 @@ Package                           License       Copyright
 @babel/preset-env                 MIT           The Babel Team (https://babel.dev/team)
 @babel/register                   MIT           The Babel Team (https://babel.dev/team)
 @babel/runtime                    MIT           The Babel Team (https://babel.dev/team)
+@eslint/eslintrc                  MIT           Nicholas C. Zakas
+@eslint/js                        MIT           n/a
 @lcdp/offline-plugin              MIT           Le Comptoir Des Pharmacies <webmaster@lecomptoirdespharmacies.fr>
 @mdi/font                         Apache-2.0    Austin Andrews
 @vue/compiler-sfc                 MIT           Evan You
@@ -14,6 +16,7 @@ axios                             MIT           Matt Zabriskie
 axios-mock-adapter                MIT           Colin Timmermans <colintimmermans@gmail.com>
 babel-loader                      MIT           Luis Couto <hello@luiscouto.pt>
 babel-plugin-istanbul             BSD-3-Clause  Thai Pangsakulyanont @dtinth
+babel-plugin-polyfill-corejs3     MIT           n/a
 browserslist                      MIT           Andrey Sitnik <andrey@sitnik.ru>
 chai                              MIT           Jake Luer <jake@alogicalparadox.com>
 cheerio                           MIT           Matt Mueller <mattmuelle@gmail.com>
@@ -38,6 +41,7 @@ eventsource-polyfill              MIT           amvtek <devel@amvtek.com>
 file-loader                       MIT           Tobias Koppers @sokra
 file-saver                        MIT           Eli Grey <me@eligrey.com>
 floating-vue                      MIT           Guillaume Chau <guillaume.b.chau@gmail.com>
+globals                           MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 hls.js                            Apache-2.0    n/a
 i                                 MIT           Pavan Kumar Sunkara <pavan.sss1991@gmail.com> (pksunkara.github.com)
 karma                             MIT           Vojta Jína <vojta.jina@gmail.com>
@@ -71,7 +75,6 @@ sass                              MIT           Natalie Weizenbaum nweiz@google.
 sass-loader                       MIT           J. Tangelder
 server                            MIT           Francisco Presencia <public@francisco.io> (https://francisco.io/)
 sockette                          MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
-standard                          MIT           Feross Aboukhadijeh feross@feross.org https://feross.org
 style-loader                      MIT           Tobias Koppers @sokra
 svg-url-loader                    MIT           Hovhannes Babayan
 tar                               ISC           Isaac Z. Schlueter

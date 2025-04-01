@@ -208,13 +208,6 @@ func TestConfig_AdminUser(t *testing.T) {
 	assert.Equal(t, "admin", c.AdminUser())
 }
 
-func TestConfig_AdminPassword(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	result := c.AdminPassword()
-	assert.Equal(t, "photoprism", result)
-}
-
 func TestConfig_ExamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

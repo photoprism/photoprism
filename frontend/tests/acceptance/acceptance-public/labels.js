@@ -29,7 +29,7 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     await label.openLabelWithUid(LabelBeaconUid);
     await toolbar.setFilter("view", "Cards");
     const PhotoBeaconUid = await photo.getNthPhotoUid("all", 0);
-    await t.click(page.cardTitle.withAttribute("data-uid", PhotoBeaconUid));
+    await page.clickCardTitleOfUID(PhotoBeaconUid);
     const PhotoKeywords = await photoedit.keywords.value;
 
     await t.expect(PhotoKeywords).contains("beacon");
@@ -54,8 +54,8 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     const LabelTest = await label.getNthLabeltUid(0);
     await label.openLabelWithUid(LabelTest);
     await toolbar.setFilter("view", "Cards");
+    await page.clickCardTitleOfUID(PhotoBeaconUid);
     await t
-      .click(page.cardTitle.withAttribute("data-uid", PhotoBeaconUid))
       .click(photoedit.labelsTab)
       .click(photoedit.deleteLabel)
       .click(photoedit.activateLabel)
@@ -179,7 +179,8 @@ test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Delete label
   await menu.openPage("browse");
   await toolbar.search("uid:" + FirstPhotoDomeUid);
   await toolbar.setFilter("view", "Cards");
-  await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoDomeUid)).click(photoedit.labelsTab);
+  await page.clickCardTitleOfUID(FirstPhotoDomeUid);
+  await t.click(photoedit.labelsTab);
 
   await t.expect(Selector("td").withText("Dome").visible).notOk();
   await t.expect(Selector("td").withText("Image").visible).notOk();
@@ -194,7 +195,7 @@ test.meta("testID", "labels-005").meta({ mode: "public" })("Common: Test mark la
   const FirstLabelUid = await label.getNthLabeltUid(0);
   const SecondLabelUid = await label.getNthLabeltUid(1);
   await label.triggerHoverAction("uid", SecondLabelUid, "favorite");
-  await toolbar.triggerToolbarAction("reload");
+  await toolbar.triggerToolbarAction("refresh");
   const FirstLabelUidAfterFavorite = await label.getNthLabeltUid(0);
 
   await t.expect(FirstLabelUid).notEql(FirstLabelUidAfterFavorite);

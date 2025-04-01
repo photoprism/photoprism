@@ -21,14 +21,17 @@ import (
 func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force bool) (file *MediaFile, err error) {
 	// Abort if the source media file is nil.
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil - you may have found a bug")
+		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
 	}
+
+	// Sanitized relative filename for use in logs.
+	logFileName := clean.Log(f.RootRelName())
 
 	// Abort if the source media file does not exist.
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: %s not found", clean.Log(f.RootRelName()))
+		return nil, fmt.Errorf("convert: %s not found", logFileName)
 	} else if f.Empty() {
-		return nil, fmt.Errorf("convert: %s is empty", clean.Log(f.RootRelName()))
+		return nil, fmt.Errorf("convert: %s is empty", logFileName)
 	}
 
 	// AVC video filename.
@@ -43,17 +46,18 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 
 	mediaFile, err := NewMediaFile(avcName)
 
-	// Check if AVC file already exists.
+	// Return it if an MP4 AVC encoded video file already exists.
 	if mediaFile == nil || err != nil {
-		// No, transcode video to AVC.
+		// Do nothing.
 	} else if mediaFile.IsVideo() {
-		// Yes, return AVC video file.
+		// Return MP4 AVC encoded video file
+		log.Debugf("convert: skipped transcoding, %s is MPEG-4 AVC encoded", logFileName)
 		return mediaFile, nil
 	}
 
-	// Check if the sidecar path is writeable, so a new AVC file can be created.
+	// Check if the sidecar path is writable, otherwise no new AVC file can be created.
 	if !w.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: transcoding disabled in read-only mode (%s)", f.RootRelName())
+		return nil, fmt.Errorf("convert: cannot transcode %s because the sidecar path is not writable", logFileName)
 	}
 
 	// Get relative filename for logging.

@@ -35,12 +35,12 @@
             <v-col cols="12">
               <v-autocomplete
                 v-model="model.SharePath"
+                v-model:search="search"
                 hide-details
                 hide-no-data
                 flat
                 autocomplete="off"
                 :hint="$gettext('Folder')"
-                :search.sync="search"
                 :items="pathItems"
                 :loading="loading"
                 item-title="abs"
@@ -77,12 +77,12 @@
             <v-col cols="12" sm="6">
               <v-autocomplete
                 v-model="model.SyncPath"
+                v-model:search="search"
                 hide-details
                 hide-no-data
                 flat
                 autocomplete="off"
                 :hint="$gettext('Folder')"
-                :search.sync="search"
                 :items="pathItems"
                 :loading="loading"
                 item-title="abs"

@@ -67,7 +67,7 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 				result.AccName = serviceUrl.Host
 			}
 
-			result.AccType = h.ServiceType
+			result.AccType = h.Type
 			result.AccURL = serviceUrl.String()
 
 			return result, nil

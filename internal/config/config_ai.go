@@ -30,8 +30,3 @@ func (c *Config) NSFWModelPath() string {
 func (c *Config) DetectNSFW() bool {
 	return c.options.DetectNSFW
 }
-
-// UploadNSFW checks if NSFW photos can be uploaded.
-func (c *Config) UploadNSFW() bool {
-	return c.options.UploadNSFW
-}

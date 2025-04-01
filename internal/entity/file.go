@@ -595,7 +595,7 @@ func (m *File) NoJpeg() bool {
 	return fs.ImageJpeg.NotEqual(m.FileType)
 }
 
-// NoPNG returns true if the file is not a PNG image.
+// NoPng returns true if the file is not a PNG image.
 func (m *File) NoPng() bool {
 	return fs.ImagePng.NotEqual(m.FileType)
 }

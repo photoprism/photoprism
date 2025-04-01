@@ -29,7 +29,7 @@ test.meta("testID", "stacks-001").meta({ type: "short", mode: "public" })(
       await photo.triggerHoverAction("nth", 0, "open");
       await photoviewer.triggerPhotoViewerAction("arrow--next");
       await photoviewer.triggerPhotoViewerAction("arrow--prev");
-      await photoviewer.triggerPhotoViewerAction("close");
+      await photoviewer.triggerPhotoViewerAction("close-button");
       await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
     }
     await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
@@ -40,15 +40,16 @@ test.meta("testID", "stacks-002").meta({ type: "short", mode: "public" })("Commo
   await toolbar.search("ski");
   const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
   await toolbar.setFilter("view", "Cards");
-  await t.click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid)).click(photoedit.filesTab);
+  await page.clickCardTitleOfUID(SequentialPhotoUid);
+  await t.click(photoedit.filesTab);
   const FirstFileName = await Selector("td").withText("Filename").nextSibling(0).innerText;
   await t.expect(FirstFileName).contains("photos8_1_ski.jpg");
 
   await t
     .click(photoedit.toggleExpandFile.nth(1))
     .click(photoedit.makeFilePrimary)
-    .click(photoedit.dialogClose)
-    .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid));
+    .click(photoedit.dialogClose);
+  await page.clickCardTitleOfUID(SequentialPhotoUid);
   const FirstFileNameAfterChange = await Selector("td").withText("Filename").nextSibling(0).innerText;
 
   await t
@@ -69,8 +70,8 @@ test.meta("testID", "stacks-003").meta({ type: "short", mode: "public" })("Commo
   await menu.openPage("stacks");
   await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
   await toolbar.setFilter("view", "Cards");
+  await page.clickCardTitleOfUID(SequentialPhotoUid);
   await t
-    .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid))
     .click(photoedit.filesTab)
     .click(photoedit.toggleExpandFile.nth(0))
     .click(photoedit.toggleExpandFile.nth(1))
@@ -82,7 +83,7 @@ test.meta("testID", "stacks-003").meta({ type: "short", mode: "public" })("Commo
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
-    await toolbar.triggerToolbarAction("reload");
+    await toolbar.triggerToolbarAction("refresh");
   }
   const PhotoCountAfterUngroup = await photo.getPhotoCount("all");
 
@@ -106,7 +107,8 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })("Common: Delete non p
 
   await t.expect(PhotoCount).eql(1);
 
-  await t.click(page.cardTitle.withAttribute("data-uid", PhotoUid)).click(photoedit.filesTab);
+  await page.clickCardTitleOfUID(PhotoUid);
+  await t.click(photoedit.filesTab);
   const FileCount = await photoedit.getFileCount();
 
   await t.expect(FileCount).eql(2);

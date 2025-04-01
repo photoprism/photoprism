@@ -3,13 +3,18 @@ package entity
 import (
 	"fmt"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
+
+// countsBusy is true when the covers are currently updating.
+var countsBusy = atomic.Bool{}
 
 type LabelPhotoCount struct {
 	LabelID    int
@@ -194,8 +199,25 @@ func UpdateLabelCounts() (err error) {
 	return nil
 }
 
+// UpdateCountsAsync runs UpdateCounts in a go routine
+// and logs the returned error, if any, as a warning.
+func UpdateCountsAsync() {
+	go func() {
+		if err := UpdateCounts(); err != nil {
+			log.Warnf("index: %s (update counts)", clean.Error(err))
+		}
+	}()
+}
+
 // UpdateCounts updates precalculated photo and file counts.
 func UpdateCounts() (err error) {
+	if !countsBusy.CompareAndSwap(false, true) {
+		log.Debugf("index: skipped updating counts because it is already in progress")
+		return nil
+	}
+
+	defer countsBusy.Store(false)
+
 	log.Debug("index: updating counts")
 
 	if err = UpdatePlacesCounts(); err != nil {

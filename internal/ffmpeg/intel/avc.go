@@ -15,7 +15,6 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-strict", "-2",
 		"-hwaccel", "qsv",
 		"-hwaccel_output_format", "qsv",
-		"-qsv_device", "/dev/dri/renderD128",
 		"-i", srcName,
 		"-c:a", "aac",
 		"-vf", opt.VideoFilter(encode.FormatQSV),
@@ -23,10 +22,10 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
 		"-r", "30",
-		"-b:v", opt.DestBitrate,
-		"-bitrate", opt.DestBitrate,
+		"-b:v", opt.BitrateLimit,
+		"-bitrate", opt.BitrateLimit,
 		"-f", "mp4",
-		"-movflags", "+faststart", // puts headers at the beginning for faster streaming
+		"-movflags", opt.MovFlags,
 		destName,
 	)
 }

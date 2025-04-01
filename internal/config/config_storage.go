@@ -337,6 +337,11 @@ func (c *Config) ImportDest() string {
 	return clean.UserPath(c.options.ImportDest)
 }
 
+// ImportAllow returns the file extensions that users are allowed to import.
+func (c *Config) ImportAllow() fs.ExtList {
+	return fs.NewExtList(c.options.ImportAllow)
+}
+
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.options.SidecarPath == "" {

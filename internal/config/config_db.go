@@ -41,7 +41,7 @@ func (c *Config) DatabaseDriver() string {
 	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
 		c.options.DatabaseDriver = MySQL
-	case SQLite3, "sqlite", "sqllite", "test", "file", "":
+	case SQLite3, "sqlite", "test", "file", "":
 		c.options.DatabaseDriver = SQLite3
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
@@ -61,7 +61,7 @@ func (c *Config) DatabaseDriverName() string {
 	switch c.DatabaseDriver() {
 	case MySQL, MariaDB:
 		return "MariaDB"
-	case SQLite3, "sqlite", "sqllite", "test", "file", "":
+	case SQLite3, "sqlite", "test", "file", "":
 		return "SQLite"
 	case "tidb":
 		return "TiDB"
@@ -251,7 +251,18 @@ func (c *Config) DatabasePassword() string {
 
 	c.ParseDatabaseDsn()
 
-	return c.options.DatabasePassword
+	// Try to read password from file if c.options.DatabasePassword is not set.
+	if c.options.DatabasePassword != "" {
+		return clean.Password(c.options.DatabasePassword)
+	} else if fileName := FlagFilePath("DATABASE_PASSWORD"); fileName == "" {
+		// No password set, this is not an error.
+		return ""
+	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+		log.Warnf("config: failed to read database password from %s (%s)", fileName, err)
+		return ""
+	} else {
+		return clean.Password(string(b))
+	}
 }
 
 // DatabaseTimeout returns the TCP timeout in seconds for establishing a database connection:
@@ -492,7 +503,7 @@ func (c *Config) connectDb() error {
 	}
 
 	if dbVersion := c.DatabaseVersion(); dbVersion != "" {
-		log.Infof("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
+		log.Debugf("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
 	}
 
 	// Ok.

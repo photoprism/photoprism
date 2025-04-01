@@ -16,7 +16,7 @@ import (
 // FixJpeg tries to re-encode a broken JPEG and returns the cached image file.
 func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil - you may have found a bug")
+		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
 	}
 
 	logName := clean.Log(f.RootRelName())

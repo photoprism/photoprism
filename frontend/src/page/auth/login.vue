@@ -229,10 +229,10 @@ export default {
     },
   },
   created() {
-    const authError = window.localStorage.getItem("authError");
+    const authError = window.localStorage.getItem("session.error");
     if (authError) {
       this.$notify.error(authError);
-      window.localStorage.removeItem("authError");
+      window.localStorage.removeItem("session.error");
     }
   },
   mounted() {

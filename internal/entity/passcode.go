@@ -325,7 +325,7 @@ func (m *Passcode) Image(size int) (image.Image, error) {
 	return key.Image(size, size)
 }
 
-// PNG returns a PNG image buffer with a QR Code that can be used to initialize compatible authenticator apps.
+// Png returns a PNG image buffer with a QR Code that can be used to initialize compatible authenticator apps.
 func (m *Passcode) Png(size int) *bytes.Buffer {
 	if m == nil {
 		return nil

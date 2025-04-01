@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	"gopkg.in/photoprism/go-tz.v2/tz"
+	"github.com/ugjka/go-tz/v2"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )

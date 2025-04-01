@@ -52,9 +52,10 @@ func TestUserSettings_Apply(t *testing.T) {
 
 	s := &customize.Settings{
 		UI: customize.UISettings{
-			Theme:    "onyx",
-			Language: "nl",
-			TimeZone: "Europe/Berlin",
+			Theme:     "onyx",
+			Language:  "nl",
+			TimeZone:  "Europe/Berlin",
+			StartPage: "Places",
 		},
 		Download: customize.DownloadSettings{
 			Name:         "file",
@@ -90,6 +91,7 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, "nl", r.UILanguage)
 	assert.Equal(t, "onyx", r.UITheme)
 	assert.Equal(t, "Europe/Berlin", r.UITimeZone)
+	assert.Equal(t, "Places", r.UIStartPage)
 	assert.Equal(t, -1, r.DownloadMediaRaw)
 	assert.Equal(t, 1, r.DownloadOriginals)
 	assert.Equal(t, 1, r.DownloadMediaSidecar)
@@ -125,6 +127,12 @@ func TestUserSettings_Apply(t *testing.T) {
 			Path: "imports/2023",
 			Move: true,
 		},
+		Search: customize.SearchSettings{
+			BatchSize:    -1,
+			ListView:     false,
+			ShowTitles:   true,
+			ShowCaptions: false,
+		},
 	}
 	r2 := m.Apply(s2)
 
@@ -140,6 +148,9 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, "index-path", r2.IndexPath)
 	assert.Equal(t, 1, r2.ImportMove)
 	assert.Equal(t, "imports/2023", r2.ImportPath)
+	assert.Equal(t, -1, r.SearchListView)
+	assert.Equal(t, 1, r.SearchShowTitles)
+	assert.Equal(t, -1, r.SearchShowCaptions)
 }
 
 func TestUserSettings_ApplyTo(t *testing.T) {
@@ -147,6 +158,7 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 		UITheme:              "lavender",
 		UILanguage:           "ch",
 		UITimeZone:           "Europe",
+		UIStartPage:          "",
 		MapsStyle:            "satellite",
 		MapsAnimate:          1,
 		IndexPath:            "flowers",
@@ -156,13 +168,17 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 		DownloadOriginals:    -1,
 		DownloadMediaRaw:     1,
 		DownloadMediaSidecar: -1,
+		SearchListView:       -1,
+		SearchShowTitles:     1,
+		SearchShowCaptions:   -1,
 	}
 
 	s := &customize.Settings{
 		UI: customize.UISettings{
-			Theme:    "onyx",
-			Language: "nl",
-			TimeZone: "Europe/Berlin",
+			Theme:     "onyx",
+			Language:  "nl",
+			TimeZone:  "Europe/Berlin",
+			StartPage: "",
 		},
 		Download: customize.DownloadSettings{
 			Name:         "file",
@@ -192,6 +208,7 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, "ch", r.UI.Language)
 	assert.Equal(t, "lavender", r.UI.Theme)
 	assert.Equal(t, "Europe", r.UI.TimeZone)
+	assert.Equal(t, "default", r.UI.StartPage)
 	assert.Equal(t, true, r.Download.MediaRaw)
 	assert.Equal(t, false, r.Download.Originals)
 	assert.Equal(t, false, r.Download.MediaSidecar)
@@ -201,11 +218,15 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, "flowers", r.Index.Path)
 	assert.Equal(t, true, r.Import.Move)
 	assert.Equal(t, "import", r.Import.Path)
+	assert.Equal(t, false, r.Search.ListView)
+	assert.Equal(t, true, r.Search.ShowTitles)
+	assert.Equal(t, false, r.Search.ShowCaptions)
 
 	m2 := &UserSettings{
 		UITheme:              "lavender",
 		UILanguage:           "ch",
 		UITimeZone:           "Europe",
+		UIStartPage:          "Places",
 		MapsStyle:            "satellite",
 		MapsAnimate:          -1,
 		IndexPath:            "flowers",
@@ -215,6 +236,9 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 		DownloadOriginals:    1,
 		DownloadMediaRaw:     -1,
 		DownloadMediaSidecar: 1,
+		SearchListView:       1,
+		SearchShowTitles:     -1,
+		SearchShowCaptions:   1,
 	}
 
 	r2 := m2.ApplyTo(s)
@@ -223,6 +247,7 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, "ch", s.UI.Language)
 	assert.Equal(t, "lavender", s.UI.Theme)
 	assert.Equal(t, "Europe", s.UI.TimeZone)
+	assert.Equal(t, "Places", s.UI.StartPage)
 	assert.Equal(t, false, s.Download.MediaRaw)
 	assert.Equal(t, true, s.Download.Originals)
 	assert.Equal(t, true, s.Download.MediaSidecar)
@@ -232,4 +257,7 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, "flowers", s.Index.Path)
 	assert.Equal(t, false, s.Import.Move)
 	assert.Equal(t, "import", s.Import.Path)
+	assert.Equal(t, true, r.Search.ListView)
+	assert.Equal(t, false, r.Search.ShowTitles)
+	assert.Equal(t, true, r.Search.ShowCaptions)
 }

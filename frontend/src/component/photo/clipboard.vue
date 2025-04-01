@@ -54,7 +54,7 @@
           v-if="canArchive && !album && context === 'archive' && context !== 'hidden'"
           key="action-restore"
           :title="$gettext('Restore')"
-          icon="mdi-check-bold"
+          icon="mdi-archive-arrow-up"
           color="share"
           variant="elevated"
           density="comfortable"
@@ -125,7 +125,7 @@
         <v-btn
           v-if="canEditAlbum && isAlbum"
           key="action-remove"
-          :title="$gettext('Remove from album')"
+          :title="$gettext('Remove from Album')"
           icon="mdi-eject"
           color="remove"
           variant="elevated"

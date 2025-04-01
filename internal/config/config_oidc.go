@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -53,9 +54,20 @@ func (c *Config) OIDCClient() string {
 	return c.options.OIDCClient
 }
 
-// OIDCSecret returns the Client ID for single sign-on via OIDC.
+// OIDCSecret returns the Client Secret for single sign-on via OIDC.
 func (c *Config) OIDCSecret() string {
-	return c.options.OIDCSecret
+	// Try to read secret from file if c.options.OIDCSecret is not set.
+	if c.options.OIDCSecret != "" {
+		return clean.Password(c.options.OIDCSecret)
+	} else if fileName := FlagFilePath("OIDC_SECRET"); fileName == "" {
+		// No secret set, this is not an error.
+		return ""
+	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+		log.Warnf("config: failed to read OIDC client secret from %s (%s)", fileName, err)
+		return ""
+	} else {
+		return clean.Password(string(b))
+	}
 }
 
 // OIDCScopes returns the user information scopes for single sign-on via OIDC.

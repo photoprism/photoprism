@@ -62,8 +62,8 @@
             <v-col cols="12">
               <v-combobox
                 v-model="category"
+                v-model:search="category"
                 class="input-category"
-                :search.sync="category"
                 :items="categories"
                 :disabled="disabled"
                 :label="$gettext('Category')"

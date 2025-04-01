@@ -20,9 +20,9 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
 		"-r", "30",
-		"-b:v", opt.DestBitrate,
+		"-b:v", opt.BitrateLimit,
 		"-f", "mp4",
-		"-movflags", "+faststart", // puts headers at the beginning for faster streaming
+		"-movflags", opt.MovFlags,
 		destName,
 	)
 }

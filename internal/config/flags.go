@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/ffmpeg"
+	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -133,24 +133,23 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "log-level",
 			Aliases: []string{"l"},
-			Usage:   "log message verbosity `LEVEL` (trace, debug, info, warning, error, fatal, panic)",
+			Usage:   "log message verbosity `LEVEL` (trace, debug, info, warning, error)",
 			Value:   "info",
 			EnvVars: EnvVars("LOG_LEVEL"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "prod",
-			Hidden:  true,
-			Usage:   "enable production mode, hide non-essential log messages",
+			Usage:   "disable debug mode and log startup warnings and errors only",
 			EnvVars: EnvVars("PROD"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "debug",
-			Usage:   "enable debug mode, show non-essential log messages",
+			Usage:   "enable debug mode for development and troubleshooting",
 			EnvVars: EnvVars("DEBUG"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "trace",
-			Usage:   "enable trace mode, show all log messages",
+			Usage:   "enable trace mode to display all debug and trace logs",
 			EnvVars: EnvVars("TRACE"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -182,24 +181,27 @@ var Flags = CliFlags{
 			Usage:   "hosting partner id",
 			EnvVars: EnvVars("PARTNER_ID"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "config-path",
-			Aliases: []string{"c"},
-			Usage:   "config storage `PATH`, values in options.yml override CLI flags and environment variables if present",
-			EnvVars: EnvVars("CONFIG_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "config-path",
+			Aliases:   []string{"c"},
+			Usage:     "config storage `PATH`, values in options.yml override CLI flags and environment variables if present",
+			EnvVars:   EnvVars("CONFIG_PATH"),
+			TakesFile: true,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "defaults-yaml",
-			Aliases: []string{"y"},
-			Usage:   "load config defaults from `FILE` if exists, does not override CLI flags and environment variables",
-			Value:   "/etc/photoprism/defaults.yml",
-			EnvVars: EnvVars("DEFAULTS_YAML"),
+			Name:      "defaults-yaml",
+			Aliases:   []string{"y"},
+			Usage:     "load config defaults from `FILE` if exists, does not override CLI flags and environment variables",
+			Value:     "/etc/photoprism/defaults.yml",
+			EnvVars:   EnvVars("DEFAULTS_YAML"),
+			TakesFile: true,
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "originals-path",
-			Aliases: []string{"o"},
-			Usage:   "storage `PATH` of your original media files (photos and videos)",
-			EnvVars: EnvVars("ORIGINALS_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "originals-path",
+			Aliases:   []string{"o"},
+			Usage:     "storage `PATH` of your original media files (photos and videos)",
+			EnvVars:   EnvVars("ORIGINALS_PATH"),
+			TakesFile: true,
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "originals-limit",
@@ -221,42 +223,64 @@ var Flags = CliFlags{
 			Value:   "users",
 			EnvVars: EnvVars("USERS_PATH"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "storage-path",
-			Aliases: []string{"s"},
-			Usage:   "writable storage `PATH` for sidecar, cache, and database files",
-			EnvVars: EnvVars("STORAGE_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "storage-path",
+			Aliases:   []string{"s"},
+			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
+			EnvVars:   EnvVars("STORAGE_PATH"),
+			TakesFile: true,
+		}}, {
+		Flag: &cli.PathFlag{
+			Name:      "import-path",
+			Aliases:   []string{"im"},
+			Usage:     "base `PATH` from which files can be imported to originals *optional*",
+			EnvVars:   EnvVars("IMPORT_PATH"),
+			TakesFile: true,
+		}}, {
+		Flag: &cli.PathFlag{
+			Name:      "import-dest",
+			Usage:     "relative originals `PATH` to which the files should be imported by default *optional*",
+			EnvVars:   EnvVars("IMPORT_DEST"),
+			TakesFile: true,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "import-path",
-			Aliases: []string{"im"},
-			Usage:   "base `PATH` from which files can be imported to originals *optional*",
-			EnvVars: EnvVars("IMPORT_PATH"),
+			Name:    "import-allow",
+			Usage:   "allow to import these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			EnvVars: EnvVars("IMPORT_ALLOW"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "upload-nsfw",
+			Aliases: []string{"n"},
+			Usage:   "allow uploads that might be offensive (detecting unsafe content requires TensorFlow)",
+			EnvVars: EnvVars("UPLOAD_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "import-dest",
-			Usage:   "relative originals `PATH` to which the files should be imported by default *optional*",
-			EnvVars: EnvVars("IMPORT_DEST"),
+			Name:    "upload-allow",
+			Usage:   "allow to upload these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			EnvVars: EnvVars("UPLOAD_ALLOW"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "cache-path",
-			Aliases: []string{"ca"},
-			Usage:   "custom cache `PATH` for sessions and thumbnail files *optional*",
-			EnvVars: EnvVars("CACHE_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "cache-path",
+			Aliases:   []string{"ca"},
+			Usage:     "custom cache `PATH` for sessions and thumbnail files *optional*",
+			EnvVars:   EnvVars("CACHE_PATH"),
+			TakesFile: true,
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "temp-path",
-			Aliases: []string{"tmp"},
-			Usage:   "temporary file `PATH` *optional*",
-			EnvVars: EnvVars("TEMP_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "temp-path",
+			Aliases:   []string{"tmp"},
+			Usage:     "temporary file `PATH` *optional*",
+			EnvVars:   EnvVars("TEMP_PATH"),
+			TakesFile: true,
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "assets-path",
-			Aliases: []string{"as"},
-			Usage:   "assets `PATH` containing static resources like icons, models, and translations",
-			EnvVars: EnvVars("ASSETS_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "assets-path",
+			Aliases:   []string{"as"},
+			Usage:     "assets `PATH` containing static resources like icons, models, and translations",
+			EnvVars:   EnvVars("ASSETS_PATH"),
+			TakesFile: true,
 		}}, {
-		Flag: &cli.StringFlag{
+		Flag: &cli.PathFlag{
 			Name:    "sidecar-path",
 			Aliases: []string{"sc"},
 			Usage:   "custom relative or absolute sidecar `PATH` *optional*",
@@ -277,11 +301,12 @@ var Flags = CliFlags{
 			Usage:   "maximum aggregated size of all indexed files in `GB` (0 for unlimited)",
 			EnvVars: EnvVars("FILES_QUOTA"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "backup-path",
-			Aliases: []string{"ba"},
-			Usage:   "custom base `PATH` for creating and restoring backups *optional*",
-			EnvVars: EnvVars("BACKUP_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "backup-path",
+			Aliases:   []string{"ba"},
+			Usage:     "custom base `PATH` for creating and restoring backups *optional*",
+			EnvVars:   EnvVars("BACKUP_PATH"),
+			TakesFile: true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "backup-schedule",
@@ -453,18 +478,6 @@ var Flags = CliFlags{
 			Name:    "detect-nsfw",
 			Usage:   "flag newly added pictures as private if they might be offensive (requires TensorFlow)",
 			EnvVars: EnvVars("DETECT_NSFW"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "upload-nsfw",
-			Aliases: []string{"n"},
-			Usage:   "allow uploads that might be offensive (detecting unsafe content requires TensorFlow)",
-			EnvVars: EnvVars("UPLOAD_NSFW"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "upload-allow",
-			Usage:   "allow these file types for web uploads (comma-separated list of extensions; leave blank to allow all)",
-			EnvVars: EnvVars("UPLOAD_ALLOW"),
-			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "default-locale",
@@ -757,7 +770,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-bin",
 			Usage:   "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
-			Value:   ffmpeg.DefaultBin,
+			Value:   encode.FFmpegBin,
 			EnvVars: EnvVars("FFMPEG_BIN"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -784,15 +797,15 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-map-video",
 			Usage:   "video `STREAMS` that should be transcoded",
-			Value:   ffmpeg.MapVideoDefault,
+			Value:   encode.MapVideo,
 			EnvVars: EnvVars("FFMPEG_MAP_VIDEO"),
-		}, DocDefault: fmt.Sprintf("`%s`", ffmpeg.MapVideoDefault)}, {
+		}, DocDefault: fmt.Sprintf("`%s`", encode.MapVideo)}, {
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-map-audio",
 			Usage:   "audio `STREAMS` that should be transcoded",
-			Value:   ffmpeg.MapAudioDefault,
+			Value:   encode.MapAudio,
 			EnvVars: EnvVars("FFMPEG_MAP_AUDIO"),
-		}, DocDefault: fmt.Sprintf("`%s`", ffmpeg.MapAudioDefault)}, {
+		}, DocDefault: fmt.Sprintf("`%s`", encode.MapAudio)}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
@@ -823,17 +836,19 @@ var Flags = CliFlags{
 			Value:   "thm",
 			EnvVars: EnvVars("DARKTABLE_EXCLUDE", "DARKTABLE_BLACKLIST"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "darktable-cache-path",
-			Usage:   "custom Darktable cache `PATH`",
-			Value:   "",
-			EnvVars: EnvVars("DARKTABLE_CACHE_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "darktable-cache-path",
+			Usage:     "custom Darktable cache `PATH`",
+			Value:     "",
+			EnvVars:   EnvVars("DARKTABLE_CACHE_PATH"),
+			TakesFile: true,
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "darktable-config-path",
-			Usage:   "custom Darktable config `PATH`",
-			Value:   "",
-			EnvVars: EnvVars("DARKTABLE_CONFIG_PATH"),
+		Flag: &cli.PathFlag{
+			Name:      "darktable-config-path",
+			Usage:     "custom Darktable config `PATH`",
+			Value:     "",
+			EnvVars:   EnvVars("DARKTABLE_CONFIG_PATH"),
+			TakesFile: true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "rawtherapee-bin",
@@ -988,14 +1003,16 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "pid-filename",
-			Usage:   "process id `FILE` *daemon-mode only*",
-			EnvVars: EnvVars("PID_FILENAME"),
+			Name:      "pid-filename",
+			Usage:     "process id `FILE` *daemon-mode only*",
+			EnvVars:   EnvVars("PID_FILENAME"),
+			TakesFile: true,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "log-filename",
-			Usage:   "server log `FILE` *daemon-mode only*",
-			Value:   "",
-			EnvVars: EnvVars("LOG_FILENAME"),
+			Name:      "log-filename",
+			Usage:     "server log `FILE` *daemon-mode only*",
+			Value:     "",
+			EnvVars:   EnvVars("LOG_FILENAME"),
+			TakesFile: true,
 		}},
 }

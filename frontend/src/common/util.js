@@ -24,13 +24,13 @@ Additional information can be found in our Developer Guide:
 */
 
 import { $config } from "app/session";
-import { DATE_FULL } from "model/photo";
 import sanitizeHtml from "sanitize-html";
 import { DateTime } from "luxon";
 import { $gettext } from "common/gettext";
 import $notify from "common/notify";
 import * as media from "common/media";
 import * as can from "common/can";
+import * as formats from "options/formats";
 
 const Nanosecond = 1;
 const Microsecond = 1000 * Nanosecond;
@@ -76,7 +76,7 @@ export default class $util {
     return Math.round(b / 1073741824);
   }
 
-  static formatDate(s) {
+  static formatDate(s, format, zone) {
     if (!s || !s.length) {
       return s;
     }
@@ -87,7 +87,39 @@ export default class $util {
       return s;
     }
 
-    return DateTime.fromISO(s, { zone: "UTC" }).toLocaleString(DATE_FULL);
+    let options;
+
+    switch (format) {
+      case "date_full":
+      case "DATE_FULL":
+        options = formats.DATE_FULL;
+        break;
+      case "date_full_tz":
+      case "DATE_FULL_TZ":
+        options = formats.DATE_FULL_TZ;
+        break;
+      case "date_med_tz":
+      case "DATE_MED_TZ":
+        options = formats.DATE_MED_TZ;
+        break;
+      case "date_med":
+      case "DATE_MED":
+        options = formats.DATE_MED;
+        break;
+      case "datetime_med":
+      case "DATETIME_MED":
+        options = formats.DATETIME_MED;
+        break;
+      default:
+        options = formats.DATE_FULL;
+        break;
+    }
+
+    if (!zone) {
+      zone = "UTC";
+    }
+
+    return DateTime.fromISO(s, { zone }).toLocaleString(options);
   }
 
   static formatDuration(d) {

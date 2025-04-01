@@ -46,7 +46,7 @@ test.meta("testID", "photos-download-001").meta({ type: "short", mode: "public" 
     await logger.clear();
     await photoviewer.triggerPhotoViewerAction("download-button");
     await logger.clear();
-    await photoviewer.triggerPhotoViewerAction("close");
+    await photoviewer.triggerPhotoViewerAction("close-button");
   }
 );
 

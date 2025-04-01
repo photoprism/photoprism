@@ -33,8 +33,8 @@ func TestSession_Get(t *testing.T) {
 
 	found, err = s.Get(sess.ID)
 
-	assert.Equal(t, "", found.ID)
 	assert.Error(t, err)
+	assert.Equal(t, "", found.ID)
 
 	assert.Falsef(t, s.Exists(sess.ID), "session %s should not exist", clean.LogQuote(sess.ID))
 }

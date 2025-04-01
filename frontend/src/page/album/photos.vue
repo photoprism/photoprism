@@ -243,6 +243,12 @@ export default {
           ev.preventDefault();
           this.refresh();
           break;
+        case "KeyU":
+          ev.preventDefault();
+          if (this.$config.allow("files", "upload") && this.$config.feature("upload")) {
+            this.$event.publish("dialog.upload");
+          }
+          break;
       }
     },
     hideExpansionPanel() {
@@ -250,11 +256,11 @@ export default {
     },
     getViewType() {
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
-      let defaultType = window.localStorage.getItem("photos_view");
-      let storedType = window.localStorage.getItem("album_photos_view");
+      let defaultType = window.localStorage.getItem("photos.view");
+      let storedType = window.localStorage.getItem("album.photos.view");
 
       if (queryParam) {
-        window.localStorage.setItem("album_photos_view", queryParam);
+        window.localStorage.setItem("album.photos.view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -328,7 +334,9 @@ export default {
       }
 
       if (showMerged) {
-        this.$lightbox.openModels(Thumb.fromFiles([selected]), 0);
+        this.$lightbox.openModels(Thumb.fromFiles([selected]), 0, this.model);
+      } else if (this.getSortOrder() === "random") {
+        this.$lightbox.openModels(Thumb.fromPhotos(this.results), index, this.model);
       } else {
         this.$lightbox.openView(this, index);
       }
@@ -374,21 +382,23 @@ export default {
 
           if (this.complete) {
             this.offset = offset;
-
             if (this.results.length > 1) {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
-              );
+              if (!this.lightbox.open) {
+                this.$notify.info(
+                  this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
+                );
+              }
             }
           } else if (this.results.length >= Photo.limit()) {
             this.offset = offset;
             this.scrollDisabled = true;
             this.complete = true;
-            this.$notify.warn(this.$gettext("Can't load more, limit reached"));
+            if (!this.lightbox.open) {
+              this.$notify.warn(this.$gettext("Can't load more, limit reached"));
+            }
           } else {
             this.offset = offset + count;
             this.page++;
-
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.loadMore();
@@ -422,7 +432,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("album_photos_" + key, this.settings[key]);
+        window.localStorage.setItem("album.photos." + key, this.settings[key]);
       }
     },
     updateFilter(props) {
@@ -611,6 +621,8 @@ export default {
 
           if (this.lastParams?.order !== this.model?.Order) {
             this.updateQuery();
+            this.loadMore(true);
+          } else {
             this.loadMore(true);
           }
 

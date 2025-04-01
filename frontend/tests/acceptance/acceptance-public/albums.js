@@ -51,7 +51,8 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })(
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
 
-    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await page.clickCardTitleOfUID(FirstPhotoUid);
+
     await t
       .click(photoedit.infoTab)
       .expect(Selector("td").withText("Albums").visible)
@@ -64,14 +65,15 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })(
     await photo.selectPhotoFromUID(FirstPhotoUid);
     await contextmenu.triggerContextMenuAction("album", "NotYetExistingAlbum");
 
-    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await page.clickCardTitleOfUID(FirstPhotoUid);
+
     await t
-      .click(photoedit.infoTab)
-      .expect(Selector("td").withText("Albums").visible)
-      .ok()
-      .expect(Selector("td").withText("NotYetExistingAlbum").visible)
-      .ok()
-      .click(photoedit.dialogClose);
+    .click(photoedit.infoTab)
+    .expect(Selector("td").withText("Albums").visible)
+    .ok()
+    .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+    .ok()
+    .click(photoedit.dialogClose);
 
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
@@ -89,14 +91,15 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })(
 
     await menu.openPage("browse");
     await toolbar.search("photo:true");
-    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
-    await t
-      .click(photoedit.infoTab)
-      .expect(Selector("td").withText("Albums").visible)
-      .notOk()
-      .expect(Selector("td").withText("NotYetExistingAlbum").visible)
-      .notOk()
-      .click(photoedit.dialogClose);
+    await page.clickCardTitleOfUID(FirstPhotoUid);
+
+  await t
+  .click(photoedit.infoTab)
+  .expect(Selector("td").withText("Albums").visible)
+  .notOk()
+  .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+  .notOk()
+  .click(photoedit.dialogClose);
   }
 );
 
@@ -155,7 +158,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
 
-    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await page.clickCardTitleOfUID(FirstPhotoUid);
     await t
       .click(photoedit.infoTab)
       .expect(Selector("td").withText("Albums").visible)
@@ -167,7 +170,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
     await photo.selectPhotoFromUID(SecondPhotoUid);
     await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
     await photoviewer.triggerPhotoViewerAction("select-toggle");
-    await photoviewer.triggerPhotoViewerAction("close");
+    await photoviewer.triggerPhotoViewerAction("close-button");
     await contextmenu.triggerContextMenuAction("album", "Holiday");
     await menu.openPage("albums");
     await album.openAlbumWithUid(AlbumUid);
@@ -175,7 +178,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
 
     await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
 
-    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await page.clickCardTitleOfUID(FirstPhotoUid);
     await t
       .click(photoedit.infoTab)
       .expect(Selector("td").withText("Albums").visible)
@@ -193,7 +196,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
 
     await menu.openPage("browse");
     await toolbar.search("photo:true");
-    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await page.clickCardTitleOfUID(FirstPhotoUid);
     await t
       .click(photoedit.infoTab)
       .expect(Selector("td").withText("Albums").visible)

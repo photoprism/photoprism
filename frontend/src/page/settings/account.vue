@@ -337,7 +337,7 @@
       :visible="dialog.passcode"
       :model="user"
       @close="dialog.passcode = false"
-      @updateUser="updateUser()"
+      @update-user="updateUser()"
     ></p-settings-passcode>
     <p-settings-password
       :visible="dialog.password"

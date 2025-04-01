@@ -144,6 +144,10 @@ services:
     extends:
       file: ./compose.yaml
       service: mariadb
+  qdrant:
+    extends:
+      file: ./compose.yaml
+      service: qdrant
   traefik:
     extends:
       file: ./compose.yaml

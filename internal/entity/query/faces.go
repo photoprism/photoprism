@@ -61,18 +61,23 @@ func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces,
 	return result, err
 }
 
-// ManuallyAddedFaces returns all manually added face clusters.
-func ManuallyAddedFaces(hidden, ignored bool) (result entity.Faces, err error) {
+// ManuallyAddedFaces returns all manually added face clusters for the specified subj_uid, or all subjects if "".
+func ManuallyAddedFaces(hidden, ignored bool, subj_uid string) (result entity.Faces, err error) {
 	stmt := Db().
 		Where("face_hidden = ?", hidden).
-		Where("face_src = ?", entity.SrcManual).
-		Where("subj_uid <> ''")
+		Where("face_src = ?", entity.SrcManual)
+
+	if subj_uid != "" {
+		stmt = stmt.Where("subj_uid = ?", subj_uid)
+	} else {
+		stmt = stmt.Where("subj_uid <> ''")
+	}
 
 	if !ignored {
 		stmt = stmt.Where("face_kind <= 1")
 	}
 
-	err = stmt.Order("subj_uid, samples DESC").Find(&result).Error
+	err = stmt.Order("subj_uid, samples DESC, created_at ASC").Find(&result).Error
 
 	return result, err
 }
@@ -178,7 +183,9 @@ func PurgeOrphanFaces(faceIds []string, ignored bool) (affected int, err error) 
 		} else if result.RowsAffected > 0 {
 			affected += int(result.RowsAffected)
 		} else {
-			affected += len(ids)
+			// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
+			log.Debugf("faces: no affected rows for purge in batch %d - %d", i, j)
+			//affected += len(ids)
 		}
 	}
 
@@ -214,9 +221,9 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	if removed, err := PurgeOrphanFaces(merge.IDs(), ignored); err != nil {
 		return merged, err
 	} else if removed > 0 {
-		log.Debugf("faces: removed %d orphans for subject %s", removed, clean.Log(subjUID))
+		log.Debugf("faces: removed %d orphans of %d candidate for subject %s", removed, len(merge), clean.Log(subjUID))
 	} else {
-		log.Warnf("faces: failed removing merged clusters for subject %s", clean.Log(subjUID))
+		return merged, fmt.Errorf("faces: failed to remove any orphan clusters of %d candidate for subject %s", len(merge), clean.Log(subjUID))
 	}
 
 	return merged, err

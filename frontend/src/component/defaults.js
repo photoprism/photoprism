@@ -141,6 +141,11 @@ export default {
     rounded: "pill",
     location: "bottom",
     transition: "fade-transition",
+    variant: "flat",
+    closeOnBack: true,
+    closeOnContentClick: false,
+    attach: true,
+    timeout: -1,
   },
   VNavigationDrawer: {
     width: 270,
@@ -148,6 +153,7 @@ export default {
     mobileBreakpoint: 960,
     location: "start",
     touchless: true,
+    scrim: true,
   },
   VListItem: {
     ripple: false,

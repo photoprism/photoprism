@@ -64,6 +64,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"users-storage-path", c.UsersStoragePath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},
+		{"import-allow", c.ImportAllow().String()},
+		{"upload-nsfw", fmt.Sprintf("%t", c.UploadNSFW())},
+		{"upload-allow", c.UploadAllow().String()},
 		{"cache-path", c.CachePath()},
 		{"cmd-cache-path", c.CmdCachePath()},
 		{"media-cache-path", c.MediaCachePath()},
@@ -131,7 +134,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// TensorFlow.
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
-		{"upload-nsfw", fmt.Sprintf("%t", c.UploadNSFW())},
 		{"tensorflow-version", c.TensorFlowVersion()},
 		{"tensorflow-model-path", c.TensorFlowModelPath()},
 

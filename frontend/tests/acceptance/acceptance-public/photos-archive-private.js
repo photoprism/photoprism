@@ -58,7 +58,7 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
 
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
@@ -78,7 +78,7 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
     //await photo.checkPhotoVisibility(SecondPhotoUid, true);
@@ -99,7 +99,7 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
     //await photo.checkPhotoVisibility(SecondPhotoUid, false);
@@ -149,7 +149,7 @@ test.meta("testID", "photos-archive-private-002").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
 
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
@@ -164,7 +164,7 @@ test.meta("testID", "photos-archive-private-002").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
 
     await photo.checkPhotoVisibility(FirstReviewPhotoUid, false);
@@ -175,7 +175,7 @@ test.meta("testID", "photos-archive-private-002").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
 
     await photo.checkPhotoVisibility(FirstPrivatePhotoUid, false);
@@ -197,7 +197,7 @@ test.meta("testID", "photos-archive-private-002").meta({ type: "short", mode: "p
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
 
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
@@ -291,7 +291,7 @@ test.meta("testID", "photos-archive-private-003").meta({ mode: "public" })(
       if (t.browser.platform === "mobile") {
         await t.eval(() => location.reload());
       } else {
-        await toolbar.triggerToolbarAction("reload");
+        await toolbar.triggerToolbarAction("refresh");
       }
       await toolbar.setFilter("view", "Mosaic");
 
@@ -429,7 +429,7 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
       if (t.browser.platform === "mobile") {
         await t.eval(() => location.reload());
       } else {
-        await toolbar.triggerToolbarAction("reload");
+        await toolbar.triggerToolbarAction("refresh");
       }
       await toolbar.setFilter("view", "Mosaic");
 
@@ -491,7 +491,7 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
       if (t.browser.platform === "mobile") {
         await t.eval(() => location.reload());
       } else {
-        await toolbar.triggerToolbarAction("reload");
+        await toolbar.triggerToolbarAction("refresh");
       }
       await toolbar.setFilter("view", "Mosaic");
 
@@ -540,7 +540,7 @@ test.meta("testID", "photos-archive-private-005").meta({ type: "short", mode: "p
   async (t) => {
     await menu.openPage("archive");
     await toolbar.triggerToolbarAction("delete-all");
-    await t.expect(Selector("p").withText("Are you sure you want to delete all archived pictures?").visible).ok();
+    await t.expect(Selector("div.text-subtitle-1").withText("Delete all?").visible).ok();
     await t.click(Selector("button.action-cancel"));
   }
 );

@@ -32,5 +32,7 @@ func TestUpdateSubjectCovers(t *testing.T) {
 }
 
 func TestUpdateCovers(t *testing.T) {
+	// coversBusy.Store(true)
+	UpdateCoversAsync()
 	assert.NoError(t, UpdateCovers())
 }

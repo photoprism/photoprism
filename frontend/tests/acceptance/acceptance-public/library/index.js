@@ -76,7 +76,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     await toolbar.search("cheetah");
 
@@ -96,7 +96,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     if (t.browser.platform === "mobile") {
       await t.navigateTo("/library/calendar?q=December%202013");
@@ -110,7 +110,7 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload");
+      await toolbar.triggerToolbarAction("refresh");
     }
     if (t.browser.platform === "mobile") {
       await t.navigateTo("/library/folders?q=moment");

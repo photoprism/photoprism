@@ -296,13 +296,19 @@ export default {
           ev.preventDefault();
           this.$view.focus(this.$refs?.toolbar, ".input-search input", true);
           break;
+        case "KeyU":
+          ev.preventDefault();
+          if (this.$config.allow("files", "upload") && this.$config.feature("upload")) {
+            this.$event.publish("dialog.upload");
+          }
+          break;
       }
     },
     hideExpansionPanel() {
       return this.$refs?.toolbar?.hideExpansionPanel();
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("photos_offset"));
+      const offset = parseInt(window.localStorage.getItem("photos.offset"));
       if (this.offset > 0 || !offset) {
         return this.batchSize;
       }
@@ -310,7 +316,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("photos_offset", offset);
+      window.localStorage.setItem("photos.offset", offset);
     },
     getViewType() {
       if (this.embedded) {
@@ -318,10 +324,10 @@ export default {
       }
 
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
-      let storedType = window.localStorage.getItem("photos_view");
+      let storedType = window.localStorage.getItem("photos.view");
 
       if (queryParam) {
-        window.localStorage.setItem("photos_view", queryParam);
+        window.localStorage.setItem("photos.view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -358,23 +364,23 @@ export default {
 
       switch (this.getContext()) {
         case "archive":
-          storageKey = "archive_order";
+          storageKey = "archive.order";
           defaultOrder = "archived";
           break;
         case "favorites":
-          storageKey = "favorites_order";
+          storageKey = "favorites.order";
           defaultOrder = "newest";
           break;
         case "hidden":
-          storageKey = "hidden_order";
+          storageKey = "hidden.order";
           defaultOrder = "added";
           break;
         case "review":
-          storageKey = "review_order";
+          storageKey = "review.order";
           defaultOrder = "added";
           break;
         default:
-          storageKey = "photos_order";
+          storageKey = "photos.order";
           defaultOrder = "newest";
       }
 
@@ -456,6 +462,8 @@ export default {
 
       if (showMerged) {
         this.$lightbox.openModels(Thumb.fromFiles([selected]), 0);
+      } else if (this.filter?.order === "random") {
+        this.$lightbox.openModels(Thumb.fromPhotos(this.results), index);
       } else {
         this.$lightbox.openView(this, index);
       }
@@ -497,22 +505,24 @@ export default {
 
           if (this.complete) {
             this.setOffset(response.offset);
-
             if (!this.embedded && this.results.length > 1) {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
-              );
+              if (!this.lightbox.open) {
+                this.$notify.info(
+                  this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
+                );
+              }
             }
           } else if (this.results.length >= Photo.limit()) {
             this.setOffset(response.offset);
             this.complete = true;
             this.scrollDisabled = true;
-            this.$notify.warn(this.$gettext("Can't load more, limit reached"));
+            if (!this.lightbox.open) {
+              this.$notify.warn(this.$gettext("Can't load more, limit reached"));
+            }
           } else {
             this.setOffset(response.offset + response.limit);
             this.offset = offset + count;
             this.page++;
-
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.loadMore();
@@ -546,7 +556,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("photos_" + key, this.settings[key]);
+        window.localStorage.setItem("photos." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

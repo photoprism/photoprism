@@ -3,7 +3,6 @@ package config
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
 
@@ -94,12 +93,12 @@ func TestConfig_FFmpegBitrateExceeded(t *testing.T) {
 
 func TestConfig_FFmpegMapVideo(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ffmpeg.MapVideoDefault, c.FFmpegMapVideo())
+	assert.Equal(t, encode.MapVideo, c.FFmpegMapVideo())
 }
 
 func TestConfig_FFmpegMapAudio(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ffmpeg.MapAudioDefault, c.FFmpegMapAudio())
+	assert.Equal(t, encode.MapAudio, c.FFmpegMapAudio())
 }
 
 func TestConfig_FFmpegOptions(t *testing.T) {
@@ -109,9 +108,9 @@ func TestConfig_FFmpegOptions(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, c.FFmpegBin(), opt.Bin)
 	assert.Equal(t, encode.SoftwareAvc, opt.Encoder)
-	assert.Equal(t, bitrate, opt.DestBitrate)
-	assert.Equal(t, ffmpeg.MapVideoDefault, opt.MapVideo)
-	assert.Equal(t, ffmpeg.MapAudioDefault, opt.MapAudio)
+	assert.Equal(t, bitrate, opt.BitrateLimit)
+	assert.Equal(t, encode.MapVideo, opt.MapVideo)
+	assert.Equal(t, encode.MapAudio, opt.MapAudio)
 	assert.Equal(t, c.FFmpegMapVideo(), opt.MapVideo)
 	assert.Equal(t, c.FFmpegMapAudio(), opt.MapAudio)
 }

@@ -327,12 +327,12 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		return false, fmt.Errorf("subject has no uid")
 	}
 
-	// Change name?
+	// Update name?
 	if name := clean.Name(frm.SubjName); name != "" && name != m.SubjName {
-		existing, err := m.UpdateName(name)
+		existing, updateErr := m.UpdateName(name)
 
-		if existing.SubjUID != m.SubjUID || err != nil {
-			return err != nil, err
+		if updateErr != nil || existing.SubjUID != m.SubjUID {
+			return updateErr != nil, updateErr
 		}
 
 		changed = true

@@ -25,6 +25,7 @@ venv
 .venv
 .env
 .tmp
+.nv
 .eslintcache
 /tmp/
 /test/

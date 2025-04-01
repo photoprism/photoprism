@@ -217,13 +217,45 @@ table td > .action-buttons {
 
 /* Action Menu */
 
-.p-action-menu .v-overlay__content {
-    border-radius: 8px;
+.v-menu.action-menu .v-overlay__content {
+    border-radius: 6px;
 }
 
-.p-action-menu .action-menu__list {
-    min-width: 108px;
+.v-menu.action-menu .action-menu__list {
+    min-width: 132px;
     opacity: 0.97;
+    padding: 4px;
+    border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+    border-style: solid;
+    border-width: thin;
+}
+
+.v-menu>.v-overlay__content>.v-list.action-menu__list>.v-list-item.v-list-item--density-compact.action-menu__item {
+    padding: 8px 10px;
+}
+
+.v-menu.action-menu.action-menu--lightbox .action-menu__list {
+    opacity: 0.87;
+    background: #191a1c;
+    color: #ffffff;
+    stroke: #ffffff;
+    border-color: #ffffff12;
+    border-style: solid;
+    border-width: thin;
+}
+
+.v-menu.action-menu.action-menu--lightbox>.v-overlay__content>.v-list.action-menu__list>.v-list-item.v-list-item--density-compact.action-menu__item {
+    padding: 8px;
+}
+
+.v-menu.action-menu .action-menu__list .action-menu__shortcut {
+    margin-inline-start: .75rem;
+    opacity: .5;
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1.667;
+    letter-spacing: normal;
+    text-transform: none;
 }
 
 /* Table Actions */

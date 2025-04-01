@@ -527,6 +527,7 @@ export default {
           name: "refresh",
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
+          shortcut: "Ctrl-R",
           visible: true,
           click: () => {
             this.refresh();
@@ -536,6 +537,7 @@ export default {
           name: "upload",
           icon: "mdi-cloud-upload",
           text: this.$gettext("Upload"),
+          shortcut: "Ctrl-U",
           visible: this.canUpload,
           click: () => {
             this.showUpload();
@@ -556,6 +558,12 @@ export default {
         case "KeyF":
           ev.preventDefault();
           this.$view.focus(this.$refs?.form, ".input-search input", true);
+          break;
+        case "KeyU":
+          ev.preventDefault();
+          if (this.$config.allow("files", "upload") && this.$config.feature("upload")) {
+            this.$event.publish("dialog.upload");
+          }
           break;
       }
     },
@@ -593,7 +601,7 @@ export default {
     },
     sortOrder() {
       const typeName = this.staticFilter?.type;
-      const keyName = "albums_order_" + typeName;
+      const keyName = "albums.order." + typeName;
       const queryParam = this.$route.query["order"];
       const storedType = window.localStorage.getItem(keyName);
 
@@ -607,7 +615,7 @@ export default {
       return this.defaultOrder;
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("albums_offset"));
+      const offset = parseInt(window.localStorage.getItem("albums.offset"));
 
       if (this.offset > 0 || !offset) {
         return this.batchSize;
@@ -617,7 +625,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("albums_offset", offset);
+      window.localStorage.setItem("albums.offset", offset);
     },
     share(album) {
       if (!album || !this.canShare) {
@@ -843,7 +851,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("albums_" + key, this.settings[key]);
+        window.localStorage.setItem("albums." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

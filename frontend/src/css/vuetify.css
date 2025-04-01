@@ -66,10 +66,14 @@ body.dark-theme {
 /* Notifications */
 
 .v-snackbar__wrapper {
-    min-width: 300px;
+    min-width: 312px;
     color: rgba(var(--v-theme-on-surface), 1);
     background-color: rgba(var(--v-theme-surface), 0.2);
     backdrop-filter: blur(6px);
+}
+
+.v-snackbar__wrapper .p-notify__close {
+    opacity: 0.8;
 }
 
 .v-snackbar__wrapper .v-snackbar__content {
@@ -83,22 +87,22 @@ body.dark-theme {
 }
 
 .v-snackbar.p-notify--success .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-success), 0.24) !important;
+    background-color: rgba(var(--v-theme-success), 0.26) !important;
     color: rgba(var(--v-theme-on-surface), 1) !important;
 }
 
 .v-snackbar.p-notify--info .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-info), 0.24) !important;
+    background-color: rgba(var(--v-theme-info), 0.26) !important;
     color: rgba(var(--v-theme-on-surface), 1) !important;
 }
 
 .v-snackbar.p-notify--warning .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-warning), 0.08) !important;
+    background-color: rgba(var(--v-theme-warning), 0.18) !important;
     color: rgba(var(--v-theme-on-surface), 1) !important;
 }
 
 .v-snackbar.p-notify--error .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-error), 0.1) !important;
+    background-color: rgba(var(--v-theme-error), 0.18) !important;
     color: rgba(var(--v-theme-on-surface), 1) !important;
 }
 

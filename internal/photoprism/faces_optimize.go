@@ -15,6 +15,11 @@ type FacesOptimizeResult struct {
 
 // Optimize optimizes the face lookup table.
 func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
+	return w.OptimizeFor("")
+}
+
+// Optimize optimizes the face lookup table for the specified subj_uid or "" for all subjects
+func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
 		return result, fmt.Errorf("face recognition is disabled")
 	}
@@ -27,12 +32,14 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
-		if faces, err = query.ManuallyAddedFaces(false, false); err != nil {
+		if faces, err = query.ManuallyAddedFaces(false, false, subj_uid); err != nil {
 			return result, err
 		} else if n = len(faces) - 1; n < 1 {
 			// Need at least 2 faces to optimize.
 			break
 		}
+
+		log.Debugf("faces: optimize for %s itr %d n %d", subj_uid, i, n)
 
 		// Find and merge matching faces.
 		for j := 0; j <= n; j++ {
@@ -42,8 +49,10 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 				if len(merge) < 2 {
 					// Nothing to merge.
 				} else if _, err := query.MergeFaces(merge, false); err != nil {
-					log.Errorf("%s (merge)", err)
+					log.Errorf("%s (merge) itr %d cluster %d count %d", err, i, j, len(merge))
 				} else {
+					// not exactly right, potentially overcounting
+					// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
 					result.Merged += len(merge)
 				}
 

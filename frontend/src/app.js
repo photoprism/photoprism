@@ -52,7 +52,6 @@ import VueLuxon from "vue-luxon";
 import { passiveSupport } from "passive-events-support/src/utils";
 import * as themes from "options/themes";
 import Hls from "hls.js";
-import "common/maptiler-lang";
 import { createGettext, T } from "common/gettext";
 import { Locale } from "locales";
 import * as offline from "@lcdp/offline-plugin/runtime";
@@ -163,14 +162,14 @@ $config.update().finally(() => {
   // Make scroll-pos-restore compatible with bfcache (required to work in PWA mode on iOS).
   window.addEventListener("pagehide", (ev) => {
     if (ev.persisted) {
-      localStorage.setItem("lastScrollPosBeforePageHide", JSON.stringify({ x: window.scrollX, y: window.scrollY }));
+      localStorage.setItem("window.scroll.pos", JSON.stringify({ x: window.scrollX, y: window.scrollY }));
     }
   });
   window.addEventListener("pageshow", (ev) => {
     if (ev.persisted) {
-      const lastSavedScrollPos = localStorage.getItem("lastScrollPosBeforePageHide");
+      const lastSavedScrollPos = localStorage.getItem("window.scroll.pos");
       if (lastSavedScrollPos !== undefined && lastSavedScrollPos !== null && lastSavedScrollPos !== "") {
-        window.positionToRestore = JSON.parse(localStorage.getItem("lastScrollPosBeforePageHide"));
+        window.positionToRestore = JSON.parse(localStorage.getItem("window.scroll.pos"));
         // Wait for other things that set the scroll-pos anywhere in the app to fire.
         setTimeout(() => {
           if (window.positionToRestore !== undefined) {
@@ -186,7 +185,7 @@ $config.update().finally(() => {
       }
     }
 
-    localStorage.removeItem("lastScrollPosBeforePageHide");
+    localStorage.removeItem("window.scroll.pos");
   });
 
   // Configure client-side routing.

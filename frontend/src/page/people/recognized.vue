@@ -349,7 +349,7 @@ export default {
       });
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("subjects_offset"));
+      const offset = parseInt(window.localStorage.getItem("people.recognized.offset"));
 
       if (this.offset > 0 || !offset) {
         return this.batchSize;
@@ -362,7 +362,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("subjects_offset", offset);
+      window.localStorage.setItem("people.recognized.offset", offset);
     },
     toggleLike(ev, index) {
       if (!this.canManage) {
@@ -606,7 +606,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("people_" + key, this.settings[key]);
+        window.localStorage.setItem("people.recognized." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

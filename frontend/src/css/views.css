@@ -5,13 +5,6 @@
     -webkit-touch-callout: none;
 }
 
-/*
-For more information on the contain property, see https://developers.google.com/web/updates/2016/06/css-containment
-*/
-body.chrome .search-results .result {
-    contain: layout style paint;
-}
-
 .v-alert.no-results.v-alert--outline,
 .v-alert.no-outline.v-alert--outline {
     border: 0 !important;
@@ -223,7 +216,7 @@ body.chrome .search-results .result {
 
 .mosaic-view .result-container {
     aspect-ratio: 1;
-    contain: layout paint style size;
+    contain: size layout paint style;
     transition: none;
 }
 
@@ -238,8 +231,9 @@ body.chrome .search-results .result {
     cursor: pointer;
 }
 
-.list-view .result {
-    text-align: center;
+.list-view .result,
+.cards-view .result {
+    contain: layout paint style;
 }
 
 .cards-view .result,
@@ -339,7 +333,7 @@ body.chrome .search-results .result {
 
 .list-view tbody td.col-select .input-select {
     display: block;
-    font-size: 1.25rem;
+    font-size: 1.275rem;
     line-height: 1;
     position: relative;
 }

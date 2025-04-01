@@ -157,18 +157,6 @@
                 </v-list-item>
 
                 <v-list-item
-                  :to="{ name: 'browse', query: { q: 'animated' } }"
-                  :exact="true"
-                  variant="text"
-                  class="nav-animated"
-                  @click.stop=""
-                >
-                  <v-list-item-title :class="`nav-menu-item menu-item`">
-                    {{ $gettext(`Animated`) }}
-                  </v-list-item-title>
-                </v-list-item>
-
-                <v-list-item
                   :to="{ name: 'photos', query: { q: 'stacks' } }"
                   :exact="true"
                   variant="text"
@@ -206,7 +194,7 @@
                 </v-list-item>
 
                 <v-list-item
-                  v-show="isSponsor"
+                  v-show="config.count.documents > 0"
                   :to="{ name: 'browse', query: { q: 'documents' } }"
                   :exact="true"
                   variant="text"
@@ -216,6 +204,7 @@
                   <v-list-item-title :class="`nav-menu-item menu-item`">
                     {{ $gettext(`Documents`) }}
                   </v-list-item-title>
+                  <span v-show="config.count.documents > 0" class="nav-count-item">{{ config.count.documents }}</span>
                 </v-list-item>
 
                 <v-list-item
@@ -305,21 +294,21 @@
 
             <v-list-item
               v-if="isMini && $config.feature('videos')"
-              to="/videos"
+              to="/media"
               variant="text"
-              class="nav-video"
+              class="nav-media"
               :ripple="false"
               @click.stop=""
             >
               <v-icon class="ma-auto">mdi-play-circle</v-icon>
             </v-list-item>
             <div v-else-if="!isMini && $config.feature('videos')">
-              <v-list-item to="/videos" variant="text" class="nav-video activator" @click.stop="">
+              <v-list-item to="/media" variant="text" class="nav-media activator" @click.stop="">
                 <v-list-item-title class="nav-menu-item">
                   <p class="nav-item-title">
-                    {{ $gettext(`Videos`) }}
+                    {{ $gettext(`Media`) }}
                   </p>
-                  <span v-show="config.count.videos > 0" class="nav-count-group">{{ config.count.videos }}</span>
+                  <span v-show="config.count.media > 0" class="nav-count-group">{{ config.count.media }}</span>
                 </v-list-item-title>
               </v-list-item>
 
@@ -330,11 +319,44 @@
                   </v-list-item>
                 </template>
 
+                <v-list-item :to="{ name: 'videos' }" variant="text" class="nav-video nav-videos" @click.stop="">
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Videos`) }}
+                  </v-list-item-title>
+                  <span v-show="config.count.videos > 0" class="nav-count-item">{{ config.count.videos }}</span>
+                </v-list-item>
+
                 <v-list-item :to="{ name: 'live' }" variant="text" class="nav-live" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item`">
                     {{ $gettext(`Live Photos`) }}
                   </v-list-item-title>
                   <span v-show="config.count.live > 0" class="nav-count-item">{{ config.count.live }}</span>
+                </v-list-item>
+
+                <v-list-item
+                  v-show="config.count.audio > 0"
+                  :to="{ name: 'audio' }"
+                  variant="text"
+                  class="nav-audio"
+                  @click.stop=""
+                >
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Audio`) }}
+                  </v-list-item-title>
+                  <span class="nav-count-item">{{ config.count.audio }}</span>
+                </v-list-item>
+
+                <v-list-item
+                  v-show="config.count.animated > 0"
+                  :to="{ name: 'animated' }"
+                  variant="text"
+                  class="nav-animated"
+                  @click.stop=""
+                >
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Animated`) }}
+                  </v-list-item-title>
+                  <span v-show="config.count.animated > 0" class="nav-count-item">{{ config.count.animated }}</span>
                 </v-list-item>
               </v-list-group>
             </div>
@@ -999,7 +1021,7 @@ export default {
       featFiles: this.$config.feature("files"),
       featUsage: canManagePhotos && this.$config.feature("files") && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,
-      isMini: localStorage.getItem("last_navigation_mode") !== "false" || isRestricted,
+      isMini: localStorage.getItem("navigation.mode") !== "false" || isRestricted,
       isDemo: isDemo,
       isPro: isPro,
       isPublic: isPublic,
@@ -1106,7 +1128,7 @@ export default {
       }
 
       this.isMini = !this.isMini;
-      localStorage.setItem("last_navigation_mode", `${this.isMini}`);
+      localStorage.setItem("navigation.mode", `${this.isMini}`);
     },
     showAccountSettings() {
       if (this.$config.feature("account")) {

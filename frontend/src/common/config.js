@@ -26,7 +26,6 @@ Additional information can be found in our Developer Guide:
 import $api from "common/api";
 import $event from "common/event";
 import * as themes from "options/themes";
-import translations from "locales/translations.json";
 import { Languages } from "options/options";
 import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
@@ -48,7 +47,7 @@ export default class Config {
     this.updating = false;
 
     this.$vuetify = null;
-    this.translations = translations;
+    this.translations = {};
 
     if (!values || !values.siteTitle) {
       // Omit warning in unit tests.
@@ -166,7 +165,7 @@ export default class Config {
     return this.updating;
   }
 
-  setValues(values) {
+  async setValues(values) {
     if (!values || typeof values !== "object") {
       return;
     }
@@ -185,7 +184,7 @@ export default class Config {
 
     if (values.settings) {
       this.setBatchSize(values.settings);
-      this.setLanguage(values.settings.ui.language, true);
+      await this.setLanguage(values.settings.ui.language, true);
       this.setTheme(values.settings.ui.theme);
     }
 
@@ -292,13 +291,29 @@ export default class Config {
         this.values.count.all += data.count;
         this.values.count.photos += data.count;
         break;
-      case "live":
+      case "animated":
         this.values.count.all += data.count;
-        this.values.count.live += data.count;
+        this.values.count.media += data.count;
+        this.values.count.animated += data.count;
         break;
       case "videos":
         this.values.count.all += data.count;
+        this.values.count.media += data.count;
         this.values.count.videos += data.count;
+        break;
+      case "live":
+        this.values.count.all += data.count;
+        this.values.count.media += data.count;
+        this.values.count.live += data.count;
+        break;
+      case "audio":
+        this.values.count.all += data.count;
+        this.values.count.media += data.count;
+        this.values.count.audio += data.count;
+        break;
+      case "documents":
+        this.values.count.all += data.count;
+        this.values.count.documents += data.count;
         break;
       case "cameras":
         this.values.count.cameras += data.count;
@@ -417,9 +432,29 @@ export default class Config {
     return !this.allowAny(resource, perm);
   }
 
+  // loadTranslation asynchronously loads the specified locale file.
+  async loadTranslation(locale) {
+    if (!locale || (this.translations && this.translations[locale])) {
+      return;
+    }
+
+    try {
+      // Dynamically import the translation JSON file.
+      await import(
+        /* webpackChunkName: "[request]" */
+        /* webpackMode: "lazy" */
+        `../locales/json/${locale}.json`
+      ).then((module) => {
+        Object.assign(this.translations, module.default);
+      });
+    } catch (error) {
+      console.error(`failed to load translations for locale ${locale}:`, error);
+    }
+  }
+
   // setLanguage sets the ISO/IEC 15897 locale,
   // e.g. "en" or "zh_TW" (minimum 2 letters).
-  setLanguage(locale, apply) {
+  async setLanguage(locale, apply) {
     // Skip setting language if no locale is specified.
     if (!locale) {
       return this;
@@ -427,6 +462,8 @@ export default class Config {
 
     // Apply locale to browser window?
     if (apply) {
+      await this.loadTranslation(locale);
+
       // Update the Accept-Language header for XHR requests.
       if ($api) {
         $api.defaults.headers.common["Accept-Language"] = locale;

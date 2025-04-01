@@ -3,6 +3,7 @@ package query
 import (
 	"fmt"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -10,8 +11,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
 )
+
+// coversBusy is true when the covers are currently updating.
+var coversBusy = atomic.Bool{}
 
 // UpdateAlbumDefaultCovers updates default album cover thumbs.
 func UpdateAlbumDefaultCovers() (err error) {
@@ -314,8 +319,25 @@ func UpdateSubjectCovers(public bool) (err error) {
 	return err
 }
 
+// UpdateCoversAsync runs UpdateCovers in a go routine
+// and logs the returned error, if any, as a warning.
+func UpdateCoversAsync() {
+	go func() {
+		if err := UpdateCovers(); err != nil {
+			log.Warnf("index: %s (update covers)", clean.Error(err))
+		}
+	}()
+}
+
 // UpdateCovers updates album, subject, and label cover thumbs.
 func UpdateCovers() (err error) {
+	if !coversBusy.CompareAndSwap(false, true) {
+		log.Debugf("index: skipped updating covers because it is already in progress")
+		return nil
+	}
+
+	defer coversBusy.Store(false)
+
 	log.Debugf("index: updating covers")
 
 	// Update Albums.

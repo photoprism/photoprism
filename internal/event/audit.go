@@ -1,21 +1,12 @@
 package event
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/sirupsen/logrus"
 )
 
 // AuditLog optionally logs security events.
 var AuditLog Logger
 var AuditPrefix = "audit: "
-var AuditMessageSep = " › "
-
-// Format formats an audit log event.
-func Format(ev []string, args ...interface{}) string {
-	return fmt.Sprintf(strings.Join(ev, AuditMessageSep), args...)
-}
 
 // Audit optionally reports security-relevant events.
 func Audit(level logrus.Level, ev []string, args ...interface{}) {
@@ -35,7 +26,7 @@ func Audit(level logrus.Level, ev []string, args ...interface{}) {
 	// Publish event if log level is info or higher.
 	if level <= logrus.InfoLevel {
 		Publish(
-			"audit."+level.String(),
+			"audit.log."+level.String(),
 			Data{
 				"time":    TimeStamp(),
 				"level":   level.String(),

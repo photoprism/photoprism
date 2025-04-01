@@ -9,6 +9,19 @@ const (
 
 type Done map[string]Status
 
+// Processed counts the number of processed files.
+func (d Done) Processed() int {
+	count := 0
+
+	for _, s := range d {
+		if s.Processed() {
+			count++
+		}
+	}
+
+	return count
+}
+
 func (s Status) Exists() bool {
 	return s > 0
 }

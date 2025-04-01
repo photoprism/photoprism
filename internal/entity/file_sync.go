@@ -8,6 +8,7 @@ const (
 	FileSyncNew        = "new"
 	FileSyncIgnore     = "ignore"
 	FileSyncExists     = "exists"
+	FileSyncFailed     = "failed"
 	FileSyncDownloaded = "downloaded"
 	FileSyncUploaded   = "uploaded"
 )

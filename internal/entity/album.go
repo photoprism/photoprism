@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -35,6 +36,8 @@ var (
 	DefaultOrderState  = sortby.Newest
 	DefaultOrderMonth  = sortby.Oldest
 )
+
+var albumMutex = sync.Mutex{}
 
 type Albums []Album
 
@@ -102,11 +105,11 @@ func UpdateAlbum(albumUID string, values interface{}) (err error) {
 
 // AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
 func AddPhotoToAlbums(uid string, albums []string) (err error) {
-	return AddPhotoToUserAlbums(uid, albums, OwnerUnknown)
+	return AddPhotoToUserAlbums(uid, albums, DefaultOrderAlbum, OwnerUnknown)
 }
 
 // AddPhotoToUserAlbums adds a photo UID to multiple albums and automatically creates them as a user if needed.
-func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err error) {
+func AddPhotoToUserAlbums(photoUid string, albums []string, sortOrder, userUid string) (err error) {
 	if photoUid == "" || len(albums) == 0 {
 		// Do nothing.
 		return nil
@@ -115,6 +118,9 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 	if !rnd.IsUID(photoUid, PhotoUID) {
 		return fmt.Errorf("album: can not add invalid photo uid %s", clean.Log(photoUid))
 	}
+
+	albumMutex.Lock()
+	defer albumMutex.Unlock()
 
 	for _, album := range albums {
 		var albumUid string
@@ -127,7 +133,7 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 		if rnd.IsUID(album, AlbumUID) {
 			albumUid = album
 		} else {
-			a := NewUserAlbum(album, AlbumManual, sortby.Oldest, userUid)
+			a := NewUserAlbum(album, AlbumManual, sortOrder, userUid)
 
 			if found := a.Find(); found != nil {
 				albumUid = found.AlbumUID
@@ -311,7 +317,7 @@ func FindMonthAlbum(year, month int) *Album {
 func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	m := Album{}
 
-	if albumSlug == "" {
+	if albumSlug == "" || albumSlug == UnknownSlug {
 		return nil
 	}
 
@@ -394,13 +400,23 @@ func FindAlbum(find Album) *Album {
 
 	// Search by slug and filter or title.
 	if find.AlbumType != AlbumManual {
-		if find.AlbumFilter != "" {
+		if find.AlbumFilter != "" && find.AlbumSlug != UnknownSlug {
 			stmt = stmt.Where("album_slug = ? OR album_filter = ?", find.AlbumSlug, find.AlbumFilter)
-		} else {
+		} else if find.AlbumFilter != "" {
+			stmt = stmt.Where("album_filter = ?", find.AlbumFilter)
+		} else if find.AlbumSlug != UnknownSlug {
 			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
+		} else {
+			return nil
 		}
-	} else {
+	} else if find.AlbumTitle != "" && find.AlbumSlug != UnknownSlug {
 		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
+	} else if find.AlbumSlug != UnknownSlug {
+		stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
+	} else if find.AlbumTitle != "" {
+		stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
+	} else {
+		return nil
 	}
 
 	// Filter by creator if the album has not been published yet.
@@ -452,7 +468,7 @@ func (m *Album) String() string {
 		return "Album<nil>"
 	}
 
-	if m.AlbumSlug != "" {
+	if m.AlbumSlug != "" && m.AlbumSlug != UnknownSlug {
 		return clean.Log(m.AlbumSlug)
 	}
 
@@ -503,7 +519,7 @@ func (m *Album) SetTitle(title string) *Album {
 	}
 
 	if m.AlbumSlug == "" {
-		m.AlbumSlug = "-"
+		m.AlbumSlug = UnknownSlug
 	}
 
 	return m
@@ -608,9 +624,7 @@ func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) 
 		return nil
 	}
 
-	if title != "" {
-		m.SetTitle(title)
-	}
+	m.SetTitle(title)
 
 	return m.Updates(Map{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }

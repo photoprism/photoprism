@@ -34,18 +34,23 @@ export class Thumb extends Model {
   getDefaults() {
     return {
       UID: "",
+      Type: "image",
       Title: "",
-      TakenAtLocal: "",
       Caption: "",
+      Lat: 0.0,
+      Lng: 0.0,
+      TakenAtLocal: "",
+      TimeZone: "",
       Favorite: false,
       Playable: false,
-      DownloadUrl: "",
+      Duration: 0,
       Width: 0,
       Height: 0,
       Hash: "",
       Codec: "",
       Mime: "",
       Thumbs: {},
+      DownloadUrl: "",
     };
   }
 
@@ -74,25 +79,32 @@ export class Thumb extends Model {
   static notFound() {
     const result = {
       UID: "",
+      Type: "image",
       Title: $gettext("Invalid photo selected"),
-      TakenAtLocal: "",
       Caption: "",
+      Lat: 0.0,
+      Lng: 0.0,
+      TakenAtLocal: "",
+      TimeZone: "",
       Favorite: false,
       Playable: false,
-      DownloadUrl: "",
+      Duration: 0,
       Width: 0,
       Height: 0,
       Hash: "",
+      Codec: "",
+      Mime: "",
       Thumbs: {},
+      DownloadUrl: "",
     };
 
     for (let i = 0; i < thumbs.length; i++) {
       let t = thumbs[i];
 
       result.Thumbs[t.size] = {
-        src: `${$config.staticUri}/img/404.jpg`,
         w: t.w,
         h: t.h,
+        src: `${$config.staticUri}/img/404.jpg`,
       };
     }
 
@@ -121,16 +133,23 @@ export class Thumb extends Model {
 
     const result = {
       UID: photo.UID,
+      Type: photo.Type,
       Title: photo.Title,
-      TakenAtLocal: photo.getDateString(),
       Caption: photo.Caption,
+      Lat: photo.Lat,
+      Lng: photo.Lng,
+      TakenAtLocal: photo.getDateString(),
+      TimeZone: photo.TimeZone,
       Favorite: photo.Favorite,
       Playable: photo.isPlayable(),
-      DownloadUrl: this.downloadUrl(photo),
+      Duration: photo.Duration,
       Width: photo.Width,
       Height: photo.Height,
       Hash: photo.Hash,
+      Codec: photo.videoCodec(),
+      Mime: photo.videoContentType(),
       Thumbs: {},
+      DownloadUrl: this.downloadUrl(photo),
     };
 
     for (let i = 0; i < thumbs.length; i++) {
@@ -138,9 +157,9 @@ export class Thumb extends Model {
       let size = photo.calculateSize(t.w, t.h);
 
       result.Thumbs[t.size] = {
-        src: photo.thumbnailUrl(t.size),
         w: size.width,
         h: size.height,
+        src: photo.thumbnailUrl(t.size),
       };
     }
 
@@ -154,16 +173,23 @@ export class Thumb extends Model {
 
     const result = {
       UID: photo.UID,
+      Type: file.MediaType,
       Title: photo.Title,
-      TakenAtLocal: photo.getDateString(),
       Caption: photo.Caption,
+      Lat: photo.Lat,
+      Lng: photo.Lng,
+      TakenAtLocal: photo.getDateString(),
+      TimeZone: photo.TimeZone,
       Favorite: photo.Favorite,
       Playable: photo.isPlayable(),
-      DownloadUrl: this.downloadUrl(file),
+      Duration: photo.Duration,
       Width: file.Width,
       Height: file.Height,
       Hash: file.Hash,
+      Codec: file.Codec,
+      Mime: file.Mime,
       Thumbs: {},
+      DownloadUrl: this.downloadUrl(file),
     };
 
     for (let i = 0; i < thumbs.length; i++) {
@@ -171,9 +197,9 @@ export class Thumb extends Model {
       let size = this.calculateSize(file, t.w, t.h);
 
       result.Thumbs[t.size] = {
-        src: this.thumbnailUrl(file, t.size),
         w: size.width,
         h: size.height,
+        src: this.thumbnailUrl(file, t.size),
       };
     }
 
@@ -231,10 +257,10 @@ export class Thumb extends Model {
 
     if (srcAspectRatio > maxAspectRatio) {
       newW = width;
-      newH = Math.round(newW / srcAspectRatio);
+      newH = Math.ceil(newW / srcAspectRatio);
     } else {
       newH = height;
-      newW = Math.round(newH * srcAspectRatio);
+      newW = Math.ceil(newH * srcAspectRatio);
     }
 
     return { width: newW, height: newH };

@@ -449,6 +449,7 @@ export default {
       default: "",
     },
   },
+  emits: ["close"],
   data() {
     return {
       view: this.$view.data(),

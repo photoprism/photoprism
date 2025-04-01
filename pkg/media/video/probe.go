@@ -40,6 +40,11 @@ func ProbeFile(fileName string) (info Info, err error) {
 	// Get video information.
 	info, err = Probe(file)
 
+	// Return if failed.
+	if err != nil {
+		return info, err
+	}
+
 	// Add file name.
 	info.FileName = fileName
 	info.FileSize = stat.Size()

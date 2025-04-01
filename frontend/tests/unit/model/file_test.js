@@ -166,7 +166,7 @@ describe("model/file", () => {
       Name: "1/2/IMG123.jpg",
     };
     const file3 = new File(values3);
-    assert.equal(file3.calculateSize(900, 450).width, 397);
+    assert.equal(file3.calculateSize(900, 450).width, 398);
     assert.equal(file3.calculateSize(900, 450).height, 450);
   });
 

@@ -113,3 +113,9 @@ func TestConfig_DisableJpegXL(t *testing.T) {
 	assert.True(t, c.DisableJpegXL())
 	c.options.DisableJpegXL = false
 }
+
+func TestConfig_Import(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "avif, avifs, thm", c.SipsExclude())
+}

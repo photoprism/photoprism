@@ -155,9 +155,7 @@ func (m *Photo) Approve() error {
 	m.DeletedAt = nil
 
 	// Update precalculated photo and file counts.
-	if err := entity.UpdateCounts(); err != nil {
-		log.Warnf("index: %s (update counts)", err)
-	}
+	entity.UpdateCountsAsync()
 
 	event.Publish("count.review", event.Data{
 		"count": -1,
@@ -189,7 +187,7 @@ func (m *Photo) Restore() error {
 // IsPlayable returns true if the photo has a related video/animation that is playable.
 func (m *Photo) IsPlayable() bool {
 	switch m.PhotoType {
-	case entity.MediaVideo, entity.MediaLive, entity.MediaAnimated:
+	case entity.MediaLive, entity.MediaVideo, entity.MediaAudio, entity.MediaAnimated:
 		return true
 	default:
 		return false

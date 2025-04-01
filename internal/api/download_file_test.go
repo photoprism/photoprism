@@ -4,11 +4,46 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/config/customize"
 )
+
+func TestDownloadName(t *testing.T) {
+	t.Run("File", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "api/v1/dl?name=file", nil)
+		assert.NoError(t, err)
+
+		c := &gin.Context{
+			Request: req,
+		}
+
+		assert.Equal(t, customize.DownloadNameFile, DownloadName(c))
+	})
+	t.Run("Share", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "api/v1/dl?name=share", nil)
+		assert.NoError(t, err)
+
+		c := &gin.Context{
+			Request: req,
+		}
+
+		assert.Equal(t, customize.DownloadNameShare, DownloadName(c))
+	})
+	t.Run("Original", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "api/v1/dl?name=original", nil)
+		assert.NoError(t, err)
+
+		c := &gin.Context{
+			Request: req,
+		}
+
+		assert.Equal(t, customize.DownloadNameOriginal, DownloadName(c))
+	})
+}
 
 func TestGetDownload(t *testing.T) {
 	t.Run("NotFound", func(t *testing.T) {

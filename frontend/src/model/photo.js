@@ -37,34 +37,12 @@ import { PhotoClipboard } from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";
 import * as media from "common/media";
+import * as formats from "options/formats";
 
 export const YearUnknown = -1;
 export const MonthUnknown = -1;
 export const DayUnknown = -1;
 export const TimeZoneUTC = "UTC";
-
-const num = "numeric";
-const short = "short";
-const long = "long";
-
-export const DATE_FULL = {
-  year: num,
-  month: long,
-  day: num,
-  weekday: long,
-  hour: num,
-  minute: num,
-};
-
-export const DATE_FULL_TZ = {
-  year: num,
-  month: short,
-  day: num,
-  weekday: short,
-  hour: num,
-  minute: num,
-  timeZoneName: short,
-};
 
 export let BatchSize = 156;
 
@@ -398,7 +376,7 @@ export class Photo extends RestModel {
   }
 
   generateIsPlayable = memoizeOne((type, files) => {
-    if (type === media.Animated) {
+    if (type === media.Animated || type === media.Audio) {
       return true;
     } else if (!files) {
       return false;
@@ -468,13 +446,13 @@ export class Photo extends RestModel {
 
     if (vw < width + 90) {
       let newWidth = vw - 100;
-      height = Math.round(newWidth * (actualHeight / actualWidth));
+      height = Math.ceil(newWidth * (actualHeight / actualWidth));
       width = newWidth;
     }
 
     if (vh < height + 90) {
       let newHeight = vh - 100;
-      width = Math.round(newHeight * (actualWidth / actualHeight));
+      width = Math.ceil(newHeight * (actualWidth / actualHeight));
       height = newHeight;
     }
 
@@ -526,6 +504,16 @@ export class Photo extends RestModel {
       return $util.videoContentType(file?.Codec, file?.Mime);
     } else {
       return media.ContentTypeMp4AvcMain;
+    }
+  }
+
+  videoCodec() {
+    const file = this.videoFile();
+
+    if (file) {
+      return file?.Codec;
+    } else {
+      return "";
     }
   }
 
@@ -777,10 +765,10 @@ export class Photo extends RestModel {
 
     if (srcAspectRatio > maxAspectRatio) {
       newW = width;
-      newH = Math.round(newW / srcAspectRatio);
+      newH = Math.ceil(newW / srcAspectRatio);
     } else {
       newH = height;
-      newW = Math.round(newH * srcAspectRatio);
+      newW = Math.ceil(newH * srcAspectRatio);
     }
 
     return { width: newW, height: newH };
@@ -797,11 +785,11 @@ export class Photo extends RestModel {
       return this.localYearString();
     } else if (day === DayUnknown) {
       return this.localDate().toLocaleString({
-        month: long,
-        year: num,
+        month: formats.long,
+        year: formats.num,
       });
     } else if (timeZone) {
-      return this.localDate().toLocaleString(showTimeZone ? DATE_FULL_TZ : DATE_FULL);
+      return this.localDate().toLocaleString(showTimeZone ? formats.DATE_FULL_TZ : formats.DATE_FULL);
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_HUGE);

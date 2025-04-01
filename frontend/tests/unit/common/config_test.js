@@ -290,22 +290,22 @@ describe("common/config", () => {
     assert.equal(cfg.values.count.all, 139);
   });
 
-  it("should return user interface direction string", () => {
+  it("should return user interface direction string", async () => {
     const cfg = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
-    cfg.setLanguage("en", true);
+    await cfg.setLanguage("en", true);
     assert.equal(document.dir, "ltr", "document.dir should be ltr");
     assert.equal(cfg.dir(), "ltr");
     assert.equal(cfg.dir(true), "rtl");
     assert.equal(cfg.dir(false), "ltr");
-    cfg.setLanguage("he", false);
+    await cfg.setLanguage("he", false);
     assert.equal(document.dir, "ltr", "document.dir should still be ltr");
-    cfg.setLanguage("he", true);
+    await cfg.setLanguage("he", true);
     assert.equal(cfg.dir(), "rtl");
     assert.equal(document.dir, "rtl", "document.dir should now be rtl");
     assert.equal(cfg.dir(), "rtl");
     assert.equal(cfg.dir(true), "rtl");
     assert.equal(cfg.dir(false), "ltr");
-    cfg.setLanguage("en", true);
+    await cfg.setLanguage("en", true);
     assert.equal(document.dir, "ltr", "document.dir should be ltr again");
     assert.equal(cfg.dir(), "ltr");
   });

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -105,6 +106,16 @@ func TestConfig_DatabaseUser(t *testing.T) {
 
 func TestConfig_DatabasePassword(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.DatabasePassword())
+
+	// Test setting the password via secret file.
+	_ = os.Setenv(FlagFileVar("DATABASE_PASSWORD"), "testdata/secret_database")
+	assert.Equal(t, "", c.DatabasePassword())
+	c.Options().DatabaseDriver = MySQL
+	assert.Equal(t, "StoryOfAmélie", c.DatabasePassword())
+	c.Options().DatabaseDriver = SQLite3
+	_ = os.Setenv(FlagFileVar("DATABASE_PASSWORD"), "")
 
 	assert.Equal(t, "", c.DatabasePassword())
 }

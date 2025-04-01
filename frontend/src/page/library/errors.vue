@@ -212,6 +212,7 @@ export default {
           name: "refresh",
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
+          shortcut: "Ctrl-R",
           visible: true,
           click: () => {
             this.onReload();

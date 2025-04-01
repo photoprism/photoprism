@@ -31,9 +31,9 @@ export default class Page {
         if (!(await Selector("div.v-list-group--open a.nav-browse").visible)) {
           await t.click(Selector("div.nav-browse .mdi-chevron-down"));
         }
-      } else if (page === "live") {
-        if (!(await Selector("div.v-list-group--open a.nav-video").visible)) {
-          await t.click(Selector("div.nav-video .mdi-chevron-down"));
+      } else if ((page === "live") | (page === "video")) {
+        if (!(await Selector("div.v-list-group--open a.nav-media").visible)) {
+          await t.click(Selector("div.nav-media .mdi-chevron-down"));
         }
       } else if (page === "states") {
         if (!(await Selector("div.v-list-group--open a.nav-places").visible)) {

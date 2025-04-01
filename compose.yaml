@@ -164,6 +164,30 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
+  ## Qdrant (Vector Database)
+  ## Docs: https://qdrant.tech/documentation/guides/installation/#docker-compose
+  ## Release Notes: https://github.com/qdrant/qdrant/releases
+  ## Web UI: https://qdrant.localssl.dev/dashboard
+  qdrant:
+    image: qdrant/qdrant:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.qdrant.loadbalancer.server.port=6333"
+      - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.qdrant.entrypoints=websecure"
+      - "traefik.http.routers.qdrant.rule=Host(`qdrant.localssl.dev`)"
+      - "traefik.http.routers.qdrant.priority=3"
+      - "traefik.http.routers.qdrant.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.qdrant.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.qdrant.tls=true"
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    volumes:
+      - ./.qdrant.yaml:/qdrant/config/production.yaml
+      - ./storage/qdrant:/qdrant/storage
+
   ## Traefik v3 (Reverse Proxy)
   ## includes "*.localssl.dev" SSL certificate for test environments
   ## Docs: https://doc.traefik.io/traefik/

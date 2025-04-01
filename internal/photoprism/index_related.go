@@ -52,7 +52,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		// Skip files if the filename extension does not match their mime type,
 		// see https://github.com/photoprism/photoprism/issues/3518 for details.
 		if typeErr := f.CheckType(); typeErr != nil {
-			result.Err = fmt.Errorf("index: skipped %s due to %w", clean.Log(f.RootRelName()), typeErr)
+			result.Err = fmt.Errorf("index: skipped %s because it %w", clean.Log(f.RootRelName()), typeErr)
 			result.Status = IndexFailed
 			continue
 		}

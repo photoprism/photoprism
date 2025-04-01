@@ -9,6 +9,8 @@
     @click.stop="onClick"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
+    @keydown.left="onLeft"
+    @keydown.right="onRight"
   >
     <v-card ref="content" :tile="$vuetify.display.smAndDown" tabindex="1">
       <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">
@@ -138,6 +140,7 @@ export default {
       default: "",
     },
   },
+  emits: ["close"],
   data() {
     return {
       selected: 0,
@@ -236,15 +239,38 @@ export default {
       // Closes the dialog.
       this.$emit("close");
     },
+    keysActive() {
+      return document.activeElement instanceof HTMLDivElement && this.$view.isActive(this) && !this.model?.wasChanged();
+    },
+    onLeft() {
+      if (this.keysActive()) {
+        if (this.$isRtl) {
+          this.next();
+        } else {
+          this.prev();
+        }
+      }
+    },
+    onRight() {
+      if (this.keysActive()) {
+        if (this.$isRtl) {
+          this.prev();
+        } else {
+          this.next();
+        }
+      }
+    },
     prev() {
       if (this.selected > 0) {
         this.find(this.selected - 1);
       }
     },
     next() {
-      if (!this.selection) return;
+      if (!this.selection) {
+        return;
+      }
 
-      if (this.selected < this.selection.length) {
+      if (this.selected + 1 < this.selection.length) {
         this.find(this.selected + 1);
       }
     },

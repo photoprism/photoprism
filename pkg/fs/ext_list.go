@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"sort"
 	"strings"
 )
 
@@ -46,6 +47,15 @@ func (b ExtList) Contains(ext string) bool {
 	return false
 }
 
+// Excludes tests if the extension is not included, or returns false if the list is empty.
+func (b ExtList) Excludes(ext string) bool {
+	if len(b) == 0 {
+		return false
+	}
+
+	return !b.Contains(ext)
+}
+
 // Allow tests if a file extension is NOT listed.
 func (b ExtList) Allow(ext string) bool {
 	return !b.Contains(ext)
@@ -74,4 +84,40 @@ func (b ExtList) Add(ext string) {
 	}
 
 	b[ext] = true
+}
+
+// String returns the list as a comma-separated list in alphabetical order.
+func (b ExtList) String() string {
+	if len(b) == 0 {
+		return ""
+	}
+
+	list := make([]string, 0, len(b))
+
+	for s := range b {
+		list = append(list, s)
+	}
+
+	sort.Strings(list)
+
+	return strings.Join(list, ", ")
+}
+
+// Accept returns a comma-separated list in alphabetical order for use as an input accept attribute.
+func (b ExtList) Accept() string {
+	if len(b) == 0 {
+		return ""
+	}
+
+	list := make([]string, 0, len(b))
+
+	for s := range b {
+		if s = TrimExt(s); s != "" {
+			list = append(list, "."+s)
+		}
+	}
+
+	sort.Strings(list)
+
+	return strings.Join(list, ",")
 }

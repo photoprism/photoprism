@@ -24,9 +24,9 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-max_muxing_queue_size", "1024",
 		"-crf", "23",
 		"-r", "30",
-		"-b:v", opt.DestBitrate,
+		"-b:v", opt.BitrateLimit,
 		"-f", "mp4",
-		"-movflags", "+faststart", // puts headers at the beginning for faster streaming
+		"-movflags", opt.MovFlags,
 		destName,
 	)
 }

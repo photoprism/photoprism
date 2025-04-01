@@ -57,10 +57,10 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			f.RemoteDate = file.Date
 			f.RemoteSize = file.Size
 
-			// Select supported types for download
+			// Select supported types for download.
 			content := media.FromName(file.Name)
 			switch content {
-			case media.Image, media.Sidecar:
+			case media.Image, media.Sidecar, media.Vector, media.Document, media.Live, media.Animated:
 				f.Status = entity.FileSyncNew
 			case media.Raw, media.Video:
 				if a.SyncRaw {

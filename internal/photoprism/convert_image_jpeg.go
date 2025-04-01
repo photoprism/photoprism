@@ -15,7 +15,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	result = NewConvertCmds()
 
 	if f == nil {
-		return result, useMutex, fmt.Errorf("file is nil - you may have found a bug")
+		return result, useMutex, fmt.Errorf("no media file provided for processing - you may have found a bug")
 	}
 
 	// Find conversion command depending on the file type and runtime environment.

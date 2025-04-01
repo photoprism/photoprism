@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/tidwall/gjson"
-	"gopkg.in/photoprism/go-tz.v2/tz"
+	"github.com/ugjka/go-tz/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"

@@ -29,7 +29,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.Debug"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-debug"
                 density="compact"
                 color="surface-variant"
@@ -45,7 +45,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.Experimental"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-experimental"
                 density="compact"
                 color="surface-variant"
@@ -61,7 +61,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.ReadOnly"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-readonly"
                 density="compact"
                 color="surface-variant"
@@ -77,7 +77,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableBackups"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-backups"
                 density="compact"
                 color="surface-variant"
@@ -93,7 +93,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableWebDAV"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-webdav"
                 density="compact"
                 color="surface-variant"
@@ -109,7 +109,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisablePlaces"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-places"
                 density="compact"
                 color="surface-variant"
@@ -125,7 +125,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableExifTool"
-                :disabled="busy || (!settings.Experimental && !settings.DisableExifTool)"
+                :disabled="isDemo || (!settings.Experimental && !settings.DisableExifTool)"
                 class="ma-0 pa-0 input-disable-exiftool"
                 density="compact"
                 color="surface-variant"
@@ -141,7 +141,7 @@
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.DisableTensorFlow"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-tensorflow"
                 density="compact"
                 color="surface-variant"
@@ -170,7 +170,7 @@
               <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.BackupDatabase"
-                  :disabled="busy || settings.BackupSchedule === ''"
+                  :disabled="isDemo || settings.BackupSchedule === ''"
                   class="ma-0 pa-0 input-backup-database"
                   density="compact"
                   color="surface-variant"
@@ -186,7 +186,7 @@
               <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.BackupAlbums"
-                  :disabled="busy"
+                  :disabled="isDemo"
                   class="ma-0 pa-0 input-backup-albums"
                   density="compact"
                   color="surface-variant"
@@ -202,7 +202,7 @@
               <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.SidecarYaml"
-                  :disabled="busy"
+                  :disabled="isDemo"
                   class="ma-0 pa-0 input-sidecar-yaml"
                   density="compact"
                   color="surface-variant"
@@ -227,7 +227,7 @@
             <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="py-2">
               <v-select
                 v-model="settings.ThumbFilter"
-                :disabled="busy"
+                :disabled="isDemo"
                 :items="options.ThumbFilters()"
                 :label="$gettext('Downscaling Filter')"
                 density="compact"
@@ -248,7 +248,7 @@
                 :min="720"
                 :max="7680"
                 :step="4"
-                :disabled="busy"
+                :disabled="isDemo"
                 hide-details
                 class="ma-0"
                 @end="onChange"
@@ -268,7 +268,7 @@
                 :min="720"
                 :max="7680"
                 :step="4"
-                :disabled="busy"
+                :disabled="isDemo"
                 hide-details
                 class="ma-0"
                 @end="onChange"
@@ -278,7 +278,7 @@
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-checkbox
                 v-model="settings.ThumbUncached"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0"
                 density="compact"
                 color="surface-variant"
@@ -311,7 +311,7 @@
                 v-model="settings.JpegQuality"
                 :min="25"
                 :max="100"
-                :disabled="busy"
+                :disabled="isDemo"
                 hide-details
                 class="ma-0"
                 @end="onChange"
@@ -327,7 +327,7 @@
                 :min="720"
                 :max="30000"
                 :step="20"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0"
                 @end="onChange"
               ></v-slider>
@@ -342,7 +342,7 @@
                 :min="720"
                 :max="30000"
                 :step="20"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0"
                 @end="onChange"
               ></v-slider>
@@ -359,7 +359,7 @@
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableDarktable"
-                :disabled="busy || settings.DisableRaw"
+                :disabled="isDemo || settings.DisableRaw"
                 class="ma-0 pa-0 input-disable-darktable"
                 density="compact"
                 color="surface-variant"
@@ -375,7 +375,7 @@
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableRawTherapee"
-                :disabled="busy || settings.DisableRaw"
+                :disabled="isDemo || settings.DisableRaw"
                 class="ma-0 pa-0 input-disable-rawtherapee"
                 density="compact"
                 color="surface-variant"
@@ -391,7 +391,7 @@
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.RawPresets"
-                :disabled="busy || settings.DisableRaw"
+                :disabled="isDemo || settings.DisableRaw"
                 class="ma-0 pa-0 input-raw-presets"
                 density="compact"
                 color="surface-variant"
@@ -407,7 +407,7 @@
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableImageMagick"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-imagemagick"
                 density="compact"
                 color="surface-variant"
@@ -423,7 +423,7 @@
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableFFmpeg"
-                :disabled="busy || (!settings.Experimental && !settings.DisableFFmpeg)"
+                :disabled="isDemo || (!settings.Experimental && !settings.DisableFFmpeg)"
                 class="ma-0 pa-0 input-disable-ffmpeg"
                 density="compact"
                 color="surface-variant"
@@ -439,7 +439,7 @@
             <v-col v-if="isSponsor" cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableVectors"
-                :disabled="busy"
+                :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-vectors"
                 density="compact"
                 color="surface-variant"
@@ -459,7 +459,7 @@
           <v-btn
             color="highlight"
             :block="$vuetify.display.xs"
-            :disabled="busy || !$config.values.restart"
+            :disabled="isDemo || !$config.values.restart"
             variant="flat"
             @click.stop.p.prevent="onRestart"
           >
@@ -518,8 +518,11 @@ export default {
       }
 
       this.busy = true;
+      this.$notify.blockUI();
+
       this.settings.load().finally(() => {
         this.busy = false;
+        this.$notify.unblockUI();
       });
     },
     onChange() {
@@ -528,13 +531,17 @@ export default {
       }
 
       this.busy = true;
+      this.$notify.blockUI();
 
       this.settings
         .save()
         .then(() => {
           this.$notify.success(this.$gettext("Changes successfully saved"));
         })
-        .finally(() => (this.busy = false));
+        .finally(() => {
+          this.busy = false;
+          this.$notify.unblockUI();
+        });
     },
   },
 };

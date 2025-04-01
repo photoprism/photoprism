@@ -5,6 +5,7 @@ export default class Page {
     this.generalTab = Selector("#tab-settings_general");
     this.languageInput = Selector(".input-language input");
     this.languageOpenSelection = Selector(".input-language div.v-input__control");
+    this.startpageOpenSelection = Selector(".input-startpage div.v-input__control");
     this.uploadCheckbox = Selector(".input-upload div.v-selection-control__input");
     this.downloadCheckbox = Selector(".input-download div.v-selection-control__input");
     this.importCheckbox = Selector(".input-import div.v-selection-control__input");
@@ -12,6 +13,9 @@ export default class Page {
     this.editCheckbox = Selector(".input-edit div.v-selection-control__input");
     this.filesCheckbox = Selector(".input-files div.v-selection-control__input");
     this.momentsCheckbox = Selector(".input-moments div.v-selection-control__input");
+    this.calendarCheckbox = Selector(".input-calendar div.v-selection-control__input");
+    this.accountCheckbox = Selector(".input-account div.v-selection-control__input");
+    this.servicesCheckbox = Selector(".input-services div.v-selection-control__input");
     this.labelsCheckbox = Selector(".input-labels div.v-selection-control__input");
     this.logsCheckbox = Selector(".input-logs div.v-selection-control__input");
     this.shareCheckbox = Selector(".input-share div.v-selection-control__input");
@@ -28,6 +32,10 @@ export default class Page {
     this.dateTimeStacksCheckbox = Selector(".input-stack-meta div.v-selection-control__input");
     this.uuidStacksCheckbox = Selector(".input-stack-uuid div.v-selection-control__input");
     this.nameStacksCheckbox = Selector(".input-stack-name div.v-selection-control__input");
+    this.downloadRawCheckbox = Selector(".input-download-raw div.v-selection-control__input");
+    this.hideTitlesCheckbox = Selector(".input-search-titles div.v-selection-control__input");
+    this.hideCaptionsCheckbox = Selector(".input-search-captions div.v-selection-control__input");
+    this.hideListViewCheckbox = Selector(".input-search-listview div.v-selection-control__input");
 
     this.advancedTab = Selector("#tab-settings_advanced");
     this.debugCheckbox = Selector("label").withText("Debug Logs");

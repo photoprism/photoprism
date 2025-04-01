@@ -22,9 +22,9 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-profile", "high",
 		"-level", "51",
 		"-r", "30",
-		"-b:v", opt.DestBitrate,
+		"-b:v", opt.BitrateLimit,
 		"-f", "mp4",
-		"-movflags", "+faststart",
+		"-movflags", opt.MovFlags,
 		destName,
 	)
 }

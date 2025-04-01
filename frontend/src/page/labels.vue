@@ -204,11 +204,13 @@ export default {
     const q = query["q"] ? query["q"] : "";
     const all = query["all"] ? query["all"] : "";
 
+    const features = this.$config.getSettings().features;
     const canManage = this.$config.allow("labels", "manage");
-    const canAddAlbums = this.$config.allow("albums", "create") && this.$config.feature("albums");
+    const canAddAlbums = this.$config.allow("albums", "create") && features.albums;
 
     return {
       canManage: canManage,
+      canUpload: this.$config.allow("files", "upload") && features.upload,
       canSelect: canManage || canAddAlbums,
       view: "all",
       config: this.$config.values,
@@ -286,9 +288,20 @@ export default {
           name: "refresh",
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
+          shortcut: "Ctrl-R",
           visible: true,
           click: () => {
             this.refresh();
+          },
+        },
+        {
+          name: "upload",
+          icon: "mdi-cloud-upload",
+          text: this.$gettext("Upload"),
+          shortcut: "Ctrl-U",
+          visible: this.canUpload,
+          click: () => {
+            this.$event.publish("dialog.upload");
           },
         },
         {
@@ -315,6 +328,12 @@ export default {
           ev.preventDefault();
           this.$view.focus(this.$refs?.form, ".input-search input", true);
           break;
+        case "KeyU":
+          ev.preventDefault();
+          if (this.$config.allow("files", "upload") && this.$config.feature("upload")) {
+            this.$event.publish("dialog.upload");
+          }
+          break;
       }
     },
     edit(label) {
@@ -329,7 +348,7 @@ export default {
       this.dialog.edit = true;
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("labels_offset"));
+      const offset = parseInt(window.localStorage.getItem("labels.offset"));
 
       if (this.offset > 0 || !offset) {
         return this.batchSize;
@@ -339,7 +358,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("labels_offset", offset);
+      window.localStorage.setItem("labels.offset", offset);
     },
     toggleLike(ev, index) {
       if (!this.canManage) {
@@ -570,7 +589,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("labels_" + key, this.settings[key]);
+        window.localStorage.setItem("labels." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

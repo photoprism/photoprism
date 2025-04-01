@@ -26,7 +26,7 @@ func TranscodeCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, 
 
 	// Use the default binary name if no name is specified.
 	if opt.Bin == "" {
-		opt.Bin = DefaultBin
+		opt.Bin = encode.FFmpegBin
 	}
 
 	// Always use software encoder for transcoding animated pictures into videos.
@@ -39,7 +39,7 @@ func TranscodeCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, 
 			"-pix_fmt", encode.FormatYUV420P.String(),
 			"-vf", "scale='trunc(iw/2)*2:trunc(ih/2)*2'",
 			"-f", "mp4",
-			"-movflags", "+faststart", // puts headers at the beginning for faster streaming
+			"-movflags", "+faststart",
 			destName,
 		)
 

@@ -223,10 +223,17 @@ export default [
     props: { staticFilter: { favorite: "true" } },
   },
   {
+    name: "media",
+    path: "/media",
+    component: Photos,
+    meta: { title: $gettext("Media"), requiresAuth: true },
+    props: { staticFilter: { media: "true" } },
+  },
+  {
     name: "live",
     path: "/live",
     component: Photos,
-    meta: { title: $gettext("Live"), requiresAuth: true },
+    meta: { title: $gettext("Live Photos"), requiresAuth: true },
     props: { staticFilter: { live: "true" } },
   },
   {
@@ -235,6 +242,20 @@ export default [
     component: Photos,
     meta: { title: $gettext("Videos"), requiresAuth: true },
     props: { staticFilter: { video: "true" } },
+  },
+  {
+    name: "audio",
+    path: "/audio",
+    component: Photos,
+    meta: { title: $gettext("Audio"), requiresAuth: true },
+    props: { staticFilter: { audio: "true" } },
+  },
+  {
+    name: "animated",
+    path: "/animated",
+    component: Photos,
+    meta: { title: $gettext("Animated"), requiresAuth: true },
+    props: { staticFilter: { animated: "true" } },
   },
   {
     name: "review",

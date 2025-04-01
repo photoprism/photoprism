@@ -57,7 +57,10 @@ export default {
     "p-tab-discover-todo": tabTodo,
   },
   props: {
-    tab: Number,
+    tab: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {

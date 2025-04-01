@@ -148,7 +148,7 @@
                             variant="plain"
                             hide-details
                             class="input-label ma-0 pa-0"
-                            @keyup.enter="addLabel"
+                            @keydown.enter="addLabel"
                           ></v-text-field>
                         </td>
                         <td class="text-start">

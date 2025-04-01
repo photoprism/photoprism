@@ -257,29 +257,34 @@ func TestLikeAllNames(t *testing.T) {
 }
 
 func TestAnySlug(t *testing.T) {
-	t.Run("table spoon usa img json", func(t *testing.T) {
+	t.Run("Multiple", func(t *testing.T) {
 		where := AnySlug("custom_slug", "table spoon usa img json", " ")
 		assert.Equal(t, "custom_slug = 'table' OR custom_slug = 'spoon' OR custom_slug = 'usa' OR custom_slug = 'img' OR custom_slug = 'json'", where)
 	})
 
-	t.Run("cat dog", func(t *testing.T) {
+	t.Run("CatDog", func(t *testing.T) {
 		where := AnySlug("custom_slug", "cat dog", " ")
 		assert.Equal(t, "custom_slug = 'cat' OR custom_slug = 'dog'", where)
 	})
 
-	t.Run("cats dogs", func(t *testing.T) {
+	t.Run("CatsDogs", func(t *testing.T) {
 		where := AnySlug("custom_slug", "cats dogs", " ")
 		assert.Equal(t, "custom_slug = 'cats' OR custom_slug = 'cat' OR custom_slug = 'dogs' OR custom_slug = 'dog'", where)
 	})
 
-	t.Run("spoon", func(t *testing.T) {
+	t.Run("Spoon", func(t *testing.T) {
 		where := AnySlug("custom_slug", "spoon", " ")
 		assert.Equal(t, "custom_slug = 'spoon'", where)
 	})
 
-	t.Run("img", func(t *testing.T) {
+	t.Run("Img", func(t *testing.T) {
 		where := AnySlug("custom_slug", "img", " ")
 		assert.Equal(t, "custom_slug = 'img'", where)
+	})
+
+	t.Run("Space", func(t *testing.T) {
+		where := AnySlug("custom_slug", " ", "")
+		assert.Equal(t, "custom_slug = '' OR custom_slug = ''", where)
 	})
 
 	t.Run("Empty", func(t *testing.T) {
@@ -287,14 +292,19 @@ func TestAnySlug(t *testing.T) {
 		assert.Equal(t, "", where)
 	})
 
-	t.Run("comma separated", func(t *testing.T) {
+	t.Run("CommaSeparated", func(t *testing.T) {
 		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", txt.Or)
 		assert.Equal(t, "custom_slug = 'botanical-garden' OR custom_slug = 'landscape' OR custom_slug = 'bay'", where)
 	})
 
-	t.Run("len = 0", func(t *testing.T) {
-		where := AnySlug("custom_slug", " ", "")
-		assert.Equal(t, "custom_slug = '' OR custom_slug = ''", where)
+	t.Run("Emoji", func(t *testing.T) {
+		where := AnySlug("custom_slug", "💐", "|")
+		assert.Equal(t, "custom_slug = '_5cpzfea'", where)
+	})
+
+	t.Run("EmojiSlug", func(t *testing.T) {
+		where := AnySlug("custom_slug", "_5cpzfea", "|")
+		assert.Equal(t, "custom_slug = '_5cpzfea'", where)
 	})
 }
 

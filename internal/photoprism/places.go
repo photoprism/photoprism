@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Places represents a geo data worker.
@@ -153,7 +154,7 @@ func (w *Places) UpdatePhotos(force bool) (affected int, err error) {
 		model, err = query.PhotoByUID(u[i])
 
 		if err != nil {
-			log.Errorf("index: %s while loading %s", err, model.String())
+			log.Errorf("index: %s while loading uid %s", err, clean.Log(u[i]))
 			continue
 		} else if model.NoLatLng() {
 			log.Debugf("index: photo %s has no location", model.String())
