@@ -122,6 +122,7 @@
 
         <template v-if="model.Lat && model.Lng">
           <v-divider class="my-4"></v-divider>
+          <!-- Clickable version commented out
           <v-list-item
             prepend-icon="mdi-map-marker"
             :title="`${model.Lat.toFixed(5)}°N ${model.Lng.toFixed(5)}°E`"
@@ -129,12 +130,26 @@
             @click.stop="$util.copyText(`${model.Lat},${model.Lng}`)"
           >
           </v-list-item>
+          -->
+          <v-list-item
+            prepend-icon="mdi-map-marker"
+            :title="`${model.Lat.toFixed(5)}°N ${model.Lng.toFixed(5)}°E`"
+            class="metadata__item"
+          >
+          </v-list-item>
+          <div id="metadata-map" ref="mapContainer" class="metadata__map"></div>
         </template>
       </v-list>
     </div>
   </div>
 </template>
+
 <script>
+import model from "../../model/model";
+
+// MapLibre GL.
+let maplibregl;
+
 export default {
   name: "PSidebarInfo",
   props: {
@@ -155,6 +170,10 @@ export default {
   data() {
     return {
       actions: [],
+      map: null,
+      marker: null,
+      mapLoaded: false,
+      loadingMapLibre: false,
     };
   },
   computed: {
@@ -162,10 +181,133 @@ export default {
       return this.modelValue;
     },
   },
+  watch: {
+    "model.Lat"() {
+      this.loadMapAndInit();
+    },
+    "model.Lng"() {
+      this.loadMapAndInit();
+    },
+  },
+  mounted() {
+    if (this.model.Lat && this.model.Lng) {
+      this.loadMapAndInit();
+    }
+  },
+  beforeUnmount() {
+    if (this.map) {
+      this.map.remove();
+    }
+  },
   methods: {
     close() {
       this.$emit("close");
     },
+    loadMapAndInit() {
+      if (this.loadingMapLibre) {
+        return;
+      }
+
+      this.loadingMapLibre = true;
+
+      // Dynamically import MapLibre GL JS
+      import("../../common/maplibregl.js")
+        .then((module) => {
+          maplibregl = module.default;
+          // Wait for next tick to ensure DOM is ready
+          this.$nextTick(() => {
+            // Double check if the container exists
+            if (this.$refs.mapContainer) {
+              this.initMap();
+            } else {
+              // If container doesn't exist yet, wait a bit longer
+              setTimeout(() => {
+                this.initMap();
+              }, 100);
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to load maplibregl:", error);
+        })
+        .finally(() => {
+          this.loadingMapLibre = false;
+        });
+    },
+    async initMap() {
+      if (!this.model.Lat || !this.model.Lng || !this.$refs.mapContainer || !maplibregl) {
+        return;
+      }
+
+      try {
+        if (this.map) {
+          this.map.remove();
+        }
+
+        const mapKey = this.$config.has("mapKey") ? this.$config.get("mapKey").replace(/[^a-z0-9]/gi, "") : "";
+        const style = this.$config.values.settings.maps.style;
+        let styleUrl = "https://cdn.photoprism.app/maps/default.json";
+
+        if (mapKey && style) {
+          styleUrl = `https://api.maptiler.com/maps/${style === "streets" ? "streets-v2" : style}/style.json?key=${mapKey}`;
+        }
+
+        this.map = new maplibregl.Map({
+          container: this.$refs.mapContainer,
+          style: styleUrl,
+          center: [this.model.Lng, this.model.Lat],
+          zoom: 13,
+          interactive: true,
+          attributionControl: false,
+        });
+
+        this.map.on("error", (e) => {
+          console.error("Map error:", e);
+        });
+
+        this.map.on("load", () => {
+          this.mapLoaded = true;
+
+          if (this.marker) {
+            this.marker.remove();
+          }
+
+          this.marker = new maplibregl.Marker().setLngLat([this.model.Lng, this.model.Lat]).addTo(this.map);
+        });
+      } catch (error) {
+        console.error("Failed to initialize map:", error);
+        this.mapLoaded = false;
+      }
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.p-sidebar-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.metadata__list {
+  display: block;
+  overflow-y: auto;
+  height: 100%;
+  padding: 0;
+}
+
+.metadata__item {
+  margin-bottom: 4px;
+  padding: 0 16px;
+}
+
+.metadata__map {
+  display: block;
+  height: 300px;
+  margin: 8px 0 16px;
+  background: var(--v-background-base, #f5f5f5);
+  overflow: hidden;
+}
+</style>
