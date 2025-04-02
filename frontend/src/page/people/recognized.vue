@@ -669,9 +669,16 @@ export default {
     refresh(props) {
       this.updateSettings(props);
 
-      if (this.loading || !this.active) return;
+      if (this.loading || !this.active || !this.listen) {
+        return;
+      }
+
+      /*
+      TODO: Leaving "loading" untouched here avoids flickering when refreshing the results, which might lead to a
+       smoother experience. If it doesn't cause any problems or unwanted side effects, this line can be removed.
 
       this.loading = true;
+      */
       this.page = 0;
       this.dirty = true;
       this.scrollDisabled = false;
@@ -738,7 +745,9 @@ export default {
         });
     },
     onUpdate(ev, data) {
-      if (!this.listen) return;
+      if (!this.listen) {
+        return;
+      }
 
       if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;

@@ -146,6 +146,8 @@ clean:
 	[ ! -d "frontend/node_modules" ] || rm -rf frontend/node_modules
 	[ ! -d "$(BUILD_PATH)" ] || rm -rf --preserve-root $(BUILD_PATH)
 	[ ! -d "$(JS_BUILD_PATH)" ] || rm -rf --preserve-root $(JS_BUILD_PATH)
+clean-build:
+	[ ! -d "$(BUILD_PATH)" ] || rm -rf --preserve-root $(BUILD_PATH)
 tar.gz:
 	$(info Creating tar.gz archives from the directories in "$(BUILD_PATH)"...)
 	find "$(BUILD_PATH)" -maxdepth 1 -mindepth 1 -type d -name "photoprism*" -exec tar --exclude='.[^/]*' -C {} -czf {}.tar.gz . \;
@@ -297,10 +299,12 @@ build-libheif-armv7-latest:
 	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 build-tensorflow:
 	docker build -t photoprism/tensorflow:build docker/tensorflow
-	docker run -ti photoprism/tensorflow:build bash
+terminal-tensorflow:
+	docker run --rm -ti --platform=amd64 -v "./build:/build" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/tensorflow:build bash
 build-tensorflow-arm64:
 	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
-	docker run -ti photoprism/tensorflow:arm64 bash
+terminal-tensorflow-arm64:
+	docker run --rm -ti --platform=arm64 -v "./build:/build" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/tensorflow:arm64 bash
 watch-js:
 	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
 test-js:

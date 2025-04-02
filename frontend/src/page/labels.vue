@@ -5,6 +5,7 @@
     class="p-page p-page-labels not-selectable"
     :class="$config.aclClasses('labels')"
     @keydown.ctrl="onCtrl"
+    @keydown.meta="onCtrl"
   >
     <v-form
       ref="form"
@@ -315,7 +316,7 @@ export default {
       ];
     },
     onCtrl(ev) {
-      if (!ev || !(ev instanceof KeyboardEvent) || !ev.ctrlKey || !this.$view.isActive(this)) {
+      if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }
 
@@ -650,9 +651,16 @@ export default {
     refresh(props) {
       this.updateSettings(props);
 
-      if (this.loading) return;
+      if (this.loading || !this.listen) {
+        return;
+      }
+
+      /*
+      TODO: Leaving "loading" untouched here avoids flickering when refreshing the results, which might lead to a
+       smoother experience. If it doesn't cause any problems or unwanted side effects, this line can be removed.
 
       this.loading = true;
+      */
       this.page = 0;
       this.dirty = true;
       this.scrollDisabled = false;
@@ -719,7 +727,9 @@ export default {
         });
     },
     onUpdate(ev, data) {
-      if (!this.listen) return;
+      if (!this.listen) {
+        return;
+      }
 
       if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;

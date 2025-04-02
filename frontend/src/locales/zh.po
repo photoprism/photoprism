@@ -187,14 +187,6 @@ msgstr "添加"
 msgid "Add %{s}?"
 msgstr "添加 %{s}?"
 
-#: src/component/sidebar/metadata.vue:59
-msgid "Add a caption"
-msgstr "添加标题"
-
-#: src/component/sidebar/metadata.vue:46
-msgid "Add a title"
-msgstr "添加标题"
-
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
 msgstr "添加账户"
@@ -410,13 +402,13 @@ msgstr "批准"
 msgid "Apps and Devices"
 msgstr "应用程序和设备"
 
-#: src/app/routes.js:287 src/component/lightbox.vue:1173
+#: src/app/routes.js:287 src/component/lightbox.vue:1178
 #: src/component/navigation.vue:553 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398 src/page/settings/general.vue:417
 msgid "Archive"
 msgstr "归档"
 
-#: src/component/lightbox.vue:1851 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:1852 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "已归档"
 
@@ -659,7 +651,7 @@ msgstr "无法保存变更"
 
 #: src/component/user/edit/dialog.vue:83 src/component/user/edit/dialog.vue:159
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1810
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1811
 #: src/component/photo/edit/files.vue:160 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
 #: src/page/albums.vue:656 src/page/people/recognized.vue:119
@@ -701,7 +693,7 @@ msgid "Client Credentials"
 msgstr "客户证书"
 
 #: src/page/admin/sessions.vue:529 src/component/lightbox.vue:253
-#: src/component/lightbox.vue:975 src/component/lightbox.vue:976
+#: src/component/lightbox.vue:980 src/component/lightbox.vue:981
 #: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:151
 #: src/component/photo/upload/dialog.vue:228
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
@@ -857,7 +849,7 @@ msgstr "Cubic: 质量适中，性能良好"
 msgid "Current Password"
 msgstr "当前密码"
 
-#: src/options/themes.js:873 src/options/themes.js:882
+#: src/options/themes.js:915 src/options/themes.js:924
 msgid "Custom"
 msgstr "定制"
 
@@ -891,7 +883,7 @@ msgstr "调试日志"
 #: src/model/user.js:246 src/options/auth.js:20 src/options/auth.js:21
 #: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:128
 #: src/options/options.js:164 src/options/options.js:248
-#: src/options/themes.js:727 src/page/settings/general.vue:104
+#: src/options/themes.js:769 src/page/settings/general.vue:104
 msgid "Default"
 msgstr "默认"
 
@@ -1021,8 +1013,8 @@ msgstr "在搜索结果中显示图片标题。"
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183
-#: src/component/sidebar/metadata.vue:108 src/options/options.js:241
+#: src/component/photo/view/mosaic.vue:183 src/component/sidebar/info.vue:108
+#: src/options/options.js:241
 msgid "Document"
 msgstr "文件"
 
@@ -1052,7 +1044,7 @@ msgid "Done."
 msgstr "完成。"
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:113
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1201
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1206
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:321
@@ -1073,7 +1065,7 @@ msgstr "下载单个文件并用 zip 压缩。"
 
 #: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:152
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:1890 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:1891 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:117
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:126
@@ -1113,7 +1105,7 @@ msgid "E-Mail"
 msgstr "电子邮件"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:84
-#: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
+#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:393
 msgid "Edit"
 msgstr "编辑"
@@ -1370,7 +1362,7 @@ msgstr "框架"
 msgid "Full Access"
 msgstr "完全访问"
 
-#: src/component/lightbox.vue:1050 src/component/lightbox.vue:1051
+#: src/component/lightbox.vue:1055 src/component/lightbox.vue:1056
 msgid "Fullscreen"
 msgstr "全屏"
 
@@ -1555,7 +1547,7 @@ msgstr "索引失败"
 msgid "Indexing media and sidecar files…"
 msgstr "索引媒体和附属文件…"
 
-#: src/component/sidebar/metadata.vue:27
+#: src/component/sidebar/info.vue:28
 msgid "Info"
 msgstr "信息"
 
@@ -1722,7 +1714,7 @@ msgstr "资料库"
 msgid "License"
 msgstr "许可证"
 
-#: src/component/lightbox.vue:1068 src/component/lightbox.vue:1069
+#: src/component/lightbox.vue:1073 src/component/lightbox.vue:1074
 msgid "Like"
 msgstr "喜欢"
 
@@ -1752,8 +1744,8 @@ msgstr "列表查看"
 
 #: src/component/photo/view/cards.vue:319
 #: src/component/photo/view/cards.vue:501 src/component/photo/view/list.vue:176
-#: src/component/photo/view/mosaic.vue:163
-#: src/component/sidebar/metadata.vue:99 src/options/options.js:221
+#: src/component/photo/view/mosaic.vue:163 src/component/sidebar/info.vue:99
+#: src/options/options.js:221
 msgid "Live"
 msgstr "实况"
 
@@ -1913,7 +1905,7 @@ msgstr "黑白"
 msgid "Month"
 msgstr "月"
 
-#: src/component/lightbox.vue:1121
+#: src/component/lightbox.vue:1126
 msgid "More options"
 msgstr "更多选择"
 
@@ -1933,7 +1925,7 @@ msgstr "移动文件"
 msgid "Must have at least %{n} characters."
 msgstr "必须至少有%{n}个字符。"
 
-#: src/component/lightbox.vue:1017 src/component/lightbox.vue:1018
+#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
 msgid "Mute"
 msgstr "静音"
 
@@ -2068,12 +2060,12 @@ msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查
 msgid "None"
 msgstr "无"
 
-#: src/common/util.js:791 src/component/lightbox.vue:599
+#: src/common/util.js:791 src/component/lightbox.vue:602
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "不允许"
 
-#: src/component/lightbox.vue:596
+#: src/component/lightbox.vue:599
 msgid "Not found"
 msgstr "未找到"
 
@@ -2081,8 +2073,8 @@ msgstr "未找到"
 msgid "Not sorted."
 msgstr "未分类。"
 
-#: src/common/util.js:796 src/component/lightbox.vue:593
-#: src/component/lightbox.vue:710
+#: src/common/util.js:796 src/component/lightbox.vue:596
+#: src/component/lightbox.vue:713
 msgid "Not supported"
 msgstr "不支持"
 
@@ -2454,8 +2446,8 @@ msgid "Raw"
 msgstr "原始数据"
 
 #: src/component/photo/view/cards.vue:313
-#: src/component/photo/view/mosaic.vue:157
-#: src/component/sidebar/metadata.vue:89 src/page/settings/content.vue:378
+#: src/component/photo/view/mosaic.vue:157 src/component/sidebar/info.vue:90
+#: src/page/settings/content.vue:378
 msgid "RAW"
 msgstr "RAW"
 
@@ -2541,7 +2533,7 @@ msgstr "移除"
 msgid "remove failed: unknown album"
 msgstr "移除失败：未知相册"
 
-#: src/component/lightbox.vue:1158 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1163 src/component/photo/clipboard.vue:155
 msgid "Remove from Album"
 msgstr "从相册中移除"
 
@@ -2549,7 +2541,7 @@ msgstr "从相册中移除"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "移除导入的文件以节省存储空间，不支持的文件类型将永远不会被删除，它们会保留在它们当前的位置。"
 
-#: src/common/api.js:102 src/component/lightbox.vue:706
+#: src/common/api.js:102 src/component/lightbox.vue:709
 msgid "Request failed - are you offline?"
 msgstr "请求失败 - 你是否离线？"
 
@@ -2570,12 +2562,12 @@ msgstr "分辨率"
 msgid "Restart"
 msgstr "重新启动"
 
-#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1187
+#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1192
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "恢复"
 
-#: src/component/lightbox.vue:1869
+#: src/component/lightbox.vue:1870
 msgid "Restored"
 msgstr "恢复"
 
@@ -2654,7 +2646,7 @@ msgstr "密钥"
 msgid "Security and Access"
 msgstr "安全和访问"
 
-#: src/component/lightbox.vue:1085 src/component/lightbox.vue:1086
+#: src/component/lightbox.vue:1090 src/component/lightbox.vue:1091
 msgid "Select"
 msgstr "选择"
 
@@ -2724,7 +2716,7 @@ msgstr "会议ID"
 msgid "Sessions"
 msgstr "会议"
 
-#: src/component/lightbox.vue:1143
+#: src/component/lightbox.vue:1148
 msgid "Set as Album Cover"
 msgstr "设为专辑封面"
 
@@ -2788,7 +2780,7 @@ msgstr "在库中显示服务器日志。"
 msgid "Show Titles"
 msgstr "显示标题"
 
-#: src/component/lightbox.vue:998 src/component/lightbox.vue:999
+#: src/component/lightbox.vue:1003 src/component/lightbox.vue:1004
 msgid "Show/Hide Sidebar"
 msgstr "显示/隐藏侧边栏"
 
@@ -2825,7 +2817,7 @@ msgstr "软件"
 msgid "Software Update"
 msgstr "软件更新"
 
-#: src/component/lightbox.vue:703
+#: src/component/lightbox.vue:706
 msgid "Something went wrong, try again"
 msgstr "出错了，再试一次"
 
@@ -2880,7 +2872,7 @@ msgstr "开始"
 msgid "Start Page"
 msgstr "起始页"
 
-#: src/component/lightbox.vue:1033 src/component/lightbox.vue:1034
+#: src/component/lightbox.vue:1038 src/component/lightbox.vue:1039
 msgid "Start/Stop Slideshow"
 msgstr "开始/停止幻灯片"
 
@@ -3441,6 +3433,12 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/lightbox.vue:254
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Add a caption"
+#~ msgstr "添加标题"
+
+#~ msgid "Add a title"
+#~ msgstr "添加标题"
 
 #~ msgid "Topographic"
 #~ msgstr "地形图"

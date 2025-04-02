@@ -184,14 +184,6 @@ msgstr "Дадаць"
 msgid "Add %{s}?"
 msgstr "Дадаць %{s}?"
 
-#: src/component/sidebar/metadata.vue:59
-msgid "Add a caption"
-msgstr "Дадайце надпіс"
-
-#: src/component/sidebar/metadata.vue:46
-msgid "Add a title"
-msgstr "Дадайце назву"
-
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
 msgstr "Дадаць уліковы запіс"
@@ -407,13 +399,13 @@ msgstr "Зацвердзіць"
 msgid "Apps and Devices"
 msgstr "Праграмы і прылады"
 
-#: src/app/routes.js:287 src/component/lightbox.vue:1173
+#: src/app/routes.js:287 src/component/lightbox.vue:1178
 #: src/component/navigation.vue:553 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398 src/page/settings/general.vue:417
 msgid "Archive"
 msgstr "Архіў"
 
-#: src/component/lightbox.vue:1851 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:1852 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "Заархівавана"
 
@@ -656,7 +648,7 @@ msgstr "Не ўдалося захаваць змены"
 
 #: src/component/user/edit/dialog.vue:83 src/component/user/edit/dialog.vue:159
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1810
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1811
 #: src/component/photo/edit/files.vue:160 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
 #: src/page/albums.vue:656 src/page/people/recognized.vue:119
@@ -698,7 +690,7 @@ msgid "Client Credentials"
 msgstr "Уліковыя даныя кліента"
 
 #: src/page/admin/sessions.vue:529 src/component/lightbox.vue:253
-#: src/component/lightbox.vue:975 src/component/lightbox.vue:976
+#: src/component/lightbox.vue:980 src/component/lightbox.vue:981
 #: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:151
 #: src/component/photo/upload/dialog.vue:228
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
@@ -854,7 +846,7 @@ msgstr "Cubic: умераная якасць, добрая прадукцыйн�
 msgid "Current Password"
 msgstr "Бягучы пароль"
 
-#: src/options/themes.js:873 src/options/themes.js:882
+#: src/options/themes.js:915 src/options/themes.js:924
 msgid "Custom"
 msgstr "Прыстасаваныя"
 
@@ -888,7 +880,7 @@ msgstr "Журналы адладкі"
 #: src/model/user.js:246 src/options/auth.js:20 src/options/auth.js:21
 #: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:128
 #: src/options/options.js:164 src/options/options.js:248
-#: src/options/themes.js:727 src/page/settings/general.vue:104
+#: src/options/themes.js:769 src/page/settings/general.vue:104
 msgid "Default"
 msgstr "Па змаўчанні"
 
@@ -1018,8 +1010,8 @@ msgstr "Паказаць назвы малюнкаў у выніках пошу�
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183
-#: src/component/sidebar/metadata.vue:108 src/options/options.js:241
+#: src/component/photo/view/mosaic.vue:183 src/component/sidebar/info.vue:108
+#: src/options/options.js:241
 msgid "Document"
 msgstr "Дакумент"
 
@@ -1049,7 +1041,7 @@ msgid "Done."
 msgstr "Гатова."
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:113
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1201
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1206
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:321
@@ -1070,7 +1062,7 @@ msgstr "Спампаваць асобныя файлы і zip-архівы."
 
 #: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:152
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:1890 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:1891 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:117
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:126
@@ -1110,7 +1102,7 @@ msgid "E-Mail"
 msgstr "Электронная пошта"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:84
-#: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
+#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:393
 msgid "Edit"
 msgstr "Рэдагаваць"
@@ -1367,7 +1359,7 @@ msgstr "Рамкі"
 msgid "Full Access"
 msgstr "Поўны доступ"
 
-#: src/component/lightbox.vue:1050 src/component/lightbox.vue:1051
+#: src/component/lightbox.vue:1055 src/component/lightbox.vue:1056
 msgid "Fullscreen"
 msgstr "Поуны экран"
 
@@ -1552,7 +1544,7 @@ msgstr "Збой індэксацыі"
 msgid "Indexing media and sidecar files…"
 msgstr "Ідзе індэксацыя мультымедыйных і дадатковых файлаў…"
 
-#: src/component/sidebar/metadata.vue:27
+#: src/component/sidebar/info.vue:28
 msgid "Info"
 msgstr "Інфармацыя"
 
@@ -1719,7 +1711,7 @@ msgstr "Бібліятэка"
 msgid "License"
 msgstr "Ліцэнзія"
 
-#: src/component/lightbox.vue:1068 src/component/lightbox.vue:1069
+#: src/component/lightbox.vue:1073 src/component/lightbox.vue:1074
 msgid "Like"
 msgstr "Падабаецца"
 
@@ -1749,8 +1741,8 @@ msgstr "Спіс"
 
 #: src/component/photo/view/cards.vue:319
 #: src/component/photo/view/cards.vue:501 src/component/photo/view/list.vue:176
-#: src/component/photo/view/mosaic.vue:163
-#: src/component/sidebar/metadata.vue:99 src/options/options.js:221
+#: src/component/photo/view/mosaic.vue:163 src/component/sidebar/info.vue:99
+#: src/options/options.js:221
 msgid "Live"
 msgstr "жыць"
 
@@ -1910,7 +1902,7 @@ msgstr "Манахромныя"
 msgid "Month"
 msgstr "Месяц"
 
-#: src/component/lightbox.vue:1121
+#: src/component/lightbox.vue:1126
 msgid "More options"
 msgstr "Больш варыянтаў"
 
@@ -1930,7 +1922,7 @@ msgstr "Перамясціць файлы"
 msgid "Must have at least %{n} characters."
 msgstr "Павінна быць не менш за %{n} сімвалаў."
 
-#: src/component/lightbox.vue:1017 src/component/lightbox.vue:1018
+#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
 msgid "Mute"
 msgstr "Адключыць гук"
 
@@ -2065,12 +2057,12 @@ msgstr "Нефатаграфічныя і нізкаякасныя выявы п
 msgid "None"
 msgstr "Няма"
 
-#: src/common/util.js:791 src/component/lightbox.vue:599
+#: src/common/util.js:791 src/component/lightbox.vue:602
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Не дазволена"
 
-#: src/component/lightbox.vue:596
+#: src/component/lightbox.vue:599
 msgid "Not found"
 msgstr "Не знойдзена"
 
@@ -2078,8 +2070,8 @@ msgstr "Не знойдзена"
 msgid "Not sorted."
 msgstr "Не адсартаваны."
 
-#: src/common/util.js:796 src/component/lightbox.vue:593
-#: src/component/lightbox.vue:710
+#: src/common/util.js:796 src/component/lightbox.vue:596
+#: src/component/lightbox.vue:713
 msgid "Not supported"
 msgstr "Не падтрымліваецца"
 
@@ -2450,8 +2442,8 @@ msgid "Raw"
 msgstr "Сыравіна"
 
 #: src/component/photo/view/cards.vue:313
-#: src/component/photo/view/mosaic.vue:157
-#: src/component/sidebar/metadata.vue:89 src/page/settings/content.vue:378
+#: src/component/photo/view/mosaic.vue:157 src/component/sidebar/info.vue:90
+#: src/page/settings/content.vue:378
 msgid "RAW"
 msgstr "RAW"
 
@@ -2536,7 +2528,7 @@ msgstr "Выдаліць"
 msgid "remove failed: unknown album"
 msgstr "выдаліць не атрымалася: невядомы альбом"
 
-#: src/component/lightbox.vue:1158 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1163 src/component/photo/clipboard.vue:155
 msgid "Remove from Album"
 msgstr "Выдаліць з альбома"
 
@@ -2544,7 +2536,7 @@ msgstr "Выдаліць з альбома"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Выдаліце імпартаваныя файлы, каб зэканоміць памяць. Непадтрымоўваныя тыпы файлаў ніколі не выдаляюцца, яны застаюцца ў сваім бягучым месцы."
 
-#: src/common/api.js:102 src/component/lightbox.vue:706
+#: src/common/api.js:102 src/component/lightbox.vue:709
 msgid "Request failed - are you offline?"
 msgstr "Запыт не выкананы - вы па-за сеткай?"
 
@@ -2565,12 +2557,12 @@ msgstr "дазвол"
 msgid "Restart"
 msgstr "Перазапуск"
 
-#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1187
+#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1192
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "Аднавіць"
 
-#: src/component/lightbox.vue:1869
+#: src/component/lightbox.vue:1870
 msgid "Restored"
 msgstr "Адноўлены"
 
@@ -2649,7 +2641,7 @@ msgstr "сакрэт"
 msgid "Security and Access"
 msgstr "Бяспека і доступ"
 
-#: src/component/lightbox.vue:1085 src/component/lightbox.vue:1086
+#: src/component/lightbox.vue:1090 src/component/lightbox.vue:1091
 msgid "Select"
 msgstr "Выберыце"
 
@@ -2719,7 +2711,7 @@ msgstr "Ідэнтыфікатар сеансу"
 msgid "Sessions"
 msgstr "Сесіі"
 
-#: src/component/lightbox.vue:1143
+#: src/component/lightbox.vue:1148
 msgid "Set as Album Cover"
 msgstr "Усталяваць у якасці вокладкі альбома"
 
@@ -2783,7 +2775,7 @@ msgstr "Паказаць журналы сервера ў бібліятэцы."
 msgid "Show Titles"
 msgstr "Паказаць загалоўкі"
 
-#: src/component/lightbox.vue:998 src/component/lightbox.vue:999
+#: src/component/lightbox.vue:1003 src/component/lightbox.vue:1004
 msgid "Show/Hide Sidebar"
 msgstr "Паказаць/схаваць бакавую панэль"
 
@@ -2820,7 +2812,7 @@ msgstr "праграмнае забеспячэнне"
 msgid "Software Update"
 msgstr "Абнаўленне праграмнага забеспячэння"
 
-#: src/component/lightbox.vue:703
+#: src/component/lightbox.vue:706
 msgid "Something went wrong, try again"
 msgstr "Нешта пайшло не так, паўтарыце спробу"
 
@@ -2875,7 +2867,7 @@ msgstr "Пачаць"
 msgid "Start Page"
 msgstr "Пачатковая старонка"
 
-#: src/component/lightbox.vue:1033 src/component/lightbox.vue:1034
+#: src/component/lightbox.vue:1038 src/component/lightbox.vue:1039
 msgid "Start/Stop Slideshow"
 msgstr "Пачаць/спыніць слайд-шоў"
 
@@ -3436,6 +3428,12 @@ msgstr "Ваша бібліятэка пастаянна аналізуецца 
 #: src/component/lightbox.vue:254
 msgid "Zoom in/out"
 msgstr "Павелічэнне/памяншэнне"
+
+#~ msgid "Add a caption"
+#~ msgstr "Дадайце надпіс"
+
+#~ msgid "Add a title"
+#~ msgstr "Дадайце назву"
 
 #~ msgid "Topographic"
 #~ msgstr "Тапаграфічны"

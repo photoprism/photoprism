@@ -187,14 +187,6 @@ msgstr "Tilføj"
 msgid "Add %{s}?"
 msgstr "Tilføj %{s}?"
 
-#: src/component/sidebar/metadata.vue:59
-msgid "Add a caption"
-msgstr "Tilføj en billedtekst"
-
-#: src/component/sidebar/metadata.vue:46
-msgid "Add a title"
-msgstr "Tilføj en titel"
-
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
 msgstr "Tilføj konto"
@@ -410,13 +402,13 @@ msgstr "Godkend"
 msgid "Apps and Devices"
 msgstr "Apps og enheder"
 
-#: src/app/routes.js:287 src/component/lightbox.vue:1173
+#: src/app/routes.js:287 src/component/lightbox.vue:1178
 #: src/component/navigation.vue:553 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398 src/page/settings/general.vue:417
 msgid "Archive"
 msgstr "Arkiver"
 
-#: src/component/lightbox.vue:1851 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:1852 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "Arkiveret"
 
@@ -659,7 +651,7 @@ msgstr "Ændringer kunne ikke gemmes"
 
 #: src/component/user/edit/dialog.vue:83 src/component/user/edit/dialog.vue:159
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1810
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1811
 #: src/component/photo/edit/files.vue:160 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
 #: src/page/albums.vue:656 src/page/people/recognized.vue:119
@@ -701,7 +693,7 @@ msgid "Client Credentials"
 msgstr "Kundens legitimationsoplysninger"
 
 #: src/page/admin/sessions.vue:529 src/component/lightbox.vue:253
-#: src/component/lightbox.vue:975 src/component/lightbox.vue:976
+#: src/component/lightbox.vue:980 src/component/lightbox.vue:981
 #: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:151
 #: src/component/photo/upload/dialog.vue:228
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
@@ -857,7 +849,7 @@ msgstr "Cubic: Moderat Kvalitet, God Ydeevne"
 msgid "Current Password"
 msgstr "Nuværende kodeord"
 
-#: src/options/themes.js:873 src/options/themes.js:882
+#: src/options/themes.js:915 src/options/themes.js:924
 msgid "Custom"
 msgstr "Brugerdefineret"
 
@@ -891,7 +883,7 @@ msgstr "Fejlfindingslog"
 #: src/model/user.js:246 src/options/auth.js:20 src/options/auth.js:21
 #: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:128
 #: src/options/options.js:164 src/options/options.js:248
-#: src/options/themes.js:727 src/page/settings/general.vue:104
+#: src/options/themes.js:769 src/page/settings/general.vue:104
 msgid "Default"
 msgstr "Standard"
 
@@ -1021,8 +1013,8 @@ msgstr "Vis billedtitler i søgeresultater."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183
-#: src/component/sidebar/metadata.vue:108 src/options/options.js:241
+#: src/component/photo/view/mosaic.vue:183 src/component/sidebar/info.vue:108
+#: src/options/options.js:241
 msgid "Document"
 msgstr "Dokument"
 
@@ -1052,7 +1044,7 @@ msgid "Done."
 msgstr "Udført."
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:113
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1201
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1206
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:321
@@ -1073,7 +1065,7 @@ msgstr "Download enkeltfiler og zip-arkiver."
 
 #: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:152
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:1890 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:1891 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:117
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:126
@@ -1113,7 +1105,7 @@ msgid "E-Mail"
 msgstr "E-mail"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:84
-#: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
+#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:393
 msgid "Edit"
 msgstr "Redigere"
@@ -1370,7 +1362,7 @@ msgstr "Rammer"
 msgid "Full Access"
 msgstr "Fuld adgang"
 
-#: src/component/lightbox.vue:1050 src/component/lightbox.vue:1051
+#: src/component/lightbox.vue:1055 src/component/lightbox.vue:1056
 msgid "Fullscreen"
 msgstr "Fuld skærm"
 
@@ -1555,7 +1547,7 @@ msgstr "Indeksering fejlede"
 msgid "Indexing media and sidecar files…"
 msgstr "Indekserer medie- og sidecar filer…"
 
-#: src/component/sidebar/metadata.vue:27
+#: src/component/sidebar/info.vue:28
 msgid "Info"
 msgstr "Info"
 
@@ -1722,7 +1714,7 @@ msgstr "Bibliotek"
 msgid "License"
 msgstr "Licens"
 
-#: src/component/lightbox.vue:1068 src/component/lightbox.vue:1069
+#: src/component/lightbox.vue:1073 src/component/lightbox.vue:1074
 msgid "Like"
 msgstr "Synes godt om"
 
@@ -1752,8 +1744,8 @@ msgstr "Listevisning"
 
 #: src/component/photo/view/cards.vue:319
 #: src/component/photo/view/cards.vue:501 src/component/photo/view/list.vue:176
-#: src/component/photo/view/mosaic.vue:163
-#: src/component/sidebar/metadata.vue:99 src/options/options.js:221
+#: src/component/photo/view/mosaic.vue:163 src/component/sidebar/info.vue:99
+#: src/options/options.js:221
 msgid "Live"
 msgstr "Direkte"
 
@@ -1913,7 +1905,7 @@ msgstr "Monokrom"
 msgid "Month"
 msgstr "Måned"
 
-#: src/component/lightbox.vue:1121
+#: src/component/lightbox.vue:1126
 msgid "More options"
 msgstr "Flere muligheder"
 
@@ -1933,7 +1925,7 @@ msgstr "Flyt filer"
 msgid "Must have at least %{n} characters."
 msgstr "Skal indeholde mindst %{n} tegn."
 
-#: src/component/lightbox.vue:1017 src/component/lightbox.vue:1018
+#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
 msgid "Mute"
 msgstr "Dæmpet"
 
@@ -2068,12 +2060,12 @@ msgstr "Ikke-fotografiske billeder af lav kvalitet kræver en gennemgang, før d
 msgid "None"
 msgstr "Ingen"
 
-#: src/common/util.js:791 src/component/lightbox.vue:599
+#: src/common/util.js:791 src/component/lightbox.vue:602
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Ikke tilladt"
 
-#: src/component/lightbox.vue:596
+#: src/component/lightbox.vue:599
 msgid "Not found"
 msgstr "Ikke fundet"
 
@@ -2081,8 +2073,8 @@ msgstr "Ikke fundet"
 msgid "Not sorted."
 msgstr "Ikke sorteret."
 
-#: src/common/util.js:796 src/component/lightbox.vue:593
-#: src/component/lightbox.vue:710
+#: src/common/util.js:796 src/component/lightbox.vue:596
+#: src/component/lightbox.vue:713
 msgid "Not supported"
 msgstr "Ikke understøttet"
 
@@ -2453,8 +2445,8 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/view/cards.vue:313
-#: src/component/photo/view/mosaic.vue:157
-#: src/component/sidebar/metadata.vue:89 src/page/settings/content.vue:378
+#: src/component/photo/view/mosaic.vue:157 src/component/sidebar/info.vue:90
+#: src/page/settings/content.vue:378
 msgid "RAW"
 msgstr "RAW"
 
@@ -2539,7 +2531,7 @@ msgstr "Fjern"
 msgid "remove failed: unknown album"
 msgstr "fjern mislykkedes: ukendt album"
 
-#: src/component/lightbox.vue:1158 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1163 src/component/photo/clipboard.vue:155
 msgid "Remove from Album"
 msgstr "Fjern fra albummet"
 
@@ -2547,7 +2539,7 @@ msgstr "Fjern fra albummet"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Fjern importerede filer for at frigøre lagerplads. Ikke-understøttede filtyper slettes aldrig, de forbliver på deres nuværende placering."
 
-#: src/common/api.js:102 src/component/lightbox.vue:706
+#: src/common/api.js:102 src/component/lightbox.vue:709
 msgid "Request failed - are you offline?"
 msgstr "Anmodning mislykkedes - er du offline?"
 
@@ -2568,12 +2560,12 @@ msgstr "Opløsning"
 msgid "Restart"
 msgstr "Genstart"
 
-#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1187
+#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1192
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "Gendan"
 
-#: src/component/lightbox.vue:1869
+#: src/component/lightbox.vue:1870
 msgid "Restored"
 msgstr "Genoprettet"
 
@@ -2652,7 +2644,7 @@ msgstr "Hemmelighed"
 msgid "Security and Access"
 msgstr "Sikkerhed og adgang"
 
-#: src/component/lightbox.vue:1085 src/component/lightbox.vue:1086
+#: src/component/lightbox.vue:1090 src/component/lightbox.vue:1091
 msgid "Select"
 msgstr "Vælg"
 
@@ -2722,7 +2714,7 @@ msgstr "Sessions-ID"
 msgid "Sessions"
 msgstr "Sessioner"
 
-#: src/component/lightbox.vue:1143
+#: src/component/lightbox.vue:1148
 msgid "Set as Album Cover"
 msgstr "Set som albumcover"
 
@@ -2786,7 +2778,7 @@ msgstr "Vis serverlogfiler i biblioteket."
 msgid "Show Titles"
 msgstr "Vis titler"
 
-#: src/component/lightbox.vue:998 src/component/lightbox.vue:999
+#: src/component/lightbox.vue:1003 src/component/lightbox.vue:1004
 msgid "Show/Hide Sidebar"
 msgstr "Vis/skjul sidepanel"
 
@@ -2823,7 +2815,7 @@ msgstr "Software"
 msgid "Software Update"
 msgstr "Opdatering af software"
 
-#: src/component/lightbox.vue:703
+#: src/component/lightbox.vue:706
 msgid "Something went wrong, try again"
 msgstr "Noget gik galt, prøv igen"
 
@@ -2878,7 +2870,7 @@ msgstr "Start"
 msgid "Start Page"
 msgstr "Startside"
 
-#: src/component/lightbox.vue:1033 src/component/lightbox.vue:1034
+#: src/component/lightbox.vue:1038 src/component/lightbox.vue:1039
 msgid "Start/Stop Slideshow"
 msgstr "Start/stop lysbilledshow"
 
@@ -3439,6 +3431,12 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/lightbox.vue:254
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Add a caption"
+#~ msgstr "Tilføj en billedtekst"
+
+#~ msgid "Add a title"
+#~ msgstr "Tilføj en titel"
 
 #~ msgid "Topographic"
 #~ msgstr "Topografisk"

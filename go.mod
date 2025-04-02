@@ -14,7 +14,7 @@ require (
 	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v1.2.2
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang/geo v0.0.0-20250328065203-0b6e08c212fb
+	github.com/golang/geo v0.0.0-20250401183444-7b99cb294169
 	github.com/google/open-location-code/go v0.0.0-20250307090349-1695db3c3b15
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -37,7 +37,6 @@ require (
 	github.com/sevlyar/go-daemon v0.1.6
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
-	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
@@ -86,6 +85,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/ugjka/go-tz/v2 v2.2.6
 	github.com/urfave/cli/v2 v2.27.6
+	github.com/wamuir/graft v0.10.0
 	github.com/zitadel/oidc/v3 v3.37.0
 	golang.org/x/mod v0.24.0
 	golang.org/x/sys v0.31.0

@@ -8,7 +8,7 @@ import (
 	"runtime/debug"
 	"sync"
 
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+	tf "github.com/wamuir/graft/tensorflow"
 
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"

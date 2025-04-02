@@ -6,5 +6,5 @@ download:
 	tar -xzf v$(TF_VERSION).tar.gz
 	cp Makefile *.sh tensorflow-$(TF_VERSION)
 libtensorflow:
-	bazel build -c opt //tensorflow:libtensorflow.so --copt=-march=armv8-a
+	bazel build -c opt --config cross_compile_linux_arm64 //tensorflow:libtensorflow.so
 	./create_archive.sh arm64 $(TF_VERSION)

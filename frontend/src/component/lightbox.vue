@@ -39,9 +39,10 @@
         @keydown.space.exact="onKeyDown"
         @keydown.esc.exact="onKeyDown"
         @keydown.ctrl="onKeyDown"
+        @keydown.meta="onKeyDown"
       ></div>
       <div v-if="sidebarVisible" ref="sidebar" class="p-lightbox__sidebar bg-background">
-        <p-sidebar-metadata v-model="model" :album="album" :context="context" @close="hideSidebar"></p-sidebar-metadata>
+        <p-sidebar-info v-model="model" :album="album" :context="context" @close="hideSidebar"></p-sidebar-info>
       </div>
     </div>
     <div
@@ -119,11 +120,11 @@ import { Album } from "model/album";
 import * as media from "common/media";
 
 import PLightboxMenu from "component/lightbox/menu.vue";
-import PSidebarMetadata from "component/sidebar/metadata.vue";
+import PSidebarInfo from "component/sidebar/info.vue";
 
 export default {
   name: "PLightbox",
-  components: [PLightboxMenu, PSidebarMetadata],
+  components: [PLightboxMenu, PSidebarInfo],
   emits: ["enter", "leave"],
   data() {
     const debug = this.$config.get("debug");
@@ -1106,7 +1107,7 @@ export default {
         });
 
         // Add sidebar view/hide toggle button.
-        if (this.featDevelop && this.canEdit && window.innerWidth > this.mobileBreakpoint) {
+        if (this.featExperimental && this.canEdit && window.innerWidth > this.mobileBreakpoint) {
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
             className: "pswp__button--sidebar-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
@@ -1716,6 +1717,7 @@ export default {
         return;
       }
 
+      // Handle space and escape key events.
       switch (ev.code) {
         case "Space":
           ev.preventDefault();
@@ -1735,6 +1737,15 @@ export default {
           ev.stopPropagation();
           this.closeLightbox();
           break;
+      }
+
+      // Return if Ctrl or Cmd is not pressed.
+      if (!(ev.ctrlKey || ev.metaKey)) {
+        return;
+      }
+
+      // Handle Ctrl/Cmd + key combinations:
+      switch (ev.code) {
         case "KeyA":
           ev.preventDefault();
           ev.stopPropagation();
@@ -2052,7 +2063,7 @@ export default {
     },
     // Shows the lightbox sidebar, if hidden.
     showSidebar() {
-      if (!this.visible || this.sidebarVisible) {
+      if (!this.visible || this.sidebarVisible || !this.featExperimental || !this.canEdit) {
         return;
       }
 
@@ -2068,7 +2079,7 @@ export default {
     },
     // Hides the lightbox sidebar, if visible.
     hideSidebar() {
-      if (!this.visible || !this.sidebarVisible) {
+      if (!this.visible || !this.sidebarVisible || !this.featExperimental || !this.canEdit) {
         return;
       }
 

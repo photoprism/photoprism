@@ -187,14 +187,6 @@ msgstr "जोड़ना"
 msgid "Add %{s}?"
 msgstr "%{s} जोड़ें?"
 
-#: src/component/sidebar/metadata.vue:59
-msgid "Add a caption"
-msgstr "एक कैप्शन जोडीये"
-
-#: src/component/sidebar/metadata.vue:46
-msgid "Add a title"
-msgstr "शीर्षक जोड़ें"
-
 #: src/component/user/add/dialog.vue:56 src/component/service/add.vue:49
 msgid "Add Account"
 msgstr "खाता जोड़ो"
@@ -410,13 +402,13 @@ msgstr "मंजूर"
 msgid "Apps and Devices"
 msgstr "ऐप्स और डिवाइस"
 
-#: src/app/routes.js:287 src/component/lightbox.vue:1173
+#: src/app/routes.js:287 src/component/lightbox.vue:1178
 #: src/component/navigation.vue:553 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398 src/page/settings/general.vue:417
 msgid "Archive"
 msgstr "पुरालेख"
 
-#: src/component/lightbox.vue:1851 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:1852 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "संग्रहीत"
 
@@ -659,7 +651,7 @@ msgstr "परिवर्तन सहेजा नहीं जा सका"
 
 #: src/component/user/edit/dialog.vue:83 src/component/user/edit/dialog.vue:159
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1810
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1811
 #: src/component/photo/edit/files.vue:160 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
 #: src/page/albums.vue:656 src/page/people/recognized.vue:119
@@ -701,7 +693,7 @@ msgid "Client Credentials"
 msgstr "ग्राहक क्रेडेंशियल"
 
 #: src/page/admin/sessions.vue:529 src/component/lightbox.vue:253
-#: src/component/lightbox.vue:975 src/component/lightbox.vue:976
+#: src/component/lightbox.vue:980 src/component/lightbox.vue:981
 #: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:151
 #: src/component/photo/upload/dialog.vue:228
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
@@ -857,7 +849,7 @@ msgstr "घन: मध्यम गुणवत्ता, अच्छा प्
 msgid "Current Password"
 msgstr "वर्तमान पासवर्ड"
 
-#: src/options/themes.js:873 src/options/themes.js:882
+#: src/options/themes.js:915 src/options/themes.js:924
 msgid "Custom"
 msgstr "रिवाज़"
 
@@ -891,7 +883,7 @@ msgstr "दोषमार्जन लॉग"
 #: src/model/user.js:246 src/options/auth.js:20 src/options/auth.js:21
 #: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:128
 #: src/options/options.js:164 src/options/options.js:248
-#: src/options/themes.js:727 src/page/settings/general.vue:104
+#: src/options/themes.js:769 src/page/settings/general.vue:104
 msgid "Default"
 msgstr "चूक"
 
@@ -1021,8 +1013,8 @@ msgstr "खोज परिणामों में चित्र शीर�
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183
-#: src/component/sidebar/metadata.vue:108 src/options/options.js:241
+#: src/component/photo/view/mosaic.vue:183 src/component/sidebar/info.vue:108
+#: src/options/options.js:241
 msgid "Document"
 msgstr "दस्तावेज़"
 
@@ -1052,7 +1044,7 @@ msgid "Done."
 msgstr "किया हुआ |"
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:113
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1201
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1206
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:321
@@ -1073,7 +1065,7 @@ msgstr "एकल फाइलें और ज़िप अभिलेखा�
 
 #: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:152
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:1890 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:1891 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:117
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:126
@@ -1113,7 +1105,7 @@ msgid "E-Mail"
 msgstr "ईमेल"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:84
-#: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
+#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:393
 msgid "Edit"
 msgstr "संपादित करें"
@@ -1370,7 +1362,7 @@ msgstr "फ्रेम्स"
 msgid "Full Access"
 msgstr "पूर्ण पहुँच"
 
-#: src/component/lightbox.vue:1050 src/component/lightbox.vue:1051
+#: src/component/lightbox.vue:1055 src/component/lightbox.vue:1056
 msgid "Fullscreen"
 msgstr "पूर्ण स्क्रीन"
 
@@ -1555,7 +1547,7 @@ msgstr "अनुक्रमण विफल रहा"
 msgid "Indexing media and sidecar files…"
 msgstr "मीडिया और साइडकार फ़ाइलों को अनुक्रमित करना …"
 
-#: src/component/sidebar/metadata.vue:27
+#: src/component/sidebar/info.vue:28
 msgid "Info"
 msgstr "जानकारी"
 
@@ -1722,7 +1714,7 @@ msgstr "पुस्तकालय"
 msgid "License"
 msgstr "लाइसेंस"
 
-#: src/component/lightbox.vue:1068 src/component/lightbox.vue:1069
+#: src/component/lightbox.vue:1073 src/component/lightbox.vue:1074
 msgid "Like"
 msgstr "पसंद"
 
@@ -1752,8 +1744,8 @@ msgstr "लिस्ट व्यू"
 
 #: src/component/photo/view/cards.vue:319
 #: src/component/photo/view/cards.vue:501 src/component/photo/view/list.vue:176
-#: src/component/photo/view/mosaic.vue:163
-#: src/component/sidebar/metadata.vue:99 src/options/options.js:221
+#: src/component/photo/view/mosaic.vue:163 src/component/sidebar/info.vue:99
+#: src/options/options.js:221
 msgid "Live"
 msgstr "लाइव"
 
@@ -1913,7 +1905,7 @@ msgstr "एक रंग का"
 msgid "Month"
 msgstr "महीना"
 
-#: src/component/lightbox.vue:1121
+#: src/component/lightbox.vue:1126
 msgid "More options"
 msgstr "अधिक विकल्प"
 
@@ -1933,7 +1925,7 @@ msgstr "फ़ाइलें ले जाएँ"
 msgid "Must have at least %{n} characters."
 msgstr "कम से कम %{n} अक्षर होने चाहिए।"
 
-#: src/component/lightbox.vue:1017 src/component/lightbox.vue:1018
+#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
 msgid "Mute"
 msgstr "आवाज़ बंद करना"
 
@@ -2068,12 +2060,12 @@ msgstr "गैर-फोटोग्राफिक और निम्न-ग�
 msgid "None"
 msgstr "कोई नहीं"
 
-#: src/common/util.js:791 src/component/lightbox.vue:599
+#: src/common/util.js:791 src/component/lightbox.vue:602
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "अनुमति नहीं"
 
-#: src/component/lightbox.vue:596
+#: src/component/lightbox.vue:599
 msgid "Not found"
 msgstr "नहीं मिला"
 
@@ -2081,8 +2073,8 @@ msgstr "नहीं मिला"
 msgid "Not sorted."
 msgstr "क्रमबद्ध नहीं।"
 
-#: src/common/util.js:796 src/component/lightbox.vue:593
-#: src/component/lightbox.vue:710
+#: src/common/util.js:796 src/component/lightbox.vue:596
+#: src/component/lightbox.vue:713
 msgid "Not supported"
 msgstr "समर्थित नहीं"
 
@@ -2453,8 +2445,8 @@ msgid "Raw"
 msgstr "कच्चा"
 
 #: src/component/photo/view/cards.vue:313
-#: src/component/photo/view/mosaic.vue:157
-#: src/component/sidebar/metadata.vue:89 src/page/settings/content.vue:378
+#: src/component/photo/view/mosaic.vue:157 src/component/sidebar/info.vue:90
+#: src/page/settings/content.vue:378
 msgid "RAW"
 msgstr "कच्चा"
 
@@ -2539,7 +2531,7 @@ msgstr "हटाना"
 msgid "remove failed: unknown album"
 msgstr "निकालें विफल: अज्ञात एल्बम"
 
-#: src/component/lightbox.vue:1158 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1163 src/component/photo/clipboard.vue:155
 #, fuzzy
 msgid "Remove from Album"
 msgstr "एल्बम से निकालें"
@@ -2548,7 +2540,7 @@ msgstr "एल्बम से निकालें"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "स्टोरेज को सेव करने के लिए इंपोर्टेड फाइल्स निकालें। असमर्थित फ़ाइल प्रकार कभी भी हटाए नहीं जाएंगे, वे अपने वर्तमान स्थान पर बने रहेंगे।"
 
-#: src/common/api.js:102 src/component/lightbox.vue:706
+#: src/common/api.js:102 src/component/lightbox.vue:709
 msgid "Request failed - are you offline?"
 msgstr "अनुरोध विफल - क्या आप ऑफ़लाइन हैं?"
 
@@ -2569,12 +2561,12 @@ msgstr "रिज़ॉल्यूशन"
 msgid "Restart"
 msgstr "पुनः आरंभ करें"
 
-#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1187
+#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1192
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "पुनर्स्थापित"
 
-#: src/component/lightbox.vue:1869
+#: src/component/lightbox.vue:1870
 msgid "Restored"
 msgstr "पुनः स्थापित किए गए"
 
@@ -2653,7 +2645,7 @@ msgstr "गुप्त"
 msgid "Security and Access"
 msgstr "सुरक्षा और पहुंच"
 
-#: src/component/lightbox.vue:1085 src/component/lightbox.vue:1086
+#: src/component/lightbox.vue:1090 src/component/lightbox.vue:1091
 msgid "Select"
 msgstr "चुनें"
 
@@ -2723,7 +2715,7 @@ msgstr "सत्र आईडी"
 msgid "Sessions"
 msgstr "सत्र"
 
-#: src/component/lightbox.vue:1143
+#: src/component/lightbox.vue:1148
 msgid "Set as Album Cover"
 msgstr "एल्बम कवर के रूप में सेट करें"
 
@@ -2787,7 +2779,7 @@ msgstr "लायब्रेरी में सर्वर लॉग दि�
 msgid "Show Titles"
 msgstr "शीर्षक दिखाएं"
 
-#: src/component/lightbox.vue:998 src/component/lightbox.vue:999
+#: src/component/lightbox.vue:1003 src/component/lightbox.vue:1004
 msgid "Show/Hide Sidebar"
 msgstr "साइडबार दिखाएँ/छिपाएँ"
 
@@ -2824,7 +2816,7 @@ msgstr "सॉफ़्टवेयर"
 msgid "Software Update"
 msgstr "सॉफ्टवेयर अपडेट"
 
-#: src/component/lightbox.vue:703
+#: src/component/lightbox.vue:706
 msgid "Something went wrong, try again"
 msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"
 
@@ -2879,7 +2871,7 @@ msgstr "शुरू"
 msgid "Start Page"
 msgstr "पृष्ठ आरंभ करें"
 
-#: src/component/lightbox.vue:1033 src/component/lightbox.vue:1034
+#: src/component/lightbox.vue:1038 src/component/lightbox.vue:1039
 msgid "Start/Stop Slideshow"
 msgstr "शुरू / बंद स्लाइड शो"
 
@@ -3440,6 +3432,12 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/lightbox.vue:254
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "Add a caption"
+#~ msgstr "एक कैप्शन जोडीये"
+
+#~ msgid "Add a title"
+#~ msgstr "शीर्षक जोड़ें"
 
 #~ msgid "Topographic"
 #~ msgstr "स्थलाकृतिक"

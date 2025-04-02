@@ -5,11 +5,10 @@ import (
 	"sync"
 	"testing"
 
-	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
+	"github.com/stretchr/testify/assert"
+	"github.com/wamuir/graft/tensorflow"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-
-	"github.com/stretchr/testify/assert"
 )
 
 var assetsPath = fs.Abs("../../../assets")

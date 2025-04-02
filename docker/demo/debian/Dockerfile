@@ -2,7 +2,8 @@ FROM photoprism/photoprism:preview-ce-debian AS build
 
 # Set environment variables
 ENV TF_CPP_MIN_LOG_LEVEL=2 \
-    MALLOC_ARENA_MAX="4" \
+    TF_ENABLE_ONEDNN_OPTS=1 \
+    MALLOC_ARENA_MAX=4 \
     PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \
     PHOTOPRISM_DEBUG="false" \
     PHOTOPRISM_READONLY="false" \

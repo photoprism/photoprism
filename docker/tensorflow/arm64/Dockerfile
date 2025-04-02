@@ -1,10 +1,11 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.10
 
 LABEL maintainer="PhotoPrism UG <hello@photoprism.app>"
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV TMP /tmp
-ENV EXTRA_BAZEL_ARGS "--host_javabase=@local_jdk//:jdk"
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TMP=/tmp
+
+ENV TF_VERSION=2.18.0
 
 # apt default settings
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
@@ -17,48 +18,28 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 # Install dev / build dependencies
 RUN apt-get update && apt-get upgrade && \
     apt-get install \
-    ca-certificates \
     build-essential \
-    autoconf \
-    automake \
-    libtool \
-    g++-4.8 \
-    gcc-4.8 \
-    libc6-dev \
-    zlib1g-dev \
-    libssl-dev \
+    python3 \
+    ca-certificates \
+    llvm-17 \
+    clang-17 \
     curl \
-    chrpath \
-    pkg-config \
-    unzip \
-    zip \
-    make \
-    nano \
     wget \
     git \
-    libtool \
-    python3 \
-    python3-git \
-    openjdk-8-jdk
+    jq 
 
-# Use GCC 4.8 and Python 3 as default
-# See https://www.tensorflow.org/install/source#tested_build_configurations
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10 && \
-    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10 && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.6 10
+# Install bazelisk
+RUN ln -s /usr/bin/python3 /usr/bin/python && \
+    ln -s /usr/bin/clang-17 /usr/bin/clang && \
+    ln -s /usr/bin/clang++-17 /usr/bin/clang++ && \
+    ln -s /usr/bin/clang-cpp /usr/bin/clang-cpp && \
+    export BAZELISK_VERSION=$(curl -L https://api.github.com/repos/bazelbuild/bazelisk/releases/latest | jq -r .tag_name) && \
+    curl -L https://github.com/bazelbuild/bazelisk/releases/download/${BAZELISK_VERSION}/bazelisk-linux-arm64 -o /usr/bin/bazel && \
+    chmod +x /usr/bin/bazel && \
+    mkdir -p /home/tensorflow
 
-# Download Bazel & TensorFlow
 WORKDIR "/home/tensorflow"
-RUN wget https://github.com/tensorflow/tensorflow/archive/v1.15.2.tar.gz
-RUN tar -xzf v1.15.2.tar.gz
-
-# Install Bazel
-# RUN wget https://github.com/bazelbuild/bazel/releases/download/0.24.1/bazel-0.24.1-linux-x86_64
-RUN wget https://github.com/guysoft/bazel-bin/raw/master/bazel-0.24.1-aarch64
-RUN mv bazel-0.24.1-aarch64 /usr/local/bin/bazel && chmod 755 /usr/local/bin/bazel
 
 # Configure TensorFlow
-WORKDIR "/home/tensorflow/tensorflow-1.15.2"
 COPY ./*.sh ./
-COPY ./.tf_configure.bazelrc .tf_configure.bazelrc
 COPY ./Makefile Makefile

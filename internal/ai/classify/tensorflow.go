@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+	tf "github.com/wamuir/graft/tensorflow"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 )

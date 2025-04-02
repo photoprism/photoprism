@@ -7,7 +7,7 @@ PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PAT
 
 set -e
 
-TF_VERSION=${TF_VERSION:-1.15.2}
+TF_VERSION=${TF_VERSION:-2.18.0}
 
 # Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
@@ -40,6 +40,9 @@ esac
 if [[ $1 == "auto" ]]; then
   TF_DRIVER="auto";
   DESTDIR="/usr";
+elif [[ $1 == "gpu" ]]; then
+  TF_DRIVER="gpu";
+  DESTDIR="/usr";
 else
   DESTDIR=$(realpath "${1:-/usr}")
 fi
@@ -54,17 +57,27 @@ fi
 
 mkdir -p "$DESTDIR"
 
+if [[ $DESTARCH != "amd64" ]]; then
+  TF_DRIVER=""
+fi
+
 if [[ $TF_DRIVER == "auto" ]]; then
   echo "Detecting driver..."
 
   CPU_DETECTED=$(lshw -c processor -json 2>/dev/null)
 
-  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx2') == "true" ]]; then
+  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx2') == "true" ]]; then
     TF_DRIVER="avx2"
-  elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx') == "true" ]]; then
+    echo "✅ Your CPU supports AVX2 instructions"
+    if [[ $(lshw -c display -json 2>/dev/null | jq -r '.[0].configuration.driver') == "nvidia" ]]; then
+      echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected"
+    fi
+  elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx') == "true" ]]; then
     TF_DRIVER="avx"
+    echo "✅ Your CPU supports AVX instructions"
   else
     TF_DRIVER=""
+    echo "❌ Your CPU does not support AVX or AVX2 instructions"
   fi
 fi
 

@@ -29,8 +29,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
-    TF_CPP_MIN_LOG_LEVEL="2" \
-    MALLOC_ARENA_MAX="4" \
+    TF_CPP_MIN_LOG_LEVEL=2 \
+    TF_ENABLE_ONEDNN_OPTS=1 \
+    MALLOC_ARENA_MAX=4 \
     PROG="photoprism"
 
 # Copy scripts and package sources config.

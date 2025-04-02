@@ -5,6 +5,7 @@
     class="p-page p-page-album-photos"
     :class="$config.aclClasses('photos')"
     @keydown.ctrl="onCtrl"
+    @keydown.meta="onCtrl"
   >
     <p-album-toolbar
       ref="toolbar"
@@ -234,7 +235,7 @@ export default {
       this.lastFilter = {};
     },
     onCtrl(ev) {
-      if (!ev || !(ev instanceof KeyboardEvent) || !ev.ctrlKey || !this.$view.isActive(this)) {
+      if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }
 
@@ -498,11 +499,16 @@ export default {
     refresh(props) {
       this.updateSettings(props);
 
-      if (this.loading) {
+      if (this.loading || !this.listen) {
         return;
       }
 
+      /*
+      TODO: Leaving "loading" untouched here avoids flickering when refreshing the results, which might lead to a
+       smoother experience. If it doesn't cause any problems or unwanted side effects, this line can be removed.
+
       this.loading = true;
+      */
       this.page = 0;
       this.dirty = true;
       this.complete = false;
