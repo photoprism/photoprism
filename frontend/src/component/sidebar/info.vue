@@ -42,39 +42,83 @@
           </template -->
         </v-list-item>
 
-        <v-list-item
-          v-if="model.Type === 'image'"
-          prepend-icon="mdi-image"
-          :title="`${((model.Width * modelValue.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
-          class="metadata__item"
-        >
-        </v-list-item>
-        <v-list-item
-          v-else-if="model.Type === 'raw'"
-          prepend-icon="mdi-camera"
-          :title="
-            $gettext('RAW') + ` ${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`
-          "
-          class="metadata__item"
-        >
-        </v-list-item>
-        <v-list-item
-          v-else-if="modelValue.Type === 'live'"
-          prepend-icon="mdi-play-circle-outline"
-          :title="
-            $gettext('Live') +
-            ` ${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`
-          "
-          class="metadata__item"
-        >
-        </v-list-item>
-        <v-list-item
-          v-else-if="model.Type === 'document'"
-          prepend-icon="mdi-file-pdf-box"
-          :title="$gettext('Document')"
-          class="metadata__item"
-        >
-        </v-list-item>
+        <template v-if="model.Type === 'image'">
+          <v-list-item
+            prepend-icon="mdi-image"
+            :title="`${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
+        <template v-else-if="model.Type === 'raw'">
+          <v-list-item
+            prepend-icon="mdi-raw"
+            :title="`${$gettext('RAW')} ${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
+        <template v-else-if="model.Type === 'video'">
+          <v-list-item
+            prepend-icon="mdi-video"
+            :title="`${model.Width}×${model.Height}`"
+            class="metadata__item"
+          >
+          </v-list-item>
+          <v-list-item
+            v-if="model.Duration"
+            prepend-icon="mdi-clock-outline"
+            :title="$util.formatDuration(model.Duration)"
+            class="metadata__item"
+          >
+          </v-list-item>
+          <v-list-item
+            v-if="model.Codec"
+            prepend-icon="mdi-video-box"
+            :title="$util.formatCodec(model.Codec)"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
+        <template v-else-if="model.Type === 'live'">
+          <v-list-item
+            prepend-icon="mdi-play-circle-outline"
+            :title="`${$gettext('Live')} ${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
+            class="metadata__item"
+          >
+          </v-list-item>
+          <v-list-item
+            v-if="model.Duration"
+            prepend-icon="mdi-clock-outline"
+            :title="$util.formatDuration(model.Duration)"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
+        <template v-else-if="model.Type === 'animated'">
+          <v-list-item
+            prepend-icon="mdi-file-gif-box"
+            :title="`${model.Width}×${model.Height}`"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
+        <template v-else-if="model.Type === 'vector'">
+          <v-list-item
+            prepend-icon="mdi-vector-polyline"
+            :title="`${model.Width}×${model.Height}`"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
+        <template v-else-if="model.Type === 'document'">
+          <v-list-item
+            prepend-icon="mdi-file-pdf-box"
+            :title="$gettext('Document')"
+            class="metadata__item"
+          >
+          </v-list-item>
+        </template>
 
         <template v-if="model.Lat && model.Lng">
           <v-divider class="my-4"></v-divider>
