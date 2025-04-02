@@ -45,7 +45,7 @@
         <template v-if="model.Type === 'image'">
           <v-list-item
             prepend-icon="mdi-image"
-            :title="`${((model.Width * model.Height) / 1000000).toFixed(1)}MP\u2003${model.Width}×${model.Height}`"
+            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -53,7 +53,7 @@
         <template v-else-if="model.Type === 'raw'">
           <v-list-item
             prepend-icon="mdi-raw"
-            :title="`${$gettext('RAW')}\u2003${((model.Width * model.Height) / 1000000).toFixed(1)}MP\u2003${model.Width}×${model.Height}`"
+            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -61,7 +61,7 @@
         <template v-else-if="model.Type === 'video'">
           <v-list-item
             prepend-icon="mdi-video"
-            :title="`${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}${model.Codec ? '\u2003' + $util.formatCodec(model.Codec) : ''}`"
+            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}${model.Codec ? '\u2003' + $util.formatCodec(model.Codec) : ''}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -69,7 +69,7 @@
         <template v-else-if="model.Type === 'live'">
           <v-list-item
             prepend-icon="mdi-play-circle-outline"
-            :title="`${((model.Width * model.Height) / 1000000).toFixed(1)}MP\u2003${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}`"
+            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -77,7 +77,7 @@
         <template v-else-if="model.Type === 'animated'">
           <v-list-item
             prepend-icon="mdi-file-gif-box"
-            :title="`${$gettext('GIF')}\u2003${model.Width}×${model.Height}`"
+            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -85,7 +85,7 @@
         <template v-else-if="model.Type === 'vector'">
           <v-list-item
             prepend-icon="mdi-vector-polyline"
-            :title="`${$gettext('Vector')}\u2003${model.Width}×${model.Height}`"
+            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -126,7 +126,6 @@
 <script>
 import model from "../../model/model";
 
-// MapLibre GL.
 let maplibregl;
 
 export default {
@@ -159,6 +158,10 @@ export default {
     model() {
       return this.modelValue;
     },
+    megapixels() {
+      if (!this.model.Width || !this.model.Height) return 0;
+      return ((this.model.Width * this.model.Height) / 1000000).toFixed(1);
+    },
   },
   watch: {
     "model.Lat"() {
@@ -189,7 +192,6 @@ export default {
 
       this.loadingMapLibre = true;
 
-      // Dynamically import MapLibre GL JS
       import("../../common/maplibregl.js")
         .then((module) => {
           maplibregl = module.default;
