@@ -45,7 +45,7 @@
         <template v-if="model.Type === 'image'">
           <v-list-item
             prepend-icon="mdi-image"
-            :title="`${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
+            :title="`${((model.Width * model.Height) / 1000000).toFixed(1)}MP\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -53,7 +53,7 @@
         <template v-else-if="model.Type === 'raw'">
           <v-list-item
             prepend-icon="mdi-raw"
-            :title="`${$gettext('RAW')} ${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
+            :title="`${$gettext('RAW')}\u2003${((model.Width * model.Height) / 1000000).toFixed(1)}MP\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -61,21 +61,7 @@
         <template v-else-if="model.Type === 'video'">
           <v-list-item
             prepend-icon="mdi-video"
-            :title="`${model.Width}×${model.Height}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-          <v-list-item
-            v-if="model.Duration"
-            prepend-icon="mdi-clock-outline"
-            :title="$util.formatDuration(model.Duration)"
-            class="metadata__item"
-          >
-          </v-list-item>
-          <v-list-item
-            v-if="model.Codec"
-            prepend-icon="mdi-video-box"
-            :title="$util.formatCodec(model.Codec)"
+            :title="`${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}${model.Codec ? '\u2003' + $util.formatCodec(model.Codec) : ''}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -83,14 +69,7 @@
         <template v-else-if="model.Type === 'live'">
           <v-list-item
             prepend-icon="mdi-play-circle-outline"
-            :title="`${$gettext('Live')} ${((model.Width * model.Height) / 1000000).toFixed(1)}MP ${model.Width}×${model.Height}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-          <v-list-item
-            v-if="model.Duration"
-            prepend-icon="mdi-clock-outline"
-            :title="$util.formatDuration(model.Duration)"
+            :title="`${((model.Width * model.Height) / 1000000).toFixed(1)}MP\u2003${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -98,7 +77,7 @@
         <template v-else-if="model.Type === 'animated'">
           <v-list-item
             prepend-icon="mdi-file-gif-box"
-            :title="`${model.Width}×${model.Height}`"
+            :title="`${$gettext('GIF')}\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -106,7 +85,7 @@
         <template v-else-if="model.Type === 'vector'">
           <v-list-item
             prepend-icon="mdi-vector-polyline"
-            :title="`${model.Width}×${model.Height}`"
+            :title="`${$gettext('Vector')}\u2003${model.Width}×${model.Height}`"
             class="metadata__item"
           >
           </v-list-item>
@@ -133,7 +112,7 @@
           -->
           <v-list-item
             prepend-icon="mdi-map-marker"
-            :title="`${model.Lat.toFixed(5)}°N ${model.Lng.toFixed(5)}°E`"
+            :title="`${model.Lat.toFixed(5)}°N\u2003${model.Lng.toFixed(5)}°E`"
             class="metadata__item"
           >
           </v-list-item>
