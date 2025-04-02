@@ -11,9 +11,13 @@
     class="p-dialog p-lightbox v-dialog--lightbox"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
-    @focus="onDialogFocus"
-    @focusin="onDialogFocus"
-    @focusout="onDialogFocus"
+    @focusout="onFocusOut"
+    @keydown.ctrl="onKeyCtrl"
+    @keydown.meta="onKeyCtrl"
+    @keydown.space.exact="onKeyDown"
+    @keydown.esc.exact="onKeyDown"
+    @keydown.left.exact="onKeyDown"
+    @keydown.right.exact="onKeyDown"
   >
     <div class="p-lightbox__underlay"></div>
     <div
@@ -36,12 +40,8 @@
           'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"
-        @keydown.space.exact="onKeyDown"
-        @keydown.esc.exact="onKeyDown"
-        @keydown.ctrl="onKeyDown"
-        @keydown.meta="onKeyDown"
       ></div>
-      <div v-if="sidebarVisible" ref="sidebar" class="p-lightbox__sidebar bg-background">
+      <div v-if="sidebarVisible" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
         <p-sidebar-info v-model="model" :album="album" :context="context" @close="hideSidebar"></p-sidebar-info>
       </div>
     </div>
@@ -292,12 +292,21 @@ export default {
       this.$event.publish("lightbox.leave");
       this.$emit("leave");
     },
-    // Triggered when the dialog focus changes.
-    onDialogFocus(ev) {
+    // Traps the focus inside the lightbox dialog.
+    onFocusOut(ev) {
       if (this.trace) {
-        this.log(`dialog.${ev.type}`);
+        this.log(`dialog.${ev.type}`, ev);
       }
-      return false;
+
+      if (!this.$view.isActive(this)) {
+        return;
+      }
+
+      if (ev.target && ev.target instanceof HTMLElement && this.$refs?.content instanceof HTMLElement) {
+        if (!ev.target.closest(".p-lightbox") || ev.target?.disabled) {
+          this.$refs.content.focus();
+        }
+      }
     },
     log(ev, data) {
       if (!ev) {
@@ -340,6 +349,7 @@ export default {
         zoom: true,
         close: false,
         escKey: false,
+        arrowKeys: false,
         pinchToClose: false,
         counter: false,
         trapFocus: false,
@@ -975,6 +985,11 @@ export default {
         }
       });
 
+      // Called when PhotoSwipe measures size of its elements.
+      this.lightbox.on("initialLayout", () => {
+        this.viewPortWidth = this.getViewport().x;
+      });
+
       // Trigger onChange() event handler when slide is changed and on initialization,
       // see https://photoswipe.com/events/#initialization-events.
       this.lightbox.on("change", this.onChange.bind(this));
@@ -1067,7 +1082,6 @@ export default {
 
       // Init PhotoSwipe.
       this.lightbox.init();
-      this.viewPortWidth = this.getViewport().x;
 
       // Show first image.
       this.lightbox.loadAndOpen(this.index);
@@ -1107,7 +1121,7 @@ export default {
         });
 
         // Add sidebar view/hide toggle button.
-        if (this.featExperimental && this.canEdit && window.innerWidth > this.mobileBreakpoint) {
+        if (this.featExperimental && window.innerWidth > this.mobileBreakpoint) {
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
             className: "pswp__button--sidebar-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
@@ -1711,41 +1725,23 @@ export default {
         }
       }
     },
-    // Handles keyboard events.
-    onKeyDown(ev) {
-      if (!ev || !ev.code || !this.visible || this.sidebarVisible) {
+    // Handles Ctrl/Cmd + key combinations.
+    onKeyCtrl(ev) {
+      if (!ev || !ev.code || !this.visible || !this.$view.isActive(this)) {
         return;
       }
 
-      // Handle space and escape key events.
-      switch (ev.code) {
-        case "Space":
-          ev.preventDefault();
-          ev.stopPropagation();
-
-          // Get active video element, if any.
-          const { video } = this.getContent();
-
-          if (video) {
-            this.toggleVideo();
-          } else {
-            this.toggleControls();
-          }
-          break;
-        case "Escape":
-          ev.preventDefault();
-          ev.stopPropagation();
-          this.closeLightbox();
-          break;
+      if (this.trace) {
+        this.log("key.ctrl", { ev });
       }
 
-      // Return if Ctrl or Cmd is not pressed.
-      if (!(ev.ctrlKey || ev.metaKey)) {
-        return;
-      }
-
-      // Handle Ctrl/Cmd + key combinations:
       switch (ev.code) {
+        case "Period":
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.onShowMenu();
+          this.toggleSelect();
+          break;
         case "KeyA":
           ev.preventDefault();
           ev.stopPropagation();
@@ -1763,6 +1759,93 @@ export default {
           if (this.canDownload) {
             this.onDownload();
           }
+          break;
+        case "KeyE":
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (this.canEdit) {
+            this.onEdit();
+          }
+          break;
+        case "KeyF":
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (this.canFullscreen) {
+            this.toggleFullscreen();
+          }
+          break;
+        case "KeyI":
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.toggleSidebar();
+          break;
+        case "KeyL":
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.onShowMenu();
+          if (this.canLike) {
+            this.toggleLike();
+          }
+          break;
+        case "KeyS":
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.toggleSlideshow();
+          break;
+      }
+    },
+    // Handles other key events.
+    onKeyDown(ev) {
+      if (!ev || !ev.code || !this.visible || !this.$view.isActive(this)) {
+        return;
+      }
+
+      if (
+        this.sidebarVisible &&
+        (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+
+      if (this.trace) {
+        this.log("key.down", { ev });
+      }
+
+      this.pauseSlideshow();
+
+      // Handle space and escape key events.
+      switch (ev.code) {
+        case "ArrowLeft":
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (this.index > 0) {
+            this.pswp().prev();
+          }
+          break;
+        case "ArrowRight":
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (this.models.length > this.index + 1) {
+            this.pswp().next();
+          }
+          break;
+        case "Space":
+          ev.preventDefault();
+          ev.stopPropagation();
+
+          // Get active video element, if any.
+          const { video } = this.getContent();
+
+          if (video) {
+            this.toggleVideo();
+          } else {
+            this.toggleControls();
+          }
+          break;
+        case "Escape":
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.closeLightbox();
           break;
       }
     },
@@ -2063,7 +2146,7 @@ export default {
     },
     // Shows the lightbox sidebar, if hidden.
     showSidebar() {
-      if (!this.visible || this.sidebarVisible || !this.featExperimental || !this.canEdit) {
+      if (!this.visible || this.sidebarVisible || !this.featExperimental) {
         return;
       }
 
@@ -2079,7 +2162,7 @@ export default {
     },
     // Hides the lightbox sidebar, if visible.
     hideSidebar() {
-      if (!this.visible || !this.sidebarVisible || !this.featExperimental || !this.canEdit) {
+      if (!this.visible || !this.sidebarVisible || !this.featExperimental) {
         return;
       }
 

@@ -4,8 +4,8 @@
     tabindex="1"
     class="p-page p-page-albums not-selectable"
     :class="$config.aclClasses('albums')"
-    @keydown.ctrl="onCtrl"
-    @keydown.meta="onCtrl"
+    @keydown.ctrl="onKeyCtrl"
+    @keydown.meta="onKeyCtrl"
   >
     <v-form
       ref="form"
@@ -546,7 +546,7 @@ export default {
         },
       ];
     },
-    onCtrl(ev) {
+    onKeyCtrl(ev) {
       if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }

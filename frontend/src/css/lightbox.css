@@ -60,6 +60,7 @@
     width: 300px;
     z-index: 100000;
     opacity: 1;
+    user-select: none;
     border-color: rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
@@ -75,6 +76,10 @@
 
 .p-lightbox__container > .p-lightbox__sidebar .v-toolbar {
     padding: 2px 0 2px 0;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .metadata__item {
+    user-select: text;
 }
 
 /* Media Content */
