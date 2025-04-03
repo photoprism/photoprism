@@ -58,8 +58,9 @@
           -->
           <v-list-item
             prepend-icon="mdi-map-marker"
-            :title="`${model.Lat.toFixed(5)}°N\u2003${model.Lng.toFixed(5)}°E`"
-            class="metadata__item"
+            :title="model.getLatLng()"
+            class="clickable metadata__item"
+            @click.stop="model.copyLatLng"
           >
           </v-list-item>
           <div id="metadata-map" ref="mapContainer" class="metadata__map"></div>
@@ -70,8 +71,6 @@
 </template>
 
 <script>
-import model from "../../model/model";
-
 let maplibregl;
 
 export default {
@@ -209,32 +208,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.p-sidebar-info {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
-
-.metadata__list {
-  display: block;
-  overflow-y: auto;
-  height: 100%;
-  padding: 0;
-}
-
-.metadata__item {
-  margin-bottom: 4px;
-  padding: 0 16px;
-}
-
-.metadata__map {
-  display: block;
-  height: 300px;
-  margin: 8px 0 16px;
-  background: var(--v-background-base, #f5f5f5);
-  overflow: hidden;
-}
-</style>
