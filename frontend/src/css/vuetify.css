@@ -63,53 +63,6 @@ body.dark-theme {
     opacity: 0.82;
 }
 
-/* Notifications */
-
-.v-snackbar {
-    margin: 16px;
-}
-
-.v-snackbar__wrapper {
-    min-width: 320px;
-    color: rgba(var(--v-theme-on-surface), 1);
-    background-color: rgba(var(--v-theme-surface), 0.2);
-    backdrop-filter: blur(6px);
-}
-
-.v-snackbar__wrapper .p-notify__close {
-    opacity: 0.8;
-}
-
-.v-snackbar__wrapper .v-snackbar__content {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    flex-direction: row;
-    justify-content: stretch;
-    justify-items: center;
-    padding: 10px 14px;
-}
-
-.v-snackbar.p-notify--success .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-success), 0.33) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
-}
-
-.v-snackbar.p-notify--info .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-info), 0.33) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
-}
-
-.v-snackbar.p-notify--warning .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-warning), 0.18) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
-}
-
-.v-snackbar.p-notify--error .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-error), 0.18) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
-}
-
 /* Cards */
 
 .v-card-title {

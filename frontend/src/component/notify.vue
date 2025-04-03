@@ -1,12 +1,11 @@
 <template>
-  <div id="p-notify" tabindex="-1">
+  <div v-if="visible" id="p-notify" tabindex="-1">
     <v-snackbar
-      v-if="visible && message.text"
-      v-model="snackbar"
-      tabindex="-1"
+      :model-value="snackbar"
       :class="'p-notify--' + message.color"
       class="p-notify clickable"
       @click.stop.prevent="showNext"
+      @update:model-value="onSnackbar"
     >
       <v-icon
         v-if="message.icon"
@@ -62,7 +61,7 @@ export default {
     this.$event.unsubscribe(this.subscriptionId);
   },
   methods: {
-    onNotify: function (ev, data) {
+    onNotify(ev, data) {
       const type = ev.split(".")[1];
 
       // Get the message.
@@ -101,23 +100,23 @@ export default {
       }
     },
 
-    addSuccessMessage: function (message) {
+    addSuccessMessage(message) {
       this.addMessage("success", "check-circle", message, this.defaultDelay);
     },
 
-    addInfoMessage: function (message) {
+    addInfoMessage(message) {
       this.addMessage("info", "information-outline", message, this.defaultDelay);
     },
 
-    addWarningMessage: function (message) {
+    addWarningMessage(message) {
       this.addMessage("warning", "alert", message, this.warningDelay);
     },
 
-    addErrorMessage: function (message) {
+    addErrorMessage(message) {
       this.addMessage("error", "alert-circle-outline", message, this.errorDelay);
     },
 
-    addMessage: function (color, icon, text, delay) {
+    addMessage(color, icon, text, delay) {
       if (!text || text === this.lastText) {
         return;
       }
@@ -139,7 +138,15 @@ export default {
         this.showNext();
       }
     },
-    showNext: function () {
+    onSnackbar(show) {
+      if (show) {
+        this.snackbar = true;
+      } else {
+        this.snackbar = false;
+        this.showNext();
+      }
+    },
+    showNext() {
       const message = this.messages.shift();
 
       if (message) {
@@ -161,11 +168,11 @@ export default {
           focusElement = document.activeElement;
         }
 
-        this.visible = true;
-
         if (!this.snackbar) {
           this.snackbar = true;
         }
+
+        this.visible = true;
 
         this.$nextTick(() => {
           if (focusElement && typeof focusElement.focus === "function" && document.activeElement !== focusElement) {

@@ -1,15 +1,12 @@
 <template>
   <div v-if="activator" class="p-lightbox-menu">
     <v-menu
-      v-model="visible"
-      transition="slide-y-transition"
+      :model-value="visible"
+      :open-on-hover="openOnHover"
       :activator="activator"
       :attach="attach"
-      :z-index="2000"
-      open-on-click
-      open-on-hover
       class="p-action-menu action-menu action-menu--lightbox"
-      @update:model-value="onShow"
+      @update:model-value="onMenu"
     >
       <v-list slim nav density="compact" class="action-menu__list">
         <v-list-item
@@ -58,19 +55,32 @@ export default {
     return {
       visible: false,
       actions: [],
+      openOnHover: !this.$util.hasTouch(),
     };
   },
   methods: {
-    hide() {
-      this.visible = false;
+    show() {
+      this.actions = this.items().filter((action) => action.visible);
+      this.visible = true;
+      this.$emit("show");
     },
-    onShow(visible) {
-      if (visible) {
-        this.$emit("show");
-        this.actions = this.items().filter((action) => action.visible);
+    hide() {
+      this.actions = [];
+      this.visible = false;
+      this.$emit("hide");
+    },
+    toggle() {
+      if (this.visible) {
+        this.hide();
       } else {
-        this.actions = [];
-        this.$emit("hide");
+        this.show();
+      }
+    },
+    onMenu(show) {
+      if (show) {
+        this.show();
+      } else {
+        this.hide();
       }
     },
   },

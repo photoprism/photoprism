@@ -1,44 +1,45 @@
 <template>
-  <v-menu
-    class="p-action-menu action-menu action-menu--default"
-    transition="slide-y-transition"
-    open-on-click
-    open-on-hover
-    @update:model-value="onShow"
-  >
-    <template #activator="{ props }">
-      <v-btn
-        v-bind="props"
-        density="comfortable"
-        :icon="buttonIcon"
-        class="action-menu__btn"
-        :class="buttonClass"
-      ></v-btn>
-    </template>
+  <div class="p-action-menu">
+    <v-menu
+      :model-value="visible"
+      :open-on-hover="openOnHover"
+      class="action-menu action-menu--default"
+      @update:model-value="onMenu"
+    >
+      <template #activator="{ props }">
+        <v-btn
+          v-bind="props"
+          density="comfortable"
+          :icon="buttonIcon"
+          class="action-menu__btn"
+          :class="buttonClass"
+        ></v-btn>
+      </template>
 
-    <v-list slim nav density="compact" bg-color="navigation" class="action-menu__list">
-      <v-list-item
-        v-for="action in actions"
-        :key="action.name"
-        :value="action.name"
-        :prepend-icon="action.icon"
-        :title="action.text"
-        :class="action.class ? action.class : 'action-' + action.name"
-        :to="action.to ? action.to : undefined"
-        :href="action.href ? action.href : undefined"
-        :link="true"
-        :target="action.target ? '_blank' : '_self'"
-        :disabled="action.disabled"
-        :nav="true"
-        class="action-menu__item"
-        @click="action.click"
-      >
-        <template v-if="action.shortcut && !$isMobile" #append>
-          <div class="action-menu__shortcut">{{ action.shortcut }}</div>
-        </template>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+      <v-list slim nav density="compact" bg-color="navigation" class="action-menu__list">
+        <v-list-item
+          v-for="action in actions"
+          :key="action.name"
+          :value="action.name"
+          :prepend-icon="action.icon"
+          :title="action.text"
+          :class="action.class ? action.class : 'action-' + action.name"
+          :to="action.to ? action.to : undefined"
+          :href="action.href ? action.href : undefined"
+          :link="true"
+          :target="action.target ? '_blank' : '_self'"
+          :disabled="action.disabled"
+          :nav="true"
+          class="action-menu__item"
+          @click="action.click"
+        >
+          <template v-if="action.shortcut && !$isMobile" #append>
+            <div class="action-menu__shortcut">{{ action.shortcut }}</div>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </div>
 </template>
 <script>
 export default {
@@ -57,15 +58,37 @@ export default {
       default: "mdi-dots-vertical",
     },
   },
+  emits: ["show", "hide"],
   data() {
     return {
+      visible: false,
       actions: [],
+      openOnHover: !this.$util.hasTouch(),
     };
   },
   methods: {
-    onShow(visible) {
-      if (visible) {
-        this.actions = this.items().filter((action) => action.visible);
+    show() {
+      this.actions = this.items().filter((action) => action.visible);
+      this.visible = true;
+      this.$emit("show");
+    },
+    hide() {
+      this.actions = [];
+      this.visible = false;
+      this.$emit("hide");
+    },
+    toggle() {
+      if (this.visible) {
+        this.hide();
+      } else {
+        this.show();
+      }
+    },
+    onMenu(show) {
+      if (show) {
+        this.show();
+      } else {
+        this.hide();
       }
     },
   },

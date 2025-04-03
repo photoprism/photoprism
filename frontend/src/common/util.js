@@ -328,7 +328,11 @@ export default class $util {
   }
 
   static hasTouch() {
-    return navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
+    if (!navigator.maxTouchPoints) {
+      return false;
+    }
+
+    return navigator.maxTouchPoints > 0;
   }
 
   static isMobile() {
