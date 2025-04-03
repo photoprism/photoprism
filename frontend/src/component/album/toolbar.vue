@@ -133,6 +133,11 @@ export default {
     };
   },
   methods: {
+    showExpansionPanel() {
+      if (!this.expanded) {
+        this.expanded = true;
+      }
+    },
     hideExpansionPanel() {
       if (this.expanded) {
         this.expanded = false;

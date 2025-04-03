@@ -273,7 +273,7 @@ export default {
   methods: {
     load() {
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       this.$config
         .load()
@@ -291,7 +291,7 @@ export default {
       }
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       this.settings
         .save()

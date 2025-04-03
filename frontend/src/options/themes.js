@@ -655,8 +655,8 @@ let themes = {
     title: "Lightbox",
     name: "lightbox",
     colors: {
-      "background": "#131313",
-      "surface": "#131313",
+      "background": "#141417",
+      "surface": "#141417",
       "on-surface": "#ffffff",
       "surface-bright": "#333333",
       "surface-variant": "#cccccc",
@@ -686,8 +686,8 @@ let themes = {
       "share": "#3F51B5",
       "love": "#ef5350",
       "terminal": "#4A464F",
-      "navigation": "#121212",
-      "navigation-home": "#121212",
+      "navigation": "#0e0f10",
+      "navigation-home": "#0e0f10",
     },
   },
 

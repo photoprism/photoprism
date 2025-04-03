@@ -503,7 +503,7 @@ export default {
         });
     },
     find() {
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
       this.model
         .findApps()
         .then((resp) => {

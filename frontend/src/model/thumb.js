@@ -25,6 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import Model from "model.js";
 import $api from "common/api";
+import $util from "common/util";
 import { $config } from "app/session.js";
 import { $gettext } from "common/gettext";
 
@@ -74,6 +75,76 @@ export class Thumb extends Model {
     } else {
       return $api.delete("photos/" + this.UID + "/like");
     }
+  }
+
+  getLatLng() {
+    if (!this.Lat || !this.Lng) {
+      return `0°N\u20030°E`;
+    }
+
+    return `${this.Lat.toFixed(5)}°N\u2003${this.Lng.toFixed(5)}°E`;
+  }
+
+  copyLatLng() {
+    if (!this.Lat || !this.Lng) {
+      return;
+    }
+
+    $util.copyText(`${this.Lat},${this.Lng}`);
+  }
+
+  getMegaPixels() {
+    if (!this.Width || !this.Height) {
+      return "0MP";
+    }
+
+    return `${((this.Width * this.Height) / 1000000).toFixed(1)}MP`;
+  }
+
+  getTypeIcon() {
+    switch (this.Type) {
+      case "raw":
+        return "mdi-raw";
+      case "video":
+        return "mdi-video";
+      case "animated":
+        return "mdi-file-gif-box";
+      case "vector":
+        return "mdi-vector-polyline";
+      case "document":
+        return "mdi-file-pdf-box";
+      case "live":
+        return "mdi-play-circle-outline";
+      default:
+        return "mdi-image";
+    }
+  }
+
+  getTypeInfo() {
+    let info = [];
+
+    switch (this.Type) {
+      case "live":
+      case "video":
+        if (this.Duration) {
+          info.push($util.formatDuration(this.Duration));
+        }
+
+        info.push(this.getMegaPixels(), `${this.Width}×${this.Height}`);
+
+        if (this.codec && this.codec !== "jpeg") {
+          info.push($util.formatCodec(this.Codec));
+        }
+
+        break;
+      case "document":
+        info.push($gettext("Document"));
+        break;
+      default:
+        info.push(this.getMegaPixels(), `${this.Width}×${this.Height}`);
+    }
+
+    return info.join("\u2003");
   }
 
   static notFound() {

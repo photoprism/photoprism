@@ -40,6 +40,7 @@
             }
           "
           @keyup.enter="() => onUpdate()"
+          @keyup.esc.exact="() => hideExpansionPanel()"
           @click:prepend-inner.stop="toggleExpansionPanel"
           @click:append-inner.stop="clearLocation"
           @click:clear="
@@ -443,6 +444,11 @@ export default {
     },
   },
   methods: {
+    showExpansionPanel() {
+      if (!this.expanded) {
+        this.expanded = true;
+      }
+    },
     hideExpansionPanel() {
       if (this.expanded) {
         this.expanded = false;

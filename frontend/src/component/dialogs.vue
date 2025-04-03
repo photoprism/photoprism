@@ -8,12 +8,12 @@
       :tab="edit.tab"
       @close="closeEditDialog"
     ></p-photo-edit-dialog>
-    <p-photo-upload-dialog
+    <p-upload-dialog
       :visible="upload.visible"
       :data="upload.data"
       @close="closeUploadDialog"
       @confirm="closeUploadDialog"
-    ></p-photo-upload-dialog>
+    ></p-upload-dialog>
     <p-update :visible="update.visible" @close="closeUpdateDialog"></p-update>
     <p-lightbox @enter="onLightboxEnter" @leave="onLightboxLeave"></p-lightbox>
   </div>
@@ -22,7 +22,7 @@
 import Album from "model/album";
 
 import PPhotoEditDialog from "component/photo/edit/dialog.vue";
-import PPhotoUploadDialog from "component/photo/upload/dialog.vue";
+import PUploadDialog from "component/upload/dialog.vue";
 import PUpdate from "component/update.vue";
 import PLightbox from "component/lightbox.vue";
 
@@ -30,7 +30,7 @@ export default {
   name: "PDialogs",
   components: {
     PPhotoEditDialog,
-    PPhotoUploadDialog,
+    PUploadDialog,
     PUpdate,
     PLightbox,
   },

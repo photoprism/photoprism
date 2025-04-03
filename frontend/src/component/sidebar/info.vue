@@ -2,12 +2,12 @@
   <div class="p-sidebar-info metadata">
     <v-toolbar density="comfortable" color="navigation">
       <v-btn :icon="$isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" @click.stop="close()"></v-btn>
-      <v-toolbar-title class="text-h6 ms-2">{{ $gettext("Info") }}</v-toolbar-title>
+      <v-toolbar-title>{{ $gettext("Details") }}</v-toolbar-title>
     </v-toolbar>
     <div v-if="model.UID">
       <v-list nav slim tile density="compact" class="metadata__list mt-2">
         <v-list-item v-if="model.Title" class="metadata__item">
-          <div class="text-subtitle-1 font-weight-bold">{{ model.Title }}</div>
+          <div class="text-subtitle-2 font-weight-bold">{{ model.Title }}</div>
           <!-- v-text-field
         :model-value="modelValue.Title"
         :placeholder="$gettext('Add a title')"
@@ -42,71 +42,17 @@
           </template -->
         </v-list-item>
 
-        <template v-if="model.Type === 'image'">
-          <v-list-item
-            prepend-icon="mdi-image"
-            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-        <template v-else-if="model.Type === 'raw'">
-          <v-list-item
-            prepend-icon="mdi-raw"
-            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-        <template v-else-if="model.Type === 'video'">
-          <v-list-item
-            prepend-icon="mdi-video"
-            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}${model.Codec ? '\u2003' + $util.formatCodec(model.Codec) : ''}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-        <template v-else-if="model.Type === 'live'">
-          <v-list-item
-            prepend-icon="mdi-play-circle-outline"
-            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}${model.Duration ? '\u2003' + $util.formatDuration(model.Duration) : ''}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-        <template v-else-if="model.Type === 'animated'">
-          <v-list-item
-            prepend-icon="mdi-file-gif-box"
-            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-        <template v-else-if="model.Type === 'vector'">
-          <v-list-item
-            prepend-icon="mdi-vector-polyline"
-            :title="`${megapixels}MP\u2003${model.Width}×${model.Height}`"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-        <template v-else-if="model.Type === 'document'">
-          <v-list-item
-            prepend-icon="mdi-file-pdf-box"
-            :title="$gettext('Document')"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
+        <v-list-item :prepend-icon="model.getTypeIcon()" :title="model.getTypeInfo()" class="metadata__item">
+        </v-list-item>
 
         <template v-if="model.Lat && model.Lng">
           <v-divider class="my-4"></v-divider>
           <!-- Clickable version commented out
           <v-list-item
             prepend-icon="mdi-map-marker"
-            :title="`${model.Lat.toFixed(5)}°N ${model.Lng.toFixed(5)}°E`"
+            :title="model.getLatLng()"
             class="clickable metadata__item"
-            @click.stop="$util.copyText(`${model.Lat},${model.Lng}`)"
+            @click.stop="model.copyLatLng"
           >
           </v-list-item>
           -->

@@ -388,7 +388,7 @@ export default {
         return false;
       }
 
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       this.lastFilter = {};
       this.initialized = false;

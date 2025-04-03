@@ -40,68 +40,72 @@
           'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"
-      ></div>
+      >
+        <div ref="lightbox" tabindex="2" class="p-lightbox__pswp"></div>
+        <div
+          v-show="video.controls && controlsShown !== 0"
+          ref="controls"
+          tabindex="3"
+          class="p-lightbox__controls"
+          @click.stop.prevent
+        >
+          <div :title="video.error" class="video-control video-control--play">
+            <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
+            <v-icon v-else-if="video.seeking || video.waiting" icon="mdi-loading" class="animate-loading"></v-icon>
+            <v-icon
+              v-else-if="video.playing"
+              icon="mdi-pause"
+              class="clickable"
+              @pointerdown.stop.prevent="toggleVideo"
+            ></v-icon>
+            <v-icon v-else icon="mdi-play" class="clickable" @pointerdown.stop.prevent="toggleVideo"></v-icon>
+          </div>
+          <div class="video-control video-control--time text-body-2">
+            {{ $util.formatSeconds(video.ended ? Math.ceil(video.time) : Math.floor(video.time)) }}
+          </div>
+          <v-slider
+            :model-value="video.time"
+            :disabled="!video.seekable"
+            :readonly="video.seeking"
+            :thumb-size="12"
+            :track-size="3"
+            hide-details
+            :error="video.errorCode > 0"
+            :min="0"
+            :max="video.duration"
+            class="video-control video-control--slider"
+            @update:model-value="seekVideo"
+          >
+          </v-slider>
+          <div class="video-control video-control--duration text-body-2">
+            {{ $util.formatRemainingSeconds(video.time, video.duration) }}
+          </div>
+          <div v-if="featExperimental && video.castable" class="video-control video-control--cast">
+            <v-icon
+              v-if="video.casting"
+              icon="mdi-cast-connected"
+              class="clickable"
+              @pointerdown.stop.prevent="toggleVideoRemote"
+            ></v-icon>
+            <v-icon
+              v-else
+              icon="mdi-cast"
+              :disabled="video.remote === 'connecting'"
+              class="clickable"
+              @pointerdown.stop.prevent="toggleVideoRemote"
+            ></v-icon>
+          </div>
+        </div>
+      </div>
       <div v-if="sidebarVisible" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
         <p-sidebar-info v-model="model" :album="album" :context="context" @close="hideSidebar"></p-sidebar-info>
       </div>
     </div>
-    <div
-      v-show="video.controls && controlsShown !== 0"
-      ref="controls"
-      class="p-lightbox__controls"
-      :style="`width: ${viewPortWidth}px`"
-      @click.stop.prevent
-    >
-      <div :title="video.error" class="video-control video-control--play">
-        <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
-        <v-icon v-else-if="video.seeking || video.waiting" icon="mdi-loading" class="animate-loading"></v-icon>
-        <v-icon
-          v-else-if="video.playing"
-          icon="mdi-pause"
-          class="clickable"
-          @pointerdown.stop.prevent="toggleVideo"
-        ></v-icon>
-        <v-icon v-else icon="mdi-play" class="clickable" @pointerdown.stop.prevent="toggleVideo"></v-icon>
-      </div>
-      <div class="video-control video-control--time text-body-2">
-        {{ $util.formatSeconds(video.ended ? Math.ceil(video.time) : Math.floor(video.time)) }}
-      </div>
-      <v-slider
-        :model-value="video.time"
-        :disabled="!video.seekable"
-        :readonly="video.seeking"
-        :thumb-size="12"
-        :track-size="3"
-        hide-details
-        :error="video.errorCode > 0"
-        :min="0"
-        :max="video.duration"
-        class="video-control video-control--slider"
-        @update:model-value="seekVideo"
-      >
-      </v-slider>
-      <div class="video-control video-control--duration text-body-2">
-        {{ $util.formatRemainingSeconds(video.time, video.duration) }}
-      </div>
-      <div v-if="featExperimental && video.castable" class="video-control video-control--cast">
-        <v-icon
-          v-if="video.casting"
-          icon="mdi-cast-connected"
-          class="clickable"
-          @pointerdown.stop.prevent="toggleVideoRemote"
-        ></v-icon>
-        <v-icon
-          v-else
-          icon="mdi-cast"
-          :disabled="video.remote === 'connecting'"
-          class="clickable"
-          @pointerdown.stop.prevent="toggleVideoRemote"
-        ></v-icon>
-      </div>
-    </div>
     <p-lightbox-menu
-      :activator="menuElement"
+      ref="menu"
       :items="menuActions"
+      :activator="menuElement"
+      attach=".v-dialog--lightbox.v-overlay--active"
       @show="onShowMenu"
       @hide="onHideMenu"
     ></p-lightbox-menu>
@@ -139,7 +143,6 @@ export default {
       menuElement: null,
       menuBgColor: "#252525",
       menuVisible: false,
-      viewPortWidth: 0,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
       muted: window.sessionStorage.getItem("lightbox.muted") === "true",
@@ -294,7 +297,7 @@ export default {
     },
     // Traps the focus inside the lightbox dialog.
     onFocusOut(ev) {
-      if (this.trace) {
+      if (this.debug) {
         this.log(`dialog.${ev.type}`, ev);
       }
 
@@ -302,9 +305,20 @@ export default {
         return;
       }
 
-      if (ev.target && ev.target instanceof HTMLElement && this.$refs?.content instanceof HTMLElement) {
-        if (!ev.target.closest(".p-lightbox") || ev.target?.disabled) {
+      // Keep content element focused.
+      if (this.$refs.content && this.$refs.content instanceof HTMLElement) {
+        if (
+          (ev.target &&
+            ev.target instanceof HTMLElement &&
+            (!ev.target.closest(".v-dialog--lightbox") || ev.target?.tabIndex < 0 || ev.target.disabled)) ||
+          (ev.relatedTarget &&
+            ev.relatedTarget instanceof HTMLElement &&
+            (!ev.relatedTarget.closest(".v-dialog--lightbox") || ev.relatedTarget.tabIndex < 0))
+        ) {
           this.$refs.content.focus();
+          if (this.debug) {
+            this.log(`returned focus to content`, { target: ev.target });
+          }
         }
       }
     },
@@ -319,13 +333,13 @@ export default {
       }
     },
     // Returns the PhotoSwipe content element.
-    getContentElement() {
-      if (!this.$refs.content) {
-        this.log("content element is not visible");
+    getLightboxElement() {
+      if (!this.$refs.lightbox) {
+        this.log("lightbox element is not visible");
         return null;
       }
 
-      return this.$refs.content;
+      return this.$refs.lightbox;
     },
     // Returns the metadata sidebar element.
     getSidebarElement() {
@@ -339,7 +353,7 @@ export default {
     // Returns the PhotoSwipe config options, see https://photoswipe.com/options/.
     getOptions() {
       return {
-        appendToEl: this.getContentElement(),
+        appendToEl: this.getLightboxElement(),
         pswpModule: PhotoSwipe,
         index: this.index,
         mouseMovePan: true,
@@ -353,7 +367,7 @@ export default {
         pinchToClose: false,
         counter: false,
         trapFocus: false,
-        returnFocus: true,
+        returnFocus: false,
         allowPanToNext: false,
         closeOnVerticalDrag: false,
         initialZoomLevel: "fit",
@@ -920,9 +934,8 @@ export default {
         return Promise.reject();
       }
 
-      // Focus lightbox element.
-      // TODO: Move to common/view.js
-      this.getContentElement().focus();
+      // Focus content element.
+      this.$refs.content.focus();
 
       // Create PhotoSwipe instance.
       let lightbox = new Lightbox(options);
@@ -983,11 +996,6 @@ export default {
         if (slide.isActive) {
           this.onImageSizeChange();
         }
-      });
-
-      // Called when PhotoSwipe measures size of its elements.
-      this.lightbox.on("initialLayout", () => {
-        this.viewPortWidth = this.getViewport().x;
       });
 
       // Trigger onChange() event handler when slide is changed and on initialization,
@@ -1467,6 +1475,11 @@ export default {
         return;
       }
 
+      // Hide action menu when slide changes.
+      if (this.$refs.menu) {
+        this.$refs.menu.hide();
+      }
+
       // Set current slide (model) list index.
       if (typeof pswp.currIndex === "number") {
         this.index = pswp.currIndex;
@@ -1481,6 +1494,9 @@ export default {
       if (this.slideshow.next !== this.index) {
         this.pauseSlideshow();
       }
+
+      // Ensure that content is focused.
+      this.$refs.content.focus();
     },
     // Called when the user clicks on the PhotoSwipe lightbox background,
     // see https://photoswipe.com/click-and-tap-actions.
@@ -2122,10 +2138,8 @@ export default {
       });
     },
     resize(force) {
-      this.viewPortWidth = this.getViewport().x;
-
       this.$nextTick(() => {
-        if (this.visible && this.getContentElement() && !this.isBusy("resize")) {
+        if (this.visible && this.getLightboxElement() && !this.isBusy("resize")) {
           const pswp = this.pswp();
           if (pswp && pswp?.updateSize) {
             pswp.updateSize(force);
@@ -2154,10 +2168,10 @@ export default {
 
       localStorage.setItem("lightbox.sidebar.visible", `${this.sidebarVisible.toString()}`);
 
-      // Set focus to sidebar and resize the content element.
+      // Resize and focus content element.
       this.$nextTick(() => {
-        this.getSidebarElement().focus();
         this.resize(true);
+        this.$refs.content.focus();
       });
     },
     // Hides the lightbox sidebar, if visible.
@@ -2170,10 +2184,10 @@ export default {
 
       localStorage.setItem("lightbox.sidebar.visible", `${this.sidebarVisible.toString()}`);
 
-      // Return focus and resize the content element.
+      // Resize and focus content element.
       this.$nextTick(() => {
-        this.getContentElement().focus();
         this.resize(true);
+        this.$refs.content.focus();
       });
     },
     toggleControls() {
@@ -2280,7 +2294,7 @@ export default {
     },
     // Returns the viewport size without sidebar, if visible.
     getViewport() {
-      const el = this.getContentElement();
+      const el = this.getLightboxElement();
 
       if (el) {
         return {

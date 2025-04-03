@@ -65,8 +65,12 @@ body.dark-theme {
 
 /* Notifications */
 
+.v-snackbar {
+    margin: 16px;
+}
+
 .v-snackbar__wrapper {
-    min-width: 312px;
+    min-width: 320px;
     color: rgba(var(--v-theme-on-surface), 1);
     background-color: rgba(var(--v-theme-surface), 0.2);
     backdrop-filter: blur(6px);
@@ -87,12 +91,12 @@ body.dark-theme {
 }
 
 .v-snackbar.p-notify--success .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-success), 0.26) !important;
+    background-color: rgba(var(--v-theme-success), 0.33) !important;
     color: rgba(var(--v-theme-on-surface), 1) !important;
 }
 
 .v-snackbar.p-notify--info .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-info), 0.26) !important;
+    background-color: rgba(var(--v-theme-info), 0.33) !important;
     color: rgba(var(--v-theme-on-surface), 1) !important;
 }
 

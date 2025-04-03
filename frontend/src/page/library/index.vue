@@ -198,7 +198,7 @@ export default {
       this.fileName = "";
 
       const ctx = this;
-      $notify.blockUI();
+      $notify.blockUI("busy");
 
       // Request parameters.
       const params = {

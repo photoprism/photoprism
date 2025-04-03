@@ -43,6 +43,7 @@
             }
           "
           @keyup.enter="() => updateQuery()"
+          @keyup.esc.exact="() => hideExpansionPanel()"
           @click:prepend-inner.stop="toggleExpansionPanel"
           @click:clear="
             () => {
@@ -558,6 +559,9 @@ export default {
           break;
         case "KeyF":
           ev.preventDefault();
+          if (ev.shiftKey) {
+            this.showExpansionPanel();
+          }
           this.$view.focus(this.$refs?.form, ".input-search input", true);
           break;
         case "KeyU":
@@ -574,6 +578,11 @@ export default {
       }
 
       this.expanded = !this.expanded;
+    },
+    showExpansionPanel() {
+      if (!this.expanded) {
+        this.expanded = true;
+      }
     },
     hideExpansionPanel() {
       if (this.expanded) {

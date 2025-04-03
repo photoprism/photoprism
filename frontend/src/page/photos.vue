@@ -295,6 +295,9 @@ export default {
           break;
         case "KeyF":
           ev.preventDefault();
+          if (ev.shiftKey) {
+            this.showExpansionPanel();
+          }
           this.$view.focus(this.$refs?.toolbar, ".input-search input", true);
           break;
         case "KeyU":
@@ -304,6 +307,9 @@ export default {
           }
           break;
       }
+    },
+    showExpansionPanel() {
+      return this.$refs?.toolbar?.showExpansionPanel();
     },
     hideExpansionPanel() {
       return this.$refs?.toolbar?.hideExpansionPanel();

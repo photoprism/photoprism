@@ -351,7 +351,7 @@ export class View {
         disableScrolling = true;
         preventNavigation = true;
         break;
-      case "PPhotoUploadDialog":
+      case "PUploadDialog":
         hideScrollbar = window.innerWidth < 1280;
         disableScrolling = true;
         preventNavigation = true;
