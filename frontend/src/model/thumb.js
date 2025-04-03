@@ -90,7 +90,7 @@ export class Thumb extends Model {
       return;
     }
 
-    $util.copyText(`${this.Lat},${this.Lng}`);
+    $util.copyText(`${this.Lat.toString()},${this.Lng.toString()}`);
   }
 
   getMegaPixels() {

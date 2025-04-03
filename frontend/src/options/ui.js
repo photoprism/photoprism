@@ -22,7 +22,7 @@ export const colorsDark = {
   "error": "#e57373",
   "info": "#00acc1",
   "success": "#4db6ac",
-  "warning": "#ffd740",
+  "warning": "#bc9714",
   "favorite": "#FFD600",
   "remove": "#da4e4c",
   "restore": "#00d48a",

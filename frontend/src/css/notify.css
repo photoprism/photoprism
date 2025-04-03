@@ -9,9 +9,10 @@
 }
 
 .v-snackbar__wrapper {
+    position: relative;
     min-width: 320px;
     color: rgba(var(--v-theme-on-surface), 1);
-    background-color: rgba(var(--v-theme-surface), 0.36);
+    background-color: rgba(var(--v-theme-surface), 0.32);
     backdrop-filter: blur(6px);
 }
 
@@ -20,7 +21,7 @@
 }
 
 .v-snackbar__wrapper .v-snackbar__underlay {
-    background-color: rgba(var(--v-theme-surface), 0.36);
+    background-color: rgba(var(--v-theme-surface), 0.32);
     position: absolute;
     z-index: -1;
     bottom: 0;
@@ -32,6 +33,7 @@
 }
 
 .v-snackbar__wrapper .v-snackbar__content {
+    z-index: 2;
     display: flex;
     gap: 4px;
     align-items: center;
@@ -43,20 +45,20 @@
 
 .v-snackbar.p-notify--success .v-snackbar__wrapper {
     background-color: rgba(var(--v-theme-success), 0.36) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
+    color: rgba(var(--v-theme-on-success), 1) !important;
 }
 
 .v-snackbar.p-notify--info .v-snackbar__wrapper {
     background-color: rgba(var(--v-theme-info), 0.36) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
+    color: rgba(var(--v-theme-on-info), 1) !important;
 }
 
 .v-snackbar.p-notify--warning .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-warning), 0.24) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
+    background-color: rgba(var(--v-theme-warning), 0.4) !important;
+    color: rgba(var(--v-theme-on-warning), 1) !important;
 }
 
 .v-snackbar.p-notify--error .v-snackbar__wrapper {
-    background-color: rgba(var(--v-theme-error), 0.24) !important;
-    color: rgba(var(--v-theme-on-surface), 1) !important;
+    background-color: rgba(var(--v-theme-error), 0.42) !important;
+    color: rgba(var(--v-theme-on-error), 1) !important;
 }
