@@ -14,13 +14,13 @@ mkdir -p tmp/include/tensorflow/core/platform
 mkdir -p tmp/include/tsl/platform
 mkdir -p tmp/include/xla/tsl/c
 
-cp bazel-bin/tensorflow/libtensorflow* tmp/lib/
+cp -av bazel-bin/tensorflow/libtensorflow* tmp/lib/
 cp tensorflow/c/eager/*.h tmp/include/tensorflow/c/eager/
 cp tensorflow/c/*.h LICENSE tmp/include/tensorflow/c/
 cp tensorflow/core/platform/*.h tmp/include/tensorflow/core/platform
 cp third_party/xla/third_party/tsl/tsl/platform/*.h tmp/include/tsl/platform
 cp third_party/xla/xla/tsl/c/*.h tmp/include/xla/tsl/c
-(cd tmp && tar -czf ../libtensorflow-$1-$2.tar.gz .)
+(cd tmp && tar --exclude=*.params -czf ../libtensorflow-$1-$2.tar.gz .)
 du -h libtensorflow-$1-$2.tar.gz
 
 echo "Done"
