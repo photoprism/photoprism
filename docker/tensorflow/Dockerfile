@@ -1,4 +1,4 @@
-FROM ubuntu:24.10
+FROM ubuntu:22.04
 
 LABEL maintainer="PhotoPrism UG <hello@photoprism.app>"
 
@@ -21,15 +21,18 @@ RUN apt-get update && apt-get upgrade && \
     build-essential \
     python3 \
     ca-certificates \
-    llvm-17 \
-    clang-17 \
     curl \
     wget \
     git \
+    lsb-release \
+    software-properties-common \
+    gnupg \
     jq 
 
 # Install bazelisk
-RUN ln -s /usr/bin/python3 /usr/bin/python && \
+RUN wget https://apt.llvm.org/llvm.sh && chmod u+x llvm.sh && \
+    ./llvm.sh 17 && rm llvm.sh && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
     ln -s /usr/bin/clang-17 /usr/bin/clang && \
     ln -s /usr/bin/clang++-17 /usr/bin/clang++ && \
     ln -s /usr/bin/clang-cpp /usr/bin/clang-cpp && \
