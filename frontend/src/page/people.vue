@@ -4,8 +4,8 @@
     tabindex="1"
     class="p-page p-page-people"
     :class="$config.aclClasses('people')"
-    @keydown.ctrl="onCtrl"
-    @keydown.meta="onCtrl"
+    @keydown.ctrl="onKeyCtrl"
+    @keydown.meta="onKeyCtrl"
   >
     <v-tabs
       v-model="active"
@@ -124,7 +124,7 @@ export default {
     this.$view.leave(this);
   },
   methods: {
-    onCtrl(ev) {
+    onKeyCtrl(ev) {
       if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }

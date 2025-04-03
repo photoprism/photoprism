@@ -684,7 +684,7 @@ export default {
       }
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       return model.setName(newName).finally(() => {
         this.$notify.unblockUI();

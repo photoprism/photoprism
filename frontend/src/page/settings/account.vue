@@ -427,7 +427,7 @@ export default {
       this.dialog[name] = true;
     },
     updateUser() {
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
       this.$session
         .refresh()
         .then(() => {

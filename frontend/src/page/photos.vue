@@ -4,8 +4,8 @@
     tabindex="1"
     class="p-page p-page-photos not-selectable"
     :class="$config.aclClasses('photos')"
-    @keydown.ctrl="onCtrl"
-    @keydown.meta="onCtrl"
+    @keydown.ctrl="onKeyCtrl"
+    @keydown.meta="onKeyCtrl"
   >
     <p-photo-toolbar
       ref="toolbar"
@@ -283,7 +283,7 @@ export default {
     this.$view.leave(this);
   },
   methods: {
-    onCtrl(ev) {
+    onKeyCtrl(ev) {
       if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }
@@ -295,6 +295,9 @@ export default {
           break;
         case "KeyF":
           ev.preventDefault();
+          if (ev.shiftKey) {
+            this.showExpansionPanel();
+          }
           this.$view.focus(this.$refs?.toolbar, ".input-search input", true);
           break;
         case "KeyU":
@@ -304,6 +307,9 @@ export default {
           }
           break;
       }
+    },
+    showExpansionPanel() {
+      return this.$refs?.toolbar?.showExpansionPanel();
     },
     hideExpansionPanel() {
       return this.$refs?.toolbar?.hideExpansionPanel();

@@ -339,7 +339,7 @@ export default {
       this.busy = true;
       this.merge.visible = false;
       this.dialog.edit = false;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
       this.merge.subj1.update().finally(() => {
         this.busy = false;
         this.merge.subj1 = null;

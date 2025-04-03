@@ -200,7 +200,7 @@ export default {
       this.fileName = "";
 
       const ctx = this;
-      $notify.blockUI();
+      $notify.blockUI("busy");
 
       $api
         .post("import", this.settings.import, { cancelToken: this.source.token })

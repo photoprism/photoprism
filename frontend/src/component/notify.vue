@@ -3,6 +3,7 @@
     <v-snackbar
       v-if="visible && message.text"
       v-model="snackbar"
+      tabindex="-1"
       :class="'p-notify--' + message.color"
       class="p-notify clickable"
       @click.stop.prevent="showNext"

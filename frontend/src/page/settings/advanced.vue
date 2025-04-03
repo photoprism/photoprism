@@ -518,7 +518,7 @@ export default {
       }
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       this.settings.load().finally(() => {
         this.busy = false;
@@ -531,7 +531,7 @@ export default {
       }
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       this.settings
         .save()

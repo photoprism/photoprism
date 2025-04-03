@@ -235,7 +235,7 @@ table td > .action-buttons {
 }
 
 .v-menu.action-menu.action-menu--lightbox .action-menu__list {
-    opacity: 0.87;
+    opacity: 0.9;
     background: #191a1c;
     color: #ffffff;
     stroke: #ffffff;

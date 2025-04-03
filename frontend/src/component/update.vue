@@ -40,6 +40,7 @@ export default {
       default: false,
     },
   },
+  emits: ["close"],
   methods: {
     afterEnter() {
       this.$view.enter(this);

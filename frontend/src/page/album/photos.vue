@@ -4,8 +4,8 @@
     tabindex="1"
     class="p-page p-page-album-photos"
     :class="$config.aclClasses('photos')"
-    @keydown.ctrl="onCtrl"
-    @keydown.meta="onCtrl"
+    @keydown.ctrl="onKeyCtrl"
+    @keydown.meta="onKeyCtrl"
   >
     <p-album-toolbar
       ref="toolbar"
@@ -234,7 +234,7 @@ export default {
     resetLastFilter() {
       this.lastFilter = {};
     },
-    onCtrl(ev) {
+    onKeyCtrl(ev) {
       if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }

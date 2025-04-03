@@ -161,7 +161,7 @@ export default {
       if (this.busy || !model) return;
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       model.reject().finally(() => {
         this.$notify.unblockUI();
@@ -179,7 +179,7 @@ export default {
       if (this.busy || !model) return;
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       model.clearSubject(model).finally(() => {
         this.$notify.unblockUI();
@@ -241,7 +241,7 @@ export default {
       }
 
       this.busy = true;
-      this.$notify.blockUI();
+      this.$notify.blockUI("busy");
 
       return model.setName().finally(() => {
         this.$notify.unblockUI();

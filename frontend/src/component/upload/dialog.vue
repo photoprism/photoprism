@@ -5,12 +5,13 @@
     scrim
     scrollable
     persistent
-    class="p-photo-upload-dialog v-dialog--upload"
-    @keydown.esc="close"
+    class="p-upload-dialog v-dialog--upload"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
+    @keydown.esc.exact="onClose"
+    @focusout="onFocusOut"
   >
-    <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="1" @submit.prevent="submit">
+    <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="1" @submit.prevent="onSubmit">
       <input ref="upload" type="file" multiple :accept="accept" class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
         <v-toolbar
@@ -20,7 +21,7 @@
           class="mb-4"
           :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
         >
-          <v-btn icon @click.stop="close">
+          <v-btn icon @click.stop="onClose">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>
@@ -113,7 +114,7 @@
           </div>
         </v-card-text>
         <v-card-actions class="action-buttons mt-1">
-          <v-btn :disabled="busy" variant="flat" color="button" class="action-close" @click.stop="close">
+          <v-btn :disabled="busy" variant="flat" color="button" class="action-close" @click.stop="onClose">
             {{ $gettext(`Close`) }}
           </v-btn>
           <v-btn
@@ -137,7 +138,7 @@ import Album from "model/album";
 import { Duration } from "luxon";
 
 export default {
-  name: "PPhotoUploadDialog",
+  name: "PUploadDialog",
   props: {
     visible: {
       type: Boolean,
@@ -148,6 +149,7 @@ export default {
       default: () => {},
     },
   },
+  emits: ["close", "confirm"],
   data() {
     const isDemo = this.$config.get("demo");
     return {
@@ -213,6 +215,17 @@ export default {
     afterLeave() {
       this.$view.leave(this);
     },
+    onFocusOut(ev) {
+      if (!this.$view.isActive(this)) {
+        return;
+      }
+
+      if (ev.target && ev.target instanceof HTMLElement && this.$refs.form?.$el instanceof HTMLElement) {
+        if (!ev.target.closest(".p-upload-dialog") || ev.target?.disabled) {
+          this.$refs.form?.$el.focus();
+        }
+      }
+    },
     removeSelection(index) {
       this.selectedAlbums.splice(index, 1);
     },
@@ -244,7 +257,7 @@ export default {
           this.onLoaded();
         });
     },
-    close() {
+    onClose() {
       if (this.busy) {
         $notify.info(this.$gettext("Uploading photos…"));
         return;
@@ -260,7 +273,7 @@ export default {
 
       this.$emit("confirm");
     },
-    submit() {
+    onSubmit() {
       // DO NOTHING
     },
     reset() {

@@ -82,6 +82,11 @@ html.hide-scrollbar body {
     background-color: rgba(0, 0, 0, 0.32);
 }
 
+#busy-overlay.busy {
+    cursor: wait;
+    background-color: #ffffff00;
+}
+
 #busy-overlay.progress .splash-center {
     display: block;
 }

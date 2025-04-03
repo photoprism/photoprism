@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-errors" @keydown.ctrl="onCtrl" @keydown.meta="onCtrl">
+  <div ref="page" tabindex="1" class="p-page p-page-errors" @keydown.ctrl="onKeyCtrl" @keydown.meta="onKeyCtrl">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -228,7 +228,7 @@ export default {
         },
       ];
     },
-    onCtrl(ev) {
+    onKeyCtrl(ev) {
       if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
         return;
       }
