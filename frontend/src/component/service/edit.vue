@@ -286,7 +286,7 @@ export default {
     search(q) {
       if (this.loading) return;
 
-      const exists = this.paths.findIndex((p) => p.value === q);
+      const exists = this.paths.findIndex((p) => p.abs === q);
 
       if (exists !== -1 || !q) {
         this.pathItems = this.paths;
