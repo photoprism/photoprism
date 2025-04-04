@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-31 23:53+0000\n"
+"PO-Revision-Date: 2025-04-04 07:56+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -1549,7 +1549,7 @@ msgstr "S'estan indexant fitxers multimèdia i sidecar..."
 #: src/component/lightbox.vue:1021 src/component/lightbox.vue:1022
 #: src/component/sidebar/info.vue:28
 msgid "Information"
-msgstr ""
+msgstr "Informació"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"

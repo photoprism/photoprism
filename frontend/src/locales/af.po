@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-03-31 23:53+0000\n"
+"PO-Revision-Date: 2025-04-04 07:56+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1546,7 +1546,7 @@ msgstr "Indekseer tans media- en syspanlêers …"
 #: src/component/lightbox.vue:1021 src/component/lightbox.vue:1022
 #: src/component/sidebar/info.vue:28
 msgid "Information"
-msgstr ""
+msgstr "Inligting"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"
