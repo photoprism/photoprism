@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-04 07:56+0000\n"
+"PO-Revision-Date: 2025-04-04 08:03+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -2799,7 +2799,7 @@ msgstr "Boyut"
 
 #: src/component/lightbox.vue:1056 src/component/lightbox.vue:1057
 msgid "Slideshow"
-msgstr ""
+msgstr "Slayt gösterisi"
 
 #: src/options/options.js:156
 msgid "Slow"

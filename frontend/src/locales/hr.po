@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-04 07:56+0000\n"
+"PO-Revision-Date: 2025-04-04 08:03+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
@@ -2799,7 +2799,7 @@ msgstr "Veličina"
 
 #: src/component/lightbox.vue:1056 src/component/lightbox.vue:1057
 msgid "Slideshow"
-msgstr ""
+msgstr "Dijaprojekcija"
 
 #: src/options/options.js:156
 msgid "Slow"

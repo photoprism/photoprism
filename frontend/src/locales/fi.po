@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-04-04 07:56+0000\n"
+"PO-Revision-Date: 2025-04-04 08:03+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2796,7 +2796,7 @@ msgstr "Koko"
 
 #: src/component/lightbox.vue:1056 src/component/lightbox.vue:1057
 msgid "Slideshow"
-msgstr ""
+msgstr "Diaesitys"
 
 #: src/options/options.js:156
 msgid "Slow"
