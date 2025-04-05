@@ -232,14 +232,31 @@ export class View {
   // Initializes the instance properties with the default values.
   constructor() {
     this.uid = 0;
+    this.current = null;
     this.scopes = [];
     this.hideScrollbar = false;
     this.preventNavigation = false;
+
+    addEventListener("keydown", this.onKeyDown.bind(this));
 
     if (trace) {
       document.addEventListener("focusin", (ev) => {
         console.log("%cdocument.focusin", "color: #B2EBF2;", ev.target);
       });
+    }
+  }
+
+  onKeyDown(ev) {
+    if (!this.current || !ev || !(ev instanceof KeyboardEvent) || !ev.code) {
+      return;
+    } else if (!ev.ctrlKey && !ev.metaKey && ev.code !== "Escape") {
+      return;
+    } else if (typeof this.current?.onShortCut !== "function") {
+      return;
+    }
+
+    if (this.current.onShortCut(ev)) {
+      ev.preventDefault();
     }
   }
 
@@ -254,10 +271,11 @@ export class View {
       initHtmlElement();
     }
 
-    if (c !== this.current()) {
+    if (c !== this.getCurrent()) {
       this.scopes.push(c);
     }
 
+    this.current = c;
     this.apply(c, focusElement, focusSelector);
 
     return this.scopes.length;
@@ -279,7 +297,8 @@ export class View {
     }
 
     if (this.scopes.length) {
-      this.apply(this.scopes[this.scopes.length - 1]);
+      this.current = this.scopes[this.scopes.length - 1];
+      this.apply(this.current);
     }
 
     return this.scopes.length;
@@ -330,7 +349,7 @@ export class View {
       return;
     }
 
-    let hideScrollbar = this.layers() > 2 ? this.hideScrollbar : false;
+    let hideScrollbar = this.len() > 2 ? this.hideScrollbar : false;
     let disableScrolling = false;
     let disableNavigationGestures = false;
     let preventNavigation = uid > 0 && !name.startsWith("PPage");
@@ -445,13 +464,13 @@ export class View {
     return true;
   }
 
-  // Returns the current number of view layers.
-  layers() {
+  // Returns the number of views currently registered.
+  len() {
     return this.scopes?.length ? this.scopes.length : 0;
   }
 
   // Returns the currently active view component or null if none exists.
-  current() {
+  getCurrent() {
     if (this.scopes.length) {
       return this.scopes[this.scopes.length - 1];
     } else {
@@ -460,7 +479,7 @@ export class View {
   }
 
   // Returns the parent view of the currently active view or null if none exists.
-  parent() {
+  getParent() {
     if (this.scopes.length > 1) {
       return this.scopes[this.scopes.length - 2];
     } else {
@@ -469,8 +488,8 @@ export class View {
   }
 
   // Returns the name of the parent view component or an empty string if none exists.
-  parentName() {
-    const c = this.parent();
+  getParentName() {
+    const c = this.getParent();
 
     if (!c) {
       return "";
@@ -480,8 +499,8 @@ export class View {
   }
 
   // Returns the currently active view data or an empty reactive object otherwise.
-  data() {
-    const c = this.current();
+  getData() {
+    const c = this.getCurrent();
 
     if (c && c.$data) {
       return c.$data;

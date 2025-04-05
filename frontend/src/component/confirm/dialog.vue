@@ -1,5 +1,11 @@
 <template>
-  <v-dialog :model-value="visible" persistent max-width="360" class="p-dialog p-confirm-dialog" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="360"
+    class="p-dialog p-confirm-dialog"
+    @keydown.esc.exact="close"
+  >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon :icon="icon" :size="iconSize" color="primary"></v-icon>

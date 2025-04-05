@@ -1,4 +1,7 @@
 export default {
+  global: {
+    ripple: false,
+  },
   VBtn: {
     flat: true,
     variant: "flat",

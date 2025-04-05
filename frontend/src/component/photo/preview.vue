@@ -18,7 +18,7 @@ export default {
     },
   },
   data() {
-    const view = this.$view.data();
+    const view = this.$view.getData();
     return {
       view,
       url: view.model.thumbnailUrl("tile_500"),

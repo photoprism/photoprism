@@ -1,12 +1,5 @@
 <template>
-  <div
-    ref="page"
-    tabindex="1"
-    class="p-page p-page-people"
-    :class="$config.aclClasses('people')"
-    @keydown.ctrl="onKeyCtrl"
-    @keydown.meta="onKeyCtrl"
-  >
+  <div ref="page" tabindex="1" class="p-page p-page-people" :class="$config.aclClasses('people')">
     <v-tabs
       v-model="active"
       elevation="0"
@@ -53,6 +46,7 @@ import { markRaw } from "vue";
 
 export default {
   name: "PPagePeople",
+  expose: ["onShortCut"],
   data() {
     const config = this.$config.values;
     const isDemo = this.$config.get("demo");
@@ -124,16 +118,11 @@ export default {
     this.$view.leave(this);
   },
   methods: {
-    onKeyCtrl(ev) {
-      if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
-        return;
-      }
-
+    onShortCut(ev) {
       switch (ev.code) {
         case "KeyF":
-          ev.preventDefault();
           this.$view.focus(this.$refs?.page, ".v-window-item--active .input-search input", true);
-          break;
+          return true;
       }
     },
     openTab() {

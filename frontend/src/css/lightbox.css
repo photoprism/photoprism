@@ -404,12 +404,12 @@
     height: 22px;
 }
 
-.pswp__top-bar .pswp__button--sidebar-button .pswp__icn {
+.pswp__top-bar .pswp__button--info-button .pswp__icn {
     width: 20px;
     height: 20px;
 }
 
-.p-lightbox__content.sidebar-visible .pswp__top-bar .pswp__button--sidebar-button .pswp__icn {
+.p-lightbox__content.sidebar-visible .pswp__top-bar .pswp__button--info-button .pswp__icn {
     display: none;
 }
 

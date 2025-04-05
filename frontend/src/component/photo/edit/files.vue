@@ -401,7 +401,7 @@ export default {
   },
   data() {
     return {
-      view: this.$view.data(),
+      view: this.$view.getData(),
       expanded: [0],
       deleteFile: {
         dialog: false,

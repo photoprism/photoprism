@@ -4,7 +4,7 @@
     persistent
     max-width="350"
     class="p-dialog p-service-delete"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

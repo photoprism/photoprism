@@ -5,7 +5,7 @@
     max-width="500"
     class="dialog-person-edit"
     color="background"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

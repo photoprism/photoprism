@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-errors" @keydown.ctrl="onKeyCtrl" @keydown.meta="onKeyCtrl">
+  <div ref="page" tabindex="1" class="p-page p-page-errors">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -149,6 +149,7 @@ export default {
     PActionMenu,
     PConfirmDialog,
   },
+  expose: ["onShortCut"],
   data() {
     const query = this.$route.query;
     const q = query["q"] ? query["q"] : "";
@@ -228,20 +229,14 @@ export default {
         },
       ];
     },
-    onKeyCtrl(ev) {
-      if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
-        return;
-      }
-
+    onShortCut(ev) {
       switch (ev.code) {
         case "KeyR":
-          ev.preventDefault();
           this.onReload();
-          break;
+          return true;
         case "KeyF":
-          ev.preventDefault();
           this.$view.focus(this.$refs?.form, ".input-search input", true);
-          break;
+          return true;
       }
     },
     updateFilter(props) {

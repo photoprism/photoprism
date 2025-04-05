@@ -1,12 +1,5 @@
 <template>
-  <div
-    ref="page"
-    tabindex="1"
-    class="p-page p-page-photos not-selectable"
-    :class="$config.aclClasses('photos')"
-    @keydown.ctrl="onKeyCtrl"
-    @keydown.meta="onKeyCtrl"
-  >
+  <div ref="page" tabindex="1" class="p-page p-page-photos not-selectable" :class="$config.aclClasses('photos')">
     <p-photo-toolbar
       ref="toolbar"
       :context="context"
@@ -110,6 +103,7 @@ export default {
       default: false,
     },
   },
+  expose: ["onShortCut"],
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
@@ -283,29 +277,28 @@ export default {
     this.$view.leave(this);
   },
   methods: {
-    onKeyCtrl(ev) {
-      if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
-        return;
-      }
-
+    onShortCut(ev) {
       switch (ev.code) {
+        case "Escape":
+          if (document.activeElement instanceof HTMLInputElement) {
+            document.activeElement.blur();
+          }
+          this.hideExpansionPanel();
+          return true;
         case "KeyR":
-          ev.preventDefault();
           this.refresh();
-          break;
+          return true;
         case "KeyF":
-          ev.preventDefault();
           if (ev.shiftKey) {
             this.showExpansionPanel();
           }
           this.$view.focus(this.$refs?.toolbar, ".input-search input", true);
-          break;
+          return true;
         case "KeyU":
-          ev.preventDefault();
           if (this.$config.allow("files", "upload") && this.$config.feature("upload")) {
             this.$event.publish("dialog.upload");
           }
-          break;
+          return true;
       }
     },
     showExpansionPanel() {

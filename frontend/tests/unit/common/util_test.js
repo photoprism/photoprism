@@ -100,6 +100,60 @@ describe("common/util", () => {
     const iPhone13 = $util.formatCamera(null, 21, "Apple", "iPhone 13", false);
     assert.equal(iPhone13, "iPhone 13");
   });
+  it("should return best matching thumbnail", () => {
+    const thumbs = {
+      fit_720: {
+        w: 720,
+        h: 481,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_720",
+      },
+      fit_1280: {
+        w: 1280,
+        h: 854,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_1280",
+      },
+      fit_1920: {
+        w: 1800,
+        h: 1200,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_1920",
+      },
+      fit_2560: {
+        w: 2400,
+        h: 1600,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_2560",
+      },
+      fit_4096: {
+        w: 4096,
+        h: 2732,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_4096",
+      },
+      fit_5120: {
+        w: 5120,
+        h: 3415,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_5120",
+      },
+      fit_7680: {
+        w: 5120,
+        h: 3415,
+        src: "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_5120",
+      },
+    };
+    assert.equal($util.thumb(thumbs, 1200, 900).size, "fit_1280");
+    assert.equal($util.thumb(thumbs, 1300, 900).size, "fit_1920");
+    assert.equal($util.thumb(thumbs, 1300, 900).w, 1800);
+    assert.equal($util.thumb(thumbs, 1300, 900).h, 1200);
+    assert.equal(
+      $util.thumb(thumbs, 1300, 900).src,
+      "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_1920"
+    );
+    assert.equal($util.thumb(thumbs, 1400, 1200).size, "fit_1920");
+    assert.equal($util.thumb(thumbs, 100000, 120000).size, "fit_7680");
+  });
+  it("should return the approximate best thumbnail size name", () => {
+    assert.equal($util.thumbSize(1300, 900), "fit_1280");
+    assert.equal($util.thumbSize(1400, 1200), "fit_1920");
+    assert.equal($util.thumbSize(100000, 120000), "fit_7680");
+  });
   it("should return matching video format name", () => {
     const avc = $util.videoFormat("avc1", ContentTypeMp4AvcMain);
     assert.equal(avc, "avc");

@@ -4,7 +4,7 @@
     persistent
     max-width="390"
     class="p-dialog p-photo-album-dialog"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

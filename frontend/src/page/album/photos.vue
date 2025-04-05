@@ -1,12 +1,5 @@
 <template>
-  <div
-    ref="page"
-    tabindex="1"
-    class="p-page p-page-album-photos"
-    :class="$config.aclClasses('photos')"
-    @keydown.ctrl="onKeyCtrl"
-    @keydown.meta="onKeyCtrl"
-  >
+  <div ref="page" tabindex="1" class="p-page p-page-album-photos" :class="$config.aclClasses('photos')">
     <p-album-toolbar
       ref="toolbar"
       :filter="filter"
@@ -102,6 +95,7 @@ export default {
       default: () => {},
     },
   },
+  expose: ["onShortCut"],
   data() {
     const uid = this.$route.params.album;
     const query = this.$route.query;
@@ -234,22 +228,16 @@ export default {
     resetLastFilter() {
       this.lastFilter = {};
     },
-    onKeyCtrl(ev) {
-      if (!ev || !(ev instanceof KeyboardEvent) || !(ev.ctrlKey || ev.metaKey) || !this.$view.isActive(this)) {
-        return;
-      }
-
+    onShortCut(ev) {
       switch (ev.code) {
         case "KeyR":
-          ev.preventDefault();
           this.refresh();
-          break;
+          return true;
         case "KeyU":
-          ev.preventDefault();
           if (this.$config.allow("files", "upload") && this.$config.feature("upload")) {
             this.$event.publish("dialog.upload");
           }
-          break;
+          return true;
       }
     },
     hideExpansionPanel() {

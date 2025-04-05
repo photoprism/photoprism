@@ -663,7 +663,7 @@ let themes = {
       "surface": "#141417",
       "on-surface": "#ffffff",
       "surface-bright": "#333333",
-      "surface-variant": "#cccccc",
+      "surface-variant": "#242628",
       "on-surface-variant": "#f6f6f6",
       "card": "#171717",
       "selected": "#9c9c9c",

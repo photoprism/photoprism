@@ -52,7 +52,6 @@
                 <v-combobox
                   v-model="selectedAlbums"
                   :disabled="busy || loading || total > 0 || filesQuotaReached"
-                  :loading="loading"
                   hide-details
                   chips
                   closable-chips

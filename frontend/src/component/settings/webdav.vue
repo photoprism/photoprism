@@ -4,7 +4,7 @@
     persistent
     max-width="580"
     class="p-dialog p-settings-webdav"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

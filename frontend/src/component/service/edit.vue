@@ -4,7 +4,7 @@
     persistent
     max-width="500"
     class="p-dialog p-service-edit"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
@@ -286,7 +286,7 @@ export default {
     search(q) {
       if (this.loading) return;
 
-      const exists = this.paths.findIndex((p) => p.value === q);
+      const exists = this.paths.findIndex((p) => p.abs === q);
 
       if (exists !== -1 || !q) {
         this.pathItems = this.paths;

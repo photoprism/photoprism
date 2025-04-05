@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-03-31 23:53+0000\n"
+"PO-Revision-Date: 2025-04-04 08:03+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -42,7 +42,7 @@ msgstr "{0} 선택됨"
 msgid "{0}-{1} of {2}"
 msgstr "{2}의 {0}-{1}"
 
-#: src/page/albums.vue:601
+#: src/page/albums.vue:609
 msgid "%{n} albums found"
 msgstr "%{n}개 앨범을 찾음"
 
@@ -50,7 +50,7 @@ msgstr "%{n}개 앨범을 찾음"
 msgid "%{n} files uploaded"
 msgstr "%{n}개 파일 업로드함"
 
-#: src/page/library/browse.vue:338
+#: src/page/library/browse.vue:359
 msgid "%{n} folders found"
 msgstr "%{n}개 폴더를 찾음"
 
@@ -58,17 +58,17 @@ msgstr "%{n}개 폴더를 찾음"
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} q}의 GB 사용된 GB"
 
-#: src/page/labels.vue:524
+#: src/page/labels.vue:525
 msgid "%{n} labels found"
 msgstr "%{n}개 라벨을 찾음"
 
-#: src/page/people/new.vue:348 src/page/people/new.vue:437
-#: src/page/people/recognized.vue:526
+#: src/page/people/new.vue:350 src/page/people/new.vue:444
+#: src/page/people/recognized.vue:533
 msgid "%{n} people found"
 msgstr "%{n}명을 찾았습니다"
 
-#: src/page/album/photos.vue:313 src/page/album/photos.vue:489
-#: src/page/photos.vue:435 src/page/photos.vue:616
+#: src/page/album/photos.vue:308 src/page/album/photos.vue:489
+#: src/page/photos.vue:441 src/page/photos.vue:627
 msgid "%{n} pictures found"
 msgstr "사진 %{n}장 찾았습니다"
 
@@ -105,7 +105,7 @@ msgstr "4시간"
 msgid "A click will copy it to your clipboard."
 msgstr "클릭하면 클립보드에 복사됩니다."
 
-#: src/component/update.vue:17
+#: src/component/update.vue:18
 msgid "A new version of %{s} is available:"
 msgstr "s}의 새 버전을 사용할 수 있습니다:"
 
@@ -191,7 +191,7 @@ msgstr "이름 추가 %{s}?"
 msgid "Add Account"
 msgstr "계정 등록"
 
-#: src/page/albums.vue:118 src/page/albums.vue:302
+#: src/page/albums.vue:120 src/page/albums.vue:304
 msgid "Add Album"
 msgstr "앨범 추가"
 
@@ -209,7 +209,7 @@ msgstr "링크 추가"
 msgid "Add person?"
 msgstr "사람을 추가하시겠습니까?"
 
-#: src/page/albums.vue:412
+#: src/page/albums.vue:414
 msgid "Add pictures from search results by selecting them."
 msgstr "검색 결과에서 사진을 선택해 추가할 수 있습니다."
 
@@ -257,7 +257,7 @@ msgstr "1달 후"
 msgid "After one year"
 msgstr "1년 후"
 
-#: src/page/albums.vue:279
+#: src/page/albums.vue:281
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "검색 결과에서 사진을 선택한 뒤, 컨텍스트 메뉴를 사용하여 사진을 앨범에 추가할 수 있습니다."
 
@@ -277,7 +277,7 @@ msgstr "앨범"
 msgid "Album Backups"
 msgstr "앨범 백업"
 
-#: src/page/albums.vue:653
+#: src/page/albums.vue:668
 msgid "Album created"
 msgstr "앨범 생성됨"
 
@@ -295,11 +295,11 @@ msgstr "앨범 삭제됨"
 msgid "All"
 msgstr "모두"
 
-#: src/page/albums.vue:457
+#: src/page/albums.vue:465
 msgid "All %{n} albums loaded"
 msgstr "모든 %{n}개 앨범 로딩됨"
 
-#: src/page/labels.vue:373
+#: src/page/labels.vue:367
 msgid "All %{n} labels loaded"
 msgstr "모든 %{n}개의 라벨 로딩됨"
 
@@ -311,8 +311,8 @@ msgstr "모든 %{n}명 로딩됨"
 msgid "All Cameras"
 msgstr "모든 카메라"
 
-#: src/component/photo/toolbar.vue:74 src/page/albums.vue:43
-#: src/page/albums.vue:232 src/page/albums.vue:725
+#: src/component/photo/toolbar.vue:74 src/page/albums.vue:44
+#: src/page/albums.vue:240 src/page/albums.vue:740
 msgid "All Categories"
 msgstr "모든 카테고리"
 
@@ -344,7 +344,7 @@ msgstr "모든 달"
 msgid "All originals"
 msgstr "모든 원본"
 
-#: src/component/photo/toolbar.vue:76 src/page/albums.vue:92
+#: src/component/photo/toolbar.vue:76 src/page/albums.vue:93
 msgid "All Years"
 msgstr "모든 년도"
 
@@ -402,13 +402,13 @@ msgstr "승인"
 msgid "Apps and Devices"
 msgstr "앱 및 디바이스"
 
-#: src/app/routes.js:287 src/component/lightbox.vue:1178
+#: src/app/routes.js:287 src/component/lightbox.vue:1197
 #: src/component/navigation.vue:553 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398 src/page/settings/general.vue:417
 msgid "Archive"
 msgstr "보관"
 
-#: src/component/lightbox.vue:1852 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:1939 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "보관함"
 
@@ -519,8 +519,8 @@ msgstr "파란색"
 msgid "Brown"
 msgstr "갈색"
 
-#: src/component/photo/edit/files.vue:263 src/component/photo/toolbar.vue:132
-#: src/component/photo/upload/dialog.vue:240
+#: src/component/photo/edit/files.vue:263 src/component/photo/toolbar.vue:135
+#: src/component/upload/dialog.vue:240
 msgid "Browse"
 msgstr "찾아보기"
 
@@ -557,7 +557,7 @@ msgstr "당사가 제공하는 소프트웨어 및 서비스를 사용함으로�
 msgid "Calendar"
 msgstr "달력"
 
-#: src/component/photo/edit/details.vue:346 src/component/photo/toolbar.vue:222
+#: src/component/photo/edit/details.vue:346 src/component/photo/toolbar.vue:225
 #: src/component/photo/view/cards.vue:467 src/component/photo/view/list.vue:116
 msgid "Camera"
 msgstr "카메라"
@@ -570,15 +570,15 @@ msgstr "카메라 일련 번호"
 msgid "Can't access your authenticator app or device?"
 msgstr "인증 앱 또는 디바이스에 액세스할 수 없나요?"
 
-#: src/page/album/photos.vue:322 src/page/photos.vue:444
+#: src/page/album/photos.vue:317 src/page/photos.vue:450
 msgid "Can't load more, limit reached"
 msgstr "더 로드할 수 없습니다. 한도에 도달했습니다."
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:663 src/page/albums.vue:679 src/page/labels.vue:299
-#: src/page/labels.vue:319 src/page/library/browse.vue:220
-#: src/page/library/browse.vue:236 src/page/people/new.vue:276
-#: src/page/people/new.vue:292 src/page/people/recognized.vue:305
+#: src/page/albums.vue:678 src/page/albums.vue:694 src/page/labels.vue:293
+#: src/page/labels.vue:313 src/page/library/browse.vue:233
+#: src/page/library/browse.vue:249 src/page/people/new.vue:278
+#: src/page/people/new.vue:294 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
 msgid "Can't select more items"
 msgstr "더 많은 아이템을 선택할 수 없습니다"
@@ -605,7 +605,7 @@ msgstr "취소"
 
 #: src/component/photo/edit/details.vue:87 src/component/photo/edit/info.vue:59
 #: src/component/photo/edit/labels.vue:42
-#: src/component/photo/view/cards.vue:445
+#: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:71
 msgid "Caption"
 msgstr "캡션"
 
@@ -618,8 +618,8 @@ msgid "Carousel slide {0} of {1}"
 msgstr "1}의 {0} 캐러셀 슬라이드"
 
 #: src/page/about/feedback.vue:82 src/page/about/feedback.vue:83
-#: src/component/album/edit/dialog.vue:128 src/component/photo/toolbar.vue:381
-#: src/page/albums.vue:181
+#: src/component/album/edit/dialog.vue:128 src/component/photo/toolbar.vue:384
+#: src/page/albums.vue:183
 msgid "Category"
 msgstr "범주"
 
@@ -651,10 +651,10 @@ msgstr "변경 사항을 저장할 수 없음"
 
 #: src/component/user/edit/dialog.vue:83 src/component/user/edit/dialog.vue:159
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1811
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1898
 #: src/component/photo/edit/files.vue:160 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
-#: src/page/albums.vue:656 src/page/people/recognized.vue:119
+#: src/page/albums.vue:671 src/page/people/recognized.vue:119
 #: src/page/settings/advanced.vue:62 src/page/settings/content.vue:62
 #: src/page/settings/general.vue:108
 msgid "Changes successfully saved"
@@ -692,16 +692,16 @@ msgstr "클라이언트"
 msgid "Client Credentials"
 msgstr "클라이언트 자격 증명"
 
-#: src/page/admin/sessions.vue:529 src/component/lightbox.vue:253
-#: src/component/lightbox.vue:980 src/component/lightbox.vue:981
-#: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:151
-#: src/component/photo/upload/dialog.vue:228
+#: src/page/admin/sessions.vue:529 src/component/lightbox.vue:274
+#: src/component/lightbox.vue:999 src/component/lightbox.vue:1000
+#: src/component/photo/edit/details.vue:627 src/component/photo/toolbar.vue:154
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
 #: src/component/settings/passcode.vue:148
 #: src/component/settings/passcode.vue:456
 #: src/component/settings/passcode.vue:497
 #: src/component/settings/webdav.vue:131 src/component/share/dialog.vue:231
-#: src/component/update.vue:57 src/locales.js:207
+#: src/component/sidebar/info.vue:25 src/component/update.vue:57
+#: src/component/upload/dialog.vue:228 src/locales.js:207
 #: src/page/library/errors.vue:248
 msgid "Close"
 msgstr "닫기"
@@ -710,7 +710,7 @@ msgstr "닫기"
 msgid "Codec"
 msgstr "코덱"
 
-#: src/component/photo/toolbar.vue:354
+#: src/component/photo/toolbar.vue:357
 msgid "Color"
 msgstr "색깔"
 
@@ -762,12 +762,12 @@ msgstr "세부 연락처"
 msgid "Contact Us"
 msgstr "문의하기"
 
-#: src/page/albums.vue:425 src/page/labels.vue:234
+#: src/page/albums.vue:427 src/page/labels.vue:233
 #: src/page/people/recognized.vue:302
 msgid "Contains %{n} pictures."
 msgstr "%{n}개의 사진이 포함되어 있습니다."
 
-#: src/page/albums.vue:419 src/page/labels.vue:228
+#: src/page/albums.vue:421 src/page/labels.vue:227
 #: src/page/people/recognized.vue:296
 msgid "Contains one picture."
 msgstr "한 장의 사진이 포함되어 있습니다."
@@ -792,7 +792,7 @@ msgstr "기여자"
 msgid "Converting"
 msgstr "변환하는 중"
 
-#: src/common/util.js:784
+#: src/common/util.js:788
 msgid "Copied to clipboard"
 msgstr "클립보드에 복사했습니다"
 
@@ -809,7 +809,7 @@ msgid "Couldn't find anything."
 msgstr "아무것도 찾을 수 없습니다."
 
 #: src/page/settings/account.vue:685 src/component/photo/edit/details.vue:242
-#: src/component/photo/toolbar.vue:194 src/page/settings/account.vue:577
+#: src/component/photo/toolbar.vue:197 src/page/settings/account.vue:577
 msgid "Country"
 msgstr "나라"
 
@@ -849,7 +849,7 @@ msgstr "큐빅: 보통 품질, 우수한 성능"
 msgid "Current Password"
 msgstr "현재 비밀번호"
 
-#: src/options/themes.js:915 src/options/themes.js:924
+#: src/options/themes.js:919 src/options/themes.js:928
 msgid "Custom"
 msgstr "사용자 지정"
 
@@ -883,7 +883,7 @@ msgstr "디버그 로그"
 #: src/model/user.js:246 src/options/auth.js:20 src/options/auth.js:21
 #: src/options/auth.js:39 src/options/auth.js:40 src/options/options.js:128
 #: src/options/options.js:164 src/options/options.js:248
-#: src/options/themes.js:769 src/page/settings/general.vue:104
+#: src/options/themes.js:773 src/page/settings/general.vue:104
 msgid "Default"
 msgstr "기본값"
 
@@ -902,11 +902,11 @@ msgstr "기본 폴더"
 msgid "Delete"
 msgstr "삭제"
 
-#: src/component/photo/toolbar.vue:112 src/page/library/errors.vue:94
+#: src/component/photo/toolbar.vue:115 src/page/library/errors.vue:94
 msgid "Delete All"
 msgstr "모두 삭제"
 
-#: src/component/photo/toolbar.vue:416 src/page/library/errors.vue:190
+#: src/component/photo/toolbar.vue:419 src/page/library/errors.vue:190
 msgid "Delete all?"
 msgstr "모두 삭제하시겠습니까?"
 
@@ -914,7 +914,7 @@ msgstr "모두 삭제하시겠습니까?"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "고아가 된 색인 항목, 사이드카 파일 및 썸네일을 삭제합니다."
 
-#: src/component/album/edit/dialog.vue:107 src/page/albums.vue:403
+#: src/component/album/edit/dialog.vue:107 src/page/albums.vue:405
 msgid "Description"
 msgstr "설명"
 
@@ -922,8 +922,8 @@ msgstr "설명"
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "자세한 지시는 사용설명서에서 찾을 수 있습니다."
 
-#: src/component/photo/edit/dialog.vue:154
-#: src/component/photo/edit/dialog.vue:171
+#: src/component/photo/edit/dialog.vue:156
+#: src/component/photo/edit/dialog.vue:173
 msgid "Details"
 msgstr "세부 사항"
 
@@ -1013,7 +1013,7 @@ msgstr "검색 결과에 사진 제목을 표시합니다."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183 src/component/sidebar/info.vue:108
+#: src/component/photo/view/mosaic.vue:183 src/model/thumb.js:141
 #: src/options/options.js:241
 msgid "Document"
 msgstr "문서"
@@ -1038,13 +1038,13 @@ msgstr "RawTherapee를 사용하여 RAW 파일을 변환하지 마십시오."
 msgid "Done"
 msgstr "완료"
 
-#: src/component/photo/upload/dialog.vue:134 src/page/library/import.vue:46
+#: src/component/upload/dialog.vue:135 src/page/library/import.vue:46
 #: src/page/library/index.vue:52
 msgid "Done."
 msgstr "완료."
 
-#: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:113
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1206
+#: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:118
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1225
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:321
@@ -1063,12 +1063,12 @@ msgstr "원격 파일 다운로드하기"
 msgid "Download single files and zip archives."
 msgstr "단일 파일 및 ZIP 아카이브 다운로드하기."
 
-#: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:152
+#: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:157
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:1891 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:1978 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:117
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
-#: src/page/library/browse.vue:126
+#: src/page/library/browse.vue:139
 msgid "Downloading…"
 msgstr "다운로드 중…"
 
@@ -1104,8 +1104,8 @@ msgstr "다이나믹 크기 제한: %{n}px"
 msgid "E-Mail"
 msgstr "이메일"
 
-#: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:84
-#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
+#: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:89
+#: src/component/lightbox.vue:1126 src/component/lightbox.vue:1127
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:393
 msgid "Edit"
 msgstr "편집"
@@ -1169,8 +1169,8 @@ msgstr "인증코드를 입력하세요"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "작업을 확인하고 계속하려면 비밀번호를 입력하세요."
 
-#: src/page/connect.vue:54 src/component/lightbox.vue:257
-#: src/page/connect.vue:57 src/page/library/errors.vue:253
+#: src/page/connect.vue:54 src/component/lightbox.vue:278
+#: src/page/connect.vue:57 src/page/library/errors.vue:248
 msgid "Error"
 msgstr "오류"
 
@@ -1266,7 +1266,7 @@ msgid "Favorite"
 msgstr "즐겨 찾기"
 
 #: src/app/routes.js:222 src/component/navigation.vue:891
-#: src/options/options.js:134 src/page/albums.vue:96
+#: src/options/options.js:134 src/page/albums.vue:97
 msgid "Favorites"
 msgstr "즐겨 찾기"
 
@@ -1309,8 +1309,8 @@ msgstr "파일 크기"
 msgid "Filename"
 msgstr "파일이름"
 
-#: src/component/navigation.vue:1928 src/component/photo/edit/dialog.vue:265
-#: src/component/photo/edit/dialog.vue:282
+#: src/component/navigation.vue:1928 src/component/photo/edit/dialog.vue:267
+#: src/component/photo/edit/dialog.vue:284
 msgid "Files"
 msgstr "파일"
 
@@ -1333,11 +1333,11 @@ msgstr "초점 거리"
 msgid "Folder"
 msgstr "폴더"
 
-#: src/page/library/browse.vue:341
+#: src/page/library/browse.vue:362
 msgid "Folder contains %{n} files"
 msgstr "폴더에 %{n} 파일을 포함됨"
 
-#: src/page/library/browse.vue:332
+#: src/page/library/browse.vue:353
 msgid "Folder is empty"
 msgstr "폴더가 비어 있습니다"
 
@@ -1362,7 +1362,7 @@ msgstr "프레임"
 msgid "Full Access"
 msgstr "전체 권한"
 
-#: src/component/lightbox.vue:1055 src/component/lightbox.vue:1056
+#: src/component/lightbox.vue:1074 src/component/lightbox.vue:1075
 msgid "Fullscreen"
 msgstr "전체 화면"
 
@@ -1386,7 +1386,7 @@ msgstr "미리보기 생성"
 msgid "Generated"
 msgstr "생성됨"
 
-#: src/component/photo/toolbar.vue:184
+#: src/component/photo/toolbar.vue:189
 msgid "Get Started"
 msgstr "시작하기"
 
@@ -1509,7 +1509,7 @@ msgid "in"
 msgstr "입력"
 
 #: src/component/photo/view/cards.vue:149 src/component/photo/view/list.vue:87
-#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:153
+#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:152
 #: src/page/library/browse.vue:123
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "예상한 사진이 누락된 경우 라이브러리를 다시 검색하고 색인 생성이 완료될 때까지 기다리십시오."
@@ -1522,7 +1522,7 @@ msgstr "스택과 아카이브를 다운로드할 때 RAW 이미지 파일을 �
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "스택과 아카이브를 다운로드할 때 사이드카 파일을 포함하세요."
 
-#: src/component/photo/upload/dialog.vue:136 src/page/library/import.vue:48
+#: src/component/upload/dialog.vue:137 src/page/library/import.vue:48
 msgid "Increase storage size or delete files to continue."
 msgstr "계속하려면 저장 용량 크기를 늘리거나 파일을 삭제하세요."
 
@@ -1547,15 +1547,16 @@ msgstr "색인 실패"
 msgid "Indexing media and sidecar files…"
 msgstr "미디어 및 사이드카 파일 색인중…"
 
-#: src/component/sidebar/info.vue:28
-msgid "Info"
+#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
+#: src/component/sidebar/info.vue:30
+msgid "Information"
 msgstr "정보"
 
 #: src/component/photo/edit/files.vue:282
 msgid "Instance ID"
 msgstr "인스턴스 ID"
 
-#: src/component/photo/upload/dialog.vue:136 src/page/library/import.vue:48
+#: src/component/upload/dialog.vue:137 src/page/library/import.vue:48
 msgid "Insufficient storage."
 msgstr "저장 공간 부족."
 
@@ -1589,7 +1590,7 @@ msgstr "잘못된 날짜"
 msgid "Invalid parameters"
 msgstr "잘못된 매개 변수"
 
-#: src/component/photo/edit/dialog.vue:180 src/model/thumb.js:83
+#: src/component/photo/edit/dialog.vue:191 src/model/thumb.js:154
 msgid "Invalid photo selected"
 msgstr "잘못된 사진을 선택했습니다."
 
@@ -1636,8 +1637,8 @@ msgid "Label"
 msgstr "라벨"
 
 #: src/app/routes.js:389 src/component/navigation.vue:1175
-#: src/component/photo/edit/dialog.vue:186
-#: src/component/photo/edit/dialog.vue:203 src/options/options.js:138
+#: src/component/photo/edit/dialog.vue:188
+#: src/component/photo/edit/dialog.vue:205 src/options/options.js:138
 #: src/page/settings/general.vue:247
 msgid "Labels"
 msgstr "라벨"
@@ -1690,7 +1691,7 @@ msgid "Learn more"
 msgstr "더 보기"
 
 #: src/page/admin/sessions.vue:108 src/page/admin/users.vue:133
-#: src/page/labels.vue:131
+#: src/page/labels.vue:132
 msgid "Learn More"
 msgstr "자세히 알아보기"
 
@@ -1714,7 +1715,7 @@ msgstr "라이브러리"
 msgid "License"
 msgstr "라이센스"
 
-#: src/component/lightbox.vue:1073 src/component/lightbox.vue:1074
+#: src/component/lightbox.vue:1092 src/component/lightbox.vue:1093
 msgid "Like"
 msgstr "좋아요"
 
@@ -1722,7 +1723,7 @@ msgstr "좋아요"
 msgid "Lime"
 msgstr "라임색"
 
-#: src/page/library/browse.vue:345
+#: src/page/library/browse.vue:366
 msgid "Limit reached, showing first %{n} files"
 msgstr "한도에 도달하여 처음 %{n} 파일을 표시합니다"
 
@@ -1744,8 +1745,7 @@ msgstr "목록 보기"
 
 #: src/component/photo/view/cards.vue:319
 #: src/component/photo/view/cards.vue:501 src/component/photo/view/list.vue:176
-#: src/component/photo/view/mosaic.vue:163 src/component/sidebar/info.vue:99
-#: src/options/options.js:221
+#: src/component/photo/view/mosaic.vue:163 src/options/options.js:221
 msgid "Live"
 msgstr "라이브"
 
@@ -1777,8 +1777,8 @@ msgstr "현지 시간"
 #: src/component/album/edit/dialog.vue:92 src/component/photo/edit/info.vue:63
 #: src/component/photo/edit/labels.vue:48
 #: src/component/photo/view/cards.vue:555 src/component/photo/view/list.vue:117
-#: src/page/albums.vue:98 src/page/settings/account.vue:557
-#: src/page/settings/account.vue:559
+#: src/component/sidebar/info.vue:106 src/page/albums.vue:99
+#: src/page/settings/account.vue:557 src/page/settings/account.vue:559
 msgid "Location"
 msgstr "위치"
 
@@ -1901,11 +1901,11 @@ msgid "Monochrome"
 msgstr "단색"
 
 #: src/page/settings/account.vue:475 src/component/photo/edit/details.vue:137
-#: src/component/photo/toolbar.vue:328
+#: src/component/photo/toolbar.vue:331
 msgid "Month"
 msgstr "달"
 
-#: src/component/lightbox.vue:1126
+#: src/component/lightbox.vue:1145
 msgid "More options"
 msgstr "추가 옵션"
 
@@ -1925,7 +1925,7 @@ msgstr "파일 이동하기"
 msgid "Must have at least %{n} characters."
 msgstr "8자 이상이어야 합니다."
 
-#: src/component/lightbox.vue:1022 src/component/lightbox.vue:1023
+#: src/component/lightbox.vue:1041 src/component/lightbox.vue:1042
 msgid "Mute"
 msgstr "음소거"
 
@@ -1937,7 +1937,7 @@ msgstr "음소거"
 #: src/component/photo/edit/info.vue:125 src/component/photo/edit/people.vue:36
 #: src/component/photo/view/list.vue:117 src/component/service/edit.vue:310
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:286
-#: src/page/albums.vue:97 src/page/auth/login.vue:145
+#: src/page/albums.vue:98 src/page/auth/login.vue:145
 #: src/page/people/new.vue:68 src/page/settings/services.vue:36
 msgid "Name"
 msgstr "이름"
@@ -1946,8 +1946,8 @@ msgstr "이름"
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:30
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:53
-#: src/page/library/browse.vue:45 src/page/people/new.vue:51
+#: src/component/photo/edit/people.vue:39 src/page/labels.vue:54
+#: src/page/library/browse.vue:46 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
 msgstr "이름이 너무 깁니다"
@@ -1957,7 +1957,7 @@ msgstr "이름이 너무 깁니다"
 msgid "Never"
 msgstr "안함"
 
-#: src/page/people.vue:31
+#: src/page/people.vue:32
 msgid "New"
 msgstr "신규"
 
@@ -1967,11 +1967,11 @@ msgstr "새로운 비밀번호"
 
 #: src/component/album/edit/dialog.vue:24 src/component/photo/toolbar.vue:114
 #: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:136
-#: src/page/albums.vue:99
+#: src/page/albums.vue:100
 msgid "Newest First"
 msgstr "최신 순"
 
-#: src/component/lightbox.vue:256 src/locales.js:298
+#: src/component/lightbox.vue:277 src/locales.js:298
 msgid "Next"
 msgstr "다음"
 
@@ -1991,7 +1991,7 @@ msgstr "다음 비주얼"
 msgid "No"
 msgstr "아니요"
 
-#: src/page/albums.vue:596 src/page/albums.vue:274
+#: src/page/albums.vue:604 src/page/albums.vue:276
 msgid "No albums found"
 msgstr "앨범이 없습니다"
 
@@ -1999,7 +1999,7 @@ msgstr "앨범이 없습니다"
 msgid "No data available"
 msgstr "사용 가능한 데이터 없음"
 
-#: src/page/labels.vue:519 src/page/labels.vue:152
+#: src/page/labels.vue:520 src/page/labels.vue:151
 msgid "No labels found"
 msgstr "라벨이 없습니다"
 
@@ -2011,16 +2011,16 @@ msgstr "일치하는 레코드가 없습니다."
 msgid "No more"
 msgstr "더 이상"
 
-#: src/component/photo/edit/people.vue:34 src/page/people/new.vue:344
-#: src/page/people/new.vue:433 src/page/people/new.vue:100
-#: src/page/people/recognized.vue:521 src/page/people/recognized.vue:142
+#: src/component/photo/edit/people.vue:34 src/page/people/new.vue:346
+#: src/page/people/new.vue:440 src/page/people/new.vue:100
+#: src/page/people/recognized.vue:528 src/page/people/recognized.vue:142
 msgid "No people found"
 msgstr "사람이 없습니다"
 
-#: src/component/lightbox.vue:334 src/component/photo/view/cards.vue:144
+#: src/component/lightbox.vue:355 src/component/photo/view/cards.vue:144
 #: src/component/photo/view/list.vue:82 src/component/photo/view/mosaic.vue:68
 #: src/page/album/photos.vue:484 src/page/library/browse.vue:122
-#: src/page/photos.vue:611 src/page/places.vue:623 src/page/places.vue:721
+#: src/page/photos.vue:622 src/page/places.vue:623 src/page/places.vue:721
 msgid "No pictures found"
 msgstr "사진이 없습니다"
 
@@ -2049,9 +2049,9 @@ msgstr "아니요, 괜찮습니다"
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr "이 키워드를 포함하는 경고 또는 오류가 없습니다. 검색은 대소문자를 구분합니다."
 
-#: src/component/photo/upload/dialog.vue:208
 #: src/component/photo/view/cards.vue:154 src/component/photo/view/list.vue:59
 #: src/component/photo/view/list.vue:92 src/component/photo/view/mosaic.vue:78
+#: src/component/upload/dialog.vue:208
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 전에 검토가 필요합니다."
 
@@ -2060,12 +2060,12 @@ msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 �
 msgid "None"
 msgstr "없음"
 
-#: src/common/util.js:791 src/component/lightbox.vue:602
+#: src/common/util.js:795 src/component/lightbox.vue:623
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "허용되지 않음"
 
-#: src/component/lightbox.vue:599
+#: src/component/lightbox.vue:620
 msgid "Not found"
 msgstr "찾을 수 없음"
 
@@ -2073,8 +2073,8 @@ msgstr "찾을 수 없음"
 msgid "Not sorted."
 msgstr "정렬되지 않았습니다."
 
-#: src/common/util.js:796 src/component/lightbox.vue:596
-#: src/component/lightbox.vue:713
+#: src/common/util.js:800 src/component/lightbox.vue:617
+#: src/component/lightbox.vue:734
 msgid "Not supported"
 msgstr "지원되지 않음"
 
@@ -2117,7 +2117,7 @@ msgstr "확인"
 
 #: src/component/album/edit/dialog.vue:25 src/component/photo/toolbar.vue:115
 #: src/component/photo/toolbar.vue:127 src/component/photo/toolbar.vue:137
-#: src/page/albums.vue:100
+#: src/page/albums.vue:101
 msgid "Oldest First"
 msgstr "오래된 순"
 
@@ -2133,11 +2133,11 @@ msgstr "썸네일을 주문형으로 생성하면 CPU 및 메모리 사용량이
 msgid "Once a week"
 msgstr "일주일에 한 번"
 
-#: src/page/albums.vue:598
+#: src/page/albums.vue:606
 msgid "One album found"
 msgstr "1개 앨범 찾음"
 
-#: src/page/library/browse.vue:334
+#: src/page/library/browse.vue:355
 msgid "One file found"
 msgstr "1개 파일 찾음"
 
@@ -2145,20 +2145,20 @@ msgstr "1개 파일 찾음"
 msgid "One file uploaded"
 msgstr "업로드된 파일 1개"
 
-#: src/page/library/browse.vue:336
+#: src/page/library/browse.vue:357
 msgid "One folder found"
 msgstr "1개 폴더 찾음"
 
-#: src/page/labels.vue:521
+#: src/page/labels.vue:522
 msgid "One label found"
 msgstr "라벨 1개를 찾았습니다."
 
-#: src/page/people/new.vue:346 src/page/people/new.vue:435
-#: src/page/people/recognized.vue:523
+#: src/page/people/new.vue:348 src/page/people/new.vue:442
+#: src/page/people/recognized.vue:530
 msgid "One person found"
 msgstr "한 사람이 발견됨"
 
-#: src/page/album/photos.vue:486 src/page/photos.vue:613
+#: src/page/album/photos.vue:486 src/page/photos.vue:624
 msgid "One picture found"
 msgstr "사진 1장 발견"
 
@@ -2250,8 +2250,8 @@ msgid "Password changed"
 msgstr "비밀번호 변경됨"
 
 #: src/app/routes.js:404 src/app/routes.js:428 src/component/navigation.vue:843
-#: src/component/navigation.vue:1896 src/component/photo/edit/dialog.vue:226
-#: src/component/photo/edit/dialog.vue:243 src/options/options.js:133
+#: src/component/navigation.vue:1896 src/component/photo/edit/dialog.vue:228
+#: src/component/photo/edit/dialog.vue:245 src/options/options.js:133
 #: src/page/settings/general.vue:175
 msgid "People"
 msgstr "사람"
@@ -2260,7 +2260,7 @@ msgstr "사람"
 msgid "People you share a link with will be able to view public contents."
 msgstr "링크를 공유한 사람들은 공개 콘텐츠를 볼 수 있습니다."
 
-#: src/component/photo/clipboard.vue:126 src/component/photo/toolbar.vue:257
+#: src/component/photo/clipboard.vue:126 src/component/photo/toolbar.vue:262
 msgid "Permanently deleted"
 msgstr "영구 삭제됨"
 
@@ -2325,11 +2325,11 @@ msgstr "새 비밀번호를 확인하세요."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "무작위로 생성된 다음 앱 비밀번호는 다시 볼 수 없으므로 복사하여 안전한 곳에 보관하시기 바랍니다."
 
-#: src/component/photo/upload/dialog.vue:203
+#: src/component/upload/dialog.vue:203
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "사적이거나 불법적이거나 불쾌감을 주는 사진은 업로드하지 마세요."
 
-#: src/component/photo/upload/dialog.vue:205
+#: src/component/upload/dialog.vue:205
 msgid "Please don't upload photos containing offensive content."
 msgstr "불쾌감한 콘텐츠 포함된 사진을 업로드하지 마십시오."
 
@@ -2365,7 +2365,7 @@ msgstr "초상"
 msgid "Preserve filenames"
 msgstr "파일 이름 보류"
 
-#: src/component/photo/upload/dialog.vue:162
+#: src/component/upload/dialog.vue:162
 msgid "Press enter to create a new album."
 msgstr "새 앨범을 만들려면 Enter 키를 누르세요."
 
@@ -2385,7 +2385,7 @@ msgstr "미리보기"
 msgid "Preview Images"
 msgstr "이미지 미리보기"
 
-#: src/component/lightbox.vue:255 src/locales.js:299
+#: src/component/lightbox.vue:276 src/locales.js:299
 msgid "Previous"
 msgstr "이전 게시물"
 
@@ -2445,8 +2445,7 @@ msgid "Raw"
 msgstr "원시"
 
 #: src/component/photo/view/cards.vue:313
-#: src/component/photo/view/mosaic.vue:157 src/component/sidebar/info.vue:90
-#: src/page/settings/content.vue:378
+#: src/component/photo/view/mosaic.vue:157 src/page/settings/content.vue:378
 msgid "RAW"
 msgstr "날것의"
 
@@ -2460,7 +2459,7 @@ msgstr "읽기 전용 모드"
 
 #: src/component/album/edit/dialog.vue:26 src/component/photo/toolbar.vue:116
 #: src/component/photo/toolbar.vue:128 src/component/photo/toolbar.vue:138
-#: src/page/albums.vue:101
+#: src/page/albums.vue:102
 msgid "Recently Added"
 msgstr "최근 추가됨"
 
@@ -2468,7 +2467,7 @@ msgstr "최근 추가됨"
 msgid "Recently Archived"
 msgstr "최근 아카이브"
 
-#: src/component/photo/toolbar.vue:139 src/page/albums.vue:102
+#: src/component/photo/toolbar.vue:139 src/page/albums.vue:103
 msgid "Recently Edited"
 msgstr "최근 편집"
 
@@ -2481,7 +2480,7 @@ msgstr "인덱싱이 완료된 후 인식이 시작됩니다."
 msgid "Recognize faces so people can be assigned and found."
 msgstr "특정 사람을 찾을 수 있도록 얼굴을 인식합니다."
 
-#: src/page/people.vue:18
+#: src/page/people.vue:19
 msgid "Recognized"
 msgstr "인정"
 
@@ -2494,9 +2493,9 @@ msgid "Red"
 msgstr "빨간색"
 
 #: src/page/admin/sessions.vue:99 src/page/admin/users.vue:124
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:164
-#: src/page/albums.vue:172 src/page/labels.vue:111
-#: src/page/library/browse.vue:90 src/page/library/errors.vue:78
+#: src/component/album/toolbar.vue:79 src/component/photo/toolbar.vue:169
+#: src/page/albums.vue:173 src/page/labels.vue:112
+#: src/page/library/browse.vue:90 src/page/library/errors.vue:79
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:87
 msgid "Refresh"
 msgstr "새로 고침"
@@ -2514,7 +2513,7 @@ msgstr "등록하기"
 msgid "Reload"
 msgstr "새로고침"
 
-#: src/component/navigation.vue:108 src/component/update.vue:26
+#: src/component/navigation.vue:108 src/component/update.vue:27
 #: src/page/settings/general.vue:104
 msgid "Reloading…"
 msgstr "새로고침 중…"
@@ -2531,7 +2530,7 @@ msgstr "제거"
 msgid "remove failed: unknown album"
 msgstr "제거 실패 - 잘못된 앨범"
 
-#: src/component/lightbox.vue:1163 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1182 src/component/photo/clipboard.vue:155
 #, fuzzy
 msgid "Remove from Album"
 msgstr "앨범에서 제거"
@@ -2540,7 +2539,7 @@ msgstr "앨범에서 제거"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "가져온 파일을 제거하여 저장 공간을 절약하십시오. 지원되지 않는 파일 형식은 삭제되지 않으며 현재 위치에 남아 있습니다."
 
-#: src/common/api.js:102 src/component/lightbox.vue:709
+#: src/common/api.js:102 src/component/lightbox.vue:730
 msgid "Request failed - are you offline?"
 msgstr "요청 실패 - 오프라인 상태인가요?"
 
@@ -2561,12 +2560,12 @@ msgstr "해상도"
 msgid "Restart"
 msgstr "다시 시작"
 
-#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1192
+#: src/component/user/edit/dialog.vue:485 src/component/lightbox.vue:1211
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "복원"
 
-#: src/component/lightbox.vue:1870
+#: src/component/lightbox.vue:1957
 msgid "Restored"
 msgstr "복원됨"
 
@@ -2623,9 +2622,9 @@ msgstr "범위"
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:62
 #: src/component/navigation.vue:340 src/component/navigation.vue:1864
 #: src/component/photo/toolbar.vue:56 src/options/options.js:129
-#: src/page/albums.vue:100 src/page/labels.vue:77
-#: src/page/library/errors.vue:75 src/page/people/recognized.vue:65
-#: src/page/places.vue:79 src/page/settings/content.vue:235
+#: src/page/albums.vue:99 src/page/labels.vue:76 src/page/library/errors.vue:75
+#: src/page/people/recognized.vue:65 src/page/places.vue:79
+#: src/page/settings/content.vue:235
 msgid "Search"
 msgstr "검색"
 
@@ -2645,7 +2644,7 @@ msgstr "비밀"
 msgid "Security and Access"
 msgstr "보안 및 액세스"
 
-#: src/component/lightbox.vue:1090 src/component/lightbox.vue:1091
+#: src/component/lightbox.vue:1109 src/component/lightbox.vue:1110
 msgid "Select"
 msgstr "선택"
 
@@ -2661,12 +2660,11 @@ msgstr "날짜 선택"
 msgid "Select dates"
 msgstr "날짜 선택"
 
-#: src/component/photo/album/dialog.vue:54
-#: src/component/photo/upload/dialog.vue:154
+#: src/component/photo/album/dialog.vue:54 src/component/upload/dialog.vue:154
 msgid "Select or create an album"
 msgstr "앨범 선택 또는 생성"
 
-#: src/component/photo/upload/dialog.vue:137
+#: src/component/upload/dialog.vue:138
 msgid "Select the files to upload…"
 msgstr "업로드할 파일 선택…"
 
@@ -2715,7 +2713,7 @@ msgstr "세션 ID"
 msgid "Sessions"
 msgstr "세션"
 
-#: src/component/lightbox.vue:1148
+#: src/component/lightbox.vue:1167
 msgid "Set as Album Cover"
 msgstr "앨범 표지로 설정"
 
@@ -2734,7 +2732,7 @@ msgstr "설정 저장됨"
 msgid "Setup"
 msgstr "설치"
 
-#: src/component/album/clipboard.vue:49 src/component/album/toolbar.vue:93
+#: src/component/album/clipboard.vue:49 src/component/album/toolbar.vue:98
 #: src/component/photo/clipboard.vue:51 src/page/settings/general.vue:369
 msgid "Share"
 msgstr "공유"
@@ -2763,11 +2761,11 @@ msgstr "캡션 표시"
 msgid "Show hidden"
 msgstr "숨김 표시"
 
-#: src/page/labels.vue:107
+#: src/page/labels.vue:106
 msgid "Show less"
 msgstr "덜 보여"
 
-#: src/page/labels.vue:100
+#: src/page/labels.vue:99
 msgid "Show more"
 msgstr "더 보여"
 
@@ -2778,10 +2776,6 @@ msgstr "라이브러리에 서버 로그를 표시합니다."
 #: src/page/settings/content.vue:282
 msgid "Show Titles"
 msgstr "제목 표시"
-
-#: src/component/lightbox.vue:1003 src/component/lightbox.vue:1004
-msgid "Show/Hide Sidebar"
-msgstr "사이드바 표시/숨기기"
 
 #: src/model/file.js:214 src/page/settings/content.vue:400
 msgid "Sidecar"
@@ -2800,9 +2794,13 @@ msgid "Similar"
 msgstr "비슷한"
 
 #: src/component/photo/edit/files.vue:49 src/component/photo/edit/files.vue:341
-#: src/component/service/edit.vue:139
+#: src/component/service/edit.vue:139 src/component/sidebar/info.vue:95
 msgid "Size"
 msgstr "크기"
+
+#: src/component/lightbox.vue:1057 src/component/lightbox.vue:1058
+msgid "Slideshow"
+msgstr "슬라이드쇼"
 
 #: src/options/options.js:156
 msgid "Slow"
@@ -2816,7 +2814,7 @@ msgstr "소프트웨어"
 msgid "Software Update"
 msgstr "소프트웨어 업데이트"
 
-#: src/component/lightbox.vue:706
+#: src/component/lightbox.vue:727
 msgid "Something went wrong, try again"
 msgstr "문제가 발생했습니다. 다시 시도하세요."
 
@@ -2824,8 +2822,8 @@ msgstr "문제가 발생했습니다. 다시 시도하세요."
 msgid "Sort by"
 msgstr "정렬 기준"
 
-#: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:276
-#: src/page/albums.vue:207
+#: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:279
+#: src/page/albums.vue:209
 msgid "Sort Order"
 msgstr "정렬 방법"
 
@@ -2870,10 +2868,6 @@ msgstr "시작"
 #: src/page/settings/general.vue:127
 msgid "Start Page"
 msgstr "시작 페이지"
-
-#: src/component/lightbox.vue:1038 src/component/lightbox.vue:1039
-msgid "Start/Stop Slideshow"
-msgstr "슬라이드쇼 시작/중지"
 
 #: src/page/settings/advanced.vue:426
 msgid "Static Size Limit: %{n}px"
@@ -2939,6 +2933,7 @@ msgstr "원시 사진과 동영상 파일을 동기화하기"
 
 #: src/component/photo/edit/info.vue:183 src/component/photo/view/cards.vue:200
 #: src/component/photo/view/cards.vue:458 src/component/photo/view/list.vue:115
+#: src/component/sidebar/info.vue:88
 msgid "Taken"
 msgstr "찍음"
 
@@ -3018,6 +3013,7 @@ msgstr "주제"
 
 #: src/component/photo/edit/info.vue:57 src/component/photo/edit/info.vue:155
 #: src/component/photo/edit/labels.vue:40 src/component/photo/view/list.vue:114
+#: src/component/sidebar/info.vue:56
 msgid "Title"
 msgstr "주제"
 
@@ -3025,7 +3021,7 @@ msgstr "주제"
 msgid "Title / Position"
 msgstr "직위"
 
-#: src/page/albums.vue:82
+#: src/page/albums.vue:83
 msgid "Title too long"
 msgstr "주제 너무 긴다"
 
@@ -3053,7 +3049,7 @@ msgstr "업그레이드하려면 활성화 코드를 입력하거나 '등록'을
 msgid "Today"
 msgstr "오늘"
 
-#: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:74
+#: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:77
 msgid "Toggle View"
 msgstr "보기형식 변경"
 
@@ -3061,7 +3057,7 @@ msgstr "보기형식 변경"
 msgid "Token"
 msgstr "토큰"
 
-#: src/component/photo/upload/dialog.vue:202
+#: src/component/upload/dialog.vue:214
 msgid "Too many files selected"
 msgstr "선택한 파일이 너무 많습니다."
 
@@ -3069,13 +3065,13 @@ msgstr "선택한 파일이 너무 많습니다."
 msgid "Too many requests"
 msgstr "너무 많은 요청"
 
-#: src/component/photo/toolbar.vue:192 src/page/library/errors.vue:88
+#: src/component/photo/toolbar.vue:197 src/page/library/errors.vue:89
 msgid "Troubleshooting"
 msgstr "문제 해결"
 
 #: src/component/photo/view/cards.vue:146 src/component/photo/view/list.vue:54
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:70
-#: src/page/albums.vue:276 src/page/labels.vue:153
+#: src/page/albums.vue:278 src/page/labels.vue:152
 #: src/page/people/recognized.vue:143
 msgid "Try again using other filters or keywords."
 msgstr "다른 필터 또는 키워드를 사용하여 다시 시도하십시오."
@@ -3102,7 +3098,7 @@ msgid "Unique ID"
 msgstr "유일 ID"
 
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
-#: src/page/settings/account.vue:501 src/common/util.js:464
+#: src/page/settings/account.vue:501 src/common/util.js:468
 #: src/component/photo/edit/details.vue:21
 #: src/component/photo/edit/details.vue:111
 #: src/component/photo/edit/details.vue:138
@@ -3113,8 +3109,8 @@ msgstr "유일 ID"
 #: src/model/photo.js:1056 src/model/photo.js:1069 src/model/user.js:157
 #: src/options/options.js:51 src/options/options.js:69
 #: src/options/options.js:86 src/options/options.js:100
-#: src/options/options.js:112 src/page/library/errors.vue:245
-#: src/page/library/errors.vue:262
+#: src/options/options.js:112 src/page/library/errors.vue:240
+#: src/page/library/errors.vue:257
 msgid "Unknown"
 msgstr "알 수 없는"
 
@@ -3171,25 +3167,24 @@ msgstr "업그레이드"
 msgid "Upgrade Now"
 msgstr "지금 업그레이드"
 
-#: src/component/album/toolbar.vue:103 src/component/navigation.vue:1822
-#: src/component/photo/toolbar.vue:174 src/component/photo/upload/dialog.vue:50
-#: src/component/service/upload.vue:144 src/page/albums.vue:182
-#: src/page/labels.vue:121 src/page/library/import.vue:133
+#: src/component/album/toolbar.vue:108 src/component/navigation.vue:1822
+#: src/component/photo/toolbar.vue:179 src/component/service/upload.vue:144
+#: src/component/upload/dialog.vue:51 src/page/albums.vue:183
+#: src/page/labels.vue:122 src/page/library/import.vue:133
 #: src/page/settings/general.vue:297 src/page/settings/services.vue:37
 msgid "Upload"
 msgstr "업로드"
 
-#: src/component/photo/upload/dialog.vue:295
+#: src/component/upload/dialog.vue:307
 msgid "Upload complete"
 msgstr "업로드 완료"
 
-#: src/component/photo/upload/dialog.vue:132
+#: src/component/upload/dialog.vue:133
 msgid "Upload complete. Indexing…"
 msgstr "업로드 완료. 색인중…"
 
-#: src/component/photo/upload/dialog.vue:281
-#: src/component/photo/upload/dialog.vue:300
-#: src/component/photo/upload/dialog.vue:128
+#: src/component/upload/dialog.vue:293 src/component/upload/dialog.vue:312
+#: src/component/upload/dialog.vue:129
 msgid "Upload failed"
 msgstr "업로드 실패"
 
@@ -3206,13 +3201,12 @@ msgstr "업로드 경로"
 msgid "Upload to WebDAV and share links with friends."
 msgstr "WebDAV에 업로드하고 친구와 링크로 공유합니다."
 
-#: src/component/photo/upload/dialog.vue:130
+#: src/component/upload/dialog.vue:131
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{t} 중 %{n} 업로드 중…"
 
-#: src/component/photo/upload/dialog.vue:116
-#: src/component/photo/upload/dialog.vue:124
-#: src/component/photo/upload/dialog.vue:238
+#: src/component/upload/dialog.vue:128 src/component/upload/dialog.vue:136
+#: src/component/upload/dialog.vue:250
 msgid "Uploading photos…"
 msgstr "사진 업로드중…"
 
@@ -3220,7 +3214,7 @@ msgstr "사진 업로드중…"
 msgid "Uploading…"
 msgstr "업로드 중…"
 
-#: src/component/photo/upload/dialog.vue:205
+#: src/component/upload/dialog.vue:205
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "이러한 이미지가 포함될 수 있는 업로드는 자동으로 거부됩니다."
 
@@ -3291,7 +3285,7 @@ msgstr "비디오 시간"
 msgid "Videos"
 msgstr "동영상"
 
-#: src/component/photo/toolbar.vue:250 src/component/photo/view/cards.vue:350
+#: src/component/photo/toolbar.vue:253 src/component/photo/view/cards.vue:350
 #: src/component/photo/view/mosaic.vue:194
 msgid "View"
 msgstr "보기"
@@ -3312,7 +3306,7 @@ msgstr "방문자"
 msgid "Visual Similarity"
 msgstr "시각적 유사성"
 
-#: src/page/library/errors.vue:255
+#: src/page/library/errors.vue:250
 msgid "Warning"
 msgstr "경고"
 
@@ -3365,7 +3359,7 @@ msgid "Work Details"
 msgstr "작업 내용"
 
 #: src/page/settings/account.vue:500 src/component/photo/edit/details.vue:163
-#: src/component/photo/toolbar.vue:302 src/page/albums.vue:154
+#: src/component/photo/toolbar.vue:305 src/page/albums.vue:156
 msgid "Year"
 msgstr "년"
 
@@ -3382,7 +3376,7 @@ msgstr "황색"
 #: src/component/photo/edit/files.vue:510 src/component/photo/edit/info.vue:281
 #: src/component/photo/edit/info.vue:297 src/component/photo/edit/info.vue:313
 #: src/component/photo/edit/info.vue:329 src/component/photo/edit/info.vue:344
-#: src/component/photo/toolbar.vue:417
+#: src/component/photo/toolbar.vue:420
 msgid "Yes"
 msgstr "네"
 
@@ -3399,7 +3393,7 @@ msgstr "하나의 앨범 만 다운로드할 수 있습니다"
 msgid "You can only download one label"
 msgstr "하나의 라벨 만 다운로드할 수 있습니다"
 
-#: src/component/photo/upload/dialog.vue:203
+#: src/component/upload/dialog.vue:203
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "테스트 목적으로 최대 %{n}개의 파일을 업로드할 수 있습니다."
 
@@ -3425,13 +3419,22 @@ msgstr "브라우저가 WebGL을 지원하지 않습니다."
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "귀하의 지속적인 지원은 정기적인 업데이트를 제공하고 독립적인 상태를 유지하는 데 도움이 되어 당사의 사명을 완수하고 귀하의 개인 정보를 보호할 수 있습니다."
 
-#: src/page/albums.vue:284
+#: src/page/albums.vue:286
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
 
-#: src/component/lightbox.vue:254
+#: src/component/lightbox.vue:275
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Start/Stop Slideshow"
+#~ msgstr "슬라이드쇼 시작/중지"
+
+#~ msgid "Info"
+#~ msgstr "정보"
+
+#~ msgid "Show/Hide Sidebar"
+#~ msgstr "사이드바 표시/숨기기"
 
 #~ msgid "Add a caption"
 #~ msgstr "캡션 추가"

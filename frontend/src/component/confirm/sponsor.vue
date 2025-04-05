@@ -4,7 +4,7 @@
     persistent
     max-width="575"
     class="p-dialog modal-dialog sponsor-dialog"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

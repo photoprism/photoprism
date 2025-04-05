@@ -5,7 +5,7 @@
     max-width="500"
     class="p-dialog dialog-label-edit"
     color="background"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

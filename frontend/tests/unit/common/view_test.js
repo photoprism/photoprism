@@ -5,16 +5,16 @@ let assert = chai.assert;
 
 describe("common/view", () => {
   it("should return parent", () => {
-    assert.equal($view.parent(), null);
+    assert.equal($view.getParent(), null);
   });
   it("should return parent name", () => {
-    assert.equal($view.parentName(), "");
+    assert.equal($view.getParentName(), "");
   });
   it("should return data", () => {
-    assert.containsSubset($view.data(), {});
+    assert.containsSubset($view.getData(), {});
   });
   it("should return number of layers", () => {
-    assert.containsSubset($view.layers(), 0);
+    assert.containsSubset($view.len(), 0);
   });
   it("should return if root view is active", () => {
     assert.equal($view.isRoot(), true);

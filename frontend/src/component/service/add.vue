@@ -4,7 +4,7 @@
     persistent
     max-width="500"
     class="p-dialog p-service-add"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

@@ -4,7 +4,7 @@
     persistent
     max-width="350"
     class="p-dialog p-photo-archive-dialog"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
   >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">

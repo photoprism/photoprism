@@ -168,4 +168,7 @@ module.exports = (config) => {
 
     singleRun: true,
   });
+
+  // Set default timezone.
+  process.env.TZ = 'UTC';
 };

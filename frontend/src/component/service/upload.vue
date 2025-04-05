@@ -4,7 +4,7 @@
     persistent
     max-width="400"
     class="p-dialog p-service-upload"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

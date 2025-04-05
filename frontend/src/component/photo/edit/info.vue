@@ -337,7 +337,7 @@ export default {
   },
   data() {
     return {
-      view: this.$view.data(),
+      view: this.$view.getData(),
       options: options,
       config: this.$config.values,
       readonly: this.$config.get("readonly"),

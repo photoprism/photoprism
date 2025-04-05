@@ -452,7 +452,7 @@ export default {
   emits: ["close"],
   data() {
     return {
-      view: this.$view.data(),
+      view: this.$view.getData(),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       all: {

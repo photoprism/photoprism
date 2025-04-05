@@ -194,7 +194,7 @@ export default {
   },
   data() {
     return {
-      view: this.$view.data(),
+      view: this.$view.getData(),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
