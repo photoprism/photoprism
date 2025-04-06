@@ -32,7 +32,7 @@ RUN apt-get update && apt-get upgrade && \
     jq \
     nano
 
-# Install bazelisk
+# Install bazelisk and llvm
 RUN wget https://apt.llvm.org/llvm.sh && chmod u+x llvm.sh && \
     ./llvm.sh 17 && rm llvm.sh && \
     ln -s /usr/bin/python3 /usr/bin/python && \
