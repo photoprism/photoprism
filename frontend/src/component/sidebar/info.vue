@@ -98,6 +98,11 @@ export default {
     },
   },
   emits: ["update:modelValue", "close"],
+  data() {
+    return {
+      actions: [],
+    };
+  },
   computed: {
     model() {
       return this.modelValue;
