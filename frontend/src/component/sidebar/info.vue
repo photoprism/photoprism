@@ -68,7 +68,7 @@
           </v-list-item>
           -->
           <v-list-item prepend-icon="mdi-map-marker" :title="model.getLatLng()" class="metadata__item"> </v-list-item>
-          <div id="metadata-map" ref="mapContainer" class="metadata__map"></div>
+          <PMap :lat="model.Lat" :lng="model.Lng" />
         </template>
       </v-list>
     </div>
@@ -76,10 +76,13 @@
 </template>
 
 <script>
-let maplibregl;
+import PMap from "./map.vue";
 
 export default {
   name: "PSidebarInfo",
+  components: {
+    PMap,
+  },
   props: {
     modelValue: {
       type: Object,
@@ -95,120 +98,14 @@ export default {
     },
   },
   emits: ["update:modelValue", "close"],
-  data() {
-    return {
-      actions: [],
-      map: null,
-      marker: null,
-      mapLoaded: false,
-      loadingMapLibre: false,
-    };
-  },
   computed: {
     model() {
       return this.modelValue;
     },
-    megapixels() {
-      if (!this.model.Width || !this.model.Height) return 0;
-      return ((this.model.Width * this.model.Height) / 1000000).toFixed(1);
-    },
-  },
-  watch: {
-    "model.Lat"() {
-      this.loadMapAndInit();
-    },
-    "model.Lng"() {
-      this.loadMapAndInit();
-    },
-  },
-  mounted() {
-    if (this.model.Lat && this.model.Lng) {
-      this.loadMapAndInit();
-    }
-  },
-  beforeUnmount() {
-    if (this.map) {
-      this.map.remove();
-    }
   },
   methods: {
     close() {
       this.$emit("close");
-    },
-    loadMapAndInit() {
-      if (this.loadingMapLibre) {
-        return;
-      }
-
-      this.loadingMapLibre = true;
-
-      import("../../common/maplibregl.js")
-        .then((module) => {
-          maplibregl = module.default;
-          // Wait for next tick to ensure DOM is ready
-          this.$nextTick(() => {
-            // Double check if the container exists
-            if (this.$refs.mapContainer) {
-              this.initMap();
-            } else {
-              // If container doesn't exist yet, wait a bit longer
-              setTimeout(() => {
-                this.initMap();
-              }, 100);
-            }
-          });
-        })
-        .catch((error) => {
-          console.error("Failed to load maplibregl:", error);
-        })
-        .finally(() => {
-          this.loadingMapLibre = false;
-        });
-    },
-    async initMap() {
-      if (!this.model.Lat || !this.model.Lng || !this.$refs.mapContainer || !maplibregl) {
-        return;
-      }
-
-      try {
-        if (this.map) {
-          this.map.remove();
-        }
-
-        const mapKey = this.$config.has("mapKey") ? this.$config.get("mapKey").replace(/[^a-z0-9]/gi, "") : "";
-        const style = this.$config.values.settings.maps.style;
-        let styleUrl = "https://cdn.photoprism.app/maps/default.json";
-
-        if (mapKey && style) {
-          styleUrl = `https://api.maptiler.com/maps/${style === "streets" ? "streets-v2" : style}/style.json?key=${mapKey}`;
-        }
-
-        this.map = new maplibregl.Map({
-          container: this.$refs.mapContainer,
-          style: styleUrl,
-          center: [this.model.Lng, this.model.Lat],
-          zoom: 13,
-          interactive: true,
-          attributionControl: false,
-        });
-
-        this.map.on("error", (e) => {
-          console.error("Map error:", e);
-        });
-
-        this.map.on("load", () => {
-          this.mapLoaded = true;
-
-          if (this.marker) {
-            this.marker.remove();
-          }
-
-          this.marker = new maplibregl.Marker().setLngLat([this.model.Lng, this.model.Lat]).addTo(this.map);
-        });
-      } catch (error) {
-        console.error("Failed to initialize map:", error);
-        this.mapLoaded = false;
-      }
     },
   },
 };
