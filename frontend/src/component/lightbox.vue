@@ -2313,7 +2313,7 @@ export default {
     },
     // Returns the viewport size without sidebar, if visible.
     getViewport() {
-      const el = this.getLightboxElement();
+      const el = this.$refs?.content;
 
       if (el) {
         return {

@@ -50,10 +50,15 @@ const (
 	ExtXMP    = ".xmp"
 	ExtTxt    = ".txt"
 	ExtMd     = ".md"
+	ExtZip    = ".zip"
 )
 
 // Ext returns all extension of a file name including the dots.
 func Ext(name string) string {
+	if name == "" {
+		return ""
+	}
+
 	ext := filepath.Ext(name)
 	name = StripExt(name)
 
@@ -62,6 +67,16 @@ func Ext(name string) string {
 	}
 
 	return ext
+}
+
+// ArchiveExt returns the normalized archive file extension or an empty string if it is not an archive.
+func ArchiveExt(name string) string {
+	switch strings.ToLower(Ext(name)) {
+	case ExtZip:
+		return ExtZip
+	default:
+		return ""
+	}
 }
 
 // NormalizedExt returns the file extension without dot and in lowercase.

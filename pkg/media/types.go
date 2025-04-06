@@ -2,6 +2,7 @@ package media
 
 const (
 	Unknown  Type = ""
+	Archive  Type = "archive"
 	Animated Type = "animated"
 	Audio    Type = "audio"
 	Document Type = "document"

@@ -10,6 +10,11 @@ import (
 	_ "golang.org/x/image/webp"
 )
 
+// Supported archive file types:
+const (
+	ArchiveZip Type = "zip"
+)
+
 // Supported media.Document file types:
 const (
 	DocumentPDF Type = "pdf" // Portable Document Format (PDF)

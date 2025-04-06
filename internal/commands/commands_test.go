@@ -15,6 +15,8 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "2")
+
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log

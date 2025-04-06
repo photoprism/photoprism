@@ -11,7 +11,7 @@
     <div v-if="model.UID">
       <v-list nav slim tile density="compact" class="metadata__list mt-2">
         <v-list-item v-if="model.Title" class="metadata__item">
-          <div v-tooltip="$gettext('Title')" class="text-subtitle-2 font-weight-bold">{{ model.Title }}</div>
+          <div v-tooltip="$gettext('Title')" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
           <!-- v-text-field
         :model-value="modelValue.Title"
         :placeholder="$gettext('Add a title')"
@@ -22,7 +22,7 @@
       ></v-text-field -->
         </v-list-item>
         <v-list-item v-if="model.Caption" class="metadata__item">
-          <div v-tooltip="$gettext('Caption')" class="text-body-2">{{ model.Caption }}</div>
+          <div v-tooltip="$gettext('Caption')" class="text-body-2 meta-caption">{{ model.Caption }}</div>
           <!-- v-textarea
         :model-value="modelValue.Caption"
         :placeholder="$gettext('Add a caption')"

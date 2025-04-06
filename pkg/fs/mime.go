@@ -91,6 +91,9 @@ func MimeType(filename string) (mimeType string) {
 		// High Efficiency Image Container Sequence
 		case ImageHeicS:
 			return header.ContentTypeHeicS
+		// ZIP Archive File:
+		case ArchiveZip:
+			return header.ContentTypeZip
 		}
 	}
 

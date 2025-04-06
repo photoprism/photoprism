@@ -4,6 +4,7 @@ import "github.com/photoprism/photoprism/pkg/fs"
 
 // Formats maps file formats to general media types.
 var Formats = map[fs.Type]Type{
+	fs.ArchiveZip:      Archive,
 	fs.DocumentPDF:     Document,
 	fs.ImageJpeg:       Image,
 	fs.ImageJpegXL:     Image,

@@ -245,7 +245,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "import-allow",
-			Usage:   "allow to import these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			Usage:   "restrict imports to these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
 			EnvVars: EnvVars("IMPORT_ALLOW"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -256,8 +256,19 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "upload-allow",
-			Usage:   "allow to upload these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			Usage:   "restrict uploads to these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
 			EnvVars: EnvVars("UPLOAD_ALLOW"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "upload-archives",
+			Usage:   "allow upload of zip archives (will be extracted before import)",
+			EnvVars: EnvVars("UPLOAD_ARCHIVES"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "upload-limit",
+			Value:   1000,
+			Usage:   "maximum total size of uploaded files in `MB` (1-100000; -1 to disable)",
+			EnvVars: EnvVars("UPLOAD_LIMIT"),
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "cache-path",
@@ -298,7 +309,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Uint64Flag{
 			Name:    "files-quota",
-			Usage:   "maximum aggregated size of all indexed files in `GB` (0 for unlimited)",
+			Usage:   "maximum total size of all indexed files in `GB` (0 for unlimited)",
 			EnvVars: EnvVars("FILES_QUOTA"),
 		}}, {
 		Flag: &cli.PathFlag{

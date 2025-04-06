@@ -66,9 +66,15 @@ if [[ $TF_DRIVER == "auto" ]]; then
 
   CPU_DETECTED=$(lshw -c processor -json 2>/dev/null)
 
-  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx_vnni') == "true" ]]; then
+  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx512_vnni') == "true" ]]; then
+    TF_DRIVER="avx512"
+    echo "✅ Your CPU supports AVX512-VNNI Vector Neural Network Instructions"
+    if [[ $(lshw -c display -json 2>/dev/null | jq -r '.[0].configuration.driver') == "nvidia" ]]; then
+      echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected"
+    fi
+  elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx_vnni') == "true" ]]; then
     TF_DRIVER="vnni"
-    echo "✅ Your CPU supports AVX-VNNI vector neural network instructions"
+    echo "✅ Your CPU supports AVX-VNNI Vector Neural Network Instructions"
     if [[ $(lshw -c display -json 2>/dev/null | jq -r '.[0].configuration.driver') == "nvidia" ]]; then
       echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected"
     fi

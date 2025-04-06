@@ -10,6 +10,7 @@ type FileExtensions map[string]Type
 
 // Extensions contains the filename extensions of file formats known to PhotoPrism.
 var Extensions = FileExtensions{
+	ExtZip:      ArchiveZip,
 	ExtPDF:      DocumentPDF, // .pdf
 	ExtJpeg:     ImageJpeg,   // .jpg
 	".jpeg":     ImageJpeg,

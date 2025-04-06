@@ -91,30 +91,40 @@ func ZipFile(zipWriter *zip.Writer, fileName, fileAlias string, compress bool) (
 }
 
 // Unzip extracts the contents of a zip file to the target directory.
-func Unzip(zipName, dir string) (files []string, err error) {
+func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64) (files []string, skipped []string, err error) {
 	zipReader, err := zip.OpenReader(zipName)
 
 	if err != nil {
-		return files, err
+		return files, skipped, err
 	}
 
 	defer zipReader.Close()
 
 	for _, zipFile := range zipReader.File {
 		// Skip directories like __OSX and potentially malicious file names containing "..".
-		if strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..") {
+		if strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..") ||
+			totalSizeLimit == 0 || fileSizeLimit > 0 && zipFile.UncompressedSize64 > uint64(fileSizeLimit) {
+			skipped = append(skipped, zipFile.Name)
+			continue
+		}
+
+		if totalSizeLimit < 1 {
+			// Do nothing;
+		} else if totalSizeLimit = totalSizeLimit - int64(zipFile.UncompressedSize64); totalSizeLimit < 1 {
+			skipped = append(skipped, zipFile.Name)
+			totalSizeLimit = 0
 			continue
 		}
 
 		fileName, unzipErr := UnzipFile(zipFile, dir)
 		if unzipErr != nil {
-			return files, unzipErr
+			return files, skipped, unzipErr
 		}
 
 		files = append(files, fileName)
 	}
 
-	return files, nil
+	return files, skipped, nil
 }
 
 // UnzipFile writes a file from a zip archive to the target destination.

@@ -5,7 +5,9 @@ LABEL maintainer="PhotoPrism UG <hello@photoprism.app>"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TMP=/tmp
 
-ENV TF_VERSION=2.18.0
+# see https://docs.docker.com/build/building/variables/#env-usage-example
+ARG TF_VERSION=2.18.0
+ENV TF_VERSION=$TF_VERSION
 
 # apt default settings
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
@@ -27,7 +29,8 @@ RUN apt-get update && apt-get upgrade && \
     lsb-release \
     software-properties-common \
     gnupg \
-    jq 
+    jq \
+    nano
 
 # Install bazelisk
 RUN wget https://apt.llvm.org/llvm.sh && chmod u+x llvm.sh && \

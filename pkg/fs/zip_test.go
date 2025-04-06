@@ -27,10 +27,11 @@ func TestZip(t *testing.T) {
 			t.Logf("%s: %d bytes", zipName, info.Size())
 		}
 
-		if unzipFiles, err := Unzip(zipName, unzipDir); err != nil {
+		if unzipFiles, skippedFiles, err := Unzip(zipName, unzipDir, 2*GB, -1); err != nil {
 			t.Error(err)
 		} else {
-			t.Logf("%s: %#v", zipName, unzipFiles)
+			t.Logf("%s: extracted %#v", zipName, unzipFiles)
+			t.Logf("%s: skipped %#v", zipName, skippedFiles)
 		}
 
 		if err := os.Remove(zipName); err != nil {
@@ -59,10 +60,11 @@ func TestZip(t *testing.T) {
 			t.Logf("%s: %d bytes", zipName, info.Size())
 		}
 
-		if unzipFiles, err := Unzip(zipName, unzipDir); err != nil {
+		if unzipFiles, skippedFiles, err := Unzip(zipName, unzipDir, 2*GB, -1); err != nil {
 			t.Error(err)
 		} else {
-			t.Logf("%s: %#v", zipName, unzipFiles)
+			t.Logf("%s: extracted %#v", zipName, unzipFiles)
+			t.Logf("%s: skipped %#v", zipName, skippedFiles)
 		}
 
 		if err := os.Remove(zipName); err != nil {

@@ -4,6 +4,7 @@ type TypeMap map[Type]string
 
 // TypeInfo contains human-readable descriptions for supported file formats
 var TypeInfo = TypeMap{
+	ArchiveZip:      "ZIP Archive File",
 	DocumentPDF:     "Portable Document Format (PDF)",
 	ImageJpeg:       "Joint Photographic Experts Group (JPEG)",
 	ImageJpegXL:     "JPEG XL",

@@ -1,10 +1,11 @@
-# -march see https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/i386-and-x86-64-Options.html
-
 all: libtensorflow
+# Downloads the TensorFlow source code from GitHub and extracts it to a subdirectory:
 download:
 	wget https://github.com/tensorflow/tensorflow/archive/v$(TF_VERSION).tar.gz
 	tar -xzf v$(TF_VERSION).tar.gz
 	cp Makefile *.sh tensorflow-$(TF_VERSION)
+# Clang command line argument reference:
+# https://clang.llvm.org/docs/ClangCommandLineReference.html#aarch64
 libtensorflow:
-	bazel build -c opt //tensorflow:libtensorflow.so --copt=-march=armv8-a
+	bazel build -c opt //tensorflow:libtensorflow.so --copt=-O2 --copt=-march=armv8-a
 	./create_archive.sh arm64 $(TF_VERSION)

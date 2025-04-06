@@ -224,7 +224,7 @@ table td > .action-buttons {
 .v-menu.action-menu .action-menu__list {
     min-width: 132px;
     opacity: 0.97;
-    padding: 4px;
+    padding: 2px 4px;
     border-color: rgba(var(--v-border-color), var(--v-border-opacity));
     border-style: solid;
     border-width: thin;
@@ -232,6 +232,7 @@ table td > .action-buttons {
 
 .v-menu>.v-overlay__content>.v-list.action-menu__list>.v-list-item.v-list-item--density-compact.action-menu__item {
     padding: 8px 10px;
+    margin: 2px 0;
 }
 
 .v-menu.action-menu.action-menu--lightbox .action-menu__list {

@@ -347,7 +347,7 @@ func (c *Config) DownloadTestData() error {
 
 // UnzipTestData extracts tests files from the zip archive.
 func (c *Config) UnzipTestData() error {
-	if _, err := fs.Unzip(TestDataZip, c.StoragePath()); err != nil {
+	if _, _, err := fs.Unzip(TestDataZip, c.StoragePath(), 2*fs.GB, -1); err != nil {
 		return fmt.Errorf("config: could not unzip test data: %s", err.Error())
 	}
 

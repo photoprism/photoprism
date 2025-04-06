@@ -99,4 +99,5 @@ const (
 	ContentTypeHtml      = "text/html; charset=utf-8"
 	ContentTypeText      = "text/plain; charset=utf-8"
 	ContentTypePDF       = "application/pdf"
+	ContentTypeZip       = "application/zip"
 )

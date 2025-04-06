@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path"
@@ -89,7 +90,10 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		// If the file extension list is empty, all file types may
 		// be uploaded except raw files if raw support is disabled.
 		allowedExt := conf.UploadAllow()
+		rejectArchives := !conf.UploadArchives()
 		rejectRaw := conf.DisableRaw()
+		fileSizeLimit := conf.OriginalsLimitBytes()
+		totalSizeLimit := conf.UploadLimitBytes()
 
 		// Save uploaded files and append their names
 		// to "uploads" if they pass all checks.
@@ -100,17 +104,20 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 			// Reject unsupported files and files with extensions that aren't allowed.
 			if fileType == fs.TypeUnknown {
-				log.Warnf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
+				log.Errorf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
 				continue
 			} else if allowedExt.Excludes(fileType.DefaultExt()) {
-				log.Warnf("upload: rejected %s because its extension is not allowed", clean.Log(baseName))
+				log.Errorf("upload: rejected %s because its extension is not allowed", clean.Log(baseName))
+				continue
+			} else if fileSizeLimit > 0 && file.Size > fileSizeLimit {
+				log.Errorf("upload: rejected %s because its size exceeds the file size limit", clean.Log(baseName))
 				continue
 			}
 
 			// Save uploaded file in the user upload path.
 			if err = c.SaveUploadedFile(file, destName); err != nil {
-				log.Errorf("upload: failed to save %s", clean.Log(baseName))
 				log.Debugf("upload: %s in %s", clean.Error(err), clean.Log(baseName))
+				log.Errorf("upload: failed to save %s", clean.Log(baseName))
 				Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 				return
 			} else {
@@ -118,18 +125,59 @@ func UploadUserFiles(router *gin.RouterGroup) {
 				event.Publish("upload.saved", event.Data{"uid": s.UserUID, "file": baseName})
 			}
 
-			// Make sure the file is supported and has the correct extension before importing it.
-			if mediaFile, mediaErr := photoprism.NewMediaFile(destName); mediaErr != nil {
-				log.Errorf("upload: rejected %s, %s", clean.Error(err), clean.Log(baseName))
-				logErr("upload", os.Remove(destName))
-			} else if typeErr := mediaFile.CheckType(); typeErr != nil {
-				log.Warnf("upload: rejected %s %s", clean.Log(baseName), typeErr)
-				logErr("upload", os.Remove(destName))
-			} else if rejectRaw && mediaFile.IsRaw() {
-				log.Warnf("upload: rejected %s because raw support is disabled", clean.Log(baseName))
-				logErr("upload", os.Remove(destName))
+			// Extract contents if the uploaded file is an archive.
+			if ext := fs.ArchiveExt(baseName); ext != "" {
+				if rejectArchives {
+					logWarn("upload", os.Remove(destName))
+					log.Errorf("upload: rejected %s because archive uploads are disabled", clean.Log(baseName))
+					continue
+				}
+
+				zipFiles, skippedFiles, zipErr := fs.Unzip(destName, uploadDir, fileSizeLimit, totalSizeLimit)
+
+				logWarn("upload", os.Remove(destName))
+
+				if zipErr != nil {
+					log.Errorf("upload: failed to extract files from %s (%s)", clean.Log(baseName), zipErr)
+				}
+
+				if len(skippedFiles) > 0 {
+					log.Errorf("upload: could not extract %s from %s due to upload restrictions", strings.Join(skippedFiles, ", "), clean.Log(baseName))
+				}
+
+				if len(zipFiles) == 0 {
+					continue
+				}
+
+				for _, destName = range zipFiles {
+					baseName = filepath.Base(destName)
+					fileType = fs.FileType(baseName)
+
+					// Reject unsupported files and files with extensions that aren't allowed.
+					if baseName == "" {
+						log.Errorf("upload: rejected unzipped file because it has no file name")
+					} else if baseName[0] == '.' || baseName[0] == '@' {
+						logWarn("upload", os.Remove(destName))
+						log.Errorf("upload: rejected unzipped file %s because it has an unsupported file name", clean.Log(baseName))
+					} else if fileType == fs.TypeUnknown {
+						logWarn("upload", os.Remove(destName))
+						log.Errorf("upload: rejected unzipped file %s because it has an unsupported file extension", clean.Log(baseName))
+					} else if allowedExt.Excludes(fileType.DefaultExt()) {
+						logWarn("upload", os.Remove(destName))
+						log.Errorf("upload: rejected unzipped file %s because its extension is not allowed", clean.Log(baseName))
+					} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, totalSizeLimit); err != nil {
+						log.Errorf("upload: %s", err)
+					} else {
+						// Add to the list of uploaded files after having verified that
+						// the unzipped file has the correct extension and format.
+						uploads = append(uploads, destName)
+					}
+				}
+			} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, totalSizeLimit); err != nil {
+				log.Errorf("upload: %s", err)
 			} else {
-				// Successfully validated upload.
+				// Add to the list of uploaded files after having verified that
+				// the uploaded file has the correct extension and format.
 				uploads = append(uploads, destName)
 			}
 		}
@@ -178,6 +226,29 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})
+}
+
+// UploadCheckFile checks if the file is supported and has the correct extension.
+func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
+	baseName := filepath.Base(destName)
+
+	if mediaFile, mediaErr := photoprism.NewMediaFile(destName); mediaErr != nil {
+		logWarn("upload", os.Remove(destName))
+		return totalSizeLimit, fmt.Errorf("rejected %s, %s", clean.Error(err), clean.Log(baseName))
+	} else if typeErr := mediaFile.CheckType(); typeErr != nil {
+		logWarn("upload", os.Remove(destName))
+		return totalSizeLimit, fmt.Errorf("rejected %s %s", clean.Log(baseName), typeErr)
+	} else if rejectRaw && mediaFile.IsRaw() {
+		logWarn("upload", os.Remove(destName))
+		return totalSizeLimit, fmt.Errorf("rejected %s because raw support is disabled", clean.Log(baseName))
+	} else if totalSizeLimit < 0 {
+		return -1, nil
+	} else if remainingSizeLimit = totalSizeLimit - mediaFile.FileSize(); totalSizeLimit == 0 || remainingSizeLimit < 1 {
+		logWarn("upload", os.Remove(destName))
+		return 0, fmt.Errorf("rejected %s because the total upload size limit has been reached", clean.Log(baseName))
+	} else {
+		return remainingSizeLimit, nil
+	}
 }
 
 // ProcessUserUpload triggers processing once all files have been uploaded.
