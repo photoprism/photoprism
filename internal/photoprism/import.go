@@ -67,7 +67,6 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		return done
 	}
 
-	ind := imp.index
 	importPath := opt.Path
 
 	// Check if the import folder exists.
@@ -84,11 +83,6 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		}
 
 		defer mutex.IndexWorker.Stop()
-	}
-
-	if err := ind.tensorFlow.Init(); err != nil {
-		log.Errorf("import: %s", err.Error())
-		return done
 	}
 
 	jobs := make(chan ImportJob)

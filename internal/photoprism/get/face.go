@@ -9,10 +9,10 @@ import (
 var onceFaceNet sync.Once
 
 func initFaceNet() {
-	services.FaceNet = face.NewNet(conf.FaceNetModelPath(), "", conf.DisableFaces())
+	services.FaceNet = face.NewModel(conf.FaceNetModelPath(), "", conf.DisableFaces())
 }
 
-func FaceNet() *face.Net {
+func FaceNet() *face.Model {
 	onceFaceNet.Do(initFaceNet)
 
 	return services.FaceNet

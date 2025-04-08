@@ -9,6 +9,9 @@ import (
 // ApiUri defines the standard path for handling REST requests.
 const ApiUri = "/api/v1"
 
+// DownloadUri defines the file download URI based on the ApiUri.
+const DownloadUri = ApiUri + "/dl"
+
 // LibraryUri defines the path for user interface routes.
 const LibraryUri = "/library"
 

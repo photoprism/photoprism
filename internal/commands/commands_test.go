@@ -24,6 +24,9 @@ func TestMain(m *testing.M) {
 	c := config.NewTestConfig("commands")
 	get.SetConfig(c)
 
+	// Remember to close database connection.
+	defer c.CloseDb()
+
 	// Init config and connect to database.
 	InitConfig = func(ctx *cli.Context) (*config.Config, error) {
 		return c, c.Init()
@@ -31,9 +34,6 @@ func TestMain(m *testing.M) {
 
 	// Run unit tests.
 	code := m.Run()
-
-	// Close database connection.
-	_ = c.CloseDb()
 
 	os.Exit(code)
 }

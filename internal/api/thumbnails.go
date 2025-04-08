@@ -42,7 +42,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := get.Config()
-		download := c.Query("download") != ""
+		attachment := c.Query("download") != ""
 		fileHash, cropArea := crop.ParseThumb(clean.Token(c.Param("thumb")))
 
 		// Is cropped thumbnail?
@@ -72,7 +72,7 @@ func GetThumb(router *gin.RouterGroup) {
 			// Add HTTP cache header.
 			AddImmutableCacheHeader(c)
 
-			if download {
+			if attachment {
 				c.FileAttachment(fileName, cropName.Jpeg())
 			} else {
 				c.File(fileName)
@@ -118,7 +118,7 @@ func GetThumb(router *gin.RouterGroup) {
 			// Add HTTP cache header.
 			AddImmutableCacheHeader(c)
 
-			if download {
+			if attachment {
 				c.FileAttachment(cached.FileName, cached.ShareName)
 			} else {
 				c.File(cached.FileName)
@@ -128,7 +128,7 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		// Return existing thumbs straight away.
-		if !download {
+		if !attachment {
 			if fileName, err := size.ResolvedName(fileHash, conf.ThumbCachePath()); err == nil {
 				// Add HTTP cache header.
 				AddImmutableCacheHeader(c)
@@ -188,7 +188,7 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() && !download {
+		if size.ExceedsLimit() && !attachment {
 			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", logPrefix, size.Width, size.Height)
 
 			// Add HTTP cache header.
@@ -228,7 +228,7 @@ func GetThumb(router *gin.RouterGroup) {
 		AddImmutableCacheHeader(c)
 
 		// Return requested content.
-		if download {
+		if attachment {
 			c.FileAttachment(thumbName, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbName)

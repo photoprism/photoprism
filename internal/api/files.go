@@ -24,7 +24,7 @@ func GetFile(router *gin.RouterGroup) {
 	router.GET("/files/:hash", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionView)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

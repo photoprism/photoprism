@@ -47,6 +47,11 @@ func (c *Config) ContentUri() string {
 	return c.CdnUrl(c.ApiUri())
 }
 
+// DownloadUrl returns the download URL based on the SiteUrl and the DownloadUri.
+func (c *Config) DownloadUrl() string {
+	return strings.TrimRight(c.options.SiteUrl, "/") + DownloadUri
+}
+
 // VideoUri returns the video streaming URI.
 func (c *Config) VideoUri() string {
 	if c.CdnVideo() {

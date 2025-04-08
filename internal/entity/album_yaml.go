@@ -53,7 +53,7 @@ func (m *Album) SaveAsYaml(fileName string) error {
 	defer albumYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err = fs.WriteFile(fileName, data); err != nil {
+	if err = fs.WriteFile(fileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

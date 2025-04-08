@@ -134,11 +134,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"raw-presets", fmt.Sprintf("%t", c.RawPresets())},
 		{"exif-bruteforce", fmt.Sprintf("%t", c.ExifBruteForce())},
 
-		// TensorFlow.
-		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
-		{"tensorflow-version", c.TensorFlowVersion()},
-		{"tensorflow-model-path", c.TensorFlowModelPath()},
-
 		// Customization.
 		{"default-locale", c.DefaultLocale()},
 		{"default-timezone", c.DefaultTimezone().String()},
@@ -245,6 +240,17 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jpeg-quality", fmt.Sprintf("%d", c.JpegQuality())},
 		{"jpeg-size", fmt.Sprintf("%d", c.JpegSize())},
 		{"png-size", fmt.Sprintf("%d", c.PngSize())},
+
+		// Computer Vision.
+		{"vision-yaml", c.VisionYaml()},
+		{"vision-api", fmt.Sprintf("%t", c.VisionApi())},
+		{"vision-uri", c.VisionUri()},
+		{"vision-key", strings.Repeat("*", utf8.RuneCountInString(c.VisionKey()))},
+		{"tensorflow-version", c.TensorFlowVersion()},
+		{"nasnet-model-path", c.NasnetModelPath()},
+		{"facenet-model-path", c.FaceNetModelPath()},
+		{"nsfw-model-path", c.NSFWModelPath()},
+		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 
 		// Facial Recognition.
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},

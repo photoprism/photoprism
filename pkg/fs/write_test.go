@@ -30,7 +30,7 @@ func TestWriteFile(t *testing.T) {
 
 		assert.True(t, PathExists(dir))
 
-		fileErr := WriteFile(filePath, fileData)
+		fileErr := WriteFile(filePath, fileData, ModeFile)
 
 		assert.NoError(t, fileErr)
 		assert.FileExists(t, filePath)

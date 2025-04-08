@@ -1,66 +1,55 @@
 package photoprism
 
 import (
-	"sort"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Labels classifies a JPEG image and returns matching labels.
-func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
+func (ind *Index) Labels(file *MediaFile) (labels classify.Labels) {
 	start := time.Now()
 
+	var err error
 	var sizes []thumb.Name
+	var thumbnails []string
 
-	if jpeg.Square() {
+	// The thumbnail size may need to be adjusted to use other models.
+	if file.Square() {
+		// Only one thumbnail is required for square images.
 		sizes = []thumb.Name{thumb.Tile224}
+		thumbnails = make([]string, 0, 1)
 	} else {
+		// Use three thumbnails otherwise (center, left, right).
 		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
+		thumbnails = make([]string, 0, 3)
 	}
 
-	var labels classify.Labels
-
+	// Get thumbnail filenames for the selected sizes.
 	for _, size := range sizes {
-		filename, err := jpeg.Thumbnail(Config().ThumbCachePath(), size)
-
-		if err != nil {
-			log.Debugf("%s in %s", err, clean.Log(jpeg.BaseName()))
+		if thumbnail, fileErr := file.Thumbnail(Config().ThumbCachePath(), size); fileErr != nil {
+			log.Debugf("index: %s in %s", err, clean.Log(file.BaseName()))
 			continue
-		}
-
-		imageLabels, err := ind.tensorFlow.File(filename)
-
-		if err != nil {
-			log.Debugf("%s in %s", err, clean.Log(jpeg.BaseName()))
-			continue
-		}
-
-		labels = append(labels, imageLabels...)
-	}
-
-	// Sort by priority and uncertainty
-	sort.Sort(labels)
-
-	var confidence int
-
-	for _, label := range labels {
-		if confidence == 0 {
-			confidence = 100 - label.Uncertainty
-		}
-
-		if (100 - label.Uncertainty) > (confidence / 3) {
-			results = append(results, label)
+		} else {
+			thumbnails = append(thumbnails, thumbnail)
 		}
 	}
 
-	if l := len(labels); l == 1 {
-		log.Infof("index: matched %d label with %s [%s]", l, clean.Log(jpeg.BaseName()), time.Since(start))
-	} else if l > 1 {
-		log.Infof("index: matched %d labels with %s [%s]", l, clean.Log(jpeg.BaseName()), time.Since(start))
+	// Get matching labels from computer vision model.
+	if labels, err = vision.Labels(thumbnails); err != nil {
+		log.Debugf("labels: %s in %s", err, clean.Log(file.BaseName()))
+		return labels
 	}
 
-	return results
+	// Log number of labels found and return results.
+	if n := len(labels); n > 0 {
+		log.Infof("index: found %s for %s [%s]", english.Plural(n, "label", "labels"), clean.Log(file.BaseName()), time.Since(start))
+	}
+
+	return labels
 }

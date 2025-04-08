@@ -41,7 +41,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 	searchForm := func(c *gin.Context) (frm form.SearchPhotos, s *entity.Session, err error) {
 		s = AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return frm, s, i18n.Error(i18n.ErrForbidden)
 		}

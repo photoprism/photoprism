@@ -4,14 +4,32 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
 
 // WriteFile overwrites a file with the specified bytes as content.
 // If the path does not exist or the file cannot be written, an error is returned.
-func WriteFile(fileName string, data []byte) error {
-	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, ModeFile)
+func WriteFile(fileName string, data []byte, perm os.FileMode) error {
+	// Return error if no filename was provided.
+	if fileName == "" {
+		return errors.New("missing filename")
+	}
+
+	// Default to regular file permissions.
+	if perm == 0 {
+		perm = ModeFile
+	}
+
+	// Create storage directory if it does not exist yet.
+	if dir := filepath.Dir(fileName); dir != "" && dir != "/" && dir != "." && dir != ".." && !PathExists(dir) {
+		if err := MkdirAll(dir); err != nil {
+			return err
+		}
+	}
+
+	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, perm)
 
 	if err != nil {
 		return err
@@ -29,7 +47,7 @@ func WriteFile(fileName string, data []byte) error {
 // WriteString overwrites a file with the specified string as content.
 // If the path does not exist or the file cannot be written, an error is returned.
 func WriteString(fileName string, s string) error {
-	return WriteFile(fileName, []byte(s))
+	return WriteFile(fileName, []byte(s), ModeFile)
 }
 
 // WriteUnixTime overwrites a file with the current Unix timestamp as content.

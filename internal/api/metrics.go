@@ -23,7 +23,7 @@ func GetMetrics(router *gin.RouterGroup) {
 	router.GET("/metrics", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceMetrics, acl.AccessAll)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

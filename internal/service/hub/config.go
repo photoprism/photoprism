@@ -334,7 +334,7 @@ func (c *Config) Save() error {
 		return err
 	}
 
-	if err = fs.WriteFile(c.FileName, data); err != nil {
+	if err = fs.WriteFile(c.FileName, data, fs.ModeConfigFile); err != nil {
 		return err
 	}
 

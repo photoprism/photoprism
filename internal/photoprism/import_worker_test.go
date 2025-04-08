@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
@@ -19,11 +18,10 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	tf := classify.New(c.AssetsPath(), c.DisableTensorFlow())
-	nd := nsfw.New(c.NSFWModelPath())
-	fn := face.NewNet(c.FaceNetModelPath(), "", c.DisableTensorFlow())
+	nd := nsfw.NewModel(c.NSFWModelPath())
+	fn := face.NewModel(c.FaceNetModelPath(), "", c.DisableTensorFlow())
 	convert := NewConvert(c)
-	ind := NewIndex(c, tf, nd, fn, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(c, nd, fn, convert, NewFiles(), NewPhotos())
 	imp := &Import{c, ind, convert, c.ImportAllow()}
 
 	mediaFileName := c.ExamplesPath() + "/beach_sand.jpg"

@@ -135,7 +135,7 @@ func (s Settings) StackMeta() bool {
 // Load user settings from file.
 func (s *Settings) Load(fileName string) error {
 	if fileName == "" {
-		return fmt.Errorf("no settings filename provided")
+		return fmt.Errorf("missing settings filename")
 	} else if !fs.FileExists(fileName) {
 		return fmt.Errorf("settings file not found: %s", clean.Log(fileName))
 	}
@@ -157,6 +157,10 @@ func (s *Settings) Load(fileName string) error {
 
 // Save user settings to a file.
 func (s *Settings) Save(fileName string) error {
+	if fileName == "" {
+		return fmt.Errorf("missing settings filename")
+	}
+
 	data, err := yaml.Marshal(s)
 
 	if err != nil {
@@ -165,7 +169,7 @@ func (s *Settings) Save(fileName string) error {
 
 	s.Propagate()
 
-	if err = os.WriteFile(fileName, data, fs.ModeFile); err != nil {
+	if err = os.WriteFile(fileName, data, fs.ModeConfigFile); err != nil {
 		return err
 	}
 

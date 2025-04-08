@@ -44,7 +44,7 @@ func FolderCover(router *gin.RouterGroup) {
 		conf := get.Config()
 		uid := c.Param("uid")
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
-		download := c.Query("download") != ""
+		attachment := c.Query("download") != ""
 
 		size, ok := thumb.Sizes[thumbName]
 
@@ -80,7 +80,7 @@ func FolderCover(router *gin.RouterGroup) {
 
 			AddCoverCacheHeader(c)
 
-			if download {
+			if attachment {
 				c.FileAttachment(cached.FileName, cached.ShareName)
 			} else {
 				c.File(cached.FileName)
@@ -110,7 +110,7 @@ func FolderCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() && !download {
+		if size.ExceedsLimit() && !attachment {
 			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", folderCover, size.Width, size.Height)
 			AddCoverCacheHeader(c)
 			c.File(fileName)
@@ -140,7 +140,7 @@ func FolderCover(router *gin.RouterGroup) {
 
 		AddCoverCacheHeader(c)
 
-		if download {
+		if attachment {
 			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbnail)

@@ -25,7 +25,7 @@ func GetSettings(router *gin.RouterGroup) {
 	router.GET("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.AccessAll, acl.AccessOwn})
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}
@@ -56,7 +56,7 @@ func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.ActionView, acl.ActionUpdate, acl.ActionManage})
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

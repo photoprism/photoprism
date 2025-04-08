@@ -38,7 +38,7 @@ func SearchGeo(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

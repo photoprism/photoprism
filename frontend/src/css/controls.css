@@ -233,6 +233,7 @@ table td > .action-buttons {
 .v-menu>.v-overlay__content>.v-list.action-menu__list>.v-list-item.v-list-item--density-compact.action-menu__item {
     padding: 8px 10px;
     margin: 2px 0;
+    user-select: none;
 }
 
 .v-menu.action-menu.action-menu--lightbox .action-menu__list {

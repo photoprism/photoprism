@@ -31,7 +31,7 @@ func TestThumbCache(t *testing.T) {
 }
 
 func TestClassify(t *testing.T) {
-	assert.IsType(t, &classify.TensorFlow{}, Classify())
+	assert.IsType(t, &classify.Model{}, Classify())
 }
 
 func TestConvert(t *testing.T) {
@@ -59,7 +59,7 @@ func TestCleanUp(t *testing.T) {
 }
 
 func TestNsfwDetector(t *testing.T) {
-	assert.IsType(t, &nsfw.Detector{}, NsfwDetector())
+	assert.IsType(t, &nsfw.Model{}, NsfwDetector())
 }
 
 func TestQuery(t *testing.T) {

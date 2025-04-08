@@ -4850,6 +4850,174 @@
                 }
             }
         },
+        "/api/v1/vision/caption": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vision"
+                ],
+                "summary": "returns a suitable caption for an image",
+                "operationId": "PostVisionCaption",
+                "parameters": [
+                    {
+                        "description": "list of image file urls",
+                        "name": "images",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/vision/faces": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vision"
+                ],
+                "summary": "returns the positions and embeddings of detected faces",
+                "operationId": "PostVisionFaces",
+                "parameters": [
+                    {
+                        "description": "list of image file urls",
+                        "name": "images",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/vision/labels": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vision"
+                ],
+                "summary": "returns suitable labels for an image",
+                "operationId": "PostVisionLabels",
+                "parameters": [
+                    {
+                        "description": "list of image file urls",
+                        "name": "images",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/zip": {
             "post": {
                 "tags": [
@@ -5029,6 +5197,9 @@
                 "HttpsProxyInsecure": {
                     "type": "boolean"
                 },
+                "ImportAllow": {
+                    "type": "string"
+                },
                 "IndexSchedule": {
                     "type": "string"
                 },
@@ -5132,11 +5303,45 @@
                 "Trace": {
                     "type": "boolean"
                 },
+                "UsageInfo": {
+                    "type": "boolean"
+                },
                 "WakeupInterval": {
                     "$ref": "#/definitions/time.Duration"
                 },
                 "WallpaperUri": {
                     "type": "string"
+                }
+            }
+        },
+        "customize.AlbumsOrder": {
+            "type": "object",
+            "properties": {
+                "album": {
+                    "type": "string"
+                },
+                "folder": {
+                    "type": "string"
+                },
+                "moment": {
+                    "type": "string"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
+        "customize.AlbumsSettings": {
+            "type": "object",
+            "properties": {
+                "download": {
+                    "$ref": "#/definitions/customize.DownloadSettings"
+                },
+                "order": {
+                    "$ref": "#/definitions/customize.AlbumsOrder"
                 }
             }
         },
@@ -5183,6 +5388,9 @@
                     "type": "boolean"
                 },
                 "archive": {
+                    "type": "boolean"
+                },
+                "calendar": {
                     "type": "boolean"
                 },
                 "delete": {
@@ -5309,12 +5517,21 @@
                 },
                 "listView": {
                     "type": "boolean"
+                },
+                "showCaptions": {
+                    "type": "boolean"
+                },
+                "showTitles": {
+                    "type": "boolean"
                 }
             }
         },
         "customize.Settings": {
             "type": "object",
             "properties": {
+                "albums": {
+                    "$ref": "#/definitions/customize.AlbumsSettings"
+                },
                 "download": {
                     "$ref": "#/definitions/customize.DownloadSettings"
                 },
@@ -5385,6 +5602,9 @@
                 },
                 "scrollbar": {
                     "type": "boolean"
+                },
+                "startPage": {
+                    "type": "string"
                 },
                 "theme": {
                     "type": "string"
@@ -5753,6 +5973,9 @@
                 },
                 "OriginalName": {
                     "type": "string"
+                },
+                "Pages": {
+                    "type": "integer"
                 },
                 "PhotoUID": {
                     "type": "string"
@@ -7022,6 +7245,9 @@
                 "TakenAtLocal": {
                     "type": "string"
                 },
+                "TimeZone": {
+                    "type": "string"
+                },
                 "Title": {
                     "type": "string"
                 },
@@ -7384,18 +7610,6 @@
                 1000000,
                 1000000000,
                 60000000000,
-                3600000000000,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
                 3600000000000
             ],
             "x-enum-varnames": [
@@ -7420,20 +7634,113 @@
                 "Millisecond",
                 "Second",
                 "Minute",
-                "Hour",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
                 "Hour"
             ]
+        },
+        "vision.ApiRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "model": {
+                    "type": "string"
+                },
+                "videos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "vision.ApiResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "model": {
+                    "$ref": "#/definitions/vision.Model"
+                },
+                "result": {
+                    "$ref": "#/definitions/vision.ApiResult"
+                }
+            }
+        },
+        "vision.ApiResult": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "$ref": "#/definitions/vision.CaptionResult"
+                },
+                "faces": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vision.LabelResult"
+                    }
+                }
+            }
+        },
+        "vision.CaptionResult": {
+            "type": "object",
+            "properties": {
+                "confidence": {
+                    "type": "number"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "vision.LabelResult": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "confidence": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "topicality": {
+                    "type": "number"
+                }
+            }
+        },
+        "vision.Model": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "resolution": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
         }
     },
     "externalDocs": {

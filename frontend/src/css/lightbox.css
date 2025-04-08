@@ -396,6 +396,7 @@
     height: 48px;
     width: 44px;
     display: flex;
+    user-select: none;
     justify-content: center !important;
     align-items: center !important;
 }

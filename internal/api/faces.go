@@ -29,7 +29,7 @@ func GetFace(router *gin.RouterGroup) {
 	router.GET("/faces/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionView)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}
@@ -61,7 +61,7 @@ func UpdateFace(router *gin.RouterGroup) {
 	router.PUT("/faces/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

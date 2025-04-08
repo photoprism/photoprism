@@ -54,7 +54,7 @@ func TestNet(t *testing.T) {
 
 	var embeddings = make(Embeddings, 11)
 
-	faceNet := NewNet(modelPath, "testdata/cache", false)
+	faceNet := NewModel(modelPath, "testdata/cache", false)
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
 		if info.IsDir() || filepath.Base(filepath.Dir(fileName)) != "testdata" {

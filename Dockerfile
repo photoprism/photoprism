@@ -1,5 +1,5 @@
 # Ubuntu 24.10 (Oracular Oriole)
-FROM photoprism/develop:250402-oracular
+FROM photoprism/develop:250407-oracular
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)

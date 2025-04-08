@@ -23,7 +23,13 @@ const (
 	Left224  Name = "left_224"
 	Right224 Name = "right_224"
 	Tile224  Name = "tile_224"
+	Left384  Name = "left_384"
+	Right384 Name = "right_384"
+	Tile384  Name = "tile_384"
 	Fit720   Name = "fit_720"
+	Tile480  Name = "tile_480"
+	Left480  Name = "left_480"
+	Right480 Name = "right_480"
 	Tile500  Name = "tile_500"
 	Tile1080 Name = "tile_1080"
 	Fit1280  Name = "fit_1280"
@@ -55,12 +61,12 @@ var Names = []Name{
 	Colors,
 }
 
-// Find returns the largest default thumbnail type for the given size limit.
-func Find(limit int) (name Name, size Size) {
+// Find returns the largest thumbnail type for the given pixel size.
+func Find(pixels int) (name Name, size Size) {
 	for _, name = range Names {
 		t := Sizes[name]
 
-		if t.Width <= limit && t.Height <= limit {
+		if t.Width <= pixels && t.Height <= pixels {
 			return name, t
 		}
 	}

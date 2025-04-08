@@ -8,6 +8,7 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 )
 
+// Base64 returns a data URL representing the binary buffer data.
 func Base64(buf *bytes.Buffer) string {
 	encoded := base64.StdEncoding.EncodeToString(buf.Bytes())
 

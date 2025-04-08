@@ -1,5 +1,10 @@
 package header
 
+import (
+	"mime"
+	"net/http"
+)
+
 /*
 	Standard content types for use in HTTP headers and the web interface, see:
 	- https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Video_codecs
@@ -101,3 +106,14 @@ const (
 	ContentTypePDF       = "application/pdf"
 	ContentTypeZip       = "application/zip"
 )
+
+// HasContentType checks weather the Content-Type header has the specified type.
+func HasContentType(header *http.Header, contentType string) bool {
+	if header == nil || contentType == "" {
+		return false
+	} else if ct, _, err := mime.ParseMediaType(header.Get("Content-Type")); err == nil && ct == contentType {
+		return true
+	}
+
+	return false
+}

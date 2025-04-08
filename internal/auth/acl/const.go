@@ -59,6 +59,7 @@ const (
 	ResourceLogs      Resource = "logs"
 	ResourceWebDAV    Resource = "webdav"
 	ResourceMetrics   Resource = "metrics"
+	ResourceVision    Resource = "vision"
 	ResourceFeedback  Resource = "feedback"
 	ResourceDefault   Resource = "default"
 )

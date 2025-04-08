@@ -64,9 +64,9 @@ func GetService(router *gin.RouterGroup) {
 //	@Id			GetServiceFolders
 //	@Tags		Services
 //	@Produce	json
-//	@Success	200				{object}	[]object
+//	@Success	200					{object}	[]object
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		id				path		string	true	"service id"
+//	@Param		id					path		string	true	"service id"
 //	@Router		/api/v1/services/{id}/folders [get]
 func GetServiceFolders(router *gin.RouterGroup) {
 	router.GET("/services/:id/folders", func(c *gin.Context) {
@@ -128,7 +128,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 //	@Produce	json
 //	@Success	200				{object}	entity.Service
 //	@Failure	400,401,403,429	{object}	i18n.Response
-//	@Param		service				body		form.Service	true	"properties of the service to be created"
+//	@Param		service			body		form.Service	true	"properties of the service to be created"
 //	@Router		/api/v1/services [post]
 func AddService(router *gin.RouterGroup) {
 	router.POST("/services", func(c *gin.Context) {
@@ -178,9 +178,9 @@ func AddService(router *gin.RouterGroup) {
 //	@Tags		Services
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Service
+//	@Success	200						{object}	entity.Service
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		id						path		string		true	"service id"
+//	@Param		id						path		string			true	"service id"
 //	@Param		service					body		form.Service	true	"properties to be updated (only submit values that should be changed)"
 //	@Router		/api/v1/services/{id} [put]
 func UpdateService(router *gin.RouterGroup) {
@@ -254,7 +254,7 @@ func UpdateService(router *gin.RouterGroup) {
 //	@Produce	json
 //	@Success	200				{object}	entity.Service
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		id					path		string	true	"service id"
+//	@Param		id				path		string	true	"service id"
 //	@Router		/api/v1/services/{id} [delete]
 func DeleteService(router *gin.RouterGroup) {
 	router.DELETE("/services/:id", func(c *gin.Context) {

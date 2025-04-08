@@ -32,6 +32,7 @@ var OptionsReportSections = []ReportSection{
 	{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},
 	{Start: "PHOTOPRISM_THUMB_LIBRARY", Title: "Preview Images"},
 	{Start: "PHOTOPRISM_JPEG_QUALITY", Title: "Image Quality"},
+	{Start: "PHOTOPRISM_VISION_YAML", Title: "Computer Vision"},
 	{Start: "PHOTOPRISM_FACE_SIZE", Title: "Face Recognition",
 		Info: faceFlagsInfo},
 	{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",
@@ -56,6 +57,7 @@ var YamlReportSections = []ReportSection{
 	{Start: "DownloadToken", Title: "Security Tokens"},
 	{Start: "ThumbLibrary", Title: "Preview Images"},
 	{Start: "JpegQuality", Title: "Image Quality"},
+	{Start: "VisionYaml", Title: "Computer Vision"},
 	{Start: "PIDFilename", Title: "Daemon Mode",
 		Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 }

@@ -9,10 +9,10 @@ import (
 var onceNsfwDetector sync.Once
 
 func initNsfwDetector() {
-	services.Nsfw = nsfw.New(conf.NSFWModelPath())
+	services.Nsfw = nsfw.NewModel(conf.NSFWModelPath())
 }
 
-func NsfwDetector() *nsfw.Detector {
+func NsfwDetector() *nsfw.Model {
 	onceNsfwDetector.Do(initNsfwDetector)
 
 	return services.Nsfw

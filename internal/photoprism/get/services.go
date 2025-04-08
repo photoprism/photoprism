@@ -43,7 +43,7 @@ var services struct {
 	FolderCache *gc.Cache
 	CoverCache  *gc.Cache
 	ThumbCache  *gc.Cache
-	Classify    *classify.TensorFlow
+	Classify    *classify.Model
 	Convert     *photoprism.Convert
 	Files       *photoprism.Files
 	Photos      *photoprism.Photos
@@ -54,8 +54,8 @@ var services struct {
 	Places      *photoprism.Places
 	Purge       *photoprism.Purge
 	CleanUp     *photoprism.CleanUp
-	Nsfw        *nsfw.Detector
-	FaceNet     *face.Net
+	Nsfw        *nsfw.Model
+	FaceNet     *face.Model
 	Query       *query.Query
 	Thumbs      *photoprism.Thumbs
 	Session     *session.Session

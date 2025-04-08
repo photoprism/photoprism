@@ -18,7 +18,7 @@ func StopServer(router *gin.RouterGroup) {
 		s := Auth(c, acl.ResourceConfig, acl.ActionManage)
 		conf := get.Config()
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Invalid() || conf.Public() || conf.DisableSettings() || conf.DisableRestart() {
 			AbortForbidden(c)
 			return

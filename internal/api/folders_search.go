@@ -47,7 +47,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 	handler := func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.AccessLibrary)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

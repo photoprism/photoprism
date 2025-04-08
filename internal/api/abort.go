@@ -94,6 +94,10 @@ func AbortDeleteFailed(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrDeleteFailed)
 }
 
+func AbortNotImplemented(c *gin.Context) {
+	Abort(c, http.StatusNotImplemented, i18n.ErrUnsupported)
+}
+
 func AbortUnexpectedError(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 }

@@ -9,10 +9,10 @@ import (
 var onceClassify sync.Once
 
 func initClassify() {
-	services.Classify = classify.New(Config().AssetsPath(), Config().DisableClassification())
+	services.Classify = classify.NewNasnet(Config().AssetsPath(), Config().DisableClassification())
 }
 
-func Classify() *classify.TensorFlow {
+func Classify() *classify.Model {
 	onceClassify.Do(initClassify)
 
 	return services.Classify

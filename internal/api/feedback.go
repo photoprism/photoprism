@@ -25,7 +25,7 @@ func SendFeedback(router *gin.RouterGroup) {
 
 		s := Auth(c, acl.ResourceFeedback, acl.ActionCreate)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

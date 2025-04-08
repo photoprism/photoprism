@@ -41,10 +41,16 @@ var (
 	SizeColors   = Size{Colors, Fit720, "Color Detection", 3, 3, false, false, false, true, Options{ResampleResize, ResampleNearestNeighbor, ResamplePng}}
 	SizeTile50   = Size{Tile50, Fit720, "List View", 50, 50, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
 	SizeTile100  = Size{Tile100, Fit720, "Places View", 100, 100, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
-	SizeTile224  = Size{Tile224, Fit720, "TensorFlow, Mosaic View", 224, 224, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
-	SizeLeft224  = Size{Left224, Fit720, "TensorFlow", 224, 224, false, false, false, false, Options{ResampleFillTopLeft, ResampleDefault}}
-	SizeRight224 = Size{Right224, Fit720, "TensorFlow", 224, 224, false, false, false, false, Options{ResampleFillBottomRight, ResampleDefault}}
+	SizeTile224  = Size{Tile224, Fit720, "AI, Mosaic View", 224, 224, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
+	SizeLeft224  = Size{Left224, Fit720, "AI", 224, 224, false, false, false, false, Options{ResampleFillTopLeft, ResampleDefault}}
+	SizeRight224 = Size{Right224, Fit720, "AI", 224, 224, false, false, false, false, Options{ResampleFillBottomRight, ResampleDefault}}
+	SizeTile384  = Size{Tile384, Fit720, "AI", 384, 384, false, false, true, false, Options{ResampleFillCenter, ResampleDefault}}
+	SizeLeft384  = Size{Left384, Fit720, "AI", 384, 384, false, false, true, false, Options{ResampleFillTopLeft, ResampleDefault}}
+	SizeRight384 = Size{Right384, Fit720, "AI", 384, 384, false, false, true, false, Options{ResampleFillBottomRight, ResampleDefault}}
 	SizeFit720   = Size{Fit720, "", "SD TV, Mobile", 720, 720, true, true, false, true, Options{ResampleFit, ResampleDefault}}
+	SizeTile480  = Size{Tile480, Fit1920, "AI", 480, 480, false, false, true, false, Options{ResampleFillCenter, ResampleDefault}}
+	SizeLeft480  = Size{Left480, Fit1920, "AI", 480, 480, false, false, true, false, Options{ResampleFillTopLeft, ResampleDefault}}
+	SizeRight480 = Size{Right480, Fit1920, "AI", 480, 480, false, false, true, false, Options{ResampleFillBottomRight, ResampleDefault}}
 	SizeTile500  = Size{Tile500, Fit1920, "Cards View", 500, 500, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
 	SizeTile1080 = Size{Tile1080, Fit1920, "Instagram", 1080, 1080, false, false, true, false, Options{ResampleFillCenter, ResampleDefault}}
 	SizeFit1280  = Size{Fit1280, Fit1920, "HD TV, SXGA", 1280, 1024, true, true, false, false, Options{ResampleFit, ResampleDefault}}
@@ -63,9 +69,15 @@ var Sizes = SizeMap{
 	Colors:   SizeColors,
 	Tile50:   SizeTile50,
 	Tile100:  SizeTile100,
+	Tile224:  SizeTile224,
 	Left224:  SizeLeft224,
 	Right224: SizeRight224,
-	Tile224:  SizeTile224,
+	Tile384:  SizeTile384,
+	Left384:  SizeLeft384,
+	Right384: SizeRight384,
+	Tile480:  SizeTile480,
+	Left480:  SizeLeft480,
+	Right480: SizeRight480,
 	Fit720:   SizeFit720,
 	Tile500:  SizeTile500,
 	Tile1080: SizeTile1080, // Optional
@@ -78,4 +90,8 @@ var Sizes = SizeMap{
 	Fit4096:  SizeFit4096,
 	Fit5120:  SizeFit5120,
 	Fit7680:  SizeFit7680,
+}
+
+func ParseSize(s string) Size {
+	return Sizes[Name(s)]
 }

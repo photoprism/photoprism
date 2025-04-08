@@ -7,10 +7,11 @@ import (
 
 // File and directory permissions.
 var (
-	ModeDir    os.FileMode = 0o777
-	ModeSocket os.FileMode = 0o666
-	ModeFile   os.FileMode = 0o666
-	ModeBackup os.FileMode = 0o600
+	ModeDir        os.FileMode = 0o777
+	ModeSocket     os.FileMode = 0o666
+	ModeFile       os.FileMode = 0o666
+	ModeConfigFile os.FileMode = 0o664
+	ModeBackupFile os.FileMode = 0o600
 )
 
 // ParseMode parses and returns a filesystem permission mode,

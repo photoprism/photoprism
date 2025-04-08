@@ -2,17 +2,18 @@ package api
 
 import (
 	"net/http"
-
-	"github.com/photoprism/photoprism/internal/config/customize"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api/download"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TODO: GET /api/v1/dl/file/:hash
@@ -41,18 +42,35 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 //	@Produce	application/octet-stream
 //	@Failure	403,404	{file}	image/svg+xml
 //	@Success	200		{file}	application/octet-stream
-//	@Param		hash	path	string	true	"File Hash"
-//	@Router		/api/v1/dl/{hash} [get]
+//	@Param		file	path	string	true	"file hash or unique download id"
+//	@Router		/api/v1/dl/{file} [get]
 func GetDownload(router *gin.RouterGroup) {
-	router.GET("/dl/:hash", func(c *gin.Context) {
+	router.GET("/dl/:file", func(c *gin.Context) {
+		id := clean.Token(c.Param("file"))
+
+		// Check for temporary download if the file is identified by a UUID string.
+		if rnd.IsUUID(id) {
+			fileName, fileErr := download.Find(id)
+
+			if fileErr != nil {
+				AbortForbidden(c)
+				return
+			} else if !fs.FileExists(fileName) {
+				AbortNotFound(c)
+				return
+			}
+
+			c.FileAttachment(fileName, filepath.Base(fileName))
+			return
+		}
+
+		// If the file is identified by its hash, a valid download token is required.
 		if InvalidDownloadToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
-		fileHash := clean.Token(c.Param("hash"))
-
-		f, err := query.FileByHash(fileHash)
+		f, err := query.FileByHash(id)
 
 		if err != nil {
 			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})

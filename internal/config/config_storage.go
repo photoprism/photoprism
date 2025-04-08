@@ -196,7 +196,7 @@ func (c *Config) CreateDirectories() error {
 	}
 
 	// Create TensorFlow model path if it doesn't exist yet.
-	if dir := c.TensorFlowModelPath(); dir == "" {
+	if dir := c.NasnetModelPath(); dir == "" {
 		return notFoundError("tensorflow model")
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)

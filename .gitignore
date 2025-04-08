@@ -49,6 +49,8 @@ frontend/coverage/
 /assets/nasnet
 /assets/nsfw
 /assets/static/build/
+/assets/*net
+/assets/vision
 /pro
 /plus
 

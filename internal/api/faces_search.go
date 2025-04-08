@@ -30,7 +30,7 @@ func SearchFaces(router *gin.RouterGroup) {
 	router.GET("/faces", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionSearch)
 
-		// Abort if permission was not granted.
+		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}

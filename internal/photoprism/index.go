@@ -11,7 +11,6 @@ import (
 
 	"github.com/karrick/godirwalk"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
@@ -27,9 +26,8 @@ import (
 // Index represents an indexer that indexes files in the originals directory.
 type Index struct {
 	conf         *config.Config
-	tensorFlow   *classify.TensorFlow
-	nsfwDetector *nsfw.Detector
-	faceNet      *face.Net
+	nsfwDetector *nsfw.Model
+	faceNet      *face.Model
 	convert      *Convert
 	files        *Files
 	photos       *Photos
@@ -40,7 +38,7 @@ type Index struct {
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
+func NewIndex(conf *config.Config, nsfwDetector *nsfw.Model, faceNet *face.Model, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
 		log.Errorf("index: config is not set")
 		return nil
@@ -48,7 +46,6 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 
 	i := &Index{
 		conf:         conf,
-		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
 		faceNet:      faceNet,
 		convert:      convert,
@@ -106,12 +103,6 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	defer mutex.IndexWorker.Stop()
-
-	if err := ind.tensorFlow.Init(); err != nil {
-		log.Errorf("index: %s", clean.Error(err))
-
-		return found, updated
-	}
 
 	jobs := make(chan IndexJob)
 

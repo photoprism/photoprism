@@ -113,7 +113,6 @@ type Options struct {
 	DisableRaw             bool          `yaml:"DisableRaw" json:"DisableRaw" flag:"disable-raw"`
 	RawPresets             bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
 	ExifBruteForce         bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
-	DetectNSFW             bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	DefaultLocale          string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
 	DefaultTimezone        string        `yaml:"DefaultTimezone" json:"DefaultTimezone" flag:"default-timezone"`
 	DefaultTheme           string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
@@ -193,6 +192,11 @@ type Options struct {
 	JpegQuality            int           `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
 	JpegSize               int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
 	PngSize                int           `yaml:"PngSize" json:"PngSize" flag:"png-size"`
+	VisionYaml             string        `yaml:"VisionYaml" json:"-" flag:"vision-yaml"`
+	VisionApi              bool          `yaml:"VisionApi" json:"-" flag:"vision-api"`
+	VisionUri              string        `yaml:"VisionUri" json:"-" flag:"vision-uri"`
+	VisionKey              string        `yaml:"VisionKey" json:"-" flag:"vision-key"`
+	DetectNSFW             bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	FaceSize               int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore              float64       `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap            int           `yaml:"-" json:"-" flag:"face-overlap"`

@@ -24,6 +24,7 @@ var ResourceNames = []Resource{
 	ResourceLogs,
 	ResourceWebDAV,
 	ResourceMetrics,
+	ResourceVision,
 	ResourceFeedback,
 	ResourceDefault,
 }
