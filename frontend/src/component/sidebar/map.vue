@@ -94,6 +94,13 @@ export default {
           attributionControl: false,
         });
 
+        // Add zoom controls
+        this.map.addControl(new maplibregl.NavigationControl({
+          showCompass: false,
+          showZoom: true,
+          visualizePitch: false,
+        }), 'top-right');
+
         this.map.on("error", (e) => {
           console.error("Map error:", e);
         });
