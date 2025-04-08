@@ -67,7 +67,7 @@
           >
           </v-list-item>
           -->
-          <v-list-item prepend-icon="mdi-map-marker" :title="model.getLatLng()" class="metadata__item"> </v-list-item>
+          <v-list-item v-tooltip="$gettext('Location')" prepend-icon="mdi-map-marker" :title="model.getLatLng()" class="metadata__item"> </v-list-item>
           <PMap :lat="model.Lat" :lng="model.Lng" />
         </template>
       </v-list>

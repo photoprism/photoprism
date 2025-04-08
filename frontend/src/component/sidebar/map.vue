@@ -1,5 +1,5 @@
 <template>
-  <div v-if="lat && lng" class="metadata__map" ref="mapContainer"></div>
+  <div v-if="lat && lng && !isOfflineStyle" class="metadata__map" ref="mapContainer"></div>
 </template>
 
 <script>
@@ -25,8 +25,23 @@ export default {
       loadingMapLibre: false,
     };
   },
+  computed: {
+    isOfflineStyle() {
+      return this.$config.values.settings.maps.style === "low-resolution";
+    },
+  },
+  watch: {
+    lat() {
+      this.updateMapPosition();
+    },
+    lng() {
+      this.updateMapPosition();
+    },
+  },
   async mounted() {
-    await this.loadMapAndInit();
+    if (!this.isOfflineStyle) {
+      await this.loadMapAndInit();
+    }
   },
   beforeUnmount() {
     if (this.map) {
@@ -95,6 +110,14 @@ export default {
       } catch (error) {
         console.error("Failed to initialize map:", error);
         this.mapLoaded = false;
+      }
+    },
+    updateMapPosition() {
+      if (this.map && this.mapLoaded) {
+        this.map.setCenter([this.lng, this.lat]);
+        if (this.marker) {
+          this.marker.setLngLat([this.lng, this.lat]);
+        }
       }
     },
   },
