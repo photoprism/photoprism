@@ -27,7 +27,7 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     await toolbar.search("beacon");
     const LabelBeaconUid = await label.getNthLabeltUid(0);
     await label.openLabelWithUid(LabelBeaconUid);
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     const PhotoBeaconUid = await photo.getNthPhotoUid("all", 0);
     await page.clickCardTitleOfUID(PhotoBeaconUid);
     const PhotoKeywords = await photoedit.keywords.value;
@@ -53,7 +53,7 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
     await toolbar.search("test");
     const LabelTest = await label.getNthLabeltUid(0);
     await label.openLabelWithUid(LabelTest);
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     await page.clickCardTitleOfUID(PhotoBeaconUid);
     await t
       .click(photoedit.labelsTab)
@@ -178,7 +178,7 @@ test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Delete label
 
   await menu.openPage("browse");
   await toolbar.search("uid:" + FirstPhotoDomeUid);
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   await page.clickCardTitleOfUID(FirstPhotoDomeUid);
   await t.click(photoedit.labelsTab);
 

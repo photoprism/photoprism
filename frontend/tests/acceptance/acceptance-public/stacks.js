@@ -39,7 +39,7 @@ test.meta("testID", "stacks-001").meta({ type: "short", mode: "public" })(
 test.meta("testID", "stacks-002").meta({ type: "short", mode: "public" })("Common: Change primary file", async (t) => {
   await toolbar.search("ski");
   const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   await page.clickCardTitleOfUID(SequentialPhotoUid);
   await t.click(photoedit.filesTab);
   const FirstFileName = await Selector("td").withText("Filename").nextSibling(0).innerText;
@@ -61,7 +61,7 @@ test.meta("testID", "stacks-002").meta({ type: "short", mode: "public" })("Commo
 
 test.meta("testID", "stacks-003").meta({ type: "short", mode: "public" })("Common: Ungroup files", async (t) => {
   await toolbar.search("group");
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   const PhotoCount = await photo.getPhotoCount("all");
   const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
 
@@ -69,7 +69,7 @@ test.meta("testID", "stacks-003").meta({ type: "short", mode: "public" })("Commo
 
   await menu.openPage("stacks");
   await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   await page.clickCardTitleOfUID(SequentialPhotoUid);
   await t
     .click(photoedit.filesTab)
@@ -101,7 +101,7 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })("Common: Delete non p
     .wait(10000);
   await menu.openPage("browse");
   await toolbar.search("pizza");
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   const PhotoCount = await photo.getPhotoCount("all");
   const PhotoUid = await photo.getNthPhotoUid("all", 0);
 

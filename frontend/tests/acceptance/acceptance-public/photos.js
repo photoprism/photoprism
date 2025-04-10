@@ -23,7 +23,7 @@ const page = new Page();
 const photoedit = new PhotoEdit();
 
 test.meta("testID", "photos-001").meta({ mode: "public" })("Common: Scroll to top", async (t) => {
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
 
   await t
     .expect(Selector("button.is-photo-scroll-top").exists)
@@ -96,7 +96,7 @@ test.meta("testID", "photos-003").meta({ type: "short", mode: "public" })(
       .typeText(photoedit.latitude, "9.999", { replace: true })
       .typeText(photoedit.longitude, "9.999", { replace: true });
     await t.click(photoedit.detailsApply).click(photoedit.detailsClose);
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     const ApproveButtonThirdPhoto = 'div.is-photo[data-uid="' + ThirdPhotoUid + '"] button.action-approve';
     await t.click(Selector(ApproveButtonThirdPhoto));
     if (t.browser.platform === "mobile") {
@@ -169,7 +169,7 @@ test.meta("testID", "photos-004").meta({ type: "short", mode: "public" })(
 );
 
 test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Common: Edit photo/video", async (t) => {
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
   await page.clickCardTitleOfUID(FirstPhotoUid);
 
@@ -319,7 +319,7 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
 test.meta("testID", "photos-006").meta({ mode: "public" })(
   "Multi-Window: Navigate from card view to place",
   async (t) => {
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     await t.click(page.cardLocation.nth(0));
 
     await t
@@ -395,7 +395,7 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
 test.meta("testID", "photos-008").meta({ mode: "public" })(
   "Multi-Window: Navigate from card view to photos taken at the same date",
   async (t) => {
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     await toolbar.search("flower");
     await t.click(page.cardTaken.nth(0));
 

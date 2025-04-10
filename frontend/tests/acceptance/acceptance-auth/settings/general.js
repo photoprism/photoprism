@@ -98,7 +98,7 @@ test.meta("testID", "settings-general-002").meta({ type: "short", mode: "auth" }
 test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" })(
   "Common: Disable pages: import, originals, logs, moments, places, library, calendar, services, account",
   async (t) => {
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
 
     await toolbar.search("Tübingen");
     await t.expect(page.cardLocation.exists).ok();
@@ -173,7 +173,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
     }
 
     await menu.openPage("browse");
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
 
     await t.expect(page.cardLocation.exists).notOk();
 
@@ -269,7 +269,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
 test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" })(
   "Common: Disable people and labels",
   async (t) => {
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     await t.click(page.cardTitle.nth(0));
     await t.click(photoedit.labelsTab);
 
@@ -286,7 +286,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
     await t.click(settings.peopleCheckbox).click(settings.labelsCheckbox);
     await t.eval(() => location.reload());
     await menu.openPage("browse");
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     await t.click(page.cardTitle.nth(0));
     await t.click(photoedit.labelsTab);
 
@@ -524,7 +524,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await contextmenu.checkContextMenuActionAvailability("edit", false);
 
     await contextmenu.clearSelection();
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
 
     await toolbar.search("photo:true");
     await photoviewer.openPhotoViewer("nth", 0);

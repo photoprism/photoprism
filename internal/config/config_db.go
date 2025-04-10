@@ -324,6 +324,7 @@ func (c *Config) CloseDb() error {
 	if c.db != nil {
 		if err := c.db.Close(); err == nil {
 			c.db = nil
+			entity.SetDbProvider(nil)
 		} else {
 			return err
 		}
@@ -356,25 +357,26 @@ func (c *Config) InitDb() {
 	c.MigrateDb(false, nil)
 }
 
-// MigrateDb initializes the database and migrates the schema if needed.
+// MigrateDb will initialize the database and migrate the schema if necessary.
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	entity.Admin.UserName = c.AdminUser()
 
-	// Only migrate once automatically per version.
+	// Automatically migrate database schema only once per release to reduce startup time.
 	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
 	entity.InitDb(migrate.Opt(version.NeedsMigration(), runFailed, ids))
 	if err := version.Migrated(c.Db()); err != nil {
 		log.Warnf("config: %s (migrate)", err)
 	}
 
-	// Init admin account?
+	// Set the password for the initial Super Admin account, if specified.
 	if c.AdminPassword() == "" {
-		log.Warnf("config: password required to initialize %s account", clean.LogQuote(c.AdminUser()))
+		log.Warnf("config: %s account cannot be initialized due to missing or invalid password", clean.LogQuote(c.AdminUser()))
 	} else {
 		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	go entity.Error{}.LogEvents()
+	// Start recording warnings and errors after the required database table has been created.
+	entity.LogWarningsAndErrors()
 }
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
@@ -387,7 +389,8 @@ func (c *Config) InitTestDb() {
 		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
 	}
 
-	go entity.Error{}.LogEvents()
+	// Start recording warnings and errors after the required table has have been created.
+	entity.LogWarningsAndErrors()
 }
 
 // checkDb checks the database server version.

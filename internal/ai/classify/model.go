@@ -56,7 +56,7 @@ func (m *Model) File(imageUri string, confidenceThreshold int) (result Labels, e
 
 	var data []byte
 
-	if data, err = media.ReadUri(imageUri); err != nil {
+	if data, err = media.ReadUrl(imageUri); err != nil {
 		return nil, err
 	}
 

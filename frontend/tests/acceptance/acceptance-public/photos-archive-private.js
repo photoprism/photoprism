@@ -47,7 +47,7 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     /*await toolbar.setFilter("view", "List");
     await photo.triggerListViewActions("uid", SecondPhotoUid, "private");
     await photo.triggerListViewActions("uid", SecondVideoUid, "private");*/
-    await toolbar.setFilter("view", "Cards");
+    await t.click(toolbar.cardsViewAction);
     await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");
     await photo.triggerHoverAction("uid", ThirdVideoUid, "select");
     await contextmenu.triggerContextMenuAction("edit", "");

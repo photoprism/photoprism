@@ -40,7 +40,7 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
   await t
     .typeText(albumdialog.title, "Wonderland", { replace: true })
     .typeText(albumdialog.location, "Earth", { replace: true })
-    .typeText(albumdialog.description, "We love earth")
+    .typeText(albumdialog.description, "We love earth", { replace: true })
     .typeText(albumdialog.category, "Mountains")
     .pressKey("enter")
     .click(albumdialog.dialogSave);

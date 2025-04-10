@@ -1,12 +1,28 @@
 package entity
 
 import (
+	"sync/atomic"
 	"time"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/event"
 )
+
+// logEvents is true when events are being recorded in the "errors" database table.
+var logEvents = atomic.Bool{}
+
+// LogWarningsAndErrors starts logging published error and warning
+// events to the errors database table if a database instance is set.
+func LogWarningsAndErrors() {
+	if !HasDbProvider() {
+		return
+	}
+
+	if logEvents.CompareAndSwap(false, true) {
+		go Error{}.LogEvents(logrus.WarnLevel)
+	}
+}
 
 // Error represents an error message log.
 type Error struct {
@@ -24,37 +40,41 @@ func (Error) TableName() string {
 	return "errors"
 }
 
-// LogEvents logs published error events.
-func (Error) LogEvents() {
+// LogEvents writes published events with the specified minimum level to the "errors" database table.
+func (Error) LogEvents(minLevel logrus.Level) {
 	s := event.Subscribe("log.*")
 
 	defer func() {
+		logEvents.CompareAndSwap(true, false)
 		event.Unsubscribe(s)
 	}()
 
+	// Wait for log events and write them to the  "errors" table,
+	// as long as a database connection exists.
 	for msg := range s.Receiver {
-		level, ok := msg.Fields["level"]
+		var err error
+		var level logrus.Level
 
-		if !ok {
+		if val, ok := msg.Fields["level"]; !ok {
+			continue
+		} else if level, err = logrus.ParseLevel(val.(string)); err != nil || level > minLevel {
 			continue
 		}
 
-		logLevel, err := logrus.ParseLevel(level.(string))
-
-		if err != nil || logLevel >= logrus.InfoLevel {
-			continue
-		}
-
-		newError := Error{ErrorLevel: logLevel.String()}
+		errLog := Error{ErrorLevel: level.String()}
 
 		if val, ok := msg.Fields["message"]; ok {
-			newError.ErrorMessage = val.(string)
+			errLog.ErrorMessage = val.(string)
 		}
 
 		if val, ok := msg.Fields["time"]; ok {
-			newError.ErrorTime = val.(time.Time)
+			errLog.ErrorTime = val.(time.Time)
 		}
 
-		Db().Create(&newError)
+		if HasDbProvider() {
+			Db().Create(&errLog)
+		} else {
+			break
+		}
 	}
 }

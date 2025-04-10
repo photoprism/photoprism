@@ -50,7 +50,7 @@ test.meta("testID", "components-004").meta({ mode: "public" })("Common: List vie
 });
 
 test.meta("testID", "components-005").meta({ type: "short", mode: "public" })("Common: Card view", async (t) => {
-  await toolbar.setFilter("view", "Cards");
+  await t.click(toolbar.cardsViewAction);
   await toolbar.search("photo:true");
 
   await t

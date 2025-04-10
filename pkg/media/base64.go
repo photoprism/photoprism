@@ -1,30 +1,23 @@
 package media
 
 import (
-	"bytes"
 	"encoding/base64"
-	"fmt"
-
-	"github.com/gabriel-vasile/mimetype"
+	"io"
 )
 
-// Base64 returns a data URL representing the binary buffer data.
-func Base64(buf *bytes.Buffer) string {
-	encoded := base64.StdEncoding.EncodeToString(buf.Bytes())
+// EncodeBase64 returns the base64 encoding of bin.
+func EncodeBase64(bin []byte) string {
+	return base64.StdEncoding.EncodeToString(bin)
+}
 
-	if encoded == "" {
-		return ""
-	}
+// ReadBase64 returns a new reader that decodes base64 and returns binary data.
+func ReadBase64(stream io.Reader) io.Reader {
+	return base64.NewDecoder(base64.StdEncoding, stream)
+}
 
-	var mimeType string
-
-	mime, err := mimetype.DetectReader(buf)
-
-	if err != nil {
-		mimeType = "application/octet-stream"
-	} else {
-		mimeType = mime.String()
-	}
-
-	return fmt.Sprintf("data:%s;base64,%s", mimeType, encoded)
+// DecodeBase64 returns the bytes represented by the base64 string s.
+// If the input is malformed, it returns the partially decoded data and
+// [CorruptInputError]. Newline characters (\r and \n) are ignored.
+func DecodeBase64(s string) ([]byte, error) {
+	return base64.StdEncoding.DecodeString(s)
 }
