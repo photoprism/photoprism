@@ -66,7 +66,7 @@ func convertAction(ctx *cli.Context) error {
 	w := get.Convert()
 
 	// Start file conversion.
-	if err := w.Start(convertPath, ctx.StringSlice("ext"), ctx.Bool("force")); err != nil {
+	if err = w.Start(convertPath, ctx.StringSlice("ext"), ctx.Bool("force")); err != nil {
 		log.Error(err)
 	}
 

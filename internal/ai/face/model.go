@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/disintegration/imaging"
 	tf "github.com/wamuir/graft/tensorflow"
 
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -27,8 +28,14 @@ type Model struct {
 }
 
 // NewModel returns a new TensorFlow Facenet instance.
-func NewModel(modelPath, cachePath string, disabled bool) *Model {
-	return &Model{modelPath: modelPath, cachePath: cachePath, resolution: CropSize.Width, modelTags: []string{"serve"}, disabled: disabled}
+func NewModel(modelPath, cachePath string, resolution int, tags []string, disabled bool) *Model {
+	if resolution == 0 {
+		resolution = CropSize.Width
+	}
+	if len(tags) == 0 {
+		tags = []string{"serve"}
+	}
+	return &Model{modelPath: modelPath, cachePath: cachePath, resolution: resolution, modelTags: tags, disabled: disabled}
 }
 
 // Detect runs the detection and facenet algorithms over the provided source image.
@@ -57,14 +64,23 @@ func (m *Model) Detect(fileName string, minSize int, cacheCrop bool, expected in
 			continue
 		}
 
-		if img, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); imgErr != nil {
+		if img, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); imgErr != nil {
 			log.Errorf("faces: failed to decode image: %s", imgErr)
-		} else if embeddings := m.getEmbeddings(img); !embeddings.Empty() {
+		} else if embeddings := m.Run(img); !embeddings.Empty() {
 			faces[i].Embeddings = embeddings
 		}
 	}
 
 	return faces, nil
+}
+
+// Init initialises tensorflow models if not disabled
+func (m *Model) Init() (err error) {
+	if m.disabled {
+		return nil
+	}
+
+	return m.loadModel()
 }
 
 // ModelLoaded tests if the TensorFlow model is loaded.
@@ -99,8 +115,9 @@ func (m *Model) loadModel() error {
 	return nil
 }
 
-// getEmbeddings returns the face embeddings for an image.
-func (m *Model) getEmbeddings(img image.Image) Embeddings {
+// Run returns the face embeddings for an image.
+func (m *Model) Run(img image.Image) Embeddings {
+	// Create input tensor from image.
 	tensor, err := imageToTensor(img, m.resolution)
 
 	if err != nil {
@@ -143,6 +160,11 @@ func imageToTensor(img image.Image, resolution int) (tfTensor *tf.Tensor, err er
 
 	if resolution <= 0 {
 		return tfTensor, fmt.Errorf("faces: invalid model resolution")
+	}
+
+	// Resize the image only if its resolution does not match the model.
+	if img.Bounds().Dx() != resolution || img.Bounds().Dy() != resolution {
+		img = imaging.Fill(img, resolution, resolution, imaging.Center, imaging.Lanczos)
 	}
 
 	var tfImage [1][][][3]float32

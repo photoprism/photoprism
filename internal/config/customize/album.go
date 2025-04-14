@@ -6,8 +6,8 @@ import (
 
 // AlbumsSettings represents album defaults and preferences.
 type AlbumsSettings struct {
-	Order    AlbumsOrder      `json:"order" yaml:"Order"`
 	Download DownloadSettings `json:"download" yaml:"Download"`
+	Order    AlbumsOrder      `json:"order" yaml:"Order"`
 }
 
 // AlbumsOrder represents default album sort orders.

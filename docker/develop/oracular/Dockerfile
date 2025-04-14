@@ -39,6 +39,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
     PROG="photoprism" \
     S6_KEEP_ENV=1 \
+    S6_VERBOSITY=0 \
     S6_LOGGING=0
 
 # Copy scripts and package sources config.

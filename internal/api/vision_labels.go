@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
@@ -24,7 +25,7 @@ import (
 //	@Router		/api/v1/vision/labels [post]
 func PostVisionLabels(router *gin.RouterGroup) {
 	router.POST("/vision/labels", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceVision, acl.AccessAll)
+		s := Auth(c, acl.ResourceVision, acl.ActionUse)
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
@@ -53,9 +54,10 @@ func PostVisionLabels(router *gin.RouterGroup) {
 		}
 
 		// Run inference to find matching labels.
-		labels, err := vision.Labels(request.Images)
+		labels, err := vision.Labels(request.Images, media.SrcRemote)
 
 		if err != nil {
+			log.Errorf("vision: %s (run labels)", err)
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
 		}

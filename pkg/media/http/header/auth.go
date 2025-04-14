@@ -67,7 +67,7 @@ func Authorization(c *gin.Context) (authType, authToken string) {
 	return "", ""
 }
 
-// SetAuthorization adds a bearer token authorization header to a request.
+// SetAuthorization adds a bearer token authorization header to the given request.
 func SetAuthorization(r *http.Request, authToken string) {
 	if authToken != "" {
 		r.Header.Add(Auth, fmt.Sprintf("%s %s", AuthBearer, authToken))

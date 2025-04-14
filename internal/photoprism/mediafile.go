@@ -950,12 +950,12 @@ func (m *MediaFile) IsRaw() bool {
 	return m.HasFileType(fs.ImageRaw) || m.HasMediaType(media.Raw) || m.IsDng()
 }
 
-// IsAnimated returns true if it is a video or animated image.
+// IsAnimated returns true if this is a video or animated image.
 func (m *MediaFile) IsAnimated() bool {
 	return m.IsVideo() || m.IsAnimatedImage()
 }
 
-// NotAnimated checks if the file is not a video or an animated image.
+// NotAnimated checks if this is not a video or an animated image.
 func (m *MediaFile) NotAnimated() bool {
 	return !m.IsAnimated()
 }
@@ -978,6 +978,11 @@ func (m *MediaFile) IsVideo() bool {
 // IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
 func (m *MediaFile) IsSidecar() bool {
 	return !m.Media().Main()
+}
+
+// IsArchive returns true if this is an archive file.
+func (m *MediaFile) IsArchive() bool {
+	return m.HasFileType(fs.ArchiveZip) || m.HasMediaType(media.Archive)
 }
 
 // IsThumb checks if the file is a thumbnail image.

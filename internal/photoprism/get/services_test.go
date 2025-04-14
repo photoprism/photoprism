@@ -6,8 +6,6 @@ import (
 	gc "github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
-	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -28,10 +26,6 @@ func TestCoverCache(t *testing.T) {
 
 func TestThumbCache(t *testing.T) {
 	assert.IsType(t, &gc.Cache{}, ThumbCache())
-}
-
-func TestClassify(t *testing.T) {
-	assert.IsType(t, &classify.Model{}, Classify())
 }
 
 func TestConvert(t *testing.T) {
@@ -56,10 +50,6 @@ func TestPurge(t *testing.T) {
 
 func TestCleanUp(t *testing.T) {
 	assert.IsType(t, &photoprism.CleanUp{}, CleanUp())
-}
-
-func TestNsfwDetector(t *testing.T) {
-	assert.IsType(t, &nsfw.Model{}, NsfwDetector())
 }
 
 func TestQuery(t *testing.T) {

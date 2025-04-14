@@ -19,7 +19,6 @@ const (
 type Settings struct {
 	UI        UISettings       `json:"ui" yaml:"UI"`
 	Search    SearchSettings   `json:"search" yaml:"Search"`
-	Albums    AlbumsSettings   `json:"albums" yaml:"Albums"`
 	Maps      MapsSettings     `json:"maps" yaml:"Maps"`
 	Features  FeatureSettings  `json:"features" yaml:"Features"`
 	Import    ImportSettings   `json:"import" yaml:"Import"`
@@ -27,6 +26,7 @@ type Settings struct {
 	Stack     StackSettings    `json:"stack" yaml:"Stack"`
 	Share     ShareSettings    `json:"share" yaml:"Share"`
 	Download  DownloadSettings `json:"download" yaml:"Download"`
+	Albums    AlbumsSettings   `json:"albums" yaml:"Albums"`
 	Templates TemplateSettings `json:"templates" yaml:"Templates"`
 }
 

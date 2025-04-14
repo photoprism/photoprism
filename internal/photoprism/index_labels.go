@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // Labels classifies a JPEG image and returns matching labels.
@@ -41,7 +42,7 @@ func (ind *Index) Labels(file *MediaFile) (labels classify.Labels) {
 	}
 
 	// Get matching labels from computer vision model.
-	if labels, err = vision.Labels(thumbnails); err != nil {
+	if labels, err = vision.Labels(thumbnails, media.SrcLocal); err != nil {
 		log.Debugf("labels: %s in %s", err, clean.Log(file.BaseName()))
 		return labels
 	}

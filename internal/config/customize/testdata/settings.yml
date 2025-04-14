@@ -10,19 +10,6 @@ Search:
   ListView: true
   ShowTitles: true
   ShowCaptions: true
-Albums:
-  Order:
-    Album: oldest
-    Folder: added
-    Moment: oldest
-    State: newest
-    Month: oldest
-  Download:
-    Name: share
-    Disabled: false
-    Originals: true
-    MediaRaw: false
-    MediaSidecar: false
 Maps:
   Animate: 0
   Style: ""
@@ -75,5 +62,18 @@ Download:
   Originals: true
   MediaRaw: false
   MediaSidecar: false
+Albums:
+  Download:
+    Name: share
+    Disabled: false
+    Originals: true
+    MediaRaw: false
+    MediaSidecar: false
+  Order:
+    Album: oldest
+    Folder: added
+    Moment: oldest
+    State: newest
+    Month: oldest
 Templates:
   Default: index.gohtml

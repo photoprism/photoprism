@@ -39,7 +39,7 @@ var thumbFileSizes = []thumb.Size{
 }
 
 // ImageFromThumb returns a cropped area from an existing thumbnail image.
-func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, err error) {
+func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, err error) {
 	// Use same folder for caching if "cache" is true.
 	filePath := filepath.Dir(thumbName)
 
@@ -48,12 +48,12 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 
 	// Resolve symlinks.
 	if thumbName, err = fs.Resolve(thumbName); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// Compose cached crop image file name.
 	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.ExtJpeg)
-	cropName := filepath.Join(filePath, cropBase)
+	cropName = filepath.Join(filePath, cropBase)
 
 	// Cached?
 	if !fs.FileExists(cropName) {
@@ -61,14 +61,14 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	} else if cropImg, cropErr := imaging.Open(cropName); cropErr != nil {
 		log.Errorf("crop: failed loading %s", filepath.Base(cropName))
 	} else {
-		return cropImg, nil
+		return cropImg, cropName, nil
 	}
 
 	// Open thumb image file.
 	img, err = openIdealThumbFile(thumbName, hash, area, size)
 
 	if err != nil {
-		return img, err
+		return img, "", err
 	}
 
 	// Get absolute crop coordinates and dimension.
@@ -93,7 +93,7 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 		}
 	}
 
-	return img, nil
+	return img, cropName, nil
 }
 
 // ThumbFileName returns the ideal thumb file name.

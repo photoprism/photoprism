@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-03-27
+Date generated: 2025-04-14
 
 ================================================================================
 
@@ -1039,8 +1039,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-contrib/gzip
-Version: v1.2.2
-License: MIT (https://github.com/gin-contrib/gzip/blob/v1.2.2/LICENSE)
+Version: v1.2.3
+License: MIT (https://github.com/gin-contrib/gzip/blob/v1.2.3/LICENSE)
 
 MIT License
 
@@ -1067,8 +1067,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-contrib/sse
-Version: v1.0.0
-License: MIT (https://github.com/gin-contrib/sse/blob/v1.0.0/LICENSE)
+Version: v1.1.0
+License: MIT (https://github.com/gin-contrib/sse/blob/v1.1.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -1879,8 +1879,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-playground/validator/v10
-Version: v10.25.0
-License: MIT (https://github.com/go-playground/validator/blob/v10.25.0/LICENSE)
+Version: v10.26.0
+License: MIT (https://github.com/go-playground/validator/blob/v10.26.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -2316,8 +2316,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20250324010448-bc23e40121c4
-License: Apache-2.0 (https://github.com/golang/geo/blob/bc23e40121c4/LICENSE)
+Version: v0.0.0-20250411042641-97e19c1a7ce7
+License: Apache-2.0 (https://github.com/golang/geo/blob/97e19c1a7ce7/LICENSE)
 
 
                                  Apache License
@@ -2525,8 +2525,8 @@ License: Apache-2.0 (https://github.com/golang/geo/blob/bc23e40121c4/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/google/open-location-code/go
-Version: v0.0.0-20250307090349-1695db3c3b15
-License: Apache-2.0 (https://github.com/google/open-location-code/blob/1695db3c3b15/go/LICENSE)
+Version: v0.0.0-20250413133937-894dfd253334
+License: Apache-2.0 (https://github.com/google/open-location-code/blob/894dfd253334/go/LICENSE)
 
 
                                  Apache License
@@ -4432,8 +4432,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/pelletier/go-toml/v2
-Version: v2.2.3
-License: MIT (https://github.com/pelletier/go-toml/blob/v2.2.3/LICENSE)
+Version: v2.2.4
+License: MIT (https://github.com/pelletier/go-toml/blob/v2.2.4/LICENSE)
 
 The MIT License (MIT)
 
@@ -4670,8 +4670,8 @@ License: Apache-2.0 (https://github.com/pquerna/otp/blob/v1.4.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/client_golang/prometheus
-Version: v1.21.1
-License: Apache-2.0 (https://github.com/prometheus/client_golang/blob/v1.21.1/LICENSE)
+Version: v1.22.0
+License: Apache-2.0 (https://github.com/prometheus/client_golang/blob/v1.22.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5663,11 +5663,204 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-Package: github.com/tensorflow/tensorflow/tensorflow/go
-Version: v1.15.2
-License: Apache-2.0 (https://github.com/tensorflow/tensorflow/blob/v1.15.2/LICENSE)
+Package: github.com/tidwall/gjson
+Version: v1.18.0
+License: MIT (https://github.com/tidwall/gjson/blob/v1.18.0/LICENSE)
 
-Copyright 2019 The TensorFlow Authors.  All rights reserved.
+The MIT License (MIT)
+
+Copyright (c) 2016 Josh Baker
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/tidwall/match
+Version: v1.1.1
+License: MIT (https://github.com/tidwall/match/blob/v1.1.1/LICENSE)
+
+The MIT License (MIT)
+
+Copyright (c) 2016 Josh Baker
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/tidwall/pretty
+Version: v1.2.1
+License: MIT (https://github.com/tidwall/pretty/blob/v1.2.1/LICENSE)
+
+The MIT License (MIT)
+
+Copyright (c) 2017 Josh Baker
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/ugjka/go-tz/v2
+Version: v2.2.6
+License: MIT (https://github.com/ugjka/go-tz/blob/v2.2.6/LICENSE)
+
+MIT License
+
+Copyright (c) 2017 ugjka <esesmu@protonmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/ugorji/go/codec
+Version: v1.2.12
+License: MIT (https://github.com/ugorji/go/blob/codec/v1.2.12/codec/LICENSE)
+
+The MIT License (MIT)
+
+Copyright (c) 2012-2020 Ugorji Nwoke.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/ulule/deepcopier
+Version: v0.0.0-20200430083143-45decc6639b6
+License: MIT (https://github.com/ulule/deepcopier/blob/45decc6639b6/LICENSE)
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Ulule
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/urfave/cli/v2
+Version: v2.27.6
+License: MIT (https://github.com/urfave/cli/blob/v2.27.6/LICENSE)
+
+MIT License
+
+Copyright (c) 2022 urfave/cli maintainers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/wamuir/graft/tensorflow
+Version: v0.10.0
+License: Apache-2.0 (https://github.com/wamuir/graft/blob/v0.10.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5870,201 +6063,6 @@ Copyright 2019 The TensorFlow Authors.  All rights reserved.
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
---------------------------------------------------------------------------------
-
-Package: github.com/tidwall/gjson
-Version: v1.18.0
-License: MIT (https://github.com/tidwall/gjson/blob/v1.18.0/LICENSE)
-
-The MIT License (MIT)
-
-Copyright (c) 2016 Josh Baker
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------------------------------
-
-Package: github.com/tidwall/match
-Version: v1.1.1
-License: MIT (https://github.com/tidwall/match/blob/v1.1.1/LICENSE)
-
-The MIT License (MIT)
-
-Copyright (c) 2016 Josh Baker
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------------------------------
-
-Package: github.com/tidwall/pretty
-Version: v1.2.1
-License: MIT (https://github.com/tidwall/pretty/blob/v1.2.1/LICENSE)
-
-The MIT License (MIT)
-
-Copyright (c) 2017 Josh Baker
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------------------------------
-
-Package: github.com/ugjka/go-tz/v2
-Version: v2.2.6
-License: MIT (https://github.com/ugjka/go-tz/blob/v2.2.6/LICENSE)
-
-MIT License
-
-Copyright (c) 2017 ugjka <esesmu@protonmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
---------------------------------------------------------------------------------
-
-Package: github.com/ugorji/go/codec
-Version: v1.2.12
-License: MIT (https://github.com/ugorji/go/blob/codec/v1.2.12/codec/LICENSE)
-
-The MIT License (MIT)
-
-Copyright (c) 2012-2020 Ugorji Nwoke.
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
---------------------------------------------------------------------------------
-
-Package: github.com/ulule/deepcopier
-Version: v0.0.0-20200430083143-45decc6639b6
-License: MIT (https://github.com/ulule/deepcopier/blob/45decc6639b6/LICENSE)
-
-The MIT License (MIT)
-
-Copyright (c) 2015 Ulule
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
---------------------------------------------------------------------------------
-
-Package: github.com/urfave/cli/v2
-Version: v2.27.6
-License: MIT (https://github.com/urfave/cli/blob/v2.27.6/LICENSE)
-
-MIT License
-
-Copyright (c) 2022 urfave/cli maintainers
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 --------------------------------------------------------------------------------
 
@@ -7588,8 +7586,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/214862532bf5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.36.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.36.0:LICENSE)
+Version: v0.37.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.37.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7622,8 +7620,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/image
-Version: v0.25.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.25.0:LICENSE)
+Version: v0.26.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.26.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7690,8 +7688,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.37.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.37.0:LICENSE)
+Version: v0.39.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.39.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7758,8 +7756,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sync/errgroup
-Version: v0.12.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.12.0:LICENSE)
+Version: v0.13.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.13.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7792,8 +7790,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sys
-Version: v0.31.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.31.0:LICENSE)
+Version: v0.32.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.32.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7826,8 +7824,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.23.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.23.0:LICENSE)
+Version: v0.24.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.24.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

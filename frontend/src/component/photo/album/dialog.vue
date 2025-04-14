@@ -122,13 +122,17 @@ export default {
     onLoad() {
       this.loading = true;
       this.$nextTick(() => {
-        this.$refs.input.focus();
+        if (document.activeElement !== this.$refs.input) {
+          this.$refs.input.focus();
+        }
       });
     },
     onLoaded() {
       this.loading = false;
       this.$nextTick(() => {
-        this.$refs.input.focus();
+        if (document.activeElement !== this.$refs.input) {
+          this.$refs.input.focus();
+        }
       });
     },
     reset() {

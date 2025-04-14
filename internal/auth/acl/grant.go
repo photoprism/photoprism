@@ -11,6 +11,7 @@ var (
 		AccessOwn:       true,
 		AccessShared:    true,
 		AccessLibrary:   true,
+		ActionUse:       true,
 		ActionView:      true,
 		ActionCreate:    true,
 		ActionUpdate:    true,
@@ -20,6 +21,7 @@ var (
 		ActionRate:      true,
 		ActionReact:     true,
 		ActionManage:    true,
+		ActionPublish:   true,
 		ActionSubscribe: true,
 	}
 	GrantUploadAccess = Grant{
@@ -42,10 +44,12 @@ var (
 	GrantAll = Grant{
 		AccessAll:       true,
 		AccessOwn:       true,
+		ActionUse:       true,
 		ActionView:      true,
 		ActionCreate:    true,
 		ActionUpdate:    true,
 		ActionDelete:    true,
+		ActionPublish:   true,
 		ActionSubscribe: true,
 	}
 	GrantManageOwn = Grant{
@@ -66,10 +70,6 @@ var (
 	GrantUpdateOwn = Grant{
 		AccessOwn:    true,
 		ActionUpdate: true,
-	}
-	GrantCreateAll = Grant{
-		AccessAll:    true,
-		ActionCreate: true,
 	}
 	GrantViewOwn = Grant{
 		AccessOwn:  true,
@@ -125,6 +125,14 @@ var (
 	GrantSubscribeAll = Grant{
 		AccessAll:       true,
 		ActionSubscribe: true,
+	}
+	GrantPublishOwn = Grant{
+		AccessOwn:     true,
+		ActionPublish: true,
+	}
+	GrantUseOwn = Grant{
+		AccessOwn: true,
+		ActionUse: true,
 	}
 	GrantNone = Grant{}
 )

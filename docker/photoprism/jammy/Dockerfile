@@ -101,6 +101,3 @@ EXPOSE 2342 2443
 
 # Copy app files.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
-
-# Start app.
-CMD ["/scripts/cmd.sh", "/opt/photoprism/bin/photoprism", "start"]

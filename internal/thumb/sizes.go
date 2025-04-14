@@ -1,5 +1,9 @@
 package thumb
 
+import (
+	"slices"
+)
+
 // Default thumbnail size limits (cached and uncached).
 var (
 	SizeCached   = SizeFit1920.Width
@@ -33,6 +37,16 @@ func (m SizeMap) All() SizeList {
 	for _, s := range m {
 		result = append(result, s)
 	}
+
+	slices.SortStableFunc(result, func(a, b Size) int {
+		if a.Width < b.Width {
+			return -1
+		} else if a.Width > b.Width {
+			return 1
+		} else {
+			return 0
+		}
+	})
 
 	return result
 }
@@ -91,6 +105,9 @@ var Sizes = SizeMap{
 	Fit5120:  SizeFit5120,
 	Fit7680:  SizeFit7680,
 }
+
+// All contains all thumbnail sizes sorted by width.
+var All = Sizes.All()
 
 func ParseSize(s string) Size {
 	return Sizes[Name(s)]

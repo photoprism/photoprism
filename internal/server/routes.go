@@ -164,9 +164,10 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.FolderCover(APIv1)
 
 	// Computer Vision.
-	api.PostVisionCaption(APIv1)
-	api.PostVisionFaces(APIv1)
 	api.PostVisionLabels(APIv1)
+	api.PostVisionNsfw(APIv1)
+	api.PostVisionFace(APIv1)
+	api.PostVisionCaption(APIv1)
 
 	// People.
 	api.SearchSubjects(APIv1)

@@ -637,6 +637,10 @@ export default {
 
       this.loadMore(true);
     },
+    reset() {
+      this.results = [];
+      this.lightbox.results = [];
+    },
     search() {
       /**
        * search is called on mount or route change. If the route changed to an
@@ -705,6 +709,9 @@ export default {
               }
             });
           }
+        })
+        .catch(() => {
+          this.reset();
         })
         .finally(() => {
           this.dirty = false;

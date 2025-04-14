@@ -65,7 +65,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	for _, fileName := range matches {
 		f, fileErr := NewMediaFile(fileName)
 
-		if fileErr != nil || f.Empty() {
+		if fileErr != nil || f.Empty() || f.IsArchive() {
 			continue
 		}
 

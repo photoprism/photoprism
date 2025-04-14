@@ -74,6 +74,7 @@ func Start(ctx context.Context, conf *config.Config) {
 				conf.BaseUri("/health"),
 				conf.BaseUri(config.ApiUri + "/t"),
 				conf.BaseUri(config.ApiUri + "/folders/t"),
+				conf.BaseUri(config.ApiUri + "/dl"),
 				conf.BaseUri(config.ApiUri + "/zip"),
 				conf.BaseUri(config.ApiUri + "/albums"),
 				conf.BaseUri(config.ApiUri + "/labels"),

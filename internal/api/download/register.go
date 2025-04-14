@@ -1,22 +1,33 @@
 package download
 
 import (
-	"fmt"
+	"errors"
 
-	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Register makes the specified file available for download with the
-// returned id until the cache expires, or the server is restarted.
-func Register(fileName string) (string, error) {
-	if !fs.FileExists(fileName) {
-		return "", fmt.Errorf("%s does not exists", clean.Log(fileName))
+// Register generated an event to make the specified file available
+// for download until the cache expires, or the server is restarted.
+func Register(fileUuid, fileName string) error {
+	if !rnd.IsUUID(fileUuid) {
+		event.AuditWarn([]string{"api", "download", "create temporary token for %s", authn.Failed}, fileName)
+		return errors.New("invalid file uuid")
 	}
 
-	uniqueId := rnd.UUID()
-	cache.SetDefault(uniqueId, fileName)
+	if fileName = fs.Abs(fileName); !fs.FileExists(fileName) {
+		event.AuditWarn([]string{"api", "download", "create temporary token for %s", authn.Failed}, fileName)
+		return errors.New("file not found")
+	} else if Deny(fileName) {
+		event.AuditErr([]string{"api", "download", "create temporary token for %s", authn.Denied}, fileName)
+		return errors.New("forbidden file path")
+	}
 
-	return uniqueId, nil
+	event.AuditInfo([]string{"api", "download", "create temporary token for %s", authn.Succeeded}, fileName)
+
+	cache.SetDefault(fileUuid, fileName)
+
+	return nil
 }

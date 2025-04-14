@@ -117,3 +117,10 @@ func HasContentType(header *http.Header, contentType string) bool {
 
 	return false
 }
+
+// SetContentType adds a content type header to the given request.
+func SetContentType(r *http.Request, contentType string) {
+	if contentType != "" {
+		r.Header.Add(ContentType, contentType)
+	}
+}

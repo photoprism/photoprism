@@ -102,7 +102,6 @@ func NewTestOptions(pkg string) *Options {
 		Trace:           false,
 		Experimental:    true,
 		ReadOnly:        false,
-		DetectNSFW:      true,
 		UploadNSFW:      false,
 		ExifBruteForce:  false,
 		AssetsPath:      assetsPath,
@@ -123,6 +122,8 @@ func NewTestOptions(pkg string) *Options {
 		AdminPassword:   "photoprism",
 		OriginalsLimit:  66,
 		ResolutionLimit: 33,
+		VisionApi:       true,
+		DetectNSFW:      true,
 	}
 
 	return c

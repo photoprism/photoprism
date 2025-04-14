@@ -55,7 +55,7 @@ func optimizeAction(ctx *cli.Context) error {
 		interval = 0
 	}
 
-	if err := worker.Start(delay, interval, force); err != nil {
+	if err = worker.Start(delay, interval, force); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

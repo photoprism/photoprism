@@ -1602,7 +1602,7 @@
                 }
             }
         },
-        "/api/v1/dl/{hash}": {
+        "/api/v1/dl/{file}": {
             "get": {
                 "produces": [
                     "application/octet-stream"
@@ -1616,8 +1616,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "File Hash",
-                        "name": "hash",
+                        "description": "file hash or unique download id",
+                        "name": "file",
                         "in": "path",
                         "required": true
                     }
@@ -4911,7 +4911,7 @@
                 }
             }
         },
-        "/api/v1/vision/faces": {
+        "/api/v1/vision/face": {
             "post": {
                 "produces": [
                     "application/json"
@@ -4919,8 +4919,8 @@
                 "tags": [
                     "Vision"
                 ],
-                "summary": "returns the positions and embeddings of detected faces",
-                "operationId": "PostVisionFaces",
+                "summary": "returns the embeddings of a face image",
+                "operationId": "PostVisionFace",
                 "parameters": [
                     {
                         "description": "list of image file urls",
@@ -4979,6 +4979,58 @@
                 ],
                 "summary": "returns suitable labels for an image",
                 "operationId": "PostVisionLabels",
+                "parameters": [
+                    {
+                        "description": "list of image file urls",
+                        "name": "images",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/vision/nsfw": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vision"
+                ],
+                "summary": "checks the specified images for inappropriate content",
+                "operationId": "PostVisionNsfw",
                 "parameters": [
                     {
                         "description": "list of image file urls",
@@ -7058,6 +7110,26 @@
                 }
             }
         },
+        "nsfw.Result": {
+            "type": "object",
+            "properties": {
+                "drawing": {
+                    "type": "number"
+                },
+                "hentai": {
+                    "type": "number"
+                },
+                "neutral": {
+                    "type": "number"
+                },
+                "porn": {
+                    "type": "number"
+                },
+                "sexy": {
+                    "type": "number"
+                }
+            }
+        },
         "search.Album": {
             "type": "object",
             "properties": {
@@ -7589,16 +7661,6 @@
         "time.Duration": {
             "type": "integer",
             "enum": [
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -7613,16 +7675,6 @@
                 3600000000000
             ],
             "x-enum-varnames": [
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
@@ -7635,6 +7687,19 @@
                 "Second",
                 "Minute",
                 "Hour"
+            ]
+        },
+        "vision.ApiFormat": {
+            "type": "string",
+            "enum": [
+                "url",
+                "images",
+                "vision"
+            ],
+            "x-enum-varnames": [
+                "ApiFormatUrl",
+                "ApiFormatImages",
+                "ApiFormatVision"
             ]
         },
         "vision.ApiRequest": {
@@ -7652,11 +7717,8 @@
                 "model": {
                     "type": "string"
                 },
-                "videos": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -7686,16 +7748,28 @@
                 "caption": {
                     "$ref": "#/definitions/vision.CaptionResult"
                 },
-                "faces": {
+                "embeddings": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
                     }
                 },
                 "labels": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/vision.LabelResult"
+                    }
+                },
+                "nsfw": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nsfw.Result"
                     }
                 }
             }
@@ -7706,6 +7780,9 @@
                 "confidence": {
                     "type": "number"
                 },
+                "source": {
+                    "type": "string"
+                },
                 "text": {
                     "type": "string"
                 }
@@ -7714,13 +7791,22 @@
         "vision.LabelResult": {
             "type": "object",
             "properties": {
-                "category": {
-                    "type": "string"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "confidence": {
                     "type": "number"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "source": {
                     "type": "string"
                 },
                 "topicality": {
@@ -7731,13 +7817,60 @@
         "vision.Model": {
             "type": "object",
             "properties": {
+                "Service": {
+                    "$ref": "#/definitions/vision.Service"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
                 "resolution": {
                     "type": "integer"
                 },
+                "type": {
+                    "$ref": "#/definitions/vision.ModelType"
+                },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "vision.ModelType": {
+            "type": "string",
+            "enum": [
+                "labels",
+                "nsfw",
+                "face",
+                "caption"
+            ],
+            "x-enum-varnames": [
+                "ModelTypeLabels",
+                "ModelTypeNsfw",
+                "ModelTypeFace",
+                "ModelTypeCaption"
+            ]
+        },
+        "vision.Service": {
+            "type": "object",
+            "properties": {
+                "disabled": {
+                    "type": "boolean"
+                },
+                "fileScheme": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "requestFormat": {
+                    "$ref": "#/definitions/vision.ApiFormat"
+                },
+                "responseFormat": {
+                    "$ref": "#/definitions/vision.ApiFormat"
+                },
+                "uri": {
                     "type": "string"
                 }
             }

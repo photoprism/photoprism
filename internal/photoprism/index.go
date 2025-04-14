@@ -11,8 +11,6 @@ import (
 
 	"github.com/karrick/godirwalk"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -25,34 +23,30 @@ import (
 
 // Index represents an indexer that indexes files in the originals directory.
 type Index struct {
-	conf         *config.Config
-	nsfwDetector *nsfw.Model
-	faceNet      *face.Model
-	convert      *Convert
-	files        *Files
-	photos       *Photos
-	lastRun      time.Time
-	lastFound    int
-	findFaces    bool
-	findLabels   bool
+	conf       *config.Config
+	convert    *Convert
+	files      *Files
+	photos     *Photos
+	lastRun    time.Time
+	lastFound  int
+	findFaces  bool
+	findLabels bool
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, nsfwDetector *nsfw.Model, faceNet *face.Model, convert *Convert, files *Files, photos *Photos) *Index {
+func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
 		log.Errorf("index: config is not set")
 		return nil
 	}
 
 	i := &Index{
-		conf:         conf,
-		nsfwDetector: nsfwDetector,
-		faceNet:      faceNet,
-		convert:      convert,
-		files:        files,
-		photos:       photos,
-		findFaces:    !conf.DisableFaces(),
-		findLabels:   !conf.DisableClassification(),
+		conf:       conf,
+		convert:    convert,
+		files:      files,
+		photos:     photos,
+		findFaces:  !conf.DisableFaces(),
+		findLabels: !conf.DisableClassification(),
 	}
 
 	return i

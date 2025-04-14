@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"os"
 	"path"
 	"runtime/debug"
 	"sort"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/http/scheme"
 )
 
 // Model represents a TensorFlow classification model.
@@ -48,23 +50,38 @@ func (m *Model) Init() (err error) {
 	return m.loadModel()
 }
 
-// File returns matching labels for a jpeg media file.
-func (m *Model) File(imageUri string, confidenceThreshold int) (result Labels, err error) {
+// File returns matching labels for a local jpeg file.
+func (m *Model) File(fileName string, confidenceThreshold int) (result Labels, err error) {
 	if m.disabled {
 		return nil, nil
 	}
 
 	var data []byte
 
-	if data, err = media.ReadUrl(imageUri); err != nil {
+	if data, err = os.ReadFile(fileName); err != nil {
 		return nil, err
 	}
 
-	return m.Labels(data, confidenceThreshold)
+	return m.Run(data, confidenceThreshold)
 }
 
-// Labels returns matching labels for a jpeg media string.
-func (m *Model) Labels(img []byte, confidenceThreshold int) (result Labels, err error) {
+// Url returns matching labels for a remote jpeg file.
+func (m *Model) Url(imgUrl string, confidenceThreshold int) (result Labels, err error) {
+	if m.disabled {
+		return nil, nil
+	}
+
+	var data []byte
+
+	if data, err = media.ReadUrl(imgUrl, scheme.HttpsData); err != nil {
+		return nil, err
+	}
+
+	return m.Run(data, confidenceThreshold)
+}
+
+// Run returns matching labels for the specified JPEG image.
+func (m *Model) Run(img []byte, confidenceThreshold int) (result Labels, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("classify: %s (inference panic)\nstack: %s", r, debug.Stack())
@@ -197,7 +214,10 @@ func (m *Model) createTensor(image []byte) (*tf.Tensor, error) {
 		return nil, err
 	}
 
-	img = imaging.Fill(img, m.resolution, m.resolution, imaging.Center, imaging.Lanczos)
+	// Resize the image only if its resolution does not match the model.
+	if img.Bounds().Dx() != m.resolution || img.Bounds().Dy() != m.resolution {
+		img = imaging.Fill(img, m.resolution, m.resolution, imaging.Center, imaging.Lanczos)
+	}
 
 	return tensorflow.Image(img, m.resolution)
 }

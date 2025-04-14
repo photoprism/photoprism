@@ -19,6 +19,7 @@
           overflow
           single-line
           rounded
+          tabindex="1"
           variant="solo-filled"
           :density="density"
           validate-on="invalid-input"
@@ -45,6 +46,7 @@
         <v-btn
           v-if="!filter.all"
           icon="mdi-eye"
+          tabindex="2"
           :title="$gettext('Show more')"
           class="action-show-all ms-1"
           @click.stop="showAll"
@@ -53,12 +55,18 @@
         <v-btn
           v-else
           icon="mdi-eye-off"
+          tabindex="2"
           :title="$gettext('Show less')"
           class="action-show-important ms-1"
           @click.stop="showImportant"
         >
         </v-btn>
-        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
+        <p-action-menu
+          v-if="$vuetify.display.mdAndUp"
+          :items="menuActions"
+          :tabindex="3"
+          button-class="ms-1"
+        ></p-action-menu>
       </v-toolbar>
     </v-form>
 
@@ -654,6 +662,9 @@ export default {
 
       this.loadMore();
     },
+    reset() {
+      this.results = [];
+    },
     search() {
       /**
        * re-creating the last scroll-position should only ever happen when using
@@ -706,6 +717,9 @@ export default {
               }
             });
           }
+        })
+        .catch(() => {
+          this.reset();
         })
         .finally(() => {
           this.dirty = false;

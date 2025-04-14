@@ -11,6 +11,7 @@
           v-bind="props"
           density="comfortable"
           :icon="buttonIcon"
+          :tabindex="tabindex"
           class="action-menu__btn"
           :class="buttonClass"
         ></v-btn>
@@ -48,6 +49,10 @@ export default {
     items: {
       type: Function,
       default: () => [],
+    },
+    tabindex: {
+      type: Number,
+      default: 3,
     },
     buttonClass: {
       type: String,

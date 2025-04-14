@@ -9,7 +9,6 @@ import (
 
 // Find returns the fileName for the given download id or an error if the id is invalid.
 func Find(uniqueId string) (fileName string, err error) {
-
 	if uniqueId == "" || !rnd.IsUUID(uniqueId) {
 		return fileName, fmt.Errorf("id has an invalid format")
 	}

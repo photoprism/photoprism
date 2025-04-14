@@ -5,36 +5,32 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestImportWorker_OriginalFileNames(t *testing.T) {
-	c := config.TestConfig()
+	cfg := config.TestConfig()
 
-	if err := c.InitializeTestData(); err != nil {
+	if err := cfg.InitializeTestData(); err != nil {
 		t.Fatal(err)
 	}
 
-	nd := nsfw.NewModel(c.NSFWModelPath())
-	fn := face.NewModel(c.FaceNetModelPath(), "", c.DisableTensorFlow())
-	convert := NewConvert(c)
-	ind := NewIndex(c, nd, fn, convert, NewFiles(), NewPhotos())
-	imp := &Import{c, ind, convert, c.ImportAllow()}
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	imp := &Import{cfg, ind, convert, cfg.ImportAllow()}
 
-	mediaFileName := c.ExamplesPath() + "/beach_sand.jpg"
+	mediaFileName := cfg.ExamplesPath() + "/beach_sand.jpg"
 	mediaFile, err := NewMediaFile(mediaFileName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	mediaFileName2 := c.ExamplesPath() + "/beach_wood.jpg"
+	mediaFileName2 := cfg.ExamplesPath() + "/beach_wood.jpg"
 	mediaFile2, err2 := NewMediaFile(mediaFileName2)
 	if err2 != nil {
 		t.Fatal(err2)
 	}
-	mediaFileName3 := c.ExamplesPath() + "/beach_colorfilter.jpg"
+	mediaFileName3 := cfg.ExamplesPath() + "/beach_colorfilter.jpg"
 	mediaFile3, err3 := NewMediaFile(mediaFileName3)
 	if err3 != nil {
 		t.Fatal(err3)
@@ -56,7 +52,7 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 		FileName:  mediaFile.FileName(),
 		Related:   relatedFiles,
 		IndexOpt:  IndexOptionsAll(),
-		ImportOpt: ImportOptionsCopy(c.ImportPath(), c.ImportDest()),
+		ImportOpt: ImportOptionsCopy(cfg.ImportPath(), cfg.ImportDest()),
 		Imp:       imp,
 	}
 

@@ -46,6 +46,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/api/download"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -282,9 +283,19 @@ func (c *Config) Propagate() {
 
 	// Configure computer vision package.
 	vision.AssetsPath = c.AssetsPath()
+	vision.FaceNetModelPath = c.FaceNetModelPath()
+	vision.NsfwModelPath = c.NSFWModelPath()
+	vision.CachePath = c.CachePath()
 	vision.ServiceUri = c.VisionUri()
 	vision.ServiceKey = c.VisionKey()
 	vision.DownloadUrl = c.DownloadUrl()
+
+	// Set allowed path in download package.
+	download.AllowedPaths = []string{
+		c.SidecarPath(),
+		c.OriginalsPath(),
+		c.ThumbCachePath(),
+	}
 
 	// Set cache expiration defaults.
 	ttl.CacheDefault = c.HttpCacheMaxAge()

@@ -87,9 +87,17 @@ var Rules = ACL{
 		RoleAdmin:  GrantFullAccess,
 		RoleClient: GrantFullAccess,
 	},
+	ResourceApi: Roles{
+		RoleAdmin:  GrantFullAccess,
+		RoleClient: GrantPublishOwn,
+	},
 	ResourceWebDAV: Roles{
 		RoleAdmin:  GrantFullAccess,
 		RoleClient: GrantFullAccess,
+	},
+	ResourceWebhooks: Roles{
+		RoleAdmin:  GrantFullAccess,
+		RoleClient: GrantPublishOwn,
 	},
 	ResourceMetrics: Roles{
 		RoleAdmin:  GrantFullAccess,
@@ -97,7 +105,7 @@ var Rules = ACL{
 	},
 	ResourceVision: Roles{
 		RoleAdmin:  GrantFullAccess,
-		RoleClient: GrantCreateAll,
+		RoleClient: GrantUseOwn,
 	},
 	ResourceFeedback: Roles{
 		RoleAdmin: GrantFullAccess,

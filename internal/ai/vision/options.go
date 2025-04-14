@@ -15,21 +15,15 @@ var Config = NewOptions()
 
 // Options represents a computer vision configuration for the supported Model types.
 type Options struct {
-	Caption    Models     `yaml:"Caption,omitempty" json:"caption,omitempty"`
-	Faces      Models     `yaml:"Faces,omitempty" json:"faces,omitempty"`
-	Labels     Models     `yaml:"Labels,omitempty" json:"labels,omitempty"`
-	Nsfw       Models     `yaml:"Nsfw,omitempty" json:"nsfw,omitempty"`
+	Models     Models     `yaml:"Models,omitempty" json:"models,omitempty"`
 	Thresholds Thresholds `yaml:"Thresholds" json:"thresholds"`
 }
 
 // NewOptions returns a new computer vision config with defaults.
 func NewOptions() *Options {
 	return &Options{
-		Caption:    Models{},
-		Faces:      Models{},
-		Labels:     Models{NasnetModel},
-		Nsfw:       Models{},
-		Thresholds: Thresholds{Confidence: 10},
+		Models:     DefaultModels,
+		Thresholds: DefaultThresholds,
 	}
 }
 
@@ -68,6 +62,17 @@ func (c *Options) Save(fileName string) error {
 
 	if err = os.WriteFile(fileName, data, fs.ModeConfigFile); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// Model returns the first enabled model with the matching type from the configuration.
+func (c *Options) Model(t ModelType) *Model {
+	for _, m := range c.Models {
+		if m.Type == t && !m.Disabled {
+			return m
+		}
 	}
 
 	return nil

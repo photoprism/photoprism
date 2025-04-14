@@ -116,7 +116,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 	})
 }
 
-func TestModel_Labels(t *testing.T) {
+func TestModel_Run(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -127,7 +127,7 @@ func TestModel_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/chameleon_lime.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer, 10)
+			result, err := tensorFlow.Run(imageBuffer, 10)
 
 			t.Log(result)
 
@@ -151,7 +151,7 @@ func TestModel_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer, 10)
+			result, err := tensorFlow.Run(imageBuffer, 10)
 
 			t.Log(result)
 
@@ -175,7 +175,7 @@ func TestModel_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer, 10)
+			result, err := tensorFlow.Run(imageBuffer, 10)
 			assert.Empty(t, result)
 			assert.Error(t, err)
 		}
@@ -186,7 +186,7 @@ func TestModel_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/6720px_white.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer, 10)
+			result, err := tensorFlow.Run(imageBuffer, 10)
 
 			if err != nil {
 				t.Fatal(err)
@@ -201,7 +201,7 @@ func TestModel_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer, 10)
+			result, err := tensorFlow.Run(imageBuffer, 10)
 
 			t.Log(result)
 

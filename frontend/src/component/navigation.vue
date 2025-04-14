@@ -67,7 +67,7 @@
               <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
                 <template #prepend>
                   <div class="v-avatar bg-transparent nav-logo">
-                    <a :href="siteUrl" @click.stop.prevent="goHome">
+                    <a :href="siteUrl" tabindex="-1" @click.stop.prevent="goHome">
                       <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
                     </a>
                   </div>
@@ -77,6 +77,7 @@
                     icon
                     variant="text"
                     :elevation="0"
+                    tabindex="-1"
                     class="nav-minimize hidden-sm-and-down"
                     :ripple="false"
                     :title="$gettext('Minimize')"
@@ -99,7 +100,7 @@
             color="primary"
             open-strategy="single"
             :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-            tabindex="0"
+            tabindex="-1"
           >
             <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
               <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" class="ma-auto"></v-icon>

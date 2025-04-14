@@ -1,0 +1,3 @@
+#!/command/execlineb -P
+with-contenv
+/scripts/cmd.sh /opt/photoprism/bin/photoprism start

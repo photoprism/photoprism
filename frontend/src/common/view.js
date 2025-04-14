@@ -243,6 +243,9 @@ export class View {
       document.addEventListener("focusin", (ev) => {
         console.log("%cdocument.focusin", "color: #B2EBF2;", ev.target);
       });
+      document.addEventListener("focusout", (ev) => {
+        console.log("%cdocument.focusout", "color: #B2EBF2;", ev.target);
+      });
     }
   }
 

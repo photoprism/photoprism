@@ -8,22 +8,24 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
-// PostVisionFaces returns the positions and embeddings of detected faces.
+// PostVisionNsfw checks the specified images for inappropriate content.
 //
-//	@Summary	returns the positions and embeddings of detected faces
-//	@Id			PostVisionFaces
+//	@Summary	checks the specified images for inappropriate content
+//	@Id			PostVisionNsfw
 //	@Tags		Vision
+//	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	vision.ApiResponse
-//	@Failure	401,403,429,501	{object}	i18n.Response
-//	@Param		images			body		vision.ApiRequest	true	"list of image file urls"
-//	@Router		/api/v1/vision/faces [post]
-func PostVisionFaces(router *gin.RouterGroup) {
-	router.POST("/vision/faces", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceVision, acl.AccessAll)
+//	@Success	200			{object}	vision.ApiResponse
+//	@Failure	401,403,429	{object}	i18n.Response
+//	@Param		images		body		vision.ApiRequest	true	"list of image file urls"
+//	@Router		/api/v1/vision/nsfw [post]
+func PostVisionNsfw(router *gin.RouterGroup) {
+	router.POST("/vision/nsfw", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceVision, acl.ActionUse)
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
@@ -51,15 +53,23 @@ func PostVisionFaces(router *gin.RouterGroup) {
 			return
 		}
 
+		// Run inference to check the specified images for inappropriate content.
+		results, err := vision.Nsfw(request.Images, media.SrcRemote)
+
+		if err != nil {
+			log.Errorf("vision: %s (run nsfw)", err)
+			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
+			return
+		}
+
 		// Generate Vision API service response.
 		response := vision.ApiResponse{
 			Id:     request.GetId(),
-			Code:   http.StatusNotImplemented,
-			Error:  http.StatusText(http.StatusNotImplemented),
-			Model:  &vision.Model{Name: "Faces"},
-			Result: &vision.ApiResult{},
+			Code:   http.StatusOK,
+			Model:  &vision.Model{Type: vision.ModelTypeNsfw},
+			Result: vision.ApiResult{Nsfw: results},
 		}
 
-		c.JSON(http.StatusNotImplemented, response)
+		c.JSON(http.StatusOK, response)
 	})
 }

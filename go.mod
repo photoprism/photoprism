@@ -12,10 +12,10 @@ require (
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
 	github.com/dustin/go-humanize v1.0.1
 	github.com/esimov/pigo v1.4.6
-	github.com/gin-contrib/gzip v1.2.2
+	github.com/gin-contrib/gzip v1.2.3
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang/geo v0.0.0-20250401183444-7b99cb294169
-	github.com/google/open-location-code/go v0.0.0-20250307090349-1695db3c3b15
+	github.com/golang/geo v0.0.0-20250411042641-97e19c1a7ce7
+	github.com/google/open-location-code/go v0.0.0-20250413133937-894dfd253334
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
 	github.com/jinzhu/gorm v1.9.16
@@ -40,15 +40,15 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.36.0
-	golang.org/x/net v0.38.0
+	golang.org/x/crypto v0.37.0
+	golang.org/x/net v0.39.0
 	gonum.org/v1/gonum v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.25.0
+	golang.org/x/image v0.26.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5
@@ -60,20 +60,20 @@ require github.com/chzyer/readline v1.5.1 // indirect
 require github.com/gabriel-vasile/mimetype v1.4.8
 
 require (
-	golang.org/x/sync v0.12.0
+	golang.org/x/sync v0.13.0
 	golang.org/x/time v0.11.0
 )
 
 require github.com/go-ldap/ldap/v3 v3.4.10
 
 require (
-	github.com/prometheus/client_golang v1.21.1
+	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.63.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 
-require golang.org/x/text v0.23.0
+require golang.org/x/text v0.24.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -88,7 +88,7 @@ require (
 	github.com/wamuir/graft v0.10.0
 	github.com/zitadel/oidc/v3 v3.37.0
 	golang.org/x/mod v0.24.0
-	golang.org/x/sys v0.31.0
+	golang.org/x/sys v0.32.0
 )
 
 require (
@@ -104,7 +104,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
-	github.com/gin-contrib/sse v1.0.0 // indirect
+	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.7 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
@@ -123,7 +123,6 @@ require (
 	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mandykoh/go-parallel v0.1.0 // indirect
@@ -159,10 +158,10 @@ require (
 	github.com/abema/go-mp4 v1.4.1
 	github.com/bytedance/sonic v1.13.2 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
-	github.com/go-playground/validator/v10 v10.25.0 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
+	github.com/go-playground/validator/v10 v10.26.0 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/sunfish-shogi/bufseekio v0.1.0
-	golang.org/x/arch v0.15.0 // indirect
+	golang.org/x/arch v0.16.0 // indirect
 )
 
 require (

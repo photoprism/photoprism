@@ -21,7 +21,7 @@ func (c *Config) VisionYaml() string {
 
 // VisionApi checks whether the Computer Vision API endpoints should be enabled.
 func (c *Config) VisionApi() bool {
-	return c.options.VisionApi
+	return c.options.VisionApi && !c.options.Demo
 }
 
 // VisionUri returns the remote computer vision service URI, e.g. https://example.com/api/v1/vision.

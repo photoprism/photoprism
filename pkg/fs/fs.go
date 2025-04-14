@@ -89,6 +89,23 @@ func FileExistsNotEmpty(fileName string) bool {
 	return err == nil && !info.IsDir() && info.Size() > 0
 }
 
+// FileSize returns the size of a file in bytes or -1 in case of an error.
+func FileSize(fileName string) int64 {
+	if fileName == "" {
+		return -1
+	}
+
+	info, err := os.Stat(fileName)
+
+	if err != nil || info == nil {
+		return -1
+	} else if info.IsDir() {
+		return -1
+	}
+
+	return info.Size()
+}
+
 // PathExists tests if a path exists, and is a directory or symlink.
 func PathExists(path string) bool {
 	if path == "" {

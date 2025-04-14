@@ -15,6 +15,7 @@
         <v-text-field
           :model-value="filter.q"
           :density="density"
+          tabindex="1"
           hide-details
           clearable
           overflow
@@ -48,12 +49,13 @@
         <v-btn
           v-if="canManage && staticFilter.type === 'album'"
           :title="$gettext('Add Album')"
+          tabindex="2"
           icon="mdi-plus"
           class="action-add ms-1"
           @click.prevent="create()"
         ></v-btn>
 
-        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" :tabindex="3" button-class="ms-1"></p-action-menu>
       </v-toolbar>
 
       <div class="toolbar-expansion-panel">
@@ -67,6 +69,7 @@
                     :label="$gettext('Year')"
                     :disabled="context === 'state'"
                     :menu-props="{ maxHeight: 346 }"
+                    tabindex="4"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -87,6 +90,7 @@
                     :model-value="filter.category"
                     :label="$gettext('Category')"
                     :menu-props="{ maxHeight: 346 }"
+                    tabindex="5"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -107,6 +111,7 @@
                     :model-value="filter.order"
                     :label="$gettext('Sort Order')"
                     :menu-props="{ maxHeight: 400 }"
+                    tabindex="6"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -912,6 +917,9 @@ export default {
 
       return params;
     },
+    reset() {
+      this.results = [];
+    },
     search() {
       /**
        * re-creating the last scroll-position should only ever happen when using
@@ -969,6 +977,9 @@ export default {
               }
             });
           }
+        })
+        .catch(() => {
+          this.reset();
         })
         .finally(() => {
           this.dirty = false;

@@ -1,6 +1,10 @@
 package thumb
 
-import "github.com/photoprism/photoprism/pkg/fs"
+import (
+	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
+)
 
 // Name represents a thumbnail size name.
 type Name string
@@ -72,4 +76,21 @@ func Find(pixels int) (name Name, size Size) {
 	}
 
 	return "", Size{}
+}
+
+// Vision returns a suitable tile size for computer vision applications.
+func Vision(resolution int) (size Size) {
+	for _, size = range All {
+		if size.Height != size.Width {
+			continue
+		} else if !strings.HasPrefix(size.Name.String(), "tile_") {
+			continue
+		}
+
+		if size.Width >= resolution {
+			return size
+		}
+	}
+
+	return SizeTile224
 }

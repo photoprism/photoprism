@@ -36,7 +36,7 @@ const (
 
 var log = event.Log
 
-type Labels struct {
+type Result struct {
 	Drawing float32
 	Hentai  float32
 	Neutral float32
@@ -45,12 +45,12 @@ type Labels struct {
 }
 
 // IsSafe returns true if the image is probably safe for work.
-func (l *Labels) IsSafe() bool {
-	return !l.NSFW(ThresholdSafe)
+func (l *Result) IsSafe() bool {
+	return !l.IsNsfw(ThresholdSafe)
 }
 
-// NSFW returns true if the image is may not be safe for work.
-func (l *Labels) NSFW(threshold float32) bool {
+// IsNsfw returns true if the image is may not be safe for work.
+func (l *Result) IsNsfw(threshold float32) bool {
 	if l.Neutral > 0.25 {
 		return false
 	}

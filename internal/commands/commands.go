@@ -48,6 +48,7 @@ var PhotoPrism = []*cli.Command{
 	FindCommand,
 	ImportCommand,
 	CopyCommand,
+	VisionCommands,
 	FacesCommands,
 	PlacesCommands,
 	PurgeCommand,

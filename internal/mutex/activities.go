@@ -7,6 +7,7 @@ var (
 	BackupWorker = Activity{}
 	ShareWorker  = Activity{}
 	MetaWorker   = Activity{}
+	VisionWorker = Activity{}
 	FacesWorker  = Activity{}
 	UpdatePeople = Activity{}
 )
@@ -18,11 +19,12 @@ func CancelAll() {
 	BackupWorker.Cancel()
 	ShareWorker.Cancel()
 	MetaWorker.Cancel()
+	VisionWorker.Cancel()
 	FacesWorker.Cancel()
 	UpdatePeople.Cancel()
 }
 
 // WorkersRunning checks if a worker is currently running.
 func WorkersRunning() bool {
-	return IndexWorker.Running() || SyncWorker.Running() || BackupWorker.Running() || ShareWorker.Running() || MetaWorker.Running() || FacesWorker.Running()
+	return IndexWorker.Running() || SyncWorker.Running() || BackupWorker.Running() || ShareWorker.Running() || MetaWorker.Running() || VisionWorker.Running() || FacesWorker.Running()
 }

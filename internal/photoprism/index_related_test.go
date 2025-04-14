@@ -6,8 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -15,7 +13,7 @@ import (
 
 func TestIndexRelated(t *testing.T) {
 	t.Run("2018-04-12 19_24_49.gif", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
 		testFile, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
 
@@ -30,7 +28,7 @@ func TestIndexRelated(t *testing.T) {
 		}
 
 		testToken := rnd.Base36(8)
-		testPath := filepath.Join(conf.OriginalsPath(), testToken)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
 
 		for _, f := range testRelated.Files {
 			dest := filepath.Join(testPath, f.BaseName())
@@ -52,11 +50,8 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		nd := nsfw.NewModel(conf.NSFWModelPath())
-		fn := face.NewModel(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
-
-		ind := NewIndex(conf, nd, fn, convert, NewFiles(), NewPhotos())
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 		opt := IndexOptionsAll()
 
 		result := IndexRelated(related, ind, opt)
@@ -75,7 +70,7 @@ func TestIndexRelated(t *testing.T) {
 	})
 
 	t.Run("apple-test-2.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+		cfg := config.TestConfig()
 
 		testFile, err := NewMediaFile("testdata/apple-test-2.jpg")
 
@@ -90,7 +85,7 @@ func TestIndexRelated(t *testing.T) {
 		}
 
 		testToken := rnd.Base36(8)
-		testPath := filepath.Join(conf.OriginalsPath(), testToken)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
 
 		for _, f := range testRelated.Files {
 			dest := filepath.Join(testPath, f.BaseName())
@@ -112,11 +107,8 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		nd := nsfw.NewModel(conf.NSFWModelPath())
-		fn := face.NewModel(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
-		convert := NewConvert(conf)
-
-		ind := NewIndex(conf, nd, fn, convert, NewFiles(), NewPhotos())
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 		opt := IndexOptionsAll()
 
 		result := IndexRelated(related, ind, opt)

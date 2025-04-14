@@ -1,0 +1,26 @@
+Models:
+- Type: labels
+  Name: NASNet
+  Version: Mobile
+  Resolution: 224
+  Tags:
+  - photoprism
+- Type: nsfw
+  Name: Nsfw
+  Resolution: 224
+  Tags:
+  - serve
+- Type: face
+  Name: FaceNet
+  Resolution: 160
+  Tags:
+  - serve
+- Type: caption
+  Resolution: 224
+  Service:
+    Uri: http://photoprism-vision:5000/api/v1/vision/caption
+    FileScheme: https
+    RequestFormat: url
+    ResponseFormat: vision
+Thresholds:
+  Confidence: 10

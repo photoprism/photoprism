@@ -62,7 +62,7 @@ func (m Embedding) Magnitude() float64 {
 	return m.Dist(NullEmbedding)
 }
 
-// JSON returns the face embedding as JSON bytes.
+// JSON returns the face embedding as JSON-encoded bytes.
 func (m Embedding) JSON() []byte {
 	var noResult = []byte("")
 

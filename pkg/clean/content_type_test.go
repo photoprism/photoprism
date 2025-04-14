@@ -23,7 +23,7 @@ func TestContentType(t *testing.T) {
 		result := ContentType("invalid")
 		assert.Equal(t, "invalid", result)
 	})
-	t.Run("Json", func(t *testing.T) {
+	t.Run("JSON", func(t *testing.T) {
 		result := ContentType("text/json")
 		assert.Equal(t, "application/json; charset=utf-8", result)
 	})

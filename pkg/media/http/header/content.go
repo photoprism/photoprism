@@ -9,6 +9,7 @@ const (
 	ContentType        = "Content-Type"
 	ContentDisposition = "Content-Disposition"
 	ContentEncoding    = "Content-Encoding"
+	ContentLength      = "Content-Length"
 	ContentRange       = "Content-Range"
 	Location           = "Location"
 	Origin             = "Origin"

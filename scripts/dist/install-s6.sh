@@ -58,27 +58,29 @@ set -eu
 
 S6_OVERLAY_LATEST=$(curl --silent "https://api.github.com/repos/just-containers/s6-overlay/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 S6_OVERLAY_VERSION=${1:-$S6_OVERLAY_LATEST}
-S6_ARCH_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz"
-S6_NOARCH_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz"
+ARCHIVE_NOARCH="s6-overlay-noarch.tar.xz"
+ARCHIVE_BINARY="s6-overlay-${S6_OVERLAY_ARCH}.tar.xz"
+S6_NOARCH_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/${ARCHIVE_NOARCH}"
+S6_BINARY_URL="https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/${ARCHIVE_BINARY}"
 
-echo "Installing S6 Overlay..."
+echo "Installing S6 Overlay for ${S6_OVERLAY_ARCH^^}..."
 
 echo "------------------------------------------------"
-echo "VERSION   : ${S6_OVERLAY_VERSION}"
-echo "LATEST    : ${S6_OVERLAY_LATEST}"
-echo "DESTDIR   : ${S6_OVERLAY_DESTDIR}"
-echo "BINARY URL: ${S6_ARCH_URL}"
-echo "NOARCH URL: ${S6_NOARCH_URL}"
+echo "VERSION: ${S6_OVERLAY_VERSION}"
+echo "LATEST : ${S6_OVERLAY_LATEST}"
+echo "NOARCH : ${ARCHIVE_NOARCH}"
+echo "BINARY : ${ARCHIVE_BINARY}"
+echo "DESTDIR: ${S6_OVERLAY_DESTDIR}"
 echo "------------------------------------------------"
 
 # Create the destination directory if it does not already exist.
 mkdir -p "${S6_OVERLAY_DESTDIR}"
 
 # Download and install the s6-overlay release from GitHub.
-echo "Extracting \"$S6_ARCH_URL\" to \"$S6_OVERLAY_DESTDIR\"."
-curl -fsSL "$S6_ARCH_URL" | tar -C "${S6_OVERLAY_DESTDIR}" -Jxp
-
-echo "Extracting \"$S6_NOARCH_URL\" to \"$S6_OVERLAY_DESTDIR\"."
+echo "Extracting \"$S6_NOARCH_URL\" to \"$S6_OVERLAY_DESTDIR\"..."
 curl -fsSL "$S6_NOARCH_URL" | tar -C "${S6_OVERLAY_DESTDIR}" -Jxp
+
+echo "Extracting \"$S6_BINARY_URL\" to \"$S6_OVERLAY_DESTDIR\"..."
+curl -fsSL "$S6_BINARY_URL" | tar -C "${S6_OVERLAY_DESTDIR}" -Jxp
 
 echo "Done."

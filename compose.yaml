@@ -25,6 +25,8 @@ services:
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
+      - "traefik:vision.localssl.dev"
+      - "traefik:qdrant.localssl.dev"
       - "traefik:keycloak.localssl.dev"
       - "traefik:dummy-oidc.localssl.dev"
       - "traefik:dummy-webdav.localssl.dev"
@@ -170,6 +172,11 @@ services:
   ## Web UI: https://qdrant.localssl.dev/dashboard
   qdrant:
     image: qdrant/qdrant:latest
+    profiles: ["all", "qdrant"]
+    links:
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
+      - "traefik:vision.localssl.dev"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.qdrant.loadbalancer.server.port=6333"
@@ -187,6 +194,34 @@ services:
     volumes:
       - ./.qdrant.yaml:/qdrant/config/production.yaml
       - ./storage/qdrant:/qdrant/storage
+
+  ## PhotoPrism® Computer Vision API
+  ## See: https://github.com/photoprism/photoprism-vision
+  photoprism-vision:
+    image: photoprism/vision:latest
+    entrypoint: [ "/app/venv/bin/flask" ]
+    command: [ "--app", "app", "run", "--debug", "--host", "0.0.0.0" ]
+    profiles: ["all", "vision"]
+    stop_grace_period: 5s
+    working_dir: "/app"
+    links:
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
+      - "traefik:qdrant.localssl.dev"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.qdrant.loadbalancer.server.port=5000"
+      - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.qdrant.entrypoints=websecure"
+      - "traefik.http.routers.qdrant.rule=Host(`vision.localssl.dev`)"
+      - "traefik.http.routers.qdrant.priority=3"
+      - "traefik.http.routers.qdrant.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.qdrant.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.qdrant.tls=true"
+    expose:
+      - 5000
+    environment:
+      TF_CPP_MIN_LOG_LEVEL: 2
 
   ## Traefik v3 (Reverse Proxy)
   ## includes "*.localssl.dev" SSL certificate for test environments

@@ -37,6 +37,14 @@ func TestFileExistsNotEmpty(t *testing.T) {
 	assert.False(t, FileExistsNotEmpty(""))
 }
 
+func TestFileSize(t *testing.T) {
+	assert.Equal(t, 10990, int(FileSize("./testdata/test.jpg")))
+	assert.Equal(t, 10990, int(FileSize("./testdata/test.jpg")))
+	assert.Equal(t, 0, int(FileSize("./testdata/empty.jpg")))
+	assert.Equal(t, -1, int(FileSize("./foo.jpg")))
+	assert.Equal(t, -1, int(FileSize("")))
+}
+
 func TestPathExists(t *testing.T) {
 	assert.True(t, PathExists("./testdata"))
 	assert.False(t, PathExists("./testdata/test.jpg"))

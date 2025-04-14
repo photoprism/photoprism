@@ -12,6 +12,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -21,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // UploadUserFiles adds files to the user upload folder, from where they can be moved and indexed.
@@ -184,19 +186,18 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		// Check if the uploaded file may contain inappropriate content.
 		if len(uploads) > 0 && !conf.UploadNSFW() {
-			nd := get.NsfwDetector()
-
 			containsNSFW := false
 
 			for _, filename := range uploads {
-				labels, nsfwErr := nd.File(filename)
+				labels, nsfwErr := vision.Nsfw([]string{filename}, media.SrcLocal)
 
 				if nsfwErr != nil {
 					log.Debug(nsfwErr)
 					continue
-				}
-
-				if labels.IsSafe() {
+				} else if len(labels) < 1 {
+					log.Errorf("nsfw: model returned no result")
+					continue
+				} else if labels[0].IsSafe() {
 					continue
 				}
 

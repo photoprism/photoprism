@@ -6,7 +6,8 @@ import (
 	gc "github.com/patrickmn/go-cache"
 )
 
-var cache = gc.New(time.Minute*15, 5*time.Minute)
+var expires = time.Minute * 15
+var cache = gc.New(expires, 5*time.Minute)
 
 // Flush resets the download cache.
 func Flush() {

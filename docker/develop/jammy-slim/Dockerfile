@@ -33,7 +33,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TF_ENABLE_ONEDNN_OPTS=1 \
     MALLOC_ARENA_MAX=4 \
     PROG="photoprism" \
-    S6_KEEP_ENV=1 \
+    S6_KEEP_ENV=0 \
+    S6_VERBOSITY=0 \
     S6_LOGGING=0
 
 # Copy scripts and package sources config.
@@ -73,6 +74,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/config \
         /photoprism/storage/cache && \
     /scripts/install-s6.sh && \
+    ln -sf /scripts/services/photoprism /etc/s6-overlay/s6-rc.d/photoprism && \
+    touch /etc/s6-overlay/s6-rc.d/user/contents.d/photoprism && \
     /scripts/cleanup.sh
 
 # Set default working directory.
@@ -83,4 +86,3 @@ EXPOSE 2342 2442 2443
 
 # Set default entrypoint and command.
 ENTRYPOINT ["/init"]
-CMD ["/scripts/cmd.sh", "tail", "-f", "/dev/null"]

@@ -1,23 +1,83 @@
 /* Notifications */
 
-.v-snackbar .p-notify {
+#p-notify {
+    position: fixed;
+    z-index: 2500;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-direction: column;
+    justify-items: center;
+    font-size: 0.875rem;
+    font-weight: 400;
     user-select: none;
+    width: auto;
+    height: auto;
+    max-width: 440px;
+    pointer-events: none;
 }
 
-.v-snackbar {
-    margin: 16px;
+#p-notify .v-snackbar {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    margin-bottom: 24px;
 }
 
-.v-snackbar__wrapper {
-    position: relative;
-    min-width: 320px;
+#p-notify .v-snackbar .v-snackbar__wrapper {
+    cursor: pointer;
     color: rgba(var(--v-theme-on-surface), 1);
     background-color: rgba(var(--v-theme-surface), 0.32);
     backdrop-filter: blur(6px);
+    box-shadow: 0 2px 1px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 1px 1px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 3px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+    padding: 10px 16px;
+    pointer-events: auto;
+    border-radius: 9999px;
 }
 
-.v-snackbar__wrapper .p-notify__close {
-    opacity: 0.8;
+#p-notify .v-snackbar__wrapper .v-snackbar__content {
+    z-index: 2;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    align-self: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    justify-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+#p-notify .v-snackbar__wrapper .v-snackbar__content .p-notify__icon {
+    margin: 0;
+    align-self: center;
+    font-size: 22px;
+    height: 22px;
+    width: 22px;
+}
+
+#p-notify .v-snackbar__wrapper .v-snackbar__content .p-notify__text {
+    flex-grow: 1;
+    margin: 2px 8px;
+    padding: 0;
+    text-align: start;
+    align-self: center;
+}
+
+#p-notify .v-snackbar__wrapper .v-snackbar__content .p-notify__close {
+    opacity: 0.78;
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
 }
 
 .v-snackbar__wrapper .v-snackbar__underlay {
@@ -30,17 +90,6 @@
     top: 0;
     pointer-events: none;
     border-radius: inherit;
-}
-
-.v-snackbar__wrapper .v-snackbar__content {
-    z-index: 2;
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    flex-direction: row;
-    justify-content: stretch;
-    justify-items: center;
-    padding: 8px 14px;
 }
 
 .v-snackbar.p-notify--success .v-snackbar__wrapper {
@@ -61,4 +110,13 @@
 .v-snackbar.p-notify--error .v-snackbar__wrapper {
     background-color: rgba(var(--v-theme-error), 0.42) !important;
     color: rgba(var(--v-theme-on-error), 1) !important;
+}
+
+@media only screen and (min-width: 600px) {
+    #p-notify .v-snackbar {
+        width: auto;
+        min-width: 280px;
+        max-width: 440px;
+        margin-bottom: 16px;
+    }
 }

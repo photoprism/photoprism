@@ -18,7 +18,7 @@ import (
 var FindCommand = &cli.Command{
 	Name:      "find",
 	Usage:     "Searches the index for specific files",
-	ArgsUsage: "filter",
+	ArgsUsage: "[filter]",
 	Flags: append(report.CliFlags, &cli.UintFlag{
 		Name:    "count",
 		Aliases: []string{"n"},

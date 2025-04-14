@@ -109,7 +109,7 @@ func (embeddings Embeddings) Dist(other Embedding) (dist float64) {
 	return dist
 }
 
-// JSON returns the embeddings as JSON bytes.
+// JSON returns the embeddings as JSON-encoded bytes.
 func (embeddings Embeddings) JSON() []byte {
 	var noResult = []byte("")
 

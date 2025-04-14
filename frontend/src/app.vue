@@ -2,8 +2,6 @@
   <div id="photoprism" :class="['theme-' + themeName]">
     <p-loading-bar height="4"></p-loading-bar>
 
-    <p-notify></p-notify>
-
     <v-app :class="appClass">
       <p-navigation></p-navigation>
 
@@ -13,6 +11,7 @@
     </v-app>
 
     <p-dialogs></p-dialogs>
+    <p-notify></p-notify>
   </div>
 </template>
 

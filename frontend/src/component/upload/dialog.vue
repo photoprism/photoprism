@@ -220,7 +220,10 @@ export default {
       }
 
       if (ev.target && ev.target instanceof HTMLElement && this.$refs.form?.$el instanceof HTMLElement) {
-        if (!ev.target.closest(".p-upload-dialog") || ev.target?.disabled) {
+        if (
+          document.activeElement !== this.$refs.form.$el &&
+          (!ev.target.closest(".p-upload-dialog") || ev.target?.disabled)
+        ) {
           this.$refs.form?.$el.focus();
         }
       }

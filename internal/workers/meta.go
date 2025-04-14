@@ -81,7 +81,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 		for _, photo := range photos {
 			if mutex.MetaWorker.Canceled() {
-				return errors.New("index: metadata optimization canceled")
+				return errors.New("index: metadata worker canceled")
 			}
 
 			if done[photo.PhotoUID] {
@@ -106,7 +106,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 		}
 
 		if mutex.MetaWorker.Canceled() {
-			return errors.New("index: optimization canceled")
+			return errors.New("index: metadata worker canceled")
 		}
 
 		offset += limit

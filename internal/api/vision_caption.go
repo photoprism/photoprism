@@ -23,7 +23,7 @@ import (
 //	@Router		/api/v1/vision/caption [post]
 func PostVisionCaption(router *gin.RouterGroup) {
 	router.POST("/vision/caption", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceVision, acl.AccessAll)
+		s := Auth(c, acl.ResourceVision, acl.ActionUse)
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
@@ -51,15 +51,18 @@ func PostVisionCaption(router *gin.RouterGroup) {
 			return
 		}
 
+		// TODO: Return error code 501 until this service is implemented.
+		code := http.StatusNotImplemented
+
 		// Generate Vision API service response.
 		response := vision.ApiResponse{
 			Id:     request.GetId(),
-			Code:   http.StatusNotImplemented,
+			Code:   code,
 			Error:  http.StatusText(http.StatusNotImplemented),
-			Model:  &vision.Model{Name: "Caption"},
-			Result: &vision.ApiResult{Caption: &vision.CaptionResult{Text: "This is a test.", Confidence: 0.14159265359}},
+			Model:  &vision.Model{Type: vision.ModelTypeCaption},
+			Result: vision.ApiResult{Caption: &vision.CaptionResult{Text: "This is a test.", Confidence: 0.14159265359}},
 		}
 
-		c.JSON(http.StatusNotImplemented, response)
+		c.JSON(code, response)
 	})
 }

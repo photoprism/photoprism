@@ -209,7 +209,10 @@ export default {
       }
 
       if (ev.target && ev.target instanceof HTMLElement && this.$refs.content?.$el instanceof HTMLElement) {
-        if (!ev.target.closest(".p-photo-edit-dialog") || ev.target?.disabled) {
+        if (
+          document.activeElement !== this.$refs.content.$el &&
+          (!ev.target.closest(".p-photo-edit-dialog") || ev.target?.disabled)
+        ) {
           this.$refs.content?.$el.focus();
         }
       }

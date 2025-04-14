@@ -1,65 +1,41 @@
 package vision
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"io"
-	"net/http"
+	"fmt"
 	"sort"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// Labels returns suitable labels for the specified image thumbnail.
-func Labels(thumbnails []string) (result classify.Labels, err error) {
+// Labels finds matching labels for the specified image.
+func Labels(images Files, src media.Src) (result classify.Labels, err error) {
 	// Return if no thumbnail filenames were given.
-	if len(thumbnails) == 0 {
-		return result, errors.New("missing thumbnail filenames")
+	if len(images) == 0 {
+		return result, errors.New("at least one image required")
 	}
 
 	// Return if there is no configuration or no image classification models are configured.
 	if Config == nil {
-		return result, errors.New("missing configuration")
-	} else if len(Config.Labels) == 0 {
-		return result, errors.New("missing labels model configuration")
-	}
-
-	// Use computer vision models configured for image classification.
-	for _, model := range Config.Labels {
+		return result, errors.New("vision service is not configured")
+	} else if model := Config.Model(ModelTypeLabels); model != nil {
 		// Use remote service API if a server endpoint has been configured.
-		if uri, method := model.Endpoint(LabelsEndpoint); uri != "" && method != "" {
-			apiRequest := NewClientRequest(model.Name, thumbnails)
-			data, jsonErr := apiRequest.MarshalJSON()
+		if uri, method := model.Endpoint(); uri != "" && method != "" {
+			var apiRequest *ApiRequest
+			var apiResponse *ApiResponse
 
-			if jsonErr != nil {
-				return result, jsonErr
+			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme()); err != nil {
+				return result, err
 			}
 
-			// Create HTTP client and authenticated service API request.
-			client := http.Client{}
-			req, reqErr := http.NewRequest(method, uri, bytes.NewReader(data))
-			header.SetAuthorization(req, model.EndpointKey())
-
-			if reqErr != nil {
-				return result, reqErr
+			if model.Name != "" {
+				apiRequest.Model = model.Name
 			}
 
-			// Perform API request.
-			clientResp, clientErr := client.Do(req)
-
-			if clientErr != nil {
-				return result, clientErr
-			}
-
-			apiResponse := &ApiResponse{}
-
-			// Unmarshal response and add labels, if returned.
-			if apiJson, apiErr := io.ReadAll(clientResp.Body); apiErr != nil {
-				return result, apiErr
-			} else if apiErr = json.Unmarshal(apiJson, apiResponse); apiErr != nil {
-				return result, apiErr
+			if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {
+				return result, err
 			}
 
 			for _, label := range apiResponse.Result.Labels {
@@ -67,18 +43,29 @@ func Labels(thumbnails []string) (result classify.Labels, err error) {
 			}
 		} else if tf := model.ClassifyModel(); tf != nil {
 			// Predict labels with local TensorFlow model.
-			for i := range thumbnails {
-				labels, modelErr := tf.File(thumbnails[i], Config.Thresholds.Confidence)
+			for i := range images {
+				var labels classify.Labels
 
-				if modelErr != nil {
-					return result, modelErr
+				switch src {
+				case media.SrcLocal:
+					labels, err = tf.File(images[i], Config.Thresholds.Confidence)
+				case media.SrcRemote:
+					labels, err = tf.Url(images[i], Config.Thresholds.Confidence)
+				default:
+					return result, fmt.Errorf("invalid image source %s", clean.Log(src))
+				}
+
+				if err != nil {
+					return result, err
 				}
 
 				result = mergeLabels(result, labels)
 			}
 		} else {
-			return result, errors.New("missing labels model")
+			return result, errors.New("invalid labels model configuration")
 		}
+	} else {
+		return result, errors.New("missing labels model")
 	}
 
 	sort.Sort(result)

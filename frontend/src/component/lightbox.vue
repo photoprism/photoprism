@@ -319,7 +319,11 @@ export default {
       }
     },
     focusContent(ev) {
-      if (this.$refs.content && this.$refs.content instanceof HTMLElement) {
+      if (
+        this.$refs.content &&
+        this.$refs.content instanceof HTMLElement &&
+        document.activeElement !== this.$refs.content
+      ) {
         this.$refs.content.focus();
 
         if (this.debug && ev) {
@@ -940,7 +944,7 @@ export default {
       }
 
       // Focus content element.
-      this.$refs.content.focus();
+      this.focusContent();
 
       // Create PhotoSwipe instance.
       let lightbox = new Lightbox(options);
@@ -1501,7 +1505,7 @@ export default {
       }
 
       // Ensure that content is focused.
-      this.$refs.content.focus();
+      this.focusContent();
     },
     // Called when the user clicks on the PhotoSwipe lightbox background,
     // see https://photoswipe.com/click-and-tap-actions.
@@ -2190,7 +2194,7 @@ export default {
       // Resize and focus content element.
       this.$nextTick(() => {
         this.resize(true);
-        this.$refs.content.focus();
+        this.focusContent();
       });
     },
     // Hides the lightbox sidebar, if visible.
@@ -2206,7 +2210,7 @@ export default {
       // Resize and focus content element.
       this.$nextTick(() => {
         this.resize(true);
-        this.$refs.content.focus();
+        this.focusContent();
       });
     },
     toggleControls() {
