@@ -91,7 +91,7 @@ export default {
           center: [this.lng, this.lat],
           zoom: 13,
           interactive: true,
-          attributionControl: false,
+          attributionControl: { compact: true },
         });
 
         // Add zoom controls
@@ -113,6 +113,13 @@ export default {
           }
 
           this.marker = new maplibregl.Marker().setLngLat([this.lng, this.lat]).addTo(this.map);
+          
+          // Minimize attribution control by default
+          const attrCtrl = this.$refs.mapContainer.querySelector(".maplibregl-ctrl-attrib");
+          if (attrCtrl) {
+            attrCtrl.classList.remove("maplibregl-compact-show");
+            attrCtrl.removeAttribute("open");
+          }
         });
       } catch (error) {
         console.error("Failed to initialize map:", error);
