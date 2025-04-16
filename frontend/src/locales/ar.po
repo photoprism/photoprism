@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-16 06:12+0000\n"
+"PO-Revision-Date: 2025-04-16 08:07+0000\n"
 "Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -3420,7 +3420,7 @@ msgstr "يساعدنا دعمك المستمر في توفير تحديثات م
 
 #: src/page/albums.vue:292
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبومات للحظات الخاصة والرحلات والأماكن تلقائيًا."
+msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن تلقائيًا."
 
 #: src/component/lightbox.vue:285
 msgid "Zoom in/out"
