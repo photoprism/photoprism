@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-16 06:12+0000\n"
+"PO-Revision-Date: 2025-04-16 10:50+0000\n"
 "Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -362,7 +362,7 @@ msgstr "الارتفاع (م)"
 
 #: src/locales.js:282
 msgid "AM"
-msgstr "أكون"
+msgstr "صباحاً"
 
 #: src/app/routes.js:257 src/component/navigation.vue:791
 #: src/component/photo/edit/files.vue:364
@@ -370,11 +370,11 @@ msgstr "أكون"
 #: src/component/photo/view/cards.vue:511 src/component/photo/view/list.vue:184
 #: src/component/photo/view/mosaic.vue:171 src/options/options.js:277
 msgid "Animated"
-msgstr "متحرك"
+msgstr "متحركة"
 
 #: src/page/settings/general.vue:687
 msgid "Animation"
-msgstr "حركة"
+msgstr "صور متحركة"
 
 #: src/component/share/dialog.vue:207
 msgid "Any private photos and videos remain private and won't be shared."
@@ -390,13 +390,13 @@ msgstr "طلب"
 
 #: src/component/photo/edit/details.vue:641
 msgid "Apply"
-msgstr "تطبيق"
+msgstr "تقديم الطلب"
 
 #: src/component/photo/clipboard.vue:64
 #: src/component/photo/edit/details.vue:640
 #: src/component/photo/view/cards.vue:416
 msgid "Approve"
-msgstr "موافق"
+msgstr "الموافقة"
 
 #: src/page/settings/account.vue:374 src/component/settings/apps.vue:91
 msgid "Apps and Devices"
@@ -414,7 +414,7 @@ msgstr "مؤرشف"
 
 #: src/component/photo/archive/dialog.vue:34
 msgid "Are you sure you want to archive the selection?"
-msgstr "هل أنت متأكد أنك تريد أرشفة التحديد؟"
+msgstr "هل أنت متأكد أنك تريد أرشفة ما تم تحديده؟"
 
 #: src/component/album/delete/dialog.vue:30
 msgid "Are you sure you want to delete these albums?"
@@ -439,11 +439,11 @@ msgstr "هل أنت متأكد أنك تريد حذف هذا الملف نهائ
 #: src/component/session/remove/dialog.vue:32
 #: src/component/confirm/dialog.vue:30
 msgid "Are you sure?"
-msgstr "هل أنت واثق؟"
+msgstr "هل أنت متأكد؟"
 
 #: src/component/photo/edit/details.vue:537
 msgid "Artist"
-msgstr "فنان"
+msgstr "الفنان"
 
 #: src/component/photo/edit/files.vue:418
 msgid "Aspect Ratio"
@@ -526,7 +526,7 @@ msgstr "تصفح"
 
 #: src/page/settings/general.vue:256
 msgid "Browse and edit image classification labels."
-msgstr "تصفح وتحرير تسميات تصنيف الصورة."
+msgstr "التصفح لتغيير تسميات تصنيف الصورة."
 
 #: src/page/settings/general.vue:206
 msgid "Browse and share your pictures organized into monthly albums."
@@ -542,11 +542,11 @@ msgstr "تصفح الملفات والمجلدات المفهرسة في الم�
 
 #: src/page/about/feedback.vue:10 src/options/options.js:379
 msgid "Bug Report"
-msgstr "تقرير الشوائب"
+msgstr "تقرير المشاكل"
 
 #: src/page/connect.vue:50 src/common/notify.js:101 src/page/connect.vue:53
 msgid "Busy, please wait…"
-msgstr "مشغول ، الرجاء الانتظار …"
+msgstr "يتم العمل، الرجاء الانتظار …"
 
 #: src/page/connect.vue:317
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
@@ -601,7 +601,7 @@ msgstr "لا يمكن تحديد المزيد من العناصر"
 #: src/locales.js:211 src/page/auth/login.vue:232 src/page/connect.vue:123
 #: src/page/library/import.vue:119 src/page/library/index.vue:128
 msgid "Cancel"
-msgstr "يلغي"
+msgstr "إلغاء"
 
 #: src/component/photo/edit/details.vue:87 src/component/photo/edit/info.vue:59
 #: src/component/photo/edit/labels.vue:42
@@ -686,7 +686,7 @@ msgstr "مسح {0}"
 
 #: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:43
 msgid "Client"
-msgstr "عميل"
+msgstr "العميل"
 
 #: src/options/auth.js:24
 msgid "Client Credentials"
@@ -738,7 +738,7 @@ msgstr "الثقة"
 #: src/component/photo/album/dialog.vue:90
 #: src/component/settings/passcode.vue:261
 msgid "Confirm"
-msgstr "يتأكد"
+msgstr "التأكيد"
 
 #: src/component/service/add.vue:20 src/page/settings/services.vue:187
 msgid "Connect"
@@ -778,7 +778,7 @@ msgstr "محتوى"
 
 #: src/component/settings/apps.vue:163
 msgid "Continue"
-msgstr "يكمل"
+msgstr "المتابعة"
 
 #: src/page/auth/login.vue:314
 msgid "Continue with %{provider}"
@@ -798,7 +798,7 @@ msgstr "نسخ إلى الحافظة"
 
 #: src/component/settings/apps.vue:250 src/component/settings/passcode.vue:358
 msgid "Copy"
-msgstr "ينسخ"
+msgstr "نسخ"
 
 #: src/component/photo/edit/details.vue:516
 msgid "Copyright"
@@ -815,7 +815,7 @@ msgstr "دولة"
 
 #: src/page/auth/login.vue:247
 msgid "Create Account"
-msgstr "إصنع حساب"
+msgstr "إنشاء حساب"
 
 #: src/component/photo/album/dialog.vue:23
 msgid "Create album"
@@ -835,7 +835,7 @@ msgstr "قم بإنشاء ملفات YAML الجانبية لعمل نسخة ا�
 
 #: src/page/admin/sessions.vue:417 src/component/photo/edit/info.vue:412
 msgid "Created"
-msgstr "مخلوق"
+msgstr "تم إنشاءه"
 
 #: src/page/library/index.vue:185
 msgid "Creating thumbnails for"
@@ -843,7 +843,7 @@ msgstr "إنشاء صور مصغرة لـ"
 
 #: src/options/options.js:403
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "مكعب: جودة متوسطة ، أداء جيد"
+msgstr "Cubic: جودة متوسطة ، أداء جيد"
 
 #: src/component/settings/password.vue:85
 msgid "Current Password"
@@ -871,7 +871,7 @@ msgstr "يوم"
 
 #: src/component/settings/passcode.vue:445
 msgid "Deactivate"
-msgstr "إلغاء التنشيط"
+msgstr "إلغاء التفعيل"
 
 #: src/page/settings/advanced.vue:104
 msgid "Debug Logs"
@@ -885,11 +885,11 @@ msgstr "سجلات التصحيح"
 #: src/options/options.js:208 src/options/options.js:292
 #: src/options/themes.js:773 src/page/settings/general.vue:107
 msgid "Default"
-msgstr "تقصير"
+msgstr "مبدئي"
 
 #: src/component/service/edit.vue:123
 msgid "Default Folder"
-msgstr "المجلد الإفتراضى"
+msgstr "المجلد المبدئي"
 
 #: src/component/session/remove/dialog.vue:56
 #: src/component/user/remove/dialog.vue:56 src/component/album/clipboard.vue:97
@@ -916,7 +916,7 @@ msgstr "حذف إدخالات الفهرس المعزولة والملفات ا�
 
 #: src/component/album/edit/dialog.vue:107 src/page/albums.vue:411
 msgid "Description"
-msgstr "وصف"
+msgstr "الوصف"
 
 #: src/component/settings/webdav.vue:115
 msgid "Detailed instructions can be found in our User Guide."
@@ -981,7 +981,7 @@ msgstr "تعطيل WebDAV"
 
 #: src/page/settings/advanced.vue:753
 msgid "Disables vector graphics support."
-msgstr "تعطيل دعم رسومات المتجهات."
+msgstr "تعطيل دعم رسومات ااتجاهات."
 
 #: src/page/settings/advanced.vue:727
 msgid "Disables video transcoding and thumbnail extraction."
@@ -990,11 +990,11 @@ msgstr "تعطيل تحويل ترميز الفيديو واستخراج الص�
 #: src/app/routes.js:558 src/app/routes.js:565 src/app/routes.js:572
 #: src/app/routes.js:579
 msgid "Discover"
-msgstr "يكتشف"
+msgstr "اكتشف"
 
 #: src/locales.js:208
 msgid "Dismiss"
-msgstr "رفض"
+msgstr "إغلاق"
 
 #: src/component/user/add/dialog.vue:133 src/component/user/add/dialog.vue:134
 #: src/component/user/edit/dialog.vue:163
@@ -1036,12 +1036,12 @@ msgstr "لا تستخدم RawTherapee لتحويل ملفات RAW."
 
 #: src/component/settings/apps.vue:238 src/component/share/dialog.vue:29
 msgid "Done"
-msgstr "فعله"
+msgstr "تم الإنجاز"
 
 #: src/component/upload/dialog.vue:135 src/page/library/import.vue:46
 #: src/page/library/index.vue:52
 msgid "Done."
-msgstr "فعله."
+msgstr "تم الإنجاز."
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:118
 #: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1235
@@ -1053,7 +1053,7 @@ msgstr "تحميل"
 
 #: src/page/settings/content.vue:357
 msgid "Download only original media files, without any automatically generated files."
-msgstr "قم بتنزيل ملفات الوسائط الأصلية فقط ، بدون أي ملفات تم إنشاؤها تلقائيًا."
+msgstr "قم بتحميل ملفات الوسائط الأصلية فقط ، بدون أي ملفات تم إنشاؤها تلقائيًا."
 
 #: src/component/service/edit.vue:237
 msgid "Download remote files"
@@ -1078,7 +1078,7 @@ msgstr "مرشح تصغير الحجم"
 
 #: src/locales.js:277
 msgid "Drag and drop files here"
-msgstr "اسحب وأفلِت الملفات هنا"
+msgstr "اسحب الملفات هنا"
 
 #: src/page/about/feedback.vue:61
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1086,7 +1086,7 @@ msgstr "نظرًا للكم الهائل من رسائل البريد الإلك
 
 #: src/page/library/browse.vue:124
 msgid "Duplicates will be skipped and only appear once."
-msgstr "سيتم تخطي التكرارات وستظهر مرة واحدة فقط."
+msgstr "سيتم تخطي المحتوى المكرر وسيعرض مرة واحدة فقط."
 
 #: src/component/photo/edit/files.vue:376
 msgid "Duration"
@@ -1108,17 +1108,17 @@ msgstr "البريد الإلكتروني"
 #: src/component/lightbox.vue:1136 src/component/lightbox.vue:1137
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:407
 msgid "Edit"
-msgstr "يحرر"
+msgstr "تعديل"
 
 #: src/component/album/edit/dialog.vue:54
 #: src/component/label/edit/dialog.vue:52
 #: src/component/people/edit/dialog.vue:52
 msgid "Edit %{s}"
-msgstr "تحرير %{s}"
+msgstr "تعديل %{s}"
 
 #: src/component/user/edit/dialog.vue:61 src/component/service/edit.vue:79
 msgid "Edit Account"
-msgstr "تحرير الحساب"
+msgstr "تعديل الحساب"
 
 #: src/component/photo/edit/dialog.vue:64
 msgid "Edit Photo"
@@ -1126,7 +1126,7 @@ msgstr "تعديل الصورة"
 
 #: src/component/photo/edit/info.vue:421
 msgid "Edited"
-msgstr "تم تحريره"
+msgstr "تم التعديل"
 
 #: src/component/user/add/dialog.vue:151 src/component/user/edit/dialog.vue:213
 #: src/page/settings/account.vue:171 src/page/settings/account.vue:593
@@ -1135,7 +1135,7 @@ msgstr "البريد"
 
 #: src/page/settings/advanced.vue:105
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "قم بتمكين وضع التصحيح لعرض سجلات إضافية والمساعدة في استكشاف الأخطاء وإصلاحها."
+msgstr "قم بتمكين وضع التصحيح لعرض سجلات إضافية التي تساعد على اكتشاف الأخطاء وإصلاحها."
 
 #: src/page/settings/advanced.vue:129
 msgid "Enable new features that may be incomplete or unstable."
@@ -3420,7 +3420,7 @@ msgstr "يساعدنا دعمك المستمر في توفير تحديثات م
 
 #: src/page/albums.vue:292
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبومات للحظات الخاصة والرحلات والأماكن تلقائيًا."
+msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن تلقائيًا."
 
 #: src/component/lightbox.vue:285
 msgid "Zoom in/out"
