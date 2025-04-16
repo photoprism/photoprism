@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-15 13:15+0000\n"
+"PO-Revision-Date: 2025-04-16 06:12+0000\n"
 "Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -52,7 +52,7 @@ msgstr "تم تحميل %{n} من الملفات"
 
 #: src/page/library/browse.vue:362
 msgid "%{n} folders found"
-msgstr "تم العثور على %{n} مجلدات"
+msgstr "تم العثور على %{n} من مجلدات"
 
 #: src/component/navigation.vue:1676
 msgid "%{n} GB of %{q} GB used"
@@ -91,7 +91,7 @@ msgstr "12 ساعة"
 #: src/component/user/edit/dialog.vue:452 src/page/settings/account.vue:324
 #: src/component/settings/passcode.vue:75
 msgid "2-Factor Authentication"
-msgstr "2-عامل المصادقة"
+msgstr "المصادقة الثنائية"
 
 #: src/component/user/edit/dialog.vue:451 src/options/auth.js:46
 msgid "2FA"
@@ -103,7 +103,7 @@ msgstr "4 ساعات"
 
 #: src/component/share/dialog.vue:207
 msgid "A click will copy it to your clipboard."
-msgstr "نقرة للنسخ إلى الحافظة الخاصة بك."
+msgstr "انقر للنسخ إلى الحافظة الخاصة بك."
 
 #: src/component/update.vue:18
 msgid "A new version of %{s} is available:"
@@ -115,7 +115,7 @@ msgstr "يتوفر إصدار جديد من %{s}:"
 #: src/app/routes.js:63 src/component/navigation.vue:1521
 #: src/page/people/recognized.vue:292
 msgid "About"
-msgstr "حول"
+msgstr "عن"
 
 #: src/options/auth.js:26 src/options/auth.js:44
 msgid "Access Token"
@@ -168,7 +168,7 @@ msgstr "قم بالتفعيل لإزالة الفرز."
 
 #: src/locales.js:226
 msgid "Activate to sort ascending."
-msgstr "قم بالتفعيل لفرز تصاعديًا."
+msgstr "قم بالتفعيل للفرز تصاعديًا."
 
 #: src/locales.js:225
 msgid "Activate to sort descending."
@@ -181,7 +181,7 @@ msgstr "رمز التفعيل"
 #: src/component/user/add/dialog.vue:28 src/page/admin/users.vue:83
 #: src/component/settings/apps.vue:448
 msgid "Add"
-msgstr "يضيف"
+msgstr "إضافة"
 
 #: src/component/photo/edit/people.vue:162 src/page/people/new.vue:244
 msgid "Add %{s}?"
@@ -197,7 +197,7 @@ msgstr "أضف البوم"
 
 #: src/page/settings/general.vue:308
 msgid "Add files to your library via Web Upload."
-msgstr "أضف ملفات إلى مكتبتك عبر تحميل الويب."
+msgstr "إضافة ملفات إلى المكتبة عبر تحميل الويب."
 
 #: src/component/share/dialog.vue:48
 msgid "Add Link"
@@ -2858,7 +2858,7 @@ msgstr "سهل التخزين"
 
 #: src/component/navigation.vue:421 src/page/settings/content.vue:136
 msgid "Stacks"
-msgstr "الأكوام"
+msgstr "المجموعات"
 
 #: src/page/library/index.vue:140
 msgid "Start"
@@ -3261,7 +3261,7 @@ msgstr "المتجه"
 
 #: src/component/navigation.vue:440
 msgid "Vectors"
-msgstr "ثلاثة أبعاد"
+msgstr "الابعاد"
 
 #: src/component/settings/passcode.vue:227 src/page/auth/login.vue:121
 msgid "Verification Code"
@@ -3364,7 +3364,7 @@ msgstr "سنة"
 
 #: src/options/options.js:320
 msgid "Yellow"
-msgstr "الأصفر"
+msgstr "اصفر"
 
 #: src/component/confirm/dialog.vue:54 src/component/people/merge/dialog.vue:58
 #: src/component/photo/archive/dialog.vue:58
