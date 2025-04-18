@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-16 10:50+0000\n"
+"PO-Revision-Date: 2025-04-18 00:02+0000\n"
 "Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -2617,7 +2617,7 @@ msgstr "عمليات المسح"
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:377
 #: src/component/settings/apps.vue:54 src/component/settings/apps.vue:310
 msgid "Scope"
-msgstr "نِطَاق"
+msgstr "نطاق"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:62
 #: src/component/navigation.vue:342 src/component/navigation.vue:1866
@@ -2875,11 +2875,11 @@ msgstr "حد الحجم الثابت: %{n} بكسل"
 
 #: src/component/photo/edit/files.vue:57
 msgid "Status"
-msgstr "حالة"
+msgstr "الحالة"
 
 #: src/component/photo/edit/files.vue:313
 msgid "Storage"
-msgstr "تخزين"
+msgstr "المساحة"
 
 #: src/options/options.js:237
 msgid "Streets"
@@ -2888,15 +2888,15 @@ msgstr "الشوارع"
 #: src/component/photo/edit/details.vue:494
 #: src/component/photo/edit/labels.vue:44
 msgid "Subject"
-msgstr "موضوعات"
+msgstr "المواضيع"
 
 #: src/page/about/feedback.vue:162 src/page/about/feedback.vue:163
 msgid "Submit"
-msgstr "يُقدِّم"
+msgstr "اكمل الطلب"
 
 #: src/component/settings/passcode.vue:132
 msgid "Successfully activated"
-msgstr "تم التنشيط بنجاح"
+msgstr "تم التفعيل بنجاح"
 
 #: src/page/connect.vue:52 src/page/connect.vue:55
 msgid "Successfully Connected"
@@ -2913,7 +2913,7 @@ msgstr "تم التحقق بنجاح"
 
 #: src/component/user/edit/dialog.vue:398 src/page/admin/users.vue:161
 msgid "Super Admin"
-msgstr "مشرف فائق"
+msgstr "Super Admin"
 
 #: src/component/service/add.vue:122
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2975,14 +2975,14 @@ msgstr "قد لا يكون تنسيقها مدعومًا ، أو لم يتم ت�
 
 #: src/page/settings/general.vue:61
 msgid "Theme"
-msgstr "سمة"
+msgstr "هوية التصميم"
 
 #: src/common/form.js:213 src/common/form.js:221 src/common/form.js:229
 #: src/common/form.js:238 src/common/form.js:248 src/common/form.js:261
 #: src/common/form.js:284 src/common/form.js:299 src/common/form.js:314
 #: src/common/form.js:325 src/common/form.js:344
 msgid "This field is required"
-msgstr "هذه الخانة مطلوبه"
+msgstr "هذه الخانة مطلوبة"
 
 #: src/component/settings/webdav.vue:100 src/page/settings/services.vue:144
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -3095,7 +3095,7 @@ msgstr "الغاء التحميل"
 
 #: src/page/settings/content.vue:183
 msgid "Unique ID"
-msgstr "معرف فريد"
+msgstr "معرف مميز"
 
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
 #: src/page/settings/account.vue:501 src/common/util.js:474
@@ -3125,7 +3125,7 @@ msgstr "غير مصنف"
 
 #: src/component/photo/edit/files.vue:217
 msgid "Unstack"
-msgstr "فك"
+msgstr "فصل المحتوى"
 
 #: src/component/photo/edit/files.vue:519 src/component/photo/edit/info.vue:416
 msgid "Updated"
@@ -3186,7 +3186,7 @@ msgstr "اكتمل التحميل. جارٍ الفهرسة …"
 #: src/component/upload/dialog.vue:296 src/component/upload/dialog.vue:315
 #: src/component/upload/dialog.vue:129
 msgid "Upload failed"
-msgstr "التحميل فشل"
+msgstr "فشل التحميل"
 
 #: src/component/service/edit.vue:257
 msgid "Upload local files"
@@ -3288,7 +3288,7 @@ msgstr "أشرطة فيديو"
 #: src/component/photo/toolbar.vue:261 src/component/photo/view/cards.vue:350
 #: src/component/photo/view/mosaic.vue:194
 msgid "View"
-msgstr "رأي"
+msgstr "العرض"
 
 #: src/page/settings/content.vue:261
 msgid "View search results as a list."
@@ -3296,7 +3296,7 @@ msgstr "عرض نتائج البحث كقائمة."
 
 #: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
-msgstr "مشاهد"
+msgstr "نافذة العرض"
 
 #: src/page/admin/sessions.vue:271 src/options/auth.js:12
 msgid "Visitor"
