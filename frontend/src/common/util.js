@@ -40,6 +40,9 @@ const Minute = 60 * Second;
 const Hour = 60 * Minute;
 let start = new Date();
 
+// List of characters used in the values returned by generateToken.
+const tokenAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+
 // True if debug logs should be created.
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
@@ -329,8 +332,16 @@ export default class $util {
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
+  // Generates a random token that makes some effort to be relatively
+  // unique each time. This isn't suitable for use in
+  // security-critical locations where predictability or collisions
+  // would cause a serious problem.
   static generateToken() {
-    return (Math.random() + 1).toString(36).substring(6);
+    let result = "";
+    for (let i = 0; i < 7; i++) {
+      result += tokenAlphabet.charAt(Math.floor(Math.random() * tokenAlphabet.length));
+    }
+    return result;
   }
 
   static hasTouch() {
