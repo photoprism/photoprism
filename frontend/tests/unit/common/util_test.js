@@ -1,5 +1,6 @@
 import "../fixtures";
 import $util from "common/util";
+import { tokenRegexp, tokenLength } from "common/util";
 import * as can from "common/can";
 import { ContentTypeMp4AvcMain, ContentTypeMp4HvcMain } from "common/media";
 
@@ -207,4 +208,16 @@ describe("common/util", () => {
       `Try this: <a href="https://photoswipe.com/options/" target="_blank">https://photoswipe.com/options/</a> It&apos;s a link!`
     );
   });
+  it("should generate tokens reliably", () => {
+    const tokens = new Set();
+    const numTokens = 100;
+    for (let i = 0; i < numTokens; i++) {
+      const token = $util.generateToken();
+      assert.lengthOf(token, tokenLength);
+      assert.match(token, tokenRegexp);
+      tokens.add(token);
+    }
+    // Check they are all unique
+    assert.lengthOf(tokens, numTokens);
+  })
 });

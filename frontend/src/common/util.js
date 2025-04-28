@@ -42,6 +42,8 @@ let start = new Date();
 
 // List of characters used in the values returned by generateToken.
 const tokenAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+export const tokenRegexp = /^[a-z0-9]{7}$/;
+export const tokenLength = 7;
 
 // True if debug logs should be created.
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
@@ -338,7 +340,7 @@ export default class $util {
   // would cause a serious problem.
   static generateToken() {
     let result = "";
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < tokenLength; i++) {
       result += tokenAlphabet.charAt(Math.floor(Math.random() * tokenAlphabet.length));
     }
     return result;
