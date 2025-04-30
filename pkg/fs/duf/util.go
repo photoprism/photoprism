@@ -2,6 +2,7 @@ package duf
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/IGLOU-EU/go-wildcard"
@@ -26,13 +27,7 @@ func parseCommaSeparatedValues(values string) FilterValues {
 // validateGroups validates the parsed group maps.
 func validateGroups(m FilterValues) error {
 	for k := range m {
-		found := false
-		for _, g := range groups {
-			if g == k {
-				found = true
-				break
-			}
-		}
+		found := slices.Contains(groups, k)
 
 		if !found {
 			return fmt.Errorf("unknown device group: %s", k)

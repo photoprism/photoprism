@@ -2,6 +2,7 @@ package service
 
 import (
 	"net/url"
+	"slices"
 	"strings"
 )
 
@@ -40,13 +41,7 @@ func (h Heuristic) MatchDomain(match string) bool {
 		return true
 	}
 
-	for _, m := range h.Domains {
-		if m == match {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(h.Domains, match)
 }
 
 func (h Heuristic) Discover(rawUrl, user string) *url.URL {
