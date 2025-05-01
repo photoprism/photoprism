@@ -8,7 +8,7 @@ SOFTWARE INCLUDED
 
 PhotoPrism latest, AGPL 3
 Docker CE 23.0, Apache 2
-Traefik 2.9, MIT
+Traefik 3.3, MIT
 MariaDB 10.10, GPL 2
 Ofelia 0.3, MIT
 Watchtower 1.5, Apache 2
