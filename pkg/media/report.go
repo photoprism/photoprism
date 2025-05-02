@@ -1,6 +1,7 @@
 package media
 
 import (
+	"slices"
 	"sort"
 	"strings"
 	"unicode"
@@ -43,9 +44,7 @@ func Report(m fs.TypesExt, withDesc, withType, withExt bool) (rows [][]string, c
 	}
 
 	for f, ext := range m {
-		sort.Slice(ext, func(i, j int) bool {
-			return ext[i] < ext[j]
-		})
+		slices.Sort(ext)
 
 		v := make([]string, 0, 4)
 		v = append(v, strings.ToUpper(f.String()))
