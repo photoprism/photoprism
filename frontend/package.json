@@ -18,6 +18,10 @@
     "gettext-extract": "gettext-extract --output src/locales/translations.pot $(find ${SRC:-src} -type f \\( -iname \\*.vue -o -iname \\*.js \\) -not -path src/common/gettext.js)",
     "lint": "eslint --cache src/ *.js",
     "test": "karma start",
+    "test:vitest": "vitest run",
+    "test:vitest:watch": "vitest",
+    "test:vitest:coverage": "vitest run --coverage",
+    "test:vitest:ui": "vitest --ui",
     "testcafe": "testcafe",
     "trace": "webpack --stats-children",
     "upgrade": "npm update && npm audit fix",
@@ -131,5 +135,15 @@
     "node": ">= 18.0.0",
     "npm": ">= 9.0.0",
     "yarn": "please use npm"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-v8": "^3.1.2",
+    "@vitest/ui": "^3.1.2",
+    "jsdom": "^26.1.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.1.2"
   }
 }
