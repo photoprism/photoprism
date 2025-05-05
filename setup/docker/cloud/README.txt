@@ -7,7 +7,7 @@ SOFTWARE INCLUDED
 ------------------------------------------------------------------------
 
 PhotoPrism latest, AGPL 3
-Docker CE 23.0, Apache 2
+Docker CE latest, Apache 2
 Traefik 3.3, MIT
 MariaDB 11, GPL 2
 Ofelia latest, MIT
