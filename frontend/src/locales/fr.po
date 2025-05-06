@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-05 07:45+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-05-06 01:02+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.11.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -443,7 +443,7 @@ msgstr "Êtes-vous sûr ?"
 
 #: src/component/photo/edit/details.vue:537
 msgid "Artist"
-msgstr "Artiste"
+msgstr "Auteur"
 
 #: src/component/photo/edit/files.vue:418
 msgid "Aspect Ratio"
