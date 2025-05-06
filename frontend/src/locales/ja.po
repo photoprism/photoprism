@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-04 08:03+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-05-06 13:08+0000\n"
+"Last-Translator: Suu <suu@na-cat.com>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.11.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -2144,7 +2144,7 @@ msgstr "1 個のファイルが見つかりました"
 
 #: src/component/service/upload.vue:104
 msgid "One file uploaded"
-msgstr "%{n} 件のファイルをアップロードしました"
+msgstr "1 個のファイルをアップロードしました"
 
 #: src/page/library/browse.vue:360
 msgid "One folder found"
