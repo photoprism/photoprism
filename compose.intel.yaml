@@ -8,6 +8,7 @@ services:
       - dummy-webdav
       - dummy-oidc
     stop_grace_period: 10s
+    privileged: true
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -124,6 +125,7 @@ services:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
+
   mariadb:
     extends:
       file: ./compose.yaml

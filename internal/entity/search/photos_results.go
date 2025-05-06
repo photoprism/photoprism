@@ -106,7 +106,15 @@ type Photo struct {
 	CheckedAt        time.Time     `json:"CheckedAt,omitempty" select:"photos.checked_at"`
 	DeletedAt        *time.Time    `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
 
-	Files []entity.File `json:"Files"`
+	// Additional information from the details table.
+	DetailsKeywords  string `json:"DetailsKeywords,omitempty" select:"-"`
+	DetailsSubject   string `json:"DetailsSubject,omitempty" select:"-"`
+	DetailsArtist    string `json:"DetailsArtist,omitempty" select:"-"`
+	DetailsCopyright string `json:"DetailsCopyright,omitempty" select:"-"`
+	DetailsLicense   string `json:"DetailsLicense,omitempty" select:"-"`
+
+	// List of files if search results are merged.
+	Files []entity.File `json:"Files" select:"-"`
 }
 
 // GetID returns the numeric entity ID.
@@ -291,7 +299,7 @@ func (m PhotoResults) Merge() (merged PhotoResults, count int, err error) {
 	var photoId uint
 
 	for _, photo := range m {
-		file := entity.File{}
+		file := entity.File{OmitMarkers: true}
 
 		if err = deepcopier.Copy(&file).From(photo); err != nil {
 			return merged, count, err

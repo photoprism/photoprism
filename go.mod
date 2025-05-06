@@ -14,7 +14,7 @@ require (
 	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v1.2.3
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang/geo v0.0.0-20250425181934-8bbaf6e6a91f
+	github.com/golang/geo v0.0.0-20250504065118-0e612851eaff
 	github.com/google/open-location-code/go v0.0.0-20250415120251-fa6d7f9d4765
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -86,7 +86,7 @@ require (
 	github.com/ugjka/go-tz/v2 v2.2.6
 	github.com/urfave/cli/v2 v2.27.6
 	github.com/wamuir/graft v0.10.0
-	github.com/zitadel/oidc/v3 v3.37.0
+	github.com/zitadel/oidc/v3 v3.38.1
 	golang.org/x/mod v0.24.0
 	golang.org/x/sys v0.32.0
 )
@@ -148,7 +148,7 @@ require (
 	go.opentelemetry.io/otel v1.35.0 // indirect
 	go.opentelemetry.io/otel/metric v1.35.0 // indirect
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
-	golang.org/x/oauth2 v0.28.0 // indirect
+	golang.org/x/oauth2 v0.29.0 // indirect
 	golang.org/x/tools v0.31.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

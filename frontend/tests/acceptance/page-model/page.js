@@ -84,7 +84,7 @@ export default class Page {
       .contains("After 1 day")
       .typeText(sharedialog.linkSecretInput, InitialSecret, { replace: true })
       .click(sharedialog.linkExpireInput)
-      .scroll(Selector("div.input-expires div.v-input__control"), "top")
+      .pressKey("down")
       .click(Selector("div").withText("Never").parent('div[role="option"]'))
       .click(sharedialog.dialogSave)
       .click(sharedialog.expandLink);

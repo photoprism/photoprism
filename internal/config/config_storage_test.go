@@ -9,15 +9,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-func TestConfig_findBin(t *testing.T) {
-	assert.Equal(t, "", findBin("yyy123", "xxx123"))
-	assert.Equal(t, "", findBin("yyy123", "sh"))
-	assert.Equal(t, "/usr/bin/sh", findBin("sh", "yyy123"))
-	assert.Equal(t, "/usr/bin/sh", findBin("", "sh"))
-	assert.Equal(t, "/usr/bin/sh", findBin("", "", "sh"))
-	assert.Equal(t, "/usr/bin/sh", findBin("", "yyy123", "sh"))
-	assert.Equal(t, "/usr/bin/sh", findBin("sh", "bash"))
-	assert.Equal(t, "/usr/bin/bash", findBin("bash", "sh"))
+func TestConfig_FindBin(t *testing.T) {
+	assert.Equal(t, "", FindBin("yyy123", "xxx123"))
+	assert.Equal(t, "", FindBin("yyy123", "sh"))
+	assert.Equal(t, "/usr/bin/sh", FindBin("sh", "yyy123"))
+	assert.Equal(t, "/usr/bin/sh", FindBin("", "sh"))
+	assert.Equal(t, "/usr/bin/sh", FindBin("", "", "sh"))
+	assert.Equal(t, "/usr/bin/sh", FindBin("", "yyy123", "sh"))
+	assert.Equal(t, "/usr/bin/sh", FindBin("sh", "bash"))
+	assert.Equal(t, "/usr/bin/bash", FindBin("bash", "sh"))
 }
 
 func TestConfig_SidecarPath(t *testing.T) {

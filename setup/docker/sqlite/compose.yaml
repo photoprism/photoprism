@@ -77,7 +77,7 @@ services:
       PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       ## Run/install on first startup, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
-      PHOTOPRISM_INIT: "https tensorflow"            # common options: update tensorflow https intel gpu davfs
+      PHOTOPRISM_INIT: "https tensorflow"            # common options: update https tensorflow tensorflow-gpu intel gpu davfs
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)

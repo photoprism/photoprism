@@ -58,7 +58,7 @@ test.meta("testID", "settings-content-002").meta({ mode: "auth" })("Common: Hide
     .typeText(photoedit.description, "A cute cat in the sun", {
       replace: true,
     })
-    .click(Selector("button.action-apply"))
+    .click(photoedit.detailsApply)
     .click(Selector("button.action-close"));
 
   await t.expect(page.cardCaption.withText("A cute cat in the sun").visible).ok();

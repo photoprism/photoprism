@@ -7,7 +7,7 @@ export default class Page {
     this.countries = Selector("div.p-countries-select", { timeout: 15000 });
     this.time = Selector("div.p-time-select", { timeout: 15000 });
     this.search1 = Selector("div.input-search input", { timeout: 15000 });
-    this.menuButton = Selector("button.action-menu__btn", { timeout: 15000 });
+    this.menuButton = Selector("button.pswp__button--menu-button", { timeout: 15000 });
     this.viewer = Selector("div.p-lightbox__pswp", { timeout: 15000 });
     this.caption = Selector("div.pswp__caption__center", { timeout: 5000 });
     this.muteButton = Selector("button.pswp__button--mute", { timeout: 5000 });
@@ -37,14 +37,14 @@ export default class Page {
 
   async checkPhotoViewerActionAvailability(action, visible) {
     if (action === "cover") {
-      await t.hover(Selector("button.action-menu__btn"));
+      await t.hover(this.menuButton);
       if (visible) {
         await t.expect(Selector("div.action-" + action).visible).ok();
       } else {
         await t.expect(Selector("div.action-" + action).visible).notOk();
       }
     } else if (action === "download") {
-      await t.hover(Selector("button.action-menu__btn"));
+      await t.hover(this.menuButton);
       if (visible) {
         await t.expect(Selector("div.action-" + action).visible).ok();
       } else {
@@ -61,10 +61,10 @@ export default class Page {
 
   async triggerPhotoViewerAction(action) {
     if (action === "cover") {
-      await t.hover(Selector("button.action-menu__btn"));
+      await t.hover(this.menuButton);
       await t.click(Selector("div.action-" + action));
     } else if (action === "download") {
-      await t.hover(Selector("button.action-menu__btn"));
+      await t.hover(this.menuButton);
       await t.click(Selector("div.action-" + action));
     } else {
       await t.hover(Selector("button.pswp__button--" + action));

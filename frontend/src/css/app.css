@@ -96,10 +96,10 @@ main {
     margin: auto;
     opacity: 1;
     color: rgb(var(--v-theme-on-button, #000000));
-    background-color: rgba(var(--v-theme-button, #ffffff), 0.5);
-    backdrop-filter: blur(12px);
+    background-color: rgba(var(--v-theme-button, #ffffff), 0.8);
+    /* backdrop-filter: blur(12px);
     box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
-    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4, 0, .2, 1), opacity 125ms;
+    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4, 0, .2, 1), opacity 125ms; */
     -webkit-tap-highlight-color: transparent;
     border: 0;
     border-radius: 1.6rem;

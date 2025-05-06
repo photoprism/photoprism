@@ -182,13 +182,14 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.UpdateFace(APIv1)
 
 	// Batch Operations.
+	api.BatchAlbumsDelete(APIv1)
+	api.BatchLabelsDelete(APIv1)
+	api.BatchPhotosEdit(APIv1)
 	api.BatchPhotosApprove(APIv1)
 	api.BatchPhotosArchive(APIv1)
 	api.BatchPhotosRestore(APIv1)
 	api.BatchPhotosPrivate(APIv1)
 	api.BatchPhotosDelete(APIv1)
-	api.BatchAlbumsDelete(APIv1)
-	api.BatchLabelsDelete(APIv1)
 
 	// Technical Endpoints.
 	api.GetSvg(APIv1)

@@ -251,7 +251,7 @@ export default class Page {
 
       .click(Selector("button.action-approve"));
     await t.expect(this.latitude.visible, { timeout: 5000 }).ok();
-    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
+    await t.click(this.detailsApply).click(Selector("button.action-close"));
   }
 
   async undoPhotoEdit(
@@ -407,6 +407,6 @@ export default class Page {
     } else {
       await t.typeText(Selector(".input-notes textarea"), notes, { replace: true });
     }
-    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
+    await t.click(this.detailsApply).click(Selector("button.action-close"));
   }
 }

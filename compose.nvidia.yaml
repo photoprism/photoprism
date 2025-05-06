@@ -3,11 +3,13 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    runtime: nvidia
     depends_on:
       - mariadb
       - dummy-webdav
       - dummy-oidc
     stop_grace_period: 10s
+    privileged: true
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -113,7 +115,7 @@ services:
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       TF_CPP_MIN_LOG_LEVEL: 1                        # show TensorFlow log messages for development
       ## Run/install on first startup, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
-      PHOTOPRISM_INIT: "https tensorflow"            # common options: update tensorflow https intel gpu davfs
+      PHOTOPRISM_INIT: "https tensorflow-gpu"        # common options: update https tensorflow tensorflow-gpu intel gpu davfs
       ## Nvidia Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit):
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "all"
@@ -140,8 +142,9 @@ services:
         reservations:
           devices:
             - driver: "nvidia"
+              capabilities: [gpu]
               count: 1
-              capabilities: [ gpu ]
+
   mariadb:
     extends:
       file: ./compose.yaml

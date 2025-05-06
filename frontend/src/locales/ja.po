@@ -792,7 +792,7 @@ msgstr "投稿者"
 msgid "Converting"
 msgstr "変換しています"
 
-#: src/common/util.js:833
+#: src/common/util.js:846
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
 
@@ -2061,7 +2061,7 @@ msgstr "写真ではないものや、低品質な画像は検索結果に表示
 msgid "None"
 msgstr "なし"
 
-#: src/common/util.js:840 src/component/lightbox.vue:633
+#: src/common/util.js:853 src/component/lightbox.vue:633
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "不可"
@@ -2074,7 +2074,7 @@ msgstr "見つかりませんでした"
 msgid "Not sorted."
 msgstr "選別されていない。"
 
-#: src/common/util.js:845 src/component/lightbox.vue:627
+#: src/common/util.js:858 src/component/lightbox.vue:627
 #: src/component/lightbox.vue:744
 msgid "Not supported"
 msgstr "サポートされていない"
@@ -3098,7 +3098,7 @@ msgid "Unique ID"
 msgstr "一意のID"
 
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
-#: src/page/settings/account.vue:501 src/common/util.js:474
+#: src/page/settings/account.vue:501 src/common/util.js:487
 #: src/component/photo/edit/details.vue:21
 #: src/component/photo/edit/details.vue:111
 #: src/component/photo/edit/details.vue:138

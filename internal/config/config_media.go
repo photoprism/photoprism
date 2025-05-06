@@ -11,7 +11,7 @@ func (c *Config) VectorEnabled() bool {
 
 // RsvgConvertBin returns the rsvg-convert executable file name.
 func (c *Config) RsvgConvertBin() string {
-	return findBin(c.options.RsvgConvertBin, "rsvg-convert")
+	return FindBin(c.options.RsvgConvertBin, "rsvg-convert")
 }
 
 // RsvgConvertEnabled checks if rsvg-convert is enabled for SVG conversion.
@@ -21,7 +21,7 @@ func (c *Config) RsvgConvertEnabled() bool {
 
 // ImageMagickBin returns the ImageMagick "convert" executable file name.
 func (c *Config) ImageMagickBin() string {
-	return findBin(c.options.ImageMagickBin, "convert", "magick")
+	return FindBin(c.options.ImageMagickBin, "convert", "magick")
 }
 
 // ImageMagickExclude returns the file extensions not to be used with ImageMagick.
@@ -36,7 +36,7 @@ func (c *Config) ImageMagickEnabled() bool {
 
 // JpegXLDecoderBin returns the JPEG XL decoder executable file name.
 func (c *Config) JpegXLDecoderBin() string {
-	return findBin("", "djxl")
+	return FindBin("", "djxl")
 }
 
 // JpegXLEnabled checks if JPEG XL file format support is enabled.
@@ -58,7 +58,7 @@ func (c *Config) DisableJpegXL() bool {
 // HeifConvertBin returns the name of the "heif-dec" executable ("heif-convert" in earlier libheif versions).
 // see https://github.com/photoprism/photoprism/issues/4439
 func (c *Config) HeifConvertBin() string {
-	return findBin(c.options.HeifConvertBin, "heif-dec", "heif-convert")
+	return FindBin(c.options.HeifConvertBin, "heif-dec", "heif-convert")
 }
 
 // HeifConvertOrientation returns the Exif orientation of images generated with libheif (keep, reset).
@@ -78,7 +78,7 @@ func (c *Config) SipsEnabled() bool {
 
 // SipsBin returns the SIPS executable file name.
 func (c *Config) SipsBin() string {
-	return findBin(c.options.SipsBin, "sips")
+	return FindBin(c.options.SipsBin, "sips")
 }
 
 // SipsExclude returns the file extensions no not be used with Sips.

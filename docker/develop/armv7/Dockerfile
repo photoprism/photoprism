@@ -64,6 +64,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         iputils-ping dnsutils \
     && \
     /scripts/install-nodejs.sh && \
+    /scripts/install-yt-dlp.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-tensorflow.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \

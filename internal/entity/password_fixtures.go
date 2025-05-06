@@ -28,6 +28,7 @@ var PasswordFixtures = PasswordMap{
 	"metrics":       NewPassword("cs5cpu17n6gj2qo5", "xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e", false),
 	"no_local_auth": NewPassword("usg73p55zwgr1ytr", "None123!", false),
 	"2fa":           NewPassword("usg73p55zwgr1ojy", "2fa-123!", false),
+	"gandalf":       NewPassword("uqxetse3cy5eu3r0", "Gandalf123!", false),
 }
 
 // CreatePasswordFixtures inserts known entities into the database for testing.

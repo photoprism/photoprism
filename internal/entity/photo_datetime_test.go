@@ -202,6 +202,52 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
 		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAtLocal)
 	})
+	t.Run("UpdateTimezoneFromMetadata", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), TakenAt: time.Date(2014, 12, 11, 8, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin", TakenSrc: "meta"}
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local),
+			time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), "tz.Local", SrcMeta)
+		assert.Equal(t, "tz.Local", photo.TimeZone)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), photo.TakenAtLocal)
+	})
+	t.Run("KeepTimezoneIfLocationWasSetManually-Local", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), TakenAt: time.Date(2014, 12, 11, 8, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin", TakenSrc: "meta", PhotoLat: 52.48498888888889, PhotoLng: 13.190422222222223, PhotoCountry: "de", PlaceSrc: "manual"}
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local),
+			time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), "tz.Local", SrcMeta)
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		assert.Equal(t, time.Date(2014, 12, 11, 8, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), photo.TakenAtLocal)
+	})
+	t.Run("KeepTimezoneIfLocationWasSetManually-UTC", func(t *testing.T) {
+		photo := &Photo{PhotoType: "video", TakenAtLocal: time.Date(2015, 05, 17, 19, 48, 22, 0, time.UTC), TakenAt: time.Date(2015, 05, 17, 17, 48, 22, 0, time.UTC), TimeZone: "Europe/Berlin", TakenSrc: "meta", PhotoLat: 52.48498888888889, PhotoLng: 13.190422222222223, PhotoCountry: "de", PlaceSrc: "manual"}
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		photo.SetTakenAt(time.Date(2015, 05, 17, 17, 48, 22, 0, time.UTC),
+			time.Date(2015, 05, 17, 17, 48, 22, 0, time.UTC), tz.UTC, SrcMeta)
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		assert.Equal(t, time.Date(2015, 05, 17, 17, 48, 22, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2015, 05, 17, 19, 48, 22, 0, time.UTC), photo.TakenAtLocal)
+	})
+	t.Run("KeepTimezoneIfLocationWasSetManually", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), TakenAt: time.Date(2014, 12, 11, 8, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin", TakenSrc: "meta", PhotoLat: 52.48498888888889, PhotoLng: 13.190422222222223, PhotoCountry: "de", PlaceSrc: "manual"}
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		photo.SetTakenAt(time.Date(2014, 12, 11, 17, 7, 18, 0, time.UTC),
+			time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), "America/Los_Angeles", SrcMeta)
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		assert.Equal(t, time.Date(2014, 12, 11, 8, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), photo.TakenAtLocal)
+	})
+	t.Run("UpdateTimezoneIfLocationWasNotSetManually", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), TakenAt: time.Date(2014, 12, 11, 8, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin", TakenSrc: "meta", PhotoLat: 52.48498888888889, PhotoLng: 13.190422222222223, PhotoCountry: "de", PlaceSrc: "meta"}
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		photo.SetTakenAt(time.Date(2014, 12, 11, 17, 7, 18, 0, time.UTC),
+			time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), "America/Los_Angeles", SrcMeta)
+		assert.Equal(t, "America/Los_Angeles", photo.TimeZone)
+		assert.Equal(t, time.Date(2014, 12, 11, 17, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.Local), photo.TakenAtLocal)
+	})
+
 }
 
 func TestPhoto_UpdateTimeZone(t *testing.T) {

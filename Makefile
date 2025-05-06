@@ -404,20 +404,25 @@ docker-pull:
 	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
 docker-build:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) down --remove-orphans
 	$(DOCKER_COMPOSE) build --pull
-docker-nvidia: docker-nvidia-up
-docker-nvidia-build:
+nvidia: nvidia-up
+nvidia-build:
+	$(DOCKER_COMPOSE) --profile=qdrant -f compose.nvidia.yaml pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) --profile=qdrant -f compose.nvidia.yaml build
-docker-nvidia-up:
-	$(DOCKER_COMPOSE) --profile=qdrant -f compose.nvidia.yaml up
-docker-nvidia-down:
+nvidia-up:
+	$(DOCKER_COMPOSE) --profile=qdrant -f compose.nvidia.yaml pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) --profile=qdrant -f compose.nvidia.yaml up --remove-orphans
+nvidia-down:
 	$(DOCKER_COMPOSE) --profile=qdrant -f compose.nvidia.yaml down --remove-orphans
-docker-intel: docker-intel-up
-docker-intel-build:
+intel: intel-up
+intel-build:
+	$(DOCKER_COMPOSE) -f compose.intel.yaml pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) -f compose.intel.yaml build
-docker-intel-up:
-	$(DOCKER_COMPOSE) -f compose.intel.yaml up
-docker-intel-down:
+intel-up:
+	$(DOCKER_COMPOSE) -f compose.intel.yaml pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) -f compose.intel.yaml up --remove-orphans
+intel-down:
 	$(DOCKER_COMPOSE) -f compose.intel.yaml down --remove-orphans
 develop: docker-develop
 docker-develop: docker-develop-latest

@@ -12,7 +12,7 @@ func TestPhotos_Photos(t *testing.T) {
 		photo1 := PhotoFixtures.Get("Photo08")
 		photo2 := PhotoFixtures.Get("Photo07")
 
-		photos := Photos{photo1, photo2}
+		photos := Photos{&photo1, &photo2}
 
 		r := photos.Photos()
 

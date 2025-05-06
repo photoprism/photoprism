@@ -58,11 +58,11 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Configure file selection based on user settings.
 		var selection query.FileSelection
-		if dl := conf.Settings().Download; dl.Disabled {
+		if settings := conf.Settings().Download; settings.Disabled {
 			AbortFeatureDisabled(c)
 			return
 		} else {
-			selection = query.DownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals)
+			selection = query.DownloadSelection(settings.MediaRaw, settings.MediaSidecar, settings.Originals)
 		}
 
 		// Find files to download.

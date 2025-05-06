@@ -789,7 +789,7 @@ msgstr "Toetaja"
 msgid "Converting"
 msgstr "Konverteerimine"
 
-#: src/common/util.js:833
+#: src/common/util.js:846
 msgid "Copied to clipboard"
 msgstr "Kopeeritud lõikelauale"
 
@@ -2058,7 +2058,7 @@ msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, e
 msgid "None"
 msgstr "Puudub"
 
-#: src/common/util.js:840 src/component/lightbox.vue:633
+#: src/common/util.js:853 src/component/lightbox.vue:633
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Ei ole lubatud"
@@ -2071,7 +2071,7 @@ msgstr "Ei leitud"
 msgid "Not sorted."
 msgstr "Ei ole sorteeritud."
 
-#: src/common/util.js:845 src/component/lightbox.vue:627
+#: src/common/util.js:858 src/component/lightbox.vue:627
 #: src/component/lightbox.vue:744
 msgid "Not supported"
 msgstr "Ei toetata"
@@ -3095,7 +3095,7 @@ msgid "Unique ID"
 msgstr "Unikaalne ID"
 
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
-#: src/page/settings/account.vue:501 src/common/util.js:474
+#: src/page/settings/account.vue:501 src/common/util.js:487
 #: src/component/photo/edit/details.vue:21
 #: src/component/photo/edit/details.vue:111
 #: src/component/photo/edit/details.vue:138

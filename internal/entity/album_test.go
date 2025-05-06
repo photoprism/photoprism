@@ -1076,7 +1076,7 @@ func TestAlbum_AddPhotos(t *testing.T) {
 		photo1 := PhotoFixtures.Get("19800101_000002_D640C559")
 		photo2 := PhotoFixtures.Get("Photo01")
 		photo3 := Photo{}
-		photos := Photos{photo1, photo2, photo3}
+		photos := Photos{&photo1, &photo2, &photo3}
 
 		added := album.AddPhotos(photos)
 
@@ -1124,7 +1124,7 @@ func TestAlbum_AddPhotos(t *testing.T) {
 		photo1 := PhotoFixtures.Get("19800101_000002_D640C559")
 		photo2 := PhotoFixtures.Get("Photo01")
 		photo3 := Photo{}
-		photos := Photos{photo1, photo2, photo3}
+		photos := Photos{&photo1, &photo2, &photo3}
 
 		added := album.AddPhotos(photos)
 

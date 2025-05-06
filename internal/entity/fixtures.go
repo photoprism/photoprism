@@ -10,6 +10,7 @@ func CreateTestFixtures() {
 	CreateCameraFixtures()
 	CreateCountryFixtures()
 	CreatePhotoFixtures()
+	CreateDetailsFixtures()
 	CreateAlbumFixtures()
 	CreateServiceFixtures()
 	CreateLinkFixtures()

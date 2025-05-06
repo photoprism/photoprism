@@ -22,8 +22,8 @@ var (
 	tempPath = ""
 )
 
-// findBin resolves the absolute file path of external binaries.
-func findBin(configBin string, defaultBin ...string) (binPath string) {
+// FindBin resolves the absolute file path of external binaries.
+func FindBin(configBin string, defaultBin ...string) (binPath string) {
 	// Binary file paths to be checked.
 	var search []string
 
@@ -655,17 +655,17 @@ func (c *Config) TestdataPath() string {
 
 // MariadbBin returns the mariadb executable file name.
 func (c *Config) MariadbBin() string {
-	return findBin("", "mariadb", "mysql")
+	return FindBin("", "mariadb", "mysql")
 }
 
 // MariadbDumpBin returns the mariadb-dump executable file name.
 func (c *Config) MariadbDumpBin() string {
-	return findBin("", "mariadb-dump", "mysqldump")
+	return FindBin("", "mariadb-dump", "mysqldump")
 }
 
 // SqliteBin returns the sqlite executable file name.
 func (c *Config) SqliteBin() string {
-	return findBin("", "sqlite3")
+	return FindBin("", "sqlite3")
 }
 
 // OriginalsAlbumsPath returns the optional album YAML file path inside originals.

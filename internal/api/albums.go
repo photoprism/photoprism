@@ -570,7 +570,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 						log.Errorf("approve: %s", err)
 					} else {
 						approved = append(approved, p)
-						SaveSidecarYaml(&p)
+						SaveSidecarYaml(p)
 					}
 				}
 

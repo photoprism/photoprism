@@ -16,7 +16,7 @@ func (c *Config) RawPresets() bool {
 
 // DarktableBin returns the darktable-cli executable file name.
 func (c *Config) DarktableBin() string {
-	return findBin(c.options.DarktableBin, "darktable-cli")
+	return FindBin(c.options.DarktableBin, "darktable-cli")
 }
 
 // DarktableExclude returns the file extensions no not be used with Darktable.
@@ -71,7 +71,7 @@ func (c *Config) DarktableEnabled() bool {
 
 // RawTherapeeBin returns the rawtherapee-cli executable file name.
 func (c *Config) RawTherapeeBin() string {
-	return findBin(c.options.RawTherapeeBin, "rawtherapee-cli")
+	return FindBin(c.options.RawTherapeeBin, "rawtherapee-cli")
 }
 
 // RawTherapeeExclude returns the file extensions no not be used with RawTherapee.

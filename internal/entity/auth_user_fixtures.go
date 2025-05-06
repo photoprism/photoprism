@@ -276,6 +276,21 @@ var UserFixtures = UserMap{
 			UITimeZone:  "UTC",
 		},
 	},
+	"gandalf": {
+		ID:           10000028,
+		UserUID:      "uqxetse3cy5eu3r0",
+		UserName:     "gandalf",
+		DisplayName:  "Gandalf",
+		UserEmail:    "gandalf@example.com",
+		UserRole:     acl.RoleGuest.String(),
+		AuthProvider: authn.ProviderLocal.String(),
+		AuthMethod:   authn.MethodDefault.String(),
+		SuperAdmin:   false,
+		CanLogin:     true,
+		WebDAV:       false,
+		CanInvite:    false,
+		InviteToken:  "",
+	},
 }
 
 // CreateUserFixtures creates the user fixtures specified above

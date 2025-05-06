@@ -1,7 +1,10 @@
 package encode
 
 // FFmpegBin defines the default ffmpeg binary name.
-const FFmpegBin = "ffmpeg"
+const (
+	FFmpegBin  = "ffmpeg"
+	FFprobeBin = "ffprobe"
+)
 
 // Bitrate limit min, max, and default settings in MBps.
 const (

@@ -32,7 +32,7 @@ func TestBatchPhotosArchive(t *testing.T) {
 		val3 := gjson.Get(r3.Body.String(), "DeletedAt")
 		assert.NotEmpty(t, val3.String())
 	})
-	t.Run("no items selected", func(t *testing.T) {
+	t.Run("MissingSelection", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosArchive(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/archive", `{"photos": []}`)
@@ -77,7 +77,7 @@ func TestBatchPhotosRestore(t *testing.T) {
 		val4 := gjson.Get(r4.Body.String(), "DeletedAt")
 		assert.Empty(t, val4.String())
 	})
-	t.Run("no items selected", func(t *testing.T) {
+	t.Run("MissingSelection", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosRestore(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/restore", `{"photos": []}`)
@@ -160,7 +160,7 @@ func TestBatchPhotosPrivate(t *testing.T) {
 		val3 := gjson.Get(r3.Body.String(), "Private")
 		assert.Equal(t, "true", val3.String())
 	})
-	t.Run("no items selected", func(t *testing.T) {
+	t.Run("MissingSelection", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosPrivate(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/private", `{"photos": []}`)
@@ -249,7 +249,7 @@ func TestBatchPhotosApprove(t *testing.T) {
 		val6 := gjson.Get(r3.Body.String(), "EditedAt")
 		assert.NotEmpty(t, val6.String())
 	})
-	t.Run("no items selected", func(t *testing.T) {
+	t.Run("MissingSelection", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosApprove(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/approve", `{"photos": []}`)

@@ -995,19 +995,25 @@ export default {
     refresh(props) {
       this.updateSettings(props);
 
+      // Do not refresh results if the view is already loading
+      // or should not be listening for events.
       if (this.loading || !this.listen) {
         return;
       }
 
-      /*
-      TODO: Leaving "loading" untouched here avoids flickering when refreshing the results, which might lead to a
-       smoother experience. If it doesn't cause any problems or unwanted side effects, this line can be removed.
+      // Make sure enough results are loaded to maintain the scroll position.
+      if (this.page > 2) {
+        this.page = this.page - 1;
+      } else {
+        this.page = 1;
+      }
 
-      this.loading = true;
-      */
-      this.page = 0;
+      // Flag results as dirty to force a refresh.
       this.dirty = true;
+
+      // Enable infinite scrolling if it was disabled.
       this.scrollDisabled = false;
+
       this.loadMore();
     },
     create() {

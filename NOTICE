@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-04-26
+Date generated: 2025-05-04
 
 ================================================================================
 
@@ -541,7 +541,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Package: github.com/dsoprea/go-heic-exif-extractor/v2
 Version: v2.0.0-20210512044107-62067e44c235
-License: MIT (https://github.com/dsoprea/go-heic-exif-extractor/blob/62067e44c235/v2/LICENSE)
+License: MIT (https://github.com/dsoprea/go-heic-exif-extractor/blob/62067e44c235/LICENSE)
 
 MIT LICENSE
 
@@ -585,7 +585,7 @@ SOFTWARE.
 
 Package: github.com/dsoprea/go-jpeg-image-structure/v2
 Version: v2.0.0-20221012074422-4f3f7e934102
-License: MIT (https://github.com/dsoprea/go-jpeg-image-structure/blob/4f3f7e934102/v2/LICENSE)
+License: MIT (https://github.com/dsoprea/go-jpeg-image-structure/blob/4f3f7e934102/LICENSE)
 
 MIT LICENSE
 
@@ -661,7 +661,7 @@ SOFTWARE.
 
 Package: github.com/dsoprea/go-png-image-structure/v2
 Version: v2.0.0-20210512210324-29b889a6093d
-License: MIT (https://github.com/dsoprea/go-png-image-structure/blob/29b889a6093d/v2/LICENSE)
+License: MIT (https://github.com/dsoprea/go-png-image-structure/blob/29b889a6093d/LICENSE)
 
 MIT LICENSE
 
@@ -677,7 +677,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Package: github.com/dsoprea/go-tiff-image-structure/v2
 Version: v2.0.0-20221003165014-8ecc4f52edca
-License: MIT (https://github.com/dsoprea/go-tiff-image-structure/blob/8ecc4f52edca/v2/LICENSE)
+License: MIT (https://github.com/dsoprea/go-tiff-image-structure/blob/8ecc4f52edca/LICENSE)
 
 MIT License
 
@@ -705,7 +705,7 @@ SOFTWARE.
 
 Package: github.com/dsoprea/go-utility/v2
 Version: v2.0.0-20221003172846-a3e1774ef349
-License: MIT (https://github.com/dsoprea/go-utility/blob/a3e1774ef349/v2/LICENSE)
+License: MIT (https://github.com/dsoprea/go-utility/blob/a3e1774ef349/LICENSE)
 
 Copyright 2019 Random Ingenuity InformationWorks
 
@@ -2316,8 +2316,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20250425181934-8bbaf6e6a91f
-License: Apache-2.0 (https://github.com/golang/geo/blob/8bbaf6e6a91f/LICENSE)
+Version: v0.0.0-20250504065118-0e612851eaff
+License: Apache-2.0 (https://github.com/golang/geo/blob/0e612851eaff/LICENSE)
 
 
                                  Apache License
@@ -6303,8 +6303,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.6.2/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3/pkg
-Version: v3.37.0
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.37.0/LICENSE)
+Version: v3.38.1
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.38.1/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7722,8 +7722,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/oauth2
-Version: v0.28.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.28.0:LICENSE)
+Version: v0.29.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.29.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

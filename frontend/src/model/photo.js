@@ -144,6 +144,12 @@ export class Photo extends RestModel {
       Hash: "",
       Width: "",
       Height: "",
+      // Details.
+      DetailsKeywords: "",
+      DetailsSubject: "",
+      DetailsArtist: "",
+      DetailsCopyright: "",
+      DetailsLicense: "",
       // Date fields.
       CreatedAt: "",
       UpdatedAt: "",
@@ -614,20 +620,49 @@ export class Photo extends RestModel {
     return this.Files.filter((f) => f.FileType === media.FormatJpeg || f.FileType === media.FormatPng);
   }
 
-  primaryFileHash() {
-    return this.generatePrimaryFileHash(this.primaryFile(), this.Hash);
+  // Returns the primary file hash if it exists,
+  // otherwise the best matching non-sidecar file hash.
+  fileHash() {
+    return this.generateFileHash(this.Files, this.Hash);
   }
 
-  generatePrimaryFileHash = memoizeOne((primary, hash) => {
-    if (this.Files) {
-      if (primary && primary.Hash) {
-        return primary.Hash;
+  generateFileHash = memoizeOne((files, hash) => {
+    // Get hash from file properties if a list of files exists and is not empty.
+    if (files && files.length > 0) {
+      // Use primary file hash, if exists.
+      let file = files.find((f) => !!f.Primary && f.Hash);
+      if (file) {
+        return file.Hash;
       }
-    } else if (hash) {
-      return hash;
+
+      // Use first JPEG or PNG file hash, if exists.
+      file = files.find(
+        (f) => (f.FileType === media.FormatJpeg || f.FileType === media.FormatPng) && !f.Missing && f.Hash
+      );
+      if (file) {
+        return file.Hash;
+      }
+
+      // Use first video file hash, if exists.
+      file = files.find((f) => !!f.Video && !f.Missing && f.Hash);
+      if (file) {
+        return file.Hash;
+      }
+
+      // Use first non sidecar file hash, if exists.
+      file = files.find((f) => !f.Sidecar && !f.Missing && f.Hash);
+      if (file) {
+        return file.Hash;
+      }
     }
 
-    return "";
+    // Return an empty string if hash is not a string.
+    if (typeof hash !== "string") {
+      return "";
+    }
+
+    // Default to the photo's hash property (can be empty).
+    return hash;
   });
 
   fileModels() {
@@ -666,10 +701,11 @@ export class Photo extends RestModel {
     return result;
   }
 
+  // Returns the thumbnail URL of the primary file,
+  // or otherwise the best matching non-sidecar file.
   thumbnailUrl(size) {
     return this.generateThumbnailUrl(
-      this.primaryFileHash(),
-      this.videoFile(),
+      this.fileHash(),
       $config.staticUri,
       $config.contentUri,
       $config.previewToken,
@@ -677,24 +713,22 @@ export class Photo extends RestModel {
     );
   }
 
-  generateThumbnailUrl = memoizeOne((mainFileHash, videoFile, staticUri, contentUri, previewToken, size) => {
-    let hash = mainFileHash;
-
-    if (!hash) {
-      if (videoFile && videoFile.Hash) {
-        return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
-      }
-
+  generateThumbnailUrl = memoizeOne((fileHash, staticUri, contentUri, previewToken, size) => {
+    if (!fileHash) {
       return `${staticUri}/img/404.jpg`;
     }
 
-    return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+    return `${contentUri}/t/${fileHash}/${previewToken}/${size}`;
   });
 
+  // Returns the download URL for the primary file if it is set in Files
+  // or if there is no list of files (otherwise the best matching image
+  // or video file).
   getDownloadUrl() {
-    return `${$config.apiUri}/dl/${this.primaryFileHash()}?t=${$config.downloadToken}`;
+    return `${$config.apiUri}/dl/${this.fileHash()}?t=${$config.downloadToken}`;
   }
 
+  // Downloads all related files if they exist and depending on the settings.
   downloadAll() {
     const s = $config.getSettings();
 
@@ -706,7 +740,8 @@ export class Photo extends RestModel {
     const token = $config.downloadToken;
 
     if (!this.Files) {
-      const hash = this.primaryFileHash();
+      // Download primary file if no list of Files is specified.
+      const hash = this.fileHash();
 
       if (hash) {
         download(`/${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));

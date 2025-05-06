@@ -97,7 +97,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 
 	for i, merge := range identical {
 		if i == 0 {
-			original = merge
+			original = *merge
 			log.Debugf("photo: merging id %d with %d identical", original.ID, len(identical)-1)
 			continue
 		}

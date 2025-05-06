@@ -792,7 +792,7 @@ msgstr "기여자"
 msgid "Converting"
 msgstr "변환하는 중"
 
-#: src/common/util.js:833
+#: src/common/util.js:846
 msgid "Copied to clipboard"
 msgstr "클립보드에 복사했습니다"
 
@@ -2061,7 +2061,7 @@ msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 �
 msgid "None"
 msgstr "없음"
 
-#: src/common/util.js:840 src/component/lightbox.vue:633
+#: src/common/util.js:853 src/component/lightbox.vue:633
 #: src/component/service/upload.vue:75 src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "허용되지 않음"
@@ -2074,7 +2074,7 @@ msgstr "찾을 수 없음"
 msgid "Not sorted."
 msgstr "정렬되지 않았습니다."
 
-#: src/common/util.js:845 src/component/lightbox.vue:627
+#: src/common/util.js:858 src/component/lightbox.vue:627
 #: src/component/lightbox.vue:744
 msgid "Not supported"
 msgstr "지원되지 않음"
@@ -3099,7 +3099,7 @@ msgid "Unique ID"
 msgstr "유일 ID"
 
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
-#: src/page/settings/account.vue:501 src/common/util.js:474
+#: src/page/settings/account.vue:501 src/common/util.js:487
 #: src/component/photo/edit/details.vue:21
 #: src/component/photo/edit/details.vue:111
 #: src/component/photo/edit/details.vue:138

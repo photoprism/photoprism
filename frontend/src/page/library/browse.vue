@@ -421,14 +421,16 @@ export default {
         return;
       }
 
-      /*
-      TODO: Leaving "loading" untouched here avoids flickering when refreshing the results, which might lead to a
-       smoother experience. If it doesn't cause any problems or unwanted side effects, this line can be removed.
+      // Make sure enough results are loaded to maintain the scroll position.
+      if (this.page > 2) {
+        this.page = this.page - 1;
+      } else {
+        this.page = 1;
+      }
 
-      this.loading = true;
-      */
-      this.page = 0;
+      // Flag results as dirty to force a refresh.
       this.dirty = true;
+
       this.search();
     },
     getPathAsString() {

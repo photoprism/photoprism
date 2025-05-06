@@ -303,8 +303,8 @@ func TestPhoto_Delete(t *testing.T) {
 
 func TestPhotos_UIDs(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		photo1 := Photo{PhotoUID: "abc123"}
-		photo2 := Photo{PhotoUID: "abc456"}
+		photo1 := &Photo{PhotoUID: "abc123"}
+		photo2 := &Photo{PhotoUID: "abc456"}
 		photos := Photos{photo1, photo2}
 		assert.Equal(t, []string{"abc123", "abc456"}, photos.UIDs())
 	})

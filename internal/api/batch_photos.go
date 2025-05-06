@@ -69,7 +69,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 				if archiveErr := p.Archive(); archiveErr != nil {
 					log.Errorf("archive: %s", archiveErr)
 				} else {
-					SaveSidecarYaml(&p)
+					SaveSidecarYaml(p)
 				}
 			}
 		} else if err := entity.Db().Where("photo_uid IN (?)", frm.Photos).Delete(&entity.Photo{}).Error; err != nil {
@@ -140,7 +140,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 				if err = p.Restore(); err != nil {
 					log.Errorf("restore: %s", err)
 				} else {
-					SaveSidecarYaml(&p)
+					SaveSidecarYaml(p)
 				}
 			}
 		} else if err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", frm.Photos).
@@ -212,7 +212,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 				log.Errorf("approve: %s", err)
 			} else {
 				approved = append(approved, p)
-				SaveSidecarYaml(&p)
+				SaveSidecarYaml(p)
 			}
 		}
 
@@ -221,80 +221,6 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 		event.EntitiesUpdated("photos", approved)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionApproved))
-	})
-}
-
-// BatchAlbumsDelete permanently removes multiple albums.
-//
-//	@Summary	permanently removes multiple albums
-//	@Id			BatchAlbumsDelete
-//	@Tags		Albums
-//	@Accept		json
-//	@Produce	json
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		albums				body		form.Selection	true	"Album Selection"
-//	@Router		/api/v1/batch/albums/delete [post]
-func BatchAlbumsDelete(router *gin.RouterGroup) {
-	router.POST("/batch/albums/delete", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceAlbums, acl.ActionDelete)
-
-		if s.Abort(c) {
-			return
-		}
-
-		var frm form.Selection
-
-		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		// Get album UIDs.
-		albumUIDs := frm.Albums
-
-		if len(albumUIDs) == 0 {
-			Abort(c, http.StatusBadRequest, i18n.ErrNoAlbumsSelected)
-			return
-		}
-
-		log.Infof("albums: deleting %s", clean.Log(frm.String()))
-
-		// Fetch albums.
-		albums, queryErr := query.AlbumsByUID(albumUIDs, false)
-
-		if queryErr != nil {
-			log.Errorf("albums: %s (find)", queryErr)
-		}
-
-		// Abort if no albums with a matching UID were found.
-		if len(albums) == 0 {
-			AbortEntityNotFound(c)
-			return
-		}
-
-		deleted := 0
-		conf := get.Config()
-
-		// Flag matching albums as deleted.
-		for _, a := range albums {
-			if deleteErr := a.Delete(); deleteErr != nil {
-				log.Errorf("albums: %s (delete)", deleteErr)
-			} else {
-				if conf.BackupAlbums() {
-					SaveAlbumYaml(a)
-				}
-
-				deleted++
-			}
-		}
-
-		// Update client config if at least one album was successfully deleted.
-		if deleted > 0 {
-			UpdateClientConfig()
-		}
-
-		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgAlbumsDeleted))
 	})
 }
 
@@ -344,7 +270,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		// Fetch selection from index.
 		if photos, err := query.SelectedPhotos(frm); err == nil {
 			for _, p := range photos {
-				SaveSidecarYaml(&p)
+				SaveSidecarYaml(p)
 			}
 
 			event.EntitiesUpdated("photos", photos)
@@ -355,59 +281,6 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		FlushCoverCache()
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionProtected))
-	})
-}
-
-// BatchLabelsDelete deletes multiple labels.
-//
-//	@Summary	deletes multiple labels
-//	@Id			BatchLabelsDelete
-//	@Tags		Labels
-//	@Accept		json
-//	@Produce	json
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		labels				body		form.Selection	true	"Label Selection"
-//	@Router		/api/v1/batch/labels/delete [post]
-func BatchLabelsDelete(router *gin.RouterGroup) {
-	router.POST("/batch/labels/delete", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceLabels, acl.ActionDelete)
-
-		if s.Abort(c) {
-			return
-		}
-
-		var frm form.Selection
-
-		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		if len(frm.Labels) == 0 {
-			log.Error("no labels selected")
-			Abort(c, http.StatusBadRequest, i18n.ErrNoLabelsSelected)
-			return
-		}
-
-		log.Infof("labels: deleting %s", clean.Log(frm.String()))
-
-		var labels entity.Labels
-
-		if err := entity.Db().Where("label_uid IN (?)", frm.Labels).Find(&labels).Error; err != nil {
-			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
-			return
-		}
-
-		for _, label := range labels {
-			logErr("labels", label.Delete())
-		}
-
-		UpdateClientConfig()
-
-		event.EntitiesDeleted("labels", frm.Labels)
-
-		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgLabelsDeleted))
 	})
 }
 
@@ -487,7 +360,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", path.Join(p.PhotoPath, p.PhotoName+"*")})
 
 			// Remove all related files from storage.
-			n, deleteErr := photoprism.DeletePhoto(&p, true, true)
+			n, deleteErr := photoprism.DeletePhoto(p, true, true)
 
 			numFiles += n
 

@@ -1,14 +1,14 @@
 package entity
 
 // Photos represents a list of photos.
-type Photos []Photo
+type Photos []*Photo
 
 // Photos returns the result as a slice of Photo.
 func (m Photos) Photos() []PhotoInterface {
 	result := make([]PhotoInterface, len(m))
 
 	for i := range m {
-		result[i] = &m[i]
+		result[i] = m[i]
 	}
 
 	return result

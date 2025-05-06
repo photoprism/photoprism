@@ -47,3 +47,42 @@ func Name(name string) string {
 func NameCapitalized(name string) string {
 	return txt.Title(Name(name))
 }
+
+// DlName sanitizes a download name string.
+func DlName(name string) string {
+	if name == "" {
+		return ""
+	}
+
+	name = strings.Replace(name, "...", "…", -1)
+
+	var prev rune
+
+	// Remove unwanted characters.
+	name = strings.Map(func(r rune) rune {
+		if r == ' ' && (prev == 0 || prev == ' ') {
+			return -1
+		}
+
+		prev = r
+
+		if r < 32 || r == 127 {
+			return -1
+		}
+
+		switch r {
+		case '.', '|', '?', '"', '$', '%', '/', '\\', '*', '`', ':', ';', '<', '>', '{', '}':
+			return -1
+		}
+		return r
+	}, name)
+
+	// Shorten string if longer than 255 runes.
+	if name = strings.TrimSpace(name); name == "" {
+		return ""
+	} else if runes := []rune(name); len(runes) > txt.ClipPath {
+		name = string(runes[0:txt.ClipPath])
+	}
+
+	return strings.TrimSpace(name)
+}

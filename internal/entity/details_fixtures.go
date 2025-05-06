@@ -75,3 +75,10 @@ var DetailsFixtures = DetailsMap{
 		LicenseSrc:   "manual",
 	},
 }
+
+// CreateDetailsFixtures inserts known entities into the database for testing.
+func CreateDetailsFixtures() {
+	for _, entity := range DetailsFixtures {
+		Db().Create(&entity)
+	}
+}

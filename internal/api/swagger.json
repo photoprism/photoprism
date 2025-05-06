@@ -1360,6 +1360,76 @@
                 }
             }
         },
+        "/api/v1/batch/photos/edit": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "returns and updates the metadata of multiple photos",
+                "operationId": "BatchPhotosEdit",
+                "parameters": [
+                    {
+                        "description": "photos selection and values",
+                        "name": "photos",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/batch.PhotosRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/batch.PhotosForm"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/batch/photos/private": {
             "post": {
                 "consumes": [
@@ -5097,6 +5167,211 @@
         }
     },
     "definitions": {
+        "batch.Action": {
+            "type": "string",
+            "enum": [
+                "none",
+                "update",
+                "add",
+                "remove"
+            ],
+            "x-enum-varnames": [
+                "ActionNone",
+                "ActionUpdate",
+                "ActionAdd",
+                "ActionRemove"
+            ]
+        },
+        "batch.Bool": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/batch.Action"
+                },
+                "mixed": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "batch.Float32": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/batch.Action"
+                },
+                "mixed": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "batch.Float64": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/batch.Action"
+                },
+                "mixed": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "batch.Int": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/batch.Action"
+                },
+                "mixed": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "batch.PhotosForm": {
+            "type": "object",
+            "properties": {
+                "Altitude": {
+                    "$ref": "#/definitions/batch.Int"
+                },
+                "CameraID": {
+                    "$ref": "#/definitions/batch.UInt"
+                },
+                "Caption": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "Country": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "Day": {
+                    "$ref": "#/definitions/batch.Int"
+                },
+                "DetailsArtist": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "DetailsCopyright": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "DetailsKeywords": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "DetailsLicense": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "DetailsSubject": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "Exposure": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "FNumber": {
+                    "$ref": "#/definitions/batch.Float32"
+                },
+                "Favorite": {
+                    "$ref": "#/definitions/batch.Bool"
+                },
+                "FocalLength": {
+                    "$ref": "#/definitions/batch.Int"
+                },
+                "Iso": {
+                    "$ref": "#/definitions/batch.Int"
+                },
+                "Lat": {
+                    "$ref": "#/definitions/batch.Float64"
+                },
+                "LensID": {
+                    "$ref": "#/definitions/batch.UInt"
+                },
+                "Lng": {
+                    "$ref": "#/definitions/batch.Float64"
+                },
+                "Month": {
+                    "$ref": "#/definitions/batch.Int"
+                },
+                "Panorama": {
+                    "$ref": "#/definitions/batch.Bool"
+                },
+                "Private": {
+                    "$ref": "#/definitions/batch.Bool"
+                },
+                "Scan": {
+                    "$ref": "#/definitions/batch.Bool"
+                },
+                "TakenAt": {
+                    "type": "string"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "TimeZone": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "Title": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "Type": {
+                    "$ref": "#/definitions/batch.String"
+                },
+                "Year": {
+                    "$ref": "#/definitions/batch.Int"
+                }
+            }
+        },
+        "batch.PhotosRequest": {
+            "type": "object",
+            "properties": {
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "return": {
+                    "type": "boolean"
+                },
+                "values": {
+                    "$ref": "#/definitions/batch.PhotosForm"
+                }
+            }
+        },
+        "batch.String": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/batch.Action"
+                },
+                "mixed": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "batch.UInt": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/batch.Action"
+                },
+                "mixed": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
         "config.Options": {
             "type": "object",
             "properties": {
@@ -7446,6 +7721,22 @@
                 "DeletedAt": {
                     "type": "string"
                 },
+                "DetailsArtist": {
+                    "type": "string"
+                },
+                "DetailsCopyright": {
+                    "type": "string"
+                },
+                "DetailsKeywords": {
+                    "description": "Additional information from the details table.",
+                    "type": "string"
+                },
+                "DetailsLicense": {
+                    "type": "string"
+                },
+                "DetailsSubject": {
+                    "type": "string"
+                },
                 "DocumentID": {
                     "type": "string"
                 },
@@ -7477,6 +7768,7 @@
                     "type": "string"
                 },
                 "Files": {
+                    "description": "List of files if search results are merged.",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.File"
@@ -7670,20 +7962,6 @@
         "time.Duration": {
             "type": "integer",
             "enum": [
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
                 1,
                 1000,
                 1000000,
@@ -7692,20 +7970,6 @@
                 3600000000000
             ],
             "x-enum-varnames": [
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
@@ -7901,6 +8165,18 @@
             }
         }
     },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
     "externalDocs": {
         "description": "Learn more ›",
         "url": "https://docs.photoprism.app/developer-guide/api/"
