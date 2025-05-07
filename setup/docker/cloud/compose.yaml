@@ -1,6 +1,5 @@
 #  ========================================================================
 #  PhotoPrism for Cloud Servers
-#  Based on Ubuntu 25.04 LTS (Plucky Puffin)
 #  ========================================================================
 #
 #  Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalOcean:
@@ -179,7 +178,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v3.3
+    image: traefik:v3.4
     container_name: traefik
     ports:
       - "80:80"

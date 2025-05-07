@@ -1,6 +1,5 @@
 ========================================================================
 PhotoPrism for Cloud Servers
-Based on Ubuntu 25.04 LTS (Plucky Puffin)
 ========================================================================
 
 SOFTWARE INCLUDED
@@ -8,7 +7,7 @@ SOFTWARE INCLUDED
 
 PhotoPrism latest, AGPL 3
 Docker CE latest, Apache 2
-Traefik 3.3, MIT
+Traefik 3.4, MIT
 MariaDB 11, GPL 2
 Ofelia latest, MIT
 Watchtower latest, Apache 2
