@@ -67,19 +67,27 @@
       @confirm="dialog.upload = false"
     ></p-service-upload>
     <p-album-edit-dialog :visible="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
+    <p-album-delete-dialog
+      :visible="dialog.delete"
+      @close="dialog.delete = false"
+      @confirm="onDeleteConfirm"
+    ></p-album-delete-dialog>
   </v-form>
 </template>
 <script>
 import $notify from "common/notify";
 import download from "common/download";
 import { T } from "common/gettext";
+import $api from "common/api";
 
 import PActionMenu from "component/action/menu.vue";
+import PAlbumDeleteDialog from "component/album/delete/dialog.vue";
 
 export default {
   name: "PAlbumToolbar",
   components: {
     PActionMenu,
+    PAlbumDeleteDialog,
   },
   props: {
     album: {
@@ -117,6 +125,7 @@ export default {
         this.$config.allow("albums", "download") && features.download && !settings?.albums?.download?.disabled,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),
+      canDelete: this.$config.allow("albums", "delete"),
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       categories: this.$config.albumCategories(),
@@ -128,6 +137,7 @@ export default {
         share: false,
         upload: false,
         edit: false,
+        delete: false,
       },
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
@@ -193,6 +203,17 @@ export default {
             this.download();
           },
         },
+        {
+          name: "delete",
+          icon: "mdi-delete-outline",
+          text: this.$gettext("Delete Album"),
+          visible: this.canDelete,
+          class: "text-error",
+          color: "error",
+          click: () => {
+            this.dialog.delete = true;
+          },
+        },
       ];
     },
     T() {
@@ -229,6 +250,18 @@ export default {
       $notify.success(this.$gettext("Downloading…"));
 
       download(path, "album.zip");
+    },
+    onDeleteConfirm() {
+      $api
+        .delete(`albums/${this.album.UID}`)
+        .then(() => {
+          $notify.success(this.$gettext("Album deleted"));
+          this.$router.push({ name: this.collectionRoute });
+        })
+        .catch(() => {
+          $notify.error(this.$gettext("Failed to delete album"));
+        });
+      this.dialog.delete = false;
     },
   },
 };
