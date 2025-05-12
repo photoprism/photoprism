@@ -67,11 +67,14 @@
       @confirm="dialog.upload = false"
     ></p-service-upload>
     <p-album-edit-dialog :visible="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
-    <p-album-delete-dialog
+    <p-confirm-dialog
       :visible="dialog.delete"
+      :text="$gettext('Are you sure you want to delete this album?')"
+      :action="$gettext('Delete')"
+      icon="mdi-delete-outline"
       @close="dialog.delete = false"
       @confirm="onDeleteConfirm"
-    ></p-album-delete-dialog>
+    ></p-confirm-dialog>
   </v-form>
 </template>
 <script>
@@ -81,13 +84,13 @@ import { T } from "common/gettext";
 import $api from "common/api";
 
 import PActionMenu from "component/action/menu.vue";
-import PAlbumDeleteDialog from "component/album/delete/dialog.vue";
+import PConfirmDialog from "component/confirm/dialog.vue";
 
 export default {
   name: "PAlbumToolbar",
   components: {
     PActionMenu,
-    PAlbumDeleteDialog,
+    PConfirmDialog,
   },
   props: {
     album: {
