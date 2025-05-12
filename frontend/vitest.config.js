@@ -1,18 +1,19 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react(), vue(), tsconfigPaths()],
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: "./tests/vitest/setup.js",
+    setupFiles: ["./tests/vitest/setup.js", "./tests/vitest/vue-setup.js"],
     include: ["tests/vitest/**/*.{test,spec}.{js,jsx}"],
     coverage: {
       reporter: ["text", "html"],
-      include: ["src/**/*.{js,jsx}"],
+      include: ["src/**/*.{js,jsx,vue}"],
       exclude: ["src/locales/**"],
     },
     alias: {
