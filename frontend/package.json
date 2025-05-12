@@ -21,6 +21,7 @@
     "test:vitest": "vitest run",
     "test:vitest:watch": "vitest",
     "test:vitest:coverage": "vitest run --coverage",
+    "test:vitest:component": "vitest run tests/vitest/component",
     "test:vitest:ui": "vitest --ui",
     "testcafe": "testcafe",
     "trace": "webpack --stats-children",
