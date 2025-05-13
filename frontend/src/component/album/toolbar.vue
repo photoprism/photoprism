@@ -210,7 +210,7 @@ export default {
           name: "delete",
           icon: "mdi-delete-outline",
           text: this.$gettext("Delete Album"),
-          visible: this.canDelete,
+          visible: this.canDelete && ["album", "moment", "state"].includes(this.album.Type),
           class: "text-error",
           color: "error",
           click: () => {
