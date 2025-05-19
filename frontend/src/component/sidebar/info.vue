@@ -120,10 +120,14 @@ export default {
         return this.$gettext("Unknown");
       }
 
-      if (model.TimeZone && model.TimeZone !== "Local") {
-        return DateTime.fromISO(model.TakenAtLocal, { zone: model.TimeZone }).toLocaleString(formats.DATETIME_MED_TZ);
+      // Always parse as UTC to avoid time shifts
+      const dateTime = DateTime.fromISO(model.TakenAtLocal, { zone: "UTC" });
+
+      if (model.TimeZone && model.TimeZone !== "Local" && model.TimeZone !== "UTC") {
+        // We use the real timezone just for display, but don't shift the time (prevents double timezone offset as backend already applied it)
+        return dateTime.setZone(model.TimeZone, { keepLocalTime: true }).toLocaleString(formats.DATETIME_MED_TZ);
       } else {
-        return DateTime.fromISO(model.TakenAtLocal, { zone: "UTC" }).toLocaleString(formats.DATETIME_MED);
+        return dateTime.toLocaleString(formats.DATETIME_MED);
       }
     },
   },
