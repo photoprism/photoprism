@@ -1,7 +1,9 @@
 import { defineConfig } from "vitest/config";
 import path from "path";
+import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
+  plugins: [vue()],
   resolve: {
     alias: {
       "app": path.resolve(__dirname, "./src/app"),
@@ -17,10 +19,14 @@ export default defineConfig({
     },
   },
 
+  optimizeDeps: {
+    include: ["vuetify"],
+  },
+
   test: {
     globals: true,
     setupFiles: "./tests/vitest/setup.js",
-    include: ["tests/vitest/**/*.{test,spec}.{js,jsx}"],
+    include: ["tests/vitest/**/*.{test,spec}.{js,jsx,ts,tsx,vue}"],
     exclude: ["**/node_modules/**", "**/dist/**"],
     coverage: {
       reporter: ["text", "html"],

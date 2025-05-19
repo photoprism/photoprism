@@ -1,6 +1,7 @@
 import { afterEach, vi } from "vitest";
 import { Settings } from "luxon";
 import "@testing-library/jest-dom";
+import "./vue-setup";
 
 // Set config for Luxon
 Settings.defaultLocale = "en";
