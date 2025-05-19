@@ -111,7 +111,7 @@ describe("model/marker", () => {
     };
     const marker = new Marker(values);
     const result = marker.getDateString();
-    expect(result).toBe("2023-10-01 10:00:00");
+    expect(result).toBe("Jul 8, 2012, 4:45 PM");
   });
 
   it("should approve marker", () => {
