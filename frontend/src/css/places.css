@@ -262,3 +262,61 @@
     float: left;
     margin: 0 0 10px 10px;
 }
+
+/* Photo Map Dialog Styles */
+.p-photo-map-dialog .p-map {
+    width: 100%;
+    height: 400px;
+}
+
+.p-photo-map-dialog .maplibregl-ctrl-top-right {
+    z-index: 5;
+}
+
+.position-relative {
+    position: relative;
+}
+  
+.position-absolute {
+    position: absolute;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .p-photo-map-dialog .v-card {
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .p-photo-map-dialog .v-toolbar-title {
+      font-size: 1.1rem;
+    }
+    
+    .p-photo-map-dialog .map-sidebar {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+}
+
+.v-dialog.v-dialog--fullscreen .p-map {
+    height: 60vh !important;
+}
+  
+@media (max-width: 960px) {
+    .p-photo-map-dialog .map-sidebar {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    .v-dialog.v-dialog--fullscreen .v-card-text {
+      overflow: auto;
+      max-height: calc(100vh - 56px);
+    }
+}
+  
+/* Remove margins from map dialog */
+.v-dialog>.v-overlay__content>.v-card>.v-card-text, 
+.v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
+    margin: 0 !important;
+    padding: 0 !important;
+}

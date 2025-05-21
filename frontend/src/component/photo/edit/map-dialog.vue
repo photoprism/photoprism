@@ -1,0 +1,497 @@
+<template>
+  <v-dialog
+    v-model="show"
+    :max-width="900"
+    :fullscreen="$vuetify.display.mdAndDown"
+    :persistent="false"
+    class="p-photo-map-dialog"
+    @keydown.esc="close"
+    @after-leave="onDialogClosed"
+  >
+    <v-card :tile="$vuetify.display.mdAndDown">
+      <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="px-4">
+        <v-btn v-if="$vuetify.display.mdAndDown" icon @click.stop="close">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-icon v-else color="primary" class="mr-3">mdi-map-marker</v-icon>
+        <v-toolbar-title>
+          {{ $gettext("Set Location") }}
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn v-if="!$vuetify.display.mdAndDown" icon class="action-close" @click.stop="close">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-text class="pa-0">
+        <div class="d-flex flex-column flex-md-row pa-4">
+          <!-- Map panel -->
+          <div class="flex-grow-1 position-relative mb-4 mb-md-0">
+            <div ref="map" class="p-map" style="height: 50vh; min-height: 300px; width: 100%; border-radius: 4px"></div>
+          </div>
+
+          <!-- Search and info panel -->
+          <div
+            class="map-sidebar ml-0 ml-md-4"
+            style="width: 100%; max-width: 100%; width: 100%; max-width: 300px; min-width: 0"
+          >
+            <v-card border class="pa-3 mb-3">
+              <div class="text-subtitle-2 mb-2">{{ $gettext("Coordinates") }}</div>
+              <v-text-field
+                v-model="coordinateInput"
+                :label="$gettext('Latitude, Longitude')"
+                prepend-inner-icon="mdi-map-marker"
+                density="compact"
+                variant="outlined"
+                placeholder="e.g., 52.520008, 13.404954"
+                persistent-hint
+                clearable
+                class="mb-2"
+                @keydown.enter="applyCoordinates"
+              ></v-text-field>
+              <v-btn block color="primary" :disabled="!isValidCoordinateInput" @click="applyCoordinates">
+                {{ $gettext("Set Position") }}
+              </v-btn>
+            </v-card>
+
+            <v-card v-if="locationInfo" border class="pa-3 mb-3">
+              <div class="text-subtitle-2 mb-2">{{ $gettext("Location Details") }}</div>
+              <div class="text-body-2">
+                {{ simplifiedLocationDisplay }}
+              </div>
+            </v-card>
+
+            <v-card border class="pa-3">
+              <div class="text-subtitle-2 mb-2">{{ $gettext("Instructions") }}</div>
+              <div class="text-body-2">
+                {{ $gettext("Click on the map to set a location. Drag the marker for precise positioning.") }}
+              </div>
+              <div class="d-flex justify-space-between mt-3">
+                <v-btn
+                  v-if="currentLat && currentLng && !(currentLat === 0 && currentLng === 0)"
+                  variant="text"
+                  color="error"
+                  @click="clearLocation"
+                >
+                  <v-icon start>mdi-delete</v-icon>
+                  {{ $gettext("Clear") }}
+                </v-btn>
+                <v-spacer v-else></v-spacer>
+                <v-btn variant="text" @click="close">{{ $gettext("Cancel") }}</v-btn>
+                <v-btn
+                  color="primary"
+                  :disabled="!currentLat || !currentLng || (currentLat === 0 && currentLng === 0)"
+                  @click="confirm"
+                >
+                  {{ $gettext("Apply") }}
+                </v-btn>
+              </div>
+            </v-card>
+          </div>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+import maplibregl from "common/maplibregl";
+
+export default {
+  name: "PPhotoEditMapDialog",
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+    latitude: {
+      type: Number,
+      default: 0,
+    },
+    longitude: {
+      type: Number,
+      default: 0,
+    },
+  },
+  emits: ["update:value", "update:latitude", "update:longitude", "confirm", "close"],
+  data() {
+    return {
+      show: this.value,
+      map: null,
+      marker: null,
+      position: [0.0, 0.0],
+      options: {
+        container: null,
+        style: `https://cdn.photoprism.app/maps/embedded.json`,
+        glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
+        zoom: 12,
+        interactive: true,
+        attributionControl: false,
+      },
+      loaded: false,
+      currentLat: this.latitude,
+      currentLng: this.longitude,
+      originalLat: this.latitude,
+      originalLng: this.longitude,
+      coordinateInput: "",
+      locationInfo: null,
+    };
+  },
+  computed: {
+    hasOriginalCoordinates() {
+      return (
+        this.originalLat &&
+        this.originalLng &&
+        !(this.originalLat === 0 && this.originalLng === 0) &&
+        (this.originalLat !== this.currentLat || this.originalLng !== this.currentLng)
+      );
+    },
+    isValidCoordinateInput() {
+      if (!this.coordinateInput) return false;
+
+      const parts = this.coordinateInput.split(",").map((part) => part.trim());
+      if (parts.length !== 2) return false;
+
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+
+      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+    },
+    simplifiedLocationDisplay() {
+      if (!this.locationInfo) return "";
+
+      const parts = [];
+
+      // Add street information
+      if (this.locationInfo.street) {
+        if (this.locationInfo.houseNumber) {
+          parts.push(`${this.locationInfo.street} ${this.locationInfo.houseNumber}`);
+        } else {
+          parts.push(this.locationInfo.street);
+        }
+      }
+
+      // Add city or town
+      if (this.locationInfo.city) {
+        parts.push(this.locationInfo.city);
+      }
+
+      // Add state/region if available
+      if (this.locationInfo.state) {
+        parts.push(this.locationInfo.state);
+      }
+
+      // Add country
+      if (this.locationInfo.country) {
+        parts.push(this.locationInfo.country);
+      }
+
+      // Return joined string, or fallback to a simplified portion of the formatted address
+      if (parts.length > 0) {
+        return parts.join(", ");
+      } else if (this.locationInfo.formatted) {
+        // If no structured parts, take just the beginning of the formatted address
+        const addressParts = this.locationInfo.formatted.split(",").slice(0, 3);
+        return addressParts.join(", ");
+      }
+
+      return this.locationInfo.formatted || "";
+    },
+  },
+  watch: {
+    value(val) {
+      this.show = val;
+      if (val) {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.initMap();
+          }, 100);
+        });
+      } else {
+        // Cleanup map when dialog closes
+        this.cleanupMap();
+      }
+    },
+    show(val) {
+      this.$emit("update:value", val);
+    },
+    latitude(val) {
+      this.currentLat = val;
+      this.originalLat = val;
+      if (this.map && this.loaded) {
+        this.updatePosition(val, this.currentLng);
+      }
+    },
+    longitude(val) {
+      this.currentLng = val;
+      this.originalLng = val;
+      if (this.map && this.loaded) {
+        this.updatePosition(this.currentLat, val);
+      }
+    },
+    currentLat() {
+      this.updateCoordinateInput();
+    },
+    currentLng() {
+      this.updateCoordinateInput();
+    },
+  },
+  mounted() {
+    if (this.show) {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.initMap();
+        }, 100);
+      });
+    }
+  },
+  beforeUnmount() {
+    this.cleanupMap();
+  },
+  methods: {
+    close() {
+      this.show = false;
+    },
+    confirm() {
+      if (this.currentLat && this.currentLng) {
+        this.$emit("update:latitude", this.currentLat);
+        this.$emit("update:longitude", this.currentLng);
+        this.$emit("confirm", {
+          latitude: this.currentLat,
+          longitude: this.currentLng,
+        });
+      }
+      this.close();
+    },
+    cleanupMap() {
+      if (this.map) {
+        this.map.remove();
+        this.map = null;
+        this.marker = null;
+        this.loaded = false;
+      }
+    },
+    onDialogClosed() {
+      // Make sure map is completely removed after dialog is closed
+      this.cleanupMap();
+      this.locationInfo = null;
+      this.coordinateInput = "";
+    },
+    initMap() {
+      // Don't reinitialize if map already exists
+      if (this.map || !this.$refs.map) {
+        return;
+      }
+
+      try {
+        this.options.container = this.$refs.map;
+
+        // Set initial zoom level based on whether we have valid coordinates
+        // If no valid coordinates, show a zoomed-out world view
+        if (!this.latitude || !this.longitude || (this.latitude === 0 && this.longitude === 0)) {
+          this.options.zoom = 2;
+          this.options.center = [0, 20]; // Center on the world with a slight northern bias
+        } else {
+          this.options.zoom = 12;
+          this.options.center = [this.longitude, this.latitude];
+          this.updateCoordinateInput();
+        }
+
+        // Create the map instance
+        this.map = new maplibregl.Map(this.options);
+
+        // Handle missing sprite images
+        this.map.on("styleimagemissing", (e) => {
+          // Create a placeholder 1x1 transparent pixel for missing images
+          const emptyImage = new ImageData(1, 1);
+          if (e && e.id) {
+            this.map.addImage(e.id, emptyImage);
+          }
+        });
+
+        // Add navigation controls
+        this.map.addControl(
+          new maplibregl.NavigationControl({
+            showCompass: true,
+            showZoom: true,
+            visualizePitch: false,
+          }),
+          "top-right"
+        );
+
+        this.map.addControl(new maplibregl.ScaleControl({ maxWidth: 80, unit: "metric" }), "bottom-left");
+
+        // Add locate position control
+        this.map.addControl(
+          new maplibregl.GeolocateControl({
+            positionOptions: {
+              enableHighAccuracy: true,
+            },
+            trackUserLocation: true,
+          }),
+          "top-right"
+        );
+
+        // Add reset location control if original coordinates exist
+        if (this.hasOriginalCoordinates) {
+          const resetControl = document.createElement("div");
+          resetControl.className = "maplibregl-ctrl maplibregl-ctrl-group";
+
+          const resetButton = document.createElement("button");
+          resetButton.className = "maplibregl-ctrl-icon maplibregl-ctrl-reset";
+          resetButton.setAttribute("type", "button");
+          resetButton.setAttribute("title", "Reset to original location");
+          resetButton.innerHTML =
+            '<span class="maplibregl-ctrl-icon" aria-hidden="true" style="font-family:\'Material Design Icons\';font-size:18px;">󱞊</span>';
+          resetButton.onclick = this.resetLocation;
+
+          resetControl.appendChild(resetButton);
+          this.map._controlContainer.appendChild(resetControl);
+        }
+
+        this.map.on("error", (e) => {
+          console.error("map:", e);
+        });
+
+        this.map.on("load", () => {
+          this.loaded = true;
+          if (this.latitude && this.longitude && !(this.latitude === 0 && this.longitude === 0)) {
+            this.updatePosition(this.latitude, this.longitude);
+            this.fetchLocationInfo(this.latitude, this.longitude);
+          }
+          // Trigger a resize to ensure the map displays correctly
+          this.map.resize();
+        });
+
+        // Allow clicking on the map to set a marker
+        this.map.on("click", (e) => {
+          this.updatePosition(e.lngLat.lat, e.lngLat.lng);
+          this.currentLat = e.lngLat.lat;
+          this.currentLng = e.lngLat.lng;
+          this.fetchLocationInfo(e.lngLat.lat, e.lngLat.lng);
+        });
+      } catch (error) {
+        console.error("map: initialization failed", error);
+        this.loaded = false;
+      }
+    },
+    updatePosition(lat, lng) {
+      if (this.map && this.loaded) {
+        // Skip if the position hasn't changed and the marker exists
+        if (this.position[0] === lng && this.position[1] === lat && this.marker) {
+          return;
+        }
+
+        // Skip invalid or empty coordinates (0,0)
+        if ((lat === 0 && lng === 0) || !lat || !lng) {
+          if (this.marker) {
+            this.marker.remove();
+            this.marker = null;
+          }
+          return;
+        }
+
+        this.position = [lng, lat];
+
+        // Only the center map if we're setting initial position or no marker exists
+        if (!this.marker) {
+          this.map.flyTo({
+            center: this.position,
+            zoom: 12,
+            essential: true,
+          });
+        }
+
+        if (this.marker) {
+          this.marker.setLngLat(this.position);
+        } else {
+          this.marker = new maplibregl.Marker({
+            color: "#3fb4df",
+            draggable: true,
+          })
+            .setLngLat(this.position)
+            .addTo(this.map);
+
+          // Update coordinates when marker is dragged
+          this.marker.on("dragend", () => {
+            const lngLat = this.marker.getLngLat();
+            this.currentLat = lngLat.lat;
+            this.currentLng = lngLat.lng;
+            this.fetchLocationInfo(lngLat.lat, lngLat.lng);
+          });
+        }
+      }
+    },
+    formatCoordinates(lat, lng) {
+      // Format coordinates as decimal degrees with 6 decimal places
+      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    },
+    updateCoordinateInput() {
+      if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
+        this.coordinateInput = this.formatCoordinates(this.currentLat, this.currentLng);
+      } else {
+        this.coordinateInput = "";
+      }
+    },
+    applyCoordinates() {
+      if (!this.isValidCoordinateInput) return;
+
+      const parts = this.coordinateInput.split(",").map((part) => part.trim());
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+
+      this.currentLat = lat;
+      this.currentLng = lng;
+      this.updatePosition(lat, lng);
+      this.fetchLocationInfo(lat, lng);
+    },
+    fetchLocationInfo(lat, lng) {
+      // Reverse geocode to get location information TODO: DEVELOPMENT PURPOSES ONLY
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.display_name) {
+            this.locationInfo = {
+              formatted: data.display_name,
+              country: data.address.country,
+              city: data.address.city || data.address.town || data.address.village || data.address.hamlet,
+              state: data.address.state || data.address.region || data.address.county,
+              street: data.address.road || data.address.street || data.address.pedestrian || data.address.path,
+              houseNumber: data.address.house_number,
+            };
+          }
+        })
+        .catch((error) => {
+          console.error("Reverse geocoding error:", error);
+          this.locationInfo = null;
+        });
+    },
+    resetLocation() {
+      if (this.originalLat && this.originalLng && !(this.originalLat === 0 && this.originalLng === 0)) {
+        this.currentLat = this.originalLat;
+        this.currentLng = this.originalLng;
+        this.updatePosition(this.originalLat, this.originalLng);
+        this.fetchLocationInfo(this.originalLat, this.originalLng);
+      }
+    },
+    clearLocation() {
+      this.currentLat = 0;
+      this.currentLng = 0;
+      this.coordinateInput = "";
+      if (this.marker) {
+        this.marker.remove();
+        this.marker = null;
+      }
+      this.locationInfo = null;
+
+      // Zoom out to world view
+      if (this.map) {
+        this.map.flyTo({
+          center: [0, 20],
+          zoom: 2,
+          essential: true,
+        });
+      }
+    },
+  },
+};
+</script>
