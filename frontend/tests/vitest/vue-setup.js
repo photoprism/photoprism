@@ -4,6 +4,10 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import "vuetify/styles";
+import { Settings } from "luxon";
+
+// Setup timezone to match test expectations (UTC+2/CEST)
+Settings.defaultZoneName = "Europe/Berlin";
 
 // Create a proper Vuetify instance with all components and styles
 const vuetify = createVuetify({
