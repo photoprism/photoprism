@@ -43,7 +43,7 @@ describe("options/options", () => {
   it("should get years", () => {
     const Years = options.Years();
     const currentYear = new Date().getUTCFullYear();
-    expect(Years[0].text).toBe(currentYear);
+    expect(Years[0].text).toBe(currentYear.toString());
   });
 
   it("should get indexed years", () => {
