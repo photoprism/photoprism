@@ -24,12 +24,10 @@
       </v-toolbar>
       <v-card-text class="pa-0">
         <div class="d-flex flex-column flex-md-row py-4 px-2">
-          <!-- Map panel -->
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
             <div ref="map" class="p-map" style="height: 50vh; min-height: 300px; width: 100%; border-radius: 4px"></div>
           </div>
 
-          <!-- Search and info panel -->
           <div
             class="map-sidebar ml-0 ml-md-4"
             :style="{
@@ -51,6 +49,7 @@
                 clearable
                 class="mb-2"
                 @keydown.enter="applyCoordinates"
+                @update:model-value="locationWasCleared = false"
               ></v-text-field>
               <v-btn block color="primary" :disabled="!isValidCoordinateInput" @click="applyCoordinates">
                 {{ $gettext("Set Position") }}
@@ -71,19 +70,24 @@
               </div>
               <div class="d-flex justify-space-between mt-3">
                 <v-btn
-                  v-if="currentLat && currentLng && !(currentLat === 0 && currentLng === 0)"
+                  v-if="!locationWasCleared"
                   variant="text"
                   color="error"
+                  :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
                   @click="clearLocation"
                 >
                   <v-icon start>mdi-delete</v-icon>
                   {{ $gettext("Clear") }}
                 </v-btn>
-                <v-spacer v-else></v-spacer>
-                <v-btn variant="text" @click="close">{{ $gettext("Cancel") }}</v-btn>
+                <v-btn v-else variant="text" color="warning" @click="undoClearLocation">
+                  <v-icon start>mdi-undo</v-icon>
+                  {{ $gettext("Undo") }}
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn variant="text" class="mr-2" @click="close">{{ $gettext("Cancel") }}</v-btn>
                 <v-btn
                   color="primary"
-                  :disabled="!currentLat || !currentLng || (currentLat === 0 && currentLng === 0)"
+                  :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
                   @click="confirm"
                 >
                   {{ $gettext("Apply") }}
@@ -134,21 +138,14 @@ export default {
       loaded: false,
       currentLat: this.latitude,
       currentLng: this.longitude,
-      originalLat: this.latitude,
-      originalLng: this.longitude,
       coordinateInput: "",
       locationInfo: null,
+      locationWasCleared: false,
+      latBeforeClear: null,
+      lngBeforeClear: null,
     };
   },
   computed: {
-    hasOriginalCoordinates() {
-      return (
-        this.originalLat &&
-        this.originalLng &&
-        !(this.originalLat === 0 && this.originalLng === 0) &&
-        (this.originalLat !== this.currentLat || this.originalLng !== this.currentLng)
-      );
-    },
     isValidCoordinateInput() {
       if (!this.coordinateInput) return false;
 
@@ -165,31 +162,22 @@ export default {
 
       const parts = [];
 
-      // Add street information
       if (this.locationInfo.street) {
         parts.push(this.locationInfo.street);
       }
-
-      // Add city or town
       if (this.locationInfo.city) {
         parts.push(this.locationInfo.city);
       }
-
-      // Add state/region if available
       if (this.locationInfo.state) {
         parts.push(this.locationInfo.state);
       }
-
-      // Add country
       if (this.locationInfo.country) {
         parts.push(this.locationInfo.country);
       }
 
-      // Return joined string, or fallback to a simplified portion of the formatted address
       if (parts.length > 0) {
         return parts.join(", ");
       } else if (this.locationInfo.formatted) {
-        // If no structured parts, take just the beginning of the formatted address
         const addressParts = this.locationInfo.formatted.split(",").slice(0, 3);
         return addressParts.join(", ");
       }
@@ -201,6 +189,9 @@ export default {
     value(val) {
       this.show = val;
       if (val) {
+        this.currentLat = this.latitude;
+        this.currentLng = this.longitude;
+        this.locationWasCleared = false;
         this.$nextTick(() => {
           setTimeout(() => {
             this.initMap();
@@ -216,14 +207,12 @@ export default {
     },
     latitude(val) {
       this.currentLat = val;
-      this.originalLat = val;
       if (this.map && this.loaded) {
         this.updatePosition(val, this.currentLng);
       }
     },
     longitude(val) {
       this.currentLng = val;
-      this.originalLng = val;
       if (this.map && this.loaded) {
         this.updatePosition(this.currentLat, val);
       }
@@ -250,6 +239,7 @@ export default {
   methods: {
     close() {
       this.show = false;
+      this.$emit("close");
     },
     confirm() {
       if (this.currentLat && this.currentLng) {
@@ -271,44 +261,37 @@ export default {
       }
     },
     onDialogClosed() {
-      // Make sure map is completely removed after dialog is closed
       this.cleanupMap();
       this.locationInfo = null;
       this.coordinateInput = "";
+      this.locationWasCleared = false;
+      this.latBeforeClear = null;
+      this.lngBeforeClear = null;
     },
     initMap() {
-      // Don't reinitialize if map already exists
       if (this.map || !this.$refs.map) {
         return;
       }
-
       try {
         this.options.container = this.$refs.map;
-
-        // Set initial zoom level based on whether we have valid coordinates
-        // If no valid coordinates, show a zoomed-out world view
-        if (!this.latitude || !this.longitude || (this.latitude === 0 && this.longitude === 0)) {
+        if (!this.currentLat || !this.currentLng || (this.currentLat === 0 && this.currentLng === 0)) {
           this.options.zoom = 2;
-          this.options.center = [0, 20]; // Center on the world with a slight northern bias
+          this.options.center = [0, 20];
         } else {
           this.options.zoom = 12;
-          this.options.center = [this.longitude, this.latitude];
+          this.options.center = [this.currentLng, this.currentLat];
           this.updateCoordinateInput();
         }
 
-        // Create the map instance
         this.map = new maplibregl.Map(this.options);
 
-        // Handle missing sprite images
         this.map.on("styleimagemissing", (e) => {
-          // Create a placeholder 1x1 transparent pixel for missing images
           const emptyImage = new ImageData(1, 1);
           if (e && e.id) {
             this.map.addImage(e.id, emptyImage);
           }
         });
 
-        // Add navigation controls
         this.map.addControl(
           new maplibregl.NavigationControl({
             showCompass: true,
@@ -317,10 +300,7 @@ export default {
           }),
           "top-right"
         );
-
         this.map.addControl(new maplibregl.ScaleControl({ maxWidth: 80, unit: "metric" }), "bottom-left");
-
-        // Add locate position control
         this.map.addControl(
           new maplibregl.GeolocateControl({
             positionOptions: {
@@ -337,20 +317,19 @@ export default {
 
         this.map.on("load", () => {
           this.loaded = true;
-          if (this.latitude && this.longitude && !(this.latitude === 0 && this.longitude === 0)) {
-            this.updatePosition(this.latitude, this.longitude);
-            this.fetchLocationInfo(this.latitude, this.longitude);
+          if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
+            this.updatePosition(this.currentLat, this.currentLng);
+            this.fetchLocationInfo(this.currentLat, this.currentLng);
           }
-          // Trigger a resize to ensure the map displays correctly
           this.map.resize();
         });
 
-        // Allow clicking on the map to set a marker
         this.map.on("click", (e) => {
-          this.updatePosition(e.lngLat.lat, e.lngLat.lng);
           this.currentLat = e.lngLat.lat;
           this.currentLng = e.lngLat.lng;
+          this.updatePosition(e.lngLat.lat, e.lngLat.lng);
           this.fetchLocationInfo(e.lngLat.lat, e.lngLat.lng);
+          this.locationWasCleared = false;
         });
       } catch (error) {
         console.error("map: initialization failed", error);
@@ -372,7 +351,6 @@ export default {
           }
           return;
         }
-
         this.position = [lng, lat];
 
         // Only the center map if we're setting initial position or no marker exists
@@ -383,7 +361,6 @@ export default {
             essential: true,
           });
         }
-
         if (this.marker) {
           this.marker.setLngLat(this.position);
         } else {
@@ -400,12 +377,12 @@ export default {
             this.currentLat = lngLat.lat;
             this.currentLng = lngLat.lng;
             this.fetchLocationInfo(lngLat.lat, lngLat.lng);
+            this.locationWasCleared = false;
           });
         }
       }
     },
     formatCoordinates(lat, lng) {
-      // Format coordinates as decimal degrees with 6 decimal places
       return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     },
     updateCoordinateInput() {
@@ -417,15 +394,14 @@ export default {
     },
     applyCoordinates() {
       if (!this.isValidCoordinateInput) return;
-
       const parts = this.coordinateInput.split(",").map((part) => part.trim());
       const lat = parseFloat(parts[0]);
       const lng = parseFloat(parts[1]);
-
       this.currentLat = lat;
       this.currentLng = lng;
       this.updatePosition(lat, lng);
       this.fetchLocationInfo(lat, lng);
+      this.locationWasCleared = false;
     },
     fetchLocationInfo(lat, lng) {
       // Reverse geocode to get location information TODO: DEVELOPMENT PURPOSES ONLY
@@ -440,6 +416,8 @@ export default {
               state: data.address.state || data.address.region || data.address.county,
               street: data.address.road || data.address.street || data.address.pedestrian || data.address.path,
             };
+          } else {
+            this.locationInfo = null;
           }
         })
         .catch((error) => {
@@ -447,15 +425,9 @@ export default {
           this.locationInfo = null;
         });
     },
-    resetLocation() {
-      if (this.originalLat && this.originalLng && !(this.originalLat === 0 && this.originalLng === 0)) {
-        this.currentLat = this.originalLat;
-        this.currentLng = this.originalLng;
-        this.updatePosition(this.originalLat, this.originalLng);
-        this.fetchLocationInfo(this.originalLat, this.originalLng);
-      }
-    },
     clearLocation() {
+      this.latBeforeClear = this.currentLat;
+      this.lngBeforeClear = this.currentLng;
       this.currentLat = 0;
       this.currentLng = 0;
       this.coordinateInput = "";
@@ -464,8 +436,6 @@ export default {
         this.marker = null;
       }
       this.locationInfo = null;
-
-      // Zoom out to world view
       if (this.map) {
         this.map.flyTo({
           center: [0, 20],
@@ -473,6 +443,18 @@ export default {
           essential: true,
         });
       }
+      this.locationWasCleared = true;
+    },
+    undoClearLocation() {
+      if (this.latBeforeClear !== null && this.lngBeforeClear !== null) {
+        this.currentLat = this.latBeforeClear;
+        this.currentLng = this.lngBeforeClear;
+        this.updatePosition(this.currentLat, this.currentLng);
+        this.fetchLocationInfo(this.currentLat, this.currentLng);
+      }
+      this.locationWasCleared = false;
+      this.latBeforeClear = null;
+      this.lngBeforeClear = null;
     },
   },
 };
