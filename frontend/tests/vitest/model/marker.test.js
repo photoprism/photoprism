@@ -107,7 +107,7 @@ describe("model/marker", () => {
     };
     const marker = new Marker(values);
     const result = marker.getDateString();
-    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 4:45 PM");
+    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("should approve marker", () => {

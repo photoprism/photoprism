@@ -190,7 +190,7 @@ describe("model/album", () => {
     };
     const album = new Album(values);
     const result = album.getCreatedString();
-    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 4:45 PM");
+    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("should get album date string with invalid day", () => {

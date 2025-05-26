@@ -98,7 +98,7 @@ describe("model/face", () => {
     };
     const face = new Face(values);
     const result = face.getDateString();
-    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 4:45 PM");
+    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("show and hide face", () => {

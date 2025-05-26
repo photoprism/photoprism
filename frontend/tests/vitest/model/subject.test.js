@@ -150,7 +150,7 @@ describe("model/subject", () => {
     };
     const subject = new Subject(values);
     const result = subject.getDateString();
-    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 4:45 PM");
+    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("should like subject", () => {

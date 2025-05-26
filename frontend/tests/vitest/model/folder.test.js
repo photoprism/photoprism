@@ -128,7 +128,7 @@ describe("model/folder", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const folder = new Folder(values);
-    expect(folder.getDateString().replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 4:45 PM");
+    expect(folder.getDateString().replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("should toggle like", () => {

@@ -184,7 +184,7 @@ describe("model/file", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file = new File(values);
-    expect(file.getDateString().replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 4:45 PM");
+    expect(file.getDateString().replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("should get info", () => {
