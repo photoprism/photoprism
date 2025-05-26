@@ -23,7 +23,7 @@
         </v-btn>
       </v-toolbar>
       <v-card-text class="pa-0">
-        <div class="d-flex flex-column flex-md-row pa-4">
+        <div class="d-flex flex-column flex-md-row py-4 px-2">
           <!-- Map panel -->
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
             <div ref="map" class="p-map" style="height: 50vh; min-height: 300px; width: 100%; border-radius: 4px"></div>
@@ -32,7 +32,11 @@
           <!-- Search and info panel -->
           <div
             class="map-sidebar ml-0 ml-md-4"
-            style="width: 100%; max-width: 100%; width: 100%; max-width: 300px; min-width: 0"
+            :style="{
+              width: $vuetify.display.smAndDown ? '100%' : '300px',
+              maxWidth: $vuetify.display.smAndDown ? '100%' : '300px',
+              minWidth: 0,
+            }"
           >
             <v-card border class="pa-3 mb-3">
               <div class="text-subtitle-2 mb-2">{{ $gettext("Coordinates") }}</div>

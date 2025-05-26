@@ -463,7 +463,7 @@ import Thumb from "model/thumb";
 import * as options from "options/options";
 import { rules } from "common/form";
 import PPhotoEditMapDialog from "component/photo/edit/map-dialog.vue";
-import {$gettext} from "../../../common/gettext";
+import { $gettext } from "../../../common/gettext";
 
 export default {
   name: "PTabPhotoDetails",
