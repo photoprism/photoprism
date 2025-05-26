@@ -239,7 +239,7 @@ dep-npm:
 	sudo npm install -g npm
 dep-js:
 	(cd frontend && npm ci --no-update-notifier --no-audit)
-	# TODO: add this once playwright is suitable for Ubuntu 25.04
+	# TODO: If in the future we want to test in a real browser environment, add this (Playwright)
 	# (cd frontend && npx playwright install chromium)
 dep-go:
 	go build -v ./...

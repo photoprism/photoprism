@@ -28,24 +28,31 @@ export default defineConfig({
     setupFiles: "./tests/vitest/setup.js",
     include: ["tests/vitest/**/*.{test,spec}.{js,jsx,ts,tsx,vue}"],
     exclude: ["**/node_modules/**", "**/dist/**"],
-    coverage: {
-      reporter: ["text", "html"],
-      include: ["src/**/*.{js,jsx,vue}"],
-      exclude: ["src/locales/**"],
-    },
+
+    environment: "jsdom",
+    css: true,
+    pool: "vmForks",
+    testTimeout: 10000,
+    watch: false,
+    silent: true,
     browser: {
-      enabled: true,
+      enabled: false,
       provider: "playwright",
+      headless: true,
+      isolate: false,
       instances: [
         {
           browser: "chromium",
           headless: true,
-          slowMo: 0,
         },
       ],
     },
-    testTimeout: 10000,
-    watch: true,
-    silent: true,
+
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      include: ["src/**/*.{js,jsx,vue}"],
+      exclude: ["src/locales/**"],
+    },
   },
 });
