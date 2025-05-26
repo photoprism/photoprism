@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-04 08:03+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-05-26 09:40+0000\n"
+"Last-Translator: equalchan <ll191476501@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.11.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -56,7 +56,7 @@ msgstr "已找到 %{n} 个文件夹"
 
 #: src/component/navigation.vue:1676
 msgid "%{n} GB of %{q} GB used"
-msgstr "%{n}%{q}的 GB使用的 GB"
+msgstr "已使用%{n}GB，共%{q}GB"
 
 #: src/page/labels.vue:528
 msgid "%{n} labels found"
@@ -207,7 +207,7 @@ msgstr "添加链接"
 #: src/component/photo/edit/people.vue:162 src/page/people/new.vue:57
 #: src/page/people/new.vue:244
 msgid "Add person?"
-msgstr "加人？"
+msgstr "新增人物？"
 
 #: src/page/albums.vue:420
 msgid "Add pictures from search results by selecting them."
@@ -782,7 +782,7 @@ msgstr "继续"
 
 #: src/page/auth/login.vue:314
 msgid "Continue with %{provider}"
-msgstr "继续 %{provider｝"
+msgstr "继续 %{provider}"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -2110,7 +2110,7 @@ msgstr "离线"
 
 #: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
-msgstr "奥伊德数据中心"
+msgstr "OIDC"
 
 #: src/locales.js:209
 msgid "OK"
@@ -2547,7 +2547,7 @@ msgstr "请求失败 - 你是否离线？"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
-msgstr "请求失败——无效的响应"
+msgstr "请求失败 - 无效的响应"
 
 #: src/page/settings/content.vue:61
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."

@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-04-04 08:03+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-05-26 09:40+0000\n"
+"Last-Translator: \"vnandor@gmail.com\" <vnandor@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.11.4\n"
 
 #: src/locales.js:268
 msgid "{0} appended action"
@@ -137,11 +137,11 @@ msgstr "Fiók törölve"
 
 #: src/page/admin/users.vue:335
 msgid "Account restored"
-msgstr "Számla visszaállítva"
+msgstr "Fiók visszaállítva"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "Számlák"
+msgstr "Fiókok"
 
 #: src/component/photo/edit/info.vue:391
 msgid "Accuracy"
@@ -2603,7 +2603,7 @@ msgstr "Mentés"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"
-msgstr "Felderítés"
+msgstr "Szkennelt"
 
 #: src/component/settings/passcode.vue:179
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
@@ -2832,7 +2832,7 @@ msgstr "Növekvő sorrendben."
 
 #: src/locales.js:220
 msgid "Sorted descending."
-msgstr "Lefelé rendezve."
+msgstr "Csökkenő sorrendben."
 
 #: src/component/photo/edit/labels.vue:21
 #: src/component/photo/edit/labels.vue:106
@@ -2887,7 +2887,7 @@ msgstr "Utcák"
 #: src/component/photo/edit/details.vue:494
 #: src/component/photo/edit/labels.vue:44
 msgid "Subject"
-msgstr "Tantárgy"
+msgstr "Tárgy"
 
 #: src/page/about/feedback.vue:162 src/page/about/feedback.vue:163
 msgid "Submit"
