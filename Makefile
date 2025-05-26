@@ -239,6 +239,8 @@ dep-npm:
 	sudo npm install -g npm
 dep-js:
 	(cd frontend && npm ci --no-update-notifier --no-audit)
+	# TODO: add this once playwright is suitable for Ubuntu 25.04
+	# (cd frontend && npx playwright install chromium)
 dep-go:
 	go build -v ./...
 dep-upgrade:
@@ -343,6 +345,25 @@ acceptance-auth-short:
 acceptance-auth-firefox:
 	$(info Running JS acceptance-auth tests in Firefox...)
 	(cd frontend && npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json --disable-native-automation "tests/acceptance")
+test-vitest:
+	$(info Running Vitest unit tests...)
+	(cd frontend && npm run test-vitest)
+
+test-vitest-watch:
+	$(info Running Vitest unit tests in watch mode...)
+	(cd frontend && npm run test-vitest-watch)
+
+test-vitest-coverage:
+	$(info Running Vitest unit tests with coverage...)
+	(cd frontend && npm run test-vitest-coverage)
+
+test-vitest-component:
+	$(info Running Vitest component tests...)
+	(cd frontend && npm run test-vitest-component)
+
+test-vitest-ui:
+	$(info Opening Vitest UI...)
+	(cd frontend && npm run test-vitest-ui)
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/reset-photoprism.sql
