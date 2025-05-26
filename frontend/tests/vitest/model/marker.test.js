@@ -185,13 +185,8 @@ describe("model/marker", () => {
       SubjSrc: "manual",
     };
     const marker = new Marker(values);
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const response = await marker.clearSubject();
-      expect(response.success).toBe("ok");
-    } catch (error) {
-      throw error;
-    }
+    const response = await marker.clearSubject();
+    expect(response.success).toBe("ok");
   });
 
   it("should return batch size", () => {
