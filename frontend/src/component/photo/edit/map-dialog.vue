@@ -163,11 +163,7 @@ export default {
 
       // Add street information
       if (this.locationInfo.street) {
-        if (this.locationInfo.houseNumber) {
-          parts.push(`${this.locationInfo.street} ${this.locationInfo.houseNumber}`);
-        } else {
-          parts.push(this.locationInfo.street);
-        }
+        parts.push(this.locationInfo.street);
       }
 
       // Add city or town
@@ -331,23 +327,6 @@ export default {
           "top-right"
         );
 
-        // Add reset location control if original coordinates exist
-        if (this.hasOriginalCoordinates) {
-          const resetControl = document.createElement("div");
-          resetControl.className = "maplibregl-ctrl maplibregl-ctrl-group";
-
-          const resetButton = document.createElement("button");
-          resetButton.className = "maplibregl-ctrl-icon maplibregl-ctrl-reset";
-          resetButton.setAttribute("type", "button");
-          resetButton.setAttribute("title", "Reset to original location");
-          resetButton.innerHTML =
-            '<span class="maplibregl-ctrl-icon" aria-hidden="true" style="font-family:\'Material Design Icons\';font-size:18px;">󱞊</span>';
-          resetButton.onclick = this.resetLocation;
-
-          resetControl.appendChild(resetButton);
-          this.map._controlContainer.appendChild(resetControl);
-        }
-
         this.map.on("error", (e) => {
           console.error("map:", e);
         });
@@ -456,7 +435,6 @@ export default {
               city: data.address.city || data.address.town || data.address.village || data.address.hamlet,
               state: data.address.state || data.address.region || data.address.county,
               street: data.address.road || data.address.street || data.address.pedestrian || data.address.path,
-              houseNumber: data.address.house_number,
             };
           }
         })
