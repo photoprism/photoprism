@@ -1,11 +1,6 @@
 import { afterEach, vi } from "vitest";
-import { Settings } from "luxon";
 import "@testing-library/jest-dom";
 import "./vue-setup";
-
-// Set config for Luxon
-Settings.defaultLocale = "en";
-Settings.defaultZoneName = "UTC";
 
 // Import and set up global config
 import clientConfig from "./config";
