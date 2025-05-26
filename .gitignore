@@ -40,6 +40,7 @@ venv
 /frontend/src/locales/*.mo
 /frontend/tests_output
 frontend/coverage/
+**/__screenshots__/
 /photoprism
 /photoprism-*
 /photos/originals/*
