@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-05-06 01:02+0000\n"
+"PO-Revision-Date: 2025-05-28 18:02+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.11.1\n"
+"X-Generator: Weblate 5.11.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -2715,7 +2715,7 @@ msgstr "Sessions"
 
 #: src/component/lightbox.vue:1177
 msgid "Set as Album Cover"
-msgstr "Utiliser comme couverture de l'album"
+msgstr "Utiliser cette photo comme couverture de l'album"
 
 #: src/app/routes.js:101 src/app/routes.js:492 src/app/routes.js:504
 #: src/app/routes.js:521 src/app/routes.js:534 src/app/routes.js:547
