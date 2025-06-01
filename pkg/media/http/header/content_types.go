@@ -96,16 +96,17 @@ const (
 
 // Standard ContentType strings for markup and sidecar files.
 const (
-	ContentTypeBinary    = "application/octet-stream"
-	ContentTypeForm      = "application/x-www-form-urlencoded"
-	ContentTypeMultipart = "multipart/form-data"
-	ContentTypeJson      = "application/json"
-	ContentTypeJsonUtf8  = "application/json; charset=utf-8"
-	ContentTypeXml       = "text/xml"
-	ContentTypeHtml      = "text/html; charset=utf-8"
-	ContentTypeText      = "text/plain; charset=utf-8"
-	ContentTypePDF       = "application/pdf"
-	ContentTypeZip       = "application/zip"
+	ContentTypeBinary     = "application/octet-stream"
+	ContentTypeForm       = "application/x-www-form-urlencoded"
+	ContentTypeMultipart  = "multipart/form-data"
+	ContentTypeJson       = "application/json"
+	ContentTypeJsonUtf8   = "application/json; charset=utf-8"
+	ContentTypeXml        = "text/xml"
+	ContentTypeHtml       = "text/html; charset=utf-8"
+	ContentTypeText       = "text/plain; charset=utf-8"
+	ContentTypePDF        = "application/pdf"
+	ContentTypeZip        = "application/zip"
+	ContentTypePrometheus = "text/plain; version=0.0.4"
 )
 
 // HasContentType checks weather the Content-Type header has the specified type.
