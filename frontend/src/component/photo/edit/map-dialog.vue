@@ -160,29 +160,15 @@ export default {
     simplifiedLocationDisplay() {
       if (!this.locationInfo) return "";
 
-      const parts = [];
-
-      if (this.locationInfo.street) {
-        parts.push(this.locationInfo.street);
-      }
-      if (this.locationInfo.city) {
-        parts.push(this.locationInfo.city);
-      }
-      if (this.locationInfo.state) {
-        parts.push(this.locationInfo.state);
-      }
-      if (this.locationInfo.country) {
-        parts.push(this.locationInfo.country);
-      }
-
-      if (parts.length > 0) {
-        return parts.join(", ");
+      if (this.locationInfo.street && this.locationInfo.formatted) {
+        return `${this.locationInfo.street}, ${this.locationInfo.formatted}`;
+      } else if (this.locationInfo.street) {
+        return this.locationInfo.street;
       } else if (this.locationInfo.formatted) {
-        const addressParts = this.locationInfo.formatted.split(",").slice(0, 3);
-        return addressParts.join(", ");
+        return this.locationInfo.formatted;
       }
 
-      return this.locationInfo.formatted || "";
+      return "";
     },
   },
   watch: {
@@ -404,18 +390,11 @@ export default {
       this.locationWasCleared = false;
     },
     fetchLocationInfo(lat, lng) {
-      // Reverse geocode to get location information TODO: DEVELOPMENT PURPOSES ONLY
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data && data.display_name) {
-            this.locationInfo = {
-              formatted: data.display_name,
-              country: data.address.country,
-              city: data.address.city || data.address.town || data.address.village || data.address.hamlet,
-              state: data.address.state || data.address.region || data.address.county,
-              street: data.address.road || data.address.street || data.address.pedestrian || data.address.path,
-            };
+      // Use backend API endpoint instead of directly calling OpenStreetMap
+      this.$api.get(`maps/geocode/reverse?lat=${lat}&lng=${lng}`)
+        .then((response) => {
+          if (response.data && response.data.formatted) {
+            this.locationInfo = response.data;
           } else {
             this.locationInfo = null;
           }
