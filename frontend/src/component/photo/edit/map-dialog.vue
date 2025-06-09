@@ -47,13 +47,9 @@
                 placeholder="e.g., 52.520008, 13.404954"
                 persistent-hint
                 clearable
-                class="mb-2"
                 @keydown.enter="applyCoordinates"
-                @update:model-value="locationWasCleared = false"
+                @update:model-value="onCoordinateInputChange"
               ></v-text-field>
-              <v-btn block color="primary" :disabled="!isValidCoordinateInput" @click="applyCoordinates">
-                {{ $gettext("Set Position") }}
-              </v-btn>
             </v-card>
 
             <v-card v-if="locationInfo" border class="pa-3 mb-3">
@@ -68,24 +64,27 @@
               <div class="text-body-2">
                 {{ $gettext("Click on the map to set a location. Drag the marker for precise positioning.") }}
               </div>
-              <div class="d-flex justify-space-between mt-3">
+              <div class="mt-3">
+                <div class="d-flex justify-space-between mb-2">
+                  <v-btn
+                    v-if="!locationWasCleared"
+                    variant="text"
+                    color="error"
+                    :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
+                    @click="clearLocation"
+                  >
+                    <v-icon start>mdi-delete</v-icon>
+                    {{ $gettext("Clear") }}
+                  </v-btn>
+                  <v-btn v-else variant="text" color="warning" @click="undoClearLocation">
+                    <v-icon start>mdi-undo</v-icon>
+                    {{ $gettext("Undo") }}
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn variant="text" class="mr-2" @click="close">{{ $gettext("Cancel") }}</v-btn>
+                </div>
                 <v-btn
-                  v-if="!locationWasCleared"
-                  variant="text"
-                  color="error"
-                  :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
-                  @click="clearLocation"
-                >
-                  <v-icon start>mdi-delete</v-icon>
-                  {{ $gettext("Clear") }}
-                </v-btn>
-                <v-btn v-else variant="text" color="warning" @click="undoClearLocation">
-                  <v-icon start>mdi-undo</v-icon>
-                  {{ $gettext("Undo") }}
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn variant="text" class="mr-2" @click="close">{{ $gettext("Cancel") }}</v-btn>
-                <v-btn
+                  block
                   color="primary"
                   :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
                   @click="confirm"
@@ -133,7 +132,7 @@ export default {
         glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
         zoom: 12,
         interactive: true,
-        attributionControl: false,
+        attributionControl: { compact: true },
       },
       loaded: false,
       currentLat: this.latitude,
@@ -143,6 +142,7 @@ export default {
       locationWasCleared: false,
       latBeforeClear: null,
       lngBeforeClear: null,
+      coordinateInputTimeout: null,
     };
   },
   computed: {
@@ -253,6 +253,12 @@ export default {
       this.locationWasCleared = false;
       this.latBeforeClear = null;
       this.lngBeforeClear = null;
+
+      // Clear any pending timeout
+      if (this.coordinateInputTimeout) {
+        clearTimeout(this.coordinateInputTimeout);
+        this.coordinateInputTimeout = null;
+      }
     },
     initMap() {
       if (this.map || !this.$refs.map) {
@@ -324,7 +330,6 @@ export default {
     },
     updatePosition(lat, lng) {
       if (this.map && this.loaded) {
-        // Skip if the position hasn't changed and the marker exists
         if (this.position[0] === lng && this.position[1] === lat && this.marker) {
           return;
         }
@@ -339,14 +344,13 @@ export default {
         }
         this.position = [lng, lat];
 
-        // Only the center map if we're setting initial position or no marker exists
-        if (!this.marker) {
-          this.map.flyTo({
-            center: this.position,
-            zoom: 12,
-            essential: true,
-          });
-        }
+        // Always center map when position changes
+        this.map.flyTo({
+          center: this.position,
+          zoom: 12,
+          essential: true,
+        });
+
         if (this.marker) {
           this.marker.setLngLat(this.position);
         } else {
@@ -390,8 +394,8 @@ export default {
       this.locationWasCleared = false;
     },
     fetchLocationInfo(lat, lng) {
-      // Use backend API endpoint instead of directly calling OpenStreetMap
-      this.$api.get(`maps/geocode/reverse?lat=${lat}&lng=${lng}`)
+      this.$api
+        .get(`maps/geocode/reverse?lat=${lat}&lng=${lng}`)
         .then((response) => {
           if (response.data && response.data.formatted) {
             this.locationInfo = response.data;
@@ -434,6 +438,19 @@ export default {
       this.locationWasCleared = false;
       this.latBeforeClear = null;
       this.lngBeforeClear = null;
+    },
+    onCoordinateInputChange() {
+      this.locationWasCleared = false;
+
+      if (this.coordinateInputTimeout) {
+        clearTimeout(this.coordinateInputTimeout);
+      }
+
+      this.coordinateInputTimeout = setTimeout(() => {
+        if (this.isValidCoordinateInput) {
+          this.applyCoordinates();
+        }
+      }, 1000); // 1 second delay after user stops typing
     },
   },
 };
