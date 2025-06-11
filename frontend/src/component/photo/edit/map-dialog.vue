@@ -42,12 +42,14 @@
                 v-model="coordinateInput"
                 :label="$gettext('Latitude, Longitude')"
                 prepend-inner-icon="mdi-map-marker"
+                :append-inner-icon="locationWasCleared ? 'mdi-undo' : coordinateInput ? 'mdi-delete' : ''"
                 density="compact"
                 variant="outlined"
-                placeholder="e.g., 52.520008, 13.404954"
+                placeholder="e.g., 52.5208, 13.4049"
                 persistent-hint
                 @keydown.enter="applyCoordinates"
                 @update:model-value="onCoordinateInputChange"
+                @click:append-inner="locationWasCleared ? undoClearLocation() : clearLocation()"
               ></v-text-field>
             </v-card>
 
@@ -64,27 +66,26 @@
                 {{ $gettext("Click on the map to set a location. Drag the marker for precise positioning.") }}
               </div>
               <div class="mt-3">
-                <div class="d-flex justify-space-between mb-2">
+                <div class="d-flex flex-wrap ga-2">
                   <v-btn
-                    v-if="!locationWasCleared"
-                    variant="text"
-                    color="error"
-                    :disabled="!(currentLat !== null && currentLng !== null && !(currentLat === 0 && currentLng === 0))"
-                    @click="clearLocation"
+                    variant="outlined"
+                    color="surface-variant"
+                    class="flex-grow-1"
+                    style="min-width: 120px"
+                    @click="close"
                   >
-                    <v-icon start>mdi-delete</v-icon>
-                    {{ $gettext("Clear") }}
+                    {{ $gettext("Cancel") }}
                   </v-btn>
-                  <v-btn v-else variant="text" color="warning" @click="undoClearLocation">
-                    <v-icon start>mdi-undo</v-icon>
-                    {{ $gettext("Undo") }}
+                  <v-btn
+                    color="primary"
+                    class="flex-grow-1"
+                    style="min-width: 120px"
+                    :disabled="!(currentLat !== null && currentLng !== null)"
+                    @click="confirm"
+                  >
+                    {{ $gettext("Apply") }}
                   </v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn variant="text" class="mr-2" @click="close">{{ $gettext("Cancel") }}</v-btn>
                 </div>
-                <v-btn block color="primary" :disabled="!(currentLat !== null && currentLng !== null)" @click="confirm">
-                  {{ $gettext("Apply") }}
-                </v-btn>
               </div>
             </v-card>
           </div>
