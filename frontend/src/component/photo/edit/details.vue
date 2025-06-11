@@ -170,6 +170,23 @@
             <v-col cols="12" sm="12" md="8">
               <div class="d-flex align-center ga-2">
                 <v-text-field
+                  v-model="view.model.Altitude"
+                  :disabled="disabled"
+                  hide-details
+                  flat
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  :label="$gettext('Altitude (m)')"
+                  placeholder=""
+                  color="surface-variant"
+                  density="comfortable"
+                  validate-on="input"
+                  :rules="rules.number(false, -10000, 1000000)"
+                  class="input-altitude"
+                  style="flex: 0 0 120px"
+                ></v-text-field>
+                <v-text-field
                   v-model="view.model.Lat"
                   :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
                   :disabled="disabled"
@@ -202,23 +219,6 @@
                   class="input-longitude"
                   style="flex: 1"
                   @paste="pastePosition"
-                ></v-text-field>
-                <v-text-field
-                  v-model="view.model.Altitude"
-                  :disabled="disabled"
-                  hide-details
-                  flat
-                  autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  :label="$gettext('Altitude (m)')"
-                  placeholder=""
-                  color="surface-variant"
-                  density="comfortable"
-                  validate-on="input"
-                  :rules="rules.number(false, -10000, 1000000)"
-                  class="input-altitude"
-                  style="flex: 0 0 120px"
                 ></v-text-field>
                 <v-btn
                   v-show="!placesDisabled"
@@ -657,10 +657,16 @@ export default {
       this.mapDialogVisible = true;
     },
     updateLocation(data) {
-      if (data && data.latitude && data.longitude) {
+      if (data && data.latitude !== undefined && data.longitude !== undefined) {
         this.view.model.Lat = data.latitude;
         this.view.model.Lng = data.longitude;
         this.view.model.PlaceSrc = "manual";
+
+        // Clear country and altitude when coordinates are cleared (0,0)
+        if (data.latitude === 0 && data.longitude === 0) {
+          this.view.model.Country = "zz"; // "Unknown" country code
+          this.view.model.Altitude = "0";
+        }
       }
     },
   },

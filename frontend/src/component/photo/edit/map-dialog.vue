@@ -46,7 +46,6 @@
                 variant="outlined"
                 placeholder="e.g., 52.520008, 13.404954"
                 persistent-hint
-                clearable
                 @keydown.enter="applyCoordinates"
                 @update:model-value="onCoordinateInputChange"
               ></v-text-field>
@@ -70,7 +69,7 @@
                     v-if="!locationWasCleared"
                     variant="text"
                     color="error"
-                    :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
+                    :disabled="!(currentLat !== null && currentLng !== null && !(currentLat === 0 && currentLng === 0))"
                     @click="clearLocation"
                   >
                     <v-icon start>mdi-delete</v-icon>
@@ -83,12 +82,7 @@
                   <v-spacer></v-spacer>
                   <v-btn variant="text" class="mr-2" @click="close">{{ $gettext("Cancel") }}</v-btn>
                 </div>
-                <v-btn
-                  block
-                  color="primary"
-                  :disabled="!(currentLat && currentLng && !(currentLat === 0 && currentLng === 0))"
-                  @click="confirm"
-                >
+                <v-btn block color="primary" :disabled="!(currentLat !== null && currentLng !== null)" @click="confirm">
                   {{ $gettext("Apply") }}
                 </v-btn>
               </div>
@@ -228,7 +222,7 @@ export default {
       this.$emit("close");
     },
     confirm() {
-      if (this.currentLat && this.currentLng) {
+      if (this.currentLat !== null && this.currentLng !== null) {
         this.$emit("update:latitude", this.currentLat);
         this.$emit("update:longitude", this.currentLng);
         this.$emit("confirm", {
