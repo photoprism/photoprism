@@ -146,7 +146,7 @@
                 @update:model-value="syncTime"
               ></v-autocomplete>
             </v-col>
-            <v-col cols="12" sm="8" md="4">
+            <v-col cols="12" sm="12" md="4">
               <v-autocomplete
                 v-model="view.model.Country"
                 :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
@@ -167,62 +167,59 @@
               >
               </v-autocomplete>
             </v-col>
-            <v-col cols="12" sm="4" md="2">
-              <v-text-field
-                v-model="view.model.Altitude"
-                :disabled="disabled"
-                hide-details
-                flat
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('Altitude (m)')"
-                placeholder=""
-                color="surface-variant"
-                density="comfortable"
-                validate-on="input"
-                :rules="rules.number(false, -10000, 1000000)"
-                class="input-altitude"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="8" md="6">
-              <div class="d-flex align-center">
-                <div class="flex-grow-1 mr-2" style="width: 45%">
-                  <v-text-field
-                    v-model="view.model.Lat"
-                    :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
-                    :disabled="disabled"
-                    hide-details
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="none"
-                    :label="$gettext('Latitude')"
-                    placeholder=""
-                    density="comfortable"
-                    validate-on="input"
-                    :rules="rules.lat(false)"
-                    class="input-latitude"
-                    @paste="pastePosition"
-                  ></v-text-field>
-                </div>
-                <div class="flex-grow-1 mr-2" style="width: 45%">
-                  <v-text-field
-                    v-model="view.model.Lng"
-                    :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
-                    :disabled="disabled"
-                    hide-details
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="none"
-                    :label="$gettext('Longitude')"
-                    placeholder=""
-                    density="comfortable"
-                    validate-on="input"
-                    :rules="rules.lng(false)"
-                    class="input-longitude"
-                    @paste="pastePosition"
-                  ></v-text-field>
-                </div>
+            <v-col cols="12" sm="12" md="8">
+              <div class="d-flex align-center ga-2">
+                <v-text-field
+                  v-model="view.model.Lat"
+                  :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
+                  :disabled="disabled"
+                  hide-details
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  :label="$gettext('Latitude')"
+                  placeholder=""
+                  density="comfortable"
+                  validate-on="input"
+                  :rules="rules.lat(false)"
+                  class="input-latitude"
+                  style="flex: 1"
+                  @paste="pastePosition"
+                ></v-text-field>
+                <v-text-field
+                  v-model="view.model.Lng"
+                  :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
+                  :disabled="disabled"
+                  hide-details
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  :label="$gettext('Longitude')"
+                  placeholder=""
+                  density="comfortable"
+                  validate-on="input"
+                  :rules="rules.lng(false)"
+                  class="input-longitude"
+                  style="flex: 1"
+                  @paste="pastePosition"
+                ></v-text-field>
+                <v-text-field
+                  v-model="view.model.Altitude"
+                  :disabled="disabled"
+                  hide-details
+                  flat
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  :label="$gettext('Altitude (m)')"
+                  placeholder=""
+                  color="surface-variant"
+                  density="comfortable"
+                  validate-on="input"
+                  :rules="rules.number(false, -10000, 1000000)"
+                  class="input-altitude"
+                  style="flex: 0 0 120px"
+                ></v-text-field>
                 <v-btn
                   v-show="!placesDisabled"
                   v-tooltip="$gettext('Set location on map')"
