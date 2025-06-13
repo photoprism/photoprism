@@ -106,6 +106,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.SearchPhotos(APIv1)
 	api.SearchGeo(APIv1)
 	api.GetReverseGeocode(APIv1)
+	api.GetPlaceSearch(APIv1)
 	api.GetPhoto(APIv1)
 	api.GetPhotoYaml(APIv1)
 	api.UpdatePhoto(APIv1)

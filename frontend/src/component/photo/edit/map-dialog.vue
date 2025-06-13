@@ -37,6 +37,51 @@
             }"
           >
             <v-card border class="pa-3 mb-3">
+              <div class="text-subtitle-2 mb-2">{{ $gettext("Search Places") }}</div>
+              <v-menu
+                v-model="showSearchMenu"
+                :close-on-content-click="false"
+                location="bottom"
+                origin="top"
+                max-height="300"
+              >
+                <template #activator="{ props }">
+                  <v-text-field
+                    v-model="searchQuery"
+                    :label="$gettext('Search for a place')"
+                    prepend-inner-icon="mdi-magnify"
+                    :append-inner-icon="searchLoading ? 'mdi-loading mdi-spin' : searchQuery ? 'mdi-delete' : ''"
+                    density="compact"
+                    variant="outlined"
+                    placeholder="e.g., Berlin, New York, Tokyo"
+                    v-bind="props"
+                    @update:model-value="onSearchQueryChange"
+                    @click:append-inner="clearSearch"
+                    @focus="onSearchFocus"
+                    @blur="onSearchBlur"
+                  ></v-text-field>
+                </template>
+                <v-list v-if="searchResults.length > 0" density="compact">
+                  <v-list-item
+                    v-for="place in searchResults"
+                    :key="place.id"
+                    :title="place.formatted"
+                    @click="onPlaceSelected(place)"
+                  >
+                    <template #prepend>
+                      <v-icon>mdi-map-marker</v-icon>
+                    </template>
+                  </v-list-item>
+                </v-list>
+                <v-list v-else-if="searchQuery && searchQuery.length >= 2 && !searchLoading">
+                  <v-list-item>
+                    <v-list-item-title>{{ $gettext("No results found") }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-card>
+
+            <v-card border class="pa-3 mb-3">
               <div class="text-subtitle-2 mb-2">{{ $gettext("Coordinates") }}</div>
               <v-text-field
                 v-model="coordinateInput"
@@ -68,11 +113,11 @@
               <div class="mt-3">
                 <div class="d-flex flex-wrap ga-2">
                   <v-btn
-                    variant="outlined"
-                    color="surface-variant"
-                    class="flex-grow-1"
+                    variant="flat"
+                    color="button"
+                    class="action-cancel flex-grow-1"
                     style="min-width: 120px"
-                    @click="close"
+                    @click.stop="close"
                   >
                     {{ $gettext("Cancel") }}
                   </v-btn>
@@ -138,6 +183,11 @@ export default {
       latBeforeClear: null,
       lngBeforeClear: null,
       coordinateInputTimeout: null,
+      searchQuery: "",
+      searchResults: [],
+      searchLoading: false,
+      searchTimeout: null,
+      showSearchMenu: false,
     };
   },
   computed: {
@@ -253,6 +303,15 @@ export default {
       if (this.coordinateInputTimeout) {
         clearTimeout(this.coordinateInputTimeout);
         this.coordinateInputTimeout = null;
+      }
+
+      // Clear search state
+      this.searchQuery = "";
+      this.searchResults = [];
+      this.searchLoading = false;
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = null;
       }
     },
     initMap() {
@@ -446,6 +505,75 @@ export default {
           this.applyCoordinates();
         }
       }, 1000); // 1 second delay after user stops typing
+    },
+    onSearchQueryChange(query) {
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+      }
+
+      if (!query || query.length < 2) {
+        this.searchResults = [];
+        this.showSearchMenu = false;
+        return;
+      }
+
+      this.searchTimeout = setTimeout(() => {
+        this.performPlaceSearch(query);
+      }, 300); // 300ms delay after user stops typing
+    },
+    async performPlaceSearch(query) {
+      this.searchLoading = true;
+      try {
+        const response = await this.$api.get("maps/places/search", {
+          params: {
+            q: query,
+            count: 10,
+            locale: this.$config.getLanguageLocale() || "en",
+          },
+        });
+
+        if (response.data && response.data.results) {
+          this.searchResults = response.data.results;
+          this.showSearchMenu = this.searchResults.length > 0;
+        } else {
+          this.searchResults = [];
+          this.showSearchMenu = false;
+        }
+      } catch (error) {
+        console.error("Place search error:", error);
+        this.searchResults = [];
+      } finally {
+        this.searchLoading = false;
+      }
+    },
+    onPlaceSelected(place) {
+      if (place && place.lat && place.lng) {
+        this.currentLat = place.lat;
+        this.currentLng = place.lng;
+        this.updatePosition(place.lat, place.lng);
+        this.fetchLocationInfo(place.lat, place.lng);
+        this.locationWasCleared = false;
+
+        // Clear search after selection
+        this.showSearchMenu = false;
+        this.searchQuery = "";
+      }
+    },
+    clearSearch() {
+      this.searchQuery = "";
+      this.searchResults = [];
+      this.showSearchMenu = false;
+    },
+    onSearchFocus() {
+      if (this.searchResults.length > 0) {
+        this.showSearchMenu = true;
+      }
+    },
+    onSearchBlur() {
+      // Delay hiding menu to allow for selection
+      setTimeout(() => {
+        this.showSearchMenu = false;
+      }, 200);
     },
   },
 };
