@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-04-04 08:03+0000\n"
+"PO-Revision-Date: 2025-06-19 18:11+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.11.4\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -1826,7 +1826,7 @@ msgstr "Кіраванне ўліковым запісам"
 
 #: src/options/admin.js:10 src/options/auth.js:7
 msgid "Manager"
-msgstr ""
+msgstr "Менеджар"
 
 #: src/component/photo/edit/info.vue:49 src/component/photo/edit/labels.vue:38
 msgid "Manual"
