@@ -99,7 +99,6 @@ func TestConfig_UserUploadPath(t *testing.T) {
 
 func TestConfig_SidecarPathIsAbs(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
 	assert.Equal(t, true, c.SidecarPathIsAbs())
 	c.options.SidecarPath = ".photoprism"
 	assert.Equal(t, false, c.SidecarPathIsAbs())
@@ -107,14 +106,22 @@ func TestConfig_SidecarPathIsAbs(t *testing.T) {
 
 func TestConfig_SidecarWritable(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
 	assert.Equal(t, true, c.SidecarWritable())
 }
 
 func TestConfig_FFmpegBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
 	assert.True(t, strings.Contains(c.FFmpegBin(), "/bin/ffmpeg"))
+}
+
+func TestConfig_FFprobeBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.True(t, strings.Contains(c.FFprobeBin(), "/bin/ffprobe"))
+}
+
+func TestConfig_YtDlpBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.True(t, strings.Contains(c.YtDlpBin(), "/bin/yt-dlp"))
 }
 
 func TestConfig_TempPath(t *testing.T) {

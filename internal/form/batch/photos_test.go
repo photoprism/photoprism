@@ -52,6 +52,12 @@ func TestNewPhotosForm(t *testing.T) {
 		assert.Equal(t, true, frm.PhotoFNumber.Mixed)
 		assert.Equal(t, 0, frm.PhotoFocalLength.Value)
 		assert.Equal(t, true, frm.PhotoFocalLength.Mixed)
+		assert.Equal(t, float64(0), frm.PhotoLat.Value)
+		assert.Equal(t, true, frm.PhotoLat.Mixed)
+		assert.Equal(t, float64(0), frm.PhotoLng.Value)
+		assert.Equal(t, true, frm.PhotoLng.Mixed)
+		assert.Equal(t, 0, frm.PhotoAltitude.Value)
+		assert.Equal(t, true, frm.PhotoAltitude.Mixed)
 
 		// Additional details.
 		assert.Equal(t, "", frm.DetailsKeywords.Value)
@@ -80,6 +86,12 @@ func TestNewPhotosForm(t *testing.T) {
 			PhotoFavorite: false,
 			CameraID:      1,
 			LensID:        2,
+			PhotoAltitude: -10,
+			PhotoLat:      48.519234,
+			PhotoLng:      9.057997,
+			PhotoDay:      4,
+			PhotoMonth:    5,
+			PhotoYear:     2021,
 		}
 
 		photo2 := search.Photo{
@@ -99,6 +111,12 @@ func TestNewPhotosForm(t *testing.T) {
 			PhotoFavorite: true,
 			CameraID:      1,
 			LensID:        2,
+			PhotoAltitude: -15,
+			PhotoLat:      48.519234,
+			PhotoLng:      9.057997,
+			PhotoDay:      3,
+			PhotoMonth:    5,
+			PhotoYear:     2020,
 		}
 
 		photos := search.PhotoResults{photo1, photo2}
@@ -133,33 +151,53 @@ func TestNewPhotosForm(t *testing.T) {
 		assert.Equal(t, false, frm.PhotoFNumber.Mixed)
 		assert.Equal(t, 0, frm.PhotoFocalLength.Value)
 		assert.Equal(t, false, frm.PhotoFocalLength.Mixed)
+		assert.Equal(t, 48.519234, frm.PhotoLat.Value)
+		assert.Equal(t, false, frm.PhotoLat.Mixed)
+		assert.Equal(t, 9.057997, frm.PhotoLng.Value)
+		assert.Equal(t, false, frm.PhotoLng.Mixed)
+		assert.Equal(t, 0, frm.PhotoAltitude.Value)
+		assert.Equal(t, true, frm.PhotoAltitude.Mixed)
+		assert.Equal(t, -2, frm.PhotoDay.Value)
+		assert.Equal(t, true, frm.PhotoDay.Mixed)
+		assert.Equal(t, 5, frm.PhotoMonth.Value)
+		assert.Equal(t, false, frm.PhotoMonth.Mixed)
+		assert.Equal(t, -2, frm.PhotoYear.Value)
+		assert.Equal(t, true, frm.PhotoYear.Mixed)
 	})
 	t.Run("Success", func(t *testing.T) {
 		photo1 := search.Photo{
-			ID:           111115411,
-			TakenSrc:     "",
-			TimeZone:     "",
-			PhotoUID:     "ps6sg6be2lvl0x41",
-			PhotoType:    "image",
-			PhotoTitle:   "Same Title",
-			PhotoCountry: "de",
-			CameraID:     1000001,
-			LensID:       1000001,
+			ID:            111115411,
+			TakenSrc:      "",
+			TimeZone:      "",
+			PhotoUID:      "ps6sg6be2lvl0x41",
+			PhotoType:     "image",
+			PhotoTitle:    "Same Title",
+			PhotoCountry:  "de",
+			CameraID:      1000001,
+			LensID:        1000001,
+			PhotoDay:      3,
+			PhotoMonth:    5,
+			PhotoYear:     2020,
+			PhotoAltitude: 105,
 		}
 
 		photo2 := search.Photo{
-			ID:           111115511,
-			CreatedAt:    time.Time{},
-			TakenAt:      time.Time{},
-			TakenAtLocal: time.Time{},
-			TakenSrc:     "",
-			TimeZone:     "",
-			PhotoUID:     "ps6sg6be2lvlx986",
-			PhotoType:    "image",
-			PhotoTitle:   "Same Title",
-			PhotoCountry: "",
-			CameraID:     1000000,
-			LensID:       1000000,
+			ID:            111115511,
+			CreatedAt:     time.Time{},
+			TakenAt:       time.Time{},
+			TakenAtLocal:  time.Time{},
+			TakenSrc:      "",
+			TimeZone:      "",
+			PhotoUID:      "ps6sg6be2lvlx986",
+			PhotoType:     "image",
+			PhotoTitle:    "Same Title",
+			PhotoCountry:  "",
+			CameraID:      1000000,
+			LensID:        1000000,
+			PhotoDay:      3,
+			PhotoMonth:    6,
+			PhotoYear:     2020,
+			PhotoAltitude: 105,
 		}
 
 		photos := search.PhotoResults{photo1, photo2}
@@ -194,6 +232,14 @@ func TestNewPhotosForm(t *testing.T) {
 		assert.Equal(t, false, frm.PhotoFNumber.Mixed)
 		assert.Equal(t, 0, frm.PhotoFocalLength.Value)
 		assert.Equal(t, false, frm.PhotoFocalLength.Mixed)
+		assert.Equal(t, 105, frm.PhotoAltitude.Value)
+		assert.Equal(t, false, frm.PhotoAltitude.Mixed)
+		assert.Equal(t, 3, frm.PhotoDay.Value)
+		assert.Equal(t, false, frm.PhotoDay.Mixed)
+		assert.Equal(t, -2, frm.PhotoMonth.Value)
+		assert.Equal(t, true, frm.PhotoMonth.Mixed)
+		assert.Equal(t, 2020, frm.PhotoYear.Value)
+		assert.Equal(t, false, frm.PhotoYear.Mixed)
 	})
 
 }

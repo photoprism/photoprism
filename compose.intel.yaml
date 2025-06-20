@@ -115,8 +115,8 @@ services:
       PHOTOPRISM_FFMPEG_ENCODER: "intel"             # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "60"              # video bitrate limit in Mbps (default: 60)
-      ## Run/install on first startup (options: update tensorflow https intel gpu davfs):
-      PHOTOPRISM_INIT: "https intel tensorflow"
+      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
+      PHOTOPRISM_INIT: "https intel tensorflow yt-dlp"
     ## Share hardware devices with FFmpeg for hardware video transcoding:
     devices:
       - "/dev/dri:/dev/dri"

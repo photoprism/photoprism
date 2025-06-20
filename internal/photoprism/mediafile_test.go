@@ -765,6 +765,26 @@ func TestMediaFile_MimeType(t *testing.T) {
 			assert.Equal(t, "video/mp4", f.MimeType())
 		}
 	})
+	t.Run("bear.m2ts", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "bear.m2ts")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.True(t, f.IsM2TS())
+			assert.Equal(t, fs.VideoM2TS, f.FileType())
+			assert.Equal(t, header.ContentTypeM2TS, f.MimeType())
+			assert.Equal(t, header.ContentTypeM2TS, f.ContentType())
+		}
+	})
+	t.Run("m2ts.mp4", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "m2ts.mp4")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.False(t, f.IsM2TS())
+			assert.Equal(t, fs.VideoMp4, f.FileType())
+			assert.Equal(t, header.ContentTypeMp4, f.MimeType())
+			assert.Equal(t, header.ContentTypeMp4, f.ContentType())
+		}
+	})
 	t.Run("earth.avi", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "earth.avi")); err != nil {
 			t.Fatal(err)

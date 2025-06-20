@@ -107,3 +107,5 @@ webpack-manifest-plugin           MIT           Dane Thurber <dane.thurber@gmail
 webpack-md5-hash                  MIT           Kirill Ermolov
 webpack-merge                     MIT           Juho Vepsalainen <bebraw@gmail.com>
 webpack-plugin-vuetify            MIT           Kael Watts-Deuchar
+@vitejs/plugin-vue                MIT           Evan You
+@vue/test-utils                   MIT           Lachlan Miller lachlan.miller.1990@outlook.com

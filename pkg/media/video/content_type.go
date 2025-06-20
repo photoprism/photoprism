@@ -64,6 +64,8 @@ func ContentType(mediaType, fileType, videoCodec string, hdr bool) string {
 			mediaType = header.ContentTypeMp4
 		case fs.VideoMkv.Equal(fileType):
 			mediaType = header.ContentTypeMkv
+		case fs.VideoM2TS.Equal(fileType) || videoCodec == CodecM2TS:
+			mediaType = header.ContentTypeM2TS
 		}
 	}
 

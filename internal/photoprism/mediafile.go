@@ -532,6 +532,10 @@ func (m *MediaFile) MimeType() string {
 
 	m.mimeType = fs.MimeType(fileName)
 
+	if m.mimeType == header.ContentTypeMp4 && m.MetaData().Codec == video.CodecM2TS {
+		m.mimeType = header.ContentTypeM2TS
+	}
+
 	return m.mimeType
 }
 
@@ -812,6 +816,17 @@ func (m *MediaFile) IsAvif() bool {
 // IsAvifS checks if the file is an AVIF image sequence with a supported file type extension.
 func (m *MediaFile) IsAvifS() bool {
 	return m.HasFileType(fs.ImageAvifS)
+}
+
+// IsM2TS checks if the file is an MPEG-2 Transport Stream (M2TS) container.
+func (m *MediaFile) IsM2TS() bool {
+	if t := fs.FileType(m.fileName); t == fs.VideoM2TS {
+		return true
+	} else if t == fs.VideoMp4 || t == fs.VideoAVCHD {
+		return m.HasMimeType(header.ContentTypeM2TS)
+	}
+
+	return false
 }
 
 // IsBmp checks if the file is a bitmap image with a supported file type extension.

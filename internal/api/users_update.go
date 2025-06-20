@@ -30,7 +30,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is allowed to manage all accounts or update his/her own account.
-		s := AuthAny(c, acl.ResourceUsers, acl.Permissions{acl.ActionManage, acl.AccessOwn, acl.ActionUpdate})
+		s := AuthAny(c, acl.ResourceUsers, acl.Permissions{acl.ActionManage, acl.AccessOwn, acl.ActionUpdate, acl.ActionUpdateOwn})
 
 		if s.Abort(c) {
 			return

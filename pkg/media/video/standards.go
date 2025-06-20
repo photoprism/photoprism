@@ -74,6 +74,9 @@ var Types = Standards{
 	"mkv1":      MkvAv1,
 	"ogg":       Theora, // ↓ Theora video in OGG container
 	"ogv":       Theora,
+	"m2t":       M2TS, // ↓ MPEG-2 Transport Stream container
+	"m2ts":      M2TS,
+	"mp2t":      M2TS,
 	"mp4":       Mp4, // ↓ Unknown codec in MP4 container
 	"mpeg4":     Mp4,
 	"webm":      Webm, // ↓ Unknown codec in WebM container

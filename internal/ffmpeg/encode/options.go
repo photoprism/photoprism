@@ -3,21 +3,31 @@ package encode
 import (
 	"fmt"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Options represents FFmpeg encoding options.
 type Options struct {
-	Bin        string        // FFmpeg binary filename, e.g. /usr/bin/ffmpeg
-	Encoder    Encoder       // Supported FFmpeg output Encoder
-	SizeLimit  int           // Maximum width and height of the output video file in pixels.
-	Quality    int           // See https://ffmpeg.org/ffmpeg-codecs.html
-	Preset     string        // See https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
-	Device     string        // See https://trac.ffmpeg.org/wiki/Limiting%20the%20output%20bitrate
-	MapVideo   string        // See https://trac.ffmpeg.org/wiki/Map#Videostreamsonly
-	MapAudio   string        // See https://trac.ffmpeg.org/wiki/Map#Audiostreamsonly
-	TimeOffset string        // See https://trac.ffmpeg.org/wiki/Seeking and https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax
-	Duration   time.Duration // See https://ffmpeg.org/ffmpeg.html#Main-options
-	MovFlags   string
+	Bin         string        // FFmpeg binary filename, e.g. /usr/bin/ffmpeg
+	Container   fs.Type       // Multimedia Container File Format
+	Encoder     Encoder       // Supported FFmpeg output Encoder
+	SizeLimit   int           // Maximum width and height of the output video file in pixels.
+	Quality     int           // See https://ffmpeg.org/ffmpeg-codecs.html
+	Preset      string        // See https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
+	Device      string        // See https://trac.ffmpeg.org/wiki/Limiting%20the%20output%20bitrate
+	MapVideo    string        // See https://trac.ffmpeg.org/wiki/Map#Videostreamsonly
+	MapAudio    string        // See https://trac.ffmpeg.org/wiki/Map#Audiostreamsonly
+	MapMetadata string        // See https://ffmpeg.org/ffmpeg.html
+	TimeOffset  string        // See https://trac.ffmpeg.org/wiki/Seeking and https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax
+	Duration    time.Duration // See https://ffmpeg.org/ffmpeg.html#Main-options
+	MovFlags    string
+	Title       string
+	Description string
+	Comment     string
+	Author      string
+	Created     time.Time
+	Force       bool
 }
 
 // NewVideoOptions creates and returns new FFmpeg video transcoding options.
@@ -57,15 +67,38 @@ func NewVideoOptions(ffmpegBin string, encoder Encoder, sizeLimit, quality int, 
 	}
 
 	return Options{
-		Bin:       ffmpegBin,
-		Encoder:   encoder,
-		SizeLimit: sizeLimit,
-		Quality:   quality,
-		Preset:    preset,
-		Device:    device,
-		MapVideo:  mapVideo,
-		MapAudio:  mapAudio,
-		MovFlags:  MovFlags,
+		Bin:         ffmpegBin,
+		Container:   fs.VideoMp4,
+		Encoder:     encoder,
+		SizeLimit:   sizeLimit,
+		Quality:     quality,
+		Preset:      preset,
+		Device:      device,
+		MapVideo:    mapVideo,
+		MapAudio:    mapAudio,
+		MapMetadata: DefaultMapMetadata,
+		MovFlags:    MovFlags,
+	}
+}
+
+// NewRemuxOptions creates and returns new video remux options.
+func NewRemuxOptions(ffmpegBin string, container fs.Type, force bool) Options {
+	if ffmpegBin == "" {
+		ffmpegBin = FFmpegBin
+	}
+
+	if container == "" {
+		container = fs.VideoMp4
+	}
+
+	return Options{
+		Bin:         ffmpegBin,
+		Container:   fs.VideoMp4,
+		MapVideo:    DefaultMapVideo,
+		MapAudio:    DefaultMapAudio,
+		MapMetadata: DefaultMapMetadata,
+		MovFlags:    MovFlags,
+		Force:       force,
 	}
 }
 

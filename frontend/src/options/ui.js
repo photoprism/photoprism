@@ -27,6 +27,7 @@ export const colorsDark = {
   "remove": "#da4e4c",
   "restore": "#00d48a",
   "album": "#ed9e00",
+  "on-album": "#ffffff",
   "download": "#00bfa5",
   "private": "#00b8d4",
   "edit": "#2196F3",

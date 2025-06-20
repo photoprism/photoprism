@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"bufio"
@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-// Options for New()
+// Options for NewMetadata()
 type Options struct {
 	Type               Type
 	PlaylistStart      uint   // --playlist-start
@@ -33,25 +33,29 @@ type Options struct {
 	StderrFn           func(cmd *exec.Cmd) io.Writer // if not nil, function to get Writer for stderr
 	HttpClient         *http.Client                  // Client for download thumbnail and subtitles (nil use http.DefaultClient)
 	MergeOutputFormat  string                        // --merge-output-format
+	RemuxVideo         string                        // --remux-video
+	RecodeVideo        string                        // --recode-video
+	Fixup              string                        // --fixup
 	SortingFormat      string                        // --format-sort
 
-	// Set to true if you don't want to use the result.Info structure after the goutubedl.New() call,
+	// Set to true if you don't want to use the result.Info structure after the goutubedl.NewMetadata() call,
 	// so the given URL will be downloaded in a single pass in the DownloadResult.Download() call.
 	noInfoDownload bool
 }
 
 type DownloadOptions struct {
-	AudioFormats      string // --audio-formats Download audio using formats (best, aac, alac, flac, m4a, mp3, opus, vorbis, wav)
-	DownloadAudioOnly bool   // -x Download audio only from video
-	// Download format matched by filter (usually a format id or quality designator).
-	// If filter is empty, then youtube-dl will use its default format selector.
-	Filter string
-	// The index of the entry to download from the playlist that would be
-	// passed to youtube-dl via --playlist-items. The index value starts at 1
-	PlaylistIndex int
+	Filter            string // Download format matched by filter (usually a format id or quality designator).
+	AudioFormats      string // --audio-formats Download audio using formats (best, aac, alac, flac, m4a, mp3, opus, vorbis, wav).
+	DownloadAudioOnly bool   // -x Download audio only from video.
+	EmbedMetadata     bool   // --embed-metadata embeds metadata to the video file.
+	EmbedSubs         bool   // --embed-subs embeds subtitles in the video file
+	ForceOverwrites   bool   // --force-overwrites replaces existing files
+	DisableCaching    bool   // --no-cache-dir
+	PlaylistIndex     int    // --playlist-items index of the file to download if there is more than one video
+	Output            string
 }
 
-func (result Result) DownloadWithOptions(
+func (result Metadata) DownloadWithOptions(
 	ctx context.Context,
 	options DownloadOptions,
 ) (*DownloadResult, error) {
@@ -86,7 +90,7 @@ func (result Result) DownloadWithOptions(
 
 	cmd := exec.CommandContext(
 		ctx,
-		FindBin(),
+		FindYtDlpBin(),
 		// see comment below about ignoring errors for playlists
 		"--ignore-errors",
 		// TODO: deprecated in yt-dlp?
@@ -97,10 +101,14 @@ func (result Result) DownloadWithOptions(
 		// TODO: needed?
 		"--restrict-filenames",
 		// use .netrc authentication data
-		"--netrc",
-		// write to stdout
-		"--output", "-",
+		// "--netrc",
 	)
+
+	if options.Output != "" {
+		cmd.Args = append(cmd.Args, "--output", options.Output)
+	} else {
+		cmd.Args = append(cmd.Args, "--output", "-")
+	}
 
 	if result.Options.noInfoDownload {
 		// provide URL via stdin for security, youtube-dl has some run command args
@@ -128,6 +136,7 @@ func (result Result) DownloadWithOptions(
 	} else {
 		cmd.Args = append(cmd.Args, "--load-info", jsonTempPath)
 	}
+
 	// force IPV4 Usage
 	if result.Options.UseIPV4 {
 		cmd.Args = append(cmd.Args, "-4")
@@ -144,6 +153,27 @@ func (result Result) DownloadWithOptions(
 
 	if options.DownloadAudioOnly {
 		cmd.Args = append(cmd.Args, "-x")
+	}
+
+	// If requested, embed metadata in the video file, including chapters and infoJSON,
+	// see https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#post-processing-options.
+	if options.EmbedMetadata {
+		cmd.Args = append(cmd.Args, "--embed-metadata")
+	}
+
+	// If requested, embed subtitles in the video file.
+	if options.EmbedSubs {
+		cmd.Args = append(cmd.Args, "--embed-subs")
+	}
+
+	// If requested, overwrite existing video and metadata files.
+	if options.ForceOverwrites {
+		cmd.Args = append(cmd.Args, "--force-overwrites")
+	}
+
+	// If requested, disable filesystem caching.
+	if options.DisableCaching {
+		cmd.Args = append(cmd.Args, "--no-cache-dir")
 	}
 
 	if options.AudioFormats != "" {
@@ -169,6 +199,24 @@ func (result Result) DownloadWithOptions(
 	if result.Options.MergeOutputFormat != "" {
 		cmd.Args = append(cmd.Args,
 			"--merge-output-format", result.Options.MergeOutputFormat,
+		)
+	}
+
+	if result.Options.RemuxVideo != "" {
+		cmd.Args = append(cmd.Args,
+			"--remux-video", result.Options.RemuxVideo,
+		)
+	}
+
+	if result.Options.RecodeVideo != "" {
+		cmd.Args = append(cmd.Args,
+			"--recode-video", result.Options.RecodeVideo,
+		)
+	}
+
+	if result.Options.Fixup != "" {
+		cmd.Args = append(cmd.Args,
+			"--fixup", result.Options.Fixup,
 		)
 	}
 

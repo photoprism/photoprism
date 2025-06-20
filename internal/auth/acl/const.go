@@ -26,6 +26,7 @@ const (
 	ActionUpload    Permission = "upload"
 	ActionCreate    Permission = "create"
 	ActionUpdate    Permission = "update"
+	ActionUpdateOwn Permission = "update_own"
 	ActionDownload  Permission = "download"
 	ActionShare     Permission = "share"
 	ActionDelete    Permission = "delete"

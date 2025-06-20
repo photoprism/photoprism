@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"strings"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestFindBin(t *testing.T) {
-	assert.True(t, strings.Contains(FindBin(), "yt-dlp"), "binary filepath should contain 'yt-dlp'")
+	assert.True(t, strings.Contains(FindYtDlpBin(), "yt-dlp"), "binary filepath should contain 'yt-dlp'")
 }
 
 func TestFindFFmpegBin(t *testing.T) {

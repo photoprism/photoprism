@@ -74,6 +74,7 @@ test: test-js test-go
 test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
 test-api: reset-sqlite run-test-api
+test-video: reset-sqlite run-test-video
 test-entity: reset-sqlite run-test-entity
 test-commands: reset-sqlite run-test-commands
 test-photoprism: reset-sqlite run-test-photoprism
@@ -397,6 +398,9 @@ run-test-pkg:
 run-test-api:
 	$(info Running all API tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/api/...
+run-test-video:
+	$(info Running all video tests...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
 run-test-entity:
 	$(info Running all Entity tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/entity/...

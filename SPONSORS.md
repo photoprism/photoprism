@@ -30,6 +30,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 **[Andreas Krizek](https://github.com/Cosmic314)** (January 2025)
 
+**[Jason Grim](https://github.com/jgrim)** (June 2025)
+
 ## Gold Sponsors ##
 
 [**Simen Eriksen**](https://github.com/dennorske) (GitHub Sponsors, December 2019)

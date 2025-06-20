@@ -21,6 +21,16 @@ var Mp4 = Type{
 	Public:      true,
 }
 
+// M2TS specifies the MPEG-2 Transport Stream (M2TS) multimedia container format.
+var M2TS = Type{
+	Codec:       CodecAvc1,
+	FileType:    fs.VideoM2TS,
+	ContentType: header.ContentTypeM2TS,
+	WidthLimit:  8192,
+	HeightLimit: 4320,
+	Public:      false,
+}
+
 // Mov specifies the Apple QuickTime (QT) container format.
 var Mov = Type{
 	Codec:       CodecAvc1,

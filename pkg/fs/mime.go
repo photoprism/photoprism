@@ -29,6 +29,9 @@ func MimeType(filename string) (mimeType string) {
 	// Determine mime type based on the extension for the following
 	// formats, which otherwise cannot be reliably distinguished:
 	switch fileType {
+	// MPEG-2 Transport Stream
+	case VideoM2TS, VideoAVCHD:
+		return header.ContentTypeM2TS
 	// Apple QuickTime Container
 	case VideoMov:
 		return header.ContentTypeMov

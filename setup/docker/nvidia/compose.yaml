@@ -90,7 +90,7 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       ## Run/install on first startup, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
-      PHOTOPRISM_INIT: "https tensorflow-gpu"        # common options: update https tensorflow tensorflow-gpu intel gpu davfs
+      PHOTOPRISM_INIT: "https tensorflow-gpu"        # common options: update https tensorflow tensorflow-gpu intel gpu davfs yt-dlp
       ## Nvidia Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit):
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "all"

@@ -12,7 +12,8 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	if opt.Device != "" {
 		return exec.Command(
 			opt.Bin,
-			"-hide_banner", "-y",
+			"-hide_banner",
+			"-y",
 			"-strict", "-2",
 			"-hwaccel", "qsv",
 			"-hwaccel_device", opt.Device,
@@ -23,17 +24,19 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 			"-c:v", opt.Encoder.String(),
 			"-map", opt.MapVideo,
 			"-map", opt.MapAudio,
+			"-ignore_unknown",
 			"-preset", opt.Preset,
-			"-r", "30",
 			"-global_quality", opt.GlobalQuality(),
 			"-f", "mp4",
 			"-movflags", opt.MovFlags,
+			"-map_metadata", opt.MapMetadata,
 			destName,
 		)
 	} else {
 		return exec.Command(
 			opt.Bin,
-			"-hide_banner", "-y",
+			"-hide_banner",
+			"-y",
 			"-strict", "-2",
 			"-hwaccel", "qsv",
 			"-hwaccel_output_format", "qsv",
@@ -43,11 +46,12 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 			"-c:v", opt.Encoder.String(),
 			"-map", opt.MapVideo,
 			"-map", opt.MapAudio,
+			"-ignore_unknown",
 			"-preset", opt.Preset,
-			"-r", "30",
 			"-global_quality", opt.GlobalQuality(),
 			"-f", "mp4",
 			"-movflags", opt.MovFlags,
+			"-map_metadata", opt.MapMetadata,
 			destName,
 		)
 	}

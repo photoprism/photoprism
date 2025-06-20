@@ -423,8 +423,9 @@ export default class $util {
         return "Matroska Multimedia Container";
       case "mts":
         return "Advanced Video Coding High Definition (AVCHD)";
+      case "m2t":
       case "m2ts":
-        return "Blu-ray MPEG-2 Transport Stream";
+        return "MPEG-2 Transport Stream (M2TS)";
       case "webp":
         return "Google WebP";
       case media.FormatWebm:
@@ -524,6 +525,8 @@ export default class $util {
       case media.CodecVp09:
       case media.FormatVp9:
         return "VP9";
+      case media.FormatM2TS:
+        return "M2TS";
       case "extended webp":
       case media.FormatWebp:
         return "WebP";
@@ -578,6 +581,9 @@ export default class $util {
         return "Extended WebP";
       case "webm":
         return "Google WebM";
+      case "m2t":
+      case "m2ts":
+        return "MPEG-2 Transport Stream (M2TS)";
       case "mpeg":
         return "Moving Picture Experts Group (MPEG)";
       case "mjpg":

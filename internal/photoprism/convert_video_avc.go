@@ -41,16 +41,33 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	if f.IsAnimatedImage() {
 		avcName = fs.VideoMp4.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	} else {
+		// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers.
+		if f.IsM2TS() && w.conf.SidecarWritable() {
+			if mp4Name, mp4Err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); mp4Err != nil {
+				return nil, fmt.Errorf("convert: %s in %s (remux)", mp4Err, clean.Log(f.RootRelName()))
+			} else if mp4Err = ffmpeg.RemuxFile(f.FileName(), mp4Name, encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, false)); mp4Err != nil {
+				return nil, fmt.Errorf("convert: %s in %s (remux)", err, clean.Log(f.RootRelName()))
+			} else if mp4File, fileErr := NewMediaFile(mp4Name); mp4File == nil || fileErr != nil {
+				log.Warnf("convert: %s could not be converted to mp4", logFileName)
+			} else if jsonErr := mp4File.CreateExifToolJson(w); jsonErr != nil {
+				log.Warnf("convert: %s in %s (create json)", jsonErr, logFileName)
+			} else if jsonErr = mp4File.ReadExifToolJson(); jsonErr != nil {
+				log.Warnf("convert: %s in %s (read json)", jsonErr, logFileName)
+			} else if mp4File.MetaData().CodecAvc() {
+				return mp4File, nil
+			}
+		}
+
 		avcName = fs.VideoAvc.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	}
 
 	mediaFile, err := NewMediaFile(avcName)
 
-	// Return it if an MP4 AVC encoded video file already exists.
+	// Return the AVC-encoded video file if it already exists.
 	if mediaFile == nil || err != nil {
 		// Do nothing.
 	} else if mediaFile.IsVideo() {
-		// Return MP4 AVC encoded video file
+		// Return existing AVC file.
 		log.Debugf("convert: %s has already been transcoded to MPEG-4 AVC", logFileName)
 		return mediaFile, nil
 	}

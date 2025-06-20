@@ -23,6 +23,7 @@ import (
 
 // Standard ContentType strings for audio and video files:
 const (
+	ContentTypeM2TS           = "video/mp2t"
 	ContentTypeM4v            = "video/x-m4v"
 	ContentTypeMp4            = "video/mp4"
 	ContentTypeMp4Avc         = ContentTypeMp4 + "; codecs=\"avc1\""             // MPEG-4 AVC (H.264)

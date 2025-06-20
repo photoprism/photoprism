@@ -100,9 +100,17 @@ export default [
     meta: {
       title: $gettext("Settings"),
       requiresAuth: true,
-      admin: true,
       settings: true,
       background: "background",
+    },
+    beforeEnter: (to, from, next) => {
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
+      } else if ($config.deny("users", "access_all")) {
+        next({ name: $session.getDefaultRoute() });
+      } else {
+        next();
+      }
     },
   },
   {

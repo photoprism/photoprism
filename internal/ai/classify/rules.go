@@ -1843,7 +1843,7 @@ var Rules = LabelRules{
 		Label:      "snow",
 		Threshold:  0.900000,
 		Priority:   0,
-		Categories: []string{"animal", "dog"},
+		Categories: []string{"vehicle"},
 	},
 	"dome": {
 		Label:      "dome",

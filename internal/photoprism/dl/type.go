@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 // Type of response you want
 type Type int

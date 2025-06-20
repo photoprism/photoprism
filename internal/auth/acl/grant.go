@@ -118,6 +118,13 @@ var (
 		ActionView:   true,
 		ActionSearch: true,
 	}
+	GrantSearchAllUpdateOwn = Grant{
+		AccessAll:       true,
+		AccessOwn:       true,
+		ActionSearch:    true,
+		ActionView:      true,
+		ActionUpdateOwn: true,
+	}
 	GrantSubscribeOwn = Grant{
 		AccessOwn:       true,
 		ActionSubscribe: true,
