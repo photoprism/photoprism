@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-06-19 18:11+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-06-23 20:02+0000\n"
+"Last-Translator: Petr Sturc <petr.sturc@gmail.com>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -607,7 +607,7 @@ msgstr "Zrušit"
 #: src/component/photo/edit/labels.vue:42
 #: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:72
 msgid "Caption"
-msgstr "Titulek"
+msgstr "Popisek"
 
 #: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:106
 msgid "Cards"
