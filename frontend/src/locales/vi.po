@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-06-19 18:11+0000\n"
+"PO-Revision-Date: 2025-06-24 19:37+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.11.4\n"
+"X-Generator: Weblate 5.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -427,7 +427,7 @@ msgstr "Bạn có chắc chắn muốn xóa tài khoản này?"
 
 #: src/component/album/toolbar.vue:136
 msgid "Are you sure you want to delete this album?"
-msgstr ""
+msgstr "Bạn có chắc chắn muốn xóa album này không?"
 
 #: src/component/photo/clipboard.vue:199
 msgid "Are you sure you want to permanently delete these pictures?"
@@ -905,7 +905,7 @@ msgstr "Xóa bỏ"
 
 #: src/component/album/toolbar.vue:133
 msgid "Delete Album"
-msgstr ""
+msgstr "Xóa Album"
 
 #: src/component/photo/toolbar.vue:119 src/page/library/errors.vue:95
 msgid "Delete All"
@@ -3096,7 +3096,7 @@ msgstr "Kiểu"
 
 #: src/component/album/toolbar.vue:184
 msgid "Unable to delete"
-msgstr ""
+msgstr "Không thể xóa"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-06-19 18:11+0000\n"
+"PO-Revision-Date: 2025-06-24 19:37+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.11.4\n"
+"X-Generator: Weblate 5.12.2\n"
 "Generated-By: usercopypaste\n"
 
 #: src/locales.js:268
@@ -430,7 +430,7 @@ msgstr "Вы действительно хотите удалить этот а�
 
 #: src/component/album/toolbar.vue:136
 msgid "Are you sure you want to delete this album?"
-msgstr ""
+msgstr "Ты уверен, что хочешь удалить этот альбом?"
 
 #: src/component/photo/clipboard.vue:199
 msgid "Are you sure you want to permanently delete these pictures?"
@@ -908,7 +908,7 @@ msgstr "Удалить"
 
 #: src/component/album/toolbar.vue:133
 msgid "Delete Album"
-msgstr ""
+msgstr "Удалить альбом"
 
 #: src/component/photo/toolbar.vue:119 src/page/library/errors.vue:95
 msgid "Delete All"
@@ -3099,7 +3099,7 @@ msgstr "Тип"
 
 #: src/component/album/toolbar.vue:184
 msgid "Unable to delete"
-msgstr ""
+msgstr "Невозможно удалить"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"

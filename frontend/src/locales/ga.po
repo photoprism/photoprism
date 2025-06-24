@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-06-19 18:11+0000\n"
+"PO-Revision-Date: 2025-06-24 19:37+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 5.11.4\n"
+"X-Generator: Weblate 5.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -427,7 +427,7 @@ msgstr "An bhfuil tú cinnte gur mhaith leat an cuntas seo a scriosadh?"
 
 #: src/component/album/toolbar.vue:136
 msgid "Are you sure you want to delete this album?"
-msgstr ""
+msgstr "An bhfuil tú cinnte gur mian leat an t-albam seo a scriosadh?"
 
 #: src/component/photo/clipboard.vue:199
 msgid "Are you sure you want to permanently delete these pictures?"
@@ -905,7 +905,7 @@ msgstr "Scrios"
 
 #: src/component/album/toolbar.vue:133
 msgid "Delete Album"
-msgstr ""
+msgstr "Scrios Albam"
 
 #: src/component/photo/toolbar.vue:119 src/page/library/errors.vue:95
 msgid "Delete All"
@@ -3096,7 +3096,7 @@ msgstr "Cineál"
 
 #: src/component/album/toolbar.vue:184
 msgid "Unable to delete"
-msgstr ""
+msgstr "Ní féidir scriosadh"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"

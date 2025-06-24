@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-06-19 18:11+0000\n"
+"PO-Revision-Date: 2025-06-24 19:37+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 5.11.4\n"
+"X-Generator: Weblate 5.12.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -430,7 +430,7 @@ msgstr "هل أنت متأكد أنك تريد حذف هذا الحساب؟"
 
 #: src/component/album/toolbar.vue:136
 msgid "Are you sure you want to delete this album?"
-msgstr ""
+msgstr "هل أنت متأكد من رغبتك في حذف هذا الألبوم؟"
 
 #: src/component/photo/clipboard.vue:199
 msgid "Are you sure you want to permanently delete these pictures?"
@@ -908,7 +908,7 @@ msgstr "حذف"
 
 #: src/component/album/toolbar.vue:133
 msgid "Delete Album"
-msgstr ""
+msgstr "حذف الألبوم"
 
 #: src/component/photo/toolbar.vue:119 src/page/library/errors.vue:95
 msgid "Delete All"
@@ -3099,7 +3099,7 @@ msgstr "يكتب"
 
 #: src/component/album/toolbar.vue:184
 msgid "Unable to delete"
-msgstr ""
+msgstr "تعذر الحذف"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"
