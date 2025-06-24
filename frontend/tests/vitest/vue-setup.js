@@ -1,39 +1,22 @@
 import { config } from "@vue/test-utils";
 import { vi } from "vitest";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+import "vuetify/styles";
+import { Settings } from "luxon";
 
-// Mock Vuetify components
-const vuetifyComponents = [
-  "VBtn",
-  "VToolbar",
-  "VToolbarTitle",
-  "VList",
-  "VListItem",
-  "VDivider",
-  "VProgressCircular",
-  "VIcon",
-  "VRow",
-  "VCol",
-  "VCard",
-  "VCardTitle",
-  "VCardText",
-  "VCardActions",
-  "VTextField",
-  "VTextarea",
-  "VSheet",
-];
+// Setup timezone to match test expectations (UTC+2/CEST)
+Settings.defaultZoneName = "Europe/Berlin";
 
-// Create stubs for Vuetify components
-const vuetifyStubs = vuetifyComponents.reduce((acc, component) => {
-  acc[component] = {
-    name: component.toLowerCase(),
-    template: `<div data-testid="${component.toLowerCase()}" class="${component.toLowerCase()}-stub"><slot></slot></div>`,
-  };
-  acc[component.toLowerCase()] = {
-    name: component.toLowerCase(),
-    template: `<div data-testid="${component.toLowerCase()}" class="${component.toLowerCase()}-stub"><slot></slot></div>`,
-  };
-  return acc;
-}, {});
+// Create a proper Vuetify instance with all components and styles
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: "light",
+  },
+});
 
 // Configure Vue Test Utils global configuration
 config.global.mocks = {
@@ -44,8 +27,9 @@ config.global.mocks = {
   },
 };
 
+config.global.plugins = [vuetify];
+
 config.global.stubs = {
-  ...vuetifyStubs,
   transition: false,
 };
 
@@ -64,9 +48,16 @@ config.global.mount = function (component, options = {}) {
   options.global.config.globalProperties = options.global.config.globalProperties || {};
   options.global.config.globalProperties.$emit = vi.fn();
 
+  // Add vuetify to all mount calls
+  if (!options.global.plugins) {
+    options.global.plugins = [vuetify];
+  } else if (Array.isArray(options.global.plugins)) {
+    options.global.plugins.push(vuetify);
+  }
+
   return originalMount(component, options);
 };
 
 export default {
-  vuetifyStubs,
+  vuetify,
 };

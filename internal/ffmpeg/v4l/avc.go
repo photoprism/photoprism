@@ -11,12 +11,14 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	// ffmpeg -hide_banner -h encoder=h264_v4l2m2m
 	return exec.Command(
 		opt.Bin,
-		"-hide_banner", "-y",
+		"-hide_banner",
+		"-y",
 		"-strict", "-2",
 		"-i", srcName,
 		"-c:v", opt.Encoder.String(),
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
+		"-ignore_unknown",
 		"-c:a", "aac",
 		"-vf", opt.VideoFilter(encode.FormatYUV420P),
 		"-num_output_buffers", "72",
@@ -24,6 +26,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-max_muxing_queue_size", "1024",
 		"-f", "mp4",
 		"-movflags", opt.MovFlags,
+		"-map_metadata", opt.MapMetadata,
 		destName,
 	)
 }

@@ -60,13 +60,13 @@ func (c Chunk) FileOffset(fileName string) (int, error) {
 
 	defer file.Close()
 
-	index, err := c.DataOffset(file, -1)
+	index, err := c.DataOffset(file, 0, -1)
 
 	return index, err
 }
 
 // DataOffset returns the index of the chunk in file, or -1 if it was not found.
-func (c Chunk) DataOffset(file io.ReadSeeker, maxOffset int) (int, error) {
+func (c Chunk) DataOffset(file io.ReadSeeker, offset, maxOffset int) (int, error) {
 	if file == nil {
 		return -1, errors.New("file is nil")
 	}
@@ -79,8 +79,11 @@ func (c Chunk) DataOffset(file io.ReadSeeker, maxOffset int) (int, error) {
 	// Create buffered read seeker.
 	r := bufseekio.NewReadSeeker(file, blockSize, dataSize)
 
-	// Index offset.
-	var offset int
+	if seekOffset, seekErr := r.Seek(int64(offset), io.SeekStart); seekErr != nil {
+		return -1, seekErr
+	} else {
+		offset = int(seekOffset)
+	}
 
 	// Search in batches.
 	for {

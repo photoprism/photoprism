@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	testVideoRawURL          = "https://vimeo.com/454525548"
+	testVideoRawURL          = "https://www.youtube.com/watch?v=fD6VYfy3B2s"
 	playlistRawURL           = "https://soundcloud.com/mattheis/sets/kindred-phenomena"
 	channelRawURL            = "https://www.youtube.com/channel/UCHDm-DKoMyJxKVgwGmuTaQA"
 	subtitlesTestVideoRawURL = "https://www.youtube.com/watch?v=QRS8MkLhQmM"
@@ -31,13 +31,16 @@ func TestParseInfo(t *testing.T) {
 		url           string
 		expectedTitle string
 	}{
-		{"https://soundcloud.com/avalonemerson/avalon-emerson-live-at-printworks-london-march-2017", "Avalon Emerson Live at Printworks London 2017"},
-		{"https://www.infoq.com/presentations/Simple-Made-Easy", "Simple Made Easy - InfoQ"},
-		{"https://vimeo.com/454525548", "Sample Video - 3 minutemp4.mp4"},
+		{"https://soundcloud.com/avalonemerson/avalon-emerson-live-at-printworks-london-march-2017",
+			"Avalon Emerson Live at Printworks London 2017"},
+		{"https://www.infoq.com/presentations/Simple-Made-Easy",
+			"Simple Made Easy - InfoQ"},
+		{testVideoRawURL,
+			"Cinematic Epic Deep Trailer - Background Music for Trailers and Film"},
 	} {
 		t.Run(c.url, func(t *testing.T) {
 			ctx, cancelFn := context.WithCancel(context.Background())
-			ydlResult, err := New(ctx, c.url, Options{
+			ydlResult, err := NewMetadata(ctx, c.url, Options{
 				DownloadThumbnail: true,
 			})
 			if err != nil {
@@ -85,7 +88,7 @@ func TestParseInfo(t *testing.T) {
 }
 
 func TestPlaylist(t *testing.T) {
-	ydlResult, ydlResultErr := New(context.Background(), playlistRawURL, Options{
+	ydlResult, ydlResultErr := NewMetadata(context.Background(), playlistRawURL, Options{
 		Type:              TypePlaylist,
 		DownloadThumbnail: false,
 	})
@@ -113,7 +116,7 @@ func TestPlaylist(t *testing.T) {
 func TestChannel(t *testing.T) {
 	t.Skip("skip youtube for now")
 
-	ydlResult, ydlResultErr := New(
+	ydlResult, ydlResultErr := NewMetadata(
 		context.Background(),
 		channelRawURL,
 		Options{
@@ -147,7 +150,7 @@ func TestUnsupportedURL(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	_, ydlResultErr := New(context.Background(), "https://www.google.com", Options{})
+	_, ydlResultErr := NewMetadata(context.Background(), "https://www.google.com", Options{})
 	if ydlResultErr == nil {
 		t.Errorf("expected unsupported url")
 	}
@@ -162,7 +165,7 @@ func TestPlaylistWithPrivateVideo(t *testing.T) {
 	t.Skip("skip youtube for now")
 
 	plRawURL := "https://www.youtube.com/playlist?list=PLX0g748fkegS54oiDN4AXKl7BR7mLIydP"
-	ydlResult, ydlResultErr := New(context.Background(), plRawURL, Options{
+	ydlResult, ydlResultErr := NewMetadata(context.Background(), plRawURL, Options{
 		Type:              TypePlaylist,
 		DownloadThumbnail: false,
 	})
@@ -181,7 +184,7 @@ func TestPlaylistWithPrivateVideo(t *testing.T) {
 func TestSubtitles(t *testing.T) {
 	t.Skip("skip youtube for now")
 
-	ydlResult, ydlResultErr := New(
+	ydlResult, ydlResultErr := NewMetadata(
 		context.Background(),
 		subtitlesTestVideoRawURL,
 		Options{
@@ -218,6 +221,10 @@ func TestDownloadSections(t *testing.T) {
 	fileName := fs.Abs("./testdata/duration_test_file")
 	duration := 5
 
+	defer func() {
+		_ = os.Remove(fileName)
+	}()
+
 	cmd := exec.Command(FindFFmpegBin(), "-version")
 	_, err := cmd.Output()
 
@@ -225,9 +232,9 @@ func TestDownloadSections(t *testing.T) {
 		t.Errorf("failed to check ffmpeg installed: %s", err)
 	}
 
-	ydlResult, ydlResultErr := New(
+	ydlResult, ydlResultErr := NewMetadata(
 		context.Background(),
-		"https://vimeo.com/454525548",
+		testVideoRawURL,
 		Options{
 			DownloadSections: fmt.Sprintf("*0:0-0:%d", duration),
 		})
@@ -289,7 +296,6 @@ func TestDownloadSections(t *testing.T) {
 	}
 
 	_ = dr.Close()
-	_ = os.Remove(fileName)
 }
 
 func TestErrorNotAPlaylist(t *testing.T) {
@@ -297,7 +303,7 @@ func TestErrorNotAPlaylist(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	_, ydlResultErr := New(context.Background(), testVideoRawURL, Options{
+	_, ydlResultErr := NewMetadata(context.Background(), testVideoRawURL, Options{
 		Type:              TypePlaylist,
 		DownloadThumbnail: false,
 	})
@@ -311,7 +317,7 @@ func TestErrorNotASingleEntry(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	_, ydlResultErr := New(context.Background(), playlistRawURL, Options{
+	_, ydlResultErr := NewMetadata(context.Background(), playlistRawURL, Options{
 		Type:              TypeSingle,
 		DownloadThumbnail: false,
 	})
@@ -326,7 +332,7 @@ func TestOptionDownloader(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	ydlResult, ydlResultErr := New(
+	ydlResult, ydlResultErr := NewMetadata(
 		context.Background(),
 		testVideoRawURL,
 		Options{
@@ -353,7 +359,7 @@ func TestOptionDownloader(t *testing.T) {
 }
 
 func TestInvalidOptionTypeField(t *testing.T) {
-	_, err := New(context.Background(), playlistRawURL, Options{
+	_, err := NewMetadata(context.Background(), playlistRawURL, Options{
 		Type: 42,
 	})
 	if err == nil {
@@ -368,7 +374,7 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 
 	// Download file by specifying the playlist index
 	stderrBuf := &bytes.Buffer{}
-	r, err := New(context.Background(), playlistRawURL, Options{
+	r, err := NewMetadata(context.Background(), playlistRawURL, Options{
 		StderrFn: func(cmd *exec.Cmd) io.Writer {
 			return stderrBuf
 		},
@@ -422,7 +428,7 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 	// Download the same file but with the direct link
 	url := "https://soundcloud.com/mattheis/b1-mattheis-ben-m"
 	stderrBuf = &bytes.Buffer{}
-	r, err = New(context.Background(), url, Options{
+	r, err = NewMetadata(context.Background(), url, Options{
 		StderrFn: func(cmd *exec.Cmd) io.Writer {
 			return stderrBuf
 		},
@@ -475,7 +481,7 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 func TestFormatDownloadError(t *testing.T) {
 	t.Skip("test URL broken")
 
-	ydl, ydlErr := New(
+	ydl, ydlErr := NewMetadata(
 		context.Background(),
 		"https://www.reddit.com/r/newsbabes/s/92rflI0EB0",
 		Options{},

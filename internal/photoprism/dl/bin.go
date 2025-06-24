@@ -1,29 +1,30 @@
-package ytdl
+package dl
 
 import (
-	"github.com/photoprism/photoprism/internal/config"
+	"os/exec"
+
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 )
 
 var (
-	Bin        = ""
+	YtDlpBin   = ""
 	FFmpegBin  = ""
 	FFprobeBin = ""
 )
 
-// FindBin returns the YouTube / M38U video downloader binary name.
-func FindBin() string {
-	if Bin == "" {
-		Bin = config.FindBin("yt-dlp", "yt-dl", "youtube-dl", "dl")
+// FindYtDlpBin returns the YouTube / M38U video downloader binary name.
+func FindYtDlpBin() string {
+	if YtDlpBin == "" {
+		YtDlpBin, _ = exec.LookPath("yt-dlp")
 	}
 
-	return Bin
+	return YtDlpBin
 }
 
 // FindFFmpegBin returns the "ffmpeg" command binary name.
 func FindFFmpegBin() string {
 	if FFmpegBin == "" {
-		FFmpegBin = config.FindBin(encode.FFmpegBin)
+		FFmpegBin, _ = exec.LookPath(encode.FFmpegBin)
 	}
 
 	return FFmpegBin
@@ -32,7 +33,7 @@ func FindFFmpegBin() string {
 // FindFFprobeBin returns the "ffprobe" command binary name.
 func FindFFprobeBin() string {
 	if FFprobeBin == "" {
-		FFprobeBin = config.FindBin(encode.FFprobeBin)
+		FFprobeBin, _ = exec.LookPath(encode.FFprobeBin)
 	}
 
 	return FFprobeBin

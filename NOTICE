@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-05-06
+Date generated: 2025-06-20
 
 ================================================================================
 
@@ -408,8 +408,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/cpuguy83/go-md2man/v2/md2man
-Version: v2.0.6
-License: MIT (https://github.com/cpuguy83/go-md2man/blob/v2.0.6/LICENSE.md)
+Version: v2.0.7
+License: MIT (https://github.com/cpuguy83/go-md2man/blob/v2.0.7/LICENSE.md)
 
 The MIT License (MIT)
 
@@ -541,7 +541,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Package: github.com/dsoprea/go-heic-exif-extractor/v2
 Version: v2.0.0-20210512044107-62067e44c235
-License: MIT (https://github.com/dsoprea/go-heic-exif-extractor/blob/62067e44c235/LICENSE)
+License: MIT (https://github.com/dsoprea/go-heic-exif-extractor/blob/62067e44c235/v2/LICENSE)
 
 MIT LICENSE
 
@@ -585,7 +585,7 @@ SOFTWARE.
 
 Package: github.com/dsoprea/go-jpeg-image-structure/v2
 Version: v2.0.0-20221012074422-4f3f7e934102
-License: MIT (https://github.com/dsoprea/go-jpeg-image-structure/blob/4f3f7e934102/LICENSE)
+License: MIT (https://github.com/dsoprea/go-jpeg-image-structure/blob/4f3f7e934102/v2/LICENSE)
 
 MIT LICENSE
 
@@ -661,7 +661,7 @@ SOFTWARE.
 
 Package: github.com/dsoprea/go-png-image-structure/v2
 Version: v2.0.0-20210512210324-29b889a6093d
-License: MIT (https://github.com/dsoprea/go-png-image-structure/blob/29b889a6093d/LICENSE)
+License: MIT (https://github.com/dsoprea/go-png-image-structure/blob/29b889a6093d/v2/LICENSE)
 
 MIT LICENSE
 
@@ -677,7 +677,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Package: github.com/dsoprea/go-tiff-image-structure/v2
 Version: v2.0.0-20221003165014-8ecc4f52edca
-License: MIT (https://github.com/dsoprea/go-tiff-image-structure/blob/8ecc4f52edca/LICENSE)
+License: MIT (https://github.com/dsoprea/go-tiff-image-structure/blob/8ecc4f52edca/v2/LICENSE)
 
 MIT License
 
@@ -705,7 +705,7 @@ SOFTWARE.
 
 Package: github.com/dsoprea/go-utility/v2
 Version: v2.0.0-20221003172846-a3e1774ef349
-License: MIT (https://github.com/dsoprea/go-utility/blob/a3e1774ef349/LICENSE)
+License: MIT (https://github.com/dsoprea/go-utility/blob/a3e1774ef349/v2/LICENSE)
 
 Copyright 2019 Random Ingenuity InformationWorks
 
@@ -1095,8 +1095,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-gonic/gin
-Version: v1.10.0
-License: MIT (https://github.com/gin-gonic/gin/blob/v1.10.0/LICENSE)
+Version: v1.10.1
+License: MIT (https://github.com/gin-gonic/gin/blob/v1.10.1/LICENSE)
 
 The MIT License (MIT)
 
@@ -1123,8 +1123,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.16.1
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.16.1/LICENSE)
+Version: v2.16.2
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.16.2/LICENSE)
 
 MIT License
 
@@ -2316,8 +2316,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20250505201543-5b58c72585db
-License: Apache-2.0 (https://github.com/golang/geo/blob/5b58c72585db/LICENSE)
+Version: v0.0.0-20250613135800-9e8e59d779cc
+License: Apache-2.0 (https://github.com/golang/geo/blob/9e8e59d779cc/LICENSE)
 
 
                                  Apache License
@@ -2525,8 +2525,8 @@ License: Apache-2.0 (https://github.com/golang/geo/blob/5b58c72585db/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/google/open-location-code/go
-Version: v0.0.0-20250415120251-fa6d7f9d4765
-License: Apache-2.0 (https://github.com/google/open-location-code/blob/fa6d7f9d4765/go/LICENSE)
+Version: v0.0.0-20250613141612-3e39f06c927c
+License: Apache-2.0 (https://github.com/google/open-location-code/blob/3e39f06c927c/go/LICENSE)
 
 
                                  Apache License
@@ -3982,8 +3982,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/leonelquinteros/gotext
-Version: v1.7.1
-License: MIT (https://github.com/leonelquinteros/gotext/blob/v1.7.1/LICENSE)
+Version: v1.7.2
+License: MIT (https://github.com/leonelquinteros/gotext/blob/v1.7.2/LICENSE)
 
 The MIT License (MIT)
 
@@ -4461,8 +4461,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/pquerna/otp
-Version: v1.4.0
-License: Apache-2.0 (https://github.com/pquerna/otp/blob/v1.4.0/LICENSE)
+Version: v1.5.0
+License: Apache-2.0 (https://github.com/pquerna/otp/blob/v1.5.0/LICENSE)
 
 
                                  Apache License
@@ -4878,8 +4878,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_golang/blob/v1.22.0/LI
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/client_model/go
-Version: v0.6.1
-License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.1/LICENSE)
+Version: v0.6.2
+License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.2/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5086,8 +5086,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.1/LICE
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/common
-Version: v0.63.0
-License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.63.0/LICENSE)
+Version: v0.64.0
+License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.64.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5773,8 +5773,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/ugorji/go/codec
-Version: v1.2.12
-License: MIT (https://github.com/ugorji/go/blob/codec/v1.2.12/codec/LICENSE)
+Version: v1.2.14
+License: MIT (https://github.com/ugorji/go/blob/codec/v1.2.14/codec/LICENSE)
 
 The MIT License (MIT)
 
@@ -5831,8 +5831,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/urfave/cli/v2
-Version: v2.27.6
-License: MIT (https://github.com/urfave/cli/blob/v2.27.6/LICENSE)
+Version: v2.27.7
+License: MIT (https://github.com/urfave/cli/blob/v2.27.7/LICENSE)
 
 MIT License
 
@@ -6303,8 +6303,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.6.2/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3/pkg
-Version: v3.38.1
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.38.1/LICENSE)
+Version: v3.39.0
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.39.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7586,8 +7586,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/214862532bf5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.38.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.38.0:LICENSE)
+Version: v0.39.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.39.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7620,8 +7620,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/image
-Version: v0.27.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.27.0:LICENSE)
+Version: v0.28.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.28.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7654,8 +7654,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/mod/semver
-Version: v0.24.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.24.0:LICENSE)
+Version: v0.25.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.25.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7688,8 +7688,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.40.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.40.0:LICENSE)
+Version: v0.41.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.41.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7722,8 +7722,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/oauth2
-Version: v0.29.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.29.0:LICENSE)
+Version: v0.30.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.30.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7756,8 +7756,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sync/errgroup
-Version: v0.14.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.14.0:LICENSE)
+Version: v0.15.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.15.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7824,8 +7824,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.25.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.25.0:LICENSE)
+Version: v0.26.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.26.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7858,8 +7858,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/time/rate
-Version: v0.11.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/time/+/v0.11.0:LICENSE)
+Version: v0.12.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/time/+/v0.12.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8241,10 +8241,13 @@ Package                           License       Copyright
 @testing-library/jest-dom         MIT           Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
 @testing-library/react            MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 @vitejs/plugin-react              MIT           Evan You
+@vitejs/plugin-vue                MIT           Evan You
+@vitest/browser                   MIT           n/a
 @vitest/coverage-v8               MIT           Anthony Fu <anthonyfu117@hotmail.com>
 @vitest/ui                        MIT           n/a
 @vue/compiler-sfc                 MIT           Evan You
 @vue/language-server              MIT           n/a
+@vue/test-utils                   MIT           Lachlan Miller lachlan.miller.1990@outlook.com
 @vvo/tzdb                         MIT           Vincent Voyer <vincent@codeagain.com>
 axios                             MIT           Matt Zabriskie
 axios-mock-adapter                MIT           Colin Timmermans <colintimmermans@gmail.com>
@@ -8295,6 +8298,7 @@ mocha                             MIT           TJ Holowaychuk <tj@vision-media.
 node-storage-shim                 ISC           Michael Nahkies
 passive-events-support            MIT           Ignas Damunskis <ignas3run@gmail.com>
 photoswipe                        MIT           Dmytro Semenov (https://dimsemenov.com)
+playwright                        Apache-2.0    Microsoft Corporation
 postcss                           MIT           Andrey Sitnik <andrey@sitnik.ru>
 postcss-import                    MIT           Maxime Thirouin
 postcss-loader                    MIT           Andrey Sitnik <andrey@sitnik.ru>

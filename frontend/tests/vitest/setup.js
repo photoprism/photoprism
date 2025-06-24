@@ -1,59 +1,22 @@
+import { afterEach, vi } from "vitest";
 import "@testing-library/jest-dom";
-import { cleanup } from "@testing-library/react";
-import { afterEach, vi, beforeAll } from "vitest";
-import { setupCommonMocks } from "./fixtures";
+import "./vue-setup";
 
-global.window = global.window || {};
-global.window.__CONFIG__ = {
-  debug: false,
-  trace: false,
-};
+// Import and set up global config
+import clientConfig from "./config";
+import { $config } from "app/session";
 
-global.window.location = {
-  protocol: "https:",
-};
+$config.setValues(clientConfig);
 
-global.navigator = {
-  userAgent: "node.js",
-  maxTouchPoints: 0,
-};
+// Make config available in browser environment
+window.__CONFIG__ = clientConfig;
 
+console.log("Running tests in real browser environment");
+
+// Clean up after each test
 afterEach(() => {
-  cleanup();
+  vi.resetAllMocks();
 });
 
-beforeAll(() => {
-  setupCommonMocks();
-});
-
-vi.mock("luxon", () => ({
-  DateTime: {
-    fromISO: vi.fn().mockReturnValue({
-      toLocaleString: vi.fn().mockReturnValue("2023-10-01 10:00:00"),
-    }),
-    DATETIME_MED: {},
-    DATETIME_MED_WITH_WEEKDAY: {},
-    DATE_MED: {},
-    TIME_24_SIMPLE: {},
-  },
-  Settings: {
-    defaultLocale: "en",
-    defaultZoneName: "UTC",
-  },
-}));
-
-vi.mock("common/gettext", () => ({
-  $gettext: vi.fn((text) => text),
-}));
-
-vi.mock("app/session", () => ({
-  $config: {},
-}));
-
-vi.mock("common/notify", () => ({
-  default: {
-    success: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+// Export shared configuration
+export { clientConfig };

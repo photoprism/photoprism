@@ -4,6 +4,7 @@ import { $gettext } from "common/gettext";
 export const Roles = () => {
   return {
     "admin": $gettext("Admin"),
+    "manager": $gettext("Manager"),
     "user": $gettext("User"),
     "viewer": $gettext("Viewer"),
     "contributor": $gettext("Contributor"),

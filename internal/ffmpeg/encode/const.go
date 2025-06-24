@@ -16,6 +16,7 @@ const (
 
 // Default video and audio track mapping.
 const (
-	DefaultMapVideo = "0:v:0"
-	DefaultMapAudio = "0:a:0?"
+	DefaultMapVideo    = "0:v:0"
+	DefaultMapAudio    = "0:a:0?"
+	DefaultMapMetadata = "0"
 )

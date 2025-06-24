@@ -45,6 +45,13 @@
     }
 }
 
+/* Overflow */
+
+.overflow-hidden {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Layout Widths */
 
 .width-sm, .width-md, .width-lg {

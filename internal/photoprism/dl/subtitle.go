@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 // Subtitle youtube-dl subtitle
 type Subtitle struct {

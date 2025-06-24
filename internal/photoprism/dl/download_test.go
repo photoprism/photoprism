@@ -1,12 +1,17 @@
-package ytdl
+package dl
 
 import (
 	"bytes"
 	"context"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestDownload(t *testing.T) {
@@ -14,8 +19,9 @@ func TestDownload(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
+	// Fetch metadata.
 	stderrBuf := &bytes.Buffer{}
-	r, err := New(context.Background(), testVideoRawURL, Options{
+	r, err := NewMetadata(context.Background(), testVideoRawURL, Options{
 		StderrFn: func(cmd *exec.Cmd) io.Writer {
 			return stderrBuf
 		},
@@ -23,6 +29,22 @@ func TestDownload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	// Write metadata to "./testdata/download-test.json".
+	jsonName := fs.Abs("./testdata/download-test.json")
+	if json := r.Info.JSON(); json != nil {
+		if err = fs.WriteFile(jsonName, json, fs.ModeFile); err != nil {
+			t.Errorf("%s could not be created: %s", jsonName, err)
+		}
+	} else {
+		t.Errorf("%s could not be created because json data is nil", jsonName)
+	}
+
+	// Remove metadata file.
+	assert.FileExists(t, jsonName)
+	_ = os.Remove(jsonName)
+
+	// Download video based on metadata.
 	dr, err := r.Download(context.Background(), r.Info.Formats[0].FormatID)
 	if err != nil {
 		t.Fatal(err)
@@ -37,6 +59,8 @@ func TestDownload(t *testing.T) {
 	if n != int64(downloadBuf.Len()) {
 		t.Errorf("copy n not equal to download buffer: %d!=%d", n, downloadBuf.Len())
 	}
+
+	t.Logf("error: %s", stderrBuf.String())
 
 	if n < 10000 {
 		t.Errorf("should have copied at least 10000 bytes: %d", n)

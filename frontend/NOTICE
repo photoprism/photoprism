@@ -13,10 +13,13 @@ Package                           License       Copyright
 @testing-library/jest-dom         MIT           Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
 @testing-library/react            MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 @vitejs/plugin-react              MIT           Evan You
+@vitejs/plugin-vue                MIT           Evan You
+@vitest/browser                   MIT           n/a
 @vitest/coverage-v8               MIT           Anthony Fu <anthonyfu117@hotmail.com>
 @vitest/ui                        MIT           n/a
 @vue/compiler-sfc                 MIT           Evan You
 @vue/language-server              MIT           n/a
+@vue/test-utils                   MIT           Lachlan Miller lachlan.miller.1990@outlook.com
 @vvo/tzdb                         MIT           Vincent Voyer <vincent@codeagain.com>
 axios                             MIT           Matt Zabriskie
 axios-mock-adapter                MIT           Colin Timmermans <colintimmermans@gmail.com>
@@ -67,6 +70,7 @@ mocha                             MIT           TJ Holowaychuk <tj@vision-media.
 node-storage-shim                 ISC           Michael Nahkies
 passive-events-support            MIT           Ignas Damunskis <ignas3run@gmail.com>
 photoswipe                        MIT           Dmytro Semenov (https://dimsemenov.com)
+playwright                        Apache-2.0    Microsoft Corporation
 postcss                           MIT           Andrey Sitnik <andrey@sitnik.ru>
 postcss-import                    MIT           Maxime Thirouin
 postcss-loader                    MIT           Andrey Sitnik <andrey@sitnik.ru>

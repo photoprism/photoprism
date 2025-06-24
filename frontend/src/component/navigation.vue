@@ -1007,7 +1007,7 @@ export default {
       canAccessPrivate: !isRestricted && this.$config.allow("photos", "access_private"),
       canManagePhotos: canManagePhotos,
       canManagePeople: this.$config.allow("people", "manage"),
-      canManageUsers: (!isPublic || isDemo) && this.$config.allow("users", "manage"),
+      canManageUsers: (!isPublic || isDemo) && this.$config.allow("users", "access_all"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appAbout: this.$config.getAbout(),

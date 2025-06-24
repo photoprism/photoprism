@@ -87,8 +87,8 @@ const (
 	Video3GP    Type = "3gp"  // Mobile Multimedia Container, MPEG-4 Part 12
 	Video3G2    Type = "3g2"  // Similar to 3GP, consumes less space & bandwidth
 	VideoFlash  Type = "flv"  // Flash Video
-	VideoAvcHD  Type = "mts"  // AVCHD (Advanced Video Coding High Definition)
-	VideoBDAV   Type = "m2ts" // Blu-ray MPEG-2 Transport Stream
+	VideoM2TS   Type = "m2t"  // MPEG-2 Transport Stream (M2TS)
+	VideoAVCHD  Type = "mts"  // AVCHD (Advanced Video Coding High Definition)
 	VideoTheora Type = "ogv"  // Ogg container format maintained by the Xiph.Org, free and open
 	VideoASF    Type = "asf"  // Advanced Systems/Streaming Format (ASF)
 	VideoAVI    Type = "avi"  // Microsoft Audio Video Interleave (AVI)

@@ -1,10 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
+import "../fixtures";
 import { Marker, BatchSize } from "model/marker";
-import { setupMarkerMocks } from "../fixtures";
-
-beforeEach(() => {
-  setupMarkerMocks();
-});
 
 describe("model/marker", () => {
   it("should get marker defaults", () => {
@@ -111,7 +107,7 @@ describe("model/marker", () => {
     };
     const marker = new Marker(values);
     const result = marker.getDateString();
-    expect(result).toBe("2023-10-01 10:00:00");
+    expect(result.replaceAll("\u202f", " ")).toBe("Jul 8, 2012, 2:45 PM");
   });
 
   it("should approve marker", () => {
@@ -174,7 +170,6 @@ describe("model/marker", () => {
     };
     const marker2 = new Marker(values2);
     expect(marker2.Name).toBe("testname");
-
     const response = await marker2.setName();
     expect(response.success).toBe("ok");
   });

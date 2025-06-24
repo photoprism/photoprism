@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // GetMetrics provides a prometheus-compatible metrics endpoint for monitoring.
@@ -30,6 +31,8 @@ func GetMetrics(router *gin.RouterGroup) {
 
 		conf := get.Config()
 		counts := conf.ClientUser(false).Count
+
+		header.SetContentType(c.Request, header.ContentTypePrometheus)
 
 		c.Stream(func(w io.Writer) bool {
 			reg := prometheus.NewRegistry()

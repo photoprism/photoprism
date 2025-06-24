@@ -39,6 +39,17 @@ func TestChunk_FileOffset(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 23213, index)
 	})
+	t.Run("motion-photo.heif", func(t *testing.T) {
+		index, err := ChunkFTYP.FileOffset("testdata/motion-photo.heif")
+		require.NoError(t, err)
+		assert.Equal(t, 4, index)
+		index, err = ChunkHEIC.FileOffset("testdata/motion-photo.heif")
+		require.NoError(t, err)
+		assert.Equal(t, 8, index)
+		index, err = ChunkHVC1.FileOffset("testdata/motion-photo.heif")
+		require.NoError(t, err)
+		assert.Equal(t, 976016, index)
+	})
 }
 
 func TestChunks(t *testing.T) {

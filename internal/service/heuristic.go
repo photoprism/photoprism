@@ -30,7 +30,7 @@ var Heuristics = []Heuristic{
 	{Type: GPhotos, Domains: []string{"photos.google.com"}, Paths: []string{}, Method: "GET"},
 	{Type: WebDAV,
 		Domains: []string{},
-		Paths:   []string{"/", "/webdav/", "/originals/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"},
+		Paths:   []string{"/", "/webdav/", "/originals/", "/import/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"},
 		Method:  "PROPFIND",
 		Headers: Headers{"Depth": "1"},
 	},

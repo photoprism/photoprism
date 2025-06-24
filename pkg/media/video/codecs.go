@@ -33,6 +33,7 @@ const (
 	CodecVp08    Codec = "vp08" // Google VP8
 	CodecVp09    Codec = "vp09" // Google VP9
 	CodecTheora  Codec = "ogv"  // Ogg Vorbis Video
+	CodecM2TS    Codec = "m2t"  // MPEG-2 Transport Stream
 	CodecWebm    Codec = "webm" // Google WebM
 )
 

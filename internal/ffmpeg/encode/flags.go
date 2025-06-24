@@ -6,4 +6,4 @@ package encode
 // - https://cloudinary.com/glossary/fragmented-mp4
 // - https://medium.com/@vlad.pbr/in-browser-live-video-using-fragmented-mp4-3aedb600a07e
 // - https://github.com/video-dev/hls.js?tab=readme-ov-file#features
-var MovFlags = "frag_keyframe+empty_moov+default_base_moof+faststart"
+var MovFlags = "use_metadata_tags+faststart"

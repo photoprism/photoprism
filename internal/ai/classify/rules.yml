@@ -2606,8 +2606,7 @@ dogsled:
   label: snow
   threshold: 0.9
   categories:
-    - animal
-    - dog
+    - vehicle
 
 dome:
   label: dome

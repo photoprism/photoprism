@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"errors"

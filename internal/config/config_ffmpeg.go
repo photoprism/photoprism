@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -12,6 +13,20 @@ import (
 // FFmpegBin returns the ffmpeg executable file name.
 func (c *Config) FFmpegBin() string {
 	return FindBin(c.options.FFmpegBin, encode.FFmpegBin)
+}
+
+// FFprobeBin returns the ffprobe executable file name.
+func (c *Config) FFprobeBin() string {
+	if ffmpegBin := c.FFmpegBin(); ffmpegBin != "" && fs.FileExistsNotEmpty(ffmpegBin) {
+		return FindBin(filepath.Join(filepath.Dir(ffmpegBin), encode.FFprobeBin), encode.FFprobeBin)
+	}
+
+	return FindBin(encode.FFprobeBin)
+}
+
+// YtDlpBin returns the name of the video download executable file, if installed.
+func (c *Config) YtDlpBin() string {
+	return FindBin("yt-dlp", "yt-dl", "youtube-dl", "dl")
 }
 
 // FFmpegEnabled checks if FFmpeg is enabled for video transcoding.

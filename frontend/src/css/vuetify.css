@@ -521,6 +521,10 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     margin-bottom: 4px;
 }
 
+.v-table hr {
+    opacity: 0.05;
+}
+
 /* Flex Grids */
 
 .v-row {

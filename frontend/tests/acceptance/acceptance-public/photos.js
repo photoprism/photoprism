@@ -215,49 +215,6 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   const FirstPhotoKeywords = await photoedit.keywords.value;
   const FirstPhotoNotes = await photoedit.notes.value;
 
-  await t.typeText(photoedit.title, "Not saved photo title", { replace: true }).click(photoedit.detailsClose);
-  await page.clickCardTitleOfUID(FirstPhotoUid);
-
-  await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
-
-  await photoedit.editPhoto(
-    "New Photo Title",
-    "Europe/Moscow",
-    "15",
-    "07",
-    "2019",
-    "04:30:30",
-    "-1",
-    "41.15333",
-    "20.168331",
-    "32",
-    "1/32",
-    "29",
-    "33",
-    "Super nice edited photo",
-    "Happy",
-    "Happy2020",
-    "Super nice cat license",
-    "Description of a nice image :)",
-    ", cat, love",
-    "Some notes",
-    "Canon EOS M10",
-    "EF-M15-45mm f/3.5-6.3 IS STM"
-  );
-  if (t.browser.platform === "mobile") {
-    await t.eval(() => location.reload());
-  } else {
-    await toolbar.triggerToolbarAction("refresh");
-  }
-  await toolbar.search("uid:" + FirstPhotoUid);
-
-  await t
-    .expect(Selector('div[data-uid="' + FirstPhotoUid + '"] button.action-title-edit').innerText)
-    .eql("New Photo Title");
-
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
-  await contextmenu.triggerContextMenuAction("edit", "");
-
   const expectedInputValues = [
     ["title", "New Photo Title"],
     ["localTime", "04:30:30"],
@@ -284,34 +241,65 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
     ["camera", "Canon EOS M10"],
     ["lens", "EF-M15-45mm f/3.5-6.3 IS STM"],
   ];
+  const expectedSelectValuesNoCountry = [
+    ["day", "15"],
+    ["month", "07"],
+    ["year", "2019"],
+    ["timezone", "Europe/Moscow"],
+    ["camera", "Canon EOS M10"],
+    ["lens", "EF-M15-45mm f/3.5-6.3 IS STM"],
+  ];
+  const initialInputValues = [
+    ["title", FirstPhotoTitle],
+    ["localTime", FirstPhotoLocalTime],
+    ["altitude", FirstPhotoAltitude],
+    ["latitude", FirstPhotoLatitude],
+    ["longitude", FirstPhotoLongitude],
+    ["iso", FirstPhotoIso],
+    ["exposure", FirstPhotoExposure],
+    ["fnumber", FirstPhotoFnumber],
+    ["focallength", FirstPhotoFocalLength],
+    ["subject", FirstPhotoSubject],
+    ["artist", FirstPhotoArtist],
+    ["copyright", FirstPhotoCopyright],
+    ["license", FirstPhotoLicense],
+    ["description", FirstPhotoDescription],
+    ["notes", FirstPhotoNotes],
+    ["keywords", FirstPhotoKeywords],
+  ];
+  const initialSelectValuesNoCountry = [
+    ["day", FirstPhotoDay],
+    ["month", FirstPhotoMonth],
+    ["year", FirstPhotoYear],
+    ["timezone", FirstPhotoTimezone],
+    ["camera", FirstPhotoCamera],
+    ["lens", FirstPhotoLens],
+  ];
+  await t.typeText(photoedit.title, "Not saved photo title", { replace: true }).click(photoedit.detailsClose);
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
+  await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
+
+  await photoedit.editFormValues(expectedInputValues, expectedSelectValuesNoCountry);
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await toolbar.triggerToolbarAction("refresh");
+  }
+  await toolbar.search("uid:" + FirstPhotoUid);
+
+  await t
+    .expect(Selector('div[data-uid="' + FirstPhotoUid + '"] button.action-title-edit').innerText)
+    .eql("New Photo Title");
+
+  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+  await contextmenu.triggerContextMenuAction("edit", "");
 
   await photoedit.checkEditFormValues(expectedInputValues, expectedSelectValues);
 
-  await photoedit.undoPhotoEdit(
-    FirstPhotoTitle,
-    FirstPhotoTimezone,
-    FirstPhotoDay,
-    FirstPhotoMonth,
-    FirstPhotoYear,
-    FirstPhotoLocalTime,
-    FirstPhotoAltitude,
-    FirstPhotoLatitude,
-    FirstPhotoLongitude,
-    FirstPhotoCountry,
-    FirstPhotoIso,
-    FirstPhotoExposure,
-    FirstPhotoFnumber,
-    FirstPhotoFocalLength,
-    FirstPhotoSubject,
-    FirstPhotoArtist,
-    FirstPhotoCopyright,
-    FirstPhotoLicense,
-    FirstPhotoDescription,
-    FirstPhotoKeywords,
-    FirstPhotoNotes,
-    FirstPhotoCamera,
-    FirstPhotoLens
-  );
+  await photoedit.editFormValues(initialInputValues, initialSelectValuesNoCountry);
+  await contextmenu.triggerContextMenuAction("edit", "");
+
   await contextmenu.checkContextMenuCount("1");
   await contextmenu.clearSelection();
 });

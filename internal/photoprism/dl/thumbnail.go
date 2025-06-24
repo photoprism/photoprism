@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 type Thumbnail struct {
 	ID         string `json:"id"`

@@ -591,7 +591,7 @@ func (m *File) RelatedPhoto() *Photo {
 	return &photo
 }
 
-// NoJPEG returns true if the file is not a JPEG image.
+// NoJpeg returns true if the file is not a JPEG image.
 func (m *File) NoJpeg() bool {
 	return fs.ImageJpeg.NotEqual(m.FileType)
 }

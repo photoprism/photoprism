@@ -1,5 +1,5 @@
 # Ubuntu 25.04 (Plucky Puffin)
-FROM photoprism/develop:250507-plucky
+FROM photoprism/develop:250608-plucky
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)
@@ -20,3 +20,5 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 # Copy source to image.
 COPY . .
 COPY --chown=root:root /scripts/dist/ /scripts/
+
+RUN sudo /scripts/install-yt-dlp.sh

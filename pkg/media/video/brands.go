@@ -76,7 +76,6 @@ var CompatibleBrands = Chunks{
 	ChunkHEV2,
 	ChunkHEV3,
 	ChunkDVHE,
-	ChunkHEIC,
 	ChunkAV01,
 	ChunkAV1C,
 	ChunkMMP4,

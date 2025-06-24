@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"context"
@@ -21,8 +21,8 @@ func TestVersion(t *testing.T) {
 		}
 	})
 	t.Run("InvalidBin", func(t *testing.T) {
-		defer func(orig string) { Bin = orig }(Bin)
-		Bin = "/non-existing"
+		defer func(orig string) { YtDlpBin = orig }(YtDlpBin)
+		YtDlpBin = "/non-existing"
 
 		_, versionErr := Version(context.Background())
 		if versionErr == nil || !strings.Contains(versionErr.Error(), "no such file or directory") {

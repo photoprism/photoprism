@@ -91,6 +91,7 @@ COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 # Update pre-installed packages.
 RUN apt-get update && \
     apt-get -qq dist-upgrade && \
+    yt-dlp -U && \
     /scripts/cleanup.sh
 
 # Set default working directory.

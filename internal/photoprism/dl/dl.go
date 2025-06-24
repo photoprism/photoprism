@@ -1,5 +1,5 @@
 /*
-Package ytdl provides media download functionality.
+Package dl provides media download functionality.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
@@ -28,7 +28,7 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package ytdl
+package dl
 
 import (
 	"github.com/photoprism/photoprism/internal/event"

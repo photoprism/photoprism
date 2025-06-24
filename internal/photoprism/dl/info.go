@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"bufio"
@@ -100,6 +100,12 @@ type Info struct {
 	Format
 }
 
+// JSON returns the information as JSON string.
+func (i *Info) JSON() []byte {
+	b, _ := json.Marshal(i)
+	return b
+}
+
 func infoFromURL(
 	ctx context.Context,
 	rawURL string,
@@ -107,7 +113,7 @@ func infoFromURL(
 ) (info Info, rawJSON []byte, err error) {
 	cmd := exec.CommandContext(
 		ctx,
-		FindBin(),
+		FindYtDlpBin(),
 		// see comment below about ignoring errors for playlists
 		"--ignore-errors",
 		// TODO: deprecated in yt-dlp?
@@ -116,7 +122,7 @@ func infoFromURL(
 		// TODO: needed?
 		"--restrict-filenames",
 		// use .netrc authentication data
-		"--netrc",
+		// "--netrc",
 		// provide url via stdin for security, youtube-dl has some run command args
 		"--batch-file", "-",
 		// dump info json

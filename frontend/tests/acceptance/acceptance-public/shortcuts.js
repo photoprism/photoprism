@@ -155,7 +155,7 @@ test.meta("testID", "shortcuts-004").meta({ type: "short", mode: "public" })(
     // Edit Test
     await triggerKeyPress("e", "KeyE", 69, true, false);
     await t.expect(photoEdit.dialog.visible).ok();
-    await t.pressKey("esc");
+    await t.click(photoEdit.dialogClose);
 
     await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
     await t.wait(500); // Wait for lightbox again

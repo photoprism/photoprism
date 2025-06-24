@@ -1,4 +1,4 @@
-package ytdl
+package dl
 
 import (
 	"context"
@@ -13,7 +13,7 @@ func Download(
 	filter string,
 ) (*DownloadResult, error) {
 	options.noInfoDownload = true
-	d, err := New(ctx, rawURL, options)
+	d, err := NewMetadata(ctx, rawURL, options)
 	if err != nil {
 		return nil, err
 	}

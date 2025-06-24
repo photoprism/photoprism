@@ -51,6 +51,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -277,6 +278,11 @@ func (c *Config) Propagate() {
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
 	initThumbs()
+
+	// Configure video download package.
+	dl.YtDlpBin = c.YtDlpBin()
+	dl.FFmpegBin = c.FFmpegBin()
+	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
 	vision.AssetsPath = c.AssetsPath()

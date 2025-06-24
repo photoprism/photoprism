@@ -23,6 +23,7 @@ import (
 
 // Standard ContentType strings for audio and video files:
 const (
+	ContentTypeM2TS           = "video/mp2t"
 	ContentTypeM4v            = "video/x-m4v"
 	ContentTypeMp4            = "video/mp4"
 	ContentTypeMp4Avc         = ContentTypeMp4 + "; codecs=\"avc1\""             // MPEG-4 AVC (H.264)
@@ -95,16 +96,17 @@ const (
 
 // Standard ContentType strings for markup and sidecar files.
 const (
-	ContentTypeBinary    = "application/octet-stream"
-	ContentTypeForm      = "application/x-www-form-urlencoded"
-	ContentTypeMultipart = "multipart/form-data"
-	ContentTypeJson      = "application/json"
-	ContentTypeJsonUtf8  = "application/json; charset=utf-8"
-	ContentTypeXml       = "text/xml"
-	ContentTypeHtml      = "text/html; charset=utf-8"
-	ContentTypeText      = "text/plain; charset=utf-8"
-	ContentTypePDF       = "application/pdf"
-	ContentTypeZip       = "application/zip"
+	ContentTypeBinary     = "application/octet-stream"
+	ContentTypeForm       = "application/x-www-form-urlencoded"
+	ContentTypeMultipart  = "multipart/form-data"
+	ContentTypeJson       = "application/json"
+	ContentTypeJsonUtf8   = "application/json; charset=utf-8"
+	ContentTypeXml        = "text/xml"
+	ContentTypeHtml       = "text/html; charset=utf-8"
+	ContentTypeText       = "text/plain; charset=utf-8"
+	ContentTypePDF        = "application/pdf"
+	ContentTypeZip        = "application/zip"
+	ContentTypePrometheus = "text/plain; version=0.0.4"
 )
 
 // HasContentType checks weather the Content-Type header has the specified type.

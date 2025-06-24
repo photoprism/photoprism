@@ -38,6 +38,7 @@ export const FormatWebmAv1 = "webm_av1";
 export const FormatMkvAv1 = "mkv_av1";
 export const FormatTheora = "ogg";
 export const FormatWebp = "webp";
+export const FormatM2TS = "m2t";
 
 // Image file formats:
 export const FormatJpeg = "jpg";

@@ -191,7 +191,7 @@
           v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0"
           class="d-flex justify-center mt-8 mb-4"
         >
-          <v-btn color="secondary" rounded variant="flat" class="action-add" @click.prevent="create">
+          <v-btn color="button" rounded variant="flat" class="action-add" @click.prevent="create">
             {{ $gettext(`Add Album`) }}
           </v-btn>
         </div>

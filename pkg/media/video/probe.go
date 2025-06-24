@@ -153,8 +153,7 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 	// If no AVC video was found, search the video data for High Efficiency Video Coding (HEVC) chunks,
 	// see https://stackoverflow.com/questions/63468587/what-hevc-codec-tag-to-use-with-fmp4-hvc1-or-hev1.
 	if info.VideoCodec == "" {
-		// To improve performance, only search for "hvc1" as that is the most common HEVC video identifier.
-		if fileOffset, fileErr := ChunkHVC1.DataOffset(file, -1); fileOffset > 0 && fileErr == nil {
+		if fileOffset, fileErr := ChunkHVC1.DataOffset(file, 0, -1); fileOffset > 0 && fileErr == nil {
 			info.VideoCodec = CodecHvc1
 		}
 	}
