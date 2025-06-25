@@ -17,10 +17,6 @@
         <v-toolbar-title>
           {{ $gettext("Set Location") }}
         </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn v-if="!$vuetify.display.mdAndDown" icon class="action-close" @click.stop="close">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
       </v-toolbar>
       <v-card-text class="pa-0">
         <div class="d-flex flex-column flex-md-row py-4 px-2">
