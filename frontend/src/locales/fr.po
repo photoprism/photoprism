@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-06-24 19:37+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-06-25 20:02+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -430,7 +430,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer ce compte ?"
 
 #: src/component/album/toolbar.vue:136
 msgid "Are you sure you want to delete this album?"
-msgstr "Es-tu sûr de vouloir supprimer cet album ?"
+msgstr "Êtes-vous sûr de vouloir supprimer cet album ?"
 
 #: src/component/photo/clipboard.vue:199
 msgid "Are you sure you want to permanently delete these pictures?"
