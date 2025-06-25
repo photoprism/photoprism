@@ -186,21 +186,22 @@
                 style="flex: 0 0 120px"
               ></v-text-field>
             </v-col>
-            <v-col cols="7" md="3">
+            <v-col cols="12" md="6">
               <v-text-field
-                v-model="view.model.Lat"
+                v-model="coordinateInput"
                 :disabled="disabled"
                 hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
-                :label="$gettext('Latitude')"
-                placeholder=""
+                :label="$gettext('Coordinates')"
+                placeholder="e.g., 52.5208, 13.4049"
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.lat(false)"
-                class="input-latitude"
-                style="flex: 1"
+                :rules="[() => !coordinateInput || isValidCoordinateInput]"
+                class="input-coordinates"
+                @keydown.enter="applyCoordinates"
+                @update:model-value="onCoordinateInputChange"
                 @paste="pastePosition"
               >
                 <template #prepend-inner>
@@ -214,27 +215,16 @@
                     @click.stop="openMapDialog"
                   >
                   </v-icon>
-                  <!-- v-icon v-if="view.model.PlaceSrc === 'manual'" variant="plain" icon="mdi-check"> </v-icon -->
                 </template>
-              </v-text-field>
-            </v-col>
-            <v-col cols="5" md="3">
-              <v-text-field
-                v-model="view.model.Lng"
-                :disabled="disabled"
-                hide-details
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('Longitude')"
-                placeholder=""
-                density="comfortable"
-                validate-on="input"
-                :rules="rules.lng(false)"
-                class="input-longitude"
-                style="flex: 1"
-                @paste="pastePosition"
-              >
+                <template #append-inner>
+                  <v-icon
+                    v-if="coordinateInput"
+                    variant="plain"
+                    icon="mdi-close-circle"
+                    class="action-clear"
+                    @click.stop="clearLocation"
+                  ></v-icon>
+                </template>
               </v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="p-camera-select">
@@ -498,6 +488,7 @@ export default {
       rtl: this.$isRtl,
       mapDialogVisible: false,
       placesDisabled: !this.$config.feature("places"),
+      coordinateInput: "",
     };
   },
   computed: {
@@ -510,14 +501,32 @@ export default {
     inReview() {
       return this.featReview && this.view.model.Quality < 3;
     },
+    isValidCoordinateInput() {
+      if (!this.coordinateInput) return false;
+
+      const parts = this.coordinateInput.split(",").map((part) => part.trim());
+      if (parts.length !== 2) return false;
+
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+
+      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+    },
   },
   watch: {
-    uid() {
+    "uid"() {
       this.syncTime();
+    },
+    "view.model.Lat"() {
+      this.updateCoordinateInput();
+    },
+    "view.model.Lng"() {
+      this.updateCoordinateInput();
     },
   },
   created() {
     this.syncTime();
+    this.updateCoordinateInput();
   },
   methods: {
     setDay(v) {
@@ -669,6 +678,41 @@ export default {
           this.view.model.Country = "zz"; // "Unknown" country code
           this.view.model.Altitude = "0";
         }
+      }
+    },
+    onCoordinateInputChange(value) {
+      this.coordinateInput = value;
+
+      if (this.isValidCoordinateInput) {
+        this.applyCoordinates();
+      }
+    },
+    applyCoordinates() {
+      if (!this.isValidCoordinateInput) return;
+
+      const parts = this.coordinateInput.split(",").map((part) => part.trim());
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+
+      // Update underlying model
+      this.view.model.Lat = lat;
+      this.view.model.Lng = lng;
+      this.view.model.PlaceSrc = "manual";
+    },
+    clearLocation() {
+      this.view.model.Lat = 0;
+      this.view.model.Lng = 0;
+      this.view.model.PlaceSrc = "manual";
+      this.updateCoordinateInput();
+    },
+    updateCoordinateInput() {
+      const lat = this.view.model.Lat;
+      const lng = this.view.model.Lng;
+
+      if (lat !== null && lng !== null && !(lat === 0 && lng === 0) && !isNaN(lat) && !isNaN(lng)) {
+        this.coordinateInput = `${parseFloat(lat).toFixed(6)}, ${parseFloat(lng).toFixed(6)}`;
+      } else {
+        this.coordinateInput = "";
       }
     },
   },
