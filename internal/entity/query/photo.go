@@ -180,48 +180,20 @@ func FlagHiddenPhotos() (err error) {
 	// Start time for logs.
 	start := time.Now()
 
-	// IDs of hidden photos.
-	var hidden []uint
-
 	// Number of updated records.
 	affected := 0
 
-	// Find and flag hidden photos.
-	if err = Db().Table(entity.Photo{}.TableName()).
+	ids := Db().Select("id").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
-		Pluck("id", &hidden).Error; err != nil {
-		// Find query failed.
-		return err
-	} else if found := len(hidden); found == 0 {
-		// Nothing to update.
-		return nil
+		Table(entity.Photo{}.TableName())
+	if result := UnscopedDb().Table(entity.Photo{}.TableName()).
+		Where("id IN (?) AND photo_quality > -1", ids).
+		UpdateColumn("photo_quality", -1); result.Error != nil {
+		// Failed to flag all hidden photos.
+		log.Warnf("index: failed to flag photos as hidden")
+		return fmt.Errorf("%s while flagging hidden photos", result.Error)
 	} else {
-		// Update photos in batches to be compatible with SQLite.
-		batchSize := BatchSize()
-
-		for i := 0; i < len(hidden); i += batchSize {
-			j := i + batchSize
-
-			if j > len(hidden) {
-				j = len(hidden)
-			}
-
-			// Next batch.
-			ids := hidden[i:j]
-
-			// Set photos.photo_quality = -1.
-			if result := UnscopedDb().Table(entity.Photo{}.TableName()).
-				Where("id IN (?) AND photo_quality > -1", ids).
-				UpdateColumn("photo_quality", -1); result.Error != nil {
-				// Failed to flag all hidden photos.
-				log.Warnf("index: failed to flag %d photos as hidden", len(hidden)-affected)
-				return fmt.Errorf("%s while flagging hidden photos", result.Error)
-			} else if result.RowsAffected > 0 {
-				affected += int(result.RowsAffected)
-			} else {
-				affected += len(ids)
-			}
-		}
+		affected = int(result.RowsAffected)
 	}
 
 	// Log number of affected rows, if any.

@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestPhotoByID(t *testing.T) {
@@ -115,8 +116,90 @@ func TestFixPrimaries(t *testing.T) {
 }
 
 func TestFlagHiddenPhotos(t *testing.T) {
-	// Set photo quality scores to -1 if files are missing.
-	if err := FlagHiddenPhotos(); err != nil {
-		t.Fatal(err)
-	}
+	t.Run("Success", func(t *testing.T) {
+		// Set photo quality scores to -1 if files are missing.
+		if err := FlagHiddenPhotos(); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("SuccessWith1000", func(t *testing.T) {
+		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+		// Load 1000 photos that need to be hidden
+		for i := 0; i < 1000; i++ {
+			newPhoto := entity.Photo{ //JPG, Geo from metadata, indexed
+				//ID:               1000049,
+				PhotoUID:         rnd.GenerateUID(entity.PhotoUID),
+				TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
+				TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
+				TakenSrc:         entity.SrcMeta,
+				PhotoType:        "image",
+				TypeSrc:          "",
+				PhotoTitle:       "desk\"",
+				TitleSrc:         entity.SrcManual,
+				PhotoCaption:     "",
+				CaptionSrc:       "",
+				PhotoPath:        "2000\"/02\"",
+				PhotoName:        "SuccessWith1000",
+				OriginalName:     "",
+				PhotoFavorite:    false,
+				PhotoPrivate:     false,
+				PhotoScan:        false,
+				PhotoPanorama:    false,
+				TimeZone:         "America/Mexico_City",
+				PlaceSrc:         "meta",
+				CellAccuracy:     0,
+				PhotoAltitude:    3,
+				PhotoLat:         48.519234,
+				PhotoLng:         9.057997,
+				PhotoCountry:     entity.CellFixtures.Pointer("caravan park").Place.CountryCode(),
+				PhotoYear:        2020,
+				PhotoMonth:       11,
+				PhotoDay:         11,
+				PhotoIso:         0,
+				PhotoExposure:    "",
+				PhotoFocalLength: 0,
+				PhotoFNumber:     0,
+				PhotoQuality:     5,
+				PhotoResolution:  0,
+				Camera:           entity.CameraFixtures.Pointer("canon-eos-6d"),
+				CameraID:         entity.CameraFixtures.Pointer("canon-eos-6d").ID,
+				CameraSerial:     "",
+				CameraSrc:        "",
+				Lens:             entity.LensFixtures.Pointer("lens-f-380"),
+				LensID:           entity.LensFixtures.Pointer("lens-f-380").ID,
+				Keywords:         []entity.Keyword{},
+				Albums:           []entity.Album{},
+				Files:            []entity.File{},
+				Labels:           []entity.PhotoLabel{},
+				CreatedAt:        time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+				UpdatedAt:        time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+				EditedAt:         nil,
+				CheckedAt:        &checkedTime,
+				DeletedAt:        nil,
+				PhotoColor:       14,
+				PhotoStack:       0,
+				PhotoFaces:       0,
+			}
+			if err := Db().Create(&newPhoto).Error; err != nil {
+				t.Fatal(err)
+			}
+		}
+		// Set photo quality scores to -1 if files are missing.
+		if err := FlagHiddenPhotos(); err != nil {
+			t.Fatal(err)
+		}
+
+		var actual int64
+		var expected int64 = 1000
+		if err := Db().Model(&entity.Photo{}).Where("photo_name = ? AND photo_quality = ?", "SuccessWith1000", -1).Count(&actual).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, expected, actual)
+
+		if err := UnscopedDb().Where("photo_name = ? AND photo_quality = ?", "SuccessWith1000", -1).Delete(&entity.Photo{}).Error; err != nil {
+			t.Fatal(err)
+		}
+	})
 }
