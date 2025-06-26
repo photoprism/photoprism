@@ -9,17 +9,26 @@
     @after-leave="onDialogClosed"
   >
     <v-card :tile="$vuetify.display.mdAndDown">
-      <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="px-4">
-        <v-btn v-if="$vuetify.display.mdAndDown" icon @click.stop="close">
+      <v-toolbar
+        v-if="$vuetify.display.mdAndDown"
+        flat
+        color="navigation"
+        class="mb-4"
+        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+      >
+        <v-btn icon @click.stop="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-icon v-else color="primary" class="mr-3">mdi-map-marker</v-icon>
         <v-toolbar-title>
           {{ $gettext("Set Location") }}
         </v-toolbar-title>
       </v-toolbar>
+      <v-card-title v-else class="d-flex justify-start align-center ga-3">
+        <v-icon size="28" color="primary">mdi-map-marker</v-icon>
+        <h6 class="text-h6">{{ $gettext("Set Location") }}</h6>
+      </v-card-title>
       <v-card-text class="pa-0">
-        <div class="d-flex flex-column flex-md-row py-4 px-2">
+        <div class="d-flex flex-column flex-md-row">
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
             <div ref="map" class="p-map" style="height: 50vh; min-height: 300px; width: 100%; border-radius: 4px"></div>
           </div>
@@ -100,26 +109,17 @@
                 ></v-text-field>
               </div>
 
-              <div
-                class="d-flex flex-column ga-3 pa-4"
-                style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px"
-              >
+              <div class="d-flex flex-column ga-3 pa-4 border rounded">
                 <div class="text-body-2">
                   {{ $gettext("Click on the map to set a location. Drag the marker for precise positioning.") }}
                 </div>
                 <div class="d-flex ga-2">
-                  <v-btn
-                    variant="flat"
-                    color="button"
-                    class="action-cancel"
-                    style="min-width: 120px"
-                    @click.stop="close"
-                  >
+                  <v-btn variant="flat" color="button" class="action-cancel" min-width="120" @click.stop="close">
                     {{ $gettext("Cancel") }}
                   </v-btn>
                   <v-btn
                     color="primary"
-                    style="min-width: 120px"
+                    min-width="120"
                     :disabled="!(currentLat !== null && currentLng !== null)"
                     @click="confirm"
                   >
