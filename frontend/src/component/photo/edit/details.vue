@@ -710,7 +710,7 @@ export default {
       const lng = this.view.model.Lng;
 
       if (lat !== null && lng !== null && !(lat === 0 && lng === 0) && !isNaN(lat) && !isNaN(lng)) {
-        this.coordinateInput = `${parseFloat(lat).toFixed(6)}, ${parseFloat(lng).toFixed(6)}`;
+        this.coordinateInput = `${parseFloat(lat)}, ${parseFloat(lng)}`;
       } else {
         this.coordinateInput = "";
       }
