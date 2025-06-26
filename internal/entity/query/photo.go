@@ -185,7 +185,7 @@ func FlagHiddenPhotos() (err error) {
 
 	ids := Db().Select("id").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
-		Table(entity.Photo{}.TableName())
+		Table(entity.Photo{}.TableName()).SubQuery()
 	if result := UnscopedDb().Table(entity.Photo{}.TableName()).
 		Where("id IN (?) AND photo_quality > -1", ids).
 		UpdateColumn("photo_quality", -1); result.Error != nil {
