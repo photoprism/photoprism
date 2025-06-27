@@ -187,45 +187,24 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="coordinateInput"
+              <p-coordinate-input
+                :latitude="view.model.Lat"
+                :longitude="view.model.Lng"
                 :disabled="disabled"
                 hide-details
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
                 :label="$gettext('Coordinates')"
                 placeholder="e.g., 52.5208, 13.4049"
                 density="comfortable"
                 validate-on="input"
-                :rules="[() => !coordinateInput || isValidCoordinateInput]"
+                :show-map-button="!placesDisabled"
+                :map-button-title="$gettext('Choose Location')"
+                :map-button-disabled="placesDisabled"
                 class="input-coordinates"
-                @keydown.enter="applyCoordinates"
-                @update:model-value="onCoordinateInputChange"
-                @paste="pastePosition"
-              >
-                <template #prepend-inner>
-                  <v-icon
-                    v-if="!placesDisabled"
-                    variant="plain"
-                    icon="mdi-crosshairs-gps"
-                    :title="$gettext('Choose Location')"
-                    :disabled="placesDisabled"
-                    class="action-map"
-                    @click.stop="openMapDialog"
-                  >
-                  </v-icon>
-                </template>
-                <template #append-inner>
-                  <v-icon
-                    v-if="coordinateInput"
-                    variant="plain"
-                    icon="mdi-close-circle"
-                    class="action-clear"
-                    @click.stop="clearLocation"
-                  ></v-icon>
-                </template>
-              </v-text-field>
+                @update:latitude="updateLatitude"
+                @update:longitude="updateLongitude"
+                @coordinates-changed="onCoordinatesChanged"
+                @open-map="openMapDialog"
+              ></p-coordinate-input>
             </v-col>
             <v-col cols="12" md="6" class="p-camera-select">
               <v-select
@@ -454,11 +433,13 @@ import Thumb from "model/thumb";
 import * as options from "options/options";
 import { rules } from "common/form";
 import PLocationDialog from "component/location/dialog.vue";
+import PCoordinateInput from "component/location/coordinate-input.vue";
 
 export default {
   name: "PTabPhotoDetails",
   components: {
     PLocationDialog,
+    PCoordinateInput,
   },
   props: {
     uid: {
@@ -488,7 +469,6 @@ export default {
       rtl: this.$isRtl,
       mapDialogVisible: false,
       placesDisabled: !this.$config.feature("places"),
-      coordinateInput: "",
     };
   },
   computed: {
@@ -501,32 +481,14 @@ export default {
     inReview() {
       return this.featReview && this.view.model.Quality < 3;
     },
-    isValidCoordinateInput() {
-      if (!this.coordinateInput) return false;
-
-      const parts = this.coordinateInput.split(",").map((part) => part.trim());
-      if (parts.length !== 2) return false;
-
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-
-      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
-    },
   },
   watch: {
-    "uid"() {
+    uid() {
       this.syncTime();
-    },
-    "view.model.Lat"() {
-      this.updateCoordinateInput();
-    },
-    "view.model.Lng"() {
-      this.updateCoordinateInput();
     },
   },
   created() {
     this.syncTime();
-    this.updateCoordinateInput();
   },
   methods: {
     setDay(v) {
@@ -575,36 +537,7 @@ export default {
       const taken = this.view.model.getDateTime();
       this.time = taken.toFormat("HH:mm:ss");
     },
-    pastePosition(event) {
-      // Autofill the lat and lng fields if the text in the clipboard contains two float values.
-      const clipboard = event.clipboardData ? event.clipboardData : window.clipboardData;
 
-      if (!clipboard) {
-        return;
-      }
-
-      // Get values from browser clipboard.
-      const text = clipboard.getData("text");
-
-      // Trim spaces before splitting by whitespace and/or commas.
-      const val = text.trim().split(/[ ,]+/);
-
-      // Two values found?
-      if (val.length >= 2) {
-        // Parse values.
-        const lat = parseFloat(val[0]);
-        const lng = parseFloat(val[1]);
-
-        // Lat and long must be valid floating point numbers.
-        if (!isNaN(lat) && lat >= -90 && lat <= 90 && !isNaN(lng) && lng >= -180 && lng <= 180) {
-          // Update view.model values.
-          this.view.model.Lat = lat;
-          this.view.model.Lng = lng;
-          // Prevent default action.
-          event.preventDefault();
-        }
-      }
-    },
     updateModel() {
       if (!this.view?.model.hasId()) {
         return;
@@ -669,50 +602,24 @@ export default {
     },
     updateLocation(data) {
       if (data && data.latitude !== undefined && data.longitude !== undefined) {
-        this.view.model.Lat = data.latitude;
-        this.view.model.Lng = data.longitude;
-        this.view.model.PlaceSrc = "manual";
-
-        // Clear country and altitude when coordinates are cleared (0,0)
-        if (data.latitude === 0 && data.longitude === 0) {
-          this.view.model.Country = "zz"; // "Unknown" country code
-          this.view.model.Altitude = "0";
-        }
+        this.updateLatitude(data.latitude);
+        this.updateLongitude(data.longitude);
+        this.onCoordinatesChanged(data);
       }
     },
-    onCoordinateInputChange(value) {
-      this.coordinateInput = value;
-
-      if (this.isValidCoordinateInput) {
-        this.applyCoordinates();
-      }
-    },
-    applyCoordinates() {
-      if (!this.isValidCoordinateInput) return;
-
-      const parts = this.coordinateInput.split(",").map((part) => part.trim());
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-
-      // Update underlying model
+    updateLatitude(lat) {
       this.view.model.Lat = lat;
+      this.view.model.PlaceSrc = "manual";
+    },
+    updateLongitude(lng) {
       this.view.model.Lng = lng;
       this.view.model.PlaceSrc = "manual";
     },
-    clearLocation() {
-      this.view.model.Lat = 0;
-      this.view.model.Lng = 0;
-      this.view.model.PlaceSrc = "manual";
-      this.updateCoordinateInput();
-    },
-    updateCoordinateInput() {
-      const lat = this.view.model.Lat;
-      const lng = this.view.model.Lng;
-
-      if (lat !== null && lng !== null && !(lat === 0 && lng === 0) && !isNaN(lat) && !isNaN(lng)) {
-        this.coordinateInput = `${parseFloat(lat)}, ${parseFloat(lng)}`;
-      } else {
-        this.coordinateInput = "";
+    onCoordinatesChanged(data) {
+      // Clear country and altitude when coordinates are cleared (0,0)
+      if (data.latitude === 0 && data.longitude === 0) {
+        this.view.model.Country = "zz"; // "Unknown" country code
+        this.view.model.Altitude = "0";
       }
     },
   },

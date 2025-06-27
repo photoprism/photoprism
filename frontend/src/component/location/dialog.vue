@@ -27,7 +27,7 @@
         <v-icon size="28" color="primary">mdi-map-marker</v-icon>
         <h6 class="text-h6">{{ $gettext("Set Location") }}</h6>
       </v-card-title>
-      <v-card-text class="pa-0">
+      <v-card-text class="pt-4">
         <div class="d-flex flex-column flex-md-row">
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
             <div ref="map" class="p-map" style="height: 50vh; min-height: 300px; width: 100%; border-radius: 4px"></div>
@@ -96,17 +96,19 @@
               </div>
 
               <div>
-                <v-text-field
-                  v-model="coordinateInput"
-                  prepend-inner-icon="mdi-crosshairs-gps"
-                  :append-inner-icon="locationWasCleared ? 'mdi-undo' : coordinateInput ? 'mdi-close-circle' : ''"
+                <p-coordinate-input
+                  :latitude="currentLat"
+                  :longitude="currentLng"
                   density="comfortable"
                   placeholder="e.g., 52.5208, 13.4049"
-                  persistent-hint
-                  @keydown.enter="applyCoordinates"
-                  @update:model-value="onCoordinateInputChange"
-                  @click:append-inner="locationWasCleared ? undoClearLocation() : clearLocation()"
-                ></v-text-field>
+                  :enable-undo="true"
+                  :auto-apply="true"
+                  :label="$gettext('Coordinates')"
+                  @update:latitude="updateLatitude"
+                  @update:longitude="updateLongitude"
+                  @coordinates-changed="onCoordinatesChanged"
+                  @coordinates-cleared="onCoordinatesCleared"
+                ></p-coordinate-input>
               </div>
 
               <div class="d-flex flex-column ga-3 pa-4 border rounded">
@@ -137,9 +139,13 @@
 
 <script>
 import maplibregl from "common/maplibregl";
+import PCoordinateInput from "component/location/coordinate-input.vue";
 
 export default {
   name: "PLocationDialog",
+  components: {
+    PCoordinateInput,
+  },
   props: {
     value: {
       type: Boolean,
@@ -172,12 +178,7 @@ export default {
       loaded: false,
       currentLat: this.latitude,
       currentLng: this.longitude,
-      coordinateInput: "",
       locationInfo: null,
-      locationWasCleared: false,
-      latBeforeClear: null,
-      lngBeforeClear: null,
-      coordinateInputTimeout: null,
       searchQuery: "",
       searchResults: [],
       searchLoading: false,
@@ -186,17 +187,6 @@ export default {
     };
   },
   computed: {
-    isValidCoordinateInput() {
-      if (!this.coordinateInput) return false;
-
-      const parts = this.coordinateInput.split(",").map((part) => part.trim());
-      if (parts.length !== 2) return false;
-
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-
-      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
-    },
     simplifiedLocationDisplay() {
       if (!this.locationInfo) return "";
 
@@ -217,7 +207,6 @@ export default {
       if (val) {
         this.currentLat = this.latitude;
         this.currentLng = this.longitude;
-        this.locationWasCleared = false;
         this.$nextTick(() => {
           setTimeout(() => {
             this.initMap();
@@ -242,12 +231,6 @@ export default {
       if (this.map && this.loaded) {
         this.updatePosition(this.currentLat, val);
       }
-    },
-    currentLat() {
-      this.updateCoordinateInput();
-    },
-    currentLng() {
-      this.updateCoordinateInput();
     },
   },
   mounted() {
@@ -289,16 +272,6 @@ export default {
     onDialogClosed() {
       this.cleanupMap();
       this.locationInfo = null;
-      this.coordinateInput = "";
-      this.locationWasCleared = false;
-      this.latBeforeClear = null;
-      this.lngBeforeClear = null;
-
-      // Clear any pending timeout
-      if (this.coordinateInputTimeout) {
-        clearTimeout(this.coordinateInputTimeout);
-        this.coordinateInputTimeout = null;
-      }
 
       // Clear search state
       this.searchQuery = "";
@@ -321,7 +294,6 @@ export default {
         } else {
           this.options.zoom = 12;
           this.options.center = [this.currentLng, this.currentLat];
-          this.updateCoordinateInput();
         }
 
         this.map = new maplibregl.Map(this.options);
@@ -370,7 +342,6 @@ export default {
           this.currentLng = e.lngLat.lng;
           this.updatePosition(e.lngLat.lat, e.lngLat.lng);
           this.fetchLocationInfo(e.lngLat.lat, e.lngLat.lng);
-          this.locationWasCleared = false;
         });
       } catch (error) {
         console.error("map: initialization failed", error);
@@ -416,32 +387,38 @@ export default {
             this.currentLat = lngLat.lat;
             this.currentLng = lngLat.lng;
             this.fetchLocationInfo(lngLat.lat, lngLat.lng);
-            this.locationWasCleared = false;
           });
         }
       }
     },
-    formatCoordinates(lat, lng) {
-      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    updateLatitude(lat) {
+      this.currentLat = lat;
+      this.updatePosition(lat, this.currentLng);
     },
-    updateCoordinateInput() {
-      if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
-        this.coordinateInput = this.formatCoordinates(this.currentLat, this.currentLng);
-      } else {
-        this.coordinateInput = "";
+    updateLongitude(lng) {
+      this.currentLng = lng;
+      this.updatePosition(this.currentLat, lng);
+    },
+    onCoordinatesChanged(data) {
+      if (data.latitude !== 0 || data.longitude !== 0) {
+        this.fetchLocationInfo(data.latitude, data.longitude);
       }
     },
-    applyCoordinates() {
-      if (!this.isValidCoordinateInput) return;
-      const parts = this.coordinateInput.split(",").map((part) => part.trim());
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-      this.currentLat = lat;
-      this.currentLng = lng;
-      this.updatePosition(lat, lng);
-      this.fetchLocationInfo(lat, lng);
-      this.locationWasCleared = false;
+    onCoordinatesCleared() {
+      this.locationInfo = null;
+      if (this.marker) {
+        this.marker.remove();
+        this.marker = null;
+      }
+      if (this.map) {
+        this.map.flyTo({
+          center: [0, 20],
+          zoom: 2,
+          essential: true,
+        });
+      }
     },
+
     fetchLocationInfo(lat, lng) {
       this.$api
         .get(`places/reverse?lat=${lat}&lng=${lng}`)
@@ -457,50 +434,7 @@ export default {
           this.locationInfo = null;
         });
     },
-    clearLocation() {
-      this.latBeforeClear = this.currentLat;
-      this.lngBeforeClear = this.currentLng;
-      this.currentLat = 0;
-      this.currentLng = 0;
-      this.coordinateInput = "";
-      if (this.marker) {
-        this.marker.remove();
-        this.marker = null;
-      }
-      this.locationInfo = null;
-      if (this.map) {
-        this.map.flyTo({
-          center: [0, 20],
-          zoom: 2,
-          essential: true,
-        });
-      }
-      this.locationWasCleared = true;
-    },
-    undoClearLocation() {
-      if (this.latBeforeClear !== null && this.lngBeforeClear !== null) {
-        this.currentLat = this.latBeforeClear;
-        this.currentLng = this.lngBeforeClear;
-        this.updatePosition(this.currentLat, this.currentLng);
-        this.fetchLocationInfo(this.currentLat, this.currentLng);
-      }
-      this.locationWasCleared = false;
-      this.latBeforeClear = null;
-      this.lngBeforeClear = null;
-    },
-    onCoordinateInputChange() {
-      this.locationWasCleared = false;
 
-      if (this.coordinateInputTimeout) {
-        clearTimeout(this.coordinateInputTimeout);
-      }
-
-      this.coordinateInputTimeout = setTimeout(() => {
-        if (this.isValidCoordinateInput) {
-          this.applyCoordinates();
-        }
-      }, 1000); // 1 second delay after user stops typing
-    },
     onSearchQueryChange(query) {
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout);
@@ -547,7 +481,6 @@ export default {
         this.currentLng = place.lng;
         this.updatePosition(place.lat, place.lng);
         this.fetchLocationInfo(place.lat, place.lng);
-        this.locationWasCleared = false;
 
         // Clear search after selection
         this.showSearchMenu = false;
