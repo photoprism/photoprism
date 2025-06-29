@@ -14,6 +14,9 @@ var UnwantedStrings = map[string]bool{
 	"Created by Imlib":         true, // Apps
 	"iClarified":               true,
 	"OLYMPUS DIGITAL CAMERA":   true, // Olympus
+	"MEDION DIGITAL CAMERA":    true, // Medion
+	"My beautiful picture":     true,
+	"HELLOMOTO":                true, // Motorola
 	"SAMSUNG":                  true, // Samsung
 	"SAMSUNG CAMERA PICTURES":  true,
 	"<Digimax i5, Samsung #1>": true,
@@ -45,11 +48,16 @@ var UnwantedStrings = map[string]bool{
 	"cof":                      true,
 	"qrf":                      true,
 	"fshbty":                   true,
+	"_cuva":                    true,
+	"smart":                    true,
+	"hdr":                      true,
+	"bsh":                      true,
 	"binary comment":           true, // Other
 	"default":                  true,
 	"Exif_JPEG_PICTURE":        true,
 	"DVC 10.1 HDMI":            true,
 	"charset=Ascii":            true,
+	"Digital Camera":           true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z\\d_\\-]+")
