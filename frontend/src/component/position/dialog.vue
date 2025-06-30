@@ -56,7 +56,6 @@
                 item-value="id"
                 return-object
                 auto-select-first
-                clear-on-select
                 clearable
                 autocomplete="off"
                 no-filter
@@ -495,18 +494,28 @@ export default {
         this.currentLng = place.lng;
         this.updatePosition(place.lat, place.lng);
         this.fetchLocationInfo(place.lat, place.lng);
-        this.clearSearch();
-        this.searchLoading = false;
-        if (this.searchTimeout) {
-          clearTimeout(this.searchTimeout);
-          this.searchTimeout = null;
-        }
+
+        this.$nextTick(() => {
+          this.searchQuery = "";
+          this.searchResults = [];
+          this.selectedPlace = null;
+          this.searchLoading = false;
+          if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+          }
+        });
       }
     },
     clearSearch() {
       this.searchQuery = "";
       this.searchResults = [];
       this.selectedPlace = null;
+      this.searchLoading = false;
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = null;
+      }
     },
   },
 };
