@@ -42,46 +42,41 @@
             }"
           >
             <div>
-              <v-menu
-                v-model="showSearchMenu"
-                :close-on-content-click="false"
-                location="bottom"
-                origin="top"
-                max-height="300"
+              <v-autocomplete
+                v-model="selectedPlace"
+                :items="searchResults"
+                :loading="searchLoading"
+                :search="searchQuery"
+                prepend-inner-icon="mdi-magnify"
+                density="compact"
+                variant="outlined"
+                :placeholder="$gettext(`Search`)"
+                item-title="formatted"
+                item-value="id"
+                return-object
+                clearable
+                autocomplete="off"
+                no-filter
+                :menu-props="{ maxHeight: 300 }"
+                @update:search="onSearchQueryChange"
+                @update:model-value="onPlaceSelected"
+                @click:clear="clearSearch"
               >
-                <template #activator="{ props }">
-                  <v-text-field
-                    v-model="searchQuery"
-                    prepend-inner-icon="mdi-magnify"
-                    :append-inner-icon="searchLoading ? 'mdi-loading mdi-spin' : searchQuery ? 'mdi-close-circle' : ''"
-                    density="compact"
-                    variant="outlined"
-                    :placeholder="$gettext(`Search`)"
-                    v-bind="props"
-                    @update:model-value="onSearchQueryChange"
-                    @click:append-inner="clearSearch"
-                    @focus="onSearchFocus"
-                    @blur="onSearchBlur"
-                  ></v-text-field>
-                </template>
-                <v-list v-if="searchResults.length > 0" density="compact">
-                  <v-list-item
-                    v-for="place in searchResults"
-                    :key="place.id"
-                    :title="place.formatted"
-                    @click="onPlaceSelected(place)"
-                  >
+                <template #item="{ props }">
+                  <v-list-item v-bind="props" density="compact">
                     <template #prepend>
                       <v-icon>mdi-map-marker</v-icon>
                     </template>
                   </v-list-item>
-                </v-list>
-                <v-list v-else-if="searchQuery && searchQuery.length >= 2 && !searchLoading">
-                  <v-list-item>
+                </template>
+                <template #no-data>
+                  <v-list-item
+                    v-if="searchQuery && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0"
+                  >
                     <v-list-item-title>{{ $gettext("No results found") }}</v-list-item-title>
                   </v-list-item>
-                </v-list>
-              </v-menu>
+                </template>
+              </v-autocomplete>
             </div>
             <!-- div v-if="locationInfo">
               <div class="text-subtitle-2 mb-2">{{ $gettext("Location Details") }}</div>
@@ -176,7 +171,7 @@ export default {
       searchResults: [],
       searchLoading: false,
       searchTimeout: null,
-      showSearchMenu: false,
+      selectedPlace: null,
     };
   },
   computed: {
@@ -270,6 +265,7 @@ export default {
       this.searchQuery = "";
       this.searchResults = [];
       this.searchLoading = false;
+      this.selectedPlace = null;
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout);
         this.searchTimeout = null;
@@ -362,6 +358,7 @@ export default {
           center: this.position,
           zoom: 12,
           essential: true,
+          duration: 900,
         });
 
         if (this.marker) {
@@ -429,22 +426,30 @@ export default {
     },
 
     onSearchQueryChange(query) {
+      this.searchQuery = query;
+
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout);
+        this.searchTimeout = null;
       }
 
       if (!query || query.length < 2) {
         this.searchResults = [];
-        this.showSearchMenu = false;
+        this.searchLoading = false;
         return;
       }
 
+      this.searchLoading = true;
       this.searchTimeout = setTimeout(() => {
         this.performPlaceSearch(query);
       }, 300); // 300ms delay after user stops typing
     },
     async performPlaceSearch(query) {
-      this.searchLoading = true;
+      if (!query || query.length < 2) {
+        this.searchLoading = false;
+        return;
+      }
+
       try {
         const response = await this.$api.get("places/search", {
           params: {
@@ -454,18 +459,22 @@ export default {
           },
         });
 
-        if (response.data && response.data.results) {
-          this.searchResults = response.data.results;
-          this.showSearchMenu = this.searchResults.length > 0;
-        } else {
-          this.searchResults = [];
-          this.showSearchMenu = false;
+        if (this.searchQuery === query) {
+          if (response.data && response.data.results) {
+            this.searchResults = response.data.results;
+          } else {
+            this.searchResults = [];
+          }
         }
       } catch (error) {
         console.error("Place search error:", error);
-        this.searchResults = [];
+        if (this.searchQuery === query) {
+          this.searchResults = [];
+        }
       } finally {
-        this.searchLoading = false;
+        if (this.searchQuery === query) {
+          this.searchLoading = false;
+        }
       }
     },
     onPlaceSelected(place) {
@@ -475,26 +484,19 @@ export default {
         this.updatePosition(place.lat, place.lng);
         this.fetchLocationInfo(place.lat, place.lng);
 
-        // Clear search after selection
-        this.showSearchMenu = false;
         this.searchQuery = "";
+        this.searchResults = [];
+        this.searchLoading = false;
+        if (this.searchTimeout) {
+          clearTimeout(this.searchTimeout);
+          this.searchTimeout = null;
+        }
       }
     },
     clearSearch() {
       this.searchQuery = "";
       this.searchResults = [];
-      this.showSearchMenu = false;
-    },
-    onSearchFocus() {
-      if (this.searchResults.length > 0) {
-        this.showSearchMenu = true;
-      }
-    },
-    onSearchBlur() {
-      // Delay hiding menu to allow for selection
-      setTimeout(() => {
-        this.showSearchMenu = false;
-      }, 200);
+      this.selectedPlace = null;
     },
   },
 };
