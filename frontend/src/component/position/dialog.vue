@@ -112,7 +112,8 @@
               <v-btn
                 color="highlight"
                 min-width="120"
-                :disabled="!(currentLat !== null && currentLng !== null)"
+                :disabled="!(currentLat !== null && currentLng !== null) || locationInfoLoading"
+                :loading="locationInfoLoading"
                 @click="confirm"
               >
                 {{ $gettext("Apply") }}
@@ -167,6 +168,7 @@ export default {
       currentLat: this.latitude,
       currentLng: this.longitude,
       locationInfo: null,
+      locationInfoLoading: false,
       searchQuery: "",
       searchResults: [],
       searchLoading: false,
@@ -260,6 +262,7 @@ export default {
     onDialogClosed() {
       this.cleanupMap();
       this.locationInfo = null;
+      this.locationInfoLoading = false;
 
       // Clear search state
       this.searchQuery = "";
@@ -396,6 +399,7 @@ export default {
     },
     onCoordinatesCleared() {
       this.locationInfo = null;
+      this.locationInfoLoading = false;
       if (this.marker) {
         this.marker.remove();
         this.marker = null;
@@ -410,6 +414,7 @@ export default {
     },
 
     fetchLocationInfo(lat, lng) {
+      this.locationInfoLoading = true;
       this.$api
         .get(`places/reverse?lat=${lat}&lng=${lng}`)
         .then((response) => {
@@ -422,6 +427,9 @@ export default {
         .catch((error) => {
           console.error("Reverse geocoding error:", error);
           this.locationInfo = null;
+        })
+        .finally(() => {
+          this.locationInfoLoading = false;
         });
     },
 
