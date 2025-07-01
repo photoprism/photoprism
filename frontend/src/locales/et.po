@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-06-24 19:37+0000\n"
+"PO-Revision-Date: 2025-07-01 15:30+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -225,7 +225,7 @@ msgstr "Lisatud"
 #: src/component/location/dialog.vue:72 src/component/location/dialog.vue:94
 #: src/component/photo/edit/details.vue:247
 msgid "Adjust Location"
-msgstr ""
+msgstr "Kohandage asukohta"
 
 #: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
@@ -285,7 +285,7 @@ msgstr "Album lisatud"
 
 #: src/page/album/photos.vue:584
 msgid "Album deleted"
-msgstr ""
+msgstr "Album kustutatud"
 
 #: src/app/routes.js:184 src/component/album/toolbar.vue:55
 #: src/component/navigation.vue:607 src/component/navigation.vue:1922
@@ -2053,7 +2053,7 @@ msgstr "Hiljuti muudetud pilte ei ole"
 
 #: src/component/location/dialog.vue:159
 msgid "No results"
-msgstr ""
+msgstr "Tulemusi ei ole"
 
 #: src/component/navigation.vue:1686
 msgid "No server connection"
@@ -3426,7 +3426,7 @@ msgstr "Võid alla laadida ainult ühe sildi"
 
 #: src/component/location/dialog.vue:171
 msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr ""
+msgstr "Saate otsida asukohta või liigutada markerit kaardil, et muuta asukohta:"
 
 #: src/component/upload/dialog.vue:205
 msgid "You can upload up to %{n} files for test purposes."

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-06-24 19:37+0000\n"
+"PO-Revision-Date: 2025-07-01 15:30+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
@@ -228,7 +228,7 @@ msgstr "Adicionado"
 #: src/component/location/dialog.vue:72 src/component/location/dialog.vue:94
 #: src/component/photo/edit/details.vue:247
 msgid "Adjust Location"
-msgstr ""
+msgstr "Ajustar a localização"
 
 #: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
@@ -288,7 +288,7 @@ msgstr "Álbum criado"
 
 #: src/page/album/photos.vue:584
 msgid "Album deleted"
-msgstr ""
+msgstr "Álbum eliminado"
 
 #: src/app/routes.js:184 src/component/album/toolbar.vue:55
 #: src/component/navigation.vue:607 src/component/navigation.vue:1922
@@ -3427,7 +3427,7 @@ msgstr "Pode descarregar apenas uma etiqueta"
 
 #: src/component/location/dialog.vue:171
 msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr ""
+msgstr "Podes procurar uma localização ou mover o marcador no mapa para alterar a posição:"
 
 #: src/component/upload/dialog.vue:205
 msgid "You can upload up to %{n} files for test purposes."

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-06-24 19:37+0000\n"
+"PO-Revision-Date: 2025-07-01 15:30+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -228,7 +228,7 @@ msgstr "जोड़ा गया"
 #: src/component/location/dialog.vue:72 src/component/location/dialog.vue:94
 #: src/component/photo/edit/details.vue:247
 msgid "Adjust Location"
-msgstr ""
+msgstr "स्थान समायोजित करें"
 
 #: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
@@ -288,7 +288,7 @@ msgstr "एल्बम बनाया गया"
 
 #: src/page/album/photos.vue:584
 msgid "Album deleted"
-msgstr ""
+msgstr "एल्बम हटा दिया गया"
 
 #: src/app/routes.js:184 src/component/album/toolbar.vue:55
 #: src/component/navigation.vue:607 src/component/navigation.vue:1922
@@ -3428,7 +3428,7 @@ msgstr "आप केवल एक लेबल डाउनलोड कर स
 
 #: src/component/location/dialog.vue:171
 msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr ""
+msgstr "आप किसी स्थान को खोज सकते हैं या स्थिति बदलने के लिए मानचित्र पर मार्कर को स्थानांतरित कर सकते हैं:"
 
 #: src/component/upload/dialog.vue:205
 msgid "You can upload up to %{n} files for test purposes."
