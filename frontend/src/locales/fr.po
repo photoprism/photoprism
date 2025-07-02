@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-01 15:30+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-07-02 09:56+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -3427,7 +3427,7 @@ msgstr "Vous ne pouvez télécharger qu'une seule étiquette"
 
 #: src/component/location/dialog.vue:171
 msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr "Tu peux rechercher un lieu ou déplacer le marqueur sur la carte pour changer de position :"
+msgstr "Vous pouvez rechercher un lieu ou déplacer le marqueur sur la carte pour changer de position :"
 
 #: src/component/upload/dialog.vue:205
 msgid "You can upload up to %{n} files for test purposes."
