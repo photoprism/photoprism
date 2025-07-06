@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-01 15:30+0000\n"
+"PO-Revision-Date: 2025-07-06 08:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -386,7 +386,7 @@ msgstr "애니메이션"
 
 #: src/component/navigation.vue:797
 msgid "Animations"
-msgstr ""
+msgstr "애니메이션"
 
 #: src/component/share/dialog.vue:207
 msgid "Any private photos and videos remain private and won't be shared."
