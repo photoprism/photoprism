@@ -94,7 +94,7 @@ export default {
         this.options.container = this.$refs.map;
 
         // Set center based on coordinates or default
-        if (!this.lat || !this.lng || (this.lat === 0 && this.lng === 0)) {
+        if (!(this.lat && this.lng && !(this.lat === 0 && this.lng === 0))) {
           this.options.zoom = 2;
           this.options.center = [0, 20];
         } else {
@@ -161,8 +161,8 @@ export default {
         return;
       }
 
-      // Skip invalid or empty coordinates (0,0)
-      if ((this.lat === 0 && this.lng === 0) || !this.lat || !this.lng) {
+      // Skip invalid or empty coordinates
+      if (!(this.lat && this.lng && !(this.lat === 0 && this.lng === 0))) {
         if (this.marker) {
           this.marker.remove();
           this.marker = null;

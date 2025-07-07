@@ -110,8 +110,8 @@
                 :enable-undo="true"
                 :auto-apply="true"
                 :label="locationLabel"
-                @update:lat="setLat"
-                @update:lng="setLng"
+                @update:lat="currentLat = $event"
+                @update:lng="currentLng = $event"
                 @changed="onLocationChanged"
                 @cleared="onLocationCleared"
               ></p-location-input>
@@ -192,10 +192,6 @@ export default {
         this.currentLng = this.latlng[1];
       }
     },
-    latlng(val) {
-      this.currentLat = val[0];
-      this.currentLng = val[1];
-    },
   },
   methods: {
     close() {
@@ -228,14 +224,8 @@ export default {
     onMapClicked(event) {
       this.setPositionAndFetchInfo(event.lat, event.lng);
     },
-    setLat(lat) {
-      this.currentLat = lat;
-    },
-    setLng(lng) {
-      this.currentLng = lng;
-    },
     onLocationChanged(data) {
-      if (data.lat !== 0 || data.lng !== 0) {
+      if (data.lat && data.lng && !(data.lat === 0 && data.lng === 0)) {
         this.fetchLocationInfo(data.lat, data.lng);
       }
     },
