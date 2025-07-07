@@ -27,7 +27,19 @@
       <v-card-text class="pb-3">
         <div class="d-flex flex-column flex-md-row ga-5">
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
-            <div ref="map" class="p-map"></div>
+            <p-map
+              ref="map"
+              :lat="currentLat"
+              :lng="currentLng"
+              :zoom="12"
+              :style="style"
+              :interactive="true"
+              :draggable="true"
+              :show-controls="true"
+              :clickable="true"
+              @marker-moved="onMarkerMoved"
+              @map-clicked="onMapClicked"
+            />
           </div>
 
           <div
@@ -128,14 +140,13 @@
 
 <script>
 import PLocationInput from "component/location/input.vue";
-import * as map from "common/map";
-
-let maplibregl = null;
+import PMap from "component/map.vue";
 
 export default {
   name: "PLocationDialog",
   components: {
     PLocationInput,
+    PMap,
   },
   props: {
     visible: {
@@ -154,18 +165,6 @@ export default {
   emits: ["update:lat", "update:lng", "close", "confirm"],
   data() {
     return {
-      map: null,
-      marker: null,
-      position: [0.0, 0.0],
-      options: {
-        container: null,
-        style: `https://cdn.photoprism.app/maps/${this.style}.json`,
-        glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
-        zoom: 12,
-        interactive: true,
-        attributionControl: false,
-      },
-      loaded: false,
       currentLat: this.lat,
       currentLng: this.lng,
       location: null,
@@ -191,17 +190,12 @@ export default {
       if (show) {
         this.currentLat = this.latlng[0];
         this.currentLng = this.latlng[1];
-        this.setPosition(this.currentLat, this.currentLng);
       }
     },
     latlng(val) {
       this.currentLat = val[0];
       this.currentLng = val[1];
-      this.setPosition(this.currentLat, this.currentLng);
     },
-  },
-  beforeUnmount() {
-    this.afterLeave();
   },
   methods: {
     close() {
@@ -218,140 +212,27 @@ export default {
         });
       }
     },
-    removeMap() {
-      if (this.map) {
-        this.map.remove();
-        this.map = null;
-        this.marker = null;
-        this.loaded = false;
+    afterEnter() {
+      if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
+        this.fetchLocationInfo(this.currentLat, this.currentLng);
       }
     },
-    afterEnter() {
-      map.load().then((m) => {
-        maplibregl = m;
-        this.initMap();
-      });
-    },
     afterLeave() {
-      this.removeMap();
       this.location = null;
       this.locationLoading = false;
       this.resetSearchState();
     },
-    initMap() {
-      if (this.map || !this.$refs.map) {
-        return;
-      }
-
-      try {
-        this.options.container = this.$refs.map;
-
-        if (!this.currentLat || !this.currentLng || (this.currentLat === 0 && this.currentLng === 0)) {
-          this.options.zoom = 2;
-          this.options.center = [0, 20];
-        } else {
-          this.options.zoom = 12;
-          this.options.center = [this.currentLng, this.currentLat];
-        }
-
-        this.map = new maplibregl.Map(this.options);
-
-        this.map.on("styleimagemissing", (e) => {
-          const emptyImage = new ImageData(1, 1);
-          if (e && e.id) {
-            this.map.addImage(e.id, emptyImage);
-          }
-        });
-
-        this.map.addControl(
-          new maplibregl.NavigationControl({
-            showCompass: true,
-            showZoom: true,
-            visualizePitch: false,
-          }),
-          "top-right"
-        );
-        this.map.addControl(new maplibregl.ScaleControl({ maxWidth: 80, unit: "metric" }), "bottom-left");
-        this.map.addControl(
-          new maplibregl.GeolocateControl({
-            positionOptions: {
-              enableHighAccuracy: true,
-            },
-            trackUserLocation: true,
-          }),
-          "top-right"
-        );
-
-        this.map.on("error", (e) => {
-          console.error("map:", e);
-        });
-
-        this.map.on("load", () => {
-          this.loaded = true;
-          if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
-            this.setPosition(this.currentLat, this.currentLng);
-            this.fetchLocationInfo(this.currentLat, this.currentLng);
-          }
-          this.map.resize();
-        });
-
-        this.map.on("click", (e) => {
-          this.setPositionAndFetchInfo(e.lngLat.lat, e.lngLat.lng);
-        });
-      } catch (error) {
-        console.error("map: initialization failed", error);
-        this.loaded = false;
-      }
+    onMarkerMoved(event) {
+      this.setPositionAndFetchInfo(event.lat, event.lng);
     },
-    setPosition(lat, lng) {
-      if (!this.map || !this.loaded) {
-        return;
-      }
-
-      if (this.position[0] === lng && this.position[1] === lat && this.marker) {
-        return;
-      }
-
-      // Skip invalid or empty coordinates (0,0)
-      if ((lat === 0 && lng === 0) || !lat || !lng) {
-        if (this.marker) {
-          this.marker.remove();
-          this.marker = null;
-        }
-        return;
-      }
-      this.position = [lng, lat];
-
-      // Always center map when position changes
-      this.map.setCenter(this.position, {
-        zoom: 12,
-        animate: false,
-      });
-
-      if (this.marker) {
-        this.marker.setLngLat(this.position);
-      } else {
-        this.marker = new maplibregl.Marker({
-          color: "#3fb4df",
-          draggable: true,
-        })
-          .setLngLat(this.position)
-          .addTo(this.map);
-
-        // Update coordinates when marker is dragged
-        this.marker.on("dragend", () => {
-          const lngLat = this.marker.getLngLat();
-          this.setPositionAndFetchInfo(lngLat.lat, lngLat.lng);
-        });
-      }
+    onMapClicked(event) {
+      this.setPositionAndFetchInfo(event.lat, event.lng);
     },
     setLat(lat) {
       this.currentLat = lat;
-      this.setPosition(lat, this.currentLng);
     },
     setLng(lng) {
       this.currentLng = lng;
-      this.setPosition(this.currentLat, lng);
     },
     onLocationChanged(data) {
       if (data.lat !== 0 || data.lng !== 0) {
@@ -362,17 +243,10 @@ export default {
       this.location = null;
       this.locationLoading = false;
 
-      if (this.marker) {
-        this.marker.remove();
-        this.marker = null;
-      }
-
-      if (this.map) {
-        this.map.flyTo({
-          center: [0, 20],
-          zoom: 2,
-          essential: true,
-        });
+      // Use the map component's removeMarker method
+      if (this.$refs.map) {
+        this.$refs.map.removeMarker();
+        this.$refs.map.flyTo(20, 0, 2); // lat, lng, zoom
       }
     },
     clearSearchTimeout() {
@@ -391,7 +265,6 @@ export default {
     setPositionAndFetchInfo(lat, lng) {
       this.currentLat = lat;
       this.currentLng = lng;
-      this.setPosition(lat, lng);
       this.fetchLocationInfo(lat, lng);
     },
     fetchLocationInfo(lat, lng) {

@@ -26,7 +26,25 @@ export default {
       type: String,
       default: "embedded",
     },
+    // Interactive mode props
+    interactive: {
+      type: Boolean,
+      default: false,
+    },
+    draggable: {
+      type: Boolean,
+      default: false,
+    },
+    showControls: {
+      type: Boolean,
+      default: false,
+    },
+    clickable: {
+      type: Boolean,
+      default: false,
+    },
   },
+  emits: ["update:lat", "update:lng", "marker-moved", "map-clicked"],
   data() {
     return {
       map: null,
@@ -41,7 +59,7 @@ export default {
         style: `https://cdn.photoprism.app/maps/${this.style}.json`,
         glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
         zoom: this.zoom,
-        interactive: true,
+        interactive: this.interactive,
         attributionControl: false,
       },
       loaded: false,
@@ -74,20 +92,40 @@ export default {
 
       try {
         this.options.container = this.$refs.map;
+
+        // Set center based on coordinates or default
+        if (!this.lat || !this.lng || (this.lat === 0 && this.lng === 0)) {
+          this.options.zoom = 2;
+          this.options.center = [0, 20];
+        } else {
+          this.options.center = [this.lng, this.lat];
+        }
+
         this.map = new maplibregl.Map(this.options);
 
-        // Add controls.
-        /* this.map.addControl(
-          new maplibregl.NavigationControl({
-            showCompass: false,
-            showZoom: true,
-            visualizePitch: false,
-          }),
-          "top-right"
-        );
+        // Add controls if requested
+        if (this.showControls) {
+          this.map.addControl(
+            new maplibregl.NavigationControl({
+              showCompass: true,
+              showZoom: true,
+              visualizePitch: false,
+            }),
+            "top-right"
+          );
 
-        this.map.addControl(new maplibregl.ScaleControl({ maxWidth: 80, unit: "metric" }), "bottom-left");
-        */
+          this.map.addControl(new maplibregl.ScaleControl({ maxWidth: 80, unit: "metric" }), "bottom-left");
+
+          this.map.addControl(
+            new maplibregl.GeolocateControl({
+              positionOptions: {
+                enableHighAccuracy: true,
+              },
+              trackUserLocation: true,
+            }),
+            "top-right"
+          );
+        }
 
         this.map.on("error", (e) => {
           console.error("map:", e);
@@ -96,31 +134,90 @@ export default {
         this.map.on("load", () => {
           this.loaded = true;
           this.updatePosition();
+          this.map.resize();
         });
+
+        // Add click handler for interactive mode
+        if (this.clickable) {
+          this.map.on("click", (e) => {
+            const lat = e.lngLat.lat;
+            const lng = e.lngLat.lng;
+            this.$emit("map-clicked", { lat, lng });
+            this.$emit("update:lat", lat);
+            this.$emit("update:lng", lng);
+          });
+        }
       } catch (error) {
         console.error("map: initialization failed", error);
         this.loaded = false;
       }
     },
     updatePosition() {
-      if (this.map && this.loaded) {
-        if (this.position[0] === this.lng && this.position[1] === this.lat) {
-          return;
-        }
+      if (!this.map || !this.loaded) {
+        return;
+      }
 
-        this.position = [this.lng, this.lat];
-        this.map.setCenter(this.position);
+      if (this.position[0] === this.lng && this.position[1] === this.lat && this.marker) {
+        return;
+      }
 
+      // Skip invalid or empty coordinates (0,0)
+      if ((this.lat === 0 && this.lng === 0) || !this.lat || !this.lng) {
         if (this.marker) {
-          this.marker.setLngLat(this.position);
-        } else {
-          this.marker = new maplibregl.Marker({
-            color: "#3fb4df",
-            draggable: false,
-          })
-            .setLngLat(this.position)
-            .addTo(this.map);
+          this.marker.remove();
+          this.marker = null;
         }
+        return;
+      }
+
+      this.position = [this.lng, this.lat];
+
+      // Always center map when position changes in interactive mode
+      if (this.interactive) {
+        this.map.setCenter(this.position, {
+          zoom: this.zoom,
+          animate: false,
+        });
+      } else {
+        this.map.setCenter(this.position);
+      }
+
+      if (this.marker) {
+        this.marker.setLngLat(this.position);
+      } else {
+        this.marker = new maplibregl.Marker({
+          color: "#3fb4df",
+          draggable: this.draggable,
+        })
+          .setLngLat(this.position)
+          .addTo(this.map);
+
+        // Add drag event listener for draggable markers
+        if (this.draggable) {
+          this.marker.on("dragend", () => {
+            const lngLat = this.marker.getLngLat();
+            this.$emit("marker-moved", { lat: lngLat.lat, lng: lngLat.lng });
+            this.$emit("update:lat", lngLat.lat);
+            this.$emit("update:lng", lngLat.lng);
+          });
+        }
+      }
+    },
+    // Public method to remove marker
+    removeMarker() {
+      if (this.marker) {
+        this.marker.remove();
+        this.marker = null;
+      }
+    },
+    // Public method to fly to coordinates
+    flyTo(lat, lng, zoom = this.zoom) {
+      if (this.map) {
+        this.map.flyTo({
+          center: [lng, lat],
+          zoom: zoom,
+          essential: true,
+        });
       }
     },
   },
