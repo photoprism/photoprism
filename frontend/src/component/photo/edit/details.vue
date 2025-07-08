@@ -417,7 +417,7 @@
     </v-form>
     <p-location-dialog
       :visible="locationDialog"
-      :latlng="[view.model.Lat ? Number(view.model.Lat) : 0, view.model.Lng ? Number(view.model.Lng) : 0]"
+      :coordinates="[view.model.Lat ? Number(view.model.Lat) : 0, view.model.Lng ? Number(view.model.Lng) : 0]"
       @close="locationDialog = false"
       @confirm="confirmLocation"
     ></p-location-dialog>

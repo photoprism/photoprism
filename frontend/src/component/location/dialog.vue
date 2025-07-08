@@ -29,8 +29,7 @@
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
             <p-map
               ref="map"
-              :lat="currentLat"
-              :lng="currentLng"
+              :coordinates="[currentLat, currentLng]"
               :zoom="12"
               :style="style"
               :interactive="true"
@@ -153,7 +152,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    latlng: {
+    coordinates: {
       type: Array,
       default: () => [0, 0],
     },
@@ -162,11 +161,11 @@ export default {
       default: "embedded",
     },
   },
-  emits: ["update:lat", "update:lng", "close", "confirm"],
+  emits: ["update:coordinates", "close", "confirm"],
   data() {
     return {
-      currentLat: this.lat,
-      currentLng: this.lng,
+      currentLat: this.coordinates[0],
+      currentLng: this.coordinates[1],
       location: null,
       locationLoading: false,
       searchQuery: "",
@@ -188,8 +187,8 @@ export default {
   watch: {
     visible(show) {
       if (show) {
-        this.currentLat = this.latlng[0];
-        this.currentLng = this.latlng[1];
+        this.currentLat = this.coordinates[0];
+        this.currentLng = this.coordinates[1];
       }
     },
   },
@@ -199,8 +198,7 @@ export default {
     },
     confirm() {
       if (this.currentLat !== null && this.currentLng !== null) {
-        this.$emit("update:lat", this.currentLat);
-        this.$emit("update:lng", this.currentLng);
+        this.$emit("update:coordinates", [this.currentLat, this.currentLng]);
         this.$emit("confirm", {
           lat: this.currentLat,
           lng: this.currentLng,
