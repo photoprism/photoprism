@@ -29,7 +29,7 @@
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">
             <p-map
               ref="map"
-              :coordinates="[currentLat, currentLng]"
+              :latlng="[currentLat, currentLng]"
               :zoom="12"
               :style="style"
               :interactive="true"
@@ -103,14 +103,12 @@
 
             <div class="flex-grow-1">
               <p-location-input
-                :lat="currentLat"
-                :lng="currentLng"
+                :latlng="[currentLat, currentLng]"
                 density="comfortable"
                 :enable-undo="true"
                 :auto-apply="true"
                 :label="locationLabel"
-                @update:lat="currentLat = $event"
-                @update:lng="currentLng = $event"
+                @update:latlng="onLatLngUpdate"
                 @changed="onLocationChanged"
                 @cleared="onLocationCleared"
               ></p-location-input>
@@ -152,7 +150,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    coordinates: {
+    latlng: {
       type: Array,
       default: () => [0, 0],
     },
@@ -161,11 +159,11 @@ export default {
       default: "embedded",
     },
   },
-  emits: ["update:coordinates", "close", "confirm"],
+  emits: ["update:latlng", "close", "confirm"],
   data() {
     return {
-      currentLat: this.coordinates[0],
-      currentLng: this.coordinates[1],
+      currentLat: this.latlng[0],
+      currentLng: this.latlng[1],
       location: null,
       locationLoading: false,
       searchQuery: "",
@@ -187,8 +185,8 @@ export default {
   watch: {
     visible(show) {
       if (show) {
-        this.currentLat = this.coordinates[0];
-        this.currentLng = this.coordinates[1];
+        this.currentLat = this.latlng[0];
+        this.currentLng = this.latlng[1];
       }
     },
   },
@@ -198,7 +196,7 @@ export default {
     },
     confirm() {
       if (this.currentLat !== null && this.currentLng !== null) {
-        this.$emit("update:coordinates", [this.currentLat, this.currentLng]);
+        this.$emit("update:latlng", [this.currentLat, this.currentLng]);
         this.$emit("confirm", {
           lat: this.currentLat,
           lng: this.currentLng,
@@ -226,6 +224,10 @@ export default {
       if (data.lat && data.lng && !(data.lat === 0 && data.lng === 0)) {
         this.fetchLocationInfo(data.lat, data.lng);
       }
+    },
+    onLatLngUpdate(latlng) {
+      this.currentLat = latlng[0];
+      this.currentLng = latlng[1];
     },
     onLocationCleared() {
       this.location = null;

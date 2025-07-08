@@ -52,13 +52,10 @@
 export default {
   name: "PLocationInput",
   props: {
-    lat: {
-      type: Number,
-      default: null,
-    },
-    lng: {
-      type: Number,
-      default: null,
+    latlng: {
+      type: Array,
+      default: () => [null, null],
+      validator: (value) => Array.isArray(value) && value.length === 2,
     },
     disabled: {
       type: Boolean,
@@ -113,7 +110,7 @@ export default {
       default: 1000,
     },
   },
-  emits: ["update:lat", "update:lng", "changed", "cleared", "open-map"],
+  emits: ["update:latlng", "changed", "cleared", "open-map"],
   data() {
     return {
       coordinateInput: "",
@@ -140,11 +137,11 @@ export default {
     },
   },
   watch: {
-    lat() {
-      this.updateCoordinateInput();
-    },
-    lng() {
-      this.updateCoordinateInput();
+    latlng: {
+      handler() {
+        this.updateCoordinateInput();
+      },
+      deep: true,
     },
   },
   mounted() {
@@ -157,8 +154,8 @@ export default {
   },
   methods: {
     updateCoordinateInput() {
-      const lat = this.lat;
-      const lng = this.lng;
+      const lat = this.latlng[0];
+      const lng = this.latlng[1];
 
       if (lat !== null && lng !== null && !(lat === 0 && lng === 0) && !isNaN(lat) && !isNaN(lng)) {
         this.coordinateInput = `${parseFloat(lat)}, ${parseFloat(lng)}`;
@@ -191,21 +188,19 @@ export default {
       const lat = parseFloat(parts[0]);
       const lng = parseFloat(parts[1]);
 
-      this.$emit("update:lat", lat);
-      this.$emit("update:lng", lng);
+      this.$emit("update:latlng", [lat, lng]);
       this.$emit("changed", { lat: lat, lng: lng });
     },
     clearCoordinates() {
       if (this.enableUndo) {
-        this.lastValidLat = this.lat;
-        this.lastValidLng = this.lng;
+        this.lastValidLat = this.latlng[0];
+        this.lastValidLng = this.latlng[1];
       }
 
       this.coordinateInput = "";
       this.wasCleared = true;
 
-      this.$emit("update:lat", 0);
-      this.$emit("update:lng", 0);
+      this.$emit("update:latlng", [0, 0]);
       this.$emit("changed", { lat: 0, lng: 0 });
       this.$emit("cleared", {
         lat: 0,
@@ -216,8 +211,7 @@ export default {
     },
     undoClear() {
       if (this.lastValidLat !== null && this.lastValidLng !== null) {
-        this.$emit("update:lat", this.lastValidLat);
-        this.$emit("update:lng", this.lastValidLng);
+        this.$emit("update:latlng", [this.lastValidLat, this.lastValidLng]);
         this.$emit("changed", {
           lat: this.lastValidLat,
           lng: this.lastValidLng,
@@ -248,8 +242,7 @@ export default {
 
         if (!isNaN(lat) && lat >= -90 && lat <= 90 && !isNaN(lng) && lng >= -180 && lng <= 180) {
           // Update coordinates
-          this.$emit("update:lat", lat);
-          this.$emit("update:lng", lng);
+          this.$emit("update:latlng", [lat, lng]);
           this.$emit("changed", { lat: lat, lng: lng });
 
           // Prevent default action.

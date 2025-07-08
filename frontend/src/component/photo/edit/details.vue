@@ -148,8 +148,7 @@
             </v-col>
             <v-col cols="12" sm="6" md="6">
               <p-location-input
-                :lat="view.model.Lat"
-                :lng="view.model.Lng"
+                :latlng="[view.model.Lat, view.model.Lng]"
                 :disabled="disabled"
                 hide-details
                 :label="locationLabel"
@@ -159,8 +158,7 @@
                 :map-button-title="$gettext('Adjust Location')"
                 :map-button-disabled="placesDisabled"
                 class="input-coordinates"
-                @update:lat="updateLat"
-                @update:lng="updateLng"
+                @update:latlng="updateLatLng"
                 @changed="onLocationChanged"
                 @open-map="adjustLocation"
               ></p-location-input>
@@ -417,7 +415,7 @@
     </v-form>
     <p-location-dialog
       :visible="locationDialog"
-      :coordinates="[view.model.Lat ? Number(view.model.Lat) : 0, view.model.Lng ? Number(view.model.Lng) : 0]"
+      :latlng="[view.model.Lat ? Number(view.model.Lat) : 0, view.model.Lng ? Number(view.model.Lng) : 0]"
       @close="locationDialog = false"
       @confirm="confirmLocation"
     ></p-location-dialog>
@@ -615,19 +613,15 @@ export default {
     },
     confirmLocation(data) {
       if (data && data.lat !== undefined && data.lng !== undefined) {
-        this.updateLat(data.lat);
-        this.updateLng(data.lng);
+        this.updateLatLng([data.lat, data.lng]);
         this.onLocationChanged(data);
       }
 
       this.locationDialog = false;
     },
-    updateLat(lat) {
-      this.view.model.Lat = lat;
-      this.view.model.PlaceSrc = "manual";
-    },
-    updateLng(lng) {
-      this.view.model.Lng = lng;
+    updateLatLng(latlng) {
+      this.view.model.Lat = latlng[0];
+      this.view.model.Lng = latlng[1];
       this.view.model.PlaceSrc = "manual";
     },
     onLocationChanged(data) {

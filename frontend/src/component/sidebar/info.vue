@@ -66,7 +66,7 @@
           >
           </v-list-item>
           <v-list-item v-if="featPlaces" class="mx-0 px-0">
-            <p-map :coordinates="[model.Lat, model.Lng]"></p-map>
+            <p-map :latlng="[model.Lat, model.Lng]"></p-map>
           </v-list-item>
         </template>
       </v-list>

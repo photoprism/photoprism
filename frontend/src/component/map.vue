@@ -10,7 +10,7 @@ let maplibregl = null;
 export default {
   name: "PMap",
   props: {
-    coordinates: {
+    latlng: {
       type: Array,
       default: () => [0.0, 0.0],
       validator: (value) => Array.isArray(value) && value.length === 2,
@@ -41,7 +41,7 @@ export default {
       default: false,
     },
   },
-  emits: ["update:coordinates", "marker-moved", "map-clicked"],
+  emits: ["update:latlng", "marker-moved", "map-clicked"],
   data() {
     return {
       map: null,
@@ -63,7 +63,7 @@ export default {
     };
   },
   watch: {
-    coordinates() {
+    latlng() {
       this.updatePosition();
     },
   },
@@ -88,13 +88,11 @@ export default {
         this.options.container = this.$refs.map;
 
         // Set center based on coordinates or default
-        if (
-          !(this.coordinates[0] && this.coordinates[1] && !(this.coordinates[0] === 0 && this.coordinates[1] === 0))
-        ) {
+        if (!(this.latlng[0] && this.latlng[1] && !(this.latlng[0] === 0 && this.latlng[1] === 0))) {
           this.options.zoom = 2;
           this.options.center = [0, 20];
         } else {
-          this.options.center = [this.coordinates[1], this.coordinates[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
+          this.options.center = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
         }
 
         this.map = new maplibregl.Map(this.options);
@@ -139,7 +137,7 @@ export default {
             const lat = e.lngLat.lat;
             const lng = e.lngLat.lng;
             this.$emit("map-clicked", { lat, lng });
-            this.$emit("update:coordinates", [lat, lng]);
+            this.$emit("update:latlng", [lat, lng]);
           });
         }
       } catch (error) {
@@ -152,12 +150,12 @@ export default {
         return;
       }
 
-      if (this.position[0] === this.coordinates[1] && this.position[1] === this.coordinates[0] && this.marker) {
+      if (this.position[0] === this.latlng[1] && this.position[1] === this.latlng[0] && this.marker) {
         return;
       }
 
       // Skip invalid or empty coordinates
-      if (!(this.coordinates[0] && this.coordinates[1] && !(this.coordinates[0] === 0 && this.coordinates[1] === 0))) {
+      if (!(this.latlng[0] && this.latlng[1] && !(this.latlng[0] === 0 && this.latlng[1] === 0))) {
         if (this.marker) {
           this.marker.remove();
           this.marker = null;
@@ -165,7 +163,7 @@ export default {
         return;
       }
 
-      this.position = [this.coordinates[1], this.coordinates[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
+      this.position = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
 
       // Always center map when position changes in interactive mode
       if (this.interactive) {
@@ -192,7 +190,7 @@ export default {
           this.marker.on("dragend", () => {
             const lngLat = this.marker.getLngLat();
             this.$emit("marker-moved", { lat: lngLat.lat, lng: lngLat.lng });
-            this.$emit("update:coordinates", [lngLat.lat, lngLat.lng]);
+            this.$emit("update:latlng", [lngLat.lat, lngLat.lng]);
           });
         }
       }
