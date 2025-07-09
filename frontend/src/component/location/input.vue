@@ -137,11 +137,8 @@ export default {
     },
   },
   watch: {
-    latlng: {
-      handler() {
-        this.updateCoordinateInput();
-      },
-      deep: true,
+    latlng() {
+      this.updateCoordinateInput();
     },
   },
   mounted() {
