@@ -43,10 +43,13 @@ export default {
   },
   emits: ["update:latlng", "marker-moved", "map-clicked"],
   data() {
+    const settings = this.$config.getSettings();
+
     return {
       map: null,
       marker: null,
       position: [0.0, 0.0],
+      animate: settings.maps.animate,
       options: {
         container: null,
         // Styles can be edited/created with https://maplibre.org/maputnik/.
@@ -125,6 +128,14 @@ export default {
           console.error("map:", e);
         });
 
+        // Handle missing style images
+        this.map.on("styleimagemissing", (e) => {
+          const emptyImage = new ImageData(1, 1);
+          if (e && e.id) {
+            this.map.addImage(e.id, emptyImage);
+          }
+        });
+
         this.map.on("load", () => {
           this.loaded = true;
           this.updatePosition();
@@ -165,14 +176,23 @@ export default {
 
       this.position = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
 
-      // Always center map when position changes in interactive mode
-      if (this.interactive) {
-        this.map.setCenter(this.position, {
-          zoom: this.zoom,
-          animate: false,
+      if (this.animate > 0) {
+        this.map.flyTo({
+          center: this.position,
+          zoom: this.interactive ? this.zoom : undefined, // Only set zoom in interactive mode
+          duration: this.animate,
+          essential: true, // Respects prefers-reduced-motion
         });
       } else {
-        this.map.setCenter(this.position);
+        // Use setCenter for instant positioning (no animation)
+        if (this.interactive) {
+          this.map.setCenter(this.position, {
+            zoom: this.zoom,
+            animate: false,
+          });
+        } else {
+          this.map.setCenter(this.position);
+        }
       }
 
       if (this.marker) {
@@ -205,11 +225,19 @@ export default {
     // Public method to fly to coordinates
     flyTo(lat, lng, zoom = this.zoom) {
       if (this.map) {
-        this.map.flyTo({
-          center: [lng, lat],
-          zoom: zoom,
-          essential: true,
-        });
+        if (this.animate > 0) {
+          this.map.flyTo({
+            center: [lng, lat],
+            zoom: zoom,
+            duration: this.animate,
+            essential: true,
+          });
+        } else {
+          this.map.jumpTo({
+            center: [lng, lat],
+            zoom: zoom,
+          });
+        }
       }
     },
   },
