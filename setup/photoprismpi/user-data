@@ -168,7 +168,9 @@ runcmd:
                                                                    
       Welcome to PhotoPrism Pi!                                    
                                                                    
-      You can access the web interface using the following URLs:   
+      You should soon be able to access the web interface
+      by navigating to one of the following URLs:
+
       http://$IP:2342/                                             
       https://photoprism-pi.local/                                 
                                                                    
@@ -196,8 +198,9 @@ write_files:
       
       Welcome to PhotoPrism Pi!                                   
       
-      You can access the web interface using one of the            
-      following URLs:                                             
+      You should soon be able to access the web interface
+      by navigating to one of the following URLs:
+                                             
       http://<your IP address>:2342/                                       
       https://photoprism-pi.local/                                 
       
