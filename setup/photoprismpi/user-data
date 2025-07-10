@@ -201,7 +201,7 @@ write_files:
       You should soon be able to access the web interface
       by navigating to one of the following URLs:
                                              
-      http://<your IP address>:2342/                                       
+      http://<IP address>:2342/                                       
       https://photoprism-pi.local/                                 
       
       Your initial password for the "admin" account is             
