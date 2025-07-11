@@ -71,7 +71,10 @@ runcmd:
   
   # Create mount points for external drives
   - printf "\e[0;35m[SETUP] Creating mount points for external drives...\e[0m\n"
-  - mkdir -p /mnt/{a,b,c,d}
+  - mkdir -p /mnt/a
+  - mkdir -p /mnt/b
+  - mkdir -p /mnt/c
+  - mkdir -p /mnt/d
   - chown -R 1000:1000 /mnt
   - printf "\e[0;35m[SETUP] ✓ External drive mount points created\e[0m\n"
   
@@ -278,11 +281,11 @@ write_files:
 
         mariadb:
           restart: always
-          image: arm64v8/mariadb:10.10
+          image: arm64v8/mariadb:11
           security_opt:
             - seccomp=unconfined
             - apparmor=unconfined
-          command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+          command: mariadbd --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
           volumes:
             - "/opt/photoprism/database:/var/lib/mysql"
           environment:
