@@ -294,7 +294,7 @@ msgstr "Importación cancelada"
 #: messages.go:172
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr "Indexación completada em %d"
+msgstr "Indexación completada en %d"
 
 #: messages.go:173
 msgid "Indexing originals..."
