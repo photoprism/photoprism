@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-07-06 08:59+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2025-07-14 13:18+0000\n"
+"Last-Translator: Duy <mastoduy@gmail.com>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1740,7 +1740,7 @@ msgstr "Giấy phép"
 
 #: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
 msgid "Like"
-msgstr "Giống"
+msgstr "Thích"
 
 #: src/options/options.js:389
 msgid "Lime"
@@ -1879,7 +1879,7 @@ msgstr "Đã đạt đến số lượng tài khoản tối đa."
 #: src/app/routes.js:237 src/component/navigation.vue:693
 #: src/options/options.js:199
 msgid "Media"
-msgstr "Phương tiện truyền thông"
+msgstr "Media"
 
 #: src/options/options.js:220
 msgid "Medium"
@@ -2632,7 +2632,7 @@ msgstr "Vệ tinh"
 #: src/component/people/edit/dialog.vue:133 src/component/service/edit.vue:467
 #: src/component/settings/password.vue:173 src/component/share/dialog.vue:181
 msgid "Save"
-msgstr "Cứu"
+msgstr "Lưu"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"
