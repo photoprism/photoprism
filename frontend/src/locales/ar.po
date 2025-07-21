@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-06 08:58+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-07-21 10:58+0000\n"
+"Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -2104,7 +2104,7 @@ msgstr "غير مسموح به"
 
 #: src/component/lightbox.vue:630
 msgid "Not found"
-msgstr "لم يتم العثور على"
+msgstr "لم يتم العثور"
 
 #: src/locales.js:222
 msgid "Not sorted."
@@ -2298,7 +2298,7 @@ msgstr "سيتمكن الأشخاص الذين تشارك الرابط معهم 
 
 #: src/component/photo/clipboard.vue:126 src/component/photo/toolbar.vue:262
 msgid "Permanently deleted"
-msgstr "حذف نهائيًا"
+msgstr "تم الحذف بشكل نهائي"
 
 #: src/page/settings/general.vue:458
 msgid "Permanently remove files to free up storage."
@@ -2721,7 +2721,7 @@ msgstr "تمت أرشفة المحتوى المحدد"
 
 #: src/component/photo/clipboard.vue:139
 msgid "Selection restored"
-msgstr "تمت استعادة المحتوى المحدد"
+msgstr "تم استعادة المحتوى المحدد"
 
 #: src/page/settings/content.vue:205
 msgid "Sequential Name"
@@ -2851,7 +2851,7 @@ msgstr "تحديث البرنامج"
 
 #: src/component/lightbox.vue:737
 msgid "Something went wrong, try again"
-msgstr "حدث خطأ ما حاول مرة أخرى"
+msgstr "حدث خطأ ما، حاول مرة أخرى"
 
 #: src/locales.js:227
 msgid "Sort by"
