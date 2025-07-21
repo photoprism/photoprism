@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-03-11 19:22+0000\n"
-"PO-Revision-Date: 2025-03-11 19:36+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2025-07-21 11:32+0000\n"
+"Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -13,11 +12,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.12.2\n"
 
 #: messages.go:103
 msgid "Something went wrong, try again"
-msgstr "حدث خطأ ما حاول مرة أخرى"
+msgstr "حدث خطأ ما، حاول مرة أخرى"
 
 #: messages.go:104
 msgid "Unable to do that"
@@ -38,7 +37,7 @@ msgstr "%s موجود بالفعل"
 
 #: messages.go:108
 msgid "Not found"
-msgstr "لم يتم العثور على"
+msgstr "لم يتم العثور"
 
 #: messages.go:109
 msgid "File not found"
@@ -118,23 +117,23 @@ msgstr "طلب الاذن مرفوض"
 
 #: messages.go:128
 msgid "Upload might be offensive"
-msgstr "تحميل قد يكون مسيئا"
+msgstr "المحتوى المرفوع قد يكون مسيئا"
 
 #: messages.go:129
 msgid "Upload failed"
-msgstr "التحميل فشل"
+msgstr "فشل التحميل"
 
 #: messages.go:130
 msgid "No items selected"
-msgstr "لم يتم تحديد الاختيار"
+msgstr "لم يتم اختيار المحتوى"
 
 #: messages.go:131
 msgid "Failed creating file, please check permissions"
-msgstr "فشل إنشاء الملف ، يرجى التحقق من الأذونات"
+msgstr "فشل إنشاء الملف ، يرجى التحقق من الصلاحيات"
 
 #: messages.go:132
 msgid "Failed creating folder, please check permissions"
-msgstr "فشل إنشاء المجلد ، يرجى التحقق من الأذونات"
+msgstr "لم يتم إنشاء المجلد ، يرجى التحقق من الصلاحيات"
 
 #: messages.go:133
 msgid "Could not connect, please try again"
@@ -150,15 +149,15 @@ msgstr "رمز التحقق غير صالح، يرجى المحاولة مرة �
 
 #: messages.go:136
 msgid "Invalid password, please try again"
-msgstr "كلمة السر غير مطابقة، برجاء حاول مرة أخرى"
+msgstr "كلمة السر غير مطابقة، يرجى المحاولة مرة أخرى"
 
 #: messages.go:137
 msgid "Feature disabled"
-msgstr "الخاصية معطلة"
+msgstr "الخاصية غير مفعلة"
 
 #: messages.go:138
 msgid "No labels selected"
-msgstr "لم يتم تحديد تسميات"
+msgstr "لم يتم تحديد المعرفات"
 
 #: messages.go:139
 msgid "No albums selected"
@@ -170,7 +169,7 @@ msgstr "لا توجد ملفات متاحة للتنزيل"
 
 #: messages.go:141
 msgid "Failed to create zip file"
-msgstr "فشل إنشاء ملف مضغوط"
+msgstr "فشل في إنشاء ملف مضغوط"
 
 #: messages.go:142
 msgid "Invalid credentials"
@@ -178,7 +177,7 @@ msgstr "بيانات الاعتماد غير صالحة"
 
 #: messages.go:143
 msgid "Invalid link"
-msgstr "ارتباط غير صالح"
+msgstr "رابط غير صالح"
 
 #: messages.go:144
 msgid "Invalid name"
@@ -186,7 +185,7 @@ msgstr "اسم غير صحيح"
 
 #: messages.go:145
 msgid "Busy, please try again later"
-msgstr "مشغول ، يرجى المحاولة مرة أخرى في وقت لاحق"
+msgstr "مشغول، يرجى المحاولة مرة أخرى في وقت لاحق"
 
 #: messages.go:146
 #, c-format
@@ -207,7 +206,7 @@ msgstr "مساحة تخزين غير كافية"
 
 #: messages.go:150
 msgid "Quota exceeded"
-msgstr "تم تجاوز الحصة"
+msgstr "تم تجاوز المساحة المخصصة"
 
 #: messages.go:153
 msgid "Changes successfully saved"
@@ -376,7 +375,7 @@ msgstr "تمت أرشفة الاختيار"
 
 #: messages.go:191
 msgid "Selection restored"
-msgstr "تمت استعادة التحديد"
+msgstr "تم استعادة المحتوى المحدد"
 
 #: messages.go:192
 msgid "Selection marked as private"
@@ -389,7 +388,7 @@ msgstr "تم حذف الألبومات"
 #: messages.go:194
 #, c-format
 msgid "Zip created in %d s"
-msgstr "إنشاء الملف المضغوط خلال %d ثوانٍ"
+msgstr "تم إنشاء الملف المضغوط خلال %d ثوانٍ"
 
 #: messages.go:195
 msgid "Permanently deleted"
@@ -406,7 +405,7 @@ msgstr "تم التحقق بنجاح"
 
 #: messages.go:198
 msgid "Successfully activated"
-msgstr "تم التنشيط بنجاح"
+msgstr "تم التفعيل بنجاح"
 
 #~ msgid "Storage is full"
 #~ msgstr "التخزين ممتلئ"
