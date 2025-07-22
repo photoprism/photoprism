@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-07-06 08:59+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2025-07-22 18:49+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -415,13 +415,13 @@ msgstr "Aplikazioak eta gailuak"
 #: src/page/settings/general.vue:432
 msgctxt "Noun"
 msgid "Archive"
-msgstr ""
+msgstr "Artxiboa"
 
 #: src/component/lightbox.vue:1207 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398
 msgctxt "Verb"
 msgid "Archive"
-msgstr ""
+msgstr "Artxiboa"
 
 #: src/component/lightbox.vue:2002 src/component/photo/edit/info.vue:433
 msgid "Archived"
