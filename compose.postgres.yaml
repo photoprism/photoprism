@@ -66,7 +66,7 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
       TF_CPP_MIN_LOG_LEVEL: 1                 # show TensorFlow log messages for development
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https yt-dlp"
+      PHOTOPRISM_INIT: "https"
   ## PostgreSQL Database Server
   ## Docs: https://www.postgresql.org/docs/
   postgres:

@@ -8,7 +8,7 @@ services:
       - mariadb
       - dummy-webdav
       - dummy-oidc
-    stop_grace_period: 10s
+    stop_grace_period: 15s
     privileged: true
     security_opt:
       - seccomp:unconfined
@@ -117,35 +117,82 @@ services:
       PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       TF_CPP_MIN_LOG_LEVEL: 1                        # show TensorFlow log messages for development
-      ## Nvidia Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit):
+      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
+      PHOTOPRISM_INIT: "https tensorflow-gpu"
+      ## Computer Vision API (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
+      PHOTOPRISM_VISION_API: "true"                  # server: enables service API endpoints under /api/v1/vision (requires access token)
+      PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
+      PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
+      ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "all"
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
-      # PHOTOPRISM_FFMPEG_BITRATE: "60"              # video bitrate limit in Mbps (default: 60)
-      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https tensorflow-gpu yt-dlp"
-    ## Share hardware devices with FFmpeg and TensorFlow (optional):
+      PHOTOPRISM_FFMPEG_BITRATE: "64"                # video bitrate limit in Mbps (default: 60)
+    ## Shared devices for video hardware transcoding (optional):
     # devices:
-    #  - "/dev/dri:/dev/dri"                         # Intel QSV (Broadwell and later) or VAAPI (Haswell and earlier)
-    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia CUDA
-    #  - "/dev/nvidiactl:/dev/nvidiactl"
-    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
-    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
-    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
-    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding
     #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
+    ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
     deploy:
       resources:
         reservations:
           devices:
             - driver: "nvidia"
               capabilities: [gpu]
+              count: "all"
+
+  ## Ollama Large Language Models
+  ## see https://ollama.com/search?c=vision
+  ## Before use, you must run the "ollama pull [name:version]"
+  ## command to download and install a model, for example:
+  ## docker compose exec ollama ollama pull qwen2.5vl:3b
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    stop_grace_period: 15s
+    ## Only starts this service if the "vision" or "all" profile is specified::
+    ## docker compose --profile vision up -d
+    profiles: [ "all", "vision" ]
+    ## Insecurely exposes the Ollama service on port 11434
+    ## without authentication (for private networks only):
+    # ports:
+    #  - "11434:11434"
+    environment:
+      ## Ollama server configuration
+      OLLAMA_HOST: "0.0.0.0:11434"
+      OLLAMA_MODELS: "/root/.ollama" # model storage path (see volumes section below)
+      OLLAMA_MAX_QUEUE: "100"        # maximum number of queued requests
+      OLLAMA_NUM_PARALLEL: "1"       # maximum number of parallel requests
+      OLLAMA_MAX_LOADED_MODELS: "1"  # maximum number of loaded models per GPU
+      OLLAMA_LOAD_TIMEOUT: "5m"      # maximum time for loading models (default "5m")
+      OLLAMA_KEEP_ALIVE: "10m"       # duration that models stay loaded in memory (default "5m")
+      OLLAMA_CONTEXT_LENGTH: "4096"  # maximum input context length
+      OLLAMA_MULTIUSER_CACHE: "1"    # optimize prompt caching for multi-user scenarios
+      # OLLAMA_DEBUG: "1"              # shows additional debug information
+      # OLLAMA_NOPRUNE: "1"            # disables pruning of model blobs at startup
+      # OLLAMA_NOHISTORY: "1"          # disables readline history
+      # OLLAMA_FLASH_ATTENTION: "1"    # enables the experimental flash attention feature
+      # OLLAMA_SCHED_SPREAD: "1"       # allows scheduling models across all GPUs.
+      # OLLAMA_GPU_OVERHEAD: "0"       # reserves a portion of VRAM per GPU (bytes)
+      # OLLAMA_INTEL_GPU: "1"          # enables experimental Intel GPU detection
+      ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+    volumes:
+      - "./storage/ollama:/root/.ollama"
+    ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              capabilities: [ gpu ]
               count: "all"
 
   mariadb:

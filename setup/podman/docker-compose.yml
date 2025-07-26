@@ -130,7 +130,8 @@ services:
     ## MariaDB config flags, see https://mariadb.com/kb/en/server-system-variables/
     command: --innodb-buffer-pool-size=2G --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
-      - "./database:/var/lib/mysql"
+      - "./database:/var/lib/mysql" # DO NOT REMOVE
+    ## See https://link.photoprism.app/mariadb-enviconment-variables:
     environment:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"
@@ -138,3 +139,7 @@ services:
       MARIADB_USER: "photoprism"
       MARIADB_PASSWORD: "insecure"
       MARIADB_ROOT_PASSWORD: "insecure"
+      ## When specified, the container will connect to this host and replicate from it (for advanced users only):
+      # MARIADB_MASTER_HOST: ""
+      # MARIADB_REPLICATION_USER: ""
+      # MARIADB_REPLICATION_PASSWORD: ""

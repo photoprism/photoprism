@@ -245,8 +245,6 @@ write_files:
             PHOTOPRISM_AUTH_MODE: "passwd"
             PHOTOPRISM_SITE_URL: "https://photoprism-pi.local/"
             PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-            PHOTOPRISM_ORIGINALS_LIMIT: 5000
-            PHOTOPRISM_RESOLUTION_LIMIT: 300
             PHOTOPRISM_HTTP_COMPRESSION: "gzip"
             PHOTOPRISM_WORKERS: 3
             PHOTOPRISM_LOG_LEVEL: "info"
@@ -269,7 +267,9 @@ write_files:
             PHOTOPRISM_UPLOAD_NSFW: "true"                 # allow uploads that MAY be offensive
             PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
             PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
-            PHOTOPRISM_UPLOAD_LIMIT: 10000                 # maximum total size of uploaded files in MB (1-100000; -1 to disable)
+            PHOTOPRISM_UPLOAD_LIMIT: 5000                  # maximum size of uploaded files and uncompressed archive contents in MB
+            PHOTOPRISM_ORIGINALS_LIMIT: 5000               # maximum size of original media files in MB (larger files are skipped)
+            PHOTOPRISM_RESOLUTION_LIMIT: 300               # maximum resolution of original media files in Pixels (larger files are skipped)
             PHOTOPRISM_SIDECAR_YAML: "false"               # creates YAML sidecar files to back up picture metadata
             PHOTOPRISM_INDEX_SCHEDULE: ""                  # indexing SCHEDULE in cron format (e.g. "@every 3h" for every 3 hours; "" to disable)
             PHOTOPRISM_BACKUP_ALBUMS: "true"               # creates YAML files to back up album metadata
@@ -307,7 +307,7 @@ write_files:
 
         traefik:
           restart: always
-          image: traefik:v3.4
+          image: traefik:v3.5
           ports:
             - "80:80"
             - "443:443"

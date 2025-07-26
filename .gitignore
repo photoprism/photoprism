@@ -69,8 +69,11 @@ frontend/coverage/
 ehthumbs.db
 Thumbs.db
 .heartbeat
-.idea
 .glide
+.idea
+.project
+.vscode
+*.tmproj
 *~
 .goutputstream*
 .c9revisions

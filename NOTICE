@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-07-16
+Date generated: 2025-07-24
 
 ================================================================================
 
@@ -2343,8 +2343,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20250707181242-c5087ca84cf4
-License: Apache-2.0 (https://github.com/golang/geo/blob/c5087ca84cf4/LICENSE)
+Version: v0.0.0-20250723132703-4547674171cb
+License: Apache-2.0 (https://github.com/golang/geo/blob/4547674171cb/LICENSE)
 
 
                                  Apache License

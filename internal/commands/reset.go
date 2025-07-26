@@ -76,7 +76,7 @@ func resetAction(ctx *cli.Context) error {
 			IsConfirm: true,
 		}
 
-		if _, err := removeIndexPrompt.Run(); err == nil {
+		if _, err = removeIndexPrompt.Run(); err == nil {
 			confirmed = true
 		} else {
 			log.Infof("keeping index database")
@@ -99,7 +99,7 @@ func resetAction(ctx *cli.Context) error {
 		IsConfirm: true,
 	}
 
-	if _, err := removeCachePrompt.Run(); err == nil {
+	if _, err = removeCachePrompt.Run(); err == nil {
 		resetCache(conf)
 	} else {
 		log.Infof("keeping cache files")
@@ -111,7 +111,7 @@ func resetAction(ctx *cli.Context) error {
 		IsConfirm: true,
 	}
 
-	if _, err := removeSidecarJsonPrompt.Run(); err == nil {
+	if _, err = removeSidecarJsonPrompt.Run(); err == nil {
 		resetSidecarJson(conf)
 	} else {
 		log.Infof("keeping *.json sidecar files")
@@ -123,7 +123,7 @@ func resetAction(ctx *cli.Context) error {
 		IsConfirm: true,
 	}
 
-	if _, err := removeSidecarYamlPrompt.Run(); err == nil {
+	if _, err = removeSidecarYamlPrompt.Run(); err == nil {
 		resetSidecarYaml(conf)
 	} else {
 		log.Infof("keeping *.yml metadata files")
@@ -135,13 +135,13 @@ func resetAction(ctx *cli.Context) error {
 		IsConfirm: true,
 	}
 
-	if _, err := removeAlbumYamlPrompt.Run(); err == nil {
+	if _, err = removeAlbumYamlPrompt.Run(); err == nil {
 		start := time.Now()
 
-		matches, err := filepath.Glob(regexp.QuoteMeta(conf.BackupAlbumsPath()) + "/**/*.yml")
+		matches, globErr := filepath.Glob(regexp.QuoteMeta(conf.BackupAlbumsPath()) + "/**/*.yml")
 
-		if err != nil {
-			return err
+		if globErr != nil {
+			return globErr
 		}
 
 		if len(matches) > 0 {
