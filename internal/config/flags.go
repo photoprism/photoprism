@@ -742,6 +742,23 @@ var Flags = CliFlags{
 			Usage:   "Web server port `NUMBER`, ignored for Unix domain sockets",
 			EnvVars: EnvVars("HTTP_PORT"),
 		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "http-cors-allow-origins",
+			Usage:   "allow cross-origin requests from these `ORIGINS` (comma-separated list of URLs, e.g. https://example.com; use * to allow all)",
+			EnvVars: EnvVars("HTTP_CORS_ORIGINS"),
+		}}, {
+			Flag: &cli.StringSliceFlag{
+			Name:    "http-cors-allow-headers",
+			Usage:   "allow cross-origin requests from these `HEADERS` (comma-separated list of HTTP headers, e.g. Authorization, Content-Type; use * to allow all)",
+			EnvVars: EnvVars("HTTP_CORS_ALLOW_HEADERS"),
+			Value:   cli.NewStringSlice("Origin", "Content-Type", "Accept", "Authorization"),
+		}}, {
+			Flag: &cli.StringSliceFlag{
+			Name:    "http-cors-allow-methods",
+			Usage:   "allow cross-origin requests from these `METHODS` (comma-separated list of HTTP methods, e.g. GET, POST; use * to allow all)",
+			EnvVars: EnvVars("HTTP_CORS_ALLOW_METHODS"),
+			Value:   cli.NewStringSlice("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "database-driver",
 			Aliases: []string{"db"},

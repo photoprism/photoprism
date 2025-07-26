@@ -15,6 +15,7 @@ import (
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server/process"
@@ -86,6 +87,11 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	// Register security middleware.
 	router.Use(Security(conf))
+
+	if conf.HttpCorsEnabled() {
+		router.Use(cors.New(conf.HttpCors()))
+		log.Infof("server: enabled CORS")
+	}
 
 	// Create REST API router group.
 	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))

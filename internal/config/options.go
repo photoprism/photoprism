@@ -157,6 +157,9 @@ type Options struct {
 	HttpHost               string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort               int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	HttpSocket             *url.URL      `yaml:"-" json:"-" flag:"-"`
+	HttpCorsAllowOrigins   []string      `yaml:"HttpCorsAllowOrigins" json:"-" flag:"http-cors-allow-origins"`
+	HttpCorsAllowMethods   []string      `yaml:"HttpCorsAllowMethods" json:"-" flag:"http-cors-allow-methods"`	
+	HttpCorsAllowHeaders   []string      `yaml:"HttpCorsAllowHeaders" json:"-" flag:"http-cors-allow headers"`
 	DatabaseDriver         string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn            string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName           string        `yaml:"DatabaseName" json:"-" flag:"database-name"`

@@ -5,6 +5,9 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
+
+	"github.com/gin-contrib/cors"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/server/limiter"
@@ -179,6 +182,23 @@ func (c *Config) HttpSocket() *url.URL {
 
 	// Return parsed resource URI.
 	return c.options.HttpSocket
+}
+
+// HttpCorsEnabled checks if CORS is enabled.
+func (c *Config) HttpCorsEnabled() bool {
+	return len(c.options.HttpCorsAllowOrigins) > 0
+}
+
+// HttpCors returns the server CORS configuration.
+func (c *Config) HttpCors() cors.Config {
+	return cors.Config{
+		AllowOrigins:     c.options.HttpCorsAllowOrigins,
+		AllowMethods:     c.options.HttpCorsAllowMethods,
+		AllowHeaders:     c.options.HttpCorsAllowHeaders,
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge: 12 * time.Hour,
+	}
 }
 
 // TemplatesPath returns the server templates path.
