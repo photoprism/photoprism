@@ -114,8 +114,8 @@ func TestChunks(t *testing.T) {
 			t.Fatalf("expected to read 12 bytes instead of %d", n)
 		}
 
-		assert.NotEqual(t, ChunkFTYP, *(*[4]byte)(b[4:8]))
-		assert.NotEqual(t, ChunkISOM, *(*[4]byte)(b[8:12]))
+		assert.NotEqual(t, ChunkFTYP, [4]byte(b[4:8]))
+		assert.NotEqual(t, ChunkISOM, [4]byte(b[8:12]))
 	})
 }
 

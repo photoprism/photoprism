@@ -82,7 +82,7 @@ func (c Chunks) FileTypeOffset(file io.ReadSeeker) (int, error) {
 			// Not found.
 		} else if j := i + 4; j < 8 || len(buffer) < j+4 {
 			// Skip.
-		} else if k := j + 4; c.Contains(*(*[4]byte)(buffer[j:k])) {
+		} else if k := j + 4; c.Contains([4]byte(buffer[j:k])) {
 			return offset + i - 4, nil
 		}
 
