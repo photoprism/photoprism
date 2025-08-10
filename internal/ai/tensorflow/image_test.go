@@ -13,6 +13,7 @@ import (
 var defaultImageInput = &PhotoInput{
 	Height: 224,
 	Width:  224,
+	Shape:  DefaultPhotoInputShape(),
 }
 
 func TestConvertValue(t *testing.T) {
@@ -40,6 +41,10 @@ func TestImageFromBytes(t *testing.T) {
 		}
 
 		result, err := ImageFromBytes(imageBuffer, defaultImageInput)
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, tensorflow.DataType(0x1), result.DataType())
 		assert.Equal(t, int64(1), result.Shape()[0])
 		assert.Equal(t, int64(224), result.Shape()[2])

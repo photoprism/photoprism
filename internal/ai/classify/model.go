@@ -59,6 +59,7 @@ func NewNasnet(assetsPath string, disabled bool) *Model {
 			Width:             224,
 			ResizeOperation:   tensorflow.CenterCrop,
 			ColorChannelOrder: tensorflow.RGB,
+			Shape:             tensorflow.DefaultPhotoInputShape(),
 			Intervals: []tensorflow.Interval{
 				{
 					Start: -1,
@@ -197,7 +198,7 @@ func (m *Model) loadModel() (err error) {
 	modelPath := path.Join(m.assetsPath, m.modelPath)
 
 	if len(m.meta.Tags) == 0 {
-		infos, modelErr := tensorflow.GetModelInfo(modelPath)
+		infos, modelErr := tensorflow.GetModelTagsInfo(modelPath)
 		if modelErr != nil {
 			log.Errorf("classify: could not get info from model in %s (%s)", clean.Log(modelPath), clean.Error(modelErr))
 		} else if len(infos) == 1 {
@@ -209,7 +210,6 @@ func (m *Model) loadModel() (err error) {
 	}
 
 	m.model, err = tensorflow.SavedModel(modelPath, m.meta.Tags)
-
 	if err != nil {
 		return err
 	}

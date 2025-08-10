@@ -22,6 +22,7 @@ var (
 				Width:             224,
 				ResizeOperation:   tensorflow.CenterCrop,
 				ColorChannelOrder: tensorflow.RGB,
+				Shape:             tensorflow.DefaultPhotoInputShape(),
 				Intervals: []tensorflow.Interval{
 					{
 						Start: -1.0,
@@ -52,6 +53,7 @@ var (
 				Height:      224,
 				Width:       224,
 				OutputIndex: 0,
+				Shape:       tensorflow.DefaultPhotoInputShape(),
 			},
 			Output: &tensorflow.ModelOutput{
 				Name:          "nsfw_cls_model/final_prediction",
@@ -74,6 +76,7 @@ var (
 				Name:        "input",
 				Height:      160,
 				Width:       160,
+				Shape:       tensorflow.DefaultPhotoInputShape(),
 				OutputIndex: 0,
 			},
 			Output: &tensorflow.ModelOutput{

@@ -132,7 +132,7 @@ func (m *Model) loadModel() error {
 	log.Infof("nsfw: loading %s", clean.Log(filepath.Base(m.modelPath)))
 
 	if len(m.meta.Tags) == 0 {
-		infos, err := tensorflow.GetModelInfo(m.modelPath)
+		infos, err := tensorflow.GetModelTagsInfo(m.modelPath)
 		if err != nil {
 			log.Errorf("nsfw: could not get the model info at %s: %v", clean.Log(m.modelPath))
 		} else if len(infos) == 1 {
@@ -150,10 +150,10 @@ func (m *Model) loadModel() error {
 	}
 
 	if !m.meta.IsComplete() {
-		input, output, err := tensorflow.GetInputAndOutputFromSavedModel(m.model)
+		input, output, err := tensorflow.GetInputAndOutputFromSavedModel(model)
 		if err != nil {
 			log.Errorf("nsfw: could not get info from signatures: %v", err)
-			input, output, err = tensorflow.GuessInputAndOutput(m.model)
+			input, output, err = tensorflow.GuessInputAndOutput(model)
 			if err != nil {
 				return fmt.Errorf("nsfw: %w", err)
 			}

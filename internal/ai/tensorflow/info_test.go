@@ -2,6 +2,7 @@ package tensorflow
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,6 +15,22 @@ var allOperations = []ResizeOperation{
 	ResizeBreakAspectRatio,
 	CenterCrop,
 	Padding,
+}
+
+func TestGetModelTagsInfo(t *testing.T) {
+	info, err := GetModelTagsInfo(
+		filepath.Join(assetsPath, "nasnet"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(info) != 1 {
+		t.Fatalf("Expected 1 info but got %d", len(info))
+	} else if len(info[0].Tags) != 1 {
+		t.Fatalf("Expected 1 tag, but got %d", len(info[0].Tags))
+	} else if info[0].Tags[0] != "photoprism" {
+		t.Fatalf("Expected tag photoprism, but have %s", info[0].Tags[0])
+	}
 }
 
 func TestResizeOperations(t *testing.T) {

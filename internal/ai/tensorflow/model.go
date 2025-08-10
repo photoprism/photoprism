@@ -25,18 +25,33 @@ func SavedModel(modelPath string, tags []string) (model *tf.SavedModel, err erro
 // GuessInputAndOutput tries to inspect a loaded saved model to build the
 // ModelInfo struct
 func GuessInputAndOutput(model *tf.SavedModel) (input *PhotoInput, output *ModelOutput, err error) {
+	if model == nil {
+		return nil, nil, fmt.Errorf("tensorflow: GuessInputAndOutput received a nil input")
+	}
+
 	modelOps := model.Graph.Operations()
 
 	for i := range modelOps {
 		if strings.HasPrefix(modelOps[i].Type(), "Placeholder") &&
 			modelOps[i].NumOutputs() == 1 &&
-			modelOps[i].Output(0).Shape().NumDimensions() == 4 &&
-			modelOps[i].Output(0).Shape().Size(3) == ExpectedChannels { // check the channels are 3
+			modelOps[i].Output(0).Shape().NumDimensions() == 4 {
+
 			shape := modelOps[i].Output(0).Shape()
-			input = &PhotoInput{
-				Name:   modelOps[i].Name(),
-				Height: shape.Size(1),
-				Width:  shape.Size(2),
+
+			var comps []ShapeComponent
+			if shape.Size(3) == ExpectedChannels {
+				comps = []ShapeComponent{ShapeBatch, ShapeHeight, ShapeWidth, ShapeColor}
+			} else if shape.Size(1) == ExpectedChannels { // check the channels are 3
+				comps = []ShapeComponent{ShapeBatch, ShapeColor, ShapeHeight, ShapeWidth, ShapeColor}
+			}
+
+			if comps != nil {
+				input = &PhotoInput{
+					Name:   modelOps[i].Name(),
+					Height: shape.Size(1),
+					Width:  shape.Size(2),
+					Shape:  comps,
+				}
 			}
 		} else if (modelOps[i].Type() == "Softmax" || strings.HasPrefix(modelOps[i].Type(), "StatefulPartitionedCall")) &&
 			modelOps[i].NumOutputs() == 1 && modelOps[i].Output(0).Shape().NumDimensions() == 2 {
@@ -59,34 +74,57 @@ func GetInputAndOutputFromSavedModel(model *tf.SavedModel) (*PhotoInput, *ModelO
 		return nil, nil, fmt.Errorf("GetInputAndOutputFromSavedModel: nil input")
 	}
 
+	log.Debugf("tensorflow: found %d signatures", len(model.Signatures))
 	for k, v := range model.Signatures {
+		var photoInput *PhotoInput
+		var modelOutput *ModelOutput
+
 		inputs := v.Inputs
 		outputs := v.Outputs
 
-		if len(inputs) == 1 && len(outputs) == 1 {
-			_, inputTensor := GetOne(inputs)
-			outputVarName, outputTensor := GetOne(outputs)
+		if len(inputs) >= 1 && len(outputs) >= 1 {
+			for _, inputTensor := range inputs {
+				if inputTensor.Shape.NumDimensions() == 4 {
+					var comps []ShapeComponent
+					if inputTensor.Shape.Size(3) == ExpectedChannels {
+						comps = []ShapeComponent{ShapeBatch, ShapeHeight, ShapeWidth, ShapeColor}
+					} else if inputTensor.Shape.Size(1) == ExpectedChannels { // check the channels are 3
+						comps = []ShapeComponent{ShapeBatch, ShapeColor, ShapeHeight, ShapeWidth}
+					} else {
+						log.Debugf("tensorflow: shape %d", inputTensor.Shape.Size(1))
+					}
 
-			if inputTensor != nil && outputTensor != nil {
-				if inputTensor.Shape.Size(3) != ExpectedChannels {
-					log.Warnf("tensorflow: skipping signature %v because channels are expected to be %d, have %d",
-						k, ExpectedChannels, inputTensor.Shape.Size(3))
-				}
+					if comps == nil {
+						log.Warnf("tensorflow: skipping signature %v because we could not find the color component", k)
+					} else {
+						var inputIdx = 0
+						var err error
 
-				if inputTensor.Shape.NumDimensions() == 4 &&
-					inputTensor.Shape.Size(3) == ExpectedChannels &&
-					outputTensor.Shape.NumDimensions() == 2 {
-					var inputIdx, outputIdx = 0, 0
-					var err error
+						inputName, inputIndex, found := strings.Cut(inputTensor.Name, ":")
+						if found {
+							inputIdx, err = strconv.Atoi(inputIndex)
+							if err != nil {
+								return nil, nil, fmt.Errorf("could not parse index %s (%s)", inputIndex, clean.Error(err))
+							}
+						}
 
-					inputName, inputIndex, found := strings.Cut(inputTensor.Name, ":")
-					if found {
-						inputIdx, err = strconv.Atoi(inputIndex)
-						if err != nil {
-							return nil, nil, fmt.Errorf("could not parse index %s (%s)", inputIndex, clean.Error(err))
+						photoInput = &PhotoInput{
+							Name:        inputName,
+							OutputIndex: inputIdx,
+							Height:      inputTensor.Shape.Size(1),
+							Width:       inputTensor.Shape.Size(2),
+							Shape:       comps,
 						}
 					}
 
+					break
+				}
+			}
+
+			for outputVarName, outputTensor := range outputs {
+				var err error
+				var outputIdx int
+				if outputTensor.Shape.NumDimensions() == 2 {
 					outputName, outputIndex, found := strings.Cut(outputTensor.Name, ":")
 					if found {
 						outputIdx, err = strconv.Atoi(outputIndex)
@@ -95,23 +133,20 @@ func GetInputAndOutputFromSavedModel(model *tf.SavedModel) (*PhotoInput, *ModelO
 						}
 					}
 
-					return &PhotoInput{
-							Name:        inputName,
-							OutputIndex: inputIdx,
-							Height:      inputTensor.Shape.Size(1),
-							Width:       inputTensor.Shape.Size(2),
-						}, &ModelOutput{
-							Name:          outputName,
-							OutputIndex:   outputIdx,
-							NumOutputs:    outputTensor.Shape.Size(1),
-							OutputsLogits: strings.Contains(Deref(outputVarName, ""), "logits"),
-						}, nil
-
+					modelOutput = &ModelOutput{
+						Name:          outputName,
+						OutputIndex:   outputIdx,
+						NumOutputs:    outputTensor.Shape.Size(1),
+						OutputsLogits: strings.Contains(outputVarName, "logits"),
+					}
+					break
 				}
 			}
+		}
 
+		if photoInput != nil && modelOutput != nil {
+			return photoInput, modelOutput, nil
 		}
 	}
-
 	return nil, nil, fmt.Errorf("GetInputAndOutputFromSignature: could not find valid signatures")
 }

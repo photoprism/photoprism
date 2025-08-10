@@ -16,6 +16,11 @@ Models:
       ColorChannelOrder: RGB
       Height: 224
       Width: 224
+      Shape:
+      - Batch
+      - Height
+      - Width
+      - Color
     Output:
       Name: predictions/Softmax
       Outputs: 1000
@@ -31,6 +36,11 @@ Models:
       Name: input_tensor
       Height: 224
       Width: 224
+      Shape:
+      - Batch
+      - Height
+      - Width
+      - Color
     Output:
       Name: nsfw_cls_model/final_prediction
       Outputs: 5
@@ -46,6 +56,11 @@ Models:
       Name: input
       Height: 160
       Width: 160
+      Shape:
+      - Batch
+      - Height
+      - Width
+      - Color
     Output:
       Name: embeddings
       Outputs: 512
