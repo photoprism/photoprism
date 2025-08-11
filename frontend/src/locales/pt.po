@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-22 18:49+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-08-11 16:09+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -509,7 +509,7 @@ msgstr "caminho base"
 
 #: src/component/photo/edit/info.vue:49 src/component/photo/edit/labels.vue:38
 msgid "Batch"
-msgstr ""
+msgstr "Lote"
 
 #: src/page/about/about.vue:96 src/page/connect.vue:222
 msgid "Become a member today, support our mission and enjoy our member benefits!"
