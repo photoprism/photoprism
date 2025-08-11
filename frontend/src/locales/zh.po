@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-07-22 18:49+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-08-11 08:45+0000\n"
+"Last-Translator: Angelkawaii2 <angelkawaii2@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
@@ -1236,7 +1236,7 @@ msgstr "排除已隐藏"
 
 #: src/page/settings/advanced.vue:249
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "要完全支持视频、实时照片和 XMP，需要使用 ExifTool 提取元数据。"
+msgstr "要完全支持视频、实况照片和 XMP，需要使用 ExifTool 提取元数据。"
 
 #: src/page/settings/advanced.vue:128
 msgid "Experimental Features"
