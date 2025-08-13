@@ -22,9 +22,9 @@ const (
 	ExternalModelsTestLabel = "PHOTOPRISM_TEST_EXTERNAL_MODELS"
 )
 
-var baseUrl = "https://dl.photoprism.app/tensorflow/vision"
+var baseUrl = "https://dl.photoprism.app/tensorflow/models"
 
-//To avoid downloading everything again and again...
+// To avoid downloading everything again and again...
 //var baseUrl = "http://host.docker.internal:8000"
 
 type ModelTestCase struct {
@@ -100,6 +100,15 @@ var modelsInfo = map[string]*ModelTestCase{
 			},
 		},
 	},
+	/* Not correctly uploaded
+	"vit-base-patch16-google-250811.tar.gz": {
+		Info: &tensorflow.ModelInfo{
+			Output: &tensorflow.ModelOutput{
+				OutputsLogits: true,
+			},
+		},
+	},
+	*/
 }
 
 func isSafePath(target, baseDir string) bool {
