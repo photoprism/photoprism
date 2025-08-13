@@ -19,7 +19,7 @@ var allOperations = []ResizeOperation{
 
 func TestGetModelTagsInfo(t *testing.T) {
 	info, err := GetModelTagsInfo(
-		filepath.Join(assetsPath, "nasnet"))
+		filepath.Join(assetsPath, "models", "nasnet"))
 	if err != nil {
 		t.Fatal(err)
 	}

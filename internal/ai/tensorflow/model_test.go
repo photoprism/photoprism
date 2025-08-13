@@ -13,7 +13,7 @@ var testDataPath = fs.Abs("testdata")
 
 func TestTF1ModelLoad(t *testing.T) {
 	model, err := SavedModel(
-		filepath.Join(assetsPath, "nasnet"),
+		filepath.Join(assetsPath, "models", "nasnet"),
 		[]string{"photoprism"})
 
 	if err != nil {

@@ -7,8 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/wamuir/graft/tensorflow"
-
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 var defaultImageInput = &PhotoInput{
@@ -17,7 +15,6 @@ var defaultImageInput = &PhotoInput{
 	Shape:  DefaultPhotoInputShape(),
 }
 
-var assetsPath = fs.Abs("../../../assets")
 var examplesPath = filepath.Join(assetsPath, "examples")
 
 func TestConvertValue(t *testing.T) {
