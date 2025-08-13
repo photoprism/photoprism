@@ -4,7 +4,8 @@ TODAY=$(date -u +%Y%m%d)
 
 MODEL_NAME="NASNet Mobile"
 MODEL_URL="https://dl.photoprism.app/tensorflow/nasnet.zip?$TODAY"
-MODEL_PATH="assets/nasnet"
+MODELS_PATH="assets/models"
+MODEL_PATH="$MODELS_PATH/nasnet"
 MODEL_ZIP="/tmp/photoprism/nasnet.zip"
 MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
@@ -41,7 +42,7 @@ if [[ -e ${MODEL_PATH} ]]; then
 fi
 
 # Unzip model
-unzip ${MODEL_ZIP} -d assets
+unzip ${MODEL_ZIP} -d "$MODELS_PATH"
 echo "$MODEL_NAME $TODAY $MODEL_HASH" > ${MODEL_VERSION}
 wget --inet4-only -c "${MODEL_21K_LABELS_URL}" -O ${MODEL_PATH}/labels21k.txt
 

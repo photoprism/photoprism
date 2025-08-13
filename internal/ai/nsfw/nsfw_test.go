@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../../assets/nsfw")
+var modelPath, _ = filepath.Abs("../../../assets/models/nsfw")
 
 var detector = NewModel(modelPath, nil, false)
 

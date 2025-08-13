@@ -299,6 +299,12 @@ var Flags = CliFlags{
 			TakesFile: true,
 		}}, {
 		Flag: &cli.PathFlag{
+			Name:      "models-path",
+			Usage:     "custom model assets `PATH` where computer vision models are located",
+			EnvVars:   EnvVars("MODELS_PATH"),
+			TakesFile: true,
+		}}, {
+		Flag: &cli.PathFlag{
 			Name:    "sidecar-path",
 			Aliases: []string{"sc"},
 			Usage:   "custom relative or absolute sidecar `PATH` *optional*",

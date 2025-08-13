@@ -78,7 +78,7 @@ var PhotoPrism = []*cli.Command{
 var CountFlag = &cli.UintFlag{
 	Name:    "count",
 	Aliases: []string{"n"},
-	Usage:   "`LIMIT` number of results",
+	Usage:   "maximum `NUMBER` of results",
 	Value:   100,
 }
 

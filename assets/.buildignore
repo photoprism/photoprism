@@ -1,8 +1,5 @@
 examples
-efficientnet
-imagenet
-resnet
-vision
 README.md
 docs
 .*
+_*

@@ -73,6 +73,7 @@ pull: docker-pull
 test: test-js test-go
 test-go: reset-sqlite run-test-go
 test-pkg: reset-sqlite run-test-pkg
+test-ai: reset-sqlite run-test-ai
 test-api: reset-sqlite run-test-api
 test-video: reset-sqlite run-test-video
 test-entity: reset-sqlite run-test-entity
@@ -395,6 +396,9 @@ run-test-mariadb:
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...
+run-test-ai:
+	$(info Running all AI tests...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ai/...
 run-test-api:
 	$(info Running all API tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/api/...

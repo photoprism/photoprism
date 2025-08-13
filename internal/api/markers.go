@@ -75,7 +75,7 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //
 // See internal/form/marker.go for the values required to create a new marker.
 //
-//	@Tags Files
+//	@Tags	Files
 //	@Router	/api/v1/markers [post]
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {

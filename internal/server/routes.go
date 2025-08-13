@@ -202,5 +202,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.Connect(APIv1)
 	api.WebSocket(APIv1)
 	api.GetMetrics(APIv1)
+	api.Options(APIv1)
 	api.Echo(APIv1)
 }

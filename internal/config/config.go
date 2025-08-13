@@ -33,6 +33,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/dustin/go-humanize"
@@ -78,6 +79,7 @@ type Config struct {
 	serial    string
 	env       string
 	start     bool
+	ready     atomic.Bool
 }
 
 func init() {
@@ -266,8 +268,14 @@ func (c *Config) Init() error {
 
 	// Show log message.
 	log.Debugf("config: successfully initialized [%s]", time.Since(start))
+	c.ready.Store(true)
 
 	return nil
+}
+
+// IsReady checks if the application has been successfully initialized.
+func (c *Config) IsReady() bool {
+	return c.ready.Load()
 }
 
 // Propagate updates config options in other packages as needed.
@@ -291,10 +299,8 @@ func (c *Config) Propagate() {
 	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
-	vision.AssetsPath = c.AssetsPath()
-	vision.FaceNetModelPath = c.FaceNetModelPath()
-	vision.NsfwModelPath = c.NSFWModelPath()
-	vision.CachePath = c.CachePath()
+	vision.SetCachePath(c.CachePath())
+	vision.SetModelsPath(c.ModelsPath())
 	vision.ServiceUri = c.VisionUri()
 	vision.ServiceKey = c.VisionKey()
 	vision.DownloadUrl = c.DownloadUrl()
@@ -601,6 +607,9 @@ func (c *Config) SetLogLevel(level logrus.Level) {
 
 // Shutdown shuts down the active processes and closes the database connection.
 func (c *Config) Shutdown() {
+	// App is no longer accepting requests.
+	c.ready.Store(false)
+
 	// Send cancel signal to all workers.
 	mutex.CancelAll()
 

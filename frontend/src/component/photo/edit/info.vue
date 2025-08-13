@@ -370,6 +370,8 @@ export default {
           return defaultValue ? defaultValue : this.$gettext("Auto");
         case "default":
           return this.$gettext("Default");
+        case "batch":
+          return this.$gettext("Batch");
         case "manual":
           return this.$gettext("Manual");
         case "meta":

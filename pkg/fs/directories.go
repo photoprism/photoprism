@@ -120,6 +120,16 @@ var AssetPaths = []string{
 	"/var/lib/photoprism/assets",
 }
 
+var ModelsPaths = []string{
+	"/opt/photoprism/assets/models",
+	"/photoprism/assets/models",
+	"~/.photoprism/assets/models",
+	"~/photoprism/assets/models",
+	"photoprism/assets/models",
+	"assets/models",
+	"/var/lib/photoprism/assets/models",
+}
+
 // Dirs returns a slice of directories in a path, optional recursively and with symlinks.
 //
 // Warning: Following symlinks can make the result non-deterministic and hard to test!

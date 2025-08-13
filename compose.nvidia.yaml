@@ -147,7 +147,7 @@ services:
               capabilities: [gpu]
               count: "all"
 
-  ## Ollama AI Model Runner (optional)
+  ## Ollama Large-Language Model Runner (optional)
   ## Run "ollama pull [name]:[version]" to download a vision model
   ## listed at <https://ollama.com/search?c=vision>, for example:
   ## docker compose exec ollama ollama pull qwen2.5vl:3b

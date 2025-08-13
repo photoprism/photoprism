@@ -14,7 +14,7 @@ require (
 	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v1.2.3
 	github.com/gin-gonic/gin v1.10.1
-	github.com/golang/geo v0.0.0-20250731010204-92ad70d864ba
+	github.com/golang/geo v0.0.0-20250813021530-247f39904721
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -40,15 +40,15 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.40.0
-	golang.org/x/net v0.42.0
+	golang.org/x/crypto v0.41.0
+	golang.org/x/net v0.43.0
 	gonum.org/v1/gonum v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.29.0
+	golang.org/x/image v0.30.0
 )
 
 require github.com/olekukonko/tablewriter v1.0.9
@@ -73,7 +73,7 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 
-require golang.org/x/text v0.27.0
+require golang.org/x/text v0.28.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -86,10 +86,10 @@ require (
 	github.com/ugjka/go-tz/v2 v2.2.6
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
-	github.com/zitadel/oidc/v3 v3.43.1
-	golang.org/x/mod v0.26.0
-	golang.org/x/sys v0.34.0
-	google.golang.org/protobuf v1.36.6
+	github.com/zitadel/oidc/v3 v3.44.0
+	golang.org/x/mod v0.27.0
+	golang.org/x/sys v0.35.0
+	google.golang.org/protobuf v1.36.7
 )
 
 require (
@@ -154,7 +154,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/trace v1.37.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/tools v0.34.0 // indirect
+	golang.org/x/tools v0.35.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

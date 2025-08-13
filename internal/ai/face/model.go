@@ -19,7 +19,6 @@ import (
 // Model is a wrapper for the TensorFlow Facenet model.
 type Model struct {
 	model      *tf.SavedModel
-	modelName  string
 	modelPath  string
 	cachePath  string
 	resolution int
@@ -41,6 +40,7 @@ func NewModel(modelPath, cachePath string, resolution int, meta *tensorflow.Mode
 	if len(meta.Tags) == 0 {
 		meta.Tags = []string{"serve"}
 	}
+
 	return &Model{
 		modelPath:  modelPath,
 		cachePath:  cachePath,

@@ -50,7 +50,7 @@ func GetSettings(router *gin.RouterGroup) {
 //	@Produce	json
 //	@Success	200					{object}	customize.Settings
 //	@Failure	400,401,403,404,500	{object}	i18n.Response
-//	@Param		settings			body		customize.Settings	true "user settings"
+//	@Param		settings			body		customize.Settings	true	"user settings"
 //	@Router		/api/v1/settings [post]
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {

@@ -2,6 +2,7 @@ package classify
 
 import (
 	"os"
+	"path/filepath"
 	"sync"
 	"testing"
 
@@ -12,14 +13,15 @@ import (
 )
 
 var assetsPath = fs.Abs("../../../assets")
-var modelPath = assetsPath + "/nasnet"
-var examplesPath = assetsPath + "/examples"
+var examplesPath = filepath.Join(assetsPath, "examples")
+var modelsPath = filepath.Join(assetsPath, "models")
+var modelPath = modelsPath + "/nasnet"
 var once sync.Once
 var testInstance *Model
 
 func NewModelTest(t *testing.T) *Model {
 	once.Do(func() {
-		testInstance = NewNasnet(assetsPath, false)
+		testInstance = NewNasnet(modelsPath, false)
 		if err := testInstance.loadModel(); err != nil {
 			t.Fatal(err)
 		}
@@ -29,7 +31,7 @@ func NewModelTest(t *testing.T) *Model {
 }
 
 func TestModel_CenterCrop(t *testing.T) {
-	model := NewNasnet(assetsPath, false)
+	model := NewNasnet(modelsPath, false)
 	if err := model.loadModel(); err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +44,7 @@ func TestModel_CenterCrop(t *testing.T) {
 }
 
 func TestModel_Padding(t *testing.T) {
-	model := NewNasnet(assetsPath, false)
+	model := NewNasnet(modelsPath, false)
 	if err := model.loadModel(); err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +57,7 @@ func TestModel_Padding(t *testing.T) {
 }
 
 func TestModel_ResizeBreakAspectRatio(t *testing.T) {
-	model := NewNasnet(assetsPath, false)
+	model := NewNasnet(modelsPath, false)
 	if err := model.loadModel(); err != nil {
 		t.Fatal(err)
 	}
@@ -154,7 +156,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 		assert.Empty(t, result)
 	})
 	t.Run("Disabled", func(t *testing.T) {
-		tensorFlow := NewNasnet(assetsPath, true)
+		tensorFlow := NewNasnet(modelsPath, true)
 
 		result, err := tensorFlow.File(examplesPath+"/chameleon_lime.jpg", 10)
 		assert.Nil(t, err)
@@ -253,7 +255,7 @@ func TestModel_Run(t *testing.T) {
 		}
 	})
 	t.Run("Disabled", func(t *testing.T) {
-		tensorFlow := NewNasnet(assetsPath, true)
+		tensorFlow := NewNasnet(modelsPath, true)
 
 		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
@@ -277,7 +279,7 @@ func TestModel_LoadModel(t *testing.T) {
 		assert.True(t, tf.ModelLoaded())
 	})
 	t.Run("NotFound", func(t *testing.T) {
-		tensorFlow := NewNasnet(assetsPath+"foo", false)
+		tensorFlow := NewNasnet(modelsPath+"foo", false)
 		err := tensorFlow.loadModel()
 
 		if err != nil {
@@ -290,7 +292,7 @@ func TestModel_LoadModel(t *testing.T) {
 
 func TestModel_BestLabels(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		tensorFlow := NewNasnet(assetsPath, false)
+		tensorFlow := NewNasnet(modelsPath, false)
 
 		if err := tensorFlow.loadLabels(modelPath); err != nil {
 			t.Fatal(err)
@@ -308,7 +310,7 @@ func TestModel_BestLabels(t *testing.T) {
 		t.Log(result)
 	})
 	t.Run("NotLoaded", func(t *testing.T) {
-		tensorFlow := NewNasnet(assetsPath, false)
+		tensorFlow := NewNasnet(modelsPath, false)
 
 		p := make([]float32, 1000)
 

@@ -268,7 +268,7 @@ func assertContainsAny(t *testing.T, s string, substrings []string) {
 
 func testModel_LabelsFromFile(t *testing.T, tensorFlow *Model) {
 	testName := func(name string) string {
-		return fmt.Sprintf("%s/%s", tensorFlow.modelPath, name)
+		return fmt.Sprintf("%s/%s", tensorFlow.name, name)
 	}
 
 	t.Run(testName("chameleon_lime.jpg"), func(t *testing.T) {
@@ -373,7 +373,7 @@ func testModel_Run(t *testing.T, tensorFlow *Model) {
 	}
 
 	testName := func(name string) string {
-		return fmt.Sprintf("%s/%s", tensorFlow.modelPath, name)
+		return fmt.Sprintf("%s/%s", tensorFlow.name, name)
 	}
 
 	t.Run(testName("chameleon_lime.jpg"), func(t *testing.T) {

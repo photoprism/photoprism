@@ -77,6 +77,7 @@ type Options struct {
 	TempPath               string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath             string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
 	CustomAssetsPath       string        `yaml:"-" json:"-" flag:"custom-assets-path" tags:"plus,pro"`
+	ModelsPath             string        `yaml:"ModelsPath" json:"-" flag:"models-path"`
 	SidecarPath            string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
 	SidecarYaml            bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml" default:"true"`
 	UsageInfo              bool          `yaml:"UsageInfo" json:"UsageInfo" flag:"usage-info"`

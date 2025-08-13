@@ -22,7 +22,7 @@ var FindCommand = &cli.Command{
 	Flags: append(report.CliFlags, &cli.UintFlag{
 		Name:    "count",
 		Aliases: []string{"n"},
-		Usage:   "maximum number of search `RESULTS`",
+		Usage:   "maximum `NUMBER` of results",
 		Value:   10000,
 	}),
 	Action: findAction,

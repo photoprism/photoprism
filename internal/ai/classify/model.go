@@ -24,8 +24,8 @@ import (
 // Model represents a TensorFlow classification model.
 type Model struct {
 	model             *tf.SavedModel
-	modelPath         string
-	assetsPath        string
+	name              string
+	modelsPath        string
 	defaultLabelsPath string
 	labels            []string
 	disabled          bool
@@ -35,14 +35,14 @@ type Model struct {
 }
 
 // NewModel returns new TensorFlow classification model instance.
-func NewModel(assetsPath, modelPath, defaultLabelsPath string, meta *tensorflow.ModelInfo, disabled bool) *Model {
+func NewModel(modelsPath, name, defaultLabelsPath string, meta *tensorflow.ModelInfo, disabled bool) *Model {
 	if meta == nil {
 		meta = new(tensorflow.ModelInfo)
 	}
 
 	return &Model{
-		modelPath:         modelPath,
-		assetsPath:        assetsPath,
+		name:              name,
+		modelsPath:        modelsPath,
 		defaultLabelsPath: defaultLabelsPath,
 		meta:              meta,
 		disabled:          disabled,
@@ -50,8 +50,8 @@ func NewModel(assetsPath, modelPath, defaultLabelsPath string, meta *tensorflow.
 }
 
 // NewNasnet returns new Nasnet TensorFlow classification model instance.
-func NewNasnet(assetsPath string, disabled bool) *Model {
-	return NewModel(assetsPath, "nasnet", "", &tensorflow.ModelInfo{
+func NewNasnet(modelsPath string, disabled bool) *Model {
+	return NewModel(modelsPath, "nasnet", "", &tensorflow.ModelInfo{
 		TFVersion: "1.12.0",
 		Tags:      []string{"photoprism"},
 		Input: &tensorflow.PhotoInput{
@@ -199,7 +199,7 @@ func (m *Model) loadModel() (err error) {
 		return nil
 	}
 
-	modelPath := path.Join(m.assetsPath, m.modelPath)
+	modelPath := path.Join(m.modelsPath, m.name)
 
 	if len(m.meta.Tags) == 0 {
 		infos, modelErr := tensorflow.GetModelTagsInfo(modelPath)

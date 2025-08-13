@@ -76,6 +76,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"thumb-cache-path", c.ThumbCachePath()},
 		{"temp-path", c.TempPath()},
 		{"assets-path", c.AssetsPath()},
+		{"models-path", c.ModelsPath()},
 		{"static-path", c.StaticPath()},
 		{"build-path", c.BuildPath()},
 		{"img-path", c.ImgPath()},
@@ -256,8 +257,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-uri", c.VisionUri()},
 		{"vision-key", strings.Repeat("*", utf8.RuneCountInString(c.VisionKey()))},
 		{"nasnet-model-path", c.NasnetModelPath()},
-		{"facenet-model-path", c.FaceNetModelPath()},
-		{"nsfw-model-path", c.NSFWModelPath()},
+		{"facenet-model-path", c.FacenetModelPath()},
+		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 
 		// Facial Recognition.

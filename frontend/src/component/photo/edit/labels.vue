@@ -218,6 +218,8 @@ export default {
     refresh() {},
     sourceName(s) {
       switch (s) {
+        case "batch":
+          return this.$gettext("Batch");
         case "manual":
           return this.$gettext("Manual");
         case "title":

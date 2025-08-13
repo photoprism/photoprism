@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-07-22 18:49+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-08-11 16:09+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -504,6 +504,10 @@ msgstr "Märgis"
 msgid "Base Path"
 msgstr "Baasirada"
 
+#: src/component/photo/edit/info.vue:49 src/component/photo/edit/labels.vue:38
+msgid "Batch"
+msgstr "Partii"
+
 #: src/page/about/about.vue:96 src/page/connect.vue:222
 msgid "Become a member today, support our mission and enjoy our member benefits!"
 msgstr "Astu liikmeks juba täna, toeta meie missiooni ja naudi meie liikmete soodustusi!"
@@ -627,8 +631,8 @@ msgstr "Katkesta"
 msgid "Cannot copy to clipboard"
 msgstr "Ei saa kopeerida lõikelauale"
 
-#: src/component/photo/edit/details.vue:89 src/component/photo/edit/info.vue:63
-#: src/component/photo/edit/labels.vue:42
+#: src/component/photo/edit/details.vue:89 src/component/photo/edit/info.vue:65
+#: src/component/photo/edit/labels.vue:44
 #: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:72
 msgid "Caption"
 msgstr "Pealkiri"
@@ -1207,7 +1211,7 @@ msgstr "Viga"
 msgid "Errors"
 msgstr "Vead"
 
-#: src/component/photo/edit/info.vue:55
+#: src/component/photo/edit/info.vue:57
 msgid "Estimate"
 msgstr "Hinnang:"
 
@@ -1311,7 +1315,7 @@ msgstr "Tagasiside"
 msgid "Female"
 msgstr "Naine"
 
-#: src/component/photo/edit/info.vue:57 src/component/photo/edit/info.vue:214
+#: src/component/photo/edit/info.vue:59 src/component/photo/edit/info.vue:214
 #: src/model/file.js:290
 msgid "File"
 msgstr "Fail"
@@ -1498,7 +1502,7 @@ msgstr "Hübriid"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Kui kaotate juurdepääsu autentimisrakendusele või -seadmele, saate oma kontole juurdepääsu taastamiseks kasutada taastekoodi."
 
-#: src/component/photo/edit/info.vue:65 src/component/photo/edit/labels.vue:46
+#: src/component/photo/edit/info.vue:67 src/component/photo/edit/labels.vue:48
 #: src/component/photo/view/cards.vue:532 src/model/file.js:218
 #: src/options/options.js:281
 msgid "Image"
@@ -1808,7 +1812,7 @@ msgstr "Kohalik aeg"
 #: src/component/photo/edit/details.vue:38
 #: src/component/photo/edit/details.vue:116
 #: src/component/photo/edit/details.vue:210
-#: src/component/photo/edit/info.vue:67 src/component/photo/edit/labels.vue:48
+#: src/component/photo/edit/info.vue:69 src/component/photo/edit/labels.vue:50
 #: src/component/photo/view/cards.vue:555 src/component/photo/view/list.vue:117
 #: src/component/sidebar/info.vue:107 src/page/albums.vue:100
 #: src/page/settings/account.vue:563 src/page/settings/account.vue:565
@@ -1862,7 +1866,7 @@ msgstr "Halda kontot"
 msgid "Manager"
 msgstr "Juht"
 
-#: src/component/photo/edit/info.vue:49 src/component/photo/edit/labels.vue:38
+#: src/component/photo/edit/info.vue:51 src/component/photo/edit/labels.vue:40
 msgid "Manual"
 msgstr "Käsitsi"
 
@@ -1907,7 +1911,7 @@ msgstr "Sõnum"
 msgid "Message sent"
 msgstr "Sõnum saadetud"
 
-#: src/component/photo/edit/info.vue:51
+#: src/component/photo/edit/info.vue:53
 msgid "Metadata"
 msgstr "Metaandmed"
 
@@ -1969,7 +1973,7 @@ msgstr "Mute"
 #: src/component/album/edit/dialog.vue:78
 #: src/component/label/edit/dialog.vue:72
 #: src/component/people/edit/dialog.vue:72
-#: src/component/photo/edit/files.vue:41 src/component/photo/edit/info.vue:59
+#: src/component/photo/edit/files.vue:41 src/component/photo/edit/info.vue:61
 #: src/component/photo/edit/info.vue:125 src/component/photo/edit/people.vue:36
 #: src/component/photo/view/list.vue:117 src/component/service/edit.vue:311
 #: src/component/settings/apps.vue:53 src/component/settings/apps.vue:289
@@ -2924,7 +2928,7 @@ msgid "Streets"
 msgstr "Tänavad"
 
 #: src/component/photo/edit/details.vue:468
-#: src/component/photo/edit/labels.vue:44
+#: src/component/photo/edit/labels.vue:46
 msgid "Subject"
 msgstr "Subjekt"
 
@@ -3049,8 +3053,8 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Pealkiri"
 
-#: src/component/photo/edit/info.vue:61 src/component/photo/edit/info.vue:155
-#: src/component/photo/edit/labels.vue:40 src/component/photo/view/list.vue:114
+#: src/component/photo/edit/info.vue:63 src/component/photo/edit/info.vue:155
+#: src/component/photo/edit/labels.vue:42 src/component/photo/view/list.vue:114
 #: src/component/sidebar/info.vue:57
 msgid "Title"
 msgstr "Pealkiri"

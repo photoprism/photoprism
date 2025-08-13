@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../../assets/facenet")
+var modelPath, _ = filepath.Abs("../../../assets/models/facenet")
 
 func TestNet(t *testing.T) {
 	expected := map[string]int{

@@ -10,21 +10,22 @@ import (
 
 // Echo returns the request and response headers as JSON if debug mode is enabled.
 //
-// The supported request methods are:
-//
-//   - GET
-//   - POST
-//   - PUT
-//   - PATCH
-//   - HEAD
-//   - OPTIONS
-//   - DELETE
-//   - CONNECT
-//   - TRACE
-//
-// ANY /api/v1/echo
+//	@Summary	returns the request and response headers as JSON if debug mode is enabled
+//	@Id			Echo
+//	@Success	200
+//	@Router		/api/v1/echo [get]
 func Echo(router *gin.RouterGroup) {
-	router.Any("/echo", func(c *gin.Context) {
+	methods := []string{
+		http.MethodGet,
+		http.MethodHead,
+		http.MethodPost,
+		http.MethodPut,
+		http.MethodPatch,
+		http.MethodDelete,
+		http.MethodConnect,
+		http.MethodTrace,
+	}
+	router.Match(methods, "/echo", func(c *gin.Context) {
 		// Abort if debug mode is disabled.
 		if !get.Config().Debug() {
 			AbortFeatureDisabled(c)

@@ -1,5 +1,5 @@
 # Ubuntu 25.04 (Plucky Puffin)
-FROM photoprism/develop:250805-plucky
+FROM photoprism/develop:250808-plucky
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)

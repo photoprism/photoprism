@@ -549,6 +549,11 @@ msgstr ""
 msgid "Base Path"
 msgstr ""
 
+#: src/component/photo/edit/info.vue:49
+#: src/component/photo/edit/labels.vue:38
+msgid "Batch"
+msgstr ""
+
 #: src/page/about/about.vue:96
 #: src/page/connect.vue:222
 msgid "Become a member today, support our mission and enjoy our member benefits!"
@@ -705,8 +710,8 @@ msgid "Cannot copy to clipboard"
 msgstr ""
 
 #: src/component/photo/edit/details.vue:89
-#: src/component/photo/edit/info.vue:63
-#: src/component/photo/edit/labels.vue:42
+#: src/component/photo/edit/info.vue:65
+#: src/component/photo/edit/labels.vue:44
 #: src/component/photo/view/cards.vue:445
 #: src/component/sidebar/info.vue:72
 msgid "Caption"
@@ -1383,7 +1388,7 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: src/component/photo/edit/info.vue:55
+#: src/component/photo/edit/info.vue:57
 msgid "Estimate"
 msgstr ""
 
@@ -1498,7 +1503,7 @@ msgstr ""
 msgid "Female"
 msgstr ""
 
-#: src/component/photo/edit/info.vue:57
+#: src/component/photo/edit/info.vue:59
 #: src/component/photo/edit/info.vue:214
 #: src/model/file.js:290
 msgid "File"
@@ -1707,8 +1712,8 @@ msgstr ""
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr ""
 
-#: src/component/photo/edit/info.vue:65
-#: src/component/photo/edit/labels.vue:46
+#: src/component/photo/edit/info.vue:67
+#: src/component/photo/edit/labels.vue:48
 #: src/component/photo/view/cards.vue:532
 #: src/model/file.js:218
 #: src/options/options.js:281
@@ -2069,8 +2074,8 @@ msgstr ""
 #: src/component/photo/edit/details.vue:38
 #: src/component/photo/edit/details.vue:116
 #: src/component/photo/edit/details.vue:210
-#: src/component/photo/edit/info.vue:67
-#: src/component/photo/edit/labels.vue:48
+#: src/component/photo/edit/info.vue:69
+#: src/component/photo/edit/labels.vue:50
 #: src/component/photo/view/cards.vue:555
 #: src/component/photo/view/list.vue:117
 #: src/component/sidebar/info.vue:107
@@ -2132,8 +2137,8 @@ msgstr ""
 msgid "Manager"
 msgstr ""
 
-#: src/component/photo/edit/info.vue:49
-#: src/component/photo/edit/labels.vue:38
+#: src/component/photo/edit/info.vue:51
+#: src/component/photo/edit/labels.vue:40
 msgid "Manual"
 msgstr ""
 
@@ -2181,7 +2186,7 @@ msgstr ""
 msgid "Message sent"
 msgstr ""
 
-#: src/component/photo/edit/info.vue:51
+#: src/component/photo/edit/info.vue:53
 msgid "Metadata"
 msgstr ""
 
@@ -2254,7 +2259,7 @@ msgstr ""
 #: src/component/label/edit/dialog.vue:72
 #: src/component/people/edit/dialog.vue:72
 #: src/component/photo/edit/files.vue:41
-#: src/component/photo/edit/info.vue:59
+#: src/component/photo/edit/info.vue:61
 #: src/component/photo/edit/info.vue:125
 #: src/component/photo/edit/people.vue:36
 #: src/component/photo/view/list.vue:117
@@ -3342,7 +3347,7 @@ msgid "Streets"
 msgstr ""
 
 #: src/component/photo/edit/details.vue:468
-#: src/component/photo/edit/labels.vue:44
+#: src/component/photo/edit/labels.vue:46
 msgid "Subject"
 msgstr ""
 
@@ -3488,9 +3493,9 @@ msgctxt "Photo"
 msgid "Title"
 msgstr ""
 
-#: src/component/photo/edit/info.vue:61
+#: src/component/photo/edit/info.vue:63
 #: src/component/photo/edit/info.vue:155
-#: src/component/photo/edit/labels.vue:40
+#: src/component/photo/edit/labels.vue:42
 #: src/component/photo/view/list.vue:114
 #: src/component/sidebar/info.vue:57
 msgid "Title"

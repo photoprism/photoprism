@@ -1,5 +1,6 @@
 export const Auto = "";
 export const Default = "default";
+export const Batch = "batch";
 export const Manual = "manual";
 export const Estimate = "estimate";
 export const File = "file";

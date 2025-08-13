@@ -1714,6 +1714,17 @@
                 }
             }
         },
+        "/api/v1/echo": {
+            "get": {
+                "summary": "returns the request and response headers as JSON if debug mode is enabled",
+                "operationId": "Echo",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/v1/errors": {
             "get": {
                 "produces": [
@@ -5270,6 +5281,17 @@
                 "responses": {}
             }
         },
+        "/api/v1/{any}": {
+            "options": {
+                "summary": "returns CORS headers with an empty response body",
+                "operationId": "Options",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/api/v1/{entity}/{uid}/links": {
             "post": {
                 "tags": [
@@ -7560,19 +7582,24 @@
             "type": "object",
             "properties": {
                 "drawing": {
-                    "type": "number"
+                    "type": "number",
+                    "format": "float32"
                 },
                 "hentai": {
-                    "type": "number"
+                    "type": "number",
+                    "format": "float32"
                 },
                 "neutral": {
-                    "type": "number"
+                    "type": "number",
+                    "format": "float32"
                 },
                 "porn": {
-                    "type": "number"
+                    "type": "number",
+                    "format": "float32"
                 },
                 "sexy": {
-                    "type": "number"
+                    "type": "number",
+                    "format": "float32"
                 }
             }
         },
@@ -8223,11 +8250,128 @@
                 }
             }
         },
+        "tensorflow.ColorChannelOrder": {
+            "type": "integer",
+            "enum": [
+                0
+            ],
+            "x-enum-varnames": [
+                "UndefinedOrder"
+            ]
+        },
+        "tensorflow.Interval": {
+            "type": "object",
+            "properties": {
+                "end": {
+                    "type": "number"
+                },
+                "mean": {
+                    "type": "number"
+                },
+                "start": {
+                    "type": "number"
+                },
+                "stdDev": {
+                    "type": "number"
+                }
+            }
+        },
+        "tensorflow.ModelInfo": {
+            "type": "object",
+            "properties": {
+                "input": {
+                    "$ref": "#/definitions/tensorflow.PhotoInput"
+                },
+                "output": {
+                    "$ref": "#/definitions/tensorflow.ModelOutput"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "tensorflow.ModelOutput": {
+            "type": "object",
+            "properties": {
+                "index": {
+                    "type": "integer"
+                },
+                "logits": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputs": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tensorflow.PhotoInput": {
+            "type": "object",
+            "properties": {
+                "height": {
+                    "type": "integer"
+                },
+                "index": {
+                    "type": "integer"
+                },
+                "inputOrder": {
+                    "$ref": "#/definitions/tensorflow.ColorChannelOrder"
+                },
+                "intervals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tensorflow.Interval"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "resizeOperation": {
+                    "$ref": "#/definitions/tensorflow.ResizeOperation"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tensorflow.ResizeOperation": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "UndefinedResizeOperation",
+                "ResizeBreakAspectRatio",
+                "CenterCrop",
+                "Padding"
+            ]
+        },
         "time.Duration": {
             "type": "integer",
+            "format": "int64",
             "enum": [
                 -9223372036854775808,
                 9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
                 1,
                 1000,
                 1000000,
@@ -8238,6 +8382,18 @@
             "x-enum-varnames": [
                 "minDuration",
                 "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
@@ -8433,7 +8589,8 @@
                         "items": {
                             "type": "array",
                             "items": {
-                                "type": "number"
+                                "type": "number",
+                                "format": "float64"
                             }
                         }
                     }
@@ -8498,8 +8655,14 @@
                 "Service": {
                     "$ref": "#/definitions/vision.Service"
                 },
+                "default": {
+                    "type": "boolean"
+                },
                 "disabled": {
                     "type": "boolean"
+                },
+                "meta": {
+                    "$ref": "#/definitions/tensorflow.ModelInfo"
                 },
                 "name": {
                     "type": "string"

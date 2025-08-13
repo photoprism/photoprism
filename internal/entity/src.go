@@ -56,7 +56,7 @@ var SrcPriority = Priorities{
 	SrcKeyword:  16,
 	SrcMeta:     16,
 	SrcXmp:      32,
-	SrcBatch:    48,
+	SrcBatch:    64,
 	SrcManual:   64,
 	SrcAdmin:    128,
 }

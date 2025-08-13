@@ -7,14 +7,10 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestLabels(t *testing.T) {
-	var assetsPath = fs.Abs("../../../assets")
-	var examplesPath = assetsPath + "/examples"
-
 	t.Run("Success", func(t *testing.T) {
 		result, err := Labels(Files{examplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
 

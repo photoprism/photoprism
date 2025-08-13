@@ -2,7 +2,6 @@ package vision
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 	"sync"
 
@@ -143,7 +142,7 @@ func (m *Model) ClassifyModel() *classify.Model {
 		return nil
 	case NasnetModel.Name, "nasnet":
 		// Load and initialize the Nasnet image classification model.
-		if model := classify.NewNasnet(AssetsPath, m.Disabled); model == nil {
+		if model := classify.NewNasnet(GetModelsPath(), m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init nasnet model)", err)
@@ -154,7 +153,7 @@ func (m *Model) ClassifyModel() *classify.Model {
 	default:
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
-			m.Path = clean.TypeLowerUnderscore(m.Name)
+			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
 		if m.Meta == nil {
@@ -173,8 +172,7 @@ func (m *Model) ClassifyModel() *classify.Model {
 		m.Meta.Input.SetResolution(m.Resolution)
 
 		// Try to load custom model based on the configuration values.
-		defaultPath := filepath.Join(AssetsPath, "nasnet")
-		if model := classify.NewModel(AssetsPath, m.Path, defaultPath, m.Meta, m.Disabled); model == nil {
+		if model := classify.NewModel(GetModelsPath(), m.Path, GetNasnetModelPath(), m.Meta, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -205,7 +203,7 @@ func (m *Model) FaceModel() *face.Model {
 		return nil
 	case FacenetModel.Name, "facenet":
 		// Load and initialize the Nasnet image classification model.
-		if model := face.NewModel(FaceNetModelPath, CachePath, m.Resolution, m.Meta, m.Disabled); model == nil {
+		if model := face.NewModel(GetFacenetModelPath(), GetCachePath(), m.Resolution, m.Meta, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -216,7 +214,7 @@ func (m *Model) FaceModel() *face.Model {
 	default:
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
-			m.Path = clean.TypeLowerUnderscore(m.Name)
+			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
 		// Set default thumbnail resolution if no tags are configured.
@@ -229,7 +227,7 @@ func (m *Model) FaceModel() *face.Model {
 		}
 
 		// Try to load custom model based on the configuration values.
-		if model := face.NewModel(filepath.Join(AssetsPath, m.Path), CachePath, m.Resolution, m.Meta, m.Disabled); model == nil {
+		if model := face.NewModel(GetModelPath(m.Path), GetCachePath(), m.Resolution, m.Meta, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -260,7 +258,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		return nil
 	case NsfwModel.Name, "nsfw":
 		// Load and initialize the Nasnet image classification model.
-		if model := nsfw.NewModel(NsfwModelPath, NsfwModel.Meta, m.Disabled); model == nil {
+		if model := nsfw.NewModel(GetNsfwModelPath(), NsfwModel.Meta, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -271,7 +269,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 	default:
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
-			m.Path = clean.TypeLowerUnderscore(m.Name)
+			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
 		// Set default thumbnail resolution if no tags are configured.
@@ -290,7 +288,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		}
 
 		// Try to load custom model based on the configuration values.
-		if model := nsfw.NewModel(filepath.Join(AssetsPath, m.Path), m.Meta, m.Disabled); model == nil {
+		if model := nsfw.NewModel(GetModelPath(m.Path), m.Meta, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)

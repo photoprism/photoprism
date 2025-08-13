@@ -24,11 +24,14 @@ var Api = func(conf *config.Config) gin.HandlerFunc {
 		if origin := conf.CORSOrigin(); origin != "" {
 			c.Header(header.AccessControlAllowOrigin, origin)
 
-			// Add additional information to preflight OPTION requests.
+			// Handle OPTIONS preflight requests by adding CORS headers
+			// and aborting the request with HTTP status code 204.
 			if c.Request.Method == http.MethodOptions {
 				c.Header(header.AccessControlAllowHeaders, conf.CORSHeaders())
 				c.Header(header.AccessControlAllowMethods, conf.CORSMethods())
 				c.Header(header.AccessControlMaxAge, header.DefaultAccessControlMaxAge)
+				c.AbortWithStatus(http.StatusNoContent)
+				return
 			}
 		}
 	}

@@ -26,8 +26,8 @@ var VisionRunCommand = &cli.Command{
 		},
 		&cli.IntFlag{
 			Name:    "count",
-			Aliases: []string{"c"},
-			Usage:   "maximum number of pictures to be processed",
+			Aliases: []string{"n"},
+			Usage:   "maximum `NUMBER` of pictures to be processed",
 			Value:   search.MaxResults,
 		},
 		&cli.StringFlag{

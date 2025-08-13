@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,11 +35,12 @@ func TestConfig_VisionKey(t *testing.T) {
 	assert.Equal(t, "", c.VisionKey())
 }
 
-func TestConfig_TensorFlowModelPath(t *testing.T) {
+func TestConfig_ModelsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.NasnetModelPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/nasnet", path)
+	assert.True(t, strings.HasPrefix(path, c.ModelsPath()))
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/models/nasnet", path)
 }
 
 func TestConfig_TensorFlowDisabled(t *testing.T) {
@@ -51,13 +53,13 @@ func TestConfig_TensorFlowDisabled(t *testing.T) {
 func TestConfig_NSFWModelPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.NSFWModelPath(), "/assets/nsfw")
+	assert.Contains(t, c.NsfwModelPath(), "/assets/models/nsfw")
 }
 
 func TestConfig_FaceNetModelPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.FaceNetModelPath(), "/assets/facenet")
+	assert.Contains(t, c.FacenetModelPath(), "/assets/models/facenet")
 }
 
 func TestConfig_DetectNSFW(t *testing.T) {

@@ -43,19 +43,35 @@ func (c *Config) VisionKey() string {
 	}
 }
 
+// ModelsPath returns the path where the machine learning models are located.
+func (c *Config) ModelsPath() string {
+	if c.options.ModelsPath != "" {
+		return fs.Abs(c.options.ModelsPath)
+	}
+
+	if dir := filepath.Join(c.AssetsPath(), "models"); fs.PathExists(dir) {
+		c.options.ModelsPath = dir
+		return c.options.ModelsPath
+	}
+
+	c.options.ModelsPath = fs.FindDir(fs.ModelsPaths)
+
+	return c.options.ModelsPath
+}
+
 // NasnetModelPath returns the TensorFlow model path.
 func (c *Config) NasnetModelPath() string {
-	return filepath.Join(c.AssetsPath(), "nasnet")
+	return filepath.Join(c.ModelsPath(), "nasnet")
 }
 
-// FaceNetModelPath returns the FaceNet model path.
-func (c *Config) FaceNetModelPath() string {
-	return filepath.Join(c.AssetsPath(), "facenet")
+// FacenetModelPath returns the FaceNet model path.
+func (c *Config) FacenetModelPath() string {
+	return filepath.Join(c.ModelsPath(), "facenet")
 }
 
-// NSFWModelPath returns the "not safe for work" TensorFlow model path.
-func (c *Config) NSFWModelPath() string {
-	return filepath.Join(c.AssetsPath(), "nsfw")
+// NsfwModelPath returns the "not safe for work" TensorFlow model path.
+func (c *Config) NsfwModelPath() string {
+	return filepath.Join(c.ModelsPath(), "nsfw")
 }
 
 // DetectNSFW checks if NSFW photos should be detected and flagged.
