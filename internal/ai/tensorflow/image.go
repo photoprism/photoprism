@@ -24,7 +24,7 @@ func ImageFromFile(fileName string, input *PhotoInput) (*tf.Tensor, error) {
 	if img, err := OpenImage(fileName); err != nil {
 		return nil, err
 	} else {
-		return Image(img, input)
+		return Image(img, input, nil)
 	}
 }
 
@@ -39,17 +39,17 @@ func OpenImage(fileName string) (image.Image, error) {
 	return img, err
 }
 
-func ImageFromBytes(b []byte, input *PhotoInput) (*tf.Tensor, error) {
+func ImageFromBytes(b []byte, input *PhotoInput, builder *ImageTensorBuilder) (*tf.Tensor, error) {
 	img, _, imgErr := image.Decode(bytes.NewReader(b))
 
 	if imgErr != nil {
 		return nil, imgErr
 	}
 
-	return Image(img, input)
+	return Image(img, input, builder)
 }
 
-func Image(img image.Image, input *PhotoInput) (tfTensor *tf.Tensor, err error) {
+func Image(img image.Image, input *PhotoInput, builder *ImageTensorBuilder) (tfTensor *tf.Tensor, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("tensorflow: %s (panic)\nstack: %s", r, debug.Stack())
@@ -60,9 +60,11 @@ func Image(img image.Image, input *PhotoInput) (tfTensor *tf.Tensor, err error) 
 		return tfTensor, fmt.Errorf("tensorflow: resolution must be larger than 0")
 	}
 
-	builder, err := NewImageTensorBuilder(input)
-	if err != nil {
-		return nil, err
+	if builder == nil {
+		builder, err = NewImageTensorBuilder(input)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	for i := 0; i < input.Resolution(); i++ {

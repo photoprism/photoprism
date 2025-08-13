@@ -40,7 +40,7 @@ func TestImageFromBytes(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		result, err := ImageFromBytes(imageBuffer, defaultImageInput)
+		result, err := ImageFromBytes(imageBuffer, defaultImageInput, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -52,7 +52,7 @@ func TestImageFromBytes(t *testing.T) {
 	t.Run("Document", func(t *testing.T) {
 		imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx")
 		assert.Nil(t, err)
-		result, err := ImageFromBytes(imageBuffer, defaultImageInput)
+		result, err := ImageFromBytes(imageBuffer, defaultImageInput, nil)
 
 		assert.Empty(t, result)
 		assert.EqualError(t, err, "image: unknown format")

@@ -318,3 +318,44 @@ func TestModel_BestLabels(t *testing.T) {
 		assert.Empty(t, result)
 	})
 }
+
+func BenchmarkModel_BestLabelWithOptimization(b *testing.B) {
+	model := NewNasnet(assetsPath, false)
+	err := model.loadModel()
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg")
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	for b.Loop() {
+		_, err := model.Run(imageBuffer, 10)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkModel_BestLabelsNoOptimization(b *testing.B) {
+	model := NewNasnet(assetsPath, false)
+	err := model.loadModel()
+	if err != nil {
+		b.Fatal(err)
+	}
+	model.builder = nil
+
+	imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg")
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	for b.Loop() {
+		_, err := model.Run(imageBuffer, 10)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
