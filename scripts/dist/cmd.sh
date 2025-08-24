@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # clean up child processes via trap
-trap 'ps -p $$ -o pgid= | xargs pgrep -g | xargs kill ;exit' EXIT
+trap 'ps -p $$ -o pgid= | xargs pgrep -A -g | xargs kill ;exit' EXIT
 
 # regular expressions
 re='^[0-9]+$'
