@@ -67,49 +67,13 @@ func SplitWithEscape(s string, separator rune, escape rune, trim bool) (result [
 // Only applies the escape if the following character is escape or separator
 // otherwise it keeps both runes
 func TrimmedSplitWithEscape(s string, separator rune, escape rune) (result []string) {
-	/* 	if s == "" {
-	   		return []string{}
-	   	}
-
-	   	result = []string{}
-
-	   	if !strings.ContainsRune(s, separator) {
-	   		if t := strings.TrimSpace(s); t != "" {
-	   			result = append(result, t)
-	   		}
-	   	} else {
-	   		escaped := false
-	   		var upTo strings.Builder
-
-	   		for _, rune := range s {
-	   			if escaped {
-	   				if rune == escape || rune == separator {
-	   					upTo.WriteRune(rune)
-	   				} else {
-	   					upTo.WriteRune(escape)
-	   					upTo.WriteRune(rune)
-	   				}
-	   				escaped = false
-	   			} else if rune == escape {
-	   				escaped = true
-	   			} else if rune == separator {
-	   				if t := strings.TrimSpace(upTo.String()); t != "" {
-	   					result = append(result, t)
-	   				}
-	   				upTo.Reset()
-	   			} else {
-	   				upTo.WriteRune(rune)
-	   			}
-	   		}
-	   		if t := strings.TrimSpace(upTo.String()); t != "" {
-	   			result = append(result, t)
-	   		}
-	   	}
-	return result
-	*/
 	return SplitWithEscape(s, separator, escape, true)
 }
 
+// Splits a string using a separator allowing escaping that separator with escape
+// Does not trim each result, and will return sets containing just white space if included in string
+// Only applies the escape if the following character is escape or separator
+// otherwise it keeps both runes
 func UnTrimmedSplitWithEscape(s string, separator rune, escape rune) (result []string) {
 	return SplitWithEscape(s, separator, escape, false)
 }
