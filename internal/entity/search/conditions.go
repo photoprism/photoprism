@@ -33,7 +33,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		wildcardThreshold = 2
 	}
 
-	for _, k := range strings.Split(s, txt.And) {
+	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
 		var words []string
 
@@ -133,10 +133,10 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 		return wheres
 	}
 
-	for _, k := range strings.Split(s, txt.And) {
+	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
 
-		for _, w := range strings.Split(k, txt.Or) {
+		for _, w := range txt.UnTrimmedSplitWithEscape(k, txt.OrRune, txt.EscapeRune) {
 			w = strings.TrimSpace(w)
 
 			if w == txt.EmptyString {
@@ -243,7 +243,7 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
-	terms := strings.Split(s, txt.Or)
+	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 	values = make([]interface{}, len(terms))
 
 	if l := len(terms); l == 0 {
@@ -271,7 +271,7 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
-	terms := strings.Split(s, txt.Or)
+	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 
 	if len(terms) == 0 {
 		return "", []interface{}{}
@@ -299,37 +299,12 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	return strings.Join(wheres, " OR "), values
 }
 
-// Split splits a search string into separate values and trims whitespace.
-func Split(s string, sep string) (result []string) {
-	if s == "" {
-		return []string{}
-	}
-
-	// Trim separator and split.
-	s = strings.Trim(s, sep)
-	v := strings.Split(s, sep)
-
-	if len(v) <= 1 {
-		return v
-	}
-
-	result = make([]string, 0, len(v))
-
-	for i := range v {
-		if t := strings.TrimSpace(v[i]); t != "" {
-			result = append(result, t)
-		}
-	}
-
-	return result
-}
-
 // SplitOr splits a search string into separate OR values for an IN condition.
 func SplitOr(s string) (values []string) {
-	return Split(s, txt.Or)
+	return txt.TrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 }
 
 // SplitAnd splits a search string into separate AND values.
 func SplitAnd(s string) (values []string) {
-	return Split(s, txt.And)
+	return txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)
 }
