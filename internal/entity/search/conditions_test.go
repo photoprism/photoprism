@@ -387,6 +387,18 @@ func TestOrLikeCols(t *testing.T) {
 		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ? OR p.photo_caption LIKE ? OR p.photo_caption LIKE ?", where)
 		assert.Equal(t, []interface{}{"foo%", "bar", "foo%", "bar"}, values)
 	})
+	t.Run("OneTermEscaped", func(t *testing.T) {
+		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "\\|bar")
+
+		assert.Equal(t, "k.keyword LIKE ? OR p.photo_caption LIKE ?", where)
+		assert.Equal(t, []interface{}{"|bar", "|bar"}, values)
+	})
+	t.Run("TwoTermsEscaped", func(t *testing.T) {
+		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "foo*%|\\|bar")
+
+		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ? OR p.photo_caption LIKE ? OR p.photo_caption LIKE ?", where)
+		assert.Equal(t, []interface{}{"foo%", "|bar", "foo%", "|bar"}, values)
+	})
 	t.Run("OneFilename", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name"}, " 2790/07/27900704_070228_D6D51B6C.jpg")
 
@@ -399,30 +411,20 @@ func TestOrLikeCols(t *testing.T) {
 		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ? OR photos.photo_name LIKE ? OR photos.photo_name LIKE ?", where)
 		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
 	})
-}
+	t.Run("OneFilenameEscaped", func(t *testing.T) {
+		where, values := OrLikeCols([]string{"files.file_name"}, " 2790/07/27900704_070228_D6D\\|51B6C.jpg")
 
-func TestSplit(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
-		values := Split("", "")
-
-		assert.Equal(t, []string{}, values)
+		assert.Equal(t, "files.file_name LIKE ?", where)
+		assert.Equal(t, []interface{}{" 2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
 	})
-	t.Run("FooBar", func(t *testing.T) {
-		values := Split(" foo | Bar ", "&")
+	t.Run("TwoFilenamesEscaped", func(t *testing.T) {
+		where, values := OrLikeCols([]string{"files.file_name", "photos.photo_name"}, "1990*|2790/07/27900704_070228_D6D\\|51B6C.jpg")
 
-		assert.Equal(t, []string{" foo | Bar "}, values)
-	})
-	t.Run("FooAndBar", func(t *testing.T) {
-		values := Split(" foo & Bar ", "o")
-
-		assert.Equal(t, []string{"f", "& Bar"}, values)
-	})
-	t.Run("FooAndBarAndBaz", func(t *testing.T) {
-		values := Split(" foo & Bar&BAZ ", "&")
-
-		assert.Equal(t, []string{"foo", "Bar", "BAZ"}, values)
+		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ? OR photos.photo_name LIKE ? OR photos.photo_name LIKE ?", where)
+		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D|51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
 	})
 }
+
 func TestSplitOr(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		values := SplitOr("")

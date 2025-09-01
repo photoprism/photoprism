@@ -304,7 +304,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Filename = "20|22/vacat|ion/photo|41.jpg"
+		f.Filename = `20\|22/vacat\|ion/photo\|41.jpg`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -313,7 +313,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -482,7 +482,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Filename = "*photo|41.jpg | *&photo31.jpg"
+		f.Filename = "*photo\\|41.jpg | *&photo31.jpg"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -490,7 +490,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -790,7 +790,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "filename:\"20|22/vacat|ion/photo|41.jpg\""
+		f.Query = "filename:\"20\\|22/vacat\\|ion/photo\\|41.jpg\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -799,7 +799,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -971,7 +971,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "filename:\"*photo|41.jpg | *&photo31.jpg\""
+		f.Query = "filename:\"*photo\\|41.jpg | *&photo31.jpg\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -980,8 +980,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// TODO: Manual search also finds one result only.
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos

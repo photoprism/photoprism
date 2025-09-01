@@ -304,7 +304,7 @@ func TestPhotosFilterName(t *testing.T) {
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Name = "photo|41"
+		f.Name = "photo\\|41"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -313,7 +313,7 @@ func TestPhotosFilterName(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -482,7 +482,7 @@ func TestPhotosFilterName(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Name = "photo|41 | &photo31"
+		f.Name = "photo\\|41 | &photo31"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -490,7 +490,7 @@ func TestPhotosFilterName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Equal(t, 2, len(photos))
 	})
 }
 
@@ -781,7 +781,7 @@ func TestPhotosQueryName(t *testing.T) {
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "name:\"photo|41\""
+		f.Query = "name:\"photo\\|41\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -790,7 +790,7 @@ func TestPhotosQueryName(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -957,7 +957,7 @@ func TestPhotosQueryName(t *testing.T) {
 	t.Run("OrSearch3", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "name:\"photo|41 | &photo31\""
+		f.Query = "name:\"photo\\|41 | &photo31\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -965,7 +965,7 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Equal(t, 2, len(photos))
 	})
 	t.Run("OrSearch4", func(t *testing.T) {
 		var f form.SearchPhotos
