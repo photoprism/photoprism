@@ -1,6 +1,7 @@
 package txt
 
 import (
+	"slices"
 	"strings"
 )
 
@@ -20,26 +21,32 @@ func Bool(s string) bool {
 	return true
 }
 
-// Yes tests if a string represents "yes".
-func Yes(s string) bool {
-	if s == "" {
+// Yes tests if a string represents "yes" in the following languages Czech, Danish, Dutch, English, French, German, Indonesian, Italian, Polish, Portuguese, Russian, Ukrainian.
+func Yes(s string) (result bool) {
+	t := strings.ToLower(strings.TrimSpace(s))
+	if t == "" {
 		return false
+	} else if strings.Contains(t, " ") {
+		result = false
+	} else {
+		noStrings := []string{"1", "yes", "include", "true", "positive", "please", "ano", "ja", "oui", "si", "tak", "sim", "Да", "ya", "так"}
+		result = slices.Contains(noStrings, t)
 	}
-
-	s = strings.ToLower(strings.TrimSpace(s))
-
-	return strings.IndexAny(s, "ytjposiд") == 0
+	return result
 }
 
-// No tests if a string represents "no".
-func No(s string) bool {
-	if s == "" {
+// No tests if a string represents "no"  in the following languages Czech, Danish, Dutch, English, French, German, Indonesian, Italian, Polish, Portuguese, Russian, Ukrainian.
+func No(s string) (result bool) {
+	t := strings.ToLower(strings.TrimSpace(s))
+	if t == "" {
 		return false
+	} else if strings.Contains(t, " ") {
+		result = false
+	} else {
+		noStrings := []string{"0", "no", "none", "exclude", "false", "negative", "unknown", "žádný", "ingen", "nee", "nein", "non", "nie", "não", "нет", "tidak", "ні"}
+		result = slices.Contains(noStrings, t)
 	}
-
-	s = strings.ToLower(strings.TrimSpace(s))
-
-	return strings.IndexAny(s, "0nhufeн") == 0
+	return result
 }
 
 // New tests if a string represents "new".

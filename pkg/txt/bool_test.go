@@ -79,6 +79,18 @@ func TestYes(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, Yes(""))
 	})
+	t.Run("space", func(t *testing.T) {
+		assert.Equal(t, false, Yes("Yes Please"))
+	})
+	t.Run("one", func(t *testing.T) {
+		assert.Equal(t, true, Yes("1"))
+	})
+	t.Run("zero", func(t *testing.T) {
+		assert.Equal(t, false, Yes("0"))
+	})
+	t.Run("tak", func(t *testing.T) {
+		assert.Equal(t, true, Yes("так"))
+	})
 }
 
 func TestNo(t *testing.T) {
@@ -123,6 +135,30 @@ func TestNo(t *testing.T) {
 	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, No(""))
+	})
+	t.Run("space", func(t *testing.T) {
+		assert.Equal(t, false, No("No Thanks"))
+	})
+	t.Run("one", func(t *testing.T) {
+		assert.Equal(t, false, No("1"))
+	})
+	t.Run("zero", func(t *testing.T) {
+		assert.Equal(t, true, No("0"))
+	})
+	t.Run("hi accent", func(t *testing.T) {
+		assert.Equal(t, true, No("ні"))
+	})
+	t.Run("hi", func(t *testing.T) {
+		assert.Equal(t, false, No("Hi"))
+	})
+	t.Run("zadny", func(t *testing.T) {
+		assert.Equal(t, true, No("žádný"))
+	})
+	t.Run("nao", func(t *testing.T) {
+		assert.Equal(t, true, No("não"))
+	})
+	t.Run("het", func(t *testing.T) {
+		assert.Equal(t, true, No("нет"))
 	})
 }
 
