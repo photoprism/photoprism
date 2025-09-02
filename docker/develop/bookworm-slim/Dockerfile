@@ -55,11 +55,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
       iputils-ping dnsutils binutils binutils-gold \
     && \
-    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
-    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    /scripts/install-bashrc.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     /scripts/install-dircolors.sh && \
-    cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
       /photoprism/originals \
