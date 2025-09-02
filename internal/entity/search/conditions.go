@@ -12,7 +12,7 @@ import (
 
 // Like escapes a string for use in a query.
 func Like(s string) string {
-	return strings.Trim(clean.SqlString(s), " |&*%")
+	return strings.Trim(clean.SqlString(s, Db().Dialect().GetName()), " |&*%")
 }
 
 // LikeAny returns a single where condition matching the search words.

@@ -16,8 +16,11 @@ func TestLike(t *testing.T) {
 		assert.Equal(t, "", Like(""))
 	})
 	t.Run("Special", func(t *testing.T) {
-		s := " ' \" \t \n %_''"
-		exp := "'' \"\"   %_''''"
+		s := " ' \" \t \n %_''\\"
+		exp := "'' \"   %_''''\\"
+		if entity.DbDialect() == entity.MySQL {
+			exp = "'' \"   %_''''\\\\"
+		}
 		result := Like(s)
 		t.Logf("String..: %s", s)
 		t.Logf("Expected: %s", exp)
@@ -140,7 +143,7 @@ func TestLikeAnyWord(t *testing.T) {
 			t.Fatalf("two where conditions expected: %#v", w)
 		} else {
 			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE '\"\"us''a%'", w[1])
+			assert.Equal(t, "k.keyword LIKE '\"us''a%'", w[1])
 		}
 	})
 }
