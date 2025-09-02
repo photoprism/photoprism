@@ -129,11 +129,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-darktable.sh && \
     /scripts/install-go-tools.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
-    echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
-    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \
+    /scripts/install-bashrc.sh && \
     /scripts/install-dircolors.sh && \
-    cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
       /photoprism/originals \
