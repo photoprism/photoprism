@@ -1,22 +1,18 @@
 package list
 
+import "github.com/photoprism/photoprism/pkg/constants"
+
 // StringLengthLimit specifies the maximum length of string return values.
 var StringLengthLimit = 767
 
-// True and False specify boolean string representations.
-var (
-	True  = "true"
-	False = "false"
-)
-
 // Bool specifies boolean string values so they can be normalized.
 var Bool = map[string]string{
-	"true":    True,
-	"yes":     True,
-	"on":      True,
-	"enable":  True,
-	"false":   False,
-	"no":      False,
-	"off":     False,
-	"disable": False,
+	"true":    constants.True,
+	"yes":     constants.True,
+	"on":      constants.True,
+	"enable":  constants.True,
+	"false":   constants.False,
+	"no":      constants.False,
+	"off":     constants.False,
+	"disable": constants.False,
 }

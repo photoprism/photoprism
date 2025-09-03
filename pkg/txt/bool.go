@@ -1,13 +1,9 @@
 package txt
 
 import (
-	"slices"
 	"strings"
-)
 
-const (
-	True  = "true"
-	False = "false"
+	"github.com/photoprism/photoprism/pkg/constants"
 )
 
 // Bool casts a string to bool.
@@ -29,8 +25,8 @@ func Yes(s string) (result bool) {
 	} else if strings.Contains(t, " ") {
 		result = false
 	} else {
-		noStrings := []string{"1", "yes", "include", "true", "positive", "please", "ano", "ja", "oui", "si", "tak", "sim", "Да", "ya", "так"}
-		result = slices.Contains(noStrings, t)
+
+		_, result = constants.YesMap[t]
 	}
 	return result
 }
@@ -43,8 +39,7 @@ func No(s string) (result bool) {
 	} else if strings.Contains(t, " ") {
 		result = false
 	} else {
-		noStrings := []string{"0", "no", "none", "exclude", "false", "negative", "unknown", "žádný", "ingen", "nee", "nein", "non", "nie", "não", "нет", "tidak", "ні"}
-		result = slices.Contains(noStrings, t)
+		_, result = constants.NoMap[t]
 	}
 	return result
 }

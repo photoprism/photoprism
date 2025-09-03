@@ -3,6 +3,8 @@ package list
 import (
 	"sort"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/constants"
 )
 
 // Attr represents a list of key-value attributes.
@@ -84,7 +86,7 @@ func (list Attr) Sort() Attr {
 func (list Attr) Contains(s string) bool {
 	attr := list.Find(s)
 
-	if attr.Key == "" || attr.Value == False {
+	if attr.Key == "" || attr.Value == constants.False {
 		return false
 	}
 
@@ -118,14 +120,14 @@ func (list Attr) Find(s string) (a KeyValue) {
 	} else {
 		for i := range list {
 			if strings.EqualFold(attr.Key, list[i].Key) {
-				if attr.Value == True && list[i].Value == False {
+				if attr.Value == constants.True && list[i].Value == constants.False {
 					return KeyValue{Key: "", Value: ""}
 				} else if attr.Value == list[i].Value {
 					return *list[i]
 				} else if list[i].Value == All {
 					a = *list[i]
 				}
-			} else if list[i].Key == All && attr.Value != False {
+			} else if list[i].Key == All && attr.Value != constants.False {
 				a = *list[i]
 			}
 		}

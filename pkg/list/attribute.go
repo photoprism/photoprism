@@ -3,6 +3,8 @@ package list
 import (
 	"fmt"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/constants"
 )
 
 // KeyValue represents a key-value attribute.
@@ -77,7 +79,7 @@ func (f *KeyValue) Parse(s string) *KeyValue {
 	if f.Key == All {
 		return f
 	} else if v = Value(v); v == "" {
-		f.Value = True
+		f.Value = constants.True
 		return f
 	}
 
@@ -101,7 +103,7 @@ func (f *KeyValue) String() string {
 		return All
 	}
 
-	if Bool[strings.ToLower(f.Value)] == True {
+	if Bool[strings.ToLower(f.Value)] == constants.True {
 		return f.Key
 	}
 

@@ -22,7 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/constants"
 )
 
 // Vision represents a computer vision worker.
@@ -105,7 +105,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	// Find photos without captions when only
 	// captions are updated without force flag.
 	if !updateLabels && !updateNsfw && !force {
-		frm.Caption = txt.False
+		frm.Caption = constants.False
 	}
 
 	photos, _, queryErr := search.Photos(frm)
