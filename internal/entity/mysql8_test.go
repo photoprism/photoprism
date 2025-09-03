@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 
 	"github.com/jinzhu/gorm"
 )
@@ -18,7 +18,7 @@ func TestMySQL8(t *testing.T) {
 		t.Skip("skipping MySQL 8 test: PHOTOPRISM_TEST_DSN_MYSQL8 is not set")
 	}
 
-	dbDriver := constants.MySQL
+	dbDriver := enum.MySQL
 	db, err := gorm.Open(dbDriver, dbDsn)
 
 	if err != nil || db == nil {

@@ -3,15 +3,15 @@ package migrate
 import (
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 var Dialects = map[string]Migrations{
-	constants.MySQL:   DialectMySQL,
-	constants.SQLite3: DialectSQLite3,
+	enum.MySQL:   DialectMySQL,
+	enum.SQLite3: DialectSQLite3,
 }
 
 var once = map[string]*sync.Once{
-	constants.MySQL:   {},
-	constants.SQLite3: {},
+	enum.MySQL:   {},
+	enum.SQLite3: {},
 }

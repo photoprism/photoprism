@@ -5,68 +5,68 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestSqlSpecial(t *testing.T) {
 	t.Run("Special MySQL", func(t *testing.T) {
-		if s, o := SqlSpecial(1, constants.MySQL); !s {
+		if s, o := SqlSpecial(1, enum.MySQL); !s {
 			t.Error("char is special")
 		} else if !o {
 			t.Error("\" must be omitted")
 		}
 
-		if s, o := SqlSpecial(31, constants.MySQL); !s {
+		if s, o := SqlSpecial(31, enum.MySQL); !s {
 			t.Error("char is special")
 		} else if !o {
 			t.Error("\" must be omitted")
 		}
 
-		if s, o := SqlSpecial('\\', constants.MySQL); !s {
+		if s, o := SqlSpecial('\\', enum.MySQL); !s {
 			t.Error("\\ is special")
 		} else if o {
 			t.Error("\\ must not be omitted")
 		}
 
-		if s, o := SqlSpecial('\'', constants.MySQL); !s {
+		if s, o := SqlSpecial('\'', enum.MySQL); !s {
 			t.Error("' is special")
 		} else if o {
 			t.Error("' must not be omitted")
 		}
 	})
 	t.Run("Special SQLite", func(t *testing.T) {
-		if s, o := SqlSpecial(1, constants.SQLite3); !s {
+		if s, o := SqlSpecial(1, enum.SQLite3); !s {
 			t.Error("char is special")
 		} else if !o {
 			t.Error("\" must be omitted")
 		}
 
-		if s, o := SqlSpecial(31, constants.SQLite3); !s {
+		if s, o := SqlSpecial(31, enum.SQLite3); !s {
 			t.Error("char is special")
 		} else if !o {
 			t.Error("\" must be omitted")
 		}
 
-		if s, o := SqlSpecial('\'', constants.SQLite3); !s {
+		if s, o := SqlSpecial('\'', enum.SQLite3); !s {
 			t.Error("' is special")
 		} else if o {
 			t.Error("' must not be omitted")
 		}
 	})
 	t.Run("Special Postgres", func(t *testing.T) {
-		if s, o := SqlSpecial(1, constants.Postgres); !s {
+		if s, o := SqlSpecial(1, enum.Postgres); !s {
 			t.Error("char is special")
 		} else if !o {
 			t.Error("\" must be omitted")
 		}
 
-		if s, o := SqlSpecial(31, constants.Postgres); !s {
+		if s, o := SqlSpecial(31, enum.Postgres); !s {
 			t.Error("char is special")
 		} else if !o {
 			t.Error("\" must be omitted")
 		}
 
-		if s, o := SqlSpecial('\'', constants.Postgres); !s {
+		if s, o := SqlSpecial('\'', enum.Postgres); !s {
 			t.Error("' is special")
 		} else if o {
 			t.Error("' must not be omitted")
@@ -74,105 +74,105 @@ func TestSqlSpecial(t *testing.T) {
 	})
 
 	t.Run("NotSpecial MySQL", func(t *testing.T) {
-		if s, o := SqlSpecial(32, constants.MySQL); s {
+		if s, o := SqlSpecial(32, enum.MySQL); s {
 			t.Error("space is not special")
 		} else if o {
 			t.Error("space must not be omitted")
 		}
 
-		if s, o := SqlSpecial('A', constants.MySQL); s {
+		if s, o := SqlSpecial('A', enum.MySQL); s {
 			t.Error("A is not special")
 		} else if o {
 			t.Error("A must not be omitted")
 		}
 
-		if s, o := SqlSpecial('a', constants.MySQL); s {
+		if s, o := SqlSpecial('a', enum.MySQL); s {
 			t.Error("a is not special")
 		} else if o {
 			t.Error("a must not be omitted")
 		}
 
-		if s, o := SqlSpecial('_', constants.MySQL); s {
+		if s, o := SqlSpecial('_', enum.MySQL); s {
 			t.Error("_ is not special")
 		} else if o {
 			t.Error("_ must not be omitted")
 		}
 
-		if s, o := SqlSpecial('"', constants.MySQL); s {
+		if s, o := SqlSpecial('"', enum.MySQL); s {
 			t.Error("\" is not special")
 		} else if o {
 			t.Error("\" must not be omitted")
 		}
 	})
 	t.Run("NotSpecial SQLite", func(t *testing.T) {
-		if s, o := SqlSpecial(32, constants.SQLite3); s {
+		if s, o := SqlSpecial(32, enum.SQLite3); s {
 			t.Error("space is not special")
 		} else if o {
 			t.Error("space must not be omitted")
 		}
 
-		if s, o := SqlSpecial('A', constants.SQLite3); s {
+		if s, o := SqlSpecial('A', enum.SQLite3); s {
 			t.Error("A is not special")
 		} else if o {
 			t.Error("A must not be omitted")
 		}
 
-		if s, o := SqlSpecial('a', constants.SQLite3); s {
+		if s, o := SqlSpecial('a', enum.SQLite3); s {
 			t.Error("a is not special")
 		} else if o {
 			t.Error("a must not be omitted")
 		}
 
-		if s, o := SqlSpecial('_', constants.SQLite3); s {
+		if s, o := SqlSpecial('_', enum.SQLite3); s {
 			t.Error("_ is not special")
 		} else if o {
 			t.Error("_ must not be omitted")
 		}
 
-		if s, o := SqlSpecial('"', constants.SQLite3); s {
+		if s, o := SqlSpecial('"', enum.SQLite3); s {
 			t.Error("\" is not special")
 		} else if o {
 			t.Error("\" must not be omitted")
 		}
 
-		if s, o := SqlSpecial('\\', constants.SQLite3); s {
+		if s, o := SqlSpecial('\\', enum.SQLite3); s {
 			t.Error("\\ is not special")
 		} else if o {
 			t.Error("\\ must not be omitted")
 		}
 	})
 	t.Run("NotSpecial Postgres", func(t *testing.T) {
-		if s, o := SqlSpecial(32, constants.Postgres); s {
+		if s, o := SqlSpecial(32, enum.Postgres); s {
 			t.Error("space is not special")
 		} else if o {
 			t.Error("space must not be omitted")
 		}
 
-		if s, o := SqlSpecial('A', constants.Postgres); s {
+		if s, o := SqlSpecial('A', enum.Postgres); s {
 			t.Error("A is not special")
 		} else if o {
 			t.Error("A must not be omitted")
 		}
 
-		if s, o := SqlSpecial('a', constants.Postgres); s {
+		if s, o := SqlSpecial('a', enum.Postgres); s {
 			t.Error("a is not special")
 		} else if o {
 			t.Error("a must not be omitted")
 		}
 
-		if s, o := SqlSpecial('_', constants.Postgres); s {
+		if s, o := SqlSpecial('_', enum.Postgres); s {
 			t.Error("_ is not special")
 		} else if o {
 			t.Error("_ must not be omitted")
 		}
 
-		if s, o := SqlSpecial('"', constants.Postgres); s {
+		if s, o := SqlSpecial('"', enum.Postgres); s {
 			t.Error("\" is not special")
 		} else if o {
 			t.Error("\" must not be omitted")
 		}
 
-		if s, o := SqlSpecial('\\', constants.Postgres); s {
+		if s, o := SqlSpecial('\\', enum.Postgres); s {
 			t.Error("\\ is not special")
 		} else if o {
 			t.Error("\\ must not be omitted")
@@ -182,32 +182,32 @@ func TestSqlSpecial(t *testing.T) {
 
 func TestSqlString(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, "", SqlString("", constants.MySQL))
-		assert.Equal(t, "", SqlString("", constants.SQLite3))
-		assert.Equal(t, "", SqlString("", constants.Postgres))
+		assert.Equal(t, "", SqlString("", enum.MySQL))
+		assert.Equal(t, "", SqlString("", enum.SQLite3))
+		assert.Equal(t, "", SqlString("", enum.Postgres))
 	})
 	t.Run("Special", func(t *testing.T) {
 		s := "' \" \t \n %_''\\"
 		exp := "'' \"   %_''''\\\\"
-		result := SqlString(s, constants.MySQL)
+		result := SqlString(s, enum.MySQL)
 		t.Logf("String..: %s", s)
 		t.Logf("Expected: %s", exp)
 		t.Logf("Result..: %s", result)
 		assert.Equal(t, exp, result)
 		exp = "'' \"   %_''''\\"
-		result = SqlString(s, constants.SQLite3)
+		result = SqlString(s, enum.SQLite3)
 		t.Logf("String..: %s", s)
 		t.Logf("Expected: %s", exp)
 		t.Logf("Result..: %s", result)
 		assert.Equal(t, exp, result)
 		exp = "'' \"   %_''''\\"
-		result = SqlString(s, constants.Postgres)
+		result = SqlString(s, enum.Postgres)
 		t.Logf("String..: %s", s)
 		t.Logf("Expected: %s", exp)
 		t.Logf("Result..: %s", result)
 		assert.Equal(t, exp, result)
 	})
 	t.Run("Alnum", func(t *testing.T) {
-		assert.Equal(t, "123ABCabc", SqlString("123ABCabc", constants.MySQL))
+		assert.Equal(t, "123ABCabc", SqlString("123ABCabc", enum.MySQL))
 	})
 }

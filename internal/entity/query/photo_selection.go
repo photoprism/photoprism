@@ -6,7 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // SelectedPhotos finds photos based on the given selection form, e.g. for adding them to an album.
@@ -25,9 +25,9 @@ func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {
 	var concat string
 
 	switch DbDialect() {
-	case constants.MySQL:
+	case enum.MySQL:
 		concat = "CONCAT(a.path, '/%')"
-	case constants.SQLite3:
+	case enum.SQLite3:
 		concat = "a.path || '/%'"
 	default:
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())

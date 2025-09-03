@@ -10,7 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -121,7 +121,7 @@ func UpdateAlbumDates() error {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case constants.MySQL:
+	case enum.MySQL:
 		return UnscopedDb().Exec(`UPDATE albums INNER JOIN (
              SELECT photo_path, MAX(taken_at_local) AS taken_max
 			 FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL

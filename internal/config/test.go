@@ -20,7 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -69,11 +69,11 @@ func NewTestOptions(pkg string) *Options {
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
-		driver = constants.SQLite3
+		driver = enum.SQLite3
 	}
 
 	// Set default database DSN.
-	if driver == constants.SQLite3 {
+	if driver == enum.SQLite3 {
 		if dsn == "" && pkg != "" {
 			if dsn = fmt.Sprintf(".%s.db", clean.TypeLower(pkg)); !fs.FileExists(dsn) {
 				log.Debugf("sqlite: test database %s does not already exist", clean.Log(dsn))
@@ -143,7 +143,7 @@ func NewTestOptionsError() *Options {
 		OriginalsPath:  dataPath + "/originals",
 		ImportPath:     dataPath + "/import",
 		TempPath:       dataPath + "/temp",
-		DatabaseDriver: constants.SQLite3,
+		DatabaseDriver: enum.SQLite3,
 		DatabaseDsn:    ".test-error.db",
 	}
 

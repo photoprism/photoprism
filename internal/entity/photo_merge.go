@@ -5,7 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -109,11 +109,11 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
 
 		switch DbDialect() {
-		case constants.MySQL:
+		case enum.MySQL:
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
-		case constants.SQLite3:
+		case enum.SQLite3:
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))

@@ -58,7 +58,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/checksum"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -643,7 +643,7 @@ func (c *Config) IndexWorkers() int {
 	}
 
 	// Limit number of workers when using SQLite3 to avoid database locking issues.
-	if c.DatabaseDriver() == constants.SQLite3 && (cores >= 8 && c.options.IndexWorkers <= 0 || c.options.IndexWorkers > 4) {
+	if c.DatabaseDriver() == enum.SQLite3 && (cores >= 8 && c.options.IndexWorkers <= 0 || c.options.IndexWorkers > 4) {
 		return 4
 	}
 

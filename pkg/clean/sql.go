@@ -1,6 +1,6 @@
 package clean
 
-import "github.com/photoprism/photoprism/pkg/constants"
+import "github.com/photoprism/photoprism/pkg/enum"
 
 // SqlSpecial checks if the byte must be escaped/omitted in SQL.
 func SqlSpecial(b byte, dialect string) (special bool, omit bool) {
@@ -8,7 +8,7 @@ func SqlSpecial(b byte, dialect string) (special bool, omit bool) {
 		return true, true
 	}
 
-	if dialect == constants.MySQL {
+	if dialect == enum.MySQL {
 		switch b {
 		case '\'', '\\':
 			return true, false

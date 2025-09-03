@@ -19,7 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // SQLite default DSNs.
@@ -31,17 +31,17 @@ const (
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
 	switch strings.ToLower(c.options.DatabaseDriver) {
-	case constants.MySQL, constants.MariaDB:
-		c.options.DatabaseDriver = constants.MySQL
-	case constants.SQLite3, "sqlite", "test", "file", "":
-		c.options.DatabaseDriver = constants.SQLite3
+	case enum.MySQL, enum.MariaDB:
+		c.options.DatabaseDriver = enum.MySQL
+	case enum.SQLite3, "sqlite", "test", "file", "":
+		c.options.DatabaseDriver = enum.SQLite3
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
-		c.options.DatabaseDriver = constants.SQLite3
+		c.options.DatabaseDriver = enum.SQLite3
 		c.options.DatabaseDsn = ""
 	default:
 		log.Warnf("config: unsupported database driver %s, using sqlite", c.options.DatabaseDriver)
-		c.options.DatabaseDriver = constants.SQLite3
+		c.options.DatabaseDriver = enum.SQLite3
 		c.options.DatabaseDsn = ""
 	}
 
@@ -51,9 +51,9 @@ func (c *Config) DatabaseDriver() string {
 // DatabaseDriverName returns the formatted database driver name.
 func (c *Config) DatabaseDriverName() string {
 	switch c.DatabaseDriver() {
-	case constants.MySQL, constants.MariaDB:
+	case enum.MySQL, enum.MariaDB:
 		return "MariaDB"
-	case constants.SQLite3, "sqlite", "test", "file", "":
+	case enum.SQLite3, "sqlite", "test", "file", "":
 		return "SQLite"
 	case "tidb":
 		return "TiDB"
@@ -83,7 +83,7 @@ func (c *Config) DatabaseSsl() bool {
 	}
 
 	switch c.DatabaseDriver() {
-	case constants.MySQL:
+	case enum.MySQL:
 		// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
 		return c.IsDatabaseVersion("v11.4")
 	default:
@@ -95,7 +95,7 @@ func (c *Config) DatabaseSsl() bool {
 func (c *Config) DatabaseDsn() string {
 	if c.options.DatabaseDsn == "" {
 		switch c.DatabaseDriver() {
-		case constants.MySQL, constants.MariaDB:
+		case enum.MySQL, enum.MariaDB:
 			databaseServer := c.DatabaseServer()
 
 			// Connect via Unix Domain Socket?
@@ -114,7 +114,7 @@ func (c *Config) DatabaseDsn() string {
 				c.DatabaseName(),
 				c.DatabaseTimeout(),
 			)
-		case constants.Postgres:
+		case enum.Postgres:
 			return fmt.Sprintf(
 				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d sslmode=disable TimeZone=UTC",
 				c.DatabaseUser(),
@@ -124,7 +124,7 @@ func (c *Config) DatabaseDsn() string {
 				c.DatabasePort(),
 				c.DatabaseTimeout(),
 			)
-		case constants.SQLite3:
+		case enum.SQLite3:
 			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000")
 		default:
 			log.Errorf("config: empty database dsn")
@@ -159,7 +159,7 @@ func (c *Config) ParseDatabaseDsn() {
 func (c *Config) DatabaseServer() string {
 	c.ParseDatabaseDsn()
 
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return ""
 	} else if c.options.DatabaseServer == "" {
 		return localhost
@@ -170,7 +170,7 @@ func (c *Config) DatabaseServer() string {
 
 // DatabaseHost the database server host.
 func (c *Config) DatabaseHost() string {
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return ""
 	}
 
@@ -200,7 +200,7 @@ func (c *Config) DatabasePort() int {
 
 // DatabasePortString the database server port as string.
 func (c *Config) DatabasePortString() string {
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return ""
 	}
 
@@ -211,7 +211,7 @@ func (c *Config) DatabasePortString() string {
 func (c *Config) DatabaseName() string {
 	c.ParseDatabaseDsn()
 
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return c.DatabaseDsn()
 	} else if c.options.DatabaseName == "" {
 		return "photoprism"
@@ -222,7 +222,7 @@ func (c *Config) DatabaseName() string {
 
 // DatabaseUser returns the database user name.
 func (c *Config) DatabaseUser() string {
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return ""
 	}
 
@@ -237,7 +237,7 @@ func (c *Config) DatabaseUser() string {
 
 // DatabasePassword returns the database user password.
 func (c *Config) DatabasePassword() string {
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return ""
 	}
 
@@ -328,11 +328,11 @@ func (c *Config) CloseDb() error {
 // SetDbOptions sets the database collation to unicode if supported.
 func (c *Config) SetDbOptions() {
 	switch c.DatabaseDriver() {
-	case constants.MySQL, constants.MariaDB:
+	case enum.MySQL, enum.MariaDB:
 		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
-	case constants.Postgres:
+	case enum.Postgres:
 		// Ignore for now.
-	case constants.SQLite3:
+	case enum.SQLite3:
 		// Not required as unicode is default.
 	}
 }
@@ -388,7 +388,7 @@ func (c *Config) InitTestDb() {
 // checkDb checks the database server version.
 func (c *Config) checkDb(db *gorm.DB) error {
 	switch c.DatabaseDriver() {
-	case constants.MySQL:
+	case enum.MySQL:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
 		}
@@ -416,7 +416,7 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		} else if !c.IsDatabaseVersion("v10.5.12") {
 			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
-	case constants.SQLite3:
+	case enum.SQLite3:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
 		}

@@ -29,7 +29,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 var log = event.Log
@@ -74,7 +74,7 @@ func DbDialect() string {
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case constants.SQLite3:
+	case enum.SQLite3:
 		return 333
 	default:
 		return 1000

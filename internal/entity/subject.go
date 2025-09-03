@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -471,7 +471,7 @@ func (m *Subject) RefreshPhotos() error {
 
 	var err error
 	switch DbDialect() {
-	case constants.MySQL:
+	case enum.MySQL:
 		update := fmt.Sprintf(`UPDATE photos p JOIN files f ON f.photo_id = p.id JOIN %s m ON m.file_uid = f.file_uid
 			SET p.checked_at = NULL WHERE m.subj_uid = ?`, Marker{}.TableName())
 		err = UnscopedDb().Exec(update, m.SubjUID).Error

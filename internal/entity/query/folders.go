@@ -5,7 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -76,7 +76,7 @@ func UpdateFolderDates() error {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case constants.MySQL:
+	case enum.MySQL:
 		return UnscopedDb().Exec(`UPDATE folders
 		INNER JOIN
 			(SELECT photo_path, MAX(taken_at_local) AS taken_max

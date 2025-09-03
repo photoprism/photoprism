@@ -6,7 +6,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // Report returns global config values as a table for reporting.
@@ -15,7 +15,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	var dbKey string
 
-	if c.DatabaseDriver() == constants.SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		dbKey = "database-dsn"
 	} else {
 		dbKey = "database-name"
