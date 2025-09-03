@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/constants"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -57,13 +58,13 @@ func InitTestDb(driver, dsn string) *DbConn {
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
-		driver = SQLite3
+		driver = constants.SQLite3
 	}
 
 	// Set default database DSN.
-	if driver == SQLite3 {
-		if dsn == "" || dsn == SQLiteTestDB {
-			dsn = SQLiteTestDB
+	if driver == constants.SQLite3 {
+		if dsn == "" || dsn == constants.SQLiteTestDB {
+			dsn = constants.SQLiteTestDB
 			if !fs.FileExists(dsn) {
 				log.Debugf("sqlite: test database %s does not already exist", clean.Log(dsn))
 			} else if err := os.Remove(dsn); err != nil {

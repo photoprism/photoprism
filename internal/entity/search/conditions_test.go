@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/constants"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -18,7 +19,7 @@ func TestLike(t *testing.T) {
 	t.Run("Special", func(t *testing.T) {
 		s := " ' \" \t \n %_''\\"
 		exp := "'' \"   %_''''\\"
-		if entity.DbDialect() == entity.MySQL {
+		if entity.DbDialect() == constants.MySQL {
 			exp = "'' \"   %_''''\\\\"
 		}
 		result := Like(s)

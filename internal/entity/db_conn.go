@@ -10,14 +10,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-// Supported test databases.
-const (
-	MySQL           = "mysql"
-	SQLite3         = "sqlite3"
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:?cache=shared"
-)
-
 // dbConn is the global gorm.DB connection provider.
 var dbConn Gorm
 

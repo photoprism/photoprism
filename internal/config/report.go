@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"github.com/photoprism/photoprism/pkg/constants"
 )
 
 // Report returns global config values as a table for reporting.
@@ -13,7 +15,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	var dbKey string
 
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == constants.SQLite3 {
 		dbKey = "database-dsn"
 	} else {
 		dbKey = "database-name"

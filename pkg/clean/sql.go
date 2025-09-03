@@ -1,11 +1,6 @@
 package clean
 
-const (
-	MySQL    = "mysql"
-	MariaDB  = "mariadb"
-	Postgres = "postgres"
-	SQLite3  = "sqlite3"
-)
+import "github.com/photoprism/photoprism/pkg/constants"
 
 // SqlSpecial checks if the byte must be escaped/omitted in SQL.
 func SqlSpecial(b byte, dialect string) (special bool, omit bool) {
@@ -13,7 +8,7 @@ func SqlSpecial(b byte, dialect string) (special bool, omit bool) {
 		return true, true
 	}
 
-	if dialect == MySQL {
+	if dialect == constants.MySQL {
 		switch b {
 		case '\'', '\\':
 			return true, false

@@ -1,19 +1,17 @@
 package migrate
 
-import "sync"
+import (
+	"sync"
 
-// Supported database dialects.
-const (
-	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
+	"github.com/photoprism/photoprism/pkg/constants"
 )
 
 var Dialects = map[string]Migrations{
-	MySQL:   DialectMySQL,
-	SQLite3: DialectSQLite3,
+	constants.MySQL:   DialectMySQL,
+	constants.SQLite3: DialectSQLite3,
 }
 
 var once = map[string]*sync.Once{
-	MySQL:   {},
-	SQLite3: {},
+	constants.MySQL:   {},
+	constants.SQLite3: {},
 }
