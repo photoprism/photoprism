@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-08-11 16:09+0000\n"
+"PO-Revision-Date: 2025-09-03 14:14+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.13\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -1664,7 +1664,7 @@ msgstr "JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارا
 
 #: src/common/util.js:732
 msgid "Keyword"
-msgstr ""
+msgstr "Peyva sereke"
 
 #: src/component/photo/edit/details.vue:555
 msgid "Keywords"
@@ -3348,7 +3348,7 @@ msgstr "Temaşeker"
 
 #: src/common/util.js:746
 msgid "Vision"
-msgstr ""
+msgstr "Qaweta çavdîtinê"
 
 #: src/page/admin/sessions.vue:271 src/options/auth.js:13
 msgid "Visitor"
