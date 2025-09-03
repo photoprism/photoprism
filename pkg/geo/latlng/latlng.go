@@ -1,5 +1,5 @@
 /*
-Package latlng provides latitude and longitude functions and constants.
+Package latlng provides latitude and longitude functions and enum.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 

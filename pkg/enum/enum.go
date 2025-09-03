@@ -1,5 +1,5 @@
 /*
-Package constants provides declarations of constants.
+Package enum provides declarations of enum.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
@@ -22,4 +22,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package constants
+package enum

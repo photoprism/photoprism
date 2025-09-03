@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/media/http/header"
@@ -515,9 +515,9 @@ func (m *Session) ValidateScope(resource acl.Resource, perms acl.Permissions) bo
 	}
 
 	// Check if scope is limited to read or write operations.
-	if a := attr.Find(acl.ScopeRead.String()); a.Value == constants.True && acl.GrantScopeRead.DenyAny(perms) {
+	if a := attr.Find(acl.ScopeRead.String()); a.Value == enum.True && acl.GrantScopeRead.DenyAny(perms) {
 		return false
-	} else if a = attr.Find(acl.ScopeWrite.String()); a.Value == constants.True && acl.GrantScopeWrite.DenyAny(perms) {
+	} else if a = attr.Find(acl.ScopeWrite.String()); a.Value == enum.True && acl.GrantScopeWrite.DenyAny(perms) {
 		return false
 	}
 

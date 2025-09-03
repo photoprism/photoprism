@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestParseAttr(t *testing.T) {
@@ -202,7 +202,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 7)
 		result := attr.Find("people.view")
 		assert.Equal(t, "people.view", result.Key)
-		assert.Equal(t, constants.True, result.Value)
+		assert.Equal(t, enum.True, result.Value)
 	})
 	t.Run("ReadAll", func(t *testing.T) {
 		s := "read *"
@@ -211,7 +211,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 2)
 		result := attr.Find("read")
 		assert.Equal(t, "read", result.Key)
-		assert.Equal(t, constants.True, result.Value)
+		assert.Equal(t, enum.True, result.Value)
 	})
 	t.Run("ReadFalse", func(t *testing.T) {
 		s := "read:false *"
@@ -220,10 +220,10 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 2)
 		result := attr.Find("read:*")
 		assert.Equal(t, "read", result.Key)
-		assert.Equal(t, constants.False, result.Value)
+		assert.Equal(t, enum.False, result.Value)
 		result = attr.Find("read:false")
 		assert.Equal(t, "read", result.Key)
-		assert.Equal(t, constants.False, result.Value)
+		assert.Equal(t, enum.False, result.Value)
 	})
 	t.Run("ReadOther", func(t *testing.T) {
 		s := "read:other *"

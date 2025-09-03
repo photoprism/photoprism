@@ -1,4 +1,4 @@
-package constants
+package enum
 
 // True and False specify boolean string representations.
 const (

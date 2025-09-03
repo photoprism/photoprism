@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // KeyValue represents a key-value attribute.
@@ -79,7 +79,7 @@ func (f *KeyValue) Parse(s string) *KeyValue {
 	if f.Key == All {
 		return f
 	} else if v = Value(v); v == "" {
-		f.Value = constants.True
+		f.Value = enum.True
 		return f
 	}
 
@@ -103,7 +103,7 @@ func (f *KeyValue) String() string {
 		return All
 	}
 
-	if Bool[strings.ToLower(f.Value)] == constants.True {
+	if Bool[strings.ToLower(f.Value)] == enum.True {
 		return f.Key
 	}
 

@@ -1,6 +1,6 @@
-package constants
+package enum
 
-// Maps to represent Yes or No in the following languages Czech, Danish, Dutch, English, French, German, Indonesian, Italian, Polish, Portuguese, Russian, Ukrainian.
+// YesMap map to represent Yes in the following languages Czech, Danish, Dutch, English, French, German, Indonesian, Italian, Polish, Portuguese, Russian, Ukrainian.
 var YesMap = map[string]struct{}{
 	"1":        {},
 	"yes":      {},
@@ -19,6 +19,7 @@ var YesMap = map[string]struct{}{
 	"так":      {},
 }
 
+// NoMap map to represent No in the following languages Czech, Danish, Dutch, English, French, German, Indonesian, Italian, Polish, Portuguese, Russian, Ukrainian.
 var NoMap = map[string]struct{}{
 	"0":        {},
 	"no":       {},

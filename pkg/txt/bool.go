@@ -3,7 +3,7 @@ package txt
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/constants"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // Bool casts a string to bool.
@@ -26,7 +26,7 @@ func Yes(s string) (result bool) {
 		result = false
 	} else {
 
-		_, result = constants.YesMap[t]
+		_, result = enum.YesMap[t]
 	}
 	return result
 }
@@ -39,7 +39,7 @@ func No(s string) (result bool) {
 	} else if strings.Contains(t, " ") {
 		result = false
 	} else {
-		_, result = constants.NoMap[t]
+		_, result = enum.NoMap[t]
 	}
 	return result
 }
