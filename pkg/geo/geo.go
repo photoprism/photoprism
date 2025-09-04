@@ -1,5 +1,5 @@
 /*
-Package geo provides earth geometry functions and enum.
+Package geo provides earth geometry functions and constants.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 

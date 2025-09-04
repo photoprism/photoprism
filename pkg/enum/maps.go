@@ -14,7 +14,7 @@ var YesMap = map[string]struct{}{
 	"si":       {},
 	"tak":      {},
 	"sim":      {},
-	"Да":       {},
+	"да":       {},
 	"ya":       {},
 	"так":      {},
 }
