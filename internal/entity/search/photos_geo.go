@@ -42,25 +42,6 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		return GeoResults{}, ErrBadRequest
 	}
 
-	// Find photos near another?
-	if txt.NotEmpty(frm.Near) {
-		photo := Photo{}
-
-		// Find a nearby picture using the UID or return an empty result otherwise.
-		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
-			log.Debugf("search: %s (find nearby)", err)
-			return GeoResults{}, ErrNotFound
-		}
-
-		// Set the S2 Cell ID to search for.
-		frm.S2 = photo.CellID
-
-		// Set the search distance if unspecified.
-		if frm.Dist <= 0 {
-			frm.Dist = geo.DefaultDist
-		}
-	}
-
 	// Set default search distance.
 	if frm.Dist <= 0 {
 		frm.Dist = geo.DefaultDist
@@ -160,7 +141,20 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Order("taken_at, photos.photo_uid")
 	} else {
 		// Sort by distance to UID.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", frm.Near, frm.Lat, frm.Lng))
+		sq := ""
+		var values []interface{}
+		for item, value := range SplitOr(frm.Near) {
+			if item == 0 {
+				sq = "(photos.photo_uid IN (?"
+			} else {
+				sq = sq + ", ?"
+			}
+			values = append(values, value)
+		}
+		sq = sq + ")) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)"
+		values = append(values, frm.Lat)
+		values = append(values, frm.Lng)
+		s = s.Order(gorm.Expr(sq, values...))
 	}
 
 	// Find specific UIDs only.
@@ -209,26 +203,27 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	if txt.NotEmpty(frm.Label) {
 		var categories []entity.Category
 		var labels []entity.Label
-		var labelIds []uint
+		var labelIDs []uint
 
 		if labelErr := Db().Where(AnySlug("label_slug", frm.Label, txt.Or)).Or(AnySlug("custom_slug", frm.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || labelErr != nil {
 			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
 			return GeoResults{}, nil
-		} else {
-			for _, l := range labels {
-				labelIds = append(labelIds, l.ID)
-
-				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
-				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
-
-				for _, category := range categories {
-					labelIds = append(labelIds, category.LabelID)
-				}
-			}
-
-			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
-				Group("photos.id, files.id")
 		}
+
+		for _, l := range labels {
+			labelIDs = append(labelIDs, l.ID)
+
+			Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
+			log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
+
+			for _, category := range categories {
+				labelIDs = append(labelIDs, category.LabelID)
+			}
+		}
+
+		s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIDs).
+			Group("photos.id, files.id")
+
 	}
 
 	// Set search filters based on search terms.
@@ -309,7 +304,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	if frm.Query != "" {
 		var categories []entity.Category
 		var labels []entity.Label
-		var labelIds []uint
+		var labelIDs []uint
 
 		if labelsErr := Db().Where(AnySlug("custom_slug", frm.Query, " ")).Find(&labels).Error; len(labels) == 0 || labelsErr != nil {
 			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
@@ -319,23 +314,23 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			}
 		} else {
 			for _, l := range labels {
-				labelIds = append(labelIds, l.ID)
+				labelIDs = append(labelIDs, l.ID)
 
 				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
 				log.Tracef("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
-					labelIds = append(labelIds, category.LabelID)
+					labelIDs = append(labelIDs, category.LabelID)
 				}
 			}
 
 			if wheres := LikeAnyKeyword("k.keyword", frm.Query); len(wheres) > 0 {
 				for _, where := range wheres {
 					s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
-						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIds)
+						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIDs)
 				}
 			} else {
-				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIds)
+				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIDs)
 			}
 		}
 	}
@@ -637,8 +632,36 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		}
 	}
 
-	// Filter by location code.
-	if txt.NotEmpty(frm.S2) {
+	// Find photos near another?
+	if txt.NotEmpty(frm.Near) {
+		var values []interface{}
+		qs := ""
+		for item, value := range SplitOr(frm.Near) {
+			photo := Photo{}
+			// Get the CellID for the photo_uid
+			if err = Db().Model(&Photo{}).Where("photo_uid = ?", value).Select("cell_id").First(&photo).Error; err != nil {
+				log.Debugf("search: %s (find nearby)", err)
+				return GeoResults{}, ErrNotFound
+			}
+			// Set the S2 Cell ID to search for.
+			frm.S2 = photo.CellID
+
+			// Set the search distance if unspecified.
+			if frm.Dist <= 0 {
+				frm.Dist = geo.DefaultDist
+			}
+
+			if item == 0 {
+				qs = "photos.cell_id BETWEEN ? AND ?"
+			} else {
+				qs = qs + " OR photos.cell_id BETWEEN ? AND ?"
+			}
+			s2Min, s2Max := s2.PrefixedRange(frm.S2, s2.Level(frm.Dist))
+			values = append(values, s2Min)
+			values = append(values, s2Max)
+		}
+		s = s.Where(qs, values...)
+	} else if txt.NotEmpty(frm.S2) { // Filter by location code.
 		// S2 Cell ID.
 		s2Min, s2Max := s2.PrefixedRange(frm.S2, s2.Level(frm.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
