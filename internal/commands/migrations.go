@@ -289,7 +289,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 		if !runForced {
 			errmsg := fmt.Sprintf("migrate: transfer target database is not empty, %d records found across %d tables", totalRecords, len(entitiesToCheck))
 			log.Error(errmsg)
-			return fmt.Errorf(errmsg)
+			return fmt.Errorf("%s", errmsg)
 		} else {
 			errmsg := fmt.Sprintf("migrate: transfer target database is not empty, %d records found across %d tables but force enabled", totalRecords, len(entitiesToCheck))
 			log.Warning(errmsg)
