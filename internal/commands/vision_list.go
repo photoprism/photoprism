@@ -16,7 +16,7 @@ import (
 // VisionListCommand configures the command name, flags, and action.
 var VisionListCommand = &cli.Command{
 	Name:   "ls",
-	Usage:  "Lists configured computer vision models",
+	Usage:  "Lists the configured computer vision models",
 	Flags:  append(report.CliFlags),
 	Action: visionListAction,
 }

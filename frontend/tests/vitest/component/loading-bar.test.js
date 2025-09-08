@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
+import { nextTick } from "vue";
 import PLoadingBar from "component/loading-bar.vue";
 
 // Mock $event subscription
@@ -23,7 +24,6 @@ describe("PLoadingBar component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-
     vi.useFakeTimers();
 
     wrapper = mount(PLoadingBar, {
@@ -42,64 +42,120 @@ describe("PLoadingBar component", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    if (wrapper) {
+      wrapper.unmount();
+    }
   });
 
-  it("should render correctly", () => {
-    expect(wrapper.vm).toBeTruthy();
-    expect(wrapper.find("#p-loading-bar").exists()).toBe(true);
-    expect(wrapper.find(".top-progress").exists()).toBe(false); // Initially not visible
+  describe("Component Initialization", () => {
+    it("should render container element", () => {
+      const container = wrapper.find("#p-loading-bar");
+      expect(container.exists()).toBe(true);
+    });
 
-    // Check computed properties
-    expect(wrapper.vm.progressColor).toBe("#29d"); // Default color
-    expect(wrapper.vm.isStarted).toBe(false);
+    it("should not show progress bar initially", () => {
+      const progressBar = wrapper.find(".top-progress");
+      expect(progressBar.exists()).toBe(false);
+    });
+
+    it("should subscribe to AJAX events on mount", () => {
+      expect(mockSubscribe).toHaveBeenCalledTimes(2);
+      expect(mockSubscribe.mock.calls[0][0]).toBe("ajax.start");
+      expect(mockSubscribe.mock.calls[1][0]).toBe("ajax.end");
+    });
   });
 
-  it("should subscribe to ajax events on mount", () => {
-    expect(mockSubscribe).toHaveBeenCalledTimes(2);
-    expect(mockSubscribe.mock.calls[0][0]).toBe("ajax.start");
-    expect(mockSubscribe.mock.calls[1][0]).toBe("ajax.end");
+  describe("Progress Bar Visibility", () => {
+    it("should show progress bar when started", async () => {
+      // Start the loading bar
+      wrapper.vm.start();
+      await nextTick();
+
+      const progressBar = wrapper.find(".top-progress");
+      expect(progressBar.exists()).toBe(true);
+    });
+
+    it("should hide progress bar when completed", async () => {
+      // Start and complete the loading bar
+      wrapper.vm.start();
+      await nextTick();
+
+      wrapper.vm.done();
+      await nextTick();
+
+      // Fast forward through completion animation
+      vi.advanceTimersByTime(1000);
+      await nextTick();
+
+      const progressBar = wrapper.find(".top-progress");
+      expect(progressBar.exists()).toBe(false);
+    });
   });
 
-  it("should start the loading bar", async () => {
-    wrapper.vm.start();
+  describe("Progress Bar Appearance", () => {
+    beforeEach(async () => {
+      wrapper.vm.start();
+      await nextTick();
+    });
 
-    await wrapper.vm.$nextTick();
-    expect(wrapper.vm.visible).toBe(true);
+    it("should display with default color", async () => {
+      const progressBar = wrapper.find(".top-progress");
+      const barStyle = progressBar.attributes("style");
 
-    // After transition, the bar should be displayed
-    wrapper.vm.afterEnter();
-    expect(wrapper.vm.status).not.toBeNull();
+      expect(barStyle).toContain("background-color: rgb(34, 153, 221)"); // #29d
+    });
+
+    it("should display with error color when failed", async () => {
+      wrapper.vm.fail();
+      await nextTick();
+
+      const progressBar = wrapper.find(".top-progress");
+      const barStyle = progressBar.attributes("style");
+
+      expect(barStyle).toContain("background-color: rgb(244, 67, 54)"); // #f44336
+    });
+
+    it("should have peg element for styling", () => {
+      const peg = wrapper.find(".peg");
+      expect(peg.exists()).toBe(true);
+    });
   });
 
-  it("should make progress visible when started", async () => {
-    expect(wrapper.vm.visible).toBe(false);
+  describe("Progress Bar Behavior", () => {
+    it("should show progress bar when started", async () => {
+      wrapper.vm.start();
+      await nextTick();
 
-    // Start the bar
-    wrapper.vm.start();
-    await wrapper.vm.$nextTick();
+      const progressBar = wrapper.find(".top-progress");
+      expect(progressBar.exists()).toBe(true);
+      expect(progressBar.attributes("style")).toContain("width:");
+    });
 
-    // Should be visible now
-    expect(wrapper.vm.visible).toBe(true);
-  });
+    it("should pause progress when paused", async () => {
+      wrapper.vm.start();
+      wrapper.vm.pause();
+      await nextTick();
 
-  it("should handle error state", async () => {
-    wrapper.vm.fail();
-    await wrapper.vm.$nextTick();
+      // When paused, progress bar should still exist but not advance
+      const progressBar = wrapper.find(".top-progress");
+      expect(progressBar.exists()).toBe(true);
+    });
 
-    expect(wrapper.vm.error).toBe(true);
-    expect(wrapper.vm.progressColor).toBe("#f44336"); // Error color
-  });
+    it("should complete progress when done is called", async () => {
+      wrapper.vm.start();
+      await nextTick();
 
-  it("should pause the loading bar", () => {
-    wrapper.vm.start();
-    wrapper.vm.pause();
+      const progressBar = wrapper.find(".top-progress");
+      expect(progressBar.exists()).toBe(true);
 
-    expect(wrapper.vm.isPaused).toBe(true);
-  });
+      wrapper.vm.done();
 
-  it("should initialize progress to zero", () => {
-    expect(wrapper.vm.progress).toBe(0);
+      // Allow time for completion animation
+      vi.advanceTimersByTime(1000);
+      await nextTick();
 
-    expect(wrapper.vm.getProgress()).toBe(0);
+      // Progress bar should disappear after completion
+      expect(wrapper.find(".top-progress").exists()).toBe(false);
+    });
   });
 });

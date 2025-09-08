@@ -30,7 +30,7 @@ var ConfigReports = []Report{
 	}},
 }
 
-// showConfigAction shows global config option names and values.
+// showConfigAction displays global config option names and values.
 func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)

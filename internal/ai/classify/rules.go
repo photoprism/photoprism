@@ -7207,7 +7207,7 @@ var Rules = LabelRules{
 		Label:      "",
 		Threshold:  0.290000,
 		Priority:   0,
-		Categories: []string{"aircraft"},
+		Categories: []string{},
 	},
 	"wire-haired fox terrier": {
 		Label:      "dog",

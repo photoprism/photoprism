@@ -10,5 +10,6 @@ export const Xmp = "xmp";
 export const Yaml = "yaml";
 export const Marker = "marker";
 export const Image = "image";
+export const Vision = "vision";
 export const Keyword = "keyword";
 export const Location = "location";

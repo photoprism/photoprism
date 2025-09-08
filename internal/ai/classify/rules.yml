@@ -2927,8 +2927,6 @@ airship:
 
 wing:
   threshold: 0.29
-  categories:
-    - aircraft
 
 ambulance:
   label: vehicle

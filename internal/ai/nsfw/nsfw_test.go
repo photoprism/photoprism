@@ -20,7 +20,7 @@ func TestIsSafe(t *testing.T) {
 		result, err := detector.File(filename)
 
 		if err != nil {
-			t.Fatalf(err.Error())
+			t.Fatal(err.Error())
 		}
 
 		assert.NotNil(t, result)

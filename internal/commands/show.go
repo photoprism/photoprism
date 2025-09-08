@@ -14,6 +14,7 @@ var ShowCommands = &cli.Command{
 		ShowConfigYamlCommand,
 		ShowSearchFiltersCommand,
 		ShowFileFormatsCommand,
+		ShowSourcesCommand,
 		ShowThumbSizesCommand,
 		ShowVideoSizesCommand,
 		ShowMetadataCommand,

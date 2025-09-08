@@ -530,25 +530,25 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-name",
-			Usage:   "progressive web app `NAME` when installed on a device",
+			Usage:   "app `NAME` when installed as a Progressive Web App (PWA)",
 			Value:   "",
 			EnvVars: EnvVars("APP_NAME"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-mode",
-			Usage:   "progressive web app `MODE` (fullscreen, standalone, minimal-ui, browser)",
+			Usage:   "app display `MODE` (fullscreen, standalone, minimal-ui, browser)",
 			Value:   "standalone",
 			EnvVars: EnvVars("APP_MODE"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-icon",
-			Usage:   "home screen `ICON` (logo, app, crisp, mint, bold, square)",
+			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square)",
 			EnvVars: EnvVars("APP_ICON"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-color",
-			Usage:   "splash screen `COLOR` code",
-			Value:   "#000000",
+			Usage:   "app background and splash screen `COLOR`",
+			Value:   DefaultAppColor,
 			EnvVars: EnvVars("APP_COLOR"),
 		}}, {
 		Flag: &cli.StringFlag{

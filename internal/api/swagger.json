@@ -8874,24 +8874,17 @@
             "type": "integer",
             "format": "int64",
             "enum": [
-                -9223372036854775808,
-                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
                 1,
                 1000,
                 1000000,
                 1000000000,
                 60000000000,
                 3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -8900,24 +8893,17 @@
                 3600000000000
             ],
             "x-enum-varnames": [
-                "minDuration",
-                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
                 "Minute",
                 "Hour",
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
@@ -9189,20 +9175,17 @@
         "vision.Model": {
             "type": "object",
             "properties": {
-                "Service": {
-                    "$ref": "#/definitions/vision.Service"
-                },
                 "default": {
                     "type": "boolean"
                 },
                 "disabled": {
                     "type": "boolean"
                 },
-                "meta": {
-                    "$ref": "#/definitions/tensorflow.ModelInfo"
-                },
                 "name": {
                     "type": "string"
+                },
+                "options": {
+                    "$ref": "#/definitions/vision.ApiRequestOptions"
                 },
                 "prompt": {
                     "type": "string"
@@ -9210,8 +9193,14 @@
                 "resolution": {
                     "type": "integer"
                 },
+                "service": {
+                    "$ref": "#/definitions/vision.Service"
+                },
                 "system": {
                     "type": "string"
+                },
+                "tensorflow": {
+                    "$ref": "#/definitions/tensorflow.ModelInfo"
                 },
                 "type": {
                     "$ref": "#/definitions/vision.ModelType"

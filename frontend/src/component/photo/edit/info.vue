@@ -24,7 +24,7 @@
               <td>
                 <span>{{ $gettext(`Type`) }}</span>
               </td>
-              <td v-tooltip="formatSource(view.model?.TypeSrc, $gettext('Default'))">
+              <td v-tooltip="sourceName(view.model?.TypeSrc, $gettext('Default'))">
                 <v-select
                   v-model="view.model.Type"
                   :append-icon="view.model.TypeSrc === 'manual' ? 'mdi-check' : ''"
@@ -87,7 +87,7 @@
                 <span>{{ $gettext(`Title`) }}</span>
               </td>
               <td>
-                <div v-tooltip="formatSource(view.model?.TitleSrc, $gettext('Generated'))" class="text-flex text-break">
+                <div v-tooltip="sourceName(view.model?.TitleSrc, $gettext('Generated'))" class="text-flex text-break">
                   <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(view.model.Title)">{{
                     view.model.Title
                   }}</span>
@@ -101,7 +101,7 @@
                 <span>{{ $gettext(`Taken`) }}</span>
               </td>
               <td>
-                <div v-tooltip="formatSource(view.model?.TakenSrc, $gettext('File'))" class="text-flex text-break">
+                <div v-tooltip="sourceName(view.model?.TakenSrc, $gettext('File'))" class="text-flex text-break">
                   <div>{{ view.model.getDateString() }}</div>
                   <v-icon v-if="view.model.TakenSrc === ''" icon="mdi-file-clock-outline" class="src"></v-icon>
                   <!-- v-icon v-else-if="view.model.TakenSrc === 'meta'" icon="mdi-camera" class="src"></v-icon -->
@@ -224,7 +224,7 @@
                 {{ $gettext(`Place`) }}
               </td>
               <td>
-                <div v-tooltip="formatSource(view.model.PlaceSrc, $gettext('Missing'))" class="text-flex">
+                <div v-tooltip="sourceName(view.model.PlaceSrc, $gettext('Missing'))" class="text-flex">
                   <div>{{ view.model.locationInfo() }}</div>
                   <v-icon v-if="view.model.PlaceSrc === 'estimate'" icon="mdi-map-clock-outline" class="src"></v-icon>
                   <!-- v-icon v-else-if="view.model.PlaceSrc === 'meta'" icon="mdi-camera" class="src"></v-icon -->
@@ -360,41 +360,8 @@ export default {
   },
   methods: {
     $gettext,
-    formatSource(s, defaultValue) {
-      switch (s) {
-        case null:
-        case false:
-        case undefined:
-        case "":
-        case "auto":
-          return defaultValue ? defaultValue : this.$gettext("Auto");
-        case "default":
-          return this.$gettext("Default");
-        case "batch":
-          return this.$gettext("Batch");
-        case "manual":
-          return this.$gettext("Manual");
-        case "meta":
-          return this.$gettext("Metadata");
-        case "xmp":
-          return "XMP";
-        case "estimate":
-          return this.$gettext("Estimate");
-        case "file":
-          return this.$gettext("File");
-        case "name":
-          return this.$gettext("Name");
-        case "title":
-          return this.$gettext("Title");
-        case "caption":
-          return this.$gettext("Caption");
-        case "image":
-          return this.$gettext("Image");
-        case "location":
-          return this.$gettext("Location");
-        default:
-          return T(this.$util.capitalize(s));
-      }
+    sourceName(src, defaultValue) {
+      return this.$util.sourceName(src, defaultValue);
     },
     formatTime(s) {
       return DateTime.fromISO(s, { zone: this.timeZone }).toLocaleString(formats.TIMESTAMP);

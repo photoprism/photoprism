@@ -385,7 +385,7 @@ watch-js:
 	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
 test-js:
 	$(info Running JS unit tests...)
-	(cd frontend && env TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test npm run test)
+	(cd frontend && npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
 	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json --test "testname" "tests/acceptance"'  && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
@@ -404,21 +404,15 @@ acceptance-auth-short:
 acceptance-auth-firefox:
 	$(info Running JS acceptance-auth tests in Firefox...)
 	(cd frontend && npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json --disable-native-automation "tests/acceptance")
-vitest:
-	$(info Running Vitest unit tests...)
-	(cd frontend && npm run vitest)
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
-	(cd frontend && npm run vitest-watch)
+	(cd frontend && npm run test-watch)
 vitest-coverage:
 	$(info Running Vitest unit tests with coverage...)
-	(cd frontend && npm run vitest-coverage)
+	(cd frontend && npm run test-coverage)
 vitest-component:
 	$(info Running Vitest component tests...)
-	(cd frontend && npm run vitest-component)
-vitest-ui:
-	$(info Opening Vitest UI...)
-	(cd frontend && npm run vitest-ui)
+	(cd frontend && npm run test-component)
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/reset-photoprism.sql

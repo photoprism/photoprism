@@ -11,6 +11,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// DefaultAppColor specifies the default app background and splash screen color.
+var DefaultAppColor = "#19191a"
+
 // AppName returns the app name when installed on a device.
 func (c *Config) AppName() string {
 	name := strings.TrimSpace(c.options.AppName)
@@ -58,10 +61,10 @@ func (c *Config) AppIcon() string {
 	return defaultIcon
 }
 
-// AppColor returns the app splash screen color when installed on a device.
+// AppColor returns the app background and splash screen color.
 func (c *Config) AppColor() string {
 	if appColor := clean.Color(c.options.AppColor); appColor == "" {
-		return "#000000"
+		return DefaultAppColor
 	} else {
 		return appColor
 	}

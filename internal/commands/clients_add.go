@@ -134,7 +134,7 @@ func clientsAddAction(ctx *cli.Context) error {
 		}
 
 		// Show client authentication credentials.
-		fmt.Printf(message)
+		fmt.Println(message)
 		result := report.Credentials("Client ID", client.ClientUID, "Client Secret", secret)
 		fmt.Printf("\n%s\n", result)
 

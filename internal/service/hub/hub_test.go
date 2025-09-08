@@ -143,7 +143,7 @@ func TestConfig_Load(t *testing.T) {
 		c := NewConfig("test", "testdata/hub1.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 
 		if err := c.Load(); err != nil {
-			t.Logf(err.Error())
+			t.Log(err.Error())
 		}
 
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
@@ -156,7 +156,7 @@ func TestConfig_Load(t *testing.T) {
 		c := NewConfig("test", "testdata/hub2.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 
 		if err := c.Load(); err != nil {
-			t.Logf(err.Error())
+			t.Log(err.Error())
 		}
 
 		assert.Equal(t, "ab66cb5cfb3658dbea0a1433df048d900934ac68", c.Key)
@@ -185,7 +185,7 @@ func TestConfig_Save(t *testing.T) {
 		c := NewConfig("test", "testdata/hub1.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 
 		if err := c.Load(); err != nil {
-			t.Logf(err.Error())
+			t.Log(err.Error())
 		}
 
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
@@ -211,7 +211,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.FileExists(t, "testdata/hub-save.yml")
 
 		if err := c.Load(); err != nil {
-			t.Logf(err.Error())
+			t.Log(err.Error())
 		}
 
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)

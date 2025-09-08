@@ -703,6 +703,54 @@ export default class $util {
     }
   }
 
+  // Returns the translated source name string to be displayed in the user interface.
+  static sourceName(src, defaultValue) {
+    switch (src) {
+      case null:
+      case false:
+      case undefined:
+      case "":
+      case "auto":
+        return defaultValue ? defaultValue : $gettext("Auto");
+      case "default":
+        return $gettext("Default");
+      case "estimate":
+        return $gettext("Estimate");
+      case "file":
+        return $gettext("File");
+      case "name":
+        return $gettext("Name");
+      case "image":
+        return $gettext("Image");
+      case "location":
+        return $gettext("Location");
+      case "marker":
+        return $gettext("Marker");
+      case "caption":
+        return $gettext("Caption");
+      case "keyword":
+        return $gettext("Keyword");
+      case "meta":
+        return $gettext("Metadata");
+      case "subject":
+        return $gettext("Subject");
+      case "title":
+        return $gettext("Title");
+      case "xmp":
+        return "XMP";
+      case "batch":
+        return $gettext("Batch");
+      case "manual":
+        return $gettext("Manual");
+      case "vision":
+        return $gettext("Vision");
+      case "admin":
+        return $gettext("Admin");
+      default:
+        return this.ucFirst(src);
+    }
+  }
+
   // Returns the best matching thumbnail based on the provided list of available images,
   // as well as the viewport width and height.
   static thumb(thumbs, viewportWidth, viewportHeight) {
