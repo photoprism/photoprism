@@ -24,7 +24,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.3.0
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.7.2
-	github.com/lucasb-eyer/go-colorful v1.2.0
+	github.com/lucasb-eyer/go-colorful v1.3.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v1.14.24 // indirect
@@ -38,7 +38,7 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.41.0
+	golang.org/x/crypto v0.42.0
 	golang.org/x/net v0.43.0
 	gonum.org/v1/gonum v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -46,7 +46,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.30.0
+	golang.org/x/image v0.31.0
 )
 
 require github.com/olekukonko/tablewriter v1.0.9
@@ -71,7 +71,7 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 
-require golang.org/x/text v0.28.0
+require golang.org/x/text v0.29.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -86,7 +86,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/zitadel/oidc/v3 v3.44.0
-	golang.org/x/mod v0.27.0
+	golang.org/x/mod v0.28.0
 	golang.org/x/sys v0.36.0
 	google.golang.org/protobuf v1.36.8
 	gorm.io/driver/mysql v1.5.7

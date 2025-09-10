@@ -28,6 +28,9 @@ all: install build
 dep: install-npm install-testcafe install
 dep-list:
 	npx npm-check-updates
+help: list
+list:
+	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
 notice:
 	@echo "Creating license report for frontend dependencies..."
 	license-report --only=prod --config=.report.json > NOTICE

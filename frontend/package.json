@@ -135,5 +135,9 @@
     "node": ">= 18.0.0",
     "npm": ">= 9.0.0",
     "yarn": "please use npm"
+  },
+  "overrides": {
+    "color-convert": "2.0.1",
+    "color-name": "1.1.4"
   }
 }

@@ -4,6 +4,7 @@
 # more about our team, products and services: https://www.photoprism.app/
 
 export GO111MODULE=on
+export NPM_CONFIG_IGNORE_SCRIPTS ?= true
 
 -include .semver
 -include .env
@@ -104,6 +105,9 @@ acceptance-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acce
 acceptance-exec-chromium-short: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth-short acceptance-auth-stop acceptance-database-reset-2 acceptance-public-start wait-2 acceptance-short acceptance-public-stop
 acceptance-auth-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-auth-stop
 acceptance-public-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-public-start wait-1 acceptance acceptance-public-stop
+help: list
+list:
+	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
 
 wait-%:
 	sleep 20
@@ -121,8 +125,10 @@ logs:
 	$(DOCKER_COMPOSE) logs -f
 down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
-help:
-	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
+codex: dep-codex codex-status
+codex-status:
+	codex --version
+	codex /status
 docs: swag
 swag: swag-json
 swag-json:
@@ -279,9 +285,12 @@ dep-list:
 dep-npm:
 	sudo npm install -g npm
 dep-js:
-	(cd frontend && npm ci --no-update-notifier --no-audit)
+	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
 	# TODO: If in the future we want to test in a real browser environment, add this (Playwright)
 	# (cd frontend && npx playwright install chromium)
+dep-codex:
+	@echo "Installing latest Codex CLI..."
+	sudo npm i -g "@openai/codex@latest"
 dep-go:
 	go build -v ./...
 dep-upgrade:
