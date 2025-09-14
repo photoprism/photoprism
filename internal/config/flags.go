@@ -1154,7 +1154,6 @@ var Flags = CliFlags{
 			Value:     "",
 			EnvVars:   EnvVars("LOG_FILENAME"),
 			TakesFile: true,
-		}},
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "transfer-driver",
@@ -1194,35 +1193,5 @@ var Flags = CliFlags{
 			Aliases: []string{"tfr-db-pass"},
 			Usage:   "database user `PASSWORD`",
 			EnvVars: EnvVars("TRANSFER_PASSWORD"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "portal-url",
-			Usage:   "PhotoPrism® Portal server `URL`",
-			EnvVars: EnvVars("PORTAL_URL"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "portal-client",
-			Usage:   "PhotoPrism® Portal client `ID`",
-			EnvVars: EnvVars("PORTAL_CLIENT"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "portal-secret",
-			Usage:   "PhotoPrism® Portal client `SECRET`",
-			EnvVars: EnvVars("PORTAL_SECRET"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "instance-roles",
-			Usage:   "`ROLES` of this instance within a cluster (library, vision, portal)",
-			EnvVars: EnvVars("INSTANCE_ROLES"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "instance-secret",
-			Usage:   "`SECRET` for authenticating this instance in a cluster (must be unique)",
-			EnvVars: EnvVars("INSTANCE_SECRET"),
-			Hidden:  true,
-		}, Tags: []string{Pro}},
+		}},
 }
