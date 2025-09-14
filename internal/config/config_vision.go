@@ -9,6 +9,10 @@ import (
 )
 
 // VisionYaml returns the vision config YAML filename.
+//
+// TODO: Call fs.YamlFilePath to use ".yaml" extension for new YAML files, unless a .yml" file already exists.
+//
+//	return fs.YamlFilePath("vision", c.ConfigPath(), c.options.VisionYaml)
 func (c *Config) VisionYaml() string {
 	if c.options.VisionYaml != "" {
 		return fs.Abs(c.options.VisionYaml)
@@ -49,7 +53,7 @@ func (c *Config) ModelsPath() string {
 		return fs.Abs(c.options.ModelsPath)
 	}
 
-	if dir := filepath.Join(c.AssetsPath(), "models"); fs.PathExists(dir) {
+	if dir := filepath.Join(c.AssetsPath(), fs.ModelsDir); fs.PathExists(dir) {
 		c.options.ModelsPath = dir
 		return c.options.ModelsPath
 	}

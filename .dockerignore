@@ -1,4 +1,4 @@
-# Local build files and directories
+# Local build files and directories:
 /photos/*
 /frontend/node_modules/*
 /node_modules
@@ -16,32 +16,51 @@
 /build
 /photoprism
 /photoprism-*
-/coverage.*
 /frontend/tests/acceptance/screenshots
 /test/
 
-# Custom config, database, log, and temporary files
-/tmp/
-.env
+# Docker configuration files:
 .dockerignore
-*.log
-*.jsonl
-*.db
-*.db-journal
 Dockerfile
 docker-compose*
 compose.yaml
 compose.*.yaml
+
+# Customization, database, log, and temporary files:
+*.socket
+*.lock
+*.sock
+*.pid
+*.log
+*.jsonl
+*.db
+*.db-journal
+*.sqlite
 *.override.yml
-*.override.yaml
 *.tmp.yml
+*.override.yaml
 *.tmp.yaml
+*.out
+*.test
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 *.tmp
 *.img
 *.img.xz
 *.img.gz
-
-# Automatically generated files, e.g. by editors and operating systems
+/*.zip
+/coverage.*
+__pycache__
+venv
+.venv
+.env
+.tmp
+.nv
+.eslintcache
+.gocache
 .DS_Store
 .DS_Store?
 ._*
@@ -51,10 +70,12 @@ ehthumbs.db
 Thumbs.db
 .heartbeat
 .idea
-.glide
+.codex
+.local
 *~
 .goutputstream*
 .c9revisions
 .settings
 .swp
-.tmp
+.glide
+/tmp/

@@ -165,7 +165,15 @@ func (c *Config) SitePreview() string {
 	}
 
 	return fmt.Sprintf("https://i.photoprism.app/prism?cover=64&style=centered%%20dark&caption=none&title=%s", url.QueryEscape(c.AppName()))
+}
 
+// InternalUrl returns the internal instance URL if configured, or the site URL if not.
+func (c *Config) InternalUrl() string {
+	if c.options.InternalUrl == "" {
+		return c.SiteUrl()
+	}
+
+	return strings.TrimRight(c.options.InternalUrl, "/") + "/"
 }
 
 // LegalInfo returns the legal info text for the page footer.

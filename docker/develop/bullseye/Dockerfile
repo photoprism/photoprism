@@ -54,6 +54,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
       apt-utils \
+      ripgrep \
       gpg \
       pkg-config \
       software-properties-common \

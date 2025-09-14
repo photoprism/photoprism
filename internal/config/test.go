@@ -54,6 +54,8 @@ func NewTestOptions(pkg string) *Options {
 		storagePath = fs.Abs("../../storage")
 	}
 
+	dataPath := filepath.Join(storagePath, fs.TestdataDir)
+
 	pkg = PkgNameRegexp.ReplaceAllString(pkg, "")
 	driver, dsn := functions.PhotoPrismTestToDriverDsn()
 

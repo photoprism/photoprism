@@ -63,6 +63,11 @@ func (c *Config) AuthMode() string {
 	}
 }
 
+// AuthSecret returns the key for signing authentication tokens, if specified.
+func (c *Config) AuthSecret() string {
+	return c.options.AuthSecret
+}
+
 // Public checks if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
 	return c.AuthMode() == AuthModePublic

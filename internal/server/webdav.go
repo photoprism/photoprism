@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -169,7 +169,7 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 
 // WebDAVSetFavoriteFlag adds the favorite flag to files uploaded via WebDAV.
 func WebDAVSetFavoriteFlag(fileName string) {
-	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYaml
+	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYml
 
 	// Abort if YAML file already exists to avoid overwriting metadata.
 	if fs.FileExists(yamlName) {

@@ -152,6 +152,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Site Infos.
 		{"site-url", c.SiteUrl()},
+		{"internal-url", c.InternalUrl()},
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
 		{"site-author", c.SiteAuthor()},
@@ -161,18 +162,21 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-favicon", c.SiteFavicon()},
 		{"site-preview", c.SitePreview()},
 
+		// Cluster Configuration.
+		{"node-name", c.NodeName()},
+		{"node-type", c.NodeType()},
+		{"node-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeSecret())))},
+		{"portal-url", c.PortalUrl()},
+		{"portal-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.PortalToken())))},
+		{"portal-config-path", c.PortalConfigPath()},
+		{"portal-theme-path", c.PortalThemePath()},
+
 		// CDN and Cross-Origin Resource Sharing (CORS).
 		{"cdn-url", c.CdnUrl("/")},
 		{"cdn-video", fmt.Sprintf("%t", c.CdnVideo())},
 		{"cors-origin", c.CORSOrigin()},
 		{"cors-headers", c.CORSHeaders()},
 		{"cors-methods", c.CORSMethods()},
-
-		// Portal Server.
-		{"portal-url", fmt.Sprintf("%s", c.Options().PortalUrl)},
-		{"portal-client", fmt.Sprintf("%s", c.Options().PortalClient)},
-		{"portal-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.Options().PortalSecret)))},
-		{"instance-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.Options().InstanceSecret)))},
 
 		// URIs.
 		{"base-uri", c.BaseUri("/")},

@@ -1,6 +1,6 @@
 // Package clusters provides abstract definitions of clusterers as well as
 // their implementations.
-package clusters
+package alg
 
 import (
 	"math"

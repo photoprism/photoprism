@@ -73,12 +73,12 @@ func (c *Config) AppColor() string {
 // AppIconsPath returns the path to the app icons.
 func (c *Config) AppIconsPath(name ...string) string {
 	if len(name) > 0 {
-		filePath := []string{c.StaticPath(), "icons"}
+		filePath := []string{c.StaticPath(), fs.IconsDir}
 		filePath = append(filePath, name...)
 		return filepath.Join(filePath...)
 	}
 
-	return filepath.Join(c.StaticPath(), "icons")
+	return filepath.Join(c.StaticPath(), fs.IconsDir)
 }
 
 // AppConfig returns the progressive web app config.

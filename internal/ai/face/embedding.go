@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
 // Embedding represents a face embedding.
@@ -54,7 +54,7 @@ func (m Embedding) Dist(other Embedding) float64 {
 		return -1
 	}
 
-	return clusters.EuclideanDist(m, other)
+	return alg.EuclideanDist(m, other)
 }
 
 // Magnitude returns the face embedding vector length (magnitude).

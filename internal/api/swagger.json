@@ -1570,6 +1570,50 @@
                 }
             }
         },
+        "/api/v1/cluster/theme": {
+            "get": {
+                "produces": [
+                    "application/zip"
+                ],
+                "tags": [
+                    "Cluster"
+                ],
+                "summary": "returns custom theme files as zip, if available",
+                "operationId": "ClusterGetTheme",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/config/options": {
             "get": {
                 "produces": [
@@ -2897,11 +2941,16 @@
                     },
                     {
                         "enum": [
-                            "favorites",
                             "name",
                             "title",
                             "added",
-                            "edited"
+                            "edited",
+                            "newest",
+                            "oldest",
+                            "size",
+                            "random",
+                            "duration",
+                            "relevance"
                         ],
                         "type": "string",
                         "description": "sort order",
@@ -2934,8 +2983,7 @@
                         "type": "integer",
                         "description": "minimum quality score (1-7)",
                         "name": "quality",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -5909,6 +5957,9 @@
                 "IndexWorkers": {
                     "type": "integer"
                 },
+                "InternalUrl": {
+                    "type": "string"
+                },
                 "JpegQuality": {
                     "type": "integer"
                 },
@@ -8874,11 +8925,16 @@
             "type": "integer",
             "format": "int64",
             "enum": [
+                -9223372036854775808,
+                9223372036854775807,
                 1,
                 1000,
                 1000000,
                 1000000000,
                 60000000000,
+                3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -8890,20 +8946,35 @@
                 1000000,
                 1000000000,
                 60000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
                 3600000000000
             ],
             "x-enum-varnames": [
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
+                "minDuration",
+                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
                 "Minute",
                 "Hour",
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",

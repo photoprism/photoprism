@@ -15,6 +15,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// Set the assets path so that NewConfig(CliTestContext) always works for the package tests.
+func init() {
+	if os.Getenv("PHOTOPRISM_ASSETS_PATH") == "" {
+		// From internal/config to repo root assets.
+		_ = os.Setenv("PHOTOPRISM_ASSETS_PATH", filepath.Clean("../../assets"))
+	}
+}
+
 func TestMain(m *testing.M) {
 	_ = os.Setenv("PHOTOPRISM_TEST", "true")
 	log = logrus.StandardLogger()
@@ -263,23 +271,19 @@ func TestConfig_BuildPath(t *testing.T) {
 func TestConfig_ImgPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ImgPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
+	result := c.ImgPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", result)
 }
 
 func TestConfig_ThemePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ThemePath()
 	expected := "/go/src/github.com/photoprism/photoprism/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/config/theme"
-	assert.Equal(t, expected, path)
-}
-
-func TestConfig_PortalPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	path := c.PortalPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/config/portal", path)
+	assert.Equal(t, expected, c.ThemePath())
+	c.SetThemePath("testdata/static/img/wallpaper")
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/static/img/wallpaper", c.ThemePath())
+	c.SetThemePath("")
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/config/theme", c.ThemePath())
 }
 
 func TestConfig_IndexWorkers(t *testing.T) {

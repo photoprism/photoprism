@@ -27,10 +27,10 @@ import (
 //	@Failure		400,401,403,404	{object}	i18n.Response
 //	@Param			count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
 //	@Param			offset			query		int		false	"file offset"				minimum(0)	maximum(100000)
-//	@Param			order			query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
+//	@Param			order			query		string	false	"sort order"				Enums(name, title, added, edited, newest, oldest, size, random, duration, relevance)
 //	@Param			merged			query		bool	false	"groups consecutive files that belong to the same photo"
 //	@Param			public			query		bool	false	"excludes private pictures"
-//	@Param			quality			query		int		true	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
+//	@Param			quality			query		int		false	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
 //	@Param			q				query		string	false	"search query"
 //	@Param			s				query		string	false	"album uid"
 //	@Param			path			query		string	false	"photo path"

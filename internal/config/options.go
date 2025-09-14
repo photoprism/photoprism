@@ -25,6 +25,7 @@ type Options struct {
 	Copyright              string        `json:"-"`
 	PartnerID              string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode               string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
+	AuthSecret             string        `yaml:"AuthSecret" json:"-" flag:"auth-secret"`
 	Public                 bool          `yaml:"Public" json:"-" flag:"public"`
 	NoHub                  bool          `yaml:"-" json:"-" flag:"no-hub"`
 	AdminUser              string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
@@ -77,6 +78,7 @@ type Options struct {
 	TempPath               string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath             string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
 	CustomAssetsPath       string        `yaml:"-" json:"-" flag:"custom-assets-path" tags:"plus,pro"`
+	CustomThemePath        string        `yaml:"-" json:"-" flag:"theme-path"`
 	ModelsPath             string        `yaml:"ModelsPath" json:"-" flag:"models-path"`
 	SidecarPath            string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
 	SidecarYaml            bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml" default:"true"`
@@ -129,6 +131,7 @@ type Options struct {
 	LegalUrl               string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri           string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	SiteUrl                string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
+	InternalUrl            string        `yaml:"InternalUrl" json:"InternalUrl" flag:"internal-url"`
 	SiteAuthor             string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle              string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption            string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
@@ -140,6 +143,12 @@ type Options struct {
 	CORSOrigin             string        `yaml:"CORSOrigin" json:"-" flag:"cors-origin"`
 	CORSHeaders            string        `yaml:"CORSHeaders" json:"-" flag:"cors-headers"`
 	CORSMethods            string        `yaml:"CORSMethods" json:"-" flag:"cors-methods"`
+	NodeName               string        `yaml:"NodeName" json:"-" flag:"node-name"`
+	NodeType               string        `yaml:"NodeType" json:"-" flag:"node-type"`
+	NodeSecret             string        `yaml:"NodeSecret" json:"-" flag:"node-secret"`
+	PortalUrl              string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
+	PortalClient           string        `yaml:"PortalClient" json:"-" flag:"portal-client"`
+	PortalToken            string        `yaml:"PortalToken" json:"-" flag:"portal-token"`
 	HttpsProxy             string        `yaml:"HttpsProxy" json:"HttpsProxy" flag:"https-proxy"`
 	HttpsProxyInsecure     bool          `yaml:"HttpsProxyInsecure" json:"HttpsProxyInsecure" flag:"https-proxy-insecure"`
 	TrustedPlatform        string        `yaml:"TrustedPlatform" json:"-" flag:"trusted-platform"`
@@ -219,11 +228,6 @@ type Options struct {
 	PIDFilename            string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename            string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	DetachServer           bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
-	PortalUrl              string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
-	PortalClient           string        `yaml:"PortalClient" json:"-" flag:"portal-client"`
-	PortalSecret           string        `yaml:"PortalSecret" json:"-" flag:"portal-secret"`
-	InstanceRoles          string        `yaml:"InstanceRoles" json:"-" flag:"instance-roles"`
-	InstanceSecret         string        `yaml:"InstanceSecret" json:"-" flag:"instance-secret"`
 	DBTransferDriver       string        `yaml:"DBTransferDriver" json:"-" flag:"transfer-driver"`
 	DBTransferDsn          string        `yaml:"DBTransferDsn" json:"-" flag:"transfer-dsn"`
 	DBTransferName         string        `yaml:"DBTransferName" json:"-" flag:"transfer-name"`

@@ -2,7 +2,7 @@ package vision
 
 import (
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // Default computer vision model configuration.

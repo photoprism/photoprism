@@ -22,8 +22,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // DownloadCommand configures the command name, flags, and action.
@@ -81,7 +81,7 @@ func downloadAction(ctx *cli.Context) error {
 
 	var downloadPath, downloadFile string
 
-	downloadPath = filepath.Join(conf.TempPath(), "download_"+rnd.Base36(12))
+	downloadPath = filepath.Join(conf.TempPath(), fs.DownloadDir+"_"+rnd.Base36(12))
 
 	if err := fs.MkdirAll(downloadPath); err != nil {
 		return err

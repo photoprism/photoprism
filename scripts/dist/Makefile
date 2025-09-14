@@ -40,6 +40,8 @@ install-tensorflow:
 tensorflow-gpu: install-tensorflow-gpu
 install-tensorflow-gpu:
 	/scripts/install-tensorflow.sh gpu
+codex:
+	/scripts/install-codex.sh
 davfs: install-davfs
 install-davfs:
 	/scripts/install-davfs.sh

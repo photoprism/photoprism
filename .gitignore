@@ -31,6 +31,7 @@ venv
 .tmp
 .nv
 .eslintcache
+.gocache
 /pro
 /plus
 /tmp/
@@ -71,6 +72,8 @@ Thumbs.db
 .heartbeat
 .glide
 .idea
+.codex
+.local
 .project
 .vscode
 *.tmproj

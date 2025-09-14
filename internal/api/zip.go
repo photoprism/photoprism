@@ -83,7 +83,7 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Configure file names.
 		dlName := DownloadName(c)
-		zipPath := path.Join(conf.TempPath(), "zip")
+		zipPath := path.Join(conf.TempPath(), fs.ZipDir)
 		zipToken := rnd.Base36(8)
 		zipBaseName := fmt.Sprintf("photoprism-download-%s-%s.zip", time.Now().Format("20060102-150405"), zipToken)
 		zipFileName := path.Join(zipPath, zipBaseName)
@@ -172,7 +172,7 @@ func ZipDownload(router *gin.RouterGroup) {
 
 		conf := get.Config()
 		zipBaseName := clean.FileName(filepath.Base(c.Param("filename")))
-		zipPath := path.Join(conf.TempPath(), "zip")
+		zipPath := path.Join(conf.TempPath(), fs.ZipDir)
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {

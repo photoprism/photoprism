@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
 // Cluster clusters indexed face embeddings.
@@ -37,10 +37,10 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		log.Debugf("faces: at least %d samples needed for clustering", opt.SampleThreshold())
 		return added, nil
 	} else {
-		var c clusters.HardClusterer
+		var c alg.HardClusterer
 
 		// See https://dl.photoprism.app/research/ for research on face clustering algorithms.
-		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.IndexWorkers(), clusters.EuclideanDist); err != nil {
+		if c, err = alg.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.IndexWorkers(), alg.EuclideanDist); err != nil {
 			return added, err
 		} else if err = c.Learn(embeddings.Float64()); err != nil {
 			return added, err

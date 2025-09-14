@@ -193,6 +193,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.BatchPhotosPrivate(APIv1)
 	api.BatchPhotosDelete(APIv1)
 
+	// Cluster Operations.
+	api.ClusterGetTheme(APIv1)
+
 	// Technical Endpoints.
 	api.GetSvg(APIv1)
 	api.GetStatus(APIv1)

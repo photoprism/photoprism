@@ -13,10 +13,11 @@ import (
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -30,6 +31,12 @@ var Flags = CliFlags{
 			Usage:   "authentication `MODE` (public, password)",
 			Value:   "password",
 			EnvVars: EnvVars("AUTH_MODE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "auth-secret",
+			Usage:   "secret `KEY` for signing authentication tokens",
+			EnvVars: EnvVars("AUTH_SECRET"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "public",
@@ -227,7 +234,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "users-path",
 			Usage:   "relative `PATH` to create base and upload subdirectories for users",
-			Value:   "users",
+			Value:   fs.UsersDir,
 			EnvVars: EnvVars("USERS_PATH"),
 		}}, {
 		Flag: &cli.PathFlag{
@@ -297,6 +304,13 @@ var Flags = CliFlags{
 			Usage:     "assets `PATH` containing static resources like icons, models, and translations",
 			EnvVars:   EnvVars("ASSETS_PATH"),
 			TakesFile: true,
+		}}, {
+		Flag: &cli.PathFlag{
+			Name:      "theme-path",
+			Usage:     "custom user interface theme `PATH` containing styles, scripts, and images",
+			EnvVars:   EnvVars("THEME_PATH"),
+			TakesFile: true,
+			Hidden:    true,
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "models-path",
@@ -585,10 +599,15 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-url",
-			Aliases: []string{"url"},
-			Usage:   "public site `URL`",
+			Usage:   "public site `URL` used to build links and determine HTTPS/TLS; must include scheme (http/https)",
 			Value:   "http://localhost:2342/",
 			EnvVars: EnvVars("SITE_URL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "internal-url",
+			Usage:   "internal server `URL` for service-to-service communication and local networking *optional*",
+			Value:   "",
+			EnvVars: EnvVars("INTERNAL_URL"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-author",
@@ -651,6 +670,35 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("CORS_METHODS"),
 			Value:   header.DefaultAccessControlAllowMethods,
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-name",
+			Usage:   "cluster node `NAME` (lowercase letters, digits, hyphens; 1–63 chars)",
+			EnvVars: EnvVars("NODE_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-type",
+			Usage:   "cluster node `TYPE` (portal, instance, service)",
+			EnvVars: EnvVars("NODE_TYPE"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-secret",
+			Usage:   "private `KEY` to secure intra-cluster communication *optional*",
+			EnvVars: EnvVars("NODE_SECRET"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-url",
+			Usage:   "base `URL` of the cluster portal e.g. https://portal.example.com",
+			EnvVars: EnvVars("PORTAL_URL"),
+			Hidden:  true,
+		}, Tags: []string{Pro}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-token",
+			Usage:   "access TOKEN for nodes to register and synchronize with the portal",
+			EnvVars: EnvVars("PORTAL_TOKEN"),
+			Hidden:  true,
+		}, Tags: []string{Pro}}, {
 		Flag: &cli.StringFlag{
 			Name:    "https-proxy",
 			Usage:   "proxy server `URL` to be used for outgoing connections *optional*",
@@ -1106,6 +1154,7 @@ var Flags = CliFlags{
 			Value:     "",
 			EnvVars:   EnvVars("LOG_FILENAME"),
 			TakesFile: true,
+		}},
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "transfer-driver",

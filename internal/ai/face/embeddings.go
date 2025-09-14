@@ -7,7 +7,7 @@ import (
 
 	"github.com/montanaflynn/stats"
 
-	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
 // Embeddings represents a face embedding cluster.
@@ -166,7 +166,7 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	// Radius is the max embedding distance + 0.01 from result.
 	for _, emb := range embeddings {
-		if d := clusters.EuclideanDist(result, emb); d > radius {
+		if d := alg.EuclideanDist(result, emb); d > radius {
 			radius = d + 0.01
 		}
 	}

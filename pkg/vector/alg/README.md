@@ -21,7 +21,7 @@ This library was built out of necessity for a collection of performant cluster a
 
 If you have Go 1.7+
 ```bash
-go get github.com/photoprism/photoprism/pkg/clusters
+go get github.com/photoprism/photoprism/pkg/alg
 ```
 
 ## Usage
