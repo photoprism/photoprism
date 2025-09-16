@@ -15,15 +15,18 @@ func Like(s string) string {
 	return strings.Trim(clean.SqlString(s), " |&*%")
 }
 
-// SQLParm cleans and preps a string for use as a parameter in a query.  Pre and Post are used to add a wild card character for like's.
-func SQLParm(s, pre, post string) string {
+// SQLParam cleans and preps a string for use as a parameter in a query.  Pre and Post are used to add a wild card character for like's.
+func SQLParam(s, pre, post string) string {
 	return pre + strings.Trim(s, " |&*%") + post
 }
 
-// LikeAny returns a single where condition matching the search words.
-func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]interface{}) {
+// LikeAny returns a slice of or'd where conditions matching the search words, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAny(col, s string, keywords, exact bool) (wheres []string, valuesSlice [][]interface{}) {
 	if s == "" {
-		return wheres, values
+		return wheres, valuesSlice
 	}
 
 	s = txt.StripOr(clean.SearchQuery(s))
@@ -56,10 +59,10 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]i
 		for _, w := range words {
 			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
 				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
-				orValues = append(orValues, SQLParm(w, "", "%"))
+				orValues = append(orValues, SQLParam(w, "", "%"))
 			} else {
 				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
-				orValues = append(orValues, SQLParm(w, "", ""))
+				orValues = append(orValues, SQLParam(w, "", ""))
 			}
 
 			if !keywords || !txt.ContainsASCIILetters(w) {
@@ -70,33 +73,42 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]i
 
 			if singular != w {
 				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
-				orValues = append(orValues, SQLParm(singular, "", ""))
+				orValues = append(orValues, SQLParam(singular, "", ""))
 			}
 		}
 
 		if len(orWheres) > 0 {
 			wheres = append(wheres, strings.Join(orWheres, " OR "))
-			values = append(values, orValues)
+			valuesSlice = append(valuesSlice, orValues)
 		}
 	}
 
-	return wheres, values
+	return wheres, valuesSlice
 }
 
-// LikeAnyKeyword returns a single where condition matching the search keywords.
-func LikeAnyKeyword(col, s string) (wheres []string, values [][]interface{}) {
+// LikeAnyKeyword returns a slice of or'd where conditions matching the search keywords, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAnyKeyword(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAny(col, s, true, false)
 }
 
-// LikeAnyWord returns a single where condition matching the search word.
-func LikeAnyWord(col, s string) (wheres []string, values [][]interface{}) {
+// LikeAnyWord returns a returns a slice of or'd where conditions matching the search word, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAnyWord(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAny(col, s, false, false)
 }
 
-// LikeAll returns a list of where conditions and values matching all search words.
-func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]interface{}) {
+// LikeAll returns a slice of where conditions matching all the search words, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAll(col, s string, keywords, exact bool) (wheres []string, valuesSlice [][]interface{}) {
 	if s == "" {
-		return wheres, values
+		return wheres, valuesSlice
 	}
 
 	var words []string
@@ -111,7 +123,7 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]i
 	}
 
 	if len(words) == 0 {
-		return wheres, values
+		return wheres, valuesSlice
 	} else if exact {
 		wildcardThreshold = -1
 	}
@@ -120,31 +132,40 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]i
 		var value []interface{}
 		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
 			wheres = append(wheres, fmt.Sprintf("%s LIKE ?", col))
-			value = append(value, SQLParm(w, "", "%"))
+			value = append(value, SQLParam(w, "", "%"))
 		} else {
 			wheres = append(wheres, fmt.Sprintf("%s LIKE ?", col))
-			value = append(value, SQLParm(w, "", ""))
+			value = append(value, SQLParam(w, "", ""))
 		}
-		values = append(values, value)
+		valuesSlice = append(valuesSlice, value)
 	}
 
-	return wheres, values
+	return wheres, valuesSlice
 }
 
-// LikeAllKeywords returns a list of where conditions matching all search keywords.
-func LikeAllKeywords(col, s string) (wheres []string, values [][]interface{}) {
+// LikeAllKeywords returns a slice of where conditions matching all the search keywords, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAllKeywords(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAll(col, s, true, false)
 }
 
-// LikeAllWords returns a list of where conditions matching all search words.
-func LikeAllWords(col, s string) (wheres []string, values [][]interface{}) {
+// LikeAllWords returns a slice of where conditions matching all the search words, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAllWords(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAll(col, s, false, false)
 }
 
-// LikeAllNames returns a list of where conditions matching all names.
-func LikeAllNames(cols Cols, s string) (wheres []string, values [][]interface{}) {
+// LikeAllNames returns a slice of where conditions matching all the names, and slices of the variable parameters for each where condition.
+// It returns a slice of where statements, and slices of slice the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(wheres[0], valuesSlice[0]...)
+func LikeAllNames(cols Cols, s string) (wheres []string, valuesSlice [][]interface{}) {
 	if len(cols) == 0 || len(s) < 1 {
-		return wheres, values
+		return wheres, valuesSlice
 	}
 
 	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
@@ -161,24 +182,27 @@ func LikeAllNames(cols Cols, s string) (wheres []string, values [][]interface{})
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
 					orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", c))
-					orValues = append(orValues, SQLParm(w, "", "%"))
+					orValues = append(orValues, SQLParam(w, "", "%"))
 				} else {
 					orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", c))
-					orValues = append(orValues, SQLParm(w, "%", "%"))
+					orValues = append(orValues, SQLParam(w, "%", "%"))
 				}
 			}
 		}
 
 		if len(orWheres) > 0 {
 			wheres = append(wheres, strings.Join(orWheres, " OR "))
-			values = append(values, orValues)
+			valuesSlice = append(valuesSlice, orValues)
 		}
 	}
 
-	return wheres, values
+	return wheres, valuesSlice
 }
 
-// AnySlug returns a where condition that matches any slug in search.
+// AnySlug returns a where condition that matches any slug in the search and the slice of the variable parameters for the where condition.
+// It returns a where statement, and a slice of the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(where, values...)
 func AnySlug(col, search, sep string) (where string, values []interface{}) {
 	if search == "" {
 		return "", values
@@ -213,13 +237,16 @@ func AnySlug(col, search, sep string) (where string, values []interface{}) {
 
 	for _, w := range words {
 		wheres = append(wheres, fmt.Sprintf("%s = ?", col))
-		values = append(values, SQLParm(w, "", ""))
+		values = append(values, SQLParam(w, "", ""))
 	}
 
 	return strings.Join(wheres, " OR "), values
 }
 
-// AnyInt returns a where condition that matches any integer within a range.
+// AnyInt returns a where condition that matches any integer in the search and the slice of the variable parameters for the where condition.
+// It returns a where statement, and a slice of the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(where, values...)
 func AnyInt(col, numbers, sep string, low, high int) (where string, values []interface{}) {
 	if numbers == "" {
 		return "", values
@@ -254,7 +281,10 @@ func AnyInt(col, numbers, sep string, low, high int) (where string, values []int
 	return strings.Join(wheres, " OR "), values
 }
 
-// OrLike returns a where condition and values for finding multiple terms combined with OR.
+// OrLike returns a where condition and values for finding multiple terms combined with OR and the slice of the variable parameters for the where condition.
+// It returns a where statement, and a slice of the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(where, values...)
 func OrLike(col, s string) (where string, values []interface{}) {
 	if txt.Empty(col) || txt.Empty(s) {
 		return "", []interface{}{}
@@ -282,7 +312,10 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	return where, values
 }
 
-// OrLikeCols returns a where condition and values for finding multiple terms combined with OR.
+// OrLikeCols returns a where condition and values for finding multiple terms combined with OR and the slice of the variable parameters for the where condition.
+// It returns a where statement, and a slice of the parameter values.
+// Expectation is that each set of results will be fed into gorm.Expr
+// eg. gorm.Expr(where, values...)
 func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	if len(cols) == 0 || txt.Empty(s) {
 		return "", []interface{}{}
