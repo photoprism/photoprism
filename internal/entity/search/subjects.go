@@ -56,8 +56,9 @@ func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 	}
 
 	if frm.Query != "" {
-		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query) {
-			s = s.Where("?", gorm.Expr(where))
+		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query)
+		for i, where := range wheres {
+			s = s.Where("?", gorm.Expr(where, values[i]...))
 		}
 	}
 
@@ -121,7 +122,7 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 
 	var matches []Matches
 
-	wheres := LikeAllNames(Cols{"subj_name", "subj_alias"}, s)
+	wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, s)
 
 	if len(wheres) == 0 {
 		return result, names, s
@@ -129,11 +130,11 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 
 	remaining = s
 
-	for _, where := range wheres {
+	for i, where := range wheres {
 		var subj []string
 
 		stmt := Db().Model(entity.Subject{})
-		stmt = stmt.Where("?", gorm.Expr(where))
+		stmt = stmt.Where("?", gorm.Expr(where, values[i]...))
 
 		if err := stmt.Scan(&matches).Error; err != nil {
 			log.Errorf("search: %s while finding subjects", err)

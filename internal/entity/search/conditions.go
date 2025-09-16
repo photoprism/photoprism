@@ -15,10 +15,15 @@ func Like(s string) string {
 	return strings.Trim(clean.SqlString(s), " |&*%")
 }
 
+// SQLParm cleans and preps a string for use as a parameter in a query.  Pre and Post are used to add a wild card character for like's.
+func SQLParm(s, pre, post string) string {
+	return pre + strings.Trim(s, " |&*%") + post
+}
+
 // LikeAny returns a single where condition matching the search words.
-func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
+func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]interface{}) {
 	if s == "" {
-		return wheres
+		return wheres, values
 	}
 
 	s = txt.StripOr(clean.SearchQuery(s))
@@ -35,6 +40,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 
 	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
+		var orValues []interface{}
 		var words []string
 
 		if keywords {
@@ -49,9 +55,11 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 
 		for _, w := range words {
 			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, Like(w)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
+				orValues = append(orValues, SQLParm(w, "", "%"))
 			} else {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, Like(w)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
+				orValues = append(orValues, SQLParm(w, "", ""))
 			}
 
 			if !keywords || !txt.ContainsASCIILetters(w) {
@@ -61,32 +69,34 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 			singular := inflection.Singular(w)
 
 			if singular != w {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, Like(singular)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
+				orValues = append(orValues, SQLParm(singular, "", ""))
 			}
 		}
 
 		if len(orWheres) > 0 {
 			wheres = append(wheres, strings.Join(orWheres, " OR "))
+			values = append(values, orValues)
 		}
 	}
 
-	return wheres
+	return wheres, values
 }
 
 // LikeAnyKeyword returns a single where condition matching the search keywords.
-func LikeAnyKeyword(col, s string) (wheres []string) {
+func LikeAnyKeyword(col, s string) (wheres []string, values [][]interface{}) {
 	return LikeAny(col, s, true, false)
 }
 
 // LikeAnyWord returns a single where condition matching the search word.
-func LikeAnyWord(col, s string) (wheres []string) {
+func LikeAnyWord(col, s string) (wheres []string, values [][]interface{}) {
 	return LikeAny(col, s, false, false)
 }
 
-// LikeAll returns a list of where conditions matching all search words.
-func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
+// LikeAll returns a list of where conditions and values matching all search words.
+func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]interface{}) {
 	if s == "" {
-		return wheres
+		return wheres, values
 	}
 
 	var words []string
@@ -101,40 +111,45 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 	}
 
 	if len(words) == 0 {
-		return wheres
+		return wheres, values
 	} else if exact {
 		wildcardThreshold = -1
 	}
 
 	for _, w := range words {
+		var value []interface{}
 		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, Like(w)))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE ?", col))
+			value = append(value, SQLParm(w, "", "%"))
 		} else {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, Like(w)))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE ?", col))
+			value = append(value, SQLParm(w, "", ""))
 		}
+		values = append(values, value)
 	}
 
-	return wheres
+	return wheres, values
 }
 
 // LikeAllKeywords returns a list of where conditions matching all search keywords.
-func LikeAllKeywords(col, s string) (wheres []string) {
+func LikeAllKeywords(col, s string) (wheres []string, values [][]interface{}) {
 	return LikeAll(col, s, true, false)
 }
 
 // LikeAllWords returns a list of where conditions matching all search words.
-func LikeAllWords(col, s string) (wheres []string) {
+func LikeAllWords(col, s string) (wheres []string, values [][]interface{}) {
 	return LikeAll(col, s, false, false)
 }
 
 // LikeAllNames returns a list of where conditions matching all names.
-func LikeAllNames(cols Cols, s string) (wheres []string) {
+func LikeAllNames(cols Cols, s string) (wheres []string, values [][]interface{}) {
 	if len(cols) == 0 || len(s) < 1 {
-		return wheres
+		return wheres, values
 	}
 
 	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
+		var orValues []interface{}
 
 		for _, w := range txt.UnTrimmedSplitWithEscape(k, txt.OrRune, txt.EscapeRune) {
 			w = strings.TrimSpace(w)
@@ -145,25 +160,28 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, Like(w)))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", c))
+					orValues = append(orValues, SQLParm(w, "", "%"))
 				} else {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, Like(w)))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", c))
+					orValues = append(orValues, SQLParm(w, "%", "%"))
 				}
 			}
 		}
 
 		if len(orWheres) > 0 {
 			wheres = append(wheres, strings.Join(orWheres, " OR "))
+			values = append(values, orValues)
 		}
 	}
 
-	return wheres
+	return wheres, values
 }
 
 // AnySlug returns a where condition that matches any slug in search.
-func AnySlug(col, search, sep string) (where string) {
+func AnySlug(col, search, sep string) (where string, values []interface{}) {
 	if search == "" {
-		return ""
+		return "", values
 	}
 
 	if sep == "" {
@@ -190,20 +208,21 @@ func AnySlug(col, search, sep string) (where string) {
 	}
 
 	if len(words) == 0 {
-		return ""
+		return "", values
 	}
 
 	for _, w := range words {
-		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, Like(w)))
+		wheres = append(wheres, fmt.Sprintf("%s = ?", col))
+		values = append(values, SQLParm(w, "", ""))
 	}
 
-	return strings.Join(wheres, " OR ")
+	return strings.Join(wheres, " OR "), values
 }
 
 // AnyInt returns a where condition that matches any integer within a range.
-func AnyInt(col, numbers, sep string, min, max int) (where string) {
+func AnyInt(col, numbers, sep string, low, high int) (where string, values []interface{}) {
 	if numbers == "" {
-		return ""
+		return "", values
 	}
 
 	if sep == "" {
@@ -216,7 +235,7 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	for _, n := range strings.Split(numbers, sep) {
 		i := txt.Int(n)
 
-		if i == 0 || i < min || i > max {
+		if i == 0 || i < low || i > high {
 			continue
 		}
 
@@ -224,14 +243,15 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	}
 
 	if len(matches) == 0 {
-		return ""
+		return "", values
 	}
 
 	for _, n := range matches {
-		wheres = append(wheres, fmt.Sprintf("%s = %d", col, n))
+		wheres = append(wheres, fmt.Sprintf("%s = ?", col))
+		values = append(values, n)
 	}
 
-	return strings.Join(wheres, " OR ")
+	return strings.Join(wheres, " OR "), values
 }
 
 // OrLike returns a where condition and values for finding multiple terms combined with OR.

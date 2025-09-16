@@ -31,307 +31,267 @@ func TestLike(t *testing.T) {
 
 func TestLikeAny(t *testing.T) {
 	t.Run("and_or_search", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "table spoon & usa | img json", true, false); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'usa'", w[1])
-		}
+		w, v := LikeAny("k.keyword", "table spoon & usa | img json", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 	t.Run(" exact and_or_search", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "table spoon & usa | img json", true, true); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon' OR k.keyword LIKE 'table'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'json' OR k.keyword LIKE 'usa'", w[1])
-		}
+		w, v := LikeAny("k.keyword", "table spoon & usa | img json", true, true)
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon", "table"}, {"json", "usa"}}, v)
 	})
 	t.Run("and_or_search_en", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "table spoon and usa or img json", true, false); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'usa'", w[1])
-		}
+		w, v := LikeAny("k.keyword", "table spoon and usa or img json", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 	t.Run("table spoon usa img json", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "table spoon usa img json", true, false); len(w) != 1 {
-			t.Fatal("one where condition expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%' OR k.keyword LIKE 'usa'", w[0])
-		}
+		w, v := LikeAny("k.keyword", "table spoon usa img json", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"json%", "spoon%", "table%", "usa"}}, v)
 	})
 
 	t.Run("cat dog", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "cat dog", true, false); len(w) != 1 {
-			t.Fatal("one where condition expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'cat' OR k.keyword LIKE 'dog'", w[0])
-		}
+		w, v := LikeAny("k.keyword", "cat dog", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"cat", "dog"}}, v)
 	})
 
 	t.Run("cats dogs", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "cats dogs", true, false); len(w) != 1 {
-			t.Fatal("one where condition expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'cats%' OR k.keyword LIKE 'cat' OR k.keyword LIKE 'dogs%' OR k.keyword LIKE 'dog'", w[0])
-		}
+		w, v := LikeAny("k.keyword", "cats dogs", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"cats%", "cat", "dogs%", "dog"}}, v)
 	})
 
 	t.Run("spoon", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "spoon", true, false); len(w) != 1 {
-			t.Fatal("one where condition expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%'", w[0])
-		}
+		w, v := LikeAny("k.keyword", "spoon", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%"}}, v)
 	})
 
 	t.Run("img", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "img", true, false); len(w) > 0 {
-			t.Fatal("no where condition expected")
-		}
+		w, v := LikeAny("k.keyword", "img", true, false)
+		assert.Empty(t, w, "where")
+		assert.Empty(t, v, "value")
 	})
 
 	t.Run("Empty", func(t *testing.T) {
-		if w := LikeAny("k.keyword", "", true, false); len(w) > 0 {
-			t.Fatal("no where condition expected")
-		}
+		w, v := LikeAny("k.keyword", "", true, false)
+		assert.Empty(t, w, "where")
+		assert.Empty(t, v, "value")
 	})
 }
 
 func TestLikeAnyKeyword(t *testing.T) {
 	t.Run("and_or_search", func(t *testing.T) {
-		if w := LikeAnyKeyword("k.keyword", "table spoon & usa | img json"); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'usa'", w[1])
-		}
+		w, v := LikeAnyKeyword("k.keyword", "table spoon & usa | img json")
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 	t.Run("and_or_search_en", func(t *testing.T) {
-		if w := LikeAnyKeyword("k.keyword", "table spoon and usa or img json"); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'usa'", w[1])
-		}
+		w, v := LikeAnyKeyword("k.keyword", "table spoon and usa or img json")
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 }
 
 func TestLikeAnyWord(t *testing.T) {
 	t.Run("SearchAndOr", func(t *testing.T) {
-		if w := LikeAnyWord("k.keyword", "table spoon & usa | img json"); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'img%' OR k.keyword LIKE 'json%' OR k.keyword LIKE 'usa%'", w[1])
-		}
+		w, v := LikeAnyWord("k.keyword", "table spoon & usa | img json")
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"img%", "json%", "usa%"}}, v)
 	})
 	t.Run("SearchAndOrEnglish", func(t *testing.T) {
-		if w := LikeAnyWord("k.keyword", "table spoon and usa or img json"); len(w) != 2 {
-			t.Fatal("two where conditions expected")
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE 'img%' OR k.keyword LIKE 'json%' OR k.keyword LIKE 'usa%'", w[1])
-		}
+		w, v := LikeAnyWord("k.keyword", "table spoon and usa or img json")
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"img%", "json%", "usa%"}}, v)
 	})
 	t.Run("EscapeSql", func(t *testing.T) {
-		if w := LikeAnyWord("k.keyword", "table% | 'spoon' & \"us'a"); len(w) != 2 {
-			t.Fatalf("two where conditions expected: %#v", w)
-		} else {
-			assert.Equal(t, "k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%'", w[0])
-			assert.Equal(t, "k.keyword LIKE '\"\"us''a%'", w[1])
-		}
+		w, v := LikeAnyWord("k.keyword", "table% | 'spoon' & \"us'a")
+		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {`"us'a%`}}, v)
 	})
 }
 
 func TestLikeAll(t *testing.T) {
 	t.Run("keywords", func(t *testing.T) {
-		if w := LikeAll("k.keyword", "Jo Mander 李", true, false); len(w) == 2 {
-			assert.Equal(t, "k.keyword LIKE 'mander%'", w[0])
-			assert.Equal(t, "k.keyword LIKE '李'", w[1])
-		} else {
-			t.Logf("wheres: %#v", w)
-			t.Fatal("two where conditions expected")
-		}
+		w, v := LikeAll("k.keyword", "Jo Mander 李", true, false)
+		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"mander%"}, {"李"}}, v)
 	})
 	t.Run("exact", func(t *testing.T) {
-		if w := LikeAll("k.keyword", "Jo Mander 李", true, true); len(w) == 2 {
-			assert.Equal(t, "k.keyword LIKE 'mander'", w[0])
-			assert.Equal(t, "k.keyword LIKE '李'", w[1])
-		} else {
-			t.Logf("wheres: %#v", w)
-			t.Fatal("two where conditions expected")
-		}
+		w, v := LikeAll("k.keyword", "Jo Mander 李", true, true)
+		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"mander"}, {"李"}}, v)
 	})
 	t.Run("string empty", func(t *testing.T) {
-		w := LikeAll("k.keyword", "", true, true)
+		w, v := LikeAll("k.keyword", "", true, true)
 		assert.Empty(t, w)
+		assert.Empty(t, v)
 	})
 	t.Run("0 words", func(t *testing.T) {
-		w := LikeAll("k.keyword", "ab", true, true)
+		w, v := LikeAll("k.keyword", "ab", true, true)
 		assert.Empty(t, w)
+		assert.Empty(t, v)
 	})
 }
 
 func TestLikeAllKeywords(t *testing.T) {
 	t.Run("keywords", func(t *testing.T) {
-		if w := LikeAllKeywords("k.keyword", "Jo Mander 李"); len(w) == 2 {
-			assert.Equal(t, "k.keyword LIKE 'mander%'", w[0])
-			assert.Equal(t, "k.keyword LIKE '李'", w[1])
-		} else {
-			t.Fatalf("unexpected result:  %#v", w)
-		}
+		w, v := LikeAllKeywords("k.keyword", "Jo Mander 李")
+		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"mander%"}, {"李"}}, v)
 	})
 }
 
 func TestLikeAllWords(t *testing.T) {
 	t.Run("keywords", func(t *testing.T) {
-		if w := LikeAllWords("k.name", "Jo Mander 王"); len(w) == 3 {
-			assert.Equal(t, "k.name LIKE 'jo%'", w[0])
-			assert.Equal(t, "k.name LIKE 'mander%'", w[1])
-			assert.Equal(t, "k.name LIKE '王%'", w[2])
-		} else {
-			t.Fatalf("unexpected result:  %#v", w)
-		}
+		w, v := LikeAllWords("k.name", "Jo Mander 王")
+		assert.Equal(t, []string{"k.name LIKE ?", "k.name LIKE ?", "k.name LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"jo%"}, {"mander%"}, {"王%"}}, v)
 	})
 }
 
 func TestLikeAllNames(t *testing.T) {
 	t.Run("MultipleNames", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"k.name"}, "j Mander 王"); len(w) == 1 {
-			assert.Equal(t, "k.name LIKE 'j Mander 王%'", w[0])
-		} else {
-			t.Fatalf("unexpected result:  %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"k.name"}, "j Mander 王")
+		assert.Equal(t, []string{"k.name LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"j Mander 王%"}}, v)
 	})
 	t.Run("MultipleColumns", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander"); len(w) == 1 {
-			assert.Equal(t, "a.col1 LIKE 'Mo Mander%' OR b.col2 LIKE 'Mo Mander%'", w[0])
-		} else {
-			t.Fatalf("unexpected result: %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander")
+		assert.Equal(t, []string{"a.col1 LIKE ? OR b.col2 LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"Mo Mander%", "Mo Mander%"}}, v)
 	})
 	t.Run("EmptyName", func(t *testing.T) {
-		w := LikeAllNames(Cols{"k.name"}, "")
+		w, v := LikeAllNames(Cols{"k.name"}, "")
 		assert.Empty(t, w)
+		assert.Empty(t, v)
 	})
 	t.Run("SingleCharacter", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"k.name"}, "a"); len(w) == 1 {
-			assert.Equal(t, "k.name LIKE '%a%'", w[0])
-		} else {
-			t.Fatalf("unexpected result: %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"k.name"}, "a")
+		assert.Equal(t, []string{"k.name LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"%a%"}}, v)
 	})
 	t.Run("FullNames", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"j.name", "j.alias"}, "Bill & Melinda Gates"); len(w) == 2 {
-			assert.Equal(t, "j.name LIKE '%Bill%' OR j.alias LIKE '%Bill%'", w[0])
-			assert.Equal(t, "j.name LIKE 'Melinda Gates%' OR j.alias LIKE 'Melinda Gates%'", w[1])
-		} else {
-			t.Fatalf("unexpected result: %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"j.name", "j.alias"}, "Bill & Melinda Gates")
+		assert.Equal(t, []string{"j.name LIKE ? OR j.alias LIKE ?", "j.name LIKE ? OR j.alias LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"%Bill%", "%Bill%"}, {"Melinda Gates%", "Melinda Gates%"}}, v)
 	})
 	t.Run("Plus", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, clean.SearchQuery("Paul + Paula")); len(w) == 2 {
-			assert.Equal(t, "name LIKE '%Paul%'", w[0])
-			assert.Equal(t, "name LIKE '%Paula%'", w[1])
-		} else {
-			t.Fatalf("unexpected result:  %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"name"}, clean.SearchQuery("Paul + Paula"))
+		assert.Equal(t, []string{"name LIKE ?", "name LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"%Paul%"}, {"%Paula%"}}, v)
 	})
 	t.Run("And", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, clean.SearchQuery("P and Paula")); len(w) == 2 {
-			assert.Equal(t, "name LIKE '%P%'", w[0])
-			assert.Equal(t, "name LIKE '%Paula%'", w[1])
-		} else {
-			t.Fatalf("unexpected result:  %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"name"}, clean.SearchQuery("P and Paula"))
+		assert.Equal(t, []string{"name LIKE ?", "name LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"%P%"}, {"%Paula%"}}, v)
 	})
 	t.Run("Or", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, clean.SearchQuery("Paul or Paula")); len(w) == 1 {
-			assert.Equal(t, "name LIKE '%Paul%' OR name LIKE '%Paula%'", w[0])
-		} else {
-			t.Fatalf("unexpected result:  %#v", w)
-		}
+		w, v := LikeAllNames(Cols{"name"}, clean.SearchQuery("Paul or Paula"))
+		assert.Equal(t, []string{"name LIKE ? OR name LIKE ?"}, w)
+		assert.Equal(t, [][]interface{}{{"%Paul%", "%Paula%"}}, v)
 	})
 }
 
 func TestAnySlug(t *testing.T) {
 	t.Run("Multiple", func(t *testing.T) {
-		where := AnySlug("custom_slug", "table spoon usa img json", " ")
-		assert.Equal(t, "custom_slug = 'table' OR custom_slug = 'spoon' OR custom_slug = 'usa' OR custom_slug = 'img' OR custom_slug = 'json'", where)
+		w, v := AnySlug("custom_slug", "table spoon usa img json", " ")
+		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"table", "spoon", "usa", "img", "json"}, v)
 	})
 
 	t.Run("CatDog", func(t *testing.T) {
-		where := AnySlug("custom_slug", "cat dog", " ")
-		assert.Equal(t, "custom_slug = 'cat' OR custom_slug = 'dog'", where)
+		w, v := AnySlug("custom_slug", "cat dog", " ")
+		assert.Equal(t, "custom_slug = ? OR custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"cat", "dog"}, v)
 	})
 
 	t.Run("CatsDogs", func(t *testing.T) {
-		where := AnySlug("custom_slug", "cats dogs", " ")
-		assert.Equal(t, "custom_slug = 'cats' OR custom_slug = 'cat' OR custom_slug = 'dogs' OR custom_slug = 'dog'", where)
+		w, v := AnySlug("custom_slug", "cats dogs", " ")
+		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"cats", "cat", "dogs", "dog"}, v)
 	})
 
 	t.Run("Spoon", func(t *testing.T) {
-		where := AnySlug("custom_slug", "spoon", " ")
-		assert.Equal(t, "custom_slug = 'spoon'", where)
+		w, v := AnySlug("custom_slug", "spoon", " ")
+		assert.Equal(t, "custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"spoon"}, v)
 	})
 
 	t.Run("Img", func(t *testing.T) {
-		where := AnySlug("custom_slug", "img", " ")
-		assert.Equal(t, "custom_slug = 'img'", where)
+		w, v := AnySlug("custom_slug", "img", " ")
+		assert.Equal(t, "custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"img"}, v)
 	})
 
 	t.Run("Space", func(t *testing.T) {
-		where := AnySlug("custom_slug", " ", "")
-		assert.Equal(t, "custom_slug = '' OR custom_slug = ''", where)
+		w, v := AnySlug("custom_slug", " ", "")
+		assert.Equal(t, "custom_slug = ? OR custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"", ""}, v)
 	})
 
 	t.Run("Empty", func(t *testing.T) {
-		where := AnySlug("custom_slug", "", " ")
+		where, values := AnySlug("custom_slug", "", " ")
 		assert.Equal(t, "", where)
+		assert.Empty(t, values)
 	})
 
 	t.Run("CommaSeparated", func(t *testing.T) {
-		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", txt.Or)
-		assert.Equal(t, "custom_slug = 'botanical-garden' OR custom_slug = 'landscape' OR custom_slug = 'bay'", where)
+		w, v := AnySlug("custom_slug", "botanical-garden,landscape,bay", ",")
+		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"botanical-garden", "landscape", "bay"}, v)
+	})
+
+	t.Run("PipeSeparated", func(t *testing.T) {
+		w, v := AnySlug("custom_slug", "botanical-garden|landscape|bay", txt.Or)
+		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"botanical-garden", "landscape", "bay"}, v)
 	})
 
 	t.Run("Emoji", func(t *testing.T) {
-		where := AnySlug("custom_slug", "💐", "|")
-		assert.Equal(t, "custom_slug = '_5cpzfea'", where)
+		w, v := AnySlug("custom_slug", "💐", "|")
+		assert.Equal(t, "custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"_5cpzfea"}, v)
 	})
 
 	t.Run("EmojiSlug", func(t *testing.T) {
-		where := AnySlug("custom_slug", "_5cpzfea", "|")
-		assert.Equal(t, "custom_slug = '_5cpzfea'", where)
+		w, v := AnySlug("custom_slug", "_5cpzfea", "|")
+		assert.Equal(t, "custom_slug = ?", w)
+		assert.Equal(t, []interface{}{"_5cpzfea"}, v)
 	})
 }
 
 func TestAnyInt(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		where := AnyInt("photos.photo_month", "", txt.Or, entity.UnknownMonth, txt.MonthMax)
+		where, values := AnyInt("photos.photo_month", "", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
+		assert.Empty(t, values)
 	})
 
 	t.Run("Range", func(t *testing.T) {
-		where := AnyInt("photos.photo_month", "-3|0|10|9|11|12|13", txt.Or, entity.UnknownMonth, txt.MonthMax)
-		assert.Equal(t, "photos.photo_month = 10 OR photos.photo_month = 9 OR photos.photo_month = 11 OR photos.photo_month = 12", where)
+		w, v := AnyInt("photos.photo_month", "-3|0|10|9|11|12|13", txt.Or, entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ?", w)
+		assert.Equal(t, []interface{}{10, 9, 11, 12}, v)
 	})
 
 	t.Run("Chars", func(t *testing.T) {
-		where := AnyInt("photos.photo_month", "a|b|c", txt.Or, entity.UnknownMonth, txt.MonthMax)
+		where, values := AnyInt("photos.photo_month", "a|b|c", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
+		assert.Empty(t, values)
 	})
 
 	t.Run("CommaSeparated", func(t *testing.T) {
-		where := AnyInt("photos.photo_month", "-3,10,9,11,12,13", ",", entity.UnknownMonth, txt.MonthMax)
-		assert.Equal(t, "photos.photo_month = 10 OR photos.photo_month = 9 OR photos.photo_month = 11 OR photos.photo_month = 12", where)
+		w, v := AnyInt("photos.photo_month", "-3,10,9,11,12,13", ",", entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ?", w)
+		assert.Equal(t, []interface{}{10, 9, 11, 12}, v)
 	})
 
 	t.Run("Invalid", func(t *testing.T) {
-		where := AnyInt("photos.photo_month", "  , |  ", ",", entity.UnknownMonth, txt.MonthMax)
+		where, values := AnyInt("photos.photo_month", "  , |  ", ",", entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
+		assert.Empty(t, values)
 	})
 }
 
