@@ -17,7 +17,7 @@ func Like(s string) string {
 
 // SQLParam cleans and preps a string for use as a parameter in a query.  Pre and Post are used to add a wild card character for like's.
 func SQLParam(s, pre, post string) string {
-	return pre + strings.Trim(s, " |&*%") + post
+	return pre + strings.Trim(clean.SqlClean(s), " |&*%") + post
 }
 
 // LikeAny returns a slice of or'd where conditions matching the search words, and slices of the variable parameters for each where condition.

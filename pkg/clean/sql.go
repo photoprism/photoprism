@@ -51,3 +51,34 @@ func SqlString(s string) string {
 
 	return string(b[:j])
 }
+
+// SqlClean removes bytes from a string that are determined as requiring omitting
+func SqlClean(s string) string {
+	var i int
+	for i = range len(s) {
+		if _, found := SqlSpecial(s[i]); found {
+			break
+		}
+	}
+
+	// Return if no omittable characters were found.
+	if i >= len(s) {
+		return s
+	}
+
+	b := make([]byte, 2*len(s)-i)
+
+	copy(b, s[:i])
+
+	j := i
+
+	for ; i < len(s); i++ {
+		if _, omit := SqlSpecial(s[i]); !omit {
+			// Keep all bytes not omitted
+			b[j] = s[i]
+			j++
+		}
+	}
+
+	return string(b[:j])
+}
