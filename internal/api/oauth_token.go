@@ -127,17 +127,17 @@ func OAuthToken(router *gin.RouterGroup) {
 			if s == nil {
 				AbortInvalidCredentials(c)
 				return
-			} else if s.Username() == "" || s.IsClient() || !s.IsRegistered() {
+			} else if s.GetUserName() == "" || s.IsClient() || !s.IsRegistered() {
 				event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
 				AbortInvalidCredentials(c)
 				return
 			}
 
-			actor = fmt.Sprintf("user %s", clean.Log(s.Username()))
+			actor = fmt.Sprintf("user %s", clean.Log(s.GetUserName()))
 
-			if s.User().Provider().SupportsPasswordAuthentication() {
+			if s.GetUser().Provider().SupportsPasswordAuthentication() {
 				loginForm := form.Login{
-					Username: s.Username(),
+					Username: s.GetUserName(),
 					Password: frm.Password,
 				}
 
@@ -153,7 +153,7 @@ func OAuthToken(router *gin.RouterGroup) {
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, "%s"}, strings.ToLower(clean.Error(authErr)))
 					AbortInvalidCredentials(c)
 					return
-				} else if !authUser.Equal(s.User()) {
+				} else if !authUser.Equal(s.GetUser()) {
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrUserDoesNotMatch.Error()})
 					AbortInvalidCredentials(c)
 					return
@@ -164,7 +164,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				frm.GrantType = authn.GrantSession
 			}
 
-			sess = entity.NewClientSession(frm.ClientName, frm.ExpiresIn, frm.Scope, frm.GrantType, s.User())
+			sess = entity.NewClientSession(frm.ClientName, frm.ExpiresIn, frm.Scope, frm.GrantType, s.GetUser())
 
 			// Return the reserved request rate limit tokens after successful authentication.
 			r.Success()
@@ -201,7 +201,8 @@ func OAuthToken(router *gin.RouterGroup) {
 			"access_token": sess.AuthToken(),
 			"token_type":   sess.AuthTokenType(),
 			"expires_in":   sess.ExpiresIn(),
-			"client_name":  sess.ClientName,
+			"client_name":  sess.GetClientName(),
+			"client_role":  sess.GetClientRole(),
 			"scope":        sess.Scope(),
 		}
 

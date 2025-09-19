@@ -51,27 +51,27 @@ func DeleteSession(router *gin.RouterGroup) {
 
 		// Only admins may delete other sessions by ref id.
 		if rnd.IsRefID(id) {
-			if !acl.Rules.AllowAll(acl.ResourceSessions, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
-				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", authn.Denied}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			if !acl.Rules.AllowAll(acl.ResourceSessions, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", authn.Denied}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 				Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 				return
 			}
 
-			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", authn.Granted}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", authn.Granted}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 
 			if s = entity.FindSessionByRefID(id); s == nil {
 				Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 				return
 			}
 		} else if id != "" && s.ID != id {
-			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
 
 		// Delete session cache and database record.
 		if err := s.Delete(); err != nil {
-			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", "%s"}, s.RefID, s.UserRole(), err)
+			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", "%s"}, s.RefID, s.GetUserRole(), err)
 		} else {
 			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, s.RefID)
 		}

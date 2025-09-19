@@ -17,6 +17,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/capture"
 )
 
+// TODO: Several CLI commands defer conf.Shutdown(), which closes the shared
+// database connection. To avoid flakiness, RunWithTestContext re-initializes
+// and re-registers the DB provider before each command invocation. If you see
+// "config: database not connected" during test runs, consider moving shutdown
+// behavior behind an interface or gating it for tests.
+
 func TestMain(m *testing.M) {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
@@ -35,8 +41,8 @@ func TestMain(m *testing.M) {
 	c := config.NewTestConfig("commands")
 	get.SetConfig(c)
 
-	// Remember to close database connection.
-	defer c.CloseDb()
+	// Keep DB connection open for the duration of this package's tests to
+	// avoid late access after CloseDb() in concurrent test runs.
 
 	// Init config and connect to database.
 	InitConfig = func(ctx *cli.Context) (*config.Config, error) {
@@ -92,12 +98,22 @@ func RunWithTestContext(cmd *cli.Command, args []string) (output string, err err
 
 	cmd.HideHelp = false
 
+	// Ensure DB connection is open for each command run (some commands call Shutdown).
+	if c := get.Config(); c != nil {
+		_ = c.Init()   // safe to call; re-opens DB if needed
+		c.RegisterDb() // (re)register provider
+	}
+
 	// Redirect the output from cli to buffer for transfer to output for testing
 	var catureOutput bytes.Buffer
 	oldWriter := ctx.App.Writer
 	ctx.App.Writer = &catureOutput
+
 	// Run command with test context.
 	output = capture.Output(func() {
+		origExiter := cli.OsExiter
+		cli.OsExiter = func(int) {}
+		defer func() { cli.OsExiter = origExiter }()
 		err = cmd.Run(ctx, args...)
 	})
 	ctx.App.Writer = oldWriter
@@ -150,8 +166,19 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	var catureOutput bytes.Buffer
 	oldWriter := ctx.App.Writer
 	ctx.App.Writer = &catureOutput
-	// Run command with test context.
+
+	// Ensure DB connection is open for each command run (some commands call Shutdown).
+	if c := get.Config(); c != nil {
+		_ = c.Init()   // safe to call; re-opens DB if needed
+		c.RegisterDb() // (re)register provider
+	}
+
+	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder
+	// errors don't terminate the test binary.
 	output = capture.Output(func() {
+		origExiter := cli.OsExiter
+		cli.OsExiter = func(int) {}
+		defer func() { cli.OsExiter = origExiter }()
 		err = cmd.Run(ctx, args...)
 	})
 	ctx.App.Writer = oldWriter

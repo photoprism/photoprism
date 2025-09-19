@@ -32,7 +32,7 @@ func TestAuth(t *testing.T) {
 		// Check successful authorization in public mode.
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
 		assert.NotNil(t, s)
-		assert.Equal(t, "admin", s.Username())
+		assert.Equal(t, "admin", s.GetUserName())
 		assert.Equal(t, session.PublicID, s.ID)
 		assert.Equal(t, http.StatusOK, s.HttpStatus())
 		assert.False(t, s.Abort(c))
@@ -40,7 +40,7 @@ func TestAuth(t *testing.T) {
 		// Check failed authorization in public mode.
 		s = Auth(c, acl.ResourceUsers, acl.ActionUpload)
 		assert.NotNil(t, s)
-		assert.Equal(t, "", s.Username())
+		assert.Equal(t, "", s.GetUserName())
 		assert.Equal(t, "", s.ID)
 		assert.Equal(t, http.StatusForbidden, s.HttpStatus())
 		assert.True(t, s.Abort(c))
@@ -66,7 +66,7 @@ func TestAuthAny(t *testing.T) {
 		// Check successful authorization in public mode.
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionUpdate})
 		assert.NotNil(t, s)
-		assert.Equal(t, "admin", s.Username())
+		assert.Equal(t, "admin", s.GetUserName())
 		assert.Equal(t, session.PublicID, s.ID)
 		assert.Equal(t, http.StatusOK, s.HttpStatus())
 		assert.False(t, s.Abort(c))
@@ -74,7 +74,7 @@ func TestAuthAny(t *testing.T) {
 		// Check failed authorization in public mode.
 		s = AuthAny(c, acl.ResourceUsers, acl.Permissions{acl.ActionUpload})
 		assert.NotNil(t, s)
-		assert.Equal(t, "", s.Username())
+		assert.Equal(t, "", s.GetUserName())
 		assert.Equal(t, "", s.ID)
 		assert.Equal(t, http.StatusForbidden, s.HttpStatus())
 		assert.True(t, s.Abort(c))
@@ -82,7 +82,7 @@ func TestAuthAny(t *testing.T) {
 		// Check successful authorization with multiple actions in public mode.
 		s = AuthAny(c, acl.ResourceUsers, acl.Permissions{acl.ActionUpload, acl.ActionView})
 		assert.NotNil(t, s)
-		assert.Equal(t, "admin", s.Username())
+		assert.Equal(t, "admin", s.GetUserName())
 		assert.Equal(t, session.PublicID, s.ID)
 		assert.Equal(t, http.StatusOK, s.HttpStatus())
 		assert.False(t, s.Abort(c))

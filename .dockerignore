@@ -18,6 +18,7 @@
 /photoprism-*
 /frontend/tests/acceptance/screenshots
 /test/
+/specs/
 
 # Docker configuration files:
 .dockerignore

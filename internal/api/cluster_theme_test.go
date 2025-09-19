@@ -11,8 +11,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/cluster"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
@@ -20,7 +20,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Ensure portal feature flag is disabled.
-		conf.Options().NodeType = cluster.Instance
+		conf.Options().NodeRole = cluster.RoleInstance
 		ClusterGetTheme(router)
 
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/theme")
@@ -30,7 +30,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterGetTheme(router)
 
 		missing := filepath.Join(os.TempDir(), "photoprism-test-missing-theme")
@@ -48,7 +48,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterGetTheme(router)
 
 		tempTheme, err := os.MkdirTemp("", "pp-theme-*")
@@ -58,6 +58,7 @@ func TestClusterGetTheme(t *testing.T) {
 
 		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, "sub"), 0o755))
 		// Visible files
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("console.log('ok')\n"), 0o644))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "style.css"), []byte("body{}\n"), 0o644))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "sub", "visible.txt"), []byte("ok\n"), 0o644))
 		// Hidden file
@@ -103,7 +104,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterGetTheme(router)
 
 		// Create an empty temporary theme directory (no includable files).
@@ -112,22 +113,15 @@ func TestClusterGetTheme(t *testing.T) {
 		defer func() { _ = os.RemoveAll(tempTheme) }()
 		conf.SetThemePath(tempTheme)
 
-		// Hidden-only content to ensure exclusion yields empty archive.
+		// Hidden-only content and no app.js should yield 404.
 		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, ".hidden-dir"), 0o755))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden-dir", "file.txt"), []byte("secret\n"), 0o644))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden"), []byte("secret\n"), 0o644))
 
-		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/theme")
-		assert.Equal(t, http.StatusOK, r.Code)
-
-		// Verify headers
-		assert.Equal(t, header.ContentTypeZip, r.Header().Get(header.ContentType))
-		assert.Contains(t, r.Header().Get(header.ContentDisposition), "attachment; filename=theme.zip")
-
-		// Verify zip is valid and empty (no files included)
-		body := r.Body.Bytes()
-		zr, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
-		assert.NoError(t, err)
-		assert.Equal(t, 0, len(zr.File))
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/cluster/theme", nil)
+		req.Header.Set("Accept", "application/json")
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
 }

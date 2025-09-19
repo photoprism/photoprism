@@ -323,7 +323,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		var err error
 
 		// Abort if user wants to delete all but does not have sufficient privileges.
-		if frm.All && !acl.Rules.AllowAll(acl.ResourcePhotos, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+		if frm.All && !acl.Rules.AllowAll(acl.ResourcePhotos, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 			AbortForbidden(c)
 			return
 		}

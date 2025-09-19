@@ -599,15 +599,9 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-url",
-			Usage:   "public site `URL` used to build links and determine HTTPS/TLS; must include scheme (http/https)",
+			Usage:   "canonical site `URL` used in generated links and to determine HTTPS/TLS (scheme://host[:port])",
 			Value:   "http://localhost:2342/",
 			EnvVars: EnvVars("SITE_URL"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "internal-url",
-			Usage:   "internal server `URL` for service-to-service communication and local networking *optional*",
-			Value:   "",
-			EnvVars: EnvVars("INTERNAL_URL"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-author",
@@ -671,34 +665,57 @@ var Flags = CliFlags{
 			Value:   header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-name",
-			Usage:   "cluster node `NAME` (lowercase letters, digits, hyphens; 1–63 chars)",
-			EnvVars: EnvVars("NODE_NAME"),
+			Name:    "cluster-domain",
+			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
+			EnvVars: EnvVars("CLUSTER_DOMAIN"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-type",
-			Usage:   "cluster node `TYPE` (portal, instance, service)",
-			EnvVars: EnvVars("NODE_TYPE"),
-			Hidden:  true,
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "node-secret",
-			Usage:   "private `KEY` to secure intra-cluster communication *optional*",
-			EnvVars: EnvVars("NODE_SECRET"),
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope per-node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-url",
-			Usage:   "base `URL` of the cluster portal e.g. https://portal.example.com",
+			Usage:   "base `URL` of the cluster portal (e.g. https://portal.example.com)",
 			EnvVars: EnvVars("PORTAL_URL"),
 			Hidden:  true,
-		}, Tags: []string{Pro}}, {
+		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "portal-token",
-			Usage:   "access TOKEN for nodes to register and synchronize with the portal",
-			EnvVars: EnvVars("PORTAL_TOKEN"),
+			Name:    "join-token",
+			Usage:   "secret `TOKEN` required to join the cluster",
+			EnvVars: EnvVars("JOIN_TOKEN"),
 			Hidden:  true,
-		}, Tags: []string{Pro}}, {
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-name",
+			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
+			EnvVars: EnvVars("NODE_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-role",
+			Usage:   "node `ROLE` (portal, instance, or service)",
+			EnvVars: EnvVars("NODE_ROLE"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-id",
+			Usage:   "client `ID` registered with the portal (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_ID"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-secret",
+			Usage:   "client `SECRET` registered with the portal (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_SECRET"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "advertise-url",
+			Usage:   "advertised `URL` for intra-cluster calls (scheme://host[:port])",
+			Value:   "",
+			EnvVars: EnvVars("ADVERTISE_URL"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "https-proxy",
 			Usage:   "proxy server `URL` to be used for outgoing connections *optional*",
@@ -831,7 +848,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "database-server",
 			Aliases: []string{"db-server"},
-			Usage:   "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
+			Usage:   "database `HOST` incl. port, e.g. \"mariadb:3306\" (or socket path)",
 			EnvVars: EnvVars("DATABASE_SERVER"),
 		}}, {
 		Flag: &cli.StringFlag{

@@ -116,6 +116,17 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Warn(albumErr)
 				}
 
+				// Remember the original filename for duplicates so that indexing can still persist
+				// OriginalName even when the file was not copied due to an existing identical file.
+				if fileHash := f.Hash(); fileHash != "" {
+					if existing, findErr := entity.FirstFileByHash(fileHash); findErr == nil {
+						existingPath := FileName(existing.FileRoot, existing.FileName)
+						if existingPath != "" {
+							relatedOriginalNames[existingPath] = relFileName
+						}
+					}
+				}
+
 				// Remove duplicates to save storage.
 				if opt.RemoveExistingFiles {
 					if removeErr := f.Remove(); removeErr != nil {

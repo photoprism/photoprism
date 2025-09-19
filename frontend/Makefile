@@ -35,22 +35,26 @@ notice:
 	@echo "Creating license report for frontend dependencies..."
 	license-report --only=prod --config=.report.json > NOTICE
 install-npm:
-	sudo npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest license-report@latest
+	# Keep scripts enabled for npm itself; split other globals and disable scripts for safety
+	sudo npm install -g npm@latest
+	sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 install-testcafe:
-	npm install -g testcafe@latest
+	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@latest
 install-eslint:
-	npm install -g eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
+	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
 upgrade:
 	$(info Securely upgrading NPM dependencies...)
-	$(DOCKER_NPM) 'npx -y npm@latest update --save --ignore-scripts --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
+	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
 npm-install:
 	$(info Installing NPM dependencies...)
-	npm install --ignore-scripts --no-update-notifier --no-audit --no-audit --no-fund
+	npm install --ignore-scripts --no-fund --no-audit --no-update-notifier
 install: npm-install
 npm-update:
 	$(info Updating NPM dependencies in package.lock and package-lock.json...)
-	npm update --save --package-lock --ignore-scripts --no-update-notifier --no-audit --no-fund
+	npm update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier
 update: npm-update npm-install
+security-check: # Scan for missing --ignore-scripts and unsafe v-html
+	npm run -s security:scan
 watch:
 	npm run watch
 build:

@@ -511,6 +511,20 @@ test-coverage:
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
+git-pull:
+	@echo "Pulling changes from remote repositories..."; \
+	if [ -d .git ]; then \
+		echo "Updating photoprism"; \
+		git pull --ff-only || echo "Warning: git pull failed in root"; \
+	else \
+		echo "Skipping: current directory is not a Git repo"; \
+	fi; \
+	for d in */ ; do \
+		[ -d "$$d" ] || continue; \
+		[ -d "$$d/.git" ] || continue; \
+		echo "Updating photoprism/$$d"; \
+		git -C "$$d" pull --ff-only || echo "Warning: git pull failed in $$d"; \
+	done;
 test-sqlite-benchmark10x:
 	$(info Running all Go tests with benchmarks...)
 	dirname $$(grep --files-with-matches --include "*_test.go" -oP "(?<=func )Benchmark[A-Za-z_]+(?=\(b \*testing\.B)" --recursive ./*) | sort -u | xargs -n1 bash -c 'cd "$$0" && pwd && go test -skip Test -parallel 4 -count 10 -cpu 4 -failfast -tags slow -timeout 30m -benchtime 1s -bench=.'

@@ -202,11 +202,11 @@ func (m *Session) Save() error {
 	}
 
 	// Limit the number of sessions that are created with an app password.
-	if !m.Method().IsSession() {
+	if !m.GetMethod().IsSession() {
 		return nil
-	} else if !m.Provider().IsApplication() {
+	} else if !m.GetProvider().IsApplication() {
 		return nil
-	} else if client := m.Client(); client.NoName() || client.Tokens() < 1 {
+	} else if client := m.GetClient(); client.NoName() || client.Tokens() < 1 {
 		return nil
 	} else if deleted := DeleteClientSessions(client, authn.MethodSession, client.Tokens()); deleted > 0 {
 		event.AuditInfo([]string{m.IP(), "session %s", "deleted %s"}, m.RefID, english.Plural(deleted, "previously created client session", "previously created client sessions"))
@@ -242,7 +242,7 @@ func (m *Session) BeforeCreate(scope *gorm.DB) error {
 	return scope.Error
 }
 
-// SetClient updates the client of this session.
+// SetClient sets the client of this session.
 func (m *Session) SetClient(c *Client) *Session {
 	if c == nil {
 		return m
@@ -259,7 +259,7 @@ func (m *Session) SetClient(c *Client) *Session {
 	return m
 }
 
-// SetClientName changes the session's client name.
+// SetClientName changes the client name of this session.
 func (m *Session) SetClientName(s string) *Session {
 	if s == "" {
 		return m
@@ -270,8 +270,8 @@ func (m *Session) SetClientName(s string) *Session {
 	return m
 }
 
-// Client returns the session's client.
-func (m *Session) Client() *Client {
+// GetClient returns the client this session belongs to.
+func (m *Session) GetClient() *Client {
 	if m == nil {
 		return &Client{}
 	} else if m.client != nil {
@@ -285,17 +285,22 @@ func (m *Session) Client() *Client {
 		UserUID:    m.UserUID,
 		UserName:   m.UserName,
 		ClientUID:  m.ClientUID,
-		ClientName: m.ClientName,
-		ClientRole: m.ClientRole().String(),
+		ClientName: m.GetClientName(),
+		ClientRole: m.GetClientRole().String(),
 		AuthScope:  m.Scope(),
 		AuthMethod: m.AuthMethod,
 	}
 }
 
-// ClientRole returns the session's client ACL role.
-func (m *Session) ClientRole() acl.Role {
+// GetClientName returns the client name.
+func (m *Session) GetClientName() string {
+	return m.ClientName
+}
+
+// GetClientRole returns the client ACL role.
+func (m *Session) GetClientRole() acl.Role {
 	if m.HasClient() {
-		return m.Client().AclRole()
+		return m.GetClient().AclRole()
 	} else if m.IsClient() {
 		return acl.RoleClient
 	}
@@ -303,10 +308,10 @@ func (m *Session) ClientRole() acl.Role {
 	return acl.RoleNone
 }
 
-// ClientInfo returns the session's client identifier string.
-func (m *Session) ClientInfo() string {
+// GetClientInfo returns the client identifier string.
+func (m *Session) GetClientInfo() string {
 	if m.HasClient() {
-		return m.Client().String()
+		return m.GetClient().String()
 	} else if m.ClientName != "" {
 		return m.ClientName
 	}
@@ -333,8 +338,8 @@ func (m *Session) IsClient() bool {
 	return authn.Provider(m.AuthProvider).IsClient()
 }
 
-// User returns the session's user entity.
-func (m *Session) User() *User {
+// GetUser returns the related user entity.
+func (m *Session) GetUser() *User {
 	if m == nil {
 		return &User{}
 	} else if m.user != nil {
@@ -351,20 +356,20 @@ func (m *Session) User() *User {
 	return &User{}
 }
 
-// UserRole returns the session's user ACL role.
-func (m *Session) UserRole() acl.Role {
-	return m.User().AclRole()
+// GetUserRole returns the session's user ACL role.
+func (m *Session) GetUserRole() acl.Role {
+	return m.GetUser().AclRole()
 }
 
 // UserInfo returns the session's user information.
 func (m *Session) UserInfo() string {
-	name := m.Username()
+	name := m.GetUserName()
 
 	if name != "" {
 		return name
 	}
 
-	return m.UserRole().String()
+	return m.GetUserRole().String()
 }
 
 // SetUser updates the user entity of this session.
@@ -415,15 +420,15 @@ func (m *Session) RefreshUser() *Session {
 	return m
 }
 
-// Username returns the login name.
-func (m *Session) Username() string {
+// GetUserName returns the login name.
+func (m *Session) GetUserName() string {
 	return m.UserName
 }
 
-// AuthInfo returns information about the authentication type.
-func (m *Session) AuthInfo() string {
-	provider := m.Provider()
-	method := m.Method()
+// GetAuthInfo returns information about the authentication type.
+func (m *Session) GetAuthInfo() string {
+	provider := m.GetProvider()
+	method := m.GetMethod()
 
 	if method.IsDefault() {
 		return provider.Pretty()
@@ -444,8 +449,8 @@ func (m *Session) SetAuthID(id, issuer string) *Session {
 	return m
 }
 
-// Provider returns the authentication provider.
-func (m *Session) Provider() authn.ProviderType {
+// GetProvider returns the authentication provider.
+func (m *Session) GetProvider() authn.ProviderType {
 	return authn.Provider(m.AuthProvider)
 }
 
@@ -460,14 +465,14 @@ func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 	return m
 }
 
-// Method returns the authentication method.
-func (m *Session) Method() authn.MethodType {
+// GetMethod returns the authentication method.
+func (m *Session) GetMethod() authn.MethodType {
 	return authn.Method(m.AuthMethod)
 }
 
 // Is2FA checks if 2-Factor Authentication (2FA) was used to log in.
 func (m *Session) Is2FA() bool {
-	return m.Method().Is(authn.Method2FA)
+	return m.GetMethod().Is(authn.Method2FA)
 }
 
 // SetMethod sets a custom authentication method.
@@ -540,8 +545,8 @@ func (m *Session) SetScope(scope string) *Session {
 	return m
 }
 
-// AuthGrantType returns the session's grant type as authn.GrantType.
-func (m *Session) AuthGrantType() authn.GrantType {
+// GetGrantType returns the session's grant type as authn.GrantType.
+func (m *Session) GetGrantType() authn.GrantType {
 	return authn.Grant(m.GrantType)
 }
 
@@ -558,7 +563,7 @@ func (m *Session) SetGrantType(t authn.GrantType) *Session {
 
 // ChangePassword changes the password of the current user.
 func (m *Session) ChangePassword(newPw string) (err error) {
-	u := m.User()
+	u := m.GetUser()
 
 	if u == nil {
 		return fmt.Errorf("unknown user")
@@ -607,8 +612,8 @@ func (m *Session) SetDownloadToken(token string) *Session {
 	return m
 }
 
-// Data returns the session's data.
-func (m *Session) Data() (data *SessionData) {
+// GetData returns the data that belong to this session.
+func (m *Session) GetData() (data *SessionData) {
 	if m.data != nil {
 		data = m.data
 	}
@@ -618,7 +623,7 @@ func (m *Session) Data() (data *SessionData) {
 	if len(m.DataJSON) == 0 {
 		return data
 	} else if err := json.Unmarshal(m.DataJSON, data); err != nil {
-		log.Errorf("failed parsing session json: %s", err)
+		log.Errorf("auth: failed to read session data (%s)", err)
 	} else {
 		data.RefreshShares()
 		m.data = data
@@ -627,10 +632,10 @@ func (m *Session) Data() (data *SessionData) {
 	return data
 }
 
-// SetData updates the session's data.
+// SetData updates the data that belong to this session.
 func (m *Session) SetData(data *SessionData) *Session {
 	if data == nil {
-		log.Debugf("auth: empty data passed to session %s", m.RefID)
+		log.Debugf("auth: nil cannot be set as session data (%s)", m.RefID)
 		return m
 	}
 
@@ -638,7 +643,7 @@ func (m *Session) SetData(data *SessionData) *Session {
 	data.RefreshShares()
 
 	if j, err := json.Marshal(data); err != nil {
-		log.Debugf("auth:  %s", err)
+		log.Debugf("auth: failed to set session data (%s)", err)
 	} else {
 		m.DataJSON = j
 	}
@@ -705,7 +710,7 @@ func (m *Session) UpdateContext(c *gin.Context) *Session {
 
 // IsVisitor checks if the session belongs to a sharing link visitor.
 func (m *Session) IsVisitor() bool {
-	return m.User().IsVisitor()
+	return m.GetUser().IsVisitor()
 }
 
 // IsSuperAdmin checks if the session belongs to a registered super admin user.
@@ -714,7 +719,7 @@ func (m *Session) IsSuperAdmin() bool {
 		return false
 	}
 
-	return m.User().IsSuperAdmin()
+	return m.GetUser().IsSuperAdmin()
 }
 
 // IsRegistered checks if the session belongs to a registered user account.
@@ -723,7 +728,7 @@ func (m *Session) IsRegistered() bool {
 		return false
 	}
 
-	return m.User().IsRegistered()
+	return m.GetUser().IsRegistered()
 }
 
 // NotRegistered checks if the user is not registered with an own account.
@@ -738,9 +743,9 @@ func (m *Session) NoShares() bool {
 
 // HasShares checks if the session has any shares.
 func (m *Session) HasShares() bool {
-	if user := m.User(); user.IsRegistered() {
+	if user := m.GetUser(); user.IsRegistered() {
 		return user.HasShares()
-	} else if data := m.Data(); data == nil {
+	} else if data := m.GetData(); data == nil {
 		return false
 	} else {
 		return data.HasShares()
@@ -753,14 +758,14 @@ func (m *Session) HasRegisteredUser() bool {
 		return false
 	}
 
-	return m.User().IsRegistered()
+	return m.GetUser().IsRegistered()
 }
 
 // HasShare if the session includes the specified share
 func (m *Session) HasShare(uid string) bool {
-	if user := m.User(); user.IsRegistered() {
+	if user := m.GetUser(); user.IsRegistered() {
 		return user.HasShare(uid)
-	} else if data := m.Data(); data == nil {
+	} else if data := m.GetData(); data == nil {
 		return false
 	} else {
 		return data.HasShare(uid)
@@ -769,9 +774,9 @@ func (m *Session) HasShare(uid string) bool {
 
 // SharedUIDs returns shared entity UIDs.
 func (m *Session) SharedUIDs() UIDs {
-	if user := m.User(); user.IsRegistered() {
+	if user := m.GetUser(); user.IsRegistered() {
 		return user.SharedUIDs()
-	} else if data := m.Data(); data == nil {
+	} else if data := m.GetData(); data == nil {
 		return UIDs{}
 	} else {
 		return data.SharedUIDs()
@@ -780,9 +785,9 @@ func (m *Session) SharedUIDs() UIDs {
 
 // RedeemToken updates shared entity UIDs using the specified token.
 func (m *Session) RedeemToken(token string) (n int) {
-	if user := m.User(); user.IsRegistered() {
+	if user := m.GetUser(); user.IsRegistered() {
 		return user.RedeemToken(token)
-	} else if data := m.Data(); data == nil {
+	} else if data := m.GetData(); data == nil {
 		return 0
 	} else {
 		return data.RedeemToken(token)
@@ -890,7 +895,7 @@ func (m *Session) UpdateLastActive(save bool) *Session {
 	}
 
 	// Update the activity timestamp of the parent session, if any.
-	if m.Method().IsNot(authn.MethodSession) || m.AuthID == "" || m.AuthID == m.ID {
+	if m.GetMethod().IsNot(authn.MethodSession) || m.AuthID == "" || m.AuthID == m.ID {
 		return m
 	} else if err := Db().Table(Session{}.TableName()).Where("id = ?", m.AuthID).UpdateColumn("last_active", m.LastActive).Error; err != nil {
 		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp of parent session", "%s"}, m.RefID, err)
@@ -910,7 +915,7 @@ func (m *Session) Valid() bool {
 		return true
 	}
 
-	return m.User().IsRegistered() || m.IsVisitor() && m.HasShares()
+	return m.GetUser().IsRegistered() || m.IsVisitor() && m.HasShares()
 }
 
 // Abort aborts the request with the appropriate error code if access to the requested resource is denied.

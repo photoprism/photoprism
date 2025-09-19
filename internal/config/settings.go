@@ -74,10 +74,10 @@ func (c *Config) SessionSettings(sess *entity.Session) *customize.Settings {
 	}
 
 	if sess.NoUser() && sess.IsClient() {
-		return c.Settings().ApplyACL(acl.Rules, sess.ClientRole()).ApplyScope(sess.Scope())
+		return c.Settings().ApplyACL(acl.Rules, sess.GetClientRole()).ApplyScope(sess.Scope())
 	}
 
-	user := sess.User()
+	user := sess.GetUser()
 
 	// Return public settings if the session does not have a user.
 	if user == nil {

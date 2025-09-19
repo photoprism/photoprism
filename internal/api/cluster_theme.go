@@ -50,7 +50,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		}
 
 		clientIp := ClientIP(c)
-		themePath := conf.PortalThemePath()
+		themePath := conf.ThemePath()
 
 		// Resolve symbolic links.
 		if resolved, err := filepath.EvalSymlinks(themePath); err != nil {
@@ -66,9 +66,18 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "theme path not found"}, s.RefID)
 			AbortNotFound(c)
 			return
-		} else {
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "creating theme archive from %s"}, s.RefID, clean.Log(themePath))
 		}
+
+		// Require a non-empty app.js file to avoid distributing empty themes.
+		// This aligns with bootstrap behavior, which only installs a theme when
+		// app.js exists locally or can be fetched from the Portal.
+		if !fs.FileExistsNotEmpty(filepath.Join(themePath, "app.js")) {
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "app.js missing or empty"}, s.RefID)
+			AbortNotFound(c)
+			return
+		}
+
+		event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "creating theme archive from %s"}, s.RefID, clean.Log(themePath))
 
 		// Add response headers.
 		AddDownloadHeader(c, "theme.zip")

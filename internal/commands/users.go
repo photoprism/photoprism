@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -12,13 +14,16 @@ const (
 	UserNameUsage     = "full `NAME` for display in the interface"
 	UserEmailUsage    = "unique `EMAIL` address of the user"
 	UserPasswordUsage = "`PASSWORD` for local authentication (8-72 characters)"
-	UserRoleUsage     = "user account `ROLE` (admin or guest)"
 	UserAuthUsage     = "authentication `PROVIDER` (default, local, oidc or none)"
-	UserAuthIDUsage   = "authentication `ID` e.g. Subject ID or Distinguished Name (DN)"
+	UserAuthIDUsage   = "authentication `ID`, e.g. Subject ID or Distinguished Name (DN)"
 	UserAdminUsage    = "makes user super admin with full access"
 	UserNoLoginUsage  = "disables login on the web interface"
 	UserWebDAVUsage   = "allows to sync files via WebDAV"
 	UserDisable2FA    = "deactivates two-factor authentication"
+)
+
+var (
+	UserRoleUsage = fmt.Sprintf("user account `ROLE`, e.g. %s", acl.UserRoles.CliUsageString())
 )
 
 // UsersCommands configures the user management subcommands.

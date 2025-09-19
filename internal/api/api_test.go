@@ -48,6 +48,10 @@ func TestMain(m *testing.M) {
 	get.SetConfig(c)
 	defer c.CloseDb()
 
+	// Tiny cleanup: ensure a clean registry for cluster/node tests.
+	// This avoids flaky conflicts when files from previous runs exist.
+	_ = os.RemoveAll(c.PortalConfigPath() + "/nodes")
+
 	// Increase login rate limit for testing.
 	limiter.Login = limiter.NewLimit(1, 10000)
 

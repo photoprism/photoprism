@@ -152,7 +152,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Site Infos.
 		{"site-url", c.SiteUrl()},
-		{"internal-url", c.InternalUrl()},
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
 		{"site-author", c.SiteAuthor()},
@@ -163,13 +162,17 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-preview", c.SitePreview()},
 
 		// Cluster Configuration.
-		{"node-name", c.NodeName()},
-		{"node-type", c.NodeType()},
-		{"node-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeSecret())))},
+		{"cluster-domain", c.ClusterDomain()},
+		{"cluster-uuid", c.ClusterUUID()},
 		{"portal-url", c.PortalUrl()},
-		{"portal-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.PortalToken())))},
 		{"portal-config-path", c.PortalConfigPath()},
 		{"portal-theme-path", c.PortalThemePath()},
+		{"join-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken())))},
+		{"node-name", c.NodeName()},
+		{"node-role", c.NodeRole()},
+		{"node-id", c.NodeID()},
+		{"node-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeSecret())))},
+		{"advertise-url", c.AdvertiseUrl()},
 
 		// CDN and Cross-Origin Resource Sharing (CORS).
 		{"cdn-url", c.CdnUrl("/")},

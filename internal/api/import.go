@@ -85,9 +85,9 @@ func StartImport(router *gin.RouterGroup) {
 		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
 		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
 			srcFolder = path.Join(UploadPath, s.RefID+token)
-			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", authn.Granted}, s.RefID, clean.Log(srcFolder), s.UserRole().String())
-		} else if acl.Rules.Deny(acl.ResourceFiles, s.UserRole(), acl.ActionManage) {
-			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", authn.Denied}, s.RefID, clean.Log(srcFolder), s.UserRole().String())
+			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", authn.Granted}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
+		} else if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", authn.Denied}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
 			AbortForbidden(c)
 			return
 		}
@@ -100,7 +100,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Get destination folder.
 		var destFolder string
-		if destFolder = s.User().GetUploadPath(); destFolder == "" {
+		if destFolder = s.GetUser().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 
@@ -117,7 +117,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
 			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(frm.Albums, " and ")))
 			opt.Albums = frm.Albums
 		}

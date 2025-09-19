@@ -248,6 +248,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("import-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("temp-path", config.OriginalsPath, "doc")
+	globalSet.String("cluster-uuid", config.ClusterUUID, "doc")
 	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.Int("backup-retain", config.BackupRetain, "doc")
 	globalSet.String("backup-schedule", config.BackupSchedule, "doc")

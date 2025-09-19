@@ -243,7 +243,7 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	uid := clean.UID(c.Param("uid"))
 
 	// Get user from session.
-	user := s.User()
+	user := s.GetUser()
 
 	// Regular users can only set up a passcode for their own account.
 	if user.UserUID != uid || !user.CanLogIn() {

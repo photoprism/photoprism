@@ -43,7 +43,7 @@ func DeleteSession(s *Session) error {
 func DeleteChildSessions(s *Session) (deleted int) {
 	if s == nil {
 		return 0
-	} else if !rnd.IsSessionID(s.ID) || s.Method().Is(authn.MethodSession) {
+	} else if !rnd.IsSessionID(s.ID) || s.GetMethod().Is(authn.MethodSession) {
 		return 0
 	}
 

@@ -60,6 +60,7 @@ frontend/coverage/
 /assets/static/maps/
 /assets/*net
 /assets/vision
+/specs/
 
 # Files created automatically by editors and/or operating systems:
 .DS_Store

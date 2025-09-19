@@ -134,7 +134,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Check session permissions and apply as needed.
 	if sess != nil {
-		user := sess.User()
+		user := sess.GetUser()
 		aclRole := user.AclRole()
 
 		// Exclude private content.
@@ -150,7 +150,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePlaces) || sess.NotRegistered()) ||
+		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.GetUser().HasSharedAccessOnly(acl.ResourcePlaces) || sess.NotRegistered()) ||
 			frm.Scope == "" && acl.Rules.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", authn.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
 			return GeoResults{}, ErrForbidden

@@ -65,7 +65,7 @@ func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err
 	sess.UpdateContext(c)
 
 	// Returns session and user if all checks have passed.
-	return sess, sess.User(), nil
+	return sess, sess.GetUser(), nil
 }
 
 // AuthLocal authenticates against the local user database with the specified username and password.
@@ -140,7 +140,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 			if s != nil {
 				// Set scope, client UID, and client name to that of the parent session.
 				s.ClientUID = authSess.ClientUID
-				s.ClientName = authSess.ClientName
+				s.ClientName = authSess.GetClientName()
 				s.SetScope(authSess.Scope())
 
 				// Set provider and method to help identify the session type.
@@ -267,7 +267,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 
 	// Try to redeem link share token, if provided.
 	if frm.HasShareToken() {
-		user = m.User()
+		user = m.GetUser()
 
 		// Redeem token.
 		if user.IsRegistered() {
@@ -279,7 +279,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 			} else {
 				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(frm.Token))
 			}
-		} else if data := m.Data(); data == nil {
+		} else if data := m.GetData(); data == nil {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
 		} else if shares := data.RedeemToken(frm.Token); shares == 0 {
@@ -308,7 +308,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 	}
 
 	// Unregistered visitors must use a valid share link to obtain a session.
-	if m.User().NotRegistered() && m.Data().NoShares() {
+	if m.GetUser().NotRegistered() && m.GetData().NoShares() {
 		m.Status = http.StatusUnauthorized
 		return i18n.Error(i18n.ErrInvalidCredentials)
 	}

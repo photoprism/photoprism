@@ -34,7 +34,7 @@ var UsersResetCommand = &cli.Command{
 // usersResetAction deletes recreates the user management database tables.
 func usersResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := ctx.Bool("yes")
+		confirmed := RunNonInteractively(ctx.Bool("yes"))
 
 		// Show prompt?
 		if !confirmed {

@@ -65,9 +65,16 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 		}
 	}
 
-	// Write output to file.
+	// Write output to file (make parent dir robustly in case a parallel test cleaned the cache).
 	if err = os.WriteFile(jsonName, []byte(out.String()), fs.ModeFile); err != nil {
-		return "", err
+		// If the parent directory vanished due to concurrent cleanup, recreate and retry once.
+		if !os.IsNotExist(err) {
+			return "", err
+		} else if err = fs.MkdirAll(filepath.Dir(jsonName)); err != nil {
+			return "", err
+		} else if err = os.WriteFile(jsonName, []byte(out.String()), fs.ModeFile); err != nil {
+			return "", err
+		}
 	}
 
 	// Check if file exists.

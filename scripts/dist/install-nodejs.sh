@@ -42,16 +42,18 @@ fi
 echo "Configuring NPM..."
 sudo npm config set cache ~/.cache/npm
 echo "Updating NPM..."
-sudo npm update -g npm
+sudo npm install -g --no-fund npm@latest n@latest
+echo "Installing npm-check-updates and license-report..."
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 echo "Installing TestCafe..."
-sudo npm install -g npm@latest npm-check-updates@latest license-report@latest n@latest testcafe@3.7.2
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@3.7.2
 echo "Installing Vitest..."
-sudo npm install -g vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
 echo "Installing ESLint..."
-sudo npm install -g eslint prettier globals \
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint prettier globals \
   @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty \
   eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier \
   eslint-plugin-vue eslint-plugin-vuetify eslint-webpack-plugin
 echo "Installing Vue Language Server..."
-sudo npm install -g @vue/language-server
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier @vue/language-server
 echo "Done."

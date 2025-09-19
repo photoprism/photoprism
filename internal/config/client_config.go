@@ -734,12 +734,12 @@ func (c *Config) ClientRole(role acl.Role) *ClientConfig {
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 	if sess.NoUser() && sess.IsClient() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.ClientRole())
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetClientRole())
 		cfg.Settings = c.SessionSettings(sess)
-	} else if sess.User().IsVisitor() {
+	} else if sess.GetUser().IsVisitor() {
 		cfg = c.ClientShare()
-	} else if sess.User().IsRegistered() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.UserRole())
+	} else if sess.GetUser().IsRegistered() {
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetUserRole())
 		cfg.Settings = c.SessionSettings(sess)
 	} else {
 		cfg = c.ClientPublic()

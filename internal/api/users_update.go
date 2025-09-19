@@ -63,7 +63,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user has user management privileges.
-		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
 
 		// Check if the user account quota has been exceeded.
@@ -74,7 +74,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Get user from session.
-		u := s.User()
+		u := s.GetUser()
 
 		// Save model with values from form.
 		if err = m.SaveForm(f, u); err != nil {

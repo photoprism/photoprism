@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -29,24 +30,28 @@ type Clients []Client
 
 // Client represents a client application.
 type Client struct {
-	ClientUID    string    `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
-	UserUID      string    `gorm:"type:bytes;size:42;index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName     string    `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user         *User     `gorm:"foreignKey:UserUID;references:UserUID" yaml:"-"`
-	ClientName   string    `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
-	ClientRole   string    `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
-	ClientType   string    `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
-	ClientURL    string    `gorm:"type:bytes;size:255;default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL  string    `gorm:"type:bytes;size:255;default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
-	AuthProvider string    `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string    `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthScope    string    `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
-	AuthExpires  int64     `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
-	AuthTokens   int64     `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
-	AuthEnabled  bool      `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
-	LastActive   int64     `json:"LastActive" yaml:"LastActive,omitempty"`
-	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
-	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
+	ClientUID    string          `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
+	UserUID      string          `gorm:"type:bytes;size:42;index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user         *User           `gorm:"foreignKey:UserUID;references:UserUID" yaml:"-"`
+	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
+	ClientType   string          `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
+	ClientURL    string          `gorm:"type:bytes;size:255;default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
+	CallbackURL  string          `gorm:"type:bytes;size:255;default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
+	AuthProvider string          `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string          `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64           `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64           `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool            `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
+	RefreshToken string          `gorm:"type:bytes;size:2048;column:refresh_token;default:'';" json:"-" yaml:"-"`
+	IdToken      string          `gorm:"type:bytes;size:2048;column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	DataJSON     json.RawMessage `gorm:"type:bytes;size:4096;" json:"-" yaml:"Data,omitempty"`
+	data         *ClientData     `gorm:"-" yaml:"-"`
+	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
+	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -154,8 +159,13 @@ func (m *Client) SetName(s string) *Client {
 
 // SetRole sets the client role specified as string.
 func (m *Client) SetRole(role string) *Client {
-	if role != "" {
-		m.ClientRole = acl.ClientRoles[clean.Role(role)].String()
+	r := clean.Role(role)
+
+	// Map known roles (includes aliases like "none" or empty); fall back to client if unknown.
+	if mapped, ok := acl.ClientRoles[r]; ok {
+		m.ClientRole = mapped.String()
+	} else {
+		m.ClientRole = acl.RoleClient.String()
 	}
 
 	return m
@@ -540,6 +550,7 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 
 	// Set values from form.
 	m.SetName(frm.Name())
+	m.SetRole(frm.Role())
 	m.SetProvider(frm.Provider())
 	m.SetMethod(frm.Method())
 	m.SetScope(frm.Scope())

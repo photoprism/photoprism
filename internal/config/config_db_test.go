@@ -11,14 +11,21 @@ import (
 
 func TestConfig_DatabaseDriver(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	// Ensure defaults not overridden by repo fixtures.
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
+	c.options.DatabaseServer = ""
+	c.options.DatabaseName = ""
+	c.options.DatabaseUser = ""
+	c.options.DatabasePassword = ""
 	driver := c.DatabaseDriver()
 	assert.Equal(t, SQLite3, driver)
 }
 
 func TestConfig_DatabaseDriverName(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	driver := c.DatabaseDriverName()
 	assert.Equal(t, "SQLite", driver)
 }
@@ -80,7 +87,8 @@ func TestConfig_ParseDatabaseDsn(t *testing.T) {
 
 func TestConfig_DatabaseServer(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	assert.Equal(t, "", c.DatabaseServer())
 	c.options.DatabaseServer = "test"
 	assert.Equal(t, "", c.DatabaseServer())
@@ -88,37 +96,43 @@ func TestConfig_DatabaseServer(t *testing.T) {
 
 func TestConfig_DatabaseHost(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	assert.Equal(t, "", c.DatabaseHost())
 }
 
 func TestConfig_DatabasePort(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	assert.Equal(t, 0, c.DatabasePort())
 }
 
 func TestConfig_DatabasePortString(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	assert.Equal(t, "", c.DatabasePortString())
 }
 
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := "/go/src/github.com/photoprism/photoprism/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""	expected := "/go/src/github.com/photoprism/photoprism/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
 	assert.Equal(t, expected, c.DatabaseName())
 }
 
 func TestConfig_DatabaseUser(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	assert.Equal(t, "", c.DatabaseUser())
 }
 
 func TestConfig_DatabasePassword(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	assert.Equal(t, "", c.DatabasePassword())
 
 	// Test setting the password via secret file.
@@ -134,7 +148,8 @@ func TestConfig_DatabasePassword(t *testing.T) {
 
 func TestConfig_DatabaseDsn(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
 	driver := c.DatabaseDriver()
 	assert.Equal(t, SQLite3, driver)
 	c.options.DatabaseDsn = ""
@@ -152,7 +167,13 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 
 func TestConfig_DatabaseFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
+	// Ensure SQLite defaults
+	c.options.DatabaseDriver = ""
+	c.options.DatabaseDsn = ""
+	c.options.DatabaseServer = ""
+	c.options.DatabaseName = ""
+	c.options.DatabaseUser = ""
+	c.options.DatabasePassword = ""
 	driver := c.DatabaseDriver()
 	assert.Equal(t, SQLite3, driver)
 	c.options.DatabaseDsn = ""

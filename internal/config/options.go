@@ -131,7 +131,6 @@ type Options struct {
 	LegalUrl               string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri           string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	SiteUrl                string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
-	InternalUrl            string        `yaml:"InternalUrl" json:"InternalUrl" flag:"internal-url"`
 	SiteAuthor             string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle              string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption            string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
@@ -143,12 +142,15 @@ type Options struct {
 	CORSOrigin             string        `yaml:"CORSOrigin" json:"-" flag:"cors-origin"`
 	CORSHeaders            string        `yaml:"CORSHeaders" json:"-" flag:"cors-headers"`
 	CORSMethods            string        `yaml:"CORSMethods" json:"-" flag:"cors-methods"`
-	NodeName               string        `yaml:"NodeName" json:"-" flag:"node-name"`
-	NodeType               string        `yaml:"NodeType" json:"-" flag:"node-type"`
-	NodeSecret             string        `yaml:"NodeSecret" json:"-" flag:"node-secret"`
+	ClusterDomain          string        `yaml:"ClusterDomain" json:"-" flag:"cluster-domain"`
+	ClusterUUID            string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
 	PortalUrl              string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
-	PortalClient           string        `yaml:"PortalClient" json:"-" flag:"portal-client"`
-	PortalToken            string        `yaml:"PortalToken" json:"-" flag:"portal-token"`
+	JoinToken              string        `yaml:"JoinToken" json:"-" flag:"join-token"`
+	NodeName               string        `yaml:"NodeName" json:"-" flag:"node-name"`
+	NodeRole               string        `yaml:"NodeRole" json:"-" flag:"node-role"`
+	NodeID                 string        `yaml:"NodeID" json:"-" flag:"node-id"`
+	NodeSecret             string        `yaml:"NodeSecret" json:"-" flag:"node-secret"`
+	AdvertiseUrl           string        `yaml:"AdvertiseUrl" json:"-" flag:"advertise-url"`
 	HttpsProxy             string        `yaml:"HttpsProxy" json:"HttpsProxy" flag:"https-proxy"`
 	HttpsProxyInsecure     bool          `yaml:"HttpsProxyInsecure" json:"HttpsProxyInsecure" flag:"https-proxy-insecure"`
 	TrustedPlatform        string        `yaml:"TrustedPlatform" json:"-" flag:"trusted-platform"`

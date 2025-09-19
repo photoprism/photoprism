@@ -237,6 +237,11 @@ func (c *Config) Init() error {
 	// Load settings from the "settings.yml" config file.
 	c.initSettings()
 
+	// Initialize early extensions before connecting to the database so they can
+	// influence DB settings (e.g., cluster bootstrap providing MariaDB creds).
+	log.Debugf("config: initializing early extensions")
+	EarlyExt().InitEarly(c)
+
 	// Connect to database.
 	if err := c.connectDb(); err != nil {
 		return err

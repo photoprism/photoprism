@@ -34,7 +34,7 @@ var VisionRunCommand = &cli.Command{
 			Name:    "source",
 			Aliases: []string{"s"},
 			Value:   entity.SrcImage,
-			Usage:   "custom data source `TYPE` e.g. default, image, meta, vision, or admin",
+			Usage:   "custom data source `ROLE` e.g. default, image, meta, vision, or admin",
 		},
 		&cli.BoolFlag{
 			Name:    "force",

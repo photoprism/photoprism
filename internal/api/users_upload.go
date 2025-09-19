@@ -49,7 +49,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Users may only upload files for their own account.
-		if s.User().UserUID != uid {
+		if s.GetUser().UserUID != uid {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "user does not match"}, s.RefID)
 			AbortForbidden(c)
 			return
@@ -264,7 +264,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		}
 
 		// Users may only upload their own files.
-		if s.User().UserUID != clean.UID(c.Param("uid")) {
+		if s.GetUser().UserUID != clean.UID(c.Param("uid")) {
 			AbortForbidden(c)
 			return
 		}
@@ -299,7 +299,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Get destination folder.
 		var destFolder string
-		if destFolder = s.User().GetUploadPath(); destFolder == "" {
+		if destFolder = s.GetUser().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 
@@ -309,7 +309,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
 			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(frm.Albums, " and ")))
 			opt.Albums = frm.Albums
 		}

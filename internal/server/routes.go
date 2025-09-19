@@ -195,6 +195,13 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Cluster Operations.
 	api.ClusterGetTheme(APIv1)
+	api.ClusterNodesRegister(APIv1)
+	api.ClusterListNodes(APIv1)
+	api.ClusterGetNode(APIv1)
+	api.ClusterUpdateNode(APIv1)
+	api.ClusterDeleteNode(APIv1)
+	api.ClusterSummary(APIv1)
+	api.ClusterHealth(APIv1)
 
 	// Technical Endpoints.
 	api.GetSvg(APIv1)

@@ -61,14 +61,14 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			// Set log role and actor based on the session referenced in request header.
 			sUserUID = s.UserUID
 			if s.IsClient() {
-				role = s.ClientRole()
-				actor = fmt.Sprintf("client %s", clean.Log(s.ClientInfo()))
-			} else if username := s.Username(); username != "" {
-				role = s.UserRole()
+				role = s.GetClientRole()
+				actor = fmt.Sprintf("client %s", clean.Log(s.GetClientInfo()))
+			} else if username := s.GetUserName(); username != "" {
+				role = s.GetUserRole()
 				actor = fmt.Sprintf("user %s", clean.Log(username))
 			} else {
-				role = s.UserRole()
-				actor = fmt.Sprintf("unknown %s", s.UserRole().String())
+				role = s.GetUserRole()
+				actor = fmt.Sprintf("unknown %s", s.GetUserRole().String())
 			}
 		}
 
@@ -113,14 +113,14 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// If not already set, get the log role and actor from the session to be revoked.
 		if sess != nil && role == acl.RoleNone {
 			if sess.IsClient() {
-				role = sess.ClientRole()
-				actor = fmt.Sprintf("client %s", clean.Log(sess.ClientInfo()))
-			} else if username := sess.Username(); username != "" {
-				role = s.UserRole()
+				role = sess.GetClientRole()
+				actor = fmt.Sprintf("client %s", clean.Log(sess.GetClientInfo()))
+			} else if username := sess.GetUserName(); username != "" {
+				role = s.GetUserRole()
 				actor = fmt.Sprintf("user %s", clean.Log(username))
 			} else {
-				role = sess.UserRole()
-				actor = fmt.Sprintf("unknown %s", sess.UserRole().String())
+				role = sess.GetUserRole()
+				actor = fmt.Sprintf("unknown %s", sess.GetUserRole().String())
 			}
 		}
 

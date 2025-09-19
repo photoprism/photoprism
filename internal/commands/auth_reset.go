@@ -35,7 +35,7 @@ var AuthResetCommand = &cli.Command{
 // authResetAction removes all sessions and resets the related database table to a clean state.
 func authResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := ctx.Bool("yes")
+		confirmed := RunNonInteractively(ctx.Bool("yes"))
 
 		// Show prompt?
 		if !confirmed {

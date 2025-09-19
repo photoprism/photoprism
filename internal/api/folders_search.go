@@ -62,7 +62,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			return
 		}
 
-		user := s.User()
+		user := s.GetUser()
 		aclRole := user.AclRole()
 
 		// Exclude private content?
