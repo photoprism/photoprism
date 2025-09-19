@@ -118,7 +118,8 @@ func TestConfig_DatabasePortString(t *testing.T) {
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	c.options.DatabaseDriver = ""
-	c.options.DatabaseDsn = ""	expected := "/go/src/github.com/photoprism/photoprism/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
+	c.options.DatabaseDsn = ""
+	expected := "/go/src/github.com/photoprism/photoprism/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
 	assert.Equal(t, expected, c.DatabaseName())
 }
 
