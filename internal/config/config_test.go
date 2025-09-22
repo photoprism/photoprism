@@ -177,7 +177,7 @@ func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	c.AssertTestData(t)
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/import", c.ImportPath())
 	result := c.ImportPath()
 	assert.True(t, strings.HasPrefix(result, "/"))
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/import"))
