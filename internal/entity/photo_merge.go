@@ -108,6 +108,10 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
 
 		switch DbDialect() {
+		case Postgres:
+			logResult(UnscopedDb().Exec("UPDATE photos_keywords SET photo_id = ? WHERE photo_id = ? AND keyword_id NOT IN (SELECT keyword_id FROM photos_keywords WHERE photo_id = ?)", original.ID, merge.ID, original.ID))
+			logResult(UnscopedDb().Exec("UPDATE photos_labels SET photo_id = ? WHERE photo_id = ? AND label_id NOT IN (SELECT label_id FROM photos_labels WHERE photo_id = ?)", original.ID, merge.ID, original.ID))
+			logResult(UnscopedDb().Exec("UPDATE photos_albums SET photo_uid = ? WHERE photo_uid = ? AND album_uid NOT IN (SELECT album_uid FROM photos_albums WHERE photo_uid = ?)", original.PhotoUID, merge.PhotoUID, original.PhotoUID))
 		case MySQL:
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))

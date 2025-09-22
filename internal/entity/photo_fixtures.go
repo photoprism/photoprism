@@ -1465,8 +1465,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000018, "landscape", 20, "image"),
-			LabelFixtures.PhotoLabel(10000018, "likeLabel", 20, "image")},
+			LabelFixtures.PhotoLabel(1000023, "landscape", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,
@@ -1526,8 +1525,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000018, "landscape", 20, "image"),
-			LabelFixtures.PhotoLabel(10000018, "likeLabel", 20, "image")},
+			LabelFixtures.PhotoLabel(1000024, "likeLabel", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,
