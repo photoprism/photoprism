@@ -457,7 +457,7 @@ reset-postgres-local:
 reset-postgres-acceptance:
 	$(info Resetting acceptance database...)
 	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-acceptance.sql
-reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance reset-postgres-photoprism
+reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb
 # reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
