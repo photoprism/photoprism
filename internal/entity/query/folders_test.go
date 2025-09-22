@@ -70,8 +70,12 @@ func TestAlbumFolders(t *testing.T) {
 
 func TestUpdateFolderDates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		actual := entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 0, actual.FolderDay)
 		if err := UpdateFolderDates(); err != nil {
 			t.Fatal(err)
 		}
+		actual = entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 18, actual.FolderDay)
 	})
 }
