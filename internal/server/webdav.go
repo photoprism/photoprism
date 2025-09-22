@@ -152,9 +152,24 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 	// Determine the absolute file path based on the request URL and the configuration.
 	switch basePath {
 	case conf.BaseUri(WebDAVOriginals):
-		fileName = filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(request.URL.Path, basePath))
+		// Resolve the requested path safely under OriginalsPath.
+		rel := strings.TrimPrefix(request.URL.Path, basePath)
+		// Make relative if a leading slash remains after trimming the base.
+		rel = strings.TrimLeft(rel, "/\\")
+		if name, err := joinUnderBase(conf.OriginalsPath(), rel); err == nil {
+			fileName = name
+		} else {
+			return ""
+		}
 	case conf.BaseUri(WebDAVImport):
-		fileName = filepath.Join(conf.ImportPath(), strings.TrimPrefix(request.URL.Path, basePath))
+		// Resolve the requested path safely under ImportPath.
+		rel := strings.TrimPrefix(request.URL.Path, basePath)
+		rel = strings.TrimLeft(rel, "/\\")
+		if name, err := joinUnderBase(conf.ImportPath(), rel); err == nil {
+			fileName = name
+		} else {
+			return ""
+		}
 	default:
 		return ""
 	}
@@ -165,6 +180,27 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 	}
 
 	return fileName
+}
+
+// joinUnderBase joins a base directory with a relative name and ensures
+// that the resulting path stays within the base directory. Absolute
+// paths and Windows-style volume names are rejected.
+func joinUnderBase(baseDir, rel string) (string, error) {
+	if rel == "" {
+		return "", fmt.Errorf("invalid path")
+	}
+	// Reject absolute or volume paths.
+	if filepath.IsAbs(rel) || filepath.VolumeName(rel) != "" {
+		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
+	}
+	cleaned := filepath.Clean(rel)
+	// Compose destination and verify it stays inside base.
+	dest := filepath.Join(baseDir, cleaned)
+	base := filepath.Clean(baseDir)
+	if dest != base && !strings.HasPrefix(dest, base+string(os.PathSeparator)) {
+		return "", fmt.Errorf("invalid path: outside base directory")
+	}
+	return dest, nil
 }
 
 // WebDAVSetFavoriteFlag adds the favorite flag to files uploaded via WebDAV.

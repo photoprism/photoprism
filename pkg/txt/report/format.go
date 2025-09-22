@@ -7,4 +7,5 @@ const (
 	Markdown = "markdown"
 	TSV      = "tsv"
 	CSV      = "csv"
+	JSON     = "json"
 )

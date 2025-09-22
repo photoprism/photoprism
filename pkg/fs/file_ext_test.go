@@ -150,3 +150,12 @@ func TestExt(t *testing.T) {
 		assert.Equal(t, "", result)
 	})
 }
+
+func TestArchiveExt(t *testing.T) {
+	t.Run("zip", func(t *testing.T) {
+		assert.Equal(t, ExtZip, ArchiveExt("/testdata/archive.ZIP"))
+	})
+	t.Run("not archive", func(t *testing.T) {
+		assert.Equal(t, "", ArchiveExt("/testdata/file.jpg"))
+	})
+}

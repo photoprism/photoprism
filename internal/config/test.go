@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"sync"
+	"testing"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -20,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // Download URL and ZIP hash for test files.
@@ -161,6 +163,9 @@ func TestConfig() *Config {
 }
 
 // NewTestConfig returns a valid test config.
+//
+// NewTestConfig initializes test data so required directories exist before tests run.
+// See AGENTS.md (Test Data & Fixtures) and specs/dev/backend-testing.md for guidance.
 func NewTestConfig(pkg string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
@@ -185,6 +190,10 @@ func NewTestConfig(pkg string) *Config {
 
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s", err.Error())
+	}
+
+	if err := c.InitializeTestData(); err != nil {
+		log.Errorf("config: %s", err.Error())
 	}
 
 	c.RegisterDb()
@@ -358,26 +367,89 @@ func (c *Config) UnzipTestData() error {
 	return nil
 }
 
-// InitializeTestData resets the test file directory.
+// InitializeTestData resets "storage/testdata" to a clean state.
+//
+// The function removes prior artifacts, downloads fixtures when missing,
+// unzips them, and then calls CreateDirectories so required directories exist.
+// See AGENTS.md (Test Data & Fixtures) for details.
 func (c *Config) InitializeTestData() (err error) {
 	testDataMutex.Lock()
 	defer testDataMutex.Unlock()
 
 	start := time.Now()
 
+	// Delete existing test files and directories in "storage/testdata".
 	if err = c.RemoveTestData(); err != nil {
-		return err
+		return fmt.Errorf("%s (remove testdata)", err)
 	}
 
+	// If the test file archive "/tmp/photoprism/testdata.zip" is missing,
+	// download it from https://dl.photoprism.app/qa/testdata.zip.
 	if err = c.DownloadTestData(); err != nil {
-		return err
+		return fmt.Errorf("%s (download testdata)", err)
 	}
 
+	// Extract "/tmp/photoprism/testdata.zip" in "storage/testdata".
 	if err = c.UnzipTestData(); err != nil {
-		return err
+		return fmt.Errorf("%s (unzip testdata)", err)
+	}
+
+	// Make sure all the required directories exist in "storage/testdata.
+	if err = c.CreateDirectories(); err != nil {
+		return fmt.Errorf("%s (create directories)", err)
 	}
 
 	log.Infof("config: initialized test data [%s]", time.Since(start))
 
 	return nil
+}
+
+// AssertTestData verifies the existence of the required test directories in "storage/testdata".
+//
+// Use this helper early in tests when diagnosing fixture setup issues. It logs
+// presence/emptiness of required directories to testing.T. See the backend testing
+// guide for additional patterns.
+func (c *Config) AssertTestData(t *testing.T) {
+	reportDir := func(dir string) {
+		if fs.PathExists(dir) {
+			t.Logf("testdata: dir %s exists (%s)", clean.Log(dir),
+				report.Bool(fs.DirIsEmpty(dir), "empty", "not empty"))
+		} else {
+			t.Logf("testdata: dir %s is missing %s, but required", clean.Log(dir), report.CrossMark)
+		}
+	}
+
+	reportErr := func(funcName string) {
+		t.Errorf("testdata: *Config.%s() must not return an empty string %s", funcName, report.CrossMark)
+	}
+
+	if dir := c.AssetsPath(); dir != "" {
+		reportDir(dir)
+	} else {
+		reportErr("AssetsPath")
+	}
+
+	if dir := c.ConfigPath(); dir != "" {
+		reportDir(dir)
+	} else {
+		reportErr("ConfigPath")
+	}
+
+	if dir := c.ImportPath(); dir != "" {
+		reportDir(dir)
+	} else {
+		reportErr("ImportPath")
+	}
+
+	if dir := c.OriginalsPath(); dir != "" {
+		reportDir(dir)
+	} else {
+		reportErr("OriginalsPath")
+	}
+
+	if dir := c.SidecarPath(); dir != "" {
+		reportDir(dir)
+	} else {
+		reportErr("SidecarPath")
+	}
 }

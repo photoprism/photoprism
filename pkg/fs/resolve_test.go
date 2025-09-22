@@ -5,37 +5,40 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/uuid"
-
 	"github.com/stretchr/testify/assert"
 )
 
-func TestResolve(t *testing.T) {
-	tmpDir := os.TempDir()
+func TestResolve_FileAndSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "file.txt")
+	link := filepath.Join(dir, "link.txt")
 
-	linkName := filepath.Join(tmpDir, uuid.NewString()+"-link.tmp")
-	targetName := filepath.Join(tmpDir, uuid.NewString()+".tmp")
-
-	// Delete files after test.
-	defer func(link, target string) {
-		_ = os.Remove(link)
-		_ = os.Remove(target)
-	}(linkName, targetName)
-
-	// Create empty test target file.
-	if targetFile, err := os.OpenFile(targetName, os.O_RDONLY|os.O_CREATE, ModeFile); err != nil {
-		t.Fatal(err)
-	} else if err = targetFile.Close(); err != nil {
-		t.Fatal(err)
+	assert.NoError(t, os.WriteFile(target, []byte("x"), 0o644))
+	// Create symlink if supported on this platform
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlinks not supported: %v", err)
+		return
 	}
 
-	if err := os.Symlink(targetName, linkName); err != nil {
-		t.Fatal(err)
-	}
+	// Resolving the file returns its absolute path
+	absFile, err := Resolve(target)
+	assert.NoError(t, err)
+	assert.True(t, filepath.IsAbs(absFile))
 
-	if result, err := Resolve(linkName); err != nil {
-		t.Fatal(err)
-	} else {
-		assert.Equal(t, targetName, result)
+	// Resolving the link returns the target absolute path
+	absLink, err := Resolve(link)
+	assert.NoError(t, err)
+	assert.Equal(t, absFile, absLink)
+}
+
+func TestResolve_BrokenSymlink_Error(t *testing.T) {
+	dir := t.TempDir()
+	broken := filepath.Join(dir, "broken.txt")
+	// Symlink to missing target
+	if err := os.Symlink(filepath.Join(dir, "missing.txt"), broken); err != nil {
+		t.Skipf("symlinks not supported: %v", err)
+		return
 	}
+	_, err := Resolve(broken)
+	assert.Error(t, err)
 }

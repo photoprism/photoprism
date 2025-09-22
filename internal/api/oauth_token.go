@@ -19,10 +19,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// OAuthToken creates a new access token for clients that authenticate with valid OAuth2 client credentials.
+// OAuthToken creates a new access token for clients using OAuth2 grant types.
 //
-//	@Tags	Authentication
-//	@Router	/api/v1/oauth/token [post]
+//	@Summary	create an OAuth2 access token
+//	@Id			OAuthToken
+//	@Tags		Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		request		body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
+//	@Success	200			{object}	gin.H
+//	@Failure	400,401,429	{object}	i18n.Response
+//	@Router		/api/v1/oauth/token [post]
 func OAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

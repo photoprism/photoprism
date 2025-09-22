@@ -17,7 +17,7 @@ var ClusterNodesShowCommand = &cli.Command{
 	Name:      "show",
 	Usage:     "Shows node details (Portal-only)",
 	ArgsUsage: "<id|name>",
-	Flags:     append(report.CliFlags, JsonFlag),
+	Flags:     report.CliFlags,
 	Action:    clusterNodesShowAction,
 }
 

@@ -175,10 +175,19 @@ func TestConfig_OriginalsPath(t *testing.T) {
 
 func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.AssertTestData(t)
 
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
 	result := c.ImportPath()
 	assert.True(t, strings.HasPrefix(result, "/"))
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/import"))
+
+	c.options.ImportPath = ""
+	if s := c.ImportPath(); s != "" && s != "/photoprism/import" {
+		t.Errorf("unexpected import path: %s", s)
+	}
+
+	c.options.ImportPath = result
 }
 
 func TestConfig_CachePath(t *testing.T) {

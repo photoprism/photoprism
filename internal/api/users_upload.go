@@ -25,10 +25,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// UploadUserFiles adds files to the user upload folder, from where they can be moved and indexed.
+// UploadUserFiles adds files to the user's upload folder from where they can be processed and indexed.
 //
-//	@Tags	Users, Files
-//	@Router	/users/{uid}/upload/{token} [post]
+//	@Summary	upload files to a user's upload folder
+//	@Id			UploadUserFiles
+//	@Tags		Users, Files
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		uid						path		string	true	"user uid"
+//	@Param		token					path		string	true	"upload token"
+//	@Param		files					formData	file	true	"one or more files to upload (repeat the field for multiple files)"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,413,429,507	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/upload/{token} [post]
 func UploadUserFiles(router *gin.RouterGroup) {
 	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
 		conf := get.Config()
@@ -252,9 +261,19 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 	}
 }
 
-// ProcessUserUpload triggers processing once all files have been uploaded.
+// ProcessUserUpload triggers processing and import of previously uploaded files.
 //
-// PUT /users/:uid/upload/:token
+//	@Summary	process previously uploaded files for a user
+//	@Id			ProcessUserUpload
+//	@Tags		Users, Files
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid						path		string				true	"user uid"
+//	@Param		token					path		string				true	"upload token"
+//	@Param		options					body		form.UploadOptions	true	"processing options"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/upload/{token} [put]
 func ProcessUserUpload(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/upload/:token", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})

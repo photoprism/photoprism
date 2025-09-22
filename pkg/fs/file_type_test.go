@@ -12,6 +12,10 @@ func TestType_String(t *testing.T) {
 	})
 }
 
+func TestType_ToUpper(t *testing.T) {
+	assert.Equal(t, "JPG", ImageJpeg.ToUpper())
+}
+
 func TestType_Equal(t *testing.T) {
 	t.Run("jpg", func(t *testing.T) {
 		assert.True(t, ImageJpeg.Equal("jpg"))

@@ -176,7 +176,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 //	@Param		photos				body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/approve [post]
 func BatchPhotosApprove(router *gin.RouterGroup) {
-	router.POST("batch/photos/approve", func(c *gin.Context) {
+	router.POST("/batch/photos/approve", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Abort(c) {

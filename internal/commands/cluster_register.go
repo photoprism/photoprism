@@ -40,7 +40,7 @@ var (
 var ClusterRegisterCommand = &cli.Command{
 	Name:   "register",
 	Usage:  "Registers/rotates a node via Portal (HTTP)",
-	Flags:  append(append([]cli.Flag{regNameFlag, regRoleFlag, regIntUrlFlag, regLabelFlag, regRotateDatabase, regRotateSec, regPortalURL, regPortalTok, regWriteConf, regForceFlag, JsonFlag}, report.CliFlags...)),
+	Flags:  append(append([]cli.Flag{regNameFlag, regRoleFlag, regIntUrlFlag, regLabelFlag, regRotateDatabase, regRotateSec, regPortalURL, regPortalTok, regWriteConf, regForceFlag}, report.CliFlags...)),
 	Action: clusterRegisterAction,
 }
 

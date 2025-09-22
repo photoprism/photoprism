@@ -2,6 +2,7 @@ package fs
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -136,8 +137,10 @@ func UnzipFile(f *zip.File, dir string) (fileName string, err error) {
 
 	defer rc.Close()
 
-	// Compose destination file or directory path.
-	fileName = filepath.Join(dir, f.Name)
+	// Compose destination file or directory path with safety checks.
+	if fileName, err = safeJoin(dir, f.Name); err != nil {
+		return fileName, err
+	}
 
 	// Create destination path if it is a directory.
 	if f.FileInfo().IsDir() {
@@ -168,4 +171,24 @@ func UnzipFile(f *zip.File, dir string) (fileName string, err error) {
 	}
 
 	return fileName, nil
+}
+
+// safeJoin joins a base directory with a relative name and ensures
+// that the resulting path stays within the base directory. Absolute
+// paths and Windows-style volume names are rejected.
+func safeJoin(baseDir, name string) (string, error) {
+	if name == "" {
+		return "", fmt.Errorf("invalid zip path")
+	}
+	if filepath.IsAbs(name) || filepath.VolumeName(name) != "" {
+		return "", fmt.Errorf("invalid zip path: absolute or volume path not allowed")
+	}
+	cleaned := filepath.Clean(name)
+	// Prevent paths that resolve outside the base dir.
+	dest := filepath.Join(baseDir, cleaned)
+	base := filepath.Clean(baseDir)
+	if dest != base && !strings.HasPrefix(dest, base+string(os.PathSeparator)) {
+		return "", fmt.Errorf("invalid zip path: outside target directory")
+	}
+	return dest, nil
 }

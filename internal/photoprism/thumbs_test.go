@@ -26,7 +26,8 @@ func TestResample_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cfg.InitializeTestData()
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())

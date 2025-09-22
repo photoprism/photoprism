@@ -16,11 +16,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// CreateSession creates a new client session and returns it as JSON if authentication was successful.
+// CreateSession creates a new client session (login) and returns session data.
 //
-//	@Tags	Authentication
-//	@Router	/api/v1/session [post]
-//	@Router	/api/v1/sessions [post]
+//	@Summary	create a session (login)
+//	@Tags		Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		credentials	body		form.Login	true	"login credentials"
+//	@Success	200			{object}	gin.H
+//	@Failure	400,401,429	{object}	i18n.Response
+//	@Router		/api/v1/session [post]
+//	@Router		/api/v1/sessions [post]
 func CreateSession(router *gin.RouterGroup) {
 	createSessionHandler := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

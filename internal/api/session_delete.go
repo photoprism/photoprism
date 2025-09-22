@@ -20,9 +20,15 @@ import (
 
 // DeleteSession deletes an existing client session (logout).
 //
-// DELETE /api/v1/session
-// DELETE /api/v1/session/:id
-// DELETE /api/v1/sessions/:id
+//	@Summary	delete a session (logout)
+//	@Tags		Authentication
+//	@Produce	json
+//	@Param		id				path		string	false	"session id or ref id"
+//	@Success	200				{object}	gin.H
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/session [delete]
+//	@Router		/api/v1/session/{id} [delete]
+//	@Router		/api/v1/sessions/{id} [delete]
 func DeleteSession(router *gin.RouterGroup) {
 	deleteSessionHandler := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

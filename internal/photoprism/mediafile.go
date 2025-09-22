@@ -622,58 +622,123 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 }
 
 // Move file to a new destination with the filename provided in parameter.
-func (m *MediaFile) Move(dest string) error {
-	destName := filepath.Base(dest)
-	destDir := filepath.Dir(dest)
+func (m *MediaFile) Move(filePath string, force bool) (err error) {
+	// Check for obviously empty or invalid file paths.
+	if filePath == "" || filePath == "." || filePath == ".." {
+		return errors.New("move: invalid destination file path")
+	}
 
-	// Check destination filename and create path if it does not exist yet.
-	if destName == "" {
-		return errors.New("move: invalid destination filename")
-	} else if destDir == "" {
+	// Check whether a destination file
+	// and directory name are specified.
+	if filepath.Base(filePath) == "" {
+		return errors.New("move: invalid destination name")
+	} else if filepath.Dir(filePath) == "" {
 		return errors.New("move: invalid destination path")
-	} else if err := fs.MkdirAll(destDir); err != nil {
-		return err
+	}
+
+	// Resolve absolute destination file path
+	// and return an error if unsuccessful.
+	if filePath, err = filepath.Abs(filePath); err != nil {
+		return fmt.Errorf("move: could not resolve destination file path (%s)", err)
+	}
+
+	destName := filepath.Base(filePath)
+	logName := clean.Log(destName)
+	destDir := filepath.Dir(filePath)
+
+	// Error if source and destination file path are the same.
+	if filePath == m.FileName() {
+		return fmt.Errorf("move: cannot overwrite file %s with itself", logName)
+	}
+
+	// Error if destination exists (and is not empty) without the force flag being used.
+	if fs.Exists(filePath) {
+		if fs.FileExistsIsEmpty(filePath) {
+			log.Infof("move: replacing empty destination file %s", logName)
+		} else if force {
+			log.Warnf("move: overwriting destination file %s", logName)
+		} else {
+			return fmt.Errorf("move: destination name %s already exists", logName)
+		}
+	}
+
+	// Make sure the target directory exists.
+	if err = fs.MkdirAll(destDir); err != nil {
+		return fmt.Errorf("move: could not create target directory (%s)", err)
 	}
 
 	// Remember file modification time.
 	modTime := m.ModTime()
 
-	// First try to rename existing file as that's faster than copying it and then deleting the original.
-	if err := os.Rename(m.fileName, dest); err != nil {
-		log.Tracef("move: cannot rename %s, fallback to copy and delete (%s)", clean.Log(destName), clean.Error(err))
+	// First try to rename existing file as that's faster
+	// than copying it and then deleting the original.
+	if renameErr := os.Rename(m.fileName, filePath); renameErr != nil {
+		log.Tracef("move: cannot rename %s, fallback to copy and delete (%s)", clean.Log(destName), clean.Error(renameErr))
 	} else {
-		m.SetFileName(dest)
+		m.SetFileName(filePath)
 		m.SetModTime(modTime)
 
 		return nil
 	}
 
-	// If renaming is not possible, copy the file and then delete the original.
-	if err := m.Copy(dest); err != nil {
-		return err
+	// If renaming the file is not possible, copy its
+	// contents and then delete the original file.
+	if copyErr := m.Copy(filePath, force); copyErr != nil {
+		return fmt.Errorf("%s (move fallback)", copyErr)
 	}
 
-	if err := os.Remove(m.fileName); err != nil {
-		return err
+	if rmErr := os.Remove(m.fileName); rmErr != nil {
+		return fmt.Errorf("move: %s", rmErr)
 	}
 
-	m.SetFileName(dest)
+	m.SetFileName(filePath)
 
 	return nil
 }
 
-// Copy a MediaFile to another file by destinationFilename.
-func (m *MediaFile) Copy(dest string) error {
-	destName := filepath.Base(dest)
-	destDir := filepath.Dir(dest)
+// Copy copies the file contents to the specified destination.
+// It only overwrites existing files when the force flag is used.
+func (m *MediaFile) Copy(filePath string, force bool) (err error) {
+	// Check for obviously empty or invalid file paths.
+	if filePath == "" || filePath == "." || filePath == ".." {
+		return errors.New("copy: invalid destination file path")
+	}
 
-	// Check destination filename and create path if it does not exist yet.
-	if destName == "" {
-		return errors.New("copy: invalid destination filename")
-	} else if destDir == "" {
+	// Check whether a destination file and directory name are specified.
+	if filepath.Base(filePath) == "" {
+		return errors.New("copy: invalid destination name")
+	} else if filepath.Dir(filePath) == "" {
 		return errors.New("copy: invalid destination path")
-	} else if err := fs.MkdirAll(destDir); err != nil {
-		return err
+	}
+
+	// Resolve absolute destination file path and return an error if unsuccessful.
+	if filePath, err = filepath.Abs(filePath); err != nil {
+		return fmt.Errorf("copy: could not resolve destination file path (%s)", err)
+	}
+
+	destName := filepath.Base(filePath)
+	logName := clean.Log(destName)
+	destDir := filepath.Dir(filePath)
+
+	// Error if source and destination file path are the same.
+	if filePath == m.FileName() {
+		return fmt.Errorf("copy: cannot overwrite file %s with itself", logName)
+	}
+
+	// Error if destination exists (and is not empty) without the force flag being used.
+	if fs.Exists(filePath) {
+		if fs.FileExistsIsEmpty(filePath) {
+			log.Infof("copy: replacing empty destination file %s", logName)
+		} else if force {
+			log.Warnf("copy: overwriting destination file %s", logName)
+		} else {
+			return fmt.Errorf("copy: destination name %s already exists", logName)
+		}
+	}
+
+	// Make sure the target directory exists.
+	if err = fs.MkdirAll(destDir); err != nil {
+		return fmt.Errorf("copy: could not create target directory (%s)", err)
 	}
 
 	m.fileMutex.Lock()
@@ -682,32 +747,33 @@ func (m *MediaFile) Copy(dest string) error {
 	thisFile, err := m.openFile()
 
 	if err != nil {
-		log.Error(err.Error())
-		return err
+		return fmt.Errorf("copy: source file %s cannot be opened (%s)", m.BaseName(), err)
 	}
 
 	defer thisFile.Close()
 
-	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, fs.ModeFile)
+	// Open the target file path for writing, discarding any trailing bytes.
+	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fs.ModeFile)
 
 	if err != nil {
 		log.Error(err.Error())
-		return err
+		return fmt.Errorf("copy: destination file %s cannot be opened (%s)", logName, err)
 	}
 
 	defer func() {
+		// Update the file timestamp after the file has been copied and closed.
 		if err = destFile.Close(); err != nil {
-			log.Debugf("copy: failed to close %s (%s)", clean.Log(destName), clean.Error(err))
-		} else if err = os.Chtimes(dest, time.Time{}, m.ModTime()); err != nil {
-			log.Debugf("copy: failed to set mtime for %s (%s)", clean.Log(destName), clean.Error(err))
+			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(err))
+		} else if err = os.Chtimes(filePath, time.Time{}, m.ModTime()); err != nil {
+			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(err))
 		}
 	}()
 
+	// Copy file contents to the destination.
 	_, err = io.Copy(destFile, thisFile)
 
 	if err != nil {
-		log.Error(err.Error())
-		return err
+		return fmt.Errorf("copy: %s", err)
 	}
 
 	return nil
@@ -1398,8 +1464,8 @@ func (m *MediaFile) RenameSidecarFiles(oldFileName string) (renamed map[string]s
 		if fs.FileExists(destName) {
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 
-			if err := os.Remove(srcName); err != nil {
-				log.Errorf("files: failed removing sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
+			if rmErr := os.Remove(srcName); rmErr != nil {
+				log.Errorf("files: could not remove sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			} else {
 				log.Infof("files: removed sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			}
@@ -1407,8 +1473,8 @@ func (m *MediaFile) RenameSidecarFiles(oldFileName string) (renamed map[string]s
 			continue
 		}
 
-		if err := fs.Move(srcName, destName); err != nil {
-			return renamed, err
+		if moveErr := fs.Move(srcName, destName, true); moveErr != nil {
+			return renamed, moveErr
 		} else {
 			log.Infof("files: moved existing sidecar to %s", clean.Log(newName+filepath.Ext(srcName)))
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)

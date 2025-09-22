@@ -18,7 +18,8 @@ func TestConvert_ToImage(t *testing.T) {
 	}
 
 	cnf := config.TestConfig()
-	cnf.InitializeTestData()
+	initErr := cnf.InitializeTestData()
+	assert.NoError(t, initErr)
 	convert := NewConvert(cnf)
 
 	t.Run("Video", func(t *testing.T) {

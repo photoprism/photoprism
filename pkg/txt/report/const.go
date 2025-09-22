@@ -6,4 +6,6 @@ const (
 	Yes         = "Yes"
 	No          = "No"
 	NotAssigned = "n/a"
+	CheckMark   = "✅"
+	CrossMark   = "❌"
 )

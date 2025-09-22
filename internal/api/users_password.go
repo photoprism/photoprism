@@ -16,10 +16,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// UpdateUserPassword changes the password of the currently authenticated user.
+// UpdateUserPassword changes the password of the specified user.
 //
-//	@Tags	Users, Authentication
-//	@Router	/api/v1/users/{uid}/password [put]
+//	@Summary	change a user's password
+//	@Id			UpdateUserPassword
+//	@Tags		Users, Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid					path		string				true	"user uid"
+//	@Param		request				body		form.ChangePassword	true	"old and new password"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/password [put]
 func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := get.Config()

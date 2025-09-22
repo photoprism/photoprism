@@ -18,10 +18,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// OAuthRevoke takes an access token and deletes it. A client may only delete its own tokens.
+// OAuthRevoke revokes an access token or session. A client may only revoke its own tokens.
 //
-//	@Tags	Authentication
-//	@Router	/api/v1/oauth/revoke [post]
+//	@Summary	revoke an OAuth2 access token or session
+//	@Id			OAuthRevoke
+//	@Tags		Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		request				body		form.OAuthRevokeToken	true	"revoke request"
+//	@Success	200					{object}	gin.H
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/oauth/revoke [post]
 func OAuthRevoke(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

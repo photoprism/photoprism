@@ -877,63 +877,67 @@ func TestMediaFile_SetModTime(t *testing.T) {
 func TestMediaFile_Move(t *testing.T) {
 	c := config.TestConfig()
 
-	tmpPath := c.CachePath() + "/_tmp/TestMediaFile_Move"
-	origName := tmpPath + "/original.jpg"
-	destName := tmpPath + "/destination.jpg"
+	t.Run("Success", func(t *testing.T) {
+		tmpPath := c.CachePath() + "/_tmp/TestMediaFile_Move"
+		origName := tmpPath + "/original.jpg"
+		destName := tmpPath + "/destination.jpg"
 
-	if err := fs.MkdirAll(tmpPath); err != nil {
-		t.Fatal(err)
-	}
+		if err := fs.MkdirAll(tmpPath); err != nil {
+			t.Fatal(err)
+		}
 
-	defer os.RemoveAll(tmpPath)
+		defer os.RemoveAll(tmpPath)
 
-	f, err := NewMediaFile(c.ExamplesPath() + "/table_white.jpg")
+		f, err := NewMediaFile(c.ExamplesPath() + "/table_white.jpg")
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if err := f.Copy(origName); err != nil {
-		t.Fatal(err)
-	}
+		if copyErr := f.Copy(origName, false); copyErr != nil {
+			t.Fatal(copyErr)
+		}
 
-	assert.True(t, fs.FileExists(origName))
+		assert.True(t, fs.FileExists(origName))
 
-	m, err := NewMediaFile(origName)
-	if err != nil {
-		t.Fatal(err)
-	}
+		m, err := NewMediaFile(origName)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if err = m.Move(destName); err != nil {
-		t.Errorf("failed to move: %s", err)
-	}
+		if moveErr := m.Move(destName, false); moveErr != nil {
+			t.Error(moveErr)
+		}
 
-	assert.True(t, fs.FileExists(destName))
-	assert.Equal(t, destName, m.FileName())
+		assert.True(t, fs.FileExists(destName))
+		assert.Equal(t, destName, m.FileName())
+	})
 }
 
 func TestMediaFile_Copy(t *testing.T) {
 	c := config.TestConfig()
 
-	tmpPath := c.CachePath() + "/_tmp/TestMediaFile_Copy"
+	t.Run("Success", func(t *testing.T) {
+		tmpPath := c.CachePath() + "/_tmp/TestMediaFile_Copy"
 
-	if err := fs.MkdirAll(tmpPath); err != nil {
-		t.Fatal(err)
-	}
+		if err := fs.MkdirAll(tmpPath); err != nil {
+			t.Fatal(err)
+		}
 
-	defer os.RemoveAll(tmpPath)
+		defer os.RemoveAll(tmpPath)
 
-	mediaFile, err := NewMediaFile(c.ExamplesPath() + "/table_white.jpg")
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/table_white.jpg")
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if err := mediaFile.Copy(tmpPath + "table_whitecopy.jpg"); err != nil {
-		t.Fatal(err)
-	}
+		if copyErr := mediaFile.Copy(tmpPath+"table_whitecopy.jpg", false); copyErr != nil {
+			t.Fatal(copyErr)
+		}
 
-	assert.True(t, fs.FileExists(tmpPath+"table_whitecopy.jpg"))
+		assert.True(t, fs.FileExists(tmpPath+"table_whitecopy.jpg"))
+	})
 }
 
 func TestMediaFile_Extension(t *testing.T) {
@@ -2580,13 +2584,13 @@ func TestMediaFile_SkipTranscoding(t *testing.T) {
 
 func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		conf := config.TestConfig()
+		c := config.TestConfig()
 
-		jpegExample := filepath.Join(conf.ExamplesPath(), "/limes.jpg")
-		jpegPath := filepath.Join(conf.OriginalsPath(), "2020", "12")
+		jpegExample := filepath.Join(c.ExamplesPath(), "/limes.jpg")
+		jpegPath := filepath.Join(c.OriginalsPath(), "2020", "12")
 		jpegName := filepath.Join(jpegPath, "foobar.jpg")
 
-		if err := fs.Copy(jpegExample, jpegName); err != nil {
+		if err := fs.Copy(jpegExample, jpegName, false); err != nil {
 			t.Fatal(err)
 		}
 
@@ -2596,18 +2600,18 @@ func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err = fs.MkdirAll(filepath.Join(conf.SidecarPath(), "foo")); err != nil {
+		if err = fs.MkdirAll(filepath.Join(c.SidecarPath(), "foo")); err != nil {
 			t.Fatal(err)
 		}
 
-		srcName := filepath.Join(conf.SidecarPath(), "foo/bar.jpg.json")
-		dstName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.jpg.json")
+		srcName := filepath.Join(c.SidecarPath(), "foo/bar.jpg.json")
+		dstName := filepath.Join(c.SidecarPath(), "2020/12/foobar.jpg.json")
 
 		if err = os.WriteFile(srcName, []byte("{}"), 0666); err != nil {
 			t.Fatal(err)
 		}
 
-		if renamed, err := mf.RenameSidecarFiles(filepath.Join(conf.OriginalsPath(), "foo/bar.jpg")); err != nil {
+		if renamed, err := mf.RenameSidecarFiles(filepath.Join(c.OriginalsPath(), "foo/bar.jpg")); err != nil {
 			t.Fatal(err)
 		} else if len(renamed) != 1 {
 			t.Errorf("len should be 2: %#v", renamed)
@@ -2630,13 +2634,13 @@ func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 
 func TestMediaFile_RemoveSidecarFiles(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		conf := config.TestConfig()
+		c := config.TestConfig()
 
-		jpegExample := filepath.Join(conf.ExamplesPath(), "/limes.jpg")
-		jpegPath := filepath.Join(conf.OriginalsPath(), "2020", "12")
+		jpegExample := filepath.Join(c.ExamplesPath(), "/limes.jpg")
+		jpegPath := filepath.Join(c.OriginalsPath(), "2020", "12")
 		jpegName := filepath.Join(jpegPath, "foobar.jpg")
 
-		if err := fs.Copy(jpegExample, jpegName); err != nil {
+		if err := fs.Copy(jpegExample, jpegName, true); err != nil {
 			t.Fatal(err)
 		}
 
@@ -2646,14 +2650,14 @@ func TestMediaFile_RemoveSidecarFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		sidecarName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.jpg.json")
+		sidecarName := filepath.Join(c.SidecarPath(), "2020/12/foobar.jpg.json")
 
-		if err := os.WriteFile(sidecarName, []byte("{}"), 0666); err != nil {
-			t.Fatal(err)
+		if writeErr := os.WriteFile(sidecarName, []byte("{}"), 0666); writeErr != nil {
+			t.Fatal(writeErr)
 		}
 
-		if n, err := mf.RemoveSidecarFiles(); err != nil {
-			t.Fatal(err)
+		if n, rmErr := mf.RemoveSidecarFiles(); rmErr != nil {
+			t.Fatal(rmErr)
 		} else if fs.FileExists(sidecarName) {
 			t.Errorf("src file still exists: %s", sidecarName)
 		} else if n == 0 {

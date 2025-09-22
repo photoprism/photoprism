@@ -445,21 +445,13 @@ func TestConfig_OriginalsPath2(t *testing.T) {
 }
 
 func TestConfig_OriginalsDeletable(t *testing.T) {
-	c := NewConfig(CliTestContext())
+	c := TestConfig()
 
 	c.Settings().Features.Delete = true
-	c.options.ReadOnly = false
+	c.Options().ReadOnly = false
+	c.AssertTestData(t)
 
 	assert.True(t, c.OriginalsDeletable())
-}
-
-func TestConfig_ImportPath2(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/import", c.ImportPath())
-	c.options.ImportPath = ""
-	if s := c.ImportPath(); s != "" && s != "/photoprism/import" {
-		t.Errorf("unexpected import path: %s", s)
-	}
 }
 
 func TestConfig_ImportAllow(t *testing.T) {

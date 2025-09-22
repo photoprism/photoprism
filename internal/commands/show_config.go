@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -40,21 +41,36 @@ func showConfigAction(ctx *cli.Context) error {
 		log.Debug(err)
 	}
 
-	for _, rep := range ConfigReports {
-		// Get values.
-		rows, cols := rep.Report(conf)
-
-		// Render report.
-		opt := report.Options{Format: report.CliFormat(ctx), NoWrap: rep.NoWrap}
-		result, _ := report.Render(rows, cols, opt)
-
-		// Show report.
-		if opt.Format == report.Default {
-			fmt.Printf("\n%s\n\n", strings.ToUpper(rep.Title))
-		}
-
-		fmt.Println(result)
+	format, formatErr := report.CliFormatStrict(ctx)
+	if formatErr != nil {
+		return formatErr
 	}
 
+	if format == report.JSON {
+		type section struct {
+			Title string              `json:"title"`
+			Items []map[string]string `json:"items"`
+		}
+		sections := make([]section, 0, len(ConfigReports))
+		for _, rep := range ConfigReports {
+			rows, cols := rep.Report(conf)
+			sections = append(sections, section{Title: rep.Title, Items: report.RowsToObjects(rows, cols)})
+		}
+		b, _ := json.Marshal(map[string]interface{}{"sections": sections})
+		fmt.Println(string(b))
+		return nil
+	}
+
+	for _, rep := range ConfigReports {
+		rows, cols := rep.Report(conf)
+		opt := report.Options{Format: format, NoWrap: rep.NoWrap}
+		result, _ := report.Render(rows, cols, opt)
+		if opt.Format == report.Markdown {
+			fmt.Printf("### %s\n\n", rep.Title)
+		} else if opt.Format == report.Default {
+			fmt.Printf("%s\n\n", strings.ToUpper(rep.Title))
+		}
+		fmt.Println(result)
+	}
 	return nil
 }

@@ -27,7 +27,7 @@ var ClusterNodesRotateCommand = &cli.Command{
 	Name:      "rotate",
 	Usage:     "Rotates a node's DB and/or secret via Portal (HTTP)",
 	ArgsUsage: "<id|name>",
-	Flags:     append([]cli.Flag{rotateDatabaseFlag, rotateSecretFlag, &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}, rotatePortalURL, rotatePortalTok, JsonFlag}, report.CliFlags...),
+	Flags:     append([]cli.Flag{rotateDatabaseFlag, rotateSecretFlag, &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}, rotatePortalURL, rotatePortalTok}, report.CliFlags...),
 	Action:    clusterNodesRotateAction,
 }
 

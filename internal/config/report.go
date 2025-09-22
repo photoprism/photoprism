@@ -162,12 +162,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-preview", c.SitePreview()},
 
 		// Cluster Configuration.
-		{"cluster-domain", c.ClusterDomain()},
-		{"cluster-uuid", c.ClusterUUID()},
 		{"portal-url", c.PortalUrl()},
 		{"portal-config-path", c.PortalConfigPath()},
 		{"portal-theme-path", c.PortalThemePath()},
 		{"join-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken())))},
+		{"cluster-uuid", c.ClusterUUID()},
+		{"cluster-domain", c.ClusterDomain()},
 		{"node-name", c.NodeName()},
 		{"node-role", c.NodeRole()},
 		{"node-id", c.NodeID()},

@@ -142,10 +142,10 @@ type Options struct {
 	CORSOrigin             string        `yaml:"CORSOrigin" json:"-" flag:"cors-origin"`
 	CORSHeaders            string        `yaml:"CORSHeaders" json:"-" flag:"cors-headers"`
 	CORSMethods            string        `yaml:"CORSMethods" json:"-" flag:"cors-methods"`
-	ClusterDomain          string        `yaml:"ClusterDomain" json:"-" flag:"cluster-domain"`
-	ClusterUUID            string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
 	PortalUrl              string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
 	JoinToken              string        `yaml:"JoinToken" json:"-" flag:"join-token"`
+	ClusterUUID            string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
+	ClusterDomain          string        `yaml:"ClusterDomain" json:"-" flag:"cluster-domain"`
 	NodeName               string        `yaml:"NodeName" json:"-" flag:"node-name"`
 	NodeRole               string        `yaml:"NodeRole" json:"-" flag:"node-role"`
 	NodeID                 string        `yaml:"NodeID" json:"-" flag:"node-id"`

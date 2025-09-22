@@ -26,9 +26,8 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	cfg := config.TestConfig()
 
-	if err := cfg.InitializeTestData(); err != nil {
-		t.Fatal(err)
-	}
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 
@@ -70,7 +69,8 @@ func TestImport_Start(t *testing.T) {
 
 	cfg := config.TestConfig()
 
-	cfg.InitializeTestData()
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 

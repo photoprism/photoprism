@@ -23,10 +23,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// OIDCRedirect creates a new API access token when a user has been successfully authenticated via OIDC,
-// and then redirects the browser back to the app.
+// OIDCRedirect completes the OIDC flow, creates a session, and renders a page that stores the token client-side.
 //
-// GET /api/v1/oidc/redirect
+//	@Summary	complete OIDC login (callback)
+//	@Id			OIDCRedirect
+//	@Tags		Authentication
+//	@Produce	html
+//	@Param		state		query		string	true	"opaque OAuth2 state value"
+//	@Param		code		query		string	true	"authorization code"
+//	@Success	200			{string}	string	"HTML page bootstrapping token storage"
+//	@Failure	401,403,429	{string}	string	"rendered error page"
+//	@Router		/api/v1/oidc/redirect [get]
 func OIDCRedirect(router *gin.RouterGroup) {
 	router.GET("/oidc/redirect", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

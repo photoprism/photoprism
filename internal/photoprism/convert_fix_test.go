@@ -17,7 +17,8 @@ func TestConvert_FixJpeg(t *testing.T) {
 	}
 
 	cnf := config.TestConfig()
-	cnf.InitializeTestData()
+	initErr := cnf.InitializeTestData()
+	assert.NoError(t, initErr)
 	convert := NewConvert(cnf)
 
 	t.Run("elephants.jpg", func(t *testing.T) {

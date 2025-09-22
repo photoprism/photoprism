@@ -29,7 +29,7 @@ var ClusterNodesCommands = &cli.Command{
 var ClusterNodesListCommand = &cli.Command{
 	Name:      "ls",
 	Usage:     "Lists registered cluster nodes (Portal-only)",
-	Flags:     append(append(report.CliFlags, JsonFlag), CountFlag, OffsetFlag),
+	Flags:     append(report.CliFlags, CountFlag, OffsetFlag),
 	ArgsUsage: "",
 	Action:    clusterNodesListAction,
 }

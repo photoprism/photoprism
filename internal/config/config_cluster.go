@@ -13,39 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
-func (c *Config) ClusterDomain() string {
-	return c.options.ClusterDomain
-}
-
-// ClusterUUID returns a stable UUIDv4 that uniquely identifies the Portal.
-// Precedence: env PHOTOPRISM_CLUSTER_UUID -> options.yml (ClusterUUID) -> auto-generate and persist.
-func (c *Config) ClusterUUID() string {
-	// Use value loaded into options only if it is persisted in the current options.yml.
-	// This avoids tests (or defaults) loading a UUID from an unrelated file path.
-	if c.options.ClusterUUID != "" {
-		// Respect explicit CLI value if provided.
-		if c.cliCtx != nil && c.cliCtx.IsSet("cluster-uuid") {
-			return c.options.ClusterUUID
-		}
-		// Otherwise, only trust a persisted value from the current options.yml.
-		if fs.FileExists(c.OptionsYaml()) {
-			return c.options.ClusterUUID
-		}
-	}
-
-	// Generate, persist, and cache in memory if still empty.
-	id := rnd.UUID()
-	c.options.ClusterUUID = id
-
-	if err := c.saveClusterUUID(id); err != nil {
-		log.Warnf("config: failed to persist ClusterUUID to %s (%s)", c.OptionsYaml(), err)
-	}
-
-	return id
-}
-
-// PortalUrl returns the URL of the cluster portal server, if configured.
+// PortalUrl returns the URL of the cluster management portal server, if configured.
 func (c *Config) PortalUrl() string {
 	return c.options.PortalUrl
 }
@@ -83,6 +51,38 @@ func (c *Config) JoinToken() string {
 	} else {
 		return string(b)
 	}
+}
+
+// ClusterUUID returns a stable UUIDv4 that uniquely identifies the Portal.
+// Precedence: env PHOTOPRISM_CLUSTER_UUID -> options.yml (ClusterUUID) -> auto-generate and persist.
+func (c *Config) ClusterUUID() string {
+	// Use value loaded into options only if it is persisted in the current options.yml.
+	// This avoids tests (or defaults) loading a UUID from an unrelated file path.
+	if c.options.ClusterUUID != "" {
+		// Respect explicit CLI value if provided.
+		if c.cliCtx != nil && c.cliCtx.IsSet("cluster-uuid") {
+			return c.options.ClusterUUID
+		}
+		// Otherwise, only trust a persisted value from the current options.yml.
+		if fs.FileExists(c.OptionsYaml()) {
+			return c.options.ClusterUUID
+		}
+	}
+
+	// Generate, persist, and cache in memory if still empty.
+	id := rnd.UUID()
+	c.options.ClusterUUID = id
+
+	if err := c.saveClusterUUID(id); err != nil {
+		log.Warnf("config: failed to persist ClusterUUID to %s (%s)", c.OptionsYaml(), err)
+	}
+
+	return id
+}
+
+// ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
+func (c *Config) ClusterDomain() string {
+	return c.options.ClusterDomain
 }
 
 // NodeName returns the cluster node NAME (unique in cluster domain; [a-z0-9-]{1,32}).

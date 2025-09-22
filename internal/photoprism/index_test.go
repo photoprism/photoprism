@@ -16,7 +16,8 @@ func TestIndex_Start(t *testing.T) {
 	}
 
 	cfg := config.TestConfig()
-	cfg.InitializeTestData()
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
@@ -60,7 +61,8 @@ func TestIndex_File(t *testing.T) {
 	}
 
 	cfg := config.TestConfig()
-	cfg.InitializeTestData()
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())

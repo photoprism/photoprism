@@ -24,19 +24,27 @@ type Options struct {
 	Downloader         string // --downloader
 	DownloadThumbnail  bool
 	DownloadSubtitles  bool
-	DownloadSections   string                        // --download-sections
-	Impersonate        string                        // --impersonate
-	ProxyUrl           string                        // --proxy URL  http://host:port or socks5://host:port
-	UseIPV4            bool                          // -4 Make all connections via IPv4
-	Cookies            string                        // --cookies FILE
-	CookiesFromBrowser string                        // --cookies-from-browser BROWSER[:FOLDER]
-	StderrFn           func(cmd *exec.Cmd) io.Writer // if not nil, function to get Writer for stderr
-	HttpClient         *http.Client                  // Client for download thumbnail and subtitles (nil use http.DefaultClient)
-	MergeOutputFormat  string                        // --merge-output-format
-	RemuxVideo         string                        // --remux-video
-	RecodeVideo        string                        // --recode-video
-	Fixup              string                        // --fixup
-	SortingFormat      string                        // --format-sort
+	DownloadSections   string // --download-sections
+	Impersonate        string // --impersonate
+	ProxyUrl           string // --proxy URL  http://host:port or socks5://host:port
+	UseIPV4            bool   // -4 Make all connections via IPv4
+	Cookies            string // --cookies FILE
+	CookiesFromBrowser string // --cookies-from-browser BROWSER[:FOLDER]
+	// Note: The PhotoPrism CLI intentionally does NOT expose a --cookies-from-browser flag
+	// because the default runtime is a container without access to local browser profiles.
+	// This field remains for tests and non-container scenarios.
+	AddHeaders        []string                      // --add-header "Name: Value" (repeatable)
+	StderrFn          func(cmd *exec.Cmd) io.Writer // if not nil, function to get Writer for stderr
+	HttpClient        *http.Client                  // Client for download thumbnail and subtitles (nil use http.DefaultClient)
+	MergeOutputFormat string                        // --merge-output-format
+	RemuxVideo        string                        // --remux-video
+	RecodeVideo       string                        // --recode-video
+	Fixup             string                        // --fixup
+	SortingFormat     string                        // --format-sort
+	// FFmpegPostArgs are additional ffmpeg post-processor args, e.g.,
+	// "-metadata creation_time=2025-09-20T00:00:00Z". Applied via
+	// yt-dlp's --postprocessor-args for the ffmpeg post-processor.
+	FFmpegPostArgs string
 
 	// Set to true if you don't want to use the result.Info structure after the goutubedl.NewMetadata() call,
 	// so the given URL will be downloaded in a single pass in the DownloadResult.Download() call.
@@ -196,6 +204,19 @@ func (result Metadata) DownloadWithOptions(
 		cmd.Args = append(cmd.Args, "--cookies-from-browser", result.Options.CookiesFromBrowser)
 	}
 
+	if result.Options.Cookies != "" {
+		cmd.Args = append(cmd.Args, "--cookies", result.Options.Cookies)
+	}
+
+	if len(result.Options.AddHeaders) > 0 {
+		for _, h := range result.Options.AddHeaders {
+			if strings.TrimSpace(h) == "" {
+				continue
+			}
+			cmd.Args = append(cmd.Args, "--add-header", h)
+		}
+	}
+
 	if result.Options.MergeOutputFormat != "" {
 		cmd.Args = append(cmd.Args,
 			"--merge-output-format", result.Options.MergeOutputFormat,
@@ -226,6 +247,10 @@ func (result Metadata) DownloadWithOptions(
 		)
 	}
 
+	if strings.TrimSpace(result.Options.FFmpegPostArgs) != "" {
+		cmd.Args = append(cmd.Args, "--postprocessor-args", "ffmpeg:"+result.Options.FFmpegPostArgs)
+	}
+
 	cmd.Dir = tempPath
 	var stdoutW io.WriteCloser
 	var stderrW io.WriteCloser
@@ -239,7 +264,7 @@ func (result Metadata) DownloadWithOptions(
 	cmd.Stdout = stdoutW
 	cmd.Stderr = io.MultiWriter(optStderrWriter, stderrW)
 
-	log.Trace("cmd", " ", cmd.Args)
+	log.Trace("cmd", " ", redactArgs(cmd.Args))
 	if err := cmd.Start(); err != nil {
 		os.RemoveAll(tempPath)
 		return nil, err

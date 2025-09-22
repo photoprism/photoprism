@@ -16,7 +16,7 @@ import (
 var VisionRunCommand = &cli.Command{
 	Name:      "run",
 	Usage:     "Runs one or more computer vision models on a set of pictures that match the specified search filters",
-	ArgsUsage: "[filter...]",
+	ArgsUsage: "[filter]...",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:    "models",

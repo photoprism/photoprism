@@ -153,6 +153,15 @@ func infoFromURL(
 		cmd.Args = append(cmd.Args, "--cookies-from-browser", options.CookiesFromBrowser)
 	}
 
+	if len(options.AddHeaders) > 0 {
+		for _, h := range options.AddHeaders {
+			if strings.TrimSpace(h) == "" {
+				continue
+			}
+			cmd.Args = append(cmd.Args, "--add-header", h)
+		}
+	}
+
 	switch options.Type {
 	case TypePlaylist, TypeChannel:
 		cmd.Args = append(cmd.Args, "--yes-playlist")
@@ -200,7 +209,7 @@ func infoFromURL(
 	cmd.Stderr = io.MultiWriter(stderrBuf, stderrWriter)
 	cmd.Stdin = bytes.NewBufferString(rawURL + "\n")
 
-	log.Trace("cmd", " ", cmd.Args)
+	log.Trace("cmd", " ", redactArgs(cmd.Args))
 	cmdErr := cmd.Run()
 
 	stderrLineScanner := bufio.NewScanner(stderrBuf)

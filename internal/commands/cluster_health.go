@@ -20,7 +20,7 @@ type healthResponse struct {
 var ClusterHealthCommand = &cli.Command{
 	Name:   "health",
 	Usage:  "Shows cluster health (Portal-only)",
-	Flags:  append(report.CliFlags, JsonFlag),
+	Flags:  report.CliFlags,
 	Action: clusterHealthAction,
 }
 

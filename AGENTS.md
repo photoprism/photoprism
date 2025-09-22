@@ -13,16 +13,17 @@ Learn more: https://agents.md/
 - Contributing: https://github.com/photoprism/photoprism/blob/develop/CONTRIBUTING.md
 - Security: https://github.com/photoprism/photoprism/blob/develop/SECURITY.md
 - REST API: https://docs.photoprism.dev/ (Swagger), https://docs.photoprism.app/developer-guide/api/ (Docs)
-- Backend CODEMAP: CODEMAP.md
-- Frontend CODEMAP: frontend/CODEMAP.md
+- Code Maps: `CODEMAP.md` (Backend/Go), `frontend/CODEMAP.md` (Frontend/JS)
 
 ### Specifications (Versioning & Usage)
 
 - Always use the latest spec version for a topic (highest `-vN`), as linked from `specs/README.md` and the portal cheatsheet (`specs/portal/README.md`).
+- Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
+- Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
 - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
-- When adding or updating specs, publish changes under a new file with an incremented version suffix (e.g., `*-v3.md`) instead of overwriting. Refer to the Change Management section of each document for specific instructions.
-- Developer Cheatsheet – Portal & Cluster: specs/portal/README.md
-- Backend (Go) Testing Guide: specs/dev/backend-testing.md
+
+Note on specs repository availability
+- The `specs/` repository may be private and is not guaranteed to be present in every clone or environment. Do not add Makefile targets in the main project that depend on `specs/` paths. When `specs/` is available, run its tools directly (e.g., `bash specs/scripts/lint-status.sh`).
 
 ## Project Structure & Languages
 
@@ -124,6 +125,21 @@ Note: Across our public documentation, official images, and in production, the c
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
 
+### FFmpeg Tests & Hardware Gating
+
+- By default, do not run GPU/HW encoder integrations in CI. Gate with `PHOTOPRISM_FFMPEG_ENCODER` (one of: `vaapi`, `intel`, `nvidia`).
+- Negative-path tests should remain fast and always run:
+  - Missing ffmpeg binary → immediate exec error.
+  - Unwritable destination → command fails without creating files.
+- Prefer command-string assertions when hardware is unavailable; enable HW runs locally only when a device is configured.
+
+### Fast, Focused Test Recipes
+
+- Filesystem + archives (fast): `go test ./pkg/fs -run 'Copy|Move|Unzip' -count=1`
+- Media helpers (fast): `go test ./pkg/media/... -count=1`
+- Thumbnails (libvips, moderate): `go test ./internal/thumb/... -count=1`
+- FFmpeg command builders (moderate): `go test ./internal/ffmpeg -run 'Remux|Transcode|Extract' -count=1`
+
 ### CLI Testing Gotchas (Go)
 
 - Exit codes and `os.Exit`:
@@ -149,8 +165,47 @@ Note: Across our public documentation, official images, and in production, the c
   - Ensure `.env` and `.local` are ignored in `.gitignore` and `.dockerignore`.
 - Prefer using existing caches, workers, and batching strategies referenced in code and `Makefile`. Consider memory/CPU impact; suggest benchmarks or profiling only when justified.
 - Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures when running acceptance tests.
+- ### File I/O — Overwrite Policy (force semantics)
+
+- Default is safety-first: callers must not overwrite non-empty destination files unless they opt-in with a `force` flag.
+- Replacing empty destination files is allowed without `force=true` (useful for placeholder files).
+- Open destinations with `O_WRONLY|O_CREATE|O_TRUNC` to avoid trailing bytes when overwriting; use `O_EXCL` when the caller must detect collisions.
+- Where this lives:
+  - App-level helpers: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move`).
+  - Reusable utils: `pkg/fs/copy.go`, `pkg/fs/move.go`.
+- When to set `force=true`:
+  - Explicit “replace” actions or admin tools where the user confirmed overwrite.
+  - Not for import/index flows; Originals must not be clobbered.
+
+- ### Archive Extraction — Security Checklist
+
+- Always validate ZIP entry names with a safe join; reject:
+  - absolute paths (e.g., `/etc/passwd`).
+  - Windows drive/volume paths (e.g., `C:\\…` or `C:/…`).
+  - any entry that escapes the target directory after cleaning (path traversal via `..`).
+- Enforce per-file and total size budgets to prevent resource exhaustion.
+- Skip OS metadata directories (e.g., `__MACOSX`) and reject suspicious names.
+- Where this lives: `pkg/fs/zip.go` (`Unzip`, `UnzipFile`, `safeJoin`).
+- Tests to keep:
+  - Absolute/volume paths rejected (Windows-specific backslash path covered on Windows).
+  - `..` traversal skipped; `__MACOSX` skipped.
+  - Per-file and total size limits enforced; directory entries created; nested paths extracted safely.
+
 - Examples assume a Linux/Unix shell. For Windows specifics, see the Developer Guide FAQ:
   https://docs.photoprism.app/developer-guide/faq/#can-your-development-environment-be-used-under-windows
+
+### HTTP Download — Security Checklist
+
+- Use the shared safe HTTP helper instead of ad‑hoc `net/http` code:
+  - Package: `pkg/service/http/safe` → `safe.Download(destPath, url, *safe.Options)`.
+  - Default policy in this repo: allow only `http/https`, enforce timeouts and max size, write to a `0600` temp file then rename.
+- SSRF protection (mandatory unless explicitly needed for tests):
+  - Set `AllowPrivate=false` to block private/loopback/multicast/link‑local ranges.
+  - All redirect targets are validated; the final connected peer IP is also checked.
+  - Prefer an image‑focused `Accept` header for image downloads: `"image/jpeg, image/png, */*;q=0.1"`.
+- Avatars and small images: use the thin wrapper in `internal/thumb/avatar.SafeDownload` which applies stricter defaults (15s timeout, 10 MiB, `AllowPrivate=false`).
+- Tests using `httptest.Server` on 127.0.0.1 must pass `AllowPrivate=true` explicitly to succeed.
+- Keep per‑resource size budgets small; rely on `io.LimitReader` + `Content-Length` prechecks.
 
 If anything in this file conflicts with the `Makefile` or the Developer Guide, the `Makefile` and the documentation win. When unsure, **ask** for clarification before proceeding.
 
@@ -162,10 +217,17 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
   - Unit/subpackage: `go test ./internal/<pkg> -run <Name> -count=1`
   - Commands: `go test ./internal/commands -run <Name> -count=1`
   - Avoid `./...` unless you intend to run the whole suite.
-- Heavy tests (migrations/fixtures): internal/entity and internal/photoprism run DB migrations and load fixtures; expect 30–120s on first run. Narrow with `-run` and keep iterations low.
+- Heavy tests (migrations/fixtures): `internal/entity` and `internal/photoprism` run DB migrations and load fixtures; expect 30–120s on first run. Narrow with `-run` and keep iterations low.
 - PhotoPrism config in tests: inside `internal/photoprism`, use the package global `photoprism.Config()` for runtime‑accurate behavior. Only construct a new config if you replace it via `photoprism.SetConfig`.
 - CLI command tests: use `RunWithTestContext(cmd, args)` to capture output and avoid `os.Exit`; assert `cli.ExitCoder` codes when you need them.
 - Reports are quoted: strings in CLI "show" output are rendered with quotes by the report helpers. Prefer `assert.Contains`/regex over strict, fully formatted equality when validating content.
+
+#### Test Data & Fixtures (storage/testdata)
+
+- Shared test files live under `storage/testdata`. The lifecycle is managed by `internal/config/test.go`.
+- `NewTestConfig("<pkg>")` now calls `InitializeTestData()` so required directories exist (originals, import, cache, temp) before tests run.
+- If you build a custom `*config.Config`, call `c.InitializeTestData()` (and optionally `c.AssertTestData(t)`) before asserting on filesystem paths.
+- `InitializeTestData()` deletes existing testdata (`RemoveTestData()`), downloads/unzips fixtures if needed, and then calls `CreateDirectories()` to ensure required directories exist.
 
 ### Roles & ACL
 
@@ -187,6 +249,15 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 - Capture output with `RunWithTestContext`; usage and report values may be quoted and re‑ordered (e.g., set semantics). Use substring checks or regex for the final ", or <last>" rule from `CliUsageString`.
 - Prefer JSON output (`--json`) for stable machine assertions when commands offer it.
+- Cataloging CLI commands (new):
+  - Use `internal/commands/catalog` to enumerate commands/flags without invoking the CLI or capturing stdout.
+  - Default format for `photoprism show commands` is Markdown; pass `--json` for machine output and `--nested` to get a tree. Hidden commands/flags appear only with `--all`.
+  - Nested `help` subcommands are omitted; the top‑level `photoprism help` remains included.
+  - When asserting large JSON documents, build DTOs via `catalog.BuildFlat/BuildNode` and marshal directly to avoid pipe back‑pressure in tests.
+- JSON shapes for `show` commands:
+  - Most return a top‑level array of row objects (keys = snake_case columns).
+  - `photoprism show config` returns `{ sections: [{ title, items[] }] }`.
+  - `photoprism show config-options --json` and `photoprism show config-yaml --json` return a flat top‑level array (no `sections`).
 
 ### API Development & Config Options 
 
@@ -222,7 +293,17 @@ The following conventions summarize the insights gained when adding new configur
   - Portal mode: set `PHOTOPRISM_NODE_ROLE=portal` and `PHOTOPRISM_JOIN_TOKEN`.
   - Pagination defaults: for new list endpoints, prefer `count` default 100 (max 1000) and `offset` ≥ 0; document both in Swagger and validate bounds in handlers.
   - Document parameters explicitly in Swagger annotations (path, query, and body) so `make swag` produces accurate docs.
-  - Swagger: `make fmt-go swag-fmt && make swag` after adding or changing API annotations.
+- Swagger: `make fmt-go swag-fmt && make swag` after adding or changing API annotations.
+
+### Swagger & API Docs
+
+- Annotations live next to handlers in `internal/api/*.go`. Only annotate public handlers that are registered in `internal/server/routes.go`.
+- Always include the full prefix in `@Router` paths: `/api/v1/...` (not relative segments).
+- Avoid annotating internal helpers (e.g., generic link creators) to prevent generating undocumented placeholder paths.
+- Generate docs locally with:
+  - `make swag-fmt` (formats annotations)
+  - `make swag-json` (generates `internal/api/swagger.json` and then runs `swaggerfix` to remove unstable `time.Duration` enums for deterministic diffs)
+- `time.Duration` fields are represented as integer nanoseconds in the API. The Makefile target `swag-json` automatically post-processes `swagger.json` to strip duplicated enums for this type.
   - Focused tests: `go test ./internal/api -run Cluster -count=1` (or limit to the package you changed).
 
 - Registry & secrets
@@ -261,6 +342,42 @@ The following conventions summarize the insights gained when adding new configur
 - Gin routes: Register `CreateSession(router)` once per test router; reusing it twice panics on duplicate route.
 - CLI commands: Some commands defer `conf.Shutdown()` or emit signals that close the DB. The harness re‑opens DB before each run, but avoid invoking `start` or emitting signals in unit tests.
 - Signals: `internal/commands/start.go` waits on `process.Signal`; calling `process.Shutdown()/Restart()` can close DB. Prefer not to trigger signals in tests.
+
+### Download CLI Workbench (yt-dlp, remux, importer)
+
+- Code anchors
+  - CLI flags and examples: `internal/commands/download.go`
+  - Core implementation (testable): `internal/commands/download_impl.go`
+  - yt-dlp helpers and arg wiring: `internal/photoprism/dl/*` (`options.go`, `info.go`, `file.go`, `meta.go`)
+  - Importer entry point: `internal/photoprism/get/import.go`; options: `internal/photoprism/import_options.go`
+
+- Quick test runs (fast feedback)
+  - yt-dlp package: `go test ./internal/photoprism/dl -run 'Options|Created|PostprocessorArgs' -count=1`
+  - CLI command: `go test ./internal/commands -run 'DownloadImpl|HelpFlags' -count=1`
+
+- FFmpeg-less tests
+  - In tests: set `c.Options().FFmpegBin = "/bin/false"` and `c.Settings().Index.Convert = false` to avoid ffmpeg dependencies when not validating remux.
+
+- Stubbing yt-dlp (no network)
+  - Use a tiny shell script that:
+    - prints minimal JSON for `--dump-single-json`
+    - creates a file and prints its path when `--print` is requested
+  - Harness env vars (supported by our tests):
+    - `YTDLP_ARGS_LOG` — append final args for assertion
+    - `YTDLP_OUTPUT_FILE` — absolute file path to create for `--print`
+    - `YTDLP_DUMMY_CONTENT` — file contents to avoid importer duplicate detection between tests
+
+- Remux policy and metadata
+  - Pipe method: PhotoPrism remux (ffmpeg) always embeds title/description/created.
+  - File method: yt‑dlp writes files; we pass `--postprocessor-args 'ffmpeg:-metadata creation_time=<RFC3339>'` so imports get `Created` even without local remux (fallback from `upload_date`/`release_date`).
+  - Default remux policy: `auto`; use `always` for the most complete metadata (chapters, extended tags).
+
+- Testing
+  - Prefer targeted runs before the full suite:
+    - `go test ./internal/<pkg> -run <Name> -count=1`
+    - Avoid `./...` unless you intend to run everything.
+  - Importer duplicates: When reusing names/paths across tests, the importer may dedupe; vary file bytes via `YTDLP_DUMMY_CONTENT` or adjust `dest` to ensure assertions see the new file.
+  - Long-running packages: `internal/photoprism` is heavy; validate CLI/dl changes first in their packages, then run broader suites.
 
 ### Sessions & Redaction (building sessions in tests)
 

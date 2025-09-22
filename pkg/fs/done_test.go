@@ -12,3 +12,12 @@ func TestProcessed(t *testing.T) {
 		assert.False(t, Found.Processed())
 	})
 }
+
+func TestDoneProcessedCount(t *testing.T) {
+	d := Done{
+		"a.jpg": Found,
+		"b.jpg": Processed,
+		"c.jpg": 0,
+	}
+	assert.Equal(t, 1, d.Processed())
+}

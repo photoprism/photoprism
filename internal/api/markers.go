@@ -171,11 +171,16 @@ func CreateMarker(router *gin.RouterGroup) {
 
 // UpdateMarker updates an existing file area marker to assign faces or other subjects.
 //
-// The request parameters are:
-//
-//   - marker_uid: string Marker UID as returned by the API
-//
-// PUT /api/v1/markers/:marker_uid
+//	@Summary	update a marker (face/subject region)
+//	@Id			UpdateMarker
+//	@Tags		Files
+//	@Accept		json
+//	@Produce	json
+//	@Param		marker_uid			path		string		true	"marker uid"
+//	@Param		marker				body		form.Marker	true	"marker properties"
+//	@Success	200					{object}	entity.Marker
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/markers/{marker_uid} [put]
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -261,15 +266,16 @@ func UpdateMarker(router *gin.RouterGroup) {
 	})
 }
 
-// ClearMarkerSubject removes an existing marker subject association.
+// ClearMarkerSubject removes the subject association from a marker.
 //
-// The request parameters are:
-//
-//   - uid: string Photo UID as returned by the API
-//   - file_uid: string File UID as returned by the API
-//   - id: int Marker ID as returned by the API
-//
-// DELETE /api/v1/markers/:marker_uid/subject
+//	@Summary	clear the subject of a marker
+//	@Id			ClearMarkerSubject
+//	@Tags		Files
+//	@Produce	json
+//	@Param		marker_uid			path		string	true	"marker uid"
+//	@Success	200					{object}	entity.Marker
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/markers/{marker_uid}/subject [delete]
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.

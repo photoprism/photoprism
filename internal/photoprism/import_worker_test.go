@@ -13,9 +13,8 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 	// settings/paths from the code under test.
 	cfg := Config()
 
-	if err := cfg.InitializeTestData(); err != nil {
-		t.Fatal(err)
-	}
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())

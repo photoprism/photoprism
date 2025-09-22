@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 
@@ -37,20 +38,36 @@ func showMetadataAction(ctx *cli.Context) error {
 	})
 
 	// Output overview of supported metadata tags.
-	format := report.CliFormat(ctx)
+	format, formatErr := report.CliFormatStrict(ctx)
+	if formatErr != nil {
+		return formatErr
+	}
+	if format == report.JSON {
+		resp := struct {
+			Items []map[string]string `json:"items"`
+			Docs  []map[string]string `json:"docs,omitempty"`
+		}{
+			Items: report.RowsToObjects(rows, cols),
+		}
+		if !ctx.Bool("short") {
+			resp.Docs = report.RowsToObjects(meta.Docs, []string{"Namespace", "Documentation"})
+		}
+		b, err := json.Marshal(resp)
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(b))
+		return nil
+	}
+
 	result, err := report.RenderFormat(rows, cols, format)
-
 	fmt.Println(result)
-
 	if err != nil || ctx.Bool("short") || format == report.TSV {
 		return err
 	}
-
 	// Documentation links for those who want to delve deeper.
 	result, err = report.RenderFormat(meta.Docs, []string{"Namespace", "Documentation"}, format)
-
 	fmt.Printf("## Metadata Tags by Namespace ##\n\n")
 	fmt.Println(result)
-
 	return err
 }

@@ -46,3 +46,9 @@ func TestInit(t *testing.T) {
 		assert.Equal(t, LibVips, Library)
 	})
 }
+
+func TestShutdown_NoPanic(t *testing.T) {
+	// Call Shutdown twice to cover both not-started and already-reset states.
+	Shutdown()
+	Shutdown()
+}

@@ -36,7 +36,7 @@ var ClusterThemePullCommand = &cli.Command{
 				&cli.StringFlag{Name: "join-token", Usage: "Portal access `TOKEN` (defaults to global config)"},
 				&cli.StringFlag{Name: "client-id", Usage: "Node client `ID` (defaults to NodeID from config)"},
 				&cli.StringFlag{Name: "client-secret", Usage: "Node client `SECRET` (defaults to NodeSecret from config)"},
-				JsonFlag,
+				// JSON output supported via report.CliFlags on parent command where applicable
 			},
 			Action: clusterThemePullAction,
 		},

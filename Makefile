@@ -133,6 +133,8 @@ swag: swag-json
 swag-json:
 	@echo "Generating ./internal/api/swagger.json..."
 	swag init --ot json --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./internal/api
+	@echo "Fixing unstable time.Duration enums in swagger.json..."
+	@GO111MODULE=on go run scripts/tools/swaggerfix/main.go internal/api/swagger.json || { echo "swaggerfix failed"; exit 1; }
 swag-yaml:
 	@echo "Generating ./internal/api/swagger.yaml..."
 	swag init --ot yaml --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./internal/api
@@ -442,7 +444,7 @@ reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
 	rm --force ./storage/testdata/unit.test.db
 	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
-reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-postgres:
 	$(info Resetting photoprism database...)
 	psql postgresql://photoprism:photoprism@postgres:5432/postgres -f scripts/sql/postgresql/reset-photoprism.sql
@@ -460,7 +462,7 @@ reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb
 # reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
 	$(info Removing test database files...)
-	find ./internal -type f -name ".test.*" -delete
+	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.test.*' \) -delete
 run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...

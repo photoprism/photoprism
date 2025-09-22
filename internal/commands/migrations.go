@@ -24,7 +24,7 @@ var MigrationsStatusCommand = &cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
 	Usage:     "Displays the status of schema migrations",
-	ArgsUsage: "[migrations...]",
+	ArgsUsage: "[migrations]...",
 	Flags:     report.CliFlags,
 	Action:    migrationsStatusAction,
 }
@@ -33,7 +33,7 @@ var MigrationsRunCommand = &cli.Command{
 	Name:      "run",
 	Aliases:   []string{"execute", "migrate"},
 	Usage:     "Executes database schema migrations",
-	ArgsUsage: "[migrations...]",
+	ArgsUsage: "[migrations]...",
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
 			Name:    "failed",

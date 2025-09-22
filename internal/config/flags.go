@@ -253,7 +253,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "import-dest",
-			Usage:     "relative originals `PATH` to which the files should be imported by default *optional*",
+			Usage:     "relative originals `PATH` in which files should be imported by default *optional*",
 			EnvVars:   EnvVars("IMPORT_DEST"),
 			TakesFile: true,
 		}}, {
@@ -665,27 +665,24 @@ var Flags = CliFlags{
 			Value:   header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "cluster-domain",
-			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
-			EnvVars: EnvVars("CLUSTER_DOMAIN"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "cluster-uuid",
-			Usage:   "cluster `UUID` (v4) to scope per-node credentials",
-			EnvVars: EnvVars("CLUSTER_UUID"),
-			Hidden:  true,
-		}}, {
-		Flag: &cli.StringFlag{
 			Name:    "portal-url",
-			Usage:   "base `URL` of the cluster portal (e.g. https://portal.example.com)",
+			Usage:   "base `URL` of the cluster management portal (e.g. https://portal.example.com)",
 			EnvVars: EnvVars("PORTAL_URL"),
-			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "join-token",
 			Usage:   "secret `TOKEN` required to join the cluster",
 			EnvVars: EnvVars("JOIN_TOKEN"),
-			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-domain",
+			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
+			EnvVars: EnvVars("CLUSTER_DOMAIN"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-name",

@@ -40,8 +40,8 @@ func TestIndexRelated(t *testing.T) {
 		for _, f := range testRelated.Files {
 			dest := filepath.Join(testPath, f.BaseName())
 
-			if err := f.Copy(dest); err != nil {
-				t.Fatalf("copying test file failed: %s", err)
+			if copyErr := f.Copy(dest, false); copyErr != nil {
+				t.Fatalf("copying test file failed: %s", copyErr)
 			}
 		}
 
@@ -104,8 +104,8 @@ func TestIndexRelated(t *testing.T) {
 		for _, f := range testRelated.Files {
 			dest := filepath.Join(testPath, f.BaseName())
 
-			if err := f.Copy(dest); err != nil {
-				t.Fatalf("copying test file failed: %s", err)
+			if copyErr := f.Copy(dest, false); copyErr != nil {
+				t.Fatal(copyErr)
 			}
 		}
 

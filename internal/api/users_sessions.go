@@ -18,8 +18,17 @@ import (
 
 // FindUserSessions finds user sessions and returns them as JSON.
 //
-//	@Tags	Users, Authentication
-//	@Router	/api/v1/users/{uid}/sessions [get]
+//	@Summary	list sessions for a user
+//	@Id			FindUserSessions
+//	@Tags		Users, Authentication
+//	@Produce	json
+//	@Param		uid			path		string	true	"user uid"
+//	@Param		count		query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
+//	@Param		offset		query		int		false	"result offset"				minimum(0)
+//	@Param		q			query		string	false	"filter by username or client name"
+//	@Success	200			{object}	entity.Sessions
+//	@Failure	401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/sessions [get]
 func FindUserSessions(router *gin.RouterGroup) {
 	router.GET("/users/:uid/sessions", func(c *gin.Context) {
 		// Check if the session user is has user management privileges.

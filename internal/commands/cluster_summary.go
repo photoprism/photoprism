@@ -17,7 +17,7 @@ import (
 var ClusterSummaryCommand = &cli.Command{
 	Name:   "summary",
 	Usage:  "Shows cluster summary (Portal-only)",
-	Flags:  append(report.CliFlags, JsonFlag),
+	Flags:  report.CliFlags,
 	Action: clusterSummaryAction,
 }
 
