@@ -100,8 +100,12 @@ func RunWithTestContext(cmd *cli.Command, args []string) (output string, err err
 
 	// Ensure DB connection is open for each command run (some commands call Shutdown).
 	if c := get.Config(); c != nil {
-		_ = c.Init()   // safe to call; re-opens DB if needed
-		c.RegisterDb() // (re)register provider
+		if !c.IsDbOpen() {
+			_ = c.Init()   // safe to call; re-opens DB if needed
+			c.RegisterDb() // (re)register provider
+		} else {
+			log.Debug("commands: DB is still open")
+		}
 	}
 
 	// Redirect the output from cli to buffer for transfer to output for testing
@@ -169,8 +173,12 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 
 	// Ensure DB connection is open for each command run (some commands call Shutdown).
 	if c := get.Config(); c != nil {
-		_ = c.Init()   // safe to call; re-opens DB if needed
-		c.RegisterDb() // (re)register provider
+		if !c.IsDbOpen() {
+			_ = c.Init()   // safe to call; re-opens DB if needed
+			c.RegisterDb() // (re)register provider
+		} else {
+			log.Debug("commands: DB is still open")
+		}
 	}
 
 	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder

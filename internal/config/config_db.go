@@ -357,10 +357,31 @@ func (c *Config) CloseDb() error {
 		if c.pool != nil {
 			log.Debug("config: closing postgres pool")
 			c.pool.Close()
+			c.pool = nil
 		}
 	}
 
 	return nil
+}
+
+// IsDbOpen determines if the database is available to use
+func (c *Config) IsDbOpen() bool {
+	if c.db == nil {
+		log.Debug("isdbopen: c.db == nil")
+		return false
+	} else {
+		if sqlDB, err := c.db.DB(); err != nil {
+			log.Errorf("isdbopen: c.db.DB err = %+v", err)
+			return false
+		} else {
+			if sqlErr := sqlDB.Ping(); sqlErr != nil {
+				log.Errorf("isdbopen: Ping err = %+v", sqlErr)
+				return false
+			} else {
+				return true
+			}
+		}
+	}
 }
 
 // SetDbOptions sets the database collation to unicode if supported.
@@ -531,72 +552,77 @@ func (c *Config) connectDb() error {
 		return errors.New("config: database DSN not specified")
 	}
 
-	// Open database connection.
-	var db *gorm.DB
-	var err error
-	if dbDriver == Postgres {
-		postgresDB, pgxPool := entity.OpenPostgreSQL(dbDsn)
-		c.pool = pgxPool
-		db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
+	if c.IsDbOpen() {
+		log.Info("config: database is already open")
 	} else {
-		c.pool = nil
-		db, err = gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
-	}
-	if err != nil || db == nil {
-		log.Infof("config: waiting for the database to become available")
 
-		for i := 1; i <= 12; i++ {
-			if dbDriver == Postgres {
-				postgresDB, pgxPool := entity.OpenPostgreSQL(dbDsn)
-				c.pool = pgxPool
-				db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
-			} else {
-				c.pool = nil
-				db, err = gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
-			}
-
-			if db != nil && err == nil {
-				break
-			}
-
-			time.Sleep(5 * time.Second)
-		}
-
-		if err != nil || db == nil {
-			return err
-		}
-	}
-
-	// Configure database logging.
-	//db.LogMode(false)
-	//db.SetLogger(log)
-
-	// Set database connection parameters.
-	if dbDriver != Postgres {
-		sqlDB, err := db.DB()
-		if err != nil {
-			return err
-		}
-		sqlDB.SetMaxOpenConns(c.DatabaseConns())
-		sqlDB.SetMaxIdleConns(c.DatabaseConnsIdle())
-		sqlDB.SetConnMaxLifetime(time.Hour)
-	}
-
-	// Check database server version.
-	if err = c.checkDb(db); err != nil {
-		if c.Unsafe() {
-			log.Error(err)
+		// Open database connection.
+		var db *gorm.DB
+		var err error
+		if dbDriver == Postgres {
+			postgresDB, pgxPool := entity.OpenPostgreSQL(dbDsn)
+			c.pool = pgxPool
+			db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 		} else {
-			return err
+			c.pool = nil
+			db, err = gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
 		}
-	}
+		if err != nil || db == nil {
+			log.Infof("config: waiting for the database to become available")
 
-	if dbVersion := c.DatabaseVersion(); dbVersion != "" {
-		log.Debugf("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
-	}
+			for i := 1; i <= 12; i++ {
+				if dbDriver == Postgres {
+					postgresDB, pgxPool := entity.OpenPostgreSQL(dbDsn)
+					c.pool = pgxPool
+					db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
+				} else {
+					c.pool = nil
+					db, err = gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
+				}
 
-	// Ok.
-	c.db = db
+				if db != nil && err == nil {
+					break
+				}
+
+				time.Sleep(5 * time.Second)
+			}
+
+			if err != nil || db == nil {
+				return err
+			}
+		}
+
+		// Configure database logging.
+		//db.LogMode(false)
+		//db.SetLogger(log)
+
+		// Set database connection parameters.
+		if dbDriver != Postgres {
+			sqlDB, err := db.DB()
+			if err != nil {
+				return err
+			}
+			sqlDB.SetMaxOpenConns(c.DatabaseConns())
+			sqlDB.SetMaxIdleConns(c.DatabaseConnsIdle())
+			sqlDB.SetConnMaxLifetime(time.Hour)
+		}
+
+		// Check database server version.
+		if err = c.checkDb(db); err != nil {
+			if c.Unsafe() {
+				log.Error(err)
+			} else {
+				return err
+			}
+		}
+
+		if dbVersion := c.DatabaseVersion(); dbVersion != "" {
+			log.Debugf("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
+		}
+
+		// Ok.
+		c.db = db
+	}
 
 	return nil
 }
