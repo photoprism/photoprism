@@ -50,6 +50,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/service/hub"
@@ -622,6 +623,9 @@ func (c *Config) Shutdown() {
 
 	// Shutdown thumbnail library.
 	thumb.Shutdown()
+
+	// Close the subscriptions
+	event.SharedHub().Close()
 
 	// Close database connection.
 	if err := c.CloseDb(); err != nil {
