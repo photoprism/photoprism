@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
+	"syscall"
 	"time"
 
 	"gorm.io/gorm"
@@ -18,6 +20,7 @@ type TestDBMutex struct {
 	ID        uint      `gorm:"primaryKey;"`
 	CreateAt  time.Time `sql:"index:idx_testdbmutex_create_at"`
 	ProcessId int
+	Caller    string `gorm:"size:255"`
 }
 
 // Attempts to acquire a database controlled mutex.  Using the table primary key to prevent more than 1 insert succeeding.
@@ -28,7 +31,10 @@ func LockDBMutex(db *gorm.DB, log event.Logger, caller string) bool {
 	err := errors.New("so i am not nil")
 	counter := 0
 	for err != nil {
-		record := TestDBMutex{ID: 1, CreateAt: time.Now().UTC(), ProcessId: pid}
+		if len(caller) > 255 {
+			caller = caller[:255]
+		}
+		record := TestDBMutex{ID: 1, CreateAt: time.Now().UTC(), ProcessId: pid, Caller: caller}
 		if err = db.Create(&record).Error; err != nil {
 			counter += 1
 			LogMessage(db, fmt.Sprintf("%v LockDBMutex Failed Attempt %v", caller, counter))
@@ -36,6 +42,36 @@ func LockDBMutex(db *gorm.DB, log event.Logger, caller string) bool {
 				return false
 			}
 			time.Sleep(10 * time.Second)
+			existing := TestDBMutex{}
+			if dberr := db.Debug().First(&existing, 1); dberr.Error != nil {
+				LogMessage(db, fmt.Sprintf("Unable to First due to %s", dberr.Error))
+			} else {
+				if proc, err := os.FindProcess(existing.ProcessId); err == nil {
+					running := false
+					if runtime.GOOS == "windows" {
+						running = true
+						LogMessage(db, fmt.Sprintf("Process %d is running on windows", existing.ProcessId))
+					} else {
+						if err := proc.Signal(syscall.Signal(0)); err == nil {
+							running = true
+							LogMessage(db, fmt.Sprintf("Process %d is running on *nix", existing.ProcessId))
+						} else if err == os.ErrProcessDone {
+							running = false
+						} else {
+							LogMessage(db, fmt.Sprintf("Unable to Signal %d due to %s", existing.ProcessId, err.Error()))
+						}
+					}
+					if !running {
+						if err := db.Where("process_id = ?", existing.ProcessId).Delete(existing); err.Error != nil {
+							LogMessage(db, fmt.Sprintf("Unable to delete not running %d due to %s", existing.ProcessId, err.Error))
+						} else {
+							LogMessage(db, fmt.Sprintf("Cleaned up not running process id %d from DBMutex", existing.ProcessId))
+						}
+					}
+				} else {
+					LogMessage(db, fmt.Sprintf("Unable to FindProcess %d due to %s", existing.ProcessId, err.Error()))
+				}
+			}
 		}
 	}
 	return true
