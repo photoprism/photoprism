@@ -154,14 +154,14 @@ func TestIndex_MediaFile(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			target := cfg.SidecarPath() + "/mediarestoring.yml"
-			fs.Copy(fileNameResolved, target)
+			fs.Copy(fileNameResolved, target, true)
 		}
 
 		if fileNameResolved, err := fs.Resolve("testdata/photoprism.png"); err != nil {
 			t.Fatal(err)
 		} else {
 			target := cfg.OriginalsPath() + "/mediarestoring.png"
-			fs.Copy(fileNameResolved, target)
+			fs.Copy(fileNameResolved, target, true)
 		}
 
 		convert := NewConvert(cfg)

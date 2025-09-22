@@ -45,7 +45,7 @@ func TestDialectSQLite3(t *testing.T) {
 		_ = os.Remove(dumpName)
 		if err != nil {
 			t.Fatal(err)
-		} else if err = fs.Copy(testDbOriginal, dumpName); err != nil {
+		} else if err = fs.Copy(testDbOriginal, dumpName, true); err != nil {
 			t.Fatal(err)
 		}
 		defer os.Remove(dumpName)
@@ -143,7 +143,7 @@ func TestDialectSQLite3(t *testing.T) {
 		_ = os.Remove(dumpName)
 		if err != nil {
 			t.Fatal(err)
-		} else if err = fs.Copy(testDbOriginal, dumpName); err != nil {
+		} else if err = fs.Copy(testDbOriginal, dumpName, true); err != nil {
 			t.Fatal(err)
 		}
 		defer os.Remove(dumpName)

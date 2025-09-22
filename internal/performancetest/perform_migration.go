@@ -34,7 +34,7 @@ func sqliteMigration(original string, temp string, numberOfRecords int, skipSpee
 	_ = os.Remove(dumpName)
 	if err != nil {
 		b.Fatal(err)
-	} else if err = fs.Copy(testDbOriginal, dumpName); err != nil {
+	} else if err = fs.Copy(testDbOriginal, dumpName, true); err != nil {
 		b.Fatal(err)
 	}
 	defer os.Remove(dumpName)
