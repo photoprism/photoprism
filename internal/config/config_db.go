@@ -344,14 +344,18 @@ func (c *Config) Db() *gorm.DB {
 func (c *Config) CloseDb() error {
 	if c.db != nil {
 		sqldb, dberr := c.db.DB()
-		if dberr != nil {
-			sqldb.Close()
+		if dberr == nil {
+			log.Debug("config: closing database")
+			if err := sqldb.Close(); err != nil {
+				return err
+			}
 			c.db = nil
 			entity.SetDbProvider(nil)
 		} else {
 			return dberr
 		}
 		if c.pool != nil {
+			log.Debug("config: closing postgres pool")
 			c.pool.Close()
 		}
 	}
