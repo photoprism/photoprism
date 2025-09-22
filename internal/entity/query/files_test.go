@@ -1,6 +1,7 @@
 package query
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -131,6 +132,8 @@ func TestFilesByUID(t *testing.T) {
 			assert.Equal(t, 0, len(files))
 		case entity.MySQL:
 			assert.Error(t, err)
+		default:
+			t.Fatal(fmt.Sprintf("Unsupported dialect %s", entity.DbDialect()))
 		}
 	})
 
