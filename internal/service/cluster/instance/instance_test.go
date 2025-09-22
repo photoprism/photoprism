@@ -1,4 +1,4 @@
-package registry
+package instance
 
 import (
 	"os"
@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
-	caller := "internal/service/cluster/registry/registry_test.go/TestMain"
+	caller := "internal/service/cluster/instance/instance_test.go/TestMain"
 	dbc, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
