@@ -80,7 +80,7 @@ func TestGenerateUID(t *testing.T) {
 }
 
 func BenchmarkGenerateUID(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		GenerateUID('x')
 	}
 }
