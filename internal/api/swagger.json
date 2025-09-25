@@ -329,14 +329,14 @@
                 "advertiseUrl": {
                     "type": "string"
                 },
+                "clientId": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
                 "database": {
                     "$ref": "#/definitions/cluster.NodeDatabase"
-                },
-                "id": {
-                    "type": "string"
                 },
                 "labels": {
                     "additionalProperties": {
@@ -345,9 +345,11 @@
                     "type": "object"
                 },
                 "name": {
+                    "description": "NodeName",
                     "type": "string"
                 },
                 "role": {
+                    "description": "NodeRole",
                     "type": "string"
                 },
                 "siteUrl": {
@@ -355,12 +357,19 @@
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "uuid": {
+                    "description": "NodeUUID",
+                    "type": "string"
                 }
             },
             "type": "object"
         },
         "cluster.NodeDatabase": {
             "properties": {
+                "driver": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -375,6 +384,9 @@
         },
         "cluster.RegisterDatabase": {
             "properties": {
+                "driver": {
+                    "type": "string"
+                },
                 "dsn": {
                     "type": "string"
                 },
@@ -415,16 +427,20 @@
                 },
                 "secrets": {
                     "$ref": "#/definitions/cluster.RegisterSecrets"
+                },
+                "uuid": {
+                    "description": "ClusterUUID",
+                    "type": "string"
                 }
             },
             "type": "object"
         },
         "cluster.RegisterSecrets": {
             "properties": {
-                "nodeSecret": {
+                "clientSecret": {
                     "type": "string"
                 },
-                "secretRotatedAt": {
+                "rotatedAt": {
                     "type": "string"
                 }
             },
@@ -440,9 +456,6 @@
         },
         "cluster.SummaryResponse": {
             "properties": {
-                "UUID": {
-                    "type": "string"
-                },
                 "database": {
                     "$ref": "#/definitions/cluster.DatabaseInfo"
                 },
@@ -450,6 +463,10 @@
                     "type": "integer"
                 },
                 "time": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "description": "ClusterUUID",
                     "type": "string"
                 }
             },
@@ -6449,7 +6466,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (nodeName required; optional: nodeRole, labels, advertiseUrl, siteUrl, rotateDatabase, rotateSecret)",
+                        "description": "registration payload (nodeName required; optional: nodeRole, labels, advertiseUrl, siteUrl; to authorize UUID/name changes include clientId+clientSecret; rotation: rotateDatabase, rotateSecret)",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -6505,20 +6522,20 @@
                         }
                     }
                 },
-                "summary": "registers a node, provisions DB credentials, and issues nodeSecret",
+                "summary": "registers a node, provisions DB credentials, and issues clientSecret",
                 "tags": [
                     "Cluster"
                 ]
             }
         },
-        "/api/v1/cluster/nodes/{id}": {
+        "/api/v1/cluster/nodes/{uuid}": {
             "delete": {
                 "operationId": "ClusterDeleteNode",
                 "parameters": [
                     {
-                        "description": "node id",
+                        "description": "node uuid",
                         "in": "path",
-                        "name": "id",
+                        "name": "uuid",
                         "required": true,
                         "type": "string"
                     }
@@ -6558,7 +6575,7 @@
                         }
                     }
                 },
-                "summary": "delete node by id",
+                "summary": "delete node by uuid",
                 "tags": [
                     "Cluster"
                 ]
@@ -6567,9 +6584,9 @@
                 "operationId": "ClusterGetNode",
                 "parameters": [
                     {
-                        "description": "node id",
+                        "description": "node uuid",
                         "in": "path",
-                        "name": "id",
+                        "name": "uuid",
                         "required": true,
                         "type": "string"
                     }
@@ -6609,7 +6626,7 @@
                         }
                     }
                 },
-                "summary": "get node by id",
+                "summary": "get node by uuid",
                 "tags": [
                     "Cluster"
                 ]
@@ -6621,9 +6638,9 @@
                 "operationId": "ClusterUpdateNode",
                 "parameters": [
                     {
-                        "description": "node id",
+                        "description": "node uuid",
                         "in": "path",
-                        "name": "id",
+                        "name": "uuid",
                         "required": true,
                         "type": "string"
                     },

@@ -173,6 +173,28 @@ Conventions & Rules of Thumb
 - Never log secrets; compare tokens constant‑time.
 - Don’t import Portal internals from cluster instance/service bootstraps; use HTTP.
 - Prefer small, hermetic unit tests; isolate filesystem paths with `t.TempDir()` and env like `PHOTOPRISM_STORAGE_PATH`.
+- Cluster nodes: identify by UUID v7 (internally stored as `NodeUUID`; exposed as `uuid` in API/CLI). The OAuth client ID (`NodeClientID`, exposed as `clientId`) is for OAuth only. Registry lookups and CLI commands accept uuid, clientId, or DNS‑label name (priority in that order).
+
+Filesystem Permissions & io/fs Aliasing
+- Use `github.com/photoprism/photoprism/pkg/fs` permission variables when creating files/dirs:
+  - `fs.ModeDir` (0o755 with umask), `fs.ModeFile` (0o644 with umask), `fs.ModeConfigFile` (0o664), `fs.ModeSecretFile` (0o600), `fs.ModeBackupFile` (0o600).
+- Do not use stdlib `io/fs` mode bits as permission arguments. When importing stdlib `io/fs`, alias it (`iofs`/`gofs`) to avoid `fs.*` collisions with our package.
+- Prefer `filepath.Join` for filesystem paths across platforms; use `path.Join` for URLs only.
+
+Cluster Registry & Provisioner Cheatsheet
+- UUID‑first everywhere: API paths `{uuid}`, Registry `Get/Delete/RotateSecret` by UUID; explicit `FindByClientID` exists for OAuth.
+- Node/DTO fields: `uuid` required; `clientId` optional; database metadata includes `driver`.
+- Provisioner naming (no slugs):
+  - database: `photoprism_d<hmac11>`
+  - username: `photoprism_u<hmac11>`
+  HMAC is base32 of ClusterUUID+NodeUUID; drivers currently `mysql|mariadb`.
+- DSN builder: `BuildDSN(driver, host, port, user, pass, name)`; warns and falls back to MySQL format for unsupported drivers.
+- Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful).
+- Public API and internal registry DTOs use normalized field names:
+  - `database` (not `db`) with `name`, `user`, `driver`, `rotatedAt`.
+  - Node-level rotation timestamps use `rotatedAt`.
+  - Registration returns `secrets.clientSecret`; the CLI persists it under config `NodeClientSecret`.
+  - Admin responses may include `advertiseUrl` and `database`; non-admin responses are redacted by default.
 
 Frequently Touched Files (by topic)
 - CLI wiring: `cmd/photoprism/photoprism.go`, `internal/commands/commands.go`

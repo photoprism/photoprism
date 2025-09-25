@@ -34,7 +34,6 @@ func TestAccounts(t *testing.T) {
 			assert.IsType(t, entity.Service{}, r)
 		}
 	})
-
 	t.Run("find accounts count 1001", func(t *testing.T) {
 		f := form.SearchServices{
 			Query:  "",

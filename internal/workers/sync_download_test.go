@@ -16,7 +16,7 @@ func TestSync_download(t *testing.T) {
 	t.Run("NotFound", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		t.Logf("database-dsn: %s", conf.DatabaseDsn())
+		t.Logf("database-dsn: %s", conf.DatabaseDSN())
 
 		worker := NewSync(conf)
 
@@ -34,7 +34,7 @@ func TestSync_download(t *testing.T) {
 		conf := config.TestConfig()
 		conf.Options().FilesQuota = 1
 
-		t.Logf("database-dsn: %s", conf.DatabaseDsn())
+		t.Logf("database-dsn: %s", conf.DatabaseDSN())
 
 		worker := NewSync(conf)
 

@@ -26,7 +26,6 @@ func TestUpdateUser(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, "PUT", reqUrl, "{Email:\"admin@example.com\",Details:{Location:\"WebStorm\"}}", sessId)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
 	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		adminUid := entity.Admin.UserUID
@@ -35,7 +34,6 @@ func TestUpdateUser(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", reqUrl, "{foo:123}")
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
-
 	t.Run("Unauthorized", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -55,7 +53,6 @@ func TestUpdateUser(t *testing.T) {
 			assert.Equal(t, http.StatusUnauthorized, r.Code)
 		}
 	})
-
 	t.Run("AliceChangeOwn", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -78,7 +75,6 @@ func TestUpdateUser(t *testing.T) {
 			assert.Contains(t, r.Body.String(), "\"UploadPath\":\"uploads-alice\"")
 		}
 	})
-
 	t.Run("AliceChangeBob", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -102,7 +98,6 @@ func TestUpdateUser(t *testing.T) {
 			assert.Contains(t, r.Body.String(), "\"UploadPath\":\"uploads-bob\"")
 		}
 	})
-
 	t.Run("BobChangeOwn", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -123,7 +118,6 @@ func TestUpdateUser(t *testing.T) {
 			assert.Contains(t, r.Body.String(), "\"DisplayName\":\"Bobo\"")
 		}
 	})
-
 	t.Run("UserNotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)

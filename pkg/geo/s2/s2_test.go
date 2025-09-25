@@ -14,14 +14,12 @@ func TestToken(t *testing.T) {
 
 		assert.True(t, strings.HasPrefix(token, expected))
 	})
-
 	t.Run("lat_overflow", func(t *testing.T) {
 		token := Token(548.56344833333333, 8.996878333333333)
 		expected := ""
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("lng_overflow", func(t *testing.T) {
 		token := Token(48.56344833333333, 258.996878333333333)
 		expected := ""
@@ -37,63 +35,54 @@ func TestTokenLevel(t *testing.T) {
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("level_30_diff", func(t *testing.T) {
 		plusCode := TokenLevel(48.56344839999999, 8.996878339999999, 30)
 		expected := "4799e370ca54c8b7"
 
 		assert.Equal(t, expected, plusCode)
 	})
-
 	t.Run("level_21", func(t *testing.T) {
 		plusCode := TokenLevel(48.56344839999999, 8.996878339999999, 21)
 		expected := "4799e370ca54"
 
 		assert.Equal(t, expected, plusCode)
 	})
-
 	t.Run("level_18", func(t *testing.T) {
 		token := TokenLevel(48.56344833333333, 8.996878333333333, 18)
 		expected := "4799e370cb"
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("level_18_diff", func(t *testing.T) {
 		token := TokenLevel(48.56344839999999, 8.996878339999999, 18)
 		expected := "4799e370cb"
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("level_15", func(t *testing.T) {
 		plusCode := TokenLevel(48.56344833333333, 8.996878333333333, 15)
 		expected := "4799e370c"
 
 		assert.Equal(t, expected, plusCode)
 	})
-
 	t.Run("level_10", func(t *testing.T) {
 		token := TokenLevel(48.56344833333333, 8.996878333333333, 10)
 		expected := "4799e3"
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("lat_overflow", func(t *testing.T) {
 		token := TokenLevel(548.56344833333333, 8.996878333333333, 30)
 		expected := ""
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("lng_overflow", func(t *testing.T) {
 		token := TokenLevel(48.56344833333333, 258.996878333333333, 30)
 		expected := ""
 
 		assert.Equal(t, expected, token)
 	})
-
 	t.Run("lat & long 0.0", func(t *testing.T) {
 		token := TokenLevel(0.0, 0.0, 30)
 		expected := ""
@@ -180,7 +169,6 @@ func TestLatLng(t *testing.T) {
 		assert.Equal(t, 48.5634484, lat)
 		assert.Equal(t, 8.9968783, lng)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		lat, lng := LatLng("4799e370ca5q")
 		assert.Equal(t, 0.0, lat)

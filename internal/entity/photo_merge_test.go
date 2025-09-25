@@ -47,7 +47,6 @@ func TestPhoto_IdenticalIdentical(t *testing.T) {
 		t.Logf("result: %#v", result)
 		assert.Equal(t, 1, len(result))
 	})
-
 	t.Run("unstacked photo", func(t *testing.T) {
 		photo := &Photo{PhotoStack: IsUnstacked, PhotoName: "testName"}
 

@@ -38,7 +38,6 @@ func TestLabels(t *testing.T) {
 			}
 		}
 	})
-
 	t.Run("search for cow", func(t *testing.T) {
 		query := form.NewLabelSearch("Q:cow")
 		query.Count = 1005
@@ -93,7 +92,6 @@ func TestLabels(t *testing.T) {
 			}
 		}
 	})
-
 	t.Run("search with empty query", func(t *testing.T) {
 		query := form.NewLabelSearch("")
 		result, err := Labels(query)
@@ -105,7 +103,6 @@ func TestLabels(t *testing.T) {
 		t.Log(result)
 		assert.LessOrEqual(t, 3, len(result))
 	})
-
 	t.Run("search with invalid query string", func(t *testing.T) {
 		query := form.NewLabelSearch("xxx:bla")
 		result, err := Labels(query)
@@ -113,7 +110,6 @@ func TestLabels(t *testing.T) {
 		assert.Error(t, err, "unknown filter")
 		assert.Empty(t, result)
 	})
-
 	t.Run("search for ID", func(t *testing.T) {
 		f := form.SearchLabels{
 			Query:    "",
@@ -135,7 +131,6 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, "cake", result[0].LabelSlug)
 	})
-
 	t.Run("search for label landscape", func(t *testing.T) {
 		f := form.SearchLabels{
 			Query: "landscape",

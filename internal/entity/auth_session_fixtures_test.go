@@ -14,7 +14,6 @@ func TestSessionMap_Get(t *testing.T) {
 		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", r.ID)
 		assert.IsType(t, Session{}, r)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		r := SessionFixtures.Get("xxx")
 		assert.Equal(t, "", r.UserName)
@@ -31,7 +30,6 @@ func TestSessionMap_Pointer(t *testing.T) {
 		assert.Equal(t, "alice", r.UserName)
 		assert.IsType(t, &Session{}, r)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		r := SessionFixtures.Pointer("xxx")
 		assert.Equal(t, "", r.UserName)

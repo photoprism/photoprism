@@ -531,7 +531,6 @@ func TestMediaFile_RelName(t *testing.T) {
 		filename := mediaFile.RelName(conf.AssetsPath())
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
-
 	t.Run("directory without end slash", func(t *testing.T) {
 		filename := mediaFile.RelName(conf.AssetsPath())
 		assert.Equal(t, "examples/tree_white.jpg", filename)
@@ -1781,7 +1780,6 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 
 		assert.EqualError(t, decodeErr, ".docx is not a valid media file")
 	})
-
 	t.Run("clock_purple.jpg", func(t *testing.T) {
 		cfg := config.TestConfig()
 
@@ -1795,7 +1793,6 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		cfg := config.TestConfig()
 
@@ -1809,7 +1806,6 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("example.png", func(t *testing.T) {
 		cfg := config.TestConfig()
 
@@ -1826,7 +1822,6 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 		assert.Equal(t, 100, mediaFile.Width())
 		assert.Equal(t, 67, mediaFile.Height())
 	})
-
 	t.Run("example.gif", func(t *testing.T) {
 		cfg := config.TestConfig()
 
@@ -1843,7 +1838,6 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 		assert.Equal(t, 100, mediaFile.Width())
 		assert.Equal(t, 67, mediaFile.Height())
 	})
-
 	t.Run("blue-go-video.mp4", func(t *testing.T) {
 		cfg := config.TestConfig()
 
@@ -2418,7 +2412,6 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		assert.Equal(t, "beach_sand.jpg", name)
 		mediaFile.SetFileName(initialName)
 	})
-
 	t.Run("beach_sand unknown root", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/beach_sand.jpg")
 

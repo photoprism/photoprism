@@ -194,12 +194,10 @@ func TestFile_Missing(t *testing.T) {
 		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: deletedAt}
 		assert.Equal(t, true, file.Missing())
 	})
-
 	t.Run("missing", func(t *testing.T) {
 		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: gorm.DeletedAt{Valid: false}}
 		assert.Equal(t, true, file.Missing())
 	})
-
 	t.Run("not_missing", func(t *testing.T) {
 		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: gorm.DeletedAt{Valid: false}}
 		assert.Equal(t, false, file.Missing())

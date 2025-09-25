@@ -20,7 +20,6 @@ func TestLabel_NewLocationLabel(t *testing.T) {
 		assert.Equal(t, 24, LocLabel.Uncertainty)
 		assert.Equal(t, "locationtest", LocLabel.Name)
 	})
-
 	t.Run("locationtest - minus", func(t *testing.T) {
 		LocLabel := LocationLabel("locationtest - minus", 80)
 		t.Log(LocLabel)
@@ -28,7 +27,6 @@ func TestLabel_NewLocationLabel(t *testing.T) {
 		assert.Equal(t, 80, LocLabel.Uncertainty)
 		assert.Equal(t, "locationtest", LocLabel.Name)
 	})
-
 	t.Run("label as name", func(t *testing.T) {
 		LocLabel := LocationLabel("barracouta", 80)
 		t.Log(LocLabel)
@@ -45,7 +43,6 @@ func TestLabel_Title(t *testing.T) {
 		LocLabel := LocationLabel("locationtest123", 23)
 		assert.Equal(t, "Locationtest123", LocLabel.Title())
 	})
-
 	t.Run("Berlin/Neukölln", func(t *testing.T) {
 		LocLabel := LocationLabel("berlin/neukölln_hasenheide", 23)
 		assert.Equal(t, "Berlin / Neukölln Hasenheide", LocLabel.Title())

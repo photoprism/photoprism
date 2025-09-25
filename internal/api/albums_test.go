@@ -66,14 +66,12 @@ func TestUpdateAlbum(t *testing.T) {
 		assert.Equal(t, "false", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbum(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums"+uid, `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbum(router)

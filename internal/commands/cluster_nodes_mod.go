@@ -44,9 +44,14 @@ func clusterNodesModAction(ctx *cli.Context) error {
 			return cli.Exit(err, 1)
 		}
 
-		n, getErr := r.Get(key)
-		if getErr != nil {
-			name := clean.TypeLowerDash(key)
+		// Resolve by NodeUUID first, then by client UID, then by normalized name.
+		var n *reg.Node
+		var getErr error
+		if n, getErr = r.FindByNodeUUID(key); getErr != nil || n == nil {
+			n, getErr = r.FindByClientID(key)
+		}
+		if getErr != nil || n == nil {
+			name := clean.DNSLabel(key)
 			if name == "" {
 				return cli.Exit(fmt.Errorf("invalid node identifier"), 2)
 			}

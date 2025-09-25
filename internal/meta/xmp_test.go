@@ -20,7 +20,6 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Tulpen am See", data.Caption)
 		assert.Equal(t, Keywords{"blume", "krokus", "schöne", "wiese"}, data.Keywords)
 	})
-
 	t.Run("photoshop", func(t *testing.T) {
 		data, err := XMP("testdata/photoshop.xmp")
 
@@ -37,7 +36,6 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "ELE-L29", data.CameraModel)
 		assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
 	})
-
 	t.Run("canon_eos_6d", func(t *testing.T) {
 		data, err := XMP("testdata/canon_eos_6d.xmp")
 
@@ -53,7 +51,6 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
 		assert.Equal(t, "EF24-105mm f/4L IS USM", data.LensModel)
 	})
-
 	t.Run("iphone_7", func(t *testing.T) {
 		data, err := XMP("testdata/iphone_7.xmp")
 
@@ -70,7 +67,6 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
 		assert.Equal(t, false, data.Favorite)
 	})
-
 	t.Run("fstop", func(t *testing.T) {
 		data, err := XMP("testdata/fstop-favorite.xmp")
 
@@ -80,7 +76,6 @@ func TestXMP(t *testing.T) {
 
 		assert.Equal(t, true, data.Favorite)
 	})
-
 	t.Run("DateHeic", func(t *testing.T) {
 		data, err := XMP("testdata/date.heic.xmp")
 

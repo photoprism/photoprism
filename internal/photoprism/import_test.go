@@ -50,7 +50,6 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 		assert.Equal(t, cfg.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", fileName)
 	})
-
 	t.Run("WithBasePath", func(t *testing.T) {
 		fileName, err := imp.DestinationFilename(rawFile, rawFile, "users/guest")
 

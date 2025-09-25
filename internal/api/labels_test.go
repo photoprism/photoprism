@@ -20,14 +20,12 @@ func TestUpdateLabel(t *testing.T) {
 		assert.Equal(t, "updated01", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateLabel(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/ls6sg6b1wowuy3c7", `{"Name": 123, "Priority": 4, "Uncertainty": 80}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateLabel(router)
@@ -104,7 +102,6 @@ func TestDislikeLabel(t *testing.T) {
 		val2 := gjson.Get(r3.Body.String(), `#(Slug=="landscape").Favorite`)
 		assert.Equal(t, "false", val2.String())
 	})
-
 	t.Run("dislike existing label with prio < 0", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikeLabel(router)

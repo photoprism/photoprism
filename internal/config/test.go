@@ -120,7 +120,7 @@ func NewTestOptions(pkg string) *Options {
 		BackupRetain:    DefaultBackupRetain,
 		BackupSchedule:  DefaultBackupSchedule,
 		DatabaseDriver:  driver,
-		DatabaseDsn:     dsn,
+		DatabaseDSN:     dsn,
 		AdminPassword:   "photoprism",
 		OriginalsLimit:  66,
 		ResolutionLimit: 33,
@@ -145,7 +145,7 @@ func NewTestOptionsError() *Options {
 		ImportPath:     dataPath + "/import",
 		TempPath:       dataPath + "/temp",
 		DatabaseDriver: SQLite3,
-		DatabaseDsn:    ".test-error.db",
+		DatabaseDSN:    ".test-error.db",
 	}
 
 	return c

@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -111,9 +110,13 @@ func infoFromURL(
 	rawURL string,
 	options Options,
 ) (info Info, rawJSON []byte, err error) {
-	cmd := exec.CommandContext(
-		ctx,
-		FindYtDlpBin(),
+	// Test stub: allow bypassing external yt-dlp via env, useful on noexec mounts.
+	if os.Getenv("YTDLP_FAKE") == "1" {
+		info = Info{ID: "abc", Title: "Test", URL: rawURL, Type: "video"}
+		rawJSON = info.JSON()
+		return info, rawJSON, nil
+	}
+	cmd := ytDlpCommand(ctx, []string{
 		// see comment below about ignoring errors for playlists
 		"--ignore-errors",
 		// TODO: deprecated in yt-dlp?
@@ -127,7 +130,7 @@ func infoFromURL(
 		"--batch-file", "-",
 		// dump info json
 		"--dump-single-json",
-	)
+	})
 
 	if options.ProxyUrl != "" {
 		cmd.Args = append(cmd.Args, "--proxy", options.ProxyUrl)

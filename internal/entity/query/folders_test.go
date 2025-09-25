@@ -41,7 +41,6 @@ func TestFoldersByPath(t *testing.T) {
 
 		assert.Len(t, folders, 1)
 	})
-
 	t.Run("subdirectory", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "directory", false)
 

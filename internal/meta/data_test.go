@@ -27,7 +27,6 @@ func TestData_AspectRatio(t *testing.T) {
 
 		assert.Equal(t, float32(0.83), data.AspectRatio())
 	})
-
 	t.Run("invalid", func(t *testing.T) {
 		data := Data{
 			DocumentID:   "123",
@@ -58,7 +57,6 @@ func TestData_Portrait(t *testing.T) {
 
 		assert.Equal(t, true, data.Portrait())
 	})
-
 	t.Run("false", func(t *testing.T) {
 		data := Data{
 			Width:  800,
@@ -88,7 +86,6 @@ func TestData_HasDocumentID(t *testing.T) {
 
 		assert.Equal(t, true, data.HasDocumentID())
 	})
-
 	t.Run("asdfg12345hjyt6", func(t *testing.T) {
 		data := Data{
 			DocumentID: "asdfg12345hjyt6",
@@ -96,7 +93,6 @@ func TestData_HasDocumentID(t *testing.T) {
 
 		assert.Equal(t, false, data.HasDocumentID())
 	})
-
 	t.Run("asdfg12345hj", func(t *testing.T) {
 		data := Data{
 			DocumentID: "asdfg12345hj",
@@ -114,7 +110,6 @@ func TestData_HasInstanceID(t *testing.T) {
 
 		assert.Equal(t, true, data.HasInstanceID())
 	})
-
 	t.Run("false", func(t *testing.T) {
 		data := Data{
 			InstanceID: "asdfg12345hj",
@@ -134,7 +129,6 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 
 		assert.Equal(t, true, data.HasTimeAndPlace())
 	})
-
 	t.Run("false", func(t *testing.T) {
 		data := Data{
 			Lat:     1.334,
@@ -153,7 +147,6 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 
 		assert.Equal(t, false, data.HasTimeAndPlace())
 	})
-
 	t.Run("false", func(t *testing.T) {
 		data := Data{
 			Lat: 1.334,

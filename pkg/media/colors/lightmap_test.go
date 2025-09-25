@@ -24,7 +24,6 @@ func TestLightMap_Diff(t *testing.T) {
 			t.Errorf("result should be 845: %d", result)
 		}
 	})
-
 	t.Run("empty", func(t *testing.T) {
 		var lum []Luminance
 		lMap := LightMap(lum)
@@ -34,7 +33,6 @@ func TestLightMap_Diff(t *testing.T) {
 			t.Errorf("result should be 0: %d", result)
 		}
 	})
-
 	t.Run("one", func(t *testing.T) {
 		lum := []Luminance{0}
 		lMap := LightMap(lum)
@@ -44,7 +42,6 @@ func TestLightMap_Diff(t *testing.T) {
 			t.Errorf("result should be 0: %d", result)
 		}
 	})
-
 	t.Run("same", func(t *testing.T) {
 		lum := []Luminance{1, 1, 1, 1, 1, 1, 1, 1, 1}
 		lMap := LightMap(lum)
@@ -54,7 +51,6 @@ func TestLightMap_Diff(t *testing.T) {
 			t.Errorf("result should be 1023: %d", result)
 		}
 	})
-
 	t.Run("similar", func(t *testing.T) {
 		lum := []Luminance{1, 1, 1, 1, 1, 1, 1, 1, 2}
 		lMap := LightMap(lum)
@@ -64,7 +60,6 @@ func TestLightMap_Diff(t *testing.T) {
 			t.Errorf("result should be 1023: %d", result)
 		}
 	})
-
 	t.Run("happy", func(t *testing.T) {
 		m1 := LightMap{8, 13, 7, 2, 2, 3, 6, 3, 4}
 		d1 := m1.Diff()

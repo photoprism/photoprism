@@ -48,7 +48,6 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 		UnscopedDb().Delete(newFile)
 		UnscopedDb().Delete(newService)
 	})
-
 	t.Run("existing", func(t *testing.T) {
 		fileSync := NewFileSync(1000000, "NameForRemote")                 // Point at a real service
 		fileSync.FileID = &FileFixtures.Pointer("exampleFileName.jpg").ID // Add a pointer to a real file

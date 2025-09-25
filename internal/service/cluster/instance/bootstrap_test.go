@@ -14,6 +14,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestInitConfig_NoPortal_NoOp(t *testing.T) {
@@ -34,9 +36,18 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			resp := cluster.RegisterResponse{
-				Node:     cluster.Node{Name: "pp-node-01"},
-				Secrets:  &cluster.RegisterSecrets{NodeSecret: "SECRET"},
-				Database: cluster.RegisterDatabase{Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?charset=utf8mb4&parseTime=true"},
+				Node:    cluster.Node{Name: "pp-node-01"},
+				UUID:    rnd.UUID(),
+				Secrets: &cluster.RegisterSecrets{ClientSecret: "SECRET"},
+				Database: cluster.RegisterDatabase{
+					Driver:   config.MySQL,
+					Host:     "db.local",
+					Port:     3306,
+					Name:     "pp_db",
+					User:     "pp_user",
+					Password: "pp_pw",
+					DSN:      "pp_user:pp_pw@tcp(db.local:3306)/pp_db?charset=utf8mb4&parseTime=true",
+				},
 			}
 			_ = json.NewEncoder(w).Encode(resp)
 		case "/api/v1/cluster/theme":
@@ -54,7 +65,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	c.Options().JoinToken = "t0k3n"
 	// Gate rotate=true: driver mysql and no DSN/fields.
 	c.Options().DatabaseDriver = config.MySQL
-	c.Options().DatabaseDsn = ""
+	c.Options().DatabaseDSN = ""
 	c.Options().DatabaseName = ""
 	c.Options().DatabaseUser = ""
 	c.Options().DatabasePassword = ""
@@ -63,9 +74,9 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.NoError(t, InitConfig(c))
 
 	// Options should be reloaded; check values.
-	assert.Equal(t, "SECRET", c.NodeSecret())
+	assert.Equal(t, "SECRET", c.NodeClientSecret())
 	// DSN branch should be preferred and persisted.
-	assert.Contains(t, c.Options().DatabaseDsn, "@tcp(db.local:3306)/pp_db")
+	assert.Contains(t, c.Options().DatabaseDSN, "@tcp(db.local:3306)/pp_db")
 	assert.Equal(t, config.MySQL, c.Options().DatabaseDriver)
 }
 
@@ -83,8 +94,8 @@ func TestThemeInstall_Missing(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
 			w.Header().Set("Content-Type", "application/json")
-			// Return NodeID + NodeSecret so bootstrap can request OAuth token
-			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{Node: cluster.Node{ID: "cid123", Name: "pp-node-01"}, Secrets: &cluster.RegisterSecrets{NodeSecret: "s3cr3t"}})
+			// Return NodeClientID + NodeClientSecret so bootstrap can request OAuth token
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{UUID: rnd.UUID(), Node: cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"}, Secrets: &cluster.RegisterSecrets{ClientSecret: "s3cr3t"}})
 		case "/api/v1/oauth/token":
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "token_type": "Bearer"})
@@ -129,7 +140,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 			w.WriteHeader(http.StatusCreated)
 			resp := cluster.RegisterResponse{
 				Node:     cluster.Node{Name: "pp-node-01"},
-				Secrets:  &cluster.RegisterSecrets{NodeSecret: "SECRET"},
+				Secrets:  &cluster.RegisterSecrets{ClientSecret: "SECRET"},
 				Database: cluster.RegisterDatabase{Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?charset=utf8mb4&parseTime=true"},
 			}
 			_ = json.NewEncoder(w).Encode(resp)
@@ -144,16 +155,16 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = "t0k3n"
 	// Remember original DSN so we can ensure it is not changed.
-	origDSN := c.Options().DatabaseDsn
+	origDSN := c.Options().DatabaseDSN
 	t.Cleanup(func() { _ = os.Remove(origDSN) })
 
 	// Run bootstrap.
 	assert.NoError(t, InitConfig(c))
 
-	// NodeSecret should persist, but DB should remain SQLite (no DSN update).
-	assert.Equal(t, "SECRET", c.NodeSecret())
+	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
+	assert.Equal(t, "SECRET", c.NodeClientSecret())
 	assert.Equal(t, config.SQLite3, c.DatabaseDriver())
-	assert.Equal(t, origDSN, c.Options().DatabaseDsn)
+	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 }
 
 func TestRegister_404_NoRetry(t *testing.T) {
@@ -206,7 +217,7 @@ func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
 	assert.NoError(t, err)
 	defer func() { _ = os.RemoveAll(tempTheme) }()
 	c.SetThemePath(tempTheme)
-	assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("// app\n"), 0o644))
+	assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("// app\n"), fs.ModeFile))
 
 	assert.NoError(t, InitConfig(c))
 	// Should have skipped request because app.js already exists.

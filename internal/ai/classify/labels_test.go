@@ -21,7 +21,6 @@ func TestLabel_AppendLabel(t *testing.T) {
 		assert.Equal(t, "cat", labelsNew[0].Name)
 		assert.Equal(t, "cow", labelsNew[2].Name)
 	})
-
 	t.Run("labelWithoutName", func(t *testing.T) {
 		assert.Equal(t, 2, labels.Len())
 		cow := Label{Name: "", Source: "location", Uncertainty: 80, Priority: 5}
@@ -39,7 +38,6 @@ func TestLabels_Title(t *testing.T) {
 
 		assert.Equal(t, "cat", labels.Title("fallback"))
 	})
-
 	t.Run("second", func(t *testing.T) {
 		cat := Label{Name: "cat", Source: "location", Uncertainty: 61, Priority: 5}
 		dog := Label{Name: "dog", Source: "location", Uncertainty: 10, Priority: 4}
@@ -47,7 +45,6 @@ func TestLabels_Title(t *testing.T) {
 
 		assert.Equal(t, "dog", labels.Title("fallback"))
 	})
-
 	t.Run("fallback", func(t *testing.T) {
 		cat := Label{Name: "cat", Source: "location", Uncertainty: 80, Priority: 5}
 		dog := Label{Name: "dog", Source: "location", Uncertainty: 80, Priority: 4}
@@ -55,13 +52,11 @@ func TestLabels_Title(t *testing.T) {
 
 		assert.Equal(t, "fallback", labels.Title("fallback"))
 	})
-
 	t.Run("empty labels", func(t *testing.T) {
 		labels := Labels{}
 
 		assert.Equal(t, "", labels.Title(""))
 	})
-
 	t.Run("label priority < 0", func(t *testing.T) {
 		cat := Label{Name: "cat", Source: "location", Uncertainty: 59, Priority: -1}
 		dog := Label{Name: "dog", Source: "location", Uncertainty: 10, Priority: -1}
@@ -69,7 +64,6 @@ func TestLabels_Title(t *testing.T) {
 
 		assert.Equal(t, "fallback", labels.Title("fallback"))
 	})
-
 	t.Run("label priority = 0", func(t *testing.T) {
 		cat := Label{Name: "cat", Source: "location", Uncertainty: 59, Priority: 0}
 		dog := Label{Name: "dog", Source: "location", Uncertainty: 62, Priority: 0}

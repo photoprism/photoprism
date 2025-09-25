@@ -82,7 +82,6 @@ func TestGeo(t *testing.T) {
 			assert.LessOrEqual(t, 4, len(result))
 		}
 	})
-
 	t.Run("search for bridge", func(t *testing.T) {
 		query := form.NewSearchPhotosGeo("q:bridge Before:3006-01-02")
 
@@ -101,7 +100,6 @@ func TestGeo(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(result))
 
 	})
-
 	t.Run("search for date range", func(t *testing.T) {
 		query := form.NewSearchPhotosGeo("After:2014-12-02 Before:3006-01-02")
 
@@ -120,7 +118,6 @@ func TestGeo(t *testing.T) {
 
 		assert.Equal(t, "Reunion", result[0].PhotoTitle)
 	})
-
 	t.Run("search for review true, quality 0", func(t *testing.T) {
 		f := form.SearchPhotosGeo{
 			Query:    "",
@@ -148,7 +145,6 @@ func TestGeo(t *testing.T) {
 			assert.Equal(t, "1000017", result[0].ID)
 		}
 	})
-
 	t.Run("search for review false, quality > 0", func(t *testing.T) {
 		f := form.SearchPhotosGeo{
 			Query:    "",

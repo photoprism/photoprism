@@ -782,7 +782,6 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		r := result1.ShareBase(0)
 		assert.Contains(t, r, "20151111-090718-uid123")
 	})
-
 	t.Run("SeqGreater0", func(t *testing.T) {
 		result1 := Photo{
 			ID:               111111,

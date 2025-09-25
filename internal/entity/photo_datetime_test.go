@@ -351,7 +351,6 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		assert.Equal(t, takenAt, m.TakenAt)
 		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
 	})
-
 	t.Run("Europe/Berlin", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
 
@@ -370,7 +369,6 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
 		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
 	})
-
 	t.Run("America/New_York", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
 		m.TimeZone = "Europe/Berlin"
@@ -390,7 +388,6 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		assert.Equal(t, m.GetTakenAt(), m.TakenAt)
 		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
 	})
-
 	t.Run("manual", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
 		m.TimeZone = "Europe/Berlin"

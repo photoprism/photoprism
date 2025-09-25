@@ -105,14 +105,12 @@ func TestUpdateSubject(t *testing.T) {
 		assert.Equal(t, "Updated Name", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateSubject(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Name": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateSubject(router)

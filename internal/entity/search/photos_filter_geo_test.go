@@ -51,7 +51,6 @@ func TestPhotosQueryGeo(t *testing.T) {
 			assert.Equal(t, "zz", r.CellID)
 		}
 	})
-
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 

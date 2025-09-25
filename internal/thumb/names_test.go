@@ -19,7 +19,6 @@ func TestFind(t *testing.T) {
 		assert.Equal(t, 1920, size.Width)
 		assert.Equal(t, 1200, size.Height)
 	})
-
 	t.Run("1900", func(t *testing.T) {
 		name, size := Find(1900)
 		assert.Equal(t, Fit1280, name)

@@ -156,7 +156,6 @@ func TestFileByPhotoUID(t *testing.T) {
 		}
 		assert.Equal(t, "Germany/bridge.jpg", file.FileName)
 	})
-
 	t.Run("no files found", func(t *testing.T) {
 		file, err := FileByPhotoUID("111")
 
@@ -174,7 +173,6 @@ func TestVideoByPhotoUID(t *testing.T) {
 		}
 		assert.Equal(t, "1990/04/bridge2.mp4", file.FileName)
 	})
-
 	t.Run("no files found", func(t *testing.T) {
 		file, err := VideoByPhotoUID("111")
 
@@ -193,7 +191,6 @@ func TestFileByUID(t *testing.T) {
 
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
-
 	t.Run("no files found", func(t *testing.T) {
 		file, err := FileByUID("111")
 
@@ -215,7 +212,6 @@ func TestFileByHash(t *testing.T) {
 		}
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
-
 	t.Run("no files found", func(t *testing.T) {
 		file, err := FileByHash("111")
 

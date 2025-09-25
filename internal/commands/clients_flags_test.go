@@ -21,7 +21,6 @@ func TestClientRoleFlagUsage_IncludesNoneAlias(t *testing.T) {
 		}
 		assert.Contains(t, roleFlag.Usage, "none")
 	})
-
 	t.Run("ModCommand role flag includes none", func(t *testing.T) {
 		var roleFlag *cli.StringFlag
 		for _, f := range ClientsModCommand.Flags {

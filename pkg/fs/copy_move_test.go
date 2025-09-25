@@ -13,7 +13,7 @@ func TestCopy_NewDestination_Succeeds(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "sub", "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("hello"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("hello"), ModeFile))
 
 	err := Copy(src, dst, false)
 	assert.NoError(t, err)
@@ -26,8 +26,8 @@ func TestCopy_ExistingNonEmpty_NoForce_Error(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("short"), 0o644))
-	assert.NoError(t, os.WriteFile(dst, []byte("existing"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("short"), ModeFile))
+	assert.NoError(t, os.WriteFile(dst, []byte("existing"), ModeFile))
 
 	err := Copy(src, dst, false)
 	assert.Error(t, err)
@@ -40,9 +40,9 @@ func TestCopy_ExistingNonEmpty_Force_TruncatesAndOverwrites(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("short"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("short"), ModeFile))
 	// Destination contains longer content which must be truncated when force=true
-	assert.NoError(t, os.WriteFile(dst, []byte("existing-long"), 0o644))
+	assert.NoError(t, os.WriteFile(dst, []byte("existing-long"), ModeFile))
 
 	err := Copy(src, dst, true)
 	assert.NoError(t, err)
@@ -55,8 +55,8 @@ func TestCopy_ExistingEmpty_NoForce_AllowsReplace(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("data"), 0o644))
-	assert.NoError(t, os.WriteFile(dst, []byte{}, 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("data"), ModeFile))
+	assert.NoError(t, os.WriteFile(dst, []byte{}, ModeFile))
 
 	err := Copy(src, dst, false)
 	assert.NoError(t, err)
@@ -67,7 +67,7 @@ func TestCopy_ExistingEmpty_NoForce_AllowsReplace(t *testing.T) {
 func TestCopy_SamePath_Error(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "file.txt")
-	assert.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("x"), ModeFile))
 	err := Copy(src, src, true)
 	assert.Error(t, err)
 }
@@ -75,7 +75,7 @@ func TestCopy_SamePath_Error(t *testing.T) {
 func TestCopy_InvalidPaths_Error(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "file.txt")
-	assert.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("x"), ModeFile))
 	assert.Error(t, Copy("", filepath.Join(dir, "a.txt"), false))
 	assert.Error(t, Copy(src, "", false))
 	assert.Error(t, Copy(src, ".", false))
@@ -86,7 +86,7 @@ func TestMove_NewDestination_Succeeds(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "sub", "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("hello"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("hello"), ModeFile))
 
 	err := Move(src, dst, false)
 	assert.NoError(t, err)
@@ -102,8 +102,8 @@ func TestMove_ExistingNonEmpty_NoForce_Error(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("src"), 0o644))
-	assert.NoError(t, os.WriteFile(dst, []byte("dst"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("src"), ModeFile))
+	assert.NoError(t, os.WriteFile(dst, []byte("dst"), ModeFile))
 
 	err := Move(src, dst, false)
 	assert.Error(t, err)
@@ -119,8 +119,8 @@ func TestMove_ExistingEmpty_NoForce_AllowsReplace(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("src"), 0o644))
-	assert.NoError(t, os.WriteFile(dst, []byte{}, 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("src"), ModeFile))
+	assert.NoError(t, os.WriteFile(dst, []byte{}, ModeFile))
 
 	err := Move(src, dst, false)
 	assert.NoError(t, err)
@@ -135,8 +135,8 @@ func TestMove_ExistingNonEmpty_Force_Succeeds(t *testing.T) {
 	src := filepath.Join(dir, "src.txt")
 	dst := filepath.Join(dir, "dst.txt")
 
-	assert.NoError(t, os.WriteFile(src, []byte("AAA"), 0o644))
-	assert.NoError(t, os.WriteFile(dst, []byte("BBBBB"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("AAA"), ModeFile))
+	assert.NoError(t, os.WriteFile(dst, []byte("BBBBB"), ModeFile))
 
 	err := Move(src, dst, true)
 	assert.NoError(t, err)
@@ -149,7 +149,7 @@ func TestMove_ExistingNonEmpty_Force_Succeeds(t *testing.T) {
 func TestMove_SamePath_Error(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "file.txt")
-	assert.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("x"), ModeFile))
 	err := Move(src, src, true)
 	assert.Error(t, err)
 }
@@ -157,7 +157,7 @@ func TestMove_SamePath_Error(t *testing.T) {
 func TestMove_InvalidPaths_Error(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "file.txt")
-	assert.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
+	assert.NoError(t, os.WriteFile(src, []byte("x"), ModeFile))
 	assert.Error(t, Move("", filepath.Join(dir, "a.txt"), false))
 	assert.Error(t, Move(src, "", false))
 	assert.Error(t, Move(src, ".", false))

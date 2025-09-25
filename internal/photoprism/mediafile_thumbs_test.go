@@ -172,7 +172,6 @@ func TestMediaFile_GenerateThumbnails(t *testing.T) {
 		assert.FileExists(t, thumbFilename)
 		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
-
 	t.Run("animated-earth.jpg", func(t *testing.T) {
 		m, err := NewMediaFile("testdata/animated-earth.jpg")
 
@@ -195,7 +194,6 @@ func TestMediaFile_GenerateThumbnails(t *testing.T) {
 		assert.FileExists(t, thumbFilename)
 		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
-
 	t.Run("photoprism.png", func(t *testing.T) {
 		m, err := NewMediaFile("testdata/photoprism.png")
 
@@ -218,7 +216,6 @@ func TestMediaFile_GenerateThumbnails(t *testing.T) {
 		assert.FileExists(t, thumbFilename)
 		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
-
 	t.Run("broken/animated-earth.jpg", func(t *testing.T) {
 		m, err := NewMediaFile("testdata/broken/animated-earth.jpg")
 

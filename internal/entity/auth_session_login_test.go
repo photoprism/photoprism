@@ -514,7 +514,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("UnknownUserWithInvalidToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
@@ -534,7 +533,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal("login should fail")
 		}
 	})
-
 	t.Run("UnknownUserWithoutToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
@@ -552,7 +550,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal("login should fail")
 		}
 	})
-
 	t.Run("KnownUserWithToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		m.SetClientIP(clientIp)
@@ -572,7 +569,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("KnownUserWithInvalidToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		m.SetClientIP(clientIp)

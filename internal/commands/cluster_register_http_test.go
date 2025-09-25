@@ -13,6 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	cfg "github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 func TestClusterRegister_HTTPHappyPath(t *testing.T) {
@@ -30,8 +31,8 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 		w.WriteHeader(http.StatusCreated)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n1", "name": "pp-node-02", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd", "dsn": "user:pwd@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
-			"secrets":            map[string]any{"nodeSecret": "secret", "secretRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd", "dsn": "user:pwd@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
+			"secrets":            map[string]any{"clientSecret": "secret", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  false,
 			"alreadyProvisioned": false,
 		})
@@ -44,7 +45,7 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 	assert.NoError(t, err)
 	// Parse JSON
 	assert.Equal(t, "pp-node-02", gjson.Get(out, "node.name").String())
-	assert.Equal(t, "secret", gjson.Get(out, "secrets.nodeSecret").String())
+	assert.Equal(t, "secret", gjson.Get(out, "secrets.clientSecret").String())
 	assert.Equal(t, "pwd", gjson.Get(out, "database.password").String())
 	dsn := gjson.Get(out, "database.dsn").String()
 	parsed := cfg.NewDSN(dsn)
@@ -70,8 +71,8 @@ func TestClusterNodesRotate_HTTPHappyPath(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n1", "name": "pp-node-03", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd2", "dsn": "user:pwd2@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
-			"secrets":            map[string]any{"nodeSecret": "secret2", "secretRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd2", "dsn": "user:pwd2@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
+			"secrets":            map[string]any{"clientSecret": "secret2", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -89,7 +90,7 @@ func TestClusterNodesRotate_HTTPHappyPath(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Contains(t, out, "pp-node-03")
-	assert.Contains(t, out, "Node Secret")
+	assert.Contains(t, out, "Node Client Secret")
 	assert.Contains(t, out, "DB Password")
 }
 
@@ -108,8 +109,8 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n2", "name": "pp-node-04", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd3", "dsn": "user:pwd3@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
-			"secrets":            map[string]any{"nodeSecret": "secret3", "secretRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd3", "dsn": "user:pwd3@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
+			"secrets":            map[string]any{"clientSecret": "secret3", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -127,7 +128,7 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "pp-node-04", gjson.Get(out, "node.name").String())
-	assert.Equal(t, "secret3", gjson.Get(out, "secrets.nodeSecret").String())
+	assert.Equal(t, "secret3", gjson.Get(out, "secrets.clientSecret").String())
 	assert.Equal(t, "pwd3", gjson.Get(out, "database.password").String())
 	dsn := gjson.Get(out, "database.dsn").String()
 	parsed := cfg.NewDSN(dsn)
@@ -161,7 +162,7 @@ func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":     map[string]any{"id": "n3", "name": "pp-node-05", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database": map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd4", "dsn": "pp_user:pwd4@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
+			"database": map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd4", "dsn": "pp_user:pwd4@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
 			// secrets omitted on DB-only rotate
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
@@ -188,7 +189,7 @@ func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 	assert.Equal(t, "tcp", parsed.Net)
 	assert.Equal(t, "db:3306", parsed.Server)
 	assert.Equal(t, "pp_db", parsed.Name)
-	assert.Equal(t, "", gjson.Get(out, "secrets.nodeSecret").String())
+	assert.Equal(t, "", gjson.Get(out, "secrets.clientSecret").String())
 }
 
 func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
@@ -213,8 +214,8 @@ func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n4", "name": "pp-node-06", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
-			"secrets":            map[string]any{"nodeSecret": "secret4", "secretRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "rotatedAt": "2025-09-15T00:00:00Z"},
+			"secrets":            map[string]any{"clientSecret": "secret4", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -230,7 +231,7 @@ func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "pp-node-06", gjson.Get(out, "node.name").String())
-	assert.Equal(t, "secret4", gjson.Get(out, "secrets.nodeSecret").String())
+	assert.Equal(t, "secret4", gjson.Get(out, "secrets.clientSecret").String())
 	assert.Equal(t, "", gjson.Get(out, "database.password").String())
 }
 
@@ -266,6 +267,34 @@ func TestClusterRegister_HTTPConflict(t *testing.T) {
 	}
 }
 
+func TestClusterRegister_DryRun_JSON(t *testing.T) {
+	// No server needed; dry-run avoids HTTP
+	get.Config().Options().PortalUrl = cfg.DefaultPortalUrl
+	get.Config().Options().ClusterDomain = "cluster.dev"
+	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
+		"register", "--dry-run", "--json",
+	})
+	// Should not fail; output must include portalUrl and payload
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	assert.NotEmpty(t, gjson.Get(out, "portalUrl").String())
+	assert.Equal(t, "instance", gjson.Get(out, "payload.nodeRole").String())
+	// nodeName may be derived; ensure non-empty
+	assert.NotEmpty(t, gjson.Get(out, "payload.nodeName").String())
+}
+
+func TestClusterRegister_DryRun_Text(t *testing.T) {
+	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
+		"register", "--dry-run",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	assert.Contains(t, out, "Portal URL:")
+	assert.Contains(t, out, "Node Name:")
+}
+
 func TestClusterRegister_HTTPBadRequest(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
@@ -294,7 +323,7 @@ func TestClusterRegister_HTTPRateLimitOnceThenOK(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n7", "name": "pp-node-rl", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwdrl", "dsn": "pp_user:pwdrl@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwdrl", "dsn": "pp_user:pwdrl@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -368,7 +397,7 @@ func TestClusterNodesRotate_HTTPRateLimitOnceThenOK_JSON(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n8", "name": "pp-node-rl2", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwdrl2", "dsn": "pp_user:pwdrl2@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwdrl2", "dsn": "pp_user:pwdrl2@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -401,7 +430,7 @@ func TestClusterRegister_RotateDatabase_JSON(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n5", "name": "pp-node-07", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd7", "dsn": "pp_user:pwd7@tcp(db:3306)/pp_db?parseTime=true", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "password": "pwd7", "dsn": "pp_user:pwd7@tcp(db:3306)/pp_db?parseTime=true", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -442,8 +471,8 @@ func TestClusterRegister_RotateSecret_JSON(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"node":               map[string]any{"id": "n6", "name": "pp-node-08", "role": "instance", "createdAt": "2025-09-15T00:00:00Z", "updatedAt": "2025-09-15T00:00:00Z"},
-			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "databaseLastRotatedAt": "2025-09-15T00:00:00Z"},
-			"secrets":            map[string]any{"nodeSecret": "pwd8secret", "secretRotatedAt": "2025-09-15T00:00:00Z"},
+			"database":           map[string]any{"host": "database", "port": 3306, "name": "pp_db", "user": "pp_user", "rotatedAt": "2025-09-15T00:00:00Z"},
+			"secrets":            map[string]any{"clientSecret": "pwd8secret", "rotatedAt": "2025-09-15T00:00:00Z"},
 			"alreadyRegistered":  true,
 			"alreadyProvisioned": true,
 		})
@@ -455,6 +484,6 @@ func TestClusterRegister_RotateSecret_JSON(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "pp-node-08", gjson.Get(out, "node.name").String())
-	assert.Equal(t, "pwd8secret", gjson.Get(out, "secrets.nodeSecret").String())
+	assert.Equal(t, "pwd8secret", gjson.Get(out, "secrets.clientSecret").String())
 	assert.Equal(t, "", gjson.Get(out, "database.password").String())
 }

@@ -82,12 +82,10 @@ func TestType_Find(t *testing.T) {
 		result := ImageJpeg.Find("testdata/test (2).xmp", true)
 		assert.Equal(t, "testdata/test.jpg", result)
 	})
-
 	t.Run("name upper", func(t *testing.T) {
 		result := ImageJpeg.Find("testdata/CATYELLOW.xmp", true)
 		assert.Equal(t, "testdata/CATYELLOW.jpg", result)
 	})
-
 	t.Run("name lower", func(t *testing.T) {
 		result := ImageJpeg.Find("testdata/chameleon_lime.xmp", true)
 		assert.Equal(t, "testdata/chameleon_lime.jpg", result)

@@ -44,7 +44,6 @@ func TestSearchServices_ParseQueryString(t *testing.T) {
 		assert.Equal(t, false, form.Sync)
 		assert.Equal(t, 0, form.Count)
 	})
-
 	t.Run("query for invalid filter", func(t *testing.T) {
 		form := &SearchServices{Query: "xxx:false"}
 

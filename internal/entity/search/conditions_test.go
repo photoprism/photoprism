@@ -61,7 +61,6 @@ func TestLikeAny(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'spoon%' OR k.keyword LIKE 'table%' OR k.keyword LIKE 'usa'", w[0])
 		}
 	})
-
 	t.Run("cat dog", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "cat dog", true, false); len(w) != 1 {
 			t.Fatal("one where condition expected")
@@ -69,7 +68,6 @@ func TestLikeAny(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'cat' OR k.keyword LIKE 'dog'", w[0])
 		}
 	})
-
 	t.Run("cats dogs", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "cats dogs", true, false); len(w) != 1 {
 			t.Fatal("one where condition expected")
@@ -77,7 +75,6 @@ func TestLikeAny(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'cats%' OR k.keyword LIKE 'cat' OR k.keyword LIKE 'dogs%' OR k.keyword LIKE 'dog'", w[0])
 		}
 	})
-
 	t.Run("spoon", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "spoon", true, false); len(w) != 1 {
 			t.Fatal("one where condition expected")
@@ -85,13 +82,11 @@ func TestLikeAny(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'spoon%'", w[0])
 		}
 	})
-
 	t.Run("img", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "img", true, false); len(w) > 0 {
 			t.Fatal("no where condition expected")
 		}
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "", true, false); len(w) > 0 {
 			t.Fatal("no where condition expected")
@@ -261,47 +256,38 @@ func TestAnySlug(t *testing.T) {
 		where := AnySlug("custom_slug", "table spoon usa img json", " ")
 		assert.Equal(t, "custom_slug = 'table' OR custom_slug = 'spoon' OR custom_slug = 'usa' OR custom_slug = 'img' OR custom_slug = 'json'", where)
 	})
-
 	t.Run("CatDog", func(t *testing.T) {
 		where := AnySlug("custom_slug", "cat dog", " ")
 		assert.Equal(t, "custom_slug = 'cat' OR custom_slug = 'dog'", where)
 	})
-
 	t.Run("CatsDogs", func(t *testing.T) {
 		where := AnySlug("custom_slug", "cats dogs", " ")
 		assert.Equal(t, "custom_slug = 'cats' OR custom_slug = 'cat' OR custom_slug = 'dogs' OR custom_slug = 'dog'", where)
 	})
-
 	t.Run("Spoon", func(t *testing.T) {
 		where := AnySlug("custom_slug", "spoon", " ")
 		assert.Equal(t, "custom_slug = 'spoon'", where)
 	})
-
 	t.Run("Img", func(t *testing.T) {
 		where := AnySlug("custom_slug", "img", " ")
 		assert.Equal(t, "custom_slug = 'img'", where)
 	})
-
 	t.Run("Space", func(t *testing.T) {
 		where := AnySlug("custom_slug", " ", "")
 		assert.Equal(t, "custom_slug = '' OR custom_slug = ''", where)
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		where := AnySlug("custom_slug", "", " ")
 		assert.Equal(t, "", where)
 	})
-
 	t.Run("CommaSeparated", func(t *testing.T) {
 		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", txt.Or)
 		assert.Equal(t, "custom_slug = 'botanical-garden' OR custom_slug = 'landscape' OR custom_slug = 'bay'", where)
 	})
-
 	t.Run("Emoji", func(t *testing.T) {
 		where := AnySlug("custom_slug", "💐", "|")
 		assert.Equal(t, "custom_slug = '_5cpzfea'", where)
 	})
-
 	t.Run("EmojiSlug", func(t *testing.T) {
 		where := AnySlug("custom_slug", "_5cpzfea", "|")
 		assert.Equal(t, "custom_slug = '_5cpzfea'", where)
@@ -313,22 +299,18 @@ func TestAnyInt(t *testing.T) {
 		where := AnyInt("photos.photo_month", "", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
 	})
-
 	t.Run("Range", func(t *testing.T) {
 		where := AnyInt("photos.photo_month", "-3|0|10|9|11|12|13", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "photos.photo_month = 10 OR photos.photo_month = 9 OR photos.photo_month = 11 OR photos.photo_month = 12", where)
 	})
-
 	t.Run("Chars", func(t *testing.T) {
 		where := AnyInt("photos.photo_month", "a|b|c", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
 	})
-
 	t.Run("CommaSeparated", func(t *testing.T) {
 		where := AnyInt("photos.photo_month", "-3,10,9,11,12,13", ",", entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "photos.photo_month = 10 OR photos.photo_month = 9 OR photos.photo_month = 11 OR photos.photo_month = 12", where)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		where := AnyInt("photos.photo_month", "  , |  ", ",", entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
@@ -459,19 +441,16 @@ func TestSplitAnd(t *testing.T) {
 
 		assert.Equal(t, []string{}, values)
 	})
-
 	t.Run("FooOrBar", func(t *testing.T) {
 		values := SplitAnd(" foo | Bar ")
 
 		assert.Equal(t, []string{" foo | Bar "}, values)
 	})
-
 	t.Run("FooAndBar", func(t *testing.T) {
 		values := SplitAnd(" foo & Bar ")
 
 		assert.Equal(t, []string{"foo", "Bar"}, values)
 	})
-
 	t.Run("FooAndBarAndBaz", func(t *testing.T) {
 		values := SplitAnd(" foo & Bar&BAZ ")
 

@@ -69,11 +69,9 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("InvalidPhotoUid", func(t *testing.T) {
 		assert.Error(t, AddPhotoToAlbums("xxx", []string{"as6sg6bitoga0004"}))
 	})
-
 	t.Run("SuccessTwoAlbums", func(t *testing.T) {
 		err := AddPhotoToAlbums("ps6sg6bexxvl0yh0", []string{"as6sg6bitoga0004", ""})
 

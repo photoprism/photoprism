@@ -11,43 +11,33 @@ func TestIsTime(t *testing.T) {
 	t.Run("/2020/1212/20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		assert.False(t, IsTime("/2020/1212/20130518_142022_3D657EBD.jpg"))
 	})
-
 	t.Run("telegram_2020_01_30_09_57_18.jpg", func(t *testing.T) {
 		assert.False(t, IsTime("telegram_2020_01_30_09_57_18.jpg"))
 	})
-
 	t.Run("", func(t *testing.T) {
 		assert.False(t, IsTime(""))
 	})
-
 	t.Run("Screenshot 2019_05_21 at 10.45.52.png", func(t *testing.T) {
 		assert.False(t, IsTime("Screenshot 2019_05_21 at 10.45.52.png"))
 	})
-
 	t.Run("telegram_2020-01-30_09-57-18.jpg", func(t *testing.T) {
 		assert.False(t, IsTime("telegram_2020-01-30_09-57-18.jpg"))
 	})
-
 	t.Run("2013-05-18", func(t *testing.T) {
 		assert.True(t, IsTime("2013-05-18"))
 	})
-
 	t.Run("2013-05-18 12:01:01", func(t *testing.T) {
 		assert.True(t, IsTime("2013-05-18 12:01:01"))
 	})
-
 	t.Run("20130518_142022", func(t *testing.T) {
 		assert.True(t, IsTime("20130518_142022"))
 	})
-
 	t.Run("2020_01_30_09_57_18", func(t *testing.T) {
 		assert.True(t, IsTime("2020_01_30_09_57_18"))
 	})
-
 	t.Run("2019_05_21 at 10.45.52", func(t *testing.T) {
 		assert.True(t, IsTime("2019_05_21 at 10.45.52"))
 	})
-
 	t.Run("2020-01-30_09-57-18", func(t *testing.T) {
 		assert.True(t, IsTime("2020-01-30_09-57-18"))
 	})
@@ -57,11 +47,9 @@ func TestDateTime(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		assert.Equal(t, "", DateTime(nil))
 	})
-
 	t.Run("Zero", func(t *testing.T) {
 		assert.Equal(t, "", DateTime(&time.Time{}))
 	})
-
 	t.Run("1665389030", func(t *testing.T) {
 		now := time.Unix(1665389030, 0)
 		assert.Equal(t, "2022-10-10 08:03:50", DateTime(&now))
@@ -72,7 +60,6 @@ func TestUnixTime(t *testing.T) {
 	t.Run("Zero", func(t *testing.T) {
 		assert.Equal(t, "", UnixTime(0))
 	})
-
 	t.Run("1665389030", func(t *testing.T) {
 		assert.Equal(t, "2022-10-10 08:03:50", UnixTime(1665389030))
 	})

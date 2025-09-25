@@ -8,6 +8,7 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Duplicate names: FindByName should return the most recently updated.
@@ -29,8 +30,10 @@ func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
 	assert.NoError(t, err)
 	if assert.NotNil(t, n) {
 		// Latest should be c2
-		assert.Equal(t, c2.ClientUID, n.ID)
+		assert.Equal(t, c2.ClientUID, n.ClientID)
 		assert.Equal(t, "service", n.Role)
+		// IDs have expected format
+		assert.True(t, rnd.IsUID(n.ClientID, entity.ClientUID))
 	}
 }
 
@@ -49,7 +52,7 @@ func TestClientRegistry_RoleChange(t *testing.T) {
 		assert.Equal(t, "service", got.Role)
 	}
 	// Change to instance
-	upd := &Node{ID: got.ID, Name: got.Name, Role: "instance"}
+	upd := &Node{ClientID: got.ClientID, Name: got.Name, Role: "instance"}
 	assert.NoError(t, r.Put(upd))
 	got2, err := r.FindByName("pp-role")
 	assert.NoError(t, err)

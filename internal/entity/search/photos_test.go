@@ -556,7 +556,6 @@ func TestPhotos(t *testing.T) {
 		//t.Logf("results: %+v", photos)
 		assert.Equal(t, 1, len(photos))
 	})
-
 	t.Run("form.portrait", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "portrait:true"
@@ -572,7 +571,6 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-
 	t.Run("form.mono", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "mono:true"
@@ -739,7 +737,6 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 2, len(photos))
 	})
-
 	t.Run("search for diff", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "Diff:800"
@@ -889,7 +886,6 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
 	t.Run("search for labels", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Label = "botanical-garden|nature|landscape|park"
@@ -902,7 +898,6 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
 	t.Run("search for primary files", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Primary = true
@@ -915,7 +910,6 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
 	t.Run("search for landscape", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "landscape"
@@ -928,7 +922,6 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
 	t.Run("search with multiple parameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
@@ -1849,7 +1842,6 @@ func TestPhotos(t *testing.T) {
 		assert.Equal(t, len(photos3), len(photos4))
 		assert.Equal(t, len(photos), len(photos4))
 	})
-
 	t.Run("Search in Title", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "N"

@@ -23,17 +23,18 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 
 	// Create new node
 	n := &Node{
+		UUID:         rnd.UUIDv7(),
 		Name:         "pp-node-a",
 		Role:         "instance",
-		Labels:       map[string]string{"env": "test"},
-		AdvertiseUrl: "http://pp-node-a:2342",
 		SiteUrl:      "https://photos.example.com",
+		AdvertiseUrl: "http://pp-node-a:2342",
+		Labels:       map[string]string{"env": "test"},
 	}
-	n.DB.Name = "pp_db"
-	n.DB.User = "pp_user"
-	n.DB.RotAt = time.Now().UTC().Format(time.RFC3339)
-	n.SecretRot = time.Now().UTC().Format(time.RFC3339)
-	n.Secret = rnd.ClientSecret()
+	n.Database.Name = "pp_db"
+	n.Database.User = "pp_user"
+	n.Database.RotatedAt = time.Now().UTC().Format(time.RFC3339)
+	n.RotatedAt = time.Now().UTC().Format(time.RFC3339)
+	n.ClientSecret = rnd.ClientSecret()
 
 	assert.NoError(t, r.Put(n))
 
@@ -41,22 +42,24 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 	got, err := r.FindByName("pp-node-a")
 	assert.NoError(t, err)
 	if assert.NotNil(t, got) {
-		assert.NotEmpty(t, got.ID)
+		assert.NotEmpty(t, got.ClientID)
+		assert.True(t, rnd.IsUID(got.ClientID, entity.ClientUID))
+		assert.True(t, rnd.IsUUID(got.UUID))
 		assert.Equal(t, "pp-node-a", got.Name)
 		assert.Equal(t, "instance", got.Role)
 		assert.Equal(t, "http://pp-node-a:2342", got.AdvertiseUrl)
 		assert.Equal(t, "https://photos.example.com", got.SiteUrl)
-		assert.Equal(t, "pp_db", got.DB.Name)
-		assert.Equal(t, "pp_user", got.DB.User)
+		assert.Equal(t, "pp_db", got.Database.Name)
+		assert.Equal(t, "pp_user", got.Database.User)
 		assert.NotEmpty(t, got.CreatedAt)
 		assert.NotEmpty(t, got.UpdatedAt)
 		// Secret is not persisted in plaintext
-		assert.Equal(t, "", got.Secret)
-		assert.NotEmpty(t, got.SecretRot)
+		assert.Equal(t, "", got.ClientSecret)
+		assert.NotEmpty(t, got.RotatedAt)
 		// Password row exists and validates the initial secret
-		pw := entity.FindPassword(got.ID)
+		pw := entity.FindPassword(got.ClientID)
 		if assert.NotNil(t, pw) {
-			assert.True(t, pw.Valid(n.Secret))
+			assert.True(t, pw.Valid(n.ClientSecret))
 		}
 	}
 
@@ -73,19 +76,19 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 	assert.True(t, found)
 
 	// Rotate secret
-	rotated, err := r.RotateSecret(got.ID)
+	rotated, err := r.RotateSecret(got.UUID)
 	assert.NoError(t, err)
 	if assert.NotNil(t, rotated) {
-		assert.NotEmpty(t, rotated.Secret)
+		assert.NotEmpty(t, rotated.ClientSecret)
 		// Validate new secret
-		pw := entity.FindPassword(got.ID)
+		pw := entity.FindPassword(got.ClientID)
 		if assert.NotNil(t, pw) {
-			assert.True(t, pw.Valid(rotated.Secret))
+			assert.True(t, pw.Valid(rotated.ClientSecret))
 		}
 	}
 
 	// Update labels and site URL via Put (upsert by id)
-	upd := &Node{ID: got.ID, Name: got.Name, Labels: map[string]string{"env": "prod"}, SiteUrl: "https://photos.example.org"}
+	upd := &Node{ClientID: got.ClientID, Name: got.Name, Labels: map[string]string{"env": "prod"}, SiteUrl: "https://photos.example.org"}
 	assert.NoError(t, r.Put(upd))
 	got2, err := r.FindByName("pp-node-a")
 	assert.NoError(t, err)

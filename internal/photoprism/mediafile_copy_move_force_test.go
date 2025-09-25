@@ -7,14 +7,16 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func writeFile(t *testing.T, p string, data []byte) {
 	t.Helper()
-	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(p), fs.ModeDir); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(p, data, 0o644); err != nil {
+	if err := os.WriteFile(p, data, fs.ModeFile); err != nil {
 		t.Fatal(err)
 	}
 }

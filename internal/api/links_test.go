@@ -232,7 +232,6 @@ func TestUpdateAlbumLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("bad request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbumLink(router)
@@ -286,7 +285,6 @@ func TestGetAlbumLinks(t *testing.T) {
 		assert.GreaterOrEqual(t, len.Int(), int64(1))
 		assert.Equal(t, http.StatusOK, r2.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetAlbumLinks(router)
@@ -362,7 +360,6 @@ func TestUpdatePhotoLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("bad request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhotoLink(router)
@@ -417,7 +414,6 @@ func TestGetPhotoLinks(t *testing.T) {
 		//assert.GreaterOrEqual(t, len.Int(), int64(1))
 		assert.Equal(t, http.StatusOK, r2.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhotoLinks(router)
@@ -489,7 +485,6 @@ func TestUpdateLabelLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("bad request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateLabelLink(router)
@@ -543,7 +538,6 @@ func TestGetLabelLinks(t *testing.T) {
 		//assert.GreaterOrEqual(t, len.Int(), int64(1))
 		assert.Equal(t, http.StatusOK, r2.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetLabelLinks(router)

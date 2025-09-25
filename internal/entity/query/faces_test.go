@@ -23,7 +23,6 @@ func TestFaces(t *testing.T) {
 			assert.IsType(t, entity.Face{}, val)
 		}
 	})
-
 	t.Run("Hidden", func(t *testing.T) {
 		results, err := Faces(false, false, true, false)
 
@@ -33,7 +32,6 @@ func TestFaces(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(results), 1)
 	})
-
 	t.Run("Ignored", func(t *testing.T) {
 		results, err := Faces(false, false, true, true)
 
@@ -43,7 +41,6 @@ func TestFaces(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(results), 1)
 	})
-
 	t.Run("Unmatched", func(t *testing.T) {
 		results, err := Faces(false, true, false, false)
 

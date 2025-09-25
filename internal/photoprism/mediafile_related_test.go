@@ -49,7 +49,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			}
 		}
 	})
-
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/canon_eos_6d.dng")
 
@@ -80,7 +79,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			assert.Equal(t, expectedBaseFilename, baseFilename)
 		}
 	})
-
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
 
@@ -112,7 +110,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			}
 		}
 	})
-
 	t.Run("iphone_15_pro.heic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
 
@@ -144,7 +141,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			}
 		}
 	})
-
 	t.Run("2015-02-04.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04.jpg")
 
@@ -175,7 +171,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
 		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
 	})
-
 	t.Run("2015-02-04(1).jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
 
@@ -201,7 +196,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		assert.Equal(t, "2015-02-04(1).jpg", related.Files[0].BaseName())
 	})
-
 	t.Run("2015-02-04(1).jpg stacked", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
 
@@ -230,7 +224,6 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
 		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
 	})
-
 	t.Run("Ordering", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/IMG_4120.JPG")
 

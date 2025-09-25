@@ -16,7 +16,6 @@ func TestPhotoUnstack(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 		// t.Logf("RESP: %s", r.Body.String())
 	})
-
 	t.Run("unstack bridge3.jpg", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoUnstack(router)
@@ -25,7 +24,6 @@ func TestPhotoUnstack(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		// t.Logf("RESP: %s", r.Body.String())
 	})
-
 	t.Run("not existing file", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoUnstack(router)

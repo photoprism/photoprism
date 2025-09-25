@@ -41,7 +41,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 12 mini", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("iphone-mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/iphone-mov.json", "")
 
@@ -71,7 +70,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone SE", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("yoga-av1.webm.json", func(t *testing.T) {
 		data, err := JSON("testdata/yoga-av1.webm.json", "")
 
@@ -87,7 +85,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 854, data.ActualWidth())
 		assert.Equal(t, 480, data.ActualHeight())
 	})
-
 	t.Run("stream.webm.json", func(t *testing.T) {
 		data, err := JSON("testdata/stream.webm.json", "")
 
@@ -103,7 +100,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1280, data.ActualWidth())
 		assert.Equal(t, 720, data.ActualHeight())
 	})
-
 	t.Run("earth.ogv.json", func(t *testing.T) {
 		data, err := JSON("testdata/earth.ogv.json", "")
 
@@ -119,7 +115,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1280, data.ActualWidth())
 		assert.Equal(t, 720, data.ActualHeight())
 	})
-
 	t.Run("webm-vp8.json", func(t *testing.T) {
 		data, err := JSON("testdata/webm-vp8.json", "")
 
@@ -135,7 +130,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1920, data.ActualWidth())
 		assert.Equal(t, 1080, data.ActualHeight())
 	})
-
 	t.Run("webm-vp9.json", func(t *testing.T) {
 		data, err := JSON("testdata/webm-vp9.json", "")
 
@@ -151,7 +145,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1280, data.ActualWidth())
 		assert.Equal(t, 720, data.ActualHeight())
 	})
-
 	t.Run("gopher-telegram.json", func(t *testing.T) {
 		data, err := JSON("testdata/gopher-telegram.json", "")
 
@@ -179,7 +172,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("gopher-original.json", func(t *testing.T) {
 		data, err := JSON("testdata/gopher-original.json", "")
 
@@ -206,7 +198,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("berlin-landscape.json", func(t *testing.T) {
 		data, err := JSON("testdata/berlin-landscape.json", "")
 
@@ -231,7 +222,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("mp4.json", func(t *testing.T) {
 		data, err := JSON("testdata/mp4.json", "")
 
@@ -252,7 +242,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("photoshop.json", func(t *testing.T) {
 		data, err := JSON("testdata/photoshop.json", "")
 
@@ -279,7 +268,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("canon_eos_6d.json", func(t *testing.T) {
 		data, err := JSON("testdata/canon_eos_6d.json", "")
 
@@ -300,7 +288,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0, data.TakenNs)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("gps-2000.json", func(t *testing.T) {
 		data, err := JSON("testdata/gps-2000.json", "")
 
@@ -321,7 +308,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("ladybug.json", func(t *testing.T) {
 		data, err := JSON("testdata/ladybug.json", "")
 
@@ -342,7 +328,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("iphone_7.json", func(t *testing.T) {
 		data, err := JSON("testdata/iphone_7.json", "")
 
@@ -363,7 +348,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Apple", data.LensMake)
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
 	})
-
 	t.Run("uuid-original.json", func(t *testing.T) {
 		data, err := JSON("testdata/uuid-original.json", "")
 
@@ -389,7 +373,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone SE", data.CameraModel)
 		assert.Equal(t, "iPhone SE back camera 4.15mm f/2.2", data.LensModel)
 	})
-
 	t.Run("uuid-copy.json", func(t *testing.T) {
 		data, err := JSON("testdata/uuid-copy.json", "")
 
@@ -415,7 +398,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone SE", data.CameraModel)
 		assert.Equal(t, "iPhone SE back camera 4.15mm f/2.2", data.LensModel)
 	})
-
 	t.Run("uuid-imagemagick.json", func(t *testing.T) {
 		data, err := JSON("testdata/uuid-imagemagick.json", "")
 
@@ -441,7 +423,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone SE", data.CameraModel)
 		assert.Equal(t, "iPhone SE back camera 4.15mm f/2.2", data.LensModel)
 	})
-
 	t.Run("orientation.json", func(t *testing.T) {
 		data, err := JSON("testdata/orientation.json", "")
 
@@ -453,7 +434,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 184, data.Height)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("gphotos-1.json", func(t *testing.T) {
 		data, err := JSON("testdata/gphotos-1.json", "")
 
@@ -482,7 +462,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("gphotos-2.json", func(t *testing.T) {
 		data, err := JSON("testdata/gphotos-2.json", "")
 
@@ -500,7 +479,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1118, data.Views)
 	})
-
 	t.Run("gphotos-3.json", func(t *testing.T) {
 		data, err := JSON("testdata/gphotos-3.json", "")
 
@@ -518,7 +496,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 177, data.Views)
 	})
-
 	t.Run("gphotos-4.json", func(t *testing.T) {
 		data, err := JSON("testdata/gphotos-4.json", "")
 
@@ -536,7 +513,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 0, data.Views)
 	})
-
 	t.Run("gphotos-album.json", func(t *testing.T) {
 		data, err := JSON("testdata/gphotos-album.json", "")
 
@@ -554,7 +530,6 @@ func TestJSON(t *testing.T) {
 			assert.Len(t, data.Albums, 1)
 		}
 	})
-
 	t.Run("panorama360.json", func(t *testing.T) {
 		data, err := JSON("testdata/panorama360.json", "panorama360.jpg")
 
@@ -585,7 +560,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
 	})
-
 	t.Run("P7250006.json", func(t *testing.T) {
 		data, err := JSON("testdata/P7250006.json", "P7250006.MOV")
 
@@ -616,7 +590,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
-
 	t.Run("P9150300.json", func(t *testing.T) {
 		data, err := JSON("testdata/P9150300.json", "P9150300.MOV")
 
@@ -629,7 +602,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "OLYMPUS DIGITAL CAMERA", data.CameraMake)
 		assert.Equal(t, "E-M10MarkII", data.CameraModel)
 	})
-
 	t.Run("GOPR0533.json", func(t *testing.T) {
 		data, err := JSON("testdata/GOPR0533.json", "GOPR0533.MP4")
 
@@ -641,7 +613,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
 	})
-
 	t.Run("digikam.json", func(t *testing.T) {
 		data, err := JSON("testdata/digikam.json", "")
 
@@ -673,7 +644,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 5, data.FocalLength)
 		assert.Equal(t, 1, int(data.Orientation))
 	})
-
 	t.Run("date.mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/date.mov.json", "")
 
@@ -697,7 +667,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 6 Plus", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("date-creation.mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/date-creation.mov.json", "")
 
@@ -722,7 +691,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 6 Plus", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("date-iphone8.mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/date-iphone8.mov.json", "")
 
@@ -746,7 +714,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 8", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("date-iphonex.mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/date-iphonex.mov.json", "")
 
@@ -767,7 +734,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, "ca20385d-6106-49c9-acf5-2f8098f4b390", data.DocumentID)
 	})
-
 	t.Run("aurora.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/aurora.jpg.json", "")
 
@@ -784,7 +750,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Lat)
 		assert.Equal(t, 0.0, data.Lng)
 	})
-
 	t.Run("MVI_1724.MOV.json", func(t *testing.T) {
 		data, err := JSON("testdata/MVI_1724.MOV.json", "")
 
@@ -804,7 +769,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Canon PowerShot G15", data.CameraModel)
 		assert.Equal(t, "6.1", data.LensModel)
 	})
-
 	t.Run("snow.json", func(t *testing.T) {
 		data, err := JSON("testdata/snow.json", "")
 
@@ -830,7 +794,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, "Bad PrintIM data", data.Warning)
 	})
-
 	t.Run("datetime-zero.json", func(t *testing.T) {
 		data, err := JSON("testdata/datetime-zero.json", "")
 
@@ -855,7 +818,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "TG-830", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-
 	t.Run("subject-1.json", func(t *testing.T) {
 		data, err := JSON("testdata/subject-1.json", "")
 
@@ -882,7 +844,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "holiday", data.Subject)
 		assert.Equal(t, "holiday", data.Keywords.String())
 	})
-
 	t.Run("subject-2.json", func(t *testing.T) {
 		data, err := JSON("testdata/subject-2.json", "")
 
@@ -908,7 +869,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "holiday, greetings", data.Subject)
 		assert.Equal(t, "greetings, holiday", data.Keywords.String())
 	})
-
 	t.Run("newline.json", func(t *testing.T) {
 		data, err := JSON("testdata/newline.json", "newline.jpg")
 
@@ -941,7 +901,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
-
 	t.Run("keywords.json", func(t *testing.T) {
 		data, err := JSON("testdata/keywords.json", "")
 
@@ -961,7 +920,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "EF70-200mm f/4L IS USM", data.LensModel)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("quicktimeutc_on.json", func(t *testing.T) {
 		data, err := JSON("testdata/quicktimeutc_on.json", "")
 
@@ -978,7 +936,6 @@ func TestJSON(t *testing.T) {
 		assert.InDelta(t, 43.5683, data.Lat, 0.00001)
 		assert.InDelta(t, 4.5645, data.Lng, 0.00001)
 	})
-
 	t.Run("quicktimeutc_off.json", func(t *testing.T) {
 		data, err := JSON("testdata/quicktimeutc_off.json", "")
 
@@ -995,7 +952,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(43.5683), float32(data.Lat))
 		assert.Equal(t, float32(4.5645), float32(data.Lng))
 	})
-
 	t.Run("video_num_on.json", func(t *testing.T) {
 		data, err := JSON("testdata/video_num_on.json", "")
 
@@ -1012,7 +968,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(43.5683), float32(data.Lat))
 		assert.Equal(t, float32(4.5645), float32(data.Lng))
 	})
-
 	t.Run("cr2_num_off.json", func(t *testing.T) {
 		data, err := JSON("testdata/cr2_num_off.json", "")
 
@@ -1038,7 +993,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
-
 	t.Run("cr2_num_on.json", func(t *testing.T) {
 		data, err := JSON("testdata/cr2_num_on.json", "")
 
@@ -1062,7 +1016,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
-
 	t.Run("pxl-mp4.json", func(t *testing.T) {
 		data, err := JSON("testdata/pxl-mp4.json", "")
 
@@ -1080,7 +1033,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("sony_mp4_exiftool.json", func(t *testing.T) {
 		data, err := JSON("testdata/sony_mp4_exiftool.json", "")
 
@@ -1098,7 +1050,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1, data.Orientation)
 	})
-
 	t.Run("Iceland-P3.jpg", func(t *testing.T) {
 		data, err := JSON("testdata/Iceland-P3.json", "")
 
@@ -1131,7 +1082,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "Display P3", data.ColorProfile)
 	})
-
 	t.Run("Iceland-P3-n.jpg", func(t *testing.T) {
 		data, err := JSON("testdata/Iceland-P3-n.json", "")
 
@@ -1164,7 +1114,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "Display P3", data.ColorProfile)
 	})
-
 	t.Run("Iceland-sRGB.jpg", func(t *testing.T) {
 		data, err := JSON("testdata/Iceland-sRGB.json", "")
 
@@ -1196,7 +1145,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "Display P3", data.ColorProfile)
 	})
-
 	t.Run("gif.json", func(t *testing.T) {
 		data, err := JSON("testdata/gif.json", "")
 
@@ -1230,7 +1178,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.Projection)
 		assert.Equal(t, "", data.ColorProfile)
 	})
-
 	t.Run("iptc-fields-500", func(t *testing.T) {
 		data, err := JSON("testdata/iptc-fields-500.json", "")
 
@@ -1246,7 +1193,6 @@ func TestJSON(t *testing.T) {
 		//TODO
 		//assert.Equal(t, "zqdtcxt1q9wrxnur", data.DocumentID)
 	})
-
 	t.Run("iPhone_6s.json", func(t *testing.T) {
 		data, err := JSON("testdata/iPhone_6s.json", "")
 
@@ -1271,7 +1217,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 6s", data.CameraModel)
 		assert.Equal(t, "iPhone 6s back camera 4.15mm f/2.2", data.LensModel)
 	})
-
 	t.Run("iPhone_14_Pro.json", func(t *testing.T) {
 		data, err := JSON("testdata/iPhone_14_Pro.json", "")
 
@@ -1297,7 +1242,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 14 Pro Max back triple camera 9mm f/2.8", data.LensModel)
 		assert.Equal(t, "e5f10d35-06c3-4f75-a00c-50b793a6c325", data.DocumentID)
 	})
-
 	t.Run("buggy_panorama.json", func(t *testing.T) {
 		data, err := JSON("testdata/buggy_panorama.json", "")
 
@@ -1316,7 +1260,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(103.48), float32(data.Lng))
 		assert.Equal(t, 0.0, data.Altitude)
 	})
-
 	t.Run("altitude.json", func(t *testing.T) {
 		data, err := JSON("testdata/altitude.json", "")
 
@@ -1330,7 +1273,6 @@ func TestJSON(t *testing.T) {
 		assert.InDelta(t, 4294967284, data.Altitude, 1000)
 		assert.Equal(t, 0, clean.Altitude(data.Altitude))
 	})
-
 	t.Run("timeoffset.json", func(t *testing.T) {
 		data, err := JSON("testdata/timeoffset.json", "")
 
@@ -1352,7 +1294,6 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 13", data.CameraModel)
 		assert.Equal(t, "iPhone 13 back dual wide camera 5.1mm f/1.6", data.LensModel)
 	})
-
 	t.Run("kodak-slide-n-scan.json", func(t *testing.T) {
 		data, err := JSON("testdata/kodak-slide-n-scan.json", "")
 

@@ -34,8 +34,8 @@ var ClusterThemePullCommand = &cli.Command{
 				&cli.BoolFlag{Name: "force", Aliases: []string{"f"}, Usage: "replace existing files at destination"},
 				&cli.StringFlag{Name: "portal-url", Usage: "Portal base `URL` (defaults to global config)"},
 				&cli.StringFlag{Name: "join-token", Usage: "Portal access `TOKEN` (defaults to global config)"},
-				&cli.StringFlag{Name: "client-id", Usage: "Node client `ID` (defaults to NodeID from config)"},
-				&cli.StringFlag{Name: "client-secret", Usage: "Node client `SECRET` (defaults to NodeSecret from config)"},
+				&cli.StringFlag{Name: "client-id", Usage: "Node client `ID` (defaults to NodeClientID from config)"},
+				&cli.StringFlag{Name: "client-secret", Usage: "Node client `SECRET` (defaults to NodeClientSecret from config)"},
 				// JSON output supported via report.CliFlags on parent command where applicable
 			},
 			Action: clusterThemePullAction,
@@ -58,11 +58,11 @@ func clusterThemePullAction(ctx *cli.Context) error {
 		// Credentials: prefer OAuth client credentials (client-id/secret), fallback to join-token for compatibility.
 		clientID := ctx.String("client-id")
 		if clientID == "" {
-			clientID = conf.NodeID()
+			clientID = conf.NodeClientID()
 		}
 		clientSecret := ctx.String("client-secret")
 		if clientSecret == "" {
-			clientSecret = conf.NodeSecret()
+			clientSecret = conf.NodeClientSecret()
 		}
 		token := ""
 		if clientID != "" && clientSecret != "" {
@@ -75,7 +75,7 @@ func clusterThemePullAction(ctx *cli.Context) error {
 			}
 		}
 		if token == "" {
-			// Try join-token assisted path. If NodeID/NodeSecret not available, attempt register to obtain them, then OAuth.
+			// Try join-token assisted path. If NodeClientID/NodeClientSecret not available, attempt register to obtain them, then OAuth.
 			jt := ctx.String("join-token")
 			if jt == "" {
 				jt = conf.JoinToken()

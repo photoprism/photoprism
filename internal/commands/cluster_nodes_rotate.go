@@ -39,12 +39,14 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		}
 
 		// Determine node name. On portal, resolve id->name via registry; otherwise treat key as name.
-		name := clean.TypeLowerDash(key)
+		name := clean.DNSLabel(key)
 		if conf.IsPortal() {
 			if r, err := reg.NewClientRegistryWithConfig(conf); err == nil {
-				if n, err := r.Get(key); err == nil && n != nil {
+				if n, err := r.FindByNodeUUID(key); err == nil && n != nil {
 					name = n.Name
-				} else if n, err := r.FindByName(clean.TypeLowerDash(key)); err == nil && n != nil {
+				} else if n, err := r.FindByClientID(key); err == nil && n != nil {
+					name = n.Name
+				} else if n, err := r.FindByName(clean.DNSLabel(key)); err == nil && n != nil {
 					name = n.Name
 				}
 			}
@@ -131,17 +133,17 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		cols := []string{"ID", "Name", "Role", "DB Name", "DB User", "Host", "Port"}
-		rows := [][]string{{resp.Node.ID, resp.Node.Name, resp.Node.Role, resp.Database.Name, resp.Database.User, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
+		cols := []string{"UUID", "ClientID", "Name", "Role", "DB Driver", "DB Name", "DB User", "Host", "Port"}
+		rows := [][]string{{resp.Node.UUID, resp.Node.ClientID, resp.Node.Name, resp.Node.Role, resp.Database.Driver, resp.Database.Name, resp.Database.User, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
 		out, _ := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 		fmt.Printf("\n%s\n", out)
 
-		if (resp.Secrets != nil && resp.Secrets.NodeSecret != "") || resp.Database.Password != "" {
+		if (resp.Secrets != nil && resp.Secrets.ClientSecret != "") || resp.Database.Password != "" {
 			fmt.Println("PLEASE WRITE DOWN THE FOLLOWING CREDENTIALS; THEY WILL NOT BE SHOWN AGAIN:")
-			if resp.Secrets != nil && resp.Secrets.NodeSecret != "" && resp.Database.Password != "" {
-				fmt.Printf("\n%s\n", report.Credentials("Node Secret", resp.Secrets.NodeSecret, "DB Password", resp.Database.Password))
-			} else if resp.Secrets != nil && resp.Secrets.NodeSecret != "" {
-				fmt.Printf("\n%s\n", report.Credentials("Node Secret", resp.Secrets.NodeSecret, "", ""))
+			if resp.Secrets != nil && resp.Secrets.ClientSecret != "" && resp.Database.Password != "" {
+				fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "DB Password", resp.Database.Password))
+			} else if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
+				fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "", ""))
 			} else if resp.Database.Password != "" {
 				fmt.Printf("\n%s\n", report.Credentials("DB User", resp.Database.User, "DB Password", resp.Database.Password))
 			}

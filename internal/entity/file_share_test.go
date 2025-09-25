@@ -46,7 +46,6 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 		UnscopedDb().Delete(newFile)
 		UnscopedDb().Delete(newService)
 	})
-
 	t.Run("existing", func(t *testing.T) {
 		newFile := &File{ID: 778, PhotoID: 1000041} // Can't add share if the file and service aren't in the database.
 		Db().Create(newFile)

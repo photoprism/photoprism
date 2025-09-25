@@ -31,6 +31,7 @@ type Clients []Client
 // Client represents a client application.
 type Client struct {
 	ClientUID    string          `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
+	NodeUUID     string          `gorm:"type:bytes;size:64;index;default:'';" json:"NodeUUID,omitempty" yaml:"NodeUUID,omitempty"`
 	UserUID      string          `gorm:"type:bytes;size:42;index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User           `gorm:"foreignKey:UserUID;references:UserUID" yaml:"-"`
@@ -102,6 +103,18 @@ func FindClientByUID(uid string) *Client {
 		return nil
 	}
 
+	return m
+}
+
+// FindClientByNodeUUID returns the client with the given NodeUUID or nil if not found.
+func FindClientByNodeUUID(nodeUUID string) *Client {
+	if nodeUUID == "" {
+		return nil
+	}
+	m := &Client{}
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).First(m).Error; err != nil {
+		return nil
+	}
 	return m
 }
 

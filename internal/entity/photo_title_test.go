@@ -117,7 +117,6 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "longlonglonglonglonglongName / 2018", m.PhotoTitle)
 	})
-
 	t.Run("photo with location and short city", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
 		classifyLabels := &classify.Labels{}
@@ -144,7 +143,6 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			assert.Equal(t, "Holiday Park / Germany / 2016", m.PhotoTitle)
 		}
 	})
-
 	t.Run("photo with location without  loc name and long city", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo11")
 		classifyLabels := &classify.Labels{}
@@ -186,7 +184,6 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "Classify / Germany / 2006", m.PhotoTitle)
 	})
-
 	t.Run("no location no labels", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo02")
 		classifyLabels := &classify.Labels{}

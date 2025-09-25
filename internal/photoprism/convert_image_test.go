@@ -49,7 +49,6 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = os.Remove(outputName)
 	})
-
 	t.Run("Raw", func(t *testing.T) {
 		jpegFilename := filepath.Join(cnf.ImportPath(), "fern_green.jpg")
 
@@ -106,7 +105,6 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = os.Remove(jpgFilename)
 	})
-
 	t.Run("Svg", func(t *testing.T) {
 		svgFile := fs.Abs("./testdata/agpl.svg")
 

@@ -191,7 +191,6 @@ func TestDetails_Save(t *testing.T) {
 		UnscopedDb().Delete(&details)
 		UnscopedDb().Delete(newPhoto)
 	})
-
 	t.Run("Error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
 

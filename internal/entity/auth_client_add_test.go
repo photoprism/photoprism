@@ -83,7 +83,6 @@ func Test_AddClient_WithRole(t *testing.T) {
 		}
 		assert.Equal(t, "admin", persisted.ClientRole)
 	})
-
 	t.Run("InvalidRoleDefaultsToClient", func(t *testing.T) {
 		frm := form.Client{
 			ClientID:     "cs5cpu17n6gj9r11",

@@ -40,7 +40,6 @@ func TestConvert_ToJson(t *testing.T) {
 
 		_ = os.Remove(jsonName)
 	})
-
 	t.Run("IMG_4120.JPG", func(t *testing.T) {
 		fileName := filepath.Join(c.ExamplesPath(), "IMG_4120.JPG")
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -65,7 +64,6 @@ func TestConvert_ToJson(t *testing.T) {
 
 		_ = os.Remove(jsonName)
 	})
-
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		fileName := c.ExamplesPath() + "/iphone_7.heic"
 
@@ -91,7 +89,6 @@ func TestConvert_ToJson(t *testing.T) {
 
 		_ = os.Remove(jsonName)
 	})
-
 	t.Run("iphone_15_pro.heic", func(t *testing.T) {
 		fileName := c.ExamplesPath() + "/iphone_15_pro.heic"
 

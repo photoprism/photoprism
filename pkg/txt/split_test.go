@@ -147,7 +147,6 @@ func TestSplitWithEscape(t *testing.T) {
 
 		assert.Equal(t, expected, actual)
 	})
-
 	t.Run("UnTrimmedEmptyString", func(t *testing.T) {
 		testString := ""
 		expected := []string{}

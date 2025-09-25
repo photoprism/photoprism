@@ -245,7 +245,6 @@ func TestPhoto_UnknownLocation(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownLocation())
 	})
-
 	t.Run("no_lat_lng", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		m.PhotoLat = 0.0
@@ -254,7 +253,6 @@ func TestPhoto_UnknownLocation(t *testing.T) {
 		assert.False(t, m.HasLocation())
 		assert.True(t, m.UnknownLocation())
 	})
-
 	t.Run("lat_lng_cell_id", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		// t.Logf("MODEL: %+v", m)
@@ -413,7 +411,6 @@ func TestUpdateLocation(t *testing.T) {
 		assert.Equal(t, "mx:VvfNBpFegSCr", m.PlaceID)
 		assert.Equal(t, SrcEstimate, m.PlaceSrc)
 	})
-
 	t.Run("change_estimate", func(t *testing.T) {
 		m := Photo{
 			PhotoName:    "test_photo_1",

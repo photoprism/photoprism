@@ -29,7 +29,6 @@ func TestGetMetrics(t *testing.T) {
 		assert.Regexp(t, regexp.MustCompile(`photoprism_statistics_media_count{stat="folders"} \d+`), body)
 		assert.Regexp(t, regexp.MustCompile(`photoprism_statistics_media_count{stat="files"} \d+`), body)
 	})
-
 	t.Run("expose build information", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -45,7 +44,6 @@ func TestGetMetrics(t *testing.T) {
 
 		assert.Regexp(t, regexp.MustCompile(`photoprism_build_info{edition=".+",goversion=".+",version=".+"} 1`), body)
 	})
-
 	t.Run("has prometheus exposition format as content type", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 

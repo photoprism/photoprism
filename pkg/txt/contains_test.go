@@ -111,3 +111,20 @@ func TestContainsAlnumLower(t *testing.T) {
 		assert.False(t, ContainsAlnumLower("_3kmib24yr3"))
 	})
 }
+
+func BenchmarkContainsNumber(b *testing.B) {
+	s := "The quick brown fox jumps over 13 lazy dogs"
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = ContainsNumber(s)
+	}
+}
+
+func BenchmarkSortCaseInsensitive(b *testing.B) {
+	words := []string{"Zebra", "apple", "Banana", "cherry", "Apricot", "banana", "zebra", "Cherry"}
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		w := append([]string(nil), words...)
+		SortCaseInsensitive(w)
+	}
+}

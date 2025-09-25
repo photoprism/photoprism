@@ -29,7 +29,6 @@ func TestCacheName(t *testing.T) {
 		assert.Error(t, err)
 		assert.Empty(t, r)
 	})
-
 	t.Run("Success", func(t *testing.T) {
 		r, err := CacheName("abcdghoj", "test", "juh")
 		if err != nil {

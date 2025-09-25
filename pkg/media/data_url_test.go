@@ -38,7 +38,6 @@ func TestReadUrl(t *testing.T) {
 			assert.Equal(t, expected, data)
 		}
 	})
-
 	t.Run("HttpServer", func(t *testing.T) {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte("hello"))
@@ -51,32 +50,26 @@ func TestReadUrl(t *testing.T) {
 		}
 		assert.Equal(t, []byte("hello"), data)
 	})
-
 	t.Run("InvalidEmpty", func(t *testing.T) {
 		_, err := ReadUrl("", []string{"https"})
 		assert.Error(t, err)
 	})
-
 	t.Run("MissingScheme", func(t *testing.T) {
 		_, err := ReadUrl("example.com/file.jpg", []string{"https"})
 		assert.Error(t, err)
 	})
-
 	t.Run("DisallowedScheme", func(t *testing.T) {
 		_, err := ReadUrl("http://example.com", []string{"data"})
 		assert.Error(t, err)
 	})
-
 	t.Run("UnsupportedScheme", func(t *testing.T) {
 		_, err := ReadUrl("ssh://host/path", []string{"ssh"})
 		assert.Error(t, err)
 	})
-
 	t.Run("InvalidDataUrl", func(t *testing.T) {
 		_, err := ReadUrl("data:image/png;base64,", []string{"data"})
 		assert.Error(t, err)
 	})
-
 	t.Run("FileSchemeInvalidPath", func(t *testing.T) {
 		// os.ReadFile will not accept a file:// URL; expect error path is exercised.
 		_, err := ReadUrl("file:///this/does/not/exist", []string{"file"})

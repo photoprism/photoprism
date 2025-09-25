@@ -116,7 +116,6 @@ func TestFindLocalUser(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
-
 	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 
@@ -139,7 +138,6 @@ func TestFindLocalUser(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
-
 	t.Run("Bob", func(t *testing.T) {
 		m := FindLocalUser("bob")
 
@@ -160,7 +158,6 @@ func TestFindLocalUser(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
-
 	t.Run("Unknown", func(t *testing.T) {
 		m := FindLocalUser("")
 
@@ -168,7 +165,6 @@ func TestFindLocalUser(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		m := FindLocalUser("xxx")
 
@@ -203,7 +199,6 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
-
 	t.Run("Alice", func(t *testing.T) {
 		m := FindUserByName("alice")
 
@@ -224,7 +219,6 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
-
 	t.Run("Bob", func(t *testing.T) {
 		m := FindUserByName("bob")
 
@@ -243,7 +237,6 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
-
 	t.Run("Unknown", func(t *testing.T) {
 		m := FindUserByName("")
 
@@ -251,7 +244,6 @@ func TestFindUserByName(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		m := FindUserByName("xxx")
 
@@ -413,7 +405,6 @@ func TestUser_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("NewUser", func(t *testing.T) {
 		if err := NewUser().Save(); err != nil {
 			t.Fatal(err)
@@ -1767,26 +1758,26 @@ func TestUser_SetMethod(t *testing.T) {
 }
 
 func TestUser_SetAuthID(t *testing.T) {
-	id := rnd.UUID()
+	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
 
 	t.Run("UUID", func(t *testing.T) {
 		m := UserFixtures.Get("guest")
 
-		m.SetAuthID(id, issuer)
-		assert.Equal(t, id, m.AuthID)
+		m.SetAuthID(uuid, issuer)
+		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, issuer, m.AuthIssuer)
-		m.SetAuthID(id, "")
-		assert.Equal(t, id, m.AuthID)
+		m.SetAuthID(uuid, "")
+		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
 		m.SetAuthID("", issuer)
-		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
 	})
 }
 
 func TestUser_UpdateAuthID(t *testing.T) {
-	id := rnd.UUID()
+	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
 
 	t.Run("UUID", func(t *testing.T) {
@@ -1795,22 +1786,22 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		m.SetAuthID("", issuer)
 		assert.Equal(t, "", m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
-		m.SetAuthID(id, issuer)
-		assert.Equal(t, id, m.AuthID)
+		m.SetAuthID(uuid, issuer)
+		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, issuer, m.AuthIssuer)
-		err := m.UpdateAuthID(id, "")
+		err := m.UpdateAuthID(uuid, "")
 		assert.NoError(t, err)
-		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
 	})
 	t.Run("InvalidUUID", func(t *testing.T) {
 		m := User{UserUID: "123"}
 
 		assert.Equal(t, "", m.AuthIssuer)
-		m.SetAuthID(id, issuer)
-		assert.Equal(t, id, m.AuthID)
+		m.SetAuthID(uuid, issuer)
+		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, issuer, m.AuthIssuer)
-		err := m.UpdateAuthID(id, "")
+		err := m.UpdateAuthID(uuid, "")
 		assert.Error(t, err)
 	})
 }

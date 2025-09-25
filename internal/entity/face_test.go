@@ -23,7 +23,6 @@ func TestFace_Match(t *testing.T) {
 		assert.Greater(t, dist, 1.31)
 		assert.Less(t, dist, 1.32)
 	})
-
 	t.Run("1000003-6", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings())
@@ -32,7 +31,6 @@ func TestFace_Match(t *testing.T) {
 		assert.Greater(t, dist, 1.27)
 		assert.Less(t, dist, 1.28)
 	})
-
 	t.Run("len(embeddings) == 0", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 		match, dist := m.Match(face.Embeddings{})

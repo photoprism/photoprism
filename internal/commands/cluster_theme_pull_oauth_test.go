@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Verifies OAuth path in cluster theme pull using client_id/client_secret.
@@ -92,14 +93,15 @@ func TestClusterThemePull_JoinTokenToOAuth(t *testing.T) {
 			_ = json.NewDecoder(r.Body).Decode(&req)
 			sawRotateSecret = req.RotateSecret
 			w.Header().Set("Content-Type", "application/json")
-			// Return NodeID and a fresh secret
+			// Return NodeClientID and a fresh secret
 			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
-				Node:    cluster.Node{ID: "cid123", Name: "pp-node-01"},
-				Secrets: &cluster.RegisterSecrets{NodeSecret: "s3cr3t"},
+				UUID:    rnd.UUID(),
+				Node:    cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"},
+				Secrets: &cluster.RegisterSecrets{ClientSecret: "s3cr3t"},
 			})
 		case "/api/v1/oauth/token":
 			// Expect Basic for the returned creds
-			if r.Header.Get("Authorization") != "Basic "+base64.StdEncoding.EncodeToString([]byte("cid123:s3cr3t")) {
+			if r.Header.Get("Authorization") != "Basic "+base64.StdEncoding.EncodeToString([]byte("cs5gfen1bgxz7s9i:s3cr3t")) {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}

@@ -21,7 +21,6 @@ func TestRemuxFile(t *testing.T) {
 
 		assert.Equal(t, "invalid video file path", err.Error())
 	})
-
 	t.Run("Mp4", func(t *testing.T) {
 		opt := encode.NewRemuxOptions(ffmpegBin, fs.VideoMp4, false)
 
@@ -64,7 +63,6 @@ func TestRemuxCmd(t *testing.T) {
 
 		assert.Equal(t, "empty source filename", err.Error())
 	})
-
 	t.Run("Mp4", func(t *testing.T) {
 		opt := encode.NewRemuxOptions(ffmpegBin, fs.VideoMp4, false)
 
@@ -107,7 +105,7 @@ func TestRemuxFile_DestExists_NoForce_NoOp(t *testing.T) {
 	dest := filepath.Join(dir, "already-there.mp4")
 	// Create a tiny placeholder dest file
 	_ = os.Remove(dest)
-	if err := os.WriteFile(dest, []byte("x"), 0o644); err != nil {
+	if err := os.WriteFile(dest, []byte("x"), fs.ModeFile); err != nil {
 		t.Fatal(err)
 	}
 	defer os.Remove(dest)
@@ -134,7 +132,7 @@ func TestRemuxFile_TempExists_NoForce_Error(t *testing.T) {
 	if err := fs.Copy(orig, src, true); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(temp, []byte("x"), 0o644); err != nil {
+	if err := os.WriteFile(temp, []byte("x"), fs.ModeFile); err != nil {
 		t.Fatal(err)
 	}
 	err := RemuxFile(src, dest, opt)

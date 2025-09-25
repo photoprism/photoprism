@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // TODO: Several CLI commands defer conf.Shutdown(), which closes the shared
@@ -55,6 +56,9 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	// Purge local SQLite test artifacts created during this package's tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

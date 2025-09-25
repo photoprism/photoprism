@@ -44,9 +44,9 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	if err := json.NewDecoder(resp.Body).Decode(&regResp); err != nil {
 		return "", "", err
 	}
-	id = regResp.Node.ID
+	id = regResp.Node.ClientID
 	if regResp.Secrets != nil {
-		secret = regResp.Secrets.NodeSecret
+		secret = regResp.Secrets.ClientSecret
 	}
 	if id == "" || secret == "" {
 		return "", "", fmt.Errorf("missing client credentials in response")

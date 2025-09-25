@@ -82,25 +82,21 @@ func TestSerialize(t *testing.T) {
 		assert.IsType(t, expected, result)
 		assert.Equal(t, expected, result)
 	})
-
 	t.Run("pointer", func(t *testing.T) {
 		result := Serialize(&form, false)
 		assert.IsType(t, expected, result)
 		assert.Equal(t, expected, result)
 	})
-
 	t.Run("all value", func(t *testing.T) {
 		result := Serialize(form, true)
 		assert.IsType(t, expectedAll, result)
 		assert.Equal(t, expectedAll, result)
 	})
-
 	t.Run("all pointer", func(t *testing.T) {
 		result := Serialize(&form, true)
 		assert.IsType(t, expectedAll, result)
 		assert.Equal(t, expectedAll, result)
 	})
-
 	t.Run("invalid argument", func(t *testing.T) {
 		result := Serialize("string", true)
 		assert.Equal(t, "", result)

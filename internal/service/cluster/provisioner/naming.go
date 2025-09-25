@@ -8,50 +8,55 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const (
-	dbPrefix   = "pp_"
-	userPrefix = "pp_"
-	dbSuffix   = 8
-	userSuffix = 6
-	userMax    = 32
-	dbMax      = 64
+	// Name prefix for generated DB objects.
+	// Final pattern without slugs (UUID-based):
+	//   database: photoprism_d<hmac11>
+	//   username: photoprism_u<hmac11>
+	prefix     = "photoprism_"
+	dbSuffix   = 11
+	userSuffix = 11
+	// Budgets: keep user conservative for MySQL compatibility; MariaDB allows more.
+	userMax = 32
+	dbMax   = 64
 )
 
 // GenerateCreds computes deterministic database name and user for a node under the given portal
-// plus a random password. Naming is stable for a given (clusterUUID, nodeName) pair and changes
-// if the cluster UUID changes. The returned password is random and independent.
-func GenerateCreds(conf *config.Config, nodeName string) (dbName, dbUser, dbPass string) {
+// plus a random password. Naming is stable for a given (clusterUUID, nodeUUID) pair and changes
+// if the cluster UUID or node UUID changes.
+func GenerateCreds(conf *config.Config, nodeUUID, nodeName string) (dbName, dbUser, dbPass string) {
 	clusterUUID := conf.ClusterUUID()
-	slug := clean.TypeLowerDash(nodeName)
 
-	// Compute base32 (no padding) HMAC suffixes scoped by cluster UUID.
-	sName := hmacBase32("db-name:"+clusterUUID, slug)
-	sUser := hmacBase32("db-user:"+clusterUUID, slug)
+	// Compute base32 (no padding) HMAC suffixes scoped by cluster UUID and node UUID.
+	sName := hmacBase32("db-name:"+clusterUUID, nodeUUID)
+	sUser := hmacBase32("db-user:"+clusterUUID, nodeUUID)
 
-	// Budgets: user ≤32, db ≤64
-	// Patterns: pp_<slug>_<suffix>
-	// Compute max slug lengths to honor budgets.
-	userSlugMax := userMax - len(userPrefix) - 1 - userSuffix // 32 - 3 - 1 - 6 = 22
-	dbSlugMax := dbMax - len(dbPrefix) - 1 - dbSuffix         // 64 - 3 - 1 - 8 = 52
-
-	slugUser := trimRunes(slug, userSlugMax)
-	slugDb := trimRunes(slug, dbSlugMax)
-
-	dbName = fmt.Sprintf("%s%s_%s", dbPrefix, slugDb, sName[:dbSuffix])
-	dbUser = fmt.Sprintf("%s%s_%s", userPrefix, slugUser, sUser[:userSuffix])
+	// Budgets: user ≤32, db ≤64. Suffixes are fixed length and derived from UUID.
+	dbName = fmt.Sprintf("%sd%s", prefix, sName[:dbSuffix])
+	dbUser = fmt.Sprintf("%su%s", prefix, sUser[:userSuffix])
 	dbPass = rnd.Base62(32)
+
 	return
 }
 
-// BuildDSN returns a MySQL/MariaDB DSN suitable for PhotoPrism nodes.
-func BuildDSN(host string, port int, user, pass, name string) string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
-		user, pass, host, port, name,
-	)
+// BuildDSN returns a DSN suitable for PhotoPrism nodes given a database driver.
+// Currently, "mysql"/"mariadb" are supported; other drivers log a warning and fall back to MySQL format.
+func BuildDSN(driver, host string, port int, user, pass, name string) string {
+	d := strings.ToLower(driver)
+	switch d {
+	case config.MySQL, config.MariaDB:
+		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
+			user, pass, host, port, name,
+		)
+	default:
+		log.Warnf("provisioner: unsupported driver %q, falling back to mysql DSN format", driver)
+		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
+			user, pass, host, port, name,
+		)
+	}
 }
 
 func hmacBase32(key, data string) string {
@@ -61,18 +66,4 @@ func hmacBase32(key, data string) string {
 	enc := base32.StdEncoding.WithPadding(base32.NoPadding).EncodeToString(sum)
 
 	return strings.ToLower(enc)
-}
-
-func trimRunes(s string, max int) string {
-	if max <= 0 || len(s) <= max {
-		return s
-	}
-
-	// Trim by runes to avoid mid-rune cut, though s should be ASCII by cleaning.
-	r := []rune(s)
-	if len(r) <= max {
-		return s
-	}
-
-	return string(r[:max])
 }

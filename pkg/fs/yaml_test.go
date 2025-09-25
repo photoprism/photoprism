@@ -18,14 +18,13 @@ func TestYamlFilePath(t *testing.T) {
 		got := YamlFilePath("", "", rel)
 		assert.Equal(t, expected, got)
 	})
-
 	t.Run("PreferYmlIfExists", func(t *testing.T) {
 		dir := t.TempDir()
 		name := "app-config"
 
 		// Create .yml file
 		ymlPath := filepath.Join(dir, name+ExtYml)
-		err := os.WriteFile(ymlPath, []byte("foo: bar\n"), 0o644)
+		err := os.WriteFile(ymlPath, []byte("foo: bar\n"), ModeFile)
 		if err != nil {
 			t.Fatalf("write %s: %v", ymlPath, err)
 		}
@@ -33,7 +32,6 @@ func TestYamlFilePath(t *testing.T) {
 		got := YamlFilePath(name, dir, "")
 		assert.Equal(t, ymlPath, got)
 	})
-
 	t.Run("DefaultYamlWhenYmlMissing", func(t *testing.T) {
 		dir := t.TempDir()
 		name := "settings"
@@ -43,7 +41,6 @@ func TestYamlFilePath(t *testing.T) {
 		got := YamlFilePath(name, dir, "")
 		assert.Equal(t, expected, got)
 	})
-
 	t.Run("BothExistReturnsYml", func(t *testing.T) {
 		dir := t.TempDir()
 		name := "prefs"
@@ -52,10 +49,11 @@ func TestYamlFilePath(t *testing.T) {
 		ymlPath := filepath.Join(dir, name+ExtYml)
 		yamlPath := filepath.Join(dir, name+ExtYaml)
 
-		if err := os.WriteFile(ymlPath, []byte("a: 1\n"), 0o644); err != nil {
+		if err := os.WriteFile(ymlPath, []byte("a: 1\n"), ModeFile); err != nil {
 			t.Fatalf("write %s: %v", ymlPath, err)
 		}
-		if err := os.WriteFile(yamlPath, []byte("a: 2\n"), 0o644); err != nil {
+
+		if err := os.WriteFile(yamlPath, []byte("a: 2\n"), ModeFile); err != nil {
 			t.Fatalf("write %s: %v", yamlPath, err)
 		}
 

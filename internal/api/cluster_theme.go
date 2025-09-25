@@ -3,6 +3,7 @@ package api
 import (
 	"archive/zip"
 	gofs "io/fs"
+	"net"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -26,11 +27,28 @@ import (
 //	@Router		/api/v1/cluster/theme [get]
 func ClusterGetTheme(router *gin.RouterGroup) {
 	router.GET("/cluster/theme", func(c *gin.Context) {
-		// Check if client has cluster download privileges.
-		s := Auth(c, acl.ResourceCluster, acl.ActionDownload)
+		// Get app config and client IP.
+		conf := get.Config()
+		clientIp := ClientIP(c)
 
-		if s.Abort(c) {
-			return
+		// Optional IP-based allowance via ClusterCIDR.
+		refID := "-"
+		if cidr := conf.ClusterCIDR(); cidr != "" {
+			if _, ipnet, err := net.ParseCIDR(cidr); err == nil {
+				if ip := net.ParseIP(clientIp); ip != nil && ipnet.Contains(ip) {
+					// Allowed by CIDR; proceed without session.
+					refID = "cidr"
+				}
+			}
+		}
+
+		// If not allowed by CIDR, require regular auth.
+		if refID == "-" {
+			s := Auth(c, acl.ResourceCluster, acl.ActionDownload)
+			if s.Abort(c) {
+				return
+			}
+			refID = s.RefID
 		}
 
 		/*
@@ -40,21 +58,16 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 			  3. Optionally, return a 404 or 204 error code when no files are added, though an empty zip file is acceptable.
 		*/
 
-		// Get app config.
-		conf := get.Config()
-
 		// Abort if this is not a portal server.
 		if !conf.IsPortal() {
 			AbortFeatureDisabled(c)
 			return
 		}
-
-		clientIp := ClientIP(c)
 		themePath := conf.ThemePath()
 
 		// Resolve symbolic links.
 		if resolved, err := filepath.EvalSymlinks(themePath); err != nil {
-			event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to resolve path"}, s.RefID, clean.Error(err))
+			event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to resolve path"}, refID, clean.Error(err))
 			AbortNotFound(c)
 			return
 		} else {
@@ -63,7 +76,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 
 		// Check if theme path exists.
 		if !fs.PathExists(themePath) {
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "theme path not found"}, s.RefID)
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "theme path not found"}, refID)
 			AbortNotFound(c)
 			return
 		}
@@ -72,12 +85,12 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		// This aligns with bootstrap behavior, which only installs a theme when
 		// app.js exists locally or can be fetched from the Portal.
 		if !fs.FileExistsNotEmpty(filepath.Join(themePath, "app.js")) {
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "app.js missing or empty"}, s.RefID)
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "app.js missing or empty"}, refID)
 			AbortNotFound(c)
 			return
 		}
 
-		event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "creating theme archive from %s"}, s.RefID, clean.Log(themePath))
+		event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "creating theme archive from %s"}, refID, clean.Log(themePath))
 
 		// Add response headers.
 		AddDownloadHeader(c, "theme.zip")
@@ -87,14 +100,14 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		zipWriter := zip.NewWriter(c.Writer)
 		defer func(w *zip.Writer) {
 			if closeErr := w.Close(); closeErr != nil {
-				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to close", "%s"}, s.RefID, clean.Error(closeErr))
+				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to close", "%s"}, refID, clean.Error(closeErr))
 			}
 		}(zipWriter)
 
 		err := filepath.WalkDir(themePath, func(filePath string, info gofs.DirEntry, walkErr error) error {
 			// Handle errors.
 			if walkErr != nil {
-				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to traverse theme path", "%s"}, s.RefID, clean.Error(walkErr))
+				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to traverse theme path", "%s"}, refID, clean.Error(walkErr))
 
 				// If the error occurs on a directory, skip descending to avoid cascading errors.
 				if info != nil && info.IsDir() {
@@ -130,11 +143,11 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 			// Get the relative file name to use as alias in the zip.
 			alias := filepath.ToSlash(fs.RelName(filePath, themePath))
 
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "adding %s to archive"}, s.RefID, clean.Log(alias))
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "adding %s to archive"}, refID, clean.Log(alias))
 
 			// Stream zipped file contents.
 			if zipErr := fs.ZipFile(zipWriter, filePath, alias, false); zipErr != nil {
-				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to add %s", "%s"}, s.RefID, clean.Log(alias), clean.Error(zipErr))
+				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "failed to add %s", "%s"}, refID, clean.Log(alias), clean.Error(zipErr))
 			}
 
 			return nil
@@ -142,9 +155,9 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 
 		// Log result.
 		if err != nil {
-			event.AuditErr([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", event.Failed, "%s"}, s.RefID, clean.Error(err))
+			event.AuditErr([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", event.Failed, "%s"}, refID, clean.Error(err))
 		} else {
-			event.AuditInfo([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", event.Succeeded}, s.RefID)
+			event.AuditInfo([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", event.Succeeded}, refID)
 		}
 	})
 }

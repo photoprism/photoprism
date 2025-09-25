@@ -75,7 +75,6 @@ func TestIndexRelated(t *testing.T) {
 			assert.Equal(t, "name", photo.TakenSrc)
 		}
 	})
-
 	t.Run("apple-test-2.jpg", func(t *testing.T) {
 		cfg := config.TestConfig()
 

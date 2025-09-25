@@ -1,3 +1,5 @@
+//go:build yt
+
 package commands
 
 import (
@@ -6,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -17,7 +20,22 @@ import (
 //     with %(id)s -> abc and %(ext)s -> mp4, then prints the path
 func createFakeYtDlp(t *testing.T) string {
 	t.Helper()
-	dir := t.TempDir()
+	// Prefer the app's TempPath to avoid CI environments where OS /tmp is mounted noexec.
+	base := ""
+	if c := get.Config(); c != nil {
+		base = c.TempPath()
+	}
+	if base == "" {
+		base = t.TempDir()
+	} else {
+		if err := os.MkdirAll(base, 0o755); err != nil {
+			t.Fatalf("failed to create base temp dir: %v", err)
+		}
+	}
+	dir, derr := os.MkdirTemp(base, "ydlp_")
+	if derr != nil {
+		t.Fatalf("failed to create temp dir: %v", derr)
+	}
 	path := filepath.Join(dir, "yt-dlp")
 	if runtime.GOOS == "windows" {
 		// Not needed in CI/dev container. Keep simple stub.
@@ -43,6 +61,10 @@ func createFakeYtDlp(t *testing.T) string {
 }
 
 func TestDownloadImpl_FileMethod_AutoSkipsRemux(t *testing.T) {
+	// Ensure our fake script runs via shell even on noexec mounts.
+	t.Setenv("YTDLP_FORCE_SHELL", "1")
+	// Prefer using in-process fake to avoid exec restrictions.
+	t.Setenv("YTDLP_FAKE", "1")
 	fake := createFakeYtDlp(t)
 	orig := dl.YtDlpBin
 	defer func() { dl.YtDlpBin = orig }()
@@ -83,6 +105,10 @@ func TestDownloadImpl_FileMethod_AutoSkipsRemux(t *testing.T) {
 }
 
 func TestDownloadImpl_FileMethod_Skip_NoRemux(t *testing.T) {
+	// Ensure our fake script runs via shell even on noexec mounts.
+	t.Setenv("YTDLP_FORCE_SHELL", "1")
+	// Prefer using in-process fake to avoid exec restrictions.
+	t.Setenv("YTDLP_FAKE", "1")
 	fake := createFakeYtDlp(t)
 	orig := dl.YtDlpBin
 	defer func() { dl.YtDlpBin = orig }()
@@ -111,27 +137,51 @@ func TestDownloadImpl_FileMethod_Skip_NoRemux(t *testing.T) {
 		t.Fatalf("runDownload failed with skip remux: %v", err)
 	}
 
-	// Verify an mp4 exists under Originals/dest
+	// Verify an mp4 exists under Originals/dest. On some filesystems (e.g.,
+	// Windows/CI or slow containers) directory listings can lag slightly after
+	// moves. Poll briefly to avoid flakes.
 	c := get.Config()
 	outDir := filepath.Join(c.OriginalsPath(), dest)
-	found := false
-	_ = filepath.WalkDir(outDir, func(path string, d os.DirEntry, err error) error {
-		if err != nil || d == nil {
+	var found bool
+	deadline := time.Now().Add(2 * time.Second)
+	for !found && time.Now().Before(deadline) {
+		_ = filepath.WalkDir(outDir, func(path string, d os.DirEntry, err error) error {
+			if err != nil || d == nil {
+				return nil
+			}
+			if !d.IsDir() && strings.HasSuffix(strings.ToLower(d.Name()), ".mp4") {
+				found = true
+				return filepath.SkipDir
+			}
 			return nil
+		})
+		if !found {
+			time.Sleep(50 * time.Millisecond)
 		}
-		if !d.IsDir() && strings.HasSuffix(strings.ToLower(d.Name()), ".mp4") {
-			found = true
-			return filepath.SkipDir
-		}
-		return nil
-	})
+	}
 	if !found {
-		t.Fatalf("expected at least one mp4 in %s", outDir)
+		// Help debugging by listing the directory tree.
+		var listing []string
+		_ = filepath.WalkDir(outDir, func(path string, d os.DirEntry, err error) error {
+			if err == nil && d != nil {
+				rel, _ := filepath.Rel(outDir, path)
+				if rel == "." {
+					rel = d.Name()
+				}
+				listing = append(listing, rel)
+			}
+			return nil
+		})
+		t.Fatalf("expected at least one mp4 in %s; found: %v", outDir, listing)
 	}
 	_ = os.RemoveAll(outDir)
 }
 
 func TestDownloadImpl_FileMethod_Always_RemuxFails(t *testing.T) {
+	// Ensure our fake script runs via shell even on noexec mounts.
+	t.Setenv("YTDLP_FORCE_SHELL", "1")
+	// Prefer using in-process fake to avoid exec restrictions.
+	t.Setenv("YTDLP_FAKE", "1")
 	fake := createFakeYtDlp(t)
 	orig := dl.YtDlpBin
 	defer func() { dl.YtDlpBin = orig }()

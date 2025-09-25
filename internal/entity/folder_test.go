@@ -27,7 +27,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("/2020/05/01/", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "/2020/05/01/", time.Now().UTC())
 		assert.Equal(t, "2020/05/01", folder.Path)
@@ -36,7 +35,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("/2020/05/23/", func(t *testing.T) {
 		folder := NewFolder(RootImport, "/2020/05/23/", time.Now().UTC())
 		assert.Equal(t, "2020/05/23", folder.Path)
@@ -45,7 +43,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("/2020/05/23/Iceland 2020", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "/2020/05/23/Iceland 2020", time.Now().UTC())
 		assert.Equal(t, "2020/05/23/Iceland 2020", folder.Path)
@@ -54,7 +51,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, "is", folder.FolderCountry)
 	})
-
 	t.Run("/London/2020/05/23", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "/London/2020/05/23", time.Now().UTC())
 		assert.Equal(t, "London/2020/05/23", folder.Path)
@@ -63,7 +59,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, "gb", folder.FolderCountry)
 	})
-
 	t.Run("RootOriginalsNoDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "", time.Time{})
 		assert.Equal(t, "", folder.Path)
@@ -72,7 +67,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 0, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("RootOriginalsRootDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, RootPath, time.Time{})
 		assert.Equal(t, "", folder.Path)
@@ -81,7 +75,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 0, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("NoRootWithRootDir", func(t *testing.T) {
 		folder := NewFolder("", RootPath, time.Now().UTC())
 		assert.Equal(t, "", folder.Path)

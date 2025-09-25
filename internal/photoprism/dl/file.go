@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -18,6 +17,27 @@ func (result Metadata) DownloadToFileWithOptions(
 	ctx context.Context,
 	options DownloadOptions,
 ) ([]string, error) {
+	// Test stub: allow bypassing external yt-dlp via env, useful on noexec mounts.
+	if os.Getenv("YTDLP_FAKE") == "1" {
+		outTpl := options.Output
+		if outTpl == "" {
+			return nil, fmt.Errorf("missing output template in fake mode")
+		}
+		out := outTpl
+		out = strings.ReplaceAll(out, "%(id)s", "abc")
+		out = strings.ReplaceAll(out, "%(ext)s", "mp4")
+		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+			return nil, err
+		}
+		content := os.Getenv("YTDLP_DUMMY_CONTENT")
+		if content == "" {
+			content = "dummy"
+		}
+		if err := os.WriteFile(out, []byte(content), 0o644); err != nil {
+			return nil, err
+		}
+		return []string{out}, nil
+	}
 	if !result.Options.noInfoDownload {
 		if (result.Info.Type == "playlist" ||
 			result.Info.Type == "multi_video" ||
@@ -44,9 +64,7 @@ func (result Metadata) DownloadToFileWithOptions(
 		}
 	}
 
-	cmd := exec.CommandContext(
-		ctx,
-		FindYtDlpBin(),
+	cmd := ytDlpCommand(ctx, []string{
 		// see comment below about ignoring errors for playlists
 		"--ignore-errors",
 		// TODO: deprecated in yt-dlp?
@@ -55,7 +73,7 @@ func (result Metadata) DownloadToFileWithOptions(
 		"--newline",
 		// safer filenames
 		"--restrict-filenames",
-	)
+	})
 
 	// Output template: caller may provide one; otherwise use a deterministic fallback in CWD
 	// Note: caller should set a template rooted in the session temp dir.

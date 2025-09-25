@@ -30,7 +30,6 @@ func TestClusterPermissions(t *testing.T) {
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster")
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-
 	t.Run("ForbiddenFromCDN", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal
@@ -44,7 +43,6 @@ func TestClusterPermissions(t *testing.T) {
 		app.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
-
 	t.Run("AdminCanAccess", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal

@@ -346,7 +346,6 @@ func TestPhoto_SaveLabels(t *testing.T) {
 
 		assert.EqualError(t, err, "photo: cannot save to database, id is empty")
 	})
-
 	t.Run("ExistingPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		err := m.SaveLabels()

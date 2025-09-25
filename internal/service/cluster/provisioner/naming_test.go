@@ -13,8 +13,8 @@ func TestGenerateCreds_StabilityAndBudgets(t *testing.T) {
 	// Fix the cluster UUID via options to ensure determinism.
 	c.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
 
-	db1, user1, pass1 := GenerateCreds(c, "pp-node-01")
-	db2, user2, pass2 := GenerateCreds(c, "pp-node-01")
+	db1, user1, pass1 := GenerateCreds(c, "11111111-1111-4111-8111-111111111111", "pp-node-01")
+	db2, user2, pass2 := GenerateCreds(c, "11111111-1111-4111-8111-111111111111", "pp-node-01")
 
 	// Names stable; password random.
 	assert.Equal(t, db1, db2)
@@ -24,8 +24,8 @@ func TestGenerateCreds_StabilityAndBudgets(t *testing.T) {
 	// Budgets and patterns.
 	assert.LessOrEqual(t, len(user1), 32)
 	assert.LessOrEqual(t, len(db1), 64)
-	assert.Contains(t, db1, "pp-")
-	assert.Contains(t, user1, "pp-")
+	assert.Contains(t, db1, "photoprism_")
+	assert.Contains(t, user1, "photoprism_")
 }
 
 func TestGenerateCreds_DifferentPortal(t *testing.T) {
@@ -34,8 +34,8 @@ func TestGenerateCreds_DifferentPortal(t *testing.T) {
 	c1.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
 	c2.Options().ClusterUUID = "22222222-2222-4222-8222-222222222222"
 
-	db1, user1, _ := GenerateCreds(c1, "pp-node-01")
-	db2, user2, _ := GenerateCreds(c2, "pp-node-01")
+	db1, user1, _ := GenerateCreds(c1, "11111111-1111-4111-8111-111111111111", "pp-node-01")
+	db2, user2, _ := GenerateCreds(c2, "11111111-1111-4111-1111-111111111111", "pp-node-01")
 
 	assert.NotEqual(t, db1, db2)
 	assert.NotEqual(t, user1, user2)
@@ -45,14 +45,14 @@ func TestGenerateCreds_Truncation(t *testing.T) {
 	c := config.NewConfig(config.CliTestContext())
 	c.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
 	longName := "this-is-a-very-very-long-node-name-that-should-be-truncated-to-fit-username-and-db-budgets"
-	db, user, _ := GenerateCreds(c, longName)
+	db, user, _ := GenerateCreds(c, "11111111-1111-4111-8111-111111111111", longName)
 
 	assert.LessOrEqual(t, len(user), 32)
 	assert.LessOrEqual(t, len(db), 64)
 }
 
 func TestBuildDSN(t *testing.T) {
-	dsn := BuildDSN("mariadb", 3306, "user", "pass", "dbname")
+	dsn := BuildDSN("mysql", "mariadb", 3306, "user", "pass", "dbname")
 	assert.Contains(t, dsn, "user:pass@tcp(mariadb:3306)/dbname")
 	assert.Contains(t, dsn, "charset=utf8mb4")
 	assert.Contains(t, dsn, "parseTime=true")
@@ -64,6 +64,6 @@ func TestEnsureNodeDatabase_SqliteRejected(t *testing.T) {
 	if c.DatabaseDriver() != config.SQLite3 {
 		t.Skip("test requires SQLite driver in test config")
 	}
-	_, _, err := EnsureNodeDatabase(nil, c, "pp-node-01", false)
+	_, _, err := GetCredentials(nil, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
 	assert.Error(t, err)
 }

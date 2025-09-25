@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var log = event.Log
@@ -113,18 +114,27 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 	opts := c.Options()
 	driver := c.DatabaseDriver()
 	wantRotateDatabase := (driver == config.MySQL || driver == config.MariaDB) &&
-		opts.DatabaseDsn == "" && opts.DatabaseName == "" && opts.DatabaseUser == "" && opts.DatabasePassword == "" &&
+		opts.DatabaseDSN == "" && opts.DatabaseName == "" && opts.DatabaseUser == "" && opts.DatabasePassword == "" &&
 		c.DatabasePassword() == ""
 
 	payload := map[string]interface{}{
 		"nodeName":     c.NodeName(),
+		"nodeUUID":     c.NodeUUID(),
 		"nodeRole":     cluster.RoleInstance, // JSON wire format is string
 		"advertiseUrl": c.AdvertiseUrl(),
 	}
+	// Include client credentials when present so the Portal can verify re-registration
+	// and authorize UUID/name changes.
+	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
+		payload["clientId"] = id
+		payload["clientSecret"] = secret
+	}
+
 	// Include siteUrl when it differs from advertiseUrl; server will validate/normalize.
 	if su := c.SiteUrl(); su != "" && su != c.AdvertiseUrl() {
 		payload["siteUrl"] = su
 	}
+
 	if wantRotateDatabase {
 		// Align with API: request database rotation/creation on (re)register.
 		payload["rotateDatabase"] = true
@@ -201,28 +211,38 @@ func isTemporary(err error) bool {
 func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRotateDatabase bool) error {
 	updates := map[string]interface{}{}
 
-	// Always persist NodeID (client UID) from response for future OAuth token requests.
-	if r.Node.ID != "" {
-		updates["NodeID"] = r.Node.ID
+	// Persist ClusterUUID from portal response if provided.
+	if rnd.IsUUID(r.UUID) {
+		updates["ClusterUUID"] = r.UUID
 	}
 
-	// Persist node secret only if missing locally and provided by server.
-	if r.Secrets != nil && r.Secrets.NodeSecret != "" && c.NodeSecret() == "" {
-		updates["NodeSecret"] = r.Secrets.NodeSecret
+	// Always persist NodeClientID (client UID) from response for future OAuth token requests.
+	if r.Node.ClientID != "" {
+		updates["NodeClientID"] = r.Node.ClientID
+	}
+
+	// Persist node client secret only if missing locally and provided by server.
+	if r.Secrets != nil && r.Secrets.ClientSecret != "" && c.NodeClientSecret() == "" {
+		updates["NodeClientSecret"] = r.Secrets.ClientSecret
+	}
+
+	// Persist NodeUUID from portal response if provided and not set locally.
+	if r.Node.UUID != "" && c.Options().NodeUUID == "" {
+		updates["NodeUUID"] = r.Node.UUID
 	}
 
 	// Persist DB settings only if rotation was requested and driver is MySQL/MariaDB
 	// and local DB not configured (as checked before calling).
 	if wantRotateDatabase {
 		if r.Database.DSN != "" {
-			updates["DatabaseDriver"] = config.MySQL
-			updates["DatabaseDsn"] = r.Database.DSN
+			updates["DatabaseDriver"] = r.Database.Driver
+			updates["DatabaseDSN"] = r.Database.DSN
 		} else if r.Database.Name != "" && r.Database.User != "" && r.Database.Password != "" {
 			server := r.Database.Host
 			if r.Database.Port > 0 {
 				server = net.JoinHostPort(r.Database.Host, strconv.Itoa(r.Database.Port))
 			}
-			updates["DatabaseDriver"] = config.MySQL
+			updates["DatabaseDriver"] = r.Database.Driver
 			updates["DatabaseServer"] = server
 			updates["DatabaseName"] = r.Database.Name
 			updates["DatabaseUser"] = r.Database.User
@@ -248,7 +268,7 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 }
 
 func hasDBUpdate(m map[string]interface{}) bool {
-	if _, ok := m["DatabaseDsn"]; ok {
+	if _, ok := m["DatabaseDSN"]; ok {
 		return true
 	}
 	if _, ok := m["DatabaseName"]; ok {
@@ -289,7 +309,7 @@ func mergeOptionsYaml(c *config.Config, updates map[string]interface{}) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fileName, b, 0o644)
+	return os.WriteFile(fileName, b, fs.ModeFile)
 }
 
 // installThemeIfMissing downloads and installs the Portal-provided theme if the
@@ -304,9 +324,9 @@ func installThemeIfMissing(c *config.Config, portal *url.URL, token string) erro
 	endpoint := *portal
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/theme"
 
-	// Prefer OAuth client-credentials using NodeID/NodeSecret if available; fallback to join token.
+	// Prefer OAuth client-credentials using NodeClientID/NodeClientSecret if available; fallback to join token.
 	bearer := ""
-	if id, secret := strings.TrimSpace(c.NodeID()), strings.TrimSpace(c.NodeSecret()); id != "" && secret != "" {
+	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
 		if t, err := oauthAccessToken(c, portal, id, secret); err != nil {
 			log.Debugf("cluster: oauth token request failed (%s)", clean.Error(err))
 		} else {

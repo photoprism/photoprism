@@ -208,7 +208,7 @@ func TestCacheFileFromReader(t *testing.T) {
 func TestWriteFile_Truncates(t *testing.T) {
 	dir := t.TempDir()
 	p := filepath.Join(dir, "f.txt")
-	assert.NoError(t, os.WriteFile(p, []byte("LONGDATA"), 0o644))
+	assert.NoError(t, os.WriteFile(p, []byte("LONGDATA"), ModeFile))
 	assert.NoError(t, WriteFile(p, []byte("short"), ModeFile))
 	b, err := os.ReadFile(p)
 	assert.NoError(t, err)

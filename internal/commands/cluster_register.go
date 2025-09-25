@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli/v2"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -34,22 +36,27 @@ var (
 	regPortalTok      = &cli.StringFlag{Name: "join-token", Usage: "Portal access `TOKEN` (defaults to config)"}
 	regWriteConf      = &cli.BoolFlag{Name: "write-config", Usage: "persists returned secrets and DB settings to local config"}
 	regForceFlag      = &cli.BoolFlag{Name: "force", Aliases: []string{"f"}, Usage: "confirm actions that may overwrite/replace local data (e.g., --write-config)"}
+	regDryRun         = &cli.BoolFlag{Name: "dry-run", Usage: "print derived values and payload without performing registration"}
 )
 
 // ClusterRegisterCommand registers a node with the Portal via HTTP.
 var ClusterRegisterCommand = &cli.Command{
 	Name:   "register",
 	Usage:  "Registers/rotates a node via Portal (HTTP)",
-	Flags:  append(append([]cli.Flag{regNameFlag, regRoleFlag, regIntUrlFlag, regLabelFlag, regRotateDatabase, regRotateSec, regPortalURL, regPortalTok, regWriteConf, regForceFlag}, report.CliFlags...)),
+	Flags:  append(append([]cli.Flag{regNameFlag, regRoleFlag, regIntUrlFlag, regLabelFlag, regRotateDatabase, regRotateSec, regPortalURL, regPortalTok, regWriteConf, regForceFlag, regDryRun}, report.CliFlags...)),
 	Action: clusterRegisterAction,
 }
 
 func clusterRegisterAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		// Resolve inputs
-		name := clean.TypeLowerDash(ctx.String("name"))
+		name := clean.DNSLabel(ctx.String("name"))
+		derivedName := false
 		if name == "" { // default from config if set
-			name = clean.TypeLowerDash(conf.NodeName())
+			name = clean.DNSLabel(conf.NodeName())
+			if name != "" {
+				derivedName = true
+			}
 		}
 		if name == "" {
 			return cli.Exit(fmt.Errorf("node name is required (use --name or set node-name)"), 2)
@@ -62,9 +69,74 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		}
 
 		portalURL := ctx.String("portal-url")
+		derivedPortal := false
 		if portalURL == "" {
 			portalURL = conf.PortalUrl()
+			if portalURL != "" {
+				derivedPortal = true
+			}
 		}
+		// In dry-run, we allow empty portalURL (will print derived/empty values).
+
+		// Derive advertise/site URLs when omitted.
+		advertise := ctx.String("advertise-url")
+		if advertise == "" {
+			advertise = conf.AdvertiseUrl()
+		}
+		site := conf.SiteUrl()
+
+		body := map[string]interface{}{
+			"nodeName":     name,
+			"nodeRole":     nodeRole,
+			"labels":       parseLabelSlice(ctx.StringSlice("label")),
+			"advertiseUrl": advertise,
+			"rotate":       ctx.Bool("rotate"),
+			"rotateSecret": ctx.Bool("rotate-secret"),
+		}
+		// If we already have client credentials (e.g., re-register), include them so the
+		// portal can verify and authorize UUID/name moves or metadata updates.
+		if id, secret := strings.TrimSpace(conf.NodeClientID()), strings.TrimSpace(conf.NodeClientSecret()); id != "" && secret != "" {
+			body["clientId"] = id
+			body["clientSecret"] = secret
+		}
+		if site != "" && site != advertise {
+			body["siteUrl"] = site
+		}
+		b, _ := json.Marshal(body)
+
+		if ctx.Bool("dry-run") {
+			if ctx.Bool("json") {
+				out := map[string]any{"portalUrl": portalURL, "payload": body}
+				jb, _ := json.Marshal(out)
+				fmt.Println(string(jb))
+			} else {
+				fmt.Printf("Portal URL: %s\n", portalURL)
+				fmt.Printf("Node Name:  %s\n", name)
+				if derivedPortal || derivedName || advertise == conf.AdvertiseUrl() {
+					fmt.Println("(derived defaults were used where flags were omitted)")
+				}
+				fmt.Printf("Advertise:  %s\n", advertise)
+				if v, ok := body["siteUrl"].(string); ok && v != "" {
+					fmt.Printf("Site URL:   %s\n", v)
+				}
+				// Warn if non-HTTPS on public host; server will enforce too.
+				if warnInsecurePublicURL(advertise) {
+					fmt.Println("Warning: advertise-url is http for a public host; server may reject it (HTTPS required).")
+				}
+				if v, ok := body["siteUrl"].(string); ok && v != "" && warnInsecurePublicURL(v) {
+					fmt.Println("Warning: site-url is http for a public host; server may reject it (HTTPS required).")
+				}
+				// Single-line summary for quick operator scan
+				if v, ok := body["siteUrl"].(string); ok && v != "" {
+					fmt.Printf("Derived: portal=%s advertise=%s site=%s\n", portalURL, advertise, v)
+				} else {
+					fmt.Printf("Derived: portal=%s advertise=%s\n", portalURL, advertise)
+				}
+			}
+			return nil
+		}
+
+		// For actual registration, require portal URL and token.
 		if portalURL == "" {
 			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
 		}
@@ -75,16 +147,6 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		if token == "" {
 			return cli.Exit(fmt.Errorf("portal token is required (use --join-token or set join-token)"), 2)
 		}
-
-		body := map[string]interface{}{
-			"nodeName":     name,
-			"nodeRole":     nodeRole,
-			"labels":       parseLabelSlice(ctx.StringSlice("label")),
-			"advertiseUrl": ctx.String("advertise-url"),
-			"rotate":       ctx.Bool("rotate"),
-			"rotateSecret": ctx.Bool("rotate-secret"),
-		}
-		b, _ := json.Marshal(body)
 
 		// POST with bounded backoff on 429
 		url := stringsTrimRightSlash(portalURL) + "/api/v1/cluster/nodes/register"
@@ -115,8 +177,8 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			jb, _ := json.Marshal(resp)
 			fmt.Println(string(jb))
 		} else {
-			// Human-readable: node row and credentials if present
-			cols := []string{"ID", "Name", "Role", "DB Name", "DB User", "Host", "Port"}
+			// Human-readable: node row and credentials if present (UUID first as primary identifier)
+			cols := []string{"UUID", "ClientID", "Name", "Role", "DB Driver", "DB Name", "DB User", "Host", "Port"}
 			var dbName, dbUser string
 			if resp.Database.Name != "" {
 				dbName = resp.Database.Name
@@ -124,18 +186,18 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			if resp.Database.User != "" {
 				dbUser = resp.Database.User
 			}
-			rows := [][]string{{resp.Node.ID, resp.Node.Name, resp.Node.Role, dbName, dbUser, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
+			rows := [][]string{{resp.Node.UUID, resp.Node.ClientID, resp.Node.Name, resp.Node.Role, resp.Database.Driver, dbName, dbUser, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
 			out, _ := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 			fmt.Printf("\n%s\n", out)
 
 			// Secrets/credentials block if any
 			// Show secrets in up to two tables, then print DSN if present
-			if (resp.Secrets != nil && resp.Secrets.NodeSecret != "") || resp.Database.Password != "" {
+			if (resp.Secrets != nil && resp.Secrets.ClientSecret != "") || resp.Database.Password != "" {
 				fmt.Println("PLEASE WRITE DOWN THE FOLLOWING CREDENTIALS; THEY WILL NOT BE SHOWN AGAIN:")
-				if resp.Secrets != nil && resp.Secrets.NodeSecret != "" && resp.Database.Password != "" {
-					fmt.Printf("\n%s\n", report.Credentials("Node Secret", resp.Secrets.NodeSecret, "DB Password", resp.Database.Password))
-				} else if resp.Secrets != nil && resp.Secrets.NodeSecret != "" {
-					fmt.Printf("\n%s\n", report.Credentials("Node Secret", resp.Secrets.NodeSecret, "", ""))
+				if resp.Secrets != nil && resp.Secrets.ClientSecret != "" && resp.Database.Password != "" {
+					fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "DB Password", resp.Database.Password))
+				} else if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
+					fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "", ""))
 				} else if resp.Database.Password != "" {
 					fmt.Printf("\n%s\n", report.Credentials("DB User", resp.Database.User, "DB Password", resp.Database.Password))
 				}
@@ -218,6 +280,22 @@ func stringsTrimRightSlash(s string) string {
 	return s
 }
 
+// warnInsecurePublicURL returns true if the URL uses http and the host is not localhost/127.0.0.1/::1.
+func warnInsecurePublicURL(u string) bool {
+	parsed, err := url.Parse(u)
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return false
+	}
+	if parsed.Scheme != "http" {
+		return false
+	}
+	h := parsed.Hostname()
+	if h == "localhost" || h == "127.0.0.1" || h == "::1" {
+		return false
+	}
+	return true
+}
+
 // Persistence helpers for --write-config
 func parseLabelSlice(labels []string) map[string]string {
 	if len(labels) == 0 {
@@ -239,20 +317,20 @@ func parseLabelSlice(labels []string) map[string]string {
 
 // Persistence helpers for --write-config
 func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse) error {
-	// Node secret file
-	if resp.Secrets != nil && resp.Secrets.NodeSecret != "" {
-		// Prefer PHOTOPRISM_NODE_SECRET_FILE; otherwise config cluster path
-		fileName := os.Getenv(config.FlagFileVar("NODE_SECRET"))
+	// Node client secret file
+	if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
+		// Prefer PHOTOPRISM_NODE_CLIENT_SECRET_FILE; otherwise config cluster path
+		fileName := os.Getenv(config.FlagFileVar("NODE_CLIENT_SECRET"))
 		if fileName == "" {
 			fileName = filepath.Join(conf.PortalConfigPath(), "node-secret")
 		}
 		if err := fs.MkdirAll(filepath.Dir(fileName)); err != nil {
 			return err
 		}
-		if err := os.WriteFile(fileName, []byte(resp.Secrets.NodeSecret), 0o600); err != nil {
+		if err := os.WriteFile(fileName, []byte(resp.Secrets.ClientSecret), 0o600); err != nil {
 			return err
 		}
-		log.Infof("wrote node secret to %s", clean.Log(fileName))
+		log.Infof("wrote node client secret to %s", clean.Log(fileName))
 	}
 
 	// DB settings (MySQL/MariaDB only)
@@ -293,5 +371,5 @@ func mergeOptionsYaml(conf *config.Config, kv map[string]any) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fileName, b, 0o644)
+	return os.WriteFile(fileName, b, fs.ModeFile)
 }

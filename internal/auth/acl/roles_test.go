@@ -36,18 +36,15 @@ func TestRoleStrings_CliUsageString(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, "", (RoleStrings{}).CliUsageString())
 	})
-
 	t.Run("single", func(t *testing.T) {
 		m := RoleStrings{"admin": RoleAdmin}
 		assert.Equal(t, "admin", m.CliUsageString())
 	})
-
 	t.Run("two", func(t *testing.T) {
 		m := RoleStrings{"guest": RoleGuest, "admin": RoleAdmin}
 		// Note the comma before "or" matches current implementation.
 		assert.Equal(t, "admin, or guest", m.CliUsageString())
 	})
-
 	t.Run("three", func(t *testing.T) {
 		m := RoleStrings{"visitor": RoleVisitor, "guest": RoleGuest, "admin": RoleAdmin}
 		assert.Equal(t, "admin, guest, or visitor", m.CliUsageString())
@@ -63,7 +60,6 @@ func TestRoles_Allow(t *testing.T) {
 		assert.True(t, roles.Allow(RoleVisitor, ActionDownload))
 		assert.False(t, roles.Allow(RoleVisitor, ActionDelete))
 	})
-
 	t.Run("default fallback used", func(t *testing.T) {
 		roles := Roles{
 			RoleDefault: GrantViewAll, // allows view, denies delete
@@ -71,7 +67,6 @@ func TestRoles_Allow(t *testing.T) {
 		assert.True(t, roles.Allow(RoleUser, ActionView))
 		assert.False(t, roles.Allow(RoleUser, ActionDelete))
 	})
-
 	t.Run("specific overrides default (no fallback)", func(t *testing.T) {
 		roles := Roles{
 			RoleVisitor: GrantViewShared, // denies delete
@@ -79,7 +74,6 @@ func TestRoles_Allow(t *testing.T) {
 		}
 		assert.False(t, roles.Allow(RoleVisitor, ActionDelete))
 	})
-
 	t.Run("no match and no default", func(t *testing.T) {
 		roles := Roles{
 			RoleVisitor: GrantViewShared,
@@ -98,7 +92,6 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 			assert.NotEqual(t, "", s)
 		}
 	})
-
 	t.Run("UserRoles Strings include alias none, exclude empty", func(t *testing.T) {
 		got := UserRoles.Strings()
 		assert.ElementsMatch(t, []string{"admin", "guest", "none", "visitor"}, got)
@@ -106,7 +99,6 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 			assert.NotEqual(t, "", s)
 		}
 	})
-
 	t.Run("ClientRoles CliUsageString includes none and or before last", func(t *testing.T) {
 		u := ClientRoles.CliUsageString()
 		// Should list known roles and end with "or none" (alias present).
@@ -115,7 +107,6 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 		}
 		assert.Regexp(t, `, or none$`, u)
 	})
-
 	t.Run("UserRoles CliUsageString includes none and or before last", func(t *testing.T) {
 		u := UserRoles.CliUsageString()
 		for _, s := range []string{"admin", "guest", "visitor", "none"} {
@@ -123,7 +114,6 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 		}
 		assert.Regexp(t, `, or none$`, u)
 	})
-
 	t.Run("Alias none maps to RoleNone", func(t *testing.T) {
 		assert.Equal(t, RoleNone, ClientRoles[RoleAliasNone])
 		assert.Equal(t, RoleNone, UserRoles[RoleAliasNone])

@@ -1,6 +1,8 @@
 package authn
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -89,6 +91,10 @@ func (t GrantType) Pretty() string {
 
 // String returns the grant type as a string.
 func (t GrantType) String() string {
+	if strings.HasPrefix(string(t), "urn:") {
+		return clean.TypeLowerDash(string(t))
+	}
+
 	return clean.TypeLowerUnderscore(string(t))
 }
 

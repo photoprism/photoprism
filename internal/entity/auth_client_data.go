@@ -8,6 +8,7 @@ import (
 type ClientDatabase struct {
 	Name      string `json:"name,omitempty"`
 	User      string `json:"user,omitempty"`
+	Driver    string `json:"driver,omitempty"`
 	RotatedAt string `json:"rotatedAt,omitempty"`
 }
 
@@ -15,7 +16,7 @@ type ClientDatabase struct {
 type ClientData struct {
 	Labels          map[string]string `json:"labels,omitempty"`
 	Database        *ClientDatabase   `json:"database,omitempty"`
-	SecretRotatedAt string            `json:"secretRotatedAt,omitempty"`
+	RotatedAt       string            `json:"rotatedAt,omitempty"`
 	SiteURL         string            `json:"siteUrl,omitempty"`
 	ClusterUUID     string            `json:"clusterUUID,omitempty"`
 	ServiceKind     string            `json:"serviceKind,omitempty"`

@@ -13,7 +13,7 @@ func TestResolve_FileAndSymlink(t *testing.T) {
 	target := filepath.Join(dir, "file.txt")
 	link := filepath.Join(dir, "link.txt")
 
-	assert.NoError(t, os.WriteFile(target, []byte("x"), 0o644))
+	assert.NoError(t, os.WriteFile(target, []byte("x"), ModeFile))
 	// Create symlink if supported on this platform
 	if err := os.Symlink(target, link); err != nil {
 		t.Skipf("symlinks not supported: %v", err)

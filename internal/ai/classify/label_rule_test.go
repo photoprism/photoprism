@@ -28,7 +28,6 @@ func TestLabelRule_Find(t *testing.T) {
 		assert.Equal(t, -2, result.Priority)
 		assert.Equal(t, float32(1), result.Threshold)
 	})
-
 	t.Run("not existing rule", func(t *testing.T) {
 		result, ok := rules.Find("fish")
 		assert.False(t, ok)

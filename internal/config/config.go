@@ -240,7 +240,6 @@ func (c *Config) Init() error {
 
 	// Initialize early extensions before connecting to the database so they can
 	// influence DB settings (e.g., cluster bootstrap providing MariaDB creds).
-	log.Debugf("config: initializing early extensions")
 	EarlyExt().InitEarly(c)
 
 	// Connect to database.

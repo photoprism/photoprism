@@ -24,19 +24,31 @@ func Contains(list []string, s string) bool {
 func ContainsAny(l, s []string) bool {
 	if len(l) == 0 || len(s) == 0 {
 		return false
-	} else if s[0] == All {
-		return true
 	}
 
-	// Find matches.
-	for i := range l {
-		for j := range s {
-			if s[j] == l[i] || s[j] == All {
-				return true
-			}
+	// If second list contains All, it's a wildcard match.
+	if s[0] == All {
+		return true
+	}
+	for j := 1; j < len(s); j++ {
+		if s[j] == All {
+			return true
 		}
 	}
 
-	// Not found.
+	// Build a set from the smaller slice for O(n+m) intersection.
+	a, b := l, s
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	set := make(map[string]struct{}, len(a))
+	for i := range a {
+		set[a[i]] = struct{}{}
+	}
+	for j := range b {
+		if _, ok := set[b[j]]; ok {
+			return true
+		}
+	}
 	return false
 }

@@ -114,18 +114,18 @@ func ClusterListNodes(router *gin.RouterGroup) {
 	})
 }
 
-// ClusterGetNode returns a single node by id.
+// ClusterGetNode returns a single node by uuid.
 //
-//	@Summary	get node by id
+//	@Summary	get node by uuid
 //	@Id			ClusterGetNode
 //	@Tags		Cluster
 //	@Produce	json
-//	@Param		id				path		string	true	"node id"
+//	@Param		uuid			path		string	true	"node uuid"
 //	@Success	200				{object}	cluster.Node
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Router		/api/v1/cluster/nodes/{id} [get]
+//	@Router		/api/v1/cluster/nodes/{uuid} [get]
 func ClusterGetNode(router *gin.RouterGroup) {
-	router.GET("/cluster/nodes/:id", func(c *gin.Context) {
+	router.GET("/cluster/nodes/:uuid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceCluster, acl.ActionView)
 
 		if s.Abort(c) {
@@ -139,10 +139,10 @@ func ClusterGetNode(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("id")
+		uuid := c.Param("uuid")
 
 		// Validate id to avoid path traversal and unexpected file access.
-		if !isSafeNodeID(id) {
+		if !isSafeNodeID(uuid) {
 			AbortEntityNotFound(c)
 			return
 		}
@@ -154,9 +154,9 @@ func ClusterGetNode(router *gin.RouterGroup) {
 			return
 		}
 
-		n, err := regy.Get(id)
-
-		if err != nil {
+		// Prefer NodeUUID identifier for cluster nodes.
+		n, err := regy.FindByNodeUUID(uuid)
+		if err != nil || n == nil {
 			AbortEntityNotFound(c)
 			return
 		}
@@ -166,7 +166,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 		resp := reg.BuildClusterNode(*n, opts)
 
 		// Audit get access.
-		event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "nodes", "get", n.ID, event.Succeeded}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "nodes", "get", uuid, event.Succeeded}, s.RefID)
 
 		c.JSON(http.StatusOK, resp)
 	})
@@ -179,13 +179,13 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		id					path		string	true	"node id"
+//	@Param		uuid				path		string	true	"node uuid"
 //	@Param		node				body		object	true	"properties to update (role, labels, advertiseUrl, siteUrl)"
 //	@Success	200					{object}	cluster.StatusResponse
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Router		/api/v1/cluster/nodes/{id} [patch]
+//	@Router		/api/v1/cluster/nodes/{uuid} [patch]
 func ClusterUpdateNode(router *gin.RouterGroup) {
-	router.PATCH("/cluster/nodes/:id", func(c *gin.Context) {
+	router.PATCH("/cluster/nodes/:uuid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceCluster, acl.ActionManage)
 
 		if s.Abort(c) {
@@ -199,7 +199,7 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("id")
+		uuid := c.Param("uuid")
 
 		var req struct {
 			Role         string            `json:"role"`
@@ -220,9 +220,9 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		n, err := regy.Get(id)
-
-		if err != nil {
+		// Resolve by NodeUUID first (preferred).
+		n, err := regy.FindByNodeUUID(uuid)
+		if err != nil || n == nil {
 			AbortEntityNotFound(c)
 			return
 		}
@@ -249,23 +249,23 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), string(acl.ResourceCluster), "nodes", "update", n.ID, event.Succeeded})
+		event.AuditInfo([]string{ClientIP(c), string(acl.ResourceCluster), "nodes", "update", uuid, event.Succeeded})
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})
 }
 
 // ClusterDeleteNode removes a node entry from the registry.
 //
-//	@Summary	delete node by id
+//	@Summary	delete node by uuid
 //	@Id			ClusterDeleteNode
 //	@Tags		Cluster
 //	@Produce	json
-//	@Param		id				path		string	true	"node id"
+//	@Param		uuid			path		string	true	"node uuid"
 //	@Success	200				{object}	cluster.StatusResponse
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Router		/api/v1/cluster/nodes/{id} [delete]
+//	@Router		/api/v1/cluster/nodes/{uuid} [delete]
 func ClusterDeleteNode(router *gin.RouterGroup) {
-	router.DELETE("/cluster/nodes/:id", func(c *gin.Context) {
+	router.DELETE("/cluster/nodes/:uuid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceCluster, acl.ActionManage)
 
 		if s.Abort(c) {
@@ -279,7 +279,12 @@ func ClusterDeleteNode(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("id")
+		uuid := c.Param("uuid")
+		// Validate uuid format to avoid path traversal or unexpected input.
+		if !isSafeNodeID(uuid) {
+			AbortEntityNotFound(c)
+			return
+		}
 
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 
@@ -288,17 +293,17 @@ func ClusterDeleteNode(router *gin.RouterGroup) {
 			return
 		}
 
-		if _, err = regy.Get(id); err != nil {
-			AbortEntityNotFound(c)
+		// Delete by NodeUUID
+		if err = regy.Delete(uuid); err != nil {
+			if err == reg.ErrNotFound {
+				AbortEntityNotFound(c)
+			} else {
+				AbortUnexpectedError(c)
+			}
 			return
 		}
 
-		if err = regy.Delete(id); err != nil {
-			AbortUnexpectedError(c)
-			return
-		}
-
-		event.AuditInfo([]string{ClientIP(c), string(acl.ResourceCluster), "nodes", "delete", id, event.Succeeded})
+		event.AuditInfo([]string{ClientIP(c), string(acl.ResourceCluster), "nodes", "delete", uuid, event.Succeeded})
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})
 }

@@ -665,8 +665,26 @@ var Flags = CliFlags{
 			Value:   header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "cluster-domain",
+			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
+			EnvVars: EnvVars("CLUSTER_DOMAIN"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-cidr",
+			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
+			EnvVars: EnvVars("CLUSTER_CIDR"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "portal-url",
-			Usage:   "base `URL` of the cluster management portal (e.g. https://portal.example.com)",
+			Usage:   "base `URL` of the cluster management portal",
+			Value:   DefaultPortalUrl,
 			EnvVars: EnvVars("PORTAL_URL"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -675,36 +693,31 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("JOIN_TOKEN"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "cluster-uuid",
-			Usage:   "cluster `UUID` (v4) to scope node credentials",
-			EnvVars: EnvVars("CLUSTER_UUID"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "cluster-domain",
-			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
-			EnvVars: EnvVars("CLUSTER_DOMAIN"),
-		}}, {
-		Flag: &cli.StringFlag{
 			Name:    "node-name",
 			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
 			EnvVars: EnvVars("NODE_NAME"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-role",
-			Usage:   "node `ROLE` (portal, instance, or service)",
+			Usage:   "node `ROLE` (instance or service)",
 			EnvVars: EnvVars("NODE_ROLE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-uuid",
+			Usage:   "node `UUID` (v7) that uniquely identifies this instance",
+			EnvVars: EnvVars("NODE_UUID"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-id",
-			Usage:   "client `ID` registered with the portal (auto-assigned via join token)",
-			EnvVars: EnvVars("NODE_ID"),
+			Name:    "node-client-id",
+			Usage:   "node OAuth client `ID` (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_CLIENT_ID"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-secret",
-			Usage:   "client `SECRET` registered with the portal (auto-assigned via join token)",
-			EnvVars: EnvVars("NODE_SECRET"),
+			Name:    "node-client-secret",
+			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
@@ -878,6 +891,19 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DATABASE_CONNS_IDLE"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "database-provision-driver",
+			Usage:   "auto-provisioning `DRIVER` (auto, mysql)",
+			Value:   Auto,
+			EnvVars: EnvVars("DATABASE_PROVISION_DRIVER"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "database-provision-dsn",
+			Usage:   "auto-provisioning `DSN`",
+			EnvVars: EnvVars("DATABASE_PROVISION_DSN"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-bin",
 			Usage:   "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
 			Value:   encode.FFmpegBin,
@@ -1026,7 +1052,7 @@ var Flags = CliFlags{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
 			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
-			Value:   "auto",
+			Value:   Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
 		Flag: &cli.StringFlag{

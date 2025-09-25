@@ -10,7 +10,6 @@ func TestOrientation(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, 0, Orientation(0))
 	})
-
 	t.Run("Valid", func(t *testing.T) {
 		assert.Equal(t, 1, Orientation(1))
 		assert.Equal(t, 3, Orientation(3))
@@ -18,7 +17,6 @@ func TestOrientation(t *testing.T) {
 		assert.Equal(t, 7, Orientation(7))
 		assert.Equal(t, 8, Orientation(8))
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		assert.Equal(t, 0, Orientation(-1))
 		assert.Equal(t, 0, Orientation(9))

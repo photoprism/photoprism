@@ -159,7 +159,6 @@ func TestFileName(t *testing.T) {
 
 		assert.Equal(t, "testdata/1/2/3/123456789098765432_3x3_resize.png", result)
 	})
-
 	t.Run("fit_720", func(t *testing.T) {
 		fit720 := Sizes[Fit720]
 
@@ -229,7 +228,6 @@ func TestResolvedName(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, "", result)
 	})
-
 	t.Run("fit_720", func(t *testing.T) {
 		fit720 := Sizes[Fit720]
 

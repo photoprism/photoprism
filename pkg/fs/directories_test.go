@@ -23,7 +23,6 @@ func TestDirs(t *testing.T) {
 		assert.NotContains(t, result, "/originals/storage")
 		assert.Contains(t, result, "/linked")
 	})
-
 	t.Run("recursive no-symlinks", func(t *testing.T) {
 		result, err := Dirs("testdata", true, false)
 
@@ -36,7 +35,6 @@ func TestDirs(t *testing.T) {
 		assert.Contains(t, result, "/directory/subdirectory/animals")
 		assert.Contains(t, result, "/linked")
 	})
-
 	t.Run("non-recursive", func(t *testing.T) {
 		result, err := Dirs("testdata", false, true)
 
@@ -47,7 +45,6 @@ func TestDirs(t *testing.T) {
 		assert.Contains(t, result, "/directory")
 		assert.Contains(t, result, "/linked")
 	})
-
 	t.Run("non-recursive no-symlinks", func(t *testing.T) {
 		result, err := Dirs("testdata/directory/subdirectory", false, false)
 
@@ -58,7 +55,6 @@ func TestDirs(t *testing.T) {
 		assert.Len(t, result, 1)
 		assert.Contains(t, result, "/animals")
 	})
-
 	t.Run("non-recursive symlinks", func(t *testing.T) {
 		result, err := Dirs("testdata/linked", false, true)
 
@@ -69,7 +65,6 @@ func TestDirs(t *testing.T) {
 		assert.Contains(t, result, "/photoprism")
 		assert.Contains(t, result, "/self")
 	})
-
 	t.Run("no-result", func(t *testing.T) {
 		result, err := Dirs("testdata/linked", false, false)
 

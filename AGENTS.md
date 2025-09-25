@@ -121,6 +121,7 @@ Note: Across our public documentation, official images, and in production, the c
   - Full unit test suite: `make test` (runs backend and frontend tests)
   - Test frontend/backend: `make test-js` and `make test-go`
   - Go packages: `go test` (all tests) or `go test -run <name>` (specific tests only)
+- Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful).
 - Frontend unit tests are driven by Vitest; see scripts in `frontend/package.json`
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
@@ -158,6 +159,19 @@ Note: Across our public documentation, official images, and in production, the c
   - For short examples inside comments, indent code rather than using backticks; godoc treats indented blocks as preformatted.
 - JS/Vue: use the lint/format scripts in `frontend/package.json` (ESLint + Prettier)
 - All added code and tests **must** be formatted according to our standards.
+
+### Filesystem Permissions & io/fs Aliasing (Go)
+
+- Always use our shared permission variables from `pkg/fs` when creating files/directories:
+  - Directories: `fs.ModeDir` (0o755 with umask)
+  - Regular files: `fs.ModeFile` (0o644 with umask)
+  - Config files: `fs.ModeConfigFile` (default 0o664)
+  - Secrets/tokens: `fs.ModeSecretFile` (default 0o600)
+  - Backups: `fs.ModeBackupFile` (default 0o600)
+- Do not pass stdlib `io/fs` flags (e.g., `fs.ModeDir`) to functions expecting permission bits.
+  - When importing the stdlib package, alias it to avoid collisions: `iofs "io/fs"` or `gofs "io/fs"`.
+  - Our package is `github.com/photoprism/photoprism/pkg/fs` and provides the only approved permission constants for `os.MkdirAll`, `os.WriteFile`, `os.OpenFile`, and `os.Chmod`.
+- Prefer `filepath.Join` for filesystem paths; reserve `path.Join` for URL paths.
 
 ## Safety & Data
 
@@ -211,34 +225,24 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 ## Agent Quick Tips (Do This)
 
-### Testing
+### Next‑Session Priorities
+- If we add Postgres provisioning support, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API/CLI.
+- Consider surfacing a short “uuid → db/user” mapping helper in the CLI (e.g., `nodes show --creds`) if operators request it.
 
-- Prefer targeted runs for speed:
-  - Unit/subpackage: `go test ./internal/<pkg> -run <Name> -count=1`
-  - Commands: `go test ./internal/commands -run <Name> -count=1`
-  - Avoid `./...` unless you intend to run the whole suite.
-- Heavy tests (migrations/fixtures): `internal/entity` and `internal/photoprism` run DB migrations and load fixtures; expect 30–120s on first run. Narrow with `-run` and keep iterations low.
-- PhotoPrism config in tests: inside `internal/photoprism`, use the package global `photoprism.Config()` for runtime‑accurate behavior. Only construct a new config if you replace it via `photoprism.SetConfig`.
-- CLI command tests: use `RunWithTestContext(cmd, args)` to capture output and avoid `os.Exit`; assert `cli.ExitCoder` codes when you need them.
-- Reports are quoted: strings in CLI "show" output are rendered with quotes by the report helpers. Prefer `assert.Contains`/regex over strict, fully formatted equality when validating content.
-
-#### Test Data & Fixtures (storage/testdata)
-
-- Shared test files live under `storage/testdata`. The lifecycle is managed by `internal/config/test.go`.
-- `NewTestConfig("<pkg>")` now calls `InitializeTestData()` so required directories exist (originals, import, cache, temp) before tests run.
-- If you build a custom `*config.Config`, call `c.InitializeTestData()` (and optionally `c.AssertTestData(t)`) before asserting on filesystem paths.
-- `InitializeTestData()` deletes existing testdata (`RemoveTestData()`), downloads/unzips fixtures if needed, and then calls `CreateDirectories()` to ensure required directories exist.
+### Testing & Fixtures
+- Go tests live next to their sources (`path/to/pkg/<file>_test.go`); group related cases as `t.Run(...)` sub-tests to keep table-driven coverage readable.
+- Prefer focused `go test` runs for speed (`go test ./internal/<pkg> -run <Name> -count=1`, `go test ./internal/commands -run <Name> -count=1`) and avoid `./...` unless you need the entire suite.
+- Heavy packages such as `internal/entity` and `internal/photoprism` run migrations and fixtures; expect 30–120s on first run and narrow with `-run` to keep iterations low.
+- For CLI-driven tests, wrap commands with `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process, and assert CLI output with `assert.Contains`/regex because `show` reports quote strings.
+- In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it via `photoprism.SetConfig`.
+- Generate identifiers with `rnd.GenerateUID(entity.ClientUID)` for OAuth client IDs and `rnd.UUIDv7()` for node UUIDs; treat `node.uuid` as required in responses.
+- Shared fixtures live under `storage/testdata`; `NewTestConfig("<pkg>")` already calls `InitializeTestData()`, but call `c.InitializeTestData()` (and optionally `c.AssertTestData(t)`) when you construct custom configs so originals/import/cache/temp exist. `InitializeTestData()` clears old data, downloads fixtures if needed, then calls `CreateDirectories()`.
 
 ### Roles & ACL
-
-- Always map roles via the central tables:
-  - Users: `acl.ParseRole(s)` or `acl.UserRoles[clean.Role(s)]`.
-  - Clients: `acl.ClientRoles[clean.Role(s)]`.
-- Aliases: `RoleAliasNone` ("none") and the empty string both map to `RoleNone`; do not special‑case them in callers.
-- Defaults:
-  - Client roles: if input is unknown, default to `RoleClient`.
-  - User roles: `acl.ParseRole` handles special tokens like `0/false/nil` as none.
-- CLI usage strings: build flag help from `Roles.CliUsageString()` (e.g., `acl.ClientRoles.CliUsageString()`), not from hard‑coded lists.
+- Map roles via the shared tables: users through `acl.ParseRole(s)` / `acl.UserRoles[...]`, clients through `acl.ClientRoles[...]`.
+- Treat `RoleAliasNone` ("none") and an empty string as `RoleNone`; no caller-specific overrides.
+- Default unknown client roles to `RoleClient`; `acl.ParseRole` already handles `0/false/nil` as none for users.
+- Build CLI role help from `Roles.CliUsageString()` (e.g., `acl.ClientRoles.CliUsageString()`); never hand-maintain role lists.
 
 ### Import/Index
 
@@ -246,77 +250,20 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 - Mixed roots: when testing related files, keep `ExamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
 
 ### CLI Usage & Assertions
+- Wrap CLI tests in `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process; assert quoted `show` output with `assert.Contains`/regex for the trailing ", or <last>" rule.
+- Prefer `--json` responses for automation. `photoprism show commands --json [--nested]` exposes the tree view (add `--all` for hidden entries).
+- Use `internal/commands/catalog` to inspect commands/flags without running the binary; when validating large JSON docs, marshal DTOs via `catalog.BuildFlat/BuildNode` instead of parsing CLI stdout.
+- Expect `show` commands to return arrays of snake_case rows, except `photoprism show config`, which yields `{ sections: [...] }`, and the `config-options`/`config-yaml` variants, which flatten to a top-level array.
 
-- Capture output with `RunWithTestContext`; usage and report values may be quoted and re‑ordered (e.g., set semantics). Use substring checks or regex for the final ", or <last>" rule from `CliUsageString`.
-- Prefer JSON output (`--json`) for stable machine assertions when commands offer it.
-- Cataloging CLI commands (new):
-  - Use `internal/commands/catalog` to enumerate commands/flags without invoking the CLI or capturing stdout.
-  - Default format for `photoprism show commands` is Markdown; pass `--json` for machine output and `--nested` to get a tree. Hidden commands/flags appear only with `--all`.
-  - Nested `help` subcommands are omitted; the top‑level `photoprism help` remains included.
-  - When asserting large JSON documents, build DTOs via `catalog.BuildFlat/BuildNode` and marshal directly to avoid pipe back‑pressure in tests.
-- JSON shapes for `show` commands:
-  - Most return a top‑level array of row objects (keys = snake_case columns).
-  - `photoprism show config` returns `{ sections: [{ title, items[] }] }`.
-  - `photoprism show config-options --json` and `photoprism show config-yaml --json` return a flat top‑level array (no `sections`).
+### API & Config Changes
 
-### API Development & Config Options 
-
-The following conventions summarize the insights gained when adding new configuration options, API endpoints, and related tests. Follow these conventions unless a maintainer requests an exception.
-
-- Config precedence and new options
-  - Global precedence: If present, values in `options.yml` override CLI flags and environment variables; all override config defaults in `defaults.yml`. Don’t special‑case a single option.
-  - Adding a new option:
-    - Add a field to `internal/config/options.go` with `yaml:"…"` and a `flag:"…"` tag.
-    - Register a CLI flag and env mapping in `internal/config/flags.go` (use `EnvVars(...)`).
-    - Expose a getter on `*config.Config` in the relevant file (e.g., cluster options in `config_cluster.go`).
-    - Add name/value to `rows` in `*config.Report()`, after the same option as in `internal/config/options.go` for `photoprism show config` to report it (obfuscate passwords with `*`).
-    - If the value must persist (e.g., a generated UUID), write it back to `options.yml` using a focused helper that merges keys.
-    - Tests: cover CLI/env/file precedence and persistence. When tests need a new flag, add it to `CliTestContext` in `internal/config/test.go`.
-  - Example: `ClusterUUID` precedence = `options.yml` → CLI/env (`--cluster-uuid` / `PHOTOPRISM_CLUSTER_UUID`) → generate UUIDv4 and persist.
-  - CLI flag precedence: when you need to favor an explicit CLI flag over defaults, check `c.cliCtx.IsSet("<flag>")` before applying additional precedence logic.
-  - Persisting generated options: when writing to `options.yml`, set `c.options.OptionsYaml = filepath.Join(c.ConfigPath(), "options.yml")` and reload the file to keep in‑memory
-
-- Database access
-  - The app uses GORM v1. Don’t use `WithContext`; for executing raw SQL, prefer `db.Raw(stmt).Scan(&nop)`.
-  - When provisioning MariaDB/MySQL objects, quote identifiers with backticks and limit the character set; avoid building identifiers from untrusted input.
-  - Reuse `conf.Db()` and `conf.Database*()` getters; reject unsupported drivers early with a clear error.
-
-- Rate limiting
-  - Reuse the existing limiter in `internal/server/limiter` (e.g., `limiter.Auth` / `limiter.Login`).
-  - For 429s, use `limiter.AbortJSON(c)` when applicable; avoid creating new limiter stacks.
-
-- API handlers
-  - Use existing helpers: `api.ClientIP(c)`, `header.BearerToken(c)`, `Abort*` functions for errors.
-  - Compare secrets/tokens using constant‑time compare; don’t log secrets.
-  - Set `Cache-Control: no-store` on responses containing secrets.
-  - Register new routes in `internal/server/routes.go`. Don’t edit `swagger.json` directly—run `make swag` to regenerate.
-  - Portal mode: set `PHOTOPRISM_NODE_ROLE=portal` and `PHOTOPRISM_JOIN_TOKEN`.
-  - Pagination defaults: for new list endpoints, prefer `count` default 100 (max 1000) and `offset` ≥ 0; document both in Swagger and validate bounds in handlers.
-  - Document parameters explicitly in Swagger annotations (path, query, and body) so `make swag` produces accurate docs.
-- Swagger: `make fmt-go swag-fmt && make swag` after adding or changing API annotations.
-
-### Swagger & API Docs
-
-- Annotations live next to handlers in `internal/api/*.go`. Only annotate public handlers that are registered in `internal/server/routes.go`.
-- Always include the full prefix in `@Router` paths: `/api/v1/...` (not relative segments).
-- Avoid annotating internal helpers (e.g., generic link creators) to prevent generating undocumented placeholder paths.
-- Generate docs locally with:
-  - `make swag-fmt` (formats annotations)
-  - `make swag-json` (generates `internal/api/swagger.json` and then runs `swaggerfix` to remove unstable `time.Duration` enums for deterministic diffs)
-- `time.Duration` fields are represented as integer nanoseconds in the API. The Makefile target `swag-json` automatically post-processes `swagger.json` to strip duplicated enums for this type.
-  - Focused tests: `go test ./internal/api -run Cluster -count=1` (or limit to the package you changed).
-
-- Registry & secrets
-  - Store portal/node registry data under `conf.PortalConfigPath()/nodes/` as YAML with file mode `0600`.
-  - Keep node secrets out of logs and omit them from JSON responses unless explicitly returned on creation/rotation.
-
-- Testing patterns
-  - Use `t.TempDir()` for isolated config paths and files. After changing `ConfigPath` post‑construction, reload `options.yml` into `c.options` if needed.
-  - Prefer small, focused unit tests; use existing test helpers (`NewConfig`, `CliTestContext`, etc.).
-  - API tests: use `NewApiTest()`, `PerformRequest*`, `AuthenticateAdmin` / `AuthenticateUser`, and `OAuthToken` for client-scope scenarios.
-  - Permissions: cover public=false (401), CDN headers (403), admin access (200), and client tokens with insufficient scope (403).
-  - Auth mode in tests: use `conf.SetAuthMode(config.AuthModePasswd)` (and defer restore) instead of flipping `Options().Public`; this toggles related internals used by tests.
-  - Fixtures caveat: user fixtures often have admin role; for negative permission tests, prefer OAuth client tokens with limited scope rather than relying on a non‑admin user.
+- Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
+- Favor explicit CLI flags: check `c.cliCtx.IsSet("<flag>")` before overriding user-supplied values, and follow the `ClusterUUID` pattern (`options.yml` → CLI/env → generated UUIDv4 persisted).
+- Database helpers: reuse `conf.Db()` / `conf.Database*()`, avoid GORM `WithContext`, quote MySQL identifiers, and reject unsupported drivers early.
+- Handler conventions: reuse limiter stacks (`limiter.Auth`, `limiter.Login`) and `limiter.AbortJSON` for 429s, lean on `api.ClientIP`, `header.BearerToken`, and `Abort*` helpers, compare secrets with constant time checks, set `Cache-Control: no-store` on sensitive responses, and register routes in `internal/server/routes.go`. For new list endpoints default `count=100` (max 1000) and `offset≥0`, document parameters explicitly, and set portal mode via `PHOTOPRISM_NODE_ROLE=portal` plus `PHOTOPRISM_JOIN_TOKEN` when needed.
+- Swagger & docs: annotate only routed handlers in `internal/api/*.go`, use full `/api/v1/...` paths, skip helpers, and regenerate docs with `make fmt-go swag-fmt swag` or `make swag-json` (which also strips duplicate `time.Duration` enums). When iterating, target packages with `go test ./internal/api -run Cluster -count=1` or similarly scoped runs.
+- Testing helpers: isolate config paths with `t.TempDir()`, reuse `NewConfig`, `CliTestContext`, and `NewApiTest()` harnesses, authenticate via `AuthenticateAdmin`, `AuthenticateUser`, or `OAuthToken`, toggle auth with `conf.SetAuthMode(config.AuthModePasswd)`, and prefer OAuth client tokens over non-admin fixtures for negative permission checks.
+- Registry data and secrets: store portal/node registry files under `conf.PortalConfigPath()/nodes/` with mode `0600`, keep secrets out of logs, and only return them on creation/rotation flows.
 
 ### Formatting (Go)
 
@@ -330,12 +277,6 @@ The following conventions summarize the insights gained when adding new configur
   - Update handlers and regenerate Swagger: `make fmt-go swag-fmt swag`.
   - Update tests (search/replace old field names) and examples in `specs/`.
   - Quick grep: `rg -n 'oldField|newField' -S` across code, tests, and specs.
-
-### Cluster Registry (Source of Truth)
-
-- Use the client‑backed registry (`NewClientRegistryWithConfig`).
-- The file‑backed registry is historical; do not add new references to it.
-- Migration “done” checklist: swap callsites → build → API tests → CLI tests → remove legacy references.
 
 ### API/CLI Tests: Known Pitfalls
 
@@ -372,12 +313,7 @@ The following conventions summarize the insights gained when adding new configur
   - File method: yt‑dlp writes files; we pass `--postprocessor-args 'ffmpeg:-metadata creation_time=<RFC3339>'` so imports get `Created` even without local remux (fallback from `upload_date`/`release_date`).
   - Default remux policy: `auto`; use `always` for the most complete metadata (chapters, extended tags).
 
-- Testing
-  - Prefer targeted runs before the full suite:
-    - `go test ./internal/<pkg> -run <Name> -count=1`
-    - Avoid `./...` unless you intend to run everything.
-  - Importer duplicates: When reusing names/paths across tests, the importer may dedupe; vary file bytes via `YTDLP_DUMMY_CONTENT` or adjust `dest` to ensure assertions see the new file.
-  - Long-running packages: `internal/photoprism` is heavy; validate CLI/dl changes first in their packages, then run broader suites.
+- Testing workflow: lean on the focused commands above; if importer dedupe kicks in, vary bytes with `YTDLP_DUMMY_CONTENT` or adjust `dest`, and remember `internal/photoprism` is heavy so validate downstream packages first.
 
 ### Sessions & Redaction (building sessions in tests)
 
@@ -398,33 +334,14 @@ The following conventions summarize the insights gained when adding new configur
 - `go test ./internal/service/cluster/registry -count=1`
 - `go test ./internal/api -run 'Cluster' -count=1`
 - `go test ./internal/commands -run 'ClusterRegister|ClusterNodesRotate' -count=1`
+- Tooling constraints: `make swag` may fetch modules, so confirm network access before running it.
 
-- Known tooling constraints
-  - Python may not be available in the dev container; prefer `apply_patch`, Go, or Make targets over ad‑hoc scripts.
-  - `make swag` may fetch modules; ensure network availability in CI before running.
+### Cluster Operations
 
-### Cluster Config & Bootstrap
-
-- Import rules (avoid cycles):
-  - Do not import `internal/service/cluster/instance/*` from `internal/config` or the cluster root package.
-  - Instance/service bootstraps talk to the Portal via HTTP(S); do not import Portal internals such as `internal/api` or `internal/service/cluster/registry`/`provisioner`.
-  - Prefer constants from `internal/service/cluster/const.go` (e.g., `cluster.RoleInstance`, `cluster.RolePortal`) over string literals.
-
-- Early extension lifecycle (config.Init sequence):
-  1) Load `options.yml` and settings (`c.initSettings()`)
-  2) Run early hooks: `EarlyExt().InitEarly(c)` (may adjust DB settings)
-  3) Connect DB: `connectDb()` and `RegisterDb()`
-  4) Run regular extensions: `Ext().Init(c)`
-
-- Theme endpoint usage:
-  - Server: `GET /api/v1/cluster/theme` generates a zip from `conf.ThemePath()`; returns 200 with a valid (possibly empty) zip or 404 if missing.
-  - Client/CLI: install only if `ThemePath()` is missing or lacks `app.js`; do not overwrite unless explicitly allowed.
-  - Use header helpers/constants from `pkg/service/http/header` (e.g., `header.Accept`, `header.ContentTypeZip`, `header.SetAuthorization`).
-
-- Registration (instance bootstrap):
-  - Send `rotate=true` only if driver is MySQL/MariaDB and no DSN/name/user/password is configured (including *_FILE for password); never for SQLite.
-  - Treat 401/403/404 as terminal; apply bounded retries with delay for transient/network/429.
-  - Persist only missing `NodeSecret` and DB settings when rotation was requested.
-
-- Testing patterns:
-  - Use `httptest` for Portal endpoints and `pkg/fs.Unzip` with size caps for extraction tests.
+- Keep bootstrap code decoupled: avoid importing `internal/service/cluster/instance/*` from `internal/config` or the cluster root, let instances talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
+- Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then invoke `Ext().Init(c)`.
+- Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/service/http/header`.
+- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `clientId` + `clientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
+- Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → clientId → name`, and DTOs normalize `database.{name,user,driver,rotatedAt}` while exposing `clientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `advertiseUrl`/`database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
+- Provisioner & DSN: database/user names use UUID-based HMACs (`photoprism_d<hmac11>`, `photoprism_u<hmac11>`); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
+- Testing: exercise Portal endpoints with `httptest`, guard extraction paths with `pkg/fs.Unzip` size caps, and expect admin-only fields to disappear when authenticated as a client/user session.

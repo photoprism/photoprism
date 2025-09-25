@@ -19,7 +19,6 @@ func TestColorful(t *testing.T) {
 
 		assert.Equal(t, "purple", Colorful(color).Name())
 	})
-
 	t.Run("cyan", func(t *testing.T) {
 		c := color.RGBA{0xb2, 0xeb, 0xf2, 0xff}
 		color, ok := colorful.MakeColor(c)

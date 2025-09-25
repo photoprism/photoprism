@@ -97,7 +97,6 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "123abc/,EFG", form.Path)
 	})
-
 	t.Run("folder", func(t *testing.T) {
 		form := &SearchPhotos{Query: "folder:123abc/,EFG"}
 

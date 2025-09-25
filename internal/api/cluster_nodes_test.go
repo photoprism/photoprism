@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClusterEndpoints(t *testing.T) {
@@ -26,16 +27,16 @@ func TestClusterEndpoints(t *testing.T) {
 	// Seed nodes in the registry
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
-	n := &reg.Node{Name: "pp-node-01", Role: "instance"}
+	n := &reg.Node{Name: "pp-node-01", Role: "instance", UUID: rnd.UUIDv7()}
 	assert.NoError(t, regy.Put(n))
-	n2 := &reg.Node{Name: "pp-node-02", Role: "service"}
+	n2 := &reg.Node{Name: "pp-node-02", Role: "service", UUID: rnd.UUIDv7()}
 	assert.NoError(t, regy.Put(n2))
 	// Resolve actual IDs (client-backed registry generates IDs)
 	n, err = regy.FindByName("pp-node-01")
 	assert.NoError(t, err)
 
-	// Get by id
-	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.ID)
+	// Get by UUID
+	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// 404 for missing id
@@ -43,7 +44,7 @@ func TestClusterEndpoints(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, r.Code)
 
 	// Patch (manage requires Auth; our Auth() in tests allows admin; skip strict role checks here)
-	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.ID, `{"advertiseUrl":"http://n1:2342"}`)
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"advertiseUrl":"http://n1:2342"}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// Pagination: count=1 returns exactly one
@@ -55,11 +56,11 @@ func TestClusterEndpoints(t *testing.T) {
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// Delete existing
-	r = PerformRequest(app, http.MethodDelete, "/api/v1/cluster/nodes/"+n.ID)
+	r = PerformRequest(app, http.MethodDelete, "/api/v1/cluster/nodes/"+n.UUID)
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// GET after delete -> 404
-	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.ID)
+	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
 	assert.Equal(t, http.StatusNotFound, r.Code)
 
 	// DELETE nonexistent id -> 404
@@ -75,8 +76,8 @@ func TestClusterEndpoints(t *testing.T) {
 	assert.Equal(t, http.StatusOK, r.Code)
 }
 
-// Test that ClusterGetNode validates the :id path parameter and rejects unsafe values.
-func TestClusterGetNode_IDValidation(t *testing.T) {
+// Test that ClusterGetNode validates the :uuid path parameter and rejects unsafe values.
+func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	app, router, conf := NewApiTest()
 	conf.Options().NodeRole = cluster.RolePortal
 
@@ -86,13 +87,13 @@ func TestClusterGetNode_IDValidation(t *testing.T) {
 	// Seed a node and resolve its actual ID.
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
-	n := &reg.Node{Name: "pp-node-99", Role: "instance"}
+	n := &reg.Node{Name: "pp-node-99", Role: "instance", UUID: rnd.UUIDv7()}
 	assert.NoError(t, regy.Put(n))
 	n, err = regy.FindByName("pp-node-99")
 	assert.NoError(t, err)
 
-	// Valid ID returns 200.
-	r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.ID)
+	// Valid UUID returns 200.
+	r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// Uppercase letters are not allowed.

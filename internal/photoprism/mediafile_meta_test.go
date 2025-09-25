@@ -297,7 +297,6 @@ func TestMediaFile_Exif_Jpeg(t *testing.T) {
 		t.Logf("UTC: %s", data.TakenAt.String())
 		t.Logf("Local: %s", data.TakenAtLocal.String())
 	})
-
 	t.Run("fern_green.jpg", func(t *testing.T) {
 		img, err := NewMediaFile(c.ExamplesPath() + "/fern_green.jpg")
 

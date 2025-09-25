@@ -21,7 +21,7 @@ func TestExtractImageCmd_UnwritableDest(t *testing.T) {
 	if err := os.MkdirAll(unwritable, 0o555); err != nil {
 		t.Fatal(err)
 	}
-	defer os.Chmod(unwritable, 0o755)
+	defer os.Chmod(unwritable, fs.ModeDir)
 
 	destName := filepath.Join(unwritable, "frame.jpg")
 	cmd := ExtractImageCmd(srcName, destName, opt)
