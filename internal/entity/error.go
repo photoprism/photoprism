@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // logEvents is true when events are being recorded in the "errors" database table.
@@ -20,6 +21,7 @@ func LogWarningsAndErrors() {
 	}
 
 	if logEvents.CompareAndSwap(false, true) {
+		mutex.ErrorWorker.Start()
 		go Error{}.LogEvents(logrus.WarnLevel)
 	}
 }
@@ -47,34 +49,39 @@ func (Error) LogEvents(minLevel logrus.Level) {
 	defer func() {
 		logEvents.CompareAndSwap(true, false)
 		event.Unsubscribe(s)
+		mutex.ErrorWorker.Stop()
 	}()
 
 	// Wait for log events and write them to the  "errors" table,
 	// as long as a database connection exists.
 	for msg := range s.Receiver {
-		var err error
-		var level logrus.Level
+		if !mutex.ErrorWorker.Canceled() {
+			var err error
+			var level logrus.Level
 
-		if val, ok := msg.Fields["level"]; !ok {
-			continue
-		} else if level, err = logrus.ParseLevel(val.(string)); err != nil || level > minLevel {
-			continue
-		}
+			if val, ok := msg.Fields["level"]; !ok {
+				continue
+			} else if level, err = logrus.ParseLevel(val.(string)); err != nil || level > minLevel {
+				continue
+			}
 
-		errLog := Error{ErrorLevel: level.String()}
+			errLog := Error{ErrorLevel: level.String()}
 
-		if val, ok := msg.Fields["message"]; ok {
-			errLog.ErrorMessage = val.(string)
-		}
+			if val, ok := msg.Fields["message"]; ok {
+				errLog.ErrorMessage = val.(string)
+			}
 
-		if val, ok := msg.Fields["time"]; ok {
-			errLog.ErrorTime = val.(time.Time)
-		}
+			if val, ok := msg.Fields["time"]; ok {
+				errLog.ErrorTime = val.(time.Time)
+			}
 
-		if HasDbProvider() {
-			Db().Create(&errLog)
+			if HasDbProvider() {
+				Db().Create(&errLog)
+			} else {
+				return
+			}
 		} else {
-			break
+			return
 		}
 	}
 }

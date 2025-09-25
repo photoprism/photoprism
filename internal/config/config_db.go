@@ -350,8 +350,8 @@ func (c *Config) CloseDb() error {
 			if err := sqldb.Close(); err != nil {
 				return err
 			}
-			c.db = nil
 			entity.SetDbProvider(nil)
+			c.db = nil
 		} else {
 			return dberr
 		}
