@@ -1,0 +1,60 @@
+package provisioner
+
+import (
+	"context"
+	"os"
+	"testing"
+	"time"
+
+	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+func TestMain(m *testing.M) {
+	// Init test logger.
+	log := logrus.StandardLogger()
+	log.SetLevel(logrus.TraceLevel)
+	event.AuditLog = log
+
+	caller := "internal/service/cluster/provisioner/provisioner_test.go/TestMain"
+	dbc, err := testextras.AcquireDBMutex(log, caller)
+	if err != nil {
+		log.Error("FAIL")
+		os.Exit(1)
+	}
+	defer testextras.UnlockDBMutex(dbc.Db())
+
+	// Run unit tests.
+	beforeTimestamp := time.Now().UTC()
+	code := m.Run()
+	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
+
+	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	// TestMain ensures SQLite test DB artifacts are purged after the suite runs.
+	fs.PurgeTestDbFiles(".", false)
+	os.Exit(code)
+}
+
+func cleanupDB(t *testing.T, ctx context.Context, creds Credentials) {
+	// Cleanup: drop user and database to keep the dev DB tidy.
+	adb, err := GetDB(ctx)
+	if err != nil {
+		t.Fatalf("GetDB: %v", err)
+	}
+	qdb, err := quoteIdent(creds.Name)
+	if err != nil {
+		t.Fatalf("quoteIdent: %v", err)
+	}
+	acc, err := quoteAccount("%", creds.User)
+	if err != nil {
+		t.Fatalf("quoteAccount: %v", err)
+	}
+	// Best-effort cleanup; ignore individual errors to avoid masking earlier failures.
+	_ = execTimeout(ctx, adb, 10*time.Second, "REVOKE ALL PRIVILEGES, GRANT OPTION FROM "+acc)
+	_ = execTimeout(ctx, adb, 10*time.Second, "DROP USER IF EXISTS "+acc)
+	_ = execTimeout(ctx, adb, 15*time.Second, "DROP DATABASE IF EXISTS "+qdb)
+}

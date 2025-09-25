@@ -72,22 +72,7 @@ func TestGetCredentials_MariaDB(t *testing.T) {
 	}
 
 	// Cleanup: drop user and database to keep the dev DB tidy.
-	adb, err := GetDB(ctx)
-	if err != nil {
-		t.Fatalf("GetDB: %v", err)
-	}
-	qdb, err := quoteIdent(creds.Name)
-	if err != nil {
-		t.Fatalf("quoteIdent: %v", err)
-	}
-	acc, err := quoteAccount("%", creds.User)
-	if err != nil {
-		t.Fatalf("quoteAccount: %v", err)
-	}
-	// Best-effort cleanup; ignore individual errors to avoid masking earlier failures.
-	_ = execTimeout(ctx, adb, 10*time.Second, "REVOKE ALL PRIVILEGES, GRANT OPTION FROM "+acc)
-	_ = execTimeout(ctx, adb, 10*time.Second, "DROP USER IF EXISTS "+acc)
-	_ = execTimeout(ctx, adb, 15*time.Second, "DROP DATABASE IF EXISTS "+qdb)
+	cleanupDB(t, ctx, creds)
 }
 
 // Verifies that GetCredentials normalizes DatabaseDriver case and rejects

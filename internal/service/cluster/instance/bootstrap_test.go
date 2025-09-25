@@ -156,6 +156,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	c.Options().JoinToken = "t0k3n"
 	// Remember original DSN so we can ensure it is not changed.
 	origDSN := c.Options().DatabaseDSN
+	origDriver := c.DatabaseDriver()
 	t.Cleanup(func() { _ = os.Remove(origDSN) })
 
 	// Run bootstrap.
@@ -163,7 +164,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 
 	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
 	assert.Equal(t, "SECRET", c.NodeClientSecret())
-	assert.Equal(t, config.SQLite3, c.DatabaseDriver())
+	assert.Equal(t, origDriver, c.DatabaseDriver())
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 }
 

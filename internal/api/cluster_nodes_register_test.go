@@ -1,12 +1,20 @@
 package api
 
 import (
+	"context"
+	"database/sql"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	prov "github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -31,8 +39,12 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create a node via registry and rotate to get a plaintext secret for tests
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		n := &reg.Node{UUID: rnd.UUIDv7(), Name: "pp-auth", Role: "instance"}
-		assert.NoError(t, regy.Put(n))
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-auth"}`, "t0k3n")
+		assert.Equal(t, http.StatusCreated, rCreate.Code)
+		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
+		var resp cluster.RegisterResponse
+		json.Unmarshal(rCreate.Body.Bytes(), &resp)
+		n := resp.Node
 		nr, err := regy.RotateSecret(n.UUID)
 		assert.NoError(t, err)
 		secret := nr.ClientSecret
@@ -51,6 +63,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		body = `{"nodeName":"pp-auth","clientId":"` + nr.ClientID + `","clientSecret":"` + secret + `"}`
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, "t0k3n")
 		assert.Equal(t, http.StatusOK, r.Code)
+
+		if assert.Contains(t, rCreate.Body.String(), "database") {
+			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
+		}
 	})
 	t.Run("MissingToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -75,6 +91,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.Contains(t, body, "\"secrets\"")
 		// New nodes return the client secret; include alias for clarity.
 		assert.Contains(t, body, "\"clientSecret\"")
+
+		if assert.Contains(t, r.Body.String(), "database") {
+			cleanupDatabases(r.Body.Bytes(), conf, t)
+		}
 	})
 	t.Run("UUIDChangeRequiresSecret", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -82,16 +102,18 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = "t0k3n"
 		ClusterNodesRegister(router)
 
-		regy, err := reg.NewClientRegistryWithConfig(conf)
-		assert.NoError(t, err)
-		// Pre-create node with a UUID
-		n := &reg.Node{UUID: rnd.UUIDv7(), Name: "pp-lock", Role: "instance"}
-		assert.NoError(t, regy.Put(n))
+		// Register the node to ensure that the database and registry is there
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-lock"}`, "t0k3n")
+		assert.Equal(t, http.StatusCreated, rCreate.Code)
+		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
 
 		// Attempt to change UUID via name without client credentials → 409
 		newUUID := rnd.UUIDv7()
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-lock","nodeUUID":"`+newUUID+`"}`, "t0k3n")
 		assert.Equal(t, http.StatusConflict, r.Code)
+		if assert.Contains(t, rCreate.Body.String(), "database") {
+			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
+		}
 	})
 	t.Run("BadAdvertiseUrlRejected", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -113,9 +135,15 @@ func TestClusterNodesRegister(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-04","advertiseUrl":"https://example.com"}`, "t0k3n")
 		assert.Equal(t, http.StatusCreated, r.Code)
 
+		if assert.Contains(t, r.Body.String(), "database") {
+			cleanupDatabases(r.Body.Bytes(), conf, t)
+		}
 		// http is allowed for localhost
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-04b","advertiseUrl":"http://localhost:2342"}`, "t0k3n")
 		assert.Equal(t, http.StatusCreated, r.Code)
+		if assert.Contains(t, r.Body.String(), "database") {
+			cleanupDatabases(r.Body.Bytes(), conf, t)
+		}
 	})
 	t.Run("SiteUrlValidation", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -130,6 +158,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Accept https siteUrl
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-06","siteUrl":"https://photos.example.com"}`, "t0k3n")
 		assert.Equal(t, http.StatusCreated, r.Code)
+
+		if assert.Contains(t, r.Body.String(), "database") {
+			cleanupDatabases(r.Body.Bytes(), conf, t)
+		}
 	})
 	t.Run("NormalizeName", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -148,6 +180,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		if assert.NotNil(t, n) {
 			assert.Equal(t, "my-node-name-prod", n.Name)
+		}
+
+		if assert.Contains(t, r.Body.String(), "database") {
+			cleanupDatabases(r.Body.Bytes(), conf, t)
 		}
 	})
 	t.Run("BadName", func(t *testing.T) {
@@ -172,8 +208,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		// used by OAuth tests running in the same package.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		n := &reg.Node{Name: "pp-node-01", Role: "instance"}
-		assert.NoError(t, regy.Put(n))
+		// Register the node to ensure that the database and registry is there
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01"}`, "t0k3n")
+		assert.Equal(t, http.StatusCreated, rCreate.Code)
+		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01","rotateSecret":true}`, "t0k3n")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -185,6 +223,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		// With client-backed registry, plaintext secret is not persisted; only rotation timestamp is updated.
 		assert.NotEmpty(t, n2.RotatedAt)
+
+		if assert.Contains(t, rCreate.Body.String(), "database") {
+			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
+		}
 	})
 	t.Run("ExistingNodeSiteUrlPersistsAndRespondsOK", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -195,8 +237,9 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create node in registry so handler goes through existing-node path.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		n := &reg.Node{Name: "pp-node-02", Role: "instance"}
-		assert.NoError(t, regy.Put(n))
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-02"}`, "t0k3n")
+		assert.Equal(t, http.StatusCreated, rCreate.Code)
+		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
 
 		// Provisioner is independent; endpoint should respond 200 and persist metadata.
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-02","siteUrl":"https://Photos.Example.COM"}`, "t0k3n")
@@ -206,6 +249,11 @@ func TestClusterNodesRegister(t *testing.T) {
 		n2, err := regy.FindByName("pp-node-02")
 		assert.NoError(t, err)
 		assert.Equal(t, "https://photos.example.com", n2.SiteUrl)
+
+		if assert.Contains(t, rCreate.Body.String(), "database") {
+			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
+		}
+
 	})
 	t.Run("AssignNodeUUIDWhenMissing", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -229,5 +277,56 @@ func TestClusterNodesRegister(t *testing.T) {
 		if assert.NotNil(t, n) {
 			assert.NotEmpty(t, n.UUID)
 		}
+
+		if assert.Contains(t, r.Body.String(), "database") {
+			cleanupDatabases(r.Body.Bytes(), conf, t)
+		}
 	})
+}
+
+func quoteIdent(s string) string { return "`" + strings.ReplaceAll(s, "`", "``") + "`" }
+
+// cleanupDatabases expects a byte array that contains a cluster.RegisterResponse, config.Config and testing.T and drops the database created by the register.
+func cleanupDatabases(jb []byte, c *config.Config, t *testing.T) {
+	var resp cluster.RegisterResponse
+	json.Unmarshal(jb, &resp)
+	log.Debugf("Cleanup Database %s, User %s and node_uuid %s", resp.Database.Name, resp.Database.User, resp.Node.UUID)
+	// These statements must run against the Node DB server, not the config database.
+	ctx := context.Background()
+	adb, err := prov.GetDB(ctx)
+	if err != nil {
+		assert.Empty(t, err)
+	} else {
+		if resp.Database.Name != `` {
+			if err := execTimeout(ctx, adb, 15*time.Second, fmt.Sprintf("DROP DATABASE IF EXISTS %s", quoteIdent(resp.Database.Name))); err != nil {
+				assert.Empty(t, err)
+				t.Logf("Unable to drop database %s", quoteIdent(resp.Database.Name))
+			}
+		}
+		if resp.Database.User != `` {
+			if err := execTimeout(ctx, adb, 10*time.Second, fmt.Sprintf("DROP USER IF EXISTS %s", quoteIdent(resp.Database.User))); err != nil {
+				assert.Empty(t, err)
+				t.Logf("Unable to drop user %s", quoteIdent(resp.Database.User))
+			}
+		}
+		cleanupNode(resp.Node.UUID, c, t)
+	}
+}
+
+// cleanupNode removes a node record from the auth_clients table
+func cleanupNode(uuid string, c *config.Config, t *testing.T) {
+	if uuid != `` {
+		if err := c.Db().Unscoped().Exec("DELETE FROM auth_clients WHERE node_uuid = ?", uuid).Error; err != nil {
+			assert.Empty(t, err)
+			t.Logf("Unable to remove node_uuid %s", quoteIdent(uuid))
+		}
+	}
+}
+
+// Exec with a timeout.
+func execTimeout(ctx context.Context, db *sql.DB, d time.Duration, stmt string) error {
+	c, cancel := context.WithTimeout(ctx, d)
+	defer cancel()
+	_, err := db.ExecContext(c, stmt)
+	return err
 }

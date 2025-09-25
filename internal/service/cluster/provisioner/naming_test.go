@@ -1,6 +1,7 @@
 package provisioner
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -64,6 +65,10 @@ func TestEnsureNodeDatabase_SqliteRejected(t *testing.T) {
 	if c.DatabaseDriver() != config.SQLite3 {
 		t.Skip("test requires SQLite driver in test config")
 	}
-	_, _, err := GetCredentials(nil, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
-	assert.Error(t, err)
+	ctx := context.Background()
+	creds, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
+	assert.NoError(t, err) // Database Driver is now hard coded, so no error.
+	// Cleanup: drop user and database to keep the dev DB tidy.
+	cleanupDB(t, ctx, creds)
+
 }
