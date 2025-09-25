@@ -839,7 +839,7 @@ func (c *Config) SwapDBAndTransfer() error {
 	}
 
 	if c.options.DBTransferDriver == "" &&
-		c.options.DBTransferDsn == "" &&
+		c.options.DBTransferDSN == "" &&
 		c.options.DBTransferName == "" &&
 		c.options.DBTransferServer == "" {
 		return fmt.Errorf("config: transfer config must be provided")
@@ -849,9 +849,9 @@ func (c *Config) SwapDBAndTransfer() error {
 	c.options.DBTransferDriver = c.options.DatabaseDriver
 	c.options.DatabaseDriver = tempString
 
-	tempString = c.options.DBTransferDsn
-	c.options.DBTransferDsn = c.options.DatabaseDsn
-	c.options.DatabaseDsn = tempString
+	tempString = c.options.DBTransferDSN
+	c.options.DBTransferDSN = c.options.DatabaseDSN
+	c.options.DatabaseDSN = tempString
 
 	tempString = c.options.DBTransferName
 	c.options.DBTransferName = c.options.DatabaseName
