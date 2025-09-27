@@ -629,6 +629,7 @@ func (c *Config) connectDb() error {
 }
 
 // ImportSQL imports a file to the currently configured database.
+// All lines, including comments, must be terminated with a ;\n
 func (c *Config) ImportSQL(filename string) {
 	contents, err := os.ReadFile(filename)
 
@@ -646,8 +647,9 @@ func (c *Config) ImportSQL(filename string) {
 			continue
 		}
 
-		var result struct{}
-
-		q.Raw(stmt).Scan(&result)
+		if err := q.Exec(stmt).Error; err != nil {
+			log.Error(err)
+			return
+		}
 	}
 }
