@@ -16,6 +16,11 @@ func TestClientRegistry_ListExcludesNodeRoleWithoutUUID(t *testing.T) {
 	defer c.CloseDb()
 	assert.NoError(t, c.Init())
 
+	// Remove the fixture records
+	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
+		return
+	}
+
 	// Bad records: node-like roles but empty NodeUUID
 	bad1 := entity.NewClient().SetName("pp-bad1").SetRole("instance")
 	assert.NoError(t, bad1.Create())
@@ -38,4 +43,6 @@ func TestClientRegistry_ListExcludesNodeRoleWithoutUUID(t *testing.T) {
 		assert.NotEqual(t, "pp-bad1", list[0].Name)
 		assert.NotEqual(t, "pp-bad2", list[0].Name)
 	}
+
+	entity.Db().Create(entity.ClientFixtures.Get("node"))
 }

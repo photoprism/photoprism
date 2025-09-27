@@ -105,4 +105,12 @@ func TestSessions(t *testing.T) {
 			//t.Logf("sessions: %#v", results)
 		}
 	})
+	t.Run("SearchUpperAliceSortByID", func(t *testing.T) {
+		if results, err := Sessions(100, 0, "id", "ALICE"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 1, len(results))
+			//t.Logf("sessions: %#v", results)
+		}
+	})
 }

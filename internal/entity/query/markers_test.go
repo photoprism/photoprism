@@ -159,10 +159,17 @@ func TestRemoveInvalidMarkerReferences(t *testing.T) {
 }
 
 func TestRemoveNonExistentMarkerFaces(t *testing.T) {
+	expected := int64(0)
+
+	if err := Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace).Where("face_id <> '' AND face_id NOT IN (?)", Db().Model(entity.Face{}).Select("id")).Count(&expected).Error; err != nil {
+		assert.Empty(t, err)
+		return
+	}
+
 	affected, err := RemoveNonExistentMarkerFaces()
 
 	assert.NoError(t, err)
-	assert.GreaterOrEqual(t, affected, int64(1))
+	assert.Equal(t, affected, expected)
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
@@ -206,4 +213,22 @@ func TestCountMarkers(t *testing.T) {
 	n := CountMarkers(entity.MarkerFace)
 
 	assert.GreaterOrEqual(t, n, 1)
+}
+
+func TestResetFaceMarkerMatches(t *testing.T) {
+	n, err := ResetFaceMarkerMatches()
+
+	if !assert.Empty(t, err) {
+		return
+	}
+	assert.GreaterOrEqual(t, n, int64(0))
+}
+
+func TestRemoveOrphanMarkers(t *testing.T) {
+	n, err := RemoveOrphanMarkers()
+
+	if !assert.Empty(t, err) {
+		return
+	}
+	assert.GreaterOrEqual(t, n, int64(0))
 }

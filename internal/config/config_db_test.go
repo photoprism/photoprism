@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
@@ -217,4 +218,36 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 
 	c.options.DatabaseConnsIdle = 35
 	assert.Equal(t, 28, c.DatabaseConnsIdle())
+}
+
+func TestImportSQL(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.DatabaseDriver = os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
+	switch c.options.DatabaseDriver {
+	case "mariadb":
+		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
+	case "postgres":
+		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
+	case "sqlite":
+		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
+	case "sqlitefile":
+		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITEFILE")
+	}
+
+	if err := c.connectDb(); err != nil {
+		assert.Empty(t, err)
+		return
+	}
+
+	// Setup and capture SQL Logging output
+	buffer := bytes.Buffer{}
+	log.SetOutput(&buffer)
+
+	c.ImportSQL("./testdata/importtest.sql")
+
+	// Reset logger
+	log.SetOutput(os.Stdout)
+
+	assert.NotContains(t, buffer.String(), "level=error")
 }

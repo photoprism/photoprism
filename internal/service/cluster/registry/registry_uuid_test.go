@@ -102,6 +102,11 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	defer c.CloseDb()
 	assert.NoError(t, c.Init())
 
+	// Remove the fixture records
+	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
+		return
+	}
+
 	// Create one client with empty NodeUUID (non-node), and one proper node
 	nonNode := entity.NewClient().SetName("webapp").SetRole("client")
 	assert.NoError(t, nonNode.Create())
@@ -117,6 +122,8 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 		assert.Equal(t, "pp-node", list[0].Name)
 		assert.NotEmpty(t, list[0].UUID)
 	}
+
+	entity.Db().Create(entity.ClientFixtures.Get("node"))
 }
 
 // Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.

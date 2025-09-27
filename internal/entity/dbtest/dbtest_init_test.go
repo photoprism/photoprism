@@ -258,7 +258,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(7), count)
+		assert.Equal(t, int64(8), count)
 	})
 
 	t.Run("ReactionCounts", func(t *testing.T) {

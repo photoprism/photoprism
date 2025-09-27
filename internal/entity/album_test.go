@@ -406,6 +406,26 @@ func TestFindAlbum(t *testing.T) {
 
 		assert.Equal(t, "April 1990", result.AlbumTitle)
 	})
+	t.Run("AlbumFilterNoSlug", func(t *testing.T) {
+		album := Album{AlbumSlug: UnknownSlug, AlbumType: AlbumFolder, AlbumFilter: `path:"1990/04" public:true`}
+		result := FindAlbum(album)
+
+		if result == nil {
+			t.Fatal("album should not be nil")
+		}
+
+		assert.Equal(t, "April 1990", result.AlbumTitle)
+	})
+	t.Run("AlbumTitleNoSlug", func(t *testing.T) {
+		album := Album{AlbumSlug: UnknownSlug, AlbumType: AlbumManual, AlbumTitle: `route%`}
+		result := FindAlbum(album)
+
+		if result == nil {
+			t.Fatal("album should not be nil")
+		}
+
+		assert.Equal(t, "Route 66", result.AlbumTitle)
+	})
 	t.Run("AlbumManual", func(t *testing.T) {
 		album := Album{AlbumSlug: "berlin-2019", AlbumType: AlbumManual}
 		result := FindAlbum(album)

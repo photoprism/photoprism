@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -46,6 +47,70 @@ func TestMigrationCommand(t *testing.T) {
 			assert.Contains(t, err.Error(), "flag provided but not defined: -magles")
 		}
 		assert.Contains(t, output, "flag provided but not defined: -magles")
+	})
+
+	t.Run("Status", func(t *testing.T) {
+		// Run command with test context.
+		output, err := RunWithTestContext(MigrationsCommands, []string{"migrations", "status"})
+
+		// Check command output for plausibility.
+		// t.Log(output)
+		assert.Empty(t, err)
+		assert.Contains(t, output, "Dialect")
+		assert.Contains(t, output, "Stage")
+		assert.Contains(t, output, "Status")
+	})
+
+	t.Run("RunTraceAndFailed", func(t *testing.T) {
+
+		dbDrv := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
+		dbDSN := ""
+		switch dbDrv {
+		case "mariadb":
+			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
+		case "postgres":
+			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
+		case "sqlite":
+			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
+		case "sqlitefile":
+			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITEFILE")
+		}
+		// Run command with test context.
+		appArgs := []string{"photoprism",
+			"--database-driver", dbDrv,
+			"--database-dsn", dbDSN}
+		cmdArgs := []string{"migrations", "run", "--trace", "--failed"}
+
+		ctx := NewTestContextWithParse(appArgs, cmdArgs)
+
+		s := event.Subscribe("log.*")
+		defer event.Unsubscribe(s)
+
+		var l string
+
+		assert.IsType(t, hub.Subscription{}, s)
+
+		go func() {
+			for msg := range s.Receiver {
+				l += msg.Fields["message"].(string) + "\n"
+			}
+		}()
+
+		// Setup and capture SQL Logging output
+		buffer := bytes.Buffer{}
+		log.SetOutput(&buffer)
+
+		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
+		// Reset logger
+		log.SetOutput(os.Stdout)
+
+		// Check command output for plausibility.
+		// t.Logf("buffer = %s", buffer.String())
+		assert.Empty(t, err)
+		assert.Empty(t, output)
+		assert.Contains(t, l, "migrate: completed in")
+		assert.Contains(t, buffer.String(), "migrate: enabled trace mode")
+		assert.Contains(t, buffer.String(), "migrate: running previously failed migrations")
 	})
 
 	t.Run("TargetPopulated", func(t *testing.T) {

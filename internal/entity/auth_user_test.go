@@ -535,6 +535,76 @@ func TestFindUser(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+	t.Run("AuthProviderAndAuthID", func(t *testing.T) {
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthID", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m := FindUser(User{AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthid", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthID2", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m = FindUser(User{AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthid2", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+	})
+	t.Run("AuthProviderAndAuthIssuerAndAuthID", func(t *testing.T) {
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthIssuerAndAuthID", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin", AuthIssuer: "google"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m := FindUser(User{AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID", AuthIssuer: "google"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthissuerandauthid", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthIssuerAndAuthID2", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin", AuthIssuer: "google"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m = FindUser(User{AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID", AuthIssuer: "google"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthissuerandauthid2", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+	})
 }
 
 func TestFindUserByUID(t *testing.T) {

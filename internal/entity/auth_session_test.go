@@ -252,6 +252,24 @@ func TestSession_Create(t *testing.T) {
 		err := s.Create()
 		assert.Error(t, err)
 	})
+	t.Run("BadRefIDandID", func(t *testing.T) {
+		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7cad"
+
+		s := &Session{
+			UserName:    "freddy",
+			SessExpires: unix.Day * 3,
+			SessTimeout: unix.Now() + unix.Week,
+			RefID:       "1234567890",
+		}
+
+		s.SetAuthToken(authToken)
+
+		s.ID = "toshort"
+
+		err := s.Create()
+		assert.Empty(t, err)
+	})
+
 }
 
 func TestSession_Save(t *testing.T) {
@@ -938,6 +956,29 @@ func TestSession_UpdateLastActive(t *testing.T) {
 
 		assert.GreaterOrEqual(t, unix.Now(), m.LastActive)
 	})
+
+	t.Run("SaveMethodSession", func(t *testing.T) {
+		expected := unix.Now() - 10
+		m := NewSession(unix.Day, unix.Hour)
+		t.Logf("Timeout: %s, Expiration: %s", m.TimeoutAt().String(), m.ExpiresAt())
+
+		assert.Equal(t, int64(0), m.LastActive)
+		m.LastActive = expected
+		m.SetMethod(authn.MethodSession)
+		m.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe70ca")
+		m.SetAuthID("MyIDString", "Testing")
+		m.AuthProvider = string(authn.ProviderClient)
+
+		if err := m.Create(); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m = m.UpdateLastActive(true)
+
+		assert.Greater(t, m.LastActive, expected)
+	})
+
 }
 
 func TestSession_Expired(t *testing.T) {

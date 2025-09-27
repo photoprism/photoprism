@@ -779,6 +779,21 @@ func TestFile_ReplaceHash(t *testing.T) {
 		if err := m.ReplaceHash(""); err != nil {
 			t.Fatal(err)
 		}
+
+		if err := m.ReplaceHash(FileFixtures.Get("exampleFileName.jpg").FileHash); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("exampleXmpFile.xmp", func(t *testing.T) {
+		m := FileFixtures.Get("exampleXmpFile.xmp")
+
+		if err := m.ReplaceHash("ocad9168fa6acc5c5c2965ddf6ec465ca42fdbib"); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := m.ReplaceHash(FileFixtures.Get("exampleXmpFile.xmp").FileHash); err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 

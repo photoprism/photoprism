@@ -508,3 +508,35 @@ func TestSubject_DeletePermanently(t *testing.T) {
 	assert.NotEmpty(t, m.DeletedAt)
 	assert.Empty(t, FindSubject(m.SubjUID))
 }
+
+func TestSubject_MergeWith(t *testing.T) {
+	m := FindSubjectByName("Tim Doe", true)
+
+	if m == nil {
+		m = NewSubject("Tim Doe", SubjPerson, SrcAuto)
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	assert.Equal(t, "Tim Doe", m.SubjName)
+	assert.Empty(t, m.DeletedAt)
+	assert.NotEmpty(t, FindSubject(m.SubjUID))
+	mSubjUID := m.SubjUID
+
+	o := NewSubject("Jack Doe", SubjPerson, SrcAuto)
+
+	if err := o.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "Jack Doe", o.SubjName)
+	assert.Empty(t, o.DeletedAt)
+	assert.NotEmpty(t, FindSubject(o.SubjUID))
+	oSubjUID := o.SubjUID
+
+	if assert.Empty(t, m.MergeWith(o)) {
+		assert.NotEmpty(t, FindSubject(mSubjUID).DeletedAt)
+		assert.Empty(t, FindSubject(oSubjUID).DeletedAt)
+	}
+}
