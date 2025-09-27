@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -328,7 +329,7 @@ func RemovePeopleAndFaces() (err error) {
 	}
 
 	// Delete all faces.
-	if err = UnscopedDb().Delete(&entity.Face{}).Error; err != nil {
+	if err = UnscopedDb().Delete(&entity.Face{}, "id is not null").Error; err != nil {
 		return err
 	}
 
@@ -338,14 +339,16 @@ func RemovePeopleAndFaces() (err error) {
 	}
 
 	// Reset face counters.
-	if err = UnscopedDb().Model(&entity.Photo{}).
+	if err = UnscopedDb().Model(&entity.Photo{}).Where("photo_faces <> ?", 0).
 		UpdateColumn("photo_faces", 0).Error; err != nil {
 		return err
 	}
 
 	// Reset people label.
 	if label, labelErr := LabelBySlug("people"); labelErr != nil {
-		return labelErr
+		if !errors.Is(labelErr, gorm.ErrRecordNotFound) {
+			return labelErr
+		}
 	} else if labelErr = UnscopedDb().
 		Delete(&entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
 		return labelErr
@@ -355,7 +358,9 @@ func RemovePeopleAndFaces() (err error) {
 
 	// Reset portrait label.
 	if label, labelErr := LabelBySlug("portrait"); labelErr != nil {
-		return labelErr
+		if !errors.Is(labelErr, gorm.ErrRecordNotFound) {
+			return labelErr
+		}
 	} else if labelErr = UnscopedDb().
 		Delete(&entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
 		return labelErr
