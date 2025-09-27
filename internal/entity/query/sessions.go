@@ -42,7 +42,7 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	} else if search != "" {
 		switch DbDialect() {
 		case Postgres:
-			stmt = stmt.Where("user_name ILIKE ? OR auth_provider ILIKE ?", search+"%", search+"%")
+			stmt = stmt.Where("user_name ILIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
 		default:
 			stmt = stmt.Where("user_name LIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
 		}
