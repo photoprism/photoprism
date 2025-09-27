@@ -151,6 +151,25 @@ var ClientFixtures = ClientMap{
 		AuthEnabled:  true,
 		LastActive:   0,
 	},
+	"node": {
+		ClientUID:    "cs5cpu17node2qo5",
+		UserUID:      "",
+		UserName:     "",
+		user:         nil,
+		ClientName:   "pp-node-fixture",
+		ClientRole:   string(acl.RoleInstance),
+		ClientType:   authn.ClientConfidential,
+		ClientURL:    "",
+		CallbackURL:  "",
+		AuthProvider: authn.ProviderClient.String(),
+		AuthMethod:   authn.MethodOAuth2.String(),
+		AuthScope:    "",
+		AuthExpires:  unix.Hour,
+		AuthTokens:   5,
+		AuthEnabled:  true,
+		LastActive:   0,
+		NodeUUID:     "019984c2-1e87-73a2-b734-b8d0ed31ac0c",
+	},
 }
 
 // CreateClientFixtures inserts known entities into the database for testing.

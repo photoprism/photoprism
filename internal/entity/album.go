@@ -410,11 +410,21 @@ func FindAlbum(find Album) *Album {
 			return nil
 		}
 	} else if find.AlbumTitle != "" && find.AlbumSlug != UnknownSlug {
-		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
+		switch DbDialect() {
+		case Postgres:
+			stmt = stmt.Where("album_slug = ? OR album_title ILIKE ?", find.AlbumSlug, find.AlbumTitle)
+		default:
+			stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
+		}
 	} else if find.AlbumSlug != UnknownSlug {
 		stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 	} else if find.AlbumTitle != "" {
-		stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
+		switch DbDialect() {
+		case Postgres:
+			stmt = stmt.Where("album_title ILIKE ?", find.AlbumTitle)
+		default:
+			stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
+		}
 	} else {
 		return nil
 	}
