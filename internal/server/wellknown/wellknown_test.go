@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -31,21 +32,6 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	os.Exit(code)
-}
-package wellknown
-
-import (
-	"os"
-	"testing"
-
-	"github.com/photoprism/photoprism/pkg/fs"
-)
-
-func TestMain(m *testing.M) {
-	// Run unit tests.
-	code := m.Run()
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

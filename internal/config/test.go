@@ -50,6 +50,8 @@ func NewTestOptions(dbName string) *Options {
 		storagePath = fs.Abs("../../storage")
 	}
 
+	dataPath := filepath.Join(storagePath, fs.TestdataDir, functions.PhotoPrismTestToFolderName())
+
 	return NewTestOptionsForPath(dbName, dataPath)
 }
 
@@ -63,7 +65,8 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 			storagePath = fs.Abs("../../storage")
 		}
 
-		dataPath = filepath.Join(storagePath, fs.TestdataDir)
+		// enforce folder separation for testdata folders to prevent parallel tests of DBMS' clashing
+		dataPath = filepath.Join(storagePath, fs.TestdataDir, functions.PhotoPrismTestToFolderName())
 	}
 
 	dataPath = fs.Abs(dataPath)
@@ -88,9 +91,6 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	driver, dsn := functions.PhotoPrismTestToDriverDsn()
-
-	// enforce folder separation for testdata folders to prevent parallel tests of DBMS' clashing
-	dataPath := filepath.Join(storagePath, fs.TestdataDir, functions.PhotoPrismTestToFolderName())
 
 	// Config example for MySQL / MariaDB:
 	//   driver = MySQL,
