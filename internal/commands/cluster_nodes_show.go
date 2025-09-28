@@ -15,9 +15,10 @@ import (
 // ClusterNodesShowCommand shows node details.
 var ClusterNodesShowCommand = &cli.Command{
 	Name:      "show",
-	Usage:     "Shows node details (Portal-only)",
+	Usage:     "Shows node details",
 	ArgsUsage: "<id|name>",
 	Flags:     report.CliFlags,
+	Hidden:    true, // Required for cluster-management only.
 	Action:    clusterNodesShowAction,
 }
 

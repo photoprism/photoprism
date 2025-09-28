@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -25,7 +26,13 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	c := config.NewTestConfig("avatar")
+	tempDir, err := os.MkdirTemp("", "avatar-test")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	c := config.NewMinimalTestConfigWithDb("avatar", tempDir)
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
 	defer c.CloseDb()
@@ -35,6 +42,9 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

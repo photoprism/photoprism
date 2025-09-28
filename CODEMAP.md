@@ -1,5 +1,7 @@
 PhotoPrism — Backend CODEMAP
 
+**Last Updated:** September 24, 2025
+
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
 - Sources of truth: prefer Makefile targets and the Developer Guide linked in AGENTS.md.
@@ -78,7 +80,7 @@ Database & Migrations
 
 AuthN/Z & Sessions
 - Session model and cache: `internal/entity/auth_session*` and `internal/auth/session/*` (cleanup worker).
-- ACL: `internal/auth/acl/*` — roles, grants, scopes; use constants; avoid logging secrets, compare tokens constant‑time.
+- ACL: `internal/auth/acl/*` — roles, grants, scopes; use constants; avoid logging secrets, compare tokens constant‑time; for scope checks use `acl.ScopePermits` / `ScopeAttrPermits` instead of rolling your own parsing.
 - OIDC: `internal/auth/oidc/*`.
 
 Media Processing
@@ -92,7 +94,7 @@ Background Workers
 
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
-- Instance bootstrap & registration: `internal/service/cluster/instance/*` (HTTP to Portal; do not import Portal internals).
+- Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
 - See specs cheat sheet: `specs/portal/README.md`.

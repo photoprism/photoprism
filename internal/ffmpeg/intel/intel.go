@@ -1,18 +1,6 @@
 /*
-Package instance bootstraps a PhotoPrism node that joins a cluster Portal.
-
-Responsibilities include:
-
-  - Initializing runtime configuration derived from options and environment.
-  - Registering the node with the Portal over HTTP(S), handling non-transient
-    errors (401/403/404) as terminal and bounding retries on transient failures.
-  - Persisting returned registration data such as the Node secret and, when
-    appropriate, database settings (never for SQLite), by merging into options.yml.
-  - Installing a theme from the Portal if the local theme is missing, without
-    overwriting existing installations.
-
-The package deliberately avoids importing Portal internals and communicates
-with the Portal using HTTP-only APIs.
+Package intel collects ffmpeg helpers for configuring Intel Quick Sync Video
+(QSV) encoders when building PhotoPrism transcoding pipelines.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
@@ -35,4 +23,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package instance
+package intel

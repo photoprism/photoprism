@@ -324,6 +324,26 @@
             },
             "type": "object"
         },
+        "cluster.MetricsResponse": {
+            "properties": {
+                "clusterCidr": {
+                    "type": "string"
+                },
+                "nodes": {
+                    "additionalProperties": {
+                        "type": "integer"
+                    },
+                    "type": "object"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "cluster.Node": {
             "properties": {
                 "advertiseUrl": {
@@ -419,8 +439,14 @@
                 "alreadyRegistered": {
                     "type": "boolean"
                 },
+                "clusterCidr": {
+                    "type": "string"
+                },
                 "database": {
                     "$ref": "#/definitions/cluster.RegisterDatabase"
+                },
+                "jwksUrl": {
+                    "type": "string"
                 },
                 "node": {
                     "$ref": "#/definitions/cluster.Node"
@@ -456,6 +482,9 @@
         },
         "cluster.SummaryResponse": {
             "properties": {
+                "clusterCidr": {
+                    "type": "string"
+                },
                 "database": {
                     "$ref": "#/definitions/cluster.DatabaseInfo"
                 },
@@ -6395,6 +6424,44 @@
                     }
                 },
                 "summary": "cluster health",
+                "tags": [
+                    "Cluster"
+                ]
+            }
+        },
+        "/api/v1/cluster/metrics": {
+            "get": {
+                "operationId": "ClusterMetrics",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cluster.MetricsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "temporary cluster metrics (counts only)",
                 "tags": [
                     "Cluster"
                 ]

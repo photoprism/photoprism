@@ -5,11 +5,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
 func TestExitCodes_Register_ValidationAndUnauthorized(t *testing.T) {
 	t.Run("MissingURL", func(t *testing.T) {
-		ctx := NewTestContext([]string{"register", "--name", "pp-node-01", "--role", "instance", "--join-token", "token"})
+		ctx := NewTestContext([]string{"register", "--name", "pp-node-01", "--role", "instance", "--join-token", cluster.ExampleJoinToken})
 		err := ClusterRegisterCommand.Action(ctx)
 		assert.Error(t, err)
 		if ec, ok := err.(cli.ExitCoder); ok {

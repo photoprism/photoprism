@@ -8,31 +8,32 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClientRegistry_PutFindListRotate(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-client")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-client", t.TempDir())
 	defer c.CloseDb()
-	if err := c.Init(); err != nil {
-		t.Fatalf("init config: %v", err)
-	}
 
 	r, err := NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)
 
 	// Create new node
 	n := &Node{
-		UUID:         rnd.UUIDv7(),
-		Name:         "pp-node-a",
-		Role:         "instance",
-		SiteUrl:      "https://photos.example.com",
-		AdvertiseUrl: "http://pp-node-a:2342",
-		Labels:       map[string]string{"env": "test"},
+		Node: cluster.Node{
+			UUID:         rnd.UUIDv7(),
+			Name:         "pp-node-a",
+			Role:         "instance",
+			SiteUrl:      "https://photos.example.com",
+			AdvertiseUrl: "http://pp-node-a:2342",
+			Labels:       map[string]string{"env": "test"},
+		},
 	}
-	n.Database.Name = "pp_db"
-	n.Database.User = "pp_user"
-	n.Database.RotatedAt = time.Now().UTC().Format(time.RFC3339)
+	db := n.ensureDatabase()
+	db.Name = "pp_db"
+	db.User = "pp_user"
+	db.RotatedAt = time.Now().UTC().Format(time.RFC3339)
 	n.RotatedAt = time.Now().UTC().Format(time.RFC3339)
 	n.ClientSecret = rnd.ClientSecret()
 
@@ -49,8 +50,10 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 		assert.Equal(t, "instance", got.Role)
 		assert.Equal(t, "http://pp-node-a:2342", got.AdvertiseUrl)
 		assert.Equal(t, "https://photos.example.com", got.SiteUrl)
-		assert.Equal(t, "pp_db", got.Database.Name)
-		assert.Equal(t, "pp_user", got.Database.User)
+		if assert.NotNil(t, got.Database) {
+			assert.Equal(t, "pp_db", got.Database.Name)
+			assert.Equal(t, "pp_user", got.Database.User)
+		}
 		assert.NotEmpty(t, got.CreatedAt)
 		assert.NotEmpty(t, got.UpdatedAt)
 		// Secret is not persisted in plaintext
@@ -88,7 +91,7 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 	}
 
 	// Update labels and site URL via Put (upsert by id)
-	upd := &Node{ClientID: got.ClientID, Name: got.Name, Labels: map[string]string{"env": "prod"}, SiteUrl: "https://photos.example.org"}
+	upd := &Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, Labels: map[string]string{"env": "prod"}, SiteUrl: "https://photos.example.org"}}
 	assert.NoError(t, r.Put(upd))
 	got2, err := r.FindByName("pp-node-a")
 	assert.NoError(t, err)

@@ -43,20 +43,50 @@ func testDataPath(assetsPath string) string {
 var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
 
 // NewTestOptions returns valid config options for tests.
-func NewTestOptions(pkg string) *Options {
-	// Find assets path.
-	assetsPath := os.Getenv("PHOTOPRISM_ASSETS_PATH")
-	if assetsPath == "" {
-		fs.Abs("../../assets")
-	}
-
+func NewTestOptions(dbName string) *Options {
 	// Find storage path.
 	storagePath := os.Getenv("PHOTOPRISM_STORAGE_PATH")
 	if storagePath == "" {
 		storagePath = fs.Abs("../../storage")
 	}
 
-	pkg = PkgNameRegexp.ReplaceAllString(pkg, "")
+	return NewTestOptionsForPath(dbName, dataPath)
+}
+
+// NewTestOptionsForPath returns new test Options using the specified data path as storage.
+func NewTestOptionsForPath(dbName, dataPath string) *Options {
+	// Default to storage/testdata is no path was specified.
+	if dataPath == "" {
+		storagePath := os.Getenv("PHOTOPRISM_STORAGE_PATH")
+
+		if storagePath == "" {
+			storagePath = fs.Abs("../../storage")
+		}
+
+		dataPath = filepath.Join(storagePath, fs.TestdataDir)
+	}
+
+	dataPath = fs.Abs(dataPath)
+
+	if err := fs.MkdirAll(dataPath); err != nil {
+		log.Errorf("config: %s (create test data path)", err)
+		return &Options{}
+	}
+
+	configPath := filepath.Join(dataPath, "config")
+
+	if err := fs.MkdirAll(configPath); err != nil {
+		log.Errorf("config: %s (create test config path)", err)
+		return &Options{}
+	}
+
+	// Find assets path.
+	assetsPath := os.Getenv("PHOTOPRISM_ASSETS_PATH")
+	if assetsPath == "" {
+		fs.Abs("../../assets")
+	}
+
+	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	driver, dsn := functions.PhotoPrismTestToDriverDsn()
 
 	// enforce folder separation for testdata folders to prevent parallel tests of DBMS' clashing
@@ -73,18 +103,18 @@ func NewTestOptions(pkg string) *Options {
 
 	// Set default database DSN.
 	if driver == SQLite3 {
-		if dsn == "" && pkg != "" {
-			dsnFile := fmt.Sprintf(".%s.db", clean.TypeLower(pkg))
+		if dsn == "" && dbName != "" {
+			dsnFile := fmt.Sprintf(".%s.db", clean.TypeLower(dbName))
 			dsn = fmt.Sprintf("%s?_foreign_keys=on", dsnFile)
 			if !fs.FileExists(dsnFile) {
-				log.Debugf("sqlite: test database %s does not already exist", clean.Log(dsnFile))
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(dsnFile))
 			} else if err := os.Remove(dsnFile); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dsnFile), err)
 			}
 		} else if dsn == "" || dsn == SQLiteTestDB {
 			dsn = fmt.Sprintf("%s?_foreign_keys=on", SQLiteTestDB)
 			if !fs.FileExists(SQLiteTestDB) {
-				log.Debugf("sqlite: test database %s does not already exist", clean.Log(SQLiteTestDB))
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(SQLiteTestDB))
 			} else if err := os.Remove(SQLiteTestDB); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(SQLiteTestDB), err)
 			}
@@ -92,7 +122,7 @@ func NewTestOptions(pkg string) *Options {
 	}
 
 	// Test config options.
-	c := &Options{
+	opts := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
 		Copyright:       "(c) 2018-2025 PhotoPrism UG. All rights reserved.",
@@ -111,12 +141,14 @@ func NewTestOptions(pkg string) *Options {
 		IndexSchedule:   DefaultIndexSchedule,
 		AutoImport:      7200,
 		StoragePath:     dataPath,
-		CachePath:       dataPath + "/cache",
-		OriginalsPath:   dataPath + "/originals",
-		ImportPath:      dataPath + "/import",
-		ConfigPath:      dataPath + "/config",
-		SidecarPath:     dataPath + "/sidecar",
-		TempPath:        dataPath + "/temp",
+		CachePath:       filepath.Join(dataPath, "cache"),
+		OriginalsPath:   filepath.Join(dataPath, "originals"),
+		ImportPath:      filepath.Join(dataPath, "import"),
+		ConfigPath:      configPath,
+		DefaultsYaml:    filepath.Join(configPath, "defaults.yml"),
+		OptionsYaml:     filepath.Join(configPath, "options.yml"),
+		SidecarPath:     filepath.Join(dataPath, "sidecar"),
+		TempPath:        filepath.Join(dataPath, "temp"),
 		BackupRetain:    DefaultBackupRetain,
 		BackupSchedule:  DefaultBackupSchedule,
 		DatabaseDriver:  driver,
@@ -128,7 +160,7 @@ func NewTestOptions(pkg string) *Options {
 		DetectNSFW:      true,
 	}
 
-	return c
+	return opts
 }
 
 // NewTestOptionsError returns invalid config options for tests.
@@ -162,11 +194,94 @@ func TestConfig() *Config {
 	return testConfig
 }
 
-// NewTestConfig returns a valid test config.
+// NewMinimalTestConfig creates a lightweight test Config (no DB, minimal filesystem).
 //
+// Not suitable for tests requiring a database or pre-created storage directories.
+func NewMinimalTestConfig(dataPath string) *Config {
+	return NewIsolatedTestConfig("", dataPath, false)
+}
+
+var testDbCache []byte
+var testDbMutex sync.Mutex
+
+// NewMinimalTestConfigWithDb creates a lightweight test Config (minimal filesystem).
+//
+// Creates an isolated SQLite DB (cached after first run) without seeding media fixtures.
+func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
+	c := NewIsolatedTestConfig(dbName, dataPath, true)
+
+	cachedDb := false
+
+	// Try to restore test db from cache.
+	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseDSN()) {
+		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
+			log.Warnf("config: %s (restore test database)", err)
+		} else {
+			cachedDb = true
+		}
+	}
+
+	if err := c.Init(); err != nil {
+		log.Fatalf("config: %s (init)", err.Error())
+	}
+
+	c.RegisterDb()
+
+	if cachedDb {
+		return c
+	}
+
+	c.InitTestDb()
+
+	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+		testDbMutex.Lock()
+		defer testDbMutex.Unlock()
+
+		if testDbCache != nil {
+			return c
+		}
+
+		if testDb, readErr := os.ReadFile(c.DatabaseDSN()); readErr != nil {
+			log.Warnf("config: could not cache test database (%s)", readErr)
+		} else {
+			testDbCache = testDb
+		}
+	}
+
+	return c
+}
+
+// NewIsolatedTestConfig constructs a lightweight Config backed by the provided config path.
+//
+// It avoids running migrations or loading test fixtures, making it useful for unit tests that
+// only need basic access to config options (for example, JWT helpers). The caller should provide
+// an isolated directory (e.g. via testing.T.TempDir) so temporary files are cleaned up automatically.
+func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
+	if dataPath == "" {
+		dataPath = filepath.Join(os.TempDir(), "photoprism-test-"+rnd.Base36(6))
+	}
+
+	opts := NewTestOptionsForPath(dbName, dataPath)
+
+	c := &Config{
+		options: opts,
+		token:   rnd.Base36(8),
+	}
+
+	if !createDirs {
+		return c
+	}
+
+	if err := c.CreateDirectories(); err != nil {
+		log.Errorf("config: %s (create test directories)", err)
+	}
+
+	return c
+}
+
 // NewTestConfig initializes test data so required directories exist before tests run.
 // See AGENTS.md (Test Data & Fixtures) and specs/dev/backend-testing.md for guidance.
-func NewTestConfig(pkg string) *Config {
+func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
 	testConfigMutex.Lock()
@@ -174,7 +289,7 @@ func NewTestConfig(pkg string) *Config {
 
 	c := &Config{
 		cliCtx:  CliTestContext(),
-		options: NewTestOptions(pkg),
+		options: NewTestOptions(dbName),
 		token:   rnd.Base36(8),
 	}
 

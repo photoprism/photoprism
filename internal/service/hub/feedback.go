@@ -67,17 +67,17 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 60 * time.Second}
 
-	url := fmt.Sprintf(FeedbackURL, c.Key)
+	endpointUrl := fmt.Sprintf(FeedbackURL, c.Key)
 	method := http.MethodPost
 
 	var req *http.Request
 
 	log.Debugf("sending feedback to %s", ApiHost())
 
-	if j, err := json.Marshal(feedback); err != nil {
-		return err
-	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
-		return err
+	if j, reqErr := json.Marshal(feedback); reqErr != nil {
+		return reqErr
+	} else if req, reqErr = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); reqErr != nil {
+		return reqErr
 	}
 
 	// Set user agent.

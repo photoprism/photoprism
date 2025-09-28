@@ -40,7 +40,9 @@ func createFakeYtDlp(t *testing.T) string {
 	if runtime.GOOS == "windows" {
 		// Not needed in CI/dev container. Keep simple stub.
 		content := "@echo off\r\n" +
+			"if not \"%YTDLP_ARGS_LOG%\"==\"\" echo %* >> %YTDLP_ARGS_LOG%\r\n" +
 			"for %%A in (%*) do (\r\n" +
+			"  if \"%%~A\"==\"--version\" ( echo 2025.09.23 & goto :eof )\r\n" +
 			"  if \"%%~A\"==\"--dump-single-json\" ( echo {\"id\":\"abc\",\"title\":\"Test\",\"url\":\"http://example.com\",\"_type\":\"video\"} & goto :eof )\r\n" +
 			")\r\n"
 		if err := os.WriteFile(path, []byte(content), 0o755); err != nil {
@@ -51,6 +53,9 @@ func createFakeYtDlp(t *testing.T) string {
 	var b strings.Builder
 	b.WriteString("#!/usr/bin/env bash\n")
 	b.WriteString("set -euo pipefail\n")
+	b.WriteString("ARGS_LOG=\"${YTDLP_ARGS_LOG:-}\"\n")
+	b.WriteString("if [[ -n \"$ARGS_LOG\" ]]; then echo \"$*\" >> \"$ARGS_LOG\"; fi\n")
+	b.WriteString("for a in \"$@\"; do if [[ \"$a\" == \"--version\" ]]; then echo '2025.09.23'; exit 0; fi; done\n")
 	b.WriteString("OUT_TPL=\"\"\n")
 	b.WriteString("i=0; while [[ $i -lt $# ]]; do i=$((i+1)); arg=\"${!i}\"; if [[ \"$arg\" == \"--dump-single-json\" ]]; then echo '{\"id\":\"abc\",\"title\":\"Test\",\"url\":\"http://example.com\",\"_type\":\"video\"}'; exit 0; fi; if [[ \"$arg\" == \"--output\" ]]; then i=$((i+1)); OUT_TPL=\"${!i}\"; fi; done\n")
 	b.WriteString("if [[ $* == *'--print '* ]]; then OUT=\"$OUT_TPL\"; OUT=${OUT//%(id)s/abc}; OUT=${OUT//%(ext)s/mp4}; mkdir -p \"$(dirname \"$OUT\")\"; CONTENT=\"${YTDLP_DUMMY_CONTENT:-dummy}\"; echo \"$CONTENT\" > \"$OUT\"; echo \"$OUT\"; exit 0; fi\n")
@@ -65,6 +70,7 @@ func TestDownloadImpl_FileMethod_AutoSkipsRemux(t *testing.T) {
 	t.Setenv("YTDLP_FORCE_SHELL", "1")
 	// Prefer using in-process fake to avoid exec restrictions.
 	t.Setenv("YTDLP_FAKE", "1")
+	dl.ResetVersionWarningForTest()
 	fake := createFakeYtDlp(t)
 	orig := dl.YtDlpBin
 	defer func() { dl.YtDlpBin = orig }()
@@ -81,9 +87,10 @@ func TestDownloadImpl_FileMethod_AutoSkipsRemux(t *testing.T) {
 	if conf == nil {
 		t.Fatalf("missing test config")
 	}
+
 	// Ensure DB is initialized and registered (bypassing CLI InitConfig)
-	_ = conf.Init()
 	conf.RegisterDb()
+
 	// Override yt-dlp after config init (config may set dl.YtDlpBin)
 	dl.YtDlpBin = fake
 	t.Logf("using yt-dlp binary: %s", dl.YtDlpBin)
@@ -109,6 +116,7 @@ func TestDownloadImpl_FileMethod_Skip_NoRemux(t *testing.T) {
 	t.Setenv("YTDLP_FORCE_SHELL", "1")
 	// Prefer using in-process fake to avoid exec restrictions.
 	t.Setenv("YTDLP_FAKE", "1")
+	dl.ResetVersionWarningForTest()
 	fake := createFakeYtDlp(t)
 	orig := dl.YtDlpBin
 	defer func() { dl.YtDlpBin = orig }()
@@ -125,7 +133,6 @@ func TestDownloadImpl_FileMethod_Skip_NoRemux(t *testing.T) {
 	if conf == nil {
 		t.Fatalf("missing test config")
 	}
-	_ = conf.Init()
 	conf.RegisterDb()
 	dl.YtDlpBin = fake
 
@@ -182,6 +189,7 @@ func TestDownloadImpl_FileMethod_Always_RemuxFails(t *testing.T) {
 	t.Setenv("YTDLP_FORCE_SHELL", "1")
 	// Prefer using in-process fake to avoid exec restrictions.
 	t.Setenv("YTDLP_FAKE", "1")
+	dl.ResetVersionWarningForTest()
 	fake := createFakeYtDlp(t)
 	orig := dl.YtDlpBin
 	defer func() { dl.YtDlpBin = orig }()
@@ -196,8 +204,9 @@ func TestDownloadImpl_FileMethod_Always_RemuxFails(t *testing.T) {
 	if conf == nil {
 		t.Fatalf("missing test config")
 	}
-	_ = conf.Init()
+
 	conf.RegisterDb()
+
 	dl.YtDlpBin = fake
 
 	err := runDownload(conf, DownloadOpts{

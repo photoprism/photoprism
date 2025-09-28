@@ -8,27 +8,27 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // UUID-first upsert: Put finds existing row by UUID and updates fields.
 func TestClientRegistry_PutUpdateByUUID(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-put-uuid")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-put-uuid", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
 	uuid := rnd.UUIDv7()
 
 	// Create via UUID
-	n := &Node{UUID: uuid, Name: "pp-uuid", Role: "instance", Labels: map[string]string{"a": "1"}}
+	n := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-uuid", Role: "instance", Labels: map[string]string{"a": "1"}}}
 	assert.NoError(t, r.Put(n))
 	assert.NotEmpty(t, n.ClientID)
 	assert.True(t, rnd.IsUUID(n.UUID))
 	assert.True(t, rnd.IsUID(n.ClientID, entity.ClientUID))
 
 	// Update same record by UUID only; change name and labels
-	upd := &Node{UUID: uuid, Name: "pp-uuid-new", Labels: map[string]string{"a": "2", "b": "x"}}
+	upd := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-uuid-new", Labels: map[string]string{"a": "2", "b": "x"}}}
 	assert.NoError(t, r.Put(upd))
 
 	got, err := r.FindByNodeUUID(uuid)
@@ -46,9 +46,8 @@ func TestClientRegistry_PutUpdateByUUID(t *testing.T) {
 
 // Latest-by-UpdatedAt when multiple rows share the same NodeUUID (historical duplicates).
 func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-find-uuid-latest")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-find-uuid-latest", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	uuid := rnd.UUIDv7()
 	// Create two raw client rows with the same NodeUUID and different UpdatedAt
@@ -73,9 +72,8 @@ func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
 
 // DeleteAllByUUID removes all rows that share a NodeUUID.
 func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-delete-all")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-delete-all", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	uuid := rnd.UUIDv7()
 	// Two rows with same UUID
@@ -98,9 +96,8 @@ func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
 
 // List() should only include clients that represent cluster nodes (i.e., have a NodeUUID).
 func TestClientRegistry_ListOnlyUUID(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-list-only-uuid")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-list-only-uuid", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	// Remove the fixture records
 	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
@@ -128,20 +125,19 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 
 // Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.
 func TestClientRegistry_PutPrefersUUIDOverClientID(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-put-prefers-uuid")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-put-prefers-uuid", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two separate records
-	n1 := &Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: "instance"}
+	n1 := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: "instance"}}
 	assert.NoError(t, r.Put(n1))
-	n2 := &Node{Name: "pp-b", Role: "service"}
+	n2 := &Node{Node: cluster.Node{Name: "pp-b", Role: "service"}}
 	assert.NoError(t, r.Put(n2))
 
 	// Now attempt to update by UUID of n1 while also passing n2.ClientID:
 	// implementation must use UUID and not attach to n2.
-	upd := &Node{UUID: n1.UUID, ClientID: n2.ClientID, Role: "service"}
+	upd := &Node{Node: cluster.Node{UUID: n1.UUID, ClientID: n2.ClientID, Role: "service"}}
 	assert.NoError(t, r.Put(upd))
 
 	got1, err := r.FindByNodeUUID(n1.UUID)

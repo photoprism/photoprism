@@ -1,4 +1,4 @@
-package instance
+package node
 
 import (
 	"archive/zip"
@@ -19,16 +19,26 @@ import (
 )
 
 func TestInitConfig_NoPortal_NoOp(t *testing.T) {
-	t.Setenv("PHOTOPRISM_STORAGE_PATH", t.TempDir())
-	c := config.NewTestConfig("bootstrap-np")
+	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
+	defer c.CloseDb()
+
 	// Default NodeRole() resolves to instance; no Portal configured.
 	assert.Equal(t, cluster.RoleInstance, c.NodeRole())
 	assert.NoError(t, InitConfig(c))
 }
 
+func TestInitConfig_ServiceRole(t *testing.T) {
+	c := config.NewMinimalTestConfigWithDb("bootstrap-service", t.TempDir())
+	defer c.CloseDb()
+
+	c.Options().NodeRole = cluster.RoleService
+
+	assert.NoError(t, InitConfig(c))
+}
+
 func TestRegister_PersistSecretAndDB(t *testing.T) {
-	t.Setenv("PHOTOPRISM_STORAGE_PATH", t.TempDir())
 	// Fake Portal server.
+	var jwksURL string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
@@ -36,9 +46,11 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			resp := cluster.RegisterResponse{
-				Node:    cluster.Node{Name: "pp-node-01"},
-				UUID:    rnd.UUID(),
-				Secrets: &cluster.RegisterSecrets{ClientSecret: "SECRET"},
+				Node:        cluster.Node{Name: "pp-node-01"},
+				UUID:        rnd.UUID(),
+				ClusterCIDR: "192.0.2.0/24",
+				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+				JWKSUrl:     jwksURL,
 				Database: cluster.RegisterDatabase{
 					Driver:   config.MySQL,
 					Host:     "db.local",
@@ -57,12 +69,15 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 			http.NotFound(w, r)
 		}
 	}))
+	jwksURL = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewTestConfig("bootstrap-reg")
+	c := config.NewMinimalTestConfigWithDb("bootstrap-reg", t.TempDir())
+	defer c.CloseDb()
+
 	// Configure Portal.
 	c.Options().PortalUrl = srv.URL
-	c.Options().JoinToken = "t0k3n"
+	c.Options().JoinToken = cluster.ExampleJoinToken
 	// Gate rotate=true: driver mysql and no DSN/fields.
 	c.Options().DatabaseDriver = config.MySQL
 	c.Options().DatabaseDSN = ""
@@ -74,14 +89,15 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.NoError(t, InitConfig(c))
 
 	// Options should be reloaded; check values.
-	assert.Equal(t, "SECRET", c.NodeClientSecret())
+	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
 	// DSN branch should be preferred and persisted.
 	assert.Contains(t, c.Options().DatabaseDSN, "@tcp(db.local:3306)/pp_db")
 	assert.Equal(t, config.MySQL, c.Options().DatabaseDriver)
+	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
+	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
 }
 
 func TestThemeInstall_Missing(t *testing.T) {
-	t.Setenv("PHOTOPRISM_STORAGE_PATH", t.TempDir())
 	// Build a tiny zip in-memory with one file style.css
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
@@ -90,12 +106,14 @@ func TestThemeInstall_Missing(t *testing.T) {
 	_ = zw.Close()
 
 	// Fake Portal server (register -> oauth token -> theme)
+	clientSecret := cluster.ExampleClientSecret
+	var jwksURL2 string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
 			w.Header().Set("Content-Type", "application/json")
 			// Return NodeClientID + NodeClientSecret so bootstrap can request OAuth token
-			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{UUID: rnd.UUID(), Node: cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"}, Secrets: &cluster.RegisterSecrets{ClientSecret: "s3cr3t"}})
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{UUID: rnd.UUID(), ClusterCIDR: "198.51.100.0/24", Node: cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"}, Secrets: &cluster.RegisterSecrets{ClientSecret: clientSecret}, JWKSUrl: jwksURL2})
 		case "/api/v1/oauth/token":
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "token_type": "Bearer"})
@@ -107,12 +125,15 @@ func TestThemeInstall_Missing(t *testing.T) {
 			http.NotFound(w, r)
 		}
 	}))
+	jwksURL2 = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewTestConfig("bootstrap-theme")
+	c := config.NewMinimalTestConfigWithDb("bootstrap-theme", t.TempDir())
+	defer c.CloseDb()
+
 	// Point Portal.
 	c.Options().PortalUrl = srv.URL
-	c.Options().JoinToken = "t0k3n"
+	c.Options().JoinToken = cluster.ExampleJoinToken
 
 	// Ensure theme dir is empty and unique.
 	tempTheme, err := os.MkdirTemp("", "pp-theme-*")
@@ -131,29 +152,34 @@ func TestThemeInstall_Missing(t *testing.T) {
 }
 
 func TestRegister_SQLite_NoDBPersist(t *testing.T) {
-	t.Setenv("PHOTOPRISM_STORAGE_PATH", t.TempDir())
 	// Portal responds with DB DSN, but local driver is SQLite → must not persist DB.
+	var jwksURL3 string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			resp := cluster.RegisterResponse{
-				Node:     cluster.Node{Name: "pp-node-01"},
-				Secrets:  &cluster.RegisterSecrets{ClientSecret: "SECRET"},
-				Database: cluster.RegisterDatabase{Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?charset=utf8mb4&parseTime=true"},
+				Node:        cluster.Node{Name: "pp-node-01"},
+				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+				ClusterCIDR: "203.0.113.0/24",
+				JWKSUrl:     jwksURL3,
+				Database:    cluster.RegisterDatabase{Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?charset=utf8mb4&parseTime=true"},
 			}
 			_ = json.NewEncoder(w).Encode(resp)
 		default:
 			http.NotFound(w, r)
 		}
 	}))
+	jwksURL3 = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewTestConfig("bootstrap-sqlite")
+	c := config.NewMinimalTestConfigWithDb("bootstrap-sqlite", t.TempDir())
+	defer c.CloseDb()
+
 	// SQLite driver by default; set Portal.
 	c.Options().PortalUrl = srv.URL
-	c.Options().JoinToken = "t0k3n"
+	c.Options().JoinToken = cluster.ExampleJoinToken
 	// Remember original DSN so we can ensure it is not changed.
 	origDSN := c.Options().DatabaseDSN
 	origDriver := c.DatabaseDriver()
@@ -165,11 +191,14 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
 	assert.Equal(t, "SECRET", c.NodeClientSecret())
 	assert.Equal(t, origDriver, c.DatabaseDriver())
+	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	assert.Equal(t, config.SQLite3, c.DatabaseDriver())
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
+	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
+	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())
 }
 
 func TestRegister_404_NoRetry(t *testing.T) {
-	t.Setenv("PHOTOPRISM_STORAGE_PATH", t.TempDir())
 	var hits int
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/api/v1/cluster/nodes/register" {
@@ -181,9 +210,11 @@ func TestRegister_404_NoRetry(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := config.NewTestConfig("bootstrap-404")
+	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
+	defer c.CloseDb()
+
 	c.Options().PortalUrl = srv.URL
-	c.Options().JoinToken = "t0k3n"
+	c.Options().JoinToken = cluster.ExampleJoinToken
 
 	// Run bootstrap; registration should attempt once and stop on 404.
 	_ = InitConfig(c)
@@ -192,7 +223,6 @@ func TestRegister_404_NoRetry(t *testing.T) {
 }
 
 func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
-	t.Setenv("PHOTOPRISM_STORAGE_PATH", t.TempDir())
 	// Portal returns a valid zip, but theme dir already has app.js → skip.
 	var served int
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -209,7 +239,9 @@ func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := config.NewTestConfig("bootstrap-theme-skip")
+	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
+	defer c.CloseDb()
+
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = "t0k3n"
 

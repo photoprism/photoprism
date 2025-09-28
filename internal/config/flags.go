@@ -689,7 +689,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "join-token",
-			Usage:   "secret `TOKEN` required to join the cluster",
+			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
 			EnvVars: EnvVars("JOIN_TOKEN"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -719,6 +719,28 @@ var Flags = CliFlags{
 			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
 			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
 			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "jwks-url",
+			Usage:   "JWKS endpoint `URL` provided by the cluster portal for JWT verification",
+			EnvVars: EnvVars("JWKS_URL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwks-cache-ttl",
+			Usage:   "JWKS cache lifetime in `SECONDS` (default 300, max 3600)",
+			Value:   300,
+			EnvVars: EnvVars("JWKS_CACHE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "jwt-scope",
+			Usage:   "allowed JWT `SCOPES` (space separated). Leave empty to accept defaults",
+			EnvVars: EnvVars("JWT_SCOPE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwt-leeway",
+			Usage:   "JWT clock skew allowance in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("JWT_LEEWAY"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "advertise-url",

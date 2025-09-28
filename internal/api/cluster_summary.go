@@ -46,10 +46,11 @@ func ClusterSummary(router *gin.RouterGroup) {
 		nodes, _ := regy.List()
 
 		c.JSON(http.StatusOK, cluster.SummaryResponse{
-			UUID:     conf.ClusterUUID(),
-			Nodes:    len(nodes),
-			Database: cluster.DatabaseInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
-			Time:     time.Now().UTC().Format(time.RFC3339),
+			UUID:        conf.ClusterUUID(),
+			ClusterCIDR: conf.ClusterCIDR(),
+			Nodes:       len(nodes),
+			Database:    cluster.DatabaseInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
+			Time:        time.Now().UTC().Format(time.RFC3339),
 		})
 	})
 }

@@ -104,6 +104,52 @@ func BenchmarkAppPasswordIgnoreChecksum(b *testing.B) {
 	}
 }
 
+func TestJoinToken(t *testing.T) {
+	for n := 0; n < 10; n++ {
+		s := JoinToken()
+		t.Logf("JoinToken %d: %s", n, s)
+		assert.Equal(t, JoinTokenLength, len(s))
+		assert.True(t, IsJoinToken(s, true))
+	}
+}
+
+func TestIsJoinToken(t *testing.T) {
+	t.Run("VerifyChecksum", func(t *testing.T) {
+		assert.True(t, IsJoinToken("pGVplw8-eISgkdQN-Mep62nQ", true))
+		assert.True(t, IsJoinToken("k9sEFe6-A7gt6zqm-gY9gFh0", true))
+		assert.False(t, IsJoinToken("M2hMhlx-f4bD1zCQ-VklHch1", true))
+		assert.False(t, IsJoinToken("oWIEZ6e-FnKWzaGz-vkTBf84", true))
+		assert.True(t, IsJoinToken(JoinToken(), true))
+		assert.True(t, IsJoinToken(JoinToken(), true))
+		assert.False(t, IsJoinToken(AppPassword(), true))
+		assert.False(t, IsJoinToken(AppPassword(), true))
+		assert.False(t, IsJoinToken(AuthToken(), true))
+		assert.False(t, IsJoinToken(AuthToken(), true))
+		assert.False(t, IsJoinToken(SessionID(AuthToken()), true))
+		assert.False(t, IsJoinToken(SessionID(AuthToken()), true))
+		assert.False(t, IsJoinToken("pGVplw8e-ISgkdQN-Mep62nQ", true))
+		assert.False(t, IsJoinToken("55785BAC-9H4B-4747-B090-EE123FFEE437", true))
+		assert.False(t, IsJoinToken("4B1FEF2D1CF4A5BE38B263E0637EDEAD", true))
+		assert.False(t, IsJoinToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", true))
+		assert.False(t, IsJoinToken("", true))
+	})
+	t.Run("MinLengthOnly", func(t *testing.T) {
+		assert.True(t, IsJoinToken("pGVplw8-eISgkdQN-Mep62nQ", false))
+		assert.True(t, IsJoinToken("M2hMhlx-f4bD1zCQ-VklHchp", false))
+		assert.True(t, IsJoinToken(AppPassword(), false))
+		assert.True(t, IsJoinToken("55785BAC-9H4B-4747-B090-EE123FFEE437", false))
+		assert.True(t, IsJoinToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", false))
+		assert.False(t, IsJoinToken("abcdefghijklmnopqrstuvw", false))
+		assert.False(t, IsJoinToken("", false))
+	})
+}
+
+func BenchmarkJoinToken(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		JoinToken()
+	}
+}
+
 func TestIsAuthAny(t *testing.T) {
 	assert.True(t, IsAuthAny("MPkOqm-RtKGOi-ctIvXm-Qv3XhN"))
 	assert.True(t, IsAuthAny("9q2JHc-P0LzNE-xzvY9j-vMoefj"))

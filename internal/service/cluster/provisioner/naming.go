@@ -24,10 +24,10 @@ const (
 	dbMax   = 64
 )
 
-// GenerateCreds computes deterministic database name and user for a node under the given portal
+// GenerateCredentials computes deterministic database name and user for a node under the given portal
 // plus a random password. Naming is stable for a given (clusterUUID, nodeUUID) pair and changes
 // if the cluster UUID or node UUID changes.
-func GenerateCreds(conf *config.Config, nodeUUID, nodeName string) (dbName, dbUser, dbPass string) {
+func GenerateCredentials(conf *config.Config, nodeUUID, nodeName string) (dbName, dbUser, dbPass string) {
 	clusterUUID := conf.ClusterUUID()
 
 	// Compute base32 (no padding) HMAC suffixes scoped by cluster UUID and node UUID.
@@ -59,6 +59,9 @@ func BuildDSN(driver, host string, port int, user, pass, name string) string {
 	}
 }
 
+// hmacBase32 returns a lowercase Base32 (no padding) encoded HMAC-SHA256 digest
+// derived from the provided key and data. It is used to generate deterministic
+// suffixes for database identifiers while keeping the resulting string URL/identifier safe.
 func hmacBase32(key, data string) string {
 	mac := hmac.New(sha256.New, []byte(key))
 	_, _ = mac.Write([]byte(data))

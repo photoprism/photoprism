@@ -26,8 +26,12 @@ func TestClusterPermissions(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		ClusterSummary(router)
+		ClusterMetrics(router)
 
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+
+		r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/metrics")
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("ForbiddenFromCDN", func(t *testing.T) {
@@ -35,6 +39,7 @@ func TestClusterPermissions(t *testing.T) {
 		conf.Options().NodeRole = cluster.RolePortal
 
 		ClusterListNodes(router)
+		ClusterMetrics(router)
 
 		req, _ := http.NewRequest(http.MethodGet, "/api/v1/cluster/nodes", nil)
 		// Mark as CDN request, which Auth() forbids.
@@ -47,8 +52,12 @@ func TestClusterPermissions(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal
 		ClusterSummary(router)
+		ClusterMetrics(router)
 		token := AuthenticateAdmin(app, router)
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster", token)
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		r = AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/metrics", token)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
@@ -77,7 +86,11 @@ func TestClusterPermissions(t *testing.T) {
 		token := gjson.Get(w.Body.String(), "access_token").String()
 
 		ClusterSummary(router)
+		ClusterMetrics(router)
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster", token)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+
+		r = AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/metrics", token)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }

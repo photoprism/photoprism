@@ -17,6 +17,7 @@ const (
 	MethodSession   MethodType = "session"
 	MethodOAuth2    MethodType = "oauth2"
 	Method2FA       MethodType = "2fa"
+	MethodJWT       MethodType = "jwt"
 )
 
 // Method casts a string to a normalized method type.
@@ -31,6 +32,8 @@ func Method(s string) MethodType {
 		return MethodOAuth2
 	case "2fa", "mfa", "otp", "totp":
 		return Method2FA
+	case "jwt", "jwks":
+		return MethodJWT
 	case "access_token":
 		return MethodDefault
 	default:
@@ -57,6 +60,8 @@ func (t MethodType) Pretty() string {
 		return "OAuth2"
 	case Method2FA:
 		return "2FA"
+	case MethodJWT:
+		return "JWT"
 	default:
 		return txt.UpperFirst(t.String())
 	}
@@ -109,4 +114,9 @@ func (t MethodType) IsDefault() bool {
 // IsSession checks if this is the session method.
 func (t MethodType) IsSession() bool {
 	return t.String() == MethodSession.String()
+}
+
+// IsJWT checks if this is the JSON Web Token (JWT) method.
+func (t MethodType) IsJWT() bool {
+	return t.String() == MethodJWT.String()
 }

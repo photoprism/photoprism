@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -68,18 +69,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		}
 
 		// Parse request.
-		var req struct {
-			NodeName       string            `json:"nodeName"`
-			NodeUUID       string            `json:"nodeUUID"`
-			NodeRole       string            `json:"nodeRole"`
-			Labels         map[string]string `json:"labels"`
-			AdvertiseUrl   string            `json:"advertiseUrl"`
-			SiteUrl        string            `json:"siteUrl"`
-			ClientID       string            `json:"clientId"`
-			ClientSecret   string            `json:"clientSecret"`
-			RotateDatabase bool              `json:"rotateDatabase"`
-			RotateSecret   bool              `json:"rotateSecret"`
-		}
+		var req cluster.RegisterRequest
 
 		if err := c.ShouldBindJSON(&req); err != nil {
 			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "form invalid", "%s"}, clean.Error(err))
@@ -227,13 +217,23 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "rotate db", event.Succeeded, "node %s"}, clean.LogQuote(name))
 			}
 
+			jwksURL := buildJWKSURL(conf)
+
 			// Build response with struct types.
 			opts := reg.NodeOptsForSession(nil) // registration is token-based, not session; default redaction is fine
+			dbInfo := cluster.NodeDatabase{}
+
+			if n.Database != nil {
+				dbInfo = *n.Database
+			}
+
 			resp := cluster.RegisterResponse{
 				UUID:               conf.ClusterUUID(),
+				ClusterCIDR:        conf.ClusterCIDR(),
 				Node:               reg.BuildClusterNode(*n, opts),
-				Database:           cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: n.Database.Name, User: n.Database.User, Driver: provisioner.DatabaseDriver},
+				Database:           cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: dbInfo.Name, User: dbInfo.User, Driver: provisioner.DatabaseDriver},
 				Secrets:            respSecret,
+				JWKSUrl:            jwksURL,
 				AlreadyRegistered:  true,
 				AlreadyProvisioned: true,
 			}
@@ -252,14 +252,18 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		// New node (client UID will be generated in registry.Put).
 		n := &reg.Node{
-			Name:   name,
-			Role:   clean.TypeLowerDash(req.NodeRole),
-			UUID:   requestedUUID,
-			Labels: req.Labels,
+			Node: cluster.Node{
+				Name:   name,
+				Role:   clean.TypeLowerDash(req.NodeRole),
+				UUID:   requestedUUID,
+				Labels: req.Labels,
+			},
 		}
+
 		if n.UUID == "" {
 			n.UUID = rnd.UUIDv7()
 		}
+
 		// Derive a sensible default advertise URL when not provided by the client.
 		if req.AdvertiseUrl != "" {
 			n.AdvertiseUrl = req.AdvertiseUrl
@@ -281,6 +285,11 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
+
+		if n.Database == nil {
+			n.Database = &cluster.NodeDatabase{}
+		}
+
 		n.Database.Name, n.Database.User, n.Database.RotatedAt = creds.Name, creds.User, creds.RotatedAt
 		n.Database.Driver = provisioner.DatabaseDriver
 
@@ -291,9 +300,12 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		}
 
 		resp := cluster.RegisterResponse{
+			UUID:               conf.ClusterUUID(),
+			ClusterCIDR:        conf.ClusterCIDR(),
 			Node:               reg.BuildClusterNode(*n, reg.NodeOptsForSession(nil)),
 			Secrets:            &cluster.RegisterSecrets{ClientSecret: n.ClientSecret, RotatedAt: n.RotatedAt},
 			Database:           cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: provisioner.DatabaseDriver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt},
+			JWKSUrl:            buildJWKSURL(conf),
 			AlreadyRegistered:  false,
 			AlreadyProvisioned: false,
 		}
@@ -346,6 +358,24 @@ func validateAdvertiseURL(u string) bool {
 		return false
 	}
 	return false
+}
+
+func buildJWKSURL(conf *config.Config) string {
+	if conf == nil {
+		return "/.well-known/jwks.json"
+	}
+	path := conf.BaseUri("/.well-known/jwks.json")
+	if path == "" {
+		path = "/.well-known/jwks.json"
+	}
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	site := strings.TrimRight(conf.SiteUrl(), "/")
+	if site == "" {
+		return path
+	}
+	return site + path
 }
 
 // validateSiteURL applies the same rules as validateAdvertiseURL.

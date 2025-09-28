@@ -20,11 +20,12 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
-// flags for register
+// Supported cluster node register flags.
 var (
 	regNameFlag       = &cli.StringFlag{Name: "name", Usage: "node `NAME` (lowercase letters, digits, hyphens)"}
 	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (instance, service)", Value: "instance"}
@@ -42,7 +43,7 @@ var (
 // ClusterRegisterCommand registers a node with the Portal via HTTP.
 var ClusterRegisterCommand = &cli.Command{
 	Name:   "register",
-	Usage:  "Registers/rotates a node via Portal (HTTP)",
+	Usage:  "Registers a node or updates its credentials within a cluster",
 	Flags:  append(append([]cli.Flag{regNameFlag, regRoleFlag, regIntUrlFlag, regLabelFlag, regRotateDatabase, regRotateSec, regPortalURL, regPortalTok, regWriteConf, regForceFlag, regDryRun}, report.CliFlags...)),
 	Action: clusterRegisterAction,
 }
@@ -52,15 +53,18 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		// Resolve inputs
 		name := clean.DNSLabel(ctx.String("name"))
 		derivedName := false
+
 		if name == "" { // default from config if set
 			name = clean.DNSLabel(conf.NodeName())
 			if name != "" {
 				derivedName = true
 			}
 		}
+
 		if name == "" {
 			return cli.Exit(fmt.Errorf("node name is required (use --name or set node-name)"), 2)
 		}
+
 		nodeRole := clean.TypeLowerDash(ctx.String("role"))
 		switch nodeRole {
 		case "instance", "service":
@@ -76,7 +80,6 @@ func clusterRegisterAction(ctx *cli.Context) error {
 				derivedPortal = true
 			}
 		}
-		// In dry-run, we allow empty portalURL (will print derived/empty values).
 
 		// Derive advertise/site URLs when omitted.
 		advertise := ctx.String("advertise-url")
@@ -85,28 +88,31 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		}
 		site := conf.SiteUrl()
 
-		body := map[string]interface{}{
-			"nodeName":     name,
-			"nodeRole":     nodeRole,
-			"labels":       parseLabelSlice(ctx.StringSlice("label")),
-			"advertiseUrl": advertise,
-			"rotate":       ctx.Bool("rotate"),
-			"rotateSecret": ctx.Bool("rotate-secret"),
+		payload := cluster.RegisterRequest{
+			NodeName:       name,
+			NodeRole:       nodeRole,
+			Labels:         parseLabelSlice(ctx.StringSlice("label")),
+			AdvertiseUrl:   advertise,
+			RotateDatabase: ctx.Bool("rotate"),
+			RotateSecret:   ctx.Bool("rotate-secret"),
 		}
+
 		// If we already have client credentials (e.g., re-register), include them so the
 		// portal can verify and authorize UUID/name moves or metadata updates.
 		if id, secret := strings.TrimSpace(conf.NodeClientID()), strings.TrimSpace(conf.NodeClientSecret()); id != "" && secret != "" {
-			body["clientId"] = id
-			body["clientSecret"] = secret
+			payload.ClientID = id
+			payload.ClientSecret = secret
 		}
-		if site != "" && site != advertise {
-			body["siteUrl"] = site
-		}
-		b, _ := json.Marshal(body)
 
+		if site != "" && site != advertise {
+			payload.SiteUrl = site
+		}
+		b, _ := json.Marshal(payload)
+
+		// In dry-run, we allow empty portalURL (will print derived/empty values).
 		if ctx.Bool("dry-run") {
 			if ctx.Bool("json") {
-				out := map[string]any{"portalUrl": portalURL, "payload": body}
+				out := map[string]any{"portalUrl": portalURL, "payload": payload}
 				jb, _ := json.Marshal(out)
 				fmt.Println(string(jb))
 			} else {
@@ -116,19 +122,19 @@ func clusterRegisterAction(ctx *cli.Context) error {
 					fmt.Println("(derived defaults were used where flags were omitted)")
 				}
 				fmt.Printf("Advertise:  %s\n", advertise)
-				if v, ok := body["siteUrl"].(string); ok && v != "" {
-					fmt.Printf("Site URL:   %s\n", v)
+				if payload.SiteUrl != "" {
+					fmt.Printf("Site URL:   %s\n", payload.SiteUrl)
 				}
 				// Warn if non-HTTPS on public host; server will enforce too.
 				if warnInsecurePublicURL(advertise) {
 					fmt.Println("Warning: advertise-url is http for a public host; server may reject it (HTTPS required).")
 				}
-				if v, ok := body["siteUrl"].(string); ok && v != "" && warnInsecurePublicURL(v) {
+				if payload.SiteUrl != "" && warnInsecurePublicURL(payload.SiteUrl) {
 					fmt.Println("Warning: site-url is http for a public host; server may reject it (HTTPS required).")
 				}
 				// Single-line summary for quick operator scan
-				if v, ok := body["siteUrl"].(string); ok && v != "" {
-					fmt.Printf("Derived: portal=%s advertise=%s site=%s\n", portalURL, advertise, v)
+				if payload.SiteUrl != "" {
+					fmt.Printf("Derived: portal=%s advertise=%s site=%s\n", portalURL, advertise, payload.SiteUrl)
 				} else {
 					fmt.Printf("Derived: portal=%s advertise=%s\n", portalURL, advertise)
 				}
@@ -140,18 +146,22 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		if portalURL == "" {
 			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
 		}
+
 		token := ctx.String("join-token")
+
 		if token == "" {
 			token = conf.JoinToken()
 		}
+
 		if token == "" {
 			return cli.Exit(fmt.Errorf("portal token is required (use --join-token or set join-token)"), 2)
 		}
 
 		// POST with bounded backoff on 429
-		url := stringsTrimRightSlash(portalURL) + "/api/v1/cluster/nodes/register"
+		endpointUrl := stringsTrimRightSlash(portalURL) + "/api/v1/cluster/nodes/register"
+
 		var resp cluster.RegisterResponse
-		if err := postWithBackoff(url, token, b, &resp); err != nil {
+		if err := postWithBackoff(endpointUrl, token, b, &resp); err != nil {
 			var httpErr *httpError
 			if errors.As(err, &httpErr) && httpErr.Status == http.StatusTooManyRequests {
 				return cli.Exit(fmt.Errorf("portal rate-limited registration attempts"), 6)
@@ -179,13 +189,17 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		} else {
 			// Human-readable: node row and credentials if present (UUID first as primary identifier)
 			cols := []string{"UUID", "ClientID", "Name", "Role", "DB Driver", "DB Name", "DB User", "Host", "Port"}
+
 			var dbName, dbUser string
+
 			if resp.Database.Name != "" {
 				dbName = resp.Database.Name
 			}
+
 			if resp.Database.User != "" {
 				dbUser = resp.Database.User
 			}
+
 			rows := [][]string{{resp.Node.UUID, resp.Node.ClientID, resp.Node.Name, resp.Node.Role, resp.Database.Driver, dbName, dbUser, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
 			out, _ := report.RenderFormat(rows, cols, report.CliFormat(ctx))
 			fmt.Printf("\n%s\n", out)
@@ -317,6 +331,16 @@ func parseLabelSlice(labels []string) map[string]string {
 
 // Persistence helpers for --write-config
 func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse) error {
+	updates := map[string]any{}
+
+	if rnd.IsUUID(resp.UUID) {
+		updates["ClusterUUID"] = resp.UUID
+	}
+
+	if cidr := strings.TrimSpace(resp.ClusterCIDR); cidr != "" {
+		updates["ClusterCIDR"] = cidr
+	}
+
 	// Node client secret file
 	if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
 		// Prefer PHOTOPRISM_NODE_CLIENT_SECRET_FILE; otherwise config cluster path
@@ -335,16 +359,18 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 
 	// DB settings (MySQL/MariaDB only)
 	if resp.Database.Name != "" && resp.Database.User != "" {
-		if err := mergeOptionsYaml(conf, map[string]any{
-			"DatabaseDriver":   config.MySQL,
-			"DatabaseName":     resp.Database.Name,
-			"DatabaseServer":   fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port),
-			"DatabaseUser":     resp.Database.User,
-			"DatabasePassword": resp.Database.Password,
-		}); err != nil {
+		updates["DatabaseDriver"] = config.MySQL
+		updates["DatabaseName"] = resp.Database.Name
+		updates["DatabaseServer"] = fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port)
+		updates["DatabaseUser"] = resp.Database.User
+		updates["DatabasePassword"] = resp.Database.Password
+	}
+
+	if len(updates) > 0 {
+		if err := mergeOptionsYaml(conf, updates); err != nil {
 			return err
 		}
-		log.Infof("updated options.yml with database settings for node %s", clean.LogQuote(resp.Node.Name))
+		log.Infof("updated options.yml with cluster registration settings for node %s", clean.LogQuote(resp.Node.Name))
 	}
 	return nil
 }

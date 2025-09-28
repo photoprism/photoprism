@@ -1,5 +1,7 @@
 # PhotoPrism® Repository Guidelines
 
+**Last Updated:** September 26, 2025
+
 ## Purpose
 
 This file tells automated coding agents (and humans) where to find the single sources of truth for building, testing, and contributing to PhotoPrism.
@@ -157,8 +159,18 @@ Note: Across our public documentation, official images, and in production, the c
 - Go: run `make fmt-go swag-fmt` to reformat the backend code + Swagger annotations (see `Makefile` for additional targets)
   - Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period.
   - For short examples inside comments, indent code rather than using backticks; godoc treats indented blocks as preformatted.
+- Every Go package must contain a `<package>.go` file in its root (for example, `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment explaining its purpose.
 - JS/Vue: use the lint/format scripts in `frontend/package.json` (ESLint + Prettier)
 - All added code and tests **must** be formatted according to our standards.
+
+> Remember to update the `**Last Updated:**` line at the top whenever you edit these guidelines or other files containing a timestamp.
+
+## Safety & Data
+
+- Never commit secrets, local configurations, or cache files. Use environment variables or a local `.env`.
+  - Ensure `.env` and `.local` are ignored in `.gitignore` and `.dockerignore`.
+- Prefer using existing caches, workers, and batching strategies referenced in code and `Makefile`. Consider memory/CPU impact; suggest benchmarks or profiling only when justified.
+- Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures when running acceptance tests.
 
 ### Filesystem Permissions & io/fs Aliasing (Go)
 
@@ -173,13 +185,7 @@ Note: Across our public documentation, official images, and in production, the c
   - Our package is `github.com/photoprism/photoprism/pkg/fs` and provides the only approved permission constants for `os.MkdirAll`, `os.WriteFile`, `os.OpenFile`, and `os.Chmod`.
 - Prefer `filepath.Join` for filesystem paths; reserve `path.Join` for URL paths.
 
-## Safety & Data
-
-- Never commit secrets, local configurations, or cache files. Use environment variables or a local `.env`.
-  - Ensure `.env` and `.local` are ignored in `.gitignore` and `.dockerignore`.
-- Prefer using existing caches, workers, and batching strategies referenced in code and `Makefile`. Consider memory/CPU impact; suggest benchmarks or profiling only when justified.
-- Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures when running acceptance tests.
-- ### File I/O — Overwrite Policy (force semantics)
+### File I/O — Overwrite Policy (force semantics)
 
 - Default is safety-first: callers must not overwrite non-empty destination files unless they opt-in with a `force` flag.
 - Replacing empty destination files is allowed without `force=true` (useful for placeholder files).
@@ -191,7 +197,7 @@ Note: Across our public documentation, official images, and in production, the c
   - Explicit “replace” actions or admin tools where the user confirmed overwrite.
   - Not for import/index flows; Originals must not be clobbered.
 
-- ### Archive Extraction — Security Checklist
+### Archive Extraction — Security Checklist
 
 - Always validate ZIP entry names with a safe join; reject:
   - absolute paths (e.g., `/etc/passwd`).
@@ -225,11 +231,8 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 ## Agent Quick Tips (Do This)
 
-### Next‑Session Priorities
-- If we add Postgres provisioning support, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API/CLI.
-- Consider surfacing a short “uuid → db/user” mapping helper in the CLI (e.g., `nodes show --creds`) if operators request it.
-
 ### Testing & Fixtures
+
 - Go tests live next to their sources (`path/to/pkg/<file>_test.go`); group related cases as `t.Run(...)` sub-tests to keep table-driven coverage readable.
 - Prefer focused `go test` runs for speed (`go test ./internal/<pkg> -run <Name> -count=1`, `go test ./internal/commands -run <Name> -count=1`) and avoid `./...` unless you need the entire suite.
 - Heavy packages such as `internal/entity` and `internal/photoprism` run migrations and fixtures; expect 30–120s on first run and narrow with `-run` to keep iterations low.
@@ -237,12 +240,16 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 - In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it via `photoprism.SetConfig`.
 - Generate identifiers with `rnd.GenerateUID(entity.ClientUID)` for OAuth client IDs and `rnd.UUIDv7()` for node UUIDs; treat `node.uuid` as required in responses.
 - Shared fixtures live under `storage/testdata`; `NewTestConfig("<pkg>")` already calls `InitializeTestData()`, but call `c.InitializeTestData()` (and optionally `c.AssertTestData(t)`) when you construct custom configs so originals/import/cache/temp exist. `InitializeTestData()` clears old data, downloads fixtures if needed, then calls `CreateDirectories()`.
+- For slimmer tests that only need config objects, prefer the new helpers in `internal/config/test.go`: `NewMinimalTestConfig(t.TempDir())` when no database is needed, or `NewMinimalTestConfigWithDb("<pkg>", t.TempDir())` to spin up an isolated SQLite schema without seeding all fixtures.
+- When you need illustrative credentials (join tokens, client IDs/secrets, etc.), reuse the shared `Example*` constants (see `internal/service/cluster/examples.go`) so tests, docs, and examples stay consistent.
 
 ### Roles & ACL
+
 - Map roles via the shared tables: users through `acl.ParseRole(s)` / `acl.UserRoles[...]`, clients through `acl.ClientRoles[...]`.
 - Treat `RoleAliasNone` ("none") and an empty string as `RoleNone`; no caller-specific overrides.
 - Default unknown client roles to `RoleClient`; `acl.ParseRole` already handles `0/false/nil` as none for users.
 - Build CLI role help from `Roles.CliUsageString()` (e.g., `acl.ClientRoles.CliUsageString()`); never hand-maintain role lists.
+- When checking JWT/client scopes, use the shared helpers (`acl.ScopePermits` / `acl.ScopeAttrPermits`) instead of hand-written parsing.
 
 ### Import/Index
 
@@ -250,6 +257,7 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 - Mixed roots: when testing related files, keep `ExamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
 
 ### CLI Usage & Assertions
+
 - Wrap CLI tests in `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process; assert quoted `show` output with `assert.Contains`/regex for the trailing ", or <last>" rule.
 - Prefer `--json` responses for automation. `photoprism show commands --json [--nested]` exposes the tree view (add `--all` for hidden entries).
 - Use `internal/commands/catalog` to inspect commands/flags without running the binary; when validating large JSON docs, marshal DTOs via `catalog.BuildFlat/BuildNode` instead of parsing CLI stdout.
@@ -258,6 +266,9 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 ### API & Config Changes
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
+- When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
+- Logging: use the shared logger (`event.Log`) via the package-level `log` variable (see `internal/auth/jwt/logger.go`) instead of direct `fmt.Print*` or ad-hoc loggers.
+- Cluster registry tests (`internal/service/cluster/registry`) currently rely on a full test config because they persist `entity.Client` rows. They run migrations and seed the SQLite DB, so they are intentionally slow. If you refactor them, consider sharing a single `config.TestConfig()` across subtests or building a lightweight schema harness; do not swap to the minimal config helper unless the tests stop touching the database.
 - Favor explicit CLI flags: check `c.cliCtx.IsSet("<flag>")` before overriding user-supplied values, and follow the `ClusterUUID` pattern (`options.yml` → CLI/env → generated UUIDv4 persisted).
 - Database helpers: reuse `conf.Db()` / `conf.Database*()`, avoid GORM `WithContext`, quote MySQL identifiers, and reject unsupported drivers early.
 - Handler conventions: reuse limiter stacks (`limiter.Auth`, `limiter.Login`) and `limiter.AbortJSON` for 429s, lean on `api.ClientIP`, `header.BearerToken`, and `Abort*` helpers, compare secrets with constant time checks, set `Cache-Control: no-store` on sensitive responses, and register routes in `internal/server/routes.go`. For new list endpoints default `count=100` (max 1000) and `offset≥0`, document parameters explicitly, and set portal mode via `PHOTOPRISM_NODE_ROLE=portal` plus `PHOTOPRISM_JOIN_TOKEN` when needed.
@@ -338,10 +349,11 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 ### Cluster Operations
 
-- Keep bootstrap code decoupled: avoid importing `internal/service/cluster/instance/*` from `internal/config` or the cluster root, let instances talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
+- Keep bootstrap code decoupled: avoid importing `internal/service/cluster/node/*` from `internal/config` or the cluster root, let nodes talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
 - Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then invoke `Ext().Init(c)`.
 - Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/service/http/header`.
 - Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `clientId` + `clientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
 - Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → clientId → name`, and DTOs normalize `database.{name,user,driver,rotatedAt}` while exposing `clientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `advertiseUrl`/`database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
 - Provisioner & DSN: database/user names use UUID-based HMACs (`photoprism_d<hmac11>`, `photoprism_u<hmac11>`); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
+- If we add Postgres provisioning support, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API/CLI.
 - Testing: exercise Portal endpoints with `httptest`, guard extraction paths with `pkg/fs.Unzip` size caps, and expect admin-only fields to disappear when authenticated as a client/user session.

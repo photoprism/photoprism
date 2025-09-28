@@ -8,23 +8,23 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Rotating secret selects the latest row for a UUID and persists rotation timestamp and password.
 func TestClientRegistry_RotateSecretByUUID_LatestRow(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-rotate-latest")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-rotate-latest", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
 	uuid := rnd.UUIDv7()
 
 	// Create two entries for same NodeUUID; c2 will be latest
-	n1 := &Node{UUID: uuid, Name: "pp-rot-a", Role: "instance"}
+	n1 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-a", Role: "instance"}}
 	assert.NoError(t, r.Put(n1))
 	time.Sleep(1100 * time.Millisecond)
-	n2 := &Node{UUID: uuid, Name: "pp-rot-b", Role: "instance"}
+	n2 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-b", Role: "instance"}}
 	assert.NoError(t, r.Put(n2))
 
 	// Rotate by UUID

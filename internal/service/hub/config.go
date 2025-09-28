@@ -221,13 +221,13 @@ func (c *Config) ReSync(token string) (err error) {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 60 * time.Second}
 
-	url := ServiceURL
+	endpointUrl := ServiceURL
 	method := http.MethodPost
 
 	var req *http.Request
 
 	if c.Key != "" {
-		url = fmt.Sprintf(ServiceURL+"/%s", c.Key)
+		endpointUrl = fmt.Sprintf(ServiceURL+"/%s", c.Key)
 		method = http.MethodPut
 		log.Tracef("config: requesting updated keys for maps and places")
 	} else {
@@ -239,7 +239,7 @@ func (c *Config) ReSync(token string) (err error) {
 
 	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID, token)); err != nil {
 		return err
-	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
+	} else if req, err = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); err != nil {
 		return err
 	}
 

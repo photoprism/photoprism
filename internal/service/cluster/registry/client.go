@@ -26,7 +26,8 @@ func toNode(c *entity.Client) *Node {
 	if c == nil {
 		return nil
 	}
-	n := &Node{
+	n := &Node{}
+	n.Node = cluster.Node{
 		UUID:         c.NodeUUID,
 		Name:         c.ClientName,
 		Role:         c.ClientRole,
@@ -43,10 +44,11 @@ func toNode(c *entity.Client) *Node {
 		}
 		n.SiteUrl = data.SiteURL
 		if db := data.Database; db != nil {
-			n.Database.Name = db.Name
-			n.Database.User = db.User
-			n.Database.Driver = db.Driver
-			n.Database.RotatedAt = db.RotatedAt
+			dest := n.ensureDatabase()
+			dest.Name = db.Name
+			dest.User = db.User
+			dest.Driver = db.Driver
+			dest.RotatedAt = db.RotatedAt
 		}
 		n.RotatedAt = data.RotatedAt
 	}
@@ -126,14 +128,14 @@ func (r *ClientRegistry) Put(n *Node) error {
 		m.NodeUUID = n.UUID
 	}
 	data.RotatedAt = n.RotatedAt
-	if n.Database.Name != "" || n.Database.User != "" || n.Database.RotatedAt != "" {
+	if db := n.Database; db != nil && (db.Name != "" || db.User != "" || db.RotatedAt != "") {
 		if data.Database == nil {
 			data.Database = &entity.ClientDatabase{}
 		}
-		data.Database.Name = n.Database.Name
-		data.Database.User = n.Database.User
-		data.Database.Driver = n.Database.Driver
-		data.Database.RotatedAt = n.Database.RotatedAt
+		data.Database.Name = db.Name
+		data.Database.User = db.User
+		data.Database.Driver = db.Driver
+		data.Database.RotatedAt = db.RotatedAt
 	}
 	m.SetData(data)
 
@@ -165,9 +167,10 @@ func (r *ClientRegistry) Put(n *Node) error {
 		}
 		n.SiteUrl = data.SiteURL
 		if db := data.Database; db != nil {
-			n.Database.Name = db.Name
-			n.Database.User = db.User
-			n.Database.RotatedAt = db.RotatedAt
+			dest := n.ensureDatabase()
+			dest.Name = db.Name
+			dest.User = db.User
+			dest.RotatedAt = db.RotatedAt
 		}
 		n.RotatedAt = data.RotatedAt
 	}

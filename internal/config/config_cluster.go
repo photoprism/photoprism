@@ -2,6 +2,8 @@ package config
 
 import (
 	"errors"
+	"net"
+	urlpkg "net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
@@ -102,18 +105,54 @@ func (c *Config) PortalThemePath() string {
 	return c.ThemePath()
 }
 
-// JoinToken returns the token required to access the portal API endpoints.
+// JoinToken returns the token required to use the node register API endpoint.
+// Example: k9sEFe6-A7gt6zqm-gY9gFh0
 func (c *Config) JoinToken() string {
-	if c.options.JoinToken != "" {
-		return c.options.JoinToken
-	} else if fileName := FlagFilePath("JOIN_TOKEN"); fileName == "" {
-		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
-		log.Warnf("config: failed to read portal token from %s (%s)", fileName, err)
-		return ""
-	} else {
-		return string(b)
+	if s := strings.TrimSpace(c.options.JoinToken); rnd.IsJoinToken(s, false) {
+		c.options.JoinToken = s
+		return s
 	}
+
+	if fileName := FlagFilePath("JOIN_TOKEN"); fileName != "" && fs.FileExistsNotEmpty(fileName) {
+		if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+			log.Warnf("config: could not read portal token from %s (%s)", fileName, err)
+		} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
+			return s
+		} else {
+			log.Warnf("config: portal join token from %s is shorter than %d characters", fileName, rnd.JoinTokenLength)
+		}
+	}
+
+	if !c.IsPortal() {
+		return ""
+	}
+
+	fileName := filepath.Join(c.PortalConfigPath(), "secrets", "join_token")
+
+	if fs.FileExistsNotEmpty(fileName) {
+		if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+			log.Warnf("config: could not read portal token from %s (%s)", fileName, err)
+		} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
+			c.options.JoinToken = s
+			return s
+		} else {
+			log.Warnf("config: portal join token stored in %s is shorter than %d characters; generating a new one", fileName, rnd.JoinTokenLength)
+		}
+	}
+
+	token := rnd.JoinToken()
+	if !rnd.IsJoinToken(token, true) {
+		return ""
+	}
+
+	if err := fs.WriteFile(fileName, []byte(token), fs.ModeSecretFile); err != nil {
+		log.Errorf("config: could not write portal join token (%s)", err)
+		return ""
+	}
+
+	c.options.JoinToken = token
+
+	return token
 }
 
 // deriveNodeNameAndDomainFromHttpHost attempts to derive cluster host and domain name from the site URL.
@@ -210,6 +249,84 @@ func (c *Config) NodeClientSecret() string {
 	}
 }
 
+// JWKSUrl returns the configured JWKS endpoint for portal-issued JWTs. Nodes normally
+// persist this URL from the portal's register response, which derives it from SiteUrl;
+// manual overrides are only required for custom deployments.
+func (c *Config) JWKSUrl() string {
+	return strings.TrimSpace(c.options.JWKSUrl)
+}
+
+// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs.
+func (c *Config) SetJWKSUrl(url string) {
+	if c == nil || c.options == nil {
+		return
+	}
+
+	trimmed := strings.TrimSpace(url)
+	if trimmed == "" {
+		c.options.JWKSUrl = ""
+		return
+	}
+
+	parsed, err := urlpkg.Parse(trimmed)
+	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
+		log.Warnf("config: ignoring JWKS URL %q (%v)", trimmed, err)
+		return
+	}
+
+	scheme := strings.ToLower(parsed.Scheme)
+	host := parsed.Hostname()
+
+	switch scheme {
+	case "https":
+		// Always allowed.
+	case "http":
+		if !isLoopbackHost(host) {
+			log.Warnf("config: rejecting JWKS URL %q (http only allowed for localhost/loopback)", trimmed)
+			return
+		}
+	default:
+		log.Warnf("config: rejecting JWKS URL %q (unsupported scheme)", trimmed)
+		return
+	}
+
+	c.options.JWKSUrl = trimmed
+}
+
+// JWKSCacheTTL returns the JWKS cache lifetime in seconds (default 300, max 3600).
+func (c *Config) JWKSCacheTTL() int {
+	if c.options.JWKSCacheTTL <= 0 {
+		return 300
+	}
+	if c.options.JWKSCacheTTL > 3600 {
+		return 3600
+	}
+	return c.options.JWKSCacheTTL
+}
+
+// JWTLeeway returns the permitted clock skew in seconds (default 60, max 300).
+func (c *Config) JWTLeeway() int {
+	if c.options.JWTLeeway <= 0 {
+		return 60
+	}
+	if c.options.JWTLeeway > 300 {
+		return 300
+	}
+	return c.options.JWTLeeway
+}
+
+// JWTAllowedScopes returns an optional allow-list of accepted JWT scopes.
+func (c *Config) JWTAllowedScopes() list.Attr {
+	if s := strings.TrimSpace(c.options.JWTScope); s != "" {
+		parsed := list.ParseAttr(strings.ToLower(s))
+		if len(parsed) > 0 {
+			return parsed
+		}
+	}
+
+	return list.ParseAttr("cluster vision metrics")
+}
+
 // AdvertiseUrl returns the advertised node URL for intra-cluster calls (scheme://host[:port]).
 func (c *Config) AdvertiseUrl() string {
 	if c.options.AdvertiseUrl != "" {
@@ -222,6 +339,23 @@ func (c *Config) AdvertiseUrl() string {
 		}
 	}
 	return c.SiteUrl()
+}
+
+// isLoopbackHost returns true when host represents localhost or a loopback IP.
+func isLoopbackHost(host string) bool {
+	if host == "" {
+		return false
+	}
+
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+
+	if ip := net.ParseIP(host); ip != nil {
+		return ip.IsLoopback()
+	}
+
+	return false
 }
 
 // SaveClusterUUID writes or updates the ClusterUUID key in options.yml without

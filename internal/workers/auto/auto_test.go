@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -33,6 +34,9 @@ func TestMain(m *testing.M) {
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 	// Close database connection.
 	_ = c.CloseDb()
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

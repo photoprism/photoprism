@@ -27,10 +27,13 @@ func TestClusterEndpoints(t *testing.T) {
 	// Seed nodes in the registry
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
-	n := &reg.Node{Name: "pp-node-01", Role: "instance", UUID: rnd.UUIDv7()}
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: "instance", UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
-	n2 := &reg.Node{Name: "pp-node-02", Role: "service", UUID: rnd.UUIDv7()}
+
+	n2 := &reg.Node{Node: cluster.Node{Name: "pp-node-02", Role: "service", UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n2))
+
 	// Resolve actual IDs (client-backed registry generates IDs)
 	n, err = regy.FindByName("pp-node-01")
 	assert.NoError(t, err)
@@ -87,8 +90,10 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	// Seed a node and resolve its actual ID.
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
-	n := &reg.Node{Name: "pp-node-99", Role: "instance", UUID: rnd.UUIDv7()}
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-99", Role: "instance", UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
+
 	n, err = regy.FindByName("pp-node-99")
 	assert.NoError(t, err)
 
@@ -114,9 +119,11 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 
 	// Excessively long ID (>64 chars) is rejected.
 	longID := make([]byte, 65)
+
 	for i := range longID {
 		longID[i] = 'a'
 	}
+
 	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+string(longID))
 	assert.Equal(t, http.StatusNotFound, r.Code)
 }

@@ -29,14 +29,19 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	clientIp := ClientIP(c)
 	authToken := AuthToken(c)
 
+	// Disable response caching.
+	c.Header(header.CacheControl, header.CacheControlNoStore)
+
 	// Find active session to perform authorization check or deny if no session was found.
 	if s = Session(clientIp, authToken); s == nil {
+		if s = authAnyJWT(c, clientIp, authToken, resource, perms); s != nil {
+			return s
+		}
 		event.AuditWarn([]string{clientIp, "%s %s without authentication", authn.Denied}, perms.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	}
 
-	// Disable caching of responses and the client IP.
-	c.Header(header.CacheControl, header.CacheControlNoStore)
+	// Set client IP.
 	s.SetClientIP(clientIp)
 
 	// If the request is from a client application, check its authorization based

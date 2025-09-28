@@ -22,9 +22,10 @@ var (
 // ClusterNodesModCommand updates node fields.
 var ClusterNodesModCommand = &cli.Command{
 	Name:      "mod",
-	Usage:     "Updates node properties (Portal-only)",
+	Usage:     "Updates node properties",
 	ArgsUsage: "<id|name>",
 	Flags:     []cli.Flag{nodesModRoleFlag, nodesModInternal, nodesModLabel, &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}},
+	Hidden:    true, // Required for cluster-management only.
 	Action:    clusterNodesModAction,
 }
 

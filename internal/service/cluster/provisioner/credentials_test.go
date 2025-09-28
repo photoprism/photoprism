@@ -88,6 +88,7 @@ func TestGetCredentials_DriverNormalization(t *testing.T) {
 	DatabaseDriver = "PostGreS"
 	_, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
 	assert.Error(t, err)
+	assert.Equal(t, "PostGreS", DatabaseDriver)
 
 	// Unknown driver should return the unsupported error including normalized name.
 	DatabaseDriver = "TiDB"
@@ -95,4 +96,5 @@ func TestGetCredentials_DriverNormalization(t *testing.T) {
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "unsupported auto-provisioning database driver: tidb")
 	}
+	assert.Equal(t, "TiDB", DatabaseDriver)
 }

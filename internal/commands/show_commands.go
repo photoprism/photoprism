@@ -16,7 +16,7 @@ var ShowCommandsCommand = &cli.Command{
 	Name:  "commands",
 	Usage: "Displays a structured catalog of CLI commands",
 	Flags: []cli.Flag{
-		&cli.BoolFlag{Name: "json", Aliases: []string{"j"}, Usage: "print machine-readable JSON"},
+		JsonFlag(),
 		&cli.BoolFlag{Name: "all", Usage: "include hidden commands and flags"},
 		&cli.BoolFlag{Name: "short", Usage: "omit flags in Markdown output"},
 		&cli.IntFlag{Name: "base-heading", Value: 2, Usage: "base Markdown heading level"},

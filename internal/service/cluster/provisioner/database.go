@@ -13,11 +13,17 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// ProvisionDSN specifies database auto-provisioning DSN, for example:
+// ProvisionDSN specifies the admin DSN used for auto-provisioning, for example:
 // root:insecure@tcp(127.0.0.1:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true
 var ProvisionDSN = "root:photoprism@tcp(mariadb:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+
+// DatabaseHost is the hostname of the admin server used for provisioning operations.
 var DatabaseHost = "mariadb"
+
+// DatabasePort is the port of the admin server used for provisioning operations.
 var DatabasePort = 4001
+
+// DatabaseDriver indicates the SQL driver used for provisioning (independent from the app DB driver).
 var DatabaseDriver = "mysql"
 
 // -----------------------------------------------------------------------------

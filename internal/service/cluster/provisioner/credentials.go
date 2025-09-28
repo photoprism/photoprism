@@ -29,21 +29,22 @@ type Credentials struct {
 func GetCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeName string, rotate bool) (Credentials, bool, error) {
 	out := Credentials{}
 
-	// Normalize provisioner driver to lower-case to accept variants like "MySQL"/"MariaDB".
-	DatabaseDriver = strings.ToLower(DatabaseDriver)
+	// Normalize the configured admin driver locally so we accept variants like "MySQL"/"MariaDB"
+	// without mutating the global setting (keeps config reporting consistent).
+	driver := strings.ToLower(DatabaseDriver)
 
-	switch DatabaseDriver {
+	switch driver {
 	case config.MySQL, config.MariaDB:
 		// ok
 	case config.SQLite3, config.Postgres:
 		return out, false, errors.New("database must be MySQL/MariaDB for auto-provisioning")
 	default:
 		// Driver is configured externally for the provisioner (decoupled from app config).
-		return out, false, fmt.Errorf("unsupported auto-provisioning database driver: %s", DatabaseDriver)
+		return out, false, fmt.Errorf("unsupported auto-provisioning database driver: %s", driver)
 	}
 
 	// Compute deterministic names and a candidate password.
-	dbName, dbUser, dbPass := GenerateCreds(conf, nodeUUID, nodeName)
+	dbName, dbUser, dbPass := GenerateCredentials(conf, nodeUUID, nodeName)
 
 	// Extra safety: enforce allowed identifier charset.
 	if !identRe.MatchString(dbName) || !identRe.MatchString(dbUser) {
@@ -122,10 +123,10 @@ func GetCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeName
 	out.Port = DatabasePort
 	out.Name = dbName
 	out.User = dbUser
-	out.Driver = DatabaseDriver
+	out.Driver = driver
 
 	if out.Password != "" {
-		out.DSN = BuildDSN(DatabaseDriver, out.Host, out.Port, out.User, out.Password, out.Name)
+		out.DSN = BuildDSN(driver, out.Host, out.Port, out.User, out.Password, out.Name)
 	}
 
 	return out, created, nil

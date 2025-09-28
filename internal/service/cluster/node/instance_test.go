@@ -1,4 +1,4 @@
-package instance
+package node
 
 import (
 	"os"
@@ -32,7 +32,8 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-	// TestMain ensures SQLite test DB artifacts are purged after the suite runs.
+
+	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)

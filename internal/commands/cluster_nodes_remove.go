@@ -14,12 +14,13 @@ import (
 // ClusterNodesRemoveCommand deletes a node from the registry.
 var ClusterNodesRemoveCommand = &cli.Command{
 	Name:      "rm",
-	Usage:     "Deletes a node from the registry (Portal-only)",
+	Usage:     "Deletes a node from the registry",
 	ArgsUsage: "<id|name>",
 	Flags: []cli.Flag{
 		&cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"},
 		&cli.BoolFlag{Name: "all-ids", Usage: "delete all records that share the same UUID (admin cleanup)"},
 	},
+	Hidden: true, // Required for cluster-management only.
 	Action: clusterNodesRemoveAction,
 }
 

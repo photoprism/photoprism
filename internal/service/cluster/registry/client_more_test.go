@@ -8,14 +8,14 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Duplicate names: FindByName should return the most recently updated.
 func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-dupes")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-dupes", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	// Create two clients directly to simulate duplicates with same name.
 	c1 := entity.NewClient().SetName("pp-dupe").SetRole("instance")
@@ -39,12 +39,11 @@ func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
 
 // Role change path: Put should update ClientRole via mapping.
 func TestClientRegistry_RoleChange(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-role")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-role", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
-	n := &Node{Name: "pp-role", Role: "service"}
+	n := &Node{Node: cluster.Node{Name: "pp-role", Role: "service"}}
 	assert.NoError(t, r.Put(n))
 	got, err := r.FindByName("pp-role")
 	assert.NoError(t, err)
@@ -52,7 +51,7 @@ func TestClientRegistry_RoleChange(t *testing.T) {
 		assert.Equal(t, "service", got.Role)
 	}
 	// Change to instance
-	upd := &Node{ClientID: got.ClientID, Name: got.Name, Role: "instance"}
+	upd := &Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, Role: "instance"}}
 	assert.NoError(t, r.Put(upd))
 	got2, err := r.FindByName("pp-role")
 	assert.NoError(t, err)

@@ -1,6 +1,7 @@
 package ffmpeg
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -60,4 +61,14 @@ func TestExtractPngImageCmd(t *testing.T) {
 	assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -loglevel error -y -strict -2 -hwaccel none -err_detect ignore_err -ss 00:00:00.000 -i SRC -ss 00:00:00.001 -vf scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=1 -frames:v 1 DEST", cmdStr)
 
 	RunCommandTest(t, "png", srcName, destName, cmd, true)
+}
+
+// Negative: ffmpeg binary is missing; command execution should error immediately.
+func TestExtractImageCmd_MissingBinary(t *testing.T) {
+	opt := encode.NewPreviewImageOptions("/path/does/not/exist/ffmpeg", time.Second*1)
+	srcName := fs.Abs("./testdata/25fps.vp9")
+	destName := filepath.Join(t.TempDir(), "frame.jpg")
+	cmd := ExtractImageCmd(srcName, destName, opt)
+	err := cmd.Run()
+	assert.Error(t, err)
 }

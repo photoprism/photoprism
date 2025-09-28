@@ -12,9 +12,8 @@ import (
 
 // Ensure List() excludes clients that look like nodes by role but have no NodeUUID.
 func TestClientRegistry_ListExcludesNodeRoleWithoutUUID(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-list-exclude-node-role")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-list-exclude-node-role", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	// Remove the fixture records
 	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {

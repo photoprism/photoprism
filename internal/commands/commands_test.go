@@ -39,7 +39,13 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	c := config.NewTestConfig("commands")
+	tempDir, err := os.MkdirTemp("", "commands-test")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
 	get.SetConfig(c)
 
 	// Keep DB connection open for the duration of this package's tests to
@@ -57,7 +63,7 @@ func TestMain(m *testing.M) {
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
-	// Purge local SQLite test artifacts created during this package's tests.
+	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
@@ -104,12 +110,7 @@ func RunWithTestContext(cmd *cli.Command, args []string) (output string, err err
 
 	// Ensure DB connection is open for each command run (some commands call Shutdown).
 	if c := get.Config(); c != nil {
-		if !c.IsDbOpen() {
-			_ = c.Init()   // safe to call; re-opens DB if needed
-			c.RegisterDb() // (re)register provider
-		} else {
-			log.Debug("commands: DB is still open")
-		}
+		c.RegisterDb() // (re)register provider
 	}
 
 	// Redirect the output from cli to buffer for transfer to output for testing
@@ -126,6 +127,12 @@ func RunWithTestContext(cmd *cli.Command, args []string) (output string, err err
 	})
 	ctx.App.Writer = oldWriter
 	output += catureOutput.String()
+
+	// Re-open the database after the command completed so follow-up checks
+	// (potentially issued by the test itself) have an active connection.
+	if c := get.Config(); c != nil {
+		c.RegisterDb()
+	}
 
 	return output, err
 }
@@ -177,12 +184,7 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 
 	// Ensure DB connection is open for each command run (some commands call Shutdown).
 	if c := get.Config(); c != nil {
-		if !c.IsDbOpen() {
-			_ = c.Init()   // safe to call; re-opens DB if needed
-			c.RegisterDb() // (re)register provider
-		} else {
-			log.Debug("commands: DB is still open")
-		}
+		c.RegisterDb() // (re)register provider
 	}
 
 	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder
@@ -195,6 +197,12 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	})
 	ctx.App.Writer = oldWriter
 	output += catureOutput.String()
+
+	// Re-open the database after the command completed so follow-up checks
+	// (potentially issued by the test itself) have an active connection.
+	if c := get.Config(); c != nil {
+		c.RegisterDb()
+	}
 
 	return output, err
 }

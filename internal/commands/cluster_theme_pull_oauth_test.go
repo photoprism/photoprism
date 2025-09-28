@@ -81,7 +81,7 @@ func TestClusterThemePull_JoinTokenToOAuth(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
 			// Must have Bearer join token
-			if r.Header.Get("Authorization") != "Bearer jt" {
+			if r.Header.Get("Authorization") != "Bearer "+cluster.ExampleJoinToken {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
@@ -95,13 +95,14 @@ func TestClusterThemePull_JoinTokenToOAuth(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			// Return NodeClientID and a fresh secret
 			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
-				UUID:    rnd.UUID(),
-				Node:    cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"},
-				Secrets: &cluster.RegisterSecrets{ClientSecret: "s3cr3t"},
+				UUID:        rnd.UUID(),
+				ClusterCIDR: "203.0.113.0/24",
+				Node:        cluster.Node{ClientID: cluster.ExampleClientID, Name: "pp-node-01"},
+				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
 			})
 		case "/api/v1/oauth/token":
 			// Expect Basic for the returned creds
-			if r.Header.Get("Authorization") != "Basic "+base64.StdEncoding.EncodeToString([]byte("cs5gfen1bgxz7s9i:s3cr3t")) {
+			if r.Header.Get("Authorization") != "Basic "+base64.StdEncoding.EncodeToString([]byte(cluster.ExampleClientID+":"+cluster.ExampleClientSecret)) {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
@@ -124,7 +125,7 @@ func TestClusterThemePull_JoinTokenToOAuth(t *testing.T) {
 	out, err := RunWithTestContext(ClusterThemePullCommand.Subcommands[0], []string{
 		"pull", "--dest", dest, "-f",
 		"--portal-url=" + ts.URL,
-		"--join-token=jt",
+		"--join-token=" + cluster.ExampleJoinToken,
 	})
 	_ = out
 	assert.NoError(t, err)

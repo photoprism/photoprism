@@ -71,6 +71,11 @@ var DownloadCommand = &cli.Command{
 			Value:   "auto",
 			Usage:   "remux `POLICY` for videos when using --dl-method file: auto (skip if MP4), always, or skip",
 		},
+		&cli.StringFlag{
+			Name:    "format-sort",
+			Aliases: []string{"s"},
+			Usage:   "custom FORMAT sort expression passed to yt-dlp",
+		},
 	},
 	Action: downloadAction,
 }
@@ -145,12 +150,18 @@ func downloadAction(ctx *cli.Context) error {
 	cookies := strings.TrimSpace(ctx.String("cookies"))
 	// cookiesFromBrowser := strings.TrimSpace(ctx.String("cookies-from-browser"))
 	addHeaders := ctx.StringSlice("add-header")
-	method := strings.ToLower(strings.TrimSpace(ctx.String("dl-method")))
-	if method == "" {
-		method = "pipe"
+	flagMethod := ""
+	if ctx.IsSet("dl-method") {
+		flagMethod = ctx.String("dl-method")
 	}
-	if method != "pipe" && method != "file" {
-		return fmt.Errorf("invalid --dl-method: %s (expected 'pipe' or 'file')", method)
+	method, _, err := resolveDownloadMethod(flagMethod)
+	if err != nil {
+		return err
+	}
+	formatSort := strings.TrimSpace(ctx.String("format-sort"))
+	sortingFormat := formatSort
+	if sortingFormat == "" && method == "pipe" {
+		sortingFormat = pipeSortingFormat
 	}
 	fileRemux := strings.ToLower(strings.TrimSpace(ctx.String("file-remux")))
 	if fileRemux == "" {
@@ -201,7 +212,7 @@ func downloadAction(ctx *cli.Context) error {
 			opt := dl.Options{
 				MergeOutputFormat: fs.VideoMp4.String(),
 				RemuxVideo:        fs.VideoMp4.String(),
-				SortingFormat:     "lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id",
+				SortingFormat:     sortingFormat,
 				Cookies:           cookies,
 				AddHeaders:        addHeaders,
 			}
@@ -209,6 +220,9 @@ func downloadAction(ctx *cli.Context) error {
 			result, err := dl.NewMetadata(context.Background(), u.String(), opt)
 			if err != nil {
 				log.Errorf("metadata failed: %v", err)
+				if hint, ok := missingFormatsHint(err); ok {
+					log.Info(hint)
+				}
 				failures++
 				continue
 			}

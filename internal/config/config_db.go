@@ -393,12 +393,18 @@ func (c *Config) SetDbOptions() {
 	case Postgres:
 		// Ignore for now.
 	case SQLite3:
-		// Not required as unicode is default.
+		// Not required as Unicode is default.
 	}
 }
 
-// RegisterDb sets the database options and connection provider.
+// RegisterDb opens a database connection if needed,
+// sets the database options and connection provider.
 func (c *Config) RegisterDb() {
+	if err := c.connectDb(); err != nil {
+		log.Errorf("config: %s (register db)")
+		return
+	}
+
 	c.SetDbOptions()
 	entity.SetDbProvider(c)
 }
@@ -540,6 +546,11 @@ func (c *Config) connectDb() error {
 	// Make sure this is not running twice.
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
+
+	// Database connection already exists.
+	if c.db != nil {
+		return nil
+	}
 
 	// Get database driver and data source name.
 	dbDriver := c.DatabaseDriver()

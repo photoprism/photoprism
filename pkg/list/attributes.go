@@ -68,9 +68,9 @@ func (list Attr) Sort() Attr {
 	sort.Slice(list, func(i, j int) bool {
 		if list[i].Key == list[j].Key {
 			return list[i].Value < list[j].Value
-		} else if list[i].Key == All {
+		} else if list[i].Key == Any {
 			return false
-		} else if list[j].Key == All {
+		} else if list[j].Key == Any {
 			return true
 		} else {
 			return list[i].Key < list[j].Key
@@ -95,23 +95,25 @@ func (list Attr) Contains(s string) bool {
 func (list Attr) Find(s string) (a KeyValue) {
 	if len(list) == 0 || s == "" {
 		return a
-	} else if s == All {
-		return KeyValue{Key: All, Value: ""}
+	} else if s == Any {
+		return KeyValue{Key: Any, Value: ""}
 	}
 
 	attr := ParseKeyValue(s)
 
-	// Return nil if key is invalid or all.
-	if attr.Key == "" {
+	// Return if key is invalid.
+	if attr == nil {
+		return a
+	} else if attr.Key == "" {
 		return a
 	}
 
 	// Find and return first match.
-	if attr.Value == "" || attr.Value == All {
+	if attr.Value == "" || attr.Value == Any {
 		for i := range list {
 			if strings.EqualFold(attr.Key, list[i].Key) {
 				return *list[i]
-			} else if list[i].Key == All {
+			} else if list[i].Key == Any {
 				a = *list[i]
 			}
 		}
@@ -122,10 +124,10 @@ func (list Attr) Find(s string) (a KeyValue) {
 					return KeyValue{Key: "", Value: ""}
 				} else if attr.Value == list[i].Value {
 					return *list[i]
-				} else if list[i].Value == All {
+				} else if list[i].Value == Any {
 					a = *list[i]
 				}
-			} else if list[i].Key == All && attr.Value != False {
+			} else if list[i].Key == Any && attr.Value != False {
 				a = *list[i]
 			}
 		}

@@ -72,15 +72,15 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: reset-sqlite run-test-go
-test-pkg: reset-sqlite run-test-pkg
-test-ai: reset-sqlite run-test-ai
-test-api: reset-sqlite run-test-api
-test-video: reset-sqlite run-test-video
-test-entity: reset-sqlite run-test-entity
-test-commands: reset-sqlite run-test-commands
-test-photoprism: reset-sqlite run-test-photoprism
-test-short: reset-sqlite run-test-short
+test-go: run-test-go
+test-pkg: run-test-pkg
+test-ai: run-test-ai
+test-api: run-test-api
+test-video: run-test-video
+test-entity: run-test-entity
+test-commands: run-test-commands
+test-photoprism: run-test-photoprism
+test-short: run-test-short
 test-mariadb: reset-mariadb-testdb run-test-mariadb
 test-postgres: reset-postgres-testdb run-test-postgres
 test-sqlite: reset-sqlite-unit run-test-sqlite
@@ -125,9 +125,6 @@ logs:
 	$(DOCKER_COMPOSE) logs -f
 down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
-codex: dep-codex codex-version
-codex-version:
-	codex --version
 docs: swag
 swag: swag-json
 swag-json:
@@ -283,14 +280,25 @@ clean-local-config:
 	rm -f $(BUILD_PATH)/config/*
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
+npm: dep-npm npm-version
+npm-version:
+	@echo "✅ Installed npm $$(npm --version)"
 dep-npm:
-	sudo npm install -g npm
+	@echo "Installing NPM package manager..."
+	@if command -v sudo >/dev/null 2>&1; then \
+	  sudo npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+        else \
+	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+        fi
 dep-js:
-	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
 	# TODO: If in the future we want to test in a real browser environment, add this (Playwright)
 	# (cd frontend && npx playwright install chromium)
+	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
+codex: dep-codex codex-version
+codex-version:
+	@echo "✅ Installed $$(codex --version)"
 dep-codex:
-	@echo "Installing latest Codex CLI..."
+	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
 	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
@@ -548,6 +556,7 @@ test-postgres-benchmark10s:
 docker-pull:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
+build-docker: docker-build
 docker-build:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) down --remove-orphans

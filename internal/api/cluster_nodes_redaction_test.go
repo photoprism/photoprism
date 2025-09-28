@@ -24,10 +24,10 @@ func TestClusterListNodes_Redaction(t *testing.T) {
 	// Seed one node with internal URL and DB metadata.
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
+
 	// Nodes are UUID-first; seed with a UUID v7 so the registry includes it in List().
-	n := &reg.Node{UUID: rnd.UUIDv7(), Name: "pp-node-redact", Role: "instance", AdvertiseUrl: "http://pp-node:2342", SiteUrl: "https://photos.example.com"}
-	n.Database.Name = "pp_db"
-	n.Database.User = "pp_user"
+	n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-redact", Role: "instance", AdvertiseUrl: "http://pp-node:2342", SiteUrl: "https://photos.example.com"}}
+	n.Database = &cluster.NodeDatabase{Name: "pp_db", User: "pp_user"}
 	assert.NoError(t, regy.Put(n))
 
 	// Admin session shows internal fields
@@ -55,10 +55,10 @@ func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
 
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
+
 	// Seed node with internal URL and DB meta.
-	n := &reg.Node{Name: "pp-node-redact2", Role: "instance", AdvertiseUrl: "http://pp-node2:2342", SiteUrl: "https://photos2.example.com"}
-	n.Database.Name = "pp_db2"
-	n.Database.User = "pp_user2"
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-redact2", Role: "instance", AdvertiseUrl: "http://pp-node2:2342", SiteUrl: "https://photos2.example.com"}}
+	n.Database = &cluster.NodeDatabase{Name: "pp_db2", User: "pp_user2"}
 	assert.NoError(t, regy.Put(n))
 
 	// Create client session with cluster scope and no user (redacted view expected).

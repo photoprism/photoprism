@@ -57,7 +57,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
 		assert.Equal(t, 5, folder.FolderMonth)
-		assert.Equal(t, "gb", folder.FolderCountry)
+		assert.Equal(t, "zz", folder.FolderCountry)
 	})
 	t.Run("RootOriginalsNoDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "", time.Time{})

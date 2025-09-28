@@ -14,8 +14,9 @@ import (
 
 // ClusterNodesCommands groups node subcommands.
 var ClusterNodesCommands = &cli.Command{
-	Name:  "nodes",
-	Usage: "Node registry subcommands",
+	Name:   "nodes",
+	Usage:  "Node registry subcommands",
+	Hidden: true, // Required for cluster-management only.
 	Subcommands: []*cli.Command{
 		ClusterNodesListCommand,
 		ClusterNodesShowCommand,
@@ -28,9 +29,10 @@ var ClusterNodesCommands = &cli.Command{
 // ClusterNodesListCommand lists registered nodes.
 var ClusterNodesListCommand = &cli.Command{
 	Name:      "ls",
-	Usage:     "Lists registered cluster nodes (Portal-only)",
+	Usage:     "Lists registered cluster nodes",
 	Flags:     append(report.CliFlags, CountFlag, OffsetFlag),
 	ArgsUsage: "",
+	Hidden:    true, // Required for cluster-management only.
 	Action:    clusterNodesListAction,
 }
 

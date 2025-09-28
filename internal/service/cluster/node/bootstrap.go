@@ -1,6 +1,7 @@
-package instance
+package node
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -17,6 +18,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
+	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -29,18 +31,19 @@ var log = event.Log
 
 func init() {
 	// Register early so this can adjust DB settings before connectDb().
-	config.RegisterEarly("cluster-instance", InitConfig, nil)
+	config.RegisterEarly("cluster-node", InitConfig, nil)
 }
 
-// InitConfig performs instance bootstrap: optional registration with the Portal
+// InitConfig performs node bootstrap: optional registration with the Portal
 // and theme installation. Runs early during config.Init().
 func InitConfig(c *config.Config) error {
 	if !cluster.BootstrapAutoJoinEnabled && !cluster.BootstrapAutoThemeEnabled {
 		return nil
 	}
 
+	role := c.NodeRole()
 	// Skip on portal nodes and unknown node types.
-	if c.IsPortal() || c.NodeRole() != cluster.RoleInstance {
+	if c.IsPortal() || (role != cluster.RoleInstance && role != cluster.RoleService) {
 		return nil
 	}
 
@@ -117,27 +120,27 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 		opts.DatabaseDSN == "" && opts.DatabaseName == "" && opts.DatabaseUser == "" && opts.DatabasePassword == "" &&
 		c.DatabasePassword() == ""
 
-	payload := map[string]interface{}{
-		"nodeName":     c.NodeName(),
-		"nodeUUID":     c.NodeUUID(),
-		"nodeRole":     cluster.RoleInstance, // JSON wire format is string
-		"advertiseUrl": c.AdvertiseUrl(),
+	payload := cluster.RegisterRequest{
+		NodeName:     c.NodeName(),
+		NodeUUID:     c.NodeUUID(),
+		NodeRole:     c.NodeRole(),
+		AdvertiseUrl: c.AdvertiseUrl(),
 	}
 	// Include client credentials when present so the Portal can verify re-registration
 	// and authorize UUID/name changes.
 	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-		payload["clientId"] = id
-		payload["clientSecret"] = secret
+		payload.ClientID = id
+		payload.ClientSecret = secret
 	}
 
 	// Include siteUrl when it differs from advertiseUrl; server will validate/normalize.
 	if su := c.SiteUrl(); su != "" && su != c.AdvertiseUrl() {
-		payload["siteUrl"] = su
+		payload.SiteUrl = su
 	}
 
 	if wantRotateDatabase {
 		// Align with API: request database rotation/creation on (re)register.
-		payload["rotateDatabase"] = true
+		payload.RotateDatabase = true
 	}
 
 	bodyBytes, _ := json.Marshal(payload)
@@ -171,6 +174,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 			if err := persistRegistration(c, &r, wantRotateDatabase); err != nil {
 				return err
 			}
+			primeJWKS(c, r.JWKSUrl)
 			if resp.StatusCode == http.StatusCreated {
 				log.Infof("cluster: registered as %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
 			} else {
@@ -216,6 +220,10 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		updates["ClusterUUID"] = r.UUID
 	}
 
+	if cidr := strings.TrimSpace(r.ClusterCIDR); cidr != "" {
+		updates["ClusterCIDR"] = cidr
+	}
+
 	// Always persist NodeClientID (client UID) from response for future OAuth token requests.
 	if r.Node.ClientID != "" {
 		updates["NodeClientID"] = r.Node.ClientID
@@ -226,8 +234,13 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		updates["NodeClientSecret"] = r.Secrets.ClientSecret
 	}
 
+	if jwksUrl := strings.TrimSpace(r.JWKSUrl); jwksUrl != "" {
+		updates["JWKSUrl"] = jwksUrl
+		c.SetJWKSUrl(jwksUrl)
+	}
+
 	// Persist NodeUUID from portal response if provided and not set locally.
-	if r.Node.UUID != "" && c.Options().NodeUUID == "" {
+	if r.Node.UUID != "" && c.NodeUUID() == "" {
 		updates["NodeUUID"] = r.Node.UUID
 	}
 
@@ -265,6 +278,22 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		log.Infof("cluster: database settings applied; restart required to take effect")
 	}
 	return nil
+}
+
+func primeJWKS(c *config.Config, url string) {
+	if c == nil {
+		return
+	}
+	url = strings.TrimSpace(url)
+	if url == "" {
+		return
+	}
+	verifier := clusterjwt.NewVerifier(c)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := verifier.Prime(ctx, url); err != nil {
+		log.Debugf("cluster: jwks prime skipped (%s)", clean.Error(err))
+	}
 }
 
 func hasDBUpdate(m map[string]interface{}) bool {

@@ -19,8 +19,9 @@ type healthResponse struct {
 // ClusterHealthCommand prints a minimal health response (Portal-only).
 var ClusterHealthCommand = &cli.Command{
 	Name:   "health",
-	Usage:  "Shows cluster health (Portal-only)",
+	Usage:  "Shows cluster health status",
 	Flags:  report.CliFlags,
+	Hidden: true, // Required for cluster-management only.
 	Action: clusterHealthAction,
 }
 

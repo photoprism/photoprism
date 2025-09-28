@@ -35,7 +35,7 @@ func TestWebDAVFileName_PathTraversalRejected(t *testing.T) {
 	insideFile := filepath.Join(dir, "ok.txt")
 	assert.NoError(t, fs.WriteString(insideFile, "ok"))
 
-	conf := config.NewTestConfig("server-webdav")
+	conf := newWebDAVTestConfig(t)
 	conf.Options().OriginalsPath = dir
 
 	r := gin.New()
@@ -55,7 +55,7 @@ func TestWebDAVFileName_PathTraversalRejected(t *testing.T) {
 }
 
 func TestWebDAVFileName_MethodNotPut(t *testing.T) {
-	conf := config.NewTestConfig("server-webdav")
+	conf := newWebDAVTestConfig(t)
 	r := gin.New()
 	grp := r.Group(conf.BaseUri(WebDAVOriginals))
 	req := &http.Request{Method: http.MethodGet}
@@ -65,7 +65,7 @@ func TestWebDAVFileName_MethodNotPut(t *testing.T) {
 }
 
 func TestWebDAVFileName_ImportBasePath(t *testing.T) {
-	conf := config.NewTestConfig("server-webdav")
+	conf := newWebDAVTestConfig(t)
 	r := gin.New()
 	grp := r.Group(conf.BaseUri(WebDAVImport))
 	// create a real file under import
@@ -87,4 +87,8 @@ func TestWebDAVSetFileMtime_FutureIgnored(t *testing.T) {
 	WebDAVSetFileMtime(file, future)
 	after, _ := os.Stat(file)
 	assert.Equal(t, before.ModTime().Unix(), after.ModTime().Unix())
+}
+
+func newWebDAVTestConfig(t *testing.T) *config.Config {
+	return config.NewMinimalTestConfig(t.TempDir())
 }

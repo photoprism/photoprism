@@ -188,6 +188,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"node-uuid", c.NodeUUID()},
 		{"node-client-id", c.NodeClientID()},
 		{"node-client-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeClientSecret())))},
+		{"jwks-url", c.JWKSUrl()},
+		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
+		{"jwt-scope", c.JWTAllowedScopes().String()},
+		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
 		{"advertise-url", c.AdvertiseUrl()},
 
 		// Proxy Servers.

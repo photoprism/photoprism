@@ -22,6 +22,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
+const pipeSortingFormat = "lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id"
+
 // DownloadOpts contains the command options used by runDownload.
 type DownloadOpts struct {
 	Dest               string
@@ -30,6 +32,7 @@ type DownloadOpts struct {
 	AddHeaders         []string
 	Method             string // pipe|file
 	FileRemux          string // always|auto|skip
+	FormatSort         string
 }
 
 // runDownload executes the download/import flow for the given inputs and options.
@@ -44,6 +47,10 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	}
 	if len(inputURLs) == 0 {
 		return fmt.Errorf("no download URLs provided")
+	}
+
+	if msg, ok := dl.VersionWarning(); ok {
+		log.Info(msg)
 	}
 
 	// Resolve destination folder
@@ -62,12 +69,14 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	defer os.RemoveAll(downloadPath)
 
 	// Normalize method/remux policy
-	method := strings.ToLower(strings.TrimSpace(opts.Method))
-	if method == "" {
-		method = "pipe"
+	method, _, err := resolveDownloadMethod(opts.Method)
+	if err != nil {
+		return err
 	}
-	if method != "pipe" && method != "file" {
-		return fmt.Errorf("invalid method: %s", method)
+
+	sortingFormat := strings.TrimSpace(opts.FormatSort)
+	if sortingFormat == "" && method == "pipe" {
+		sortingFormat = pipeSortingFormat
 	}
 	fileRemux := strings.ToLower(strings.TrimSpace(opts.FileRemux))
 	if fileRemux == "" {
@@ -118,7 +127,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			opt := dl.Options{
 				MergeOutputFormat:  fs.VideoMp4.String(),
 				RemuxVideo:         fs.VideoMp4.String(),
-				SortingFormat:      "lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id",
+				SortingFormat:      sortingFormat,
 				Cookies:            opts.Cookies,
 				CookiesFromBrowser: opts.CookiesFromBrowser,
 				AddHeaders:         opts.AddHeaders,
@@ -126,6 +135,9 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			result, err := dl.NewMetadata(context.Background(), u.String(), opt)
 			if err != nil {
 				log.Errorf("metadata failed: %v", err)
+				if hint, ok := missingFormatsHint(err); ok {
+					log.Info(hint)
+				}
 				failures++
 				continue
 			}
@@ -224,4 +236,17 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	}
 	log.Infof("completed in %s", elapsed)
 	return nil
+}
+
+func missingFormatsHint(err error) (string, bool) {
+	if err == nil {
+		return "", false
+	}
+
+	lower := strings.ToLower(err.Error())
+	if strings.Contains(lower, "requested format is not available") {
+		return "yt-dlp did not receive playable formats. Try downloading via yt-dlp --list-formats, or pass authenticated cookies with --cookies <file> so YouTube exposes video/audio streams.", true
+	}
+
+	return "", false
 }

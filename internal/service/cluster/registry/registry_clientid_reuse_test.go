@@ -7,6 +7,7 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -14,19 +15,18 @@ import (
 // rule prevents hijacking: the update applies to the UUID's row and does not move
 // the ClientID from its original node.
 func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-cid-hijack")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-cid-hijack", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two independent nodes
-	a := &Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: "instance"}
-	b := &Node{UUID: rnd.UUIDv7(), Name: "pp-b", Role: "service"}
+	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: "instance"}}
+	b := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-b", Role: "service"}}
 	assert.NoError(t, r.Put(a))
 	assert.NoError(t, r.Put(b))
 
 	// Attempt to update UUID=b while passing ClientID of a
-	assert.NoError(t, r.Put(&Node{UUID: b.UUID, ClientID: a.ClientID, Role: "service"}))
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{UUID: b.UUID, ClientID: a.ClientID, Role: "service"}}))
 
 	// a stays attached to its original UUID and ClientID
 	gotA, err := r.FindByNodeUUID(a.UUID)
@@ -50,18 +50,17 @@ func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
 // migrates the row to the new UUID. This mirrors restore flows where a node's ClientID
 // is reused for a regenerated or reassigned UUID.
 func TestClientRegistry_ClientIDReuse_ChangesUUIDWhenTargetMissing(t *testing.T) {
-	c := cfg.NewTestConfig("cluster-registry-cid-move")
+	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-cid-move", t.TempDir())
 	defer c.CloseDb()
-	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed one node
-	a := &Node{UUID: rnd.UUIDv7(), Name: "pp-x", Role: "instance"}
+	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-x", Role: "instance"}}
 	assert.NoError(t, r.Put(a))
 
 	// Move the row to a new UUID by referencing the same ClientID and a new UUID
 	newUUID := rnd.UUIDv7()
-	assert.NoError(t, r.Put(&Node{UUID: newUUID, ClientID: a.ClientID}))
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{UUID: newUUID, ClientID: a.ClientID}}))
 
 	// Old UUID no longer resolves
 	_, err := r.FindByNodeUUID(a.UUID)
