@@ -7,10 +7,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
 func TestClusterMetrics_EmptyCounts(t *testing.T) {
+	// Remove the fixture record
+	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
+		return
+	}
+
 	app, router, conf := NewApiTest()
 	conf.Options().NodeRole = cluster.RolePortal
 	conf.Options().ClusterCIDR = "192.0.2.0/24"
@@ -24,4 +30,7 @@ func TestClusterMetrics_EmptyCounts(t *testing.T) {
 	body := resp.Body.String()
 	assert.Equal(t, "192.0.2.0/24", gjson.Get(body, "clusterCidr").String())
 	assert.Equal(t, int64(0), gjson.Get(body, "nodes.total").Int())
+
+	// Recreate the fixture record
+	entity.Db().Create(entity.ClientFixtures.Get("node"))
 }
