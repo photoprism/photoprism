@@ -457,10 +457,17 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 // Drop drops all database tables of registered entities.
 func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
-		if err := db.Migrator().DropTable(entity); err != nil {
+		if err := db.Migrator().DropTable(entity.TableName); err != nil {
 			// Migrator().DropTable(table) is doing a DROP TABLE IF EXISTS under the covers.
 			// Testing will show if we need a panic here or a log.Error(err)
 			panic(err)
 		}
+	}
+	// Put Migrations and Versions back as they are handled by Once and it's already run.
+	if err := db.Migrator().AutoMigrate(&migrate.Migration{}); err != nil {
+		panic(err)
+	}
+	if err := db.Migrator().AutoMigrate(&migrate.Version{}); err != nil {
+		panic(err)
 	}
 }
