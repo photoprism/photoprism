@@ -2,8 +2,10 @@ package api
 
 import (
 	"net/http"
+	"path/filepath"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,12 +19,13 @@ func TestPhotoUnstack(t *testing.T) {
 		// t.Logf("RESP: %s", r.Body.String())
 	})
 	t.Run("unstack bridge3.jpg", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+		app, router, c := NewApiTest()
 		PhotoUnstack(router)
+		fs.Copy("./testdata/london_160x160.jpg", filepath.Join(c.Options().OriginalsPath, "London/bridge3.jpg"), true)
+		fs.Copy("./testdata/face_160x160.jpg", filepath.Join(c.Options().OriginalsPath, "1990/04/bridge2.jpg"), true)
 		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/files/fs6sg6bwhhbnlqdn/unstack")
-		// TODO: Have a real file in place for testing the success case. This file does not exist, so it cannot be unstacked.
-		assert.Equal(t, http.StatusNotFound, r.Code)
-		// t.Logf("RESP: %s", r.Body.String())
+		assert.Equal(t, http.StatusOK, r.Code)
+		//t.Logf("RESP: %s", r.Body.String())
 	})
 	t.Run("not existing file", func(t *testing.T) {
 		app, router, _ := NewApiTest()
