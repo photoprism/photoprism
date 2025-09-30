@@ -104,19 +104,23 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Set default database DSN.
 	if driver == SQLite3 {
 		if dsn == "" && dbName != "" {
-			dsnFile := fmt.Sprintf(".%s.db", clean.TypeLower(dbName))
-			dsn = fmt.Sprintf("%s?_foreign_keys=on", dsnFile)
+			dsnFile, _ := filepath.Abs(fmt.Sprintf(".%s.db", clean.TypeLower(dbName)))
+			dsn = fmt.Sprintf("%s?_foreign_keys=on&_busy_timeout=5000", dsnFile)
 			if !fs.FileExists(dsnFile) {
 				log.Tracef("sqlite: test database %s does not already exist", clean.Log(dsnFile))
 			} else if err := os.Remove(dsnFile); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dsnFile), err)
+			} else {
+				log.Debugf("sqlite: test database %s removed", clean.Log(dsnFile))
 			}
 		} else if dsn == "" || dsn == SQLiteTestDB {
-			dsn = fmt.Sprintf("%s?_foreign_keys=on", SQLiteTestDB)
+			dsn = fmt.Sprintf("%s?_foreign_keys=on&_busy_timeout=5000", SQLiteTestDB)
 			if !fs.FileExists(SQLiteTestDB) {
 				log.Tracef("sqlite: test database %s does not already exist", clean.Log(SQLiteTestDB))
 			} else if err := os.Remove(SQLiteTestDB); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(SQLiteTestDB), err)
+			} else {
+				log.Debugf("sqlite: test database %s removed", clean.Log(SQLiteTestDB))
 			}
 		}
 	}
@@ -194,11 +198,32 @@ func TestConfig() *Config {
 	return testConfig
 }
 
+// RestoreDBFromCache will restore an SQLite database from a cache.
+// Only works if the target database does not exist.
+func RestoreDBFromCache(c *Config) (cachedDB bool) {
+	cachedDB = false
+	// Try to restore test db from cache.
+	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseFile()) {
+		if err := os.WriteFile(c.DatabaseFile(), testDbCache, fs.ModeFile); err != nil {
+			log.Warnf("config: %s (restore test database)", err)
+		} else {
+			log.Infof("config: restored %s from cache", c.DatabaseFile())
+			cachedDB = true
+		}
+
+		// Open the database
+		c.RegisterDb()
+	} else {
+		log.Infof("config: cache was not used for %s", c.DatabaseFile())
+	}
+	return cachedDB
+}
+
 // NewMinimalTestConfig creates a lightweight test Config (no DB, minimal filesystem).
 //
 // Not suitable for tests requiring a database or pre-created storage directories.
-func NewMinimalTestConfig(dataPath string) *Config {
-	return NewIsolatedTestConfig("", dataPath, false)
+func NewMinimalTestConfig(dbName, dataPath string) *Config {
+	return NewIsolatedTestConfig(dbName, dataPath, false)
 }
 
 var testDbCache []byte
@@ -210,22 +235,11 @@ var testDbMutex sync.Mutex
 func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 	c := NewIsolatedTestConfig(dbName, dataPath, true)
 
-	cachedDb := false
-
-	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseDSN()) {
-		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
-			log.Warnf("config: %s (restore test database)", err)
-		} else {
-			cachedDb = true
-		}
-	}
+	cachedDb := RestoreDBFromCache(c)
 
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())
 	}
-
-	c.RegisterDb()
 
 	if cachedDb {
 		return c
@@ -233,7 +247,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseFile()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 
@@ -241,9 +255,10 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 			return c
 		}
 
-		if testDb, readErr := os.ReadFile(c.DatabaseDSN()); readErr != nil {
+		if testDb, readErr := os.ReadFile(c.DatabaseFile()); readErr != nil {
 			log.Warnf("config: could not cache test database (%s)", readErr)
 		} else {
+			log.Infof("config: test database %s has been cached", c.DatabaseFile())
 			testDbCache = testDb
 		}
 	}

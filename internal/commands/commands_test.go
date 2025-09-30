@@ -11,12 +11,15 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+var savedPath string
 
 // TODO: Several CLI commands defer conf.Shutdown(), which closes the shared
 // database connection. To avoid flakiness, RunWithTestContext re-initializes
@@ -44,6 +47,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	defer os.RemoveAll(tempDir)
+	savedPath = tempDir
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
 	get.SetConfig(c)
@@ -82,7 +86,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.Commands = PhotoPrism
 	app.HelpName = app.Name
 	app.CustomAppHelpTemplate = ""
-	app.HideHelp = true
+	app.HideHelp = false
 	app.HideHelpCommand = true
 	app.Action = func(*cli.Context) error { return nil }
 	app.EnableBashCompletion = false
@@ -103,38 +107,7 @@ func NewTestContext(args []string) *cli.Context {
 
 // RunWithTestContext executes a command with a test context and returns its output.
 func RunWithTestContext(cmd *cli.Command, args []string) (output string, err error) {
-	// Create test context with flags and arguments.
-	ctx := NewTestContext(args)
-
-	cmd.HideHelp = false
-
-	// Ensure DB connection is open for each command run (some commands call Shutdown).
-	if c := get.Config(); c != nil {
-		c.RegisterDb() // (re)register provider
-	}
-
-	// Redirect the output from cli to buffer for transfer to output for testing
-	var catureOutput bytes.Buffer
-	oldWriter := ctx.App.Writer
-	ctx.App.Writer = &catureOutput
-
-	// Run command with test context.
-	output = capture.Output(func() {
-		origExiter := cli.OsExiter
-		cli.OsExiter = func(int) {}
-		defer func() { cli.OsExiter = origExiter }()
-		err = cmd.Run(ctx, args...)
-	})
-	ctx.App.Writer = oldWriter
-	output += catureOutput.String()
-
-	// Re-open the database after the command completed so follow-up checks
-	// (potentially issued by the test itself) have an active connection.
-	if c := get.Config(); c != nil {
-		c.RegisterDb()
-	}
-
-	return output, err
+	return RunWithProvidedTestContext(NewTestContext(args), cmd, args)
 }
 
 // NewTestContextWithParse creates a new CLI test context with the flags and arguments provided.
@@ -150,7 +123,7 @@ func NewTestContextWithParse(appArgs []string, cmdArgs []string) *cli.Context {
 	app.Commands = PhotoPrism
 	app.HelpName = app.Name
 	app.CustomAppHelpTemplate = ""
-	app.HideHelp = true
+	app.HideHelp = false
 	app.HideHelpCommand = true
 	app.Action = func(*cli.Context) error { return nil }
 	app.EnableBashCompletion = false
@@ -177,15 +150,13 @@ func NewTestContextWithParse(appArgs []string, cmdArgs []string) *cli.Context {
 }
 
 func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []string) (output string, err error) {
+	// Ensure DB connection is open for each command run (some commands call Shutdown).
+	_ = reopenConnection()
+
 	// Redirect the output from cli to buffer for transfer to output for testing
 	var catureOutput bytes.Buffer
 	oldWriter := ctx.App.Writer
 	ctx.App.Writer = &catureOutput
-
-	// Ensure DB connection is open for each command run (some commands call Shutdown).
-	if c := get.Config(); c != nil {
-		c.RegisterDb() // (re)register provider
-	}
 
 	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder
 	// errors don't terminate the test binary.
@@ -198,11 +169,61 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	ctx.App.Writer = oldWriter
 	output += catureOutput.String()
 
-	// Re-open the database after the command completed so follow-up checks
-	// (potentially issued by the test itself) have an active connection.
-	if c := get.Config(); c != nil {
-		c.RegisterDb()
-	}
+	// // Re-open the database after the command completed so follow-up checks
+	// // (potentially issued by the test itself) have an active connection.
+	_ = reopenConnection()
 
 	return output, err
+}
+
+// resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
+// it does call Migrate and TestFixtures for Postgres and MariaDB.  It may call Migrate and TestFixtures for SQLite if the database
+// doesn't exist.  That can only happen if you are using PHOTOPRISM_TEST_DSN_NAME="sqlite".
+func resetConfigAndDB() *config.Config {
+	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
+	get.SetConfig(c)
+	entity.SetDbProvider(c)
+
+	InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+		return c, c.Init()
+	}
+
+	return c
+}
+
+// resetConfigAndOpenDB replaces the config with a generated minimal config, and opens the configured database.
+// it does not call Migrate and TestFixtures if the database has records in auth_users and photos.
+func resetConfigAndOpenDB() *config.Config {
+	c := config.NewMinimalTestConfig("commands", savedPath)
+	config.RestoreDBFromCache(c) // If using sqlite (not sqlitefile) then the db is removed by NewMinimalTestConfig
+	if err := c.Init(); err != nil {
+		log.Fatalf("config: %s (init)", err.Error())
+	}
+	get.SetConfig(c)
+	entity.SetDbProvider(c)
+
+	InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+		return c, c.Init()
+	}
+
+	return c
+}
+
+// reopenConnection gets the current configured connection and opens it if it is closed.
+// It returns the current config to allow queries in tests if needed.
+func reopenConnection() *config.Config {
+	if c := get.Config(); c != nil {
+		if !c.IsDbOpen() {
+			c.RegisterDb()
+		} else {
+			entity.SetDbProvider(c) // entity can get out of sync with c, so make sure it's correct
+		}
+		InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+			return c, c.Init()
+		}
+		return c
+	} else {
+		log.Warn("reopenConnection: config is nil")
+		return nil
+	}
 }

@@ -7,6 +7,7 @@ import (
 )
 
 func TestUsersListCommand(t *testing.T) {
+	resetConfigAndOpenDB()
 	t.Run("All", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(UsersListCommand, []string{"ls", "--login", "--created", "--deleted", "-n", "100", "--md"})

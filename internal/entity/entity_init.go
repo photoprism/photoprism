@@ -64,11 +64,13 @@ func InitTestDb(driver, dsn string) *DbConn {
 	// Set default database DSN.
 	if driver == SQLite3 {
 		if dsn == "" || dsn == SQLiteTestDB {
-			dsn = fmt.Sprintf("%s?_foreign_keys=on", SQLiteTestDB)
+			dsn = fmt.Sprintf("%s?_busy_timeout=5000&_foreign_keys=on", SQLiteTestDB)
 			if !fs.FileExists(SQLiteTestDB) {
 				log.Debugf("sqlite: test database %s does not already exist", clean.Log(SQLiteTestDB))
 			} else if err := os.Remove(SQLiteTestDB); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(SQLiteTestDB), err)
+			} else {
+				log.Debugf("sqlite: test database %s removed", clean.Log(SQLiteTestDB))
 			}
 		}
 	}

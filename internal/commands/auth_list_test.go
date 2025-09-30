@@ -7,6 +7,7 @@ import (
 )
 
 func TestAuthListCommand(t *testing.T) {
+	resetConfigAndOpenDB()
 	t.Run("All", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(AuthListCommand, []string{"ls"})

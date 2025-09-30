@@ -20,6 +20,14 @@ func CreateDefaultFixtures() {
 func ResetTestFixtures() {
 	start := time.Now()
 
+	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
+	if (!Db().Migrator().HasTable(migrate.Migration{})) {
+		Db().Migrator().AutoMigrate(migrate.Migration{})
+	}
+	if (!Db().Migrator().HasTable(migrate.Version{})) {
+		Db().Migrator().AutoMigrate(migrate.Version{})
+	}
+
 	Entities.Migrate(Db(), migrate.Opt(true, false, nil))
 
 	if err := Entities.WaitForMigration(Db()); err != nil {

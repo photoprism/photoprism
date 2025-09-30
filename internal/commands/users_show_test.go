@@ -7,6 +7,7 @@ import (
 )
 
 func TestUsersShowCommand(t *testing.T) {
+	resetConfigAndOpenDB()
 	t.Run("Alice", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(UsersShowCommand, []string{"show", "alice"})

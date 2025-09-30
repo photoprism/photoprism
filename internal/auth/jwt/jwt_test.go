@@ -27,5 +27,5 @@ func TestMain(m *testing.M) {
 }
 
 func newTestConfig(t *testing.T) *cfg.Config {
-	return cfg.NewMinimalTestConfig(t.TempDir())
+	return cfg.NewMinimalTestConfig("", t.TempDir())
 }

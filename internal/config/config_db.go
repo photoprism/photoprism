@@ -439,6 +439,13 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
+	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
+	if (!c.db.Migrator().HasTable(migrate.Migration{})) {
+		c.db.Migrator().AutoMigrate(migrate.Migration{})
+	}
+	if (!c.db.Migrator().HasTable(migrate.Version{})) {
+		c.db.Migrator().AutoMigrate(migrate.Version{})
+	}
 	entity.ResetTestFixtures()
 
 	if c.AdminPassword() == "" {
@@ -603,10 +610,6 @@ func (c *Config) connectDb() error {
 				return err
 			}
 		}
-
-		// Configure database logging.
-		//db.LogMode(false)
-		//db.SetLogger(log)
 
 		// Set database connection parameters.
 		if dbDriver != Postgres {
