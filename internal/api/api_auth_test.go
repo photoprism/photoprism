@@ -15,6 +15,7 @@ import (
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -254,8 +255,13 @@ type portalJWTFixture struct {
 func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 	t.Helper()
 
-	origConf := get.Config()
-	t.Cleanup(func() { get.SetConfig(origConf) })
+	t.Cleanup(func() {
+		c := get.Config()
+		c.CloseDb()
+		get.SetConfig(config.TestConfig())
+		c = get.Config()
+		entity.SetDbProvider(c) // Make sure that the database has been swapped back
+	})
 
 	nodeConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-"+suffix, t.TempDir())
 
