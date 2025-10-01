@@ -151,7 +151,7 @@ func (m *Photo) Approve() error {
 	if err := UnscopedDb().
 		Table(entity.Photo{}.TableName()).
 		Where("photo_uid = ?", m.GetUID()).
-		UpdateColumns(map[string]interface{}{
+		UpdateColumns(entity.Values{
 			"deleted_at":    gorm.Expr("NULL"),
 			"edited_at":     &edited,
 			"photo_quality": 3}).Error; err != nil {

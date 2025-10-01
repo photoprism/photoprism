@@ -17,7 +17,7 @@ func TestModelValues(t *testing.T) {
 		values, keys, err := ModelValues(m, "ID", "PhotoUID")
 
 		assert.Error(t, err)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Len(t, keys, 0)
 	})
 	t.Run("NewPhoto", func(t *testing.T) {
@@ -30,7 +30,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
@@ -42,7 +42,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 2)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 	})
 	t.Run("NewFace", func(t *testing.T) {
 		m := &Face{}
@@ -54,7 +54,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 	})
 	t.Run("ExistingFace", func(t *testing.T) {
 		m := FaceFixtures.Pointer("john-doe")
@@ -66,7 +66,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 1)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 	})
 }
 
@@ -130,13 +130,13 @@ func TestModelValuesStructOption(t *testing.T) {
 		values, keys, err := ModelValuesStructOption(m, true, "ID", "PhotoUID")
 
 		assert.Error(t, err)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Len(t, keys, 0)
 
 		values, keys, err = ModelValuesStructOption(m, false, "ID", "PhotoUID")
 
 		assert.Error(t, err)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Len(t, keys, 0)
 	})
 	t.Run("NewPhoto", func(t *testing.T) {
@@ -149,7 +149,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 
 		values, keys, err = ModelValuesStructOption(m, false, "ID", "PhotoUID")
 
@@ -159,7 +159,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
 		original := PhotoFixtures.Pointer("Photo01")
@@ -178,7 +178,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 2)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.NotNil(t, m.Camera)
 		assert.NotNil(t, m.Cell)
 		assert.NotNil(t, m.Lens)
@@ -196,7 +196,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 2)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Nil(t, m.Camera)
 		assert.Nil(t, m.Cell)
 		assert.Nil(t, m.Lens)
@@ -216,7 +216,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 
 		values, keys, err = ModelValuesStructOption(m, false, "ID")
 
@@ -226,7 +226,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 
 	})
 
@@ -247,7 +247,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 1)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Equal(t, original.FaceSrc, m.FaceSrc)
 		assert.Equal(t, original.MatchedAt, m.MatchedAt)
 		assert.Equal(t, original.CreatedAt, m.CreatedAt)
@@ -262,7 +262,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 1)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Equal(t, original.FaceSrc, m.FaceSrc)
 		assert.Equal(t, original.MatchedAt, m.MatchedAt)
 		assert.Equal(t, original.CreatedAt, m.CreatedAt)
@@ -338,7 +338,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 1)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Equal(t, original.ID, m.ID)
 		assert.Equal(t, original.NullTime, m.NullTime)
 		assert.Equal(t, original.NullTimePointer, m.NullTimePointer)
@@ -382,7 +382,7 @@ func TestModelValuesStructOption(t *testing.T) {
 
 		assert.Len(t, keys, 1)
 		assert.NotNil(t, values)
-		assert.IsType(t, map[string]interface{}{}, values)
+		assert.IsType(t, Values{}, values)
 		assert.Equal(t, original.ID, m.ID)
 		assert.Equal(t, original.NullTime, m.NullTime)
 		assert.Equal(t, original.NullTimePointer, m.NullTimePointer)

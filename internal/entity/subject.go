@@ -153,7 +153,7 @@ func (m *Subject) DeletePermanently() error {
 // AfterDelete resets file and photo counters when the entity was deleted.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 	if rnd.IsUnique(m.SubjUID, 'j') {
-		tx.Model(m).Updates(map[string]interface{}{
+		tx.Model(m).Updates(Values{
 			"FileCount":  0,
 			"PhotoCount": 0,
 		})
@@ -368,7 +368,7 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 
 	// Update index?
 	if changed {
-		values := map[string]interface{}{
+		values := Values{
 			"SubjFavorite": m.SubjFavorite,
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,
@@ -424,7 +424,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	// Update subject record.
 	if err := m.SetName(name); err != nil {
 		return m, err
-	} else if err = m.Updates(map[string]interface{}{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
+	} else if err = m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
 		SubjNames.Set(m.SubjUID, m.SubjName)
@@ -509,7 +509,7 @@ func (m *Subject) MergeWith(other *Subject) error {
 	}
 
 	// Updated subject entity values.
-	updates := map[string]interface{}{
+	updates := Values{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
 	}

@@ -6,18 +6,17 @@ import (
 )
 
 // Values is an shorthand alias for map[string]interface{}.
-// DO NOT USE THIS as Gorm2 does not support it.
 type Values = map[string]interface{}
 
 // ModelValues extracts Values from an entity model.
-func ModelValues(m interface{}, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
+func ModelValues(m interface{}, omit ...string) (result Values, omitted []interface{}, err error) {
 	return ModelValuesStructOption(m, true, omit...)
 }
 
 // ModelValuesStructOption extracts Values from an entity model, with the option to includeAll fields like before.
 // When using this for entity Updates includeAll MUST be false, so that GormV2 is forced to behave like GormV1.
 // There are two white lists which need to be maintained if new data types are used, or pointers to existing types are used.
-func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
+func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (result Values, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
 		for _, s := range omit {
 			if name == s {

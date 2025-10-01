@@ -398,8 +398,8 @@ func (m *File) ReplaceHash(newHash string) error {
 	}
 
 	entities := Tables{
-		10: {"albums", Album{}},
-		20: {"labels", Label{}},
+		10: {"albums", &Album{}},
+		20: {"labels", &Label{}},
 	}
 
 	// Search related tables for references and update them.
@@ -603,7 +603,7 @@ func (m *File) Undelete() error {
 
 	if m.ID != 0 {
 		// Update database row.
-		err := m.Updates(map[string]interface{}{
+		err := m.Updates(Values{
 			"FileMissing": false,
 			"DeletedAt":   gorm.DeletedAt{},
 		})

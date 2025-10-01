@@ -129,12 +129,12 @@ func TestGorm(t *testing.T) {
 
 }
 
-func modelValues(m interface{}, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
+func modelValues(m interface{}, omit ...string) (result entity.Values, omitted []interface{}, err error) {
 	return modelValuesStructOption(m, true, omit...)
 }
 
 // ModelValues extracts Values from an entity model.
-func modelValuesStructOption(m interface{}, includeStruct bool, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
+func modelValuesStructOption(m interface{}, includeStruct bool, omit ...string) (result entity.Values, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
 		for _, s := range omit {
 			if name == s {
@@ -161,7 +161,7 @@ func modelValuesStructOption(m interface{}, includeStruct bool, omit ...string) 
 	num := t.NumField()
 
 	omitted = make([]interface{}, 0, len(omit))
-	result = make(map[string]interface{}, num)
+	result = make(entity.Values, num)
 
 	// Add exported fields to result.
 	for i := 0; i < num; i++ {
