@@ -38,7 +38,7 @@ func LockDBMutex(db *gorm.DB, log event.Logger, caller string) bool {
 		if err = db.Create(&record).Error; err != nil {
 			counter += 1
 			LogMessage(db, fmt.Sprintf("%v LockDBMutex Failed Attempt %v", caller, counter))
-			if counter > 60 { // There is 10 minutes of wait time here.
+			if counter > 240 { // There is 40 minutes of wait time here.
 				return false
 			}
 			time.Sleep(10 * time.Second)
