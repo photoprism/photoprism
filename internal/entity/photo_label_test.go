@@ -102,7 +102,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		UnscopedDb().Delete(photoLabel)
+		UnscopedDb().Delete(&photoLabel)
 		UnscopedDb().Delete(newLabel)
 		UnscopedDb().Delete(newPhoto)
 	})

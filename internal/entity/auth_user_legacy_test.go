@@ -22,12 +22,12 @@ func TestFindLegacyUser(t *testing.T) {
 
 	// t.Logf("Legacy Admin: %#v", notFound)
 
-	if err := Db().AutoMigrate(legacy.User{}); err != nil {
+	if err := Db().AutoMigrate(&legacy.User{}); err != nil {
 		log.Debugf("TestFindLegacyUser: %s (waiting 1s)", err.Error())
 
 		time.Sleep(time.Second)
 
-		if err = Db().AutoMigrate(legacy.User{}); err != nil {
+		if err = Db().AutoMigrate(&legacy.User{}); err != nil {
 			log.Errorf("TestFindLegacyUser: failed migrating legacy.User")
 			t.Error(err)
 		}
@@ -59,12 +59,12 @@ func TestFindLegacyUsers(t *testing.T) {
 
 	// t.Logf("Legacy Users: %#v", notFound)
 
-	if err := Db().AutoMigrate(legacy.User{}); err != nil {
+	if err := Db().AutoMigrate(&legacy.User{}); err != nil {
 		log.Debugf("TestFindLegacyUser: %s (waiting 1s)", err.Error())
 
 		time.Sleep(time.Second)
 
-		if err = Db().AutoMigrate(legacy.User{}); err != nil {
+		if err = Db().AutoMigrate(&legacy.User{}); err != nil {
 			log.Errorf("TestFindLegacyUser: failed migrating legacy.User")
 			t.Error(err)
 		}
