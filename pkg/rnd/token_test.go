@@ -127,13 +127,13 @@ func TestRandomToken(t *testing.T) {
 }
 
 func BenchmarkGenerateToken4(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Base36(4)
 	}
 }
 
 func BenchmarkGenerateToken3(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Base36(3)
 	}
 }

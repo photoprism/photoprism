@@ -27,13 +27,13 @@ func TestHeader(t *testing.T) {
 }
 
 func BenchmarkHeader(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Header("https://..docs.photoprism.app/gettin\\g-started/config-options/\tfile-converters")
 	}
 }
 
 func BenchmarkHeaderEmpty(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Header("")
 	}
 }

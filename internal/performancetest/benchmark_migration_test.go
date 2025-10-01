@@ -43,43 +43,37 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 	// tests here
 
 	b.Run("OneKUpgradeTest_Custom", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			sqliteMigration("../../storage/test-1k.original.sqlite", "../../storage/test-1k.db", 1000, false, "OneKUpgradeTest_Custom", time.Minute, b)
 		}
 	})
 
 	b.Run("OneKUpgradeTest_Auto", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			sqliteMigration("../../storage/test-1k.original.sqlite", "../../storage/test-1k.db", 1000, true, "OneKUpgradeTest_Auto", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest_Custom", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			sqliteMigration("../../storage/test-10k.original.sqlite", "../../storage/test-10k.db", 10000, false, "TenKUpgradeTest_Custom", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest_Auto", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			sqliteMigration("../../storage/test-10k.original.sqlite", "../../storage/test-10k.db", 10000, true, "TenKUpgradeTest_Auto", time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest_Custom", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			sqliteMigration("../../storage/test-100k.original.sqlite", "../../storage/test-100k.db", 100000, false, "OneHundredKUpgradeTest_Custom", 5*time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest_Auto", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			sqliteMigration("../../storage/test-100k.original.sqlite", "../../storage/test-100k.db", 100000, true, "OneHundredKUpgradeTest_Auto", 5*time.Minute, b)
 		}
 	})
@@ -132,22 +126,19 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			mysqlMigration("../../storage/test-1k.original.mysql", 1000, "OneKUpgradeTest", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			mysqlMigration("../../storage/test-10k.original.mysql", 10000, "TenKUpgradeTest", time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			mysqlMigration("../../storage/test-100k.original.mysql", 100000, "OneHundredKUpgradeTest", 5*time.Minute, b)
 		}
 	})
@@ -202,22 +193,19 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			postgresqlMigration("../../storage/test-1k.original.postgresql", 1000, "OneKUpgradeTest", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			postgresqlMigration("../../storage/test-10k.original.postgresql", 10000, "TenKUpgradeTest", time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			postgresqlMigration("../../storage/test-100k.original.postgresql", 100000, "OneHundredKUpgradeTest", 5*time.Minute, b)
 		}
 	})

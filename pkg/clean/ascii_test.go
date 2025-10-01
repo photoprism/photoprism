@@ -26,13 +26,13 @@ func TestASCII(t *testing.T) {
 }
 
 func BenchmarkASCII(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		ASCII("https://docs.photoprism.app/getting-started 👍/config-options/#file-converters")
 	}
 }
 
 func BenchmarkASCIIEmpty(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		ASCII("")
 	}
 }

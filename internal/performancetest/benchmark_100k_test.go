@@ -171,50 +171,43 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 func runTests(b *testing.B) {
 
 	b.Run("CreateDeleteAlbum", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			createDeleteAlbum(b)
 		}
 	})
 
 	b.Run("ListAlbums", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			listAlbums(b)
 		}
 	})
 
 	b.Run("CreateDeleteCamera", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			createDeleteCamera(b)
 		}
 	})
 
 	b.Run("CreateDeleteCellAndPlace", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			createDeleteCellAndPlace(b)
 		}
 	})
 
 	b.Run("FileRegenerateIndex", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			fileRegenerateIndex(b)
 		}
 	})
 
 	b.Run("CreateDeletePhoto", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			createDeletePhoto(b)
 		}
 	})
 
 	b.Run("ListPhotos", func(b *testing.B) {
-		//for b.Loop() {  // This needs Go 1.24
-		for range b.N {
+		for b.Loop() {
 			listPhotos(b)
 		}
 	})
