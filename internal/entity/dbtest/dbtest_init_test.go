@@ -88,7 +88,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(60), count)
+		assert.Equal(t, int64(61), count)
 	})
 
 	t.Run("PhotoCounts", func(t *testing.T) {
@@ -98,7 +98,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(58), count)
+		assert.Equal(t, int64(59), count)
 	})
 
 	t.Run("AlbumCounts", func(t *testing.T) {
@@ -158,7 +158,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(71), count)
+		assert.Equal(t, int64(72), count)
 	})
 
 	t.Run("KeywordCounts", func(t *testing.T) {

@@ -683,7 +683,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo15")
 		initialLen := len(photo.Labels)
 
-		var labelCountBefore int
+		var labelCountBefore int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", "unknown").Count(&labelCountBefore).Error; err != nil {
 			t.Fatalf("count before failed: %v", err)
 		}
@@ -693,7 +693,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 
 		assert.Equal(t, initialLen, len(photo.Labels))
 
-		var labelCountAfter int
+		var labelCountAfter int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", "unknown").Count(&labelCountAfter).Error; err != nil {
 			t.Fatalf("count after failed: %v", err)
 		}
@@ -704,7 +704,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 		initialLen := len(photo.Labels)
 
 		labelSlug := "zero-probability"
-		var labelCountBefore int
+		var labelCountBefore int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", labelSlug).Count(&labelCountBefore).Error; err != nil {
 			t.Fatalf("count before failed: %v", err)
 		}
@@ -714,7 +714,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 
 		assert.Equal(t, initialLen, len(photo.Labels))
 
-		var labelCountAfter int
+		var labelCountAfter int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", labelSlug).Count(&labelCountAfter).Error; err != nil {
 			t.Fatalf("count after failed: %v", err)
 		}
