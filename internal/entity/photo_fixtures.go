@@ -3655,7 +3655,7 @@ var PhotoFixtures = PhotoMap{
 		UpdatedAt:  time.Date(2024, 3, 15, 10, 5, 0, 0, time.UTC),
 		EditedAt:   nil,
 		CheckedAt:  &checkedTime,
-		DeletedAt:  nil,
+		DeletedAt:  gorm.DeletedAt{},
 		PhotoColor: 12,
 		PhotoStack: 0,
 		PhotoFaces: 0,

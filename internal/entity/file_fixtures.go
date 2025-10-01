@@ -3094,7 +3094,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       123456,
 		UpdatedAt:       time.Date(2024, 3, 15, 10, 5, 0, 0, time.UTC),
 		UpdatedIn:       123789,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 }
 
