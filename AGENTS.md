@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** September 26, 2025
+**Last Updated:** September 30, 2025
 
 ## Purpose
 
@@ -26,6 +26,8 @@ Learn more: https://agents.md/
 
 Note on specs repository availability
 - The `specs/` repository may be private and is not guaranteed to be present in every clone or environment. Do not add Makefile targets in the main project that depend on `specs/` paths. When `specs/` is available, run its tools directly (e.g., `bash specs/scripts/lint-status.sh`).
+- In the main repo, `specs/` appears ignored because it is managed as a nested Git repository; change into `specs/` before staging or committing spec updates.
+- When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 
 ## Project Structure & Languages
 
@@ -239,7 +241,12 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 - For CLI-driven tests, wrap commands with `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process, and assert CLI output with `assert.Contains`/regex because `show` reports quote strings.
 - In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it via `photoprism.SetConfig`.
 - Generate identifiers with `rnd.GenerateUID(entity.ClientUID)` for OAuth client IDs and `rnd.UUIDv7()` for node UUIDs; treat `node.uuid` as required in responses.
+- When adding persistent fixtures (photos, files, labels, etc.), always obtain new IDs via `rnd.GenerateUID(...)` with the matching prefix (`entity.PhotoUID`, `entity.FileUID`, `entity.LabelUID`, …) instead of inventing manual strings so the search helpers recognize them.
+- For database updates, prefer the `entity.Values` type alias over raw `map[string]interface{}` so helpers stay type-safe and consistent with existing code.
+- Reach for `config.NewMinimalTestConfig(t.TempDir())` when a test only needs filesystem/config scaffolding, and use `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` when you need a fresh SQLite schema without the cached fixture snapshot.
+- Avoid `config.TestConfig()` in new tests unless you truly need the fully seeded fixture set: it shares a singleton instance that runs `InitializeTestData()` and wipes `storage/testdata`. Tests that write to Originals/Import (e.g. WebDAV helpers) should instead call `config.NewMinimalTestConfig(t.TempDir())` (or the DB variant) and follow up with `conf.CreateDirectories()` so they operate on an isolated sandbox.
 - Shared fixtures live under `storage/testdata`; `NewTestConfig("<pkg>")` already calls `InitializeTestData()`, but call `c.InitializeTestData()` (and optionally `c.AssertTestData(t)`) when you construct custom configs so originals/import/cache/temp exist. `InitializeTestData()` clears old data, downloads fixtures if needed, then calls `CreateDirectories()`.
+- `PhotoFixtures.Get()` and similar helpers return value copies; when a test needs the database-backed row (with associations preloaded), re-query by UID/ID using helpers like `entity.FindPhoto(fixture)` so updates observe persisted IDs and in-memory caches stay coherent.
 - For slimmer tests that only need config objects, prefer the new helpers in `internal/config/test.go`: `NewMinimalTestConfig(t.TempDir())` when no database is needed, or `NewMinimalTestConfigWithDb("<pkg>", t.TempDir())` to spin up an isolated SQLite schema without seeding all fixtures.
 - When you need illustrative credentials (join tokens, client IDs/secrets, etc.), reuse the shared `Example*` constants (see `internal/service/cluster/examples.go`) so tests, docs, and examples stay consistent.
 
@@ -267,6 +274,7 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
 - When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
+- Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
 - Logging: use the shared logger (`event.Log`) via the package-level `log` variable (see `internal/auth/jwt/logger.go`) instead of direct `fmt.Print*` or ad-hoc loggers.
 - Cluster registry tests (`internal/service/cluster/registry`) currently rely on a full test config because they persist `entity.Client` rows. They run migrations and seed the SQLite DB, so they are intentionally slow. If you refactor them, consider sharing a single `config.TestConfig()` across subtests or building a lightweight schema harness; do not swap to the minimal config helper unless the tests stop touching the database.
 - Favor explicit CLI flags: check `c.cliCtx.IsSet("<flag>")` before overriding user-supplied values, and follow the `ClusterUUID` pattern (`options.yml` → CLI/env → generated UUIDv4 persisted).

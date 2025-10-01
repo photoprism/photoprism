@@ -199,7 +199,7 @@ func (m *Label) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// FirstOrCreateLabel returns the existing label, inserts a new label or nil in case of errors.
+// FirstOrCreateLabel reuses an existing label matched by slug/custom slug or creates and returns a new one; nil signals lookup/create failure.
 func FirstOrCreateLabel(m *Label) *Label {
 	if m.LabelSlug == "" && m.CustomSlug == "" {
 		return nil

@@ -5,6 +5,10 @@ import (
 	"reflect"
 )
 
+// Values is an shorthand alias for map[string]interface{}.
+// DO NOT USE THIS as Gorm2 does not support it.
+type Values = map[string]interface{}
+
 // ModelValues extracts Values from an entity model.
 func ModelValues(m interface{}, omit ...string) (result map[string]interface{}, omitted []interface{}, err error) {
 	return ModelValuesStructOption(m, true, omit...)
@@ -40,7 +44,7 @@ func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (re
 	num := t.NumField()
 
 	omitted = make([]interface{}, 0, len(omit))
-	result = make(map[string]interface{}, num)
+	result = make(Values, num)
 
 	// Add exported fields to result.
 	for i := 0; i < num; i++ {

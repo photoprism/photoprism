@@ -282,7 +282,7 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 npm: dep-npm npm-version
 npm-version:
-	@echo "✅ Installed npm $$(npm --version)"
+	@echo "📦 Installed npm $$(npm --version)."
 dep-npm:
 	@echo "Installing NPM package manager..."
 	@if command -v sudo >/dev/null 2>&1; then \
@@ -296,7 +296,7 @@ dep-js:
 	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
 codex: dep-codex codex-version
 codex-version:
-	@echo "✅ Installed $$(codex --version)"
+	@echo "🤖 Installed $$(codex --version)."
 dep-codex:
 	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
@@ -415,18 +415,12 @@ acceptance:
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=public --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
-acceptance-firefox:
-	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend && npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json --disable-native-automation "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json --test "testname" "tests/acceptance"'  && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=auth --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
-acceptance-auth-firefox:
-	$(info Running JS acceptance-auth tests in Firefox...)
-	(cd frontend && npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json --disable-native-automation "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)

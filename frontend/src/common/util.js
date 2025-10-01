@@ -726,6 +726,10 @@ export default class $util {
         return $gettext("Location");
       case "marker":
         return $gettext("Marker");
+      case "ollama":
+        return "Ollama";
+      case "openai":
+        return "OpenAI";
       case "caption":
         return $gettext("Caption");
       case "keyword":

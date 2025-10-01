@@ -51,6 +51,7 @@ type Options struct {
 	noInfoDownload bool
 }
 
+// DownloadOptions controls how yt-dlp downloads media on behalf of PhotoPrism.
 type DownloadOptions struct {
 	Filter            string // Download format matched by filter (usually a format id or quality designator).
 	AudioFormats      string // --audio-formats Download audio using formats (best, aac, alac, flac, m4a, mp3, opus, vorbis, wav).
@@ -63,6 +64,7 @@ type DownloadOptions struct {
 	Output            string
 }
 
+// DownloadWithOptions runs yt-dlp with the provided download options.
 func (result Metadata) DownloadWithOptions(
 	ctx context.Context,
 	options DownloadOptions,

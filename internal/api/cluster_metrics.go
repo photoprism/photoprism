@@ -15,12 +15,12 @@ import (
 // ClusterMetrics returns lightweight metrics about the cluster.
 //
 //	@Summary	temporary cluster metrics (counts only)
-//	@Id		ClusterMetrics
+//	@Id			ClusterMetrics
 //	@Tags		Cluster
 //	@Produce	json
 //	@Success	200			{object}	cluster.MetricsResponse
 //	@Failure	401,403,429	{object}	i18n.Response
-//	@Router	/api/v1/cluster/metrics [get]
+//	@Router		/api/v1/cluster/metrics [get]
 func ClusterMetrics(router *gin.RouterGroup) {
 	router.GET("/cluster/metrics", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceCluster, acl.ActionView)

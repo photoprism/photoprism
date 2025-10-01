@@ -7,6 +7,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 )
 
@@ -53,6 +54,36 @@ func TestIndex_Start(t *testing.T) {
 
 	t.Logf("index run 3: found %s", english.Plural(updated, "file", "files"))
 	t.Logf("index run 3: updated %s", english.Plural(updated, "file", "files"))
+}
+
+func TestNewIndexFindLabelsUsesVisionModelShouldRun(t *testing.T) {
+	prevVision := vision.Config
+	vision.Config = vision.NewConfig()
+	t.Cleanup(func() {
+		vision.Config = prevVision
+	})
+
+	cfg := config.NewConfig(config.CliTestContext())
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+
+	if ind == nil {
+		t.Fatalf("expected index instance")
+	}
+
+	if !ind.findLabels {
+		t.Fatalf("expected labels to be generated for default configuration")
+	}
+
+	vision.Config = &vision.ConfigValues{Models: vision.Models{
+		&vision.Model{Type: vision.ModelTypeLabels, Run: vision.RunManual},
+	}}
+
+	cfgManual := config.NewConfig(config.CliTestContext())
+	indManual := NewIndex(cfgManual, NewConvert(cfgManual), NewFiles(), NewPhotos())
+
+	if indManual.findLabels {
+		t.Fatalf("expected labels to be skipped when vision config disallows run")
+	}
 }
 
 func TestIndex_File(t *testing.T) {

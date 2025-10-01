@@ -19,6 +19,9 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
+
 	caller := "internal/service/cluster/provisioner/provisioner_test.go/TestMain"
 	dbc, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
@@ -34,7 +37,7 @@ func TestMain(m *testing.M) {
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
-	// TestMain ensures SQLite test DB artifacts are purged after the suite runs.
+	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 	os.Exit(code)
 }

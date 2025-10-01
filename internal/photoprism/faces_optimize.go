@@ -18,7 +18,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 	return w.OptimizeFor("")
 }
 
-// Optimize optimizes the face lookup table for the specified subj_uid or "" for all subjects
+// OptimizeFor optimizes the face lookup table for the given subject UID (or all when empty).
 func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
 		return result, fmt.Errorf("face recognition is disabled")

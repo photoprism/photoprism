@@ -73,6 +73,6 @@ func OIDCLogin(router *gin.RouterGroup) {
 		r.Success()
 
 		// Handle OIDC login request.
-		provider.AuthCodeUrlHandler(c)
+		provider.AuthURLHandler(c)
 	})
 }

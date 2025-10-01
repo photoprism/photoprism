@@ -18,6 +18,9 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
+
 	caller := "internal/service/cluster/instance/instance_test.go/TestMain"
 	dbc, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {

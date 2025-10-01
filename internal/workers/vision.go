@@ -25,23 +25,68 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Vision represents a computer vision worker.
+// Vision orchestrates background computer-vision tasks (labels, captions,
+// NSFW detection). It wraps configuration lookups and scheduling helpers.
 type Vision struct {
 	conf *config.Config
 }
 
-// NewVision returns a new Vision worker.
+// NewVision constructs a Vision worker bound to the provided configuration.
 func NewVision(conf *config.Config) *Vision {
 	return &Vision{conf: conf}
 }
 
-// originalsPath returns the original media files path as string.
+// StartScheduled executes the worker in scheduled mode, selecting models that
+// are allowed to run in the RunOnSchedule context.
+func (w *Vision) StartScheduled() {
+	models := w.scheduledModels()
+
+	if len(models) == 0 {
+		return
+	}
+
+	if err := w.Start(
+		w.conf.VisionFilter(),
+		0,
+		models,
+		entity.SrcAuto,
+		false,
+		vision.RunOnSchedule,
+	); err != nil {
+		log.Errorf("scheduler: %s (vision)", err)
+	}
+}
+
+// scheduledModels returns the model types that should run for scheduled jobs.
+func (w *Vision) scheduledModels() []string {
+	models := make([]string, 0, 3)
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeLabels)
+	}
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeNsfw)
+	}
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeCaption, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeCaption)
+	}
+
+	return models
+}
+
+// originalsPath returns the path that holds original media files.
 func (w *Vision) originalsPath() string {
 	return w.conf.OriginalsPath()
 }
 
-// Start runs the specified model types for photos matching the search query filter string.
-func (w *Vision) Start(filter string, count int, models []string, customSrc string, force bool) (err error) {
+// Start runs the requested vision models against photos matching the search
+// filter. `customSrc` allows the caller to override the metadata source string,
+// `force` regenerates metadata regardless of existing values, and `runType`
+// describes the scheduling context (manual, scheduled, etc.). A global worker
+// mutex prevents multiple vision jobs from running concurrently.
+func (w *Vision) Start(filter string, count int, models []string, customSrc string, force bool, runType vision.RunType) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("vision: %s (worker panic)\nstack: %s", r, debug.Stack())
@@ -55,6 +100,10 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	defer mutex.VisionWorker.Stop()
 
+	models = vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
+		return w.conf.VisionModelShouldRun(mt, when)
+	})
+
 	updateLabels := slices.Contains(models, vision.ModelTypeLabels)
 	updateNsfw := slices.Contains(models, vision.ModelTypeNsfw)
 	updateCaptions := slices.Contains(models, vision.ModelTypeCaption)
@@ -63,20 +112,11 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	if n := len(models); n == 0 {
 		log.Warnf("vision: no models were specified")
 		return nil
-	} else if n == 1 {
-		log.Infof("vision: running %s model", models[0])
 	} else {
-		log.Infof("vision: running %s models", strings.Join(models, " and "))
+		log.Infof("vision: running %s models", txt.JoinAnd(models))
 	}
 
-	// Source type for AI generated data.
-	var dataSrc string
-
-	if customSrc = clean.ShortTypeLower(customSrc); customSrc != "" {
-		dataSrc = customSrc
-	} else {
-		dataSrc = entity.SrcImage
-	}
+	customSrc = clean.ShortTypeLower(customSrc)
 
 	// Check time when worker was last executed.
 	updateIndex := false
@@ -133,13 +173,6 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		done[photo.PhotoUID] = true
 
 		photoName := path.Join(photo.PhotoPath, photo.PhotoName)
-		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
-		file, fileErr := photoprism.NewMediaFile(fileName)
-
-		if fileErr != nil {
-			log.Errorf("vision: failed to open %s (%s)", photoName, fileErr)
-			continue
-		}
 
 		m, loadErr := query.PhotoByUID(photo.PhotoUID)
 
@@ -148,32 +181,48 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			continue
 		}
 
+		generateLabels := updateLabels && m.ShouldGenerateLabels(force)
+		generateCaptions := updateCaptions && m.ShouldGenerateCaption(customSrc, force)
+		generateNsfw := updateNsfw && (!photo.PhotoPrivate || force)
+
+		if !(generateLabels || generateCaptions || generateNsfw) {
+			continue
+		}
+
+		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
+		file, fileErr := photoprism.NewMediaFile(fileName)
+
+		if fileErr != nil {
+			log.Errorf("vision: failed to open %s (%s)", photoName, fileErr)
+			continue
+		}
+
 		changed := false
 
 		// Generate labels.
-		if updateLabels && (len(m.Labels) == 0 || force) {
-			if labels := ind.Labels(file, dataSrc); len(labels) > 0 {
+		if generateLabels {
+			if labels := ind.Labels(file, customSrc); len(labels) > 0 {
 				m.AddLabels(labels)
 				changed = true
 			}
 		}
 
 		// Detect NSFW content.
-		if updateNsfw && (!photo.PhotoPrivate || force) {
-			if isNsfw := ind.IsNsfw(file); photo.PhotoPrivate != isNsfw {
-				photo.PhotoPrivate = isNsfw
+		if generateNsfw {
+			if isNsfw := ind.IsNsfw(file); m.PhotoPrivate != isNsfw {
+				m.PhotoPrivate = isNsfw
 				changed = true
-				log.Infof("vision: changed private flag of %s to %t", photoName, photo.PhotoPrivate)
+				log.Infof("vision: changed private flag of %s to %t", photoName, m.PhotoPrivate)
 			}
 		}
 
 		// Generate a caption if none exists or the force flag is used,
 		// and only if no caption was set or removed by a higher-priority source.
-		if updateCaptions && entity.SrcPriority[dataSrc] >= entity.SrcPriority[m.CaptionSrc] && (m.NoCaption() || force) {
-			if caption, captionErr := ind.Caption(file); captionErr != nil {
+		if generateCaptions {
+			if caption, captionErr := ind.Caption(file, customSrc); captionErr != nil {
 				log.Warnf("vision: %s in %s (generate caption)", clean.Error(captionErr), photoName)
-			} else if caption.Text = strings.TrimSpace(caption.Text); caption.Text != "" {
-				m.SetCaption(caption.Text, dataSrc)
+			} else if text := strings.TrimSpace(caption.Text); text != "" {
+				m.SetCaption(text, caption.Source)
 				if updateErr := m.UpdateCaptionLabels(); updateErr != nil {
 					log.Warnf("vision: %s in %s (update caption labels)", clean.Error(updateErr), photoName)
 				}

@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/functions"
 )
 
+// HashMap records the existence of hashes for originals or thumbnails.
 type HashMap map[string]bool
 
 // CountFileHashes counts distinct file hashes.

@@ -17,6 +17,7 @@ import (
 // FindCommand configures the command name, flags, and action.
 var FindCommand = &cli.Command{
 	Name:      "find",
+	Aliases:   []string{"search"},
 	Usage:     "Finds indexed files that match the specified search filters",
 	ArgsUsage: "[filter]...",
 	Flags: append(report.CliFlags, &cli.UintFlag{

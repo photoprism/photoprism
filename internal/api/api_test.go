@@ -35,6 +35,9 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
+
 	caller := "internal/api/api_test.go/TestMain"
 	dbc, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
@@ -47,10 +50,6 @@ func TestMain(m *testing.M) {
 	c := config.TestConfig()
 	get.SetConfig(c)
 	defer c.CloseDb()
-
-	// Tiny cleanup: ensure a clean registry for cluster/node tests.
-	// This avoids flaky conflicts when files from previous runs exist.
-	_ = os.RemoveAll(c.PortalConfigPath() + "/nodes")
 
 	// Increase login rate limit for testing.
 	limiter.Login = limiter.NewLimit(1, 10000)

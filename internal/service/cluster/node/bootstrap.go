@@ -29,6 +29,9 @@ import (
 
 var log = event.Log
 
+// Values is an shorthand alias for map[string]interface{}.
+type Values = map[string]interface{}
+
 func init() {
 	// Register early so this can adjust DB settings before connectDb().
 	config.RegisterEarly("cluster-node", InitConfig, nil)
@@ -213,7 +216,7 @@ func isTemporary(err error) bool {
 }
 
 func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRotateDatabase bool) error {
-	updates := map[string]interface{}{}
+	updates := Values{}
 
 	// Persist ClusterUUID from portal response if provided.
 	if rnd.IsUUID(r.UUID) {
@@ -296,7 +299,7 @@ func primeJWKS(c *config.Config, url string) {
 	}
 }
 
-func hasDBUpdate(m map[string]interface{}) bool {
+func hasDBUpdate(m Values) bool {
 	if _, ok := m["DatabaseDSN"]; ok {
 		return true
 	}
@@ -315,20 +318,20 @@ func hasDBUpdate(m map[string]interface{}) bool {
 	return false
 }
 
-func mergeOptionsYaml(c *config.Config, updates map[string]interface{}) error {
+func mergeOptionsYaml(c *config.Config, updates Values) error {
 	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
 		return err
 	}
 	fileName := c.OptionsYaml()
 
-	var m map[string]interface{}
+	var m Values
 	if fs.FileExists(fileName) {
 		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
 			_ = yaml.Unmarshal(b, &m)
 		}
 	}
 	if m == nil {
-		m = map[string]interface{}{}
+		m = Values{}
 	}
 	for k, v := range updates {
 		m[k] = v

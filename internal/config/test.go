@@ -353,7 +353,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
 	app.EnableBashCompletion = true
 	app.Flags = Flags.Cli()
-	app.Metadata = map[string]interface{}{
+	app.Metadata = Map{
 		"Name":    "PhotoPrism",
 		"About":   "PhotoPrism®",
 		"Edition": "ce",
@@ -545,12 +545,12 @@ func (c *Config) AssertTestData(t *testing.T) {
 			t.Logf("testdata: dir %s exists (%s)", clean.Log(dir),
 				report.Bool(fs.DirIsEmpty(dir), "empty", "not empty"))
 		} else {
-			t.Logf("testdata: dir %s is missing %s, but required", clean.Log(dir), report.CrossMark)
+			t.Logf("testdata: dir %s is missing %s, but required", clean.Log(dir), report.Cross)
 		}
 	}
 
 	reportErr := func(funcName string) {
-		t.Errorf("testdata: *Config.%s() must not return an empty string %s", funcName, report.CrossMark)
+		t.Errorf("testdata: *Config.%s() must not return an empty string %s", funcName, report.Cross)
 	}
 
 	if dir := c.AssetsPath(); dir != "" {

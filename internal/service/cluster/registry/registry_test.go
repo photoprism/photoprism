@@ -18,6 +18,9 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
+
 	// Init test logger.
 	log := logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)

@@ -6,6 +6,9 @@ const (
 	Yes         = "Yes"
 	No          = "No"
 	NotAssigned = "n/a"
-	CheckMark   = "✅"
-	CrossMark   = "❌"
+	Check       = "✅"
+	Cross       = "❌"
+	Star        = "⭐"
+	Robot       = "🤖"
+	Package     = "📦"
 )

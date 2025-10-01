@@ -17,6 +17,9 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
+
 	caller := "internal/entity/search/search_test.go/TestMain"
 	dbc, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {

@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/vision"
+
 	"github.com/photoprism/photoprism/internal/functions"
 )
 
@@ -69,4 +71,69 @@ func TestConfig_DetectNSFW(t *testing.T) {
 
 	result := c.DetectNSFW()
 	assert.Equal(t, true, result)
+}
+
+func TestConfig_VisionModelShouldRun(t *testing.T) {
+	t.Run("ClassificationDisabledLabels", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DisableClassification = true
+		withVisionConfig(t, vision.NewConfig())
+		if c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunManual) {
+			t.Fatalf("expected false when classification disabled")
+		}
+	})
+
+	t.Run("NilVisionConfig", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		withVisionConfig(t, nil)
+		if c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunManual) {
+			t.Fatalf("expected false when no vision config is loaded")
+		}
+	})
+
+	t.Run("DelegatesToVisionConfig", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		withVisionConfig(t, vision.NewConfig())
+		if !c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunManual) {
+			t.Fatalf("expected labels model to run manually with defaults")
+		}
+		if !c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex) {
+			t.Fatalf("expected labels model to run on index with defaults")
+		}
+	})
+
+	t.Run("CustomLabelsRunAfterIndex", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		defaultModel := vision.NasnetModel.Clone()
+		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom"}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{defaultModel, custom}})
+		if !c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunNewlyIndexed) {
+			t.Fatalf("expected custom labels model to run after indexing")
+		}
+		if c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex) {
+			t.Fatalf("expected custom labels model to skip on-index runs")
+		}
+	})
+}
+
+func TestConfig_VisionSchedule(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.VisionSchedule = ""
+	assert.Equal(t, "", c.VisionSchedule())
+
+	c.options.VisionSchedule = "0 6 * * *"
+	assert.Equal(t, "0 6 * * *", c.VisionSchedule())
+
+	c.options.VisionSchedule = "invalid"
+	assert.Equal(t, "", c.VisionSchedule())
+}
+
+func TestConfig_VisionFilter(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.VisionFilter = "  private:false  "
+	assert.Equal(t, "private:false", c.VisionFilter())
+
+	c.options.VisionFilter = ""
+	assert.Equal(t, "", c.VisionFilter())
 }

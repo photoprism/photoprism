@@ -8,7 +8,6 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/workers"
 )
 
@@ -24,18 +23,8 @@ var VisionRunCommand = &cli.Command{
 			Usage:   "computer vision `MODELS` to run, e.g. caption, labels, or nsfw",
 			Value:   "caption",
 		},
-		&cli.IntFlag{
-			Name:    "count",
-			Aliases: []string{"n"},
-			Usage:   "maximum `NUMBER` of pictures to be processed",
-			Value:   search.MaxResults,
-		},
-		&cli.StringFlag{
-			Name:    "source",
-			Aliases: []string{"s"},
-			Value:   entity.SrcImage,
-			Usage:   "custom data source `ROLE` e.g. default, image, meta, vision, or admin",
-		},
+		PicturesCountFlag(),
+		VisionSourceFlag(entity.SrcAuto),
 		&cli.BoolFlag{
 			Name:    "force",
 			Aliases: []string{"f"},
@@ -50,12 +39,19 @@ func visionRunAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		worker := workers.NewVision(conf)
 		filter := strings.TrimSpace(strings.Join(ctx.Args().Slice(), " "))
+		source, err := sanitizeVisionSource(ctx.String("source"))
+
+		if err != nil {
+			return cli.Exit(err.Error(), 1)
+		}
+
 		return worker.Start(
 			filter,
 			ctx.Int("count"),
-			vision.ParseTypes(ctx.String("models")),
-			ctx.String("source"),
+			vision.ParseModelTypes(ctx.String("models")),
+			string(source),
 			ctx.Bool("force"),
+			vision.RunManual,
 		)
 	})
 }

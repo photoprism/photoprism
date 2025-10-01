@@ -4,9 +4,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestClientsResetCommand(t *testing.T) {

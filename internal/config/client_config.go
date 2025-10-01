@@ -13,8 +13,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// ClientType identifies which flavor of client (public/share/user) a configuration describes.
 type ClientType string
 
+// Available client configuration types.
 const (
 	ClientPublic ClientType = "public"
 	ClientShare  ClientType = "share"
@@ -179,14 +181,17 @@ type ClientCounts struct {
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
 
+// CategoryLabels enumerates label metadata exposed to the client for navigation buckets.
 type CategoryLabels []CategoryLabel
 
+// CategoryLabel contains the slug and name for a single label entry surfaced to the client.
 type CategoryLabel struct {
 	LabelUID   string `json:"UID"`
 	CustomSlug string `json:"Slug"`
 	LabelName  string `json:"Name"`
 }
 
+// ClientPosition reports the map position of the currently focused photo in the UI.
 type ClientPosition struct {
 	PhotoUID string    `json:"uid"`
 	CellID   string    `json:"cid"`

@@ -189,7 +189,7 @@ func (m File) RegenerateIndex() {
 	log.Debugf("search: updated %s [%s]", scope, time.Since(start))
 }
 
-// FirstFileByHash gets a file in db from its hash
+// FirstFileByHash fetches the first file with the given hash, including soft-deleted rows via UnscopedDb.
 func FirstFileByHash(fileHash string) (File, error) {
 	var file File
 
@@ -198,7 +198,7 @@ func FirstFileByHash(fileHash string) (File, error) {
 	return file, res.Error
 }
 
-// PrimaryFile returns the primary file for a photo uid.
+// PrimaryFile finds the photo's primary file (primary flag set) regardless of soft-delete state.
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
 
@@ -570,7 +570,7 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	log.Debugf("file %s: renaming %s to %s", clean.Log(m.FileUID), clean.Log(m.FileName), clean.Log(fileName))
 
 	// Update database row.
-	if err := m.Updates(map[string]interface{}{
+	if err := m.Updates(Values{
 		"FileName":    fileName,
 		"FileRoot":    rootName,
 		"FileMissing": false,
@@ -586,7 +586,7 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
-		return p.Updates(map[string]interface{}{
+		return p.Updates(Values{
 			"PhotoPath": filePath,
 			"PhotoName": fileBase,
 		})

@@ -33,7 +33,7 @@ const (
 	StatusCommunity Status = "ce"
 )
 
-// Config represents backend api credentials for maps & geodata.
+// Config stores the encrypted Hub session and surface credentials used for maps and geodata requests.
 type Config struct {
 	Version   string     `json:"version" yaml:"-"`
 	FileName  string     `json:"-" yaml:"-"`
@@ -49,7 +49,7 @@ type Config struct {
 	PartnerID string     `json:"-" yaml:"-"`
 }
 
-// NewConfig creates a new backend api credentials instance.
+// NewConfig constructs a Hub configuration with the supplied version metadata and defaults for dynamic values.
 func NewConfig(version, fileName, serial, env, userAgent, partnerId string) *Config {
 	return &Config{
 		Version:   version,
@@ -65,7 +65,7 @@ func NewConfig(version, fileName, serial, env, userAgent, partnerId string) *Con
 	}
 }
 
-// MapKey returns the maps api key.
+// MapKey returns the decrypted maps API key by decoding the cached session when available.
 func (c *Config) MapKey() string {
 	if sess, err := c.DecodeSession(true); err != nil {
 		return ""
@@ -74,7 +74,7 @@ func (c *Config) MapKey() string {
 	}
 }
 
-// Tier returns the membership tier.
+// Tier returns the numeric membership tier from the decoded session; zero indicates none.
 func (c *Config) Tier() int {
 	if sess, err := c.DecodeSession(true); err != nil {
 		return 0
@@ -101,7 +101,7 @@ func (c *Config) Customer() string {
 	}
 }
 
-// Propagate updates backend api credentials in other packages.
+// Propagate publishes the current credentials to dependent packages (e.g. places search).
 func (c *Config) Propagate() {
 	places.Key = c.Key
 	places.Secret = c.Secret

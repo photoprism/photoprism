@@ -37,7 +37,7 @@ func TestGeo(t *testing.T) {
 		if result, err := PhotosGeo(query); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, 0, len(result))
+			assert.Len(t, result, 0)
 		}
 	})
 	t.Run("form.keywords", func(t *testing.T) {
@@ -426,7 +426,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("Albums", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -438,7 +438,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 2, len(photos))
+		assert.Len(t, photos, 2)
 	})
 	t.Run("City", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -450,7 +450,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 9, len(photos))
+		assert.Len(t, photos, 9)
 	})
 	t.Run("PathOrPath", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -745,7 +745,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(photos2))
+		assert.Len(t, photos, len(photos2))
 
 		var f3 form.SearchPhotosGeo
 
@@ -776,8 +776,8 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err4)
 		}
 
-		assert.Equal(t, len(photos3), len(photos4))
-		assert.Equal(t, len(photos), len(photos4))
+		assert.Len(t, photos3, len(photos4))
+		assert.Len(t, photos, len(photos4))
 
 		var f5 form.SearchPhotosGeo
 		f5.Subject = "js6sg6b1h1njaaad"
@@ -793,7 +793,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err5)
 		}
 
-		assert.Equal(t, len(photos5), len(photos4))
+		assert.Len(t, photos5, len(photos4))
 	})
 	t.Run("f.Scan = true", func(t *testing.T) {
 		var frm form.SearchPhotosGeo
@@ -1150,7 +1150,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		for _, r := range photos {
 			assert.IsType(t, GeoResult{}, r)

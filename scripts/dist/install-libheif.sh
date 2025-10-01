@@ -76,7 +76,7 @@ echo "--------------------------------------------------------------------------
 if curl -fsSL "$URL" | tar --overwrite --mode=755 -xz -C "$DESTDIR" 2> /dev/null; then
   echo "✅ Extracted \"$URL\" to \"$DESTDIR\""
 else
-  echo "❌ libheif binaries are not yet available for this architecture or distribution"
+  echo "❌ No libheif binaries are available for this architecture or distribution."
   exit 0
 fi
 

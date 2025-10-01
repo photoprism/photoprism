@@ -59,6 +59,9 @@ func TestTypeLower(t *testing.T) {
 		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result) // codespell:ignore
 		assert.Equal(t, LengthType, len(result))
 	})
+	t.Run("Ollama", func(t *testing.T) {
+		assert.Equal(t, "redule26/huihui_ai_qwen2.5-vl-7b-abliterated:latest", TypeLower("redule26/huihui_ai_qwen2.5-vl-7b-abliterated:latest"))
+	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", TypeLower(""))
 	})

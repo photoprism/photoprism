@@ -28,6 +28,8 @@ import (
 var webdavAuthExpiration = 5 * time.Minute
 var webdavAuthCache = gc.New(webdavAuthExpiration, webdavAuthExpiration)
 var webdavAuthMutex = sync.Mutex{}
+
+// BasicAuthRealm is the challenge string returned for WebDAV Basic auth prompts.
 var BasicAuthRealm = "Basic realm=\"WebDAV Authorization Required\""
 
 // WebDAVAuth checks authentication and authentication

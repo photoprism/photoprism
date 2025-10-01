@@ -21,7 +21,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 4, len(photos))
+		assert.Len(t, photos, 4)
 	})
 	t.Run("Pet*", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -34,7 +34,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -48,7 +48,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -170,9 +170,9 @@ func TestPhotosFilterAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 		if entity.DbDialect() == entity.MySQL || entity.DbDialect() == entity.Postgres {
-			assert.Equal(t, 0, len(photos))
+			assert.Len(t, photos, 0)
 		} else {
-			assert.Equal(t, 1, len(photos))
+			assert.Len(t, photos, 1)
 		}
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
@@ -295,7 +295,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 4, len(photos))
+		assert.Len(t, photos, 4)
 	})
 	t.Run("Pet*", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -308,7 +308,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -321,7 +321,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -334,7 +334,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -442,9 +442,9 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		}
 
 		if entity.DbDialect() == entity.MySQL || entity.DbDialect() == entity.Postgres {
-			assert.Equal(t, 0, len(photos))
+			assert.Len(t, photos, 0)
 		} else {
-			assert.Equal(t, 1, len(photos))
+			assert.Len(t, photos, 1)
 		}
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
@@ -487,7 +487,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos

@@ -16,11 +16,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
+// ThumbCache describes files persisted on disk for cached thumbnails and share images.
 type ThumbCache struct {
 	FileName  string
 	ShareName string
 }
 
+// ByteCache wraps in-memory cached byte slices for fast responses.
 type ByteCache struct {
 	Data []byte
 }

@@ -38,7 +38,10 @@ func authBasic(req *http.Request) {
 }
 
 func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 
 	// MKCOL
@@ -61,7 +64,10 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 }
 
 func TestWebDAVWrite_MOVE_COPY(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 
 	// Ensure source and destination directories via MKCOL
@@ -106,7 +112,10 @@ func TestWebDAVWrite_MOVE_COPY(t *testing.T) {
 }
 
 func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 
 	// Prepare src and dst

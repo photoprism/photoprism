@@ -173,6 +173,7 @@ func SetFileError(fileUID, errorString string) {
 	}
 }
 
+// FileMap maps file path keys (root + name) to their stored modification timestamp.
 type FileMap map[string]int64
 
 // IndexedFiles returns a map of already indexed files with their mod time unix timestamp as value.

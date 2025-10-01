@@ -1151,6 +1151,17 @@ var Flags = CliFlags{
 			Value:   "",
 			EnvVars: EnvVars("VISION_KEY"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "vision-schedule",
+			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
+			EnvVars: EnvVars("VISION_SCHEDULE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "vision-filter",
+			Usage:   "vision worker search `FILTER` applied to scheduled runs (same syntax as photoprism vision run)",
+			Value:   "public:true",
+			EnvVars: EnvVars("VISION_FILTER"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",

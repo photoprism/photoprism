@@ -392,7 +392,7 @@ func TestPhotoResults_Photos(t *testing.T) {
 
 	r := PhotoResults{photo1, photo2}
 
-	assert.Equal(t, 2, len(r.Photos()))
+	assert.Len(t, r.Photos(), 2)
 }
 
 func TestPhotosResults_Merged(t *testing.T) {

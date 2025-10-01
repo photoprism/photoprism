@@ -226,6 +226,8 @@ type Options struct {
 	VisionApi               bool          `yaml:"VisionApi" json:"-" flag:"vision-api"`
 	VisionUri               string        `yaml:"VisionUri" json:"-" flag:"vision-uri"`
 	VisionKey               string        `yaml:"VisionKey" json:"-" flag:"vision-key"`
+	VisionSchedule          string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
+	VisionFilter            string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	DetectNSFW              bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	FaceSize                int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore               float64       `yaml:"-" json:"-" flag:"face-score"`

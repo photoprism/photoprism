@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// ImportJob describes a media import task pulled from the worker queue.
 type ImportJob struct {
 	FileName  string
 	Related   RelatedFiles
@@ -18,6 +19,7 @@ type ImportJob struct {
 	Imp       *Import
 }
 
+// ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName string

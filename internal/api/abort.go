@@ -1,7 +1,7 @@
 package api
 
 import (
-	_ "embed"
+	_ "embed" // required for go:embed video placeholder
 	"net/http"
 	"strings"
 
@@ -18,6 +18,7 @@ import (
 //go:embed embed/video.mp4
 var brokenVideo []byte
 
+// Abort writes a localized error response and stops further handler processing.
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
 
@@ -30,6 +31,7 @@ func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	c.AbortWithStatusJSON(code, resp)
 }
 
+// Error aborts the request while attaching error details to the response payload.
 func Error(c *gin.Context, code int, err error, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
 
@@ -95,22 +97,27 @@ func AbortAlbumNotFound(c *gin.Context) {
 	Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 }
 
+// AbortSaveFailed aborts with a generic 500 "save failed" error.
 func AbortSaveFailed(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 }
 
+// AbortDeleteFailed aborts with a generic 500 "delete failed" error.
 func AbortDeleteFailed(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrDeleteFailed)
 }
 
+// AbortNotImplemented aborts with status 501 when a feature is unavailable.
 func AbortNotImplemented(c *gin.Context) {
 	Abort(c, http.StatusNotImplemented, i18n.ErrUnsupported)
 }
 
+// AbortUnexpectedError aborts with a generic 500 error.
 func AbortUnexpectedError(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 }
 
+// AbortBadRequest attaches validation details and responds with status 400.
 func AbortBadRequest(c *gin.Context, errs ...error) {
 	// Log and attach validation errors to the context.
 	for _, err := range errs {
@@ -127,34 +134,41 @@ func AbortBadRequest(c *gin.Context, errs ...error) {
 	Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 }
 
+// AbortFeatureDisabled aborts with a forbidden response when a feature is disabled.
 func AbortFeatureDisabled(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrFeatureDisabled)
 }
 
+// AbortQuotaExceeded aborts with a forbidden response when quotas are exhausted.
 func AbortQuotaExceeded(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrQuotaExceeded)
 }
 
+// AbortBusy responds with HTTP 429 to signal temporary overload.
 func AbortBusy(c *gin.Context) {
 	Abort(c, http.StatusTooManyRequests, i18n.ErrBusy)
 }
 
+// AbortInvalidName aborts with HTTP 400 when a name fails validation.
 func AbortInvalidName(c *gin.Context) {
 	Abort(c, http.StatusBadRequest, i18n.ErrInvalidName)
 }
 
+// AbortInvalidCredentials responds with HTTP 401 for failed authentication attempts.
 func AbortInvalidCredentials(c *gin.Context) {
 	if c != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authn.ErrInvalidCredentials.Error(), "code": i18n.ErrInvalidCredentials, "message": i18n.Msg(i18n.ErrInvalidCredentials)})
 	}
 }
 
+// AbortVideo writes a placeholder MP4 response for video errors.
 func AbortVideo(c *gin.Context) {
 	if c != nil {
 		AbortVideoWithStatus(c, http.StatusOK)
 	}
 }
 
+// AbortVideoWithStatus writes the placeholder MP4 response using the provided status code.
 func AbortVideoWithStatus(c *gin.Context, code int) {
 	if c != nil {
 		c.Data(code, header.ContentTypeMp4AvcMain, brokenVideo)

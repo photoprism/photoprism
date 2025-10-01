@@ -374,7 +374,7 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 
 	fileName := c.OptionsYaml()
 
-	var m map[string]interface{}
+	var m Map
 
 	if fs.FileExists(fileName) {
 		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
@@ -383,7 +383,7 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 	}
 
 	if m == nil {
-		m = map[string]interface{}{}
+		m = Map{}
 	}
 
 	m["ClusterUUID"] = uuid
@@ -418,14 +418,14 @@ func (c *Config) SaveNodeUUID(uuid string) error {
 
 	fileName := c.OptionsYaml()
 
-	var m map[string]interface{}
+	var m Map
 	if fs.FileExists(fileName) {
 		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
 			_ = yaml.Unmarshal(b, &m)
 		}
 	}
 	if m == nil {
-		m = map[string]interface{}{}
+		m = Map{}
 	}
 	m["NodeUUID"] = uuid
 	if b, err := yaml.Marshal(m); err != nil {

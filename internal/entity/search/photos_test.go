@@ -494,7 +494,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("form.subject", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -509,7 +509,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("form.subjects", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -524,7 +524,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("form.people", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -539,7 +539,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("form.hash", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -554,7 +554,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("form.portrait", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1808,7 +1808,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(photos2))
+		assert.Len(t, photos, len(photos2))
 
 		var f3 form.SearchPhotos
 
@@ -1839,8 +1839,8 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err4)
 		}
 
-		assert.Equal(t, len(photos3), len(photos4))
-		assert.Equal(t, len(photos), len(photos4))
+		assert.Len(t, photos3, len(photos4))
+		assert.Len(t, photos, len(photos4))
 	})
 	t.Run("Search in Title", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1856,7 +1856,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 		if len(photos) > 0 {
 			assert.Equal(t, photos[0].PhotoTitle, "Neckarbrücke")
 		}
@@ -1986,7 +1986,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal("error expected")
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("SearchGif", func(t *testing.T) {
 		var frm form.SearchPhotos
@@ -2314,7 +2314,7 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 
 		for _, p := range photos {
 			assert.NotEmpty(t, p.PhotoCaption)
@@ -2366,7 +2366,7 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		for _, p := range photos {
 			assert.NotEmpty(t, p.PhotoName)
@@ -2383,7 +2383,7 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		for _, p := range photos {
 			assert.NotEmpty(t, p.PhotoName)

@@ -275,6 +275,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-api", fmt.Sprintf("%t", c.VisionApi())},
 		{"vision-uri", c.VisionUri()},
 		{"vision-key", strings.Repeat("*", utf8.RuneCountInString(c.VisionKey()))},
+		{"vision-schedule", c.VisionSchedule()},
+		{"vision-filter", c.VisionFilter()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},

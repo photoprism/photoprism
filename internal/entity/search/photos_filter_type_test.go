@@ -20,7 +20,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 3, len(photos))
+		assert.Len(t, photos, 3)
 	})
 	t.Run("raw", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -33,7 +33,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 2, len(photos))
+		assert.Len(t, photos, 2)
 	})
 	t.Run("animated", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -46,7 +46,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("raw pipe video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -59,7 +59,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 5, len(photos))
+		assert.Len(t, photos, 5)
 	})
 	t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -72,7 +72,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 5, len(photos))
+		assert.Len(t, photos, 5)
 	})
 	t.Run("raw or video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -85,7 +85,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("raw OR video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -98,7 +98,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -111,7 +111,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -124,7 +124,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -137,7 +137,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -150,7 +150,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -163,7 +163,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -176,7 +176,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -189,7 +189,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -203,7 +203,7 @@ func TestPhotosFilterType(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -216,7 +216,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -229,7 +229,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -242,7 +242,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -255,7 +255,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -268,7 +268,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -282,7 +282,7 @@ func TestPhotosFilterType(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -296,7 +296,7 @@ func TestPhotosFilterType(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -309,7 +309,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -322,7 +322,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -335,7 +335,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 }
 
@@ -351,7 +351,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 3, len(photos))
+		assert.Len(t, photos, 3)
 	})
 	t.Run("raw", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -364,7 +364,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 2, len(photos))
+		assert.Len(t, photos, 2)
 	})
 	t.Run("animated", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -377,7 +377,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("raw pipe video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -390,7 +390,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 5, len(photos))
+		assert.Len(t, photos, 5)
 	})
 	t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -403,7 +403,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 5, len(photos))
+		assert.Len(t, photos, 5)
 	})
 	t.Run("raw or video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -416,7 +416,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("raw OR video", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -429,7 +429,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -442,7 +442,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -455,7 +455,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -468,7 +468,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -481,7 +481,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -494,7 +494,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -507,7 +507,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -520,7 +520,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -534,7 +534,7 @@ func TestPhotosQueryType(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -547,7 +547,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -560,7 +560,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -573,7 +573,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -586,7 +586,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -599,7 +599,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -613,7 +613,7 @@ func TestPhotosQueryType(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -626,7 +626,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -639,7 +639,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -652,7 +652,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -665,6 +665,6 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 }

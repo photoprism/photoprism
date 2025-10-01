@@ -20,7 +20,7 @@ func TestSubjects(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Count: 2, Order: "count"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.Equal(t, 2, len(results))
+		assert.Len(t, results, 2)
 		if len(results) > 1 {
 			assert.GreaterOrEqual(t, results[0].FileCount, results[1].FileCount)
 		}
@@ -65,13 +65,13 @@ func TestSubjects(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Private: "true"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.Equal(t, 0, len(results))
+		assert.Len(t, results, 0)
 	})
 	t.Run("search excluded", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Excluded: "ja"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.Equal(t, 0, len(results))
+		assert.Len(t, results, 0)
 	})
 	t.Run("search file count >2", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Files: 2, Excluded: "no"})
@@ -92,7 +92,7 @@ func TestSubjects(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "js6sg6b2h8njw0sx"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.Equal(t, 1, len(results))
+		assert.Len(t, results, 1)
 		if len(results) > 0 {
 			assert.Equal(t, "Joe Biden", results[0].SubjName)
 		}
@@ -104,18 +104,18 @@ func TestSubjectUIDs(t *testing.T) {
 		results, _, _ := SubjectUIDs("Powell")
 		//t.Logf("Subjects: %#v", results)
 		//t.Logf("Names: %#v", names)
-		assert.Equal(t, 1, len(results))
+		assert.Len(t, results, 1)
 	})
 	t.Run("search for not existing name", func(t *testing.T) {
 		results, _, _ := SubjectUIDs("Anonymous")
 		//t.Logf("Subjects: %#v", results)
 		//t.Logf("Names: %#v", names)
-		assert.Equal(t, 0, len(results))
+		assert.Len(t, results, 0)
 	})
 	t.Run("search with empty string", func(t *testing.T) {
 		results, _, _ := SubjectUIDs("")
 		//t.Logf("Subjects: %#v", results)
 		//t.Logf("Names: %#v", names)
-		assert.Equal(t, 0, len(results))
+		assert.Len(t, results, 0)
 	})
 }

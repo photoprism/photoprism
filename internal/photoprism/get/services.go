@@ -60,6 +60,7 @@ var services struct {
 	JWTVerifier *clusterjwt.Verifier
 }
 
+// SetConfig stores the shared Config for service constructors.
 func SetConfig(c *config.Config) {
 	if c == nil {
 		log.Panic("panic: argument is nil in get.SetConfig(c *config.Config)")
@@ -73,6 +74,7 @@ func SetConfig(c *config.Config) {
 	photoprism.SetConfig(c)
 }
 
+// Config returns the shared Config used by the service registry.
 func Config() *config.Config {
 	if conf == nil {
 		log.Panic("panic: conf is nil in get.Config()")

@@ -19,6 +19,11 @@ func (m *Photo) NoCaption() bool {
 	return strings.TrimSpace(m.GetCaption()) == ""
 }
 
+// ShouldGenerateCaption checks if a caption should be generated for this model.
+func (m *Photo) ShouldGenerateCaption(src Src, force bool) bool {
+	return SrcPriority[src] >= SrcPriority[m.CaptionSrc] && (m.NoCaption() || force)
+}
+
 // GetCaption returns the photo caption, if any.
 func (m *Photo) GetCaption() string {
 	return m.PhotoCaption

@@ -694,7 +694,7 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 		return nil
 	}
 
-	if err := m.Updates(map[string]interface{}{
+	if err := m.Updates(Values{
 		"AlbumPath":   albumPath,
 		"AlbumFilter": albumFilter,
 		"AlbumSlug":   albumSlug,

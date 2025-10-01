@@ -773,6 +773,12 @@
                 "UsageInfo": {
                     "type": "boolean"
                 },
+                "VisionFilter": {
+                    "type": "string"
+                },
+                "VisionSchedule": {
+                    "type": "string"
+                },
                 "WakeupInterval": {
                     "$ref": "#/definitions/time.Duration"
                 },
@@ -4460,14 +4466,16 @@
                 "url",
                 "images",
                 "vision",
-                "ollama"
+                "ollama",
+                "openai"
             ],
             "type": "string",
             "x-enum-varnames": [
                 "ApiFormatUrl",
                 "ApiFormatImages",
                 "ApiFormatVision",
-                "ApiFormatOllama"
+                "ApiFormatOllama",
+                "ApiFormatOpenAI"
             ]
         },
         "vision.ApiRequest": {
@@ -4704,11 +4712,25 @@
         },
         "vision.Model": {
             "properties": {
+                "Run": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/vision.RunType"
+                        }
+                    ],
+                    "description": "\"auto\", \"never\", \"manual\", \"always\", \"newly-indexed\", \"on-schedule\""
+                },
                 "default": {
                     "type": "boolean"
                 },
                 "disabled": {
                     "type": "boolean"
+                },
+                "engine": {
+                    "$ref": "#/definitions/vision.ModelEngine"
+                },
+                "format": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -4721,6 +4743,12 @@
                 },
                 "resolution": {
                     "type": "integer"
+                },
+                "schema": {
+                    "type": "string"
+                },
+                "schemaFile": {
+                    "type": "string"
                 },
                 "service": {
                     "$ref": "#/definitions/vision.Service"
@@ -4740,19 +4768,77 @@
             },
             "type": "object"
         },
+        "vision.ModelEngine": {
+            "enum": [
+                "vision",
+                "tensorflow",
+                "local"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "EngineVision",
+                "EngineTensorFlow",
+                "EngineLocal"
+            ]
+        },
         "vision.ModelType": {
             "enum": [
                 "labels",
                 "nsfw",
                 "face",
-                "caption"
+                "caption",
+                "generate"
             ],
             "type": "string",
             "x-enum-varnames": [
                 "ModelTypeLabels",
                 "ModelTypeNsfw",
                 "ModelTypeFace",
-                "ModelTypeCaption"
+                "ModelTypeCaption",
+                "ModelTypeGenerate"
+            ]
+        },
+        "vision.RunType": {
+            "enum": [
+                "",
+                "never",
+                "manual",
+                "always",
+                "newly-indexed",
+                "on-demand",
+                "on-schedule",
+                "on-index"
+            ],
+            "type": "string",
+            "x-enum-comments": {
+                "RunAlways": "Run manually, on-schedule, on-demand, and on-index.",
+                "RunAuto": "Automatically decide when to run based on model type and configuration.",
+                "RunManual": "Only run manually e.g. with the \"vision run\" command.",
+                "RunNever": "Never run the model.",
+                "RunNewlyIndexed": "Run manually amd for newly-indexed pictures.",
+                "RunOnDemand": "Run manually, for newly-indexed pictures, and on configured schedule.",
+                "RunOnIndex": "Run manually and on-index.",
+                "RunOnSchedule": "Run manually and on-schedule."
+            },
+            "x-enum-descriptions": [
+                "Automatically decide when to run based on model type and configuration.",
+                "Never run the model.",
+                "Only run manually e.g. with the \"vision run\" command.",
+                "Run manually, on-schedule, on-demand, and on-index.",
+                "Run manually amd for newly-indexed pictures.",
+                "Run manually, for newly-indexed pictures, and on configured schedule.",
+                "Run manually and on-schedule.",
+                "Run manually and on-index."
+            ],
+            "x-enum-varnames": [
+                "RunAuto",
+                "RunNever",
+                "RunManual",
+                "RunAlways",
+                "RunNewlyIndexed",
+                "RunOnDemand",
+                "RunOnSchedule",
+                "RunOnIndex"
             ]
         },
         "vision.Service": {

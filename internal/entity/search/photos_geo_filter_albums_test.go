@@ -39,7 +39,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -74,7 +74,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -110,7 +110,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		// t.Log(photos)
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -145,7 +145,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -180,7 +180,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -215,7 +215,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -251,7 +251,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -286,7 +286,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -321,7 +321,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -356,7 +356,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -373,7 +373,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 
 		var geo form.SearchPhotosGeo
 
@@ -390,7 +390,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -404,7 +404,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 
 		var geo form.SearchPhotosGeo
 
@@ -421,7 +421,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -453,7 +453,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -470,7 +470,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		var geo form.SearchPhotosGeo
 
@@ -487,7 +487,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -501,7 +501,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 
 		var geo form.SearchPhotosGeo
 
@@ -518,7 +518,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -550,7 +550,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -567,7 +567,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 
 		var geo form.SearchPhotosGeo
 
@@ -584,7 +584,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -616,7 +616,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -651,7 +651,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -668,7 +668,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 
 		var geo form.SearchPhotosGeo
 
@@ -685,7 +685,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -717,7 +717,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -752,7 +752,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -769,7 +769,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		var geo form.SearchPhotosGeo
 
@@ -786,7 +786,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -823,7 +823,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -858,7 +858,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -893,7 +893,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -928,7 +928,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -963,7 +963,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -998,7 +998,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1033,7 +1033,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1068,7 +1068,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1103,7 +1103,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1138,7 +1138,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1173,7 +1173,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1211,7 +1211,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1246,7 +1246,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1280,7 +1280,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1314,7 +1314,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1348,7 +1348,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1382,7 +1382,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1416,7 +1416,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1450,7 +1450,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1484,7 +1484,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1518,7 +1518,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1550,7 +1550,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1579,7 +1579,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1610,7 +1610,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1642,7 +1642,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1671,7 +1671,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1702,7 +1702,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1734,7 +1734,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1766,7 +1766,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1800,7 +1800,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1832,7 +1832,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1863,7 +1863,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1897,7 +1897,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -1929,7 +1929,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -1966,7 +1966,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2000,7 +2000,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2034,7 +2034,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2068,7 +2068,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2102,7 +2102,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2136,7 +2136,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2170,7 +2170,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2204,7 +2204,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2238,7 +2238,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2272,7 +2272,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
@@ -2306,7 +2306,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		assert.Greater(t, len(photos), 0)
 		assert.Greater(t, len(geophotos), 0)
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 		if len(photos) > 0 && len(geophotos) > 0 {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}

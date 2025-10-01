@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
+	_ "image/gif"  // register GIF decoder
+	_ "image/jpeg" // register JPEG decoder
+	_ "image/png"  // register PNG decoder
 	"io"
 	"math"
 	"os"
@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
-	_ "golang.org/x/image/bmp"
-	_ "golang.org/x/image/tiff"
-	_ "golang.org/x/image/webp"
+	_ "golang.org/x/image/bmp"  // register BMP decoder
+	_ "golang.org/x/image/tiff" // register TIFF decoder
+	_ "golang.org/x/image/webp" // register WebP decoder
 
 	"github.com/djherbis/times"
 	"github.com/dustin/go-humanize"
@@ -220,6 +220,7 @@ func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 	return m.takenAt, m.takenAtLocal, m.takenAtSrc
 }
 
+// HasTimeAndPlace reports whether both TakenAt and GPS coordinates are available.
 func (m *MediaFile) HasTimeAndPlace() bool {
 	data := m.MetaData()
 

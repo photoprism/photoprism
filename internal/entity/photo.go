@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -33,7 +34,7 @@ var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 
 var photoMutex = sync.Mutex{}
 
-// MapKey returns a key referencing time and location for indexing.
+// MapKey builds a deterministic indexing key from the capture timestamp and spatial cell identifier.
 func MapKey(takenAt time.Time, cellId string) string {
 	return path.Join(strconv.FormatInt(takenAt.Unix(), 36), cellId)
 }
@@ -111,12 +112,12 @@ func (Photo) TableName() string {
 	return "photos"
 }
 
-// NewPhoto creates a new photo with default values.
+// NewPhoto returns a Photo with default metadata placeholders and the requested stack flag.
 func NewPhoto(stackable bool) Photo {
 	return NewUserPhoto(stackable, "")
 }
 
-// NewUserPhoto creates a photo owned by a user.
+// NewUserPhoto returns a Photo initialized for the given user UID, including default Unknown* references and stack state.
 func NewUserPhoto(stackable bool, userUid string) Photo {
 	m := Photo{
 		PhotoTitle:   UnknownTitle,
@@ -143,7 +144,8 @@ func NewUserPhoto(stackable bool, userUid string) Photo {
 	return m
 }
 
-// SavePhotoForm saves a model in the database using form data.
+// SavePhotoForm merges a photo form submission into the Photo, normalizes data, refreshes derived metadata, and persists the changes.
+// The photo must already exist in the database; after saving, derived counters are updated asynchronously.
 func SavePhotoForm(m *Photo, form form.Photo) error {
 	if m == nil {
 		return fmt.Errorf("photo is nil")
@@ -352,7 +354,7 @@ func (m *Photo) String() string {
 	return "*Photo"
 }
 
-// FirstOrCreate fetches an existing row from the database or inserts a new one.
+// FirstOrCreate inserts the Photo if it does not exist and otherwise reloads the persisted row with its associations.
 func (m *Photo) FirstOrCreate() *Photo {
 	find := &Photo{}
 	// Find photo by uid.
@@ -375,7 +377,7 @@ func (m *Photo) FirstOrCreate() *Photo {
 	return FindPhoto(*m)
 }
 
-// Create inserts a new photo to the database.
+// Create persists a new Photo while holding the package mutex and ensures the related Details record exists.
 func (m *Photo) Create() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
@@ -391,7 +393,7 @@ func (m *Photo) Create() error {
 	return nil
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save writes Photo changes, creates missing rows, and re-resolves the primary file relationship.
 func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
@@ -444,7 +446,7 @@ func (m *Photo) Save() error {
 	return m.ResolvePrimary()
 }
 
-// FindPhoto fetches the matching record or returns null if it was not found.
+// FindPhoto looks up a Photo by UID or numeric ID and preloads key associations used by higher layers.
 func FindPhoto(find Photo) *Photo {
 	if find.PhotoUID == "" && find.ID == 0 {
 		return nil
@@ -487,7 +489,7 @@ func (m *Photo) Find() *Photo {
 	return FindPhoto(*m)
 }
 
-// SaveLabels updates the photo after labels have changed.
+// SaveLabels recalculates derived metadata after label edits, persists the Photo, and schedules count updates.
 func (m *Photo) SaveLabels() error {
 	if !m.HasID() {
 		return errors.New("photo: cannot save to database, id is empty")
@@ -523,7 +525,7 @@ func (m *Photo) SaveLabels() error {
 	return nil
 }
 
-// ClassifyLabels returns all associated labels as classify.Labels
+// ClassifyLabels converts attached PhotoLabel relations into classify.Labels for downstream AI components.
 func (m *Photo) ClassifyLabels() classify.Labels {
 	result := classify.Labels{}
 
@@ -594,7 +596,7 @@ func (m *Photo) RemoveKeyword(w string) error {
 	return nil
 }
 
-// UpdateLabels updates labels that are automatically set based on the photo title, subject, and keywords.
+// UpdateLabels refreshes automatically generated labels derived from the title, caption, subject metadata, and keywords.
 func (m *Photo) UpdateLabels() error {
 	if err := m.UpdateTitleLabels(); err != nil {
 		return err
@@ -687,7 +689,7 @@ func (m *Photo) UpdateKeywordLabels() error {
 	return Db().Where("label_src = ? AND photo_id = ? AND label_id NOT IN (?)", classify.SrcKeyword, m.ID, labelIds).Delete(&PhotoLabel{}).Error
 }
 
-// IndexKeywords adds given keywords to the photo entry
+// IndexKeywords synchronizes the photo-keyword join table based on normalized keywords from titles, captions, and metadata.
 func (m *Photo) IndexKeywords() error {
 	db := UnscopedDb()
 	details := m.GetDetails()
@@ -799,7 +801,7 @@ func (m *Photo) UnknownLens() bool {
 	return m.LensID == 0 || m.LensID == UnknownLens.ID
 }
 
-// GetDetails returns optional photo metadata.
+// GetDetails loads or lazily creates the Details record backing optional photo metadata.
 func (m *Photo) GetDetails() *Details {
 	if m.Details != nil {
 		m.Details.PhotoID = m.ID
@@ -831,26 +833,74 @@ func (m *Photo) SaveDetails() error {
 	}
 }
 
-// AddLabels updates the entity with additional or updated label information.
+// ShouldGenerateLabels reports whether automatic vision labels should be generated for the photo.
+// It allows regeneration when forced, when no labels exist, or when only manual/high-uncertainty
+// labels are present so low-confidence results do not block improved predictions.
+func (m *Photo) ShouldGenerateLabels(force bool) bool {
+	// Return true if force is set or there are no labels yet.
+	if len(m.Labels) == 0 || force {
+		return true
+	}
+
+	// Check if any of the existing labels were generated using a vision model.
+	for _, l := range m.Labels {
+		if l.Uncertainty >= 100 {
+			continue
+		}
+
+		if list.Contains(VisionSrcList, l.LabelSrc) {
+			return false
+		} else if l.LabelSrc == SrcCaption && list.Contains(VisionSrcList, m.CaptionSrc) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// AddLabels ensures classify labels exist as Label entities and attaches them to the photo.
+// Labels are skipped when they have no usable title or carry 0% probability so that UpdateClassify
+// never receives invalid input from upstream detectors.
 func (m *Photo) AddLabels(labels classify.Labels) {
 	for _, classifyLabel := range labels {
-		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
+
+		title := classifyLabel.Title()
+
+		if title == "" || txt.Slug(title) == "" {
+			log.Debugf("index: skipping blank label (%s)", m)
+			continue
+		}
+
+		if classifyLabel.Uncertainty >= 100 {
+			log.Debugf("index: skipping label %s with zero probability (%s)", title, m)
+			continue
+		}
+
+		labelEntity := FirstOrCreateLabel(NewLabel(title, classifyLabel.Priority))
 
 		if labelEntity == nil {
-			log.Errorf("index: label %s could not be created (%s)", clean.Log(classifyLabel.Title()), m)
+			log.Errorf("index: label %s could not be created (%s)", clean.Log(title), m)
 			continue
 		}
 
 		if labelEntity.Deleted() {
-			log.Debugf("index: skipping deleted label %s (%s)", clean.Log(classifyLabel.Title()), m)
+			log.Debugf("index: skipping deleted label %s (%s)", clean.Log(title), m)
 			continue
 		}
 
 		if err := labelEntity.UpdateClassify(classifyLabel); err != nil {
-			log.Errorf("index: failed to update label %s (%s)", clean.Log(classifyLabel.Title()), err)
+			log.Errorf("index: failed to update label %s (%s)", clean.Log(title), err)
 		}
 
-		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
+		labelSrc := classifyLabel.Source
+
+		if labelSrc == SrcAuto {
+			labelSrc = SrcImage
+		} else {
+			labelSrc = clean.ShortTypeLower(labelSrc)
+		}
+
+		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, labelSrc))
 
 		if photoLabel == nil {
 			log.Errorf("index: photo-label %d should not be nil - you may have found a bug (%s)", labelEntity.ID, m)
@@ -858,13 +908,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 
 		if photoLabel.HasID() && photoLabel.Uncertainty > classifyLabel.Uncertainty && photoLabel.Uncertainty < 100 {
-			var labelSrc string
-			if classifyLabel.Source == "" {
-				labelSrc = SrcImage
-			} else {
-				labelSrc = clean.ShortTypeLower(classifyLabel.Source)
-			}
-			if err := photoLabel.Updates(map[string]interface{}{
+			if err := photoLabel.Updates(Values{
 				"Uncertainty": classifyLabel.Uncertainty,
 				"LabelSrc":    labelSrc,
 			}); err != nil {
@@ -1022,7 +1066,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 		}
 	}
 
-	return files, m.Updates(map[string]interface{}{"DeletedAt": Now(), "PhotoQuality": -1})
+	return files, m.Updates(Values{"DeletedAt": Now(), "PhotoQuality": -1})
 }
 
 // DeletePermanently permanently removes a photo from the index.
@@ -1100,7 +1144,7 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	m.PhotoFavorite = favorite
 	m.PhotoQuality = m.QualityScore()
 
-	if err := m.Updates(map[string]interface{}{"PhotoFavorite": m.PhotoFavorite, "PhotoQuality": m.PhotoQuality}); err != nil {
+	if err := m.Updates(Values{"PhotoFavorite": m.PhotoFavorite, "PhotoQuality": m.PhotoQuality}); err != nil {
 		return err
 	}
 
@@ -1243,6 +1287,17 @@ func (m *Photo) FaceCount() int {
 	} else {
 		return f.ValidFaceCount()
 	}
+}
+
+// IsNewlyIndexed returns true if no CheckedAt timestamp is set yet.
+func (m *Photo) IsNewlyIndexed() bool {
+	if m.CheckedAt == nil {
+		return true
+	} else if m.CheckedAt.IsZero() {
+		return true
+	}
+
+	return false
 }
 
 // UnscopedSearchFirstPhoto populates photo with the results of a Where(query, values) including soft delete records

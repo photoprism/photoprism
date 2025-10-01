@@ -1,5 +1,6 @@
 package dl
 
+// Thumbnail models a thumbnail entry returned by yt-dlp metadata.
 type Thumbnail struct {
 	ID         string `json:"id"`
 	URL        string `json:"url"`
