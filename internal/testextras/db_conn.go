@@ -25,6 +25,7 @@ const (
 	SQLite3         = "sqlite"
 	SQLiteTestDB    = ".test.db"
 	SQLiteMemoryDSN = ":memory:?cache=shared&_foreign_keys=on"
+	SQLiteMutexDSN  = "/go/src/github.com/photoprism/photoprism/storage/testdata/unit.mutex.db?_busy_timeout=5000&_foreign_keys=on"
 )
 
 var drivers = map[string]func(string) gorm.Dialector{

@@ -109,7 +109,7 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, err error) {
 	// Set default database DSN.
 	if driver == SQLite3 {
 		if dsn == "" {
-			dsn = SQLiteMemoryDSN
+			dsn = SQLiteMutexDSN
 		} else if dsn != SQLiteTestDB {
 			// Continue.
 		} else if err := os.Remove(dsn); err == nil {
