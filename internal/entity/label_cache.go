@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -102,6 +103,7 @@ func FindLabel(name string, cached bool) (*Label, error) {
 
 	// Use the label slug as natural key cache.
 	cacheKey := txt.Slug(name)
+	cleanName := clean.LabelName(name)
 
 	if cacheKey == "" {
 		return &Label{}, fmt.Errorf("invalid label slug %s", clean.LogQuote(cacheKey))
@@ -110,12 +112,32 @@ func FindLabel(name string, cached bool) (*Label, error) {
 	// Return cached label, if found.
 	if cached {
 		if cacheData, ok := labelCache.Get(cacheKey); ok {
-			log.Tracef("label: cache hit for %s", cacheKey)
 
 			// Get cached data.
 			if result := cacheData.(*Label); result.HasID() {
-				// Return cached entity.
-				return result, nil
+				if result.MaxHomophone != "" {
+					if strings.EqualFold(clean.LabelName(result.LabelName), cleanName) {
+						log.Tracef("label: homophone cache hit for %s", cacheKey)
+						return result, nil
+					} else {
+						// Walk the cache
+						for c := range result.MaxHomophone[0] - byte('a') + 1 {
+							key := fmt.Sprintf("%s-c-%c", cacheKey, c+byte('a'))
+							if cacheData2, ok := labelCache.Get(key); ok {
+								if result2 := cacheData2.(*Label); result2.HasID() {
+									if strings.EqualFold(clean.LabelName(result2.LabelName), cleanName) {
+										log.Tracef("label: homophone cache hit for %s", key)
+										return result2, nil
+									}
+								}
+							}
+						}
+					}
+				} else {
+					log.Tracef("label: cache hit for %s", cacheKey)
+					// Return cached entity.
+					return result, nil
+				}
 			} else {
 				// Return cached "not found" error.
 				return &Label{}, fmt.Errorf("label not found")
@@ -125,15 +147,24 @@ func FindLabel(name string, cached bool) (*Label, error) {
 
 	// Fetch and cache label.
 	result := &Label{}
-
-	if find := Db().First(result, "(label_slug <> '' AND label_slug = ? OR custom_slug <> '' AND custom_slug = ?)", cacheKey, cacheKey); find.RecordNotFound() {
+	var labels []Label
+	slugLike := cacheKey + "-c-_"
+	if dbResult := Db().Where("(label_slug <> '' AND (label_slug = ? OR label_slug like ?)) OR (custom_slug <> '' AND custom_slug = ?)", cacheKey, slugLike, cacheKey).Find(&labels); dbResult.Error != nil {
+		labelCache.Set(cacheKey, result, labelCacheErrorExpiration)
+		log.Errorf("findlabel: label %s not found with error %s", name, dbResult.Error)
+		return result, dbResult.Error
+	}
+	if len(labels) == 0 {
 		labelCache.Set(cacheKey, result, labelCacheErrorExpiration)
 		return result, fmt.Errorf("label not found")
-	} else if find.Error != nil {
-		labelCache.Set(cacheKey, result, labelCacheErrorExpiration)
-		return result, find.Error
 	} else {
-		labelCache.SetDefault(result.LabelSlug, result)
+		for _, label := range labels {
+			if label.MaxHomophone == "" || strings.EqualFold(clean.LabelName(label.LabelName), cleanName) {
+				labelCache.SetDefault(label.LabelSlug, &label)
+				log.Tracef("label: db hit for %s", label.LabelSlug)
+				return &label, nil
+			}
+		}
 	}
 
 	return result, nil

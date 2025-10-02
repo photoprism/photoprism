@@ -46,6 +46,7 @@ type Label struct {
 	PublishedAt      *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	New              bool       `gorm:"-" json:"-" yaml:"-"`
+	MaxHomophone     string     `gorm:"type:VARCHAR(1);" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -229,11 +230,17 @@ func FirstOrCreateLabel(m *Label) *Label {
 		if len(labels) > 0 {
 			// ToDo: Handle the homophone length exceeding txt.ClipSlug better.
 			// Although it's pretty unlikely to happen.
-			m.LabelSlug = txt.Clip(fmt.Sprintf("%s-c-%s", m.LabelSlug, string(slugChar)), txt.ClipSlug)
-			m.CustomSlug = m.LabelSlug
 			if slugChar > byte('z') {
 				log.Errorf("label: %s (find or create %s)", fmt.Errorf("to many homophones for slug"), m.LabelSlug)
 				return nil
+			} else {
+				if err := UnscopedDb().Model(&Label{}).Where("label_slug = ? or label_slug like ?", m.LabelSlug, slugLike).Update("max_homophone", string(slugChar)).Error; err != nil {
+					log.Errorf("label: %s (find or create %s)", err, m.LabelSlug)
+					return nil
+				}
+				m.LabelSlug = txt.Clip(fmt.Sprintf("%s-c-%s", m.LabelSlug, string(slugChar)), txt.ClipSlug)
+				m.CustomSlug = m.LabelSlug
+				m.MaxHomophone = string(slugChar)
 			}
 		}
 	}

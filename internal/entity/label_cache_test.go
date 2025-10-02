@@ -37,6 +37,115 @@ func TestFindLabel(t *testing.T) {
 		assert.Error(t, err)
 		assert.NotNil(t, result)
 	})
+	t.Run("Homophone", func(t *testing.T) {
+		label1 := FirstOrCreateLabel(NewLabel("老板", 10))
+		if !assert.NotNil(t, label1) {
+			t.Fatal("label should not be nil")
+		}
+		label2 := FirstOrCreateLabel(NewLabel("老伴", 10))
+		if !assert.NotNil(t, label2) {
+			t.Fatal("label should not be nil")
+		}
+		label3 := FirstOrCreateLabel(NewLabel("lao-ban", 10))
+		if !assert.NotNil(t, label3) {
+			t.Fatal("label should not be nil")
+		}
+
+		uncached1, findErr := FindLabel("老板", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "老板", uncached1.LabelName)
+		uncached2, findErr := FindLabel("老伴", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "老伴", uncached2.LabelName)
+		uncached3, findErr := FindLabel("lao-ban", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "Lao-Ban", uncached3.LabelName)
+
+		cached1, cacheErr := FindLabel("老板", true)
+
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "老板", cached1.LabelName)
+		assert.Equal(t, uncached1.LabelSlug, cached1.LabelSlug)
+		assert.Equal(t, uncached1.ID, cached1.ID)
+		assert.Equal(t, uncached1.LabelUID, cached1.LabelUID)
+
+		cached2, cacheErr := FindLabel("老伴", true)
+
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "老伴", cached2.LabelName)
+		assert.Equal(t, uncached2.LabelSlug, cached2.LabelSlug)
+		assert.Equal(t, uncached2.ID, cached2.ID)
+		assert.Equal(t, uncached2.LabelUID, cached2.LabelUID)
+
+		cached3, cacheErr := FindLabel("lao-ban", true)
+
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "Lao-Ban", cached3.LabelName)
+		assert.Equal(t, uncached3.LabelSlug, cached3.LabelSlug)
+		assert.Equal(t, uncached3.ID, cached3.ID)
+		assert.Equal(t, uncached3.LabelUID, cached3.LabelUID)
+
+		assert.NoError(t, UnscopedDb().Delete(&label1).Error)
+		assert.NoError(t, UnscopedDb().Delete(&label2).Error)
+		assert.NoError(t, UnscopedDb().Delete(&label3).Error)
+	})
+
+	t.Run("HomophoneCacheInvalidation", func(t *testing.T) {
+		label1 := FirstOrCreateLabel(NewLabel("老板", 10))
+		if !assert.NotNil(t, label1) {
+			t.Fatal("label should not be nil")
+		}
+		// Cache it before the MaxHomophone is populated
+		uncached1, findErr := FindLabel("老板", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "老板", uncached1.LabelName)
+
+		label2 := FirstOrCreateLabel(NewLabel("老伴", 10))
+		if !assert.NotNil(t, label2) {
+			t.Fatal("label should not be nil")
+		}
+		label3 := FirstOrCreateLabel(NewLabel("lao-ban", 10))
+		if !assert.NotNil(t, label3) {
+			t.Fatal("label should not be nil")
+		}
+
+		// if the cache hasn't been invalidated, then this will fail.
+		uncached2, findErr := FindLabel("老伴", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "老伴", uncached2.LabelName)
+
+		uncached3, findErr := FindLabel("lao-ban", false)
+		assert.NoError(t, findErr)
+		assert.Equal(t, "Lao-Ban", uncached3.LabelName)
+
+		cached1, cacheErr := FindLabel("老板", true)
+
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "老板", cached1.LabelName)
+		assert.Equal(t, uncached1.LabelSlug, cached1.LabelSlug)
+		assert.Equal(t, uncached1.ID, cached1.ID)
+		assert.Equal(t, uncached1.LabelUID, cached1.LabelUID)
+
+		cached2, cacheErr := FindLabel("老伴", true)
+
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "老伴", cached2.LabelName)
+		assert.Equal(t, uncached2.LabelSlug, cached2.LabelSlug)
+		assert.Equal(t, uncached2.ID, cached2.ID)
+		assert.Equal(t, uncached2.LabelUID, cached2.LabelUID)
+
+		cached3, cacheErr := FindLabel("lao-ban", true)
+
+		assert.NoError(t, cacheErr)
+		assert.Equal(t, "Lao-Ban", cached3.LabelName)
+		assert.Equal(t, uncached3.LabelSlug, cached3.LabelSlug)
+		assert.Equal(t, uncached3.ID, cached3.ID)
+		assert.Equal(t, uncached3.LabelUID, cached3.LabelUID)
+
+		assert.NoError(t, UnscopedDb().Delete(&label1).Error)
+		assert.NoError(t, UnscopedDb().Delete(&label2).Error)
+		assert.NoError(t, UnscopedDb().Delete(&label3).Error)
+	})
 }
 
 func TestFindPhotoLabel(t *testing.T) {

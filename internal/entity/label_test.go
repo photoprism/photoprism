@@ -129,6 +129,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		//t.Logf("result = %+v", result)
 		assert.Equal(t, label.LabelName, result1.LabelName, "LabelName should be the same")
 		assert.Equal(t, label.LabelSlug, result1.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "", result1.MaxHomophone)
 
 		// Add another homophone
 		label2 := NewLabel("老伴", 10)
@@ -144,6 +145,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.NotEqual(t, label.LabelName, label2.LabelName, "LabelName should not be the same")
 		assert.NotEqual(t, label.LabelSlug, label2.LabelSlug, "LabelSlug should not be the same")
 		assert.Equal(t, result2.LabelSlug, "lao-ban-c-a")
+		assert.Equal(t, "a", result2.MaxHomophone)
 
 		// Add the homophone in ascii
 		label3 := NewLabel("lao-ban", 10)
@@ -155,6 +157,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.NotEqual(t, label.LabelName, label3.LabelName, "LabelName should be the same")
 		assert.NotEqual(t, label.LabelSlug, label3.LabelSlug, "LabelSlug should not be the same")
 		assert.Equal(t, result3.LabelSlug, "lao-ban-c-b")
+		assert.Equal(t, "b", result3.MaxHomophone)
 
 		assert.NotEqual(t, result1.LabelUID, result2.LabelUID)
 		assert.NotEqual(t, result1.LabelUID, result3.LabelUID)
@@ -167,6 +170,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 		assert.Equal(t, result1.LabelUID, result1a.LabelUID)
+		assert.Equal(t, "b", result1a.MaxHomophone)
 
 		label2a := NewLabel("老伴", 10)
 		result2a := FirstOrCreateLabel(label2a)
@@ -174,6 +178,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 		assert.Equal(t, result2.LabelUID, result2a.LabelUID)
+		assert.Equal(t, "b", result2a.MaxHomophone)
 
 		label3a := NewLabel("lao-ban", 10)
 		result3a := FirstOrCreateLabel(label3a)
@@ -181,7 +186,11 @@ func TestFirstOrCreateLabel(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 		assert.Equal(t, result3.LabelUID, result3a.LabelUID)
+		assert.Equal(t, "b", result3a.MaxHomophone)
 
+		assert.NoError(t, UnscopedDb().Delete(&result1).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result2).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result3).Error)
 	})
 	t.Run("exceed homophones", func(t *testing.T) {
 		label := NewLabel("送钟", 10)
