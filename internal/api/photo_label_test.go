@@ -40,7 +40,19 @@ func TestAddPhotoLabel(t *testing.T) {
 		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh8/label", `{"Name": 123, "Uncertainty": 10, "Priority": 2}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
+	t.Run("add homophone labels", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		AddPhotoLabel(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh8/label", `{"Name": "老板", "Priority": 10}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Contains(t, r.Body.String(), "老板")
+		// t.Log(r.Body.String())
+		r2 := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh8/label", `{"Name": "老伴", "Priority": 10}`)
+		assert.Equal(t, http.StatusOK, r2.Code)
+		assert.Contains(t, r2.Body.String(), "老板")
+		assert.Contains(t, r2.Body.String(), "老伴")
+		// t.Log(r2.Body.String())
+	})
 }
 
 func TestRemovePhotoLabel(t *testing.T) {
