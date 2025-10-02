@@ -22,6 +22,16 @@ func TestNewLabel(t *testing.T) {
 		assert.Equal(t, "unknown", label.LabelSlug)
 		assert.Equal(t, -6, label.LabelPriority)
 	})
+	t.Run("homophones", func(T *testing.T) {
+		label := NewLabel("老板", 10)
+		assert.Equal(t, "老板", label.LabelName)
+		assert.Equal(t, "lao-ban", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+		label = NewLabel("老伴", 10)
+		assert.Equal(t, "老伴", label.LabelName)
+		assert.Equal(t, "lao-ban", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+	})
 }
 
 func TestFlushLabelCache(t *testing.T) {
@@ -60,20 +70,233 @@ func TestLabel_SetName(t *testing.T) {
 }
 
 func TestFirstOrCreateLabel(t *testing.T) {
-	label := LabelFixtures.Get("flower")
-	result := FirstOrCreateLabel(&label)
+	t.Run("First", func(t *testing.T) {
+		// Find flower
+		label := LabelFixtures.Get("flower")
+		result := FirstOrCreateLabel(&label)
 
-	if result == nil {
-		t.Fatal("result should not be nil")
-	}
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, label.LabelName, result.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, result.LabelSlug, "LabelSlug should be the same")
 
-	if result.LabelName != label.LabelName {
-		t.Errorf("LabelName should be the same: %s %s", result.LabelName, label.LabelName)
-	}
+		// Find Batch Delete
+		label = *NewLabel("Batch Delete", 10)
+		resultBase := FirstOrCreateLabel(&label)
+		if !assert.NotNil(t, resultBase) {
+			t.Fatal("resultBase should not be nil")
+		}
+		assert.Equal(t, LabelFixtures.Get("batchdelete").LabelUID, resultBase.LabelUID)
 
-	if result.LabelSlug != label.LabelSlug {
-		t.Errorf("LabelName should be the same: %s %s", result.LabelSlug, label.LabelSlug)
-	}
+		// Find Batch Delete with -
+		label = *NewLabel("Batch-Delete", 10)
+		result = FirstOrCreateLabel(&label)
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, LabelFixtures.Get("batchdelete").LabelUID, result.LabelUID)
+
+		// Find Batch Delete lowercase
+		label = *NewLabel("batch delete'", 10)
+		result = FirstOrCreateLabel(&label)
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, LabelFixtures.Get("batchdelete").LabelUID, result.LabelUID)
+
+		// Find Batch Delete with a unicode graphic character
+		label = *NewLabel("BATCH DELETE🢱", 10)
+		result = FirstOrCreateLabel(&label)
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, LabelFixtures.Get("batchdelete").LabelUID, result.LabelUID)
+	})
+
+	t.Run("homophones", func(t *testing.T) {
+		// Add a homophone
+		label := NewLabel("老板", 10)
+		assert.Equal(t, "老板", label.LabelName)
+		assert.Equal(t, "lao-ban", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result1 := FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result1) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, label.LabelName, result1.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, result1.LabelSlug, "LabelSlug should be the same")
+
+		// Add another homophone
+		label2 := NewLabel("老伴", 10)
+		assert.Equal(t, "老伴", label2.LabelName)
+		assert.Equal(t, "lao-ban", label2.LabelSlug)
+		assert.Equal(t, 10, label2.LabelPriority)
+
+		result2 := FirstOrCreateLabel(label2)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label2.LabelName, "LabelName should not be the same")
+		assert.NotEqual(t, label.LabelSlug, label2.LabelSlug, "LabelSlug should not be the same")
+		assert.Equal(t, result2.LabelSlug, "lao-ban-c-a")
+
+		// Add the homophone in ascii
+		label3 := NewLabel("lao-ban", 10)
+		result3 := FirstOrCreateLabel(label3)
+		if !assert.NotNil(t, result3) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label3.LabelName, "LabelName should be the same")
+		assert.NotEqual(t, label.LabelSlug, label3.LabelSlug, "LabelSlug should not be the same")
+		assert.Equal(t, result3.LabelSlug, "lao-ban-c-b")
+
+		assert.NotEqual(t, result1.LabelUID, result2.LabelUID)
+		assert.NotEqual(t, result1.LabelUID, result3.LabelUID)
+		assert.NotEqual(t, result2.LabelUID, result3.LabelUID)
+
+		// Make sure that we find the correct homophone
+		label1a := NewLabel("老板", 10)
+		result1a := FirstOrCreateLabel(label1a)
+		if !assert.NotNil(t, result1a) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, result1.LabelUID, result1a.LabelUID)
+
+		label2a := NewLabel("老伴", 10)
+		result2a := FirstOrCreateLabel(label2a)
+		if !assert.NotNil(t, result2a) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, result2.LabelUID, result2a.LabelUID)
+
+		label3a := NewLabel("lao-ban", 10)
+		result3a := FirstOrCreateLabel(label3a)
+		if !assert.NotNil(t, result3a) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, result3.LabelUID, result3a.LabelUID)
+
+	})
+	t.Run("exceed homophones", func(t *testing.T) {
+		label := NewLabel("送钟", 10)
+		result := FirstOrCreateLabel(label)
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, result.LabelSlug, "song-zhong")
+		assert.NotNil(t, result)
+		label = NewLabel("送终", 10)
+		result = FirstOrCreateLabel(label)
+		assert.NotNil(t, result)
+		assert.Equal(t, result.LabelSlug, "song-zhong-c-a")
+		// Force increment to maximum
+		label = NewLabel("song-zhong-c-z", 10)
+		result = FirstOrCreateLabel(label)
+		assert.NotNil(t, result)
+		assert.Equal(t, result.LabelSlug, "song-zhong-c-z")
+		// This one should fail as we have run out of incrementers
+		label = NewLabel("song-zhong", 10)
+		result = FirstOrCreateLabel(label)
+		//t.Logf("result = %+v", result)
+		assert.Nil(t, result)
+	})
+	t.Run("Unicode Emoji", func(t *testing.T) {
+		// Test emitocons
+		label := NewLabel("😖😕", 10)
+		assert.Equal(t, "😖😕", label.LabelName)
+		assert.Equal(t, "_5cpzrfxqt5mjk", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result := FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "😖😕", result.LabelName, "LabelName should be the same")
+		assert.Equal(t, "_5cpzrfxqt5mjk", result.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, 10, result.LabelPriority)
+
+		label = NewLabel("😖😕", 1)
+		result2 := FirstOrCreateLabel(label)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "😖😕", result2.LabelName, "LabelName should be the same")
+		assert.Equal(t, "_5cpzrfxqt5mjk", result2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, result.LabelUID, result2.LabelUID, "LabelUID should be the same")
+		assert.Equal(t, 10, result2.LabelPriority)
+
+		// Test Unicode AND Emoticons
+		label = NewLabel("😖அஆஇ😕", 10)
+		assert.Equal(t, "😖அஆஇ😕", label.LabelName)
+		assert.Equal(t, "aaai", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result = FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "😖அஆஇ😕", result.LabelName, "LabelName should be the same")
+		assert.Equal(t, "aaai", result.LabelSlug, "LabelSlug should be the same")
+
+		label = NewLabel("😖அஆஇ😕", 1)
+		result2 = FirstOrCreateLabel(label)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "😖அஆஇ😕", result2.LabelName, "LabelName should be the same")
+		assert.Equal(t, "aaai", result2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, result.LabelUID, result2.LabelUID, "LabelUID should be the same")
+		assert.Equal(t, 10, result2.LabelPriority)
+
+		// Unicode Only to find with Emoticons
+		label = NewLabel("அஆஇ", 1)
+		result2 = FirstOrCreateLabel(label)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "😖அஆஇ😕", result2.LabelName, "LabelName should be the same")
+		assert.Equal(t, "aaai", result2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, result.LabelUID, result2.LabelUID, "LabelUID should be the same")
+		assert.Equal(t, 10, result2.LabelPriority)
+
+		// Test Unicode Only
+		label = NewLabel("அஆஇண", 10)
+		assert.Equal(t, "அஆஇண", label.LabelName)
+		assert.Equal(t, "aaainn", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result = FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "அஆஇண", result.LabelName, "LabelName should be the same")
+		assert.Equal(t, "aaainn", result.LabelSlug, "LabelSlug should be the same")
+
+		label = NewLabel("அஆஇண", 1)
+		result2 = FirstOrCreateLabel(label)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, "அஆஇண", result2.LabelName, "LabelName should be the same")
+		assert.Equal(t, "aaainn", result2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, result.LabelUID, result2.LabelUID, "LabelUID should be the same")
+		assert.Equal(t, 10, result2.LabelPriority)
+
+	})
 }
 
 func TestLabel_UpdateClassify(t *testing.T) {

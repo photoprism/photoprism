@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -208,13 +209,35 @@ func FirstOrCreateLabel(m *Label) *Label {
 		return nil
 	}
 
-	result := &Label{}
+	var labels []Label
+	slugLike := m.LabelSlug + "-c-_"
 
 	if err := UnscopedDb().
-		Where("(custom_slug <> '' AND custom_slug = ? OR label_slug <> '' AND label_slug = ?)", m.CustomSlug, m.LabelSlug).
-		First(result).Error; err == nil {
-		return result
-	} else if createErr := m.Create(); createErr == nil {
+		Where("((custom_slug <> '' AND custom_slug = ?) OR (label_slug <> '' AND (label_slug = ? OR label_slug like ?)))", m.CustomSlug, m.LabelSlug, slugLike).
+		Find(&labels).Error; err == nil {
+		slugChar := byte('a')
+		for _, l := range labels {
+			if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(m.LabelName)) {
+				return &l
+			} else {
+				sl := len(l.LabelSlug)
+				if l.LabelSlug[sl-4:sl-1] == "-c-" && l.LabelSlug[sl-1] >= byte(slugChar) {
+					slugChar = l.LabelSlug[len(l.LabelSlug)-1] + 1
+				}
+			}
+		}
+		if len(labels) > 0 {
+			// ToDo: Handle the homophone length exceeding txt.ClipSlug better.
+			// Although it's pretty unlikely to happen.
+			m.LabelSlug = txt.Clip(fmt.Sprintf("%s-c-%s", m.LabelSlug, string(slugChar)), txt.ClipSlug)
+			m.CustomSlug = m.LabelSlug
+			if slugChar > byte('z') {
+				log.Errorf("label: %s (find or create %s)", fmt.Errorf("to many homophones for slug"), m.LabelSlug)
+				return nil
+			}
+		}
+	}
+	if createErr := m.Create(); createErr == nil {
 		if m.LabelPriority >= 0 {
 			event.EntitiesCreated("labels", []*Label{m})
 
@@ -224,10 +247,15 @@ func FirstOrCreateLabel(m *Label) *Label {
 		}
 
 		return m
-	} else if err = UnscopedDb().
-		Where("(custom_slug <> '' AND custom_slug = ? OR label_slug <> '' AND label_slug = ?)", m.CustomSlug, m.LabelSlug).
-		First(result).Error; err == nil {
-		return result
+	} else if err := UnscopedDb().
+		Where("((custom_slug <> '' AND custom_slug = ?) OR (label_slug <> '' AND (label_slug = ? OR label_slug like ?)))", m.CustomSlug, m.LabelSlug, slugLike).
+		Find(&labels).Error; err == nil {
+		for _, l := range labels {
+			if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(m.LabelName)) {
+				return &l
+			}
+		}
+		log.Errorf("label: %s (find or create %s)", fmt.Errorf("record not found"), m.LabelSlug)
 	} else {
 		log.Errorf("label: %s (find or create %s)", createErr, m.LabelSlug)
 	}
