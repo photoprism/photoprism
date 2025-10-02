@@ -54,29 +54,43 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	}
 
 	if frm.Query != "" {
-		var labelIds []uint
+		var labelIDs []uint
 		var categories []entity.Category
-		var label entity.Label
+		// var label entity.Label
+		var labels []entity.Label
 
 		slugString := txt.Slug(frm.Query)
 		likeString := "%" + frm.Query + "%"
+		slugLike := slugString + "-c-_"
+		cleanName := clean.LabelName(frm.Query)
 
-		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
+		if result := Db().Where("label_slug = ? OR label_slug like ? OR custom_slug = ?", slugString, slugLike, slugString).Find(&labels); result.Error != nil {
+			log.Errorf("search: label %s not found with error %s", clean.Log(frm.Query), result.Error)
+			return results, result.Error
+		}
+		if len(labels) == 0 {
 			log.Infof("search: label %s not found", clean.Log(frm.Query))
 
 			s = s.Where("labels.label_name LIKE ?", likeString)
 		} else {
-			labelIds = append(labelIds, label.ID)
+			labelName := ""
+			for _, label := range labels {
+				if strings.EqualFold(clean.LabelName(label.LabelName), cleanName) {
+					labelIDs = append(labelIDs, label.ID)
+					labelName = label.LabelName
+				}
+			}
+			labelCount := len(labelIDs)
 
-			Db().Where("category_id = ?", label.ID).Find(&categories)
+			Db().Where("category_id in (?)", labelIDs).Find(&categories)
 
 			for _, category := range categories {
-				labelIds = append(labelIds, category.LabelID)
+				labelIDs = append(labelIDs, category.LabelID)
 			}
 
-			log.Infof("search: label %s includes %d categories", clean.Log(label.LabelName), len(labelIds))
+			log.Infof("search: label %s includes %d categories", clean.Log(labelName), len(labelIDs)-labelCount)
 
-			s = s.Where("labels.id IN (?)", labelIds)
+			s = s.Where("labels.id IN (?)", labelIDs)
 		}
 	}
 

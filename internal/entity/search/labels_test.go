@@ -144,4 +144,62 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, "flower", result[0].LabelSlug)
 	})
+	t.Run("search for homophones", func(t *testing.T) {
+		t.Log("Create Label 老板")
+		label1 := entity.FirstOrCreateLabel(entity.NewLabel("老板", 10))
+		query := form.NewLabelSearch("q:老板")
+		query.Count = 5
+		query.Order = "slug"
+		result, err := Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results for search query q:老板: %+v", result)
+
+		if assert.Len(t, result, 1) {
+			assert.Equal(t, label1.LabelName, result[0].LabelName)
+		}
+
+		t.Log("Create Label 老伴")
+		label2 := entity.FirstOrCreateLabel(entity.NewLabel("老伴", 10))
+
+		assert.NotEqual(t, label1.ID, label2.ID)
+
+		query = form.NewLabelSearch("q:老板")
+		query.Count = 5
+		query.Order = "slug"
+		result, err = Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results for search query q:老板: %+v", result)
+
+		if assert.Len(t, result, 1) {
+			assert.Equal(t, label1.LabelName, result[0].LabelName)
+		}
+
+		query = form.NewLabelSearch("q:老伴")
+		query.Count = 5
+		query.Order = "slug"
+		result, err = Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results for search query q:老伴: %+v", result)
+
+		if assert.Len(t, result, 1) {
+			assert.Equal(t, label2.LabelName, result[0].LabelName)
+		}
+
+		label1.Delete()
+		entity.UnscopedDb().Delete(label1)
+		label2.Delete()
+		entity.UnscopedDb().Delete(label2)
+	})
 }
