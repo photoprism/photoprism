@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -2797,7 +2797,7 @@ msgstr "عرض"
 
 #: src/page/labels.vue:129
 msgid "Show All Labels"
-msgstr ""
+msgstr "إظهار كافة التسميات"
 
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
@@ -2813,7 +2813,7 @@ msgstr "أظهر المخفي"
 
 #: src/page/labels.vue:138
 msgid "Show Important Only"
-msgstr ""
+msgstr "عرض مهم فقط"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2870,15 +2870,15 @@ msgstr "فرز حسب"
 
 #: src/page/labels.vue:156
 msgid "Sort by Name (A–Z)"
-msgstr ""
+msgstr "الترتيب حسب الاسم (من ألف إلى ياء)"
 
 #: src/page/labels.vue:165
 msgid "Sort by Photo Count"
-msgstr ""
+msgstr "فرز حسب عدد الصور"
 
 #: src/page/labels.vue:147
 msgid "Sort by Relevance"
-msgstr ""
+msgstr "فرز حسب الصلة بالموضوع"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: usercopypaste\n"
 
 #: src/locales.js:268
@@ -2797,7 +2797,7 @@ msgstr "Показать"
 
 #: src/page/labels.vue:129
 msgid "Show All Labels"
-msgstr ""
+msgstr "Показать все ярлыки"
 
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
@@ -2813,7 +2813,7 @@ msgstr "Показать скрытые"
 
 #: src/page/labels.vue:138
 msgid "Show Important Only"
-msgstr ""
+msgstr "Показать только важное"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2870,15 +2870,15 @@ msgstr "Сортировать по"
 
 #: src/page/labels.vue:156
 msgid "Sort by Name (A–Z)"
-msgstr ""
+msgstr "Сортировка по имени (A-Z)"
 
 #: src/page/labels.vue:165
 msgid "Sort by Photo Count"
-msgstr ""
+msgstr "Сортировка по количеству фотографий"
 
 #: src/page/labels.vue:147
 msgid "Sort by Relevance"
-msgstr ""
+msgstr "Сортировать по релевантности"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214

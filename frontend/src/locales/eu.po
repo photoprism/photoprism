@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -2794,7 +2794,7 @@ msgstr "Erakutsi"
 
 #: src/page/labels.vue:129
 msgid "Show All Labels"
-msgstr ""
+msgstr "Erakutsi etiketa guztiak"
 
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
@@ -2810,7 +2810,7 @@ msgstr "Erakutsi ezkutuan"
 
 #: src/page/labels.vue:138
 msgid "Show Important Only"
-msgstr ""
+msgstr "Garrantzitsua bakarrik erakutsi"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2867,15 +2867,15 @@ msgstr "Ordenatu"
 
 #: src/page/labels.vue:156
 msgid "Sort by Name (A–Z)"
-msgstr ""
+msgstr "Izenaren arabera ordenatu (A-Z)"
 
 #: src/page/labels.vue:165
 msgid "Sort by Photo Count"
-msgstr ""
+msgstr "Argazki kopuruaren arabera ordenatu"
 
 #: src/page/labels.vue:147
 msgid "Sort by Relevance"
-msgstr ""
+msgstr "Ordenatu garrantziaren arabera"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214

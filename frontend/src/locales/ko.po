@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -2798,7 +2798,7 @@ msgstr "보이기"
 
 #: src/page/labels.vue:129
 msgid "Show All Labels"
-msgstr ""
+msgstr "모든 레이블 표시"
 
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
@@ -2814,7 +2814,7 @@ msgstr "숨김 표시"
 
 #: src/page/labels.vue:138
 msgid "Show Important Only"
-msgstr ""
+msgstr "중요만 표시"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2871,15 +2871,15 @@ msgstr "정렬 기준"
 
 #: src/page/labels.vue:156
 msgid "Sort by Name (A–Z)"
-msgstr ""
+msgstr "이름별 정렬(A-Z)"
 
 #: src/page/labels.vue:165
 msgid "Sort by Photo Count"
-msgstr ""
+msgstr "사진 수로 정렬"
 
 #: src/page/labels.vue:147
 msgid "Sort by Relevance"
-msgstr ""
+msgstr "관련성 기준으로 정렬"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214

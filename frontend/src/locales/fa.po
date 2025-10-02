@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -2797,7 +2797,7 @@ msgstr "نمایش"
 
 #: src/page/labels.vue:129
 msgid "Show All Labels"
-msgstr ""
+msgstr "نمایش همه برچسب‌ها"
 
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
@@ -2813,7 +2813,7 @@ msgstr "نمایش مخفی ها"
 
 #: src/page/labels.vue:138
 msgid "Show Important Only"
-msgstr ""
+msgstr "فقط موارد مهم را نمایش بده"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2870,15 +2870,15 @@ msgstr "مرتب سازی بر اساس"
 
 #: src/page/labels.vue:156
 msgid "Sort by Name (A–Z)"
-msgstr ""
+msgstr "مرتب سازی بر اساس نام (A-Z)"
 
 #: src/page/labels.vue:165
 msgid "Sort by Photo Count"
-msgstr ""
+msgstr "مرتب سازی بر اساس تعداد عکس"
 
 #: src/page/labels.vue:147
 msgid "Sort by Relevance"
-msgstr ""
+msgstr "مرتب سازی بر اساس مرتبط بودن"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214
