@@ -1,12 +1,14 @@
 package entity
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestNewLabel(t *testing.T) {
@@ -468,5 +470,87 @@ func TestLabel_Update(t *testing.T) {
 		}
 
 		assert.Equal(t, "my-unique-slug", label.LabelSlug)
+	})
+}
+
+func TestFindLabels(t *testing.T) {
+	t.Run("Success Singular", func(t *testing.T) {
+		label := LabelFixtures.Get("flower")
+		labels, err := FindLabels(label.LabelName, txt.Or, false)
+		assert.NoError(t, err)
+		if assert.Len(t, labels, 1) {
+			assert.Equal(t, label.ID, labels[0].ID)
+		}
+	})
+	t.Run("Success Plural", func(t *testing.T) {
+		label := LabelFixtures.Get("flower")
+		labels, err := FindLabels(label.LabelName+"s", txt.Or, false)
+		assert.NoError(t, err)
+		if assert.Len(t, labels, 1) {
+			assert.Equal(t, label.ID, labels[0].ID)
+		}
+	})
+	t.Run("Success Multiple", func(t *testing.T) {
+		label1 := LabelFixtures.Get("landscape")
+		label2 := LabelFixtures.Get("flower")
+		labels, err := FindLabels(fmt.Sprintf("%s%s%s", label1.LabelName, txt.Or, label2.LabelName), txt.Or, false)
+		assert.NoError(t, err)
+		found1 := false
+		found2 := false
+		if assert.Len(t, labels, 2) {
+			for _, label := range labels {
+				if label.ID == label1.ID {
+					found1 = true
+				} else if label.ID == label2.ID {
+					found2 = true
+				} else {
+					assert.Failf(t, "unable to match", "%+v", label)
+				}
+			}
+			assert.True(t, found1, "Unable to find %+v", label1)
+			assert.True(t, found2, "Unable to find %+v", label2)
+		}
+	})
+	t.Run("Success homophone", func(t *testing.T) {
+		label1 := LabelFixtures.Get("shanghai1")
+		label2 := LabelFixtures.Get("shanghai2")
+		labels, err := FindLabels(label1.LabelName, txt.Or, false)
+		assert.NoError(t, err)
+		found1 := false
+		found2 := false
+		if assert.Len(t, labels, 1) {
+			for _, label := range labels {
+				if label.ID == label1.ID {
+					found1 = true
+				} else if label.ID == label2.ID {
+					found2 = true
+				} else {
+					assert.Failf(t, "unable to match", "%+v", label)
+				}
+			}
+			assert.True(t, found1, "Unable to find %+v", label1)
+			assert.False(t, found2, "Able to find %+v", label2)
+		}
+	})
+	t.Run("Success homophones", func(t *testing.T) {
+		label1 := LabelFixtures.Get("shanghai1")
+		label2 := LabelFixtures.Get("shanghai2")
+		labels, err := FindLabels(fmt.Sprintf("%s%s%s", label1.LabelName, txt.Or, label2.LabelName), txt.Or, false)
+		assert.NoError(t, err)
+		found1 := false
+		found2 := false
+		if assert.Len(t, labels, 2) {
+			for _, label := range labels {
+				if label.ID == label1.ID {
+					found1 = true
+				} else if label.ID == label2.ID {
+					found2 = true
+				} else {
+					assert.Failf(t, "unable to match", "%+v", label)
+				}
+			}
+			assert.True(t, found1, "Unable to find %+v", label1)
+			assert.True(t, found2, "Unable to find %+v", label2)
+		}
 	})
 }

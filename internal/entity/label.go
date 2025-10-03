@@ -2,11 +2,13 @@ package entity
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/inflection"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
@@ -383,4 +385,69 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 // Links returns all share links for this entity.
 func (m *Label) Links() Links {
 	return FindLinks("", m.LabelUID)
+}
+
+// FindLabels finds all labels that match a name (ie. handles homophones)
+func FindLabels(names string, sep string, unscoped bool) (labels []Label, err error) {
+	if names == "" {
+		return nil, fmt.Errorf("no names provided")
+	}
+
+	var db *gorm.DB
+	if unscoped {
+		db = UnscopedDb()
+	} else {
+		db = Db()
+	}
+
+	// Generate Where and Values
+	var wheres []string
+	var ins []string
+	var values []interface{}
+	for _, w := range strings.Split(names, sep) {
+		w = txt.Slug(w)
+		if !slices.Contains(ins, w) {
+			ins = append(ins, w)
+			values = append(values, fmt.Sprintf("%s-c-_", w))
+			wheres = append(wheres, "label_slug like ?")
+		}
+		if !txt.ContainsASCIILetters(w) {
+			continue
+		}
+		singular := inflection.Singular(w)
+
+		if singular != w {
+			singular = txt.Slug(singular)
+			if !slices.Contains(ins, singular) {
+				ins = append(ins, singular)
+				values = append(values, fmt.Sprintf("%s-c-_", singular))
+				wheres = append(wheres, "label_slug like ?")
+			}
+		}
+	}
+	wheres = append(wheres, "label_slug IN (?) OR custom_slug IN (?)")
+	values = append(values, ins)
+	values = append(values, ins)
+
+	where := strings.Join(wheres, " OR ")
+
+	var ls []Label
+	if err := db.Where(where, values...).Find(&ls).Error; err != nil {
+		return labels, err
+	}
+
+	nameSlice := strings.Split(names, sep)
+	for _, l := range ls {
+		if l.MaxHomophone == "" {
+			labels = append(labels, l)
+		} else {
+			for _, w := range nameSlice {
+				w = strings.TrimSpace(w)
+				if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(w)) {
+					labels = append(labels, l)
+				}
+			}
+		}
+	}
+	return labels, nil
 }
