@@ -225,23 +225,23 @@ func FirstOrCreateLabel(m *Label) *Label {
 				return &l
 			} else {
 				sl := len(l.LabelSlug)
-				if l.LabelSlug[sl-4:sl-1] == "-c-" && l.LabelSlug[sl-1] >= byte(slugChar) {
-					slugChar = l.LabelSlug[len(l.LabelSlug)-1] + 1
+				if sl > 5 {
+					if l.LabelSlug[sl-4:sl-1] == "-c-" && l.LabelSlug[sl-1] >= byte(slugChar) {
+						slugChar = l.LabelSlug[len(l.LabelSlug)-1] + 1
+					}
 				}
 			}
 		}
 		if len(labels) > 0 {
-			// ToDo: Handle the homophone length exceeding txt.ClipSlug better.
-			// Although it's pretty unlikely to happen.
 			if slugChar > byte('z') {
-				log.Errorf("label: %s (find or create %s)", fmt.Errorf("to many homophones for slug"), m.LabelSlug)
+				log.Errorf("label: %s (find or create %s)", fmt.Errorf("too many homophones for slug"), m.LabelSlug)
 				return nil
 			} else {
 				if err := UnscopedDb().Model(&Label{}).Where("label_slug = ? or label_slug like ?", m.LabelSlug, slugLike).Update("max_homophone", string(slugChar)).Error; err != nil {
 					log.Errorf("label: %s (find or create %s)", err, m.LabelSlug)
 					return nil
 				}
-				m.LabelSlug = txt.Clip(fmt.Sprintf("%s-c-%s", m.LabelSlug, string(slugChar)), txt.ClipSlug)
+				m.LabelSlug = fmt.Sprintf("%s-c-%s", txt.Clip(m.LabelSlug, txt.ClipSlug-4), string(slugChar))
 				m.CustomSlug = m.LabelSlug
 				m.MaxHomophone = string(slugChar)
 			}
