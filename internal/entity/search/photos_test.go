@@ -2494,7 +2494,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("query: label:shang-hai", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "label:shang-hai"
+		f.Query = "label:shang-hai" // homophone in latin char set
 
 		photos, _, err := Photos(f)
 
@@ -2502,12 +2502,17 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, photos, 0)
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
 	})
 	t.Run("label:shang-hai", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Label = "shang-hai" // homophone in latin char set
+		f.Label = "shang-hai-c-a" // homophone in latin char set
 
 		photos, _, err := Photos(f)
 
@@ -2515,7 +2520,12 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, photos, 0)
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
 	})
 	t.Run("query: label:shang-hai or 伤害", func(t *testing.T) {
 		var f form.SearchPhotos

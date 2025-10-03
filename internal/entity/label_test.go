@@ -553,4 +553,47 @@ func TestFindLabels(t *testing.T) {
 			assert.True(t, found2, "Unable to find %+v", label2)
 		}
 	})
+	t.Run("Success homophone slug", func(t *testing.T) {
+		label1 := LabelFixtures.Get("shanghai1")
+		label2 := LabelFixtures.Get("shanghai2")
+		labels, err := FindLabels(label1.LabelSlug, txt.Or, false)
+		assert.NoError(t, err)
+		found1 := false
+		found2 := false
+		if assert.Len(t, labels, 1) {
+			for _, label := range labels {
+				if label.ID == label1.ID {
+					found1 = true
+				} else if label.ID == label2.ID {
+					found2 = true
+				} else {
+					assert.Failf(t, "unable to match", "%+v", label)
+				}
+			}
+			assert.True(t, found1, "Unable to find %+v", label1)
+			assert.False(t, found2, "Able to find %+v", label2)
+		}
+	})
+	t.Run("Success homophone slug-a", func(t *testing.T) {
+		label1 := LabelFixtures.Get("shanghai1")
+		label2 := LabelFixtures.Get("shanghai2")
+		labels, err := FindLabels(label2.LabelSlug, txt.Or, false)
+		assert.NoError(t, err)
+		found1 := false
+		found2 := false
+		if assert.Len(t, labels, 1) {
+			for _, label := range labels {
+				if label.ID == label1.ID {
+					found1 = true
+				} else if label.ID == label2.ID {
+					found2 = true
+				} else {
+					assert.Failf(t, "unable to match", "%+v", label)
+				}
+			}
+			assert.False(t, found1, "Able to find %+v", label1)
+			assert.True(t, found2, "Unable to find %+v", label2)
+		}
+	})
+
 }

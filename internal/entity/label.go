@@ -444,7 +444,8 @@ func FindLabels(names string, sep string, unscoped bool) (labels []Label, err er
 		} else {
 			for _, w := range nameSlice {
 				w = strings.TrimSpace(w)
-				if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(w)) {
+				// If the cleansed Name matches or it's an exact match between the name and the Slug, append.
+				if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(w)) || l.LabelSlug == w {
 					labels = append(labels, l)
 				}
 			}
