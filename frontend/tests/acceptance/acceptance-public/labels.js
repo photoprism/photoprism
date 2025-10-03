@@ -211,3 +211,44 @@ test.meta("testID", "labels-005").meta({ mode: "public" })("Common: Test mark la
     .click(Selector("button.action-confirm"));
   await label.checkHoverActionState("uid", FirstLabelUid, "favorite", true);
 });
+
+test.meta("testID", "labels-006").meta({ mode: "public"})("Common: Test homophone label", async(t) => {
+  await menu.openPage("browse");
+  await t.click(toolbar.cardsViewAction);
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+  await t
+      .click(photoedit.labelsTab)
+      .typeText(photoedit.inputLabelName, "上海")
+      .click(Selector(photoedit.addLabel))
+      .typeText(photoedit.inputLabelName, "伤害")
+      .click(Selector(photoedit.addLabel))
+      .click(photoedit.detailsTab);
+
+  const PhotoKeywordsAfterEdit = await photoedit.keywords.value;
+  await t.expect(PhotoKeywordsAfterEdit).contains("上海").expect(PhotoKeywordsAfterEdit).contains("伤害");
+  await t.click(photoedit.dialogClose);
+
+  await menu.openPage("labels");
+
+  await toolbar.search("上海");
+  const LabelTest1 = await label.getNthLabeltUid(0);
+  await label.openLabelWithUid(LabelTest1);
+  const LabelPhotoTest1 = await photo.getNthPhotoUid("image", 0);
+  await page.clickCardTitleOfUID(LabelPhotoTest1);
+  const PhotoKeywordsAfterView1 = await photoedit.keywords.value;
+  await t.expect(PhotoKeywordsAfterView1).contains("上海").expect(PhotoKeywordsAfterView1).contains("伤害");
+  await t.click(photoedit.dialogClose);
+
+  await menu.openPage("labels");
+
+  await toolbar.search("伤害");
+  const LabelTest2 = await label.getNthLabeltUid(0);
+  await label.openLabelWithUid(LabelTest2);
+  const LabelPhotoTest2 = await photo.getNthPhotoUid("image", 0);
+  await page.clickCardTitleOfUID(LabelPhotoTest2);
+  const PhotoKeywordsAfterView2 = await photoedit.keywords.value;
+  await t.expect(PhotoKeywordsAfterView2).contains("上海").expect(PhotoKeywordsAfterView2).contains("伤害");
+  await t.click(photoedit.dialogClose);
+    
+});
