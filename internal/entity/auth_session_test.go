@@ -76,7 +76,7 @@ func TestSession_SetData(t *testing.T) {
 }
 
 func TestSession_Expires(t *testing.T) {
-	t.Run("Set expiry date", func(t *testing.T) {
+	t.Run("SetExpiryDate", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		initialExpiryDate := m.SessExpires
 		m.Expires(time.Date(2035, 01, 15, 12, 30, 0, 0, time.UTC))
@@ -84,7 +84,7 @@ func TestSession_Expires(t *testing.T) {
 		assert.Greater(t, finalExpiryDate, initialExpiryDate)
 
 	})
-	t.Run("Try to set zero date", func(t *testing.T) {
+	t.Run("TryToSetZeroDate", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		initialExpiryDate := m.SessExpires
 		m.Expires(time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC))
@@ -115,7 +115,7 @@ func TestFindSessionByRefID(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		assert.Nil(t, FindSessionByRefID(""))
 	})
-	t.Run("alice", func(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabcd")
 		assert.Equal(t, "alice", m.UserName)
 		assert.IsType(t, &Session{}, m)
@@ -209,7 +209,7 @@ func TestSession_Create(t *testing.T) {
 		m2 := FindSessionByRefID("sessxkkcxxxx")
 		assert.Equal(t, "charles", m2.UserName)
 	})
-	t.Run("Invalid RefID", func(t *testing.T) {
+	t.Run("InvalidRefId", func(t *testing.T) {
 		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111"
 		id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
 
@@ -236,7 +236,7 @@ func TestSession_Create(t *testing.T) {
 
 		assert.NotEqual(t, "123", m2.RefID)
 	})
-	t.Run("ID already exists", func(t *testing.T) {
+	t.Run("IdAlreadyExists", func(t *testing.T) {
 		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
 
 		s := &Session{
@@ -397,7 +397,7 @@ func TestSession_SetClientName(t *testing.T) {
 		assert.Equal(t, "Foo Bar!", m.GetClientName())
 		assert.Equal(t, "Foo Bar!", m.GetClientInfo())
 	})
-	t.Run("setNewID", func(t *testing.T) {
+	t.Run("SetNewId", func(t *testing.T) {
 		m := NewSession(0, 0)
 		assert.Equal(t, "", m.ClientUID)
 		assert.Equal(t, "", m.GetClientName())
@@ -467,14 +467,14 @@ func TestSession_RefreshUser(t *testing.T) {
 }
 
 func TestSession_AuthInfo(t *testing.T) {
-	t.Run("bob", func(t *testing.T) {
+	t.Run("Bob", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabce")
 
 		i := m.GetAuthInfo()
 
 		assert.Equal(t, "Default", i)
 	})
-	t.Run("aliceTokenWebDAV", func(t *testing.T) {
+	t.Run("AliceTokenWebDav", func(t *testing.T) {
 		m := FindSessionByRefID("sesshjtgx8qt")
 
 		i := m.GetAuthInfo()
@@ -550,7 +550,7 @@ func TestSession_SetMethod(t *testing.T) {
 		assert.Equal(t, authn.ProviderAccessToken, m.GetProvider())
 		assert.Equal(t, authn.MethodSession, m.GetMethod())
 	})
-	t.Run("2FA", func(t *testing.T) {
+	t.Run("TwoFa", func(t *testing.T) {
 		s := &Session{
 			UserName:     "test",
 			RefID:        "sessxkkcxxxz",
@@ -752,7 +752,7 @@ func TestSession_SetPreviewToken(t *testing.T) {
 		m.SetPreviewToken("12345")
 		assert.Equal(t, "12345", m.PreviewToken)
 	})
-	t.Run("ID empty", func(t *testing.T) {
+	t.Run("IdEmpty", func(t *testing.T) {
 		m := &Session{ID: ""}
 		m.SetPreviewToken("12345")
 		assert.Equal(t, "", m.PreviewToken)
@@ -765,7 +765,7 @@ func TestSession_SetDownloadToken(t *testing.T) {
 		m.SetDownloadToken("12345")
 		assert.Equal(t, "12345", m.DownloadToken)
 	})
-	t.Run("ID empty", func(t *testing.T) {
+	t.Run("IdEmpty", func(t *testing.T) {
 		m := &Session{ID: ""}
 		m.SetDownloadToken("12345")
 		assert.Equal(t, "", m.DownloadToken)
@@ -864,7 +864,7 @@ func TestSession_SharedUIDs(t *testing.T) {
 }
 
 func TestSession_RedeemToken(t *testing.T) {
-	t.Run("bob", func(t *testing.T) {
+	t.Run("Bob", func(t *testing.T) {
 		bob := FindSessionByRefID("sessxkkcabce")
 		bob.RefreshUser()
 		bob.GetUser().RefreshShares()
@@ -874,7 +874,7 @@ func TestSession_RedeemToken(t *testing.T) {
 		bob.GetUser().RefreshShares()
 		assert.Equal(t, "as6sg6bxpogaaba8", bob.GetUser().UserShares[0].ShareUID)
 	})
-	t.Run("Empty session", func(t *testing.T) {
+	t.Run("EmptySession", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, 0, m.RedeemToken("1234"))
 	})
@@ -992,7 +992,7 @@ func TestSession_Expired(t *testing.T) {
 }
 
 func TestSession_SetUserAgent(t *testing.T) {
-	t.Run("user agent empty", func(t *testing.T) {
+	t.Run("UserAgentEmpty", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.UserAgent)
 		m.SetUserAgent("")
@@ -1000,7 +1000,7 @@ func TestSession_SetUserAgent(t *testing.T) {
 		m.SetUserAgent("       ")
 		assert.Equal(t, "", m.UserAgent)
 	})
-	t.Run("change user agent", func(t *testing.T) {
+	t.Run("ChangeUserAgent", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.UserAgent)
 		m.SetUserAgent("chrome")
@@ -1011,7 +1011,7 @@ func TestSession_SetUserAgent(t *testing.T) {
 }
 
 func TestSession_SetClientIP(t *testing.T) {
-	t.Run("ip empty", func(t *testing.T) {
+	t.Run("IpEmpty", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.ClientIP)
 		m.SetClientIP("")
@@ -1019,7 +1019,7 @@ func TestSession_SetClientIP(t *testing.T) {
 		m.SetClientIP("       ")
 		assert.Equal(t, "", m.ClientIP)
 	})
-	t.Run("change ip", func(t *testing.T) {
+	t.Run("ChangeIp", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.ClientIP)
 		m.SetClientIP("1234")

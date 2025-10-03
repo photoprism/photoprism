@@ -26,7 +26,7 @@ func TestPhotosQueryAnimated(t *testing.T) {
 	}
 	assert.Len(t, photos0, 1)
 
-	t.Run("animated:yes", func(t *testing.T) {
+	t.Run("AnimatedYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "animated:yes"
@@ -39,7 +39,7 @@ func TestPhotosQueryAnimated(t *testing.T) {
 		}
 		assert.Len(t, photos, len(photos0))
 	})
-	t.Run("false > yes", func(t *testing.T) {
+	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "animated:yes"

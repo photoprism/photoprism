@@ -14,7 +14,7 @@ func TestPhotosFilterYear(t *testing.T) {
 	f0.Merged = true
 
 	photos0, _, _ := Photos(f0)
-	t.Run("2008", func(t *testing.T) {
+	t.Run("Num2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "2008"
@@ -27,7 +27,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("2018", func(t *testing.T) {
+	t.Run("Num2018", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "2018"
@@ -40,7 +40,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("19*", func(t *testing.T) {
+	t.Run("Nineteen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "19*"
@@ -53,7 +53,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		}
 		assert.Len(t, photos, len(photos0))
 	})
-	t.Run("2018 pipe 2008", func(t *testing.T) {
+	t.Run("Num2018PipeNum2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "2018|2008"
@@ -66,7 +66,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		}
 		assert.Len(t, photos, 4)
 	})
-	t.Run("2018 whitespace pipe whitespace 2008", func(t *testing.T) {
+	t.Run("Num2018WhitespacePipeWhitespaceNum2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Year = "2018 | 2008"
@@ -325,7 +325,7 @@ func TestPhotosQueryYear(t *testing.T) {
 
 	photos0, _, _ := Photos(f0)
 
-	t.Run("2008", func(t *testing.T) {
+	t.Run("Num2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "year:\"2008\""
@@ -338,7 +338,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("2018", func(t *testing.T) {
+	t.Run("Num2018", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "year:\"2018\""
@@ -351,7 +351,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("19*", func(t *testing.T) {
+	t.Run("Nineteen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "year:\"19*\""
@@ -364,7 +364,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		}
 		assert.Len(t, photos, len(photos0))
 	})
-	t.Run("2018 pipe 2008", func(t *testing.T) {
+	t.Run("Num2018PipeNum2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "year:\"2018|2008\""
@@ -377,7 +377,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		}
 		assert.Len(t, photos, 4)
 	})
-	t.Run("2018 whitespace pipe whitespace 2008", func(t *testing.T) {
+	t.Run("Num2018WhitespacePipeWhitespaceNum2008", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "year:\"2018 | 2008\""

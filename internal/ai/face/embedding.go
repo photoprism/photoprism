@@ -3,9 +3,8 @@ package face
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
-
-	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
 // Embedding represents a face embedding.
@@ -23,6 +22,8 @@ func NewEmbedding(inference []float32) Embedding {
 	for i, v = range inference {
 		result[i] = float64(v)
 	}
+
+	normalizeEmbedding(result)
 
 	return result
 }
@@ -54,12 +55,50 @@ func (m Embedding) Dist(other Embedding) float64 {
 		return -1
 	}
 
-	return alg.EuclideanDist(m, other)
+	var sum float64
+
+	var diff0, diff1, diff2, diff3 float64
+	i := 0
+	limit := len(m)
+
+	for ; i+4 <= limit; i += 4 {
+		diff0 = m[i] - other[i]
+		diff1 = m[i+1] - other[i+1]
+		diff2 = m[i+2] - other[i+2]
+		diff3 = m[i+3] - other[i+3]
+
+		sum += diff0*diff0 + diff1*diff1 + diff2*diff2 + diff3*diff3
+	}
+
+	for ; i < limit; i++ {
+		diff := m[i] - other[i]
+		sum += diff * diff
+	}
+
+	return math.Sqrt(sum)
 }
 
 // Magnitude returns the face embedding vector length (magnitude).
 func (m Embedding) Magnitude() float64 {
 	return m.Dist(NullEmbedding)
+}
+
+func normalizeEmbedding(e Embedding) {
+	var sum float64
+
+	for _, v := range e {
+		sum += v * v
+	}
+
+	if sum == 0 {
+		return
+	}
+
+	inv := 1 / math.Sqrt(sum)
+
+	for i := range e {
+		e[i] *= inv
+	}
 }
 
 // JSON returns the face embedding as JSON-encoded bytes.
@@ -86,6 +125,8 @@ func UnmarshalEmbedding(s string) (result Embedding, err error) {
 	}
 
 	err = json.Unmarshal([]byte(s), &result)
+
+	normalizeEmbedding(result)
 
 	return result, err
 }

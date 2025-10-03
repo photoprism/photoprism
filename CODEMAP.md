@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** September 24, 2025
+**Last Updated:** October 2, 2025
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -191,7 +191,7 @@ Cluster Registry & Provisioner Cheatsheet
   - username: `photoprism_u<hmac11>`
   HMAC is base32 of ClusterUUID+NodeUUID; drivers currently `mysql|mariadb`.
 - DSN builder: `BuildDSN(driver, host, port, user, pass, name)`; warns and falls back to MySQL format for unsupported drivers.
-- Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful).
+- Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and name each subtest string in PascalCase.
 - Public API and internal registry DTOs use normalized field names:
   - `database` (not `db`) with `name`, `user`, `driver`, `rotatedAt`.
   - Node-level rotation timestamps use `rotatedAt`.

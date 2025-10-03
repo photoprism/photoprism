@@ -17,7 +17,7 @@ type Priority = int
 // Priorities maps source strings to their relative priorities.
 type Priorities map[Src]Priority
 
-// SrcMap maps source names to sources.
+// SrcMap maps human-readable source names to sources.
 type SrcMap map[string]Src
 
 // Supported metadata source strings.

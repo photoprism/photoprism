@@ -4,7 +4,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// Defaults.
+// Default placeholder values used when metadata is unknown or unset.
 const (
 	Unknown      = ""
 	UnknownTitle = ""
@@ -15,7 +15,7 @@ const (
 	UnknownSlug  = "-"
 )
 
-// Media types.
+// Media types map PhotoPrism media identifiers to constants for ease of comparison.
 const (
 	MediaUnknown  = ""
 	MediaAnimated = string(media.Animated)
@@ -29,7 +29,7 @@ const (
 	MediaVideo    = string(media.Video)
 )
 
-// Base folders.
+// Base folders define canonical roots for different file classes within the library.
 const (
 	RootUnknown   = ""
 	RootOriginals = "/"
@@ -39,14 +39,14 @@ const (
 	RootPath      = "/"
 )
 
-// Event types.
+// Event types identify lifecycle state transitions published on the internal bus.
 const (
 	Created = "created"
 	Updated = "updated"
 	Deleted = "deleted"
 )
 
-// Stacking states.
+// Stacking states describe how a photo participates in stacked groups.
 const (
 	IsStacked   int8 = 1
 	IsStackable int8 = 0

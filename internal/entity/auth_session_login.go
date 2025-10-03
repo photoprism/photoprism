@@ -18,7 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Auth checks if the credentials are valid and returns the user and authentication provider.
+// Auth validates login credentials and returns the authenticated user plus provider/method metadata.
 var Auth = func(frm form.Login, s *Session, c *gin.Context) (user *User, provider authn.ProviderType, method authn.MethodType, err error) {
 	// Get sanitized username from login form.
 	nameName := frm.CleanUsername()
@@ -39,7 +39,7 @@ var Auth = func(frm form.Login, s *Session, c *gin.Context) (user *User, provide
 	return user, provider, method, err
 }
 
-// AuthSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
+// AuthSession resolves an existing session from an app password token embedded in the login form.
 func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err error) {
 	if frm.Password == "" {
 		// Abort authentication if no token was provided.
@@ -68,7 +68,7 @@ func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err
 	return sess, sess.GetUser(), nil
 }
 
-// AuthLocal authenticates against the local user database with the specified username and password.
+// AuthLocal authenticates against the local user database, handling OTP and app-password flows.
 func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider authn.ProviderType, method authn.MethodType, err error) {
 	// Set defaults.
 	provider = authn.ProviderNone

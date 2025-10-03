@@ -13,7 +13,7 @@ import (
 )
 
 func TestConvert_ToAvc(t *testing.T) {
-	t.Run("gopher-video.mp4", func(t *testing.T) {
+	t.Run("GopherVideoMp4", func(t *testing.T) {
 		conf := config.TestConfig()
 		convert := NewConvert(conf)
 
@@ -43,7 +43,7 @@ func TestConvert_ToAvc(t *testing.T) {
 
 		_ = os.Remove(outputName)
 	})
-	t.Run("jpg", func(t *testing.T) {
+	t.Run("Jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 		convert := NewConvert(conf)
 

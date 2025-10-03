@@ -39,13 +39,13 @@ func TestFile_RegenerateIndex(t *testing.T) {
 }
 
 func TestFirstFileByHash(t *testing.T) {
-	t.Run("not existing file", func(t *testing.T) {
+	t.Run("NotExistingFile", func(t *testing.T) {
 		f, err := FirstFileByHash("xxx")
 
 		assert.EqualError(t, err, "record not found")
 		assert.Equal(t, uint(0), f.ID)
 	})
-	t.Run("existing file", func(t *testing.T) {
+	t.Run("ExistingFile", func(t *testing.T) {
 		f, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		if err != nil {
 			t.Fatal(err)
@@ -117,22 +117,22 @@ func TestFile_ShareFileName(t *testing.T) {
 
 func TestFile_Changed(t *testing.T) {
 	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
-	t.Run("different modified times", func(t *testing.T) {
+	t.Run("DifferentModifiedTimes", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		d := time.Date(2020, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, true, file.Changed(500, d))
 	})
-	t.Run("different sizes", func(t *testing.T) {
+	t.Run("DifferentSizes", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 600, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, true, file.Changed(500, d))
 	})
-	t.Run("no change", func(t *testing.T) {
+	t.Run("NoChange", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, false, file.Changed(500, d))
 	})
-	t.Run("deleted", func(t *testing.T) {
+	t.Run("Deleted", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
 		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, false, file.Changed(500, d))
@@ -142,27 +142,27 @@ func TestFile_Changed(t *testing.T) {
 func TestFile_Missing(t *testing.T) {
 	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 
-	t.Run("deleted", func(t *testing.T) {
+	t.Run("Deleted", func(t *testing.T) {
 		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
 		assert.Equal(t, true, file.Missing())
 	})
-	t.Run("missing", func(t *testing.T) {
+	t.Run("Missing", func(t *testing.T) {
 		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
 		assert.Equal(t, true, file.Missing())
 	})
-	t.Run("not_missing", func(t *testing.T) {
+	t.Run("NotMissing", func(t *testing.T) {
 		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
 		assert.Equal(t, false, file.Missing())
 	})
 }
 
 func TestFile_Create(t *testing.T) {
-	t.Run("photo id == 0", func(t *testing.T) {
+	t.Run("PhotoIdEqualZero", func(t *testing.T) {
 		file := File{PhotoID: 0}
 
 		assert.Error(t, file.Create())
 	})
-	t.Run("file already exists", func(t *testing.T) {
+	t.Run("FileAlreadyExists", func(t *testing.T) {
 		file := &File{PhotoID: 123, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		assert.Nil(t, file.Create())
 		assert.Error(t, file.Create())
@@ -202,18 +202,18 @@ func TestFile_Found(t *testing.T) {
 }
 
 func TestFile_AllFilesMissing(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		file := FileFixtures.Get("missing.jpg")
 		assert.True(t, file.AllFilesMissing())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		file := FileFixtures.Get("Quality1FavoriteTrue.jpg")
 		assert.False(t, file.AllFilesMissing())
 	})
 }
 
 func TestFile_Save(t *testing.T) {
-	t.Run("save without photo", func(t *testing.T) {
+	t.Run("SaveWithoutPhoto", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", PhotoUID: "123", FileUID: "123"}
 		err := file.Save()
 
@@ -290,7 +290,7 @@ func TestFile_Update(t *testing.T) {
 }
 
 func TestFile_Links(t *testing.T) {
-	t.Run("result", func(t *testing.T) {
+	t.Run("Result", func(t *testing.T) {
 		file := FileFixturesExampleBridge
 		links := file.Links()
 		if len(links) == 0 {
@@ -302,64 +302,64 @@ func TestFile_Links(t *testing.T) {
 }
 
 func TestFile_NoJpeg(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
 		assert.True(t, file.NoJpeg())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.False(t, file.NoJpeg())
 	})
 }
 
 func TestFile_NoPng(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
 		assert.True(t, file.NoPng())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "png", FileSize: 500}
 		assert.False(t, file.NoPng())
 	})
 }
 
 func TestFile_Type(t *testing.T) {
-	t.Run("xmp", func(t *testing.T) {
+	t.Run("Xmp", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
 		assert.Equal(t, fs.SidecarXMP, file.Type())
 	})
-	t.Run("png", func(t *testing.T) {
+	t.Run("Png", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "png", FileSize: 500}
 		assert.Equal(t, fs.ImagePng, file.Type())
 	})
 }
 
 func TestFile_Panorama(t *testing.T) {
-	t.Run("3000", func(t *testing.T) {
+	t.Run("Num3000", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 3000, FileHeight: 1000}
 		assert.True(t, file.Panorama())
 	})
-	t.Run("1999", func(t *testing.T) {
+	t.Run("Num1999", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1910, FileHeight: 1000}
 		assert.True(t, file.Panorama())
 	})
-	t.Run("2000", func(t *testing.T) {
+	t.Run("Num2000", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 2000, FileHeight: 1000}
 		assert.True(t, file.Panorama())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000}
 		assert.False(t, file.Panorama())
 	})
-	t.Run("equirectangular", func(t *testing.T) {
+	t.Run("Equirectangular", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: projection.Equirectangular.String()}
 		assert.True(t, file.Panorama())
 	})
-	t.Run("transverse-cylindrical", func(t *testing.T) {
+	t.Run("TransverseCylindrical", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: projection.TransverseCylindrical.String()}
 		assert.True(t, file.Panorama())
 	})
-	t.Run("sidecar", func(t *testing.T) {
+	t.Run("Sidecar", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSidecar: true, FileWidth: 3000, FileHeight: 1000}
 		assert.False(t, file.Panorama())
 	})
@@ -406,7 +406,7 @@ func TestFile_SetProjection(t *testing.T) {
 }
 
 func TestFile_Delete(t *testing.T) {
-	t.Run("permanently", func(t *testing.T) {
+	t.Run("Permanently", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBePermanentlyDeleted", FileRoot: "", PhotoID: 5678}
 
 		err := file.Save()
@@ -420,7 +420,7 @@ func TestFile_Delete(t *testing.T) {
 
 		assert.Nil(t, err2)
 	})
-	t.Run("not permanently", func(t *testing.T) {
+	t.Run("NotPermanently", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeDeleted", FileRoot: "", PhotoID: 5678}
 
 		err := file.Save()
@@ -445,7 +445,7 @@ func TestPrimaryFile(t *testing.T) {
 }
 
 func TestFile_OriginalBase(t *testing.T) {
-	t.Run("original name empty, filename empty", func(t *testing.T) {
+	t.Run("OriginalNameEmptyFilenameEmpty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "", FileName: ""}
 
@@ -459,7 +459,7 @@ func TestFile_OriginalBase(t *testing.T) {
 		assert.Contains(t, filename2, "(1)")
 		assert.Contains(t, filename2, fs.ExtJpeg)
 	})
-	t.Run("original name empty", func(t *testing.T) {
+	t.Run("OriginalNameEmpty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "", FileName: "sonnenaufgang.jpg"}
 
@@ -473,7 +473,7 @@ func TestFile_OriginalBase(t *testing.T) {
 		assert.Contains(t, filename2, "(1)")
 		assert.Contains(t, filename2, fs.ExtJpeg)
 	})
-	t.Run("original name not empty", func(t *testing.T) {
+	t.Run("OriginalNameNotEmpty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "Sonnenaufgang.jpg", FileName: "123.jpg"}
 
@@ -520,7 +520,7 @@ func TestFile_Undelete(t *testing.T) {
 		}
 		assert.Equal(t, false, file.FileMissing)
 	})
-	t.Run("file not missing", func(t *testing.T) {
+	t.Run("FileNotMissing", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, false, file.FileMissing)
 		err := file.Undelete()
@@ -625,7 +625,7 @@ func TestFile_Rename(t *testing.T) {
 }
 
 func TestFile_SubjectNames(t *testing.T) {
-	t.Run("Photo27.jpg", func(t *testing.T) {
+	t.Run("PhotoNum27Jpg", func(t *testing.T) {
 		m := FileFixtures.Get("Photo27.jpg")
 
 		names := m.SubjectNames()
@@ -636,7 +636,7 @@ func TestFile_SubjectNames(t *testing.T) {
 			assert.Equal(t, "Actress A", names[0])
 		}
 	})
-	t.Run("Video.jpg", func(t *testing.T) {
+	t.Run("VideoJpg", func(t *testing.T) {
 		m := FileFixtures.Get("Video.jpg")
 
 		names := m.SubjectNames()
@@ -647,7 +647,7 @@ func TestFile_SubjectNames(t *testing.T) {
 			assert.Equal(t, "Actor A", names[0])
 		}
 	})
-	t.Run("bridge.jpg", func(t *testing.T) {
+	t.Run("BridgeJpg", func(t *testing.T) {
 		m := FileFixtures.Get("bridge.jpg")
 
 		names := m.SubjectNames()
@@ -661,7 +661,7 @@ func TestFile_SubjectNames(t *testing.T) {
 }
 
 func TestFile_UnsavedMarkers(t *testing.T) {
-	t.Run("bridge2.jpg", func(t *testing.T) {
+	t.Run("Bridge2Jpg", func(t *testing.T) {
 		m := FileFixtures.Get("bridge2.jpg")
 		assert.Equal(t, "fs6sg6bw15bnlqdw", m.FileUID)
 		assert.False(t, m.UnsavedMarkers())
@@ -687,7 +687,7 @@ func TestFile_UnsavedMarkers(t *testing.T) {
 }
 
 func TestFile_ReplaceHash(t *testing.T) {
-	t.Run("exampleFileName.jpg", func(t *testing.T) {
+	t.Run("ExampleFileNameJpg", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
 		if err := m.ReplaceHash(""); err != nil {

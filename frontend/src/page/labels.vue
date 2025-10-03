@@ -43,26 +43,7 @@
           "
         ></v-text-field>
 
-        <v-btn
-          v-if="!filter.all"
-          icon="mdi-eye"
-          tabindex="2"
-          :title="$gettext('Show more')"
-          class="action-show-all ms-1"
-          @click.stop="showAll"
-        >
-        </v-btn>
-        <v-btn
-          v-else
-          icon="mdi-eye-off"
-          tabindex="2"
-          :title="$gettext('Show less')"
-          class="action-show-important ms-1"
-          @click.stop="showImportant"
-        >
-        </v-btn>
         <p-action-menu
-          v-if="$vuetify.display.mdAndUp"
           :items="menuActions"
           :tabindex="3"
           button-class="ms-1"
@@ -201,7 +182,7 @@ export default {
     },
     defaultOrder: {
       type: String,
-      default: "count",
+      default: "relevance",
     },
   },
   expose: ["onShortCut"],
@@ -211,6 +192,7 @@ export default {
     const order = this.sortOrder();
     const q = query["q"] ? query["q"] : "";
     const all = query["all"] ? query["all"] : "";
+    const settings = {};
 
     const features = this.$config.getSettings().features;
     const canManage = this.$config.allow("labels", "manage");
@@ -233,7 +215,7 @@ export default {
       offset: 0,
       page: 0,
       selection: [],
-      settings: {},
+      settings: settings,
       filter: { q, order, all },
       lastFilter: {},
       routeName: routeName,
@@ -298,15 +280,60 @@ export default {
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
           shortcut: "Ctrl-R",
-          visible: true,
+          visible: this.$vuetify.display.mdAndUp,
           click: () => {
             this.refresh();
           },
         },
         {
+          name: "show-all",
+          icon: "mdi-eye",
+          text: this.$gettext("Show All Labels"),
+          visible: !this.filter.all,
+          click: () => {
+            this.showAll();
+          },
+        },
+        {
+          name: "show-important",
+          icon: "mdi-eye-off",
+          text: this.$gettext("Show Important Only"),
+          visible: this.filter.all,
+          click: () => {
+            this.showImportant();
+          },
+        },
+        {
+          name: "sort-by-relevance",
+          icon: "mdi-star",
+          text: this.$gettext("Sort by Relevance"),
+          visible: this.filter?.order !== "relevance",
+          click: () => {
+            this.updateQuery({ order: "relevance" });
+          },
+        },
+        {
+          name: "sort-by-name",
+          icon: "mdi-sort-alphabetical-descending-variant",
+          text: this.$gettext("Sort by Name (A–Z)"),
+          visible: this.filter?.order !== "slug",
+          click: () => {
+            this.updateQuery({ order: "slug" });
+          },
+        },
+        {
+          name: "sort-by-count",
+          icon: "mdi-sort-numeric-descending-variant",
+          text: this.$gettext("Sort by Photo Count"),
+          visible: this.filter?.order !== "count",
+          click: () => {
+            this.updateQuery({ order: "count" });
+          },
+        },
+        {
           name: "upload",
           icon: "mdi-cloud-upload",
-          text: this.$gettext("Upload"),
+          text: this.$gettext("Upload") + "…",
           shortcut: "Ctrl-U",
           visible: this.canUpload,
           click: () => {

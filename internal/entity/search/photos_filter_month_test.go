@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterMonth(t *testing.T) {
-	t.Run("12", func(t *testing.T) {
+	t.Run("Twelve", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Month = "12"
@@ -22,7 +22,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Month = "1"
@@ -35,7 +35,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("12 pipe 1", func(t *testing.T) {
+	t.Run("TwelvePipeOne", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Month = "12|1"
@@ -48,7 +48,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 		}
 		assert.Len(t, photos, 8)
 	})
-	t.Run("12 whitespace pipe whitespace 1", func(t *testing.T) {
+	t.Run("TwelveWhitespacePipeWhitespaceOne", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Month = "12 | 1"
@@ -306,7 +306,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 }
 
 func TestPhotosQueryMonth(t *testing.T) {
-	t.Run("12", func(t *testing.T) {
+	t.Run("Twelve", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "month:\"12\""
@@ -319,7 +319,7 @@ func TestPhotosQueryMonth(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "month:\"1\""
@@ -332,7 +332,7 @@ func TestPhotosQueryMonth(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("12 pipe 1", func(t *testing.T) {
+	t.Run("TwelvePipeOne", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "month:\"12|1\""
@@ -345,7 +345,7 @@ func TestPhotosQueryMonth(t *testing.T) {
 		}
 		assert.Len(t, photos, 8)
 	})
-	t.Run("12 whitespace pipe whitespace 1", func(t *testing.T) {
+	t.Run("TwelveWhitespacePipeWhitespaceOne", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "month:\"12 | 1\""

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -58,7 +58,7 @@ msgstr "找到了 %{n} 個資料夾"
 msgid "%{n} GB of %{q} GB used"
 msgstr "已使用 %{n} GB（共 %{q} GB）"
 
-#: src/page/labels.vue:533
+#: src/page/labels.vue:602
 msgid "%{n} labels found"
 msgstr "找到了 %{n} 個標籤"
 
@@ -230,7 +230,7 @@ msgstr "已新增"
 msgid "Adjust Location"
 msgstr "調整位置"
 
-#: src/options/admin.js:6 src/common/util.js:748 src/options/auth.js:6
+#: src/options/admin.js:6 src/common/util.js:752 src/options/auth.js:6
 msgid "Admin"
 msgstr "管理員"
 
@@ -308,7 +308,7 @@ msgstr "全部"
 msgid "All %{n} albums loaded"
 msgstr "共 %{n} 本相簿已載入"
 
-#: src/page/labels.vue:367
+#: src/page/labels.vue:436
 msgid "All %{n} labels loaded"
 msgstr "共 %{n} 個標籤已載入"
 
@@ -507,7 +507,7 @@ msgstr "徽章"
 msgid "Base Path"
 msgstr "基本路径"
 
-#: src/common/util.js:742
+#: src/common/util.js:746
 msgid "Batch"
 msgstr "批次"
 
@@ -601,8 +601,8 @@ msgid "Can't load more, limit reached"
 msgstr "已達上限，無法再載入更多"
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:293
-#: src/page/labels.vue:313 src/page/library/browse.vue:233
+#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:362
+#: src/page/labels.vue:382 src/page/library/browse.vue:233
 #: src/page/library/browse.vue:249 src/page/people/new.vue:278
 #: src/page/people/new.vue:294 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
@@ -630,11 +630,11 @@ msgstr "無法選取更多項目"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/common/util.js:911 src/common/util.js:918
+#: src/common/util.js:915 src/common/util.js:922
 msgid "Cannot copy to clipboard"
 msgstr "無法複製到剪貼簿"
 
-#: src/common/util.js:730 src/component/photo/edit/details.vue:89
+#: src/common/util.js:734 src/component/photo/edit/details.vue:89
 #: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:72
 msgid "Caption"
 msgstr "標題"
@@ -793,12 +793,12 @@ msgstr "聯絡方式"
 msgid "Contact Us"
 msgstr "聯絡我們"
 
-#: src/page/albums.vue:433 src/page/labels.vue:237
+#: src/page/albums.vue:433 src/page/labels.vue:216
 #: src/page/people/recognized.vue:306
 msgid "Contains %{n} pictures."
 msgstr "包含 %{n} 張圖片。"
 
-#: src/page/albums.vue:427 src/page/labels.vue:231
+#: src/page/albums.vue:427 src/page/labels.vue:210
 #: src/page/people/recognized.vue:300
 msgid "Contains one picture."
 msgstr "包含一張圖片。"
@@ -823,7 +823,7 @@ msgstr "貢獻者"
 msgid "Converting"
 msgstr "轉換中"
 
-#: src/common/util.js:904
+#: src/common/util.js:908
 msgid "Copied to clipboard"
 msgstr "已複製到剪貼簿"
 
@@ -880,7 +880,7 @@ msgstr "立方：中等品質，良好效能"
 msgid "Current Password"
 msgstr "目前的密碼"
 
-#: src/options/themes.js:920 src/options/themes.js:929
+#: src/options/themes.js:935 src/options/themes.js:944
 msgid "Custom"
 msgstr "風俗"
 
@@ -914,7 +914,7 @@ msgstr "除錯紀錄"
 #: src/model/user.js:261 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:196
 #: src/options/options.js:232 src/options/options.js:316
-#: src/options/themes.js:774
+#: src/options/themes.js:789
 msgid "Default"
 msgstr "預設"
 
@@ -1544,7 +1544,7 @@ msgid "in"
 msgstr "在"
 
 #: src/component/photo/view/cards.vue:149 src/component/photo/view/list.vue:87
-#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:156
+#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:135
 #: src/page/library/browse.vue:124
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "如果您覺得應該會在的圖片不見了，請重新掃描您的資料庫並等待索引完成。"
@@ -1662,7 +1662,7 @@ msgstr "JPEG大小限制：%{n} px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEGs 跟 縮圖 在需要的時候會自動生成。"
 
-#: src/common/util.js:732
+#: src/common/util.js:736
 msgid "Keyword"
 msgstr "關鍵字"
 
@@ -1729,7 +1729,7 @@ msgid "Learn more"
 msgstr "了解更多"
 
 #: src/page/admin/sessions.vue:110 src/page/admin/users.vue:137
-#: src/page/labels.vue:132
+#: src/page/labels.vue:184
 msgid "Learn More"
 msgstr "了解更多"
 
@@ -1870,7 +1870,7 @@ msgstr "管理帳號"
 msgid "Manager"
 msgstr "主管"
 
-#: src/common/util.js:744
+#: src/common/util.js:748
 msgid "Manual"
 msgstr "手動的"
 
@@ -1915,7 +1915,7 @@ msgstr "訊息"
 msgid "Message sent"
 msgstr "訊息已傳送"
 
-#: src/common/util.js:734
+#: src/common/util.js:738
 msgid "Metadata"
 msgstr "元数据"
 
@@ -1990,7 +1990,7 @@ msgstr "名稱"
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:46
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:54
+#: src/component/photo/edit/people.vue:39 src/page/labels.vue:60
 #: src/page/library/browse.vue:46 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
@@ -2043,7 +2043,7 @@ msgstr "找不到相簿"
 msgid "No data available"
 msgstr "無可用數據"
 
-#: src/page/labels.vue:528 src/page/labels.vue:155
+#: src/page/labels.vue:597 src/page/labels.vue:134
 msgid "No labels found"
 msgstr "找不到標籤"
 
@@ -2196,7 +2196,7 @@ msgstr "已上傳一個檔案"
 msgid "One folder found"
 msgstr "找到 1 個資料夾"
 
-#: src/page/labels.vue:530
+#: src/page/labels.vue:599
 msgid "One label found"
 msgstr "找到一個標籤"
 
@@ -2541,7 +2541,7 @@ msgstr "紅色"
 
 #: src/page/admin/sessions.vue:101 src/page/admin/users.vue:128
 #: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:175 src/page/labels.vue:112
+#: src/page/albums.vue:175 src/page/labels.vue:119
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:81
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:88
 msgid "Refresh"
@@ -2669,7 +2669,7 @@ msgstr "範圍"
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:69
 #: src/component/location/dialog.vue:131 src/component/navigation.vue:342
 #: src/component/navigation.vue:1866 src/component/photo/toolbar.vue:57
-#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:77
+#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:76
 #: src/page/library/errors.vue:76 src/page/people/recognized.vue:66
 #: src/page/places.vue:79 src/page/settings/content.vue:235
 msgid "Search"
@@ -2796,6 +2796,10 @@ msgstr "與其他應用程式和服務分享您的照片。"
 msgid "Show"
 msgstr "顯示"
 
+#: src/page/labels.vue:129
+msgid "Show All Labels"
+msgstr "顯示所有標籤"
+
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
 msgstr "顯示所有新面孔"
@@ -2808,13 +2812,9 @@ msgstr "顯示字幕"
 msgid "Show hidden"
 msgstr "顯示隱藏"
 
-#: src/page/labels.vue:109
-msgid "Show less"
-msgstr "顯示較少"
-
-#: src/page/labels.vue:101
-msgid "Show more"
-msgstr "顯示更多"
+#: src/page/labels.vue:138
+msgid "Show Important Only"
+msgstr "僅顯示重要內容"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2868,6 +2868,18 @@ msgstr "出错了，再试一次"
 #: src/locales.js:227
 msgid "Sort by"
 msgstr "排序方式"
+
+#: src/page/labels.vue:156
+msgid "Sort by Name (A–Z)"
+msgstr "按名稱排序（A-Z）"
+
+#: src/page/labels.vue:165
+msgid "Sort by Photo Count"
+msgstr "按照片數量排序"
+
+#: src/page/labels.vue:147
+msgid "Sort by Relevance"
+msgstr "按相關性排序"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214
@@ -2932,7 +2944,7 @@ msgstr "儲存空間"
 msgid "Streets"
 msgstr "街"
 
-#: src/common/util.js:736 src/component/photo/edit/details.vue:468
+#: src/common/util.js:740 src/component/photo/edit/details.vue:468
 msgid "Subject"
 msgstr "主題"
 
@@ -3057,7 +3069,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "標題"
 
-#: src/common/util.js:738 src/component/photo/edit/info.vue:155
+#: src/common/util.js:742 src/component/photo/edit/info.vue:155
 #: src/component/photo/view/list.vue:114 src/component/sidebar/info.vue:57
 msgid "Title"
 msgstr "標題"
@@ -3116,7 +3128,7 @@ msgstr "故障排除"
 
 #: src/component/photo/view/cards.vue:146 src/component/photo/view/list.vue:54
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:70
-#: src/page/albums.vue:284 src/page/labels.vue:156
+#: src/page/albums.vue:284 src/page/labels.vue:135
 #: src/page/people/recognized.vue:147
 msgid "Try again using other filters or keywords."
 msgstr "請使用其他篩選條件或是關鍵字。"
@@ -3219,7 +3231,7 @@ msgstr "立即升級"
 #: src/component/album/toolbar.vue:113 src/component/navigation.vue:1824
 #: src/component/photo/toolbar.vue:179 src/component/service/upload.vue:144
 #: src/component/upload/dialog.vue:51 src/page/albums.vue:185
-#: src/page/labels.vue:122 src/page/library/import.vue:133
+#: src/page/labels.vue:174 src/page/library/import.vue:133
 #: src/page/settings/general.vue:307 src/page/settings/services.vue:38
 msgid "Upload"
 msgstr "上傳"
@@ -3347,7 +3359,7 @@ msgstr "以清單形式查看搜尋結果。"
 msgid "Viewer"
 msgstr "檢視者"
 
-#: src/common/util.js:746
+#: src/common/util.js:750
 msgid "Vision"
 msgstr "想像"
 
@@ -3483,6 +3495,12 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/lightbox.vue:285
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Show less"
+#~ msgstr "顯示較少"
+
+#~ msgid "Show more"
+#~ msgstr "顯示更多"
 
 #~ msgid "Archive"
 #~ msgstr "封存"

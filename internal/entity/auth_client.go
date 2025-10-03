@@ -25,10 +25,10 @@ const (
 	ClientUID = byte('c')
 )
 
-// Clients represents a list of client applications.
+// Clients is a convenience alias for slices of Client.
 type Clients []Client
 
-// Client represents a client application.
+// Client represents an OAuth/OpenID client registered with PhotoPrism.
 type Client struct {
 	ClientUID    string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
 	NodeUUID     string          `gorm:"type:VARBINARY(64);index;default:'';" json:"NodeUUID,omitempty" yaml:"NodeUUID,omitempty"`
@@ -60,7 +60,7 @@ func (Client) TableName() string {
 	return "auth_clients"
 }
 
-// NewClient returns a new client application instance.
+// NewClient returns a new client application instance with default ACL role and authentication settings.
 func NewClient() *Client {
 	return &Client{
 		UserUID:      "",

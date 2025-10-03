@@ -39,9 +39,10 @@ var (
 
 var albumMutex = sync.Mutex{}
 
+// Albums is a helper slice type for working with groups of albums.
 type Albums []Album
 
-// Album represents a photo album
+// Album represents a photo album and its metadata, including filter definitions for virtual albums.
 type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
 	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
@@ -92,7 +93,7 @@ func (Album) TableName() string {
 	return "albums"
 }
 
-// UpdateAlbum updates album attributes in the database.
+// UpdateAlbum updates album attributes directly in the database by UID.
 func UpdateAlbum(albumUID string, values interface{}) (err error) {
 	if rnd.InvalidUID(albumUID, AlbumUID) {
 		return fmt.Errorf("album: invalid uid %s", clean.Log(albumUID))
@@ -103,12 +104,12 @@ func UpdateAlbum(albumUID string, values interface{}) (err error) {
 	return nil
 }
 
-// AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
+// AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them with default ownership when required.
 func AddPhotoToAlbums(uid string, albums []string) (err error) {
 	return AddPhotoToUserAlbums(uid, albums, DefaultOrderAlbum, OwnerUnknown)
 }
 
-// AddPhotoToUserAlbums adds a photo UID to multiple albums and automatically creates them as a user if needed.
+// AddPhotoToUserAlbums adds a photo UID to multiple albums while creating any missing albums for the given user.
 func AddPhotoToUserAlbums(photoUid string, albums []string, sortOrder, userUid string) (err error) {
 	if photoUid == "" || len(albums) == 0 {
 		// Do nothing.
@@ -159,12 +160,12 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, sortOrder, userUid s
 	return err
 }
 
-// NewAlbum creates a new album of the given type.
+// NewAlbum creates a new album of the given type using default ownership.
 func NewAlbum(albumTitle, albumType string) *Album {
 	return NewUserAlbum(albumTitle, albumType, sortby.Oldest, OwnerUnknown)
 }
 
-// NewUserAlbum creates a new album owned by a user.
+// NewUserAlbum creates a new album owned by a user and pre-fills timestamps/order defaults.
 func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 	now := Now()
 
@@ -193,7 +194,7 @@ func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 	return result
 }
 
-// NewFolderAlbum creates a new folder album.
+// NewFolderAlbum creates a new album representing a filesystem folder.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	albumSlug := txt.Slug(albumPath)
 
@@ -218,7 +219,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	return result
 }
 
-// NewMomentsAlbum creates a new moment.
+// NewMomentsAlbum creates a new automatically generated moment album.
 func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
 		return nil
@@ -240,7 +241,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	return result
 }
 
-// NewStateAlbum creates a new moment.
+// NewStateAlbum creates an automatically generated album for a specific state or region.
 func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	albumTitle = strings.TrimSpace(albumTitle)
 	albumSlug = strings.TrimSpace(albumSlug)
@@ -265,7 +266,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	return result
 }
 
-// NewMonthAlbum creates a new month album.
+// NewMonthAlbum creates an automatically generated album for a specific month.
 func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	albumTitle = strings.TrimSpace(albumTitle)
 	albumSlug = strings.TrimSpace(albumSlug)
@@ -298,7 +299,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	return result
 }
 
-// FindMonthAlbum finds a matching month album or returns nil.
+// FindMonthAlbum returns the matching month album or nil if none exists.
 func FindMonthAlbum(year, month int) *Album {
 	m := Album{}
 
@@ -313,7 +314,7 @@ func FindMonthAlbum(year, month int) *Album {
 	return &m
 }
 
-// FindAlbumBySlug finds a matching album or returns nil.
+// FindAlbumBySlug returns the album with the given slug/type combination.
 func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	m := Album{}
 
@@ -328,7 +329,7 @@ func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	return &m
 }
 
-// FindAlbumByAttr finds an album by filters and slugs, or returns nil.
+// FindAlbumByAttr returns an album matching any of the provided slugs or filters.
 func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 	m := Album{}
 
@@ -355,7 +356,7 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 	return &m
 }
 
-// FindFolderAlbum finds a matching folder album or returns nil.
+// FindFolderAlbum looks up a folder album by its canonical path or slug.
 func FindFolderAlbum(albumPath string) *Album {
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
 	albumSlug := txt.Slug(albumPath)

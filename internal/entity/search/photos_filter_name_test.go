@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterName(t *testing.T) {
-	t.Run("27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Num27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "27900704_070228_D6D51B6C"
@@ -22,7 +22,7 @@ func TestPhotosFilterName(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("*hoto1*", func(t *testing.T) {
+	t.Run("Hoto1", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "*hoto1*"
@@ -35,7 +35,7 @@ func TestPhotosFilterName(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("*hoto1* pipe 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Hoto1PipeNum27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "*hoto1*|27900704_070228_D6D51B6C"
@@ -48,7 +48,7 @@ func TestPhotosFilterName(t *testing.T) {
 		}
 		assert.Len(t, photos, 7)
 	})
-	t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Hoto1WhitespacePipeWhitespaceNum27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "*hoto1* | 27900704_070228_D6D51B6C"
@@ -61,7 +61,7 @@ func TestPhotosFilterName(t *testing.T) {
 		}
 		assert.Len(t, photos, 7)
 	})
-	t.Run("*hoto1* or 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Hoto1OrNum27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "*hoto1* or 27900704_070228_D6D51B6C"
@@ -495,7 +495,7 @@ func TestPhotosFilterName(t *testing.T) {
 }
 
 func TestPhotosQueryName(t *testing.T) {
-	t.Run("27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Num27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"27900704_070228_D6D51B6C\""
@@ -508,7 +508,7 @@ func TestPhotosQueryName(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("*hoto1*", func(t *testing.T) {
+	t.Run("Hoto1", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"*hoto1*\""
@@ -521,7 +521,7 @@ func TestPhotosQueryName(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("*hoto1* pipe 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Hoto1PipeNum27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"*hoto1*|27900704_070228_D6D51B6C\""
@@ -534,7 +534,7 @@ func TestPhotosQueryName(t *testing.T) {
 		}
 		assert.Len(t, photos, 7)
 	})
-	t.Run("*hoto1* whitespace pipe whitespace 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Hoto1WhitespacePipeWhitespaceNum27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"*hoto1* | 27900704_070228_D6D51B6C\""
@@ -547,7 +547,7 @@ func TestPhotosQueryName(t *testing.T) {
 		}
 		assert.Len(t, photos, 7)
 	})
-	t.Run("*hoto1* or 27900704_070228_D6D51B6C", func(t *testing.T) {
+	t.Run("Hoto1OrNum27900704Num070228DSixDNum51BSixC", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:\"*hoto1* or 27900704_070228_D6D51B6C\""

@@ -26,7 +26,7 @@ func TestPhotosQueryPublic(t *testing.T) {
 	}
 	assert.GreaterOrEqual(t, len(photos0), 21)
 
-	t.Run("false > yes", func(t *testing.T) {
+	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "public:yes"

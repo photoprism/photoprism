@@ -97,7 +97,7 @@ func TestDislikeSubject(t *testing.T) {
 }
 
 func TestUpdateSubject(t *testing.T) {
-	t.Run("successful request person", func(t *testing.T) {
+	t.Run("SuccessfulRequestPerson", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateSubject(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Name": "Updated Name"}`)

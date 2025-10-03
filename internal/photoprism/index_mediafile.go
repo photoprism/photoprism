@@ -822,10 +822,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if len(extraLabels) > 0 {
 				labels = append(labels, extraLabels...)
 			}
+		}
 
-			if !photoExists && Config().Settings().Features.Private && Config().DetectNSFW() {
-				photo.PhotoPrivate = ind.IsNsfw(m)
-			}
+		// Decouple NSFW detection from label generation.
+		if !photoExists && ind.detectNsfw {
+			photo.PhotoPrivate = ind.IsNsfw(m)
 		}
 
 		// Read metadata from embedded Exif and JSON sidecar file, if exists.

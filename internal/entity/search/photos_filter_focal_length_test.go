@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterFocalLength(t *testing.T) {
-	t.Run("28", func(t *testing.T) {
+	t.Run("Num28", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mm = "28"
@@ -27,7 +27,7 @@ func TestPhotosFilterFocalLength(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("28-50", func(t *testing.T) {
+	t.Run("Num28Num50", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mm = "28-50"
@@ -46,7 +46,7 @@ func TestPhotosFilterFocalLength(t *testing.T) {
 
 		assert.Len(t, photos, 4)
 	})
-	t.Run("1-400", func(t *testing.T) {
+	t.Run("OneNum400", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mm = "1-400"
@@ -65,7 +65,7 @@ func TestPhotosFilterFocalLength(t *testing.T) {
 
 		assert.Len(t, photos, 6)
 	})
-	t.Run("22", func(t *testing.T) {
+	t.Run("Num22", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mm = "22"
@@ -79,7 +79,7 @@ func TestPhotosFilterFocalLength(t *testing.T) {
 
 		assert.Len(t, photos, 0)
 	})
-	t.Run("-100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mm = "-100"
@@ -93,7 +93,7 @@ func TestPhotosFilterFocalLength(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 40)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mm = "%gold"
@@ -109,7 +109,7 @@ func TestPhotosFilterFocalLength(t *testing.T) {
 }
 
 func TestPhotosQueryFocalLength(t *testing.T) {
-	t.Run("28", func(t *testing.T) {
+	t.Run("Num28", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mm:\"28\""
@@ -128,7 +128,7 @@ func TestPhotosQueryFocalLength(t *testing.T) {
 
 		assert.Len(t, photos, 1)
 	})
-	t.Run("28-30", func(t *testing.T) {
+	t.Run("Num28Num30", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mm:\"28-30\""
@@ -147,7 +147,7 @@ func TestPhotosQueryFocalLength(t *testing.T) {
 
 		assert.Len(t, photos, 2)
 	})
-	t.Run("1-400", func(t *testing.T) {
+	t.Run("OneNum400", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mm:\"1-400\""
@@ -166,7 +166,7 @@ func TestPhotosQueryFocalLength(t *testing.T) {
 
 		assert.Len(t, photos, 6)
 	})
-	t.Run("18", func(t *testing.T) {
+	t.Run("Eighteen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mm:\"18\""
@@ -179,7 +179,7 @@ func TestPhotosQueryFocalLength(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("-100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mm:\"-100\""
@@ -192,7 +192,7 @@ func TestPhotosQueryFocalLength(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 40)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mm:\"%gold\""

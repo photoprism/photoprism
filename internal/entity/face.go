@@ -250,6 +250,10 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 
 // MatchMarkers finds and references matching markers.
 func (m *Face) MatchMarkers(faceIds []string) error {
+	if len(faceIds) == 0 {
+		return nil
+	}
+
 	var markers Markers
 
 	err := Db().
@@ -270,6 +274,31 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	}
 
 	return nil
+}
+
+// UpdateMatchStats persists sample statistics derived from recent matches.
+func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
+	if m.ID == "" || samples <= 0 {
+		return nil
+	}
+
+	radius := maxDistance + 0.01
+	if radius > 0.35 {
+		radius = 0.35
+	}
+	if radius < 0 {
+		radius = 0
+	}
+
+	if m.Samples == samples && m.SampleRadius == radius {
+		return nil
+	}
+
+	m.Samples = samples
+	m.SampleRadius = radius
+	UpdateFaces.Store(true)
+
+	return m.Updates(Values{"Samples": m.Samples, "SampleRadius": m.SampleRadius})
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.

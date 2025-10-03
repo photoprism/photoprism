@@ -65,7 +65,7 @@ func FlushCachedPhotoLabel(m *PhotoLabel) {
 	}
 }
 
-// CachePhotoLabels warms up the PhotoLabel cache.
+// CachePhotoLabels preloads the photo-label cache from the database to speed up lookups.
 func CachePhotoLabels() (err error) {
 	if !UsePhotoLabelsCache {
 		return nil

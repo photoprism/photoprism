@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewResponse(t *testing.T) {
-	t.Run("404", func(t *testing.T) {
+	t.Run("Num404", func(t *testing.T) {
 		r := NewResponse(404, errors.New("not found"), "details")
 		assert.Equal(t, 404, r.Code)
 		assert.Equal(t, "details", r.Details)

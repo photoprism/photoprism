@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterCity(t *testing.T) {
-	t.Run("Teotihuacán", func(t *testing.T) {
+	t.Run("TeotihuacN", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.City = "Teotihuacán"
@@ -22,7 +22,7 @@ func TestPhotosFilterCity(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("Neustadt*", func(t *testing.T) {
+	t.Run("Neustadt", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.City = "Neustadt*"
@@ -36,7 +36,7 @@ func TestPhotosFilterCity(t *testing.T) {
 		t.Log(len(photos))
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Teotihuacán pipe Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNPipeNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.City = "Teotihuacán|Neustadt an der Weinstraße"
@@ -49,7 +49,7 @@ func TestPhotosFilterCity(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 8)
 	})
-	t.Run("Teotihuacán whitespace pipe whitespace Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNWhitespacePipeWhitespaceNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.City = "Teotihuacán | Neustadt an der Weinstraße"
@@ -62,7 +62,7 @@ func TestPhotosFilterCity(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 8)
 	})
-	t.Run("Teotihuacán or Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNOrNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.City = "Teotihuacán or Neustadt an der Weinstraße"
@@ -75,7 +75,7 @@ func TestPhotosFilterCity(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Teotihuacán OR Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNOrNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.City = "Teotihuacán OR Neustadt an der Weinstraße"
@@ -328,7 +328,7 @@ func TestPhotosFilterCity(t *testing.T) {
 }
 
 func TestPhotosQueryCity(t *testing.T) {
-	t.Run("Teotihuacán", func(t *testing.T) {
+	t.Run("TeotihuacN", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "city:\"Teotihuacán\""
@@ -341,7 +341,7 @@ func TestPhotosQueryCity(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("Neustadt*", func(t *testing.T) {
+	t.Run("Neustadt", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "city:\"Neustadt*\""
@@ -354,7 +354,7 @@ func TestPhotosQueryCity(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Teotihuacán pipe Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNPipeNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "city:\"Teotihuacán|Neustadt an der Weinstraße\""
@@ -367,7 +367,7 @@ func TestPhotosQueryCity(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 8)
 	})
-	t.Run("Teotihuacán whitespace pipe whitespace Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNWhitespacePipeWhitespaceNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "city:\"Teotihuacán | Neustadt an der Weinstraße\""
@@ -380,7 +380,7 @@ func TestPhotosQueryCity(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 8)
 	})
-	t.Run("Teotihuacán or Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNOrNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "city:\"Teotihuacán or Neustadt an der Weinstraße\""
@@ -393,7 +393,7 @@ func TestPhotosQueryCity(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Teotihuacán OR Neustadt an der Weinstraße", func(t *testing.T) {
+	t.Run("TeotihuacNOrNeustadtAnDerWeinstraE", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "city:\"Teotihuacán OR Neustadt an der Weinstraße\""

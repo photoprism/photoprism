@@ -12,7 +12,7 @@ type Values = map[string]interface{}
 // TODO: Remove when no longer needed.
 type Map = Values
 
-// ModelValues extracts Values from an entity model.
+// ModelValues extracts exported struct fields into a Values map, optionally omitting selected names.
 func ModelValues(m interface{}, omit ...string) (result Values, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
 		for _, s := range omit {

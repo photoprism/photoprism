@@ -544,7 +544,7 @@ export default {
         {
           name: "upload",
           icon: "mdi-cloud-upload",
-          text: this.$gettext("Upload"),
+          text: this.$gettext("Upload") + "…",
           shortcut: "Ctrl-U",
           visible: this.canUpload,
           click: () => {

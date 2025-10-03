@@ -20,7 +20,7 @@ func TestAuthToken(t *testing.T) {
 }
 
 func BenchmarkAuthToken(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		AuthToken()
 	}
 }
@@ -38,7 +38,7 @@ func TestIsAuthToken(t *testing.T) {
 }
 
 func BenchmarkIsAuthToken(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		IsAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2")
 	}
 }
@@ -52,7 +52,7 @@ func TestAppPassword(t *testing.T) {
 }
 
 func BenchmarkAppPassword(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		AppPassword()
 	}
 }
@@ -93,13 +93,13 @@ func TestIsAppPasswordt(t *testing.T) {
 }
 
 func BenchmarkAppPasswordtVerifyChecksum(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true)
 	}
 }
 
 func BenchmarkAppPasswordIgnoreChecksum(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false)
 	}
 }
@@ -166,7 +166,7 @@ func TestIsAuthAny(t *testing.T) {
 }
 
 func BenchmarkIsAuthAny(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		IsAuthAny("MPkOqm-RtKGOi-ctIvXm-Qv3XhN")
 	}
 }

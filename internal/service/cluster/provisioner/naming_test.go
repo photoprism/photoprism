@@ -1,6 +1,7 @@
 package provisioner
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -74,11 +75,14 @@ func TestHmacBase32_LowercaseDeterministic(t *testing.T) {
 }
 
 func TestGetCredentials_SqliteRejected(t *testing.T) {
+	ctx := context.Background()
 	c := config.NewConfig(config.CliTestContext())
-	// Ensure we're on SQLite in tests.
-	if c.DatabaseDriver() != config.SQLite3 {
-		t.Skip("test requires SQLite driver in test config")
+	origDriver := DatabaseDriver
+	DatabaseDriver = config.SQLite3
+	t.Cleanup(func() { DatabaseDriver = origDriver })
+
+	_, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "database must be MySQL/MariaDB")
 	}
-	_, _, err := GetCredentials(nil, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
-	assert.Error(t, err)
 }

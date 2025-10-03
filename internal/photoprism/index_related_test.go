@@ -12,7 +12,7 @@ import (
 )
 
 func TestIndexRelated(t *testing.T) {
-	t.Run("2018-04-12 19_24_49.gif", func(t *testing.T) {
+	t.Run("Num2018Num04TwelveNineteenNum24Num49Gif", func(t *testing.T) {
 		cfg := config.TestConfig()
 
 		/* TODO: Investigate and resolve sporadic test failures
@@ -75,7 +75,7 @@ func TestIndexRelated(t *testing.T) {
 			assert.Equal(t, "name", photo.TakenSrc)
 		}
 	})
-	t.Run("apple-test-2.jpg", func(t *testing.T) {
+	t.Run("AppleTestTwoJpg", func(t *testing.T) {
 		cfg := config.TestConfig()
 
 		/* TODO: Investigate and resolve sporadic test failures

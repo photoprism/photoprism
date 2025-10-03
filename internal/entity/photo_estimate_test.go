@@ -103,7 +103,7 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, "zz", m.CountryCode())
 		assert.Equal(t, "Unknown", m.CountryName())
 	})
-	t.Run("Los Angeles", func(t *testing.T) {
+	t.Run("LosAngeles", func(t *testing.T) {
 		m := Photo{
 			CameraID:  2,
 			PhotoType: MediaImage,

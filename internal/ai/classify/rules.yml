@@ -1,6 +1,17 @@
 background:
-  label: background
-  threshold: 0.99
+  see: ignore
+
+ignore:
+  threshold: 1
+  priority: -3
+
+building:
+  priority: 1
+  threshold: 0.3
+
+wildlife:
+  priority: 3
+  threshold: 0.1
 
 cat:
   label: cat
@@ -2972,6 +2983,9 @@ banjo:
 barbell:
   see: ignore
 
+chair:
+  priority: -2
+
 barber chair:
   see: ignore
 
@@ -3306,6 +3320,11 @@ scale:
 dining table:
   label: dining
   threshold: 0.5
+
+table:
+  label: dining
+  threshold: 0.5
+  priority: 1
 
 maze:
   label: landscape
@@ -3783,6 +3802,7 @@ parachute:
 car:
   label: car
   threshold: 0.3
+  priority: 1
   categories:
     - vehicle
 
@@ -4634,9 +4654,6 @@ corn:
     - food
     - dining
 
-acorn:
-  see: ignore
-
 buckeye:
   label: plant
   threshold: 0.5
@@ -4690,12 +4707,6 @@ croquet ball:
 ball:
   see: ignore
 
-baseball:
-  see: ignore
-
-basketball:
-  see: ignore
-
 golf ball:
   see: ignore
 
@@ -4709,9 +4720,6 @@ soccer ball:
   see: ignore
 
 tennis ball:
-  see: ignore
-
-volleyball:
   see: ignore
 
 spider web:
@@ -4748,9 +4756,25 @@ swing:
   label: moment
   threshold: 0.15
 
-web site:
+info:
   label: info
   threshold: 0.3
+  priority: -2
+
+website:
+  label: website
+  threshold: 0.3
+  categories:
+    - info
+
+homepage:
+  see: website
+
+home page:
+  see: website
+
+web site:
+  see: website
 
 brass:
   label: info
@@ -4818,6 +4842,7 @@ mask:
 portrait:
   label: portrait
   threshold: 0.3
+  priority: 2
   categories:
     - people
 
@@ -4910,9 +4935,6 @@ patio:
   label: building
   threshold: 0.5
 
-scoreboard:
-  see: ignore
-
 racket:
   label: outdoor
   threshold: 0.3
@@ -4951,9 +4973,6 @@ pencil box:
 pencil sharpener:
   label: office
   threshold: 0.45
-
-volcano:
-  see: ignore
 
 radio telescope:
   threshold: 0.97
@@ -5002,10 +5021,6 @@ altar:
   categories:
     - church
 
-ignore:
-  threshold: 1
-  priority: -2
-
 ashcan:
   see: ignore
 
@@ -5028,9 +5043,6 @@ hook:
   see: ignore
 
 coil:
-  see: ignore
-
-wallet:
   see: ignore
 
 handkerchief:
@@ -5083,9 +5095,6 @@ barometer:
   see: display
 
 binoculars:
-  see: ignore
-
-bow:
   see: ignore
 
 caldron:
@@ -5154,9 +5163,6 @@ joystick:
 chain:
   see: ignore
 
-chest:
-  see: ignore
-
 christmas stocking:
   see: ignore
 
@@ -5213,9 +5219,6 @@ hay:
 hip:
   label: plant
   threshold: 0.43
-
-iron:
-  see: ignore
 
 jinrikisha:
   label: people
@@ -5298,9 +5301,6 @@ toilet tissue:
   see: ignore
 
 rain barrel:
-  see: ignore
-
-barrel:
   see: ignore
 
 scuba diver:
@@ -5408,3 +5408,7 @@ memorial:
 mountains:
   label: mountain
   threshold: 0.4
+
+street:
+  threshold: 0.3
+  priority: -1

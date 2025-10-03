@@ -152,12 +152,24 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	}
 
 	if parsedLabels {
+		filtered := result.Result.Labels[:0]
 		for i := range result.Result.Labels {
+			if result.Result.Labels[i].Confidence <= 0 {
+				result.Result.Labels[i].Confidence = ollama.DefaultLabelConfidence
+			}
+			if result.Result.Labels[i].Topicality <= 0 {
+				result.Result.Labels[i].Topicality = result.Result.Labels[i].Confidence
+			}
 			normalizeLabelResult(&result.Result.Labels[i])
+			if result.Result.Labels[i].Name == "" {
+				continue
+			}
 			if result.Result.Labels[i].Source == "" {
 				result.Result.Labels[i].Source = entity.SrcOllama
 			}
+			filtered = append(filtered, result.Result.Labels[i])
 		}
+		result.Result.Labels = filtered
 	} else {
 		if caption := strings.TrimSpace(ollamaResp.Response); caption != "" {
 			result.Result.Caption = &CaptionResult{

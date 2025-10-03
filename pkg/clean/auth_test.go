@@ -40,25 +40,25 @@ func TestAuth(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Auth(""))
 	})
-	t.Run("Te<s>t", func(t *testing.T) {
+	t.Run("TeLessThanSGreaterThanT", func(t *testing.T) {
 		assert.Equal(t, "Test", Auth("Te<s>t"))
 	})
 }
 
 func TestHandle(t *testing.T) {
-	t.Run("Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle("Admin "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle(" Admin@foo "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin.foo", Handle(" Admin foo "))
 	})
-	t.Run(" admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle(" admin "))
 	})
-	t.Run("admin/user", func(t *testing.T) {
+	t.Run("AdminUser", func(t *testing.T) {
 		assert.Equal(t, "admin.user", Handle("admin/user"))
 	})
 	t.Run("Windows", func(t *testing.T) {
@@ -67,25 +67,25 @@ func TestHandle(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Handle("  "))
 	})
-	t.Run("control character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "admin!", Handle("admin!"+string(rune(1))))
 	})
 }
 
 func TestUsername(t *testing.T) {
-	t.Run("Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Username("Admin "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin@foo", Username(" Admin@foo "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin foo", Username(" Admin foo "))
 	})
-	t.Run(" admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Username(" admin "))
 	})
-	t.Run("admin/user", func(t *testing.T) {
+	t.Run("AdminUser", func(t *testing.T) {
 		assert.Equal(t, "adminuser", Username("admin/user"))
 	})
 	t.Run("Windows", func(t *testing.T) {
@@ -94,7 +94,7 @@ func TestUsername(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Username("   "))
 	})
-	t.Run("control character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "admin!", Username("admin!"+string(rune(1))))
 	})
 }
@@ -146,16 +146,16 @@ func TestDomain(t *testing.T) {
 }
 
 func TestRole(t *testing.T) {
-	t.Run("Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Role("Admin "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Role(" Admin "))
 	})
-	t.Run(" admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Role(" admin "))
 	})
-	t.Run("adm}in", func(t *testing.T) {
+	t.Run("AdmIn", func(t *testing.T) {
 		assert.Equal(t, "admin", Role("adm}in"))
 	})
 	t.Run("Empty", func(t *testing.T) {

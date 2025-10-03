@@ -39,7 +39,7 @@ func TestAddDuplicate(t *testing.T) {
 			t.Fatalf("mod time should be %d", time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix())
 		}
 	})
-	t.Run("error filename empty", func(t *testing.T) {
+	t.Run("ErrorFilenameEmpty", func(t *testing.T) {
 		err := AddDuplicate(
 			"",
 			"",
@@ -52,7 +52,7 @@ func TestAddDuplicate(t *testing.T) {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error filehash empty", func(t *testing.T) {
+	t.Run("ErrorFilehashEmpty", func(t *testing.T) {
 		err := AddDuplicate(
 			"foobar.jpg",
 			"",
@@ -65,7 +65,7 @@ func TestAddDuplicate(t *testing.T) {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error mod time empty", func(t *testing.T) {
+	t.Run("ErrorModTimeEmpty", func(t *testing.T) {
 		err := AddDuplicate(
 			"foobar.jpg",
 			"",
@@ -78,7 +78,7 @@ func TestAddDuplicate(t *testing.T) {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error fileRoot empty", func(t *testing.T) {
+	t.Run("ErrorFileRootEmpty", func(t *testing.T) {
 		err := AddDuplicate(
 			"foobar.jpg",
 			"",
@@ -94,28 +94,28 @@ func TestAddDuplicate(t *testing.T) {
 }
 
 func TestCreateDuplicate(t *testing.T) {
-	t.Run("error mod time 0", func(t *testing.T) {
+	t.Run("ErrorModTimeZero", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "12345tghy", FileRoot: RootOriginals, ModTime: 0}
 		err := duplicate.Create()
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error filename empty", func(t *testing.T) {
+	t.Run("ErrorFilenameEmpty", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "", FileHash: "12345tghy", FileRoot: RootOriginals, ModTime: time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix()}
 		err := duplicate.Create()
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error filehash empty", func(t *testing.T) {
+	t.Run("ErrorFilehashEmpty", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "", FileRoot: RootOriginals, ModTime: time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix()}
 		err := duplicate.Create()
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error fileroot empty", func(t *testing.T) {
+	t.Run("ErrorFilerootEmpty", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "jhg678", FileRoot: "", ModTime: time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix()}
 		err := duplicate.Create()
 		if err == nil {
@@ -125,28 +125,28 @@ func TestCreateDuplicate(t *testing.T) {
 }
 
 func TestSaveDuplicate(t *testing.T) {
-	t.Run("error mod time 0", func(t *testing.T) {
+	t.Run("ErrorModTimeZero", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "12345tghy", FileRoot: RootOriginals, ModTime: 0}
 		err := duplicate.Save()
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error filename empty", func(t *testing.T) {
+	t.Run("ErrorFilenameEmpty", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "", FileHash: "12345tghy", FileRoot: RootOriginals, ModTime: time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix()}
 		err := duplicate.Save()
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error filehash empty", func(t *testing.T) {
+	t.Run("ErrorFilehashEmpty", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "", FileRoot: RootOriginals, ModTime: time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix()}
 		err := duplicate.Save()
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("error fileroot empty", func(t *testing.T) {
+	t.Run("ErrorFilerootEmpty", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "jhg678", FileRoot: "", ModTime: time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix()}
 		err := duplicate.Save()
 		if err == nil {
@@ -191,10 +191,10 @@ func TestDuplicate_Purge(t *testing.T) {
 }
 
 func TestPurgeDuplicate(t *testing.T) {
-	t.Run("empty filename", func(t *testing.T) {
+	t.Run("EmptyFilename", func(t *testing.T) {
 		assert.Error(t, PurgeDuplicate("", RootOriginals))
 	})
-	t.Run("empty fileroot", func(t *testing.T) {
+	t.Run("EmptyFileroot", func(t *testing.T) {
 		assert.Error(t, PurgeDuplicate("test.jpg", ""))
 	})
 }

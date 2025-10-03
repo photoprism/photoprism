@@ -7,7 +7,7 @@ import (
 )
 
 func TestCreateUserDetails(t *testing.T) {
-	t.Run("Empty UID", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		m := &User{UserUID: ""}
 		assert.Error(t, CreateUserDetails(m))
 		assert.Nil(t, m.UserDetails)
@@ -46,7 +46,7 @@ func TestUserDetails_Updates(t *testing.T) {
 }
 
 func TestUserDetails_DisplayName(t *testing.T) {
-	t.Run("Dr. John Doe", func(t *testing.T) {
+	t.Run("DrJohnDoe", func(t *testing.T) {
 		m := &User{
 			UserUID: "1234",
 			UserDetails: &UserDetails{

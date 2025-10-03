@@ -22,6 +22,10 @@ func init() {
 	} else {
 		log.Warnf("faces: PHOTOPRISM_FACE_KIDS_DIST is out of range (0.1-1.5; -1 to disable)")
 	}
+
+	for i := range KidsEmbeddings {
+		normalizeEmbedding(KidsEmbeddings[i])
+	}
 }
 
 // KidsFace tests if the embedded face belongs to a baby or young child.

@@ -349,6 +349,7 @@ func (c *Config) Propagate() {
 	face.ClusterCore = c.FaceClusterCore()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+	face.DetectionAngles = c.FaceAngles()
 
 	// Set default theme and locale.
 	customize.DefaultTheme = c.DefaultTheme()

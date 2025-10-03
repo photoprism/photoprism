@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// SetCoordinates changes the photo lat, lng and altitude if not empty and from an acceptable source.
+// SetCoordinates updates latitude/longitude while honoring source priority and keeping altitude in sync.
 func (m *Photo) SetCoordinates(lat, lng, altitude float64, source string) {
 	m.SetAltitude(altitude, source)
 
@@ -32,7 +32,7 @@ func (m *Photo) SetCoordinates(lat, lng, altitude float64, source string) {
 	m.PlaceSrc = source
 }
 
-// SetAltitude sets the photo altitude if not empty and from an acceptable source.
+// SetAltitude updates the stored altitude when the new value passes cleanup and the source outranks the current one.
 func (m *Photo) SetAltitude(altitude float64, source string) {
 	a := clean.Altitude(altitude)
 
@@ -52,7 +52,7 @@ func (m *Photo) UnknownLocation() bool {
 	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
 }
 
-// SetPosition sets a position estimate.
+// SetPosition records an estimated position, randomizing estimates slightly and refreshing location metadata.
 func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
 		return
@@ -85,7 +85,7 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 	}
 }
 
-// AdoptPlace sets the place based on another photo.
+// AdoptPlace copies place metadata from another photo when the source priority allows it.
 func (m *Photo) AdoptPlace(other *Photo, source string, force bool) {
 	if other == nil {
 		return
@@ -114,7 +114,7 @@ func (m *Photo) AdoptPlace(other *Photo, source string, force bool) {
 	log.Debugf("photo: %s now located at %s (id %s)", m.String(), clean.Log(m.Place.Label()), m.PlaceID)
 }
 
-// RemoveLocation removes the current location.
+// RemoveLocation clears the current location metadata when the caller is authorized via source priority.
 func (m *Photo) RemoveLocation(source string, force bool) {
 	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
 		return
@@ -140,7 +140,7 @@ func (m *Photo) RemoveLocation(source string, force bool) {
 	m.PlaceSrc = SrcAuto
 }
 
-// RemoveLocationLabels removes existing location labels.
+// RemoveLocationLabels removes labels created from prior location data to keep annotations consistent.
 func (m *Photo) RemoveLocationLabels() {
 	if len(m.Labels) == 0 {
 		res := Db().Delete(PhotoLabel{}, "photo_id = ? AND label_src = ?", m.ID, SrcLocation)
@@ -198,7 +198,7 @@ func (m *Photo) LocationLoaded() bool {
 	return !m.Cell.Unknown() && m.Cell.ID == m.CellID
 }
 
-// LoadLocation loads the photo location from the database if not done already.
+// LoadLocation fetches the full Cell record (including Place) from the database when needed.
 func (m *Photo) LoadLocation() error {
 	if m.LocationLoaded() {
 		return nil
@@ -235,7 +235,7 @@ func (m *Photo) PlaceLoaded() bool {
 	return !m.Place.Unknown() && m.Place.ID == m.PlaceID
 }
 
-// LoadPlace loads the photo place from the database if not done already.
+// LoadPlace fetches the associated Place from the database when needed.
 func (m *Photo) LoadPlace() error {
 	if m.PlaceLoaded() {
 		return nil
@@ -348,7 +348,7 @@ func (m *Photo) GetTakenAtLocal() time.Time {
 	}
 }
 
-// UpdateLocation updates location and labels based on latitude and longitude.
+// UpdateLocation resolves cells, places, time zones, and labels from the current coordinates.
 func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	if m.HasLatLng() {
 		var loc = NewCell(m.PhotoLat, m.PhotoLng)
@@ -432,7 +432,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	return keywords, labels
 }
 
-// SaveLocation updates location data and saves the photo metadata back to the index.
+// SaveLocation applies UpdateLocation, synchronizes derived labels/keywords, and persists the photo.
 func (m *Photo) SaveLocation() error {
 	locKeywords, labels := m.UpdateLocation()
 

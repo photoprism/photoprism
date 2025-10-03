@@ -7,6 +7,8 @@ const (
 	CaptionPrompt = "Create a caption with exactly one sentence in the active voice that describes the main visual content. Begin with the main subject and clear action. Avoid text formatting, meta-language, and filler words."
 	// CaptionModel names the default caption model bundled with our adapter defaults.
 	CaptionModel = "gemma3"
+	// DefaultLabelConfidence is used when the model omits the confidence field.
+	DefaultLabelConfidence = 0.5
 	// LabelSystemSimple defines a simple system prompt for Ollama label models.
 	LabelSystemSimple = "You are a PhotoPrism vision model. Output concise JSON that matches the schema."
 	// LabelPromptSimple defines a simple user prompt for Ollama label models.

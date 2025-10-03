@@ -38,7 +38,7 @@ func TestFolderSearch_SerializeAll(t *testing.T) {
 }
 
 func TestParseQueryStringFolder(t *testing.T) {
-	t.Run("valid query", func(t *testing.T) {
+	t.Run("ValidQuery", func(t *testing.T) {
 		form := &SearchFolders{Query: "uncached:false files:true recursive:true"}
 
 		err := form.ParseQueryString()
@@ -56,7 +56,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 		assert.Equal(t, 0, form.Offset)
 
 	})
-	t.Run("valid query with umlauts", func(t *testing.T) {
+	t.Run("ValidQueryWithUmlauts", func(t *testing.T) {
 		form := &SearchFolders{Query: "q:\"tübingen\""}
 
 		err := form.ParseQueryString()
@@ -69,7 +69,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 
 		assert.Equal(t, "tübingen", form.Query)
 	})
-	t.Run("query for invalid filter", func(t *testing.T) {
+	t.Run("QueryForInvalidFilter", func(t *testing.T) {
 		form := &SearchFolders{Query: "xxx:false"}
 
 		err := form.ParseQueryString()
@@ -82,7 +82,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 
 		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
-	t.Run("query for recursive with uncommon bool value", func(t *testing.T) {
+	t.Run("QueryForRecursiveWithUncommonBoolValue", func(t *testing.T) {
 		form := &SearchFolders{Query: "recursive:cat"}
 
 		err := form.ParseQueryString()
@@ -93,7 +93,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 
 		assert.True(t, form.Recursive)
 	})
-	t.Run("query for count with invalid type", func(t *testing.T) {
+	t.Run("QueryForCountWithInvalidType", func(t *testing.T) {
 		form := &SearchFolders{Query: "count:cat"}
 
 		err := form.ParseQueryString()

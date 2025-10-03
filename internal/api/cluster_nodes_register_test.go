@@ -60,7 +60,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01"}`)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("CreateNode_SucceedsWithProvisioner", func(t *testing.T) {
+	t.Run("CreateNodeSucceedsWithProvisioner", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal
 		conf.Options().JoinToken = cluster.ExampleJoinToken

@@ -95,7 +95,7 @@ func TestFindUserShares(t *testing.T) {
 		assert.Equal(t, expected.UserUID, m.UserUID)
 		assert.Equal(t, expected.ShareUID, m.ShareUID)
 	})
-	t.Run("Invalid uid", func(t *testing.T) {
+	t.Run("InvalidUid", func(t *testing.T) {
 		found := FindUserShares("123")
 		assert.IsType(t, UserShares{}, found)
 		assert.Empty(t, found)
@@ -134,7 +134,7 @@ func TestUserShare_UpdateLink(t *testing.T) {
 		assert.Equal(t, "ss62xpryd1ob8xxx", m.LinkUID)
 		assert.Equal(t, "Wedding", m.Comment)
 	})
-	t.Run("UID mismatch", func(t *testing.T) {
+	t.Run("UidMismatch", func(t *testing.T) {
 		m := UserShare{
 			ShareUID: "as6sg6bxpogaaba9",
 		}

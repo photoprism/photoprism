@@ -16,7 +16,7 @@ func TestSubject_TableName(t *testing.T) {
 }
 
 func TestNewSubject(t *testing.T) {
-	t.Run("Jens_Mander", func(t *testing.T) {
+	t.Run("JensMander", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 		assert.Equal(t, "Jens Mander", m.SubjName)
 		assert.Equal(t, "jens-mander", m.SubjSlug)

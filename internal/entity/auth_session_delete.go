@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
-// DeleteSession permanently deletes a session.
+// DeleteSession permanently deletes the session and any sessions that were derived from it.
 func DeleteSession(s *Session) error {
 	if s == nil {
 		return nil
@@ -38,7 +38,7 @@ func DeleteSession(s *Session) error {
 	return UnscopedDb().Delete(s).Error
 }
 
-// DeleteChildSessions deletes any other sessions that were authenticated with the specified session.
+// DeleteChildSessions deletes sessions that authenticated via the provided parent session ID.
 func DeleteChildSessions(s *Session) (deleted int) {
 	if s == nil {
 		return 0
@@ -64,7 +64,7 @@ func DeleteChildSessions(s *Session) (deleted int) {
 	return deleted
 }
 
-// DeleteClientSessions deletes client sessions above the specified limit.
+// DeleteClientSessions deletes sessions for the client beyond the configured retention limit.
 func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int64) (deleted int) {
 	if limit < 0 {
 		return 0
@@ -110,7 +110,7 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 	return deleted
 }
 
-// DeleteExpiredSessions deletes all expired sessions.
+// DeleteExpiredSessions removes sessions whose expiration timestamp has passed.
 func DeleteExpiredSessions() (deleted int) {
 	found := Sessions{}
 

@@ -32,6 +32,7 @@ type Index struct {
 	lastFound  int
 	findFaces  bool
 	findLabels bool
+	detectNsfw bool
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -49,6 +50,7 @@ func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photo
 		photos:     photos,
 		findFaces:  !conf.DisableFaces(),
 		findLabels: conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex),
+		detectNsfw: conf.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex),
 	}
 
 	return i

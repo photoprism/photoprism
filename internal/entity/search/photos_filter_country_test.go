@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterCountry(t *testing.T) {
-	t.Run("de", func(t *testing.T) {
+	t.Run("De", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Country = "de"
@@ -22,7 +22,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 		}
 		assert.Len(t, photos, 7)
 	})
-	t.Run("mx", func(t *testing.T) {
+	t.Run("Mx", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Country = "mx"
@@ -35,7 +35,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("mx pipe de", func(t *testing.T) {
+	t.Run("MxPipeDe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Country = "mx|de"
@@ -48,7 +48,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 13)
 	})
-	t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
+	t.Run("MxWhitespacePipeWhitespaceDe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Country = "mx | de"
@@ -301,7 +301,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 }
 
 func TestPhotosQueryCountry(t *testing.T) {
-	t.Run("de", func(t *testing.T) {
+	t.Run("De", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"de\""
@@ -314,7 +314,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		}
 		assert.Len(t, photos, 7)
 	})
-	t.Run("mx", func(t *testing.T) {
+	t.Run("Mx", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"mx\""
@@ -327,7 +327,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("mx pipe de", func(t *testing.T) {
+	t.Run("MxPipeDe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"mx|de\""
@@ -340,7 +340,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 13)
 	})
-	t.Run("mx whitespace pipe whitespace de", func(t *testing.T) {
+	t.Run("MxWhitespacePipeWhitespaceDe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"mx | de\""
@@ -354,7 +354,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 13)
 
 	})
-	t.Run("mx or de", func(t *testing.T) {
+	t.Run("MxOrDe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"mx or de\""
@@ -367,7 +367,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("mx OR de", func(t *testing.T) {
+	t.Run("MxOrDe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "country:\"mx OR de\""

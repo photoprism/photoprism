@@ -41,7 +41,7 @@ func TestNewSettings(t *testing.T) {
 }
 
 func TestSettings_Load(t *testing.T) {
-	t.Run("existing filename", func(t *testing.T) {
+	t.Run("ExistingFilename", func(t *testing.T) {
 		s := NewDefaultSettings()
 
 		if err := s.Load("testdata/settings.yml"); err != nil {
@@ -51,7 +51,7 @@ func TestSettings_Load(t *testing.T) {
 		assert.Equal(t, "onyx", s.UI.Theme)
 		assert.Equal(t, "de", s.UI.Language)
 	})
-	t.Run("not existing filename", func(t *testing.T) {
+	t.Run("NotExistingFilename", func(t *testing.T) {
 		s := NewDefaultSettings()
 
 		err := s.Load("testdata/settings_123.yml")
@@ -63,7 +63,7 @@ func TestSettings_Load(t *testing.T) {
 	})
 }
 func TestSettings_Save(t *testing.T) {
-	t.Run("existing filename", func(t *testing.T) {
+	t.Run("ExistingFilename", func(t *testing.T) {
 		s := NewDefaultSettings()
 
 		assert.Equal(t, "default", s.UI.Theme)
@@ -79,7 +79,7 @@ func TestSettings_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("not existing filename", func(t *testing.T) {
+	t.Run("NotExistingFilename", func(t *testing.T) {
 		s := NewDefaultSettings()
 		s.UI.Theme = "onyx"
 		s.UI.Language = "de"

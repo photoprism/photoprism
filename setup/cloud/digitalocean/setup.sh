@@ -121,4 +121,4 @@ apt-get autoremove
 
 # show public server URL and initial admin password
 printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  %s\n\n" "${PUBLIC_IP}" "${ADMIN_PASSWORD}"
-printf "\nPhotoprism is now installed and running. For documentation, visit:\n\n  https://docs.photoprism.app/\n\n"
+printf "\nPhotoPrism is now installed and running. For documentation, visit:\n\n  https://docs.photoprism.app/\n\n"

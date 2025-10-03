@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterTitle(t *testing.T) {
-	t.Run("Lake / 2790", func(t *testing.T) {
+	t.Run("LakeNum2790", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Lake / 2790"
@@ -22,7 +22,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("Lake*", func(t *testing.T) {
+	t.Run("Lake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Lake*"
@@ -35,7 +35,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "true"
@@ -52,7 +52,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 			assert.NotEmpty(t, p.PhotoTitle)
 		}
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "false"
@@ -69,7 +69,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 			assert.Empty(t, p.PhotoTitle)
 		}
 	})
-	t.Run("Neckarbrücke", func(t *testing.T) {
+	t.Run("NeckarbrCke", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Neckarbrücke"
@@ -82,7 +82,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
+	t.Run("NeckarbrCkeOrLake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Neckarbrücke OR Lake*"
@@ -95,7 +95,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Neckarbrücke whitespace pipe whitespace Lake*", func(t *testing.T) {
+	t.Run("NeckarbrCkeWhitespacePipeWhitespaceLake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Neckarbrücke | Lake*"
@@ -108,7 +108,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("Neckarbrücke pipe Lake*", func(t *testing.T) {
+	t.Run("NeckarbrCkePipeLake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Title = "Neckarbrücke|Lake*"
@@ -453,7 +453,7 @@ func TestPhotosFilterTitle(t *testing.T) {
 }
 
 func TestPhotosQueryTitle(t *testing.T) {
-	t.Run("Lake / 2790", func(t *testing.T) {
+	t.Run("LakeNum2790", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Lake / 2790\""
@@ -466,7 +466,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("Lake*", func(t *testing.T) {
+	t.Run("Lake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Lake*\""
@@ -479,7 +479,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("Neckarbrücke", func(t *testing.T) {
+	t.Run("NeckarbrCke", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Neckarbrücke\""
@@ -492,7 +492,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("Neckarbrücke or Lake*", func(t *testing.T) {
+	t.Run("NeckarbrCkeOrLake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Neckarbrücke OR Lake*\""
@@ -505,7 +505,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Neckarbrücke whitespace pipe whitespace Lake*", func(t *testing.T) {
+	t.Run("NeckarbrCkeWhitespacePipeWhitespaceLake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Neckarbrücke | Lake*\""
@@ -518,7 +518,7 @@ func TestPhotosQueryTitle(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("Neckarbrücke pipe Lake*", func(t *testing.T) {
+	t.Run("NeckarbrCkePipeLake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "title:\"Neckarbrücke|Lake*\""

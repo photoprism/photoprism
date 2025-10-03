@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterPath(t *testing.T) {
-	t.Run("2790/07", func(t *testing.T) {
+	t.Run("Num2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Path = "2790/07"
@@ -22,7 +22,7 @@ func TestPhotosFilterPath(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("2790*", func(t *testing.T) {
+	t.Run("Num2790", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Path = "2790*"
@@ -48,7 +48,7 @@ func TestPhotosFilterPath(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("London pipe 2790/07", func(t *testing.T) {
+	t.Run("LondonPipeNum2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Path = "London|2790/07"
@@ -448,7 +448,7 @@ func TestPhotosFilterPath(t *testing.T) {
 }
 
 func TestPhotosQueryPath(t *testing.T) {
-	t.Run("2790/07", func(t *testing.T) {
+	t.Run("Num2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "path:\"2790/07\""
@@ -461,7 +461,7 @@ func TestPhotosQueryPath(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("2790*", func(t *testing.T) {
+	t.Run("Num2790", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "path:\"2790*\""
@@ -487,7 +487,7 @@ func TestPhotosQueryPath(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("London pipe 2790/07", func(t *testing.T) {
+	t.Run("LondonPipeNum2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "path:\"London|2790/07\""

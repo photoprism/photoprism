@@ -2006,6 +2006,9 @@
                 "photoID": {
                     "type": "integer"
                 },
+                "topicality": {
+                    "type": "integer"
+                },
                 "uncertainty": {
                     "type": "integer"
                 }

@@ -202,7 +202,7 @@ func (m *Passcode) Type() authn.KeyType {
 	return authn.Key(m.KeyType)
 }
 
-// GenerateCode returns a valid passcode for testing.
+// GenerateCode returns a TOTP passcode for the current instant (primarily used in tests).
 func (m *Passcode) GenerateCode() (code string, err error) {
 	if m == nil {
 		return "", errors.New("passcode is nil")
@@ -236,7 +236,7 @@ func (m *Passcode) GenerateCode() (code string, err error) {
 	return code, err
 }
 
-// Valid checks if the passcode provided is valid.
+// Valid checks whether the provided passcode or recovery code is valid.
 func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 	// Validate arguments.
 	if m == nil {

@@ -30,10 +30,10 @@ const (
 	UnknownIP     = limiter.DefaultIP
 )
 
-// Sessions represents a list of sessions.
+// Sessions is a convenience alias for slices of Session.
 type Sessions []Session
 
-// Session represents a User session.
+// Session represents an authenticated user or client session persisted in the database.
 type Session struct {
 	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
 	authToken     string          `gorm:"-" yaml:"-"`

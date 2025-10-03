@@ -7,7 +7,7 @@ import (
 )
 
 func TestCrcToken(t *testing.T) {
-	t.Run("size 4", func(t *testing.T) {
+	t.Run("SizeFour", func(t *testing.T) {
 		token := CrcToken()
 		t.Logf("CrcToken: %s", token)
 		assert.NotEmpty(t, token)

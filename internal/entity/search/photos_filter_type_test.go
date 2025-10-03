@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterType(t *testing.T) {
-	t.Run("video", func(t *testing.T) {
+	t.Run("Video", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "video"
@@ -22,7 +22,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("raw", func(t *testing.T) {
+	t.Run("Raw", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "raw"
@@ -35,7 +35,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("animated", func(t *testing.T) {
+	t.Run("Animated", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "animated"
@@ -48,7 +48,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("raw pipe video", func(t *testing.T) {
+	t.Run("RawPipeVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "raw|video"
@@ -61,7 +61,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
+	t.Run("RawWhitespacePipeWhitespaceVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "raw | video"
@@ -74,7 +74,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("raw or video", func(t *testing.T) {
+	t.Run("RawOrVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "raw or video"
@@ -87,7 +87,7 @@ func TestPhotosFilterType(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("raw OR video", func(t *testing.T) {
+	t.Run("RawOrVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Type = "raw OR video"
@@ -340,7 +340,7 @@ func TestPhotosFilterType(t *testing.T) {
 }
 
 func TestPhotosQueryType(t *testing.T) {
-	t.Run("video", func(t *testing.T) {
+	t.Run("Video", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"video\""
@@ -353,7 +353,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("raw", func(t *testing.T) {
+	t.Run("Raw", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw\""
@@ -366,7 +366,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("animated", func(t *testing.T) {
+	t.Run("Animated", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"animated\""
@@ -379,7 +379,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("raw pipe video", func(t *testing.T) {
+	t.Run("RawPipeVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw|video\""
@@ -392,7 +392,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("raw whitespace pipe whitespace video", func(t *testing.T) {
+	t.Run("RawWhitespacePipeWhitespaceVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw | video\""
@@ -405,7 +405,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("raw or video", func(t *testing.T) {
+	t.Run("RawOrVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw or video\""
@@ -418,7 +418,7 @@ func TestPhotosQueryType(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("raw OR video", func(t *testing.T) {
+	t.Run("RawOrVideo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "type:\"raw OR video\""

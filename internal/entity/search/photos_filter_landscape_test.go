@@ -27,7 +27,7 @@ func TestPhotosQueryLandscape(t *testing.T) {
 
 	assert.GreaterOrEqual(t, len(photos0), 7)
 
-	t.Run("landscape:yes", func(t *testing.T) {
+	t.Run("LandscapeYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "landscape:yes"
@@ -40,7 +40,7 @@ func TestPhotosQueryLandscape(t *testing.T) {
 		}
 		assert.Len(t, photos, len(photos0))
 	})
-	t.Run("false > yes", func(t *testing.T) {
+	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "landscape:yes"

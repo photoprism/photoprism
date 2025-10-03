@@ -8,12 +8,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Optimize the picture metadata based on the specified parameters.
+// Optimize updates picture metadata, enriching titles, keywords, and locations according to the supplied flags.
 func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (updated bool, merged Photos, err error) {
 	if !m.HasID() {
 		return false, merged, errors.New("photo: cannot maintain, id is empty")
 	}
 
+	// Keep a snapshot so we can detect whether anything changed.
 	current := *m
 
 	if m.HasLatLng() && !m.HasLocation() {
@@ -55,11 +56,13 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (up
 
 	checked := Now()
 
+	// Skip persistence when nothing changed besides the CheckedAt timestamp.
 	if reflect.DeepEqual(*m, current) {
 		return false, merged, m.Update("CheckedAt", &checked)
 	}
 
 	m.CheckedAt = &checked
 
+	// Persist the updated metadata to the database.
 	return true, merged, m.Save()
 }

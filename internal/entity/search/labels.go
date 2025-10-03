@@ -36,11 +36,11 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Slug:
-		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
-	case sortby.Default, sortby.Count:
-		s = s.Order("labels.label_favorite DESC, labels.photo_count DESC, custom_slug ASC")
+		s = s.Order("custom_slug ASC, labels.photo_count DESC")
+	case sortby.Count:
+		s = s.Order("labels.photo_count DESC, custom_slug ASC")
 	default:
-		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
+		s = s.Order("labels.label_favorite DESC, labels.label_priority DESC, labels.photo_count DESC, custom_slug ASC")
 	}
 
 	if frm.UID != "" {
@@ -98,8 +98,8 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		s = s.Where("labels.label_favorite = 1")
 	}
 
-	if !frm.All {
-		s = s.Where("labels.label_priority >= 0 OR labels.label_favorite = 1")
+	if frm.Query == "" && !frm.All {
+		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1")
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

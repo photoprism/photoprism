@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 )
 
-// Role defaults.
+// Role defaults referenced when creating built-in users.
 const (
 	AdminUserName      = "admin"
 	AdminDisplayName   = "Admin"

@@ -20,7 +20,7 @@ func TestData_AddKeywords(t *testing.T) {
 
 		assert.Equal(t, "baz, foobar, pro", data.Keywords.String())
 	})
-	t.Run("ignore", func(t *testing.T) {
+	t.Run("Ignore", func(t *testing.T) {
 		data := NewData()
 
 		assert.Equal(t, "", data.Keywords.String())
@@ -41,7 +41,7 @@ func TestData_AutoAddKeywords(t *testing.T) {
 
 		assert.Equal(t, "burst", data.Keywords.String())
 	})
-	t.Run("ignore", func(t *testing.T) {
+	t.Run("Ignore", func(t *testing.T) {
 		data := NewData()
 
 		assert.Equal(t, "", data.Keywords.String())
@@ -50,7 +50,7 @@ func TestData_AutoAddKeywords(t *testing.T) {
 
 		assert.Equal(t, "", data.Keywords.String())
 	})
-	t.Run("ignore because too short", func(t *testing.T) {
+	t.Run("IgnoreBecauseTooShort", func(t *testing.T) {
 		data := NewData()
 
 		assert.Equal(t, "", data.Keywords.String())

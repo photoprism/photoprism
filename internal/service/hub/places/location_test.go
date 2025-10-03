@@ -18,7 +18,7 @@ func TestLocationGetters(t *testing.T) {
 		Place:       Place{PlaceID: "1", LocLabel: "testLabel", LocDistrict: "Berlin", LocCity: "", LocState: "Berlin", LocCountry: "de", LocKeywords: "foobar"},
 		Cached:      true,
 	}
-	t.Run("wrong id", func(t *testing.T) {
+	t.Run("WrongId", func(t *testing.T) {
 		assert.Equal(t, "1e95998417cc", location.CellID())
 		assert.Equal(t, "TestLocation", location.Name())
 		assert.Equal(t, "test", location.Category())

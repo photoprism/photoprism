@@ -160,7 +160,7 @@ func TestClient_User(t *testing.T) {
 }
 
 func TestClient_SetUser(t *testing.T) {
-	t.Run("john", func(t *testing.T) {
+	t.Run("John", func(t *testing.T) {
 		c := Client{ClientName: "test"}
 		u := &User{UserUID: "uqxc08w3d0ej2111", UserName: "john"}
 

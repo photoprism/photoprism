@@ -10,7 +10,7 @@ import (
 
 var photoDetailsMutex = sync.Mutex{}
 
-// Details stores additional metadata fields for each photo to improve search performance.
+// Details stores denormalized photo metadata to speed up search and filtering.
 type Details struct {
 	PhotoID      uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
 	Keywords     string    `gorm:"type:VARCHAR(2048);" json:"Keywords" yaml:"Keywords"`
@@ -36,7 +36,7 @@ func (Details) TableName() string {
 	return "details"
 }
 
-// NewDetails creates new photo details.
+// NewDetails constructs a Details record bound to the provided photo.
 func NewDetails(photo Photo) Details {
 	return Details{PhotoID: photo.ID}
 }

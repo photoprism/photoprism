@@ -19,11 +19,11 @@ func TestNumeric(t *testing.T) {
 		result := Numeric("0")
 		assert.Equal(t, "0", result)
 	})
-	t.Run("0.5", func(t *testing.T) {
+	t.Run("ZeroFive", func(t *testing.T) {
 		result := Numeric("0.5")
 		assert.Equal(t, "0.5", result)
 	})
-	t.Run("01:00", func(t *testing.T) {
+	t.Run("Num01Num00", func(t *testing.T) {
 		result := Numeric("01:00")
 		assert.Equal(t, "0100", result)
 	})

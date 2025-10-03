@@ -148,7 +148,7 @@ func TestFindSession(t *testing.T) {
 }
 
 func TestCacheSession(t *testing.T) {
-	t.Run("bob", func(t *testing.T) {
+	t.Run("Bob", func(t *testing.T) {
 		sessionCache.Flush()
 		r, b := sessionCache.Get(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"))
 		assert.Empty(t, r)
@@ -163,7 +163,7 @@ func TestCacheSession(t *testing.T) {
 		assert.Empty(t, r3)
 		assert.False(t, b3)
 	})
-	t.Run("duration 0", func(t *testing.T) {
+	t.Run("DurationZero", func(t *testing.T) {
 		r, b := sessionCache.Get(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"))
 		assert.Empty(t, r)
 		assert.False(t, b)
@@ -174,7 +174,7 @@ func TestCacheSession(t *testing.T) {
 		assert.True(t, b2)
 		sessionCache.Flush()
 	})
-	t.Run("invalid ID", func(t *testing.T) {
+	t.Run("InvalidId", func(t *testing.T) {
 		r, b := sessionCache.Get("xxx")
 		assert.Empty(t, r)
 		assert.False(t, b)

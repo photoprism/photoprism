@@ -11,7 +11,7 @@ const (
 	FileShareRemoved = "removed"
 )
 
-// FileShare represents a one-to-many relation between File and Account for pushing files to remote services.
+// FileShare represents remote-sharing state for a file and a single connected service account.
 type FileShare struct {
 	FileID     uint   `gorm:"primary_key;auto_increment:false"`
 	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
@@ -30,7 +30,7 @@ func (FileShare) TableName() string {
 	return "files_share"
 }
 
-// NewFileShare creates a new entity.
+// NewFileShare creates a new remote-share record with status set to "new".
 func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 	result := &FileShare{
 		FileID:     fileID,
@@ -44,12 +44,12 @@ func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 	return result
 }
 
-// Updates multiple columns in the database.
+// Updates mutates multiple columns on the existing row.
 func (m *FileShare) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Update updates a column value in the database.
+// Update mutates a single column on the existing row.
 func (m *FileShare) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

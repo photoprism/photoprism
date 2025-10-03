@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterCamera(t *testing.T) {
-	t.Run("Apple iPhone SE", func(t *testing.T) {
+	t.Run("AppleIPhoneSe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Camera = "Apple iPhone SE"
@@ -275,7 +275,7 @@ func TestPhotosFilterCamera(t *testing.T) {
 }
 
 func TestPhotosQueryCamera(t *testing.T) {
-	t.Run("Apple iPhone SE", func(t *testing.T) {
+	t.Run("AppleIPhoneSe", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "camera:\"Apple iPhone SE\""

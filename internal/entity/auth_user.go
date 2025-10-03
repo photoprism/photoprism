@@ -40,10 +40,10 @@ var PasswordLength = PasswordLengthDefault
 // UsersPath is the relative path for user assets.
 var UsersPath = "users"
 
-// Users represents a list of users.
+// Users is a convenience alias for slices of User.
 type Users []User
 
-// User represents a person that may optionally log in as user.
+// User represents an account that can authenticate with PhotoPrism.
 type User struct {
 	ID            int           `gorm:"primary_key" json:"ID" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`

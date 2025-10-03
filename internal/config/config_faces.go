@@ -1,6 +1,10 @@
 package config
 
-import "github.com/photoprism/photoprism/internal/ai/face"
+import (
+	"math"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
+)
 
 // FaceSize returns the face size threshold in pixels.
 func (c *Config) FaceSize() int {
@@ -72,4 +76,37 @@ func (c *Config) FaceMatchDist() float64 {
 	}
 
 	return c.options.FaceMatchDist
+}
+
+// FaceAngles returns the set of detection angles in radians.
+func (c *Config) FaceAngles() []float64 {
+	if len(c.options.FaceAngles) == 0 {
+		return append([]float64(nil), face.DefaultAngles...)
+	}
+
+	angles := make([]float64, 0, len(c.options.FaceAngles))
+	seen := make(map[float64]struct{}, len(c.options.FaceAngles))
+
+	for _, angle := range c.options.FaceAngles {
+		if math.IsNaN(angle) || math.IsInf(angle, 0) {
+			continue
+		}
+
+		if angle < -math.Pi || angle > math.Pi {
+			continue
+		}
+
+		if _, ok := seen[angle]; ok {
+			continue
+		}
+
+		seen[angle] = struct{}{}
+		angles = append(angles, angle)
+	}
+
+	if len(angles) == 0 {
+		return append([]float64(nil), face.DefaultAngles...)
+	}
+
+	return angles
 }

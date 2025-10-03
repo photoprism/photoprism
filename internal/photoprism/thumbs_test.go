@@ -109,7 +109,7 @@ func TestThumb_FromFile(t *testing.T) {
 		t.Error(err)
 	}
 
-	t.Run("valid parameter", func(t *testing.T) {
+	t.Run("ValidParameter", func(t *testing.T) {
 		file := &entity.File{
 			FileName: c.ExamplesPath() + "/elephants.jpg",
 			FileHash: "1234568889",
@@ -119,7 +119,7 @@ func TestThumb_FromFile(t *testing.T) {
 		assert.Nil(t, err)
 		assert.FileExists(t, thumbnail)
 	})
-	t.Run("hash too short", func(t *testing.T) {
+	t.Run("HashTooShort", func(t *testing.T) {
 		file := &entity.File{
 			FileName: c.ExamplesPath() + "/elephants.jpg",
 			FileHash: "123",
@@ -133,7 +133,7 @@ func TestThumb_FromFile(t *testing.T) {
 
 		assert.Equal(t, "thumb: invalid file hash 123", err.Error())
 	})
-	t.Run("filename too short", func(t *testing.T) {
+	t.Run("FilenameTooShort", func(t *testing.T) {
 		file := &entity.File{
 			FileName: "xxx",
 			FileHash: "12367890",
@@ -145,7 +145,7 @@ func TestThumb_FromFile(t *testing.T) {
 			t.Error("error is nil")
 		}
 	})
-	t.Run("rotate-6.tiff", func(t *testing.T) {
+	t.Run("RotateSixTiff", func(t *testing.T) {
 		fileName := "testdata/rotate/6.tiff"
 
 		file, err := NewMediaFile(fileName)
@@ -185,7 +185,7 @@ func TestThumb_Create(t *testing.T) {
 		t.Error(err)
 	}
 
-	t.Run("valid parameter", func(t *testing.T) {
+	t.Run("ValidParameter", func(t *testing.T) {
 		expectedFilename, err := thumb.FileName("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
@@ -212,7 +212,7 @@ func TestThumb_Create(t *testing.T) {
 
 		assert.FileExists(t, expectedFilename)
 	})
-	t.Run("invalid width", func(t *testing.T) {
+	t.Run("InvalidWidth", func(t *testing.T) {
 		expectedFilename, err := thumb.FileName("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
@@ -237,7 +237,7 @@ func TestThumb_Create(t *testing.T) {
 		bounds := thumbnail.Bounds()
 		assert.NotEqual(t, 150, bounds.Dx())
 	})
-	t.Run("invalid height", func(t *testing.T) {
+	t.Run("InvalidHeight", func(t *testing.T) {
 		expectedFilename, err := thumb.FileName("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {

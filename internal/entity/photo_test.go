@@ -498,6 +498,19 @@ func TestPhoto_AddLabels(t *testing.T) {
 		assert.Equal(t, 20, updated.Uncertainty)
 		assert.Equal(t, SrcImage, updated.LabelSrc)
 	})
+	t.Run("StoresTopicality", func(t *testing.T) {
+		photo := PhotoFixtures.Get("Photo15")
+		label := LabelFixtures.Get("landscape")
+
+		classifyLabels := classify.Labels{{Name: label.LabelSlug, Uncertainty: 15, Source: SrcManual, Topicality: 55}}
+		photo.AddLabels(classifyLabels)
+
+		updated, err := FindPhotoLabel(photo.ID, label.ID, true)
+		if err != nil {
+			t.Fatalf("FindPhotoLabel failed: %v", err)
+		}
+		assert.Equal(t, 55, updated.Topicality)
+	})
 	t.Run("NormalizesProviderSourceCase", func(t *testing.T) {
 		photoName := "Photo01"
 		labelName := "cow"

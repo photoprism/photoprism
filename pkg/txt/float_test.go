@@ -13,19 +13,19 @@ func TestIsFloat(t *testing.T) {
 	t.Run("Zero", func(t *testing.T) {
 		assert.True(t, IsFloat("0"))
 	})
-	t.Run("0.5", func(t *testing.T) {
+	t.Run("ZeroFive", func(t *testing.T) {
 		assert.True(t, IsFloat("0.5"))
 	})
-	t.Run("0,5", func(t *testing.T) {
+	t.Run("ZeroFive", func(t *testing.T) {
 		assert.True(t, IsFloat("0,5"))
 	})
-	t.Run("123000.45245", func(t *testing.T) {
+	t.Run("Num123000Num45245", func(t *testing.T) {
 		assert.True(t, IsFloat("123000.45245 "))
 	})
-	t.Run("123000.", func(t *testing.T) {
+	t.Run("Num123000", func(t *testing.T) {
 		assert.True(t, IsFloat("123000. "))
 	})
-	t.Run("01:00", func(t *testing.T) {
+	t.Run("Num01Num00", func(t *testing.T) {
 		assert.False(t, IsFloat("01:00"))
 	})
 	t.Run("LeadingZeros", func(t *testing.T) {
@@ -49,11 +49,11 @@ func TestFloat64(t *testing.T) {
 		result := Float64("0")
 		assert.Equal(t, 0.0, result)
 	})
-	t.Run("0.5", func(t *testing.T) {
+	t.Run("ZeroFive", func(t *testing.T) {
 		result := Float64("0.5")
 		assert.Equal(t, 0.5, result)
 	})
-	t.Run("01:00", func(t *testing.T) {
+	t.Run("Num01Num00", func(t *testing.T) {
 		result := Float64("01:00")
 		assert.Equal(t, 100.0, result)
 	})

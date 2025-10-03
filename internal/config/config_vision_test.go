@@ -81,6 +81,15 @@ func TestConfig_VisionModelShouldRun(t *testing.T) {
 		}
 	})
 
+	t.Run("DetectNSFWDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DetectNSFW = false
+		withVisionConfig(t, vision.NewConfig())
+		if c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunManual) {
+			t.Fatalf("expected false when detect nsfw disabled")
+		}
+	})
+
 	t.Run("NilVisionConfig", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		withVisionConfig(t, nil)

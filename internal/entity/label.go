@@ -26,9 +26,10 @@ const (
 var labelMutex = sync.Mutex{}
 var labelCategoriesMutex = sync.Mutex{}
 
+// Labels is a convenience alias for slices of Label.
 type Labels []Label
 
-// Label is used for photo, album and location categorization
+// Label represents a taxonomy entry used for categorizing photos, albums, and locations.
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
 	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
@@ -84,7 +85,7 @@ func (m *Label) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
 }
 
-// NewLabel returns a new label.
+// NewLabel constructs a label entity from a name and priority, normalizing title/slug fields.
 func NewLabel(name string, priority int) *Label {
 	labelName := txt.Clip(name, txt.ClipDefault)
 
@@ -106,7 +107,7 @@ func NewLabel(name string, priority int) *Label {
 	return result
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save persists label changes while holding the global label mutex.
 func (m *Label) Save() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()
@@ -114,7 +115,7 @@ func (m *Label) Save() error {
 	return Db().Save(m).Error
 }
 
-// SaveForm updates the entity using form data and stores it in the database.
+// SaveForm copies validated form data into the label and persists it.
 func (m *Label) SaveForm(f *form.Label) error {
 	if f == nil {
 		return fmt.Errorf("form is nil")
@@ -136,7 +137,7 @@ func (m *Label) SaveForm(f *form.Label) error {
 	}
 }
 
-// Create inserts the label to the database.
+// Create inserts the label into the database while holding the global label mutex.
 func (m *Label) Create() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()

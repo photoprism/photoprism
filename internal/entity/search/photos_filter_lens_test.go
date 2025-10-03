@@ -22,7 +22,7 @@ func TestPhotosFilterLens(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 46)
 	})
-	t.Run("Apple iPhone SE back camera 4.15mm f/2.2", func(t *testing.T) {
+	t.Run("AppleIPhoneSeBackCameraFourFifteenMmFTwoTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Lens = "Apple iPhone SE back camera 4.15mm f/2.2"
@@ -36,7 +36,7 @@ func TestPhotosFilterLens(t *testing.T) {
 		assert.Len(t, photos, 1)
 	})
 	//TODO
-	/*t.Run("*4.15mm f/2.2", func(t *testing.T) {
+	/*t.Run("FourFifteenMmFTwoTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Lens = "*4.15mm f/2.2"
@@ -302,7 +302,7 @@ func TestPhotosQueryLens(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 46)
 	})
-	t.Run("Apple iPhone SE back camera 4.15mm f/2.2", func(t *testing.T) {
+	t.Run("AppleIPhoneSeBackCameraFourFifteenMmFTwoTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "lens:\"Apple iPhone SE back camera 4.15mm f/2.2\""
@@ -316,7 +316,7 @@ func TestPhotosQueryLens(t *testing.T) {
 		assert.Len(t, photos, 1)
 	})
 	//TODO
-	/*t.Run("*4.15mm f/2.2", func(t *testing.T) {
+	/*t.Run("FourFifteenMmFTwoTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "lens:\"*4.15mm f/2.2\""
