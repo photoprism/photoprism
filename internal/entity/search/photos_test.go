@@ -2383,4 +2383,174 @@ func TestPhotos(t *testing.T) {
 			assert.NotEmpty(t, p.PhotoName)
 		}
 	})
+	t.Run("query: label:no-jpeg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "label:no-jpeg"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo01").ID, r.ID)
+		}
+	})
+	t.Run("label:No Jpeg", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Label = "No Jpeg"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo01").ID, r.ID)
+		}
+	})
+	t.Run("query: label:上海", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "label:上海"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
+	})
+	t.Run("label:上海", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Label = "上海"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
+	})
+	t.Run("query: label:伤害", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "label:伤害"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
+	})
+	t.Run("label:伤害", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Label = "伤害"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
+	})
+	t.Run("query: label:shang-hai", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "label:shang-hai"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 0)
+	})
+	t.Run("label:shang-hai", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Label = "shang-hai" // homophone in latin char set
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 0)
+	})
+	t.Run("query: label:shang-hai or 伤害", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "label:shang-hai|伤害"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
+	})
+	t.Run("label:shang-hai or 伤害", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Label = "shang-hai|伤害"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+		}
+	})
 }

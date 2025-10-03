@@ -1,6 +1,7 @@
 package search
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -1192,6 +1193,202 @@ func TestGeo(t *testing.T) {
 			assert.IsType(t, GeoResult{}, r)
 			assert.Empty(t, r.PhotoCaption)
 			assert.Empty(t, r.PhotoTitle)
+		}
+	})
+	t.Run("query:label:ladder", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "label:ladder"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 4)
+
+		found51 := false
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			if fmt.Sprintf("%d", entity.PhotoFixtures.Get("photo51 ").ID) == r.ID {
+				found51 = true
+			}
+		}
+		assert.True(t, found51, "unable to find photo51 ")
+	})
+	t.Run("label:ladder\"", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Label = "ladder\""
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 4)
+
+		found51 := false
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			if fmt.Sprintf("%d", entity.PhotoFixtures.Get("photo51 ").ID) == r.ID {
+				found51 = true
+			}
+		}
+		assert.True(t, found51, "unable to find Photo51")
+	})
+	t.Run("query: label:上海", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "label:上海"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
+	})
+	t.Run("label:上海", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Label = "上海"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
+	})
+	t.Run("query: label:伤害", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "label:伤害"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
+	})
+	t.Run("label:伤害", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Label = "伤害"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
+	})
+	t.Run("query: label:shang-hai", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "label:shang-hai"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 0)
+	})
+	t.Run("label:shang-hai", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Label = "shang-hai" // homophone in latin char set
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 0)
+	})
+	t.Run("query: label:shang-hai or 伤害", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "label:shang-hai|伤害"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
+	})
+	t.Run("label:shang-hai or 伤害", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Label = "shang-hai|伤害"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
+	})
+	t.Run("query: shang-hai or 伤害", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "shang-hai 伤害"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 1)
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
 		}
 	})
 }
