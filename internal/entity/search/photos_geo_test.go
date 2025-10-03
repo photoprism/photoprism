@@ -1311,6 +1311,32 @@ func TestGeo(t *testing.T) {
 			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
 		}
 	})
+	t.Run("query: label:Shang Hai", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = "label:Shang Hai"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 0)
+	})
+	t.Run("label:Shang Hai", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Label = "Shang Hai" // homophone in latin char set
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, photos, 0)
+	})
 	t.Run("query: label:shang-hai", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
@@ -1322,7 +1348,11 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, photos, 0)
+		assert.Len(t, photos, 1)
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
 	})
 	t.Run("label:shang-hai", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -1335,7 +1365,11 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, photos, 0)
+		assert.Len(t, photos, 1)
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.Equal(t, fmt.Sprintf("%d", entity.PhotoFixtures.Get("Photo56").ID), r.ID)
+		}
 	})
 	t.Run("query: label:shang-hai or 伤害", func(t *testing.T) {
 		var f form.SearchPhotosGeo
