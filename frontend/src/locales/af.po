@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-04 08:42+0000\n"
+"PO-Revision-Date: 2025-10-04 09:03+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -405,7 +405,7 @@ msgstr "Keur goed"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Approve and save changes"
-msgstr ""
+msgstr "Keur veranderinge goed en stoor dit"
 
 #: src/page/settings/account.vue:374 src/component/settings/apps.vue:91
 msgid "Apps and Devices"
@@ -1026,7 +1026,7 @@ msgstr "Gooi weg"
 
 #: src/component/photo/edit/details.vue:599
 msgid "Discard changes and close"
-msgstr ""
+msgstr "Gooi veranderinge weg en maak toe"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
@@ -2657,7 +2657,7 @@ msgstr "Stoor"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Save changes"
-msgstr ""
+msgstr "Stoor veranderinge"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"

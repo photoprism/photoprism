@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-04 08:42+0000\n"
+"PO-Revision-Date: 2025-10-04 09:03+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -408,7 +408,7 @@ msgstr "मंजूर"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Approve and save changes"
-msgstr ""
+msgstr "परिवर्तनों को स्वीकृत करें और सहेजें"
 
 #: src/page/settings/account.vue:374 src/component/settings/apps.vue:91
 msgid "Apps and Devices"
@@ -1029,7 +1029,7 @@ msgstr "खारिज करना"
 
 #: src/component/photo/edit/details.vue:599
 msgid "Discard changes and close"
-msgstr ""
+msgstr "परिवर्तनों को त्यागें और बंद करें"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
@@ -2661,7 +2661,7 @@ msgstr "सहेजें"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Save changes"
-msgstr ""
+msgstr "परिवर्तनों को सुरक्षित करें"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"

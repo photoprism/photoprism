@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-04 08:42+0000\n"
+"PO-Revision-Date: 2025-10-04 09:03+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -408,7 +408,7 @@ msgstr "確認"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Approve and save changes"
-msgstr ""
+msgstr "批准並保存更改"
 
 #: src/page/settings/account.vue:374 src/component/settings/apps.vue:91
 msgid "Apps and Devices"
@@ -1029,7 +1029,7 @@ msgstr "丟棄"
 
 #: src/component/photo/edit/details.vue:599
 msgid "Discard changes and close"
-msgstr ""
+msgstr "放棄更改並關閉"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
@@ -2661,7 +2661,7 @@ msgstr "儲存"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Save changes"
-msgstr ""
+msgstr "儲存變更"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"

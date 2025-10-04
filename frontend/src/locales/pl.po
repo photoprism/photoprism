@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-04 08:42+0000\n"
+"PO-Revision-Date: 2025-10-04 09:03+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -407,7 +407,7 @@ msgstr "Zatwierdź"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Approve and save changes"
-msgstr ""
+msgstr "Zatwierdź i zapisz zmiany"
 
 #: src/page/settings/account.vue:374 src/component/settings/apps.vue:91
 msgid "Apps and Devices"
@@ -1028,7 +1028,7 @@ msgstr "Odrzuć"
 
 #: src/component/photo/edit/details.vue:599
 msgid "Discard changes and close"
-msgstr ""
+msgstr "Odrzuć zmiany i zamknij"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
@@ -2659,7 +2659,7 @@ msgstr "Zapisz"
 
 #: src/component/photo/edit/details.vue:614
 msgid "Save changes"
-msgstr ""
+msgstr "Zapisz zmiany"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"
