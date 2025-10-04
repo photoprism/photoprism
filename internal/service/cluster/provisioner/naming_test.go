@@ -81,11 +81,21 @@ func TestGetCredentials_SqliteRejected(t *testing.T) {
 	DatabaseDriver = config.SQLite3
 	t.Cleanup(func() { DatabaseDriver = origDriver })
 
-	creds, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
+	_, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "database must be MySQL/MariaDB")
 	}
-	// Cleanup: drop user and database to keep the dev DB tidy.
-	cleanupDB(t, ctx, creds)
+}
 
+func TestGetCredentials_PostgresRejected(t *testing.T) {
+	ctx := context.Background()
+	c := config.NewConfig(config.CliTestContext())
+	origDriver := DatabaseDriver
+	DatabaseDriver = config.Postgres
+	t.Cleanup(func() { DatabaseDriver = origDriver })
+
+	_, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "database must be MySQL/MariaDB")
+	}
 }
