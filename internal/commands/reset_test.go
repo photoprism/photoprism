@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 )
 
 func TestResetCommand(t *testing.T) {
@@ -23,18 +24,7 @@ func TestResetCommand(t *testing.T) {
 		}
 		assert.Greater(t, count, int64(0))
 
-		dbDrv := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		dbDSN := ""
-		switch dbDrv {
-		case "mariadb":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
-		case "postgres":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
-		case "sqlite":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
-		case "sqlitefile":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITEFILE")
-		}
+		dbDrv, dbDSN := functions.PhotoPrismTestToDriverDsn()
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,

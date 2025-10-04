@@ -222,18 +222,7 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 
 func TestImportSQL(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
-	c.options.DatabaseDriver = os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-	switch c.options.DatabaseDriver {
-	case "mariadb":
-		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
-	case "postgres":
-		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
-	case "sqlite":
-		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
-	case "sqlitefile":
-		c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITEFILE")
-	}
+	c.options.DatabaseDriver, c.options.DatabaseDSN = functions.PhotoPrismTestToDriverDsn()
 
 	if err := c.connectDb(); err != nil {
 		assert.Empty(t, err)

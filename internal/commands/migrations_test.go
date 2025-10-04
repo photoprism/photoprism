@@ -20,6 +20,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/functions"
 )
 
 func TestMigrationCommand(t *testing.T) {
@@ -62,19 +63,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("RunTraceAndFailed", func(t *testing.T) {
-
-		dbDrv := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		dbDSN := ""
-		switch dbDrv {
-		case "mariadb":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
-		case "postgres":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
-		case "sqlite":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
-		case "sqlitefile":
-			dbDSN = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITEFILE")
-		}
+		dbDrv, dbDSN := functions.PhotoPrismTestToDriverDsn()
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,
@@ -108,7 +97,7 @@ func TestMigrationCommand(t *testing.T) {
 		// t.Logf("buffer = %s", buffer.String())
 		assert.Empty(t, err)
 		assert.Empty(t, output)
-		assert.Contains(t, l, "migrate: completed in")
+		assert.Contains(t, l, "migrate: running database migrations")
 		assert.Contains(t, buffer.String(), "migrate: enabled trace mode")
 		assert.Contains(t, buffer.String(), "migrate: running previously failed migrations")
 	})
