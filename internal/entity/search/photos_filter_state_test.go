@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterState(t *testing.T) {
-	t.Run("State of Mexico", func(t *testing.T) {
+	t.Run("StateOfMexico", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico"
@@ -22,7 +22,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("Rheinland*", func(t *testing.T) {
+	t.Run("Rheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "Rheinland*"
@@ -35,7 +35,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico pipe Rheinland-Pfalz", func(t *testing.T) {
+	t.Run("StateOfMexicoPipeRheinlandPfalz", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico|Rheinland-Pfalz"
@@ -48,7 +48,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico whitespace pipe whitespace Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoWhitespacePipeWhitespaceRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico | Rheinland-Pfalz"
@@ -61,7 +61,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico or Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico or Rheinland-Pfalz"
@@ -74,7 +74,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico OR Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico OR Rheinland-Pfalz"
@@ -327,7 +327,7 @@ func TestPhotosFilterState(t *testing.T) {
 }
 
 func TestPhotosQueryState(t *testing.T) {
-	t.Run("State of Mexico", func(t *testing.T) {
+	t.Run("StateOfMexico", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico\""
@@ -340,7 +340,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("Rheinland*", func(t *testing.T) {
+	t.Run("Rheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"Rheinland*\""
@@ -353,7 +353,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico pipe Rheinland-Pfalz", func(t *testing.T) {
+	t.Run("StateOfMexicoPipeRheinlandPfalz", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico|Rheinland-Pfalz\""
@@ -366,7 +366,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico whitespace pipe whitespace Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoWhitespacePipeWhitespaceRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico | Rheinland-Pfalz\""
@@ -379,7 +379,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico or Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico or Rheinland-Pfalz\""
@@ -392,7 +392,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico OR Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico OR Rheinland-Pfalz\""

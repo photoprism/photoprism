@@ -7,7 +7,7 @@ import (
 )
 
 func TestProcessed(t *testing.T) {
-	t.Run("jpeg", func(t *testing.T) {
+	t.Run("Jpeg", func(t *testing.T) {
 		assert.True(t, Processed.Processed())
 		assert.False(t, Found.Processed())
 	})

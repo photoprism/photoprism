@@ -24,7 +24,7 @@ func TestNewFileSync(t *testing.T) {
 }
 
 func TestFirstOrCreateFileSync(t *testing.T) {
-	t.Run("not yet existing", func(t *testing.T) {
+	t.Run("NotYetExisting", func(t *testing.T) {
 		newFile := &File{ID: 888, PhotoID: 1000041} // Can't add share if the file and service aren't in the database.
 		Db().Create(newFile)
 		newService := &Service{ID: 123}
@@ -48,7 +48,7 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 		UnscopedDb().Delete(newFile)
 		UnscopedDb().Delete(newService)
 	})
-	t.Run("existing", func(t *testing.T) {
+	t.Run("Existing", func(t *testing.T) {
 		fileSync := NewFileSync(1000000, "NameForRemote")                 // Point at a real service
 		fileSync.FileID = &FileFixtures.Pointer("exampleFileName.jpg").ID // Add a pointer to a real file
 		result := FirstOrCreateFileSync(fileSync)

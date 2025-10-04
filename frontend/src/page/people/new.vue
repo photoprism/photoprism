@@ -496,6 +496,10 @@ export default {
         });
     },
     updateQuery() {
+      if (this.loading || !this.active) {
+        return false;
+      }
+
       this.filter.q = this.filter.q.trim();
 
       const query = {
@@ -511,10 +515,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {

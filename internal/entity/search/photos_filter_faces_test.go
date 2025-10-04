@@ -14,7 +14,7 @@ func TestPhotosFilterFaces(t *testing.T) {
 	f0.Primary = true
 
 	photos0, _, _ := Photos(f0)
-	t.Run("yes", func(t *testing.T) {
+	t.Run("Yes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Faces = "yes"
@@ -27,7 +27,7 @@ func TestPhotosFilterFaces(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Faces = "1"
@@ -40,7 +40,7 @@ func TestPhotosFilterFaces(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("2", func(t *testing.T) {
+	t.Run("Two", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Faces = "2"
@@ -53,7 +53,7 @@ func TestPhotosFilterFaces(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("5", func(t *testing.T) {
+	t.Run("Five", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Faces = "4"
@@ -319,7 +319,7 @@ func TestPhotosQueryFaces(t *testing.T) {
 
 	photos0, _, _ := Photos(f0)
 
-	t.Run("yes", func(t *testing.T) {
+	t.Run("Yes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "faces:yes"
@@ -332,7 +332,7 @@ func TestPhotosQueryFaces(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "faces:1"
@@ -345,7 +345,7 @@ func TestPhotosQueryFaces(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("2", func(t *testing.T) {
+	t.Run("Two", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "faces:2"
@@ -358,7 +358,7 @@ func TestPhotosQueryFaces(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("5", func(t *testing.T) {
+	t.Run("Five", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "faces:5"

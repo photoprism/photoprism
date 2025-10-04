@@ -22,6 +22,10 @@ func init() {
 	} else {
 		log.Warnf("faces: PHOTOPRISM_FACE_IGNORED_DIST is out of range (0.1-1.5; -1 to disable)")
 	}
+
+	for i := range IgnoredEmbeddings {
+		normalizeEmbedding(IgnoredEmbeddings[i])
+	}
 }
 
 // Ignored tests whether the embedding is generally unsuitable for matching.

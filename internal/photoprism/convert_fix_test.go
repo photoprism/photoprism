@@ -21,7 +21,7 @@ func TestConvert_FixJpeg(t *testing.T) {
 	assert.NoError(t, initErr)
 	convert := NewConvert(cnf)
 
-	t.Run("elephants.jpg", func(t *testing.T) {
+	t.Run("ElephantsJpg", func(t *testing.T) {
 		fileName := filepath.Join(cnf.ExamplesPath(), "elephants.jpg")
 		outputName := filepath.Join(cnf.MediaFileCachePath("b10447b54c3330eb13566735322e971cc1dcbc41"),
 			"b10447b54c3330eb13566735322e971cc1dcbc41.jpg")

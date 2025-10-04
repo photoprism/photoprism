@@ -57,7 +57,7 @@ func TestConfig_PortalUrl(t *testing.T) {
 		c.options.ClusterDomain = "foo.bar.baz"
 		assert.Equal(t, "https://portal.foo.bar.baz", c.PortalUrl())
 	})
-	t.Run("Substitute_PHOTOPRISM_CLUSTER_DOMAIN", func(t *testing.T) {
+	t.Run("SubstitutePhotoPrismClusterDomain", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ClusterDomain = "example.dev"
 		// Use curly braces style as found in repo fixtures; resolver normalizes to ${...}.
@@ -65,14 +65,14 @@ func TestConfig_PortalUrl(t *testing.T) {
 		assert.Equal(t, "https://portal.example.dev", c.PortalUrl())
 		c.options.PortalUrl = DefaultPortalUrl
 	})
-	t.Run("Substitute_CLUSTER_DOMAIN", func(t *testing.T) {
+	t.Run("SubstituteClusterDomain", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ClusterDomain = "example.dev"
 		c.options.PortalUrl = "https://portal.${CLUSTER_DOMAIN}"
 		assert.Equal(t, "https://portal.example.dev", c.PortalUrl())
 		c.options.PortalUrl = DefaultPortalUrl
 	})
-	t.Run("Substitute_cluster_dash_domain_Curly", func(t *testing.T) {
+	t.Run("SubstituteClusterDashDomainCurly", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ClusterDomain = "example.dev"
 		// Curly brace variant {cluster-domain} is normalized by ExpandVars.

@@ -47,7 +47,7 @@ func (w *Vision) Reset(filter string, count int, models []string, provider strin
 
 	provider = clean.ShortTypeLower(provider)
 	if provider == "" {
-		provider = entity.SrcVision
+		provider = vision.DefaultSrc
 	}
 
 	start := time.Now()

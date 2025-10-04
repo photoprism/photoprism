@@ -11,7 +11,7 @@ import (
 func TestMediaFile_RelatedFiles(t *testing.T) {
 	c := config.TestConfig()
 
-	t.Run("example.tif", func(t *testing.T) {
+	t.Run("ExampleTif", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/example.tif")
 
 		if err != nil {
@@ -49,7 +49,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			}
 		}
 	})
-	t.Run("canon_eos_6d.dng", func(t *testing.T) {
+	t.Run("CanonEosSixDDng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/canon_eos_6d.dng")
 
 		if err != nil {
@@ -79,7 +79,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			assert.Equal(t, expectedBaseFilename, baseFilename)
 		}
 	})
-	t.Run("iphone_7.heic", func(t *testing.T) {
+	t.Run("IphoneSevenHeic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
@@ -110,7 +110,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			}
 		}
 	})
-	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
 
 		if err != nil {
@@ -141,7 +141,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			}
 		}
 	})
-	t.Run("2015-02-04.jpg", func(t *testing.T) {
+	t.Run("Num2015Num02Num04Jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04.jpg")
 
 		if err != nil {
@@ -171,7 +171,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
 		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
 	})
-	t.Run("2015-02-04(1).jpg", func(t *testing.T) {
+	t.Run("Num2015Num02Num04OneJpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
 
 		if err != nil {
@@ -196,7 +196,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		assert.Equal(t, "2015-02-04(1).jpg", related.Files[0].BaseName())
 	})
-	t.Run("2015-02-04(1).jpg stacked", func(t *testing.T) {
+	t.Run("Num2015Num02Num04OneJpgStacked", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04(1).jpg")
 
 		if err != nil {

@@ -11,20 +11,20 @@ import (
 
 func TestFileName(t *testing.T) {
 	c := config.TestConfig()
-	t.Run("sidecar", func(t *testing.T) {
+	t.Run("Sidecar", func(t *testing.T) {
 		assert.Equal(t, c.SidecarPath()+"/test.jpg", FileName("sidecar", "test.jpg"))
 	})
-	t.Run("import", func(t *testing.T) {
+	t.Run("Import", func(t *testing.T) {
 		assert.Equal(t, c.ImportPath()+"/test.jpg", FileName("import", "test.jpg"))
 	})
-	t.Run("examples", func(t *testing.T) {
+	t.Run("Examples", func(t *testing.T) {
 		assert.Equal(t, c.ExamplesPath()+"/test.jpg", FileName("examples", "test.jpg"))
 	})
 
 }
 
 func TestCacheName(t *testing.T) {
-	t.Run("cacheKey empty", func(t *testing.T) {
+	t.Run("CacheKeyEmpty", func(t *testing.T) {
 		r, err := CacheName("abcdghoj", "test", "")
 		assert.Error(t, err)
 		assert.Empty(t, r)
@@ -36,7 +36,7 @@ func TestCacheName(t *testing.T) {
 		}
 		assert.Contains(t, r, "test/a/b/c/abcdghoj_juh")
 	})
-	t.Run("filehash too short", func(t *testing.T) {
+	t.Run("FilehashTooShort", func(t *testing.T) {
 		r, err := CacheName("ab", "test", "juh")
 		assert.Error(t, err)
 		assert.Empty(t, r)

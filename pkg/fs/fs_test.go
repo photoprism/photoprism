@@ -100,17 +100,17 @@ func TestWritable(t *testing.T) {
 }
 
 func TestExpandedFilename(t *testing.T) {
-	t.Run("test.jpg", func(t *testing.T) {
+	t.Run("TestJpg", func(t *testing.T) {
 		filename := Abs("./testdata/test.jpg")
 		assert.Contains(t, filename, "/testdata/test.jpg")
 		assert.IsType(t, "", filename)
 	})
-	t.Run("empty filename", func(t *testing.T) {
+	t.Run("EmptyFilename", func(t *testing.T) {
 		filename := Abs("")
 		assert.Equal(t, "", filename)
 		assert.IsType(t, "", filename)
 	})
-	t.Run("~ in filename", func(t *testing.T) {
+	t.Run("InFilename", func(t *testing.T) {
 		usr, _ := user.Current()
 		expected := usr.HomeDir + "/test.jpg"
 		filename := Abs("~/test.jpg")

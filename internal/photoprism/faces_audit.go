@@ -1,7 +1,13 @@
 package photoprism
 
 import (
+	"crypto/sha1"
+	"encoding/base32"
+	"fmt"
+	"math"
+
 	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -49,6 +55,11 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Errorf("faces: %s (remove orphan embeddings)", err)
 	} else if removed > 0 {
 		log.Infof("faces: removed %d / %d markers with non-existent faces", removed, n)
+	}
+
+	// Normalize stored face embeddings and distances as needed.
+	if _, _, _, err := w.normalizeStoredEmbeddings(fix); err != nil {
+		return err
 	}
 
 	conflicts := 0
@@ -196,4 +207,260 @@ func (w *Faces) Audit(fix bool) (err error) {
 	}
 
 	return nil
+}
+
+// faceNormalizationTolerance defines the acceptable deviation from unit length before a
+// persisted embedding is treated as stale and needs to be normalized again.
+const faceNormalizationTolerance = 5e-7
+
+type faceNormalizationCandidate struct {
+	face       entity.Face
+	normalized face.Embedding
+	json       []byte
+	newID      string
+	rekey      bool
+}
+
+// normalizeStoredEmbeddings ensures persisted face embeddings are L2-normalized and IDs are aligned.
+// It optionally persists the normalized embeddings (when fix is true) and reports the number of
+// clusters that would be affected, how many IDs would change, and how many marker distances were
+// recalculated during the run.
+func (w *Faces) normalizeStoredEmbeddings(fix bool) (normalized, rekeyed, distances int, err error) {
+	var faces entity.Faces
+
+	if err = entity.Db().Order("id").Find(&faces).Error; err != nil {
+		return 0, 0, 0, err
+	}
+
+	candidates := make([]faceNormalizationCandidate, 0, len(faces))
+
+	for i := range faces {
+		f := faces[i]
+
+		if len(f.EmbeddingJSON) == 0 {
+			continue
+		}
+
+		embedding := f.Embedding()
+
+		if len(embedding) == 0 {
+			continue
+		}
+
+		var sum float64
+		invalidComponent := false
+
+		for _, v := range embedding {
+			if math.IsNaN(v) || math.IsInf(v, 0) {
+				invalidComponent = true
+				break
+			}
+
+			sum += v * v
+		}
+
+		if invalidComponent {
+			log.Warnf("faces: face %s has invalid embedding components; skipping normalization", clean.Log(f.ID))
+			continue
+		}
+
+		if sum == 0 {
+			continue
+		}
+
+		length := math.Sqrt(sum)
+
+		if length == 0 || math.IsNaN(length) {
+			continue
+		}
+
+		if math.Abs(length-1) <= faceNormalizationTolerance {
+			continue
+		}
+
+		normalizedEmb := make(face.Embedding, len(embedding))
+		inv := 1 / length
+
+		for j, v := range embedding {
+			nv := v * inv
+
+			if nv == -0 {
+				nv = 0
+			}
+
+			normalizedEmb[j] = nv
+		}
+
+		normalizedJSON := normalizedEmb.JSON()
+
+		if len(normalizedJSON) == 0 {
+			log.Warnf("faces: face %s produced empty normalized embedding; skipping", clean.Log(f.ID))
+			continue
+		}
+
+		sumBytes := sha1.Sum(normalizedJSON)
+		newID := base32.StdEncoding.EncodeToString(sumBytes[:])
+
+		candidates = append(candidates, faceNormalizationCandidate{
+			face:       f,
+			normalized: normalizedEmb,
+			json:       normalizedJSON,
+			newID:      newID,
+			rekey:      newID != f.ID,
+		})
+	}
+
+	if len(candidates) == 0 {
+		log.Infof("faces: stored embeddings are normalized")
+		return 0, 0, 0, nil
+	}
+
+	rekeyNeeded := 0
+
+	for _, c := range candidates {
+		if c.rekey {
+			rekeyNeeded++
+		}
+	}
+
+	if !fix {
+		log.Infof("faces: %s require embedding normalization (%s would change ids)", english.Plural(len(candidates), "face cluster", "face clusters"), english.Plural(rekeyNeeded, "cluster", "clusters"))
+		return len(candidates), rekeyNeeded, 0, nil
+	}
+
+	successes := 0
+	rekeyed = 0
+	updatedDistances := 0
+
+	for _, candidate := range candidates {
+		updatedMarkers, err := w.persistNormalizedFace(candidate)
+		if err != nil {
+			log.Errorf("faces: failed normalizing face %s (%s)", clean.Log(candidate.face.ID), err)
+			continue
+		}
+
+		successes++
+		updatedDistances += updatedMarkers
+
+		if candidate.rekey {
+			rekeyed++
+		}
+	}
+
+	if successes > 0 {
+		entity.UpdateFaces.Store(true)
+		log.Infof("faces: normalized %s (%d rekeyed, %d marker distances updated)", english.Plural(successes, "face cluster", "face clusters"), rekeyed, updatedDistances)
+	}
+
+	return successes, rekeyed, updatedDistances, nil
+}
+
+// persistNormalizedFace writes the normalized embedding for a single face cluster and returns the
+// number of marker rows whose cached distance was updated as part of the transaction.
+func (w *Faces) persistNormalizedFace(candidate faceNormalizationCandidate) (int, error) {
+	updated := 0
+
+	err := entity.UnscopedDb().Transaction(func(tx *gorm.DB) error {
+		now := entity.Now()
+		oldID := candidate.face.ID
+		targetID := candidate.newID
+
+		if candidate.rekey {
+			var existing int
+
+			if err := tx.Model(&entity.Face{}).Where("id = ?", candidate.newID).Count(&existing).Error; err != nil {
+				return err
+			}
+
+			if existing > 0 {
+				return fmt.Errorf("target id %s already exists", candidate.newID)
+			}
+
+			if err := tx.Exec("UPDATE faces SET id = ?, embedding_json = ?, updated_at = ? WHERE id = ?", candidate.newID, candidate.json, now, oldID).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Exec("UPDATE markers SET face_id = ? WHERE face_id = ?", candidate.newID, oldID).Error; err != nil {
+				return err
+			}
+		} else {
+			if err := tx.Exec("UPDATE faces SET embedding_json = ?, updated_at = ? WHERE id = ?", candidate.json, now, oldID).Error; err != nil {
+				return err
+			}
+		}
+
+		markerUpdates, err := w.updateMarkerDistances(tx, targetID, candidate.normalized)
+		if err != nil {
+			return err
+		}
+
+		updated = markerUpdates
+
+		return nil
+	})
+
+	return updated, err
+}
+
+// updateMarkerDistances recalculates the cached FaceDist values for markers belonging to the given
+// face, keeping the transaction-scoped DB handle so ID changes and distance updates are atomic.
+func (w *Faces) updateMarkerDistances(tx *gorm.DB, faceID string, normalized face.Embedding) (int, error) {
+	if len(normalized) == 0 {
+		return 0, nil
+	}
+
+	var markers []entity.Marker
+
+	if err := tx.Where("face_id = ?", faceID).Find(&markers).Error; err != nil {
+		return 0, err
+	}
+
+	updated := 0
+
+	for i := range markers {
+		marker := &markers[i]
+		emb := marker.Embeddings()
+
+		if emb.Empty() {
+			continue
+		}
+
+		dist := minEmbeddingDistance(normalized, emb)
+
+		if dist < 0 {
+			continue
+		}
+
+		if marker.FaceDist >= 0 && math.Abs(marker.FaceDist-dist) <= faceNormalizationTolerance {
+			continue
+		}
+
+		if err := tx.Model(&entity.Marker{}).
+			Where("marker_uid = ?", marker.MarkerUID).
+			Update("face_dist", dist).Error; err != nil {
+			return updated, err
+		}
+
+		updated++
+	}
+
+	return updated, nil
+}
+
+// minEmbeddingDistance returns the minimum Euclidean distance between an embedding and any
+// candidate in a cluster. A negative return value indicates no comparable embeddings were found.
+func minEmbeddingDistance(faceEmb face.Embedding, embeddings face.Embeddings) float64 {
+	dist := -1.0
+
+	for _, e := range embeddings {
+		if len(e) != len(faceEmb) {
+			continue
+		}
+
+		if d := e.Dist(faceEmb); d < dist || dist < 0 {
+			dist = d
+		}
+	}
+
+	return dist
 }

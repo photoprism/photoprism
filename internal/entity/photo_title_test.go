@@ -10,22 +10,22 @@ import (
 )
 
 func TestPhoto_HasTitle(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo03")
 		assert.False(t, m.HasTitle())
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.True(t, m.HasTitle())
 	})
 }
 
 func TestPhoto_NoTitle(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo03")
 		assert.True(t, m.NoTitle())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.False(t, m.NoTitle())
 	})
@@ -62,7 +62,7 @@ func TestPhoto_SetTitle(t *testing.T) {
 }
 
 func TestPhoto_GenerateTitle(t *testing.T) {
-	t.Run("won't update title was modified", func(t *testing.T) {
+	t.Run("WonTUpdateTitleWasModified", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Black beach", m.PhotoTitle)
@@ -72,7 +72,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "Black beach", m.PhotoTitle)
 	})
-	t.Run("photo with location without city and label", func(t *testing.T) {
+	t.Run("PhotoWithLocationWithoutCityAndLabel", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")
 		classifyLabels := &classify.Labels{{Name: "tree", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -87,7 +87,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			assert.Equal(t, "Tree / Germany / 2016", m.PhotoTitle)
 		}
 	})
-	t.Run("photo with location and short city and label", func(t *testing.T) {
+	t.Run("PhotoWithLocationAndShortCityAndLabel", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
 		classifyLabels := &classify.Labels{{Name: "tree", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -97,7 +97,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "Tree / Teotihuacán / 2016", m.PhotoTitle)
 	})
-	t.Run("photo with location and locname >45", func(t *testing.T) {
+	t.Run("PhotoWithLocationAndLocnameGreaterThanNum45", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo13")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -107,7 +107,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "LonglonglonglonglonglonglonglonglonglonglonglonglongName", m.PhotoTitle)
 	})
-	t.Run("photo with location and locname >20", func(t *testing.T) {
+	t.Run("PhotoWithLocationAndLocnameGreaterThanTwenty", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo14")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -117,7 +117,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "longlonglonglonglonglongName / 2018", m.PhotoTitle)
 	})
-	t.Run("photo with location and short city", func(t *testing.T) {
+	t.Run("PhotoWithLocationAndShortCity", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -127,7 +127,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "Adosada Platform / Teotihuacán / 2016", m.PhotoTitle)
 	})
-	t.Run("photo with location without city", func(t *testing.T) {
+	t.Run("PhotoWithLocationWithoutCity", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -143,7 +143,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			assert.Equal(t, "Holiday Park / Germany / 2016", m.PhotoTitle)
 		}
 	})
-	t.Run("photo with location without  loc name and long city", func(t *testing.T) {
+	t.Run("PhotoWithLocationWithoutLocNameAndLongCity", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo11")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -153,7 +153,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "longlonglonglonglongcity / 2016", m.PhotoTitle)
 	})
-	t.Run("photo with location without loc name and short city", func(t *testing.T) {
+	t.Run("PhotoWithLocationWithoutLocNameAndShortCity", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "Title", m.PhotoTitle)
@@ -163,7 +163,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "shortcity / Germany / 2016", m.PhotoTitle)
 	})
-	t.Run("no location original name", func(t *testing.T) {
+	t.Run("NoLocationOriginalName", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "Lake / 2790", m.PhotoTitle)
@@ -174,7 +174,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		assert.Contains(t, m.PhotoTitle, " & Actress A / 2008")
 		//assert.Equal(t, "Franzilein & Actress A / 2008", m.PhotoTitle)  // Requires TestMarker_SaveForm execution for this to be true.
 	})
-	t.Run("no location", func(t *testing.T) {
+	t.Run("NoLocation", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "", m.PhotoTitle)
@@ -184,7 +184,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "Classify / Germany / 2006", m.PhotoTitle)
 	})
-	t.Run("no location no labels", func(t *testing.T) {
+	t.Run("NoLocationNoLabels", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo02")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "", m.PhotoTitle)
@@ -207,7 +207,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			assert.Equal(t, "Bridge1 / 1990", m.PhotoTitle)
 		}
 	})
-	t.Run("no location no labels no takenAt", func(t *testing.T) {
+	t.Run("NoLocationNoLabelsNoTakenAt", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo20")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "", m.PhotoTitle)

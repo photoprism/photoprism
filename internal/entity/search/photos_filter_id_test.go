@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterId(t *testing.T) {
-	t.Run("a698ac56-6e7e-42b9-9c3e-a79ec96087uy", func(t *testing.T) {
+	t.Run("A698ac56SixE7eNum42B9NineC3eA79ec96087uy", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.ID = "a698ac56-6e7e-42b9-9c3e-a79ec96087uy"
@@ -22,7 +22,7 @@ func TestPhotosFilterId(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("a698ac56-6e7e-42b9-9c3e*", func(t *testing.T) {
+	t.Run("A698ac56SixE7eNum42B9NineC3e", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.ID = "a698ac56-6e7e-42b9-9c3e*"
@@ -319,7 +319,7 @@ func TestPhotosQueryId(t *testing.T) {
 
 		assert.Len(t, photos, 1)
 	})
-	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "id:\"a698ac56-6e7e-42b9-9c3e-a7*\""

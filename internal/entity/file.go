@@ -102,7 +102,8 @@ func (File) TableName() string {
 	return "files"
 }
 
-// RegenerateIndex updates the search index columns.
+// RegenerateIndex recalculates the denormalized search index columns for the matching files.
+// Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
 func (m File) RegenerateIndex() {
 	fileIndexMutex.Lock()
 	defer fileIndexMutex.Unlock()
@@ -228,7 +229,7 @@ func (m *File) BeforeCreate(scope *gorm.DB) error {
 	return scope.Error
 }
 
-// DownloadName returns the download file name.
+// DownloadName selects a download filename according to the configured naming policy.
 func (m *File) DownloadName(n customize.DownloadName, seq int) string {
 	switch n {
 	case customize.DownloadNameFile:
@@ -270,7 +271,7 @@ func (m *File) OriginalBase(seq int) string {
 	return base
 }
 
-// ShareBase returns a meaningful file name for sharing.
+// ShareBase builds a stable share filename derived from capture time and title, falling back to hash-based names.
 func (m *File) ShareBase(seq int) string {
 	// Return fallback share name if the file hash is empty.
 	if len(m.FileHash) < 8 {
@@ -327,7 +328,7 @@ func (m *File) ShareBase(seq int) string {
 	return fmt.Sprintf("%s-%s.%s", fileTime, fileTitle, m.FileType)
 }
 
-// Changed returns true if new and old file size or modified time are different.
+// Changed reports whether the given size or modification time differs from the stored metadata.
 func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	// File size has changed.
 	if m.FileSize != fileSize {
@@ -342,12 +343,12 @@ func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	return true
 }
 
-// Missing returns true if this file is current missing or marked as deleted.
+// Missing reports whether the file is flagged missing or has been soft-deleted.
 func (m File) Missing() bool {
 	return m.FileMissing || m.DeletedAt != gorm.DeletedAt{Valid: false}
 }
 
-// DeletePermanently permanently removes a file from the index.
+// DeletePermanently removes the file and its ancillary rows (markers, shares, sync jobs) from the database.
 func (m *File) DeletePermanently() error {
 	if m.ID < 1 || m.FileUID == "" {
 		return fmt.Errorf("invalid file id %d / uid %s", m.ID, clean.Log(m.FileUID))
@@ -372,7 +373,7 @@ func (m *File) DeletePermanently() error {
 	return UnscopedDb().Delete(m).Error
 }
 
-// ReplaceHash updates file hash references.
+// ReplaceHash updates the file hash and rewrites dependent cover references when appropriate.
 func (m *File) ReplaceHash(newHash string) error {
 	if m.FileHash == newHash {
 		// Nothing to do.
@@ -431,7 +432,7 @@ func (m *File) Delete(permanently bool) error {
 	return Db().Delete(m).Error
 }
 
-// Purge removes a file from the index by marking it as missing.
+// Purge marks the file as missing without deleting the database row, preserving historical references.
 func (m *File) Purge() error {
 	deletedAt := gorm.DeletedAt{Valid: true, Time: Now()}
 	m.FileMissing = true
@@ -440,14 +441,14 @@ func (m *File) Purge() error {
 	return UnscopedDb().Exec("UPDATE files SET file_missing = TRUE, file_primary = FALSE, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
 }
 
-// Found restores a previously purged file.
+// Found clears the missing flag set by Purge and brings the row back into active rotation.
 func (m *File) Found() error {
 	m.FileMissing = false
 	m.DeletedAt = gorm.DeletedAt{Valid: false}
 	return UnscopedDb().Exec("UPDATE files SET file_missing = FALSE, deleted_at = NULL WHERE id = ?", m.ID).Error
 }
 
-// AllFilesMissing returns true, if all files for the photo of this file are missing.
+// AllFilesMissing reports whether the owning photo has any remaining files that are not marked missing.
 func (m *File) AllFilesMissing() bool {
 	count := int64(0)
 
@@ -460,7 +461,7 @@ func (m *File) AllFilesMissing() bool {
 	return count == int64(0)
 }
 
-// Create inserts a new row to the database.
+// Create inserts a new row and immediately persists associated markers to keep AI data in sync.
 func (m *File) Create() error {
 	if m.PhotoID == 0 {
 		if m.Photo != nil {
@@ -506,7 +507,7 @@ func (m *File) ResolvePrimary() (err error) {
 	return err
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save upserts the file and synchronizes markers before enforcing a single primary flag.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("file %s: cannot save file with empty photo id", m.FileUID)

@@ -77,6 +77,12 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	labelsModelShouldRun := w.conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunNewlyIndexed)
 	captionModelShouldRun := w.conf.VisionModelShouldRun(vision.ModelTypeCaption, vision.RunNewlyIndexed)
 
+	nsfwModelShouldRun := w.conf.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunNewlyIndexed)
+
+	if nsfwModelShouldRun {
+		log.Debugf("index: cannot run %s model on %s", vision.ModelTypeNsfw, vision.RunNewlyIndexed)
+	}
+
 	for {
 		photos, queryErr := query.PhotosMetadataUpdate(limit, offset, delay, interval)
 
@@ -110,6 +116,8 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 					log.Debugf("index: photo %s has invalid primary file (%s)", photo.PhotoUID, clean.Error(fileErr))
 				} else {
 					fileName := photoprism.FileName(primaryFile.FileRoot, primaryFile.FileName)
+
+					// Load original media file.
 					mediaFile, mediaErr := photoprism.NewMediaFile(fileName)
 
 					if mediaErr != nil || mediaFile == nil || !mediaFile.Ok() {
@@ -117,12 +125,14 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 							log.Debugf("index: could not open primary file %s (generate metadata)", clean.Error(mediaErr))
 						}
 					} else {
+						// Generate photo labels if needed.
 						if generateLabels {
 							if labels := ind.Labels(mediaFile, entity.SrcAuto); len(labels) > 0 {
 								photo.AddLabels(labels)
 							}
 						}
 
+						// Generate photo caption if needed.
 						if generateCaption {
 							if caption, captionErr := ind.Caption(mediaFile, entity.SrcAuto); captionErr != nil {
 								log.Debugf("index: %s (generate caption for %s)", clean.Error(captionErr), photo.PhotoUID)
@@ -132,6 +142,11 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 									log.Warnf("index: %s (update caption labels for %s)", clean.Error(updateErr), photo.PhotoUID)
 								}
 							}
+						}
+
+						// Update precalculated label photo counts if needed.
+						if err = entity.UpdateLabelCountsIfNeeded(); err != nil {
+							log.Warnf("labels: could not update photo counts (%s)", err)
 						}
 					}
 				}

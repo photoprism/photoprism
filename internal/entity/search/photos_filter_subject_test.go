@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterSubject(t *testing.T) {
-	t.Run("Ac*", func(t *testing.T) {
+	t.Run("Ac", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Ac*"
@@ -35,7 +35,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Actress A", func(t *testing.T) {
+	t.Run("ActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Actress A"
@@ -48,7 +48,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("Actor A", func(t *testing.T) {
+	t.Run("ActorA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Actor A"
@@ -61,7 +61,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("Actor A pipe Actress A", func(t *testing.T) {
+	t.Run("ActorAPipeActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Actor A|Actress A"
@@ -74,7 +74,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("Actor A whitespace pipe whitespace Actress A", func(t *testing.T) {
+	t.Run("ActorAWhitespacePipeWhitespaceActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Actor A | Actress A"
@@ -87,7 +87,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("Actor A ampersand Actress A", func(t *testing.T) {
+	t.Run("ActorAAmpersandActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Actor A&Actress A"
@@ -100,7 +100,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("Actor A whitespace ampersand whitespace Actress A", func(t *testing.T) {
+	t.Run("ActorAWhitespaceAmpersandWhitespaceActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Subject = "Actor A & Actress A"
@@ -355,7 +355,7 @@ func TestPhotosFilterSubject(t *testing.T) {
 }
 
 func TestPhotosQuerySubject(t *testing.T) {
-	t.Run("Ac*", func(t *testing.T) {
+	t.Run("Ac", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Ac*\""
@@ -381,7 +381,7 @@ func TestPhotosQuerySubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("Actress A", func(t *testing.T) {
+	t.Run("ActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Actress A\""
@@ -394,7 +394,7 @@ func TestPhotosQuerySubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("Actor A", func(t *testing.T) {
+	t.Run("ActorA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Actor A\""
@@ -407,7 +407,7 @@ func TestPhotosQuerySubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("Actor A pipe Actress A", func(t *testing.T) {
+	t.Run("ActorAPipeActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Actor A|Actress A\""
@@ -420,7 +420,7 @@ func TestPhotosQuerySubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("Actor A whitespace pipe whitespace Actress A", func(t *testing.T) {
+	t.Run("ActorAWhitespacePipeWhitespaceActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Actor A | Actress A\""
@@ -433,7 +433,7 @@ func TestPhotosQuerySubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("Actor A ampersand Actress A", func(t *testing.T) {
+	t.Run("ActorAAmpersandActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Actor A&Actress A\""
@@ -446,7 +446,7 @@ func TestPhotosQuerySubject(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("Actor A whitespace ampersand whitespace Actress A", func(t *testing.T) {
+	t.Run("ActorAWhitespaceAmpersandWhitespaceActressA", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "subject:\"Actor A & Actress A\""

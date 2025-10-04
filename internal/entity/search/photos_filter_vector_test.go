@@ -26,7 +26,7 @@ func TestPhotosQueryVector(t *testing.T) {
 	}
 	assert.Len(t, photos0, 0)
 
-	t.Run("yes", func(t *testing.T) {
+	t.Run("Yes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "vector:yes"
@@ -39,7 +39,7 @@ func TestPhotosQueryVector(t *testing.T) {
 		}
 		assert.Len(t, photos, len(photos0))
 	})
-	t.Run("false > yes", func(t *testing.T) {
+	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "vector:yes"

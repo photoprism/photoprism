@@ -159,53 +159,39 @@ $config.update().finally(() => {
   app.config.globalProperties.$luxon = VueLuxon;
   components.install(app);
 
-  // Make scroll-pos-restore compatible with bfcache (required to work in PWA mode on iOS).
+  // Persist scroll position when the browser parks the page in the back/forward cache (e.g. iOS PWA).
   window.addEventListener("pagehide", (ev) => {
     if (ev.persisted) {
-      localStorage.setItem("window.scroll.pos", JSON.stringify({ x: window.scrollX, y: window.scrollY }));
+      $view.saveWindowScrollPos();
     }
   });
+
+  // When the page is resumed, either restore the stored scroll position (bfcache) or clear stale data.
   window.addEventListener("pageshow", (ev) => {
     if (ev.persisted) {
-      const lastSavedScrollPos = localStorage.getItem("window.scroll.pos");
-      if (lastSavedScrollPos !== undefined && lastSavedScrollPos !== null && lastSavedScrollPos !== "") {
-        window.positionToRestore = JSON.parse(localStorage.getItem("window.scroll.pos"));
-        // Wait for other things that set the scroll-pos anywhere in the app to fire.
-        setTimeout(() => {
-          if (window.positionToRestore !== undefined) {
-            window.scrollTo(window.positionToRestore.x, window.positionToRestore.y);
-          }
-        }, 50);
-
-        // Let's give the scrollBehaviour-function some time to use the
-        // restored position instead of resetting the scroll-pos to 0,0.
-        setTimeout(() => {
-          window.positionToRestore = undefined;
-        }, 250);
-      }
+      $view.restoreWindowScrollPos();
+    } else {
+      $view.clearWindowScrollPos();
     }
-
-    localStorage.removeItem("window.scroll.pos");
   });
 
-  // Configure client-side routing.
+  // Configure the Vue Router; base path mirrors the library prefix so deep links behave correctly.
   const router = createRouter({
     history: createWebHistory($config.baseUri + "/library/"),
     routes: routes,
+    // Apply the last saved scroll position when navigating within the SPA.
     scrollBehavior(to, from, savedPosition) {
-      let prevScrollPos = savedPosition;
-
-      if (window.positionToRestore !== undefined) {
-        prevScrollPos = window.positionToRestore;
-      }
-      window.positionToRestore = undefined;
+      const prevScrollPos = $view.getWindowScrollPos(savedPosition);
 
       if (prevScrollPos) {
+        // Wait until Vue has painted and all pending AJAX batches finish before restoring the offset.
         return new Promise((resolve) => {
-          $notify.ajaxWait().then(() => {
-            setTimeout(() => {
-              resolve(prevScrollPos);
-            }, 200);
+          requestAnimationFrame(() => {
+            $notify.ajaxWait().then(() => {
+              setTimeout(() => {
+                resolve(prevScrollPos);
+              }, 200);
+            });
           });
         });
       } else {
@@ -214,7 +200,7 @@ $config.update().finally(() => {
     },
   });
 
-  // Configure route interceptors.
+  // Add global guards to block navigation when dialogs are open and enforce auth/settings rules.
   router.beforeEach((to) => {
     if ($view.preventNavigation) {
       // Disable navigation when a fullscreen dialog or lightbox is open.
@@ -240,6 +226,7 @@ $config.update().finally(() => {
     }
   });
 
+  // Update the document title after every route change to reflect the active view.
   router.afterEach((to) => {
     const t = to.meta["title"] ? to.meta["title"] : "";
 

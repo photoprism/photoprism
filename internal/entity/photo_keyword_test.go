@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewPhotoKeyword(t *testing.T) {
-	t.Run("new keyword", func(t *testing.T) {
+	t.Run("NewKeyword", func(t *testing.T) {
 		m := NewPhotoKeyword(uint(3), uint(8))
 		assert.Equal(t, uint(3), m.PhotoID)
 		assert.Equal(t, uint(8), m.KeywordID)

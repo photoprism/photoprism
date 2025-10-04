@@ -37,13 +37,13 @@ func TestUpdateLabel(t *testing.T) {
 }
 
 func TestLikeLabel(t *testing.T) {
-	t.Run("like not existing label", func(t *testing.T) {
+	t.Run("LikeNotExistingLabel", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikeLabel(router)
 		r := PerformRequest(app, "POST", "/api/v1/labels/8775789/like")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("like existing label", func(t *testing.T) {
+	t.Run("LikeExistingLabel", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -64,7 +64,7 @@ func TestLikeLabel(t *testing.T) {
 		val2 := gjson.Get(r3.Body.String(), `#(Slug=="like-label").Favorite`)
 		assert.Equal(t, "true", val2.String())
 	})
-	t.Run("like existing label with prio < 0", func(t *testing.T) {
+	t.Run("LikeExistingLabelWithPrioLessThanZero", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikeLabel(router)
 		r := PerformRequest(app, "POST", "/api/v1/labels/ls6sg6b1wowuy311/like")
@@ -75,7 +75,7 @@ func TestLikeLabel(t *testing.T) {
 }
 
 func TestDislikeLabel(t *testing.T) {
-	t.Run("dislike not existing label", func(t *testing.T) {
+	t.Run("DislikeNotExistingLabel", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		DislikeLabel(router)
@@ -83,7 +83,7 @@ func TestDislikeLabel(t *testing.T) {
 		r := PerformRequest(app, "DELETE", "/api/v1/labels/5678/like")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("dislike existing label", func(t *testing.T) {
+	t.Run("DislikeExistingLabel", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -102,7 +102,7 @@ func TestDislikeLabel(t *testing.T) {
 		val2 := gjson.Get(r3.Body.String(), `#(Slug=="landscape").Favorite`)
 		assert.Equal(t, "false", val2.String())
 	})
-	t.Run("dislike existing label with prio < 0", func(t *testing.T) {
+	t.Run("DislikeExistingLabelWithPrioLessThanZero", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikeLabel(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/labels/ls6sg6b1wowuy312/like")

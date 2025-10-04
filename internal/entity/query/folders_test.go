@@ -9,7 +9,7 @@ import (
 )
 
 func TestFolderCoverByUID(t *testing.T) {
-	t.Run("1990/04", func(t *testing.T) {
+	t.Run("Num1990Num04", func(t *testing.T) {
 		if result, err := FolderCoverByUID("dqo63pn2f87f02xj"); err != nil {
 			t.Fatal(err)
 		} else if result.FileUID == "" {
@@ -18,7 +18,7 @@ func TestFolderCoverByUID(t *testing.T) {
 			t.Errorf("wrong result: %#v", result)
 		}
 	})
-	t.Run("2007/12", func(t *testing.T) {
+	t.Run("Num2007Twelve", func(t *testing.T) {
 		if result, err := FolderCoverByUID("dqo63pn2f87f02oi"); err != nil {
 			t.Fatal(err)
 		} else if result.FileUID == "" {
@@ -30,7 +30,7 @@ func TestFolderCoverByUID(t *testing.T) {
 }
 
 func TestFoldersByPath(t *testing.T) {
-	t.Run("root", func(t *testing.T) {
+	t.Run("Root", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)
 
 		t.Logf("folders: %+v", folders)
@@ -41,7 +41,7 @@ func TestFoldersByPath(t *testing.T) {
 
 		assert.Len(t, folders, 1)
 	})
-	t.Run("subdirectory", func(t *testing.T) {
+	t.Run("Subdirectory", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "directory", false)
 
 		t.Logf("folders: %+v", folders)
@@ -55,7 +55,7 @@ func TestFoldersByPath(t *testing.T) {
 }
 
 func TestAlbumFolders(t *testing.T) {
-	t.Run("root", func(t *testing.T) {
+	t.Run("Root", func(t *testing.T) {
 		folders, err := AlbumFolders(1)
 
 		if err != nil {

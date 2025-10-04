@@ -10,7 +10,7 @@ import (
 )
 
 func TestPhotosFilterLabel(t *testing.T) {
-	t.Run("flower", func(t *testing.T) {
+	t.Run("Flower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "flower"
@@ -30,7 +30,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			assert.Equal(t, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").PhotoCaption, photos[0].PhotoCaption)
 		}
 	})
-	t.Run("cake", func(t *testing.T) {
+	t.Run("Cake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "cake"
@@ -43,7 +43,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("cake pipe flower", func(t *testing.T) {
+	t.Run("CakePipeFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "cake|flower"
@@ -56,7 +56,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("cake whitespace pipe whitespace flower", func(t *testing.T) {
+	t.Run("CakeWhitespacePipeWhitespaceFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "cake | flower"
@@ -376,7 +376,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 }
 
 func TestPhotosQueryLabel(t *testing.T) {
-	t.Run("flower", func(t *testing.T) {
+	t.Run("Flower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"flower\""
@@ -389,7 +389,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("cake", func(t *testing.T) {
+	t.Run("Cake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"cake\""
@@ -402,7 +402,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("cake pipe flower", func(t *testing.T) {
+	t.Run("CakePipeFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"cake|flower\""
@@ -415,7 +415,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("cake whitespace pipe whitespace flower", func(t *testing.T) {
+	t.Run("CakeWhitespacePipeWhitespaceFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"cake | flower\""

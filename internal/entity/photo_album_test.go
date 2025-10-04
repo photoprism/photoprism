@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewPhotoAlbum(t *testing.T) {
-	t.Run("new album", func(t *testing.T) {
+	t.Run("NewAlbum", func(t *testing.T) {
 		m := NewPhotoAlbum("ABC", "EFG")
 		assert.Equal(t, "ABC", m.PhotoUID)
 		assert.Equal(t, "EFG", m.AlbumUID)
@@ -22,7 +22,7 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoAlbum(t *testing.T) {
-	t.Run("existing photo_album", func(t *testing.T) {
+	t.Run("ExistingPhotoAlbum", func(t *testing.T) {
 		model := PhotoAlbumFixtures.Get("1", "ps6sg6be2lvl0yh7", "as6sg6bxpogaaba8")
 		result := FirstOrCreatePhotoAlbum(&model)
 
@@ -39,7 +39,7 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 		}
 	})
 
-	t.Run("not yet existing photo_album", func(t *testing.T) {
+	t.Run("NotYetExistingPhotoAlbum", func(t *testing.T) {
 		newPhoto := &Photo{ID: 56789} // Can't add details if there isn't a photo in the database.
 		Db().Create(newPhoto)
 		newAlbum := &Album{ID: 56789} // Can't add details if there isn't a photo in the database.

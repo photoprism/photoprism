@@ -15,13 +15,13 @@ func TestInit(t *testing.T) {
 		assert.Equal(t, DefaultWorkers, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})
-	t.Run("4GiB", func(t *testing.T) {
+	t.Run("FourGiB", func(t *testing.T) {
 		Init(4*GiB, 16, LibVips)
 		assert.Equal(t, 512*MiB, MaxCacheMem)
 		assert.Equal(t, 16, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})
-	t.Run("1GiB", func(t *testing.T) {
+	t.Run("OneGiB", func(t *testing.T) {
 		Init(GiB, 3, LibVips)
 		assert.Equal(t, 256*MiB, MaxCacheMem)
 		assert.Equal(t, 3, NumWorkers)

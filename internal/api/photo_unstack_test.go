@@ -11,7 +11,7 @@ import (
 )
 
 func TestPhotoUnstack(t *testing.T) {
-	t.Run("unstack xmp sidecar file", func(t *testing.T) {
+	t.Run("UnstackXmpSidecarFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoUnstack(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/files/fs6sg6bw45bnlqdw/unstack")
@@ -19,7 +19,7 @@ func TestPhotoUnstack(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 		// t.Logf("RESP: %s", r.Body.String())
 	})
-	t.Run("unstack bridge3.jpg", func(t *testing.T) {
+	t.Run("UnstackBridge3Jpg", func(t *testing.T) {
 		app, router, c := NewApiTest()
 		PhotoUnstack(router)
 		fs.Copy("./testdata/london_160x160.jpg", filepath.Join(c.Options().OriginalsPath, "London/bridge3.jpg"), true)
@@ -28,7 +28,7 @@ func TestPhotoUnstack(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 		//t.Logf("RESP: %s", r.Body.String())
 	})
-	t.Run("not existing file", func(t *testing.T) {
+	t.Run("NotExistingFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoUnstack(router)
 		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/files/xxx/unstack")

@@ -10,7 +10,7 @@ import (
 )
 
 func TestFileShares(t *testing.T) {
-	t.Run("search for id and status", func(t *testing.T) {
+	t.Run("SearchForIdAndStatus", func(t *testing.T) {
 		r, err := FileShares(uint(1000001), "new")
 		if err != nil {
 			t.Fatal(err)
@@ -24,7 +24,7 @@ func TestFileShares(t *testing.T) {
 }
 
 func TestExpiredFileShares(t *testing.T) {
-	t.Run("expired file share exists", func(t *testing.T) {
+	t.Run("ExpiredFileShareExists", func(t *testing.T) {
 		time.Sleep(2 * time.Second)
 		r, err := ExpiredFileShares(entity.ServiceFixtureWebdavDummy)
 		if err != nil {
@@ -36,7 +36,7 @@ func TestExpiredFileShares(t *testing.T) {
 			assert.IsType(t, entity.FileShare{}, r)
 		}
 	})
-	t.Run("expired file does not exists", func(t *testing.T) {
+	t.Run("ExpiredFileDoesNotExists", func(t *testing.T) {
 		r, err := ExpiredFileShares(entity.ServiceFixtureWebdavDummy2)
 		if err != nil {
 			t.Fatal(err)

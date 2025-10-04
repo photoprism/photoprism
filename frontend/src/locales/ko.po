@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -58,7 +58,7 @@ msgstr "%{n}개 폴더를 찾음"
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} q}의 GB 사용된 GB"
 
-#: src/page/labels.vue:533
+#: src/page/labels.vue:602
 msgid "%{n} labels found"
 msgstr "%{n}개 라벨을 찾음"
 
@@ -230,7 +230,7 @@ msgstr "추가됨"
 msgid "Adjust Location"
 msgstr "위치 조정"
 
-#: src/options/admin.js:6 src/common/util.js:748 src/options/auth.js:6
+#: src/options/admin.js:6 src/common/util.js:752 src/options/auth.js:6
 msgid "Admin"
 msgstr "관리자"
 
@@ -308,7 +308,7 @@ msgstr "모두"
 msgid "All %{n} albums loaded"
 msgstr "모든 %{n}개 앨범 로딩됨"
 
-#: src/page/labels.vue:367
+#: src/page/labels.vue:436
 msgid "All %{n} labels loaded"
 msgstr "모든 %{n}개의 라벨 로딩됨"
 
@@ -507,7 +507,7 @@ msgstr "배지"
 msgid "Base Path"
 msgstr "기본 경로"
 
-#: src/common/util.js:742
+#: src/common/util.js:746
 msgid "Batch"
 msgstr "배치"
 
@@ -601,8 +601,8 @@ msgid "Can't load more, limit reached"
 msgstr "더 로드할 수 없습니다. 한도에 도달했습니다."
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:293
-#: src/page/labels.vue:313 src/page/library/browse.vue:233
+#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:362
+#: src/page/labels.vue:382 src/page/library/browse.vue:233
 #: src/page/library/browse.vue:249 src/page/people/new.vue:278
 #: src/page/people/new.vue:294 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
@@ -630,11 +630,11 @@ msgstr "더 많은 아이템을 선택할 수 없습니다"
 msgid "Cancel"
 msgstr "취소"
 
-#: src/common/util.js:911 src/common/util.js:918
+#: src/common/util.js:915 src/common/util.js:922
 msgid "Cannot copy to clipboard"
 msgstr "클립보드에 복사할 수 없습니다."
 
-#: src/common/util.js:730 src/component/photo/edit/details.vue:89
+#: src/common/util.js:734 src/component/photo/edit/details.vue:89
 #: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:72
 msgid "Caption"
 msgstr "캡션"
@@ -793,12 +793,12 @@ msgstr "세부 연락처"
 msgid "Contact Us"
 msgstr "문의하기"
 
-#: src/page/albums.vue:433 src/page/labels.vue:237
+#: src/page/albums.vue:433 src/page/labels.vue:216
 #: src/page/people/recognized.vue:306
 msgid "Contains %{n} pictures."
 msgstr "%{n}개의 사진이 포함되어 있습니다."
 
-#: src/page/albums.vue:427 src/page/labels.vue:231
+#: src/page/albums.vue:427 src/page/labels.vue:210
 #: src/page/people/recognized.vue:300
 msgid "Contains one picture."
 msgstr "한 장의 사진이 포함되어 있습니다."
@@ -823,7 +823,7 @@ msgstr "기여자"
 msgid "Converting"
 msgstr "변환하는 중"
 
-#: src/common/util.js:904
+#: src/common/util.js:908
 msgid "Copied to clipboard"
 msgstr "클립보드에 복사했습니다"
 
@@ -880,7 +880,7 @@ msgstr "큐빅: 보통 품질, 우수한 성능"
 msgid "Current Password"
 msgstr "현재 비밀번호"
 
-#: src/options/themes.js:920 src/options/themes.js:929
+#: src/options/themes.js:935 src/options/themes.js:944
 msgid "Custom"
 msgstr "사용자 지정"
 
@@ -914,7 +914,7 @@ msgstr "디버그 로그"
 #: src/model/user.js:261 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:196
 #: src/options/options.js:232 src/options/options.js:316
-#: src/options/themes.js:774
+#: src/options/themes.js:789
 msgid "Default"
 msgstr "기본값"
 
@@ -1544,7 +1544,7 @@ msgid "in"
 msgstr "입력"
 
 #: src/component/photo/view/cards.vue:149 src/component/photo/view/list.vue:87
-#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:156
+#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:135
 #: src/page/library/browse.vue:124
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "예상한 사진이 누락된 경우 라이브러리를 다시 검색하고 색인 생성이 완료될 때까지 기다리십시오."
@@ -1662,7 +1662,7 @@ msgstr "JPEG 크기 제한: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG 파일과 썸네일은 필요에 따라 자동으로 렌더딩 됩니다."
 
-#: src/common/util.js:732
+#: src/common/util.js:736
 msgid "Keyword"
 msgstr "키워드"
 
@@ -1729,7 +1729,7 @@ msgid "Learn more"
 msgstr "더 보기"
 
 #: src/page/admin/sessions.vue:110 src/page/admin/users.vue:137
-#: src/page/labels.vue:132
+#: src/page/labels.vue:184
 msgid "Learn More"
 msgstr "자세히 알아보기"
 
@@ -1870,7 +1870,7 @@ msgstr "계정 관리"
 msgid "Manager"
 msgstr "관리자"
 
-#: src/common/util.js:744
+#: src/common/util.js:748
 msgid "Manual"
 msgstr "매뉴얼"
 
@@ -1915,7 +1915,7 @@ msgstr "메시지"
 msgid "Message sent"
 msgstr "매시지 보냄"
 
-#: src/common/util.js:734
+#: src/common/util.js:738
 msgid "Metadata"
 msgstr "메타데이터"
 
@@ -1990,7 +1990,7 @@ msgstr "이름"
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:46
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:54
+#: src/component/photo/edit/people.vue:39 src/page/labels.vue:60
 #: src/page/library/browse.vue:46 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
@@ -2043,7 +2043,7 @@ msgstr "앨범이 없습니다"
 msgid "No data available"
 msgstr "사용 가능한 데이터 없음"
 
-#: src/page/labels.vue:528 src/page/labels.vue:155
+#: src/page/labels.vue:597 src/page/labels.vue:134
 msgid "No labels found"
 msgstr "라벨이 없습니다"
 
@@ -2196,7 +2196,7 @@ msgstr "업로드된 파일 1개"
 msgid "One folder found"
 msgstr "1개 폴더 찾음"
 
-#: src/page/labels.vue:530
+#: src/page/labels.vue:599
 msgid "One label found"
 msgstr "라벨 1개를 찾았습니다."
 
@@ -2541,7 +2541,7 @@ msgstr "빨간색"
 
 #: src/page/admin/sessions.vue:101 src/page/admin/users.vue:128
 #: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:175 src/page/labels.vue:112
+#: src/page/albums.vue:175 src/page/labels.vue:119
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:81
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:88
 msgid "Refresh"
@@ -2669,7 +2669,7 @@ msgstr "범위"
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:69
 #: src/component/location/dialog.vue:131 src/component/navigation.vue:342
 #: src/component/navigation.vue:1866 src/component/photo/toolbar.vue:57
-#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:77
+#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:76
 #: src/page/library/errors.vue:76 src/page/people/recognized.vue:66
 #: src/page/places.vue:79 src/page/settings/content.vue:235
 msgid "Search"
@@ -2796,6 +2796,10 @@ msgstr "다른 앱 및 서비스와 사진을 공유하십시오."
 msgid "Show"
 msgstr "보이기"
 
+#: src/page/labels.vue:129
+msgid "Show All Labels"
+msgstr "모든 레이블 표시"
+
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
 msgstr "모든 새 얼굴 표시"
@@ -2808,13 +2812,9 @@ msgstr "캡션 표시"
 msgid "Show hidden"
 msgstr "숨김 표시"
 
-#: src/page/labels.vue:109
-msgid "Show less"
-msgstr "덜 보여"
-
-#: src/page/labels.vue:101
-msgid "Show more"
-msgstr "더 보여"
+#: src/page/labels.vue:138
+msgid "Show Important Only"
+msgstr "중요만 표시"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2868,6 +2868,18 @@ msgstr "문제가 발생했습니다. 다시 시도하세요."
 #: src/locales.js:227
 msgid "Sort by"
 msgstr "정렬 기준"
+
+#: src/page/labels.vue:156
+msgid "Sort by Name (A–Z)"
+msgstr "이름별 정렬(A-Z)"
+
+#: src/page/labels.vue:165
+msgid "Sort by Photo Count"
+msgstr "사진 수로 정렬"
+
+#: src/page/labels.vue:147
+msgid "Sort by Relevance"
+msgstr "관련성 기준으로 정렬"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214
@@ -2932,7 +2944,7 @@ msgstr "저장고"
 msgid "Streets"
 msgstr "거리"
 
-#: src/common/util.js:736 src/component/photo/edit/details.vue:468
+#: src/common/util.js:740 src/component/photo/edit/details.vue:468
 msgid "Subject"
 msgstr "주제"
 
@@ -3057,7 +3069,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "주제"
 
-#: src/common/util.js:738 src/component/photo/edit/info.vue:155
+#: src/common/util.js:742 src/component/photo/edit/info.vue:155
 #: src/component/photo/view/list.vue:114 src/component/sidebar/info.vue:57
 msgid "Title"
 msgstr "주제"
@@ -3116,7 +3128,7 @@ msgstr "문제 해결"
 
 #: src/component/photo/view/cards.vue:146 src/component/photo/view/list.vue:54
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:70
-#: src/page/albums.vue:284 src/page/labels.vue:156
+#: src/page/albums.vue:284 src/page/labels.vue:135
 #: src/page/people/recognized.vue:147
 msgid "Try again using other filters or keywords."
 msgstr "다른 필터 또는 키워드를 사용하여 다시 시도하십시오."
@@ -3219,7 +3231,7 @@ msgstr "지금 업그레이드"
 #: src/component/album/toolbar.vue:113 src/component/navigation.vue:1824
 #: src/component/photo/toolbar.vue:179 src/component/service/upload.vue:144
 #: src/component/upload/dialog.vue:51 src/page/albums.vue:185
-#: src/page/labels.vue:122 src/page/library/import.vue:133
+#: src/page/labels.vue:174 src/page/library/import.vue:133
 #: src/page/settings/general.vue:307 src/page/settings/services.vue:38
 msgid "Upload"
 msgstr "업로드"
@@ -3347,7 +3359,7 @@ msgstr "검색 결과를 목록으로 봅니다."
 msgid "Viewer"
 msgstr "뷰어"
 
-#: src/common/util.js:746
+#: src/common/util.js:750
 msgid "Vision"
 msgstr "비전"
 
@@ -3483,6 +3495,12 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/lightbox.vue:285
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Show less"
+#~ msgstr "덜 보여"
+
+#~ msgid "Show more"
+#~ msgstr "더 보여"
 
 #~ msgid "Archive"
 #~ msgstr "보관"

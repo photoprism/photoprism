@@ -31,7 +31,7 @@ func TestDuration(t *testing.T) {
 		result := Duration("1.0 m0.01 s ")
 		assert.Equal(t, "1.0m0.01s", result)
 	})
-	t.Run("01:00", func(t *testing.T) {
+	t.Run("Num01Num00", func(t *testing.T) {
 		result := Duration("01:00")
 		assert.Equal(t, "01:00", result)
 	})

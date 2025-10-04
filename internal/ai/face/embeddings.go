@@ -3,11 +3,8 @@ package face
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
-
-	"github.com/montanaflynn/stats"
-
-	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
 // Embeddings represents a face embedding cluster.
@@ -149,24 +146,38 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	result = make(Embedding, dim)
 
-	// The mean of a set of vectors is calculated component-wise.
-	for i := 0; i < dim; i++ {
-		values := make(stats.Float64Data, count)
+	invCount := 1.0 / float64(count)
 
-		for j := 0; j < count; j++ {
-			values[j] = embeddings[j][i]
+	for i := range embeddings {
+		emb := embeddings[i]
+
+		if len(emb) != dim {
+			continue
 		}
 
-		if m, err := stats.Mean(values); err != nil {
-			log.Warnf("embeddings: %s", err)
-		} else {
-			result[i] = m
+		normalizeEmbedding(emb)
+
+		for j := 0; j < dim; j++ {
+			result[j] += emb[j]
 		}
 	}
 
+	for i := 0; i < dim; i++ {
+		result[i] *= invCount
+	}
+
+	normalizeEmbedding(result)
+
 	// Radius is the max embedding distance + 0.01 from result.
 	for _, emb := range embeddings {
-		if d := alg.EuclideanDist(result, emb); d > radius {
+		var dist float64
+
+		for i := 0; i < dim; i++ {
+			diff := result[i] - emb[i]
+			dist += diff * diff
+		}
+
+		if d := math.Sqrt(dist); d > radius {
 			radius = d + 0.01
 		}
 	}
@@ -183,6 +194,10 @@ func UnmarshalEmbeddings(s string) (result Embeddings, err error) {
 	}
 
 	err = json.Unmarshal([]byte(s), &result)
+
+	for i := range result {
+		normalizeEmbedding(result[i])
+	}
 
 	return result, err
 }

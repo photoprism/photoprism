@@ -11,9 +11,11 @@ func TestParseRunType(t *testing.T) {
 		{name: "EmptyIsAuto", in: "", out: RunAuto},
 		{name: "WhitespaceTrim", in: "  manual  ", out: RunManual},
 		{name: "SynonymManually", in: "manually", out: RunManual},
+		{name: "SynonymCommand", in: "command", out: RunManual},
 		{name: "UppercaseSchedule", in: "ON-SCHEDULE", out: RunOnSchedule},
 		{name: "IndexAlias", in: "index", out: RunOnIndex},
 		{name: "ExplicitOnIndex", in: "on-index", out: RunOnIndex},
+		{name: "NewlyIndexedAlias", in: "on-newly-indexed", out: RunNewlyIndexed},
 		{name: "AfterIndexAlias", in: "after-index", out: RunNewlyIndexed},
 		{name: "UnknownFallsBack", in: "something", out: RunAuto},
 	}

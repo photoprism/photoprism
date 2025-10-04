@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterFilename(t *testing.T) {
-	t.Run("2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Filename = "2790/07/27900704_070228_D6D51B6C.jpg"
@@ -22,7 +22,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("1990*", func(t *testing.T) {
+	t.Run("Num1990", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Filename = "1990*"
@@ -35,7 +35,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("1990* pipe 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num1990PipeNum2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Filename = "1990*|2790/07/27900704_070228_D6D51B6C.jpg"
@@ -48,7 +48,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("1990* whitespace pipe whitespace 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num1990WhitespacePipeWhitespaceNum2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Filename = "1990* | 2790/07/27900704_070228_D6D51B6C.jpg"
@@ -61,7 +61,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("1990* or 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num1990OrNum2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 		// Db().LogMode(true)
 		f.Filename = "1990* or 2790/07/27900704_070228_D6D51B6C.jpg"
@@ -508,7 +508,7 @@ func TestPhotosFilterFilename(t *testing.T) {
 }
 
 func TestPhotosQueryFilename(t *testing.T) {
-	t.Run("2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "filename:\"2790/07/27900704_070228_D6D51B6C.jpg\""
@@ -521,7 +521,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("1990*", func(t *testing.T) {
+	t.Run("Num1990", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "filename:\"1990*\""
@@ -534,7 +534,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("1990* pipe 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num1990PipeNum2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "filename:\"1990*|2790/07/27900704_070228_D6D51B6C.jpg\""
@@ -547,7 +547,7 @@ func TestPhotosQueryFilename(t *testing.T) {
 		}
 		assert.Len(t, photos, 6)
 	})
-	t.Run("1990* whitespace pipe whitespace 2790/07/27900704_070228_D6D51B6C.jpg", func(t *testing.T) {
+	t.Run("Num1990WhitespacePipeWhitespaceNum2790Num07Num27900704Num070228DSixDNum51BSixCJpg", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "filename:\"1990* | 2790/07/27900704_070228_D6D51B6C.jpg\""

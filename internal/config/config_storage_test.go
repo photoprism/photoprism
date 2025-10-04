@@ -260,7 +260,7 @@ func TestConfig_CreateDirectories(t *testing.T) {
         fs_test.go:142: error expected
 
 func TestConfig_CreateDirectories2(t *testing.T) {
-	t.Run("asset path not found", func(t *testing.T) {
+	t.Run("AssetPathNotFound", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -283,7 +283,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("storage path error", func(t *testing.T) {
+	t.Run("StoragePathError", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -299,7 +299,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("originals path not found", func(t *testing.T) {
+	t.Run("OriginalsPathNotFound", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -323,7 +323,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("import path not found", func(t *testing.T) {
+	t.Run("ImportPathNotFound", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -347,7 +347,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("sidecar path error", func(t *testing.T) {
+	t.Run("SidecarPathError", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -363,7 +363,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("cache path error", func(t *testing.T) {
+	t.Run("CachePathError", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -379,7 +379,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("config path error", func(t *testing.T) {
+	t.Run("ConfigPathError", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
@@ -395,7 +395,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "check config and permissions")
 	})
-	t.Run("temp path error", func(t *testing.T) {
+	t.Run("TempPathError", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{

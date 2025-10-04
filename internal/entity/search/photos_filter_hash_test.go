@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterHash(t *testing.T) {
-	t.Run("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
+	t.Run("TwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -22,7 +22,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340"
@@ -35,7 +35,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 pipe 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340PipeTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -48,7 +48,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	/*t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 whitespace pipe whitespace 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	/*t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340WhitespacePipeWhitespaceTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -61,7 +61,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -74,7 +74,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -87,7 +87,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd34*", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd34", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd34*"
@@ -340,7 +340,7 @@ func TestPhotosFilterHash(t *testing.T) {
 }
 
 func TestPhotosQueryHash(t *testing.T) {
-	t.Run("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
+	t.Run("TwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -353,7 +353,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340\""
@@ -366,7 +366,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 pipe 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340PipeTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -379,7 +379,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	/*t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 whitespace pipe whitespace 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	/*t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340WhitespacePipeWhitespaceTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -392,7 +392,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -405,7 +405,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -418,7 +418,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd34*", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd34", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd34*\""

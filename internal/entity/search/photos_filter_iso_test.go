@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterIso(t *testing.T) {
-	t.Run("200", func(t *testing.T) {
+	t.Run("Num200", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Iso = "200"
@@ -27,7 +27,7 @@ func TestPhotosFilterIso(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("200-400", func(t *testing.T) {
+	t.Run("Num200Num400", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Iso = "200-400"
@@ -46,7 +46,7 @@ func TestPhotosFilterIso(t *testing.T) {
 
 		assert.Len(t, photos, 4)
 	})
-	t.Run("1-400", func(t *testing.T) {
+	t.Run("OneNum400", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Iso = "1-400"
@@ -65,7 +65,7 @@ func TestPhotosFilterIso(t *testing.T) {
 
 		assert.Len(t, photos, 5)
 	})
-	t.Run("155", func(t *testing.T) {
+	t.Run("Num155", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Iso = "155"
@@ -79,7 +79,7 @@ func TestPhotosFilterIso(t *testing.T) {
 
 		assert.Len(t, photos, 0)
 	})
-	t.Run("-100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Iso = "-100"
@@ -93,7 +93,7 @@ func TestPhotosFilterIso(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 40)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Iso = "%gold"
@@ -109,7 +109,7 @@ func TestPhotosFilterIso(t *testing.T) {
 }
 
 func TestPhotosQueryIso(t *testing.T) {
-	t.Run("200", func(t *testing.T) {
+	t.Run("Num200", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "iso:\"200\""
@@ -128,7 +128,7 @@ func TestPhotosQueryIso(t *testing.T) {
 
 		assert.Len(t, photos, 1)
 	})
-	t.Run("200-400", func(t *testing.T) {
+	t.Run("Num200Num400", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "iso:\"200-400\""
@@ -147,7 +147,7 @@ func TestPhotosQueryIso(t *testing.T) {
 
 		assert.Len(t, photos, 4)
 	})
-	t.Run("1-400", func(t *testing.T) {
+	t.Run("OneNum400", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "iso:\"1-400\""
@@ -166,7 +166,7 @@ func TestPhotosQueryIso(t *testing.T) {
 
 		assert.Len(t, photos, 5)
 	})
-	t.Run("155", func(t *testing.T) {
+	t.Run("Num155", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "iso:\"155\""
@@ -179,7 +179,7 @@ func TestPhotosQueryIso(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("-100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "iso:\"-100\""
@@ -192,7 +192,7 @@ func TestPhotosQueryIso(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 40)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "iso:\"%gold\""

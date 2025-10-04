@@ -1179,6 +1179,12 @@ var Flags = CliFlags{
 			Value:   face.ScoreThreshold,
 			EnvVars: EnvVars("FACE_SCORE"),
 		}}, {
+		Flag: &cli.Float64SliceFlag{
+			Name:    "face-angle",
+			Usage:   "face detection `ANGLE` in radians (repeatable)",
+			Value:   cli.NewFloat64Slice(face.DefaultAngles...),
+			EnvVars: EnvVars("FACE_ANGLE"),
+		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",
 			Usage:   "face area overlap threshold in `PERCENT` (1-100)",

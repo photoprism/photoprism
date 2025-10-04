@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewPhotoLabel(t *testing.T) {
-	t.Run("name Christmas 2018", func(t *testing.T) {
+	t.Run("NameChristmasNum2018", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(1, 3, 80, "source")
 		assert.Equal(t, uint(0x1), photoLabel.PhotoID)
 		assert.Equal(t, uint(0x3), photoLabel.LabelID)
@@ -88,7 +88,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 		UnscopedDb().Delete(newPhoto)
 	})
 
-	t.Run("photo not nil and label not nil", func(t *testing.T) {
+	t.Run("PhotoNotNilAndLabelNotNil", func(t *testing.T) {
 		newLabel := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
 		Db().Create(newLabel) // Foreign keys require the data to be saved.
 		newPhoto := &Photo{}

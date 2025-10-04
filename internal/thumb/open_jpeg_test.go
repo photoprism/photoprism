@@ -7,7 +7,7 @@ import (
 )
 
 func TestOpenJpeg(t *testing.T) {
-	t.Run("testdata/example.jpg", func(t *testing.T) {
+	t.Run("TestdataExampleJpg", func(t *testing.T) {
 		img, err := OpenJpeg("testdata/example.jpg", 0)
 
 		if err != nil {
@@ -18,13 +18,13 @@ func TestOpenJpeg(t *testing.T) {
 			t.Error("img must not be nil")
 		}
 	})
-	t.Run("testdata/broken.jpg", func(t *testing.T) {
+	t.Run("TestdataBrokenJpg", func(t *testing.T) {
 		img, err := OpenJpeg("testdata/broken.jpg", 0)
 
 		assert.Error(t, err)
 		assert.Nil(t, img)
 	})
-	t.Run("testdata/fixed.jpg", func(t *testing.T) {
+	t.Run("TestdataFixedJpg", func(t *testing.T) {
 		img, err := OpenJpeg("testdata/fixed.jpg", 0)
 
 		if err != nil {
@@ -35,7 +35,7 @@ func TestOpenJpeg(t *testing.T) {
 			t.Error("img must not be nil")
 		}
 	})
-	t.Run("filename empty", func(t *testing.T) {
+	t.Run("FilenameEmpty", func(t *testing.T) {
 		img, err := OpenJpeg("", 0)
 
 		assert.Error(t, err)

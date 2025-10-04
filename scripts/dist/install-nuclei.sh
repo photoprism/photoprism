@@ -20,4 +20,4 @@ fi
 
 # Install Nuclei via go install.
 echo "Installing nuclei, a fast and customizable vulnerability scanner..."
-GOBIN="/usr/local/bin" go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+GOBIN="/usr/local/bin" go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest

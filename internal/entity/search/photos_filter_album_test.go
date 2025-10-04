@@ -10,7 +10,7 @@ import (
 )
 
 func TestPhotosFilterAlbum(t *testing.T) {
-	t.Run("Berlin*", func(t *testing.T) {
+	t.Run("Berlin", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Album = "Berlin*"
@@ -23,7 +23,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		}
 		assert.Len(t, photos, 4)
 	})
-	t.Run("Pet*", func(t *testing.T) {
+	t.Run("Pet", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Album = "Pet*"
@@ -284,7 +284,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 }
 
 func TestPhotosQueryAlbum(t *testing.T) {
-	t.Run("Berlin*", func(t *testing.T) {
+	t.Run("Berlin", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "album:\"Berlin*\""
@@ -297,7 +297,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		}
 		assert.Len(t, photos, 4)
 	})
-	t.Run("Pet*", func(t *testing.T) {
+	t.Run("Pet", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "album:\"Pet*\""

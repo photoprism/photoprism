@@ -62,7 +62,7 @@ require (
 	golang.org/x/time v0.13.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.11
+require github.com/go-ldap/ldap/v3 v3.4.12
 
 require (
 	github.com/prometheus/client_golang v1.23.2
@@ -90,7 +90,7 @@ require (
 	github.com/zitadel/oidc/v3 v3.45.0
 	golang.org/x/mod v0.28.0
 	golang.org/x/sys v0.36.0
-	google.golang.org/protobuf v1.36.9
+	google.golang.org/protobuf v1.36.10
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/driver/sqlite v1.5.6

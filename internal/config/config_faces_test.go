@@ -1,9 +1,12 @@
 package config
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
 )
 
 func TestConfig_FaceSize(t *testing.T) {
@@ -76,4 +79,15 @@ func TestConfig_FaceMatchDist(t *testing.T) {
 	assert.Equal(t, 0.1, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.01
 	assert.Equal(t, 0.46, c.FaceMatchDist())
+}
+
+func TestConfig_FaceAngles(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.DefaultAngles, c.FaceAngles())
+
+	c.options.FaceAngles = []float64{-0.5, 0, 0.5}
+	assert.Equal(t, []float64{-0.5, 0, 0.5}, c.FaceAngles())
+
+	c.options.FaceAngles = []float64{math.Pi + 0.1, math.NaN(), 4}
+	assert.Equal(t, face.DefaultAngles, c.FaceAngles())
 }

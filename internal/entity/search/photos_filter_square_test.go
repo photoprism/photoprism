@@ -26,7 +26,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 	}
 	assert.Len(t, photos0, 1)
 
-	t.Run("square:yes", func(t *testing.T) {
+	t.Run("SquareYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "square:yes"
@@ -39,7 +39,7 @@ func TestPhotosQuerySquare(t *testing.T) {
 		}
 		assert.Len(t, photos, len(photos0))
 	})
-	t.Run("false > yes", func(t *testing.T) {
+	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "square:yes"

@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterFNumber(t *testing.T) {
-	t.Run("3.2", func(t *testing.T) {
+	t.Run("ThreeTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.F = "3.2"
@@ -27,7 +27,7 @@ func TestPhotosFilterFNumber(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("3.5-5", func(t *testing.T) {
+	t.Run("ThreeFiveFive", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.F = "3.5-5"
@@ -46,7 +46,7 @@ func TestPhotosFilterFNumber(t *testing.T) {
 
 		assert.Len(t, photos, 3)
 	})
-	t.Run("3-10", func(t *testing.T) {
+	t.Run("ThreeTen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.F = "3-10"
@@ -65,7 +65,7 @@ func TestPhotosFilterFNumber(t *testing.T) {
 
 		assert.Len(t, photos, 5)
 	})
-	t.Run("8", func(t *testing.T) {
+	t.Run("Eight", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.F = "8"
@@ -79,7 +79,7 @@ func TestPhotosFilterFNumber(t *testing.T) {
 
 		assert.Len(t, photos, 0)
 	})
-	t.Run("-100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.F = "-100"
@@ -93,7 +93,7 @@ func TestPhotosFilterFNumber(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 40)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.F = "%gold"
@@ -109,7 +109,7 @@ func TestPhotosFilterFNumber(t *testing.T) {
 }
 
 func TestPhotosQueryFNumber(t *testing.T) {
-	t.Run("3.2", func(t *testing.T) {
+	t.Run("ThreeTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "f:\"3.2\""
@@ -128,7 +128,7 @@ func TestPhotosQueryFNumber(t *testing.T) {
 
 		assert.Len(t, photos, 1)
 	})
-	t.Run("3.5-5", func(t *testing.T) {
+	t.Run("ThreeFiveFive", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "f:\"3.5-5\""
@@ -146,7 +146,7 @@ func TestPhotosQueryFNumber(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("3-10", func(t *testing.T) {
+	t.Run("ThreeTen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "f:\"3-10\""
@@ -165,7 +165,7 @@ func TestPhotosQueryFNumber(t *testing.T) {
 
 		assert.Len(t, photos, 5)
 	})
-	t.Run("8", func(t *testing.T) {
+	t.Run("Eight", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "f:\"8\""
@@ -178,7 +178,7 @@ func TestPhotosQueryFNumber(t *testing.T) {
 		}
 		assert.Len(t, photos, 0)
 	})
-	t.Run("-100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "f:\"-100\""
@@ -191,7 +191,7 @@ func TestPhotosQueryFNumber(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 40)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "f:\"%gold\""

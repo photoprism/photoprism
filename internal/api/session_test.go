@@ -191,7 +191,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAPasscodeRequired", func(t *testing.T) {
+	t.Run("TwoFaPasscodeRequired", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -205,7 +205,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAInvalidPasscode", func(t *testing.T) {
+	t.Run("TwoFaInvalidPasscode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -220,7 +220,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAUseRecoveryCode", func(t *testing.T) {
+	t.Run("TwoFaUseRecoveryCode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)

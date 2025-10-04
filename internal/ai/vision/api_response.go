@@ -105,12 +105,20 @@ func (r LabelResult) ToClassify(labelSrc string) classify.Label {
 		labelSrc = entity.SrcImage
 	}
 
+	topicality := int(math.RoundToEven(float64(r.Topicality * 100)))
+	if topicality < 0 {
+		topicality = 0
+	} else if topicality > 100 {
+		topicality = 100
+	}
+
 	// Return label.
 	return classify.Label{
 		Name:        r.Name,
 		Source:      labelSrc,
 		Priority:    r.Priority,
 		Uncertainty: uncertainty,
+		Topicality:  topicality,
 		Categories:  r.Categories}
 }
 
@@ -138,6 +146,7 @@ func NewLabelsResponse(id string, model *Model, results classify.Labels) ApiResp
 			Source:     label.Source,
 			Priority:   label.Priority,
 			Confidence: label.Confidence(),
+			Topicality: float32(label.Topicality) / 100,
 			Categories: label.Categories})
 	}
 

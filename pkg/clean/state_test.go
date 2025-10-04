@@ -35,7 +35,7 @@ func TestState(t *testing.T) {
 		result := State("Washington", "us")
 		assert.Equal(t, "Washington", result)
 	})
-	t.Run("Never mind Nirvana", func(t *testing.T) {
+	t.Run("NeverMindNirvana", func(t *testing.T) {
 		result := State("Never mind Nirvana.", "us")
 		assert.Equal(t, "Never mind Nirvana.", result)
 	})
@@ -51,11 +51,11 @@ func TestState(t *testing.T) {
 		result := State(" ", "us")
 		assert.Equal(t, "", result)
 	})
-	t.Run("Control Character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		result := State("Washington"+string(rune(127)), "us")
 		assert.Equal(t, "Washington", result)
 	})
-	t.Run("Special Chars", func(t *testing.T) {
+	t.Run("SpecialChars", func(t *testing.T) {
 		result := State("Wa?shing*ton"+string(rune(127)), "us")
 		assert.Equal(t, "Washington", result)
 	})

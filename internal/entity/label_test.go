@@ -12,13 +12,13 @@ import (
 )
 
 func TestNewLabel(t *testing.T) {
-	t.Run("name Unicorn2000 priority 5", func(t *testing.T) {
+	t.Run("NameUnicornNum2000PriorityFive", func(t *testing.T) {
 		label := NewLabel("Unicorn2000", 5)
 		assert.Equal(t, "Unicorn2000", label.LabelName)
 		assert.Equal(t, "unicorn2000", label.LabelSlug)
 		assert.Equal(t, 5, label.LabelPriority)
 	})
-	t.Run("name Unknown", func(t *testing.T) {
+	t.Run("NameUnknown", func(t *testing.T) {
 		label := NewLabel("", -6)
 		assert.Equal(t, "Unknown", label.LabelName)
 		assert.Equal(t, "unknown", label.LabelSlug)
@@ -33,7 +33,7 @@ func TestFlushLabelCache(t *testing.T) {
 }
 
 func TestLabel_SetName(t *testing.T) {
-	t.Run("set name", func(t *testing.T) {
+	t.Run("SetName", func(t *testing.T) {
 		entity := LabelFixtures["landscape"]
 
 		assert.Equal(t, "Landscape", entity.LabelName)
@@ -46,7 +46,7 @@ func TestLabel_SetName(t *testing.T) {
 		assert.Equal(t, "landscape", entity.LabelSlug)
 		assert.Equal(t, "landschaft", entity.CustomSlug)
 	})
-	t.Run("new name empty", func(t *testing.T) {
+	t.Run("NewNameEmpty", func(t *testing.T) {
 		entity := LabelFixtures["flower"]
 
 		assert.Equal(t, "Flower", entity.LabelName)
@@ -79,7 +79,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 }
 
 func TestLabel_UpdateClassify(t *testing.T) {
-	t.Run("update priority and label slug", func(t *testing.T) {
+	t.Run("UpdatePriorityAndLabelSlug", func(t *testing.T) {
 		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
 		result := &Label{LabelName: "label", LabelSlug: "", CustomSlug: "customslug", LabelPriority: 4}
 
@@ -99,7 +99,7 @@ func TestLabel_UpdateClassify(t *testing.T) {
 		assert.Equal(t, "classify", result.CustomSlug)
 		assert.Equal(t, "Classify", result.LabelName)
 	})
-	t.Run("update custom slug", func(t *testing.T) {
+	t.Run("UpdateCustomSlug", func(t *testing.T) {
 		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
 		result := &Label{LabelName: "label12", LabelSlug: "labelslug", CustomSlug: "", LabelPriority: 5}
 
@@ -119,7 +119,7 @@ func TestLabel_UpdateClassify(t *testing.T) {
 		assert.Equal(t, "Classify", result.LabelName)
 
 	})
-	t.Run("update name and Categories", func(t *testing.T) {
+	t.Run("UpdateNameAndCategories", func(t *testing.T) {
 		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"flower", "plant"}}
 		result := &Label{LabelName: "label34", LabelSlug: "labelslug2", CustomSlug: "labelslug2", LabelPriority: 5, LabelCategories: []*Label{LabelFixtures.Pointer("flower")}}
 
@@ -202,7 +202,7 @@ func TestLabel_Restore(t *testing.T) {
 
 		assert.False(t, label.Deleted())
 	})
-	t.Run("label not deleted", func(t *testing.T) {
+	t.Run("LabelNotDeleted", func(t *testing.T) {
 		label := &Label{DeletedAt: gorm.DeletedAt{}, LabelName: "NotDeleted1234"}
 		if err := label.Restore(); err != nil {
 			t.Fatal(err)

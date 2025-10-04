@@ -77,27 +77,27 @@ func TestSerialize(t *testing.T) {
 	expected := "q:\"foo BAR\" name:\"yo/ba:z.JPG\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true"
 	expectedAll := "q:\"foo BAR\" name:\"yo/ba:z.JPG\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true count:100 order:name"
 
-	t.Run("value", func(t *testing.T) {
+	t.Run("Value", func(t *testing.T) {
 		result := Serialize(form, false)
 		assert.IsType(t, expected, result)
 		assert.Equal(t, expected, result)
 	})
-	t.Run("pointer", func(t *testing.T) {
+	t.Run("Pointer", func(t *testing.T) {
 		result := Serialize(&form, false)
 		assert.IsType(t, expected, result)
 		assert.Equal(t, expected, result)
 	})
-	t.Run("all value", func(t *testing.T) {
+	t.Run("AllValue", func(t *testing.T) {
 		result := Serialize(form, true)
 		assert.IsType(t, expectedAll, result)
 		assert.Equal(t, expectedAll, result)
 	})
-	t.Run("all pointer", func(t *testing.T) {
+	t.Run("AllPointer", func(t *testing.T) {
 		result := Serialize(&form, true)
 		assert.IsType(t, expectedAll, result)
 		assert.Equal(t, expectedAll, result)
 	})
-	t.Run("invalid argument", func(t *testing.T) {
+	t.Run("InvalidArgument", func(t *testing.T) {
 		result := Serialize("string", true)
 		assert.Equal(t, "", result)
 	})

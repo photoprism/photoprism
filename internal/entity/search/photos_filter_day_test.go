@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterDay(t *testing.T) {
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Day = "1"
@@ -22,7 +22,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		}
 		assert.Len(t, photos, 4)
 	})
-	t.Run("17", func(t *testing.T) {
+	t.Run("Seventeen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Day = "17"
@@ -35,7 +35,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("1 pipe 17", func(t *testing.T) {
+	t.Run("OnePipeSeventeen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Day = "1|17"
@@ -48,7 +48,7 @@ func TestPhotosFilterDay(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("1 whitespace pipe whitespace 17", func(t *testing.T) {
+	t.Run("OneWhitespacePipeWhitespaceSeventeen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Day = "1 | 17"
@@ -306,7 +306,7 @@ func TestPhotosFilterDay(t *testing.T) {
 }
 
 func TestPhotosQueryDay(t *testing.T) {
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "day:\"1\""
@@ -319,7 +319,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		}
 		assert.Len(t, photos, 4)
 	})
-	t.Run("17", func(t *testing.T) {
+	t.Run("Seventeen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "day:\"17\""
@@ -332,7 +332,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("1 pipe 17", func(t *testing.T) {
+	t.Run("OnePipeSeventeen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "day:\"1|17\""
@@ -345,7 +345,7 @@ func TestPhotosQueryDay(t *testing.T) {
 		}
 		assert.Len(t, photos, 5)
 	})
-	t.Run("1 whitespace pipe whitespace 17", func(t *testing.T) {
+	t.Run("OneWhitespacePipeWhitespaceSeventeen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "day:\"1 | 17\""

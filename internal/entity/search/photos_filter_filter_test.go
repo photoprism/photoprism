@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterFilter(t *testing.T) {
-	t.Run("path:\"1990/04\" public:true", func(t *testing.T) {
+	t.Run("PathNum1990Num04PublicTrue", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Filter = "path:\"1990/04\" public:true"

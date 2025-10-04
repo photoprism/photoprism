@@ -10,7 +10,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -28,7 +27,7 @@ var VisionResetCommand = &cli.Command{
 			Value:   "",
 		},
 		PicturesCountFlag(),
-		VisionSourceFlag(entity.SrcImage),
+		VisionSourceFlag(vision.DefaultSrc),
 		&cli.BoolFlag{
 			Name:    "yes",
 			Aliases: []string{"y"},

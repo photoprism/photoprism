@@ -92,6 +92,34 @@ export function isMediaElement(el) {
 // Component refs supported for automatic focus element detection.
 const focusRefs = ["form", "content", "container", "dialog", "page"];
 
+// Returns true if the given value looks like a persisted scroll position.
+const isPos = (v) => v && typeof v === "object" && Number.isFinite(v.left) && Number.isFinite(v.top);
+
+// Minimal localStorage wrapper that tolerates quota / access errors.
+const storage = {
+  get(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key, val) {
+    try {
+      localStorage.setItem(key, val);
+    } catch {
+      /* ignore */
+    }
+  },
+  remove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+  },
+};
+
 // Returns the most likely focus element for the given component, or null if none exists.
 export function findFocusElement(c) {
   if (!c) {
@@ -597,6 +625,133 @@ export class View {
     const c = this.scopes[this.scopes.length - 1];
 
     return c?.$options?.name === "App" || c?.$?.uid === 0;
+  }
+
+  // Saves the window scroll position.
+  saveWindowScrollPos(pos) {
+    if (!isPos(pos)) {
+      pos = { left: Math.round(window.scrollX), top: Math.round(window.scrollY) };
+    }
+
+    // Clone and store position.
+    window.positionToRestore = { left: pos.left, top: pos.top };
+    storage.set("window.scroll.pos", JSON.stringify(window.positionToRestore));
+  }
+
+  // Removes the stored window scroll position.
+  clearWindowScrollPos() {
+    window.positionToRestore = undefined;
+    storage.remove("window.scroll.pos");
+  }
+
+  // Gets the saved window scroll position.
+  getWindowScrollPos(pos) {
+    if (isPos(pos)) {
+      return pos;
+    }
+
+    let result;
+
+    // 1) Try in-memory value.
+    const mem = window.positionToRestore;
+
+    if (isPos(mem)) {
+      // Clone so clearing the original won't affect the return value.
+      result = { left: mem.left, top: mem.top };
+    } else {
+      // 2) Fallback to localStorage.
+      const s = storage.get("window.scroll.pos"); // string or null
+      if (s) {
+        try {
+          const parsed = JSON.parse(s);
+          if (isPos(parsed)) {
+            result = parsed;
+          } // already a new object
+        } catch {
+          /* ignore parse errors */
+        }
+      }
+    }
+
+    // Clear after we've safely copied the value.
+    this.clearWindowScrollPos();
+
+    // object {x, y} or undefined if nothing saved/valid
+    return result;
+  }
+
+  // Restores the saved window scroll position after pending requests finish.
+  restoreWindowScrollPos(pos) {
+    pos = this.getWindowScrollPos(pos);
+
+    if (!isPos(pos)) {
+      return;
+    }
+
+    const target = { left: pos.left, top: pos.top };
+    // Allow pending API calls (pagination batches) to finish before attempting to restore.
+    const idleDelay = 72;
+    const maxAttempts = 20;
+    const tolerance = 2;
+    let attempts = 0;
+    let lastHeight = 0;
+
+    const getContainer = () => document.scrollingElement || document.documentElement;
+
+    const clamp = () => {
+      const el = getContainer();
+      const maxX = Math.max(0, el.scrollWidth - el.clientWidth);
+      const maxY = Math.max(0, el.scrollHeight - el.clientHeight);
+      return {
+        left: Math.min(Math.max(0, target.left), maxX),
+        top: Math.min(Math.max(0, target.top), maxY),
+      };
+    };
+
+    const attemptRestore = (waitForAjax) => {
+      if (attempts >= maxAttempts) {
+        return;
+      }
+
+      const wait = waitForAjax ? $notify.ajaxWait(idleDelay) : Promise.resolve();
+
+      wait.then(() => {
+        window.setTimeout(() => {
+          if (attempts >= maxAttempts) {
+            return;
+          }
+
+          attempts++;
+
+          const el = getContainer();
+          const { left, top } = clamp();
+
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              window.scrollTo({ left, top });
+
+              const currentTop = window.scrollY || window.pageYOffset;
+              const reachedTarget = Math.abs(currentTop - target.top) <= tolerance;
+
+              const newHeight = el.scrollHeight;
+              const needsMoreContent = target.top > newHeight - el.clientHeight;
+              const layoutChanged = newHeight !== lastHeight;
+              lastHeight = newHeight;
+
+              if (reachedTarget) {
+                return;
+              }
+
+              const shouldWait = $notify.ajaxBusy() || needsMoreContent;
+              attemptRestore(shouldWait || layoutChanged);
+            });
+          });
+        }, idleDelay);
+      });
+    };
+
+    lastHeight = getContainer().scrollHeight;
+    attemptRestore(true);
   }
 }
 

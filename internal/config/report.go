@@ -285,6 +285,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Facial Recognition.
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+		{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
 		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},

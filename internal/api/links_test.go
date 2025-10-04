@@ -232,7 +232,7 @@ func TestUpdateAlbumLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("bad request", func(t *testing.T) {
+	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbumLink(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid, `{"Token": "newToken", "Expires": "vgft", "xxx": "xxx"}`)
@@ -256,7 +256,7 @@ func TestDeleteAlbumLink(t *testing.T) {
 	r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba7/links")
 	len := gjson.Get(r2.Body.String(), "#")
 
-	t.Run("successful deletion", func(t *testing.T) {
+	t.Run("SuccessfulDeletion", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteAlbumLink(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid)
@@ -295,7 +295,7 @@ func TestGetAlbumLinks(t *testing.T) {
 
 /*
 func TestCreatePhotoLink(t *testing.T) {
-	t.Run("create share link", func(t *testing.T) {
+	t.Run("CreateShareLink", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		var link entity.Link
@@ -317,7 +317,7 @@ func TestCreatePhotoLink(t *testing.T) {
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 	})
-	t.Run("photo not found", func(t *testing.T) {
+	t.Run("PhotoNotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		CreatePhotoLink(router)
@@ -360,7 +360,7 @@ func TestUpdatePhotoLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("bad request", func(t *testing.T) {
+	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhotoLink(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0yh7/links/"+uid, `{"Token": "newToken", "Expires": "vgft", "xxx": "xxx"}`)
@@ -385,7 +385,7 @@ func TestDeletePhotoLink(t *testing.T) {
 	//r2 := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7/links")
 	//len := gjson.Get(r2.Body.String(), "#")
 
-	t.Run("successful deletion", func(t *testing.T) {
+	t.Run("SuccessfulDeletion", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeletePhotoLink(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/ps6sg6be2lvl0yh7/links/"+uid)
@@ -423,7 +423,7 @@ func TestGetPhotoLinks(t *testing.T) {
 }
 
 func TestCreateLabelLink(t *testing.T) {
-	t.Run("create share link", func(t *testing.T) {
+	t.Run("CreateShareLink", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		var link entity.Link
@@ -444,7 +444,7 @@ func TestCreateLabelLink(t *testing.T) {
 		assert.False(t, link.CanComment)
 		assert.True(t, link.CanEdit)
 	})
-	t.Run("label not found", func(t *testing.T) {
+	t.Run("LabelNotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateLabelLink(router)
 		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
@@ -485,7 +485,7 @@ func TestUpdateLabelLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("bad request", func(t *testing.T) {
+	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateLabelLink(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/ls6sg6b1wowuy3c2/links/"+uid, `{"Token": "newToken", "Expires": "vgft", "xxx": "xxx"}`)
@@ -509,7 +509,7 @@ func TestDeleteLabelLink(t *testing.T) {
 	//r2 := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/links")
 	//len := gjson.Get(r2.Body.String(), "#")
 
-	t.Run("successful deletion", func(t *testing.T) {
+	t.Run("SuccessfulDeletion", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteLabelLink(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/labels/ls6sg6b1wowuy3c2/links/"+uid)

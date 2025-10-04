@@ -47,11 +47,11 @@ upgrade:
 	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
 npm-install:
 	$(info Installing NPM dependencies...)
-	npm install --ignore-scripts --no-fund --no-audit --no-update-notifier
+	npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier
 install: npm-install
 npm-update:
 	$(info Updating NPM dependencies in package.lock and package-lock.json...)
-	npm update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier
+	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
 update: npm-update npm-install
 security-check: # Scan for missing --ignore-scripts and unsafe v-html
 	npm run -s security:scan

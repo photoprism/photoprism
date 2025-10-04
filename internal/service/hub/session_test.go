@@ -15,7 +15,7 @@ func TestSession_Expired(t *testing.T) {
 		}
 		assert.True(t, session.Expired())
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		date := time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC)
 		session := Session{
 			MapKey:    "",

@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccounts(t *testing.T) {
-	t.Run("find accounts", func(t *testing.T) {
+	t.Run("FindAccounts", func(t *testing.T) {
 		f := form.SearchServices{
 			Query:  "",
 			Share:  true,
@@ -34,7 +34,7 @@ func TestAccounts(t *testing.T) {
 			assert.IsType(t, entity.Service{}, r)
 		}
 	})
-	t.Run("find accounts count 1001", func(t *testing.T) {
+	t.Run("FindAccountsCountNum1001", func(t *testing.T) {
 		f := form.SearchServices{
 			Query:  "",
 			Share:  false,
@@ -58,7 +58,7 @@ func TestAccounts(t *testing.T) {
 			assert.IsType(t, entity.Service{}, r)
 		}
 	})
-	t.Run("find accounts count > max results", func(t *testing.T) {
+	t.Run("FindAccountsCountGreaterThanMaxResults", func(t *testing.T) {
 		f := form.SearchServices{
 			Query:  "",
 			Status: "refresh",

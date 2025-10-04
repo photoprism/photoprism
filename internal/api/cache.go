@@ -75,6 +75,21 @@ func RemoveFromAlbumCoverCache(uid string) {
 	}
 }
 
+// RemoveFromLabelCoverCache removes covers by label UID e.g. after updates.
+func RemoveFromLabelCoverCache(uid string) {
+	if !rnd.IsAlnum(uid) {
+		return
+	}
+
+	cache := get.CoverCache()
+
+	for thumbName := range thumb.Sizes {
+		cacheKey := CacheKey(labelCover, uid, string(thumbName))
+		cache.Delete(cacheKey)
+		log.Debugf("removed %s from cache", cacheKey)
+	}
+}
+
 // FlushCoverCache clears the complete cover cache.
 func FlushCoverCache() {
 	get.CoverCache().Flush()

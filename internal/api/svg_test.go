@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetSvg(t *testing.T) {
-	t.Run("photo", func(t *testing.T) {
+	t.Run("Photo", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -16,7 +16,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, photoIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("raw", func(t *testing.T) {
+	t.Run("Raw", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -24,7 +24,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, rawIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("file", func(t *testing.T) {
+	t.Run("File", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -32,7 +32,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, fileIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("video", func(t *testing.T) {
+	t.Run("Video", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -40,7 +40,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, videoIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("label", func(t *testing.T) {
+	t.Run("Label", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -48,7 +48,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, labelIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("album", func(t *testing.T) {
+	t.Run("Album", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -56,7 +56,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, albumIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("folder", func(t *testing.T) {
+	t.Run("Folder", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -64,7 +64,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, folderIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("broken", func(t *testing.T) {
+	t.Run("Broken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)
@@ -72,7 +72,7 @@ func TestGetSvg(t *testing.T) {
 		assert.Equal(t, brokenIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("uncached", func(t *testing.T) {
+	t.Run("Uncached", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		t.Log(conf)
 		GetSvg(router)

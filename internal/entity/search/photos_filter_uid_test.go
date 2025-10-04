@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterUid(t *testing.T) {
-	t.Run("ps6sg6be2lvl0yh0", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh0", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.UID = "ps6sg6be2lvl0yh0"
@@ -22,7 +22,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.UID = "ps6sg6be2lvl0yh*"
@@ -262,7 +262,7 @@ func TestPhotosQueryUid(t *testing.T) {
 
 		assert.Len(t, photos, 1)
 	})
-	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "uid:\"ps6sg6be2lvl0yh*\""

@@ -328,7 +328,7 @@ func TestUser_UpdateUsername(t *testing.T) {
 }
 
 func TestUser_SetUsername(t *testing.T) {
-	t.Run("photoprism", func(t *testing.T) {
+	t.Run("PhotoPrism", func(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
@@ -345,19 +345,19 @@ func TestUser_SetUsername(t *testing.T) {
 		assert.Equal(t, "photoprism", m.Username())
 		assert.Equal(t, "photoprism", m.UserName)
 	})
-	t.Run("system users cannot be modified", func(t *testing.T) {
+	t.Run("SystemUsersCannotBeModified", func(t *testing.T) {
 		assert.Equal(t, "system users cannot be modified", Visitor.SetUsername("newname").Error())
 	})
-	t.Run("username is empty", func(t *testing.T) {
+	t.Run("UsernameIsEmpty", func(t *testing.T) {
 		assert.Equal(t, "username is empty", Admin.SetUsername("").Error())
 	})
-	t.Run("same name", func(t *testing.T) {
+	t.Run("SameName", func(t *testing.T) {
 		assert.Nil(t, Admin.SetUsername("admin"))
 	})
 }
 
 func TestUser_InvalidPassword(t *testing.T) {
-	t.Run("admin", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
@@ -366,7 +366,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 
 		assert.False(t, m.InvalidPassword("photoprism"))
 	})
-	t.Run("admin invalid password", func(t *testing.T) {
+	t.Run("AdminInvalidPassword", func(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
@@ -375,7 +375,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 
 		assert.True(t, m.InvalidPassword("wrong-password"))
 	})
-	t.Run("no password existing", func(t *testing.T) {
+	t.Run("NoPasswordExisting", func(t *testing.T) {
 		expected := rnd.GenerateUID(UserUID)
 		p := User{UserUID: expected, UserName: "HansNP", DisplayName: ""}
 		err := p.Save()
@@ -1066,7 +1066,7 @@ func TestAddUser(t *testing.T) {
 		err := AddUser(u)
 		assert.Error(t, err)
 	})
-	t.Run("Invalid Role", func(t *testing.T) {
+	t.Run("InvalidRole", func(t *testing.T) {
 		u := form.User{
 			UserName:  "thomas4",
 			UserEmail: "thomas4@example.com",
@@ -1140,7 +1140,7 @@ func TestDeleteUser(t *testing.T) {
 		err := u.Delete()
 		assert.Error(t, err)
 	})
-	t.Run("Empty UID", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		u := NewUser()
 		u.UserUID = ""
 		u.ID = 500
@@ -1187,7 +1187,7 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 		assert.NotNil(t, time3)
 		assert.True(t, time3.After(*time2) || time3.Equal(*time2))
 	})
-	t.Run("User deleted", func(t *testing.T) {
+	t.Run("UserDeleted", func(t *testing.T) {
 		u := NewUser()
 		var deleted = gorm.DeletedAt{Time: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC), Valid: true}
 		u.DeletedAt = deleted
@@ -1206,13 +1206,13 @@ func TestUser_CanLogIn(t *testing.T) {
 
 		assert.False(t, UserFixtures.Pointer("deleted").CanLogIn())
 	})
-	t.Run("False - !canlogin", func(t *testing.T) {
+	t.Run("FalseCanlogin", func(t *testing.T) {
 		u := NewUser()
 		u.AuthProvider = "local"
 		u.CanLogin = false
 		assert.False(t, u.CanLogIn())
 	})
-	t.Run("False - unknown role", func(t *testing.T) {
+	t.Run("FalseUnknownRole", func(t *testing.T) {
 		unknown := UserFixtures.Get("unauthorized")
 		assert.False(t, unknown.CanLogIn())
 		unknown.SetProvider(authn.ProviderLocal)
@@ -1288,7 +1288,7 @@ func TestUser_Form(t *testing.T) {
 }
 
 func TestUser_PrivilegeLevelChange(t *testing.T) {
-	t.Run("True - Role changed", func(t *testing.T) {
+	t.Run("TrueRoleChanged", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1305,7 +1305,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 
 		assert.True(t, m.PrivilegeLevelChange(frm))
 	})
-	t.Run("True - Path changed", func(t *testing.T) {
+	t.Run("TruePathChanged", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1322,7 +1322,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 
 		assert.True(t, m.PrivilegeLevelChange(frm))
 	})
-	t.Run("True - CanLogin changed", func(t *testing.T) {
+	t.Run("TrueCanLoginChanged", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1339,7 +1339,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 
 		assert.True(t, m.PrivilegeLevelChange(frm))
 	})
-	t.Run("True - Webdav changed", func(t *testing.T) {
+	t.Run("TrueWebdavChanged", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1356,7 +1356,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 
 		assert.True(t, m.PrivilegeLevelChange(frm))
 	})
-	t.Run("False - Name changed", func(t *testing.T) {
+	t.Run("FalseNameChanged", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1373,7 +1373,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 
 		assert.False(t, m.PrivilegeLevelChange(frm))
 	})
-	t.Run("False - No change", func(t *testing.T) {
+	t.Run("FalseNoChange", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1671,7 +1671,7 @@ func TestUser_SetDisplayName(t *testing.T) {
 		assert.Equal(t, "Henry Gates", d.FamilyName)
 		assert.Equal(t, "III", d.NameSuffix)
 	})
-	t.Run("Empty Name", func(t *testing.T) {
+	t.Run("EmptyName", func(t *testing.T) {
 		user := NewUser()
 		user.SetDisplayName("", SrcAuto)
 		d := user.Details()
@@ -1680,7 +1680,7 @@ func TestUser_SetDisplayName(t *testing.T) {
 		assert.Equal(t, "", d.FamilyName)
 		assert.Equal(t, "", d.NameSuffix)
 	})
-	t.Run("priority too low", func(t *testing.T) {
+	t.Run("PriorityTooLow", func(t *testing.T) {
 		user := User{
 			ID:      1234567,
 			UserUID: "urqdrfb72479n047",
@@ -1758,7 +1758,7 @@ func TestUser_SetAvatar(t *testing.T) {
 		assert.Equal(t, SrcManual, m.ThumbSrc)
 		assert.True(t, Admin.HasAvatar())
 	})
-	t.Run("No permissions", func(t *testing.T) {
+	t.Run("NoPermissions", func(t *testing.T) {
 		err := Admin.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcAuto)
 		assert.Error(t, err)
 	})
@@ -1792,7 +1792,7 @@ func TestUser_Provider(t *testing.T) {
 		assert.Equal(t, authn.ProviderLocal, Admin.Provider())
 		Admin.SetProvider(authn.ProviderLocal)
 	})
-	t.Run("Username empty", func(t *testing.T) {
+	t.Run("UsernameEmpty", func(t *testing.T) {
 		user := NewUser()
 		user.ID = 500
 		user.AuthProvider = ""
@@ -1802,7 +1802,7 @@ func TestUser_Provider(t *testing.T) {
 }
 
 func TestUser_SetProvider(t *testing.T) {
-	t.Run("2FA", func(t *testing.T) {
+	t.Run("TwoFa", func(t *testing.T) {
 		m := UserFixtures.Get("alice")
 		assert.Equal(t, authn.ProviderLocal, m.Provider())
 		assert.Equal(t, authn.MethodDefault, m.Method())
@@ -1817,7 +1817,7 @@ func TestUser_SetProvider(t *testing.T) {
 }
 
 func TestUser_SetMethod(t *testing.T) {
-	t.Run("2FA", func(t *testing.T) {
+	t.Run("TwoFa", func(t *testing.T) {
 		m := UserFixtures.Get("unauthorized")
 		assert.Equal(t, authn.ProviderNone, m.Provider())
 		assert.Equal(t, authn.MethodDefault, m.Method())
@@ -1942,14 +1942,14 @@ func TestUser_GetUploadPath(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "", Admin.GetUploadPath())
 	})
-	t.Run("Use base path", func(t *testing.T) {
+	t.Run("UseBasePath", func(t *testing.T) {
 		user := NewUser()
 		user.UserName = "test"
 		user.UploadPath = "./"
 		user.BasePath = "mybase"
 		assert.Equal(t, "mybase", user.GetUploadPath())
 	})
-	t.Run("Upload path includes base path", func(t *testing.T) {
+	t.Run("UploadPathIncludesBasePath", func(t *testing.T) {
 		user := NewUser()
 		user.UserName = "test"
 		user.UploadPath = "mybase/upload"
@@ -2051,7 +2051,7 @@ func TestUser_FullName(t *testing.T) {
 			t.FailNow()
 		}
 	})
-	t.Run("Name from Details", func(t *testing.T) {
+	t.Run("NameFromDetails", func(t *testing.T) {
 		u := User{
 			ID:          1234567,
 			UserUID:     "urqdrfb72479n047",
@@ -2101,7 +2101,7 @@ func TestUser_FullName(t *testing.T) {
 }
 
 func TestUser_Settings(t *testing.T) {
-	t.Run("return settings", func(t *testing.T) {
+	t.Run("ReturnSettings", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
 			UserUID:  "urqdrfb72479n047",
@@ -2119,7 +2119,7 @@ func TestUser_Settings(t *testing.T) {
 		assert.Equal(t, "de", u.Settings().UILanguage)
 		assert.Equal(t, "vanta", u.Settings().UITheme)
 	})
-	t.Run("empty uid", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
 			UserUID:  "",
@@ -2133,7 +2133,7 @@ func TestUser_Settings(t *testing.T) {
 }
 
 func TestUser_Details(t *testing.T) {
-	t.Run("return details", func(t *testing.T) {
+	t.Run("ReturnDetails", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
 			UserUID:  "urqdrfb72479n047",
@@ -2148,7 +2148,7 @@ func TestUser_Details(t *testing.T) {
 		assert.Equal(t, "John", u.Details().GivenName)
 		assert.Equal(t, "Doe", u.Details().FamilyName)
 	})
-	t.Run("empty uid", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
 			UserUID:  "",
@@ -2167,7 +2167,7 @@ func TestUser_Equal(t *testing.T) {
 }
 
 func TestUser_DeleteSessions(t *testing.T) {
-	t.Run("empty uid", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
 			UserUID:  "",
@@ -2177,7 +2177,7 @@ func TestUser_DeleteSessions(t *testing.T) {
 
 		assert.Equal(t, 0, u.DeleteSessions([]string{}))
 	})
-	t.Run("alice", func(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 
 		assert.Equal(t, 0, m.DeleteSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))

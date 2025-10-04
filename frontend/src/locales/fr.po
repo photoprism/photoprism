@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-04 18:02+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2025-10-02 11:15+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -58,7 +58,7 @@ msgstr "%{n} dossier(s) trouvé(s)"
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} Go de %{q} Go utilisés"
 
-#: src/page/labels.vue:533
+#: src/page/labels.vue:602
 msgid "%{n} labels found"
 msgstr "%{n} étiquette(s) trouvée(s)"
 
@@ -230,7 +230,7 @@ msgstr "Ajouté"
 msgid "Adjust Location"
 msgstr "Ajuster l'emplacement"
 
-#: src/options/admin.js:6 src/common/util.js:748 src/options/auth.js:6
+#: src/options/admin.js:6 src/common/util.js:752 src/options/auth.js:6
 msgid "Admin"
 msgstr "Administrateur"
 
@@ -308,7 +308,7 @@ msgstr "Tous"
 msgid "All %{n} albums loaded"
 msgstr "Les %{n} album(s) ont été chargé(s)"
 
-#: src/page/labels.vue:367
+#: src/page/labels.vue:436
 msgid "All %{n} labels loaded"
 msgstr "Les %{n} étiquettes ont été chargées"
 
@@ -507,7 +507,7 @@ msgstr "Badge"
 msgid "Base Path"
 msgstr "Chemin de base"
 
-#: src/common/util.js:742
+#: src/common/util.js:746
 msgid "Batch"
 msgstr "Lot"
 
@@ -601,8 +601,8 @@ msgid "Can't load more, limit reached"
 msgstr "Impossible de charger plus, limite atteinte"
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:293
-#: src/page/labels.vue:313 src/page/library/browse.vue:233
+#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:362
+#: src/page/labels.vue:382 src/page/library/browse.vue:233
 #: src/page/library/browse.vue:249 src/page/people/new.vue:278
 #: src/page/people/new.vue:294 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
@@ -630,11 +630,11 @@ msgstr "Impossible de sélectionner plus d’éléments"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/common/util.js:911 src/common/util.js:918
+#: src/common/util.js:915 src/common/util.js:922
 msgid "Cannot copy to clipboard"
 msgstr "Impossible de copier dans le presse-papiers"
 
-#: src/common/util.js:730 src/component/photo/edit/details.vue:89
+#: src/common/util.js:734 src/component/photo/edit/details.vue:89
 #: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:72
 msgid "Caption"
 msgstr "Légende"
@@ -793,12 +793,12 @@ msgstr "Coordonnées"
 msgid "Contact Us"
 msgstr "Nous contacter"
 
-#: src/page/albums.vue:433 src/page/labels.vue:237
+#: src/page/albums.vue:433 src/page/labels.vue:216
 #: src/page/people/recognized.vue:306
 msgid "Contains %{n} pictures."
 msgstr "Contient %{n} images."
 
-#: src/page/albums.vue:427 src/page/labels.vue:231
+#: src/page/albums.vue:427 src/page/labels.vue:210
 #: src/page/people/recognized.vue:300
 msgid "Contains one picture."
 msgstr "Contient une image."
@@ -823,7 +823,7 @@ msgstr "Contributeur"
 msgid "Converting"
 msgstr "Conversion en cours"
 
-#: src/common/util.js:904
+#: src/common/util.js:908
 msgid "Copied to clipboard"
 msgstr "Copié vers le presse-papier"
 
@@ -880,7 +880,7 @@ msgstr "Cubique : Qualité modérée, bonne performance"
 msgid "Current Password"
 msgstr "Mot de passe actuel"
 
-#: src/options/themes.js:920 src/options/themes.js:929
+#: src/options/themes.js:935 src/options/themes.js:944
 msgid "Custom"
 msgstr "Sur mesure"
 
@@ -914,7 +914,7 @@ msgstr "Journaux de débogage"
 #: src/model/user.js:261 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:196
 #: src/options/options.js:232 src/options/options.js:316
-#: src/options/themes.js:774
+#: src/options/themes.js:789
 msgid "Default"
 msgstr "Valeur par défaut"
 
@@ -1544,7 +1544,7 @@ msgid "in"
 msgstr "en"
 
 #: src/component/photo/view/cards.vue:149 src/component/photo/view/list.vue:87
-#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:156
+#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:135
 #: src/page/library/browse.vue:124
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Si des images sont manquantes, veuillez réanalyser votre bibliothèque et attendre que l'indexation soit terminée."
@@ -1662,7 +1662,7 @@ msgstr "Limite de taille des JPEGs : %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "Les JPEGs et miniatures sont automatiquement affichés selon les besoins."
 
-#: src/common/util.js:732
+#: src/common/util.js:736
 msgid "Keyword"
 msgstr "Mot-clef"
 
@@ -1729,7 +1729,7 @@ msgid "Learn more"
 msgstr "En savoir plus"
 
 #: src/page/admin/sessions.vue:110 src/page/admin/users.vue:137
-#: src/page/labels.vue:132
+#: src/page/labels.vue:184
 msgid "Learn More"
 msgstr "En savoir plus"
 
@@ -1870,7 +1870,7 @@ msgstr "Gérer le compte"
 msgid "Manager"
 msgstr "Gestionnaire"
 
-#: src/common/util.js:744
+#: src/common/util.js:748
 msgid "Manual"
 msgstr "Manuel"
 
@@ -1915,7 +1915,7 @@ msgstr "Message"
 msgid "Message sent"
 msgstr "Message envoyé"
 
-#: src/common/util.js:734
+#: src/common/util.js:738
 msgid "Metadata"
 msgstr "Métadonnées"
 
@@ -1990,7 +1990,7 @@ msgstr "Nom"
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:46
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:54
+#: src/component/photo/edit/people.vue:39 src/page/labels.vue:60
 #: src/page/library/browse.vue:46 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
@@ -2043,7 +2043,7 @@ msgstr "Aucun album trouvé"
 msgid "No data available"
 msgstr "Pas de données disponibles"
 
-#: src/page/labels.vue:528 src/page/labels.vue:155
+#: src/page/labels.vue:597 src/page/labels.vue:134
 msgid "No labels found"
 msgstr "Aucune étiquette trouvée"
 
@@ -2196,7 +2196,7 @@ msgstr "Un fichier téléchargé"
 msgid "One folder found"
 msgstr "Un dossier trouvé"
 
-#: src/page/labels.vue:530
+#: src/page/labels.vue:599
 msgid "One label found"
 msgstr "Une étiquette trouvée"
 
@@ -2541,7 +2541,7 @@ msgstr "Rouge"
 
 #: src/page/admin/sessions.vue:101 src/page/admin/users.vue:128
 #: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:175 src/page/labels.vue:112
+#: src/page/albums.vue:175 src/page/labels.vue:119
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:81
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:88
 msgid "Refresh"
@@ -2668,7 +2668,7 @@ msgstr "Portée"
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:69
 #: src/component/location/dialog.vue:131 src/component/navigation.vue:342
 #: src/component/navigation.vue:1866 src/component/photo/toolbar.vue:57
-#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:77
+#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:76
 #: src/page/library/errors.vue:76 src/page/people/recognized.vue:66
 #: src/page/places.vue:79 src/page/settings/content.vue:235
 msgid "Search"
@@ -2795,6 +2795,10 @@ msgstr "Partagez vos photos avec d'autres applications et services."
 msgid "Show"
 msgstr "Afficher"
 
+#: src/page/labels.vue:129
+msgid "Show All Labels"
+msgstr "Afficher toutes les étiquettes"
+
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
 msgstr "Montrer tous les nouveaux visages"
@@ -2807,13 +2811,9 @@ msgstr "Afficher les légendes"
 msgid "Show hidden"
 msgstr "Afficher les éléments masqués"
 
-#: src/page/labels.vue:109
-msgid "Show less"
-msgstr "Montrer moins"
-
-#: src/page/labels.vue:101
-msgid "Show more"
-msgstr "Montre plus"
+#: src/page/labels.vue:138
+msgid "Show Important Only"
+msgstr "Afficher uniquement les éléments importants"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2867,6 +2867,18 @@ msgstr "Quelque chose s'est mal passé, réessayez"
 #: src/locales.js:227
 msgid "Sort by"
 msgstr "Trier par"
+
+#: src/page/labels.vue:156
+msgid "Sort by Name (A–Z)"
+msgstr "Trier par nom (A-Z)"
+
+#: src/page/labels.vue:165
+msgid "Sort by Photo Count"
+msgstr "Trier par nombre de photos"
+
+#: src/page/labels.vue:147
+msgid "Sort by Relevance"
+msgstr "Trier par pertinence"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214
@@ -2931,7 +2943,7 @@ msgstr "Stockage"
 msgid "Streets"
 msgstr "Rues"
 
-#: src/common/util.js:736 src/component/photo/edit/details.vue:468
+#: src/common/util.js:740 src/component/photo/edit/details.vue:468
 msgid "Subject"
 msgstr "Sujet"
 
@@ -3056,7 +3068,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Titre"
 
-#: src/common/util.js:738 src/component/photo/edit/info.vue:155
+#: src/common/util.js:742 src/component/photo/edit/info.vue:155
 #: src/component/photo/view/list.vue:114 src/component/sidebar/info.vue:57
 msgid "Title"
 msgstr "Titre"
@@ -3115,7 +3127,7 @@ msgstr "Résolution des problèmes"
 
 #: src/component/photo/view/cards.vue:146 src/component/photo/view/list.vue:54
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:70
-#: src/page/albums.vue:284 src/page/labels.vue:156
+#: src/page/albums.vue:284 src/page/labels.vue:135
 #: src/page/people/recognized.vue:147
 msgid "Try again using other filters or keywords."
 msgstr "Réessayez en utilisant d'autres filtres ou mots-clés."
@@ -3218,7 +3230,7 @@ msgstr "Mettre à niveau maintenant"
 #: src/component/album/toolbar.vue:113 src/component/navigation.vue:1824
 #: src/component/photo/toolbar.vue:179 src/component/service/upload.vue:144
 #: src/component/upload/dialog.vue:51 src/page/albums.vue:185
-#: src/page/labels.vue:122 src/page/library/import.vue:133
+#: src/page/labels.vue:174 src/page/library/import.vue:133
 #: src/page/settings/general.vue:307 src/page/settings/services.vue:38
 msgid "Upload"
 msgstr "Chargement"
@@ -3346,7 +3358,7 @@ msgstr "Afficher les résultats de la recherche sous forme de liste."
 msgid "Viewer"
 msgstr "Visionneuse"
 
-#: src/common/util.js:746
+#: src/common/util.js:750
 msgid "Vision"
 msgstr "Vision"
 
@@ -3482,6 +3494,12 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/lightbox.vue:285
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Show less"
+#~ msgstr "Montrer moins"
+
+#~ msgid "Show more"
+#~ msgstr "Montre plus"
 
 #~ msgid "Archive"
 #~ msgstr "Archives"

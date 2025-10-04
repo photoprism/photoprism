@@ -9,6 +9,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/service/http/scheme"
@@ -28,6 +29,7 @@ var (
 	DefaultResolution     = 224
 	DefaultTemperature    = 0.1
 	MaxTemperature        = 2.0
+	DefaultSrc            = entity.SrcImage
 )
 
 // Config reference the current configuration options.

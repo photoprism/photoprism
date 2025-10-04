@@ -10,7 +10,7 @@ import (
 
 var photoMergeMutex = sync.Mutex{}
 
-// ResolvePrimary ensures there is only one primary file for a photo.
+// ResolvePrimary ensures only one associated file remains marked as primary, delegating to the file helper.
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
@@ -23,7 +23,7 @@ func (m *Photo) ResolvePrimary() error {
 	return nil
 }
 
-// Stackable tests if the photo may be stacked.
+// Stackable reports whether the photo participates in stacking workflows.
 func (m *Photo) Stackable() bool {
 	if !m.HasID() || m.PhotoStack == IsUnstacked || m.PhotoName == "" {
 		return false
@@ -32,7 +32,7 @@ func (m *Photo) Stackable() bool {
 	return true
 }
 
-// Identical returns identical photos that can be merged.
+// Identical returns candidate photos that can be merged with the current one based on metadata and/or UUID.
 func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err error) {
 	if !m.Stackable() {
 		return identical, nil
@@ -77,7 +77,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 	return identical, nil
 }
 
-// Merge photo with identical ones.
+// Merge collapses identical photos into a single original, reassigning files and associations while marking duplicates deleted.
 func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos, err error) {
 	photoMergeMutex.Lock()
 	defer photoMergeMutex.Unlock()

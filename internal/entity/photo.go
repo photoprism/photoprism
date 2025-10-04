@@ -567,7 +567,7 @@ func (m *Photo) BeforeCreate(scope *gorm.DB) error {
 	return scope.Error
 }
 
-// BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
+// BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo.
 func (m *Photo) BeforeSave(scope *gorm.DB) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := Now()
@@ -727,7 +727,7 @@ func (m *Photo) IndexKeywords() error {
 	return db.Where("photo_id = ? AND keyword_id NOT IN (?)", m.ID, keywordIds).Delete(&PhotoKeyword{}).Error
 }
 
-// PreloadFiles prepares gorm scope to retrieve photo file
+// PreloadFiles loads the non-deleted file records associated with the photo.
 func (m *Photo) PreloadFiles() {
 	q := Db().
 		Table("files").
@@ -738,7 +738,7 @@ func (m *Photo) PreloadFiles() {
 	Log("photo", "preload files", q.Scan(&m.Files).Error)
 }
 
-// PreloadKeywords prepares gorm scope to retrieve photo keywords
+// PreloadKeywords loads keyword entities linked to the photo.
 func (m *Photo) PreloadKeywords() {
 	q := Db().
 		Table("keywords").
@@ -749,7 +749,7 @@ func (m *Photo) PreloadKeywords() {
 	Log("photo", "preload files", q.Scan(&m.Keywords).Error)
 }
 
-// PreloadAlbums prepares gorm scope to retrieve photo albums
+// PreloadAlbums loads albums related to the photo using the standard visibility filters.
 func (m *Photo) PreloadAlbums() {
 	q := Db().
 		Table("albums").
@@ -761,7 +761,7 @@ func (m *Photo) PreloadAlbums() {
 	Log("photo", "preload albums", q.Scan(&m.Albums).Error)
 }
 
-// PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
+// PreloadMany loads the primary supporting associations (files, keywords, albums).
 func (m *Photo) PreloadMany() {
 	m.PreloadFiles()
 	m.PreloadKeywords()
@@ -786,17 +786,17 @@ func (m *Photo) NormalizeValues() (normalized bool) {
 	return normalized
 }
 
-// NoCameraSerial checks if the photo has no CameraSerial
+// NoCameraSerial reports whether the photo has no camera serial assigned.
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
 }
 
-// UnknownCamera test if the camera is unknown.
+// UnknownCamera tests whether the camera reference is the placeholder entry.
 func (m *Photo) UnknownCamera() bool {
 	return m.CameraID == 0 || m.CameraID == UnknownCamera.ID
 }
 
-// UnknownLens test if the lens is unknown.
+// UnknownLens tests whether the lens reference is the placeholder entry.
 func (m *Photo) UnknownLens() bool {
 	return m.LensID == 0 || m.LensID == UnknownLens.ID
 }
@@ -900,19 +900,28 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 			labelSrc = clean.ShortTypeLower(labelSrc)
 		}
 
-		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, labelSrc))
+		template := NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, labelSrc)
+		template.Topicality = classifyLabel.Topicality
+		photoLabel := FirstOrCreatePhotoLabel(template)
 
 		if photoLabel == nil {
 			log.Errorf("index: photo-label %d should not be nil - you may have found a bug (%s)", labelEntity.ID, m)
 			continue
 		}
 
-		if photoLabel.HasID() && photoLabel.Uncertainty > classifyLabel.Uncertainty && photoLabel.Uncertainty < 100 {
-			if err := photoLabel.Updates(Values{
-				"Uncertainty": classifyLabel.Uncertainty,
-				"LabelSrc":    labelSrc,
-			}); err != nil {
-				log.Errorf("index: %s", err)
+		if photoLabel.HasID() {
+			updates := Values{}
+			if photoLabel.Uncertainty > classifyLabel.Uncertainty && photoLabel.Uncertainty < 100 {
+				updates["Uncertainty"] = classifyLabel.Uncertainty
+				updates["LabelSrc"] = labelSrc
+			}
+			if classifyLabel.Topicality > 0 && photoLabel.Topicality != classifyLabel.Topicality {
+				updates["Topicality"] = classifyLabel.Topicality
+			}
+			if len(updates) > 0 {
+				if err := photoLabel.Updates(updates); err != nil {
+					log.Errorf("index: %s", err)
+				}
 			}
 		}
 	}
@@ -920,7 +929,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 	Db().Preload("Labels").Preload("Labels.Label").Select("id").Find(&m)
 }
 
-// SetCamera updates the camera.
+// SetCamera updates the camera reference if the source priority allows the change.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
 		log.Warnf("photo: %s failed to update camera from source %s", m.String(), SrcString(source))
@@ -944,7 +953,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 	}
 }
 
-// SetLens updates the lens.
+// SetLens updates the lens reference when the source outranks the existing metadata.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
 		log.Warnf("photo: %s failed to update lens from source %s", m.String(), SrcString(source))
@@ -988,7 +997,7 @@ func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure,
 	}
 }
 
-// AllFilesMissing returns true, if all files for this photo are missing.
+// AllFilesMissing reports whether all files for this photo are marked missing.
 func (m *Photo) AllFilesMissing() bool {
 	count := int64(0)
 

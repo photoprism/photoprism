@@ -62,6 +62,8 @@ func RandomEmbedding() (result Embedding) {
 		}
 	}
 
+	normalizeEmbedding(result)
+
 	return result
 }
 
@@ -77,6 +79,8 @@ func RandomKidsEmbedding() (result Embedding) {
 		result[i] = RandomFloat64(e[i], d)
 	}
 
+	normalizeEmbedding(result)
+
 	return result
 }
 
@@ -91,6 +95,8 @@ func RandomIgnoredEmbedding() (result Embedding) {
 	for i := range result {
 		result[i] = RandomFloat64(e[i], d)
 	}
+
+	normalizeEmbedding(result)
 
 	return result
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosGeoFilterS2(t *testing.T) {
-	t.Run("1ef744d1e283", func(t *testing.T) {
+	t.Run("OneEf744d1e283", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "1ef744d1e283"
@@ -22,7 +22,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("85d1ea7d382c", func(t *testing.T) {
+	t.Run("Num85D1ea7d382c", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "85d1ea7d382c"
@@ -259,7 +259,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 }
 
 func TestPhotosGeoQueryS2(t *testing.T) {
-	t.Run("s2:1ef744d1e283", func(t *testing.T) {
+	t.Run("S2OneEf744d1e283", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:1ef744d1e283"
@@ -272,7 +272,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		}
 		assert.Len(t, photos, 3)
 	})
-	t.Run("s2:85d1ea7d382c", func(t *testing.T) {
+	t.Run("S2Num85D1ea7d382c", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:85d1ea7d382c"
@@ -284,7 +284,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		}
 		assert.Len(t, photos, 9)
 	})
-	t.Run("85d1ea7d382c pipe 1ef744d1e283", func(t *testing.T) {
+	t.Run("Num85D1ea7d382cPipeOneEf744d1e283", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:85d1ea7d382c|1ef744d1e283"

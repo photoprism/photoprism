@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterFolder(t *testing.T) {
-	t.Run("2790/07", func(t *testing.T) {
+	t.Run("Num2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Folder = "2790/07"
@@ -22,7 +22,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("2790*", func(t *testing.T) {
+	t.Run("Num2790", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Folder = "2790*"
@@ -48,7 +48,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
+	t.Run("LondonWhitespacePipeWhitespaceNum2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Folder = "London | 2790/07"
@@ -61,7 +61,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("London pipe 2790/07", func(t *testing.T) {
+	t.Run("LondonPipeNum2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Folder = "London|2790/07"
@@ -461,7 +461,7 @@ func TestPhotosFilterFolder(t *testing.T) {
 }
 
 func TestPhotosQueryFolder(t *testing.T) {
-	t.Run("2790/07", func(t *testing.T) {
+	t.Run("Num2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "folder:\"2790/07\""
@@ -474,7 +474,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("2790*", func(t *testing.T) {
+	t.Run("Num2790", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "folder:\"2790*\""
@@ -500,7 +500,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		}
 		assert.Len(t, photos, 1)
 	})
-	t.Run("London whitespace pipe whitespace 2790/07", func(t *testing.T) {
+	t.Run("LondonWhitespacePipeWhitespaceNum2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "folder:\"London | 2790/07\""
@@ -513,7 +513,7 @@ func TestPhotosQueryFolder(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
-	t.Run("London pipe 2790/07", func(t *testing.T) {
+	t.Run("LondonPipeNum2790Num07", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "folder:\"London|2790/07\""

@@ -185,7 +185,7 @@ func TestAlbums(t *testing.T) {
 			assert.Equal(t, "Empty Moment", result[0].AlbumTitle)
 		}
 	})
-	t.Run("SearchForYear/Month/Day", func(t *testing.T) {
+	t.Run("SearchForYearMonthDay", func(t *testing.T) {
 		f := form.SearchAlbums{
 			Year:   "2021",
 			Month:  "10",

@@ -231,6 +231,7 @@ type Options struct {
 	DetectNSFW              bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	FaceSize                int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore               float64       `yaml:"-" json:"-" flag:"face-score"`
+	FaceAngles              []float64     `yaml:"-" json:"-" flag:"face-angle"`
 	FaceOverlap             int           `yaml:"-" json:"-" flag:"face-overlap"`
 	FaceClusterSize         int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore        int           `yaml:"-" json:"-" flag:"face-cluster-score"`

@@ -25,7 +25,7 @@ func TestProbeFile(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, info)
 	})
-	t.Run("mp4v-avc1.mp4", func(t *testing.T) {
+	t.Run("Mp4vAvc1Mp4", func(t *testing.T) {
 		fileName := "testdata/mp4v-avc1.mp4"
 		info, err := ProbeFile(fileName)
 		require.NoError(t, err)
@@ -52,7 +52,7 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, true, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
-	t.Run("mp42-hvc1.mp4", func(t *testing.T) {
+	t.Run("Mp42Hvc1Mp4", func(t *testing.T) {
 		fileName := "testdata/mp42-hvc1.mp4"
 		info, err := ProbeFile(fileName)
 		require.NoError(t, err)
@@ -79,7 +79,7 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
-	t.Run("quicktime-hvc1.mov", func(t *testing.T) {
+	t.Run("QuicktimeHvc1Mov", func(t *testing.T) {
 		fileName := "testdata/quicktime-hvc1.mov"
 		info, err := ProbeFile(fileName)
 		require.NoError(t, err)
@@ -106,7 +106,7 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
-	t.Run("quicktime-jpeg.mov", func(t *testing.T) {
+	t.Run("QuicktimeJpegMov", func(t *testing.T) {
 		fileName := "testdata/quicktime-jpeg.mov"
 		info, err := ProbeFile(fileName)
 		require.NoError(t, err)
@@ -132,7 +132,7 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, false, info.Compatible)
 	})
-	t.Run("image-isom-avc1.jpg", func(t *testing.T) {
+	t.Run("ImageIsomAvc1Jpg", func(t *testing.T) {
 		fileName := "testdata/image-isom-avc1.jpg"
 		info, err := ProbeFile(fileName)
 		require.NoError(t, err)
@@ -162,7 +162,7 @@ func TestProbeFile(t *testing.T) {
 }
 
 func TestProbe(t *testing.T) {
-	t.Run("mp4v-avc1.mp4", func(t *testing.T) {
+	t.Run("Mp4vAvc1Mp4", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/mp4v-avc1.mp4")
 		require.NoError(t, fileErr)
 		defer f.Close()
@@ -192,7 +192,7 @@ func TestProbe(t *testing.T) {
 		assert.Equal(t, true, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
-	t.Run("isom-avc1.mp4", func(t *testing.T) {
+	t.Run("IsomAvc1Mp4", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/isom-avc1.mp4")
 		require.NoError(t, fileErr)
 		defer f.Close()
@@ -222,7 +222,7 @@ func TestProbe(t *testing.T) {
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
-	t.Run("image-isom-avc1.jpg", func(t *testing.T) {
+	t.Run("ImageIsomAvc1Jpg", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/image-isom-avc1.jpg")
 		require.NoError(t, fileErr)
 		defer f.Close()
@@ -252,7 +252,7 @@ func TestProbe(t *testing.T) {
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
-	t.Run("motion-photo.heif", func(t *testing.T) {
+	t.Run("MotionPhotoHeif", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/motion-photo.heif")
 		require.NoError(t, fileErr)
 		defer f.Close()

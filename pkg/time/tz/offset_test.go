@@ -223,7 +223,7 @@ func TestUtcOffset(t *testing.T) {
 		assert.Equal(t, "", UtcOffset(utc, local, "+00:00"))
 		assert.Equal(t, "UTC", UtcOffset(utc, local, "Z"))
 	})
-	t.Run("UTC+2", func(t *testing.T) {
+	t.Run("UtcTwo", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 13:20:17 +00:00")
 
 		if err != nil {
@@ -244,7 +244,7 @@ func TestUtcOffset(t *testing.T) {
 
 		assert.Equal(t, "UTC+2", loc.String())
 	})
-	t.Run("+02:00", func(t *testing.T) {
+	t.Run("Num02Num00", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 13:20:17 +00:00")
 
 		if err != nil {
@@ -259,7 +259,7 @@ func TestUtcOffset(t *testing.T) {
 
 		assert.Equal(t, "UTC+2", UtcOffset(utc, local, "02:00"))
 	})
-	t.Run("UTC+2.5", func(t *testing.T) {
+	t.Run("UtcTwoFive", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 13:50:17 +00:00")
 
 		if err != nil {
@@ -274,7 +274,7 @@ func TestUtcOffset(t *testing.T) {
 
 		assert.Equal(t, "", UtcOffset(utc, local, ""))
 	})
-	t.Run("+02:30", func(t *testing.T) {
+	t.Run("Num02Num30", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 13:50:17 +00:00")
 
 		if err != nil {
@@ -289,7 +289,7 @@ func TestUtcOffset(t *testing.T) {
 
 		assert.Equal(t, "", UtcOffset(utc, local, "+02:30"))
 	})
-	t.Run("UTC-14", func(t *testing.T) {
+	t.Run("UtcFourteen", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 00:20:17 +00:00")
 
 		if err != nil {
@@ -304,7 +304,7 @@ func TestUtcOffset(t *testing.T) {
 
 		assert.Equal(t, "", UtcOffset(utc, local, ""))
 	})
-	t.Run("UTC-15", func(t *testing.T) {
+	t.Run("UtcFifteen", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 00:20:17 +00:00")
 
 		if err != nil {
@@ -319,7 +319,7 @@ func TestUtcOffset(t *testing.T) {
 
 		assert.Equal(t, "", UtcOffset(utc, local, ""))
 	})
-	t.Run("UTC+02:00", func(t *testing.T) {
+	t.Run("UtcNum02Num00", func(t *testing.T) {
 		utc, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 13:50:17 +02:00")
 
 		if err != nil {

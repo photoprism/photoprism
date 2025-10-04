@@ -7,7 +7,7 @@ import (
 )
 
 func TestPhoto_Optimize(t *testing.T) {
-	t.Run("update", func(t *testing.T) {
+	t.Run("Update", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo19")
 
 		if updated, merged, err := photo.Optimize(false, false, true, false); err != nil {
@@ -26,7 +26,7 @@ func TestPhoto_Optimize(t *testing.T) {
 			t.Errorf("no photos should be merged")
 		}
 	})
-	t.Run("photo without id", func(t *testing.T) {
+	t.Run("PhotoWithoutId", func(t *testing.T) {
 		photo := Photo{}
 		result, merged, err := photo.Optimize(false, false, true, false)
 		assert.Error(t, err)

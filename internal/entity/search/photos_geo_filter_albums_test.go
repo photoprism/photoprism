@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosGeoFilterAlbums(t *testing.T) {
-	t.Run("Berlin 2019", func(t *testing.T) {
+	t.Run("BerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Berlin 2019"
@@ -44,7 +44,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet*", func(t *testing.T) {
+	t.Run("Pet", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet*"
@@ -79,7 +79,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* pipe Berlin 2019", func(t *testing.T) {
+	t.Run("PetPipeBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet*|Berlin 2019"
@@ -115,7 +115,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* whitespace pipe whitespace Berlin 2019", func(t *testing.T) {
+	t.Run("PetWhitespacePipeWhitespaceBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet* | Berlin 2019"
@@ -150,7 +150,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* or Berlin 2019", func(t *testing.T) {
+	t.Run("PetOrBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet* or Berlin 2019"
@@ -185,7 +185,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* OR Berlin 2019", func(t *testing.T) {
+	t.Run("PetOrBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet* OR Berlin 2019"
@@ -221,7 +221,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		}
 
 	})
-	t.Run("Pet* Ampersand Berlin 2019", func(t *testing.T) {
+	t.Run("PetAmpersandBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet*&Berlin 2019"
@@ -256,7 +256,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* whitespace Ampersand whitespace Berlin 2019", func(t *testing.T) {
+	t.Run("PetWhitespaceAmpersandWhitespaceBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet* & Berlin 2019"
@@ -291,7 +291,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* and Berlin 2019", func(t *testing.T) {
+	t.Run("PetAndBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet* and Berlin 2019"
@@ -326,7 +326,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* AND Berlin 2019", func(t *testing.T) {
+	t.Run("PetAndBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Albums = "Pet* AND Berlin 2019"
@@ -1181,7 +1181,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 }
 
 func TestPhotosGeoQueryAlbums(t *testing.T) {
-	t.Run("Berlin 2019", func(t *testing.T) {
+	t.Run("BerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Berlin 2019\""
@@ -1217,7 +1217,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 		}
 
 	})
-	t.Run("Pet*", func(t *testing.T) {
+	t.Run("Pet", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet*\""
@@ -1251,7 +1251,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* pipe Berlin 2019", func(t *testing.T) {
+	t.Run("PetPipeBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet*|Berlin 2019\""
@@ -1285,7 +1285,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* whitespace pipe whitespace Berlin 2019", func(t *testing.T) {
+	t.Run("PetWhitespacePipeWhitespaceBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet* | Berlin 2019\""
@@ -1319,7 +1319,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* or Berlin 2019", func(t *testing.T) {
+	t.Run("PetOrBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet* or Berlin 2019\""
@@ -1353,7 +1353,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* OR Berlin 2019", func(t *testing.T) {
+	t.Run("PetOrBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet* OR Berlin 2019\""
@@ -1387,7 +1387,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* Ampersand Berlin 2019", func(t *testing.T) {
+	t.Run("PetAmpersandBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet*&Berlin 2019\""
@@ -1421,7 +1421,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* whitespace Ampersand whitespace Berlin 2019", func(t *testing.T) {
+	t.Run("PetWhitespaceAmpersandWhitespaceBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet* & Berlin 2019\""
@@ -1455,7 +1455,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* and Berlin 2019", func(t *testing.T) {
+	t.Run("PetAndBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet* and Berlin 2019\""
@@ -1489,7 +1489,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 			assert.Equal(t, photos[0].PhotoUID, geophotos[0].PhotoUID)
 		}
 	})
-	t.Run("Pet* AND Berlin 2019", func(t *testing.T) {
+	t.Run("PetAndBerlinNum2019", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "albums:\"Pet* AND Berlin 2019\""

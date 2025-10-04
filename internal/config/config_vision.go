@@ -37,7 +37,13 @@ func (c *Config) VisionFilter() string {
 func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) bool {
 	if t == vision.ModelTypeLabels && c.DisableClassification() {
 		return false
-	} else if vision.Config == nil {
+	}
+
+	if t == vision.ModelTypeNsfw && !c.DetectNSFW() {
+		return false
+	}
+
+	if vision.Config == nil {
 		return false
 	}
 

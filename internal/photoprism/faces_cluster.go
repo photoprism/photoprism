@@ -57,7 +57,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		results := make([]face.Embeddings, len(sizes))
 
 		for i := range sizes {
-			results[i] = face.Embeddings{}
+			results[i] = make(face.Embeddings, 0, sizes[i])
 		}
 
 		guesses := c.Guesses()

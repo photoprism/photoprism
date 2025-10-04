@@ -338,6 +338,21 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		changed = true
 	}
 
+	// Update thumbnail (hash with crop area).
+	thumbChanged := false
+	if thumbCrop := clean.ThumbCrop(frm.Thumb); thumbCrop != "" && thumbCrop != m.Thumb {
+		if SrcPriority[frm.ThumbSrc] > 0 {
+			m.Thumb = thumbCrop
+			m.ThumbSrc = frm.ThumbSrc
+			thumbChanged = true
+			changed = true
+		} else {
+			return false, fmt.Errorf("invalid thumb source")
+		}
+	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
+		return false, fmt.Errorf("invalid thumb")
+	}
+
 	// Change favorite status?
 	if m.SubjFavorite != frm.SubjFavorite {
 		m.SubjFavorite = frm.SubjFavorite
@@ -375,7 +390,12 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 			"SubjExcluded": m.SubjExcluded,
 		}
 
-		if err := m.Updates(values); err == nil {
+		if thumbChanged {
+			values["Thumb"] = m.Thumb
+			values["ThumbSrc"] = m.ThumbSrc
+		}
+
+		if updateErr := m.Updates(values); updateErr == nil {
 			event.EntitiesUpdated("subjects", []*Subject{m})
 
 			if m.IsPerson() {
@@ -384,7 +404,7 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 
 			return true, nil
 		} else {
-			return false, err
+			return false, updateErr
 		}
 	}
 

@@ -23,17 +23,17 @@ func QualityThreshold(scale int) (score float32) {
 	// Smaller faces require higher quality.
 	switch {
 	case scale < 26:
-		score += 26.0
+		score += 12.0
 	case scale < 32:
-		score += 16.0
+		score += 8.0
 	case scale < 40:
-		score += 11.0
-	case scale < 50:
-		score += 9.0
-	case scale < 80:
 		score += 6.0
-	case scale < 110:
+	case scale < 50:
+		score += 4.0
+	case scale < 80:
 		score += 2.0
+	case scale < 110:
+		score += 1.0
 	}
 
 	return score

@@ -32,7 +32,7 @@ func TestPhotosQueryGeo(t *testing.T) {
 		assert.NotEqual(t, "zz", r0.CellID)
 	}
 
-	t.Run("geo:false", func(t *testing.T) {
+	t.Run("GeoFalse", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "geo:false"

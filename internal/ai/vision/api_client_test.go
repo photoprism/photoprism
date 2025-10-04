@@ -67,7 +67,7 @@ func TestPerformApiRequestOllama(t *testing.T) {
 		resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
 		assert.NoError(t, err)
 		assert.Len(t, resp.Result.Labels, 1)
-		assert.Equal(t, "test", resp.Result.Labels[0].Name)
+		assert.Equal(t, "Test", resp.Result.Labels[0].Name)
 		assert.Nil(t, resp.Result.Caption)
 	})
 	t.Run("CaptionFallback", func(t *testing.T) {

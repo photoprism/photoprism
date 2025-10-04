@@ -86,7 +86,7 @@ func BenchmarkGenerateUID(b *testing.B) {
 }
 
 func TestGenerateUID_Time(t *testing.T) {
-	t.Run("2017", func(t *testing.T) {
+	t.Run("Num2017", func(t *testing.T) {
 		date := time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)
 		t.Logf("Unix Timestamp: %d", date.Unix())
 		t.Logf("Date Encoded: %s", strconv.FormatInt(date.UTC().Unix(), 36))

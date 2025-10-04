@@ -26,7 +26,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 		assert.Equal(t, uint(1), result.ID)
 		assert.Equal(t, UnknownID, result.CameraSlug)
 	})
-	t.Run("existing camera", func(t *testing.T) {
+	t.Run("ExistingCamera", func(t *testing.T) {
 		camera := NewCamera("Apple", "iPhone SE")
 
 		result := FirstOrCreateCamera(camera)
@@ -37,7 +37,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 
 		assert.GreaterOrEqual(t, result.ID, uint(1))
 	})
-	t.Run("not existing camera", func(t *testing.T) {
+	t.Run("NotExistingCamera", func(t *testing.T) {
 		camera := &Camera{ID: 10000000, CameraSlug: "camera-slug"}
 
 		result := FirstOrCreateCamera(camera)
@@ -203,7 +203,7 @@ func TestCamera_Mobile(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("iPhone", func(t *testing.T) {
+	t.Run("IPhone", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPhone)
 		assert.Equal(t, CameraTypePhone, camera.CameraType)
 		assert.Equal(t, MakeApple+" "+ModelIPhone, camera.CameraName)
@@ -212,7 +212,7 @@ func TestCamera_Mobile(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("iPad", func(t *testing.T) {
+	t.Run("IPad", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPad)
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeApple+" "+ModelIPad, camera.CameraName)
@@ -221,7 +221,7 @@ func TestCamera_Mobile(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("iPadAir", func(t *testing.T) {
+	t.Run("IPadAir", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPadAir)
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeApple, camera.CameraMake)
@@ -229,7 +229,7 @@ func TestCamera_Mobile(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("iPadPro", func(t *testing.T) {
+	t.Run("IPadPro", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPadPro)
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeApple, camera.CameraMake)

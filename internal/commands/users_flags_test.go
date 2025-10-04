@@ -8,7 +8,7 @@ import (
 )
 
 func TestUserRoleFlagUsage_IncludesNoneAlias(t *testing.T) {
-	t.Run("AddCommand user role flag includes none", func(t *testing.T) {
+	t.Run("AddCommandUserRoleFlagIncludesNone", func(t *testing.T) {
 		var roleFlag *cli.StringFlag
 		for _, f := range UsersAddCommand.Flags {
 			if rf, ok := f.(*cli.StringFlag); ok && rf.Name == "role" {
@@ -21,7 +21,7 @@ func TestUserRoleFlagUsage_IncludesNoneAlias(t *testing.T) {
 		}
 		assert.Contains(t, roleFlag.Usage, "none")
 	})
-	t.Run("ModCommand user role flag includes none", func(t *testing.T) {
+	t.Run("ModCommandUserRoleFlagIncludesNone", func(t *testing.T) {
 		var roleFlag *cli.StringFlag
 		for _, f := range UsersModCommand.Flags {
 			if rf, ok := f.(*cli.StringFlag); ok && rf.Name == "role" {

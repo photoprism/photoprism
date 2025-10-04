@@ -26,7 +26,7 @@ func (faces Faces) Count() int {
 	return len(faces)
 }
 
-// Uncertainty return the max face detection uncertainty in percent.
+// Uncertainty returns the max face detection uncertainty in percent.
 func (faces Faces) Uncertainty() int {
 	if len(faces) < 1 {
 		return 100

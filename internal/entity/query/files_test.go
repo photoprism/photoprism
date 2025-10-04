@@ -33,7 +33,7 @@ func TestFilesByPath(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(files))
 	})
-	t.Run("2790Public", func(t *testing.T) {
+	t.Run("Num2790Public", func(t *testing.T) {
 		files, err := FilesByPath(10, 0, entity.RootOriginals, "2790/07", true)
 
 		t.Logf("files: %+v", files)
@@ -58,7 +58,7 @@ func TestFilesByPath(t *testing.T) {
 }
 
 func TestExistingFiles(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
+	t.Run("FilesFound", func(t *testing.T) {
 		files, err := Files(1000, 0, "/", true)
 
 		t.Logf("files: %+v", files)
@@ -68,7 +68,7 @@ func TestExistingFiles(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 5, len(files))
 	})
-	t.Run("files found - includeMissing false", func(t *testing.T) {
+	t.Run("FilesFoundIncludeMissingFalse", func(t *testing.T) {
 		files, err := Files(1000, 0, "/", false)
 
 		t.Logf("files: %+v", files)
@@ -78,7 +78,7 @@ func TestExistingFiles(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 5, len(files))
 	})
-	t.Run("search for files path", func(t *testing.T) {
+	t.Run("SearchForFilesPath", func(t *testing.T) {
 		files, err := Files(1000, 0, "Photos", true)
 
 		t.Logf("files: %+v", files)
@@ -92,7 +92,7 @@ func TestExistingFiles(t *testing.T) {
 }
 
 func TestFilesByUID(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
+	t.Run("FilesFound", func(t *testing.T) {
 		files, err := FilesByUID([]string{"fs6sg6bw45bnlqdw"}, 100, 0)
 
 		if err != nil {
@@ -101,7 +101,7 @@ func TestFilesByUID(t *testing.T) {
 		assert.Equal(t, 1, len(files))
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", files[0].FileName)
 	})
-	t.Run("no files found", func(t *testing.T) {
+	t.Run("NoFilesFound", func(t *testing.T) {
 		files, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, 100, 0)
 
 		if err != nil {
@@ -148,7 +148,7 @@ func TestFilesByUID(t *testing.T) {
 }
 
 func TestFileByPhotoUID(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
+	t.Run("FilesFound", func(t *testing.T) {
 		file, err := FileByPhotoUID("ps6sg6be2lvl0y11")
 
 		if err != nil {
@@ -156,7 +156,7 @@ func TestFileByPhotoUID(t *testing.T) {
 		}
 		assert.Equal(t, "Germany/bridge.jpg", file.FileName)
 	})
-	t.Run("no files found", func(t *testing.T) {
+	t.Run("NoFilesFound", func(t *testing.T) {
 		file, err := FileByPhotoUID("111")
 
 		assert.Error(t, err, "record not found")
@@ -165,7 +165,7 @@ func TestFileByPhotoUID(t *testing.T) {
 }
 
 func TestVideoByPhotoUID(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
+	t.Run("FilesFound", func(t *testing.T) {
 		file, err := VideoByPhotoUID("ps6sg6be2lvl0yh0")
 
 		if err != nil {
@@ -173,7 +173,7 @@ func TestVideoByPhotoUID(t *testing.T) {
 		}
 		assert.Equal(t, "1990/04/bridge2.mp4", file.FileName)
 	})
-	t.Run("no files found", func(t *testing.T) {
+	t.Run("NoFilesFound", func(t *testing.T) {
 		file, err := VideoByPhotoUID("111")
 
 		assert.Error(t, err, "record not found")
@@ -182,7 +182,7 @@ func TestVideoByPhotoUID(t *testing.T) {
 }
 
 func TestFileByUID(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
+	t.Run("FilesFound", func(t *testing.T) {
 		file, err := FileByUID("fs6sg6bw45bnlqdw")
 
 		if err != nil {
@@ -191,7 +191,7 @@ func TestFileByUID(t *testing.T) {
 
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
-	t.Run("no files found", func(t *testing.T) {
+	t.Run("NoFilesFound", func(t *testing.T) {
 		file, err := FileByUID("111")
 
 		if err == nil {
@@ -204,7 +204,7 @@ func TestFileByUID(t *testing.T) {
 }
 
 func TestFileByHash(t *testing.T) {
-	t.Run("files found", func(t *testing.T) {
+	t.Run("FilesFound", func(t *testing.T) {
 		file, err := FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 
 		if err != nil {
@@ -212,7 +212,7 @@ func TestFileByHash(t *testing.T) {
 		}
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
-	t.Run("no files found", func(t *testing.T) {
+	t.Run("NoFilesFound", func(t *testing.T) {
 		file, err := FileByHash("111")
 
 		assert.Error(t, err, "record not found")
@@ -230,21 +230,21 @@ func TestSetPhotoPrimary(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("no_file_uid", func(t *testing.T) {
+	t.Run("NoFileUid", func(t *testing.T) {
 		err := SetPhotoPrimary("ps6sg6be2lvl0yh7", "")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 	})
-	t.Run("no_uid", func(t *testing.T) {
+	t.Run("NoUid", func(t *testing.T) {
 		err := SetPhotoPrimary("", "")
 
 		if err == nil {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("file missing", func(t *testing.T) {
+	t.Run("FileMissing", func(t *testing.T) {
 		err := SetPhotoPrimary("ps6sg6be2lvl0y22", "")
 
 		if err == nil {
@@ -264,7 +264,7 @@ func TestSetFileError(t *testing.T) {
 }
 
 func TestRenameFile(t *testing.T) {
-	t.Run("empty name", func(t *testing.T) {
+	t.Run("EmptyName", func(t *testing.T) {
 		err := RenameFile("xxx", "", "yyy", "yyy")
 
 		if err == nil {

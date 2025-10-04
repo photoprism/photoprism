@@ -8,25 +8,27 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
+// PhotoLabels is a convenience alias for lists of PhotoLabel relations.
 type PhotoLabels []PhotoLabel
 
-// PhotoLabel represents the many-to-many relation between Photo and label.
-// Labels are weighted by uncertainty (100 - confidence)
+// PhotoLabel represents the many-to-many relation between Photo and Label.
+// Labels are weighted by uncertainty (100 - confidence).
 type PhotoLabel struct {
 	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false"`
 	LabelID     uint   `gorm:"primaryKey;autoIncrement:false;index"`
 	LabelSrc    string `gorm:"type:bytes;size:8;"`
 	Uncertainty int    `gorm:"type:int;size:16;"`
+	Topicality  int    `gorm:"type:int;size:16;"`
 	Photo       *Photo `gorm:"foreignKey:PhotoID;references:ID;" yaml:"-"`
 	Label       *Label `gorm:"foreignKey:LabelID;references:ID;"`
 }
 
-// TableName returns the entity table name.
+// TableName returns the database table name for PhotoLabel.
 func (PhotoLabel) TableName() string {
 	return "photos_labels"
 }
 
-// NewPhotoLabel registers a new PhotoLabel relation with an uncertainty and a source of label
+// NewPhotoLabel registers a new PhotoLabel relation with an uncertainty and source.
 func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *PhotoLabel {
 	result := &PhotoLabel{
 		PhotoID:     photoID,
@@ -38,7 +40,7 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 	return result
 }
 
-// Updates multiple columns in the database.
+// Updates mutates multiple columns in the database and clears cached copies.
 func (m *PhotoLabel) Updates(values interface{}) error {
 	if err := UnscopedDb().Model(m).UpdateColumns(values).Error; err != nil {
 		return err
@@ -47,7 +49,7 @@ func (m *PhotoLabel) Updates(values interface{}) error {
 	return nil
 }
 
-// Update a column in the database.
+// Update mutates a single column in the database and clears cached copies.
 func (m *PhotoLabel) Update(attr string, value interface{}) error {
 	if err := UnscopedDb().Model(m).UpdateColumn(attr, value).Error; err != nil {
 		return err
@@ -56,7 +58,7 @@ func (m *PhotoLabel) Update(attr string, value interface{}) error {
 	return nil
 }
 
-// AfterUpdate flushes the label cache when a label is updated.
+// AfterUpdate flushes the label cache after a relation change.
 func (m *PhotoLabel) AfterUpdate(tx *gorm.DB) (err error) {
 	FlushCachedPhotoLabel(m)
 	return nil
@@ -68,6 +70,7 @@ func (m *PhotoLabel) Save() error {
 		if m.PhotoID == 0 {
 			m.PhotoID = m.Photo.ID
 		}
+		// Clear the eager-loaded Photo pointer so GORM does not attempt to persist it again.
 		m.Photo = nil
 	}
 	if m.PhotoID == 0 {
@@ -87,18 +90,18 @@ func (m *PhotoLabel) Save() error {
 	return Db().Save(m).Error
 }
 
-// Create inserts a new row to the database.
+// Create inserts a new row into the database without touching cache state.
 func (m *PhotoLabel) Create() error {
 	return Db().Create(m).Error
 }
 
-// AfterCreate sets the New column used for database callback
+// AfterCreate flushes the label cache once a relation has been persisted.
 func (m *PhotoLabel) AfterCreate(tx *gorm.DB) (err error) {
 	FlushCachedPhotoLabel(m)
 	return nil
 }
 
-// Delete deletes the label reference.
+// Delete removes the label reference and clears the cache.
 func (m *PhotoLabel) Delete() error {
 	FlushCachedPhotoLabel(m)
 	return Db().Delete(m).Error
@@ -124,7 +127,7 @@ func (m *PhotoLabel) CacheKey() string {
 	return photoLabelCacheKey(m.PhotoID, m.LabelID)
 }
 
-// FirstOrCreatePhotoLabel returns the existing row, inserts a new row or nil in case of errors.
+// FirstOrCreatePhotoLabel returns the existing row, inserts a new row, or nil in case of errors.
 func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	if m == nil {
 		return nil
@@ -146,7 +149,7 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	return nil
 }
 
-// ClassifyLabel returns the label as classify.Label
+// ClassifyLabel returns the label as a classify.Label.
 func (m *PhotoLabel) ClassifyLabel() classify.Label {
 	if m.Label == nil {
 		log.Errorf("photo-label: classify label is nil (photo id %d, label id %d) - you may have found a bug", m.PhotoID, m.LabelID)
@@ -157,6 +160,7 @@ func (m *PhotoLabel) ClassifyLabel() classify.Label {
 		Name:        m.Label.LabelName,
 		Source:      m.LabelSrc,
 		Uncertainty: m.Uncertainty,
+		Topicality:  m.Topicality,
 		Priority:    m.Label.LabelPriority,
 	}
 
