@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-02 11:15+0000\n"
+"PO-Revision-Date: 2025-10-04 08:42+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1021,7 +1021,7 @@ msgstr "Lülitab välja video transkodeerimise ja pisipildi väljavõtte."
 
 #: src/component/photo/edit/details.vue:604
 msgid "Discard"
-msgstr ""
+msgstr "Viska ära"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590

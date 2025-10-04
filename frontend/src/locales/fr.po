@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-02 11:15+0000\n"
+"PO-Revision-Date: 2025-10-04 08:42+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1024,7 +1024,7 @@ msgstr "Désactive le transcodage vidéo et l'extraction des vignettes."
 
 #: src/component/photo/edit/details.vue:604
 msgid "Discard"
-msgstr ""
+msgstr "Jeter"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
@@ -2874,11 +2874,11 @@ msgstr "Trier par"
 
 #: src/page/labels.vue:156
 msgid "Sort by Name (A–Z)"
-msgstr "Trier par nom (A-Z)"
+msgstr "Trier selon le nom (A-Z)"
 
 #: src/page/labels.vue:165
 msgid "Sort by Photo Count"
-msgstr "Trier par nombre de photos"
+msgstr "Trier selon le nombre de photos"
 
 #: src/page/labels.vue:147
 msgid "Sort by Relevance"

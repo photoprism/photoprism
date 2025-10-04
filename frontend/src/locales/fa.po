@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-02 11:15+0000\n"
+"PO-Revision-Date: 2025-10-04 08:42+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -1024,7 +1024,7 @@ msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را
 
 #: src/component/photo/edit/details.vue:604
 msgid "Discard"
-msgstr ""
+msgstr "دور انداختن"
 
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
