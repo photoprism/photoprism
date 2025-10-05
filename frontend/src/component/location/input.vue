@@ -1,20 +1,31 @@
 <template>
-  <v-text-field
-    v-model="coordinateInput"
+  <v-autocomplete
+    v-model="selectedLocation"
+    :items="locationSuggestions"
+    :loading="searchLoading"
+    :search="locationInput"
     :disabled="disabled"
     :hide-details="hideDetails"
     :label="label"
     :placeholder="placeholder"
     :density="density"
     :validate-on="validateOn"
-    :rules="[() => !coordinateInput || isValidCoordinateInput]"
+    :rules="[() => !locationInput || isValidInput]"
     autocomplete="off"
     autocorrect="off"
     autocapitalize="none"
-    class="input-coordinates"
-    @keydown.enter="applyCoordinates"
-    @update:model-value="onCoordinateInputChange"
-    @paste="pastePosition"
+    class="input-location"
+    item-title="displayName"
+    item-value="coordinates"
+    return-object
+    clearable
+    no-filter
+    menu-icon=""
+    :menu-props="{ maxHeight: 300 }"
+    @update:search="onLocationInputChange"
+    @update:model-value="onLocationSelected"
+    @click:clear="clearLocation"
+    @keydown.enter="applyLocation"
   >
     <template v-if="icon" #prepend-inner>
       <v-icon
@@ -38,14 +49,34 @@
         @click.stop="undoClear"
       ></v-icon>
       <v-icon
-        v-else-if="coordinateInput"
+        v-else-if="locationInput"
         variant="plain"
         icon="mdi-close-circle"
         class="action-clear"
-        @click.stop="clearCoordinates"
+        @click.stop="clearLocation"
       ></v-icon>
     </template>
-  </v-text-field>
+    <template #item="{ props, item }">
+      <v-list-item v-bind="props" density="compact">
+        <template #prepend>
+          <v-icon>mdi-map-marker</v-icon>
+        </template>
+        <template #title>
+          <div class="d-flex flex-column">
+            <span class="text-body-2">{{ item.raw.name }}</span>
+            <span v-if="item.raw.coordinates" class="text-caption text-medium-emphasis">
+              {{ item.raw.coordinates[0].toFixed(6) }}, {{ item.raw.coordinates[1].toFixed(6) }}
+            </span>
+          </div>
+        </template>
+      </v-list-item>
+    </template>
+    <template #no-data>
+      <v-list-item v-if="locationInput && locationInput.length >= 2 && !searchLoading && locationSuggestions.length === 0">
+        <v-list-item-title>{{ $gettext("No locations found") }}</v-list-item-title>
+      </v-list-item>
+    </template>
+  </v-autocomplete>
 </template>
 
 <script>
@@ -71,7 +102,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: "37.75267, -122.543",
+      default: "Enter location name or coordinates (e.g., San Francisco or 37.7749, -122.4194)",
     },
     density: {
       type: String,
@@ -113,7 +144,11 @@ export default {
   emits: ["update:latlng", "changed", "cleared", "open-map"],
   data() {
     return {
-      coordinateInput: "",
+      locationInput: "",
+      selectedLocation: null,
+      locationSuggestions: [],
+      searchLoading: false,
+      searchTimeout: null,
       inputTimeout: null,
       wasCleared: false,
       lastValidLat: null,
@@ -121,16 +156,19 @@ export default {
     };
   },
   computed: {
-    isValidCoordinateInput() {
-      if (!this.coordinateInput) return false;
+    isValidInput() {
+      if (!this.locationInput) return false;
 
-      const parts = this.coordinateInput.split(",").map((part) => part.trim());
-      if (parts.length !== 2) return false;
+      // Check if it's valid coordinates
+      const parts = this.locationInput.split(",").map((part) => part.trim());
+      if (parts.length === 2) {
+        const lat = parseFloat(parts[0]);
+        const lng = parseFloat(parts[1]);
+        return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+      }
 
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-
-      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+      // Check if it's a valid location name (at least 2 characters)
+      return this.locationInput.length >= 2;
     },
     showUndoButton() {
       return this.enableUndo && this.wasCleared && this.lastValidLat !== null && this.lastValidLng !== null;
@@ -138,33 +176,37 @@ export default {
   },
   watch: {
     latlng() {
-      this.updateCoordinateInput();
+      this.updateLocationInput();
     },
   },
   mounted() {
-    this.updateCoordinateInput();
+    this.updateLocationInput();
   },
   beforeUnmount() {
     if (this.inputTimeout) {
       clearTimeout(this.inputTimeout);
     }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   },
   methods: {
-    updateCoordinateInput() {
+    updateLocationInput() {
       const lat = this.latlng[0];
       const lng = this.latlng[1];
 
       if (lat !== null && lng !== null && !(lat === 0 && lng === 0) && !isNaN(lat) && !isNaN(lng)) {
-        this.coordinateInput = `${parseFloat(lat)}, ${parseFloat(lng)}`;
+        this.locationInput = `${parseFloat(lat)}, ${parseFloat(lng)}`;
         this.wasCleared = false;
       } else {
-        this.coordinateInput = "";
+        this.locationInput = "";
       }
     },
 
-    onCoordinateInputChange(value) {
-      this.coordinateInput = value;
+    onLocationInputChange(value) {
+      this.locationInput = value;
       this.wasCleared = false;
+      this.selectedLocation = null;
 
       if (this.inputTimeout) {
         clearTimeout(this.inputTimeout);
@@ -172,29 +214,104 @@ export default {
 
       if (this.autoApply) {
         this.inputTimeout = setTimeout(() => {
-          if (this.isValidCoordinateInput) {
-            this.applyCoordinates();
+          if (this.isValidInput) {
+            this.applyLocation();
           }
         }, this.debounceDelay);
       }
-    },
-    applyCoordinates() {
-      if (!this.isValidCoordinateInput) return;
 
-      const parts = this.coordinateInput.split(",").map((part) => part.trim());
+      // Search for locations if input looks like a location name (not coordinates)
+      if (value && value.length >= 2 && !this.isCoordinateInput(value)) {
+        this.searchLocations(value);
+      } else {
+        this.clearSearchTimeout();
+        this.locationSuggestions = [];
+      }
+    },
+
+    isCoordinateInput(input) {
+      const parts = input.split(",").map((part) => part.trim());
+      if (parts.length !== 2) return false;
+      
       const lat = parseFloat(parts[0]);
       const lng = parseFloat(parts[1]);
+      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+    },
 
+    async searchLocations(query) {
+      this.clearSearchTimeout();
+      
+      this.searchTimeout = setTimeout(async () => {
+        if (!query || query.length < 2 || this.isCoordinateInput(query)) {
+          return;
+        }
+
+        this.searchLoading = true;
+        
+        try {
+          const response = await this.$api.get("places/search", {
+            params: {
+              q: query,
+              count: 10,
+              locale: this.$config.getLanguageLocale() || "en",
+            },
+          });
+
+          if (response.data && Array.isArray(response.data)) {
+            this.locationSuggestions = response.data.map(place => ({
+              name: place.name,
+              coordinates: [place.lat, place.lng],
+              displayName: place.name,
+            }));
+          } else {
+            this.locationSuggestions = [];
+          }
+        } catch (error) {
+          console.error("Location search error:", error);
+          this.locationSuggestions = [];
+        } finally {
+          this.searchLoading = false;
+        }
+      }, 300);
+    },
+
+    onLocationSelected(location) {
+      if (location && location.coordinates) {
+        this.selectedLocation = location;
+        this.applyCoordinates(location.coordinates[0], location.coordinates[1]);
+      }
+    },
+
+    applyLocation() {
+      if (!this.isValidInput) return;
+
+      // If it's coordinates input
+      if (this.isCoordinateInput(this.locationInput)) {
+        const parts = this.locationInput.split(",").map((part) => part.trim());
+        const lat = parseFloat(parts[0]);
+        const lng = parseFloat(parts[1]);
+        this.applyCoordinates(lat, lng);
+      }
+      // If it's a selected location
+      else if (this.selectedLocation && this.selectedLocation.coordinates) {
+        this.applyCoordinates(this.selectedLocation.coordinates[0], this.selectedLocation.coordinates[1]);
+      }
+    },
+
+    applyCoordinates(lat, lng) {
       this.$emit("update:latlng", [lat, lng]);
       this.$emit("changed", { lat: lat, lng: lng });
     },
-    clearCoordinates() {
+
+    clearLocation() {
       if (this.enableUndo) {
         this.lastValidLat = this.latlng[0];
         this.lastValidLng = this.latlng[1];
       }
 
-      this.coordinateInput = "";
+      this.locationInput = "";
+      this.selectedLocation = null;
+      this.locationSuggestions = [];
       this.wasCleared = true;
 
       this.$emit("update:latlng", [0, 0]);
@@ -206,6 +323,14 @@ export default {
         previousLongitude: this.lastValidLng,
       });
     },
+
+    clearSearchTimeout() {
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = null;
+      }
+    },
+
     undoClear() {
       if (this.lastValidLat !== null && this.lastValidLng !== null) {
         this.$emit("update:latlng", [this.lastValidLat, this.lastValidLng]);
