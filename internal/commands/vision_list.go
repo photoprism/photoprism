@@ -26,7 +26,17 @@ func visionListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"Type", "Name", "Version", "Resolution", "Service Endpoint", "Options", "Tags", "Disabled"}
+		cols := []string{
+			"Type",
+			"Model",
+			"Engine",
+			"Endpoint",
+			"Format",
+			"Resolution",
+			"Options",
+			"Schedule",
+			"Status",
+		}
 
 		// Show log message.
 		log.Infof("found %s", english.Plural(len(vision.Config.Models), "model", "models"))
@@ -42,14 +52,10 @@ func visionListAction(ctx *cli.Context) error {
 			modelUri, modelMethod := model.Endpoint()
 			tags := ""
 
-			_, name, version := model.Model()
+			name, _, _ := model.Model()
 
 			if model.TensorFlow != nil && model.TensorFlow.Tags != nil {
 				tags = strings.Join(model.TensorFlow.Tags, ", ")
-			}
-
-			if model.Default {
-				version = "default"
 			}
 
 			var options []byte
@@ -57,15 +63,44 @@ func visionListAction(ctx *cli.Context) error {
 				options, _ = json.Marshal(*o)
 			}
 
+			var format string
+
+			if modelUri != "" && modelMethod != "" {
+				if f := model.EndpointRequestFormat(); f != "" {
+					format = f
+				}
+			}
+
+			if responseFormat := model.GetFormat(); responseFormat != "" {
+				if format != "" {
+					format = fmt.Sprintf("%s:%s", format, responseFormat)
+				} else {
+					format = responseFormat
+				}
+			}
+
+			if format == "" && model.Default {
+				format = "default"
+			}
+
+			var run string
+
+			if run = model.RunType(); run == "" {
+				run = "auto"
+			}
+
+			engine := model.EngineName()
+
 			rows[i] = []string{
 				model.Type,
 				name,
-				version,
-				fmt.Sprintf("%d", model.Resolution),
+				engine,
 				fmt.Sprintf("%s %s", modelMethod, modelUri),
-				string(options),
-				tags,
-				report.Bool(model.Disabled, report.Yes, report.No),
+				format,
+				fmt.Sprintf("%d", model.Resolution),
+				report.Bool(len(options) == 0, "tags: "+tags, string(options)),
+				run,
+				report.Bool(model.Disabled, report.Disabled, report.Enabled),
 			}
 		}
 

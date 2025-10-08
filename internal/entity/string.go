@@ -8,7 +8,7 @@ const (
 	ClipStringType = 64
 )
 
-// ToASCII removes all non-ascii characters from a string and returns it.
+// ToASCII removes all non-ASCII runes from the string.
 func ToASCII(s string) string {
 	result := make([]rune, 0, len(s))
 
@@ -21,7 +21,7 @@ func ToASCII(s string) string {
 	return string(result)
 }
 
-// Clip shortens a string to the given number of characters, and removes all leading and trailing white space.
+// Clip trims leading/trailing whitespace and shortens the string to maxLen characters.
 func Clip(s string, maxLen int) string {
 	s = strings.TrimSpace(s)
 	l := len(s)
@@ -33,17 +33,17 @@ func Clip(s string, maxLen int) string {
 	}
 }
 
-// SanitizeStringType omits invalid runes, ensures a maximum length of 32 characters, and returns the result.
+// SanitizeStringType normalizes identifier-like strings by stripping non-ASCII runes and clipping to 32 characters.
 func SanitizeStringType(s string) string {
 	return Clip(ToASCII(s), ClipStringType)
 }
 
-// SanitizeStringTypeLower converts a type string to lowercase, omits invalid runes, and shortens it if needed.
+// SanitizeStringTypeLower lowercases the string before applying SanitizeStringType.
 func SanitizeStringTypeLower(s string) string {
 	return SanitizeStringType(strings.ToLower(s))
 }
 
-// TypeString returns an entity type string for logging.
+// TypeString returns an entity type string for logging, defaulting to "unknown".
 func TypeString(entityType string) string {
 	if entityType == "" {
 		return "unknown"

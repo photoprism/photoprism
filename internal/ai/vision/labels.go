@@ -1,17 +1,38 @@
 package vision
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// Labels finds matching labels for the specified image.
-func Labels(images Files, mediaSrc media.Src, labelSrc string) (result classify.Labels, err error) {
+var labelsFunc = labelsInternal
+
+// SetLabelsFunc overrides the labels generator. Intended for tests.
+func SetLabelsFunc(fn func(Files, media.Src, string) (classify.Labels, error)) {
+	if fn == nil {
+		labelsFunc = labelsInternal
+		return
+	}
+
+	labelsFunc = fn
+}
+
+// GenerateLabels finds matching labels for the specified image.
+// Caller must pass the appropriate metadata source string (e.g., entity.SrcOllama, entity.SrcOpenAI)
+// so that downstream indexing can record where the labels originated.
+func GenerateLabels(images Files, mediaSrc media.Src, labelSrc string) (classify.Labels, error) {
+	return labelsFunc(images, mediaSrc, labelSrc)
+}
+
+func labelsInternal(images Files, mediaSrc media.Src, labelSrc string) (result classify.Labels, err error) {
 	// Return if no thumbnail filenames were given.
 	if len(images) == 0 {
 		return result, errors.New("at least one image required")
@@ -21,31 +42,64 @@ func Labels(images Files, mediaSrc media.Src, labelSrc string) (result classify.
 	if Config == nil {
 		return result, errors.New("vision service is not configured")
 	} else if model := Config.Model(ModelTypeLabels); model != nil {
+		if labelSrc == entity.SrcAuto {
+			switch model.EndpointRequestFormat() {
+			case ApiFormatOllama:
+				labelSrc = entity.SrcOllama
+			case ApiFormatOpenAI:
+				labelSrc = entity.SrcOpenAI
+			default:
+				labelSrc = entity.SrcImage
+			}
+		}
+
 		// Use remote service API if a server endpoint has been configured.
 		if uri, method := model.Endpoint(); uri != "" && method != "" {
 			var apiRequest *ApiRequest
 			var apiResponse *ApiResponse
 
-			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme()); err != nil {
+			if engine, ok := EngineFor(model.EndpointRequestFormat()); ok && engine.Builder != nil {
+				if apiRequest, err = engine.Builder.Build(context.Background(), model, images); err != nil {
+					return result, err
+				}
+			} else if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme()); err != nil {
 				return result, err
 			}
 
-			switch model.Service.RequestFormat {
-			case ApiFormatOllama:
-				apiRequest.Model, _, _ = model.Model()
-			default:
-				_, apiRequest.Model, apiRequest.Version = model.Model()
+			if format := model.GetFormat(); format != "" {
+				apiRequest.Format = format
 			}
 
-			if model.System != "" {
-				apiRequest.System = model.System
+			if apiRequest.Model == "" {
+				switch model.Service.RequestFormat {
+				case ApiFormatOllama:
+					apiRequest.Model, _, _ = model.Model()
+				default:
+					_, apiRequest.Model, apiRequest.Version = model.Model()
+				}
 			}
 
-			if model.Prompt != "" {
-				apiRequest.Prompt = model.Prompt
+			if system := model.GetSystemPrompt(); system != "" {
+				apiRequest.System = system
 			}
 
-			// Log JSON request data in trace mode.
+			prompt := strings.TrimSpace(model.GetPrompt())
+			if schemaPrompt := model.SchemaInstructions(); schemaPrompt != "" {
+				if prompt != "" {
+					prompt = fmt.Sprintf("%s\n\n%s", prompt, schemaPrompt)
+				} else {
+					prompt = schemaPrompt
+				}
+			}
+
+			if prompt != "" {
+				apiRequest.Prompt = prompt
+			}
+
+			if options := model.GetOptions(); options != nil {
+				apiRequest.Options = options
+			}
+
 			apiRequest.WriteLog()
 
 			if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {
@@ -106,6 +160,13 @@ func mergeLabels(result, labels classify.Labels) classify.Labels {
 
 				if labels[j].Priority > result[k].Priority {
 					result[k].Priority = labels[j].Priority
+				}
+
+				if labels[j].NSFW && !result[k].NSFW {
+					result[k].NSFW = true
+					result[k].NSFWConfidence = labels[j].NSFWConfidence
+				} else if labels[j].NSFWConfidence > result[k].NSFWConfidence {
+					result[k].NSFWConfidence = labels[j].NSFWConfidence
 				}
 			}
 		}

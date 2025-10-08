@@ -237,11 +237,11 @@ func (c *Config) CreateDirectories() error {
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
 	if c.options.ConfigPath == "" {
-		if fs.PathExists(filepath.Join(c.StoragePath(), "settings")) {
-			return filepath.Join(c.StoragePath(), "settings")
+		if fs.PathExists(filepath.Join(c.StoragePath(), fs.SettingsDir)) {
+			return filepath.Join(c.StoragePath(), fs.SettingsDir)
 		}
 
-		return filepath.Join(c.StoragePath(), "config")
+		return filepath.Join(c.StoragePath(), fs.ConfigDir)
 	} else if fs.FileExists(c.options.ConfigPath) {
 		if c.options.OptionsYaml == "" {
 			c.options.OptionsYaml = c.options.ConfigPath
@@ -357,7 +357,7 @@ func (c *Config) ImportAllow() fs.ExtList {
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.options.SidecarPath == "" {
-		c.options.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")
+		c.options.SidecarPath = filepath.Join(c.StoragePath(), fs.SidecarDir)
 	}
 
 	return c.options.SidecarPath
@@ -377,7 +377,7 @@ func (c *Config) SidecarWritable() bool {
 func (c *Config) UsersPath() string {
 	// Set default.
 	if c.options.UsersPath == "" {
-		return "users"
+		return fs.UsersDir
 	}
 
 	return clean.UserPath(c.options.UsersPath)
@@ -390,7 +390,7 @@ func (c *Config) UsersOriginalsPath() string {
 
 // UsersStoragePath returns the users storage base path.
 func (c *Config) UsersStoragePath() string {
-	return filepath.Join(c.StoragePath(), "users")
+	return filepath.Join(c.StoragePath(), fs.UsersDir)
 }
 
 // UserStoragePath returns the storage path for user assets.
@@ -414,7 +414,7 @@ func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 		return "", fmt.Errorf("invalid uid")
 	}
 
-	dir := filepath.Join(c.UserStoragePath(userUid), "upload", clean.Token(token))
+	dir := filepath.Join(c.UserStoragePath(userUid), fs.UploadDir, clean.Token(token))
 
 	if err := fs.MkdirAll(dir); err != nil {
 		return "", err
@@ -486,7 +486,7 @@ func (c *Config) tempPath() string {
 // CachePath returns the path for cache files.
 func (c *Config) CachePath() string {
 	if c.options.CachePath == "" {
-		return filepath.Join(c.StoragePath(), "cache")
+		return filepath.Join(c.StoragePath(), fs.CacheDir)
 	}
 
 	return fs.Abs(c.options.CachePath)
@@ -494,7 +494,7 @@ func (c *Config) CachePath() string {
 
 // CmdCachePath returns a path that external CLI tools can use as cache directory.
 func (c *Config) CmdCachePath() string {
-	return filepath.Join(c.CachePath(), "cmd")
+	return filepath.Join(c.CachePath(), fs.CmdDir)
 }
 
 // CmdLibPath returns the dynamic loader path that external CLI tools should use.
@@ -508,7 +508,7 @@ func (c *Config) CmdLibPath() string {
 
 // MediaCachePath returns the main media cache path.
 func (c *Config) MediaCachePath() string {
-	return filepath.Join(c.CachePath(), "media")
+	return filepath.Join(c.CachePath(), fs.MediaDir)
 }
 
 // MediaFileCachePath returns the cache subdirectory path for a given file hash.
@@ -536,17 +536,15 @@ func (c *Config) MediaFileCachePath(hash string) string {
 
 // ThumbCachePath returns the thumbnail storage path.
 func (c *Config) ThumbCachePath() string {
-	return filepath.Join(c.CachePath(), "thumbnails")
+	return filepath.Join(c.CachePath(), fs.ThumbnailsDir)
 }
 
 // StoragePath returns the path for generated files like cache and index.
 func (c *Config) StoragePath() string {
 	if c.options.StoragePath == "" {
-		const dirName = "storage"
-
 		// Default directories.
-		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, dirName))
-		storageDir := fs.Abs(dirName)
+		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, fs.StorageDir))
+		storageDir := fs.Abs(fs.StorageDir)
 
 		// Find existing directories.
 		if fs.PathWritable(originalsDir) && !c.ReadOnly() {
@@ -557,12 +555,12 @@ func (c *Config) StoragePath() string {
 
 		// Fallback to backup storage path.
 		if fs.PathWritable(c.options.BackupPath) {
-			return fs.Abs(filepath.Join(c.options.BackupPath, dirName))
+			return fs.Abs(filepath.Join(c.options.BackupPath, fs.StorageDir))
 		}
 
 		// Use .photoprism in home directory?
 		if usr, _ := user.Current(); usr.HomeDir != "" {
-			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, dirName))
+			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, fs.StorageDir))
 
 			if fs.PathWritable(p) || c.ReadOnly() {
 				return p
@@ -571,7 +569,7 @@ func (c *Config) StoragePath() string {
 
 		// Fallback directory in case nothing else works.
 		if c.ReadOnly() {
-			return fs.Abs(filepath.Join(fs.PPHiddenPathname, dirName))
+			return fs.Abs(filepath.Join(fs.PPHiddenPathname, fs.StorageDir))
 		}
 
 		// Store cache and index in "originals/.photoprism/storage".
@@ -602,7 +600,7 @@ func (c *Config) CustomAssetsPath() string {
 
 // ProfilesPath returns the path where processing profile files are stored.
 func (c *Config) ProfilesPath() string {
-	return filepath.Join(c.AssetsPath(), "profiles")
+	return filepath.Join(c.AssetsPath(), fs.ProfilesDir)
 }
 
 // IccProfilesPath returns the path where ICC color profile files are stored.
@@ -614,7 +612,7 @@ func (c *Config) IccProfilesPath() string {
 func (c *Config) CustomStaticPath() string {
 	if dir := c.CustomAssetsPath(); dir == "" {
 		return ""
-	} else if dir = filepath.Join(dir, "static"); !fs.PathExists(dir) {
+	} else if dir = filepath.Join(dir, fs.StaticDir); !fs.PathExists(dir) {
 		return ""
 	} else {
 		return dir
@@ -650,17 +648,17 @@ func (c *Config) CustomStaticAssetUri(res string) string {
 
 // LocalesPath returns the translation locales path.
 func (c *Config) LocalesPath() string {
-	return filepath.Join(c.AssetsPath(), "locales")
+	return filepath.Join(c.AssetsPath(), fs.LocalesDir)
 }
 
 // ExamplesPath returns the example files path.
 func (c *Config) ExamplesPath() string {
-	return filepath.Join(c.AssetsPath(), "examples")
+	return filepath.Join(c.AssetsPath(), fs.ExamplesDir)
 }
 
 // TestdataPath returns the test files path.
 func (c *Config) TestdataPath() string {
-	return filepath.Join(c.StoragePath(), "testdata")
+	return filepath.Join(c.StoragePath(), fs.TestdataDir)
 }
 
 // MariadbBin returns the mariadb executable file name.
@@ -680,5 +678,5 @@ func (c *Config) SqliteBin() string {
 
 // OriginalsAlbumsPath returns the optional album YAML file path inside originals.
 func (c *Config) OriginalsAlbumsPath() string {
-	return filepath.Join(c.OriginalsPath(), "albums")
+	return filepath.Join(c.OriginalsPath(), fs.AlbumsDir)
 }

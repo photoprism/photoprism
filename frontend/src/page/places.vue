@@ -714,7 +714,7 @@ export default {
     },
     updateQuery() {
       if (this.loading) {
-        return;
+        return false;
       }
 
       if (this.query() !== this.filter.q) {
@@ -729,7 +729,11 @@ export default {
         } else {
           this.$router.replace({ name: "places" });
         }
+
+        return true;
       }
+
+      return false;
     },
     searchParams() {
       const params = {

@@ -14,7 +14,7 @@ const (
 
 // CertificatesPath returns the path to the TLS certificates and keys.
 func (c *Config) CertificatesPath() string {
-	return filepath.Join(c.ConfigPath(), "certificates")
+	return filepath.Join(c.ConfigPath(), fs.CertificatesDir)
 }
 
 // TLSEmail returns the email address to enable automatic HTTPS via Let's Encrypt

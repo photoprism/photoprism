@@ -51,7 +51,6 @@ func TestSettings_ApplyACL(t *testing.T) {
 		t.Logf("RoleAdmin: %#v", r)
 		assert.Equal(t, expected, r.Features)
 	})
-
 	t.Run("RoleVisitor", func(t *testing.T) {
 		s := NewDefaultSettings()
 

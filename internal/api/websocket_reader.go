@@ -39,7 +39,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 				wsAuth.mutex.Lock()
 				wsAuth.sid[connId] = s.ID
 				wsAuth.rid[connId] = s.RefID
-				wsAuth.user[connId] = *s.User()
+				wsAuth.user[connId] = *s.GetUser()
 				wsAuth.mutex.Unlock()
 
 				wsSendMessage("config.updated", event.Data{"config": conf.ClientSession(s)}, ws, writeMutex)

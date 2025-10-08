@@ -44,6 +44,7 @@ func (l Labels) Less(i, j int) bool {
 	}
 }
 
+// AppendLabel adds a label if it has a name and returns the extended slice.
 func (l Labels) AppendLabel(label Label) Labels {
 	if label.Name == "" {
 		return l
@@ -52,6 +53,7 @@ func (l Labels) AppendLabel(label Label) Labels {
 	return append(l, label)
 }
 
+// Keywords flattens label names and categories into keyword tokens.
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
 		result = append(result, txt.Keywords(label.Name)...)
@@ -64,6 +66,7 @@ func (l Labels) Keywords() (result []string) {
 	return result
 }
 
+// Title picks the best label name as title, using fallback when confidence is low.
 func (l Labels) Title(fallback string) string {
 	fallbackRunes := len([]rune(fallback))
 

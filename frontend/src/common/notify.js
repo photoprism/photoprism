@@ -54,10 +54,10 @@ const $notify = {
     ajaxPending--;
     $event.publish("ajax.end");
 
-    if (!this.ajaxBusy()) {
-      ajaxCallbacks.forEach((resolve) => {
-        resolve();
-      });
+    if (!this.ajaxBusy() && ajaxCallbacks.length) {
+      const callbacks = ajaxCallbacks;
+      ajaxCallbacks = [];
+      callbacks.forEach((cb) => cb());
     }
   },
   ajaxBusy: function () {
@@ -67,13 +67,31 @@ const $notify = {
 
     return ajaxPending > 0;
   },
-  ajaxWait: function () {
+  ajaxWait: function (idleDelay = 64, timeout = 8000) {
     return new Promise((resolve) => {
-      if (this.ajaxBusy()) {
-        ajaxCallbacks.push(resolve);
-      } else {
-        resolve();
-      }
+      const start = Date.now();
+
+      const settle = () => {
+        if (timeout && Date.now() - start > timeout) {
+          resolve();
+          return;
+        }
+
+        if (this.ajaxBusy()) {
+          ajaxCallbacks.push(settle);
+          return;
+        }
+
+        window.setTimeout(() => {
+          if (this.ajaxBusy()) {
+            settle();
+          } else {
+            resolve();
+          }
+        }, idleDelay);
+      };
+
+      settle();
     });
   },
   blockUI: function (className) {

@@ -1,11 +1,14 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 // FacesOptimizeResult represents the outcome of Faces.Optimize().
@@ -18,7 +21,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 	return w.OptimizeFor("")
 }
 
-// Optimize optimizes the face lookup table for the specified subj_uid or "" for all subjects
+// OptimizeFor optimizes the face lookup table for the given subject UID (or all when empty).
 func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
 		return result, fmt.Errorf("face recognition is disabled")
@@ -48,8 +51,26 @@ func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err er
 			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID || j == n {
 				if len(merge) < 2 {
 					// Nothing to merge.
-				} else if _, err := query.MergeFaces(merge, false); err != nil {
-					log.Errorf("%s (merge) itr %d cluster %d count %d", err, i, j, len(merge))
+				} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
+					if errors.Is(mergeErr, query.ErrRetainedManualClusters) {
+						subject := entity.SubjNames.Log(merge[0].SubjUID)
+						clusterIDs := strings.Join(merge.IDs(), ", ")
+
+						event.SystemWarn([]string{
+							"faces",
+							"optimize",
+							"retained manual clusters after merge",
+							"subject %s",
+							"iteration %d",
+							"cluster %d",
+							"count %d",
+							"ids %s",
+						}, subject, i, j, len(merge), clusterIDs)
+
+						log.Debugf("faces: retained manual clusters after merge: kept %d candidate cluster(s) [%s] for subject %s (merge) itr %d cluster %d", len(merge), clusterIDs, subject, i, j)
+					} else {
+						log.Errorf("%s (merge) itr %d cluster %d count %d", mergeErr, i, j, len(merge))
+					}
 				} else {
 					// not exactly right, potentially overcounting
 					// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360

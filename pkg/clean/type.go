@@ -2,6 +2,7 @@ package clean
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
@@ -13,6 +14,50 @@ func Type(s string) string {
 	}
 
 	return clip.Chars(ASCII(s), LengthType)
+}
+
+// TypeUnderscore replaces whitespace, dividers, quotes, brackets, and other special characters with an underscore.
+func TypeUnderscore(s string) string {
+	if s == "" {
+		return s
+	}
+
+	s = strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return '_'
+		}
+
+		switch r {
+		case '-', '`', '~', '\\', '|', '"', '\'', '?', '*', '<', '>', '{', '}':
+			return '_'
+		default:
+			return r
+		}
+	}, s)
+
+	return s
+}
+
+// TypeDash replaces whitespace, dividers, quotes, brackets, and other special characters with a dash.
+func TypeDash(s string) string {
+	if s == "" {
+		return s
+	}
+
+	s = strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return '-'
+		}
+
+		switch r {
+		case '_', '`', '~', '\\', '|', '"', '\'', '?', '*', '<', '>', '{', '}':
+			return '-'
+		default:
+			return r
+		}
+	}, s)
+
+	return s
 }
 
 // TypeLower converts a type string to lowercase, omits invalid runes, and shortens it if needed.
@@ -30,7 +75,7 @@ func TypeLowerUnderscore(s string) string {
 		return s
 	}
 
-	return strings.ReplaceAll(TypeLower(s), " ", "_")
+	return TypeUnderscore(TypeLower(s))
 }
 
 // TypeLowerDash converts a string to a lowercase type string and replaces spaces with dashes.
@@ -39,7 +84,7 @@ func TypeLowerDash(s string) string {
 		return s
 	}
 
-	return strings.ReplaceAll(TypeLower(s), " ", "-")
+	return TypeDash(TypeLower(s))
 }
 
 // ShortType omits invalid runes, ensures a maximum length of 8 characters, and returns the result.
@@ -66,5 +111,14 @@ func ShortTypeLowerUnderscore(s string) string {
 		return s
 	}
 
-	return strings.ReplaceAll(ShortTypeLower(s), " ", "_")
+	return TypeUnderscore(ShortTypeLower(s))
+}
+
+// ShortTypeLowerDash converts a string to a short lowercase type string and replaces spaces with dashes.
+func ShortTypeLowerDash(s string) string {
+	if s == "" {
+		return s
+	}
+
+	return TypeDash(ShortTypeLower(s))
 }

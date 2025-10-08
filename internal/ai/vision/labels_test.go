@@ -10,9 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-func TestLabels(t *testing.T) {
+func TestGenerateLabels(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		result, err := Labels(Files{examplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
+		result, err := GenerateLabels(Files{examplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
 
 		assert.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
@@ -24,7 +24,7 @@ func TestLabels(t *testing.T) {
 		assert.Equal(t, 7, result[0].Uncertainty)
 	})
 	t.Run("Cat224", func(t *testing.T) {
-		result, err := Labels(Files{examplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
+		result, err := GenerateLabels(Files{examplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
 
 		assert.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
@@ -37,7 +37,7 @@ func TestLabels(t *testing.T) {
 		assert.InDelta(t, float32(0.41), result[0].Confidence(), 0.1)
 	})
 	t.Run("Cat720", func(t *testing.T) {
-		result, err := Labels(Files{examplesPath + "/cat_720.jpeg"}, media.SrcLocal, entity.SrcAuto)
+		result, err := GenerateLabels(Files{examplesPath + "/cat_720.jpeg"}, media.SrcLocal, entity.SrcAuto)
 
 		assert.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
@@ -50,7 +50,7 @@ func TestLabels(t *testing.T) {
 		assert.InDelta(t, float32(0.4), result[0].Confidence(), 0.1)
 	})
 	t.Run("InvalidFile", func(t *testing.T) {
-		_, err := Labels(Files{examplesPath + "/notexisting.jpg"}, media.SrcLocal, entity.SrcAuto)
+		_, err := GenerateLabels(Files{examplesPath + "/notexisting.jpg"}, media.SrcLocal, entity.SrcAuto)
 		assert.Error(t, err)
 	})
 }

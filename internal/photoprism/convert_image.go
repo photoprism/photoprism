@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // ToImage converts a media file to a directly supported image file format.
@@ -157,8 +157,8 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
 
-		// Log exact command for debugging in trace mode.
-		log.Trace(cmd.String())
+		// Log exact command in debug mode.
+		log.Debug(cmd.String())
 
 		// Run convert command.
 		if err = cmd.Run(); err != nil {

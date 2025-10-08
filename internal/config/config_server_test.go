@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 

@@ -1,6 +1,7 @@
 package txt
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,6 +24,22 @@ func TestClip(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Clip("", -1))
 	})
+}
+
+func BenchmarkClipRunesASCII(b *testing.B) {
+	s := strings.Repeat("abc def ghi ", 20) // ASCII
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = Clip(s, 50)
+	}
+}
+
+func BenchmarkClipRunesUTF8(b *testing.B) {
+	s := strings.Repeat("Grüße 世", 20) // non-ASCII runes
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = Clip(s, 50)
+	}
 }
 
 func TestShorten(t *testing.T) {

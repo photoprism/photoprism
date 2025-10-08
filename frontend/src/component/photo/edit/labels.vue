@@ -192,6 +192,7 @@ export default {
       default: "",
     },
   },
+  emits: ["close"],
   data() {
     return {
       view: this.$view.getData(),
@@ -201,15 +202,30 @@ export default {
       selected: [],
       newLabel: "",
       listColumns: [
-        { title: this.$gettext("Label"), key: "", sortable: false, align: "left" },
-        { title: this.$gettext("Source"), key: "LabelSrc", sortable: false, align: "left" },
+        {
+          title: this.$gettext("Label"),
+          key: "",
+          sortable: false,
+          align: "left",
+        },
+        {
+          title: this.$gettext("Source"),
+          key: "LabelSrc",
+          sortable: false,
+          align: "left",
+        },
         {
           title: this.$gettext("Confidence"),
           key: "Uncertainty",
           sortable: false,
           align: "center",
         },
-        { title: this.$gettext("Action"), key: "", sortable: false, align: "center" },
+        {
+          title: this.$gettext("Action"),
+          key: "",
+          sortable: false,
+          align: "center",
+        },
       ],
       nameRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
@@ -217,24 +233,7 @@ export default {
   methods: {
     refresh() {},
     sourceName(s) {
-      switch (s) {
-        case "batch":
-          return this.$gettext("Batch");
-        case "manual":
-          return this.$gettext("Manual");
-        case "title":
-          return this.$gettext("Title");
-        case "caption":
-          return this.$gettext("Caption");
-        case "subject":
-          return this.$gettext("Subject");
-        case "image":
-          return this.$gettext("Image");
-        case "location":
-          return this.$gettext("Location");
-        default:
-          return this.$util.ucFirst(s);
-      }
+      return this.$util.sourceName(s);
     },
     removeLabel(label) {
       if (!label || !this.view?.model) {

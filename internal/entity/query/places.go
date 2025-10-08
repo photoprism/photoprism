@@ -4,11 +4,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// Cell represents the minimal fields needed for a place cell lookup.
 type Cell struct {
 	ID      string
 	PlaceID string
 }
 
+// Cells is a convenience slice for bulk cell operations.
 type Cells []Cell
 
 // CellIDs returns all known S2 cell ids as Cell slice.

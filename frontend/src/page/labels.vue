@@ -43,30 +43,7 @@
           "
         ></v-text-field>
 
-        <v-btn
-          v-if="!filter.all"
-          icon="mdi-eye"
-          tabindex="2"
-          :title="$gettext('Show more')"
-          class="action-show-all ms-1"
-          @click.stop="showAll"
-        >
-        </v-btn>
-        <v-btn
-          v-else
-          icon="mdi-eye-off"
-          tabindex="2"
-          :title="$gettext('Show less')"
-          class="action-show-important ms-1"
-          @click.stop="showImportant"
-        >
-        </v-btn>
-        <p-action-menu
-          v-if="$vuetify.display.mdAndUp"
-          :items="menuActions"
-          :tabindex="3"
-          button-class="ms-1"
-        ></p-action-menu>
+        <p-action-menu :items="menuActions" :tabindex="3" button-class="ms-1"></p-action-menu>
       </v-toolbar>
     </v-form>
 
@@ -172,6 +149,11 @@
           </div>
         </div>
       </div>
+      <div v-if="results.length && !filter.all && !filter.q" class="d-flex justify-center my-8">
+        <v-btn color="button" rounded variant="flat" @click.stop="showAll">
+          {{ $gettext(`Show All Labels`) }}
+        </v-btn>
+      </div>
     </div>
 
     <p-label-edit-dialog :visible="dialog.edit" :label="model" @close="dialog.edit = false"></p-label-edit-dialog>
@@ -199,13 +181,19 @@ export default {
       type: Object,
       default: () => {},
     },
+    defaultOrder: {
+      type: String,
+      default: "relevance",
+    },
   },
   expose: ["onShortCut"],
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
+    const order = this.sortOrder();
     const q = query["q"] ? query["q"] : "";
     const all = query["all"] ? query["all"] : "";
+    const settings = {};
 
     const features = this.$config.getSettings().features;
     const canManage = this.$config.allow("labels", "manage");
@@ -228,8 +216,8 @@ export default {
       offset: 0,
       page: 0,
       selection: [],
-      settings: {},
-      filter: { q, all },
+      settings: settings,
+      filter: { q, order, all },
       lastFilter: {},
       routeName: routeName,
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
@@ -260,6 +248,7 @@ export default {
       this.routeName = this.$route.name;
       this.lastFilter = {};
       this.filter.q = query["q"] ? query["q"] : "";
+      this.filter.order = this.sortOrder();
       this.filter.all = query["all"] ? query["all"] : "";
 
       this.search();
@@ -292,15 +281,60 @@ export default {
           icon: "mdi-refresh",
           text: this.$gettext("Refresh"),
           shortcut: "Ctrl-R",
-          visible: true,
+          visible: this.$vuetify.display.mdAndUp,
           click: () => {
             this.refresh();
           },
         },
         {
+          name: "show-all",
+          icon: "mdi-eye",
+          text: this.$gettext("Show All Labels"),
+          visible: !this.filter.all,
+          click: () => {
+            this.showAll();
+          },
+        },
+        {
+          name: "show-important",
+          icon: "mdi-eye-off",
+          text: this.$gettext("Show Important Only"),
+          visible: this.filter.all,
+          click: () => {
+            this.showImportant();
+          },
+        },
+        {
+          name: "sort-by-relevance",
+          icon: "mdi-star",
+          text: this.$gettext("Sort by Relevance"),
+          visible: this.filter?.order !== "relevance",
+          click: () => {
+            this.updateQuery({ order: "relevance" });
+          },
+        },
+        {
+          name: "sort-by-name",
+          icon: "mdi-sort-alphabetical-descending-variant",
+          text: this.$gettext("Sort by Name (A–Z)"),
+          visible: this.filter?.order !== "slug",
+          click: () => {
+            this.updateQuery({ order: "slug" });
+          },
+        },
+        {
+          name: "sort-by-count",
+          icon: "mdi-sort-numeric-descending-variant",
+          text: this.$gettext("Sort by Photo Count"),
+          visible: this.filter?.order !== "count",
+          click: () => {
+            this.updateQuery({ order: "count" });
+          },
+        },
+        {
           name: "upload",
           icon: "mdi-cloud-upload",
-          text: this.$gettext("Upload"),
+          text: this.$gettext("Upload") + "…",
           shortcut: "Ctrl-U",
           visible: this.canUpload,
           click: () => {
@@ -342,6 +376,23 @@ export default {
 
       this.model = label;
       this.dialog.edit = true;
+    },
+    sortOrder() {
+      const keyName = "labels.order";
+      const queryParam = this.$route.query["order"];
+      const storedOrder = window.localStorage.getItem(keyName);
+
+      if (queryParam) {
+        window.localStorage.setItem(keyName, queryParam);
+        return queryParam;
+      } else if (storedOrder) {
+        return storedOrder;
+      }
+
+      return this.defaultOrder;
+    },
+    sortReverse() {
+      return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
     },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("labels.offset"));
@@ -459,8 +510,11 @@ export default {
       label.update();
     },
     showAll() {
+      this.$view.saveWindowScrollPos();
       this.filter.all = "true";
-      this.updateQuery();
+      if (!this.updateQuery()) {
+        this.$view.clearWindowScrollPos();
+      }
     },
     showImportant() {
       this.filter.all = "";
@@ -609,7 +663,9 @@ export default {
     updateQuery(props) {
       this.updateFilter(props);
 
-      if (this.loading) return;
+      if (this.loading) {
+        return false;
+      }
 
       const query = {
         view: this.settings.view,
@@ -624,10 +680,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {

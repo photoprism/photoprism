@@ -1,15 +1,20 @@
 package face
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/dustin/go-humanize/english"
+	pigo "github.com/esimov/pigo/core"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
+
+var benchmarkFacesCount int
 
 func TestDetect(t *testing.T) {
 	expected := map[string]int{
@@ -29,9 +34,9 @@ func TestDetect(t *testing.T) {
 		"14.jpg": 0,
 		"15.jpg": 0,
 		"16.jpg": 1,
-		"17.jpg": 1,
+		"17.jpg": 2,
 		"18.jpg": 2,
-		"19.jpg": 0,
+		"19.jpg": 1,
 	}
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
@@ -129,5 +134,79 @@ func TestDetectOverlap(t *testing.T) {
 		return nil
 	}); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestDetectLandmarkCounts(t *testing.T) {
+	faces, err := Detect("testdata/18.jpg", true, 20)
+	require.NoError(t, err)
+	require.Equal(t, 2, faces.Count())
+
+	expectedEyes := []int{2, 0}
+	expectedLandmarks := []int{15, 0}
+
+	for i, face := range faces {
+		t.Run(fmt.Sprintf("face-%d", i), func(t *testing.T) {
+			t.Logf("eyes=%d landmarks=%d", len(face.Eyes), len(face.Landmarks))
+			require.Equal(t, expectedEyes[i], len(face.Eyes))
+			require.Equal(t, expectedLandmarks[i], len(face.Landmarks))
+		})
+	}
+}
+
+func TestDetectQualityFallback(t *testing.T) {
+	t.SkipNow()
+	faces, err := Detect("testdata/<no public test image available>.jpg", false, 20)
+	require.NoError(t, err)
+	require.NotEmpty(t, faces)
+
+	found := false
+
+	for _, face := range faces {
+		if face.Score < int(QualityThreshold(face.Area.Scale)) {
+			found = true
+			break
+		}
+	}
+
+	require.Truef(t, found, "expected at least one face below the quality threshold, got %+v", faces)
+}
+
+func BenchmarkDetectorFacesLandmarks(b *testing.B) {
+	const sample = "testdata/18.jpg"
+
+	d := &pigoDetector{
+		minSize:       20,
+		shiftFactor:   0.1,
+		scaleFactor:   1.1,
+		iouThreshold:  float64(OverlapThresholdFloor) / 100,
+		perturb:       63,
+		landmarkAngle: 0.0,
+		angles:        append([]float64(nil), DetectionAngles...),
+	}
+
+	det, params, err := d.Detect(sample)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	if len(det) == 0 {
+		b.Fatalf("no detections found for %s", sample)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	detections := make([]pigo.Detection, len(det))
+
+	for b.Loop() {
+		copy(detections, det)
+
+		faces, err := d.Faces(detections, params, true)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		benchmarkFacesCount = faces.Count()
 	}
 }

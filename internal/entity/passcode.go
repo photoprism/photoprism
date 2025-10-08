@@ -202,7 +202,7 @@ func (m *Passcode) Type() authn.KeyType {
 	return authn.Key(m.KeyType)
 }
 
-// GenerateCode returns a valid passcode for testing.
+// GenerateCode returns a TOTP passcode for the current instant (primarily used in tests).
 func (m *Passcode) GenerateCode() (code string, err error) {
 	if m == nil {
 		return "", errors.New("passcode is nil")
@@ -236,7 +236,7 @@ func (m *Passcode) GenerateCode() (code string, err error) {
 	return code, err
 }
 
-// Valid checks if the passcode provided is valid.
+// Valid checks whether the provided passcode or recovery code is valid.
 func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 	// Validate arguments.
 	if m == nil {
@@ -285,7 +285,7 @@ func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 	// Set verified timestamp if nil.
 	if valid && m.VerifiedAt == nil {
 		m.VerifiedAt = TimeStamp()
-		err = m.Updates(Map{"VerifiedAt": m.VerifiedAt})
+		err = m.Updates(Values{"VerifiedAt": m.VerifiedAt})
 	}
 
 	// Return result.
@@ -304,7 +304,7 @@ func (m *Passcode) Activate() (err error) {
 		return authn.ErrPasscodeAlreadyActivated
 	} else {
 		m.ActivatedAt = TimeStamp()
-		err = m.Updates(Map{"ActivatedAt": m.ActivatedAt})
+		err = m.Updates(Values{"ActivatedAt": m.ActivatedAt})
 	}
 
 	return err

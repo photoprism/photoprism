@@ -67,8 +67,8 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 
 // YamlFileName returns both the absolute file path and the relative name for the YAML sidecar file, e.g. for logging.
 func (m *Photo) YamlFileName(originalsPath, sidecarPath string) (absolute, relative string, err error) {
-	absolute, err = fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYaml)
-	relative = filepath.Join(m.PhotoPath, m.PhotoName) + fs.ExtYaml
+	absolute, err = fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYml)
+	relative = filepath.Join(m.PhotoPath, m.PhotoName) + fs.ExtYml
 
 	return absolute, relative, err
 }

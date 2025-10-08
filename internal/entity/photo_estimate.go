@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Accuracy1Km defines the maximum tolerated inaccuracy (in meters) for estimated coordinates.
 const Accuracy1Km = 1000
 
 // EstimateCountry updates the photo with an estimated country if possible.
@@ -51,7 +52,7 @@ func (m *Photo) EstimateCountry() {
 		}
 	}
 
-	// Set new country?
+	// Assign the estimated country when we found a match.
 	if countryCode != unknown {
 		m.PhotoCountry = countryCode
 		m.PlaceSrc = SrcEstimate
@@ -95,6 +96,7 @@ func (m *Photo) EstimateLocation(force bool) {
 	rangeMin := m.TakenAt.Add(-1 * time.Hour * 37)
 	rangeMax := m.TakenAt.Add(time.Hour * 37)
 
+	// Collect up to two recent photos that match the time window and have known locations.
 	var mostRecent Photos
 
 	switch DbDialect() {
@@ -121,14 +123,14 @@ func (m *Photo) EstimateLocation(force bool) {
 		log.Warnf("photo: %s while estimating position", err)
 	}
 
-	// Found?
+	// Abort if no nearby photos with reliable locations were found.
 	if len(mostRecent) == 0 {
 		log.Debugf("photo: unknown position at %s", m.TakenAt)
 		m.RemoveLocation(SrcEstimate, false)
 		m.RemoveLocationLabels()
 		m.EstimateCountry()
 	} else if recentPhoto := mostRecent[0]; recentPhoto.HasLocation() && recentPhoto.HasPlace() {
-		// Too much time difference?
+		// Abort if the time difference to the reference photo is outside the allowed window.
 		if hours := recentPhoto.TakenAt.Sub(m.TakenAt) / time.Hour; hours < -36 || hours > 36 {
 			log.Debugf("photo: skipping %s, %d hours time difference to recent position", m, hours)
 			m.RemoveLocation(SrcEstimate, false)
@@ -142,7 +144,7 @@ func (m *Photo) EstimateLocation(force bool) {
 
 			movement := geo.NewMovement(p1.Position(), p2.Position())
 
-			// Ignore inaccurate coordinate estimates.
+			// Ignore coordinate estimates with poor accuracy or implausible travel distance.
 			if estimate := movement.EstimatePosition(m.TakenAt); movement.Km() < 100 && estimate.Accuracy < Accuracy1Km {
 				m.SetPosition(estimate, SrcEstimate, false)
 			} else {

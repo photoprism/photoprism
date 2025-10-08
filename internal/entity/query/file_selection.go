@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// MiB represents one mebibyte in bytes.
 const MiB = 1024 * 1024
 
 // FileSelection represents a selection filter to include/exclude certain files.

@@ -6,6 +6,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// Default authentication rate-limit parameters.
 const (
 	DefaultAuthInterval = time.Second * 10 // average authentication errors per second
 	DefaultAuthLimit    = 60               // authentication failure burst rate limit (for access tokens)

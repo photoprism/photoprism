@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // OAuthUserinfo should return information about the authenticated user,

@@ -51,6 +51,15 @@ func TestAuthMode(t *testing.T) {
 	c.options.Debug = false
 }
 
+func TestAuthSecret(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.AuthSecret())
+	c.options.AuthSecret = "341e1657d37759410de1ae628b95dbaa"
+	assert.Equal(t, "341e1657d37759410de1ae628b95dbaa", c.AuthSecret())
+	c.options.AuthSecret = ""
+	assert.Equal(t, "", c.AuthSecret())
+}
+
 func TestConfig_AdminPassword(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

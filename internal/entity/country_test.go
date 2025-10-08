@@ -7,12 +7,12 @@ import (
 )
 
 func TestNewCountry(t *testing.T) {
-	t.Run("unknown country", func(t *testing.T) {
+	t.Run("UnknownCountry", func(t *testing.T) {
 		country := NewCountry("", "")
 
 		assert.Equal(t, &UnknownCountry, country)
 	})
-	t.Run("United States", func(t *testing.T) {
+	t.Run("UnitedStates", func(t *testing.T) {
 		country := NewCountry("us", "United States")
 
 		assert.Equal(t, "United States", country.CountryName)
@@ -27,14 +27,14 @@ func TestNewCountry(t *testing.T) {
 }
 
 func TestFirstOrCreateCountry(t *testing.T) {
-	t.Run("es", func(t *testing.T) {
+	t.Run("Es", func(t *testing.T) {
 		country := NewCountry("es", "spain")
 		country = FirstOrCreateCountry(country)
 		if country == nil {
 			t.Fatal("country should not be nil")
 		}
 	})
-	t.Run("de", func(t *testing.T) {
+	t.Run("De", func(t *testing.T) {
 		country := &Country{ID: "de"}
 		r := FirstOrCreateCountry(country)
 		if r == nil {

@@ -68,28 +68,28 @@ if [[ $TF_DRIVER == "auto" ]]; then
 
   if [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx512_vnni') == "true" ]]; then
     TF_DRIVER="avx512"
-    echo "✅ Your CPU supports AVX512-VNNI Vector Neural Network Instructions"
+    echo "✅ Your CPU supports AVX512-VNNI Vector Neural Network Instructions."
     if [[ $(lshw -c display -json 2>/dev/null | jq -r '.[0].configuration.driver') == "nvidia" ]]; then
-      echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected"
+      echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected."
     fi
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx_vnni') == "true" ]]; then
     TF_DRIVER="vnni"
-    echo "✅ Your CPU supports AVX-VNNI Vector Neural Network Instructions"
+    echo "✅ Your CPU supports AVX-VNNI Vector Neural Network Instructions."
     if [[ $(lshw -c display -json 2>/dev/null | jq -r '.[0].configuration.driver') == "nvidia" ]]; then
-      echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected"
+      echo "✅ You can optionally install the tensorflow-gpu version as an Nvidia GPU was detected."
     fi
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx2') == "true" ]]; then
     TF_DRIVER="avx2"
-    echo "✅ Your CPU supports AVX2 vector instructions"
+    echo "✅ Your CPU supports AVX2 vector instructions."
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.avx') == "true" ]]; then
     TF_DRIVER="avx"
-    echo "✅ Your CPU supports AVX vector instructions"
+    echo "✅ Your CPU supports AVX vector instructions."
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].capabilities.ssse3') == "true" ]]; then
     TF_DRIVER="ssse3"
-    echo "✅ Your CPU supports SSSE3 instructions"
+    echo "✅ Your CPU supports SSSE3 instructions."
   else
     TF_DRIVER=""
-    echo "❌ Your CPU does not support any AVX instructions"
+    echo "❌ Your CPU does not support any AVX instructions."
   fi
 fi
 

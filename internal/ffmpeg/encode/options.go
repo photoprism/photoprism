@@ -19,6 +19,7 @@ type Options struct {
 	MapVideo    string        // See https://trac.ffmpeg.org/wiki/Map#Videostreamsonly
 	MapAudio    string        // See https://trac.ffmpeg.org/wiki/Map#Audiostreamsonly
 	MapMetadata string        // See https://ffmpeg.org/ffmpeg.html
+	SeekOffset  string        // See https://trac.ffmpeg.org/wiki/Seeking and https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax
 	TimeOffset  string        // See https://trac.ffmpeg.org/wiki/Seeking and https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax
 	Duration    time.Duration // See https://ffmpeg.org/ffmpeg.html#Main-options
 	MovFlags    string
@@ -105,8 +106,12 @@ func NewRemuxOptions(ffmpegBin string, container fs.Type, force bool) Options {
 // NewPreviewImageOptions generates encoding options for extracting a video preview image.
 func NewPreviewImageOptions(ffmpegBin string, videoDuration time.Duration) *Options {
 	return &Options{
-		Bin:        ffmpegBin,
-		TimeOffset: PreviewTimeOffset(videoDuration),
+		Bin:         ffmpegBin,
+		MapVideo:    DefaultMapVideo,
+		MapAudio:    DefaultMapAudio,
+		MapMetadata: DefaultMapMetadata,
+		SeekOffset:  PreviewSeekOffset(videoDuration),
+		TimeOffset:  PreviewTimeOffset(videoDuration),
 	}
 }
 

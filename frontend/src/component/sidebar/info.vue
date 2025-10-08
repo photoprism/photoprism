@@ -90,7 +90,7 @@ export default {
       type: Object,
       default: () => {},
     },
-    album: {
+    collection: {
       type: Object,
       default: () => {},
     },

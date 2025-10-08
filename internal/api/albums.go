@@ -70,7 +70,7 @@ func GetAlbum(router *gin.RouterGroup) {
 		}
 
 		// Other restricted users can only access their own or shared content.
-		if s.User().HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(uid) {
+		if s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -171,7 +171,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -242,7 +242,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -317,7 +317,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -368,7 +368,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -421,7 +421,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -507,7 +507,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}
@@ -622,7 +622,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Visitors and other restricted users can only access shared content.
-		if (s.User().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
+		if (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid) {
 			AbortForbidden(c)
 			return
 		}

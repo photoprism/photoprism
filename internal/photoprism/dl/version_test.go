@@ -1,32 +1,66 @@
 package dl
 
 import (
-	"context"
-	"regexp"
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
 
-func TestVersion(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		versionRe := regexp.MustCompile(`^\d{4}\.\d{2}.\d{2}.*$`)
-		version, versionErr := Version(context.Background())
+func TestVersionWarning_OldVersion(t *testing.T) {
+	ResetVersionWarningForTest()
 
-		if versionErr != nil {
-			t.Fatalf("err: %s", versionErr)
-		}
+	bin := writeVersionScript(t, "2025.09.05")
+	orig := YtDlpBin
+	YtDlpBin = bin
+	defer func() { YtDlpBin = orig }()
 
-		if !versionRe.MatchString(version) {
-			t.Errorf("version %q does not match %q", version, versionRe)
-		}
-	})
-	t.Run("InvalidBin", func(t *testing.T) {
-		defer func(orig string) { YtDlpBin = orig }(YtDlpBin)
-		YtDlpBin = "/non-existing"
+	os.Unsetenv("YTDLP_FAKE")
 
-		_, versionErr := Version(context.Background())
-		if versionErr == nil || !strings.Contains(versionErr.Error(), "no such file or directory") {
-			t.Fatalf("err should be nil 'no such file or directory': %v", versionErr)
+	msg, ok := VersionWarning()
+	if !ok {
+		t.Fatalf("expected warning for old version")
+	}
+	if !strings.Contains(msg, minYtDlpVersion) {
+		t.Fatalf("warning missing minimum version: %s", msg)
+	}
+}
+
+func TestVersionWarning_NewEnough(t *testing.T) {
+	ResetVersionWarningForTest()
+
+	bin := writeVersionScript(t, "2025.09.23")
+	orig := YtDlpBin
+	YtDlpBin = bin
+	defer func() { YtDlpBin = orig }()
+
+	os.Unsetenv("YTDLP_FAKE")
+
+	if _, ok := VersionWarning(); ok {
+		t.Fatalf("did not expect warning for up-to-date version")
+	}
+}
+
+func writeVersionScript(t *testing.T, version string) string {
+	t.Helper()
+	dir := t.TempDir()
+	path := filepath.Join(dir, "yt-dlp")
+
+	if runtime.GOOS == "windows" {
+		content := "@echo off\r\n" +
+			"echo " + version + "\r\n"
+		if err := os.WriteFile(path, []byte(content), 0o755); err != nil {
+			t.Fatalf("failed to write fake yt-dlp: %v", err)
 		}
-	})
+		return path
+	}
+
+	content := "#!/usr/bin/env bash\n" +
+		"set -euo pipefail\n" +
+		"echo '" + version + "'\n"
+	if err := os.WriteFile(path, []byte(content), 0o755); err != nil {
+		t.Fatalf("failed to write fake yt-dlp: %v", err)
+	}
+	return path
 }

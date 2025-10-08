@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -21,6 +22,9 @@ func TestMain(m *testing.M) {
 
 	// Close database connection.
 	_ = c.CloseDb()
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

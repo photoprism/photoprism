@@ -108,7 +108,6 @@ func TestUpdateService(t *testing.T) {
 		assert.Equal(t, "CreateTestUpdated", val3.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateService(router)
@@ -117,7 +116,6 @@ func TestUpdateService(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-
 	t.Run("SaveFailed", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateService(router)
@@ -150,7 +148,6 @@ func TestDeleteService(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val2.String())
 		assert.Equal(t, http.StatusNotFound, r2.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteService(router)

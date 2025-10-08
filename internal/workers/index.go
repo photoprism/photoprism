@@ -55,7 +55,7 @@ func (w *Index) Start() (err error) {
 	ind := get.Index()
 
 	convert := settings.Index.Convert && conf.SidecarWritable()
-	indOpt := photoprism.NewIndexOptions(entity.RootPath, false, convert, true, false, true)
+	indOpt := photoprism.NewIndexOptions(entity.RootPath, false, convert, true, false, true, conf)
 	indOpt.Action = photoprism.ActionAutoIndex
 
 	lastRun, lastFound := ind.LastRun()

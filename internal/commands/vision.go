@@ -13,6 +13,7 @@ var VisionCommands = &cli.Command{
 	Subcommands: []*cli.Command{
 		VisionListCommand,
 		VisionRunCommand,
+		VisionResetCommand,
 		VisionSourcesCommand,
 		VisionSaveCommand,
 	},

@@ -1,7 +1,7 @@
 package vision
 
 import (
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // Service represents a remote computer vision service configuration.

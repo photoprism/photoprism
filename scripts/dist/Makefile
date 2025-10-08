@@ -33,9 +33,14 @@ tensorflow-amd64-avx: install-tensorflow
 tensorflow-amd64-avx2: install-tensorflow
 install-tensorflow:
 	/scripts/install-tensorflow.sh auto
+onnxruntime: install-onnx
+install-onnx:
+	/scripts/install-onnx.sh
 tensorflow-gpu: install-tensorflow-gpu
 install-tensorflow-gpu:
 	/scripts/install-tensorflow.sh gpu
+codex:
+	/scripts/install-codex.sh
 davfs: install-davfs
 install-davfs:
 	/scripts/install-davfs.sh

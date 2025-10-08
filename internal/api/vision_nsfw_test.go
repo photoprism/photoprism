@@ -10,7 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 func TestPostVisionNsfw(t *testing.T) {

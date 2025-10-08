@@ -28,7 +28,13 @@ type FoldersResponse struct {
 
 // SearchFoldersOriginals returns folders in originals as JSON.
 //
-// GET /api/v1/folders/originals
+//	@Summary	list folders in originals
+//	@Id			SearchFoldersOriginals
+//	@Tags		Folders
+//	@Produce	json
+//	@Success	200		{object}	api.FoldersResponse
+//	@Failure	401,403	{object}	i18n.Response
+//	@Router		/api/v1/folders/originals [get]
 func SearchFoldersOriginals(router *gin.RouterGroup) {
 	conf := get.Config()
 	SearchFolders(router, "originals", entity.RootOriginals, conf.OriginalsPath())
@@ -36,7 +42,13 @@ func SearchFoldersOriginals(router *gin.RouterGroup) {
 
 // SearchFoldersImport returns import folders as JSON.
 //
-// GET /api/v1/folders/import
+//	@Summary	list folders in import
+//	@Id			SearchFoldersImport
+//	@Tags		Folders
+//	@Produce	json
+//	@Success	200		{object}	api.FoldersResponse
+//	@Failure	401,403	{object}	i18n.Response
+//	@Router		/api/v1/folders/import [get]
 func SearchFoldersImport(router *gin.RouterGroup) {
 	conf := get.Config()
 	SearchFolders(router, "import", entity.RootImport, conf.ImportPath())
@@ -62,7 +74,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			return
 		}
 
-		user := s.User()
+		user := s.GetUser()
 		aclRole := user.AclRole()
 
 		// Exclude private content?

@@ -43,6 +43,7 @@ case $DESTARCH in
     ;;
 esac
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 LATEST=$(curl --silent "https://api.github.com/repos/strukturag/libheif/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')

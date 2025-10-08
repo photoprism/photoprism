@@ -262,7 +262,9 @@
                             <td>
                               {{ $gettext(`Projection`) }}
                             </td>
-                            <td class="text-capitalize">{{ file.Projection }}</td>
+                            <td class="text-capitalize">
+                              {{ file.Projection }}
+                            </td>
                           </tr>
                           <tr v-if="file.AspectRatio">
                             <td>
@@ -323,7 +325,9 @@
                             <td>
                               {{ $gettext(`Main Color`) }}
                             </td>
-                            <td class="text-capitalize">{{ file.MainColor }}</td>
+                            <td class="text-capitalize">
+                              {{ file.MainColor }}
+                            </td>
                           </tr>
                           <tr v-if="file?.Chroma > 0">
                             <td>
@@ -400,6 +404,7 @@ export default {
       default: "",
     },
   },
+  emits: ["close"],
   data() {
     return {
       view: this.$view.getData(),
@@ -426,7 +431,12 @@ export default {
           align: "center",
           class: "p-col-primary",
         },
-        { title: this.$gettext("Name"), key: "Name", sortable: false, align: "left" },
+        {
+          title: this.$gettext("Name"),
+          key: "Name",
+          sortable: false,
+          align: "left",
+        },
         {
           title: this.$gettext("Dimensions"),
           headerProps: {
@@ -443,8 +453,18 @@ export default {
           key: "Size",
           sortable: false,
         },
-        { title: this.$gettext("Type"), key: "", sortable: false, align: "left" },
-        { title: this.$gettext("Status"), key: "", sortable: false, align: "left" },
+        {
+          title: this.$gettext("Type"),
+          key: "",
+          sortable: false,
+          align: "left",
+        },
+        {
+          title: this.$gettext("Status"),
+          key: "",
+          sortable: false,
+          align: "left",
+        },
       ],
     };
   },

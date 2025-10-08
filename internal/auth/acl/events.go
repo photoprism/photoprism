@@ -9,6 +9,12 @@ var Events = ACL{
 	ResourceDefault: Roles{
 		RoleAdmin: GrantFullAccess,
 	},
+	ChannelLog: Roles{
+		RoleAdmin: GrantFullAccess,
+	},
+	ChannelSystem: Roles{
+		RoleAdmin: GrantFullAccess,
+	},
 	ChannelUser: Roles{
 		RoleAdmin:   GrantFullAccess,
 		RoleGuest:   GrantSubscribeOwn,

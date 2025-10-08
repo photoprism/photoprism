@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
+// OAuth metadata published via the well-known discovery endpoints.
 var (
 	OAuthResponseTypes                 = []string{"token"}
 	OAuthGrantTypes                    = []string{"client_credentials"}

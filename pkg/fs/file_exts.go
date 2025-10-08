@@ -85,8 +85,8 @@ var Extensions = FileExtensions{
 	ExtXMP:      SidecarXMP,
 	".aae":      SidecarAppleXml,
 	ExtXml:      SidecarXml,
-	ExtYaml:     SidecarYaml, // .yml
-	".yaml":     SidecarYaml,
+	ExtYaml:     SidecarYaml, // .yaml
+	".yml":      SidecarYaml,
 	ExtJson:     SidecarJson,
 	ExtTxt:      SidecarText,
 	".nfo":      SidecarInfo,

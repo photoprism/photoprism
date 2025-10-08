@@ -32,7 +32,7 @@ func TestUploadUserAvatar(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, r.Code)
 		conf.Options().DisableSettings = false
 	})
-	t.Run("bobCannotChangeAlice", func(t *testing.T) {
+	t.Run("BobCannotChangeAlice", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		adminUid := entity.Admin.UserUID
 

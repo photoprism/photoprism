@@ -1,5 +1,6 @@
 package meta
 
+// Docs lists external references for metadata standards PhotoPrism relies on.
 var Docs = [][]string{
 	{"Exiftool", "https://exiftool.org/TagNames/EXIF.html"},
 	{"Exiftool XMP", "https://exiftool.org/TagNames/XMP.html"},

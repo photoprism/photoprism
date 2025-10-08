@@ -69,6 +69,7 @@ const DefaultSessionCache = unix.Minute * 15
 // Product feature tags used to automatically generate documentation.
 const (
 	Pro        = "pro"
+	Portal     = "portal"
 	Plus       = "plus"
 	Essentials = "essentials"
 	Community  = "ce"

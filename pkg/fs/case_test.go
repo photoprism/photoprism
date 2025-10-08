@@ -8,7 +8,7 @@ import (
 )
 
 func TestCaseInsensitive(t *testing.T) {
-	t.Run("temp", func(t *testing.T) {
+	t.Run("Temp", func(t *testing.T) {
 		if result, err := CaseInsensitive(os.TempDir()); err != nil {
 			t.Fatal(err)
 		} else {

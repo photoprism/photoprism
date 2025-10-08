@@ -9,7 +9,7 @@ import (
 )
 
 func TestCreateUserSettings(t *testing.T) {
-	t.Run("Empty UID", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		m := &User{UserUID: ""}
 		assert.Error(t, CreateUserSettings(m))
 		assert.Nil(t, m.UserSettings)

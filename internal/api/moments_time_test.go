@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetMomentsTime(t *testing.T) {
-	t.Run("get moments time", func(t *testing.T) {
+	t.Run("GetMomentsTime", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetMomentsTime(router)

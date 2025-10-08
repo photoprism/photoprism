@@ -277,7 +277,7 @@ export default [
     path: "/private",
     component: Photos,
     meta: { title: $gettext("Private"), requiresAuth: true },
-    props: { staticFilter: { private: "true" } },
+    props: { staticFilter: { private: "true", public: "" } },
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next({ name: loginRoute });

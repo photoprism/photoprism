@@ -69,9 +69,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			return
 		}
 
-		type valueMap map[string]interface{}
-
-		v := make(valueMap)
+		v := make(entity.Values)
 
 		if fs.FileExists(fileName) {
 			yamlData, err := os.ReadFile(fileName)

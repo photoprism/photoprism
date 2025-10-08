@@ -12,6 +12,7 @@ func initCleanUp() {
 	services.CleanUp = photoprism.NewCleanUp(Config())
 }
 
+// CleanUp returns the singleton cleanup worker service instance.
 func CleanUp() *photoprism.CleanUp {
 	onceCleanUp.Do(initCleanUp)
 

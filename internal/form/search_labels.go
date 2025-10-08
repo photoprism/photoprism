@@ -8,6 +8,8 @@ type SearchLabels struct {
 	Name     string `form:"name"`
 	All      bool   `form:"all"`
 	Favorite bool   `form:"favorite"`
+	NSFW     bool   `form:"nsfw"`
+	Public   bool   `form:"public"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`
 	Offset   int    `form:"offset" serialize:"-"`
 	Order    string `form:"order" serialize:"-"`

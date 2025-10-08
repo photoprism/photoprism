@@ -46,6 +46,7 @@ case $DESTARCH in
     ;;
 esac
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 echo "Installing FFmpeg..."

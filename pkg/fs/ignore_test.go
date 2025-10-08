@@ -9,7 +9,7 @@ import (
 )
 
 func TestIgnoreList_Ignore(t *testing.T) {
-	t.Run(".ppignore", func(t *testing.T) {
+	t.Run("Ppignore", func(t *testing.T) {
 		list := NewIgnoreList(".ppignore", true, false)
 		assert.False(t, list.Ignore("testdata"))
 		assert.False(t, list.Ignore("testdata/directory"))

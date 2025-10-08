@@ -58,7 +58,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         x264 x265 libde265-dev libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev \
     && \
     apt-get -qq install \
-        apt-utils pkg-config software-properties-common \
+        software-properties-common pkg-config apt-utils ripgrep fd-find bat eza \
         build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
         autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
@@ -66,9 +66,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
         librsvg2-bin ghostscript gsfonts pdf2svg ps2eps \
     && \
+    ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
+    ln -sf /usr/bin/batcat /usr/local/bin/bat && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \

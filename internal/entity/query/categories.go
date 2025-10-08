@@ -2,11 +2,13 @@ package query
 
 import "github.com/photoprism/photoprism/pkg/txt"
 
+// CategoryLabel represents a label name and a human-friendly title derived from it.
 type CategoryLabel struct {
 	Name  string
 	Title string
 }
 
+// CategoryLabels returns category labels with pagination, normalizing the display title for each entry.
 func CategoryLabels(limit, offset int) (results []CategoryLabel) {
 	s := Db().NewScope(nil).DB()
 

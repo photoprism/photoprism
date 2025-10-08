@@ -2,6 +2,7 @@ package query
 
 import "github.com/photoprism/photoprism/internal/entity"
 
+// Counts aggregates entity totals used by the dashboard and API statistics endpoints.
 type Counts struct {
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`

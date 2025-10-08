@@ -119,7 +119,6 @@ services:
       PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
       PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
-      TF_CPP_MIN_LOG_LEVEL: 1                        # show TensorFlow log messages for development
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https tensorflow-gpu"
       ## Computer Vision API (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
@@ -132,6 +131,10 @@ services:
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       PHOTOPRISM_FFMPEG_BITRATE: "64"                # video bitrate limit in Mbps (default: 60)
+      ## External dependencies and tools:
+      TF_CPP_MIN_LOG_LEVEL: 1
+      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
+      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding
@@ -150,21 +153,28 @@ services:
               capabilities: [gpu]
               count: "all"
 
-  ## Ollama Large-Language Model Runner (optional)
-  ## Run "ollama pull [name]:[version]" to download a vision model
+  ## Ollama Large-Language Model Runner
+  ## run "ollama pull [name]:[version]" to download a vision model
   ## listed at <https://ollama.com/search?c=vision>, for example:
   ## docker compose exec ollama ollama pull gemma3:latest
   ollama:
     image: ollama/ollama:latest
     restart: unless-stopped
     stop_grace_period: 15s
-    ## Only starts this service if the "vision" or "all" profile is specified::
-    ## docker compose --profile vision up -d
-    profiles: [ "all", "vision" ]
+    ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
+    ## docker compose --profile ollama up -d
+    profiles: ["all", "ollama", "vision"]
     ## Insecurely exposes the Ollama service on port 11434
     ## without authentication (for private networks only):
     # ports:
     #  - "11434:11434"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
+      - "traefik.http.services.ollama.loadbalancer.server.port=11434"
+      - "traefik.http.routers.ollama.rule=Host(`ollama.localssl.dev`)"
+      - "traefik.http.routers.ollama.entrypoints=websecure"
+      - "traefik.http.routers.ollama.tls=true"
     environment:
       ## Ollama Configuration Options:
       OLLAMA_HOST: "0.0.0.0:11434"
@@ -188,7 +198,7 @@ services:
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
     volumes:
-      - "./storage/ollama:/root/.ollama"
+      - "./storage/services/ollama:/root/.ollama"
     ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
     deploy:
       resources:
@@ -206,6 +216,10 @@ services:
     extends:
       file: ./compose.yaml
       service: qdrant
+  open-webui:
+    extends:
+      file: ./compose.yaml
+      service: open-webui
   photoprism-vision:
     extends:
       file: ./compose.yaml

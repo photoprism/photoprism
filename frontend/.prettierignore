@@ -5,8 +5,10 @@ tests/acceptance/screenshots/
 tests/upload-files/
 *.html
 .idea
+.codex
 .github
 .tmp
 .local
 .cache
+.gocache
 .var

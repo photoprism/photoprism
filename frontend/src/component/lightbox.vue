@@ -96,7 +96,7 @@
         </div>
       </div>
       <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
-        <p-sidebar-info v-model="model" :album="album" :context="context" @close="hideInfo"></p-sidebar-info>
+        <p-sidebar-info v-model="model" :collection="collection" :context="context" @close="hideInfo"></p-sidebar-info>
       </div>
     </div>
     <p-lightbox-menu
@@ -117,6 +117,7 @@ import Captions from "common/captions";
 import $api from "common/api";
 import $fullscreen from "common/fullscreen";
 import Thumb from "model/thumb";
+import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
@@ -164,7 +165,7 @@ export default {
       featDevelop: this.$config.featDevelop(), // Enables new features that are still under development.
       selection: this.$clipboard.selection,
       config: this.$config.values,
-      album: null,
+      collection: null,
       context: "",
       model: new Thumb(), // Current slide.
       models: [], // Slide models.
@@ -438,8 +439,8 @@ export default {
         return Promise.reject();
       }
 
-      // Get album model from view, if any.
-      const album = view.model && view.model instanceof Album ? view.model : null;
+      // Get collection model from view, if any.
+      const collection = view.model && view.model instanceof Collection ? view.model : null;
       const context = view.getContext && typeof view.getContext === "function" ? view.getContext() : "";
       const selected = view.results[index];
 
@@ -458,7 +459,7 @@ export default {
           (((view.lightbox.complete || view.complete) && view.lightbox.results.length >= view.results.length) ||
             i + view.lightbox.batchSize <= view.lightbox.results.length)
         ) {
-          return this.showThumbs(view.lightbox.results, i, { album, context });
+          return this.showThumbs(view.lightbox.results, i, { collection, context });
         }
       }
 
@@ -501,7 +502,7 @@ export default {
           view.lightbox.results = Thumb.wrap(response.data);
 
           // Show pictures.
-          this.showThumbs(view.lightbox.results, i, { album, context });
+          this.showThumbs(view.lightbox.results, i, { collection, context });
           view.lightbox.dirty = false;
         })
         .catch(() => {
@@ -919,9 +920,10 @@ export default {
         return Promise.reject();
       }
 
-      // Set album model and view context, if any.
-      this.album = ctx.album && ctx.album instanceof Album ? ctx.album : null;
-      this.context = ctx.context ? ctx.context : "";
+      // Set collection model (e.g. album, label) and view context, if any.
+      const collectionModel = ctx?.collection ?? ctx?.album ?? null;
+      this.collection = collectionModel instanceof Collection ? collectionModel : null;
+      this.context = ctx?.context ?? "";
 
       // Set the model list and start index.
       // TODO: In the future, additional models should be dynamically loaded when the index reaches the end of the list.
@@ -1291,12 +1293,12 @@ export default {
           disabled: !this.model,
           visible:
             this.canManageAlbums &&
-            this.album &&
-            this.album instanceof Album &&
+            this.collection &&
+            this.collection instanceof Collection &&
             !this.model?.Removed &&
             !this.model?.Archived,
           click: () => {
-            this.onSetAlbumCover();
+            this.onSetCollectionCover();
           },
         },
         {
@@ -1305,9 +1307,9 @@ export default {
           text: this.$gettext("Remove from Album"),
           visible:
             this.canManageAlbums &&
-            this.album &&
-            this.album instanceof Album &&
-            this.album?.Type === "album" &&
+            this.collection &&
+            this.collection instanceof Album &&
+            this.collection?.Type === "album" &&
             !this.model?.Removed &&
             !this.model?.Archived,
           click: () => {
@@ -1463,7 +1465,7 @@ export default {
     },
     // Reset the lightbox models and index.
     resetModels() {
-      this.album = null;
+      this.collection = null;
       this.context = "";
       this.model = new Thumb();
       this.models = [];
@@ -2052,30 +2054,30 @@ export default {
 
       this.showControls();
     },
-    // Updates the album cover, if an album model exists.
-    onSetAlbumCover() {
-      if (!this.canManageAlbums || !this.album) {
+    // Updates the collection cover, if a collection model exists.
+    onSetCollectionCover() {
+      if (!this.canManageAlbums || !(this.collection instanceof Collection)) {
         return;
       }
 
       this.pauseSlideshow();
 
       if (!this.model || !this.model.Hash) {
-        this.log("viewer: could not update album cover because the file hash is missing");
+        this.log("viewer: could not update collection cover because the file hash is missing");
         return;
       }
 
-      if (!this.album || !this.album?.UID) {
-        this.log("viewer: could not update album cover because the album is not defined");
+      if (!this.collection || !this.collection?.UID) {
+        this.log("viewer: could not update collection cover because the collection is not defined");
         return;
       }
 
-      this.album.setCover(this.model.Hash).then(() => {
+      this.collection.setCover(this.model.Hash).then(() => {
         this.$notify.success(this.$gettext("Changes successfully saved"));
       });
     },
     onRemoveFromAlbum() {
-      if (!this.canManageAlbums || !this.album) {
+      if (!this.canManageAlbums || !(this.collection instanceof Album)) {
         return;
       }
 
@@ -2086,14 +2088,14 @@ export default {
         return;
       }
 
-      if (!this.album || !this.album?.UID) {
+      if (!this.collection || !this.collection?.UID) {
         this.log("viewer: could not remove picture from album because the album is not defined");
         return;
       }
 
       this.model.Removed = true;
 
-      $api.delete(`albums/${this.album.UID}/photos`, { data: { photos: [this.model.UID] } }).catch(() => {
+      $api.delete(`albums/${this.collection.UID}/photos`, { data: { photos: [this.model.UID] } }).catch(() => {
         this.model.Removed = false;
       });
     },

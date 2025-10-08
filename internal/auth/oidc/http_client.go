@@ -7,13 +7,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
-// HttpClient represents a client that makes HTTP requests.
-//
-// NOTE: Timeout specifies a time limit for requests made by
-// this Client. The timeout includes connection time, any
-// redirects, and reading the response body. The timer remains
-// running after Get, Head, Post, or Do return and will
-// interrupt reading of the Response.Body.
+// HttpClient returns an HTTP client tailored for OIDC requests. When debug is true, it wraps the
+// default transport with a LoggingRoundTripper and keeps a 30s timeout.
 func HttpClient(debug bool) *http.Client {
 	if debug {
 		return &http.Client{
@@ -25,7 +20,7 @@ func HttpClient(debug bool) *http.Client {
 	return &http.Client{Timeout: 30 * time.Second}
 }
 
-// LoggingRoundTripper specifies the http.RoundTripper interface.
+// LoggingRoundTripper wraps an http.RoundTripper and emits audit logs for OIDC requests.
 type LoggingRoundTripper struct {
 	proxy http.RoundTripper
 }

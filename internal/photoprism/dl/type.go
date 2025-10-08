@@ -14,6 +14,7 @@ const (
 	TypeChannel
 )
 
+// TypeFromString translates string identifiers to download Type values.
 var TypeFromString = map[string]Type{
 	"any":      TypeAny,
 	"single":   TypeSingle,

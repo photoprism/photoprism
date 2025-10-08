@@ -42,11 +42,13 @@ func TestConfig_AppIcon(t *testing.T) {
 func TestConfig_AppColor(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "#000000", c.AppColor())
+	assert.Equal(t, DefaultAppColor, c.AppColor())
 	c.options.AppColor = "#aBC123"
 	assert.Equal(t, "#abc123", c.AppColor())
-	c.options.AppColor = ""
+	c.options.AppColor = "#000000"
 	assert.Equal(t, "#000000", c.AppColor())
+	c.options.AppColor = ""
+	assert.Equal(t, DefaultAppColor, c.AppColor())
 }
 
 func TestConfig_AppIconsPath(t *testing.T) {

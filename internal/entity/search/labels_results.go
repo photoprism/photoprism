@@ -8,16 +8,17 @@ import (
 type Label struct {
 	ID               uint      `json:"ID"`
 	LabelUID         string    `json:"UID"`
-	Thumb            string    `json:"Thumb"`
-	ThumbSrc         string    `json:"ThumbSrc,omitempty"`
 	LabelSlug        string    `json:"Slug"`
 	CustomSlug       string    `json:"CustomSlug"`
 	LabelName        string    `json:"Name"`
-	LabelPriority    int       `json:"Priority"`
 	LabelFavorite    bool      `json:"Favorite"`
+	LabelPriority    int       `json:"Priority"`
+	LabelNSFW        bool      `json:"NSFW,omitempty"`
 	LabelDescription string    `json:"Description"`
 	LabelNotes       string    `json:"Notes"`
 	PhotoCount       int       `json:"PhotoCount"`
+	Thumb            string    `json:"Thumb"`
+	ThumbSrc         string    `json:"ThumbSrc,omitempty"`
 	CreatedAt        time.Time `json:"CreatedAt"`
 	UpdatedAt        time.Time `json:"UpdatedAt"`
 	DeletedAt        time.Time `json:"DeletedAt,omitempty"`

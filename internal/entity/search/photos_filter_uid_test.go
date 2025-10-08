@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterUid(t *testing.T) {
-	t.Run("ps6sg6be2lvl0yh0", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh0", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.UID = "ps6sg6be2lvl0yh0"
@@ -20,9 +20,9 @@ func TestPhotosFilterUid(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.UID = "ps6sg6be2lvl0yh*"
@@ -31,7 +31,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -42,7 +42,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -53,7 +53,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -64,7 +64,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -75,7 +75,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -86,7 +86,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -97,7 +97,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -108,7 +108,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -119,7 +119,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -130,7 +130,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -141,7 +141,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -152,7 +152,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -163,7 +163,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -174,7 +174,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -185,7 +185,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -196,7 +196,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -207,7 +207,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -218,7 +218,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -229,7 +229,7 @@ func TestPhotosFilterUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 }
 
@@ -246,7 +246,7 @@ func TestPhotosQueryUid(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("QuotedPhotoUID", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -260,9 +260,9 @@ func TestPhotosQueryUid(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0yh", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "uid:\"ps6sg6be2lvl0yh*\""
@@ -271,7 +271,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -282,7 +282,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -293,7 +293,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -304,7 +304,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -315,7 +315,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -326,7 +326,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -337,7 +337,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -348,7 +348,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -359,7 +359,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -370,7 +370,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -381,7 +381,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -392,7 +392,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -403,7 +403,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -414,7 +414,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -425,7 +425,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -436,7 +436,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -447,7 +447,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -458,7 +458,7 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -469,6 +469,6 @@ func TestPhotosQueryUid(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.Error(t, err)
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 }

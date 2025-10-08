@@ -544,7 +544,7 @@ export default {
         {
           name: "upload",
           icon: "mdi-cloud-upload",
-          text: this.$gettext("Upload"),
+          text: this.$gettext("Upload") + "…",
           shortcut: "Ctrl-U",
           visible: this.canUpload,
           click: () => {
@@ -618,13 +618,13 @@ export default {
       const typeName = this.staticFilter?.type;
       const keyName = "albums.order." + typeName;
       const queryParam = this.$route.query["order"];
-      const storedType = window.localStorage.getItem(keyName);
+      const storeOrder = window.localStorage.getItem(keyName);
 
       if (queryParam) {
         window.localStorage.setItem(keyName, queryParam);
         return queryParam;
-      } else if (storedType) {
-        return storedType;
+      } else if (storeOrder) {
+        return storeOrder;
       }
 
       return this.defaultOrder;
@@ -893,7 +893,9 @@ export default {
     updateQuery(props) {
       this.updateFilter(props);
 
-      if (this.loading) return;
+      if (this.loading) {
+        return false;
+      }
 
       const query = {
         view: this.settings.view,
@@ -908,10 +910,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {

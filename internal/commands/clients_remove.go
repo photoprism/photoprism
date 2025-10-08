@@ -50,7 +50,7 @@ func clientsRemoveAction(ctx *cli.Context) error {
 			return fmt.Errorf("client %s has already been deleted", clean.Log(id))
 		}
 
-		if !ctx.Bool("force") {
+		if !ctx.Bool("force") && !RunNonInteractively(false) {
 			actionPrompt := promptui.Prompt{
 				Label:     fmt.Sprintf("Delete client %s?", m.GetUID()),
 				IsConfirm: true,

@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewKeyword(t *testing.T) {
-	t.Run("cat", func(t *testing.T) {
+	t.Run("Cat", func(t *testing.T) {
 		keyword := NewKeyword("cat")
 		assert.Equal(t, "cat", keyword.Keyword)
 		assert.Equal(t, false, keyword.Skip)

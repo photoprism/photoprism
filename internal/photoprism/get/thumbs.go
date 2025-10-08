@@ -12,6 +12,7 @@ func initThumbs() {
 	services.Thumbs = photoprism.NewThumbs(Config())
 }
 
+// Thumbs returns the singleton thumbs service instance.
 func Thumbs() *photoprism.Thumbs {
 	onceThumbs.Do(initThumbs)
 

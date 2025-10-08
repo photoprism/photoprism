@@ -2,7 +2,7 @@ package video
 
 import (
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // Unknown represents an unknown and/or unsupported video format.

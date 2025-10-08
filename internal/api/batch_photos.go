@@ -176,7 +176,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 //	@Param		photos				body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/approve [post]
 func BatchPhotosApprove(router *gin.RouterGroup) {
-	router.POST("batch/photos/approve", func(c *gin.Context) {
+	router.POST("/batch/photos/approve", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Abort(c) {
@@ -323,7 +323,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		var err error
 
 		// Abort if user wants to delete all but does not have sufficient privileges.
-		if frm.All && !acl.Rules.AllowAll(acl.ResourcePhotos, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+		if frm.All && !acl.Rules.AllowAll(acl.ResourcePhotos, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 			AbortForbidden(c)
 			return
 		}

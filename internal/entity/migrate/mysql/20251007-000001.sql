@@ -1,0 +1,1 @@
+UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;

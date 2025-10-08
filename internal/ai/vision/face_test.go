@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-func TestFace(t *testing.T) {
+func TestGenerateFaceEmbeddings(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		img, imgErr := os.ReadFile(fs.Abs("./testdata/face_160x160.jpg"))
 
@@ -18,7 +18,7 @@ func TestFace(t *testing.T) {
 			t.Fatal(imgErr)
 		}
 
-		result, err := Face(img)
+		result, err := GenerateFaceEmbeddings(img)
 
 		assert.NoError(t, err)
 		assert.IsType(t, face.Embeddings{}, result)
@@ -27,7 +27,7 @@ func TestFace(t *testing.T) {
 		// t.Log(result)
 	})
 	t.Run("InvalidFile", func(t *testing.T) {
-		result, err := Face([]byte{})
+		result, err := GenerateFaceEmbeddings([]byte{})
 
 		assert.Error(t, err)
 		assert.IsType(t, face.Embeddings{}, result)
