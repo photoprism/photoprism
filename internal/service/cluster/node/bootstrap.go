@@ -23,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -119,7 +120,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 	// and no DSN/fields are set (raw options) and no password is provided via file.
 	opts := c.Options()
 	driver := c.DatabaseDriver()
-	wantRotateDatabase := (driver == config.MySQL || driver == config.MariaDB) &&
+	wantRotateDatabase := (driver == enum.MySQL || driver == enum.MariaDB) &&
 		opts.DatabaseDSN == "" && opts.DatabaseName == "" && opts.DatabaseUser == "" && opts.DatabasePassword == "" &&
 		c.DatabasePassword() == ""
 

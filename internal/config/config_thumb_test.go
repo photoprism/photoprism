@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestConfig_ConvertSize(t *testing.T) {
@@ -48,7 +49,7 @@ func TestConfig_ThumbFilter(t *testing.T) {
 	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = "linear"
 	assert.Equal(t, thumb.ResampleLinear, c.ThumbFilter())
-	c.options.ThumbFilter = Auto
+	c.options.ThumbFilter = enum.Auto
 	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = ""
 	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
@@ -92,7 +93,7 @@ func TestConfig_PngSize(t *testing.T) {
 func TestConfig_ThumbLibrary(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.False(t, c.DisableVips())
-	c.options.ThumbLibrary = Auto
+	c.options.ThumbLibrary = enum.Auto
 	assert.Equal(t, "vips", c.ThumbLibrary())
 	c.options.DisableVips = true
 	assert.Equal(t, "imaging", c.ThumbLibrary())

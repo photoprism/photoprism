@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -52,7 +53,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
 				JWKSUrl:     jwksURL,
 				Database: cluster.RegisterDatabase{
-					Driver:   config.MySQL,
+					Driver:   enum.MySQL,
 					Host:     "db.local",
 					Port:     3306,
 					Name:     "pp_db",
@@ -79,7 +80,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
 	// Gate rotate=true: driver mysql and no DSN/fields.
-	c.Options().DatabaseDriver = config.MySQL
+	c.Options().DatabaseDriver = enum.MySQL
 	c.Options().DatabaseDSN = ""
 	c.Options().DatabaseName = ""
 	c.Options().DatabaseUser = ""
@@ -92,7 +93,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
 	// DSN branch should be preferred and persisted.
 	assert.Contains(t, c.Options().DatabaseDSN, "@tcp(db.local:3306)/pp_db")
-	assert.Equal(t, config.MySQL, c.Options().DatabaseDriver)
+	assert.Equal(t, enum.MySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
 }
@@ -189,7 +190,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 
 	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
 	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
-	assert.Equal(t, config.SQLite3, c.DatabaseDriver())
+	assert.Equal(t, enum.SQLite3, c.DatabaseDriver())
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -915,7 +916,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "database-provision-driver",
 			Usage:   "auto-provisioning `DRIVER` (auto, mysql)",
-			Value:   Auto,
+			Value:   enum.Auto,
 			EnvVars: EnvVars("DATABASE_PROVISION_DRIVER"),
 			Hidden:  true,
 		}}, {
@@ -1074,7 +1075,7 @@ var Flags = CliFlags{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
 			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
-			Value:   Auto,
+			Value:   enum.Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
 		Flag: &cli.StringFlag{

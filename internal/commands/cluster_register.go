@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
@@ -359,7 +360,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 
 	// DB settings (MySQL/MariaDB only)
 	if resp.Database.Name != "" && resp.Database.User != "" {
-		updates["DatabaseDriver"] = config.MySQL
+		updates["DatabaseDriver"] = enum.MySQL
 		updates["DatabaseName"] = resp.Database.Name
 		updates["DatabaseServer"] = fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port)
 		updates["DatabaseUser"] = resp.Database.User

@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestGenerateCredentials_StabilityAndBudgets(t *testing.T) {
@@ -78,7 +79,7 @@ func TestGetCredentials_SqliteRejected(t *testing.T) {
 	ctx := context.Background()
 	c := config.NewConfig(config.CliTestContext())
 	origDriver := DatabaseDriver
-	DatabaseDriver = config.SQLite3
+	DatabaseDriver = enum.SQLite3
 	t.Cleanup(func() { DatabaseDriver = origDriver })
 
 	_, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)

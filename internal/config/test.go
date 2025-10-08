@@ -241,7 +241,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 	cachedDb := false
 
 	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseDSN()) {
+	if len(testDbCache) > 0 && c.DatabaseDriver() == enum.SQLite3 && !fs.FileExists(c.DatabaseDSN()) {
 		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
 			log.Warnf("config: %s (restore test database)", err)
 		} else {
@@ -261,7 +261,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+	if testDbCache == nil && c.DatabaseDriver() == enum.SQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 
