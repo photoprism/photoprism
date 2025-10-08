@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/enum"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Vision orchestrates background computer-vision tasks (labels, captions,

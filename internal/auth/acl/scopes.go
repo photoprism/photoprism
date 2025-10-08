@@ -3,6 +3,7 @@ package acl
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/list"
 )
 
@@ -93,9 +94,9 @@ func ScopeAttrPermits(attr list.Attr, resource Resource, perms Permissions) bool
 	}
 
 	// Check if scope is limited to read or write operations.
-	if a := attr.Find(ScopeRead.String()); a.Value == list.True && GrantScopeRead.DenyAny(perms) {
+	if a := attr.Find(ScopeRead.String()); a.Value == enum.True && GrantScopeRead.DenyAny(perms) {
 		return false
-	} else if a = attr.Find(ScopeWrite.String()); a.Value == list.True && GrantScopeWrite.DenyAny(perms) {
+	} else if a = attr.Find(ScopeWrite.String()); a.Value == enum.True && GrantScopeWrite.DenyAny(perms) {
 		return false
 	}
 
