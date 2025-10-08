@@ -78,7 +78,7 @@ func indexAction(ctx *cli.Context) error {
 	if w := get.Index(); w != nil {
 		indexStart := time.Now()
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
-		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"))
+		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"), conf)
 
 		found, indexed = w.Start(opt)
 

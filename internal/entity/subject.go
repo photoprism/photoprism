@@ -150,7 +150,7 @@ func (m *Subject) DeletePermanently() error {
 
 // AfterDelete resets file and photo counters when the entity was deleted.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
-	tx.Model(m).Updates(Map{
+	tx.Model(m).Updates(Values{
 		"FileCount":  0,
 		"PhotoCount": 0,
 	})
@@ -338,6 +338,21 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		changed = true
 	}
 
+	// Update thumbnail (hash with crop area).
+	thumbChanged := false
+	if thumbCrop := clean.ThumbCrop(frm.Thumb); thumbCrop != "" && thumbCrop != m.Thumb {
+		if SrcPriority[frm.ThumbSrc] > 0 {
+			m.Thumb = thumbCrop
+			m.ThumbSrc = frm.ThumbSrc
+			thumbChanged = true
+			changed = true
+		} else {
+			return false, fmt.Errorf("invalid thumb source")
+		}
+	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
+		return false, fmt.Errorf("invalid thumb")
+	}
+
 	// Change favorite status?
 	if m.SubjFavorite != frm.SubjFavorite {
 		m.SubjFavorite = frm.SubjFavorite
@@ -368,14 +383,19 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 
 	// Update index?
 	if changed {
-		values := Map{
+		values := Values{
 			"SubjFavorite": m.SubjFavorite,
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,
 			"SubjExcluded": m.SubjExcluded,
 		}
 
-		if err := m.Updates(values); err == nil {
+		if thumbChanged {
+			values["Thumb"] = m.Thumb
+			values["ThumbSrc"] = m.ThumbSrc
+		}
+
+		if updateErr := m.Updates(values); updateErr == nil {
 			event.EntitiesUpdated("subjects", []*Subject{m})
 
 			if m.IsPerson() {
@@ -384,7 +404,7 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 
 			return true, nil
 		} else {
-			return false, err
+			return false, updateErr
 		}
 	}
 
@@ -424,7 +444,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	// Update subject record.
 	if err := m.SetName(name); err != nil {
 		return m, err
-	} else if err = m.Updates(Map{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
+	} else if err = m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
 		SubjNames.Set(m.SubjUID, m.SubjName)
@@ -509,7 +529,7 @@ func (m *Subject) MergeWith(other *Subject) error {
 	}
 
 	// Updated subject entity values.
-	updates := Map{
+	updates := Values{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
 	}

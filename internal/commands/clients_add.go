@@ -71,7 +71,7 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		// Set a default client name if no specific name has been provided.
 		if frm.AuthScope == "" {
-			frm.AuthScope = list.All
+			frm.AuthScope = list.Any
 		}
 
 		client, addErr := entity.AddClient(frm)

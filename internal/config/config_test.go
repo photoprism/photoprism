@@ -10,15 +10,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Set the assets path so that NewConfig(CliTestContext) always works for the package tests.
+// Runs first when package is tested.
 func init() {
-	if os.Getenv("PHOTOPRISM_ASSETS_PATH") == "" {
-		// From internal/config to repo root assets.
-		_ = os.Setenv("PHOTOPRISM_ASSETS_PATH", filepath.Clean("../../assets"))
-	}
+	hub.ApplyTestConfig()
 }
 
 func TestMain(m *testing.M) {
@@ -30,6 +28,9 @@ func TestMain(m *testing.M) {
 	defer c.CloseDb()
 
 	code := m.Run()
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }
@@ -123,7 +124,6 @@ func TestConfig_OptionsYaml(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
 	})
-
 	t.Run("ChangePath", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
@@ -161,10 +161,19 @@ func TestConfig_OriginalsPath(t *testing.T) {
 
 func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.AssertTestData(t)
 
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
 	result := c.ImportPath()
 	assert.True(t, strings.HasPrefix(result, "/"))
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/import"))
+
+	c.options.ImportPath = ""
+	if s := c.ImportPath(); s != "" && s != "/photoprism/import" {
+		t.Errorf("unexpected import path: %s", s)
+	}
+
+	c.options.ImportPath = result
 }
 
 func TestConfig_CachePath(t *testing.T) {

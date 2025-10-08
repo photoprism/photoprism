@@ -69,6 +69,8 @@ func UpdateLabel(router *gin.RouterGroup) {
 			return
 		}
 
+		RemoveFromLabelCoverCache(id)
+
 		event.SuccessMsg(i18n.MsgLabelSaved)
 
 		PublishLabelEvent(StatusUpdated, id, c)

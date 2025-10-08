@@ -56,5 +56,5 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	sess.UpdateContext(c)
 
 	// Return session and user.
-	return sess, sess.User(), sid, false
+	return sess, sess.GetUser(), sid, false
 }

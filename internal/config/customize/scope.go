@@ -9,7 +9,7 @@ import (
 
 // ApplyScope updates the current settings based on the authorization scope passed.
 func (s *Settings) ApplyScope(scope string) *Settings {
-	if scope == "" || scope == list.All {
+	if scope == "" || scope == list.Any {
 		return s
 	}
 

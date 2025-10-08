@@ -2,13 +2,13 @@ package vision
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
@@ -48,42 +48,79 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		return apiResponse, clientErr
 	}
 
+	defer func() {
+		_ = clientResp.Body.Close()
+	}()
+
+	body, apiErr := io.ReadAll(clientResp.Body)
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	format := apiRequest.GetResponseFormat()
+
+	if engine, ok := EngineFor(format); ok && engine.Parser != nil {
+		if clientResp.StatusCode >= 300 {
+			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
+		}
+
+		parsed, parseErr := engine.Parser.Parse(context.Background(), apiRequest, body, clientResp.StatusCode)
+		if parseErr != nil {
+			return nil, parseErr
+		}
+
+		return parsed, nil
+	}
+
 	apiResponse = &ApiResponse{}
 
 	// Parse and return response, or an error if the request failed.
-	switch apiRequest.GetResponseFormat() {
+	switch format {
 	case ApiFormatVision:
-		if apiJson, apiErr := io.ReadAll(clientResp.Body); apiErr != nil {
-			return apiResponse, apiErr
-		} else if apiErr = json.Unmarshal(apiJson, apiResponse); apiErr != nil {
+		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil {
 			return apiResponse, apiErr
 		} else if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", apiJson, clientResp.StatusCode)
-		}
-	case ApiFormatOllama:
-		ollamaResponse := &ApiResponseOllama{}
-
-		if apiJson, apiErr := io.ReadAll(clientResp.Body); apiErr != nil {
-			return apiResponse, apiErr
-		} else if apiErr = json.Unmarshal(apiJson, ollamaResponse); apiErr != nil {
-			return apiResponse, apiErr
-		} else if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", apiJson, clientResp.StatusCode)
-		}
-
-		apiResponse.Id = apiRequest.Id
-		apiResponse.Code = clientResp.StatusCode
-		apiResponse.Model = &Model{
-			Name: ollamaResponse.Model,
-		}
-
-		apiResponse.Result.Caption = &CaptionResult{
-			Text:   ollamaResponse.Response,
-			Source: entity.SrcImage,
+			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
 		}
 	default:
-		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.responseFormat))
+		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.ResponseFormat))
 	}
 
 	return apiResponse, nil
+}
+
+func decodeOllamaResponse(data []byte) (*ApiResponseOllama, error) {
+	resp := &ApiResponseOllama{}
+	dec := json.NewDecoder(bytes.NewReader(data))
+
+	for {
+		var chunk ApiResponseOllama
+		if err := dec.Decode(&chunk); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return nil, err
+		}
+
+		*resp = chunk
+	}
+
+	return resp, nil
+}
+
+func parseOllamaLabels(raw string) ([]LabelResult, error) {
+	cleaned := clean.JSON(raw)
+	if cleaned == "" {
+		return nil, nil
+	}
+
+	var payload struct {
+		Labels []LabelResult `json:"labels"`
+	}
+
+	if err := json.Unmarshal([]byte(cleaned), &payload); err != nil {
+		return nil, err
+	}
+
+	return payload.Labels, nil
 }

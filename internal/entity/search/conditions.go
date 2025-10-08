@@ -10,7 +10,9 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-// Like escapes a string for use in a query.
+// Like sanitizes user input so it can be safely interpolated into SQL LIKE
+// expressions. It strips operators that we don't expect to persist in the
+// statement and lets callers provide their own surrounding wildcards.
 func Like(s string) string {
 	return strings.Trim(clean.SqlString(s), " |&*%")
 }
@@ -20,8 +22,9 @@ func SQLParam(s, pre, post string) string {
 	return pre + strings.Trim(clean.SqlClean(s), " |&*%") + post
 }
 
-// LikeAny returns a slice of or'd where conditions matching the search words, and slices of the variable parameters for each where condition.
-// It returns a slice of where statements, and slices of slice the parameter values.
+// LikeAny builds OR-chained LIKE predicates for a text column. The input string
+// may contain AND / OR separators; keywords trigger stemming and plural
+// normalization while exact mode disables wildcard suffixes.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
 func LikeAny(col, s string, keywords, exact bool) (wheres []string, valuesSlice [][]interface{}) {
@@ -86,7 +89,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, valuesSlice 
 	return wheres, valuesSlice
 }
 
-// LikeAnyKeyword returns a slice of or'd where conditions matching the search keywords, and slices of the variable parameters for each where condition.
+// LikeAnyKeyword is a keyword-optimized wrapper around LikeAny.
 // It returns a slice of where statements, and slices of slice the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
@@ -94,7 +97,8 @@ func LikeAnyKeyword(col, s string) (wheres []string, valuesSlice [][]interface{}
 	return LikeAny(col, s, true, false)
 }
 
-// LikeAnyWord returns a returns a slice of or'd where conditions matching the search word, and slices of the variable parameters for each where condition.
+// LikeAnyWord matches whole words and keeps wildcard thresholds tuned for
+// free-form text search instead of keyword lists.
 // It returns a slice of where statements, and slices of slice the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
@@ -102,8 +106,9 @@ func LikeAnyWord(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAny(col, s, false, false)
 }
 
-// LikeAll returns a slice of where conditions matching all the search words, and slices of the variable parameters for each where condition.
-// It returns a slice of where statements, and slices of slice the parameter values.
+// LikeAll produces AND-chained LIKE predicates for every significant token in
+// the search string. When exact is false, longer words receive a suffix
+// wildcard to support prefix matches.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
 func LikeAll(col, s string, keywords, exact bool) (wheres []string, valuesSlice [][]interface{}) {
@@ -143,23 +148,23 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string, valuesSlice 
 	return wheres, valuesSlice
 }
 
-// LikeAllKeywords returns a slice of where conditions matching all the search keywords, and slices of the variable parameters for each where condition.
-// It returns a slice of where statements, and slices of slice the parameter values.
+// LikeAllKeywords is LikeAll specialized for keyword search.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
 func LikeAllKeywords(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAll(col, s, true, false)
 }
 
-// LikeAllWords returns a slice of where conditions matching all the search words, and slices of the variable parameters for each where condition.
-// It returns a slice of where statements, and slices of slice the parameter values.
+// LikeAllWords is LikeAll specialized for general word search.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
 func LikeAllWords(col, s string) (wheres []string, valuesSlice [][]interface{}) {
 	return LikeAll(col, s, false, false)
 }
 
-// LikeAllNames returns a slice of where conditions matching all the names, and slices of the variable parameters for each where condition.
+// LikeAllNames splits a name query into AND-separated groups and generates
+// prefix or substring matches against each provided column, keeping multi-word
+// tokens intact so "John Doe" still matches full-name columns.
 // It returns a slice of where statements, and slices of slice the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(wheres[0], valuesSlice[0]...)
@@ -199,7 +204,9 @@ func LikeAllNames(cols Cols, s string) (wheres []string, valuesSlice [][]interfa
 	return wheres, valuesSlice
 }
 
-// AnySlug returns a where condition that matches any slug in the search and the slice of the variable parameters for the where condition.
+// AnySlug converts human-friendly search terms into slugs and matches them
+// against the provided slug column, including the singularized variant for
+// plural words (e.g. "Cats" -> "cat").
 // It returns a where statement, and a slice of the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(where, values...)
@@ -243,7 +250,8 @@ func AnySlug(col, search, sep string) (where string, values []interface{}) {
 	return strings.Join(wheres, " OR "), values
 }
 
-// AnyInt returns a where condition that matches any integer in the search and the slice of the variable parameters for the where condition.
+// AnyInt filters user-specified integers through an allowed range and returns
+// an OR-chained equality predicate for the values that remain.
 // It returns a where statement, and a slice of the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(where, values...)
@@ -281,7 +289,9 @@ func AnyInt(col, numbers, sep string, low, high int) (where string, values []int
 	return strings.Join(wheres, " OR "), values
 }
 
-// OrLike returns a where condition and values for finding multiple terms combined with OR and the slice of the variable parameters for the where condition.
+// OrLike prepares a parameterised OR/LIKE clause for a single column. Star (* )
+// wildcards are mapped to SQL percent wildcards before returning the query and
+// bind values.
 // It returns a where statement, and a slice of the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(where, values...)
@@ -312,7 +322,9 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	return where, values
 }
 
-// OrLikeCols returns a where condition and values for finding multiple terms combined with OR and the slice of the variable parameters for the where condition.
+// OrLikeCols behaves like OrLike but fans out the same search terms across
+// multiple columns, preserving the order of values so callers can feed them to
+// database/sql.
 // It returns a where statement, and a slice of the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(where, values...)
@@ -352,12 +364,14 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	return strings.Join(wheres, " OR "), values
 }
 
-// SplitOr splits a search string into separate OR values for an IN condition.
+// SplitOr splits a search string on OR separators (|) while respecting escape
+// sequences so literals like "\|" survive unchanged.
 func SplitOr(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 }
 
-// SplitAnd splits a search string into separate AND values.
+// SplitAnd splits a search string on AND separators (&) while honouring escape
+// sequences.
 func SplitAnd(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)
 }

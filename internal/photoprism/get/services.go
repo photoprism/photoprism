@@ -27,6 +27,7 @@ package get
 import (
 	gc "github.com/patrickmn/go-cache"
 
+	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
@@ -54,21 +55,30 @@ var services struct {
 	Thumbs      *photoprism.Thumbs
 	Session     *session.Session
 	OIDC        *oidc.Client
+	JWTManager  *clusterjwt.Manager
+	JWTIssuer   *clusterjwt.Issuer
+	JWTVerifier *clusterjwt.Verifier
 }
 
+// SetConfig stores the shared Config for service constructors.
 func SetConfig(c *config.Config) {
 	if c == nil {
 		log.Panic("panic: argument is nil in get.SetConfig(c *config.Config)")
+		return
 	}
+
+	resetJWT()
 
 	conf = c
 
 	photoprism.SetConfig(c)
 }
 
+// Config returns the shared Config used by the service registry.
 func Config() *config.Config {
 	if conf == nil {
 		log.Panic("panic: conf is nil in get.Config()")
+		return nil
 	}
 
 	return conf

@@ -135,7 +135,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Check session permissions and apply as needed.
 	if sess != nil {
-		user := sess.User()
+		user := sess.GetUser()
 		aclRole := user.AclRole()
 
 		// Exclude private content.
@@ -156,7 +156,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
+		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
 			frm.Scope == "" && acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", authn.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden
@@ -507,17 +507,18 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
 
-		if frm.Private {
-			s = s.Where("photos.photo_private = 1")
-		} else if frm.Public {
-			s = s.Where("photos.photo_private = 0")
-		}
-
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
 		} else if frm.Quality != 0 && frm.Private == false {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
+	}
+
+	// Filter private pictures.
+	if frm.Public {
+		s = s.Where("photos.photo_private = 0")
+	} else if frm.Private {
+		s = s.Where("photos.photo_private = 1")
 	}
 
 	// Filter by camera id or name.

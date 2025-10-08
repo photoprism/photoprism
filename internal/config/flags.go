@@ -253,7 +253,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "import-dest",
-			Usage:     "relative originals `PATH` to which the files should be imported by default *optional*",
+			Usage:     "relative originals `PATH` in which files should be imported by default *optional*",
 			EnvVars:   EnvVars("IMPORT_DEST"),
 			TakesFile: true,
 		}}, {
@@ -599,15 +599,9 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-url",
-			Usage:   "canonical site `URL` used in generated links and to determine HTTPS/TLS; must include scheme (http/https)",
+			Usage:   "canonical site `URL` used in generated links and to determine HTTPS/TLS (scheme://host[:port])",
 			Value:   "http://localhost:2342/",
 			EnvVars: EnvVars("SITE_URL"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "internal-url",
-			Usage:   "service base `URL` used for intra-cluster communication and other internal requests *optional*",
-			Value:   "",
-			EnvVars: EnvVars("INTERNAL_URL"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-author",
@@ -671,40 +665,89 @@ var Flags = CliFlags{
 			Value:   header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-name",
-			Usage:   "cluster node `NAME` (lowercase letters, digits, hyphens; 1–63 chars)",
-			EnvVars: EnvVars("NODE_NAME"),
+			Name:    "cluster-domain",
+			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
+			EnvVars: EnvVars("CLUSTER_DOMAIN"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-type",
-			Usage:   "cluster node `TYPE` (portal, instance, service)",
-			EnvVars: EnvVars("NODE_TYPE"),
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "node-secret",
-			Usage:   "private `KEY` to secure intra-cluster communication *optional*",
-			EnvVars: EnvVars("NODE_SECRET"),
+			Name:    "cluster-cidr",
+			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
+			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-url",
-			Usage:   "base `URL` of the cluster portal e.g. https://portal.example.com",
+			Usage:   "base `URL` of the cluster management portal",
+			Value:   DefaultPortalUrl,
 			EnvVars: EnvVars("PORTAL_URL"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
+		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "portal-token",
-			Usage:   "access `TOKEN` for nodes to register and synchronize with the portal",
-			EnvVars: EnvVars("PORTAL_TOKEN"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
+			Name:    "join-token",
+			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
+			EnvVars: EnvVars("JOIN_TOKEN"),
+		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "portal-uuid",
-			Usage:   "`UUID` (version 4) for the portal to scope per-node credentials *optional*",
-			EnvVars: EnvVars("PORTAL_UUID"),
+			Name:    "node-name",
+			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
+			EnvVars: EnvVars("NODE_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-role",
+			Usage:   "node `ROLE` (instance or service)",
+			EnvVars: EnvVars("NODE_ROLE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-uuid",
+			Usage:   "node `UUID` (v7) that uniquely identifies this instance",
+			EnvVars: EnvVars("NODE_UUID"),
 			Hidden:  true,
-		}, Tags: []string{Pro}}, {
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-client-id",
+			Usage:   "node OAuth client `ID` (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_CLIENT_ID"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-client-secret",
+			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "jwks-url",
+			Usage:   "JWKS endpoint `URL` provided by the cluster portal for JWT verification",
+			EnvVars: EnvVars("JWKS_URL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwks-cache-ttl",
+			Usage:   "JWKS cache lifetime in `SECONDS` (default 300, max 3600)",
+			Value:   300,
+			EnvVars: EnvVars("JWKS_CACHE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "jwt-scope",
+			Usage:   "allowed JWT `SCOPES` (space separated). Leave empty to accept defaults",
+			EnvVars: EnvVars("JWT_SCOPE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwt-leeway",
+			Usage:   "JWT clock skew allowance in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("JWT_LEEWAY"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "advertise-url",
+			Usage:   "advertised `URL` for intra-cluster calls (scheme://host[:port])",
+			Value:   "",
+			EnvVars: EnvVars("ADVERTISE_URL"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "https-proxy",
 			Usage:   "proxy server `URL` to be used for outgoing connections *optional*",
@@ -837,7 +880,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "database-server",
 			Aliases: []string{"db-server"},
-			Usage:   "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
+			Usage:   "database `HOST` incl. port, e.g. \"mariadb:3306\" (or socket path)",
 			EnvVars: EnvVars("DATABASE_SERVER"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -868,6 +911,19 @@ var Flags = CliFlags{
 			Name:    "database-conns-idle",
 			Usage:   "maximum `NUMBER` of idle database connections",
 			EnvVars: EnvVars("DATABASE_CONNS_IDLE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "database-provision-driver",
+			Usage:   "auto-provisioning `DRIVER` (auto, mysql)",
+			Value:   Auto,
+			EnvVars: EnvVars("DATABASE_PROVISION_DRIVER"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "database-provision-dsn",
+			Usage:   "auto-provisioning `DSN`",
+			EnvVars: EnvVars("DATABASE_PROVISION_DSN"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-bin",
@@ -1018,7 +1074,7 @@ var Flags = CliFlags{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
 			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
-			Value:   "auto",
+			Value:   Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1095,10 +1151,38 @@ var Flags = CliFlags{
 			Value:   "",
 			EnvVars: EnvVars("VISION_KEY"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "vision-schedule",
+			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
+			EnvVars: EnvVars("VISION_SCHEDULE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "vision-filter",
+			Usage:   "vision worker search `FILTER` applied to scheduled runs (same syntax as photoprism vision run)",
+			Value:   "public:true",
+			EnvVars: EnvVars("VISION_FILTER"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
 			EnvVars: EnvVars("DETECT_NSFW"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-engine",
+			Usage:   "face detection engine `NAME` (auto, pigo, onnx)",
+			Value:   face.EngineAuto,
+			EnvVars: EnvVars("FACE_ENGINE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-engine-run",
+			Usage:   "face detection run `MODE` (auto, never, manual, newly-indexed, on-demand, on-index, on-schedule, always)",
+			Value:   "auto",
+			EnvVars: EnvVars("FACE_ENGINE_RUN"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-engine-threads",
+			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",
+			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
@@ -1111,6 +1195,12 @@ var Flags = CliFlags{
 			Usage:   "minimum face `QUALITY` score (1-100)",
 			Value:   face.ScoreThreshold,
 			EnvVars: EnvVars("FACE_SCORE"),
+		}}, {
+		Flag: &cli.Float64SliceFlag{
+			Name:    "face-angle",
+			Usage:   "face detection `ANGLE` in radians (repeatable)",
+			Value:   cli.NewFloat64Slice(face.DefaultAngles...),
+			EnvVars: EnvVars("FACE_ANGLE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",

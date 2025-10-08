@@ -71,11 +71,10 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-			// Skip with warning if preview image could not be created.
+			// Try to create a preview image; if this fails, log and continue without failing the whole group.
 			if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
-				result.Err = fmt.Errorf("index: could not create preview image for %s", clean.Log(f.RootRelName()))
-				log.Error(result.Err)
-				result.Status = IndexFailed
+				log.Warnf("index: could not create preview image for %s (%s)", clean.Log(f.RootRelName()), imgErr)
+				// Continue indexing other related files without changing the overall success status.
 				continue
 			} else if img == nil {
 				log.Debugf("index: skipped creating preview image for %s", clean.Log(f.RootRelName()))
@@ -84,8 +83,8 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 				// Skip with warning if thumbs could not be created.
 				if thumbsErr := img.GenerateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
-					result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
-					result.Status = IndexFailed
+					log.Warnf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
+					// Continue indexing; preview image exists and other related files may still succeed.
 					continue
 				}
 

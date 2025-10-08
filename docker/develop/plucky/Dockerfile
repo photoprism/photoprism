@@ -65,7 +65,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         build-essential software-properties-common pkg-config apt-utils \
         gcc g++ git autoconf automake cmake gettext apache2-utils davfs2 \
-        chrpath tree ripgrep fd-find bat eza git-delta shellcheck shfmt fzf \
+        chrpath tree ripgrep fd-find bat eza git-delta shellcheck shfmt fzf xxd \
         libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
@@ -74,9 +74,11 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
     ln -sf /usr/bin/batcat /usr/local/bin/bat && \
+    ln -sf /usr/bin/python3 /usr/local/bin/python && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
     /scripts/install-libheif.sh && \

@@ -2,7 +2,7 @@ package tensorflow
 
 import (
 	"bufio"
-	"io/fs"
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 
@@ -35,7 +35,7 @@ func loadLabelsFromPath(path string) (labels []string, err error) {
 func LoadLabels(modelPath string, expectedLabels int) (labels []string, err error) {
 
 	dir := os.DirFS(modelPath)
-	matches, err := fs.Glob(dir, "labels*.txt")
+	matches, err := iofs.Glob(dir, "labels*.txt")
 	if err != nil {
 		return nil, err
 	}

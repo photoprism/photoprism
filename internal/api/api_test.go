@@ -20,18 +20,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// Ensure assets path is set so TestMain in this package can initialize config.
-func init() {
-	if os.Getenv("PHOTOPRISM_ASSETS_PATH") == "" {
-		_ = os.Setenv("PHOTOPRISM_ASSETS_PATH", fs.Abs("../../assets"))
-	}
-}
-
 func TestMain(m *testing.M) {
 	// Init test logger.
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
+
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	// Init test config.
 	c := config.TestConfig()
@@ -43,6 +39,9 @@ func TestMain(m *testing.M) {
 
 	// Run unit tests.
 	code := m.Run()
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

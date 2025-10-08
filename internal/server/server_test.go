@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -17,6 +18,9 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
+
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	// Init test config.
 	c := config.TestConfig()
@@ -28,6 +32,9 @@ func TestMain(m *testing.M) {
 
 	// Run unit tests.
 	code := m.Run()
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

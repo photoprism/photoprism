@@ -1,7 +1,12 @@
 package query
 
 import (
+	"errors"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/jinzhu/gorm"
 
@@ -16,6 +21,25 @@ type IDs []string
 
 // FaceMap maps identification strings to face entities.
 type FaceMap map[string]entity.Face
+
+// ErrRetainedManualClusters indicates that candidate clusters could not be purged after merging
+// because markers still reference them. Callers may treat this as a non-fatal warning.
+var ErrRetainedManualClusters = errors.New("faces: retained manual clusters after merge")
+
+// MergeMaxRetry limits how often the optimiser retries stubborn manual clusters (0 = unlimited).
+var MergeMaxRetry = 1
+
+func init() {
+	if v := os.Getenv("PHOTOPRISM_FACE_MERGE_MAX_RETRY"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			if n < 0 {
+				n = 0
+			}
+
+			MergeMaxRetry = n
+		}
+	}
+}
 
 // FacesByID retrieves faces from the database and returns a map with the Face ID as key.
 func FacesByID(knownOnly, unmatchedOnly, hidden, ignored bool) (FaceMap, IDs, error) {
@@ -73,6 +97,10 @@ func ManuallyAddedFaces(hidden, ignored bool, subj_uid string) (result entity.Fa
 		stmt = stmt.Where("subj_uid <> ''")
 	}
 
+	if MergeMaxRetry > 0 {
+		stmt = stmt.Where("merge_retry < ?", MergeMaxRetry)
+	}
+
 	if !ignored {
 		stmt = stmt.Where("face_kind <= 1")
 	}
@@ -96,7 +124,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 			Where("face_id = ?", f.ID).
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
-			UpdateColumns(entity.Map{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
+			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
@@ -223,10 +251,43 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	} else if removed > 0 {
 		log.Debugf("faces: removed %d orphans of %d candidate for subject %s", removed, len(merge), clean.Log(subjUID))
 	} else {
-		return merged, fmt.Errorf("faces: failed to remove any orphan clusters of %d candidate for subject %s", len(merge), clean.Log(subjUID))
+		note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
+
+		for _, candidate := range merge {
+			updates := entity.Values{
+				"MergeRetry": gorm.Expr("merge_retry + 1"),
+				"MergeNotes": note,
+			}
+
+			if err := Db().Model(&entity.Face{}).Where("id = ?", candidate.ID).Updates(updates).Error; err != nil {
+				log.Warnf("faces: failed updating merge retry for %s (%s)", candidate.ID, err)
+			} else {
+				candidate.MergeRetry++
+				candidate.MergeNotes = note
+			}
+		}
+
+		return merged, fmt.Errorf("%w: kept %d candidate cluster(s) [%s] for subject %s because markers still reference them", ErrRetainedManualClusters, len(merge), clean.Log(strings.Join(merge.IDs(), ", ")), clean.Log(subjUID))
 	}
 
 	return merged, err
+}
+
+// ResetFaceMergeRetry clears merge retry metadata for all (or subject-specific) clusters.
+func ResetFaceMergeRetry(subjUID string) (int, error) {
+	stmt := Db().Model(&entity.Face{}).Where("merge_retry > 0")
+
+	if subjUID != "" {
+		stmt = stmt.Where("subj_uid = ?", subjUID)
+	}
+
+	res := stmt.UpdateColumns(entity.Values{"MergeRetry": 0, "MergeNotes": ""})
+
+	if res.Error != nil {
+		return 0, res.Error
+	}
+
+	return int(res.RowsAffected), nil
 }
 
 // ResolveFaceCollisions resolves collisions of different subject's faces.

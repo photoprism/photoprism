@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestGeoResult_Lat(t *testing.T) {
@@ -46,12 +47,15 @@ func TestGeoResult_Lng(t *testing.T) {
 
 func TestGeoResults_GeoJSON(t *testing.T) {
 	taken := time.Date(2000, 1, 1, 1, 1, 1, 1, time.UTC).UTC().Truncate(time.Second)
+	uid1 := rnd.GenerateUID(entity.PhotoUID)
+	uid2 := rnd.GenerateUID(entity.PhotoUID)
+	uid3 := rnd.GenerateUID(entity.PhotoUID)
 	items := GeoResults{
 		GeoResult{
 			ID:            "1",
 			PhotoLat:      7.775,
 			PhotoLng:      8.775,
-			PhotoUID:      "p1",
+			PhotoUID:      uid1,
 			PhotoTitle:    "Title 1",
 			PhotoCaption:  "Description 1",
 			PhotoFavorite: false,
@@ -65,7 +69,7 @@ func TestGeoResults_GeoJSON(t *testing.T) {
 			ID:            "2",
 			PhotoLat:      1.775,
 			PhotoLng:      -5.775,
-			PhotoUID:      "p2",
+			PhotoUID:      uid2,
 			PhotoTitle:    "Title 2",
 			PhotoCaption:  "Description 2",
 			PhotoFavorite: true,
@@ -79,7 +83,7 @@ func TestGeoResults_GeoJSON(t *testing.T) {
 			ID:            "3",
 			PhotoLat:      -1.775,
 			PhotoLng:      100.775,
-			PhotoUID:      "p3",
+			PhotoUID:      uid3,
 			PhotoTitle:    "Title 3",
 			PhotoCaption:  "Description 3",
 			PhotoFavorite: false,

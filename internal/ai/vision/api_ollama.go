@@ -80,6 +80,6 @@ func NewApiRequestOllama(images Files, fileScheme scheme.Type) (*ApiRequest, err
 		Id:             rnd.UUID(),
 		Model:          "",
 		Images:         imagesData,
-		responseFormat: ApiFormatOllama,
+		ResponseFormat: ApiFormatOllama,
 	}, nil
 }

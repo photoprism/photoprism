@@ -33,7 +33,7 @@ const (
 	StatusCommunity Status = "ce"
 )
 
-// Config represents backend api credentials for maps & geodata.
+// Config stores the encrypted Hub session and surface credentials used for maps and geodata requests.
 type Config struct {
 	Version   string     `json:"version" yaml:"-"`
 	FileName  string     `json:"-" yaml:"-"`
@@ -49,7 +49,7 @@ type Config struct {
 	PartnerID string     `json:"-" yaml:"-"`
 }
 
-// NewConfig creates a new backend api credentials instance.
+// NewConfig constructs a Hub configuration with the supplied version metadata and defaults for dynamic values.
 func NewConfig(version, fileName, serial, env, userAgent, partnerId string) *Config {
 	return &Config{
 		Version:   version,
@@ -65,7 +65,7 @@ func NewConfig(version, fileName, serial, env, userAgent, partnerId string) *Con
 	}
 }
 
-// MapKey returns the maps api key.
+// MapKey returns the decrypted maps API key by decoding the cached session when available.
 func (c *Config) MapKey() string {
 	if sess, err := c.DecodeSession(true); err != nil {
 		return ""
@@ -74,7 +74,7 @@ func (c *Config) MapKey() string {
 	}
 }
 
-// Tier returns the membership tier.
+// Tier returns the numeric membership tier from the decoded session; zero indicates none.
 func (c *Config) Tier() int {
 	if sess, err := c.DecodeSession(true); err != nil {
 		return 0
@@ -101,7 +101,7 @@ func (c *Config) Customer() string {
 	}
 }
 
-// Propagate updates backend api credentials in other packages.
+// Propagate publishes the current credentials to dependent packages (e.g. places search).
 func (c *Config) Propagate() {
 	places.Key = c.Key
 	places.Secret = c.Secret
@@ -161,8 +161,9 @@ func (c *Config) DecodeSession(cached bool) (Session, error) {
 	}
 
 	hash := sha256.New()
-	if _, err := hash.Write([]byte(c.Secret)); err != nil {
-		return result, err
+
+	if _, hashErr := hash.Write([]byte(c.Secret)); hashErr != nil {
+		return result, hashErr
 	}
 
 	var b []byte
@@ -182,8 +183,8 @@ func (c *Config) DecodeSession(cached bool) (Session, error) {
 
 	plaintext = bytes.Trim(plaintext, "\x00")
 
-	if err := json.Unmarshal(plaintext, &result); err != nil {
-		return result, err
+	if jsonErr := json.Unmarshal(plaintext, &result); jsonErr != nil {
+		return result, jsonErr
 	}
 
 	// Cache session.
@@ -221,17 +222,23 @@ func (c *Config) ReSync(token string) (err error) {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 60 * time.Second}
 
-	url := ServiceURL
-	method := http.MethodPost
+	endpointUrl := GetServiceURL(c.Key)
 
+	// Return if no endpoint URL is set.
+	if endpointUrl == "" {
+		log.Debugf("config: unable to obtain key for maps and places (service disabled)")
+		return nil
+	}
+
+	var method string
 	var req *http.Request
 
-	if c.Key != "" {
-		url = fmt.Sprintf(ServiceURL+"/%s", c.Key)
-		method = http.MethodPut
-		log.Tracef("config: requesting updated keys for maps and places")
+	if c.Key == "" {
+		method = http.MethodPost
+		log.Tracef("config: requesting new key for maps and places")
 	} else {
-		log.Tracef("config: requesting new api keys for maps and places")
+		method = http.MethodPut
+		log.Tracef("config: requesting key for maps and places")
 	}
 
 	// Create JSON request.
@@ -239,7 +246,7 @@ func (c *Config) ReSync(token string) (err error) {
 
 	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID, token)); err != nil {
 		return err
-	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
+	} else if req, err = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); err != nil {
 		return err
 	}
 
@@ -268,7 +275,7 @@ func (c *Config) ReSync(token string) (err error) {
 	if err != nil {
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("fetching api key from %s failed (error %d)", ApiHost(), r.StatusCode)
+		err = fmt.Errorf("failed to request key from %s (error %d)", GetServiceHost(), r.StatusCode)
 		return err
 	}
 

@@ -12,12 +12,12 @@ import (
 
 var albumCache = gc.New(15*time.Minute, 15*time.Minute)
 
-// FlushAlbumCache resets the album cache.
+// FlushAlbumCache clears any cached album entries.
 func FlushAlbumCache() {
 	albumCache.Flush()
 }
 
-// CachedAlbumByUID returns an existing album or an error if not found.
+// CachedAlbumByUID returns the album with the specified UID from cache or database.
 func CachedAlbumByUID(uid string) (m Album, err error) {
 	// Valid album UID?
 	if uid == "" || rnd.InvalidUID(uid, AlbumUID) {

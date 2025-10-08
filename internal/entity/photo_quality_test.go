@@ -7,19 +7,19 @@ import (
 )
 
 func TestPhoto_QualityScore(t *testing.T) {
-	t.Run("PhotoFixture19800101_000002_D640C559", func(t *testing.T) {
+	t.Run("PhotoFixtureNum19800101Num000002DNum640CNum559", func(t *testing.T) {
 		assert.Equal(t, 3, PhotoFixtures.Pointer("19800101_000002_D640C559").QualityScore())
 	})
-	t.Run("PhotoFixturePhoto01 - favorite true - taken at before 2008", func(t *testing.T) {
+	t.Run("PhotoFixturePhotoNum01FavoriteTrueTakenAtBeforeNum2008", func(t *testing.T) {
 		assert.Equal(t, 7, PhotoFixtures.Pointer("Photo01").QualityScore())
 	})
-	t.Run("PhotoFixturePhoto06 - taken at after 2012 - resolution 2", func(t *testing.T) {
+	t.Run("PhotoFixturePhotoNum06TakenAtAfterNum2012ResolutionTwo", func(t *testing.T) {
 		assert.Equal(t, 3, PhotoFixtures.Pointer("Photo06").QualityScore())
 	})
-	t.Run("PhotoFixturePhoto07 - score < 3 bit edited", func(t *testing.T) {
+	t.Run("PhotoFixturePhotoNum07ScoreLessThanThreeBitEdited", func(t *testing.T) {
 		assert.Equal(t, 3, PhotoFixtures.Pointer("Photo07").QualityScore())
 	})
-	t.Run("PhotoFixturePhoto15 - description with non-photographic", func(t *testing.T) {
+	t.Run("PhotoFixturePhotoFifteenDescriptionWithNonPhotographic", func(t *testing.T) {
 		assert.Equal(t, 2, PhotoFixtures.Pointer("Photo15").QualityScore())
 	})
 }

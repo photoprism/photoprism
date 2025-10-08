@@ -13,10 +13,10 @@ func TestPath(t *testing.T) {
 	t.Run("ValidFile", func(t *testing.T) {
 		assert.Equal(t, "filename.TXT", Path("filename.TXT"))
 	})
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "The quick brown fox.", Path("The quick brown fox."))
 	})
-	t.Run("filename.txt", func(t *testing.T) {
+	t.Run("FilenameTxt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", Path("filename.txt"))
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -34,10 +34,10 @@ func TestPath(t *testing.T) {
 	t.Run("Replace", func(t *testing.T) {
 		assert.Equal(t, "", Path("${https://<host>:<port>/<path>}"))
 	})
-	t.Run("Control Character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "filename.", Path("filename."+string(rune(127))))
 	})
-	t.Run("Special Chars", func(t *testing.T) {
+	t.Run("SpecialChars", func(t *testing.T) {
 		assert.Equal(t, "filename.", Path("filename.?**"))
 	})
 	t.Run("IncludesHash", func(t *testing.T) {
@@ -55,10 +55,10 @@ func TestUserPath(t *testing.T) {
 	t.Run("ValidFile", func(t *testing.T) {
 		assert.Equal(t, "filename.TXT", UserPath("filename.TXT"))
 	})
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "The quick brown fox", UserPath("The quick brown fox."))
 	})
-	t.Run("filename.txt", func(t *testing.T) {
+	t.Run("FilenameTxt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", UserPath("filename.txt"))
 	})
 	t.Run("Empty", func(t *testing.T) {

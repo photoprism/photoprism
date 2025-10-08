@@ -9,12 +9,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// onReady contains init functions to be called when the
-// initialization of the database is complete.
+// onReady stores callbacks to execute once database initialization finishes.
 var onReady []func()
 
-// ready executes init callbacks when the initialization of the
-// database is complete.
+// ready executes all registered callbacks after database initialization completes.
 func ready() {
 	for _, init := range onReady {
 		init()

@@ -152,7 +152,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Site Infos.
 		{"site-url", c.SiteUrl()},
-		{"internal-url", c.InternalUrl()},
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
 		{"site-author", c.SiteAuthor()},
@@ -161,16 +160,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-description", c.SiteDescription()},
 		{"site-favicon", c.SiteFavicon()},
 		{"site-preview", c.SitePreview()},
-
-		// Cluster Configuration.
-		{"node-name", c.NodeName()},
-		{"node-type", c.NodeType()},
-		{"node-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeSecret())))},
-		{"portal-url", c.PortalUrl()},
-		{"portal-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.PortalToken())))},
-		{"portal-uuid", c.PortalUUID()},
-		{"portal-config-path", c.PortalConfigPath()},
-		{"portal-theme-path", c.PortalThemePath()},
 
 		// CDN and Cross-Origin Resource Sharing (CORS).
 		{"cdn-url", c.CdnUrl("/")},
@@ -185,6 +174,25 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"static-uri", c.StaticUri()},
 		{"content-uri", c.ContentUri()},
 		{"video-uri", c.VideoUri()},
+
+		// Cluster Configuration.
+		{"cluster-domain", c.ClusterDomain()},
+		{"cluster-cidr", c.ClusterCIDR()},
+		{"cluster-uuid", c.ClusterUUID()},
+		{"portal-url", c.PortalUrl()},
+		{"portal-config-path", c.PortalConfigPath()},
+		{"portal-theme-path", c.PortalThemePath()},
+		{"join-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken())))},
+		{"node-name", c.NodeName()},
+		{"node-role", c.NodeRole()},
+		{"node-uuid", c.NodeUUID()},
+		{"node-client-id", c.NodeClientID()},
+		{"node-client-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeClientSecret())))},
+		{"jwks-url", c.JWKSUrl()},
+		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
+		{"jwt-scope", c.JWTAllowedScopes().String()},
+		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
+		{"advertise-url", c.AdvertiseUrl()},
 
 		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},
@@ -267,14 +275,20 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-api", fmt.Sprintf("%t", c.VisionApi())},
 		{"vision-uri", c.VisionUri()},
 		{"vision-key", strings.Repeat("*", utf8.RuneCountInString(c.VisionKey()))},
+		{"vision-schedule", c.VisionSchedule()},
+		{"vision-filter", c.VisionFilter()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 
 		// Facial Recognition.
+		{"face-engine", c.FaceEngine()},
+		{"face-engine-run", c.FaceEngineRunType()},
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+		{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
 		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},

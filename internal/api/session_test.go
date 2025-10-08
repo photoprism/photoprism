@@ -37,9 +37,9 @@ func TestGetSessionResponse(t *testing.T) {
 		assert.Equal(t, sess.AuthToken(), result["access_token"])
 		assert.Equal(t, sess.AuthTokenType(), result["token_type"])
 		assert.Equal(t, sess.ExpiresIn(), result["expires_in"])
-		assert.Equal(t, sess.Provider().String(), result["provider"])
-		assert.Equal(t, sess.User(), result["user"])
-		assert.Equal(t, sess.Data(), result["data"])
+		assert.Equal(t, sess.GetProvider().String(), result["provider"])
+		assert.Equal(t, sess.GetUser(), result["user"])
+		assert.Equal(t, sess.GetData(), result["data"])
 		assert.Equal(t, conf, result["config"])
 	})
 	t.Run("NoAuthToken", func(t *testing.T) {
@@ -56,9 +56,9 @@ func TestGetSessionResponse(t *testing.T) {
 		assert.Nil(t, result["access_token"])
 		assert.Nil(t, result["token_type"])
 		assert.Equal(t, sess.ExpiresIn(), result["expires_in"])
-		assert.Equal(t, sess.Provider().String(), result["provider"])
-		assert.Equal(t, sess.User(), result["user"])
-		assert.Equal(t, sess.Data(), result["data"])
+		assert.Equal(t, sess.GetProvider().String(), result["provider"])
+		assert.Equal(t, sess.GetUser(), result["user"])
+		assert.Equal(t, sess.GetData(), result["data"])
 		assert.Equal(t, conf, result["config"])
 	})
 }
@@ -191,7 +191,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAPasscodeRequired", func(t *testing.T) {
+	t.Run("TwoFaPasscodeRequired", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -205,7 +205,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAInvalidPasscode", func(t *testing.T) {
+	t.Run("TwoFaInvalidPasscode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -220,7 +220,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAUseRecoveryCode", func(t *testing.T) {
+	t.Run("TwoFaUseRecoveryCode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)

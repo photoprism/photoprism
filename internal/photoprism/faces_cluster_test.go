@@ -7,7 +7,7 @@ import (
 )
 
 func TestFaces_Cluster(t *testing.T) {
-	t.Run("force true", func(t *testing.T) {
+	t.Run("ForceTrue", func(t *testing.T) {
 		c := config.TestConfig()
 
 		m := NewFaces(c)
@@ -25,7 +25,7 @@ func TestFaces_Cluster(t *testing.T) {
 
 		t.Log(r)
 	})
-	t.Run("force false", func(t *testing.T) {
+	t.Run("ForceFalse", func(t *testing.T) {
 		c := config.TestConfig()
 
 		m := NewFaces(c)

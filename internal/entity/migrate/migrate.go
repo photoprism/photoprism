@@ -33,5 +33,5 @@ import (
 
 var log = event.Log
 
-// Map is an alias for map[string]interface{}.
-type Map map[string]interface{}
+// Map is a shorthand alias for map[string]interface{}.
+type Map = map[string]interface{}

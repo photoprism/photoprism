@@ -40,7 +40,7 @@ func TestUID(t *testing.T) {
 }
 
 func TestIdUint(t *testing.T) {
-	t.Run("12334545", func(t *testing.T) {
+	t.Run("Num12334545", func(t *testing.T) {
 		assert.Equal(t, uint(12334545), IdUint("12334545"))
 	})
 	t.Run("ThumbSize", func(t *testing.T) {

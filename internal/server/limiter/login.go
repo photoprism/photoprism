@@ -6,6 +6,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// Default login rate-limit parameters.
 const (
 	DefaultLoginInterval = time.Minute // average failed logins per second
 	DefaultLoginLimit    = 10          // login failure burst rate limit (for passwords and 2FA)

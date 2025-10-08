@@ -27,7 +27,8 @@ type Client struct {
 	insecure bool
 }
 
-// NewClient creates and returns a new OpenID Connect (OIDC) Relying Party Client based on the specified parameters.
+// NewClient creates a new OpenID Connect (OIDC) Relying Party (RP) client using the provided discovery URL,
+// client credentials, scopes, and site URL.
 func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl string, insecure bool) (result *Client, err error) {
 	if issuerUri == nil {
 		err = errors.New("issuer uri required")
@@ -126,8 +127,8 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	}, nil
 }
 
-// AuthCodeUrlHandler redirects a browser to the login page of the configured OIDC identity provider.
-func (c *Client) AuthCodeUrlHandler(ctx *gin.Context) {
+// AuthURLHandler redirects a browser to the login page of the configured OIDC identity provider.
+func (c *Client) AuthURLHandler(ctx *gin.Context) {
 	handle := rp.AuthURLHandler(rnd.State, c)
 	handle(ctx.Writer, ctx.Request)
 }
@@ -147,10 +148,14 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
 		if oidcErr := ctx.Writer.Header().Get("oidc_error"); oidcErr == "" {
-			return userInfo, tokens, errors.New("failed to exchange token for user info")
+			err = errors.New("failed to exchange token for user info")
 		} else {
-			return userInfo, tokens, errors.New(oidcErr)
+			err = errors.New(oidcErr)
 		}
+
+		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, err.Error())
+
+		return userInfo, tokens, err
 	}
 
 	return userInfo, tokens, nil

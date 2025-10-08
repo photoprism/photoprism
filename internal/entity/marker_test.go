@@ -86,7 +86,7 @@ func TestMarker_SetName(t *testing.T) {
 }
 
 func TestMarker_SaveForm(t *testing.T) {
-	t.Run("fa-ge add new name to marker then rename marker", func(t *testing.T) {
+	t.Run("FaGeAddNewNameToMarkerThenRenameMarker", func(t *testing.T) {
 		m := MarkerFixtures.Get("fa-gr-1")
 		m2 := MarkerFixtures.Get("fa-gr-2")
 		m3 := MarkerFixtures.Get("fa-gr-3")
@@ -284,7 +284,7 @@ func TestMarker_Save(t *testing.T) {
 		p.PreloadFiles()
 		assert.NotEmpty(t, p.Files)
 	})
-	t.Run("invalid position", func(t *testing.T) {
+	t.Run("InvalidPosition", func(t *testing.T) {
 		m := Marker{X: -1, Y: 0, W: 0.2, H: 0.133, MarkerType: MarkerFace}
 
 		if err := m.Save(); err == nil {
@@ -297,7 +297,7 @@ func TestMarker_Save(t *testing.T) {
 }
 
 func TestMarker_ClearSubject(t *testing.T) {
-	t.Run("1000003-2", func(t *testing.T) {
+	t.Run("Num1000003Two", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-2")
 
 		assert.NotEmpty(t, m.MarkerName)
@@ -310,7 +310,7 @@ func TestMarker_ClearSubject(t *testing.T) {
 
 		assert.Empty(t, m.MarkerName)
 	})
-	t.Run("actor-1", func(t *testing.T) {
+	t.Run("ActorOne", func(t *testing.T) {
 		m := MarkerFixtures.Get("actor-a-4")  // id 18
 		m2 := MarkerFixtures.Get("actor-a-3") // id 17
 		m3 := MarkerFixtures.Get("actor-a-2") // id 16
@@ -362,7 +362,7 @@ func TestMarker_ClearSubject(t *testing.T) {
 }
 
 func TestMarker_ClearFace(t *testing.T) {
-	t.Run("1000003-2", func(t *testing.T) {
+	t.Run("Num1000003Two", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-2")
 
 		assert.NotEmpty(t, m.FaceID)
@@ -376,7 +376,7 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.True(t, updated)
 		assert.Empty(t, m.FaceID)
 	})
-	t.Run("empty face id", func(t *testing.T) {
+	t.Run("EmptyFaceId", func(t *testing.T) {
 		m := Marker{FaceID: ""}
 
 		updated, err := m.ClearFace()
@@ -388,7 +388,7 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.False(t, updated)
 		assert.Empty(t, m.FaceID)
 	})
-	t.Run("subject src manual", func(t *testing.T) {
+	t.Run("SubjectSrcManual", func(t *testing.T) {
 		m := Marker{MarkerUID: "mqyz9x61edicxf8j", FaceID: "123ab"}
 
 		assert.NotEmpty(t, m.FaceID)
@@ -406,18 +406,18 @@ func TestMarker_ClearFace(t *testing.T) {
 }
 
 func TestMarker_SyncSubject(t *testing.T) {
-	t.Run("no face marker", func(t *testing.T) {
+	t.Run("NoFaceMarker", func(t *testing.T) {
 		m := Marker{MarkerType: "test", subject: nil}
 		assert.Nil(t, m.SyncSubject(false))
 	})
-	t.Run("subject is nil", func(t *testing.T) {
+	t.Run("SubjectIsNil", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, subject: nil}
 		assert.Nil(t, m.SyncSubject(false))
 	})
 }
 
 func TestMarker_Create(t *testing.T) {
-	t.Run("invalid position", func(t *testing.T) {
+	t.Run("InvalidPosition", func(t *testing.T) {
 		m := Marker{X: 0, Y: 0, MarkerType: MarkerFace}
 		err := m.Create()
 		if err == nil {
@@ -434,13 +434,13 @@ func TestMarker_Embeddings(t *testing.T) {
 
 		assert.Equal(t, 0.013083286379677253, m.Embeddings()[0][0])
 	})
-	t.Run("empty embedding", func(t *testing.T) {
+	t.Run("EmptyEmbedding", func(t *testing.T) {
 		m := Marker{}
 		m.EmbeddingsJSON = []byte("")
 
 		assert.Empty(t, m.Embeddings())
 	})
-	t.Run("invalid embedding json", func(t *testing.T) {
+	t.Run("InvalidEmbeddingJson", func(t *testing.T) {
 		m := Marker{}
 		m.EmbeddingsJSON = []byte("[false]")
 
@@ -449,28 +449,28 @@ func TestMarker_Embeddings(t *testing.T) {
 }
 
 func TestMarker_HasFace(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-6")
 
 		assert.True(t, m.HasFace(nil, -1))
 		assert.True(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), -1))
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-6")
 
 		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
 	})
-	t.Run("face id empty", func(t *testing.T) {
+	t.Run("FaceIdEmpty", func(t *testing.T) {
 		m := Marker{FaceID: ""}
 
 		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
 	})
-	t.Run("face dist < 0", func(t *testing.T) {
+	t.Run("FaceDistLessThanZero", func(t *testing.T) {
 		m := Marker{FaceID: "123", FaceDist: -1}
 
 		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
 	})
-	t.Run("face id = f.ID", func(t *testing.T) {
+	t.Run("FaceIdEqualFId", func(t *testing.T) {
 		m := Marker{FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
 
 		assert.True(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
@@ -540,7 +540,7 @@ func TestMarker_GetFace(t *testing.T) {
 			assert.Nil(t, m.face)
 		}
 	})
-	t.Run("find face with ID", func(t *testing.T) {
+	t.Run("FindFaceWithId", func(t *testing.T) {
 		m := Marker{MarkerUID: "ms6sg6b14ahkyd24", FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
 
 		if f := m.Face(); f == nil {
@@ -549,12 +549,12 @@ func TestMarker_GetFace(t *testing.T) {
 			assert.Equal(t, "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6", f.ID)
 		}
 	})
-	t.Run("low quality marker", func(t *testing.T) {
+	t.Run("LowQualityMarker", func(t *testing.T) {
 		m := Marker{MarkerUID: "", FaceID: "", SubjSrc: SrcManual, Size: 130}
 
 		assert.Nil(t, m.Face())
 	})
-	t.Run("create face", func(t *testing.T) {
+	t.Run("CreateFace", func(t *testing.T) {
 		m := Marker{
 			MarkerUID:      "ms6sg6b14ahkyd24",
 			FaceID:         "",
@@ -573,32 +573,32 @@ func TestMarker_GetFace(t *testing.T) {
 }
 
 func TestFindMarker(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
 		assert.Nil(t, FindMarker("0000"))
 	})
 }
 
 func TestMarker_SetFace(t *testing.T) {
-	t.Run("face == nil", func(t *testing.T) {
+	t.Run("FaceEqualNil", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-6")
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
 		updated, _ := m.SetFace(nil, -1)
 		assert.False(t, updated)
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
 	})
-	t.Run("wrong marker type", func(t *testing.T) {
+	t.Run("WrongMarkerType", func(t *testing.T) {
 		m := Marker{MarkerType: "xxx"}
 		updated, _ := m.SetFace(&Face{ID: "99876"}, -1)
 		assert.False(t, updated)
 		assert.Equal(t, "", m.FaceID)
 	})
-	t.Run("skip same face", func(t *testing.T) {
+	t.Run("SkipSameFace", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, SubjUID: "js6sg6b1qekk9jx8", FaceID: "99876uyt"}
 		updated, _ := m.SetFace(&Face{ID: "99876uyt", SubjUID: "js6sg6b1qekk9jx8"}, -1)
 		assert.False(t, updated)
 		assert.Equal(t, "99876uyt", m.FaceID)
 	})
-	t.Run("set new face", func(t *testing.T) {
+	t.Run("SetNewFace", func(t *testing.T) {
 		m := Marker{MarkerUID: "mqyz9x61edicxf8j", MarkerType: MarkerFace, SubjUID: "", FaceID: ""}
 
 		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1)

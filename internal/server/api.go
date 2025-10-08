@@ -9,8 +9,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// Api is a middleware that sets additional response headers when serving REST API requests.
-var Api = func(conf *config.Config) gin.HandlerFunc {
+// APIMiddleware returns a Gin middleware that applies API-specific headers and CORS handling.
+var APIMiddleware = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Add a vary response header for authentication, if any.
 		if c.GetHeader(header.XAuthToken) != "" {

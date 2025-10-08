@@ -32,7 +32,6 @@ func TestClientAssets_Load(t *testing.T) {
 		assert.Equal(t, "splash.test.css", a.SplashCssFile())
 		assert.NotEmpty(t, a.SplashCssFileContents())
 	})
-
 	t.Run("Error", func(t *testing.T) {
 		testBuildPath := "testdata/foo"
 		a := NewClientAssets(testBuildPath, c.StaticUri())

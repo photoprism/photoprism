@@ -55,7 +55,6 @@ func TestSettings_ApplyScope(t *testing.T) {
 		t.Logf("AdminUnscoped: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
-
 	t.Run("ClientScoped", func(t *testing.T) {
 		s := NewDefaultSettings()
 
@@ -96,7 +95,6 @@ func TestSettings_ApplyScope(t *testing.T) {
 		t.Logf("ClientScoped: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
-
 	t.Run("GuestSettings", func(t *testing.T) {
 		s := NewDefaultSettings()
 
@@ -136,7 +134,6 @@ func TestSettings_ApplyScope(t *testing.T) {
 		t.Logf("GuestSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
-
 	t.Run("VisitorSettings", func(t *testing.T) {
 		s := NewDefaultSettings()
 
@@ -176,7 +173,6 @@ func TestSettings_ApplyScope(t *testing.T) {
 		t.Logf("VisitorSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
-
 	t.Run("VisitorMetrics", func(t *testing.T) {
 		s := NewDefaultSettings()
 

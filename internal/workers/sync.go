@@ -146,7 +146,7 @@ func (w *Sync) Start() (err error) {
 		}
 
 		// Only update the following fields to avoid overwriting other settings
-		if updateErr := a.Updates(map[string]interface{}{
+		if updateErr := a.Updates(entity.Values{
 			"AccError":   accError,
 			"AccErrors":  accErrors,
 			"SyncStatus": syncStatus,

@@ -19,23 +19,27 @@ import (
 func TestClusterPermissions(t *testing.T) {
 	t.Run("UnauthorizedWhenPublicDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 
 		// Disable public mode so Auth requires a session.
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		ClusterSummary(router)
+		ClusterMetrics(router)
 
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster")
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
-	})
 
+		r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/metrics")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
 	t.Run("ForbiddenFromCDN", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 
 		ClusterListNodes(router)
+		ClusterMetrics(router)
 
 		req, _ := http.NewRequest(http.MethodGet, "/api/v1/cluster/nodes", nil)
 		// Mark as CDN request, which Auth() forbids.
@@ -44,13 +48,16 @@ func TestClusterPermissions(t *testing.T) {
 		app.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
-
 	t.Run("AdminCanAccess", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterSummary(router)
+		ClusterMetrics(router)
 		token := AuthenticateAdmin(app, router)
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster", token)
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		r = AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/metrics", token)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
@@ -58,7 +65,7 @@ func TestClusterPermissions(t *testing.T) {
 
 	t.Run("ClientInsufficientScope", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
@@ -79,7 +86,11 @@ func TestClusterPermissions(t *testing.T) {
 		token := gjson.Get(w.Body.String(), "access_token").String()
 
 		ClusterSummary(router)
+		ClusterMetrics(router)
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster", token)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+
+		r = AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/metrics", token)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }

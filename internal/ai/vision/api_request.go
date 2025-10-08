@@ -21,6 +21,13 @@ import (
 
 type Files = []string
 
+const (
+	FormatJSON = "json"
+
+	logDataPreviewLength   = 16
+	logDataTruncatedSuffix = "... (truncated)"
+)
+
 // ApiRequestOptions represents additional model parameters listed in the documentation.
 type ApiRequestOptions struct {
 	NumKeep          int      `yaml:"NumKeep,omitempty" json:"num_keep,omitempty"`
@@ -70,7 +77,7 @@ type ApiRequest struct {
 	Context        *ApiRequestContext `form:"context" yaml:"Context,omitempty" json:"context,omitempty"`
 	Stream         bool               `form:"stream" yaml:"Stream,omitempty" json:"stream"`
 	Images         Files              `form:"images" yaml:"Images,omitempty" json:"images,omitempty"`
-	responseFormat ApiFormat          `form:"-"`
+	ResponseFormat ApiFormat          `form:"-" yaml:"-" json:"-"`
 }
 
 // NewApiRequest returns a new service API request with the specified format and payload.
@@ -127,7 +134,7 @@ func NewApiRequestUrl(fileName string, fileScheme scheme.Type) (result *ApiReque
 		Id:             rnd.UUID(),
 		Model:          "",
 		Url:            imgUrl,
-		responseFormat: ApiFormatVision,
+		ResponseFormat: ApiFormatVision,
 	}, nil
 }
 
@@ -164,7 +171,7 @@ func NewApiRequestImages(images Files, fileScheme scheme.Type) (*ApiRequest, err
 		Id:             rnd.UUID(),
 		Model:          "",
 		Images:         imageUrls,
-		responseFormat: ApiFormatVision,
+		ResponseFormat: ApiFormatVision,
 	}, nil
 }
 
@@ -179,11 +186,11 @@ func (r *ApiRequest) GetId() string {
 
 // GetResponseFormat returns the expected response format type.
 func (r *ApiRequest) GetResponseFormat() ApiFormat {
-	if r.responseFormat == "" {
+	if r.ResponseFormat == "" {
 		return ApiFormatVision
 	}
 
-	return r.responseFormat
+	return r.ResponseFormat
 }
 
 // JSON returns the request data as JSON-encoded bytes.
@@ -197,7 +204,86 @@ func (r *ApiRequest) WriteLog() {
 		return
 	}
 
-	if data, _ := r.JSON(); len(data) > 0 {
+	sanitized := r.sanitizedForLog()
+
+	if data, _ := json.Marshal(sanitized); len(data) > 0 {
 		log.Tracef("vision: %s", data)
 	}
+}
+
+// sanitizedForLog returns a shallow copy of the request with large base64 payloads shortened.
+func (r *ApiRequest) sanitizedForLog() ApiRequest {
+	if r == nil {
+		return ApiRequest{}
+	}
+
+	sanitized := *r
+
+	if len(r.Images) > 0 {
+		sanitized.Images = make(Files, len(r.Images))
+
+		for i := range r.Images {
+			sanitized.Images[i] = sanitizeLogPayload(r.Images[i])
+		}
+	}
+
+	sanitized.Url = sanitizeLogPayload(r.Url)
+
+	return sanitized
+}
+
+// sanitizeLogPayload shortens base64-encoded data so trace logs remain readable.
+func sanitizeLogPayload(value string) string {
+	if value == "" {
+		return value
+	}
+
+	if strings.HasPrefix(value, "data:") {
+		if prefix, encoded, found := strings.Cut(value, ","); found {
+			sanitized := truncateBase64ForLog(encoded)
+
+			if sanitized != encoded {
+				return prefix + "," + sanitized
+			}
+		}
+
+		return value
+	}
+
+	if isLikelyBase64(value) {
+		return truncateBase64ForLog(value)
+	}
+
+	return value
+}
+
+func truncateBase64ForLog(value string) string {
+	if len(value) <= logDataPreviewLength {
+		return value
+	}
+
+	return value[:logDataPreviewLength] + logDataTruncatedSuffix
+}
+
+func isLikelyBase64(value string) bool {
+	if len(value) < logDataPreviewLength {
+		return false
+	}
+
+	for i := 0; i < len(value); i++ {
+		c := value[i]
+
+		switch {
+		case c >= 'A' && c <= 'Z':
+		case c >= 'a' && c <= 'z':
+		case c >= '0' && c <= '9':
+		case c == '+', c == '/', c == '=', c == '-', c == '_':
+		case c == '\n' || c == '\r':
+			continue
+		default:
+			return false
+		}
+	}
+
+	return true
 }

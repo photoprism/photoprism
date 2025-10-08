@@ -20,17 +20,16 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Ensure portal feature flag is disabled.
-		conf.Options().NodeType = cluster.Instance
+		conf.Options().NodeRole = cluster.RoleInstance
 		ClusterGetTheme(router)
 
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/theme")
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterGetTheme(router)
 
 		missing := filepath.Join(os.TempDir(), "photoprism-test-missing-theme")
@@ -44,11 +43,10 @@ func TestClusterGetTheme(t *testing.T) {
 		app.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
-
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterGetTheme(router)
 
 		tempTheme, err := os.MkdirTemp("", "pp-theme-*")
@@ -56,18 +54,19 @@ func TestClusterGetTheme(t *testing.T) {
 		defer func() { _ = os.RemoveAll(tempTheme) }()
 		conf.SetThemePath(tempTheme)
 
-		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, "sub"), 0o755))
+		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, "sub"), fs.ModeDir))
 		// Visible files
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "style.css"), []byte("body{}\n"), 0o644))
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "sub", "visible.txt"), []byte("ok\n"), 0o644))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("console.log('ok')\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "style.css"), []byte("body{}\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "sub", "visible.txt"), []byte("ok\n"), fs.ModeFile))
 		// Hidden file
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden.txt"), []byte("secret\n"), 0o644))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden.txt"), []byte("secret\n"), fs.ModeFile))
 		// Hidden directory
-		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, ".git"), 0o755))
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".git", "HEAD"), []byte("ref: refs/heads/main\n"), 0o644))
+		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, ".git"), fs.ModeDir))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".git", "HEAD"), []byte("ref: refs/heads/main\n"), fs.ModeFile))
 		// Hidden directory pattern "_.folder"
-		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, "_.folder"), 0o755))
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "_.folder", "secret.txt"), []byte("hidden\n"), 0o644))
+		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, "_.folder"), fs.ModeDir))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "_.folder", "secret.txt"), []byte("hidden\n"), fs.ModeFile))
 		// Symlink (should be skipped); best-effort
 		_ = os.Symlink(filepath.Join(tempTheme, "style.css"), filepath.Join(tempTheme, "link.css"))
 
@@ -99,11 +98,10 @@ func TestClusterGetTheme(t *testing.T) {
 		assert.NotContains(t, names, "_.folder/secret.txt")
 		assert.NotContains(t, names, "link.css")
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeType = cluster.Portal
+		conf.Options().NodeRole = cluster.RolePortal
 		ClusterGetTheme(router)
 
 		// Create an empty temporary theme directory (no includable files).
@@ -112,22 +110,37 @@ func TestClusterGetTheme(t *testing.T) {
 		defer func() { _ = os.RemoveAll(tempTheme) }()
 		conf.SetThemePath(tempTheme)
 
-		// Hidden-only content to ensure exclusion yields empty archive.
-		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, ".hidden-dir"), 0o755))
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden-dir", "file.txt"), []byte("secret\n"), 0o644))
-		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden"), []byte("secret\n"), 0o644))
+		// Hidden-only content and no app.js should yield 404.
+		assert.NoError(t, os.MkdirAll(filepath.Join(tempTheme, ".hidden-dir"), fs.ModeDir))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden-dir", "file.txt"), []byte("secret\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden"), []byte("secret\n"), fs.ModeFile))
 
-		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/theme")
-		assert.Equal(t, http.StatusOK, r.Code)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/cluster/theme", nil)
+		req.Header.Set("Accept", "application/json")
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
+	t.Run("CIDRAllowWithoutAuth", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		// Enable portal role and set CIDR to loopback/10.0.0.0/8 for test.
+		conf.Options().NodeRole = cluster.RolePortal
+		conf.Options().ClusterCIDR = "10.0.0.0/8"
+		ClusterGetTheme(router)
 
-		// Verify headers
-		assert.Equal(t, header.ContentTypeZip, r.Header().Get(header.ContentType))
-		assert.Contains(t, r.Header().Get(header.ContentDisposition), "attachment; filename=theme.zip")
-
-		// Verify zip is valid and empty (no files included)
-		body := r.Body.Bytes()
-		zr, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+		tempTheme, err := os.MkdirTemp("", "pp-theme-cidr-*")
 		assert.NoError(t, err)
-		assert.Equal(t, 0, len(zr.File))
+		defer func() { _ = os.RemoveAll(tempTheme) }()
+		conf.SetThemePath(tempTheme)
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("console.log('ok')\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "style.css"), []byte("body{}\n"), fs.ModeFile))
+
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/cluster/theme", nil)
+		// Simulate request from 10.1.2.3
+		req.RemoteAddr = "10.1.2.3:12345"
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, header.ContentTypeZip, w.Header().Get(header.ContentType))
 	})
 }

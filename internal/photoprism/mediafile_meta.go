@@ -11,7 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
-// HasSidecarJson returns true if this file has or is a json sidecar file.
+// HasSidecarJson reports whether the media file already has a JSON sidecar in
+// any of the configured lookup paths (or is itself a JSON sidecar).
 func (m *MediaFile) HasSidecarJson() bool {
 	if m.IsJSON() {
 		return true
@@ -20,7 +21,8 @@ func (m *MediaFile) HasSidecarJson() bool {
 	return fs.SidecarJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) != ""
 }
 
-// SidecarJsonName returns the corresponding JSON sidecar file name as used by Google Photos (and potentially other apps).
+// SidecarJsonName returns the Google Photos style JSON sidecar path if it exists
+// alongside the media file; otherwise it returns an empty string.
 func (m *MediaFile) SidecarJsonName() string {
 	jsonName := m.fileName + ".json"
 
@@ -31,7 +33,8 @@ func (m *MediaFile) SidecarJsonName() string {
 	return ""
 }
 
-// ExifToolJsonName returns the cached ExifTool metadata file name.
+// ExifToolJsonName returns the path to the cached ExifTool JSON metadata file or
+// an error when ExifTool integration is disabled.
 func (m *MediaFile) ExifToolJsonName() (string, error) {
 	if Config().DisableExifTool() {
 		return "", fmt.Errorf("media: exiftool json files disabled")
@@ -40,7 +43,8 @@ func (m *MediaFile) ExifToolJsonName() (string, error) {
 	return ExifToolCacheName(m.Hash())
 }
 
-// NeedsExifToolJson tests if an ExifTool JSON file needs to be created.
+// NeedsExifToolJson indicates whether a new ExifTool JSON export should be
+// generated for this media file.
 func (m *MediaFile) NeedsExifToolJson() bool {
 	if m.InSidecar() && m.IsImage() || !m.IsMedia() || m.Empty() {
 		return false
@@ -55,7 +59,9 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 	return !fs.FileExists(jsonName)
 }
 
-// CreateExifToolJson extracts metadata to a JSON file using Exiftool.
+// CreateExifToolJson runs ExifTool via the provided Convert helper and merges
+// its JSON output into the cached metadata. When nothing needs to be generated
+// the call is a no-op.
 func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 	if !m.NeedsExifToolJson() {
 		return nil
@@ -69,7 +75,8 @@ func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 	return nil
 }
 
-// ReadExifToolJson reads metadata from a cached ExifTool JSON file.
+// ReadExifToolJson loads cached ExifTool JSON metadata into the MediaFile
+// metadata cache.
 func (m *MediaFile) ReadExifToolJson() error {
 	jsonName, err := m.ExifToolJsonName()
 
@@ -80,7 +87,9 @@ func (m *MediaFile) ReadExifToolJson() error {
 	return m.metaData.JSON(jsonName, "")
 }
 
-// MetaData returns exif meta data of a media file.
+// MetaData returns cached EXIF/sidecar metadata. On first access it probes the
+// underlying file, merges JSON sidecars (including ExifTool exports) and
+// normalises the time zone field.
 func (m *MediaFile) MetaData() (result meta.Data) {
 	if !m.Ok() || !m.IsMedia() {
 		// Not a main media file.
@@ -133,7 +142,8 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 	return m.metaData
 }
 
-// VideoInfo returns video information if this is a video file or has a video embedded.
+// VideoInfo probes the file with a built-in parser to retrieve video
+// metadata; results are cached after the first successful call.
 func (m *MediaFile) VideoInfo() video.Info {
 	if !m.Ok() || !m.IsMedia() {
 		// Not a main media file.

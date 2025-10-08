@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-03 14:14+0000\n"
+"PO-Revision-Date: 2025-10-04 09:03+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
 "Language: it\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:268
@@ -42,7 +42,7 @@ msgstr "{0} selezionato"
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} di {2}"
 
-#: src/page/albums.vue:617
+#: src/page/albums.vue:621
 msgid "%{n} albums found"
 msgstr "%{n} album trovati"
 
@@ -50,7 +50,7 @@ msgstr "%{n} album trovati"
 msgid "%{n} files uploaded"
 msgstr "%{n} file caricati"
 
-#: src/page/library/browse.vue:364
+#: src/page/library/browse.vue:370
 msgid "%{n} folders found"
 msgstr "%{n} cartelle trovate"
 
@@ -58,17 +58,17 @@ msgstr "%{n} cartelle trovate"
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB di %{q} GB utilizzati"
 
-#: src/page/labels.vue:533
+#: src/page/labels.vue:609
 msgid "%{n} labels found"
 msgstr "%{n} etichette trovate"
 
-#: src/page/people/new.vue:350 src/page/people/new.vue:450
-#: src/page/people/recognized.vue:541
+#: src/page/people/new.vue:350 src/page/people/new.vue:456
+#: src/page/people/recognized.vue:543
 msgid "%{n} people found"
 msgstr "%{n} persone trovate"
 
-#: src/page/album/photos.vue:313 src/page/album/photos.vue:504
-#: src/page/photos.vue:446 src/page/photos.vue:641
+#: src/page/album/photos.vue:313 src/page/album/photos.vue:506
+#: src/page/photos.vue:446 src/page/photos.vue:643
 msgid "%{n} pictures found"
 msgstr "%{n} immagini trovate"
 
@@ -122,8 +122,8 @@ msgid "Access Token"
 msgstr "Gettone di accesso"
 
 #: src/component/navigation.vue:87 src/component/navigation.vue:1788
-#: src/component/service/upload.vue:71 src/model/service.js:96
-#: src/model/user.js:174 src/page/settings.vue:85
+#: src/component/service/upload.vue:71 src/model/service.js:72
+#: src/model/user.js:150 src/page/settings.vue:85
 #: src/page/settings/general.vue:582
 msgid "Account"
 msgstr "Account"
@@ -226,11 +226,11 @@ msgid "Added"
 msgstr "Aggiunto"
 
 #: src/component/location/dialog.vue:67 src/component/location/dialog.vue:88
-#: src/component/photo/edit/details.vue:246
+#: src/component/photo/edit/details.vue:248
 msgid "Adjust Location"
 msgstr "Regola la posizione"
 
-#: src/options/admin.js:6 src/common/util.js:748 src/options/auth.js:6
+#: src/options/admin.js:6 src/common/util.js:752 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -274,7 +274,7 @@ msgstr "Dopo due mesi"
 msgid "After two weeks"
 msgstr "Dopo due settimane"
 
-#: src/model/album.js:243
+#: src/model/album.js:205
 msgid "Album"
 msgstr "Album"
 
@@ -282,11 +282,11 @@ msgstr "Album"
 msgid "Album Backups"
 msgstr "Backup degli album"
 
-#: src/page/albums.vue:685
+#: src/page/albums.vue:689
 msgid "Album created"
 msgstr "Album creato"
 
-#: src/page/album/photos.vue:589
+#: src/page/album/photos.vue:591
 msgid "Album deleted"
 msgstr "Album cancellato"
 
@@ -308,7 +308,7 @@ msgstr "Tutti"
 msgid "All %{n} albums loaded"
 msgstr "Tutti i %{n} album sono stati caricati"
 
-#: src/page/labels.vue:367
+#: src/page/labels.vue:439
 msgid "All %{n} labels loaded"
 msgstr "Tutte le %{n} etichette sono state caricate"
 
@@ -321,7 +321,7 @@ msgid "All Cameras"
 msgstr "Tutte le Fotocamere"
 
 #: src/component/photo/toolbar.vue:74 src/page/albums.vue:45
-#: src/page/albums.vue:242 src/page/albums.vue:757
+#: src/page/albums.vue:242 src/page/albums.vue:761
 msgid "All Categories"
 msgstr "Tutte le Categorie"
 
@@ -365,7 +365,7 @@ msgstr "Alternativamente, puoi caricare i file direttamente a server WebDAV come
 msgid "Altitude"
 msgstr "Altitudine"
 
-#: src/component/photo/edit/details.vue:297
+#: src/component/photo/edit/details.vue:299
 msgid "Altitude (m)"
 msgstr "Altitudine (m)"
 
@@ -400,15 +400,15 @@ msgstr "Chiave API"
 msgid "Application"
 msgstr "Applicazione"
 
-#: src/component/photo/edit/details.vue:615
-msgid "Apply"
-msgstr "Applica"
-
 #: src/component/photo/clipboard.vue:64
-#: src/component/photo/edit/details.vue:614
+#: src/component/photo/edit/details.vue:620
 #: src/component/photo/view/cards.vue:416
 msgid "Approve"
 msgstr "Approva"
+
+#: src/component/photo/edit/details.vue:614
+msgid "Approve and save changes"
+msgstr "Approva e salva le modifiche"
 
 #: src/page/settings/account.vue:374 src/component/settings/apps.vue:91
 msgid "Apps and Devices"
@@ -420,13 +420,13 @@ msgctxt "Noun"
 msgid "Archive"
 msgstr "Archivio"
 
-#: src/component/lightbox.vue:1207 src/component/photo/clipboard.vue:142
+#: src/component/lightbox.vue:1209 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archivio"
 
-#: src/component/lightbox.vue:2002 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:2004 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "Archiviato"
 
@@ -463,7 +463,7 @@ msgstr "Vuoi veramente eliminare in modo permanente questi file?"
 msgid "Are you sure?"
 msgstr "Sei sicuro?"
 
-#: src/component/photo/edit/details.vue:511
+#: src/component/photo/edit/details.vue:513
 msgid "Artist"
 msgstr "Artista"
 
@@ -507,7 +507,7 @@ msgstr "Distintivo"
 msgid "Base Path"
 msgstr "Percorso base"
 
-#: src/common/util.js:742
+#: src/common/util.js:746
 msgid "Batch"
 msgstr "Lotto"
 
@@ -570,7 +570,7 @@ msgstr "Visualizza i file e le cartelle indicizzati nella Libreria."
 msgid "Bug Report"
 msgstr "Segnala Bug"
 
-#: src/page/connect.vue:50 src/common/notify.js:101 src/page/connect.vue:53
+#: src/page/connect.vue:50 src/common/notify.js:119 src/page/connect.vue:53
 msgid "Busy, please wait…"
 msgstr "Occupato, attendere prego…"
 
@@ -583,7 +583,7 @@ msgstr "Utilizzando il software e i servizi, accetti i nostri temini di servizio
 msgid "Calendar"
 msgstr "Calendario"
 
-#: src/component/photo/edit/details.vue:320 src/component/photo/toolbar.vue:232
+#: src/component/photo/edit/details.vue:322 src/component/photo/toolbar.vue:232
 #: src/component/photo/view/cards.vue:467 src/component/photo/view/list.vue:116
 msgid "Camera"
 msgstr "Fotocamera"
@@ -601,8 +601,8 @@ msgid "Can't load more, limit reached"
 msgstr "Impossibile caricare ancora, limite raggiunto"
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:695 src/page/albums.vue:711 src/page/labels.vue:293
-#: src/page/labels.vue:313 src/page/library/browse.vue:233
+#: src/page/albums.vue:699 src/page/albums.vue:715 src/page/labels.vue:365
+#: src/page/labels.vue:385 src/page/library/browse.vue:233
 #: src/page/library/browse.vue:249 src/page/people/new.vue:278
 #: src/page/people/new.vue:294 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
@@ -630,11 +630,11 @@ msgstr "Impossibile selezionare ulteriori elementi"
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/common/util.js:911 src/common/util.js:918
+#: src/common/util.js:915 src/common/util.js:922
 msgid "Cannot copy to clipboard"
 msgstr "Impossibile copiare negli appunti"
 
-#: src/common/util.js:730 src/component/photo/edit/details.vue:89
+#: src/common/util.js:734 src/component/photo/edit/details.vue:91
 #: src/component/photo/view/cards.vue:445 src/component/sidebar/info.vue:72
 msgid "Caption"
 msgstr "Didascalia"
@@ -681,10 +681,10 @@ msgstr "Le modifiche non possono essere salvate"
 
 #: src/component/user/edit/dialog.vue:85 src/component/user/edit/dialog.vue:161
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1961
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1963
 #: src/component/photo/edit/files.vue:178 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
-#: src/page/albums.vue:688 src/page/people/recognized.vue:119
+#: src/page/albums.vue:692 src/page/people/recognized.vue:119
 #: src/page/settings/advanced.vue:62 src/page/settings/content.vue:62
 #: src/page/settings/general.vue:108
 msgid "Changes successfully saved"
@@ -723,10 +723,11 @@ msgid "Client Credentials"
 msgstr "Credenziali del cliente"
 
 #: src/component/user/edit/dialog.vue:473 src/page/admin/sessions.vue:529
-#: src/component/lightbox.vue:284 src/component/lightbox.vue:1009
-#: src/component/lightbox.vue:1010 src/component/photo/edit/details.vue:601
-#: src/component/photo/toolbar.vue:160 src/component/settings/apps.vue:224
-#: src/component/settings/apps.vue:437 src/component/settings/passcode.vue:148
+#: src/component/lightbox.vue:285 src/component/lightbox.vue:1011
+#: src/component/lightbox.vue:1012 src/component/photo/edit/details.vue:599
+#: src/component/photo/edit/details.vue:606 src/component/photo/toolbar.vue:160
+#: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
+#: src/component/settings/passcode.vue:148
 #: src/component/settings/passcode.vue:456
 #: src/component/settings/passcode.vue:497
 #: src/component/settings/webdav.vue:131 src/component/share/dialog.vue:231
@@ -793,12 +794,12 @@ msgstr "Dettagli di contatto"
 msgid "Contact Us"
 msgstr "Contattaci"
 
-#: src/page/albums.vue:433 src/page/labels.vue:237
+#: src/page/albums.vue:433 src/page/labels.vue:221
 #: src/page/people/recognized.vue:306
 msgid "Contains %{n} pictures."
 msgstr "Contiene %{n} immagini."
 
-#: src/page/albums.vue:427 src/page/labels.vue:231
+#: src/page/albums.vue:427 src/page/labels.vue:215
 #: src/page/people/recognized.vue:300
 msgid "Contains one picture."
 msgstr "Contiene una foto."
@@ -823,7 +824,7 @@ msgstr "Collaboratore"
 msgid "Converting"
 msgstr "Conversione in corso"
 
-#: src/common/util.js:904
+#: src/common/util.js:908
 msgid "Copied to clipboard"
 msgstr "Copiato negli appunti"
 
@@ -831,7 +832,7 @@ msgstr "Copiato negli appunti"
 msgid "Copy"
 msgstr "Copia"
 
-#: src/component/photo/edit/details.vue:490
+#: src/component/photo/edit/details.vue:492
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -839,7 +840,7 @@ msgstr "Copyright"
 msgid "Couldn't find anything."
 msgstr "Impossibile trovare alcunché."
 
-#: src/page/settings/account.vue:685 src/component/photo/edit/details.vue:268
+#: src/page/settings/account.vue:685 src/component/photo/edit/details.vue:270
 #: src/component/photo/toolbar.vue:203 src/page/settings/account.vue:577
 msgid "Country"
 msgstr "Nazione"
@@ -880,7 +881,7 @@ msgstr "Cubico: Qualità moderata, buone prestazioni"
 msgid "Current Password"
 msgstr "Password Corrente"
 
-#: src/options/themes.js:920 src/options/themes.js:929
+#: src/options/themes.js:994 src/options/themes.js:1003
 msgid "Custom"
 msgstr "Personalizzato"
 
@@ -896,7 +897,7 @@ msgstr "Giornalmente"
 msgid "Database Backups"
 msgstr "Backup del database"
 
-#: src/page/settings/account.vue:450 src/component/photo/edit/details.vue:112
+#: src/page/settings/account.vue:450 src/component/photo/edit/details.vue:114
 msgid "Day"
 msgstr "Giorni"
 
@@ -910,11 +911,11 @@ msgstr "Registri di debug"
 
 #: src/options/admin.js:35 src/page/admin/sessions.vue:136
 #: src/page/admin/users.vue:178 src/common/util.js:716
-#: src/component/photo/edit/info.vue:110 src/model/session.js:66
-#: src/model/user.js:261 src/options/auth.js:21 src/options/auth.js:22
+#: src/component/photo/edit/info.vue:110 src/model/session.js:42
+#: src/model/user.js:237 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:196
 #: src/options/options.js:232 src/options/options.js:316
-#: src/options/themes.js:774
+#: src/options/themes.js:843
 msgid "Default"
 msgstr "Predefinito"
 
@@ -1022,6 +1023,14 @@ msgstr "Disattiva il supporto della grafica vettoriale."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Disattiva la transcodifica video e l'estrazione delle miniature."
 
+#: src/component/photo/edit/details.vue:605
+msgid "Discard"
+msgstr "Scartare"
+
+#: src/component/photo/edit/details.vue:599
+msgid "Discard changes and close"
+msgstr "Scarta le modifiche e chiudi"
+
 #: src/app/routes.js:569 src/app/routes.js:576 src/app/routes.js:583
 #: src/app/routes.js:590
 msgid "Discover"
@@ -1048,7 +1057,7 @@ msgstr "Visualizza i titoli delle immagini nei risultati della ricerca."
 
 #: src/component/photo/view/cards.vue:339
 #: src/component/photo/view/cards.vue:521
-#: src/component/photo/view/mosaic.vue:183 src/model/thumb.js:176
+#: src/component/photo/view/mosaic.vue:183 src/model/thumb.js:152
 #: src/options/options.js:309
 msgid "Document"
 msgstr "Documento"
@@ -1079,7 +1088,7 @@ msgid "Done."
 msgstr "Fatto."
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:123
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1235
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1237
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:332
@@ -1100,7 +1109,7 @@ msgstr "Scarica singoli file e archivi zip."
 
 #: src/component/album/clipboard.vue:104 src/component/album/toolbar.vue:172
 #: src/component/file/clipboard.vue:61 src/component/label/clipboard.vue:86
-#: src/component/lightbox.vue:2041 src/component/people/clipboard.vue:59
+#: src/component/lightbox.vue:2043 src/component/people/clipboard.vue:59
 #: src/component/photo/clipboard.vue:220 src/component/photo/edit/files.vue:135
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:139
@@ -1140,7 +1149,7 @@ msgid "E-Mail"
 msgstr "E-Mail"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:94
-#: src/component/lightbox.vue:1136 src/component/lightbox.vue:1137
+#: src/component/lightbox.vue:1138 src/component/lightbox.vue:1139
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:407
 msgid "Edit"
 msgstr "Modifica"
@@ -1204,8 +1213,8 @@ msgstr "Inserisci codice di verifica"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Inserisci la password per confermare l'azione e continuare:"
 
-#: src/page/connect.vue:54 src/component/lightbox.vue:288
-#: src/page/connect.vue:57 src/page/library/errors.vue:242
+#: src/page/connect.vue:54 src/component/lightbox.vue:289
+#: src/page/connect.vue:57 src/page/library/errors.vue:246
 msgid "Error"
 msgstr "Errore"
 
@@ -1251,7 +1260,7 @@ msgstr "Funzionalità Sperimentali"
 msgid "Expires"
 msgstr "Scade"
 
-#: src/component/photo/edit/details.vue:370
+#: src/component/photo/edit/details.vue:372
 msgid "Exposure"
 msgstr "Esposizione"
 
@@ -1259,11 +1268,11 @@ msgstr "Esposizione"
 msgid "Extract still images and generate thumbnails while indexing."
 msgstr "Estrai le immagini fisse e genera miniature durante l'indicizzazione."
 
-#: src/component/photo/edit/details.vue:418
+#: src/component/photo/edit/details.vue:420
 msgid "F Number"
 msgstr "Numero F"
 
-#: src/model/face.js:163
+#: src/model/face.js:139
 msgid "Face"
 msgstr "Volto"
 
@@ -1318,7 +1327,7 @@ msgid "Female"
 msgstr "Donna"
 
 #: src/common/util.js:720 src/component/photo/edit/info.vue:214
-#: src/model/file.js:290
+#: src/model/file.js:266
 msgid "File"
 msgstr "File"
 
@@ -1358,22 +1367,22 @@ msgstr "File con un nome sequenziale come 'IMG_1234 (2)' e 'IMG_1234 (3)' appart
 msgid "First page"
 msgstr "Prima pagina"
 
-#: src/component/photo/edit/details.vue:439
+#: src/component/photo/edit/details.vue:441
 msgid "Focal Length"
 msgstr "Lunghezza Focale"
 
 #: src/component/photo/edit/info.vue:115 src/component/service/edit.vue:118
 #: src/component/service/edit.vue:189 src/component/service/edit.vue:194
 #: src/component/service/upload.vue:90 src/component/service/upload.vue:96
-#: src/model/folder.js:199 src/page/library/browse.vue:182
+#: src/model/folder.js:175 src/page/library/browse.vue:182
 msgid "Folder"
 msgstr "Cartella"
 
-#: src/page/library/browse.vue:367
+#: src/page/library/browse.vue:373
 msgid "Folder contains %{n} files"
 msgstr "La cartella contiene %{n} file"
 
-#: src/page/library/browse.vue:358
+#: src/page/library/browse.vue:364
 msgid "Folder is empty"
 msgstr "La cartella è vuota"
 
@@ -1398,7 +1407,7 @@ msgstr "Fotogrammi"
 msgid "Full Access"
 msgstr "Accesso Totale"
 
-#: src/component/lightbox.vue:1084 src/component/lightbox.vue:1085
+#: src/component/lightbox.vue:1086 src/component/lightbox.vue:1087
 msgid "Fullscreen"
 msgstr "Schermo intero"
 
@@ -1505,7 +1514,7 @@ msgid "If you lose access to your authenticator app or device, you can use your 
 msgstr "Se perdessi l’accesso alla tua app o al tuo dispositivo di autenticazione, puoi usare il tuo codice di recupero per riottenere l’accesso al tuo account."
 
 #: src/common/util.js:724 src/component/photo/view/cards.vue:532
-#: src/model/file.js:218 src/options/options.js:281
+#: src/model/file.js:194 src/options/options.js:281
 msgid "Image"
 msgstr "Immagine"
 
@@ -1544,7 +1553,7 @@ msgid "in"
 msgstr "in"
 
 #: src/component/photo/view/cards.vue:149 src/component/photo/view/list.vue:87
-#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:156
+#: src/component/photo/view/mosaic.vue:73 src/page/labels.vue:140
 #: src/page/library/browse.vue:124
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Nel caso in cui siano mancanti delle immagini che ti aspettavi di trovare, per favore scansiona nuovamente la libreria e aspetta che l'indicizzazione sia completa."
@@ -1582,7 +1591,7 @@ msgstr "Indicizzazione fallita"
 msgid "Indexing media and sidecar files…"
 msgstr "Indicizzando file multimediali e sidecar…"
 
-#: src/component/lightbox.vue:1032 src/component/lightbox.vue:1033
+#: src/component/lightbox.vue:1034 src/component/lightbox.vue:1035
 #: src/component/sidebar/info.vue:31
 msgid "Information"
 msgstr "Informazioni"
@@ -1625,7 +1634,7 @@ msgstr "Data non valida"
 msgid "Invalid parameters"
 msgstr "Parametri non validi"
 
-#: src/component/photo/edit/dialog.vue:194 src/model/thumb.js:199
+#: src/component/photo/edit/dialog.vue:194 src/model/thumb.js:175
 msgid "Invalid photo selected"
 msgstr "Foto non valida selezionata"
 
@@ -1642,7 +1651,7 @@ msgstr "URL non valido"
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr "Questo è un codice a utilizzo unico che disabiliterà l’autenticazione a due fattori (2FA) per il tuo account quando lo usi."
 
-#: src/model/rest.js:179
+#: src/model/rest.js:155
 msgid "Item"
 msgstr "Elemento"
 
@@ -1662,16 +1671,16 @@ msgstr "Limite Dimensione JPEG: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "I JPEG e le miniature sono renderizzati automaticamente a seconda delle necessità."
 
-#: src/common/util.js:732
+#: src/common/util.js:736
 msgid "Keyword"
 msgstr "Parola chiave"
 
-#: src/component/photo/edit/details.vue:555
+#: src/component/photo/edit/details.vue:557
 msgid "Keywords"
 msgstr "Parole chiave"
 
 #: src/component/photo/edit/labels.vue:22
-#: src/component/photo/edit/labels.vue:101 src/model/label.js:124
+#: src/component/photo/edit/labels.vue:101 src/model/label.js:102
 msgid "Label"
 msgstr "Etichetta"
 
@@ -1729,7 +1738,7 @@ msgid "Learn more"
 msgstr "Scopri di più"
 
 #: src/page/admin/sessions.vue:110 src/page/admin/users.vue:137
-#: src/page/labels.vue:132
+#: src/page/labels.vue:184
 msgid "Learn More"
 msgstr "Per saperne di più"
 
@@ -1737,7 +1746,7 @@ msgstr "Per saperne di più"
 msgid "Legal Information"
 msgstr "Informazioni legali"
 
-#: src/component/photo/edit/details.vue:391
+#: src/component/photo/edit/details.vue:393
 #: src/component/photo/view/cards.vue:480
 msgid "Lens"
 msgstr "Lenti"
@@ -1748,12 +1757,12 @@ msgid "Library"
 msgstr "Libreria"
 
 #: src/page/connect.vue:45 src/app/routes.js:69
-#: src/component/navigation.vue:1478 src/component/photo/edit/details.vue:533
+#: src/component/navigation.vue:1478 src/component/photo/edit/details.vue:535
 #: src/page/about/license.vue:28
 msgid "License"
 msgstr "Licenza"
 
-#: src/component/lightbox.vue:1102 src/component/lightbox.vue:1103
+#: src/component/lightbox.vue:1104 src/component/lightbox.vue:1105
 msgid "Like"
 msgstr "Mi Piace"
 
@@ -1761,7 +1770,7 @@ msgstr "Mi Piace"
 msgid "Lime"
 msgstr "Lime"
 
-#: src/page/library/browse.vue:371
+#: src/page/library/browse.vue:377
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limite raggiunto, vengono mostrati i primi %{n} file"
 
@@ -1769,7 +1778,7 @@ msgstr "Limite raggiunto, vengono mostrati i primi %{n} file"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineare: Molto uniforme, migliori prestazioni"
 
-#: src/model/link.js:117 src/options/auth.js:31 src/options/auth.js:32
+#: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
 msgstr "Link"
 
@@ -1808,7 +1817,7 @@ msgstr "Caricamento..."
 msgid "Local"
 msgstr "Locale"
 
-#: src/component/photo/edit/details.vue:195
+#: src/component/photo/edit/details.vue:197
 msgid "Local Time"
 msgstr "Orario Locale"
 
@@ -1870,7 +1879,7 @@ msgstr "Gestione account"
 msgid "Manager"
 msgstr "Manager"
 
-#: src/common/util.js:744
+#: src/common/util.js:748
 msgid "Manual"
 msgstr "Manuale"
 
@@ -1882,7 +1891,7 @@ msgstr "Upload Manuale"
 msgid "Maps"
 msgstr "Mappe"
 
-#: src/common/util.js:728 src/model/marker.js:144
+#: src/common/util.js:728 src/model/marker.js:120
 msgid "Marker"
 msgstr "Segnaposto"
 
@@ -1915,7 +1924,7 @@ msgstr "Messaggio"
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: src/common/util.js:734
+#: src/common/util.js:738
 msgid "Metadata"
 msgstr "Metadati"
 
@@ -1944,12 +1953,12 @@ msgstr "Momenti"
 msgid "Monochrome"
 msgstr "Monocromo"
 
-#: src/page/settings/account.vue:475 src/component/photo/edit/details.vue:139
+#: src/page/settings/account.vue:475 src/component/photo/edit/details.vue:141
 #: src/component/photo/toolbar.vue:342
 msgid "Month"
 msgstr "Mese"
 
-#: src/component/lightbox.vue:1155
+#: src/component/lightbox.vue:1157
 msgid "More options"
 msgstr "Altre opzioni"
 
@@ -1969,7 +1978,7 @@ msgstr "Sposta File"
 msgid "Must have at least %{n} characters."
 msgstr "Minimo %{n} caratteri obbligatori."
 
-#: src/component/lightbox.vue:1051 src/component/lightbox.vue:1052
+#: src/component/lightbox.vue:1053 src/component/lightbox.vue:1054
 msgid "Mute"
 msgstr "Muto"
 
@@ -1990,7 +1999,7 @@ msgstr "Nome"
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:46
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:54
+#: src/component/photo/edit/people.vue:39 src/page/labels.vue:60
 #: src/page/library/browse.vue:46 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
@@ -2015,7 +2024,7 @@ msgstr "Nuova Password"
 msgid "Newest First"
 msgstr "Prima più Recenti"
 
-#: src/component/lightbox.vue:287 src/locales.js:297
+#: src/component/lightbox.vue:288 src/locales.js:297
 msgid "Next"
 msgstr "Avanti"
 
@@ -2035,7 +2044,7 @@ msgstr "Prossima visualizzazione"
 msgid "No"
 msgstr "No"
 
-#: src/page/albums.vue:612 src/page/albums.vue:282
+#: src/page/albums.vue:616 src/page/albums.vue:282
 msgid "No albums found"
 msgstr "Nessun album trovato"
 
@@ -2043,7 +2052,7 @@ msgstr "Nessun album trovato"
 msgid "No data available"
 msgstr "Nessun dato disponibile"
 
-#: src/page/labels.vue:528 src/page/labels.vue:155
+#: src/page/labels.vue:604 src/page/labels.vue:139
 msgid "No labels found"
 msgstr "Nessuna etichetta trovata"
 
@@ -2056,15 +2065,15 @@ msgid "No more"
 msgstr "Non di più"
 
 #: src/component/photo/edit/people.vue:34 src/page/people/new.vue:346
-#: src/page/people/new.vue:446 src/page/people/new.vue:103
-#: src/page/people/recognized.vue:536 src/page/people/recognized.vue:146
+#: src/page/people/new.vue:452 src/page/people/new.vue:103
+#: src/page/people/recognized.vue:538 src/page/people/recognized.vue:146
 msgid "No people found"
 msgstr "Nessuna persona trovata"
 
-#: src/component/lightbox.vue:365 src/component/photo/view/cards.vue:144
+#: src/component/lightbox.vue:366 src/component/photo/view/cards.vue:144
 #: src/component/photo/view/list.vue:82 src/component/photo/view/mosaic.vue:68
-#: src/page/album/photos.vue:499 src/page/library/browse.vue:123
-#: src/page/photos.vue:636 src/page/places.vue:624 src/page/places.vue:730
+#: src/page/album/photos.vue:501 src/page/library/browse.vue:123
+#: src/page/photos.vue:638 src/page/places.vue:624 src/page/places.vue:734
 msgid "No pictures found"
 msgstr "Nessuna immagine trovata"
 
@@ -2108,12 +2117,12 @@ msgstr "Le immagini non fotografiche e di bassa qualità richiedono una revision
 msgid "None"
 msgstr "Nessuno"
 
-#: src/component/lightbox.vue:633 src/component/service/upload.vue:75
+#: src/component/lightbox.vue:634 src/component/service/upload.vue:75
 #: src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Non è consentito"
 
-#: src/component/lightbox.vue:630
+#: src/component/lightbox.vue:631
 msgid "Not found"
 msgstr "Non trovato"
 
@@ -2121,7 +2130,7 @@ msgstr "Non trovato"
 msgid "Not sorted."
 msgstr "Non è stato selezionato."
 
-#: src/component/lightbox.vue:627 src/component/lightbox.vue:744
+#: src/component/lightbox.vue:628 src/component/lightbox.vue:745
 msgid "Not supported"
 msgstr "Non supportato"
 
@@ -2137,7 +2146,7 @@ msgstr "Nota:"
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Nota: solo i server WebDAV, come Nextcloud o PhotoPrism, possono essere configurati come servizio remoto per il backup e il caricamento dei file."
 
-#: src/component/photo/edit/details.vue:577
+#: src/component/photo/edit/details.vue:579
 msgid "Notes"
 msgstr "Note"
 
@@ -2180,11 +2189,11 @@ msgstr "La generazione di miniature su richiesta può causare un elevato utilizz
 msgid "Once a week"
 msgstr "Una volta a settimana"
 
-#: src/page/albums.vue:614
+#: src/page/albums.vue:618
 msgid "One album found"
 msgstr "Un album trovato"
 
-#: src/page/library/browse.vue:360
+#: src/page/library/browse.vue:366
 msgid "One file found"
 msgstr "Un file trovato"
 
@@ -2192,20 +2201,20 @@ msgstr "Un file trovato"
 msgid "One file uploaded"
 msgstr "Un file caricato"
 
-#: src/page/library/browse.vue:362
+#: src/page/library/browse.vue:368
 msgid "One folder found"
 msgstr "Una cartella trovata"
 
-#: src/page/labels.vue:530
+#: src/page/labels.vue:606
 msgid "One label found"
 msgstr "Un'etichetta trovata"
 
-#: src/page/people/new.vue:348 src/page/people/new.vue:448
-#: src/page/people/recognized.vue:538
+#: src/page/people/new.vue:348 src/page/people/new.vue:454
+#: src/page/people/recognized.vue:540
 msgid "One person found"
 msgstr "Una persona trovata"
 
-#: src/page/album/photos.vue:501 src/page/photos.vue:638
+#: src/page/album/photos.vue:503 src/page/photos.vue:640
 msgid "One picture found"
 msgstr "Una foto trovata"
 
@@ -2245,7 +2254,7 @@ msgstr "I nomi dei file originali verranno memorizzati e indicizzati."
 msgid "Original Name"
 msgstr "Nome Originale"
 
-#: src/component/navigation.vue:1304 src/model/file.js:196
+#: src/component/navigation.vue:1304 src/model/file.js:172
 #: src/options/options.js:413 src/page/library/browse.vue:65
 #: src/page/settings/content.vue:356 src/page/settings/general.vue:532
 msgid "Originals"
@@ -2268,7 +2277,7 @@ msgstr "All'aperto"
 msgid "Page {0}, Current page"
 msgstr "Pagina {0}, Pagina corrente"
 
-#: src/component/photo/edit/files.vue:352 src/model/photo.js:896
+#: src/component/photo/edit/files.vue:352 src/model/photo.js:872
 msgid "Pages"
 msgstr "Pagine"
 
@@ -2315,7 +2324,7 @@ msgstr "Eliminato permanentemente"
 msgid "Permanently remove files to free up storage."
 msgstr "Elimina permanentemente i file per liberare spazio."
 
-#: src/model/subject.js:158
+#: src/model/subject.js:134
 msgid "Person"
 msgstr "Persona"
 
@@ -2323,7 +2332,7 @@ msgstr "Persona"
 msgid "Personal"
 msgstr "Personale"
 
-#: src/model/photo.js:1310
+#: src/model/photo.js:1286
 msgid "Photo"
 msgstr "Foto"
 
@@ -2392,7 +2401,7 @@ msgstr "Tieni presente che la modifica della password ti farà uscire su altri d
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Per rendere effettive le modifiche, riavviare l'istanza."
 
-#: src/common/notify.js:98
+#: src/common/notify.js:116
 msgid "Please wait…"
 msgstr "Attendere prego…"
 
@@ -2432,7 +2441,7 @@ msgstr "Anteprima"
 msgid "Preview Images"
 msgstr "Immagini in anteprima"
 
-#: src/component/lightbox.vue:286 src/locales.js:298
+#: src/component/lightbox.vue:287 src/locales.js:298
 msgid "Previous"
 msgstr "Precedente"
 
@@ -2541,7 +2550,7 @@ msgstr "Rosso"
 
 #: src/page/admin/sessions.vue:101 src/page/admin/users.vue:128
 #: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:175 src/page/labels.vue:112
+#: src/page/albums.vue:175 src/page/labels.vue:119
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:81
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:88
 msgid "Refresh"
@@ -2577,7 +2586,7 @@ msgstr "Rimuovi"
 msgid "remove failed: unknown album"
 msgstr "rimozione fallita: album sconosciuto"
 
-#: src/component/lightbox.vue:1192 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1194 src/component/photo/clipboard.vue:155
 msgid "Remove from Album"
 msgstr "Rimuovi dall'album"
 
@@ -2585,7 +2594,7 @@ msgstr "Rimuovi dall'album"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Rimuovi i file importati per risparmiare spazio. I tipi di file non supportati non vengono mai eliminati, rimangono nella loro posizione attuale."
 
-#: src/common/api.js:102 src/component/lightbox.vue:740
+#: src/common/api.js:102 src/component/lightbox.vue:741
 msgid "Request failed - are you offline?"
 msgstr "Richiesta fallita - sei offline?"
 
@@ -2606,12 +2615,12 @@ msgstr "Risoluzione"
 msgid "Restart"
 msgstr "Riavvio"
 
-#: src/component/user/edit/dialog.vue:487 src/component/lightbox.vue:1221
+#: src/component/user/edit/dialog.vue:487 src/component/lightbox.vue:1223
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "Ripristina"
 
-#: src/component/lightbox.vue:2020
+#: src/component/lightbox.vue:2022
 msgid "Restored"
 msgstr "Ripristinato"
 
@@ -2643,10 +2652,15 @@ msgstr "Satellite"
 #: src/component/user/edit/dialog.vue:487
 #: src/component/album/edit/dialog.vue:211
 #: src/component/label/edit/dialog.vue:119
-#: src/component/people/edit/dialog.vue:132 src/component/service/edit.vue:466
+#: src/component/people/edit/dialog.vue:132
+#: src/component/photo/edit/details.vue:621 src/component/service/edit.vue:466
 #: src/component/settings/password.vue:172 src/component/share/dialog.vue:181
 msgid "Save"
 msgstr "Salva"
+
+#: src/component/photo/edit/details.vue:614
+msgid "Save changes"
+msgstr "Salva le modifiche"
 
 #: src/component/photo/edit/info.vue:319
 msgid "Scan"
@@ -2668,7 +2682,7 @@ msgstr "Ambito di applicazione"
 #: src/page/admin/sessions.vue:70 src/page/admin/users.vue:69
 #: src/component/location/dialog.vue:131 src/component/navigation.vue:342
 #: src/component/navigation.vue:1866 src/component/photo/toolbar.vue:57
-#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:77
+#: src/options/options.js:197 src/page/albums.vue:100 src/page/labels.vue:81
 #: src/page/library/errors.vue:76 src/page/people/recognized.vue:66
 #: src/page/places.vue:79 src/page/settings/content.vue:235
 msgid "Search"
@@ -2690,7 +2704,7 @@ msgstr "Segreto"
 msgid "Security and Access"
 msgstr "Sicurezza e accesso"
 
-#: src/component/lightbox.vue:1119 src/component/lightbox.vue:1120
+#: src/component/lightbox.vue:1121 src/component/lightbox.vue:1122
 msgid "Select"
 msgstr "Seleziona"
 
@@ -2747,7 +2761,7 @@ msgstr "URL Servizio"
 msgid "Services"
 msgstr "Servizi"
 
-#: src/model/session.js:107 src/options/auth.js:42 src/options/auth.js:91
+#: src/model/session.js:83 src/options/auth.js:42 src/options/auth.js:91
 msgid "Session"
 msgstr "Sessione"
 
@@ -2759,7 +2773,7 @@ msgstr "ID sessione"
 msgid "Sessions"
 msgstr "Sessioni"
 
-#: src/component/lightbox.vue:1177
+#: src/component/lightbox.vue:1179
 msgid "Set as Album Cover"
 msgstr "Imposta come copertina dell'album"
 
@@ -2795,6 +2809,10 @@ msgstr "Condividi le tue foto con altre app e servizi."
 msgid "Show"
 msgstr "Mostra"
 
+#: src/page/labels.vue:129 src/page/labels.vue:237
+msgid "Show All Labels"
+msgstr "Mostra tutte le etichette"
+
 #: src/page/people/new.vue:116 src/page/people/new.vue:233
 msgid "Show all new faces"
 msgstr "Mostra tutti i volti nuovi"
@@ -2807,13 +2825,9 @@ msgstr "Mostra didascalie"
 msgid "Show hidden"
 msgstr "Mostra nascosto"
 
-#: src/page/labels.vue:109
-msgid "Show less"
-msgstr "Mostra meno"
-
-#: src/page/labels.vue:101
-msgid "Show more"
-msgstr "Mostra più"
+#: src/page/labels.vue:138
+msgid "Show Important Only"
+msgstr "Mostra solo le cose importanti"
 
 #: src/page/settings/general.vue:558
 msgid "Show server logs in Library."
@@ -2823,7 +2837,7 @@ msgstr "Mostra i log server nella Libreria."
 msgid "Show Titles"
 msgstr "Mostra i titoli"
 
-#: src/model/file.js:214 src/page/settings/content.vue:400
+#: src/model/file.js:190 src/page/settings/content.vue:400
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2844,7 +2858,7 @@ msgstr "Simile"
 msgid "Size"
 msgstr "Dimensione"
 
-#: src/component/lightbox.vue:1067 src/component/lightbox.vue:1068
+#: src/component/lightbox.vue:1069 src/component/lightbox.vue:1070
 msgid "Slideshow"
 msgstr "Presentazione"
 
@@ -2860,13 +2874,25 @@ msgstr "Software"
 msgid "Software Update"
 msgstr "Aggiornamento software"
 
-#: src/component/lightbox.vue:737
+#: src/component/lightbox.vue:738
 msgid "Something went wrong, try again"
 msgstr "Qualcosa è andato storto, riprovare"
 
 #: src/locales.js:227
 msgid "Sort by"
 msgstr "Ordina per"
+
+#: src/page/labels.vue:156
+msgid "Sort by Name (A–Z)"
+msgstr "Ordina per nome (A-Z)"
+
+#: src/page/labels.vue:165
+msgid "Sort by Photo Count"
+msgstr "Ordina per numero di foto"
+
+#: src/page/labels.vue:147
+msgid "Sort by Relevance"
+msgstr "Ordina per rilevanza"
 
 #: src/component/album/edit/dialog.vue:142 src/component/photo/toolbar.vue:288
 #: src/page/albums.vue:214
@@ -2931,7 +2957,7 @@ msgstr "Spazio d’archiviazione"
 msgid "Streets"
 msgstr "Strade"
 
-#: src/common/util.js:736 src/component/photo/edit/details.vue:468
+#: src/common/util.js:740 src/component/photo/edit/details.vue:470
 msgid "Subject"
 msgstr "Oggetto"
 
@@ -3033,11 +3059,11 @@ msgstr "Questo campo è obbligatorio"
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Questo monta la cartella degli originali come un'unità di rete e ti permette di aprire, modificare e cancellare i file dal tuo computer o smartphone come se fossero locali."
 
-#: src/component/photo/edit/details.vue:195
+#: src/component/photo/edit/details.vue:197
 msgid "Time UTC"
 msgstr "Orario UTC"
 
-#: src/component/photo/edit/details.vue:221 src/page/settings/general.vue:108
+#: src/component/photo/edit/details.vue:223 src/page/settings/general.vue:108
 msgid "Time Zone"
 msgstr "Fuso Orario"
 
@@ -3051,12 +3077,12 @@ msgctxt "Account"
 msgid "Title"
 msgstr "Titolo"
 
-#: src/component/photo/edit/details.vue:75
+#: src/component/photo/edit/details.vue:77
 msgctxt "Photo"
 msgid "Title"
 msgstr "Titolo"
 
-#: src/common/util.js:738 src/component/photo/edit/info.vue:155
+#: src/common/util.js:742 src/component/photo/edit/info.vue:155
 #: src/component/photo/view/list.vue:114 src/component/sidebar/info.vue:57
 msgid "Title"
 msgstr "Titolo"
@@ -3115,7 +3141,7 @@ msgstr "Risoluzione dei problemi"
 
 #: src/component/photo/view/cards.vue:146 src/component/photo/view/list.vue:54
 #: src/component/photo/view/list.vue:84 src/component/photo/view/mosaic.vue:70
-#: src/page/albums.vue:284 src/page/labels.vue:156
+#: src/page/albums.vue:284 src/page/labels.vue:140
 #: src/page/people/recognized.vue:147
 msgid "Try again using other filters or keywords."
 msgstr "Riprova usando altri filtri o parole chiave."
@@ -3148,17 +3174,17 @@ msgstr "ID Unico"
 #: src/page/settings/account.vue:451 src/page/settings/account.vue:476
 #: src/page/settings/account.vue:501 src/common/util.js:488
 #: src/component/photo/edit/details.vue:27
-#: src/component/photo/edit/details.vue:113
-#: src/component/photo/edit/details.vue:140
-#: src/component/photo/edit/details.vue:166 src/component/sidebar/info.vue:43
-#: src/model/album.js:193 src/model/photo.js:331 src/model/photo.js:821
-#: src/model/photo.js:846 src/model/photo.js:869 src/model/photo.js:887
-#: src/model/photo.js:934 src/model/photo.js:942 src/model/photo.js:1031
-#: src/model/photo.js:1053 src/model/photo.js:1098 src/model/photo.js:1111
-#: src/model/user.js:160 src/options/options.js:51 src/options/options.js:69
+#: src/component/photo/edit/details.vue:115
+#: src/component/photo/edit/details.vue:142
+#: src/component/photo/edit/details.vue:168 src/component/sidebar/info.vue:43
+#: src/model/album.js:155 src/model/photo.js:307 src/model/photo.js:797
+#: src/model/photo.js:822 src/model/photo.js:845 src/model/photo.js:863
+#: src/model/photo.js:910 src/model/photo.js:918 src/model/photo.js:1007
+#: src/model/photo.js:1029 src/model/photo.js:1074 src/model/photo.js:1087
+#: src/model/user.js:136 src/options/options.js:51 src/options/options.js:69
 #: src/options/options.js:86 src/options/options.js:100
-#: src/options/options.js:112 src/page/library/errors.vue:251
-#: src/page/library/errors.vue:258
+#: src/options/options.js:112 src/page/library/errors.vue:255
+#: src/page/library/errors.vue:262
 msgid "Unknown"
 msgstr "Sconosciuto"
 
@@ -3218,7 +3244,7 @@ msgstr "Aggiorna ora"
 #: src/component/album/toolbar.vue:113 src/component/navigation.vue:1824
 #: src/component/photo/toolbar.vue:179 src/component/service/upload.vue:144
 #: src/component/upload/dialog.vue:51 src/page/albums.vue:185
-#: src/page/labels.vue:122 src/page/library/import.vue:133
+#: src/page/labels.vue:174 src/page/library/import.vue:133
 #: src/page/settings/general.vue:307 src/page/settings/services.vue:38
 msgid "Upload"
 msgstr "Upload"
@@ -3279,7 +3305,7 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "Usa il tuo codice di recupero o contatta un amministratore per chiedere aiuto."
 
 #: src/options/admin.js:14 src/page/admin/sessions.vue:59
-#: src/page/admin/sessions.vue:242 src/model/user.js:376 src/options/auth.js:8
+#: src/page/admin/sessions.vue:242 src/model/user.js:352 src/options/auth.js:8
 msgid "User"
 msgstr "Utente"
 
@@ -3318,8 +3344,8 @@ msgstr "Codice di verifica"
 
 #: src/component/photo/view/cards.vue:363
 #: src/component/photo/view/cards.vue:491 src/component/photo/view/list.vue:190
-#: src/component/photo/view/mosaic.vue:207 src/model/file.js:221
-#: src/model/photo.js:958 src/model/photo.js:976 src/options/options.js:293
+#: src/component/photo/view/mosaic.vue:207 src/model/file.js:197
+#: src/model/photo.js:934 src/model/photo.js:952 src/options/options.js:293
 msgid "Video"
 msgstr "Video"
 
@@ -3346,7 +3372,7 @@ msgstr "Visualizza i risultati della ricerca come elenco."
 msgid "Viewer"
 msgstr "Visualizzatore"
 
-#: src/common/util.js:746
+#: src/common/util.js:750
 msgid "Vision"
 msgstr "Visione"
 
@@ -3358,7 +3384,7 @@ msgstr "Visitatore"
 msgid "Visual Similarity"
 msgstr "Somiglianza visiva"
 
-#: src/page/library/errors.vue:244
+#: src/page/library/errors.vue:248
 msgid "Warning"
 msgstr "Avvertenze"
 
@@ -3410,7 +3436,7 @@ msgstr "Bianco"
 msgid "Work Details"
 msgstr "Dettagli Opera"
 
-#: src/page/settings/account.vue:500 src/component/photo/edit/details.vue:165
+#: src/page/settings/account.vue:500 src/component/photo/edit/details.vue:167
 #: src/component/photo/toolbar.vue:315 src/page/albums.vue:159
 msgid "Year"
 msgstr "Anno"
@@ -3479,9 +3505,18 @@ msgstr "Il tuo continuo supporto ci aiuta a fornire aggiornamenti regolari e a r
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "La tua libreria viene continuamente analizzata per creare automaticamente album di momenti speciali, viaggi e luoghi."
 
-#: src/component/lightbox.vue:285
+#: src/component/lightbox.vue:286
 msgid "Zoom in/out"
 msgstr "Zoom avanti/indietro"
+
+#~ msgid "Apply"
+#~ msgstr "Applica"
+
+#~ msgid "Show less"
+#~ msgstr "Mostra meno"
+
+#~ msgid "Show more"
+#~ msgstr "Mostra più"
 
 #~ msgid "Archive"
 #~ msgstr "Archivio"

@@ -7,8 +7,9 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
+// APIv1 is the router group that serves the version 1 REST API.
 var APIv1 *gin.RouterGroup
-var registerApiDocs func(router *gin.RouterGroup)
+var registerAPIDocs func(router *gin.RouterGroup)
 
 // registerRoutes registers the routes for handling HTTP requests with the built-in web server.
 func registerRoutes(router *gin.Engine, conf *config.Config) {
@@ -35,8 +36,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Docs: https://pkg.go.dev/github.com/photoprism/photoprism/internal/api
 
 	// API Documentation.
-	if registerApiDocs != nil {
-		registerApiDocs(APIv1)
+	if registerAPIDocs != nil {
+		registerAPIDocs(APIv1)
 	}
 
 	// User Sessions.
@@ -201,6 +202,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.ClusterUpdateNode(APIv1)
 	api.ClusterDeleteNode(APIv1)
 	api.ClusterSummary(APIv1)
+	api.ClusterMetrics(APIv1)
 	api.ClusterHealth(APIv1)
 
 	// Technical Endpoints.

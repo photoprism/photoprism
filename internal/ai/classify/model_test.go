@@ -38,7 +38,7 @@ func TestModel_CenterCrop(t *testing.T) {
 
 	model.meta.Input.ResizeOperation = tensorflow.CenterCrop
 
-	t.Run("nasnet padding", func(t *testing.T) {
+	t.Run("NasnetPadding", func(t *testing.T) {
 		runBasicLabelsTest(t, model, 6)
 	})
 }
@@ -51,7 +51,7 @@ func TestModel_Padding(t *testing.T) {
 
 	model.meta.Input.ResizeOperation = tensorflow.Padding
 
-	t.Run("nasnet padding", func(t *testing.T) {
+	t.Run("NasnetPadding", func(t *testing.T) {
 		runBasicLabelsTest(t, model, 6)
 	})
 }
@@ -64,7 +64,7 @@ func TestModel_ResizeBreakAspectRatio(t *testing.T) {
 
 	model.meta.Input.ResizeOperation = tensorflow.ResizeBreakAspectRatio
 
-	t.Run("nasnet break aspect ratio", func(t *testing.T) {
+	t.Run("NasnetBreakAspectRatio", func(t *testing.T) {
 		runBasicLabelsTest(t, model, 4)
 	})
 }
@@ -85,7 +85,7 @@ func runBasicLabelsTest(t *testing.T, model *Model, expectedUncertainty int) {
 }
 
 func TestModel_LabelsFromFile(t *testing.T) {
-	t.Run("chameleon_lime.jpg", func(t *testing.T) {
+	t.Run("ChameleonLimeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 		result, err := tensorFlow.File(examplesPath+"/chameleon_lime.jpg", 10)
 
@@ -101,7 +101,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 			assert.Equal(t, 7, result[0].Uncertainty)
 		}
 	})
-	t.Run("cat_224.jpeg", func(t *testing.T) {
+	t.Run("CatNum224Jpeg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 		result, err := tensorFlow.File(examplesPath+"/cat_224.jpeg", 10)
 
@@ -116,7 +116,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 			assert.Equal(t, 59, result[0].Uncertainty)
 		}
 	})
-	t.Run("cat_720.jpeg", func(t *testing.T) {
+	t.Run("CatNum720Jpeg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 		result, err := tensorFlow.File(examplesPath+"/cat_720.jpeg", 10)
 
@@ -132,7 +132,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 			assert.Equal(t, 60, result[0].Uncertainty)
 		}
 	})
-	t.Run("green.jpg", func(t *testing.T) {
+	t.Run("GreenJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 		result, err := tensorFlow.File(examplesPath+"/green.jpg", 10)
 
@@ -178,7 +178,7 @@ func TestModel_Run(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	t.Run("chameleon_lime.jpg", func(t *testing.T) {
+	t.Run("ChameleonLimeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
 		if imageBuffer, err := os.ReadFile(examplesPath + "/chameleon_lime.jpg"); err != nil {
@@ -203,7 +203,7 @@ func TestModel_Run(t *testing.T) {
 			}
 		}
 	})
-	t.Run("dog_orange.jpg", func(t *testing.T) {
+	t.Run("DogOrangeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
 		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
@@ -228,7 +228,7 @@ func TestModel_Run(t *testing.T) {
 			}
 		}
 	})
-	t.Run("Random.docx", func(t *testing.T) {
+	t.Run("RandomDocx", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
 		if imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx"); err != nil {
@@ -239,7 +239,7 @@ func TestModel_Run(t *testing.T) {
 			assert.Error(t, err)
 		}
 	})
-	t.Run("6720px_white.jpg", func(t *testing.T) {
+	t.Run("Num6720PxWhiteJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
 		if imageBuffer, err := os.ReadFile(examplesPath + "/6720px_white.jpg"); err != nil {

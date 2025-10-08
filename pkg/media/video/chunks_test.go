@@ -24,22 +24,22 @@ func TestChunk_TypeCast(t *testing.T) {
 }
 
 func TestChunk_FileOffset(t *testing.T) {
-	t.Run("mp4v-avc1.mp4", func(t *testing.T) {
+	t.Run("Mp4vAvc1Mp4", func(t *testing.T) {
 		index, err := ChunkFTYP.FileOffset("testdata/mp4v-avc1.mp4")
 		require.NoError(t, err)
 		assert.Equal(t, 4, index)
 	})
-	t.Run("isom-avc1.mp4", func(t *testing.T) {
+	t.Run("IsomAvc1Mp4", func(t *testing.T) {
 		index, err := ChunkFTYP.FileOffset("testdata/isom-avc1.mp4")
 		require.NoError(t, err)
 		assert.Equal(t, 4, index)
 	})
-	t.Run("image-isom-avc1.jpg", func(t *testing.T) {
+	t.Run("ImageIsomAvc1Jpg", func(t *testing.T) {
 		index, err := ChunkFTYP.FileOffset("testdata/image-isom-avc1.jpg")
 		require.NoError(t, err)
 		assert.Equal(t, 23213, index)
 	})
-	t.Run("motion-photo.heif", func(t *testing.T) {
+	t.Run("MotionPhotoHeif", func(t *testing.T) {
 		index, err := ChunkFTYP.FileOffset("testdata/motion-photo.heif")
 		require.NoError(t, err)
 		assert.Equal(t, 4, index)
@@ -53,7 +53,7 @@ func TestChunk_FileOffset(t *testing.T) {
 }
 
 func TestChunks(t *testing.T) {
-	t.Run("mp4v-avc1.mp4", func(t *testing.T) {
+	t.Run("Mp4vAvc1Mp4", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/mp4v-avc1.mp4")
 		require.NoError(t, fileErr)
 		defer f.Close()
@@ -83,7 +83,7 @@ func TestChunks(t *testing.T) {
 		assert.Equal(t, ChunkFTYP.Bytes(), startChunk[:4])
 		assert.Equal(t, ChunkMP4V.Bytes(), subType[:4])
 	})
-	t.Run("isom-avc1.mp4", func(t *testing.T) {
+	t.Run("IsomAvc1Mp4", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/isom-avc1.mp4")
 		require.NoError(t, fileErr)
 		defer f.Close()
@@ -100,7 +100,7 @@ func TestChunks(t *testing.T) {
 		assert.Equal(t, ChunkFTYP[:], b[4:8])
 		assert.Equal(t, ChunkISOM[:], b[8:12])
 	})
-	t.Run("image-isom-avc1.jpg", func(t *testing.T) {
+	t.Run("ImageIsomAvc1Jpg", func(t *testing.T) {
 		f, fileErr := os.Open("testdata/image-isom-avc1.jpg")
 		require.NoError(t, fileErr)
 		defer f.Close()

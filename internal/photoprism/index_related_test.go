@@ -12,8 +12,15 @@ import (
 )
 
 func TestIndexRelated(t *testing.T) {
-	t.Run("2018-04-12 19_24_49.gif", func(t *testing.T) {
+	t.Run("Num2018Num04TwelveNineteenNum24Num49Gif", func(t *testing.T) {
 		cfg := config.TestConfig()
+
+		/* TODO: Investigate and resolve sporadic test failures
+		cfg := config.NewTestConfig("index-related-gif")
+
+		// Ensure a clean originals/cache to avoid duplicate-by-hash from previous tests.
+		_ = cfg.RemoveTestData()
+		_ = fs.MkdirAll(cfg.OriginalsPath()) */
 
 		testFile, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
 
@@ -33,8 +40,8 @@ func TestIndexRelated(t *testing.T) {
 		for _, f := range testRelated.Files {
 			dest := filepath.Join(testPath, f.BaseName())
 
-			if err := f.Copy(dest); err != nil {
-				t.Fatalf("copying test file failed: %s", err)
+			if copyErr := f.Copy(dest, false); copyErr != nil {
+				t.Fatalf("copying test file failed: %s", copyErr)
 			}
 		}
 
@@ -52,7 +59,7 @@ func TestIndexRelated(t *testing.T) {
 
 		convert := NewConvert(cfg)
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		opt := IndexOptionsAll()
+		opt := IndexOptionsAll(cfg)
 
 		result := IndexRelated(related, ind, opt)
 
@@ -68,9 +75,15 @@ func TestIndexRelated(t *testing.T) {
 			assert.Equal(t, "name", photo.TakenSrc)
 		}
 	})
-
-	t.Run("apple-test-2.jpg", func(t *testing.T) {
+	t.Run("AppleTestTwoJpg", func(t *testing.T) {
 		cfg := config.TestConfig()
+
+		/* TODO: Investigate and resolve sporadic test failures
+		cfg := config.NewTestConfig("index-related-apple")
+
+		// Ensure a clean originals/cache to avoid duplicate-by-hash from previous tests.
+		_ = cfg.RemoveTestData()
+		_ = fs.MkdirAll(cfg.OriginalsPath()) */
 
 		testFile, err := NewMediaFile("testdata/apple-test-2.jpg")
 
@@ -90,8 +103,8 @@ func TestIndexRelated(t *testing.T) {
 		for _, f := range testRelated.Files {
 			dest := filepath.Join(testPath, f.BaseName())
 
-			if err := f.Copy(dest); err != nil {
-				t.Fatalf("copying test file failed: %s", err)
+			if copyErr := f.Copy(dest, false); copyErr != nil {
+				t.Fatal(copyErr)
 			}
 		}
 
@@ -109,7 +122,7 @@ func TestIndexRelated(t *testing.T) {
 
 		convert := NewConvert(cfg)
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		opt := IndexOptionsAll()
+		opt := IndexOptionsAll(cfg)
 
 		result := IndexRelated(related, ind, opt)
 

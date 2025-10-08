@@ -30,51 +30,46 @@ func TestLike(t *testing.T) {
 }
 
 func TestLikeAny(t *testing.T) {
-	t.Run("and_or_search", func(t *testing.T) {
+	t.Run("AndOrSearch", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon & usa | img json", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
-	t.Run(" exact and_or_search", func(t *testing.T) {
+	t.Run("ExactAndOrSearch", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon & usa | img json", true, true)
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"spoon", "table"}, {"json", "usa"}}, v)
 	})
-	t.Run("and_or_search_en", func(t *testing.T) {
+	t.Run("AndOrSearchEn", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon and usa or img json", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
-	t.Run("table spoon usa img json", func(t *testing.T) {
+	t.Run("TableSpoonUsaImgJson", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon usa img json", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"json%", "spoon%", "table%", "usa"}}, v)
 	})
-
-	t.Run("cat dog", func(t *testing.T) {
+	t.Run("CatDog", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "cat dog", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"cat", "dog"}}, v)
 	})
-
-	t.Run("cats dogs", func(t *testing.T) {
+	t.Run("CatsDogs", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "cats dogs", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"cats%", "cat", "dogs%", "dog"}}, v)
 	})
-
-	t.Run("spoon", func(t *testing.T) {
+	t.Run("Spoon", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "spoon", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"spoon%"}}, v)
 	})
-
-	t.Run("img", func(t *testing.T) {
+	t.Run("Img", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "img", true, false)
 		assert.Empty(t, w, "where")
 		assert.Empty(t, v, "value")
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "", true, false)
 		assert.Empty(t, w, "where")
@@ -83,12 +78,12 @@ func TestLikeAny(t *testing.T) {
 }
 
 func TestLikeAnyKeyword(t *testing.T) {
-	t.Run("and_or_search", func(t *testing.T) {
+	t.Run("AndOrSearch", func(t *testing.T) {
 		w, v := LikeAnyKeyword("k.keyword", "table spoon & usa | img json")
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
-	t.Run("and_or_search_en", func(t *testing.T) {
+	t.Run("AndOrSearchEn", func(t *testing.T) {
 		w, v := LikeAnyKeyword("k.keyword", "table spoon and usa or img json")
 		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"spoon%", "table%"}, {"json%", "usa"}}, v)
@@ -114,22 +109,22 @@ func TestLikeAnyWord(t *testing.T) {
 }
 
 func TestLikeAll(t *testing.T) {
-	t.Run("keywords", func(t *testing.T) {
+	t.Run("Keywords", func(t *testing.T) {
 		w, v := LikeAll("k.keyword", "Jo Mander 李", true, false)
 		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"mander%"}, {"李"}}, v)
 	})
-	t.Run("exact", func(t *testing.T) {
+	t.Run("Exact", func(t *testing.T) {
 		w, v := LikeAll("k.keyword", "Jo Mander 李", true, true)
 		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"mander"}, {"李"}}, v)
 	})
-	t.Run("string empty", func(t *testing.T) {
+	t.Run("StringEmpty", func(t *testing.T) {
 		w, v := LikeAll("k.keyword", "", true, true)
 		assert.Empty(t, w)
 		assert.Empty(t, v)
 	})
-	t.Run("0 words", func(t *testing.T) {
+	t.Run("ZeroWords", func(t *testing.T) {
 		w, v := LikeAll("k.keyword", "ab", true, true)
 		assert.Empty(t, w)
 		assert.Empty(t, v)
@@ -137,7 +132,7 @@ func TestLikeAll(t *testing.T) {
 }
 
 func TestLikeAllKeywords(t *testing.T) {
-	t.Run("keywords", func(t *testing.T) {
+	t.Run("Keywords", func(t *testing.T) {
 		w, v := LikeAllKeywords("k.keyword", "Jo Mander 李")
 		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"mander%"}, {"李"}}, v)
@@ -145,7 +140,7 @@ func TestLikeAllKeywords(t *testing.T) {
 }
 
 func TestLikeAllWords(t *testing.T) {
-	t.Run("keywords", func(t *testing.T) {
+	t.Run("Keywords", func(t *testing.T) {
 		w, v := LikeAllWords("k.name", "Jo Mander 王")
 		assert.Equal(t, []string{"k.name LIKE ?", "k.name LIKE ?", "k.name LIKE ?"}, w)
 		assert.Equal(t, [][]interface{}{{"jo%"}, {"mander%"}, {"王%"}}, v)
@@ -201,61 +196,51 @@ func TestAnySlug(t *testing.T) {
 		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"table", "spoon", "usa", "img", "json"}, v)
 	})
-
 	t.Run("CatDog", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "cat dog", " ")
 		assert.Equal(t, "custom_slug = ? OR custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"cat", "dog"}, v)
 	})
-
 	t.Run("CatsDogs", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "cats dogs", " ")
 		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"cats", "cat", "dogs", "dog"}, v)
 	})
-
 	t.Run("Spoon", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "spoon", " ")
 		assert.Equal(t, "custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"spoon"}, v)
 	})
-
 	t.Run("Img", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "img", " ")
 		assert.Equal(t, "custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"img"}, v)
 	})
-
 	t.Run("Space", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", " ", "")
 		assert.Equal(t, "custom_slug = ? OR custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"", ""}, v)
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		where, values := AnySlug("custom_slug", "", " ")
 		assert.Equal(t, "", where)
 		assert.Empty(t, values)
 	})
-
 	t.Run("CommaSeparated", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "botanical-garden,landscape,bay", ",")
 		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"botanical-garden", "landscape", "bay"}, v)
 	})
-
 	t.Run("PipeSeparated", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "botanical-garden|landscape|bay", txt.Or)
 		assert.Equal(t, "custom_slug = ? OR custom_slug = ? OR custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"botanical-garden", "landscape", "bay"}, v)
 	})
-
 	t.Run("Emoji", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "💐", "|")
 		assert.Equal(t, "custom_slug = ?", w)
 		assert.Equal(t, []interface{}{"_5cpzfea"}, v)
 	})
-
 	t.Run("EmojiSlug", func(t *testing.T) {
 		w, v := AnySlug("custom_slug", "_5cpzfea", "|")
 		assert.Equal(t, "custom_slug = ?", w)
@@ -269,25 +254,21 @@ func TestAnyInt(t *testing.T) {
 		assert.Equal(t, "", where)
 		assert.Empty(t, values)
 	})
-
 	t.Run("Range", func(t *testing.T) {
 		w, v := AnyInt("photos.photo_month", "-3|0|10|9|11|12|13", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ?", w)
 		assert.Equal(t, []interface{}{10, 9, 11, 12}, v)
 	})
-
 	t.Run("Chars", func(t *testing.T) {
 		where, values := AnyInt("photos.photo_month", "a|b|c", txt.Or, entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
 		assert.Empty(t, values)
 	})
-
 	t.Run("CommaSeparated", func(t *testing.T) {
 		w, v := AnyInt("photos.photo_month", "-3,10,9,11,12,13", ",", entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ? OR photos.photo_month = ?", w)
 		assert.Equal(t, []interface{}{10, 9, 11, 12}, v)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		where, values := AnyInt("photos.photo_month", "  , |  ", ",", entity.UnknownMonth, txt.MonthMax)
 		assert.Equal(t, "", where)
@@ -419,19 +400,16 @@ func TestSplitAnd(t *testing.T) {
 
 		assert.Equal(t, []string{}, values)
 	})
-
 	t.Run("FooOrBar", func(t *testing.T) {
 		values := SplitAnd(" foo | Bar ")
 
 		assert.Equal(t, []string{" foo | Bar "}, values)
 	})
-
 	t.Run("FooAndBar", func(t *testing.T) {
 		values := SplitAnd(" foo & Bar ")
 
 		assert.Equal(t, []string{"foo", "Bar"}, values)
 	})
-
 	t.Run("FooAndBarAndBaz", func(t *testing.T) {
 		values := SplitAnd(" foo & Bar&BAZ ")
 

@@ -13,7 +13,6 @@ func TestClientMap_Get(t *testing.T) {
 		assert.Equal(t, "cs5gfen1bgxz7s9i", r.ClientUID)
 		assert.IsType(t, Client{}, r)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		r := ClientFixtures.Get("xxx")
 		assert.Equal(t, "", r.ClientName)
@@ -29,7 +28,6 @@ func TestClientMap_Pointer(t *testing.T) {
 		assert.Equal(t, "Alice", r.ClientName)
 		assert.IsType(t, &Client{}, r)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		r := ClientFixtures.Pointer("xxx")
 		assert.Equal(t, "", r.ClientName)

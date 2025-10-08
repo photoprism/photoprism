@@ -1,6 +1,7 @@
 package search
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/video"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
@@ -26,6 +28,65 @@ func TestPhoto_Ids(t *testing.T) {
 	assert.Equal(t, uint(1111198), r.GetID())
 	assert.True(t, r.HasID())
 	assert.Equal(t, "ps6sg6be2lvl0o98", r.GetUID())
+}
+
+func TestPhoto_String(t *testing.T) {
+	testcases := []struct {
+		name  string
+		photo *Photo
+		want  string
+	}{
+		{
+			name:  "Nil",
+			photo: nil,
+			want:  "Photo<nil>",
+		},
+		{
+			name: "PhotoName",
+			photo: &Photo{
+				PhotoPath: "albums/test",
+				PhotoName: "my photo.jpg",
+			},
+			want: "'albums/test/my photo.jpg'",
+		},
+		{
+			name: "OriginalName",
+			photo: &Photo{
+				OriginalName: "orig name.dng",
+			},
+			want: "'orig name.dng'",
+		},
+		{
+			name: "UID",
+			photo: &Photo{
+				PhotoUID: "ps123",
+			},
+			want: "uid ps123",
+		},
+		{
+			name: "ID",
+			photo: &Photo{
+				ID: 42,
+			},
+			want: "id 42",
+		},
+		{
+			name:  "Fallback",
+			photo: &Photo{},
+			want:  "*Photo",
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.photo == nil {
+				var p *Photo
+				assert.Equal(t, tc.want, p.String())
+			} else {
+				assert.Equal(t, tc.want, tc.photo.String())
+			}
+		})
+	}
 }
 
 func TestPhoto_Approve(t *testing.T) {
@@ -391,141 +452,42 @@ func TestPhotoResults_Photos(t *testing.T) {
 
 	r := PhotoResults{photo1, photo2}
 
-	assert.Equal(t, 2, len(r.Photos()))
+	assert.Len(t, r.Photos(), 2)
 }
 
 func TestPhotosResults_Merged(t *testing.T) {
-	result1 := Photo{
-		ID:               111111,
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
-		TakenAt:          time.Time{},
-		TakenAtLocal:     time.Time{},
-		TakenSrc:         "",
-		TimeZone:         "Local",
-		PhotoUID:         "",
-		PhotoPath:        "",
-		PhotoName:        "",
-		PhotoTitle:       "Photo1",
-		PhotoYear:        0,
-		PhotoMonth:       0,
-		PhotoCountry:     "",
-		PhotoFavorite:    false,
-		PhotoPrivate:     false,
-		PhotoLat:         0,
-		PhotoLng:         0,
-		PhotoAltitude:    0,
-		PhotoIso:         0,
-		PhotoFocalLength: 0,
-		PhotoFNumber:     0,
-		PhotoExposure:    "",
-		PhotoQuality:     0,
-		PhotoResolution:  0,
-		Merged:           false,
-		CameraID:         0,
-		CameraModel:      "",
-		CameraMake:       "",
-		CameraType:       "",
-		LensID:           0,
-		LensModel:        "",
-		LensMake:         "",
-		CellID:           "",
-		PlaceID:          "",
-		PlaceLabel:       "",
-		PlaceCity:        "",
-		PlaceState:       "",
-		PlaceCountry:     "",
-		FileID:           0,
-		FileUID:          "",
-		FilePrimary:      false,
-		FileMissing:      false,
-		FileName:         "",
-		FileHash:         "",
-		FileType:         "",
-		FileMime:         "",
-		FileWidth:        0,
-		FileHeight:       0,
-		FileOrientation:  0,
-		FileAspectRatio:  0,
-		FileColors:       "",
-		FileChroma:       0,
-		FileLuminance:    "",
-		FileDiff:         0,
-		Files:            nil,
-	}
+	fileUIDA := rnd.GenerateUID(entity.FileUID)
+	fileUIDB := rnd.GenerateUID(entity.FileUID)
+	fileUIDC := rnd.GenerateUID(entity.FileUID)
 
-	result2 := Photo{
-		ID:               22222,
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
-		TakenAt:          time.Time{},
-		TakenAtLocal:     time.Time{},
-		TakenSrc:         "",
-		TimeZone:         "Local",
-		PhotoUID:         "",
-		PhotoPath:        "",
-		PhotoName:        "",
-		PhotoTitle:       "Photo2",
-		PhotoYear:        0,
-		PhotoMonth:       0,
-		PhotoCountry:     "",
-		PhotoFavorite:    false,
-		PhotoPrivate:     false,
-		PhotoLat:         0,
-		PhotoLng:         0,
-		PhotoAltitude:    0,
-		PhotoIso:         0,
-		PhotoFocalLength: 0,
-		PhotoFNumber:     0,
-		PhotoExposure:    "",
-		PhotoQuality:     0,
-		PhotoResolution:  0,
-		Merged:           false,
-		CameraID:         0,
-		CameraModel:      "",
-		CameraMake:       "",
-		CameraType:       "",
-		LensID:           0,
-		LensModel:        "",
-		LensMake:         "",
-		CellID:           "",
-		PlaceID:          "",
-		PlaceLabel:       "",
-		PlaceCity:        "",
-		PlaceState:       "",
-		PlaceCountry:     "",
-		FileID:           0,
-		FileUID:          "",
-		FilePrimary:      false,
-		FileMissing:      false,
-		FileName:         "",
-		FileHash:         "",
-		FileType:         "",
-		FileMime:         "",
-		FileWidth:        0,
-		FileHeight:       0,
-		FileOrientation:  0,
-		FileAspectRatio:  0,
-		FileColors:       "",
-		FileChroma:       0,
-		FileLuminance:    "",
-		FileDiff:         0,
-		Files:            nil,
+	results := PhotoResults{
+		{ID: 1, FileID: 10, FileUID: fileUIDA, FileName: "a.jpg"},
+		{ID: 1, FileID: 11, FileUID: fileUIDB, FileName: "b.jpg"},
+		{ID: 2, FileID: 20, FileUID: fileUIDC, FileName: "c.jpg"},
 	}
-
-	results := PhotoResults{result1, result2}
 
 	merged, count, err := results.Merge()
+	assert.NoError(t, err)
+	assert.Equal(t, 3, count)
+	assert.Len(t, merged, 2)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(t, 2, count)
-	t.Log(merged)
+	first := merged[0]
+	assert.Equal(t, "1-10", first.CompositeID)
+	assert.True(t, first.Merged)
+	assert.Len(t, first.Files, 2)
+	assert.Equal(t, uint(10), first.Files[0].ID)
+	assert.Equal(t, uint(11), first.Files[1].ID)
+
+	second := merged[1]
+	assert.Equal(t, "2-20", second.CompositeID)
+	assert.False(t, second.Merged)
+	assert.Len(t, second.Files, 1)
+	assert.Equal(t, uint(20), second.Files[0].ID)
 }
 func TestPhotosResults_UIDs(t *testing.T) {
+	uid1 := rnd.GenerateUID(entity.PhotoUID)
+	uid2 := rnd.GenerateUID(entity.PhotoUID)
+
 	result1 := Photo{
 		ID:               111111,
 		CreatedAt:        time.Time{},
@@ -535,7 +497,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
 		TimeZone:         "Local",
-		PhotoUID:         "123",
+		PhotoUID:         uid1,
 		PhotoPath:        "",
 		PhotoName:        "",
 		PhotoTitle:       "Photo1",
@@ -595,7 +557,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
 		TimeZone:         "Local",
-		PhotoUID:         "456",
+		PhotoUID:         uid2,
 		PhotoPath:        "",
 		PhotoName:        "",
 		PhotoTitle:       "Photo2",
@@ -649,11 +611,12 @@ func TestPhotosResults_UIDs(t *testing.T) {
 	results := PhotoResults{result1, result2}
 
 	result := results.UIDs()
-	assert.Equal(t, []string{"123", "456"}, result)
+	assert.Equal(t, []string{uid1, uid2}, result)
 }
 
 func TestPhotosResult_ShareFileName(t *testing.T) {
 	t.Run("WithTitle", func(t *testing.T) {
+		uid := rnd.GenerateUID(entity.PhotoUID)
 		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
@@ -663,7 +626,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
 			TimeZone:         "Local",
-			PhotoUID:         "uid123",
+			PhotoUID:         uid,
 			PhotoPath:        "",
 			PhotoName:        "",
 			PhotoTitle:       "PhotoTitle123",
@@ -718,6 +681,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		assert.Contains(t, r, "20131111-090718-Phototitle123")
 	})
 	t.Run("NoTitle", func(t *testing.T) {
+		uid := rnd.GenerateUID(entity.PhotoUID)
 		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
@@ -727,7 +691,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			TakenAtLocal:     time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
 			TimeZone:         "Local",
-			PhotoUID:         "uid123",
+			PhotoUID:         uid,
 			PhotoPath:        "",
 			PhotoName:        "",
 			PhotoTitle:       "",
@@ -779,10 +743,10 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		}
 
 		r := result1.ShareBase(0)
-		assert.Contains(t, r, "20151111-090718-uid123")
+		assert.Contains(t, r, fmt.Sprintf("20151111-090718-%s", uid))
 	})
-
 	t.Run("SeqGreater0", func(t *testing.T) {
+		uid := rnd.GenerateUID(entity.PhotoUID)
 		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
@@ -792,7 +756,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			TakenAtLocal:     time.Date(2022, 11, 11, 9, 7, 18, 0, time.UTC),
 			TakenSrc:         "",
 			TimeZone:         "Local",
-			PhotoUID:         "uid123",
+			PhotoUID:         uid,
 			PhotoPath:        "",
 			PhotoName:        "",
 			PhotoTitle:       "PhotoTitle123",

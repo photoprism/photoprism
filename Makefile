@@ -65,22 +65,23 @@ endif
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-js
+dep: dep-tensorflow dep-onnx dep-js
 biuld: build
 build: build-go
 watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: reset-sqlite run-test-go
-test-pkg: reset-sqlite run-test-pkg
-test-ai: reset-sqlite run-test-ai
-test-api: reset-sqlite run-test-api
-test-video: reset-sqlite run-test-video
-test-entity: reset-sqlite run-test-entity
-test-commands: reset-sqlite run-test-commands
-test-photoprism: reset-sqlite run-test-photoprism
-test-short: reset-sqlite run-test-short
+test-go: run-test-go
+test-hub: run-test-hub
+test-pkg: run-test-pkg
+test-ai: run-test-ai
+test-api: run-test-api
+test-video: run-test-video
+test-entity: run-test-entity
+test-commands: run-test-commands
+test-photoprism: run-test-photoprism
+test-short: run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance acceptance-sqlite-stop
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance-short acceptance-sqlite-stop
@@ -107,14 +108,13 @@ logs:
 	$(DOCKER_COMPOSE) logs -f
 down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
-codex: dep-codex codex-version
-codex-version:
-	codex --version
 docs: swag
 swag: swag-json
 swag-json:
 	@echo "Generating ./internal/api/swagger.json..."
 	swag init --ot json --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./internal/api
+	@echo "Fixing unstable time.Duration enums in swagger.json..."
+	@GO111MODULE=on go run scripts/tools/swaggerfix/main.go internal/api/swagger.json || { echo "swaggerfix failed"; exit 1; }
 swag-yaml:
 	@echo "Generating ./internal/api/swagger.yaml..."
 	swag init --ot yaml --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./internal/api
@@ -177,6 +177,7 @@ install:
 	@[ ! -d "$(DESTDIR)" ] || (echo "ERROR: Install path '$(DESTDIR)' already exists!"; exit 1)
 	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
 	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
+	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-onnx.sh $(DESTDIR)
 	rm -rf --preserve-root $(DESTDIR)/include
 	(cd $(DESTDIR) && mkdir -p bin lib assets)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
@@ -192,6 +193,8 @@ install-go:
 	go build -v ./...
 install-tensorflow:
 	sudo scripts/dist/install-tensorflow.sh
+install-onnx:
+	sudo scripts/dist/install-onnx.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
 acceptance-sqlite-restart:
@@ -244,14 +247,25 @@ clean-local-config:
 	rm -f $(BUILD_PATH)/config/*
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
+npm: dep-npm npm-version
+npm-version:
+	@echo "📦 Installed npm $$(npm --version)."
 dep-npm:
-	sudo npm install -g npm
+	@echo "Installing NPM package manager..."
+	@if command -v sudo >/dev/null 2>&1; then \
+	  sudo npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+        else \
+	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+        fi
 dep-js:
-	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
 	# TODO: If in the future we want to test in a real browser environment, add this (Playwright)
 	# (cd frontend && npx playwright install chromium)
+	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
+codex: dep-codex codex-version
+codex-version:
+	@echo "🤖 Installed $$(codex --version)."
 dep-codex:
-	@echo "Installing latest Codex CLI..."
+	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
 	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
@@ -269,6 +283,8 @@ dep-tensorflow:
 	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
+dep-onnx:
+	scripts/download-scrfd.sh
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
@@ -354,18 +370,12 @@ acceptance:
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=public --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
-acceptance-firefox:
-	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend && npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json --disable-native-automation "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=auth --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=auth --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
-acceptance-auth-firefox:
-	$(info Running JS acceptance-auth tests in Firefox...)
-	(cd frontend && npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json --disable-native-automation "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)
@@ -387,18 +397,21 @@ reset-mariadb-local:
 reset-mariadb-acceptance:
 	$(info Resetting acceptance database...)
 	mysql < scripts/sql/reset-acceptance.sql
-reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
 	$(info Removing test database files...)
-	find ./internal -type f -name ".test.*" -delete
+	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.test.*' \) -delete
 run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
 run-test-go:
 	$(info Running all Go tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+run-test-hub:
+	$(info Running all Go tests with hub requests...)
+	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
 	$(info Running all Go tests on MariaDB...)
 	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
@@ -437,9 +450,24 @@ test-coverage:
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
+git-pull:
+	@echo "Pulling changes from remote repositories..."; \
+	if [ -d .git ]; then \
+		echo "Updating photoprism"; \
+		git pull --ff-only || echo "Warning: git pull failed in root"; \
+	else \
+		echo "Skipping: current directory is not a Git repo"; \
+	fi; \
+	for d in */ ; do \
+		[ -d "$$d" ] || continue; \
+		[ -d "$$d/.git" ] || continue; \
+		echo "Updating photoprism/$$d"; \
+		git -C "$$d" pull --ff-only || echo "Warning: git pull failed in $$d"; \
+	done;
 docker-pull:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
+build-docker: docker-build
 docker-build:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) down --remove-orphans

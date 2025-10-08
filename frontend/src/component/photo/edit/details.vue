@@ -397,18 +397,26 @@
       </div>
       <div v-if="!disabled" class="form-actions form-actions--sticky">
         <div class="action-buttons">
-          <v-btn color="button" variant="flat" class="action-close" @click.stop="close">
-            {{ $gettext(`Close`) }}
+          <v-btn
+            color="button"
+            variant="flat"
+            :aria-label="view.model?.wasChanged() ? $gettext('Discard changes and close') : $gettext('Close')"
+            class="action-discard action-close"
+            @click.stop="close"
+          >
+            <span v-if="view.model?.wasChanged()">{{ $gettext(`Discard`) }}</span>
+            <span v-else>{{ $gettext(`Close`) }}</span>
           </v-btn>
           <v-btn
             color="highlight"
             variant="flat"
             :disabled="!view.model?.wasChanged() && !inReview"
-            class="action-apply action-approve"
+            :aria-label="inReview ? $gettext(`Approve and save changes`) : $gettext('Save changes')"
+            class="action-save action-apply action-approve"
             @click.stop="save(false)"
           >
             <span v-if="inReview">{{ $gettext(`Approve`) }}</span>
-            <span v-else>{{ $gettext(`Apply`) }}</span>
+            <span v-else>{{ $gettext(`Save`) }}</span>
           </v-btn>
         </div>
       </div>

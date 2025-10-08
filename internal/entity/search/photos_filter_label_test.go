@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterLabel(t *testing.T) {
-	t.Run("flower", func(t *testing.T) {
+	t.Run("Flower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "flower"
@@ -20,9 +20,9 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("cake", func(t *testing.T) {
+	t.Run("Cake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "cake"
@@ -33,9 +33,9 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("cake pipe flower", func(t *testing.T) {
+	t.Run("CakePipeFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "cake|flower"
@@ -46,9 +46,9 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("cake whitespace pipe whitespace flower", func(t *testing.T) {
+	t.Run("CakeWhitespacePipeWhitespaceFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Label = "cake | flower"
@@ -59,7 +59,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -72,7 +72,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -85,7 +85,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -99,7 +99,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -113,7 +113,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -127,7 +127,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -141,7 +141,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -155,7 +155,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -169,7 +169,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -183,7 +183,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -197,7 +197,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -211,7 +211,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -225,7 +225,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -239,7 +239,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -253,7 +253,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -267,7 +267,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -280,7 +280,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -294,7 +294,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -308,7 +308,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -322,7 +322,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -336,7 +336,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -350,7 +350,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 4)
+		assert.Len(t, photos, 4)
 	})
 	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -363,12 +363,12 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
 }
 
 func TestPhotosQueryLabel(t *testing.T) {
-	t.Run("flower", func(t *testing.T) {
+	t.Run("Flower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"flower\""
@@ -379,9 +379,9 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("cake", func(t *testing.T) {
+	t.Run("Cake", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"cake\""
@@ -392,9 +392,9 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("cake pipe flower", func(t *testing.T) {
+	t.Run("CakePipeFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"cake|flower\""
@@ -405,9 +405,9 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("cake whitespace pipe whitespace flower", func(t *testing.T) {
+	t.Run("CakeWhitespacePipeWhitespaceFlower", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "label:\"cake | flower\""
@@ -418,7 +418,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -431,7 +431,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -444,7 +444,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -458,7 +458,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -472,7 +472,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -486,7 +486,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -500,7 +500,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -514,7 +514,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -528,7 +528,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -542,7 +542,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -556,7 +556,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -570,7 +570,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -584,7 +584,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -598,7 +598,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -612,7 +612,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -626,7 +626,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -639,7 +639,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -653,7 +653,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -667,7 +667,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -722,6 +722,6 @@ func TestPhotosQueryLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
 }

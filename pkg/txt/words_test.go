@@ -10,71 +10,71 @@ func TestUnknownWord(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.True(t, UnknownWord(""))
 	})
-	t.Run("qx", func(t *testing.T) {
+	t.Run("Qx", func(t *testing.T) {
 		assert.True(t, UnknownWord("qx"))
 	})
-	t.Run("atz", func(t *testing.T) {
+	t.Run("Atz", func(t *testing.T) {
 		assert.True(t, UnknownWord("atz"))
 	})
-	t.Run("xqx", func(t *testing.T) {
+	t.Run("Xqx", func(t *testing.T) {
 		assert.True(t, UnknownWord("xqx"))
 	})
-	t.Run("kuh", func(t *testing.T) {
+	t.Run("Kuh", func(t *testing.T) {
 		assert.False(t, UnknownWord("kuh"))
 	})
-	t.Run("muh", func(t *testing.T) {
+	t.Run("Muh", func(t *testing.T) {
 		assert.False(t, UnknownWord("muh"))
 	})
-	t.Run("桥", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		assert.False(t, UnknownWord("桥"))
 	})
-	t.Run("桥船", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		assert.False(t, UnknownWord("桥船"))
 	})
 }
 
 func TestWords(t *testing.T) {
-	t.Run("桥", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Words("桥")
 		assert.Equal(t, []string{"桥"}, result)
 	})
-	t.Run("桥船", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Words("桥船")
 		assert.Equal(t, []string{"桥船"}, result)
 	})
-	t.Run("桥船猫", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Words("桥船猫")
 		assert.Equal(t, []string{"桥船猫"}, result)
 	})
-	t.Run("谢谢！", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Words("谢谢！")
 		assert.Equal(t, []string{"谢谢"}, result)
 	})
-	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
+	t.Run("IMALazyBrownFox", func(t *testing.T) {
 		result := Words("I'm a lazy-BRoWN fox!")
 		assert.Equal(t, []string{"I'm", "lazy-BRoWN", "fox"}, result)
 	})
-	t.Run("no result", func(t *testing.T) {
+	t.Run("NoResult", func(t *testing.T) {
 		result := Words("x")
 		assert.Equal(t, []string(nil), result)
 	})
-	t.Run("Österreich Urlaub", func(t *testing.T) {
+	t.Run("SterreichUrlaub", func(t *testing.T) {
 		result := Words("Österreich Urlaub")
 		assert.Equal(t, []string{"Österreich", "Urlaub"}, result)
 	})
-	t.Run("Schäferhund", func(t *testing.T) {
+	t.Run("SchFerhund", func(t *testing.T) {
 		result := Words("Schäferhund")
 		assert.Equal(t, []string{"Schäferhund"}, result)
 	})
-	t.Run("Île de la Réunion", func(t *testing.T) {
+	t.Run("LeDeLaRUnion", func(t *testing.T) {
 		result := Words("Île de la Réunion")
 		assert.Equal(t, []string{"Île", "de", "la", "Réunion"}, result)
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		result := Words("")
 		assert.Empty(t, result)
 	})
-	t.Run("trim", func(t *testing.T) {
+	t.Run("Trim", func(t *testing.T) {
 		result := Words(" -foo- -")
 		assert.Equal(t, []string{"foo"}, result)
 	})
@@ -86,122 +86,122 @@ func TestWords(t *testing.T) {
 }
 
 func TestReplaceSpaces(t *testing.T) {
-	t.Run("I love Cats", func(t *testing.T) {
+	t.Run("ILoveCats", func(t *testing.T) {
 		result := ReplaceSpaces("I love Cats", "dog")
 		assert.Equal(t, "IdoglovedogCats", result)
 	})
 }
 
 func TestFilenameWords(t *testing.T) {
-	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
+	t.Run("IMALazyBrownFox", func(t *testing.T) {
 		result := FilenameWords("I'm a lazy-BRoWN fox!")
 		assert.Equal(t, []string{"lazy", "BRoWN", "fox"}, result)
 	})
-	t.Run("no result", func(t *testing.T) {
+	t.Run("NoResult", func(t *testing.T) {
 		result := FilenameWords("x")
 		assert.Equal(t, []string(nil), result)
 	})
-	t.Run("Österreich Urlaub", func(t *testing.T) {
+	t.Run("SterreichUrlaub", func(t *testing.T) {
 		result := FilenameWords("Österreich Urlaub")
 		assert.Equal(t, []string{"Österreich", "Urlaub"}, result)
 	})
-	t.Run("Schäferhund", func(t *testing.T) {
+	t.Run("SchFerhund", func(t *testing.T) {
 		result := FilenameWords("Schäferhund")
 		assert.Equal(t, []string{"Schäferhund"}, result)
 	})
-	t.Run("Île de la Réunion", func(t *testing.T) {
+	t.Run("LeDeLaRUnion", func(t *testing.T) {
 		result := FilenameWords("Île de la Réunion")
 		assert.Equal(t, []string{"Île", "Réunion"}, result)
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		result := FilenameWords("")
 		assert.Empty(t, result)
 	})
 }
 
 func TestAddToWords(t *testing.T) {
-	t.Run("I'm a lazy-BRoWN fox!", func(t *testing.T) {
+	t.Run("IMALazyBRoWnFox", func(t *testing.T) {
 		result := AddToWords([]string{"foo", "bar", "fox"}, "Yellow banana, apple; pan-pot")
 		assert.Equal(t, []string{"apple", "banana", "bar", "foo", "fox", "pan-pot", "yellow"}, result)
 	})
 }
 
 func TestMergeWords(t *testing.T) {
-	t.Run("I'm a lazy-BRoWN fox!", func(t *testing.T) {
+	t.Run("IMALazyBRoWnFox", func(t *testing.T) {
 		result := MergeWords("I'm a lazy-BRoWN fox!", "Yellow banana, apple; pan-pot")
 		assert.Equal(t, "apple, banana, fox, i'm, lazy-brown, pan-pot, yellow", result)
 	})
 }
 
 func TestFilenameKeywords(t *testing.T) {
-	t.Run("桥.jpg", func(t *testing.T) {
+	t.Run("Jpg", func(t *testing.T) {
 		result := FilenameKeywords("桥.jpg")
 		assert.Equal(t, []string{"桥"}, result)
 	})
-	t.Run("I'm a lazy-brown var fox.jpg!", func(t *testing.T) {
+	t.Run("IMALazyBrownVarFoxJpg", func(t *testing.T) {
 		result := FilenameKeywords("I'm a lazy-brown var fox.jpg!")
 		assert.Equal(t, []string{"lazy", "brown", "fox"}, result)
 	})
-	t.Run("no result", func(t *testing.T) {
+	t.Run("NoResult", func(t *testing.T) {
 		result := FilenameKeywords("x")
 		assert.Equal(t, []string(nil), result)
 	})
-	t.Run("Österreich Urlaub", func(t *testing.T) {
+	t.Run("SterreichUrlaub", func(t *testing.T) {
 		result := FilenameKeywords("Österreich Urlaub")
 		assert.Equal(t, []string{"österreich", "urlaub"}, result)
 	})
-	t.Run("Schäferhund", func(t *testing.T) {
+	t.Run("SchFerhund", func(t *testing.T) {
 		result := FilenameKeywords("Schäferhund")
 		assert.Equal(t, []string{"schäferhund"}, result)
 	})
-	t.Run("Île de la Réunion", func(t *testing.T) {
+	t.Run("LeDeLaRUnion", func(t *testing.T) {
 		result := FilenameKeywords("Île de la Réunion")
 		assert.Equal(t, []string{"île", "réunion"}, result)
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		result := FilenameKeywords("")
 		assert.Empty(t, result)
 	})
 }
 
 func TestKeywords(t *testing.T) {
-	t.Run("桥", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Keywords("桥")
 		assert.Equal(t, []string{"桥"}, result)
 	})
-	t.Run("桥船", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Keywords("桥船")
 		assert.Equal(t, []string{"桥船"}, result)
 	})
-	t.Run("桥船猫", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Keywords("桥船猫")
 		assert.Equal(t, []string{"桥船猫"}, result)
 	})
-	t.Run("谢谢！", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := Keywords("谢谢！")
 		assert.Equal(t, []string{"谢谢"}, result)
 	})
-	t.Run("I'm a lazy brown fox!", func(t *testing.T) {
+	t.Run("IMALazyBrownFox", func(t *testing.T) {
 		result := Keywords("I'm a lazy BRoWN img!")
 		assert.Equal(t, []string{"lazy", "brown"}, result)
 	})
-	t.Run("no result", func(t *testing.T) {
+	t.Run("NoResult", func(t *testing.T) {
 		result := Keywords("was")
 		assert.Equal(t, []string(nil), result)
 	})
-	t.Run("Österreich Urlaub", func(t *testing.T) {
+	t.Run("SterreichUrlaub", func(t *testing.T) {
 		result := Keywords("Österreich Urlaub")
 		assert.Equal(t, []string{"österreich", "urlaub"}, result)
 	})
-	t.Run("Schäferhund", func(t *testing.T) {
+	t.Run("SchFerhund", func(t *testing.T) {
 		result := Keywords("Schäferhund")
 		assert.Equal(t, []string{"schäferhund"}, result)
 	})
-	t.Run("Île de la Réunion", func(t *testing.T) {
+	t.Run("LeDeLaRUnion", func(t *testing.T) {
 		result := Keywords("Île de la Réunion")
 		assert.Equal(t, []string{"île", "réunion"}, result)
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		result := Keywords("")
 		assert.Empty(t, result)
 	})
@@ -238,11 +238,11 @@ func TestUniqueKeywords(t *testing.T) {
 }
 
 func TestRemoveFromWords(t *testing.T) {
-	t.Run("brown apple", func(t *testing.T) {
+	t.Run("BrownApple", func(t *testing.T) {
 		result := RemoveFromWords([]string{"lazy", "jpg", "Brown", "apple", "brown", "new-york", "JPG"}, "brown apple")
 		assert.Equal(t, []string{"jpg", "lazy", "new-york"}, result)
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		result := RemoveFromWords([]string{"lazy", "jpg", "Brown", "apple"}, "")
 		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy"}, result)
 	})
@@ -258,25 +258,25 @@ func TestStopwordsOnly(t *testing.T) {
 	t.Run("FoldersDateienFile", func(t *testing.T) {
 		assert.False(t, StopwordsOnly("Folders Dateien Meme File"))
 	})
-	t.Run("qx", func(t *testing.T) {
+	t.Run("Qx", func(t *testing.T) {
 		assert.True(t, StopwordsOnly("qx"))
 	})
-	t.Run("atz", func(t *testing.T) {
+	t.Run("Atz", func(t *testing.T) {
 		assert.True(t, StopwordsOnly("atz"))
 	})
-	t.Run("xqx", func(t *testing.T) {
+	t.Run("Xqx", func(t *testing.T) {
 		assert.True(t, StopwordsOnly("xqx"))
 	})
-	t.Run("kuh", func(t *testing.T) {
+	t.Run("Kuh", func(t *testing.T) {
 		assert.False(t, StopwordsOnly("kuh"))
 	})
-	t.Run("muh", func(t *testing.T) {
+	t.Run("Muh", func(t *testing.T) {
 		assert.False(t, StopwordsOnly("muh"))
 	})
-	t.Run("桥", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		assert.False(t, StopwordsOnly("桥"))
 	})
-	t.Run("桥船", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		assert.False(t, StopwordsOnly("桥船"))
 	})
 }

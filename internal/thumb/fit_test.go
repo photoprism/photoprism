@@ -23,7 +23,7 @@ func TestFit(t *testing.T) {
 }
 
 func TestFitBounds(t *testing.T) {
-	t.Run("example.jpg", func(t *testing.T) {
+	t.Run("ExampleJpg", func(t *testing.T) {
 		src := "testdata/example.jpg"
 
 		assert.FileExists(t, src)
@@ -43,7 +43,7 @@ func TestFitBounds(t *testing.T) {
 
 		assert.Equal(t, "fit_1280", size.Name.String())
 	})
-	t.Run("example.bmp", func(t *testing.T) {
+	t.Run("ExampleBmp", func(t *testing.T) {
 		src := "testdata/example.bmp"
 
 		assert.FileExists(t, src)
@@ -63,7 +63,7 @@ func TestFitBounds(t *testing.T) {
 
 		assert.Equal(t, "fit_720", size.Name.String())
 	})
-	t.Run("animated-earth.jpg", func(t *testing.T) {
+	t.Run("AnimatedEarthJpg", func(t *testing.T) {
 		src := "testdata/animated-earth.jpg"
 
 		assert.FileExists(t, src)

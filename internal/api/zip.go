@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -83,10 +82,11 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Configure file names.
 		dlName := DownloadName(c)
-		zipPath := path.Join(conf.TempPath(), fs.ZipDir)
+		// Build filesystem paths using filepath for OS compatibility.
+		zipPath := filepath.Join(conf.TempPath(), fs.ZipDir)
 		zipToken := rnd.Base36(8)
 		zipBaseName := fmt.Sprintf("photoprism-download-%s-%s.zip", time.Now().Format("20060102-150405"), zipToken)
-		zipFileName := path.Join(zipPath, zipBaseName)
+		zipFileName := filepath.Join(zipPath, zipBaseName)
 
 		// Create temp directory.
 		if err = os.MkdirAll(zipPath, 0700); err != nil {
@@ -99,15 +99,10 @@ func ZipCreate(router *gin.RouterGroup) {
 		if newZipFile, err = os.Create(zipFileName); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
-		} else {
-			defer newZipFile.Close()
 		}
 
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
-		defer func(w *zip.Writer) {
-			logErr("zip", w.Close())
-		}(zipWriter)
 
 		var aliases = make(map[string]int)
 
@@ -145,6 +140,18 @@ func ZipCreate(router *gin.RouterGroup) {
 			}
 		}
 
+		// Ensure all data is flushed to disk before responding to the client
+		// to avoid rare races where the follow-up GET happens before the
+		// zip writer/file have been fully closed.
+		if cerr := zipWriter.Close(); cerr != nil {
+			Error(c, http.StatusInternalServerError, cerr, i18n.ErrZipFailed)
+			return
+		}
+		if ferr := newZipFile.Close(); ferr != nil {
+			Error(c, http.StatusInternalServerError, ferr, i18n.ErrZipFailed)
+			return
+		}
+
 		elapsed := int(time.Since(start).Seconds())
 
 		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
@@ -172,8 +179,8 @@ func ZipDownload(router *gin.RouterGroup) {
 
 		conf := get.Config()
 		zipBaseName := clean.FileName(filepath.Base(c.Param("filename")))
-		zipPath := path.Join(conf.TempPath(), fs.ZipDir)
-		zipFileName := path.Join(zipPath, zipBaseName)
+		zipPath := filepath.Join(conf.TempPath(), fs.ZipDir)
+		zipFileName := filepath.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
 			log.Errorf("download: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))

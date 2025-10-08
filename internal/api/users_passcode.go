@@ -21,10 +21,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// CreateUserPasscode sets up a new two-factor authentication passcode.
+// CreateUserPasscode sets up a new two-factor authentication passcode for a user.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode [post]
+//	@Summary	create a new 2FA passcode for a user
+//	@Id			CreateUserPasscode
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid				path		string			true	"user uid"
+//	@Param		request			body		form.Passcode	true	"passcode setup (password required)"
+//	@Success	200				{object}	entity.Passcode
+//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode [post]
 func CreateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -80,10 +88,18 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 	})
 }
 
-// ConfirmUserPasscode checks a new passcode and flags it as verified so that it can be activated.
+// ConfirmUserPasscode verifies a newly created passcode so that it can be activated.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode/confirm [post]
+//	@Summary	verify a new 2FA passcode
+//	@Id			ConfirmUserPasscode
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid				path		string			true	"user uid"
+//	@Param		request			body		form.Passcode	true	"verification code"
+//	@Success	200				{object}	entity.Passcode
+//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode/confirm [post]
 func ConfirmUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/confirm", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -126,10 +142,16 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 	})
 }
 
-// ActivateUserPasscode activates two-factor authentication if a passcode has been created and verified.
+// ActivateUserPasscode activates 2FA after a passcode has been created and verified.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode/activate [post]
+//	@Summary	activate 2FA with a verified passcode
+//	@Id			ActivateUserPasscode
+//	@Tags		Users
+//	@Produce	json
+//	@Param		uid				path		string	true	"user uid"
+//	@Success	200				{object}	entity.Passcode
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode/activate [post]
 func ActivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/activate", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -163,10 +185,18 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 	})
 }
 
-// DeactivateUserPasscode disables removes a passcode key to disable two-factor authentication.
+// DeactivateUserPasscode removes a passcode key to disable two-factor authentication.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode/deactivate [post]
+//	@Summary	deactivate 2FA and remove the passcode
+//	@Id			DeactivateUserPasscode
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid					path		string			true	"user uid"
+//	@Param		request				body		form.Passcode	true	"password for confirmation"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode/deactivate [post]
 func DeactivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/deactivate", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -243,7 +273,7 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	uid := clean.UID(c.Param("uid"))
 
 	// Get user from session.
-	user := s.User()
+	user := s.GetUser()
 
 	// Regular users can only set up a passcode for their own account.
 	if user.UserUID != uid || !user.CanLogIn() {

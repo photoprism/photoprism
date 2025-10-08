@@ -27,6 +27,7 @@ package commands
 import (
 	"context"
 	"os"
+	"strings"
 	"syscall"
 
 	"github.com/sevlyar/go-daemon"
@@ -37,7 +38,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+const NONINTERACTIVE = "noninteractive"
+
 var log = event.Log
+var cliMode = strings.ToLower(os.Getenv(config.EnvVar("cli")))
+
+// RunNonInteractively checks if command should run non-interactively.
+func RunNonInteractively(confirmed bool) bool {
+	return confirmed || cliMode == NONINTERACTIVE
+}
 
 // PhotoPrism contains the photoprism CLI (sub-)commands.
 var PhotoPrism = []*cli.Command{
@@ -66,6 +75,7 @@ var PhotoPrism = []*cli.Command{
 	PasswdCommand,
 	UsersCommands,
 	ClientsCommands,
+	ClusterCommands,
 	AuthCommands,
 	ShowCommands,
 	VersionCommand,

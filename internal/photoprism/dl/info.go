@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -111,9 +110,13 @@ func infoFromURL(
 	rawURL string,
 	options Options,
 ) (info Info, rawJSON []byte, err error) {
-	cmd := exec.CommandContext(
-		ctx,
-		FindYtDlpBin(),
+	// Test stub: allow bypassing external yt-dlp via env, useful on noexec mounts.
+	if os.Getenv("YTDLP_FAKE") == "1" {
+		info = Info{ID: "abc", Title: "Test", URL: rawURL, Type: "video"}
+		rawJSON = info.JSON()
+		return info, rawJSON, nil
+	}
+	cmd := ytDlpCommand(ctx, []string{
 		// see comment below about ignoring errors for playlists
 		"--ignore-errors",
 		// TODO: deprecated in yt-dlp?
@@ -127,7 +130,7 @@ func infoFromURL(
 		"--batch-file", "-",
 		// dump info json
 		"--dump-single-json",
-	)
+	})
 
 	if options.ProxyUrl != "" {
 		cmd.Args = append(cmd.Args, "--proxy", options.ProxyUrl)
@@ -151,6 +154,15 @@ func infoFromURL(
 
 	if options.CookiesFromBrowser != "" {
 		cmd.Args = append(cmd.Args, "--cookies-from-browser", options.CookiesFromBrowser)
+	}
+
+	if len(options.AddHeaders) > 0 {
+		for _, h := range options.AddHeaders {
+			if strings.TrimSpace(h) == "" {
+				continue
+			}
+			cmd.Args = append(cmd.Args, "--add-header", h)
+		}
 	}
 
 	switch options.Type {
@@ -200,7 +212,7 @@ func infoFromURL(
 	cmd.Stderr = io.MultiWriter(stderrBuf, stderrWriter)
 	cmd.Stdin = bytes.NewBufferString(rawURL + "\n")
 
-	log.Trace("cmd", " ", cmd.Args)
+	log.Trace("cmd", " ", redactArgs(cmd.Args))
 	cmdErr := cmd.Run()
 
 	stderrLineScanner := bufio.NewScanner(stderrBuf)

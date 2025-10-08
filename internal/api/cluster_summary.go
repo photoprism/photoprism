@@ -36,7 +36,7 @@ func ClusterSummary(router *gin.RouterGroup) {
 			return
 		}
 
-		regy, err := reg.NewFileRegistry(conf)
+		regy, err := reg.NewClientRegistryWithConfig(conf)
 
 		if err != nil {
 			AbortUnexpectedError(c)
@@ -46,10 +46,11 @@ func ClusterSummary(router *gin.RouterGroup) {
 		nodes, _ := regy.List()
 
 		c.JSON(http.StatusOK, cluster.SummaryResponse{
-			PortalUUID: conf.PortalUUID(),
-			Nodes:      len(nodes),
-			DB:         cluster.DBInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
-			Time:       time.Now().UTC().Format(time.RFC3339),
+			UUID:        conf.ClusterUUID(),
+			ClusterCIDR: conf.ClusterCIDR(),
+			Nodes:       len(nodes),
+			Database:    cluster.DatabaseInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
+			Time:        time.Now().UTC().Format(time.RFC3339),
 		})
 	})
 }
@@ -65,22 +66,18 @@ func ClusterSummary(router *gin.RouterGroup) {
 //	@Router		/api/v1/cluster/health [get]
 func ClusterHealth(router *gin.RouterGroup) {
 	router.GET("/cluster/health", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceCluster, acl.ActionView)
-
-		if s.Abort(c) {
-			return
-		}
-
 		conf := get.Config()
 
+		// Align headers with server-level health endpoints.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+		c.Header(header.AccessControlAllowOrigin, header.Any)
+
+		// Return error if not a portal node.
 		if !conf.IsPortal() {
 			AbortFeatureDisabled(c)
 			return
 		}
 
-		// Align headers with server-level health endpoints
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.AccessControlAllowOrigin, header.Any)
 		c.JSON(http.StatusOK, NewHealthResponse("ok"))
 	})
 }

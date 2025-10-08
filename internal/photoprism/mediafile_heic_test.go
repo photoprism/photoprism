@@ -18,7 +18,7 @@ func TestMediaFile_Heic(t *testing.T) {
 
 	c := config.TestConfig()
 
-	t.Run("iphone_7.heic", func(t *testing.T) {
+	t.Run("IphoneSevenHeic", func(t *testing.T) {
 		img, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "iphone_7.heic"))
 
 		if err != nil {
@@ -83,7 +83,7 @@ func TestMediaFile_Heic(t *testing.T) {
 			t.Error(err)
 		}
 	})
-	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
 		img, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "iphone_15_pro.heic"))
 
 		if err != nil {

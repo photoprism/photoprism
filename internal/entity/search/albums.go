@@ -38,7 +38,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 
 	// Check session permissions and apply as needed.
 	if sess != nil {
-		user := sess.User()
+		user := sess.GetUser()
 		aclRole := user.AclRole()
 
 		// Determine resource to check.
@@ -151,7 +151,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		}
 	}
 
-	// Albums with public pictures only?
+	// Filter private albums.
 	if frm.Public {
 		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {

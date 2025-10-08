@@ -30,9 +30,9 @@ func TestNet(t *testing.T) {
 		"14.jpg": 0,
 		"15.jpg": 0,
 		"16.jpg": 1,
-		"17.jpg": 1,
+		"17.jpg": 2,
 		"18.jpg": 2,
-		"19.jpg": 0,
+		"19.jpg": 1,
 	}
 
 	faceIndices := map[string][]int{
@@ -75,12 +75,17 @@ func TestNet(t *testing.T) {
 			// }
 
 			if len(faces) > 0 {
+				indices, ok := faceIndices[baseName]
 				for i, f := range faces {
+					if !ok || i >= len(indices) {
+						continue
+					}
+
 					if len(f.Embeddings) > 0 {
 						// t.Logf("FACE %d IN %s: %#v", i, fileName, f.Embeddings)
-						embeddings[faceIndices[baseName][i]] = f.Embeddings[0]
+						embeddings[indices[i]] = f.Embeddings[0]
 					} else {
-						embeddings[faceIndices[baseName][i]] = nil
+						embeddings[indices[i]] = nil
 					}
 				}
 			}

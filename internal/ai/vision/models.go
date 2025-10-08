@@ -2,7 +2,7 @@ package vision
 
 import (
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 )
 
 // Default computer vision model configuration.
@@ -89,17 +89,23 @@ var (
 	}
 	CaptionModel = &Model{
 		Type:       ModelTypeCaption,
-		Name:       CaptionModelDefault,
+		Name:       ollama.CaptionModel,
 		Version:    VersionLatest,
+		Engine:     ollama.EngineName,
 		Resolution: 720, // Original aspect ratio, with a max size of 720 x 720 pixels.
-		Prompt:     CaptionPromptDefault,
 		Service: Service{
-			Uri:            "http://ollama:11434/api/generate",
-			FileScheme:     scheme.Base64,
-			RequestFormat:  ApiFormatOllama,
-			ResponseFormat: ApiFormatOllama,
+			Uri: "http://ollama:11434/api/generate",
 		},
 	}
-	DefaultModels     = Models{NasnetModel, NsfwModel, FacenetModel, CaptionModel}
-	DefaultThresholds = Thresholds{Confidence: 10}
+	DefaultModels = Models{
+		NasnetModel,
+		NsfwModel,
+		FacenetModel,
+		CaptionModel,
+	}
+	DefaultThresholds = Thresholds{
+		Confidence: 10, // 0-100%
+		Topicality: 0,  // 0-100%
+		NSFW:       75, // 1-100%
+	}
 )

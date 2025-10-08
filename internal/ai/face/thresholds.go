@@ -8,6 +8,10 @@ var CropSize = crop.Sizes[crop.Tile160]          // Face image crop size for Fac
 var OverlapThreshold = 42                        // Face area overlap threshold in percent.
 var OverlapThresholdFloor = OverlapThreshold - 1 // Reduced overlap area to avoid rounding inconsistencies.
 var ScoreThreshold = 9.0                         // Min face score.
+var LandmarkQualityFloor = float32(5.0)          // Min score when both eyes are located.
+var LandmarkQualityScaleMin = 60                 // Min face size eligible for landmark-based quality fallback.
+var LandmarkQualityScaleMax = 90                 // Max face size eligible for landmark-based quality fallback.
+var LandmarkQualitySlack = float32(4.0)          // Max allowed gap between quality threshold and score.
 var ClusterScoreThreshold = 15                   // Min score for faces forming a cluster.
 var SizeThreshold = 50                           // Min face size in pixels.
 var ClusterSizeThreshold = 80                    // Min size for faces forming a cluster in pixels.
@@ -23,17 +27,17 @@ func QualityThreshold(scale int) (score float32) {
 	// Smaller faces require higher quality.
 	switch {
 	case scale < 26:
-		score += 26.0
+		score += 12.0
 	case scale < 32:
-		score += 16.0
+		score += 8.0
 	case scale < 40:
-		score += 11.0
-	case scale < 50:
-		score += 9.0
-	case scale < 80:
 		score += 6.0
-	case scale < 110:
+	case scale < 50:
+		score += 4.0
+	case scale < 80:
 		score += 2.0
+	case scale < 110:
+		score += 1.0
 	}
 
 	return score

@@ -16,11 +16,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
+// ThumbCache describes files persisted on disk for cached thumbnails and share images.
 type ThumbCache struct {
 	FileName  string
 	ShareName string
 }
 
+// ByteCache wraps in-memory cached byte slices for fast responses.
 type ByteCache struct {
 	Data []byte
 }
@@ -70,6 +72,21 @@ func RemoveFromAlbumCoverCache(uid string) {
 	// Update album cover images.
 	if err := query.UpdateAlbumCovers(); err != nil {
 		log.Error(err)
+	}
+}
+
+// RemoveFromLabelCoverCache removes covers by label UID e.g. after updates.
+func RemoveFromLabelCoverCache(uid string) {
+	if !rnd.IsAlnum(uid) {
+		return
+	}
+
+	cache := get.CoverCache()
+
+	for thumbName := range thumb.Sizes {
+		cacheKey := CacheKey(labelCover, uid, string(thumbName))
+		cache.Delete(cacheKey)
+		log.Debugf("removed %s from cache", cacheKey)
 	}
 }
 

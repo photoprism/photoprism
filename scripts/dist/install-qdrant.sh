@@ -38,6 +38,7 @@ case $DESTARCH in
     ;;
 esac
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 # Abort if not executed as root.

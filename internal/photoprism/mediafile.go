@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
+	_ "image/gif"  // register GIF decoder
+	_ "image/jpeg" // register JPEG decoder
+	_ "image/png"  // register PNG decoder
 	"io"
 	"math"
 	"os"
@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
-	_ "golang.org/x/image/bmp"
-	_ "golang.org/x/image/tiff"
-	_ "golang.org/x/image/webp"
+	_ "golang.org/x/image/bmp"  // register BMP decoder
+	_ "golang.org/x/image/tiff" // register TIFF decoder
+	_ "golang.org/x/image/webp" // register WebP decoder
 
 	"github.com/djherbis/times"
 	"github.com/dustin/go-humanize"
@@ -68,7 +68,9 @@ type MediaFile struct {
 	imageConfig      *image.Config
 }
 
-// NewMediaFile returns a new media file and automatically resolves any symlinks.
+// NewMediaFile resolves fileName (following symlinks) and initialises a MediaFile
+// instance. The returned instance is never nil; callers must check the error to
+// learn whether the path existed or was readable.
 func NewMediaFile(fileName string) (*MediaFile, error) {
 	if fileNameResolved, err := fs.Resolve(fileName); err != nil {
 		// Don't return nil on error, as this would change the previous behavior.
@@ -78,8 +80,9 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 	}
 }
 
-// NewMediaFileSkipResolve returns a new media file without resolving symlinks.
-// This is useful because if it is known that the filename is fully resolved, it is much faster.
+// NewMediaFileSkipResolve behaves like NewMediaFile but assumes fileNameResolved
+// already points to the canonical location. This avoids an extra filesystem
+// lookup when the caller has already resolved the path.
 func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (*MediaFile, error) {
 	// Create and initialize the new media file.
 	m := &MediaFile{
@@ -105,18 +108,21 @@ func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (*MediaFi
 	return m, nil
 }
 
-// Ok checks if the file has a name, exists and is not empty.
+// Ok reports whether the file name is set, Stat succeeded and the file is not empty.
+// It relies on cached metadata populated by Stat.
 func (m *MediaFile) Ok() bool {
 	return m.FileName() != "" && m.statErr == nil && !m.Empty()
 }
 
-// Empty checks if the file is empty.
+// Empty reports whether Stat determined that the file has zero (or negative when
+// stat failed) length.
 func (m *MediaFile) Empty() bool {
 	return m.FileSize() <= 0
 }
 
-// Stat calls os.Stat() to return the file size and modification time,
-// or an error if this failed.
+// Stat populates cached file size / modification time information (respecting
+// second precision) and returns the cached values. Subsequent calls reuse the
+// cached details unless the size has not yet been determined.
 func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 	if m.fileSize > 0 {
 		return m.fileSize, m.modTime, m.statErr
@@ -136,14 +142,16 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 	return m.fileSize, m.modTime, m.statErr
 }
 
-// ModTime returns the file modification time.
+// ModTime returns the cached modification timestamp in UTC, fetching it via Stat
+// if necessary.
 func (m *MediaFile) ModTime() time.Time {
 	_, modTime, _ := m.Stat()
 
 	return modTime
 }
 
-// SetModTime sets the file modification time.
+// SetModTime updates the on-disk modification time and caches the new value on
+// success. The receiver is returned so callers can chain additional method calls.
 func (m *MediaFile) SetModTime(modTime time.Time) *MediaFile {
 	modTime = modTime.UTC()
 
@@ -163,14 +171,19 @@ func (m *MediaFile) FileSize() int64 {
 	return fileSize
 }
 
-// DateCreated returns the media creation time in UTC.
+// DateCreated returns the best-known creation timestamp in UTC. It is a thin
+// wrapper around TakenAt() that discards the local time / source metadata.
 func (m *MediaFile) DateCreated() time.Time {
 	takenAt, _, _ := m.TakenAt()
 
 	return takenAt
 }
 
-// TakenAt returns the media creation time in UTC and the source from which it originates.
+// TakenAt returns the UTC creation timestamp, the local timestamp and the source
+// used to derive it. The value is cached so repeated calls avoid re-reading
+// metadata. Extraction order: EXIF metadata, filename parsing, file modification
+// time; if none of those succeed the timestamps remain set to the current time
+// captured when the method first ran.
 func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 	// Check if creation time has been cached.
 	if !m.takenAt.IsZero() {
@@ -220,6 +233,7 @@ func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 	return m.takenAt, m.takenAtLocal, m.takenAtSrc
 }
 
+// HasTimeAndPlace reports whether both TakenAt and GPS coordinates are available.
 func (m *MediaFile) HasTimeAndPlace() bool {
 	data := m.MetaData()
 
@@ -329,7 +343,9 @@ func (m *MediaFile) Checksum() string {
 	return m.checksum
 }
 
-// PathNameInfo returns file name infos for indexing.
+// PathNameInfo resolves the file root (originals/import/sidecar/etc) and returns
+// the root identifier, file base prefix, relative directory and relative name
+// for indexing / metadata persistence.
 func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relativePath, relativeName string) {
 	fileRoot = m.Root()
 
@@ -355,17 +371,18 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 	return fileRoot, fileBase, relativePath, relativeName
 }
 
-// FileName returns the filename.
+// FileName returns the absolute file name recorded for this media file.
 func (m *MediaFile) FileName() string {
 	return m.fileName
 }
 
-// BaseName returns the filename without path.
+// BaseName returns just the final path component of the file.
 func (m *MediaFile) BaseName() string {
 	return filepath.Base(m.fileName)
 }
 
-// SetFileName sets the filename to the given string.
+// SetFileName updates the stored file name and resets the cached root hint so
+// it will be recalculated on next access.
 func (m *MediaFile) SetFileName(fileName string) {
 	if m == nil {
 		log.Errorf("media: file %s is nil - you may have found a bug", clean.Log(fileName))
@@ -376,17 +393,19 @@ func (m *MediaFile) SetFileName(fileName string) {
 	m.fileRoot = entity.RootUnknown
 }
 
-// RootRelName returns the relative filename, and automatically detects the root path.
+// RootRelName returns the path of the file relative to the detected root (e.g.
+// Originals, Import, Sidecar).
 func (m *MediaFile) RootRelName() string {
 	return m.RelName(m.RootPath())
 }
 
-// RelName returns the relative filename.
+// RelName returns the file name relative to directory, sanitising the result for logging.
 func (m *MediaFile) RelName(directory string) string {
 	return fs.RelName(m.fileName, directory)
 }
 
-// RelPath returns the relative path without filename.
+// RelPath returns the relative directory (without filename) by trimming the
+// provided base directory from the stored file path.
 func (m *MediaFile) RelPath(directory string) string {
 	pathname := m.fileName
 
@@ -417,7 +436,9 @@ func (m *MediaFile) RelPath(directory string) string {
 	return pathname
 }
 
-// RootPath returns the file root path based on the configuration.
+// RootPath returns the absolute root directory for the media file (Originals,
+// Import, Sidecar, Examples) based on its detected storage location and the
+// current configuration.
 func (m *MediaFile) RootPath() string {
 	switch m.Root() {
 	case entity.RootSidecar:
@@ -431,12 +452,14 @@ func (m *MediaFile) RootPath() string {
 	}
 }
 
-// RootRelPath returns the relative path and automatically detects the root path.
+// RootRelPath returns the file path relative to the detected root directory.
 func (m *MediaFile) RootRelPath() string {
 	return m.RelPath(m.RootPath())
 }
 
-// RelPrefix returns the relative path and file name prefix.
+// RelPrefix builds a relative path (without extension) suitable for deriving
+// related files such as sidecars. When stripSequence is true the sequence
+// suffix is removed from the filename prefix.
 func (m *MediaFile) RelPrefix(directory string, stripSequence bool) string {
 	if relativePath := m.RelPath(directory); relativePath != "" {
 		return filepath.Join(relativePath, m.BasePrefix(stripSequence))
@@ -445,27 +468,31 @@ func (m *MediaFile) RelPrefix(directory string, stripSequence bool) string {
 	return m.BasePrefix(stripSequence)
 }
 
-// Dir returns the file path.
+// Dir returns the directory containing the media file.
 func (m *MediaFile) Dir() string {
 	return filepath.Dir(m.fileName)
 }
 
-// SubDir returns a sub directory name.
+// SubDir joins the media file's directory with the provided sub directory name.
 func (m *MediaFile) SubDir(dir string) string {
 	return filepath.Join(filepath.Dir(m.fileName), dir)
 }
 
-// AbsPrefix returns the directory and base filename without any extensions.
+// AbsPrefix returns the absolute path (directory + filename) without any
+// extensions, optionally stripping numeric sequence suffixes.
 func (m *MediaFile) AbsPrefix(stripSequence bool) string {
 	return fs.AbsPrefix(m.FileName(), stripSequence)
 }
 
-// BasePrefix returns the filename base without any extensions and path.
+// BasePrefix returns the filename (without directory) stripped of all
+// extensions; stripSequence removes trailing sequence tokens such as "_01".
 func (m *MediaFile) BasePrefix(stripSequence bool) string {
 	return fs.BasePrefix(m.FileName(), stripSequence)
 }
 
-// EditedName returns the corresponding edited image file name as used by Apple (e.g. IMG_E12345.JPG).
+// EditedName returns the alternate filename used by Apple Photos for edited
+// JPEGs (e.g. IMG_E12345.JPG). An empty string indicates no edited companion is
+// present.
 func (m *MediaFile) EditedName() string {
 	basename := filepath.Base(m.fileName)
 
@@ -478,7 +505,8 @@ func (m *MediaFile) EditedName() string {
 	return ""
 }
 
-// Root returns the file root directory.
+// Root identifies which configured root the media file resides in (originals,
+// import, sidecar, examples). The result is cached so repeated calls are cheap.
 func (m *MediaFile) Root() string {
 	if m.fileRoot != entity.RootUnknown {
 		return m.fileRoot
@@ -622,58 +650,123 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 }
 
 // Move file to a new destination with the filename provided in parameter.
-func (m *MediaFile) Move(dest string) error {
-	destName := filepath.Base(dest)
-	destDir := filepath.Dir(dest)
+func (m *MediaFile) Move(filePath string, force bool) (err error) {
+	// Check for obviously empty or invalid file paths.
+	if filePath == "" || filePath == "." || filePath == ".." {
+		return errors.New("move: invalid destination file path")
+	}
 
-	// Check destination filename and create path if it does not exist yet.
-	if destName == "" {
-		return errors.New("move: invalid destination filename")
-	} else if destDir == "" {
+	// Check whether a destination file
+	// and directory name are specified.
+	if filepath.Base(filePath) == "" {
+		return errors.New("move: invalid destination name")
+	} else if filepath.Dir(filePath) == "" {
 		return errors.New("move: invalid destination path")
-	} else if err := fs.MkdirAll(destDir); err != nil {
-		return err
+	}
+
+	// Resolve absolute destination file path
+	// and return an error if unsuccessful.
+	if filePath, err = filepath.Abs(filePath); err != nil {
+		return fmt.Errorf("move: could not resolve destination file path (%s)", err)
+	}
+
+	destName := filepath.Base(filePath)
+	logName := clean.Log(destName)
+	destDir := filepath.Dir(filePath)
+
+	// Error if source and destination file path are the same.
+	if filePath == m.FileName() {
+		return fmt.Errorf("move: cannot overwrite file %s with itself", logName)
+	}
+
+	// Error if destination exists (and is not empty) without the force flag being used.
+	if fs.Exists(filePath) {
+		if fs.FileExistsIsEmpty(filePath) {
+			log.Infof("move: replacing empty destination file %s", logName)
+		} else if force {
+			log.Warnf("move: overwriting destination file %s", logName)
+		} else {
+			return fmt.Errorf("move: destination name %s already exists", logName)
+		}
+	}
+
+	// Make sure the target directory exists.
+	if err = fs.MkdirAll(destDir); err != nil {
+		return fmt.Errorf("move: could not create target directory (%s)", err)
 	}
 
 	// Remember file modification time.
 	modTime := m.ModTime()
 
-	// First try to rename existing file as that's faster than copying it and then deleting the original.
-	if err := os.Rename(m.fileName, dest); err != nil {
-		log.Tracef("move: cannot rename %s, fallback to copy and delete (%s)", clean.Log(destName), clean.Error(err))
+	// First try to rename existing file as that's faster
+	// than copying it and then deleting the original.
+	if renameErr := os.Rename(m.fileName, filePath); renameErr != nil {
+		log.Tracef("move: cannot rename %s, fallback to copy and delete (%s)", clean.Log(destName), clean.Error(renameErr))
 	} else {
-		m.SetFileName(dest)
+		m.SetFileName(filePath)
 		m.SetModTime(modTime)
 
 		return nil
 	}
 
-	// If renaming is not possible, copy the file and then delete the original.
-	if err := m.Copy(dest); err != nil {
-		return err
+	// If renaming the file is not possible, copy its
+	// contents and then delete the original file.
+	if copyErr := m.Copy(filePath, force); copyErr != nil {
+		return fmt.Errorf("%s (move fallback)", copyErr)
 	}
 
-	if err := os.Remove(m.fileName); err != nil {
-		return err
+	if rmErr := os.Remove(m.fileName); rmErr != nil {
+		return fmt.Errorf("move: %s", rmErr)
 	}
 
-	m.SetFileName(dest)
+	m.SetFileName(filePath)
 
 	return nil
 }
 
-// Copy a MediaFile to another file by destinationFilename.
-func (m *MediaFile) Copy(dest string) error {
-	destName := filepath.Base(dest)
-	destDir := filepath.Dir(dest)
+// Copy copies the file contents to the specified destination.
+// It only overwrites existing files when the force flag is used.
+func (m *MediaFile) Copy(filePath string, force bool) (err error) {
+	// Check for obviously empty or invalid file paths.
+	if filePath == "" || filePath == "." || filePath == ".." {
+		return errors.New("copy: invalid destination file path")
+	}
 
-	// Check destination filename and create path if it does not exist yet.
-	if destName == "" {
-		return errors.New("copy: invalid destination filename")
-	} else if destDir == "" {
+	// Check whether a destination file and directory name are specified.
+	if filepath.Base(filePath) == "" {
+		return errors.New("copy: invalid destination name")
+	} else if filepath.Dir(filePath) == "" {
 		return errors.New("copy: invalid destination path")
-	} else if err := fs.MkdirAll(destDir); err != nil {
-		return err
+	}
+
+	// Resolve absolute destination file path and return an error if unsuccessful.
+	if filePath, err = filepath.Abs(filePath); err != nil {
+		return fmt.Errorf("copy: could not resolve destination file path (%s)", err)
+	}
+
+	destName := filepath.Base(filePath)
+	logName := clean.Log(destName)
+	destDir := filepath.Dir(filePath)
+
+	// Error if source and destination file path are the same.
+	if filePath == m.FileName() {
+		return fmt.Errorf("copy: cannot overwrite file %s with itself", logName)
+	}
+
+	// Error if destination exists (and is not empty) without the force flag being used.
+	if fs.Exists(filePath) {
+		if fs.FileExistsIsEmpty(filePath) {
+			log.Infof("copy: replacing empty destination file %s", logName)
+		} else if force {
+			log.Warnf("copy: overwriting destination file %s", logName)
+		} else {
+			return fmt.Errorf("copy: destination name %s already exists", logName)
+		}
+	}
+
+	// Make sure the target directory exists.
+	if err = fs.MkdirAll(destDir); err != nil {
+		return fmt.Errorf("copy: could not create target directory (%s)", err)
 	}
 
 	m.fileMutex.Lock()
@@ -682,32 +775,33 @@ func (m *MediaFile) Copy(dest string) error {
 	thisFile, err := m.openFile()
 
 	if err != nil {
-		log.Error(err.Error())
-		return err
+		return fmt.Errorf("copy: source file %s cannot be opened (%s)", m.BaseName(), err)
 	}
 
 	defer thisFile.Close()
 
-	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE, fs.ModeFile)
+	// Open the target file path for writing, discarding any trailing bytes.
+	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fs.ModeFile)
 
 	if err != nil {
 		log.Error(err.Error())
-		return err
+		return fmt.Errorf("copy: destination file %s cannot be opened (%s)", logName, err)
 	}
 
 	defer func() {
+		// Update the file timestamp after the file has been copied and closed.
 		if err = destFile.Close(); err != nil {
-			log.Debugf("copy: failed to close %s (%s)", clean.Log(destName), clean.Error(err))
-		} else if err = os.Chtimes(dest, time.Time{}, m.ModTime()); err != nil {
-			log.Debugf("copy: failed to set mtime for %s (%s)", clean.Log(destName), clean.Error(err))
+			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(err))
+		} else if err = os.Chtimes(filePath, time.Time{}, m.ModTime()); err != nil {
+			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(err))
 		}
 	}()
 
+	// Copy file contents to the destination.
 	_, err = io.Copy(destFile, thisFile)
 
 	if err != nil {
-		log.Error(err.Error())
-		return err
+		return fmt.Errorf("copy: %s", err)
 	}
 
 	return nil
@@ -1134,7 +1228,9 @@ func (m *MediaFile) IsMedia() bool {
 	return !m.IsThumb() && (m.IsImage() || m.IsRaw() || m.IsVideo() || m.IsVector() || m.IsDocument())
 }
 
-// PreviewImage returns a PNG or JPEG version of the media file, if exists.
+// PreviewImage returns the media file itself if it is already a JPEG/PNG, or
+// locates a matching preview image (JPEG/PNG) stored alongside the file. The
+// helper returns an error when no preview can be found.
 func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 	if m.IsJpeg() {
 		if !fs.FileExists(m.FileName()) {
@@ -1163,7 +1259,8 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 	return nil, fmt.Errorf("no preview image found for %s", m.RootRelName())
 }
 
-// HasPreviewImage returns true if the file has or is a JPEG or PNG image.
+// HasPreviewImage reports whether a JPEG/PNG preview exists. The result is
+// cached, so expensive lookups only happen once per MediaFile instance.
 func (m *MediaFile) HasPreviewImage() bool {
 	if m.hasPreviewImage {
 		return true
@@ -1398,8 +1495,8 @@ func (m *MediaFile) RenameSidecarFiles(oldFileName string) (renamed map[string]s
 		if fs.FileExists(destName) {
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 
-			if err := os.Remove(srcName); err != nil {
-				log.Errorf("files: failed removing sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
+			if rmErr := os.Remove(srcName); rmErr != nil {
+				log.Errorf("files: could not remove sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			} else {
 				log.Infof("files: removed sidecar %s", clean.Log(fs.RelName(srcName, sidecarPath)))
 			}
@@ -1407,8 +1504,8 @@ func (m *MediaFile) RenameSidecarFiles(oldFileName string) (renamed map[string]s
 			continue
 		}
 
-		if err := fs.Move(srcName, destName); err != nil {
-			return renamed, err
+		if moveErr := fs.Move(srcName, destName, true); moveErr != nil {
+			return renamed, moveErr
 		} else {
 			log.Infof("files: moved existing sidecar to %s", clean.Log(newName+filepath.Ext(srcName)))
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)

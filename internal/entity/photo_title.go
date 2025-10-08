@@ -19,7 +19,7 @@ func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
 }
 
-// NoTitle checks if the photo has no Title
+// NoTitle reports whether the photo has no title.
 func (m *Photo) NoTitle() bool {
 	return m.PhotoTitle == ""
 }
@@ -29,7 +29,8 @@ func (m *Photo) GetTitle() string {
 	return m.PhotoTitle
 }
 
-// SetTitle changes the photo title and clips it to 300 characters.
+// SetTitle updates the photo title when the supplied source outranks the current one.
+// The title is normalized, quotes are unified, and the final value is clipped to 300 characters.
 func (m *Photo) SetTitle(title, source string) {
 	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
 	title = strings.ReplaceAll(title, "\"", "'")
@@ -39,6 +40,7 @@ func (m *Photo) SetTitle(title, source string) {
 	p := SrcPriority[source]
 
 	// Compare the source priority with the priority of the current title source.
+	// Ignore requests from lower ranked sources so manual and trusted titles stay in place.
 	if (p < SrcPriority[m.TitleSrc]) && m.HasTitle() {
 		return
 	}
@@ -52,8 +54,8 @@ func (m *Photo) SetTitle(title, source string) {
 	m.TitleSrc = source
 }
 
-// GenerateTitle tries to generate a title based on the picture
-// location and labels if no other title is currently set.
+// GenerateTitle derives an automatic title using location, labels, and subject metadata
+// when the current title source allows auto-generation.
 func (m *Photo) GenerateTitle(labels classify.Labels) error {
 	if m.TitleSrc != SrcAuto {
 		return fmt.Errorf("photo: %s keeps existing %s title", m.String(), SrcString(m.TitleSrc))
@@ -165,7 +167,7 @@ func (m *Photo) GenerateTitle(labels classify.Labels) error {
 		}
 	}
 
-	// Log changes.
+	// Log changes for debugging and auditing.
 	if m.PhotoTitle != oldTitle {
 		log.Debugf("photo: %s has new title %s [%s]", m.String(), clean.Log(m.PhotoTitle), time.Since(start))
 	}
@@ -208,14 +210,14 @@ func (m *Photo) GenerateAndSaveTitle() error {
 
 // FileTitle returns a photo title based on the file name and/or path.
 func (m *Photo) FileTitle() string {
-	// Generate title based on photo name, if not generated:
+	// Generate a title from the photo name when the name was not generated automatically.
 	if !fs.IsGenerated(m.PhotoName) {
 		if title := txt.FileTitle(m.PhotoName); title != "" {
 			return title
 		}
 	}
 
-	// Generate title based on original file name, if any:
+	// Generate a title from the original file name, if available.
 	if m.OriginalName != "" {
 		if title := txt.FileTitle(m.OriginalName); !fs.IsGenerated(m.OriginalName) && title != "" {
 			return title
@@ -224,7 +226,7 @@ func (m *Photo) FileTitle() string {
 		}
 	}
 
-	// Generate title based on photo path, if any:
+	// Fall back to the photo path when no other title could be inferred.
 	if m.PhotoPath != "" && !fs.IsGenerated(m.PhotoPath) {
 		return txt.FileTitle(m.PhotoPath)
 	}
@@ -257,5 +259,6 @@ func (m *Photo) UpdateTitleLabels() error {
 		}
 	}
 
+	// Remove stale title-based labels so the photo reflects the current title.
 	return Db().Where("label_src = ? AND photo_id = ? AND label_id NOT IN (?)", classify.SrcTitle, m.ID, labelIds).Delete(&PhotoLabel{}).Error
 }

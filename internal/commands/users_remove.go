@@ -54,7 +54,7 @@ func usersRemoveAction(ctx *cli.Context) error {
 			return fmt.Errorf("user %s has already been deleted", clean.LogQuote(id))
 		}
 
-		if !ctx.Bool("force") {
+		if !ctx.Bool("force") && !RunNonInteractively(false) {
 			actionPrompt := promptui.Prompt{
 				Label:     fmt.Sprintf("Delete user %s?", m.String()),
 				IsConfirm: true,

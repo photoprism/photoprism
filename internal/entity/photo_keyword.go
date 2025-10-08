@@ -1,6 +1,6 @@
 package entity
 
-// PhotoKeyword represents the many-to-many relation between Photo and Keyword
+// PhotoKeyword represents the many-to-many relation between Photo and Keyword.
 type PhotoKeyword struct {
 	PhotoID   uint `gorm:"primary_key;auto_increment:false"`
 	KeywordID uint `gorm:"primary_key;auto_increment:false;index"`
@@ -11,7 +11,7 @@ func (PhotoKeyword) TableName() string {
 	return "photos_keywords"
 }
 
-// NewPhotoKeyword registers a new PhotoKeyword relation
+// NewPhotoKeyword returns a new PhotoKeyword relation ready for persistence.
 func NewPhotoKeyword(photoID, keywordID uint) *PhotoKeyword {
 	result := &PhotoKeyword{
 		PhotoID:   photoID,

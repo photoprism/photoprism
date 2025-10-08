@@ -227,13 +227,16 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 	}
 
 	// Download the same file but with the direct link
-	url := "https://soundcloud.com/mattheis/b1-mattheis-ben-m"
+	dlUrl := "https://soundcloud.com/mattheis/b1-mattheis-ben-m"
+
 	stderrBuf = &bytes.Buffer{}
-	r, err = NewMetadata(context.Background(), url, Options{
+
+	r, err = NewMetadata(context.Background(), dlUrl, Options{
 		StderrFn: func(cmd *exec.Cmd) io.Writer {
 			return stderrBuf
 		},
 	})
+
 	if err != nil {
 		t.Fatal(err)
 	}

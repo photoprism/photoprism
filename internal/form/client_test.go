@@ -145,7 +145,7 @@ func TestClient_Expires(t *testing.T) {
 		c := Client{AuthExpires: 999999999}
 		assert.Equal(t, int64(2678400), c.Expires())
 	})
-	t.Run("0", func(t *testing.T) {
+	t.Run("Zero", func(t *testing.T) {
 		c := Client{AuthExpires: 0}
 		assert.Equal(t, int64(0), c.Expires())
 	})
@@ -160,7 +160,7 @@ func TestClient_Tokens(t *testing.T) {
 		c := Client{AuthTokens: 9147483647}
 		assert.Equal(t, int64(2147483647), c.Tokens())
 	})
-	t.Run("0", func(t *testing.T) {
+	t.Run("Zero", func(t *testing.T) {
 		c := Client{AuthTokens: 0}
 		assert.Equal(t, int64(0), c.Tokens())
 	})

@@ -211,6 +211,21 @@ func TestAuthorization(t *testing.T) {
 		assert.Equal(t, AuthBearer, authType)
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", authToken)
 	})
+	t.Run("JWTToken", func(t *testing.T) {
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{
+			Header: make(http.Header),
+		}
+
+		token := "eyJhbGciOiJFZERTQSIsImtpZCI6IjEyMyJ9.eyJpc3MiOiJwb3J0YWw6dGVzdCIsImF1ZCI6Im5vZGU6YWJjIiwiZXhwIjoxNzAwMDAwMDB9.dGVzdC1zaWduYXR1cmUtYnl0ZXM"
+		c.Request.Header.Add(Auth, "Bearer "+token)
+
+		authType, authToken := Authorization(c)
+		assert.Equal(t, AuthBearer, authType)
+		assert.Equal(t, token, authToken)
+	})
 }
 
 func TestBasicAuth(t *testing.T) {

@@ -15,7 +15,7 @@ func TestConvert_ToJson(t *testing.T) {
 	c := config.TestConfig()
 	convert := NewConvert(c)
 
-	t.Run("gopher-video.mp4", func(t *testing.T) {
+	t.Run("GopherVideoMp4", func(t *testing.T) {
 		fileName := filepath.Join(c.ExamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -40,8 +40,7 @@ func TestConvert_ToJson(t *testing.T) {
 
 		_ = os.Remove(jsonName)
 	})
-
-	t.Run("IMG_4120.JPG", func(t *testing.T) {
+	t.Run("ImgNum4120Jpg", func(t *testing.T) {
 		fileName := filepath.Join(c.ExamplesPath(), "IMG_4120.JPG")
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
 
@@ -65,8 +64,7 @@ func TestConvert_ToJson(t *testing.T) {
 
 		_ = os.Remove(jsonName)
 	})
-
-	t.Run("iphone_7.heic", func(t *testing.T) {
+	t.Run("IphoneSevenHeic", func(t *testing.T) {
 		fileName := c.ExamplesPath() + "/iphone_7.heic"
 
 		assert.True(t, fs.FileExists(fileName))
@@ -91,8 +89,7 @@ func TestConvert_ToJson(t *testing.T) {
 
 		_ = os.Remove(jsonName)
 	})
-
-	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
 		fileName := c.ExamplesPath() + "/iphone_15_pro.heic"
 
 		assert.True(t, fs.FileExists(fileName))
