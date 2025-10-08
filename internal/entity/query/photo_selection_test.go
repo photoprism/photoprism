@@ -18,7 +18,7 @@ func TestPhotoSelection(t *testing.T) {
 
 	states := form.Selection{Albums: []string{"as6sg6bipogaab11", "as6sg6bipotaab12", "asjv2cw2eikl3cb3"}}
 
-	t.Run("no items selected", func(t *testing.T) {
+	t.Run("NoItemsSelected", func(t *testing.T) {
 		f := form.Selection{
 			Photos: []string{},
 		}
@@ -28,7 +28,7 @@ func TestPhotoSelection(t *testing.T) {
 		assert.Equal(t, "no items selected", err.Error())
 		assert.Empty(t, r)
 	})
-	t.Run("photos selected", func(t *testing.T) {
+	t.Run("PhotosSelected", func(t *testing.T) {
 		f := form.Selection{
 			Photos: []string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8"},
 		}

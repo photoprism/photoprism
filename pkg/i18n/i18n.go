@@ -37,8 +37,10 @@ import (
 type Message int
 type MessageMap map[Message]string
 
+var noVars []interface{}
+
 func gettext(s string) string {
-	return gotext.Get(s)
+	return gotext.Get(s, noVars...)
 }
 
 // msgParams replaces message params with the actual values.
@@ -52,7 +54,7 @@ func msgParams(msg string, params ...interface{}) string {
 
 // Msg returns a translated message string.
 func Msg(id Message, params ...interface{}) string {
-	return msgParams(gotext.Get(Messages[id]), params...)
+	return msgParams(gotext.Get(Messages[id], noVars...), params...)
 }
 
 // Error returns a translated error message.

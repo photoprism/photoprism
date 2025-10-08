@@ -8,5 +8,5 @@ import (
 )
 
 func init() {
-	registerApiDocs = api.GetDocs
+	registerAPIDocs = api.GetDocs
 }

@@ -31,6 +31,7 @@ venv
 .tmp
 .nv
 .eslintcache
+.gocache
 /pro
 /plus
 /tmp/
@@ -59,6 +60,9 @@ frontend/coverage/
 /assets/static/maps/
 /assets/*net
 /assets/vision
+/specs/
+/docs/
+/bin/
 
 # Files created automatically by editors and/or operating systems:
 .DS_Store
@@ -71,6 +75,8 @@ Thumbs.db
 .heartbeat
 .glide
 .idea
+.codex
+.local
 .project
 .vscode
 *.tmproj
@@ -79,4 +85,3 @@ Thumbs.db
 .c9revisions
 .settings
 .swp
-AGENTS.md

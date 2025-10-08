@@ -1,5 +1,6 @@
 package photoprism
 
+// Worker action identifiers shared across import/index pipelines.
 const (
 	ActionIndex      = "index"
 	ActionAutoIndex  = "autoindex"

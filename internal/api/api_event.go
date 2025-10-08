@@ -11,6 +11,7 @@ import (
 // Event represents an api event type.
 type Event string
 
+// Canonical event payload status strings used by the API layer.
 const (
 	StatusCreated Event = "created"
 	StatusUpdated Event = "updated"

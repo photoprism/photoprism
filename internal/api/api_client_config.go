@@ -16,7 +16,13 @@ func UpdateClientConfig() {
 
 // GetClientConfig returns the client configuration values as JSON.
 //
-// GET /api/v1/config
+//	@Summary	get client configuration
+//	@Id			GetClientConfig
+//	@Tags		Config
+//	@Produce	json
+//	@Success	200	{object}	gin.H
+//	@Failure	401	{object}	i18n.Response
+//	@Router		/api/v1/config [get]
 func GetClientConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
 		sess := Session(ClientIP(c), AuthToken(c))

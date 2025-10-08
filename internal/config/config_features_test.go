@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/vision"
 )
 
 func TestConfig_DisableFrontend(t *testing.T) {
@@ -200,4 +202,18 @@ func TestConfig_DisableRaw(t *testing.T) {
 	assert.False(t, c.DisableRaw())
 	assert.False(t, c.DisableDarktable())
 	assert.False(t, c.DisableRawTherapee())
+}
+
+func withVisionConfig(t *testing.T, cfg *vision.ConfigValues) {
+	t.Helper()
+	prev := vision.Config
+	vision.Config = cfg
+	t.Cleanup(func() {
+		vision.Config = prev
+	})
+}
+
+func cloneVisionModel(m *vision.Model) *vision.Model {
+	copy := *m
+	return &copy
 }

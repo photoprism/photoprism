@@ -59,6 +59,9 @@ func TestTypeLower(t *testing.T) {
 		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result) // codespell:ignore
 		assert.Equal(t, LengthType, len(result))
 	})
+	t.Run("Ollama", func(t *testing.T) {
+		assert.Equal(t, "redule26/huihui_ai_qwen2.5-vl-7b-abliterated:latest", TypeLower("redule26/huihui_ai_qwen2.5-vl-7b-abliterated:latest"))
+	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", TypeLower(""))
 	})
@@ -95,8 +98,66 @@ func TestTypeLowerDash(t *testing.T) {
 			"ollama-model:7b",
 			TypeLowerDash("Ollama Model:7b"))
 	})
+	t.Run("OllamaModelWithSlash", func(t *testing.T) {
+		assert.Equal(
+			t,
+			"ollama-model/7b",
+			TypeLowerDash("Ollama Model/7b"))
+	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", TypeLowerDash(""))
+	})
+}
+
+func TestTypeUnderscore(t *testing.T) {
+	t.Run("WhitespaceToUnderscore", func(t *testing.T) {
+		in := "a b\tc\nd"
+		out := TypeUnderscore(in)
+		assert.Equal(t, "a_b_c_d", out)
+	})
+	t.Run("SpecialsToUnderscore", func(t *testing.T) {
+		// Maps (colon and slash allowed): '-', '`', '~', '\\', '|', '"', '\'', '?', '*', '<', '>', '{', '}'
+		in := "a-`~/\\:|\"'?*<>{}b"
+		out := TypeUnderscore(in)
+		assert.Equal(t, "a___/_:_________b", out)
+	})
+	t.Run("NonASCIIPreserved", func(t *testing.T) {
+		assert.Equal(t, "äöü", TypeUnderscore("äöü"))
+	})
+}
+
+func TestTypeDash(t *testing.T) {
+	t.Run("WhitespaceToDash", func(t *testing.T) {
+		in := "a b\tc\nd"
+		out := TypeDash(in)
+		assert.Equal(t, "a-b-c-d", out)
+	})
+	t.Run("SpecialsToDash", func(t *testing.T) {
+		// Maps (colon and slash allowed): '_', '`', '~', '\\', '|', '"', '\'', '?', '*', '<', '>', '{', '}'
+		in := "a_`~/\\:|\"'?*<>{}b"
+		out := TypeDash(in)
+		// 13 mapped; slash and colon preserved → 3 dashes, '/', '-', ':', then 9 dashes
+		assert.Equal(t, "a---/-:---------b", out)
+	})
+	t.Run("NonASCIIPreserved", func(t *testing.T) {
+		assert.Equal(t, "äöü", TypeDash("äöü"))
+	})
+}
+
+func TestShortTypeLowerDash(t *testing.T) {
+	t.Run("Undefined", func(t *testing.T) {
+		assert.Equal(t, "", ShortTypeLowerDash("    \t "))
+	})
+	t.Run("ClientCredentials", func(t *testing.T) {
+		assert.Equal(t, "client-c", ShortTypeLowerDash(" Client Credentials幸"))
+	})
+	t.Run("Clip", func(t *testing.T) {
+		assert.Equal(t,
+			"hanzi-ar",
+			ShortTypeLowerDash(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", ShortTypeLowerDash(""))
 	})
 }
 

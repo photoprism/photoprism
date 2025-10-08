@@ -11,6 +11,8 @@ import (
 
 	"github.com/karrick/godirwalk"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -21,16 +23,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// Index represents an indexer that indexes files in the originals directory.
+// Index coordinates filesystem scans, metadata extraction, and database updates for originals.
 type Index struct {
-	conf       *config.Config
-	convert    *Convert
-	files      *Files
-	photos     *Photos
-	lastRun    time.Time
-	lastFound  int
-	findFaces  bool
-	findLabels bool
+	conf      *config.Config
+	convert   *Convert
+	files     *Files
+	photos    *Photos
+	lastRun   time.Time
+	lastFound int
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -42,15 +42,29 @@ func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photo
 
 	// Create new indexer instance.
 	i := &Index{
-		conf:       conf,
-		convert:    convert,
-		files:      files,
-		photos:     photos,
-		findFaces:  !conf.DisableFaces(),
-		findLabels: !conf.DisableClassification(),
+		conf:    conf,
+		convert: convert,
+		files:   files,
+		photos:  photos,
 	}
 
 	return i
+}
+
+func (ind *Index) shouldFlagPrivate(labels classify.Labels) bool {
+	if ind == nil || ind.conf == nil || !ind.conf.DetectNSFW() {
+		return false
+	}
+
+	threshold := vision.Config.Thresholds.GetNSFW()
+
+	for _, label := range labels {
+		if label.NSFW || label.NSFWConfidence >= threshold {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (ind *Index) originalsPath() string {
@@ -66,7 +80,9 @@ func (ind *Index) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
-// Start indexes media files in the "originals" folder.
+// Start indexes media files in the originals folder according to the provided options.
+// It streams work to worker goroutines, updates duplicate caches, and returns both
+// the set of processed paths and the number of files that were changed.
 func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	defer func() {
 		if r := recover(); r != nil {

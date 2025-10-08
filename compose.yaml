@@ -124,7 +124,6 @@ services:
       PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
       PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
-      TF_CPP_MIN_LOG_LEVEL: 1                        # show TensorFlow log messages for development
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
@@ -136,6 +135,10 @@ services:
       PHOTOPRISM_VISION_API: "true"                  # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
       PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
+      ## External dependencies and tools:
+      TF_CPP_MIN_LOG_LEVEL: 1
+      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
+      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding
@@ -176,7 +179,7 @@ services:
   ## Web UI: https://qdrant.localssl.dev/dashboard
   qdrant:
     image: qdrant/qdrant:latest
-    profiles: ["all", "qdrant"]
+    profiles: [ "all", "qdrant" ]
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
@@ -196,55 +199,31 @@ services:
       - 6334
       - 6335
     volumes:
-      - ./.qdrant.yaml:/qdrant/config/production.yaml
-      - ./storage/qdrant:/qdrant/storage
+      - "./.qdrant.yaml:/qdrant/config/production.yaml"
+      - "./storage/services/qdrant:/qdrant/storage"
 
-  ## PhotoPrism® Computer Vision API
-  ## See: https://github.com/photoprism/photoprism-vision
-  photoprism-vision:
-    image: photoprism/vision:latest
-    entrypoint: [ "/app/venv/bin/flask" ]
-    command: [ "--app", "app", "run", "--debug", "--host", "0.0.0.0" ]
-    profiles: ["all", "vision"]
-    stop_grace_period: 15s
-    working_dir: "/app"
-    links:
-      - "traefik:localssl.dev"
-      - "traefik:app.localssl.dev"
-      - "traefik:qdrant.localssl.dev"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.qdrant.loadbalancer.server.port=5000"
-      - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
-      - "traefik.http.routers.qdrant.entrypoints=websecure"
-      - "traefik.http.routers.qdrant.rule=Host(`vision.localssl.dev`)"
-      - "traefik.http.routers.qdrant.priority=3"
-      - "traefik.http.routers.qdrant.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.qdrant.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.qdrant.tls=true"
-    expose:
-      - 5000
-    environment:
-      TF_CPP_MIN_LOG_LEVEL: 2
-      ## Ollama client configuration (for the service, see below):
-      OLLAMA_ENABLED: "true"
-      OLLAMA_HOST: "http://ollama:11434"
-
-  ## Ollama Large-Language Model Runner (optional)
-  ## Run "ollama pull [name]:[version]" to download a vision model
+  ## Ollama Large-Language Model Runner
+  ## run "ollama pull [name]:[version]" to download a vision model
   ## listed at <https://ollama.com/search?c=vision>, for example:
   ## docker compose exec ollama ollama pull gemma3:latest
   ollama:
     image: ollama/ollama:latest
     restart: unless-stopped
-    stop_grace_period: 15s
-    ## Only starts this service if the "vision" or "all" profile is specified::
-    ## docker compose --profile vision up -d
-    profiles: ["all", "vision"]
+    stop_grace_period: 10s
+    ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
+    ## docker compose --profile ollama up -d
+    profiles: [ "all", "ollama", "vision" ]
     ## Insecurely exposes the Ollama service on port 11434
     ## without authentication (for private networks only):
     # ports:
     #  - "11434:11434"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
+      - "traefik.http.services.ollama.loadbalancer.server.port=11434"
+      - "traefik.http.routers.ollama.rule=Host(`ollama.localssl.dev`)"
+      - "traefik.http.routers.ollama.entrypoints=websecure"
+      - "traefik.http.routers.ollama.tls=true"
     environment:
       ## Ollama Configuration Options:
       OLLAMA_HOST: "0.0.0.0:11434"
@@ -268,7 +247,7 @@ services:
       # NVIDIA_VISIBLE_DEVICES: "all"
       # NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
     volumes:
-      - "./storage/ollama:/root/.ollama"
+      - "./storage/services/ollama:/root/.ollama"
     ## NVIDIA GPU Hardware Acceleration (optional):
     # deploy:
     #  resources:
@@ -277,6 +256,66 @@ services:
     #        - driver: "nvidia"
     #          capabilities: [ gpu ]
     #          count: "all"
+
+  ## Open WebUI, a Web Interface for Ollama
+  ## see https://github.com/open-webui/open-webui
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    stop_grace_period: 5s
+    ## Only starts this service if the "all", "ollama", "open-webui", or "vision" profile is specified::
+    ## docker compose --profile ollama up -d
+    profiles: [ "all", "ollama", "open-webui", "vision" ]
+    ## Exposes Open WebUI at http://localhost:8080 (use https://chat.localssl.dev/ to access it through Traefik):
+    ports:
+      - "127.0.0.1:8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
+      - "traefik.http.services.open-webui.loadbalancer.server.port=8080"
+      - "traefik.http.routers.open-webui.rule=Host(`chat.localssl.dev`) || Host(`open-webui.localssl.dev`) || Host(`ollama-ui.localssl.dev`)"
+      - "traefik.http.routers.open-webui.entrypoints=websecure"
+      - "traefik.http.routers.open-webui.tls=true"
+    environment:
+      WEBUI_URL: "https://chat.localssl.dev"
+      # WEBUI_SECRET_KEY: ""
+      OLLAMA_BASE_URL: "http://ollama:11434"
+      ANONYMIZED_TELEMETRY: "false"   # disable Chroma telemetry
+      HF_HUB_DISABLE_TELEMETRY: "1"   # disable Hugging Face telemetry
+      # HUGGING_FACE_HUB_TOKEN: ""      # see https://huggingface.co/docs/hub/en/security-tokens
+    volumes:
+      - "./storage/services/open-webui:/app/backend/data"
+
+  ## PhotoPrism® Computer Vision API
+  ## see https://github.com/photoprism/photoprism-vision
+  photoprism-vision:
+    image: photoprism/vision:latest
+    ## Only starts this service if the "all" or "vision" profile is specified::
+    ## docker compose --profile vision up -d
+    profiles: [ "all", "vision" ]
+    stop_grace_period: 15s
+    working_dir: "/app"
+    links:
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
+      - "traefik:qdrant.localssl.dev"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.qdrant.loadbalancer.server.port=5000"
+      - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.qdrant.entrypoints=websecure"
+      - "traefik.http.routers.qdrant.rule=Host(`vision.localssl.dev`)"
+      - "traefik.http.routers.qdrant.priority=3"
+      - "traefik.http.routers.qdrant.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.qdrant.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.qdrant.tls=true"
+    expose:
+      - 5000
+    environment:
+      TF_CPP_MIN_LOG_LEVEL: 2
+      ## Ollama client configuration (for the service, see below):
+      OLLAMA_ENABLED: "true"
+      OLLAMA_HOST: "http://ollama:11434"
 
   ## Traefik v3 (Reverse Proxy)
   ## includes "*.localssl.dev" SSL certificate for test environments
@@ -376,7 +415,7 @@ services:
   ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
-    profiles: ["all", "auth", "prometheus"]
+    profiles: [ "all", "auth", "prometheus" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"

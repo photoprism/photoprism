@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// altCountryNames defines mapping between different names for the same country
+// altCountryNames captures alternate spellings mapped to canonical country names.
 var altCountryNames = map[string]string{
 	"us":                       "United States",
 	"usa":                      "United States",
@@ -21,7 +21,7 @@ var altCountryNames = map[string]string{
 // Countries represents a list of countries.
 type Countries []Country
 
-// Country represents a country location, used for labeling photos.
+// Country represents a country entry used for labeling photos and locations.
 type Country struct {
 	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
 	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
@@ -38,19 +38,19 @@ func (Country) TableName() string {
 	return "countries"
 }
 
-// UnknownCountry is defined here to use it as a default
+// UnknownCountry is the fallback entry used when no country code is known.
 var UnknownCountry = Country{
 	ID:          UnknownID,
 	CountryName: maps.CountryNames[UnknownID],
 	CountrySlug: UnknownID,
 }
 
-// CreateUnknownCountry is used to initialize the database with the default country
+// CreateUnknownCountry ensures the fallback country exists in the database.
 func CreateUnknownCountry() {
 	UnknownCountry = *FirstOrCreateCountry(&UnknownCountry)
 }
 
-// NewCountry creates a new country, with default country code if not provided
+// NewCountry creates a new Country entity, normalizing name and slug.
 func NewCountry(countryCode string, countryName string) *Country {
 	if countryCode == "" {
 		return &UnknownCountry

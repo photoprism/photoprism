@@ -12,6 +12,7 @@ func initFaces() {
 	services.Faces = photoprism.NewFaces(Config())
 }
 
+// Faces returns the singleton face-recognition service instance.
 func Faces() *photoprism.Faces {
 	onceFaces.Do(initFaces)
 

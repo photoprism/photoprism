@@ -22,10 +22,10 @@ import (
 //	@Description	Fore more information see:
 //	@Description	- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri
 //	@Id				GetThumb
-//	@Produce		image/jpeg
+//	@Produce		image/jpeg, image/svg+xml
 //	@Tags			Images, Files
 //	@Failure		403		{file}	image/svg+xml
-//	@Failure		200		{file}	image/svg+xml
+//	@Success		200		{file}	image/svg+xml
 //	@Success		200		{file}	image/jpg
 //	@Param			thumb	path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
 //	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"

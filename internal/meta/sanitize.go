@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// UnwantedStrings lists boilerplate captions we strip during import.
 var UnwantedStrings = map[string]bool{
 	"Created by Imlib":         true, // Apps
 	"iClarified":               true,
@@ -60,6 +61,7 @@ var UnwantedStrings = map[string]bool{
 	"Digital Camera":           true,
 }
 
+// LowerCaseRegexp matches lower-case tokens in generated filenames.
 var LowerCaseRegexp = regexp.MustCompile("[a-z\\d_\\-]+")
 
 // SanitizeUnicode returns the string as valid Unicode with whitespace trimmed.

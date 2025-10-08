@@ -10,12 +10,16 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-// Like escapes a string for use in a query.
+// Like sanitizes user input so it can be safely interpolated into SQL LIKE
+// expressions. It strips operators that we don't expect to persist in the
+// statement and lets callers provide their own surrounding wildcards.
 func Like(s string) string {
 	return strings.Trim(clean.SqlString(s), " |&*%")
 }
 
-// LikeAny returns a single where condition matching the search words.
+// LikeAny builds OR-chained LIKE predicates for a text column. The input string
+// may contain AND / OR separators; keywords trigger stemming and plural
+// normalization while exact mode disables wildcard suffixes.
 func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
 		return wheres
@@ -73,17 +77,20 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	return wheres
 }
 
-// LikeAnyKeyword returns a single where condition matching the search keywords.
+// LikeAnyKeyword is a keyword-optimized wrapper around LikeAny.
 func LikeAnyKeyword(col, s string) (wheres []string) {
 	return LikeAny(col, s, true, false)
 }
 
-// LikeAnyWord returns a single where condition matching the search word.
+// LikeAnyWord matches whole words and keeps wildcard thresholds tuned for
+// free-form text search instead of keyword lists.
 func LikeAnyWord(col, s string) (wheres []string) {
 	return LikeAny(col, s, false, false)
 }
 
-// LikeAll returns a list of where conditions matching all search words.
+// LikeAll produces AND-chained LIKE predicates for every significant token in
+// the search string. When exact is false, longer words receive a suffix
+// wildcard to support prefix matches.
 func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
 		return wheres
@@ -117,17 +124,19 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 	return wheres
 }
 
-// LikeAllKeywords returns a list of where conditions matching all search keywords.
+// LikeAllKeywords is LikeAll specialized for keyword search.
 func LikeAllKeywords(col, s string) (wheres []string) {
 	return LikeAll(col, s, true, false)
 }
 
-// LikeAllWords returns a list of where conditions matching all search words.
+// LikeAllWords is LikeAll specialized for general word search.
 func LikeAllWords(col, s string) (wheres []string) {
 	return LikeAll(col, s, false, false)
 }
 
-// LikeAllNames returns a list of where conditions matching all names.
+// LikeAllNames splits a name query into AND-separated groups and generates
+// prefix or substring matches against each provided column, keeping multi-word
+// tokens intact so "John Doe" still matches full-name columns.
 func LikeAllNames(cols Cols, s string) (wheres []string) {
 	if len(cols) == 0 || len(s) < 1 {
 		return wheres
@@ -160,7 +169,9 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 	return wheres
 }
 
-// AnySlug returns a where condition that matches any slug in search.
+// AnySlug converts human-friendly search terms into slugs and matches them
+// against the provided slug column, including the singularized variant for
+// plural words (e.g. "Cats" -> "cat").
 func AnySlug(col, search, sep string) (where string) {
 	if search == "" {
 		return ""
@@ -200,7 +211,8 @@ func AnySlug(col, search, sep string) (where string) {
 	return strings.Join(wheres, " OR ")
 }
 
-// AnyInt returns a where condition that matches any integer within a range.
+// AnyInt filters user-specified integers through an allowed range and returns
+// an OR-chained equality predicate for the values that remain.
 func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	if numbers == "" {
 		return ""
@@ -234,7 +246,9 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	return strings.Join(wheres, " OR ")
 }
 
-// OrLike returns a where condition and values for finding multiple terms combined with OR.
+// OrLike prepares a parameterised OR/LIKE clause for a single column. Star (* )
+// wildcards are mapped to SQL percent wildcards before returning the query and
+// bind values.
 func OrLike(col, s string) (where string, values []interface{}) {
 	if txt.Empty(col) || txt.Empty(s) {
 		return "", []interface{}{}
@@ -262,7 +276,9 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	return where, values
 }
 
-// OrLikeCols returns a where condition and values for finding multiple terms combined with OR.
+// OrLikeCols behaves like OrLike but fans out the same search terms across
+// multiple columns, preserving the order of values so callers can feed them to
+// database/sql.
 func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	if len(cols) == 0 || txt.Empty(s) {
 		return "", []interface{}{}
@@ -299,12 +315,14 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	return strings.Join(wheres, " OR "), values
 }
 
-// SplitOr splits a search string into separate OR values for an IN condition.
+// SplitOr splits a search string on OR separators (|) while respecting escape
+// sequences so literals like "\|" survive unchanged.
 func SplitOr(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 }
 
-// SplitAnd splits a search string into separate AND values.
+// SplitAnd splits a search string on AND separators (&) while honouring escape
+// sequences.
 func SplitAnd(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)
 }

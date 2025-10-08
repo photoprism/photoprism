@@ -11,7 +11,7 @@ func TestNewPassword(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.Len(t, p.Hash, 60)
 	})
-	t.Run("empty password", func(t *testing.T) {
+	t.Run("EmptyPassword", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "", false)
 		assert.Equal(t, "", p.Hash)
 	})
@@ -32,14 +32,14 @@ func TestPassword_SetPassword(t *testing.T) {
 		assert.True(t, p.Valid("abcd"))
 		assert.False(t, p.Valid("other"))
 	})
-	t.Run("Too long", func(t *testing.T) {
+	t.Run("TooLong", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "hgfttrgkncgdhfkbvuvygvbekdjbrtugbnljbtruhogtgbotuhblenbhoyuhntyyhngytohrpnehotyihniy", false)
 
 		err := p.SetPassword("hgfttrgkncgdhfkbvuvygvbekdjbrtugbnljbtruhogtgbotuhblenbhoyuhntyyhngytohrpnehotyihniy", false)
 
 		assert.Error(t, err)
 	})
-	t.Run("Too short", func(t *testing.T) {
+	t.Run("TooShort", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "", false)
 
 		err := p.SetPassword("", false)

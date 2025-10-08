@@ -45,7 +45,7 @@ func (c *Config) BackupBasePath() string {
 		return fs.Abs(c.options.BackupPath)
 	}
 
-	return filepath.Join(c.StoragePath(), "backup")
+	return filepath.Join(c.StoragePath(), fs.BackupDir)
 }
 
 // BackupSchedule returns the backup schedule in cron format, e.g. "0 12 * * *" for daily at noon.
@@ -93,9 +93,9 @@ func (c *Config) BackupAlbums() bool {
 
 // BackupAlbumsPath returns the backup path for album YAML files.
 func (c *Config) BackupAlbumsPath() string {
-	if dir := filepath.Join(c.StoragePath(), "albums"); fs.PathExists(dir) {
+	if dir := filepath.Join(c.StoragePath(), fs.AlbumsDir); fs.PathExists(dir) {
 		return dir
 	}
 
-	return c.BackupPath("albums")
+	return c.BackupPath(fs.AlbumsDir)
 }

@@ -130,7 +130,7 @@ func TestMarkers_Labels(t *testing.T) {
 			assert.Equal(t, "portrait", result[0].Name)
 			assert.Equal(t, SrcImage, result[0].Source)
 			assert.Equal(t, 45, result[0].Uncertainty)
-			assert.Equal(t, 0, result[0].Priority)
+			assert.Equal(t, 2, result[0].Priority)
 			assert.Len(t, result[0].Categories, 1)
 
 			if len(result[0].Categories) == 1 {

@@ -103,7 +103,7 @@ services:
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
     ## Shared devices for video hardware transcoding (optional):
-    ## See: https://www.raspberrypi.com/documentation/accessories/camera.html#driver-differences-when-using-libcamera-or-the-legacy-stack
+    ## see https://www.raspberrypi.com/documentation/accessories/camera.html#driver-differences-when-using-libcamera-or-the-legacy-stack
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/photoprism" # do not change or remove

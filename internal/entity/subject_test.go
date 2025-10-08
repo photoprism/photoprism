@@ -16,7 +16,7 @@ func TestSubject_TableName(t *testing.T) {
 }
 
 func TestNewSubject(t *testing.T) {
-	t.Run("Jens_Mander", func(t *testing.T) {
+	t.Run("JensMander", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 		assert.Equal(t, "Jens Mander", m.SubjName)
 		assert.Equal(t, "jens-mander", m.SubjSlug)
@@ -392,6 +392,82 @@ func TestSubject_SaveForm(t *testing.T) {
 
 		assert.Contains(t, err.Error(), "no uid")
 		assert.False(t, changed)
+	})
+	t.Run("ManualThumb", func(t *testing.T) {
+		subj := NewSubject("Cover Person", SubjPerson, SrcAuto)
+		subj.SubjFavorite = true
+		if err := subj.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm, err := form.NewSubject(subj)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		hash := "6f6cbaa6ae8ead9da7ee99ab66aca1ae7eed8d5c-0910162fd2fd"
+		subjForm.Thumb = hash
+		subjForm.ThumbSrc = "manual"
+
+		changed, err := subj.SaveForm(subjForm)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, changed)
+		assert.Equal(t, hash, subj.Thumb)
+		assert.Equal(t, SrcManual, subj.ThumbSrc)
+
+		if err := subj.Delete(); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("DefaultThumbSrc", func(t *testing.T) {
+		subj := NewSubject("Auto Src", SubjPerson, SrcAuto)
+		if err := subj.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm, err := form.NewSubject(subj)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm.Thumb = "6f6cbaa6ae8ead9da7ee99ab66aca1ae7eed8d5c"
+		subjForm.ThumbSrc = ""
+
+		changed, err := subj.SaveForm(subjForm)
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid thumb")
+		assert.False(t, changed)
+		assert.Equal(t, "", subj.Thumb)
+		assert.Equal(t, "", subj.ThumbSrc)
+
+		if err := subj.Delete(); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("InvalidThumbSrc", func(t *testing.T) {
+		subj := NewSubject("Invalid Src", SubjPerson, SrcAuto)
+		if err := subj.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm, err := form.NewSubject(subj)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm.Thumb = "6f6cbaa6ae8ead9da7ee99ab66aca1ae7eed8d5c-0910162fd2fd"
+		subjForm.ThumbSrc = "invalid-src"
+
+		_, err = subj.SaveForm(subjForm)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid thumb source")
+
+		if err := subj.Delete(); err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 

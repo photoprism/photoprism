@@ -16,6 +16,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// RawExif extracts the raw EXIF block from the given media file, optionally falling back to a
+// brute-force search when native parsers fail.
 func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {

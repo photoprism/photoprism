@@ -3,7 +3,6 @@ package workers
 import (
 	"errors"
 	"fmt"
-	"path"
 	"runtime/debug"
 	"slices"
 	"strings"
@@ -20,28 +19,76 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Vision represents a computer vision worker.
+// Vision orchestrates background computer-vision tasks (labels, captions,
+// NSFW detection). It wraps configuration lookups and scheduling helpers.
 type Vision struct {
 	conf *config.Config
 }
 
-// NewVision returns a new Vision worker.
+// NewVision constructs a Vision worker bound to the provided configuration.
 func NewVision(conf *config.Config) *Vision {
 	return &Vision{conf: conf}
 }
 
-// originalsPath returns the original media files path as string.
+// StartScheduled executes the worker in scheduled mode, selecting models that
+// are allowed to run in the RunOnSchedule context.
+func (w *Vision) StartScheduled() {
+	models := w.scheduledModels()
+
+	if len(models) == 0 {
+		return
+	}
+
+	if err := w.Start(
+		w.conf.VisionFilter(),
+		0,
+		models,
+		entity.SrcAuto,
+		false,
+		vision.RunOnSchedule,
+	); err != nil {
+		log.Errorf("scheduler: %s (vision)", err)
+	}
+}
+
+// scheduledModels returns the model types that should run for scheduled jobs.
+func (w *Vision) scheduledModels() []string {
+	models := make([]string, 0, 3)
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeLabels)
+	}
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeNsfw)
+	}
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeCaption, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeCaption)
+	}
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeFace, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeFace)
+	}
+
+	return models
+}
+
+// originalsPath returns the path that holds original media files.
 func (w *Vision) originalsPath() string {
 	return w.conf.OriginalsPath()
 }
 
-// Start runs the specified model types for photos matching the search query filter string.
-func (w *Vision) Start(filter string, count int, models []string, customSrc string, force bool) (err error) {
+// Start runs the requested vision models against photos matching the search
+// filter. `customSrc` allows the caller to override the metadata source string,
+// `force` regenerates metadata regardless of existing values, and `runType`
+// describes the scheduling context (manual, scheduled, etc.). A global worker
+// mutex prevents multiple vision jobs from running concurrently.
+func (w *Vision) Start(filter string, count int, models []string, customSrc string, force bool, runType vision.RunType) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("vision: %s (worker panic)\nstack: %s", r, debug.Stack())
@@ -55,31 +102,33 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	defer mutex.VisionWorker.Stop()
 
+	models = vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
+		if mt == vision.ModelTypeFace {
+			return w.conf.FaceEngineShouldRun(when)
+		}
+
+		return w.conf.VisionModelShouldRun(mt, when)
+	})
+
 	updateLabels := slices.Contains(models, vision.ModelTypeLabels)
 	updateNsfw := slices.Contains(models, vision.ModelTypeNsfw)
 	updateCaptions := slices.Contains(models, vision.ModelTypeCaption)
+	detectFaces := slices.Contains(models, vision.ModelTypeFace)
 
 	// Refresh index metadata.
 	if n := len(models); n == 0 {
 		log.Warnf("vision: no models were specified")
 		return nil
-	} else if n == 1 {
-		log.Infof("vision: running %s model", models[0])
 	} else {
-		log.Infof("vision: running %s models", strings.Join(models, " and "))
+		log.Infof("vision: running %s models", txt.JoinAnd(models))
 	}
 
-	// Source type for AI generated data.
-	var dataSrc string
-
-	if customSrc = clean.ShortTypeLower(customSrc); customSrc != "" {
-		dataSrc = customSrc
-	} else {
-		dataSrc = entity.SrcImage
-	}
+	customSrc = clean.ShortTypeLower(customSrc)
 
 	// Check time when worker was last executed.
 	updateIndex := false
+	// Remember if we saved new face markers so recognition can run after the loop.
+	updateFaces := false
 
 	start := time.Now()
 	done := make(map[string]bool)
@@ -90,8 +139,6 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	if count < 1 || count > search.MaxResults {
 		count = search.MaxResults
 	}
-
-	ind := get.Index()
 
 	frm := form.SearchPhotos{
 		Query:   filter,
@@ -132,62 +179,97 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 		done[photo.PhotoUID] = true
 
-		photoName := path.Join(photo.PhotoPath, photo.PhotoName)
-		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
-		file, fileErr := photoprism.NewMediaFile(fileName)
-
-		if fileErr != nil {
-			log.Errorf("vision: failed to open %s (%s)", photoName, fileErr)
-			continue
-		}
+		logName := photo.String()
 
 		m, loadErr := query.PhotoByUID(photo.PhotoUID)
 
 		if loadErr != nil {
-			log.Errorf("vision: failed to load %s (%s)", photoName, loadErr)
+			log.Errorf("vision: failed to load %s (%s)", logName, loadErr)
 			continue
 		}
 
+		generateLabels := updateLabels && m.ShouldGenerateLabels(force)
+		generateCaptions := updateCaptions && m.ShouldGenerateCaption(customSrc, force)
+		detectNsfw := updateNsfw && (!photo.PhotoPrivate || force)
+
+		if !(generateLabels || generateCaptions || detectNsfw || detectFaces) {
+			continue
+		}
+
+		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
+		file, fileErr := photoprism.NewMediaFile(fileName)
+
+		if fileErr != nil {
+			log.Errorf("vision: failed to open %s (%s)", logName, fileErr)
+			continue
+		}
+
+		// Track whether this iteration produced metadata that needs persisting.
 		changed := false
 
+		if detectFaces {
+			if primaryFile, err := m.PrimaryFile(); err != nil {
+				log.Debugf("vision: photo %s has invalid primary file (%s)", logName, clean.Error(err))
+			} else if primaryFile == nil {
+				log.Debugf("vision: missing primary file for %s", logName)
+			} else if markers := primaryFile.Markers(); markers == nil {
+				log.Errorf("vision: failed loading markers for %s", logName)
+			} else {
+				expected := markers.DetectedFaceCount()
+				faces, detectErr := photoprism.DetectFaces(file, expected)
+				if detectErr != nil {
+					log.Debugf("vision: %s in %s (detect faces)", detectErr, clean.Log(file.BaseName()))
+				} else if saved, faceCount, applyErr := photoprism.ApplyDetectedFaces(primaryFile, faces); applyErr != nil {
+					log.Warnf("vision: %s in %s (save faces)", clean.Error(applyErr), logName)
+				} else if saved {
+					m.PhotoFaces = faceCount
+					updateFaces = true
+					changed = true
+				}
+			}
+		}
+
 		// Generate labels.
-		if updateLabels && (len(m.Labels) == 0 || force) {
-			if labels := ind.Labels(file, dataSrc); len(labels) > 0 {
+		if generateLabels {
+			if labels := file.GenerateLabels(customSrc); len(labels) > 0 {
+				if w.conf.DetectNSFW() && !m.PhotoPrivate {
+					if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
+						m.PhotoPrivate = true
+						log.Infof("vision: changed private flag of %s to %t (labels)", logName, m.PhotoPrivate)
+					}
+				}
 				m.AddLabels(labels)
 				changed = true
 			}
 		}
 
 		// Detect NSFW content.
-		if updateNsfw && (!photo.PhotoPrivate || force) {
-			if isNsfw := ind.IsNsfw(file); photo.PhotoPrivate != isNsfw {
-				photo.PhotoPrivate = isNsfw
+		if detectNsfw {
+			if isNsfw := file.DetectNSFW(); m.PhotoPrivate != isNsfw {
+				m.PhotoPrivate = isNsfw
 				changed = true
-				log.Infof("vision: changed private flag of %s to %t", photoName, photo.PhotoPrivate)
+				log.Infof("vision: changed private flag of %s to %t", logName, m.PhotoPrivate)
 			}
 		}
 
 		// Generate a caption if none exists or the force flag is used,
 		// and only if no caption was set or removed by a higher-priority source.
-		if updateCaptions && entity.SrcPriority[dataSrc] >= entity.SrcPriority[m.CaptionSrc] && (m.NoCaption() || force) {
-			if caption, captionErr := ind.Caption(file); captionErr != nil {
-				log.Warnf("vision: %s in %s (generate caption)", clean.Error(captionErr), photoName)
-			} else if caption.Text = strings.TrimSpace(caption.Text); caption.Text != "" {
-				m.SetCaption(caption.Text, dataSrc)
+		if generateCaptions {
+			if caption, captionErr := file.GenerateCaption(customSrc); captionErr != nil {
+				log.Warnf("vision: %s in %s (generate caption)", clean.Error(captionErr), logName)
+			} else if text := strings.TrimSpace(caption.Text); text != "" {
+				m.SetCaption(text, caption.Source)
 				if updateErr := m.UpdateCaptionLabels(); updateErr != nil {
-					log.Warnf("vision: %s in %s (update caption labels)", clean.Error(updateErr), photoName)
+					log.Warnf("vision: %s in %s (update caption labels)", clean.Error(updateErr), logName)
 				}
 				changed = true
-				log.Infof("vision: changed caption of %s to %s", photoName, clean.Log(m.PhotoCaption))
+				log.Infof("vision: changed caption of %s to %s", logName, clean.Log(m.PhotoCaption))
 			}
 		}
 
 		if changed {
-			if saveErr := m.GenerateAndSaveTitle(); saveErr != nil {
-				log.Infof("vision: failed to updated %s (%s)", photoName, clean.Error(saveErr))
-			} else {
+			if saveErr := m.SaveVision(); saveErr == nil {
 				updated++
-				log.Debugf("vision: updated %s", photoName)
 			}
 		}
 
@@ -200,6 +282,16 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	if updated > 0 {
 		updateIndex = true
+	}
+
+	if updateFaces {
+		// Perform face recognition after saving new face markers.
+		log.Debugf("vision: running face recognition")
+		if faces := photoprism.NewFaces(w.conf); faces.Disabled() {
+			log.Debugf("vision: skipping face recognition")
+		} else if facesErr := faces.Start(photoprism.FacesOptions{}); facesErr != nil {
+			log.Warn(facesErr)
+		}
 	}
 
 	// Only update index if photo metadata has changed or the force flag was used.

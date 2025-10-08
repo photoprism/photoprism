@@ -121,7 +121,7 @@ func TestBatchAlbumsDelete(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrAlbumNotFound), val3.String())
 		assert.Equal(t, http.StatusNotFound, r3.Code)
 	})
-	t.Run("no albums selected", func(t *testing.T) {
+	t.Run("NoAlbumsSelected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchAlbumsDelete(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/albums/delete", `{"albums": []}`)
@@ -206,7 +206,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		val3 := gjson.Get(r3.Body.String(), `#(Name=="BatchDelete").Slug`)
 		assert.Equal(t, val3.String(), "")
 	})
-	t.Run("no labels selected", func(t *testing.T) {
+	t.Run("NoLabelsSelected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchLabelsDelete(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/labels/delete", `{"labels": []}`)

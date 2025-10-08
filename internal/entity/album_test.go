@@ -14,7 +14,7 @@ import (
 
 func TestUpdateAlbum(t *testing.T) {
 	t.Run("InvalidUID", func(t *testing.T) {
-		err := UpdateAlbum("xxx", Map{"album_title": "New Title", "album_slug": "new-slug"})
+		err := UpdateAlbum("xxx", Values{"album_title": "New Title", "album_slug": "new-slug"})
 
 		assert.Error(t, err)
 	})
@@ -69,11 +69,9 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("InvalidPhotoUid", func(t *testing.T) {
 		assert.Error(t, AddPhotoToAlbums("xxx", []string{"as6sg6bitoga0004"}))
 	})
-
 	t.Run("SuccessTwoAlbums", func(t *testing.T) {
 		err := AddPhotoToAlbums("ps6sg6bexxvl0yh0", []string{"as6sg6bitoga0004", ""})
 
@@ -496,7 +494,7 @@ func TestAlbum_String(t *testing.T) {
 }
 
 func TestAlbum_IsMoment(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		album := Album{
 			AlbumUID:   "abc123",
 			AlbumSlug:  "test-slug",
@@ -505,7 +503,7 @@ func TestAlbum_IsMoment(t *testing.T) {
 		}
 		assert.False(t, album.IsMoment())
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		album := Album{
 			AlbumUID:   "abc123",
 			AlbumSlug:  "test-slug",
@@ -802,7 +800,7 @@ func TestAlbum_Updates(t *testing.T) {
 
 		assert.Equal(t, "test-title", album.AlbumSlug)
 
-		if err := album.Updates(Map{"album_title": "New Title", "album_slug": "new-slug"}); err != nil {
+		if err := album.Updates(Values{"album_title": "New Title", "album_slug": "new-slug"}); err != nil {
 			t.Fatal(err)
 		}
 
@@ -815,7 +813,7 @@ func TestAlbum_Updates(t *testing.T) {
 	t.Run("NoUID", func(t *testing.T) {
 		album := Album{}
 
-		err := album.Updates(Map{"album_title": "New Title", "album_slug": "new-slug"})
+		err := album.Updates(Values{"album_title": "New Title", "album_slug": "new-slug"})
 
 		assert.Error(t, err)
 	})
@@ -1049,13 +1047,13 @@ func TestAlbum_Title(t *testing.T) {
 }
 
 func TestAlbum_ZipName(t *testing.T) {
-	t.Run("christmas-2030.zip", func(t *testing.T) {
+	t.Run("ChristmasNum2030Zip", func(t *testing.T) {
 		album := AlbumFixtures.Get("christmas2030")
 		result := album.ZipName()
 
 		assert.Equal(t, "christmas-2030.zip", result)
 	})
-	t.Run("photoprism-album-1234.zip", func(t *testing.T) {
+	t.Run("PhotoPrismAlbumNum1234Zip", func(t *testing.T) {
 		album := Album{AlbumSlug: "a", AlbumUID: "1234"}
 		result := album.ZipName()
 

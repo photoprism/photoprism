@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterAlbum(t *testing.T) {
-	t.Run("Berlin*", func(t *testing.T) {
+	t.Run("Berlin", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Album = "Berlin*"
@@ -20,9 +20,9 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
+		assert.Len(t, photos, 4)
 	})
-	t.Run("Pet*", func(t *testing.T) {
+	t.Run("Pet", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Album = "Pet*"
@@ -33,7 +33,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -47,7 +47,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -168,7 +168,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -279,7 +279,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 }
 
 func TestPhotosQueryAlbum(t *testing.T) {
-	t.Run("Berlin*", func(t *testing.T) {
+	t.Run("Berlin", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "album:\"Berlin*\""
@@ -290,9 +290,9 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
+		assert.Len(t, photos, 4)
 	})
-	t.Run("Pet*", func(t *testing.T) {
+	t.Run("Pet", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "album:\"Pet*\""
@@ -303,7 +303,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -316,7 +316,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -329,7 +329,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -436,7 +436,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -478,7 +478,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos

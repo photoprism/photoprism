@@ -1,11 +1,13 @@
 package photoprism
 
+// ThumbsJob encapsulates thumbnail generation parameters for a media file.
 type ThumbsJob struct {
 	mediaFile *MediaFile
 	path      string
 	force     bool
 }
 
+// ThumbsWorker consumes thumbnail jobs and generates the requested previews.
 func ThumbsWorker(jobs <-chan ThumbsJob) {
 	for job := range jobs {
 		mf := job.mediaFile

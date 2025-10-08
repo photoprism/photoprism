@@ -10,8 +10,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// Runs first when package is tested.
+func init() {
+	hub.ApplyTestConfig()
+}
 
 func TestMain(m *testing.M) {
 	_ = os.Setenv("PHOTOPRISM_TEST", "true")
@@ -22,6 +28,9 @@ func TestMain(m *testing.M) {
 	defer c.CloseDb()
 
 	code := m.Run()
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }
@@ -115,7 +124,6 @@ func TestConfig_OptionsYaml(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
 	})
-
 	t.Run("ChangePath", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
@@ -153,10 +161,19 @@ func TestConfig_OriginalsPath(t *testing.T) {
 
 func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.AssertTestData(t)
 
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
 	result := c.ImportPath()
 	assert.True(t, strings.HasPrefix(result, "/"))
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/import"))
+
+	c.options.ImportPath = ""
+	if s := c.ImportPath(); s != "" && s != "/photoprism/import" {
+		t.Errorf("unexpected import path: %s", s)
+	}
+
+	c.options.ImportPath = result
 }
 
 func TestConfig_CachePath(t *testing.T) {
@@ -249,22 +266,18 @@ func TestConfig_BuildPath(t *testing.T) {
 func TestConfig_ImgPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ImgPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
+	result := c.ImgPath()
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", result)
 }
 
 func TestConfig_ThemePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ThemePath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/theme", path)
-}
-
-func TestConfig_PortalPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	path := c.PortalPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/portal", path)
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/theme", c.ThemePath())
+	c.SetThemePath("testdata/static/img/wallpaper")
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/static/img/wallpaper", c.ThemePath())
+	c.SetThemePath("")
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/theme", c.ThemePath())
 }
 
 func TestConfig_IndexWorkers(t *testing.T) {

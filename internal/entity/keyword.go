@@ -9,7 +9,7 @@ import (
 
 var keywordMutex = sync.Mutex{}
 
-// Keyword used for full text search
+// Keyword represents a normalized word used for full-text search and tagging.
 type Keyword struct {
 	ID      uint   `gorm:"primary_key"`
 	Keyword string `gorm:"type:VARCHAR(64);index;"`
@@ -21,7 +21,7 @@ func (Keyword) TableName() string {
 	return "keywords"
 }
 
-// NewKeyword registers a new keyword in database
+// NewKeyword returns a normalized keyword entity ready for persistence.
 func NewKeyword(keyword string) *Keyword {
 	keyword = strings.ToLower(txt.Clip(keyword, txt.ClipKeyword))
 

@@ -48,3 +48,9 @@ func TestReader(t *testing.T) {
 		assert.Equal(t, info.VideoMimeType, mimetype.Detect(videoData).String())
 	})
 }
+
+func TestNewReader_FileNotFound(t *testing.T) {
+	r, err := NewReader("/path/does/not/exist", 0)
+	assert.Nil(t, r)
+	assert.Error(t, err)
+}

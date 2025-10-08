@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetFoldersOriginals(t *testing.T) {
-	t.Run("flat", func(t *testing.T) {
+	t.Run("Flat", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.OriginalsPath(), false, true)
@@ -55,7 +55,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, false, folder.FolderWatch)
 		}
 	})
-	t.Run("recursive", func(t *testing.T) {
+	t.Run("Recursive", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.OriginalsPath(), true, true)
@@ -95,7 +95,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 }
 
 func TestGetFoldersImport(t *testing.T) {
-	t.Run("flat", func(t *testing.T) {
+	t.Run("Flat", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.ImportPath(), false, true)
@@ -139,7 +139,7 @@ func TestGetFoldersImport(t *testing.T) {
 		}
 
 	})
-	t.Run("recursive", func(t *testing.T) {
+	t.Run("Recursive", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.ImportPath(), true, true)

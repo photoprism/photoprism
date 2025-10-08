@@ -18,5 +18,6 @@ var ShowCommands = &cli.Command{
 		ShowThumbSizesCommand,
 		ShowVideoSizesCommand,
 		ShowMetadataCommand,
+		ShowCommandsCommand,
 	},
 }

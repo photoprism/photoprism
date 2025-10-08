@@ -40,7 +40,7 @@ func TestOptions_SetOptionsFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/temp", c.TempPath)
 	assert.Equal(t, "1h34m9s", c.WakeupInterval.String())
 	assert.NotEmpty(t, c.DatabaseDriver)
-	assert.NotEmpty(t, c.DatabaseDsn)
+	assert.NotEmpty(t, c.DatabaseDSN)
 	assert.Equal(t, 81, c.HttpPort)
 }
 

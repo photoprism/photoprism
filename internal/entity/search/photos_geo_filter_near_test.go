@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosGeoFilterNear(t *testing.T) {
-	t.Run("ps6sg6be2lvl0y24", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0y24", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "ps6sg6be2lvl0y24"
@@ -19,9 +19,9 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 9)
+		assert.Len(t, photos, 9)
 	})
-	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
+	t.Run("Ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "ps6sg6byk7wrbk30"
@@ -31,7 +31,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 26)
+		assert.Len(t, photos, 26)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -196,7 +196,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 }
 
 func TestPhotosGeoQueryNear(t *testing.T) {
-	t.Run("ps6sg6be2lvl0y24", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0y24", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:ps6sg6be2lvl0y24"
@@ -207,9 +207,9 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 9)
+		assert.Len(t, photos, 9)
 	})
-	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
+	t.Run("Ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:ps6sg6byk7wrbk30"
@@ -219,9 +219,9 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 26, len(photos))
+		assert.Len(t, photos, 26)
 	})
-	t.Run("ps6sg6be2lvl0y24 pipe ps6sg6byk7wrbk30", func(t *testing.T) {
+	t.Run("Ps6sg6be2lvl0y24PipePs6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "near:ps6sg6be2lvl0y24|ps6sg6byk7wrbk30"
@@ -231,7 +231,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 35, len(photos))
+		assert.Len(t, 35, photos)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo

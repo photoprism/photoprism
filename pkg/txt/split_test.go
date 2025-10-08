@@ -6,6 +6,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestTrimmedSplitWithEscape(t *testing.T) {
+	s := ` a\,b , c , \, d ` // escaped comma and escaped separator, spaces
+	parts := TrimmedSplitWithEscape(s, ',', EscapeRune)
+	// Expect trimming and escape handling; escaped separator stays in same token
+	assert.Equal(t, []string{"a,b", "c", ", d"}, parts)
+}
+
+func TestUnTrimmedSplitWithEscape(t *testing.T) {
+	s := ` a\,b , c `
+	parts := UnTrimmedSplitWithEscape(s, ',', EscapeRune)
+	// No trimming; spaces preserved around segments
+	assert.Equal(t, []string{" a,b ", " c "}, parts)
+}
+
 func TestSplitWithEscape(t *testing.T) {
 	t.Run("TrimmedEmptyString", func(t *testing.T) {
 		testString := ""
@@ -133,7 +147,6 @@ func TestSplitWithEscape(t *testing.T) {
 
 		assert.Equal(t, expected, actual)
 	})
-
 	t.Run("UnTrimmedEmptyString", func(t *testing.T) {
 		testString := ""
 		expected := []string{}

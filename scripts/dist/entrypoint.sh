@@ -120,5 +120,6 @@ fi
 
 PID=$!
 
-trap "kill -USR1 $PID" INT TERM
+# shellcheck disable=SC2064  # expand PID now so the trap targets the correct process id
+trap "kill -USR1 ${PID}" INT TERM
 wait

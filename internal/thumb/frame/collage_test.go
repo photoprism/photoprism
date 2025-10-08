@@ -8,7 +8,7 @@ import (
 	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -37,7 +37,6 @@ func TestCollage(t *testing.T) {
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("Two", func(t *testing.T) {
 		var images []image.Image
 
@@ -61,7 +60,6 @@ func TestCollage(t *testing.T) {
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("NoImages", func(t *testing.T) {
 		var images []image.Image
 
@@ -78,7 +76,6 @@ func TestCollage(t *testing.T) {
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("UnknownCollageType", func(t *testing.T) {
 		var images []image.Image
 

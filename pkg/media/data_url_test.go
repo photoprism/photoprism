@@ -1,7 +1,10 @@
 package media
 
 import (
+	"bytes"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -35,4 +38,86 @@ func TestReadUrl(t *testing.T) {
 			assert.Equal(t, expected, data)
 		}
 	})
+	t.Run("HttpServer", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("hello"))
+		}))
+		defer ts.Close()
+
+		data, err := ReadUrl(ts.URL, []string{"http", "https"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, []byte("hello"), data)
+	})
+	t.Run("InvalidEmpty", func(t *testing.T) {
+		_, err := ReadUrl("", []string{"https"})
+		assert.Error(t, err)
+	})
+	t.Run("MissingScheme", func(t *testing.T) {
+		_, err := ReadUrl("example.com/file.jpg", []string{"https"})
+		assert.Error(t, err)
+	})
+	t.Run("DisallowedScheme", func(t *testing.T) {
+		_, err := ReadUrl("http://example.com", []string{"data"})
+		assert.Error(t, err)
+	})
+	t.Run("UnsupportedScheme", func(t *testing.T) {
+		_, err := ReadUrl("ssh://host/path", []string{"ssh"})
+		assert.Error(t, err)
+	})
+	t.Run("InvalidDataUrl", func(t *testing.T) {
+		_, err := ReadUrl("data:image/png;base64,", []string{"data"})
+		assert.Error(t, err)
+	})
+	t.Run("FileSchemeInvalidPath", func(t *testing.T) {
+		// os.ReadFile will not accept a file:// URL; expect error path is exercised.
+		_, err := ReadUrl("file:///this/does/not/exist", []string{"file"})
+		assert.Error(t, err)
+	})
+}
+
+func TestDataUrl_LargeBinary(t *testing.T) {
+	// 2 MiB of zeros -> expect application/octet-stream
+	big := bytes.Repeat([]byte{0}, 2*1024*1024)
+	s := DataUrl(bytes.NewReader(big))
+	if !strings.HasPrefix(s, "data:application/octet-stream;base64,") {
+		t.Fatalf("unexpected prefix: %s", s[:48])
+	}
+	enc := strings.SplitN(s, ",", 2)[1]
+	wantLen := EncodedLenBase64(len(big))
+	if len(enc) != wantLen {
+		t.Fatalf("unexpected base64 length: got=%d want=%d", len(enc), wantLen)
+	}
+}
+
+func TestDataBase64_Large(t *testing.T) {
+	big := bytes.Repeat([]byte("A"), 1*1024*1024+3)
+	b64 := DataBase64(bytes.NewReader(big))
+	wantLen := EncodedLenBase64(len(big))
+	assert.Equal(t, wantLen, len(b64))
+}
+
+func TestDataUrl_JpegDetection(t *testing.T) {
+	// Minimal JPEG-like header: FF D8 FF E0 'JFIF' ...
+	buf := append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, []byte("JFIF\x00\x01\x02\x00\x00")...)
+	buf = append(buf, bytes.Repeat([]byte{0}, 64)...)
+	s := DataUrl(bytes.NewReader(buf))
+	assert.True(t, strings.HasPrefix(s, "data:image/jpeg;base64,"))
+}
+
+func TestDataUrl_GifDetection(t *testing.T) {
+	// Minimal GIF89a header + padding
+	buf := append([]byte("GIF89a"), bytes.Repeat([]byte{0}, 32)...)
+	s := DataUrl(bytes.NewReader(buf))
+	assert.True(t, strings.HasPrefix(s, "data:image/gif;base64,"))
+}
+
+func TestDataUrl_WebpDetection(t *testing.T) {
+	// Minimal RIFF/WEBP container header
+	// RIFF <size=26> WEBP VP8  + padding
+	riff := []byte{'R', 'I', 'F', 'F', 26, 0, 0, 0, 'W', 'E', 'B', 'P', 'V', 'P', '8', ' '}
+	buf := append(riff, bytes.Repeat([]byte{0}, 32)...)
+	s := DataUrl(bytes.NewReader(buf))
+	assert.True(t, strings.HasPrefix(s, "data:image/webp;base64,"))
 }

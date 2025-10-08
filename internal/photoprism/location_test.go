@@ -13,7 +13,7 @@ import (
 func TestMediaFile_Location(t *testing.T) {
 	c := config.TestConfig()
 
-	t.Run("iphone_7.heic", func(t *testing.T) {
+	t.Run("IphoneSevenHeic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
@@ -51,7 +51,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Contains(t, location2.City(), "市")
 		assert.Equal(t, "兵庫県", location2.State())
 	})
-	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
 
 		if err != nil {
@@ -88,7 +88,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Berlin", location2.City())
 		assert.Equal(t, "Berlin", location2.State())
 	})
-	t.Run("iphone_xr.jpg", func(t *testing.T) {
+	t.Run("IphoneXrJpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_xr.jpg")
 
 		if err != nil {
@@ -124,7 +124,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "白川村", location2.City())
 		assert.Equal(t, "岐阜県", location2.State())
 	})
-	t.Run("cat_brown.jpg", func(t *testing.T) {
+	t.Run("CatBrownJpg", func(t *testing.T) {
 		f, err := NewMediaFile(c.ExamplesPath() + "/cat_brown.jpg")
 
 		if err != nil {
@@ -146,7 +146,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Germany", loc.CountryName())
 		assert.True(t, strings.HasPrefix(loc.ID, s2.TokenPrefix+"4799e4a5"))
 	})
-	t.Run("dog_orange.jpg", func(t *testing.T) {
+	t.Run("DogOrangeJpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/dog_orange.jpg")
 
 		if err != nil {
@@ -159,7 +159,7 @@ func TestMediaFile_Location(t *testing.T) {
 			assert.Equal(t, "media: found no latitude and longitude", err.Error())
 		}
 	})
-	t.Run("Random.docx", func(t *testing.T) {
+	t.Run("RandomDocx", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/Random.docx")
 
 		if err != nil {

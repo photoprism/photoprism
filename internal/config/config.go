@@ -66,7 +66,7 @@ import (
 
 var initThumbsMutex sync.Mutex
 
-// Config holds database, cache and all parameters of photoprism
+// Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
 	once      sync.Once
 	cliCtx    *cli.Context
@@ -140,7 +140,7 @@ func initLogger() {
 	})
 }
 
-// NewConfig initialises a new configuration file
+// NewConfig builds a Config from CLI context defaults and loads options.yml overrides if present.
 func NewConfig(ctx *cli.Context) *Config {
 	start := false
 
@@ -172,7 +172,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	return c
 }
 
-// Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
+// Init creates directories, parses additional config files, opens the database connection, and initializes dependent subsystems.
 func (c *Config) Init() error {
 	start := time.Now()
 
@@ -236,6 +236,10 @@ func (c *Config) Init() error {
 
 	// Load settings from the "settings.yml" config file.
 	c.initSettings()
+
+	// Initialize early extensions before connecting to the database so they can
+	// influence DB settings (e.g., cluster bootstrap providing MariaDB creds).
+	EarlyExt().InitEarly(c)
 
 	// Connect to database.
 	if err := c.connectDb(); err != nil {
@@ -306,6 +310,7 @@ func (c *Config) Propagate() {
 	vision.ServiceUri = c.VisionUri()
 	vision.ServiceKey = c.VisionKey()
 	vision.DownloadUrl = c.DownloadUrl()
+	vision.DetectNSFWLabels = c.DetectNSFW() && c.Experimental()
 
 	// Set allowed path in download package.
 	download.AllowedPaths = []string{
@@ -345,6 +350,16 @@ func (c *Config) Propagate() {
 	face.ClusterCore = c.FaceClusterCore()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+	face.DetectionAngles = c.FaceAngles()
+	if err := face.ConfigureEngine(face.EngineSettings{
+		Name: c.FaceEngine(),
+		ONNX: face.ONNXOptions{
+			ModelPath: c.FaceEngineModelPath(),
+			Threads:   c.FaceEngineThreads(),
+		},
+	}); err != nil {
+		log.Warnf("faces: %s (configure engine)", err)
+	}
 
 	// Set default theme and locale.
 	customize.DefaultTheme = c.DefaultTheme()
@@ -776,7 +791,7 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
 	} else if err = c.hub.Save(); err != nil {
-		log.Warnf("config: failed to save api keys for maps and places (%s)", err)
+		log.Warnf("config: failed to save API keys for maps and places (%s)", err)
 		return i18n.Error(i18n.ErrSaveFailed)
 	} else {
 		c.hub.Propagate()

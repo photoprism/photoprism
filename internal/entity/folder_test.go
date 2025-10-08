@@ -11,7 +11,7 @@ import (
 )
 
 func TestNewFolder(t *testing.T) {
-	t.Run("2020/05", func(t *testing.T) {
+	t.Run("Num2020Num05", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "2020/05", time.Now().UTC())
 		assert.Equal(t, RootOriginals, folder.Root)
 		assert.Equal(t, "2020/05", folder.Path)
@@ -27,8 +27,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
-	t.Run("/2020/05/01/", func(t *testing.T) {
+	t.Run("Num2020Num05Num01", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "/2020/05/01/", time.Now().UTC())
 		assert.Equal(t, "2020/05/01", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
@@ -36,8 +35,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
-	t.Run("/2020/05/23/", func(t *testing.T) {
+	t.Run("Num2020Num05Num23", func(t *testing.T) {
 		folder := NewFolder(RootImport, "/2020/05/23/", time.Now().UTC())
 		assert.Equal(t, "2020/05/23", folder.Path)
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
@@ -45,8 +43,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
-	t.Run("/2020/05/23/Iceland 2020", func(t *testing.T) {
+	t.Run("Num2020Num05Num23IcelandNum2020", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "/2020/05/23/Iceland 2020", time.Now().UTC())
 		assert.Equal(t, "2020/05/23/Iceland 2020", folder.Path)
 		assert.Equal(t, "Iceland 2020", folder.FolderTitle)
@@ -54,16 +51,14 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 5, folder.FolderMonth)
 		assert.Equal(t, "is", folder.FolderCountry)
 	})
-
-	t.Run("/London/2020/05/23", func(t *testing.T) {
+	t.Run("LondonNum2020Num05Num23", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "/London/2020/05/23", time.Now().UTC())
 		assert.Equal(t, "London/2020/05/23", folder.Path)
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
 		assert.Equal(t, 5, folder.FolderMonth)
-		assert.Equal(t, "gb", folder.FolderCountry)
+		assert.Equal(t, "zz", folder.FolderCountry)
 	})
-
 	t.Run("RootOriginalsNoDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "", time.Time{})
 		assert.Equal(t, "", folder.Path)
@@ -72,7 +67,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 0, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("RootOriginalsRootDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, RootPath, time.Time{})
 		assert.Equal(t, "", folder.Path)
@@ -81,7 +75,6 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, 0, folder.FolderMonth)
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
-
 	t.Run("NoRootWithRootDir", func(t *testing.T) {
 		folder := NewFolder("", RootPath, time.Now().UTC())
 		assert.Equal(t, "", folder.Path)
@@ -122,7 +115,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 }
 
 func TestFolder_SetValuesFromPath(t *testing.T) {
-	t.Run("/", func(t *testing.T) {
+	t.Run("Root", func(t *testing.T) {
 		folder := NewFolder("new", "", time.Now().UTC())
 		folder.SetValuesFromPath()
 		assert.Equal(t, "New", folder.FolderTitle)
@@ -130,14 +123,14 @@ func TestFolder_SetValuesFromPath(t *testing.T) {
 }
 
 func TestFolder_Slug(t *testing.T) {
-	t.Run("/", func(t *testing.T) {
+	t.Run("Root", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Beautiful beach", Root: "sidecar", Path: "ugly/beach"}
 		assert.Equal(t, "ugly-beach", folder.Slug())
 	})
 }
 
 func TestFolder_Title(t *testing.T) {
-	t.Run("/", func(t *testing.T) {
+	t.Run("Root", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Beautiful beach"}
 		assert.Equal(t, "Beautiful beach", folder.Title())
 	})

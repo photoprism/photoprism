@@ -25,7 +25,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(photos0), 6)
+	assert.Len(t, photos0, 6)
 
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -39,7 +39,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"%gold\""
@@ -55,7 +55,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -69,7 +69,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"I love % dog\""
@@ -85,7 +85,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -99,7 +99,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"sale%\""
@@ -115,7 +115,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -130,7 +130,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"&IlikeFood\""
@@ -146,7 +146,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -160,7 +160,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Pets & Dogs\""
@@ -176,7 +176,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -191,7 +191,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Light&\""
@@ -207,7 +207,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -221,7 +221,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"'Family\""
@@ -237,7 +237,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -253,7 +253,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Mother's Day\""
@@ -269,7 +269,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -284,7 +284,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Ice Cream'\""
@@ -300,7 +300,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -315,7 +315,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"*Forrest\""
@@ -331,7 +331,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -346,7 +346,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"My*Kids\""
@@ -362,7 +362,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -377,7 +377,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Yoga***\""
@@ -393,7 +393,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -408,7 +408,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"|Banana\""
@@ -424,7 +424,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -439,7 +439,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Red|Green\""
@@ -455,7 +455,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -470,7 +470,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Blue|\""
@@ -486,7 +486,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -501,7 +501,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"345 Shirt\""
@@ -517,7 +517,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -532,7 +532,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Color555 Blue\""
@@ -548,7 +548,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -563,7 +563,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Route 66\""
@@ -579,7 +579,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("AndSearch", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -594,7 +594,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Route 66 & Father's Day\""
@@ -610,7 +610,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -625,7 +625,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), len(photos0))
+		assert.Len(t, photos, len(photos0))
 		var geo form.SearchPhotosGeo
 
 		geo.Query = "favorite:\"Route %66 | *Father's Day\""
@@ -641,6 +641,6 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(geophotos))
+		assert.Len(t, photos, len(geophotos))
 	})
 }

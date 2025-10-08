@@ -11,7 +11,7 @@ import (
 func TestIndex_Start(t *testing.T) {
 	conf := config.TestConfig()
 
-	t.Logf("database-dsn: %s", conf.DatabaseDsn())
+	t.Logf("database-dsn: %s", conf.DatabaseDSN())
 
 	worker := NewIndex(conf)
 

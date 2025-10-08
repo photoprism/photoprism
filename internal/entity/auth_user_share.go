@@ -27,7 +27,7 @@ const (
 	SharePrefix = "share"
 )
 
-// UserShares represents shared content.
+// UserShares groups share relationships granted to a user.
 type UserShares []UserShare
 
 // UIDs returns shared UIDs.
@@ -61,7 +61,7 @@ func (m UserShares) Contains(uid string) bool {
 	return false
 }
 
-// UserShare represents content shared with a user.
+// UserShare represents a share relationship granting a user access to another entity.
 type UserShare struct {
 	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
 	ShareUID  string     `gorm:"type:VARBINARY(42);primary_key;index;" json:"ShareUID" yaml:"ShareUID"`
@@ -79,7 +79,7 @@ func (UserShare) TableName() string {
 	return "auth_users_shares"
 }
 
-// NewUserShare creates a new entity model.
+// NewUserShare constructs a share relationship with optional expiration.
 func NewUserShare(userUID, shareUid string, perm uint, expires *time.Time) *UserShare {
 	result := &UserShare{
 		UserUID:   userUID,
@@ -159,7 +159,7 @@ func (m *UserShare) UpdateLink(link Link) error {
 	m.UpdatedAt = Now()
 	m.ExpiresAt = link.ExpiresAt()
 
-	values := Map{
+	values := Values{
 		"link_uid":   m.LinkUID,
 		"expires_at": m.ExpiresAt,
 		"comment":    m.Comment,

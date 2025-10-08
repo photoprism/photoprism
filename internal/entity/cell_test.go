@@ -34,7 +34,7 @@ func TestNewCell(t *testing.T) {
 }
 
 func TestCell_Keywords(t *testing.T) {
-	t.Run("mexico", func(t *testing.T) {
+	t.Run("Mexico", func(t *testing.T) {
 		m := CellFixtures["mexico"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"adosada", "ancient", "botanical", "garden", "mexico", "platform", "pyramid", "state-of-mexico", "teotihuacán"}, r)

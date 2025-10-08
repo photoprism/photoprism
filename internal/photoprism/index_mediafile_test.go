@@ -14,15 +14,16 @@ func TestIndex_MediaFile(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	t.Run("flash.jpg", func(t *testing.T) {
+	t.Run("FlashJpg", func(t *testing.T) {
 		cfg := config.TestConfig()
 
-		cfg.InitializeTestData()
+		initErr := cfg.InitializeTestData()
+		assert.NoError(t, initErr)
 
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 		mediaFile, err := NewMediaFile("testdata/flash.jpg")
 
 		if err != nil {
@@ -47,16 +48,16 @@ func TestIndex_MediaFile(t *testing.T) {
 		assert.Equal(t, "Animal with green eyes on table burst", mediaFile.metaData.Caption)
 		assert.Equal(t, IndexStatus("added"), result.Status)
 	})
-
-	t.Run("blue-go-video.mp4", func(t *testing.T) {
+	t.Run("BlueGoVideoMp4", func(t *testing.T) {
 		cfg := config.TestConfig()
 
-		cfg.InitializeTestData()
+		initErr := cfg.InitializeTestData()
+		assert.NoError(t, initErr)
 
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
 			t.Fatal(err)
@@ -71,12 +72,13 @@ func TestIndex_MediaFile(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		cfg := config.TestConfig()
 
-		cfg.InitializeTestData()
+		initErr := cfg.InitializeTestData()
+		assert.NoError(t, initErr)
 
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4", "")
 		assert.Equal(t, IndexStatus("failed"), result.Status)
@@ -84,24 +86,22 @@ func TestIndex_MediaFile(t *testing.T) {
 }
 
 func TestIndexResult_Archived(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		r := &IndexResult{IndexArchived, nil, 5, "", 5, ""}
 		assert.True(t, r.Archived())
 	})
-
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		r := &IndexResult{IndexAdded, nil, 5, "", 5, ""}
 		assert.False(t, r.Archived())
 	})
 }
 
 func TestIndexResult_Skipped(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		r := &IndexResult{IndexSkipped, nil, 5, "", 5, ""}
 		assert.True(t, r.Skipped())
 	})
-
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		r := &IndexResult{IndexAdded, nil, 5, "", 5, ""}
 		assert.False(t, r.Skipped())
 	})

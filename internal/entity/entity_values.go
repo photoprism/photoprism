@@ -5,11 +5,15 @@ import (
 	"reflect"
 )
 
-// Map is an alias for map[string]interface{}.
-type Map = map[string]interface{}
+// Values is a shorthand alias for map[string]interface{}.
+type Values = map[string]interface{}
 
-// ModelValues extracts Values from an entity model.
-func ModelValues(m interface{}, omit ...string) (result Map, omitted []interface{}, err error) {
+// Map is retained for backward compatibility.
+// TODO: Remove when no longer needed.
+type Map = Values
+
+// ModelValues extracts exported struct fields into a Values map, optionally omitting selected names.
+func ModelValues(m interface{}, omit ...string) (result Values, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
 		for _, s := range omit {
 			if name == s {
@@ -36,7 +40,7 @@ func ModelValues(m interface{}, omit ...string) (result Map, omitted []interface
 	num := t.NumField()
 
 	omitted = make([]interface{}, 0, len(omit))
-	result = make(map[string]interface{}, num)
+	result = make(Values, num)
 
 	// Add exported fields to result.
 	for i := 0; i < num; i++ {

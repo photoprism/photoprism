@@ -7,7 +7,7 @@ import (
 	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +31,6 @@ func TestImage(t *testing.T) {
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("TypeUnknown", func(t *testing.T) {
 		img, err := imaging.Open("testdata/500x500.jpg")
 		assert.NoError(t, err)

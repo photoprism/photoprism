@@ -19,7 +19,6 @@ func TestLabelBySlug(t *testing.T) {
 		assert.IsType(t, &entity.Label{}, result)
 		assert.Equal(t, "Flower", result.LabelName)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		label, err := LabelBySlug("111")
 
@@ -40,7 +39,6 @@ func TestLabelByUID(t *testing.T) {
 		assert.IsType(t, &entity.Label{}, result)
 		assert.Equal(t, "COW", result.LabelName)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		result, err := LabelByUID("111")
 

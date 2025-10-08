@@ -206,7 +206,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		}
 
 		if c.Query("download") != "" {
-			AddDownloadHeader(c, clean.UID(c.Param("uid"))+fs.ExtYaml)
+			AddDownloadHeader(c, clean.UID(c.Param("uid"))+fs.ExtYml)
 		}
 
 		c.Data(http.StatusOK, "text/x-yaml; charset=utf-8", data)

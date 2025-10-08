@@ -28,12 +28,12 @@ func TestActivity_Running(t *testing.T) {
 }
 
 func TestActivity_Start(t *testing.T) {
-	t.Run("cancelled true", func(t *testing.T) {
+	t.Run("CancelledTrue", func(t *testing.T) {
 		b := Activity{canceled: true}
 
 		assert.Error(t, b.Start(), "still running")
 	})
-	t.Run("busy true", func(t *testing.T) {
+	t.Run("BusyTrue", func(t *testing.T) {
 		b := Activity{busy: true}
 
 		assert.Error(t, b.Start(), "already running")

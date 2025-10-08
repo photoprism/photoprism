@@ -20,14 +20,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // Use auth cache to improve WebDAV performance. It has a standard expiration time of about 5 minutes.
 var webdavAuthExpiration = 5 * time.Minute
 var webdavAuthCache = gc.New(webdavAuthExpiration, webdavAuthExpiration)
 var webdavAuthMutex = sync.Mutex{}
+
+// BasicAuthRealm is the challenge string returned for WebDAV Basic auth prompts.
 var BasicAuthRealm = "Basic realm=\"WebDAV Authorization Required\""
 
 // WebDAVAuth checks authentication and authentication
@@ -108,32 +110,32 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			// Ignore and try basic auth next.
 		} else if !sess.HasUser() || user == nil {
 			// Log error if session does not belong to an authorized user account.
-			event.AuditErr([]string{clientIp, "webdav", "client %s", "session %s", "access without user account", authn.Denied}, clean.Log(sess.ClientInfo()), sess.RefID)
+			event.AuditErr([]string{clientIp, "webdav", "client %s", "session %s", "access without user account", authn.Denied}, clean.Log(sess.GetClientInfo()), sess.RefID)
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess.IsClient() && sess.InsufficientScope(acl.ResourceWebDAV, nil) {
 			// Log error if the client is allowed to access webdav based on its scope.
 			message := authn.ErrInsufficientScope.Error()
-			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if !user.CanUseWebDAV() {
 			// Log warning if WebDAV is disabled for this account.
 			message := authn.ErrWebDAVAccessDisabled.Error()
-			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if username != "" && !strings.EqualFold(clean.Username(username), user.Username()) {
 			limiter.Auth.Reserve(clientIp)
 			// Log warning if auth token username and specified username do not match.
 			message := authn.ErrUsernameDoesNotMatch.Error()
-			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if err := fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
 			// Log warning if upload path could not be created.
 			message := authn.ErrFailedToCreateUploadPath.Error()
-			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortServerError(c)
 			return
 		} else {
@@ -141,7 +143,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			sess.UpdateLastActive(true)
 
 			// Log successful authentication.
-			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", authn.Succeeded}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", authn.Succeeded}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			event.LoginInfo(clientIp, "webdav", user.Username(), api.UserAgent(c))
 
 			// Cache authentication to improve performance.

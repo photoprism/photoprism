@@ -5,16 +5,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestImportWorker_OriginalFileNames(t *testing.T) {
-	cfg := config.TestConfig()
+	// Use the package-level config set in TestMain to avoid diverging
+	// settings/paths from the code under test.
+	cfg := Config()
 
-	if err := cfg.InitializeTestData(); err != nil {
-		t.Fatal(err)
-	}
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
@@ -51,7 +51,7 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 	jobs <- ImportJob{
 		FileName:  mediaFile.FileName(),
 		Related:   relatedFiles,
-		IndexOpt:  IndexOptionsAll(),
+		IndexOpt:  IndexOptionsAll(cfg),
 		ImportOpt: ImportOptionsCopy(cfg.ImportPath(), cfg.ImportDest()),
 		Imp:       imp,
 	}
@@ -63,15 +63,15 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 	var file entity.File
 	res := entity.UnscopedDb().First(&file, "original_name = ?", mediaFileName)
 	assert.Nil(t, res.Error)
-	assert.Equal(t, file.OriginalName, mediaFileName)
+	assert.Equal(t, mediaFileName, file.OriginalName)
 
 	var file2 entity.File
 	res = entity.UnscopedDb().First(&file2, "original_name = ?", mediaFileName2)
 	assert.Nil(t, res.Error)
-	assert.Equal(t, file2.OriginalName, mediaFileName2)
+	assert.Equal(t, mediaFileName2, file2.OriginalName)
 
 	var file3 entity.File
 	res = entity.UnscopedDb().First(&file3, "original_name = ?", mediaFileName3)
 	assert.Nil(t, res.Error)
-	assert.Equal(t, file3.OriginalName, mediaFileName3)
+	assert.Equal(t, mediaFileName3, file3.OriginalName)
 }

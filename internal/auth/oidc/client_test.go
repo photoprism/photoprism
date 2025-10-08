@@ -74,7 +74,7 @@ func TestNewClient(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, client)
 	})
-	t.Run("EmptyRedirectUrl", func(t *testing.T) {
+	t.Run("EmptyRedirectURL", func(t *testing.T) {
 		uri, parseErr := url.Parse("http://dummy-oidc:9998")
 
 		assert.NoError(t, parseErr)

@@ -89,7 +89,8 @@ func (m Markers) SubjectNames() (names []string) {
 	return txt.UniqueNames(names)
 }
 
-// Labels returns matching labels.
+// Labels returns a list of matching labels.
+// TODO: Function is currently unused, decide how to proceed with it.
 func (m Markers) Labels() (result classify.Labels) {
 	faceCount := 0
 

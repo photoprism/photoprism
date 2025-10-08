@@ -7,19 +7,19 @@ import (
 )
 
 func TestFaces_Uncertainty(t *testing.T) {
-	t.Run("maxScore = 310", func(t *testing.T) {
+	t.Run("MaxScoreEqualNum310", func(t *testing.T) {
 		f := Faces{Face{Score: 310}, Face{Score: 210}}
 		assert.Equal(t, 1, f.Uncertainty())
 	})
-	t.Run("maxScore = 210", func(t *testing.T) {
+	t.Run("MaxScoreEqualNum210", func(t *testing.T) {
 		f := Faces{Face{Score: 210}, Face{Score: 210}}
 		assert.Equal(t, 5, f.Uncertainty())
 	})
-	t.Run("maxScore = 66", func(t *testing.T) {
+	t.Run("MaxScoreEqualNum66", func(t *testing.T) {
 		f := Faces{Face{Score: 66}, Face{Score: 66}}
 		assert.Equal(t, 20, f.Uncertainty())
 	})
-	t.Run("maxScore = 10", func(t *testing.T) {
+	t.Run("MaxScoreEqualTen", func(t *testing.T) {
 		f := Faces{Face{Score: 10}, Face{Score: 10}}
 		assert.Equal(t, 50, f.Uncertainty())
 	})

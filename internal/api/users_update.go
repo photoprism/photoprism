@@ -16,10 +16,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// UpdateUser updates the profile information of the currently authenticated user.
+// UpdateUser updates profile information for the specified user.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid} [put]
+//	@Summary	update user profile information
+//	@Id			UpdateUser
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid						path		string		true	"user uid"
+//	@Param		user					body		form.User	true	"properties to be updated"
+//	@Success	200						{object}	entity.User
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid} [put]
 func UpdateUser(router *gin.RouterGroup) {
 	router.PUT("/users/:uid", func(c *gin.Context) {
 		conf := get.Config()
@@ -63,7 +71,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user has user management privileges.
-		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
 
 		// Check if the user account quota has been exceeded.
@@ -74,7 +82,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Get user from session.
-		u := s.User()
+		u := s.GetUser()
 
 		// Save model with values from form.
 		if err = m.SaveForm(f, u); err != nil {

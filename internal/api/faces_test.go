@@ -23,7 +23,6 @@ func TestGetFace(t *testing.T) {
 		assert.LessOrEqual(t, int64(4), val2.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("Lowercase", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetFace(router)
@@ -34,7 +33,6 @@ func TestGetFace(t *testing.T) {
 		assert.Equal(t, "js6sg6b1qekk9jx8", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetFace(router)
@@ -57,7 +55,6 @@ func TestUpdateFace(t *testing.T) {
 		assert.Equal(t, "js6sg6b1qekk9jx8", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateFace(router)

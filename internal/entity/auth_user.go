@@ -40,10 +40,10 @@ var PasswordLength = PasswordLengthDefault
 // UsersPath is the relative path for user assets.
 var UsersPath = "users"
 
-// Users represents a list of users.
+// Users is a convenience alias for slices of User.
 type Users []User
 
-// User represents a person that may optionally log in as user.
+// User represents an account that can authenticate with PhotoPrism.
 type User struct {
 	ID            int           `gorm:"primary_key" json:"ID" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
@@ -629,7 +629,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 	if m.HasUID() && m.AuthProvider != "" {
 		if err := UnscopedDb().Model(&User{}).
 			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, m.AuthID).
-			Updates(map[string]interface{}{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
+			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
 			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", "%s"}, m.RefID, err)
 		}
 	}
@@ -644,7 +644,7 @@ func (m *User) UpdateAuthID(id, issuer string) error {
 	}
 
 	// Update auth id and issuer record.
-	return m.SetAuthID(id, issuer).Updates(Map{
+	return m.SetAuthID(id, issuer).Updates(Values{
 		"AuthID":     m.AuthID,
 		"AuthIssuer": m.AuthIssuer,
 	})
@@ -721,7 +721,7 @@ func (m *User) UpdateUsername(login string) (err error) {
 	}
 
 	// Save to database.
-	return m.Updates(Map{
+	return m.Updates(Values{
 		"UserName":    m.UserName,
 		"DisplayName": m.DisplayName,
 	})
@@ -1175,7 +1175,7 @@ func (m *User) RegenerateTokens() error {
 
 	m.GenerateTokens(true)
 
-	return m.Updates(Map{"PreviewToken": m.PreviewToken, "DownloadToken": m.DownloadToken})
+	return m.Updates(Values{"PreviewToken": m.PreviewToken, "DownloadToken": m.DownloadToken})
 }
 
 // RefreshShares updates the list of shares.
@@ -1440,5 +1440,5 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	m.Thumb = thumb
 	m.ThumbSrc = thumbSrc
 
-	return m.Updates(Map{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
+	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
 }

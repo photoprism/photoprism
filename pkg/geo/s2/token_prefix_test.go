@@ -16,8 +16,7 @@ func TestNormalizeToken(t *testing.T) {
 		assert.Equal(t, "1242342bac", output)
 
 	})
-
-	t.Run("abc", func(t *testing.T) {
+	t.Run("Abc", func(t *testing.T) {
 		input := "abc"
 
 		output := NormalizeToken(input)
@@ -36,8 +35,7 @@ func TestPrefix(t *testing.T) {
 		assert.Equal(t, input, output)
 
 	})
-
-	t.Run("abc", func(t *testing.T) {
+	t.Run("Abc", func(t *testing.T) {
 		input := "1242342bac"
 
 		output := Prefix(input)
@@ -45,8 +43,7 @@ func TestPrefix(t *testing.T) {
 		assert.Equal(t, TokenPrefix+input, output)
 
 	})
-
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		output := Prefix("")
 
 		assert.Equal(t, "", output)
@@ -55,21 +52,19 @@ func TestPrefix(t *testing.T) {
 }
 
 func TestPrefixedToken(t *testing.T) {
-	t.Run("germany", func(t *testing.T) {
+	t.Run("Germany", func(t *testing.T) {
 		token := PrefixedToken(48.56344833333333, 8.996878333333333)
 		expected := TokenPrefix + "4799e370"
 
 		assert.True(t, strings.HasPrefix(token, expected))
 	})
-
-	t.Run("lat_overflow", func(t *testing.T) {
+	t.Run("LatOverflow", func(t *testing.T) {
 		token := PrefixedToken(548.56344833333333, 8.996878333333333)
 		expected := ""
 
 		assert.Equal(t, expected, token)
 	})
-
-	t.Run("lng_overflow", func(t *testing.T) {
+	t.Run("LngOverflow", func(t *testing.T) {
 		token := PrefixedToken(48.56344833333333, 258.996878333333333)
 		expected := ""
 
