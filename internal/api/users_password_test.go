@@ -19,7 +19,6 @@ func TestChangePassword(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/users/xxx/password", `{}`)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
-
 	t.Run("Unauthorized", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -39,7 +38,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusUnauthorized, r.Code)
 		}
 	})
-
 	t.Run("InvalidRequestBody", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -51,7 +49,6 @@ func TestChangePassword(t *testing.T) {
 			"{OldPassword: old}", sessId)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
 	t.Run("AliceProvidesWrongPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -71,7 +68,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		}
 	})
-
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -109,7 +105,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
 	})
-
 	t.Run("AliceChangesOtherUsersPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -129,7 +124,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusForbidden, r.Code)
 		}
 	})
-
 	t.Run("BobProvidesWrongPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -149,7 +143,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		}
 	})
-
 	t.Run("SameNewPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -169,7 +162,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
 	})
-
 	t.Run("BobChangesOtherUsersPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -189,7 +181,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, http.StatusForbidden, r.Code)
 		}
 	})
-
 	t.Run("AliceAppPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -214,7 +205,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, "Permission denied", val.String())
 		}
 	})
-
 	t.Run("AliceAppPasswordWebdav", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -239,7 +229,6 @@ func TestChangePassword(t *testing.T) {
 			assert.Equal(t, "Permission denied", val.String())
 		}
 	})
-
 	t.Run("AccessToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)

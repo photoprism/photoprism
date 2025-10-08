@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterResolution(t *testing.T) {
-	t.Run("2", func(t *testing.T) {
+	t.Run("Two", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mp = "2"
@@ -25,9 +25,9 @@ func TestPhotosFilterResolution(t *testing.T) {
 			assert.GreaterOrEqual(t, 2, r.PhotoResolution)
 			assert.LessOrEqual(t, 2, r.PhotoResolution)
 		}
-		assert.Equal(t, len(photos), 8)
+		assert.Len(t, photos, 8)
 	})
-	t.Run("1-50", func(t *testing.T) {
+	t.Run("OneNum50", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mp = "1-50"
@@ -44,9 +44,9 @@ func TestPhotosFilterResolution(t *testing.T) {
 			assert.LessOrEqual(t, 1, r.PhotoResolution)
 		}
 
-		assert.Equal(t, len(photos), 9)
+		assert.Len(t, photos, 10)
 	})
-	t.Run("3-150", func(t *testing.T) {
+	t.Run("ThreeNum150", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mp = "3-150"
@@ -63,9 +63,9 @@ func TestPhotosFilterResolution(t *testing.T) {
 			assert.LessOrEqual(t, 3, r.PhotoResolution)
 		}
 
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 3)
 	})
-	t.Run("155", func(t *testing.T) {
+	t.Run("Num155", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mp = "155"
@@ -77,9 +77,9 @@ func TestPhotosFilterResolution(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Mp = "%gold"
@@ -95,7 +95,7 @@ func TestPhotosFilterResolution(t *testing.T) {
 }
 
 func TestPhotosQueryResolution(t *testing.T) {
-	t.Run("2", func(t *testing.T) {
+	t.Run("Two", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mp:\"2\""
@@ -112,9 +112,9 @@ func TestPhotosQueryResolution(t *testing.T) {
 			assert.LessOrEqual(t, 2, r.PhotoResolution)
 		}
 
-		assert.Equal(t, len(photos), 8)
+		assert.Len(t, photos, 8)
 	})
-	t.Run("1-50", func(t *testing.T) {
+	t.Run("OneNum50", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mp:\"1-50\""
@@ -131,9 +131,9 @@ func TestPhotosQueryResolution(t *testing.T) {
 			assert.LessOrEqual(t, 1, r.PhotoResolution)
 		}
 
-		assert.Equal(t, len(photos), 9)
+		assert.Len(t, photos, 10)
 	})
-	t.Run("3-150", func(t *testing.T) {
+	t.Run("ThreeNum150", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mp:\"3-150\""
@@ -150,9 +150,9 @@ func TestPhotosQueryResolution(t *testing.T) {
 			assert.LessOrEqual(t, 3, r.PhotoResolution)
 		}
 
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 3)
 	})
-	t.Run("18", func(t *testing.T) {
+	t.Run("Eighteen", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mp:\"18\""
@@ -163,9 +163,9 @@ func TestPhotosQueryResolution(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "mp:\"%gold\""

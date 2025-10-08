@@ -9,7 +9,7 @@ import (
 )
 
 func TestMediaFile_TimeZone(t *testing.T) {
-	t.Run("/elephants.jpg", func(t *testing.T) {
+	t.Run("ElephantsJpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		img, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")

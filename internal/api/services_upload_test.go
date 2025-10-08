@@ -19,7 +19,7 @@ func TestUploadToService(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrBadRequest), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("account not found", func(t *testing.T) {
+	t.Run("AccountNotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UploadToService(router)
 		r := PerformRequest(app, "POST", "/api/v1/services/999000/upload")

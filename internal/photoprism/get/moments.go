@@ -12,6 +12,7 @@ func initMoments() {
 	services.Moments = photoprism.NewMoments(Config())
 }
 
+// Moments returns the singleton moments service instance.
 func Moments() *photoprism.Moments {
 	onceMoments.Do(initMoments)
 

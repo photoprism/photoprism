@@ -87,10 +87,10 @@ func DeleteLink(c *gin.Context) {
 	c.JSON(http.StatusOK, link)
 }
 
-// CreateLink adds a new share link and return it as JSON.
-//
-//	@Tags	Links
-//	@Router	/api/v1/{entity}/{uid}/links [post]
+// CreateLink adds a new share link and returns it as JSON.
+// Note: Internal helper used by resource-specific endpoints (e.g., albums, photos).
+// Swagger annotations are defined on those public handlers to avoid generating
+// undocumented generic paths like "/api/v1/{entity}/{uid}/links".
 func CreateLink(c *gin.Context) {
 	s := Auth(c, acl.ResourceShares, acl.ActionCreate)
 

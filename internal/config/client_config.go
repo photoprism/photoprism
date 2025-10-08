@@ -13,8 +13,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// ClientType identifies which flavor of client (public/share/user) a configuration describes.
 type ClientType string
 
+// Available client configuration types.
 const (
 	ClientPublic ClientType = "public"
 	ClientShare  ClientType = "share"
@@ -179,14 +181,17 @@ type ClientCounts struct {
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
 
+// CategoryLabels enumerates label metadata exposed to the client for navigation buckets.
 type CategoryLabels []CategoryLabel
 
+// CategoryLabel contains the slug and name for a single label entry surfaced to the client.
 type CategoryLabel struct {
 	LabelUID   string `json:"UID"`
 	CustomSlug string `json:"Slug"`
 	LabelName  string `json:"Name"`
 }
 
+// ClientPosition reports the map position of the currently focused photo in the UI.
 type ClientPosition struct {
 	PhotoUID string    `json:"uid"`
 	CellID   string    `json:"cid"`
@@ -734,12 +739,12 @@ func (c *Config) ClientRole(role acl.Role) *ClientConfig {
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 	if sess.NoUser() && sess.IsClient() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.ClientRole())
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetClientRole())
 		cfg.Settings = c.SessionSettings(sess)
-	} else if sess.User().IsVisitor() {
+	} else if sess.GetUser().IsVisitor() {
 		cfg = c.ClientShare()
-	} else if sess.User().IsRegistered() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.UserRole())
+	} else if sess.GetUser().IsRegistered() {
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetUserRole())
 		cfg.Settings = c.SessionSettings(sess)
 	} else {
 		cfg = c.ClientPublic()

@@ -82,7 +82,7 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 }
 
 func TestConfig_ClientUser(t *testing.T) {
-	c := NewTestConfig("config")
+	c := NewMinimalTestConfigWithDb("client-user", t.TempDir())
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
@@ -112,7 +112,7 @@ func TestConfig_ClientUser(t *testing.T) {
 }
 
 func TestConfig_ClientRoleConfig(t *testing.T) {
-	c := NewTestConfig("config")
+	c := NewMinimalTestConfigWithDb("client-role", t.TempDir())
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())

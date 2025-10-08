@@ -76,7 +76,7 @@ func (f *KeyValue) Parse(s string) *KeyValue {
 	}
 
 	// Default?
-	if f.Key == All {
+	if f.Key == Any {
 		return f
 	} else if v = Value(v); v == "" {
 		f.Value = enum.True
@@ -99,8 +99,8 @@ func (f *KeyValue) String() string {
 		return ""
 	}
 
-	if f.Key == All {
-		return All
+	if f.Key == Any {
+		return Any
 	}
 
 	if Bool[strings.ToLower(f.Value)] == enum.True {
@@ -112,4 +112,9 @@ func (f *KeyValue) String() string {
 	}
 
 	return ""
+}
+
+// Any checks if this represents any value (asterisk).
+func (f *KeyValue) Any() bool {
+	return f.Key == Any
 }

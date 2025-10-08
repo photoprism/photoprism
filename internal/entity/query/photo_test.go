@@ -11,15 +11,14 @@ import (
 )
 
 func TestPhotoByID(t *testing.T) {
-	t.Run("photo found", func(t *testing.T) {
+	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoByID(1000000)
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 2790, result.PhotoYear)
 	})
-
-	t.Run("no photo found", func(t *testing.T) {
+	t.Run("NoPhotoFound", func(t *testing.T) {
 		result, err := PhotoByID(99999)
 		assert.Error(t, err, "record not found")
 		t.Log(result)
@@ -27,15 +26,14 @@ func TestPhotoByID(t *testing.T) {
 }
 
 func TestPhotoByUID(t *testing.T) {
-	t.Run("photo found", func(t *testing.T) {
+	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoByUID("ps6sg6be2lvl0y12")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})
-
-	t.Run("no photo found", func(t *testing.T) {
+	t.Run("NoPhotoFound", func(t *testing.T) {
 		result, err := PhotoByUID("99999")
 		assert.Error(t, err, "record not found")
 		t.Log(result)
@@ -43,15 +41,14 @@ func TestPhotoByUID(t *testing.T) {
 }
 
 func TestPreloadPhotoByUID(t *testing.T) {
-	t.Run("photo found", func(t *testing.T) {
+	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoPreloadByUID("ps6sg6be2lvl0y12")
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, "Reunion", result.PhotoTitle)
 	})
-
-	t.Run("no photo found", func(t *testing.T) {
+	t.Run("NoPhotoFound", func(t *testing.T) {
 		result, err := PhotoPreloadByUID("99999")
 		assert.Error(t, err, "record not found")
 		t.Log(result)
@@ -122,7 +119,6 @@ func TestFlagHiddenPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("SuccessWith1000", func(t *testing.T) {
 		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 		// Load 1000 photos that need to be hidden

@@ -13,8 +13,8 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // DataUrl generates a data URL of the binary data from the specified io.Reader.

@@ -19,6 +19,7 @@ func initOidc() {
 	)
 }
 
+// OIDC returns the singleton OIDC client instance.
 func OIDC() *oidc.Client {
 	onceOidc.Do(initOidc)
 

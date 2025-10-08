@@ -18,7 +18,7 @@ var (
 	year2012 = time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC)
 )
 
-// QualityScore returns a score based on photo properties like size and metadata.
+// QualityScore returns the heuristic review score derived from favorites, trusted metadata, age, and resolution.
 func (m *Photo) QualityScore() (score int) {
 	if m.PhotoFavorite {
 		score += 3
@@ -51,7 +51,7 @@ func (m *Photo) QualityScore() (score int) {
 	return score
 }
 
-// UpdateQuality updates the photo quality attribute.
+// UpdateQuality recomputes the quality score and persists it unless the photo is already deleted/invalid.
 func (m *Photo) UpdateQuality() error {
 	if m.DeletedAt != nil || m.PhotoQuality < 0 {
 		return nil
@@ -62,7 +62,7 @@ func (m *Photo) UpdateQuality() error {
 	return m.Update("PhotoQuality", m.PhotoQuality)
 }
 
-// IsNonPhotographic checks whether the image appears to be non-photographic.
+// IsNonPhotographic checks whether the image looks like a non-photographic asset based on type and keywords.
 func (m *Photo) IsNonPhotographic() (result bool) {
 	if m.PhotoType == MediaUnknown || m.PhotoType == MediaVector || m.PhotoType == MediaAnimated || m.PhotoType == MediaDocument {
 		return true

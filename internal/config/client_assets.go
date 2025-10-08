@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 )
 
+// ClientAssets holds hashed frontend asset filenames emitted by the build pipeline.
 type ClientAssets struct {
 	BuildPath                 string `json:"-"`
 	BaseUri                   string `json:"-"`

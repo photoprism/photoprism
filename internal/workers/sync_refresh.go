@@ -80,7 +80,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			}
 
 			if f.Status == entity.FileSyncDownloaded && !f.RemoteDate.Equal(file.Date) {
-				w.logErr(f.Updates(map[string]interface{}{
+				w.logErr(f.Updates(entity.Values{
 					"Status":     entity.FileSyncNew,
 					"RemoteDate": file.Date,
 					"RemoteSize": file.Size,

@@ -1,9 +1,13 @@
 package report
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/urfave/cli/v2"
+)
 
 func CliFormat(ctx *cli.Context) Format {
 	switch {
+	case ctx.Bool("json"):
+		return JSON
 	case ctx.Bool("md"), ctx.Bool("markdown"):
 		return Markdown
 	case ctx.Bool("tsv"):
@@ -15,20 +19,47 @@ func CliFormat(ctx *cli.Context) Format {
 	}
 }
 
+// CliFormatStrict selects a single output format from flags and returns
+// a usage error (exit code 2) if multiple format flags are provided.
+func CliFormatStrict(ctx *cli.Context) (Format, error) {
+	count := 0
+	if ctx.Bool("json") {
+		count++
+	}
+	if ctx.Bool("md") || ctx.Bool("markdown") {
+		count++
+	}
+	if ctx.Bool("tsv") {
+		count++
+	}
+	if ctx.Bool("csv") {
+		count++
+	}
+	if count > 1 {
+		return Default, cli.Exit("choose exactly one output format: --json | --md | --csv | --tsv", 2)
+	}
+	return CliFormat(ctx), nil
+}
+
 var CliFlags = []cli.Flag{
+	&cli.BoolFlag{
+		Name:    "json",
+		Aliases: []string{"j"},
+		Usage:   "print machine-readable JSON",
+	},
 	&cli.BoolFlag{
 		Name:    "md",
 		Aliases: []string{"m"},
-		Usage:   "format as machine-readable Markdown",
+		Usage:   "print machine-readable Markdown",
 	},
 	&cli.BoolFlag{
 		Name:    "csv",
 		Aliases: []string{"c"},
-		Usage:   "export as semicolon separated values",
+		Usage:   "print semicolon separated values",
 	},
 	&cli.BoolFlag{
 		Name:    "tsv",
 		Aliases: []string{"t"},
-		Usage:   "export as tab separated values",
+		Usage:   "print tab separated values",
 	},
 }

@@ -9,13 +9,13 @@ import (
 )
 
 func TestLog(t *testing.T) {
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "'The quick brown fox.'", Log("The quick brown fox."))
 	})
-	t.Run("filename.txt", func(t *testing.T) {
+	t.Run("FilenameTxt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", Log("filename.txt"))
 	})
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		assert.Equal(t, "''", Log(""))
 	})
 	t.Run("Replace", func(t *testing.T) {
@@ -38,7 +38,7 @@ func TestLog(t *testing.T) {
 }
 
 func TestLogQuote(t *testing.T) {
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "'The quick brown fox.'", LogQuote("The quick brown fox."))
 	})
 	t.Run("SpecialChars", func(t *testing.T) {
@@ -47,13 +47,13 @@ func TestLogQuote(t *testing.T) {
 }
 
 func TestLogLower(t *testing.T) {
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "'the quick brown fox.'", LogLower("The quick brown fox."))
 	})
-	t.Run("filename.txt", func(t *testing.T) {
+	t.Run("FilenameTxt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", LogLower("filename.TXT"))
 	})
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		assert.Equal(t, "''", LogLower(""))
 	})
 	t.Run("Replace", func(t *testing.T) {

@@ -10,14 +10,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// Latitude/Longitude bounds used when clamping map coordinates.
 const (
 	LatMax = 90
 	LngMax = 180
 )
 
-var GpsCoordsRegexp = regexp.MustCompile("[0-9\\.]+")
-var GpsRefRegexp = regexp.MustCompile("[NSEW]+")
-var GpsFloatRegexp = regexp.MustCompile("[+\\-]?(?:(?:0|[1-9]\\d*)(?:\\.\\d*)?|\\.\\d+)")
+// Regular expressions used to extract GPS coordinate components from EXIF strings.
+var (
+	GpsCoordsRegexp = regexp.MustCompile("[0-9\\.]+")
+	GpsRefRegexp    = regexp.MustCompile("[NSEW]+")
+	GpsFloatRegexp  = regexp.MustCompile("[+\\-]?(?:(?:0|[1-9]\\d*)(?:\\.\\d*)?|\\.\\d+)")
+)
 
 // GpsToLatLng returns the GPS latitude and longitude as float point number.
 func GpsToLatLng(s string) (lat, lng float64) {

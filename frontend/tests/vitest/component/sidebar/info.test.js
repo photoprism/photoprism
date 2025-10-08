@@ -80,7 +80,7 @@ describe("PSidebarInfo component", () => {
     expect(mockModel.getLatLng).toHaveBeenCalled();
   });
 
-  it.skip("should emit close event when close button is clicked", async () => {
+  it("should emit close event when close button is clicked", async () => {
     // Try finding close button by various selectors
     const closeButtonSelectors = [".close-button", "button[aria-label='Close']", "button[title='Close']"];
 

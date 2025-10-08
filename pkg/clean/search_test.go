@@ -1,6 +1,7 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,4 +43,29 @@ func TestSearchQuery(t *testing.T) {
 		q := SearchQuery("")
 		assert.Equal(t, "", q)
 	})
+}
+
+func BenchmarkSearchQuery_Complex(b *testing.B) {
+	s := "Jens AND Mander and me Or Kitty WITH flowers IN the park AT noon | img% json OR BILL!\n"
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = SearchQuery(s)
+	}
+}
+
+func BenchmarkSearchQuery_Short(b *testing.B) {
+	s := "cat and dog"
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = SearchQuery(s)
+	}
+}
+
+func BenchmarkSearchQuery_LongNoOps(b *testing.B) {
+	// No tokens to replace, primarily tests normalization + trim.
+	s := strings.Repeat("alpha beta gamma ", 50)
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = SearchQuery(s)
+	}
 }

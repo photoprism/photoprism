@@ -13,16 +13,19 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-const MimeVideoMp4 = "video/mp4"
-const MimeQuicktime = "video/quicktime"
+// Common MIME types used to detect video contexts in ExifTool sidecars.
+const (
+	MimeVideoMp4  = "video/mp4"
+	MimeQuicktime = "video/quicktime"
+)
 
 // Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {

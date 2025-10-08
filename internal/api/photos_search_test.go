@@ -18,7 +18,6 @@ func TestSearchPhotos(t *testing.T) {
 		assert.LessOrEqual(t, int64(2), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("ViewerJSON", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchPhotos(router)
@@ -31,7 +30,6 @@ func TestSearchPhotos(t *testing.T) {
 		assert.LessOrEqual(t, int64(2), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchPhotos(router)

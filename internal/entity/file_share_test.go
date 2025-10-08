@@ -21,7 +21,7 @@ func TestNewFileShare(t *testing.T) {
 }
 
 func TestFirstOrCreateFileShare(t *testing.T) {
-	t.Run("not yet existing", func(t *testing.T) {
+	t.Run("NotYetExisting", func(t *testing.T) {
 		fileShare := &FileShare{FileID: 123, ServiceID: 888, RemoteName: "test888"}
 		result := FirstOrCreateFileShare(fileShare)
 
@@ -37,8 +37,7 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 			t.Errorf("ServiceID should be the same: %d %d", result.ServiceID, fileShare.ServiceID)
 		}
 	})
-
-	t.Run("existing", func(t *testing.T) {
+	t.Run("Existing", func(t *testing.T) {
 		fileShare := NewFileShare(778, 999, "NameForRemote")
 		result := FirstOrCreateFileShare(fileShare)
 

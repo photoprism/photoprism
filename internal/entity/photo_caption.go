@@ -19,6 +19,11 @@ func (m *Photo) NoCaption() bool {
 	return strings.TrimSpace(m.GetCaption()) == ""
 }
 
+// ShouldGenerateCaption checks if a caption should be generated for this model.
+func (m *Photo) ShouldGenerateCaption(src Src, force bool) bool {
+	return SrcPriority[src] >= SrcPriority[m.CaptionSrc] && (m.NoCaption() || force)
+}
+
 // GetCaption returns the photo caption, if any.
 func (m *Photo) GetCaption() string {
 	return m.PhotoCaption
@@ -29,7 +34,7 @@ func (m *Photo) GetCaptionSrc() string {
 	return m.CaptionSrc
 }
 
-// SetCaption sets the specified caption if is not empty and from the same source.
+// SetCaption stores the supplied caption when it is non-empty and the source priority is sufficient.
 func (m *Photo) SetCaption(caption, source string) {
 	newCaption := txt.Clip(caption, txt.ClipLongText)
 
@@ -45,7 +50,7 @@ func (m *Photo) SetCaption(caption, source string) {
 	m.CaptionSrc = source
 }
 
-// GenerateCaption generates the caption from the specified list of at least 3 names if CaptionSrc is auto.
+// GenerateCaption builds an automatic caption from the supplied names when CaptionSrc is auto and enough names are known.
 func (m *Photo) GenerateCaption(names []string) {
 	if m.CaptionSrc != SrcAuto {
 		return

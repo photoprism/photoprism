@@ -200,7 +200,23 @@ func UniqueKeywords(s string) (results []string) {
 
 // SortCaseInsensitive performs a case-insensitive slice sort.
 func SortCaseInsensitive(words []string) {
-	sort.Slice(words, func(i, j int) bool { return strings.ToLower(words[i]) < strings.ToLower(words[j]) })
+	if len(words) < 2 {
+		return
+	}
+	type kv struct {
+		lower string
+		idx   int
+	}
+	ks := make([]kv, len(words))
+	for i, w := range words {
+		ks[i] = kv{lower: strings.ToLower(w), idx: i}
+	}
+	sort.SliceStable(ks, func(i, j int) bool { return ks[i].lower < ks[j].lower })
+	tmp := make([]string, len(words))
+	for i, k := range ks {
+		tmp[i] = words[k.idx]
+	}
+	copy(words, tmp)
 }
 
 // StopwordsOnly tests if the string contains stopwords only.

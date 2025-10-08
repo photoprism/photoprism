@@ -34,13 +34,17 @@ func TestSendFeedback(t *testing.T) {
 			ClientCPU:     2,
 		}
 
-		feedbackForm, err := form.NewFeedback(feedback)
+		feedbackForm, formErr := form.NewFeedback(feedback)
 
-		if err != nil {
-			t.Fatal(err)
+		if formErr != nil {
+			t.Fatal(formErr)
 		}
 
-		err2 := c.SendFeedback(feedbackForm)
-		assert.Contains(t, err2.Error(), "failed")
+		sendErr := c.SendFeedback(feedbackForm)
+		assert.Error(t, sendErr)
+
+		if Disabled() {
+			assert.EqualError(t, sendErr, "unable to send feedback (service disabled)")
+		}
 	})
 }

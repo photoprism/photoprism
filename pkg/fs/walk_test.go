@@ -1,7 +1,7 @@
 package fs
 
 import (
-	"io/fs"
+	iofs "io/fs"
 	"testing"
 
 	"github.com/karrick/godirwalk"
@@ -25,7 +25,6 @@ func TestSkipWalk(t *testing.T) {
 		assert.True(t, done["testdata/directory"].Exists())
 		assert.Equal(t, 2, len(done))
 	})
-
 	t.Run("Storage", func(t *testing.T) {
 		done := make(Done)
 		ignore := NewIgnoreList(".ppignore", true, false)
@@ -37,7 +36,7 @@ func TestSkipWalk(t *testing.T) {
 		}
 
 		if skip, result := SkipWalk("testdata/originals/storage", true, false, done, ignore); skip {
-			assert.Equal(t, fs.SkipDir, result)
+			assert.Equal(t, iofs.SkipDir, result)
 		} else {
 			t.Fatal("skip should be true because this is a directory and not a file")
 		}
@@ -45,7 +44,6 @@ func TestSkipWalk(t *testing.T) {
 		assert.True(t, done["testdata/originals/storage"].Exists())
 		assert.Equal(t, 2, len(done))
 	})
-
 	t.Run("Symlink", func(t *testing.T) {
 		done := make(Done)
 		ignore := NewIgnoreList(".ppignore", true, false)
@@ -74,7 +72,6 @@ func TestSkipWalk(t *testing.T) {
 		assert.True(t, done["testdata/directory/subdirectory/symlink/self/self"].Exists())
 		assert.Equal(t, 4, len(done))
 	})
-
 	t.Run("Godirwalk", func(t *testing.T) {
 		done := make(Done)
 		var skipped []string

@@ -67,21 +67,24 @@ describe("options/options", () => {
   });
 
   it("should set default locale", () => {
-    expect(DefaultLocale).toBe("en");
+    // Assuming DefaultLocale is exported and mutable for testing purposes
+    // Initial state check might depend on test execution order, so we control it here.
+    SetDefaultLocale("en"); // Ensure starting state
+    expect(options.DefaultLocale).toBe("en");
     SetDefaultLocale("de");
-    expect(DefaultLocale).toBe("de");
-    SetDefaultLocale("en");
+    expect(options.DefaultLocale).toBe("de");
+    SetDefaultLocale("en"); // Reset for other tests
   });
 
   it("should return default when no locale is provided", () => {
     expect(FindLanguage("").value).toBe("en");
   });
 
-  it("should return default locale is smaller than 2", () => {
+  it("should return default if locale is smaller than 2", () => {
     expect(FindLanguage("d").value).toBe("en");
   });
 
-  it("should return default locale", () => {
+  it("should return default for unknown locale", () => {
     expect(FindLanguage("xx").value).toBe("en");
   });
 
@@ -150,34 +153,9 @@ describe("options/options", () => {
     expect(StartPages(features)[5].value).toBe("people");
     expect(StartPages(features)[5].props.disabled).toBe(false);
     features = {
-      account: true,
-      albums: true,
-      archive: true,
-      delete: true,
-      download: true,
-      edit: true,
-      estimates: true,
-      favorites: true,
-      files: true,
-      folders: true,
-      import: true,
-      labels: true,
-      library: true,
-      logs: true,
+      ...features, // copy previous settings
       calendar: false,
-      moments: true,
       people: false,
-      places: true,
-      private: true,
-      ratings: true,
-      reactions: true,
-      review: true,
-      search: true,
-      services: true,
-      settings: true,
-      share: true,
-      upload: true,
-      videos: true,
     };
     expect(StartPages(features).length).toBe(12);
     expect(StartPages(features)[5].value).toBe("people");

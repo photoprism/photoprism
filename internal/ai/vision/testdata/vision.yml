@@ -67,9 +67,7 @@ Models:
 - Type: caption
   Name: gemma3
   Version: latest
-  Prompt: Create a caption with exactly one sentence in the active voice that describes
-    the main visual content. Begin with the main subject and clear action. Avoid text
-    formatting, meta-language, and filler words.
+  Engine: ollama
   Resolution: 720
   Service:
     Uri: http://ollama:11434/api/generate
@@ -78,3 +76,4 @@ Models:
     ResponseFormat: ollama
 Thresholds:
   Confidence: 10
+  NSFW: 75

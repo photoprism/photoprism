@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -42,6 +43,17 @@ func SearchLabels(router *gin.RouterGroup) {
 			return
 		}
 
+		if acl.Rules.Deny(acl.ResourceLabels, s.GetUserRole(), acl.AccessPrivate) {
+			frm.NSFW = false
+			frm.Public = true
+		}
+
+		// Update precalculated photo counts if needed.
+		if err = entity.UpdateLabelCountsIfNeeded(); err != nil {
+			log.Warnf("labels: could not update photo counts (%s)", err)
+		}
+
+		// Search matching labels.
 		result, err := search.Labels(frm)
 
 		if err != nil {

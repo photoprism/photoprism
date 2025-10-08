@@ -70,7 +70,7 @@ func TestRelatedFiles_HasPreview(t *testing.T) {
 func TestRelatedFiles_String(t *testing.T) {
 	cfg := config.TestConfig()
 
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
 		if err != nil {
 			t.Fatal(err)
@@ -94,7 +94,7 @@ func TestRelatedFiles_String(t *testing.T) {
 func TestRelatedFiles_Len(t *testing.T) {
 	cfg := config.TestConfig()
 
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
 		if err != nil {
 			t.Fatal(err)
@@ -217,7 +217,7 @@ func TestRelatedFiles_MainLogName(t *testing.T) {
 		}
 		assert.Equal(t, "telegram_2020-01-30_09-57-18.jpg", relatedFiles.MainLogName())
 	})
-	t.Run("iPhone7", func(t *testing.T) {
+	t.Run("IPhoneSeven", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
 		if err != nil {
 			t.Fatal(err)

@@ -72,9 +72,9 @@ func SaveSettings(router *gin.RouterGroup) {
 		var settings *customize.Settings
 
 		// Only super admins can change global config defaults.
-		if s.User().IsSuperAdmin() {
+		if s.GetUser().IsSuperAdmin() {
 			// Update global defaults and user preferences.
-			user := s.User()
+			user := s.GetUser()
 			settings = conf.Settings()
 
 			// Set values from request.
@@ -103,7 +103,7 @@ func SaveSettings(router *gin.RouterGroup) {
 			UpdateClientConfig()
 		} else {
 			// Update user preferences without changing global defaults.
-			user := s.User()
+			user := s.GetUser()
 
 			if user == nil {
 				AbortUnexpectedError(c)
@@ -119,7 +119,7 @@ func SaveSettings(router *gin.RouterGroup) {
 			}
 
 			// Update user preferences.
-			if acl.Rules.DenyAll(acl.ResourceSettings, s.UserRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
+			if acl.Rules.DenyAll(acl.ResourceSettings, s.GetUserRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
 				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Rules, user.AclRole())))
 				return
 			} else if err := user.Settings().Apply(settings).Save(); err != nil {

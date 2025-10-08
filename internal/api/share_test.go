@@ -15,7 +15,7 @@ func TestGetShares(t *testing.T) {
 		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 	})
 	//TODO Why does it panic?
-	/*t.Run("valid token and share", func(t *testing.T) {
+	/*t.Run("ValidTokenAndShare", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		Shares(router)
 		r := PerformRequest(app, "GET", "/api/v1/4jxf3jfn2k/as6sg6bxpogaaba7")
@@ -28,7 +28,7 @@ func TestGetShares(t *testing.T) {
 		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 	})
 	//TODO Why does it panic?
-	/*t.Run("valid token", func(t *testing.T) {
+	/*t.Run("ValidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		Shares(router)
 		r := PerformRequest(app, "GET", "/api/v1/4jxf3jfn2k")

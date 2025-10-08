@@ -166,7 +166,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 1)
 		result := attr.Find("metrics")
 
-		assert.Equal(t, All, result.Key)
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, "", result.Value)
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -184,6 +184,7 @@ func TestAttr_Find(t *testing.T) {
 
 		assert.Len(t, attr, 1)
 		result := attr.Find("*")
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, All, result.Key)
 		assert.Equal(t, "", result.Value)
 	})
@@ -193,6 +194,7 @@ func TestAttr_Find(t *testing.T) {
 
 		assert.Len(t, attr, 1)
 		result := attr.Find("6VU:*")
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, All, result.Key)
 		assert.Equal(t, "", result.Value)
 	})
@@ -232,7 +234,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 2)
 
 		result := attr.Find("read")
-		assert.Equal(t, All, result.Key)
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, "", result.Value)
 
 		result = attr.Find("read:other")
@@ -240,7 +242,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Equal(t, "other", result.Value)
 
 		result = attr.Find("read:true")
-		assert.Equal(t, All, result.Key)
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, "", result.Value)
 
 		result = attr.Find("read:false")

@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Built-in keyword slugs inferred from metadata.
 const (
 	KeywordFlash           = "flash"
 	KeywordHdr             = "hdr"
@@ -24,6 +25,7 @@ func (w Keywords) String() string {
 	return strings.Join(w, ", ")
 }
 
+// AutoKeywords lists keywords we automatically infer from descriptions or EXIF flags.
 var AutoKeywords = []string{KeywordHdr, KeywordBurst, KeywordPanorama, KeywordEquirectangular}
 
 // AddKeywords appends keywords.

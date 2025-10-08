@@ -13,10 +13,11 @@ import (
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -30,6 +31,12 @@ var Flags = CliFlags{
 			Usage:   "authentication `MODE` (public, password)",
 			Value:   "password",
 			EnvVars: EnvVars("AUTH_MODE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "auth-secret",
+			Usage:   "secret `KEY` for signing authentication tokens",
+			EnvVars: EnvVars("AUTH_SECRET"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "public",
@@ -227,7 +234,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "users-path",
 			Usage:   "relative `PATH` to create base and upload subdirectories for users",
-			Value:   "users",
+			Value:   fs.UsersDir,
 			EnvVars: EnvVars("USERS_PATH"),
 		}}, {
 		Flag: &cli.PathFlag{
@@ -246,7 +253,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "import-dest",
-			Usage:     "relative originals `PATH` to which the files should be imported by default *optional*",
+			Usage:     "relative originals `PATH` in which files should be imported by default *optional*",
 			EnvVars:   EnvVars("IMPORT_DEST"),
 			TakesFile: true,
 		}}, {
@@ -297,6 +304,13 @@ var Flags = CliFlags{
 			Usage:     "assets `PATH` containing static resources like icons, models, and translations",
 			EnvVars:   EnvVars("ASSETS_PATH"),
 			TakesFile: true,
+		}}, {
+		Flag: &cli.PathFlag{
+			Name:      "theme-path",
+			Usage:     "custom user interface theme `PATH` containing styles, scripts, and images",
+			EnvVars:   EnvVars("THEME_PATH"),
+			TakesFile: true,
+			Hidden:    true,
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "models-path",
@@ -530,25 +544,25 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-name",
-			Usage:   "progressive web app `NAME` when installed on a device",
+			Usage:   "app `NAME` when installed as a Progressive Web App (PWA)",
 			Value:   "",
 			EnvVars: EnvVars("APP_NAME"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-mode",
-			Usage:   "progressive web app `MODE` (fullscreen, standalone, minimal-ui, browser)",
+			Usage:   "app display `MODE` (fullscreen, standalone, minimal-ui, browser)",
 			Value:   "standalone",
 			EnvVars: EnvVars("APP_MODE"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-icon",
-			Usage:   "home screen `ICON` (logo, app, crisp, mint, bold, square)",
+			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square)",
 			EnvVars: EnvVars("APP_ICON"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-color",
-			Usage:   "splash screen `COLOR` code",
-			Value:   "#000000",
+			Usage:   "app background and splash screen `COLOR`",
+			Value:   DefaultAppColor,
 			EnvVars: EnvVars("APP_COLOR"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -585,8 +599,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-url",
-			Aliases: []string{"url"},
-			Usage:   "public site `URL`",
+			Usage:   "canonical site `URL` used in generated links and to determine HTTPS/TLS (scheme://host[:port])",
 			Value:   "http://localhost:2342/",
 			EnvVars: EnvVars("SITE_URL"),
 		}}, {
@@ -650,6 +663,90 @@ var Flags = CliFlags{
 			Usage:   "one or more `METHODS` that may be used when performing a cross-origin request",
 			EnvVars: EnvVars("CORS_METHODS"),
 			Value:   header.DefaultAccessControlAllowMethods,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-domain",
+			Usage:   "cluster `DOMAIN` (lowercase DNS name; 1–63 chars)",
+			EnvVars: EnvVars("CLUSTER_DOMAIN"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-cidr",
+			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
+			EnvVars: EnvVars("CLUSTER_CIDR"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-url",
+			Usage:   "base `URL` of the cluster management portal",
+			Value:   DefaultPortalUrl,
+			EnvVars: EnvVars("PORTAL_URL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "join-token",
+			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
+			EnvVars: EnvVars("JOIN_TOKEN"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-name",
+			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
+			EnvVars: EnvVars("NODE_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-role",
+			Usage:   "node `ROLE` (instance or service)",
+			EnvVars: EnvVars("NODE_ROLE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-uuid",
+			Usage:   "node `UUID` (v7) that uniquely identifies this instance",
+			EnvVars: EnvVars("NODE_UUID"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-client-id",
+			Usage:   "node OAuth client `ID` (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_CLIENT_ID"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "node-client-secret",
+			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
+			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "jwks-url",
+			Usage:   "JWKS endpoint `URL` provided by the cluster portal for JWT verification",
+			EnvVars: EnvVars("JWKS_URL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwks-cache-ttl",
+			Usage:   "JWKS cache lifetime in `SECONDS` (default 300, max 3600)",
+			Value:   300,
+			EnvVars: EnvVars("JWKS_CACHE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "jwt-scope",
+			Usage:   "allowed JWT `SCOPES` (space separated). Leave empty to accept defaults",
+			EnvVars: EnvVars("JWT_SCOPE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwt-leeway",
+			Usage:   "JWT clock skew allowance in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("JWT_LEEWAY"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "advertise-url",
+			Usage:   "advertised `URL` for intra-cluster calls (scheme://host[:port])",
+			Value:   "",
+			EnvVars: EnvVars("ADVERTISE_URL"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "https-proxy",
@@ -783,7 +880,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "database-server",
 			Aliases: []string{"db-server"},
-			Usage:   "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
+			Usage:   "database `HOST` incl. port, e.g. \"mariadb:3306\" (or socket path)",
 			EnvVars: EnvVars("DATABASE_SERVER"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -814,6 +911,19 @@ var Flags = CliFlags{
 			Name:    "database-conns-idle",
 			Usage:   "maximum `NUMBER` of idle database connections",
 			EnvVars: EnvVars("DATABASE_CONNS_IDLE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "database-provision-driver",
+			Usage:   "auto-provisioning `DRIVER` (auto, mysql)",
+			Value:   Auto,
+			EnvVars: EnvVars("DATABASE_PROVISION_DRIVER"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "database-provision-dsn",
+			Usage:   "auto-provisioning `DSN`",
+			EnvVars: EnvVars("DATABASE_PROVISION_DSN"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-bin",
@@ -964,7 +1074,7 @@ var Flags = CliFlags{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
 			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
-			Value:   "auto",
+			Value:   Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1041,10 +1151,38 @@ var Flags = CliFlags{
 			Value:   "",
 			EnvVars: EnvVars("VISION_KEY"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "vision-schedule",
+			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
+			EnvVars: EnvVars("VISION_SCHEDULE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "vision-filter",
+			Usage:   "vision worker search `FILTER` applied to scheduled runs (same syntax as photoprism vision run)",
+			Value:   "public:true",
+			EnvVars: EnvVars("VISION_FILTER"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
 			EnvVars: EnvVars("DETECT_NSFW"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-engine",
+			Usage:   "face detection engine `NAME` (auto, pigo, onnx)",
+			Value:   face.EngineAuto,
+			EnvVars: EnvVars("FACE_ENGINE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-engine-run",
+			Usage:   "face detection run `MODE` (auto, never, manual, newly-indexed, on-demand, on-index, on-schedule, always)",
+			Value:   "auto",
+			EnvVars: EnvVars("FACE_ENGINE_RUN"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-engine-threads",
+			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",
+			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
@@ -1057,6 +1195,12 @@ var Flags = CliFlags{
 			Usage:   "minimum face `QUALITY` score (1-100)",
 			Value:   face.ScoreThreshold,
 			EnvVars: EnvVars("FACE_SCORE"),
+		}}, {
+		Flag: &cli.Float64SliceFlag{
+			Name:    "face-angle",
+			Usage:   "face detection `ANGLE` in radians (repeatable)",
+			Value:   cli.NewFloat64Slice(face.DefaultAngles...),
+			EnvVars: EnvVars("FACE_ANGLE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",
@@ -1106,35 +1250,5 @@ var Flags = CliFlags{
 			Value:     "",
 			EnvVars:   EnvVars("LOG_FILENAME"),
 			TakesFile: true,
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "portal-url",
-			Usage:   "PhotoPrism® Portal server `URL`",
-			EnvVars: EnvVars("PORTAL_URL"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "portal-client",
-			Usage:   "PhotoPrism® Portal client `ID`",
-			EnvVars: EnvVars("PORTAL_CLIENT"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "portal-secret",
-			Usage:   "PhotoPrism® Portal client `SECRET`",
-			EnvVars: EnvVars("PORTAL_SECRET"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "instance-roles",
-			Usage:   "`ROLES` of this instance within a cluster (library, vision, portal)",
-			EnvVars: EnvVars("INSTANCE_ROLES"),
-			Hidden:  true,
-		}, Tags: []string{Pro}}, {
-		Flag: &cli.StringFlag{
-			Name:    "instance-secret",
-			Usage:   "`SECRET` for authenticating this instance in a cluster (must be unique)",
-			EnvVars: EnvVars("INSTANCE_SECRET"),
-			Hidden:  true,
-		}, Tags: []string{Pro}},
+		}},
 }

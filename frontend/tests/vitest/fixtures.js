@@ -324,6 +324,32 @@ Mock.onPost("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockHea
 Mock.onDelete("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onPost("api/v1/albums/5/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onDelete("api/v1/albums/5/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onPut(/^albums\/[A-Za-z0-9_-]+$/).reply((config) => {
+  const data = JSON.parse(config.data || "{}");
+  const uid = config.url.split("/").pop();
+  return [
+    200,
+    {
+      UID: uid,
+      Thumb: data.Thumb,
+      ThumbSrc: data.ThumbSrc || "manual",
+    },
+    mockHeaders,
+  ];
+});
+Mock.onPut(/^labels\/[A-Za-z0-9_-]+$/).reply((config) => {
+  const data = JSON.parse(config.data || "{}");
+  const uid = config.url.split("/").pop();
+  return [
+    200,
+    {
+      UID: uid,
+      Thumb: data.Thumb,
+      ThumbSrc: data.ThumbSrc || "manual",
+    },
+    mockHeaders,
+  ];
+});
 Mock.onGet("api/v1/config").reply(200, clientConfig, mockHeaders);
 Mock.onPut("api/v1/markers/mBC123ghytr", { Review: false, Invalid: false }).reply(
   200,

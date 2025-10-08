@@ -52,8 +52,8 @@ func authListAction(ctx *cli.Context) error {
 			rows[i] = []string{
 				res.RefID,
 				res.UserInfo(),
-				res.AuthInfo(),
-				res.ClientInfo(),
+				res.GetAuthInfo(),
+				res.GetClientInfo(),
 				res.AuthScope,
 				res.LoginIP,
 				res.ClientIP,

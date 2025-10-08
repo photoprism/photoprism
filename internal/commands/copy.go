@@ -25,7 +25,7 @@ var CopyCommand = &cli.Command{
 		&cli.StringFlag{
 			Name:    "dest",
 			Aliases: []string{"d"},
-			Usage:   "relative originals `PATH` to which the files should be imported",
+			Usage:   "relative originals `PATH` in which new files should be imported",
 		},
 	},
 	Action: copyAction,

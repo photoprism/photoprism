@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// ImportJob describes a media import task pulled from the worker queue.
 type ImportJob struct {
 	FileName  string
 	Related   RelatedFiles
@@ -18,6 +19,7 @@ type ImportJob struct {
 	Imp       *Import
 }
 
+// ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName string
@@ -92,16 +94,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				if opt.Move {
-					if moveErr := f.Move(destFileName); moveErr != nil {
+					if moveErr := f.Move(destFileName, false); moveErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", clean.Error(moveErr))
-						log.Warnf("import: failed moving file to %s, is another import running at the same time?", logRelName)
+						log.Error(moveErr)
+						log.Warnf("import: could not move file to %s, is another import running?", logRelName)
 					}
 				} else {
-					if copyErr := f.Copy(destFileName); copyErr != nil {
+					if copyErr := f.Copy(destFileName, false); copyErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", clean.Error(copyErr))
-						log.Warnf("import: failed copying file to %s, is another import running at the same time?", logRelName)
+						log.Error(copyErr)
+						log.Warnf("import: could not copy file to %s, is another import running?", logRelName)
 					}
 				}
 			} else {
@@ -114,6 +116,17 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if albumErr := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
 					log.Warn(albumErr)
+				}
+
+				// Remember the original filename for duplicates so that indexing can still persist
+				// OriginalName even when the file was not copied due to an existing identical file.
+				if fileHash := f.Hash(); fileHash != "" {
+					if existing, findErr := entity.FirstFileByHash(fileHash); findErr == nil {
+						existingPath := FileName(existing.FileRoot, existing.FileName)
+						if existingPath != "" {
+							relatedOriginalNames[existingPath] = relFileName
+						}
+					}
 				}
 
 				// Remove duplicates to save storage.

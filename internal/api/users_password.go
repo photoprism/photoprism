@@ -16,10 +16,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// UpdateUserPassword changes the password of the currently authenticated user.
+// UpdateUserPassword changes the password of the specified user.
 //
-//	@Tags	Users, Authentication
-//	@Router	/api/v1/users/{uid}/password [put]
+//	@Summary	change a user's password
+//	@Id			UpdateUserPassword
+//	@Tags		Users, Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid					path		string				true	"user uid"
+//	@Param		request				body		form.ChangePassword	true	"old and new password"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/password [put]
 func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := get.Config()
@@ -49,18 +57,18 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		}
 
 		// Check if the current user has management privileges.
-		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
-		isSuperAdmin := isAdmin && s.User().IsSuperAdmin()
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isSuperAdmin := isAdmin && s.GetUser().IsSuperAdmin()
 		uid := clean.UID(c.Param("uid"))
 
 		var u *entity.User
 
 		// Regular users may only change their own password.
-		if !isAdmin && s.User().UserUID != uid {
+		if !isAdmin && s.GetUser().UserUID != uid {
 			AbortForbidden(c)
 			return
-		} else if s.User().UserUID == uid {
-			u = s.User()
+		} else if s.GetUser().UserUID == uid {
+			u = s.GetUser()
 			isAdmin = false
 			isSuperAdmin = false
 		} else if u = entity.FindUserByUID(uid); u == nil {
@@ -94,7 +102,7 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		}
 
 		// Update tokens if user matches with session.
-		if s.User().UserUID == u.GetUID() {
+		if s.GetUser().UserUID == u.GetUID() {
 			s.SetPreviewToken(u.PreviewToken)
 			s.SetDownloadToken(u.DownloadToken)
 		}

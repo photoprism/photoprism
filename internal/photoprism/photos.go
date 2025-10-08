@@ -10,14 +10,17 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
-// Photos represents photo id lookup table, sorted by date and S2 cell id.
+// Photos caches a lookup table from capture timestamp + S2 cell IDs to photo IDs so workers can
+// skip redundant database scans. The cache is marked loaded only after Init() hydrates it from
+// the database to avoid reusing stale or partially populated maps.
 type Photos struct {
 	count  int
 	photos query.PhotoMap
+	loaded bool
 	mutex  sync.RWMutex
 }
 
-// NewPhotos returns a new Photos instance.
+// NewPhotos constructs an empty Photos cache. Call Init before using Find.
 func NewPhotos() *Photos {
 	m := &Photos{
 		photos: make(query.PhotoMap),
@@ -26,12 +29,14 @@ func NewPhotos() *Photos {
 	return m
 }
 
-// Init fetches the list from the database once.
+// Init hydrates the cache from the database when it has not been loaded yet; subsequent calls are
+// no-ops unless Done() reset the cache. This guarantees consumers see a consistent snapshot even if
+// the map contained a few provisional entries added before initialization.
 func (m *Photos) Init() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	if len(m.photos) > 0 {
+	if m.loaded {
 		m.count = len(m.photos)
 		return nil
 	}
@@ -43,11 +48,12 @@ func (m *Photos) Init() error {
 	} else {
 		m.photos = photos
 		m.count = len(photos)
+		m.loaded = true
 		return nil
 	}
 }
 
-// Remove a photo from the lookup table.
+// Remove evicts a photo from the lookup table when media has been deleted or re-indexed.
 func (m *Photos) Remove(takenAt time.Time, cellId string) {
 	key := entity.MapKey(takenAt, cellId)
 
@@ -57,7 +63,7 @@ func (m *Photos) Remove(takenAt time.Time, cellId string) {
 	delete(m.photos, key)
 }
 
-// Find returns the photo ID for a time and cell id.
+// Find returns the cached photo ID for the given capture time and cell. Zero means no entry exists.
 func (m *Photos) Find(takenAt time.Time, cellId string) uint {
 	key := entity.MapKey(takenAt, cellId)
 

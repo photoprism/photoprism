@@ -27,22 +27,22 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 		if txt.Yes(frm.Unknown) {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND subj_uid = '' AND marker_name = '' AND marker_type = 'face' AND marker_src = 'image'
+	        WHERE face_id <> '' AND subj_uid = '' AND marker_name = '' AND marker_type = 'face'
 	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
 		} else if txt.No(frm.Unknown) {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND subj_uid <> '' AND marker_name <> '' AND marker_type = 'face' AND marker_src = 'image'
+	        WHERE face_id <> '' AND subj_uid <> '' AND marker_name <> '' AND marker_type = 'face'
 	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
 		} else {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND marker_type = 'face' AND marker_src = 'image'
-	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
+	        WHERE face_id <> '' AND marker_type = 'face' AND marker_invalid = 0
+              AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
 		}

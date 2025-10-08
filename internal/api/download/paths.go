@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// AllowedPaths lists absolute directories from which downloads may be registered.
 var AllowedPaths []string
 
 // Deny checks if the filename may not be registered for download.

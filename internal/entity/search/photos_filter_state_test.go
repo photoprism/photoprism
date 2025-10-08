@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterState(t *testing.T) {
-	t.Run("State of Mexico", func(t *testing.T) {
+	t.Run("StateOfMexico", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico"
@@ -22,7 +22,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("Rheinland*", func(t *testing.T) {
+	t.Run("Rheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "Rheinland*"
@@ -33,9 +33,9 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico pipe Rheinland-Pfalz", func(t *testing.T) {
+	t.Run("StateOfMexicoPipeRheinlandPfalz", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico|Rheinland-Pfalz"
@@ -48,7 +48,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico whitespace pipe whitespace Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoWhitespacePipeWhitespaceRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico | Rheinland-Pfalz"
@@ -61,7 +61,7 @@ func TestPhotosFilterState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico or Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico or Rheinland-Pfalz"
@@ -72,9 +72,9 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico OR Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.State = "State of Mexico OR Rheinland-Pfalz"
@@ -85,7 +85,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -98,7 +98,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -111,7 +111,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -124,7 +124,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -137,7 +137,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -150,7 +150,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -163,7 +163,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -176,7 +176,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -190,7 +190,7 @@ func TestPhotosFilterState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -203,7 +203,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -216,7 +216,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -229,7 +229,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -242,7 +242,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -256,7 +256,7 @@ func TestPhotosFilterState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -270,7 +270,7 @@ func TestPhotosFilterState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -283,7 +283,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 4, len(photos))
+		assert.Len(t, photos, 4)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -296,7 +296,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 0, len(photos))
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -309,7 +309,7 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -322,12 +322,12 @@ func TestPhotosFilterState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 }
 
 func TestPhotosQueryState(t *testing.T) {
-	t.Run("State of Mexico", func(t *testing.T) {
+	t.Run("StateOfMexico", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico\""
@@ -340,7 +340,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 7)
 	})
-	t.Run("Rheinland*", func(t *testing.T) {
+	t.Run("Rheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"Rheinland*\""
@@ -351,9 +351,9 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico pipe Rheinland-Pfalz", func(t *testing.T) {
+	t.Run("StateOfMexicoPipeRheinlandPfalz", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico|Rheinland-Pfalz\""
@@ -366,7 +366,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico whitespace pipe whitespace Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoWhitespacePipeWhitespaceRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico | Rheinland-Pfalz\""
@@ -379,7 +379,7 @@ func TestPhotosQueryState(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, len(photos), 11)
 	})
-	t.Run("State of Mexico or Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico or Rheinland-Pfalz\""
@@ -390,9 +390,9 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
-	t.Run("State of Mexico OR Rheinland", func(t *testing.T) {
+	t.Run("StateOfMexicoOrRheinland", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "state:\"State of Mexico OR Rheinland-Pfalz\""
@@ -403,7 +403,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -416,7 +416,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -429,7 +429,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -442,7 +442,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -455,7 +455,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -468,7 +468,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -481,7 +481,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -494,7 +494,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -508,7 +508,7 @@ func TestPhotosQueryState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -521,7 +521,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -534,7 +534,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -547,7 +547,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -560,7 +560,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -573,7 +573,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -587,7 +587,7 @@ func TestPhotosQueryState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -600,7 +600,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -613,7 +613,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -626,7 +626,7 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -639,6 +639,6 @@ func TestPhotosQueryState(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 }

@@ -61,8 +61,8 @@ func StartIndexing(router *gin.RouterGroup) {
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		skipArchived := settings.Index.SkipArchived
 
-		indOpt := photoprism.NewIndexOptions(filepath.Clean(frm.Path), frm.Rescan, convert, true, false, skipArchived)
-		indOpt.SetUser(s.User())
+		indOpt := photoprism.NewIndexOptions(filepath.Clean(frm.Path), frm.Rescan, convert, true, false, skipArchived, conf)
+		indOpt.SetUser(s.GetUser())
 
 		if len(indOpt.Path) > 1 {
 			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
@@ -120,7 +120,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		// Delete orphaned index entries, sidecar files and thumbnails?
-		if frm.Cleanup && s.User().IsAdmin() {
+		if frm.Cleanup && s.GetUser().IsAdmin() {
 			event.Publish("index.updating", event.Data{
 				"uid":    indOpt.UID,
 				"action": indOpt.Action,

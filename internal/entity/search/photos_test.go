@@ -90,7 +90,7 @@ func TestPhotos(t *testing.T) {
 		assert.NoError(t, err)
 		assert.LessOrEqual(t, 1, len(results))
 	})
-	t.Run("search all", func(t *testing.T) {
+	t.Run("SearchAll", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
@@ -116,7 +116,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("search for ID and merged", func(t *testing.T) {
+	t.Run("SearchForIdAndMerged", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
@@ -132,7 +132,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for ID with merged false", func(t *testing.T) {
+	t.Run("SearchForIdWithMergedFalse", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
@@ -148,7 +148,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("label query dog", func(t *testing.T) {
+	t.Run("LabelQueryDog", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "label:dog"
@@ -161,7 +161,7 @@ func TestPhotos(t *testing.T) {
 		assert.Equal(t, PhotoResults{}, photos)
 		assert.Equal(t, 0, count)
 	})
-	t.Run("label query landscape", func(t *testing.T) {
+	t.Run("LabelQueryLandscape", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "label:landscape"
@@ -176,7 +176,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 2, len(photos))
 	})
-	t.Run("invalid label query", func(t *testing.T) {
+	t.Run("InvalidLabelQuery", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "label:xxx"
@@ -189,7 +189,7 @@ func TestPhotos(t *testing.T) {
 		assert.Equal(t, PhotoResults{}, photos)
 		assert.Equal(t, 0, count)
 	})
-	t.Run("form.location true", func(t *testing.T) {
+	t.Run("FormLocationTrue", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
@@ -205,7 +205,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 2, len(photos))
 	})
-	t.Run("form.location true and keyword", func(t *testing.T) {
+	t.Run("FormLocationTrueAndKeyword", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "bridge"
@@ -222,7 +222,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for keyword", func(t *testing.T) {
+	t.Run("SearchForKeyword", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "bridge"
@@ -237,7 +237,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 2, len(photos))
 	})
-	t.Run("search for label in query", func(t *testing.T) {
+	t.Run("SearchForLabelInQuery", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "flower"
@@ -252,7 +252,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for archived", func(t *testing.T) {
+	t.Run("SearchForArchived", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -267,7 +267,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for private", func(t *testing.T) {
+	t.Run("SearchForPrivate", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -283,7 +283,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for public", func(t *testing.T) {
+	t.Run("SearchForPublic", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -298,7 +298,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 3, len(photos))
 	})
-	t.Run("search for review", func(t *testing.T) {
+	t.Run("SearchForReview", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -313,7 +313,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for quality", func(t *testing.T) {
+	t.Run("SearchForQuality", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -329,7 +329,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for file error", func(t *testing.T) {
+	t.Run("SearchForFileError", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -344,7 +344,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.camera- name", func(t *testing.T) {
+	t.Run("FormCameraName", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -360,7 +360,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 3, len(photos))
 	})
-	t.Run("camera:\"Canon EOS 6D\"", func(t *testing.T) {
+	t.Run("CameraCanonEosSixD", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "camera:\"Canon EOS 6D\""
@@ -375,7 +375,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 3, len(photos))
 	})
-	t.Run("form.camera- id", func(t *testing.T) {
+	t.Run("FormCameraId", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -391,7 +391,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 3, len(photos))
 	})
-	t.Run("form.color", func(t *testing.T) {
+	t.Run("FormColor", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Count = 3
@@ -406,7 +406,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.favorites", func(t *testing.T) {
+	t.Run("FormFavorites", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "favorite:true"
 		f.Count = 10
@@ -420,7 +420,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.country", func(t *testing.T) {
+	t.Run("FormCountry", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "country:zz"
 		f.Count = 10
@@ -435,7 +435,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-	t.Run("form.city", func(t *testing.T) {
+	t.Run("FormCity", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "city:Mandeni"
 		f.Count = 10
@@ -450,7 +450,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-	t.Run("form.title", func(t *testing.T) {
+	t.Run("FormTitle", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "title:Neckarbrücke"
 		f.Count = 10
@@ -466,7 +466,7 @@ func TestPhotos(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 1)
 
 	})
-	t.Run("form.keywords", func(t *testing.T) {
+	t.Run("FormKeywords", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "keywords:bridge"
 		f.Count = 10
@@ -481,7 +481,7 @@ func TestPhotos(t *testing.T) {
 		//t.Logf("results: %+v", photos)
 		assert.GreaterOrEqual(t, len(photos), 4)
 	})
-	t.Run("form.face", func(t *testing.T) {
+	t.Run("FormFace", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZK"
 		f.Count = 10
@@ -494,9 +494,9 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
-	t.Run("form.subject", func(t *testing.T) {
+	t.Run("FormSubject", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "subject:js6sg6b1qekk9jx8"
 		f.Count = 10
@@ -509,9 +509,9 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
-	t.Run("form.subjects", func(t *testing.T) {
+	t.Run("FormSubjects", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "subjects:John"
 		f.Count = 10
@@ -524,9 +524,9 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
-	t.Run("form.people", func(t *testing.T) {
+	t.Run("FormPeople", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "people:John"
 		f.Count = 10
@@ -539,9 +539,9 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
-	t.Run("form.hash", func(t *testing.T) {
+	t.Run("FormHash", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "hash:2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		f.Count = 3
@@ -554,10 +554,9 @@ func TestPhotos(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 	})
-
-	t.Run("form.portrait", func(t *testing.T) {
+	t.Run("FormPortrait", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "portrait:true"
 		f.Count = 10
@@ -572,8 +571,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-
-	t.Run("form.mono", func(t *testing.T) {
+	t.Run("FormMono", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "mono:true"
 		f.Count = 10
@@ -588,7 +586,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.chroma:25", func(t *testing.T) {
+	t.Run("FormChromaNum25", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "chroma:25"
 		f.Count = 3
@@ -603,7 +601,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("form.chroma <9", func(t *testing.T) {
+	t.Run("FormChromaLessThanNine", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "chroma:4"
 		f.Count = 3
@@ -619,7 +617,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-	t.Run("form.f", func(t *testing.T) {
+	t.Run("FormF", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "F:5-100"
 		f.Count = 10
@@ -634,7 +632,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.f", func(t *testing.T) {
+	t.Run("FormF", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "F:0-2"
 		f.Count = 10
@@ -650,7 +648,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("form.Lat and form.Lng", func(t *testing.T) {
+	t.Run("FormLatAndFormLng", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:4000"
 		f.Count = 10
@@ -665,7 +663,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("form.Lat and form.Lng and Dist:6000", func(t *testing.T) {
+	t.Run("FormLatAndFormLngAndDistNum6000", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:6000"
 		f.Count = 10
@@ -680,7 +678,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("latlng:33.453431,-180.0,49.519234,180.0", func(t *testing.T) {
+	t.Run("LatlngNum33Num453431Num180ZeroNum49Num519234Num180Zero", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "latlng:33.453431,-180.0,49.519234,180.0"
 		f.Count = 10
@@ -701,7 +699,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("latlng:0.00,-30.123,49.519234,9.1001234", func(t *testing.T) {
+	t.Run("LatlngZeroNum00Num30Num123Num49Num519234NineNum1001234", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "latlng:0.00,-30.123,49.519234,9.1001234"
 		f.Count = 10
@@ -724,7 +722,7 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 10, len(photos))
 
 	})
-	t.Run("form.Before and form.After Order:relevance", func(t *testing.T) {
+	t.Run("FormBeforeAndFormAfterOrderRelevance", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "Before:2016-01-01 After:2013-01-01"
 		f.Count = 5000
@@ -739,8 +737,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 2, len(photos))
 	})
-
-	t.Run("search for diff", func(t *testing.T) {
+	t.Run("SearchForDiff", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "Diff:800"
 		f.Count = 5000
@@ -753,7 +750,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for camera name", func(t *testing.T) {
+	t.Run("SearchForCameraName", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Count = 1
@@ -768,7 +765,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for lens name", func(t *testing.T) {
+	t.Run("SearchForLensName", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Count = 1
@@ -783,7 +780,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for full lens name", func(t *testing.T) {
+	t.Run("SearchForFullLensName", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Count = 1
@@ -798,7 +795,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for full lens name using query", func(t *testing.T) {
+	t.Run("SearchForFullLensNameUsingQuery", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "lens:\"Apple F380\""
 		f.Count = 1
@@ -812,7 +809,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for lens, month, year, album", func(t *testing.T) {
+	t.Run("SearchForLensMonthYearAlbum", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Count = 5000
@@ -829,7 +826,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("albums", func(t *testing.T) {
+	t.Run("Albums", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Albums = "Berlin"
@@ -841,7 +838,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("f.album", func(t *testing.T) {
+	t.Run("FAlbum", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = ""
 		f.Album = "Berlin"
@@ -853,7 +850,7 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for state", func(t *testing.T) {
+	t.Run("SearchForState", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.State = "KwaZulu-Natal"
 
@@ -865,7 +862,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for city", func(t *testing.T) {
+	t.Run("SearchForCity", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.City = "Mandeni"
 
@@ -877,7 +874,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("search for category", func(t *testing.T) {
+	t.Run("SearchForCategory", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Category = "botanical garden"
 
@@ -889,8 +886,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
-	t.Run("search for labels", func(t *testing.T) {
+	t.Run("SearchForLabels", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Label = "botanical-garden|nature|landscape|park"
 
@@ -902,8 +898,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
-	t.Run("search for primary files", func(t *testing.T) {
+	t.Run("SearchForPrimaryFiles", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Primary = true
 
@@ -915,8 +910,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
-	t.Run("search for landscape", func(t *testing.T) {
+	t.Run("SearchForLandscape", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "landscape"
 
@@ -928,8 +922,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-
-	t.Run("search with multiple parameters", func(t *testing.T) {
+	t.Run("SearchWithMultipleParameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
 		f.Scan = "true"
@@ -949,7 +942,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.IsType(t, PhotoResults{}, photos)
 	})
-	t.Run("search with multiple parameters", func(t *testing.T) {
+	t.Run("SearchWithMultipleParameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
 		f.Scan = "true"
@@ -1037,7 +1030,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("search unstacked panoramas", func(t *testing.T) {
+	t.Run("SearchUnstackedPanoramas", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
@@ -1071,7 +1064,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("Or search", func(t *testing.T) {
+	t.Run("OrSearch", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
@@ -1106,7 +1099,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("faces", func(t *testing.T) {
+	t.Run("Faces", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "faces:true"
 		f.Count = 10
@@ -1120,7 +1113,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 3)
 	})
-	t.Run("faces:yes", func(t *testing.T) {
+	t.Run("FacesYes", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "Yes"
 
@@ -1132,7 +1125,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 3)
 	})
-	t.Run("faces:no", func(t *testing.T) {
+	t.Run("FacesNo", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "No"
 
@@ -1144,7 +1137,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 9)
 	})
-	t.Run("f.face yes", func(t *testing.T) {
+	t.Run("FFaceYes", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Face = "yes"
 
@@ -1156,7 +1149,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 9)
 	})
-	t.Run("faces:2", func(t *testing.T) {
+	t.Run("FacesTwo", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Faces = "2"
 
@@ -1219,7 +1212,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("query: videos", func(t *testing.T) {
+	t.Run("QueryVideos", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "videos"
@@ -1254,7 +1247,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: video", func(t *testing.T) {
+	t.Run("QueryVideo", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "video"
@@ -1289,7 +1282,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: live", func(t *testing.T) {
+	t.Run("QueryLive", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "live"
@@ -1320,7 +1313,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("f.live", func(t *testing.T) {
+	t.Run("FLive", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Live = true
@@ -1352,7 +1345,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: raws", func(t *testing.T) {
+	t.Run("QueryRaws", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "raws"
@@ -1383,7 +1376,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("f.Raw", func(t *testing.T) {
+	t.Run("FRaw", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Raw = true
@@ -1415,7 +1408,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: faces", func(t *testing.T) {
+	t.Run("QueryFaces", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "faces"
@@ -1445,7 +1438,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: faces", func(t *testing.T) {
+	t.Run("QueryFaces", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "faces:new"
@@ -1477,7 +1470,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: people", func(t *testing.T) {
+	t.Run("QueryPeople", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "people"
@@ -1508,7 +1501,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: favorites", func(t *testing.T) {
+	t.Run("QueryFavorites", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "favorites"
@@ -1539,7 +1532,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: stacks", func(t *testing.T) {
+	t.Run("QueryStacks", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "stacks"
@@ -1569,7 +1562,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: panoramas", func(t *testing.T) {
+	t.Run("QueryPanoramas", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "panoramas"
@@ -1600,7 +1593,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: scans", func(t *testing.T) {
+	t.Run("QueryScans", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "scans"
@@ -1631,7 +1624,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: monochrome", func(t *testing.T) {
+	t.Run("QueryMonochrome", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "monochrome"
@@ -1661,7 +1654,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("query: mono", func(t *testing.T) {
+	t.Run("QueryMono", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = "mono"
@@ -1691,7 +1684,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("filename", func(t *testing.T) {
+	t.Run("Filename", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Filename = "1990/04/Quality1FavoriteTrue.jpg"
 
@@ -1703,7 +1696,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 1)
 	})
-	t.Run("original name or original name", func(t *testing.T) {
+	t.Run("OriginalNameOrOriginalName", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Original = "my-videos/IMG_88888" + "|" + "Vacation/exampleFileNameOriginal"
 
@@ -1727,7 +1720,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 2)
 	})
-	t.Run("keywords:kuh|bridge > keywords:bridge&kuh", func(t *testing.T) {
+	t.Run("KeywordsKuhBridgeGreaterThanKeywordsBridgeKuh", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "keywords:kuh|bridge"
 
@@ -1791,7 +1784,7 @@ func TestPhotos(t *testing.T) {
 
 		assert.Greater(t, len(photos), len(photos2))
 	})
-	t.Run("people = subjects & person = subject", func(t *testing.T) {
+	t.Run("PeopleEqualSubjectsPersonEqualSubject", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.People = "Actor"
 
@@ -1815,7 +1808,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err2)
 		}
 
-		assert.Equal(t, len(photos), len(photos2))
+		assert.Len(t, photos, len(photos2))
 
 		var f3 form.SearchPhotos
 
@@ -1846,11 +1839,10 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err4)
 		}
 
-		assert.Equal(t, len(photos3), len(photos4))
-		assert.Equal(t, len(photos), len(photos4))
+		assert.Len(t, photos3, len(photos4))
+		assert.Len(t, photos, len(photos4))
 	})
-
-	t.Run("Search in Title", func(t *testing.T) {
+	t.Run("SearchInTitle", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "N"
 		f.Title = ""
@@ -1864,7 +1856,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 		assert.Equal(t, photos[0].PhotoTitle, "Neckarbrücke")
 	})
 	t.Run("SortByFileSize", func(t *testing.T) {
@@ -1988,7 +1980,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal("error expected")
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("SearchGif", func(t *testing.T) {
 		var frm form.SearchPhotos
@@ -2288,7 +2280,7 @@ func TestPhotos(t *testing.T) {
 			}
 		}
 	})
-	t.Run("caption:true", func(t *testing.T) {
+	t.Run("CaptionTrue", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Caption = "true"
@@ -2305,7 +2297,7 @@ func TestPhotos(t *testing.T) {
 			assert.NotEmpty(t, p.PhotoCaption)
 		}
 	})
-	t.Run("caption:lorem", func(t *testing.T) {
+	t.Run("CaptionLorem", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Caption = "Lorem*"
@@ -2316,13 +2308,13 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 
 		for _, p := range photos {
 			assert.NotEmpty(t, p.PhotoCaption)
 		}
 	})
-	t.Run("caption:false", func(t *testing.T) {
+	t.Run("CaptionFalse", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Caption = "false"
@@ -2339,7 +2331,7 @@ func TestPhotos(t *testing.T) {
 			assert.Empty(t, p.PhotoCaption)
 		}
 	})
-	t.Run("description:false", func(t *testing.T) {
+	t.Run("DescriptionFalse", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Description = "false"
@@ -2357,7 +2349,7 @@ func TestPhotos(t *testing.T) {
 			assert.Empty(t, p.PhotoTitle)
 		}
 	})
-	t.Run("name photo|41", func(t *testing.T) {
+	t.Run("NamePhotoNum41", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Name = "photo\\|41"
@@ -2368,13 +2360,13 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		for _, p := range photos {
 			assert.NotEmpty(t, p.PhotoName)
 		}
 	})
-	t.Run("name:photo|41", func(t *testing.T) {
+	t.Run("NamePhotoNum41", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:photo\\|41"
@@ -2385,7 +2377,7 @@ func TestPhotos(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, len(photos))
+		assert.Len(t, photos, 1)
 
 		for _, p := range photos {
 			assert.NotEmpty(t, p.PhotoName)

@@ -1,6 +1,10 @@
 package photoprism
 
-import "github.com/photoprism/photoprism/internal/entity"
+import (
+	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+)
 
 // IndexOptions represents file indexing options.
 type IndexOptions struct {
@@ -11,24 +15,46 @@ type IndexOptions struct {
 	Convert         bool
 	Stack           bool
 	FacesOnly       bool
+	DetectFaces     bool // Detect primary-file faces during indexing.
+	DetectNsfw      bool // Flag sensitive content while importing/updating photos.
+	GenerateLabels  bool // Generate automatic vision labels for newly indexed files.
 	SkipArchived    bool
 	ByteLimit       int64
 	ResolutionLimit int
 }
 
 // NewIndexOptions returns new index options instance.
-func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchived bool) IndexOptions {
+// The config pointer provides the scheduling defaults for detection and labeling features.
+func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchived bool, c *config.Config) IndexOptions {
 	result := IndexOptions{
-		UID:             entity.Admin.GetUID(),
-		Action:          ActionIndex,
-		Path:            path,
-		Rescan:          rescan,
-		Convert:         convert,
-		Stack:           stack,
-		FacesOnly:       facesOnly,
-		SkipArchived:    skipArchived,
-		ByteLimit:       Config().OriginalsLimitBytes(),
-		ResolutionLimit: Config().ResolutionLimit(),
+		UID:          entity.Admin.GetUID(),
+		Action:       ActionIndex,
+		Path:         path,
+		Rescan:       rescan,
+		Convert:      convert,
+		Stack:        stack,
+		FacesOnly:    facesOnly,
+		DetectFaces:  facesOnly,
+		SkipArchived: skipArchived,
+	}
+
+	if c != nil {
+		var facesRunType vision.RunType
+
+		if rescan || facesOnly {
+			// Manual runs bypass CPU-based scheduling so face detection still runs during forced rescans.
+			facesRunType = vision.RunManual
+		} else {
+			facesRunType = vision.RunOnIndex
+		}
+
+		result.DetectFaces = c.FaceEngineShouldRun(facesRunType)
+
+		result.DetectNsfw = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex)
+		result.GenerateLabels = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex)
+
+		result.ByteLimit = c.OriginalsLimitBytes()
+		result.ResolutionLimit = c.ResolutionLimit()
 	}
 
 	return result
@@ -49,21 +75,21 @@ func (o *IndexOptions) SetUser(user *entity.User) *IndexOptions {
 }
 
 // IndexOptionsAll returns new index options with all options set to true.
-func IndexOptionsAll() IndexOptions {
-	return NewIndexOptions("/", true, true, true, false, true)
+func IndexOptionsAll(c *config.Config) IndexOptions {
+	return NewIndexOptions("/", true, true, true, false, true, c)
 }
 
 // IndexOptionsFacesOnly returns new index options for updating faces only.
-func IndexOptionsFacesOnly() IndexOptions {
-	return NewIndexOptions("/", true, true, true, true, true)
+func IndexOptionsFacesOnly(c *config.Config) IndexOptions {
+	return NewIndexOptions("/", true, true, true, true, true, c)
 }
 
 // IndexOptionsSingle returns new index options for unstacked, single files.
-func IndexOptionsSingle() IndexOptions {
-	return NewIndexOptions("/", true, true, false, false, false)
+func IndexOptionsSingle(c *config.Config) IndexOptions {
+	return NewIndexOptions("/", true, true, false, false, false, c)
 }
 
 // IndexOptionsNone returns new index options with all options set to false.
-func IndexOptionsNone() IndexOptions {
-	return NewIndexOptions("", false, false, false, false, false)
+func IndexOptionsNone(c *config.Config) IndexOptions {
+	return NewIndexOptions("", false, false, false, false, false, c)
 }

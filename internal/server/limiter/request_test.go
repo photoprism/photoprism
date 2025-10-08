@@ -31,13 +31,11 @@ func TestRequest(t *testing.T) {
 		assert.True(t, r.Allow())
 		assert.False(t, r.Reject())
 	})
-
 	t.Run("Reject", func(t *testing.T) {
 		r := Request{allow: false}
 		assert.False(t, r.Allow())
 		assert.True(t, r.Reject())
 	})
-
 	t.Run("Success", func(t *testing.T) {
 		l := NewLimit(0.166, 10).IP(clientIp)
 		r1 := NewRequest(l, 10)

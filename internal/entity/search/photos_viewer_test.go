@@ -1,196 +1,190 @@
 package search
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search/viewer"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-func TestPhotoResults_ViewerJSON(t *testing.T) {
-	result1 := Photo{
-		ID:               111111,
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
-		TakenAt:          time.Time{},
-		TakenAtLocal:     time.Time{},
-		TakenSrc:         "",
-		TimeZone:         "Local",
-		PhotoUID:         "123",
-		PhotoPath:        "",
-		PhotoName:        "",
-		PhotoTitle:       "Photo1",
-		PhotoYear:        0,
-		PhotoMonth:       0,
-		PhotoCountry:     "",
-		PhotoFavorite:    false,
-		PhotoPrivate:     false,
-		PhotoLat:         0,
-		PhotoLng:         0,
-		PhotoAltitude:    0,
-		PhotoIso:         0,
-		PhotoFocalLength: 0,
-		PhotoFNumber:     0,
-		PhotoExposure:    "",
-		PhotoQuality:     0,
-		PhotoResolution:  0,
-		Merged:           false,
-		CameraID:         0,
-		CameraModel:      "",
-		CameraMake:       "",
-		CameraType:       "",
-		LensID:           0,
-		LensModel:        "",
-		LensMake:         "",
-		CellID:           "",
-		PlaceID:          "",
-		PlaceLabel:       "",
-		PlaceCity:        "",
-		PlaceState:       "",
-		PlaceCountry:     "",
-		FileID:           0,
-		FileUID:          "",
-		FilePrimary:      false,
-		FileMissing:      false,
-		FileName:         "",
-		FileHash:         "",
-		FileType:         "",
-		FileMime:         "",
-		FileWidth:        0,
-		FileHeight:       0,
-		FileOrientation:  0,
-		FileAspectRatio:  0,
-		FileColors:       "",
-		FileChroma:       0,
-		FileLuminance:    "",
-		FileDiff:         0,
-		Files:            nil,
+func TestPhoto_ViewerResult(t *testing.T) {
+	uid := rnd.GenerateUID(entity.PhotoUID)
+	imgHash := "img-hash"
+	videoHash := "video-hash"
+	taken := time.Date(2024, 5, 1, 15, 4, 5, 0, time.UTC)
+
+	photo := Photo{
+		PhotoUID:      uid,
+		PhotoType:     entity.MediaVideo,
+		PhotoTitle:    "Sunset",
+		PhotoCaption:  "Golden hour",
+		PhotoLat:      12.34,
+		PhotoLng:      56.78,
+		TakenAtLocal:  taken,
+		TimeZone:      "UTC",
+		PhotoFavorite: true,
+		PhotoDuration: 5 * time.Second,
+		FileHash:      imgHash,
+		FileWidth:     800,
+		FileHeight:    600,
+		Files: []entity.File{
+			{
+				FileVideo:  true,
+				MediaType:  entity.MediaVideo,
+				FileHash:   videoHash,
+				FileCodec:  "avc1",
+				FileMime:   header.ContentTypeMp4AvcMain,
+				FileWidth:  1920,
+				FileHeight: 1080,
+			},
+		},
 	}
 
-	result2 := Photo{
-		ID:               22222,
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
-		TakenAt:          time.Time{},
-		TakenAtLocal:     time.Time{},
-		TakenSrc:         "",
-		TimeZone:         "Local",
-		PhotoUID:         "456",
-		PhotoPath:        "",
-		PhotoName:        "",
-		PhotoTitle:       "Photo2",
-		PhotoYear:        0,
-		PhotoMonth:       0,
-		PhotoCountry:     "",
-		PhotoFavorite:    false,
-		PhotoPrivate:     false,
-		PhotoLat:         0,
-		PhotoLng:         0,
-		PhotoAltitude:    0,
-		PhotoIso:         0,
-		PhotoFocalLength: 0,
-		PhotoFNumber:     0,
-		PhotoExposure:    "",
-		PhotoQuality:     0,
-		PhotoResolution:  0,
-		Merged:           false,
-		CameraID:         0,
-		CameraModel:      "",
-		CameraMake:       "",
-		CameraType:       "",
-		LensID:           0,
-		LensModel:        "",
-		LensMake:         "",
-		CellID:           "",
-		PlaceID:          "",
-		PlaceLabel:       "",
-		PlaceCity:        "",
-		PlaceState:       "",
-		PlaceCountry:     "",
-		FileID:           0,
-		FileUID:          "",
-		FilePrimary:      false,
-		FileMissing:      false,
-		FileName:         "",
-		FileHash:         "",
-		FileType:         "",
-		FileMime:         "",
-		FileWidth:        0,
-		FileHeight:       0,
-		FileOrientation:  0,
-		FileAspectRatio:  0,
-		FileColors:       "",
-		FileChroma:       0,
-		FileLuminance:    "",
-		FileDiff:         0,
-		Files:            nil,
+	result := photo.ViewerResult("/content", "/api/v1", "preview-token", "download-token")
+
+	assert.Equal(t, uid, result.UID)
+	assert.Equal(t, entity.MediaVideo, result.Type)
+	assert.Equal(t, "Sunset", result.Title)
+	assert.Equal(t, "Golden hour", result.Caption)
+	assert.Equal(t, 12.34, result.Lat)
+	assert.Equal(t, 56.78, result.Lng)
+	assert.Equal(t, taken, result.TakenAtLocal)
+	assert.Equal(t, "UTC", result.TimeZone)
+	assert.True(t, result.Favorite)
+	assert.True(t, result.Playable)
+	assert.Equal(t, 5*time.Second, result.Duration)
+	assert.Equal(t, videoHash, result.Hash)
+	assert.Equal(t, "avc1", result.Codec)
+	assert.Equal(t, header.ContentTypeMp4AvcMain, result.Mime)
+	assert.Equal(t, 1920, result.Width)
+	assert.Equal(t, 1080, result.Height)
+	if assert.NotNil(t, result.Thumbs) {
+		assert.NotNil(t, result.Thumbs.Fit720)
+	}
+	assert.Equal(t, "/api/v1/dl/img-hash?t=download-token", result.DownloadUrl)
+}
+
+func TestPhotoResults_ViewerFormatting(t *testing.T) {
+	uid1 := rnd.GenerateUID(entity.PhotoUID)
+	uid2 := rnd.GenerateUID(entity.PhotoUID)
+
+	photos := PhotoResults{
+		{PhotoUID: uid1},
+		{PhotoUID: uid2},
 	}
 
-	results := PhotoResults{result1, result2}
+	results := photos.ViewerResults("/content", "/api", "preview", "download")
+	assert.Len(t, results, 2)
+	assert.Equal(t, uid1, results[0].UID)
+	assert.Equal(t, uid2, results[1].UID)
 
-	b, err := results.ViewerJSON("/content", "/api/v1", "preview-token", "download-token")
-
+	data, err := photos.ViewerJSON("/content", "/api", "preview", "download")
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 
-	t.Logf("result: %s", b)
+	var parsed viewer.Results
+	if err := json.Unmarshal(data, &parsed); err != nil {
+		t.Fatalf("failed to unmarshal viewer json: %v", err)
+	}
+
+	assert.Len(t, parsed, 2)
+	assert.Equal(t, uid1, parsed[0].UID)
+	assert.Equal(t, uid2, parsed[1].UID)
+}
+
+func TestGeoResult_ViewerResult(t *testing.T) {
+	uid := rnd.GenerateUID(entity.PhotoUID)
+	taken := time.Date(2023, 3, 14, 9, 26, 53, 0, time.UTC)
+
+	geo := GeoResult{
+		PhotoUID:      uid,
+		PhotoType:     entity.MediaImage,
+		PhotoTitle:    "Mountains",
+		PhotoCaption:  "Snow peaks",
+		PhotoLat:      -12.34,
+		PhotoLng:      78.9,
+		TakenAtLocal:  taken,
+		TimeZone:      "Europe/Berlin",
+		PhotoFavorite: false,
+		PhotoDuration: 0,
+		FileHash:      "img-hash",
+		FileCodec:     "jpeg",
+		FileMime:      header.ContentTypeJpeg,
+		FileWidth:     1024,
+		FileHeight:    768,
+	}
+
+	result := geo.ViewerResult("/content", "/api", "preview", "download")
+
+	assert.Equal(t, uid, result.UID)
+	assert.Equal(t, entity.MediaImage, result.Type)
+	assert.Equal(t, "Mountains", result.Title)
+	assert.Equal(t, "Snow peaks", result.Caption)
+	assert.Equal(t, -12.34, result.Lat)
+	assert.Equal(t, 78.9, result.Lng)
+	assert.Equal(t, taken, result.TakenAtLocal)
+	assert.Equal(t, "Europe/Berlin", result.TimeZone)
+	assert.False(t, result.Favorite)
+	assert.False(t, result.Playable)
+	assert.Equal(t, "img-hash", result.Hash)
+	assert.Equal(t, "jpeg", result.Codec)
+	assert.Equal(t, header.ContentTypeJpeg, result.Mime)
+	assert.Equal(t, 1024, result.Width)
+	assert.Equal(t, 768, result.Height)
+	if assert.NotNil(t, result.Thumbs) {
+		assert.NotNil(t, result.Thumbs.Fit720)
+	}
+	assert.Equal(t, "/api/dl/img-hash?t=download", result.DownloadUrl)
 }
 
 func TestGeoResults_ViewerJSON(t *testing.T) {
-	taken := time.Date(2000, 1, 1, 1, 1, 1, 1, time.UTC).UTC().Truncate(time.Second)
+	uid1 := rnd.GenerateUID(entity.PhotoUID)
+	uid2 := rnd.GenerateUID(entity.PhotoUID)
+
 	items := GeoResults{
-		GeoResult{
-			ID:            "1",
-			PhotoLat:      7.775,
-			PhotoLng:      8.775,
-			PhotoUID:      "p1",
-			PhotoTitle:    "Title 1",
-			PhotoCaption:  "Description 1",
-			PhotoFavorite: false,
-			PhotoType:     entity.MediaVideo,
-			FileHash:      "d2b4a5d18276f96f1b5a1bf17fd82d6fab3807f2",
-			FileWidth:     1920,
-			FileHeight:    1080,
-			TakenAtLocal:  taken,
-		},
-		GeoResult{
-			ID:            "2",
-			PhotoLat:      1.775,
-			PhotoLng:      -5.775,
-			PhotoUID:      "p2",
-			PhotoTitle:    "Title 2",
-			PhotoCaption:  "Description 2",
-			PhotoFavorite: true,
-			PhotoType:     entity.MediaImage,
-			FileHash:      "da639e836dfa9179e66c619499b0a5e592f72fc1",
-			FileWidth:     3024,
-			FileHeight:    3024,
-			TakenAtLocal:  taken,
-		},
-		GeoResult{
-			ID:            "3",
-			PhotoLat:      -1.775,
-			PhotoLng:      100.775,
-			PhotoUID:      "p3",
-			PhotoTitle:    "Title 3",
-			PhotoCaption:  "Description 3",
-			PhotoFavorite: false,
-			PhotoType:     entity.MediaRaw,
-			FileHash:      "412fe4c157a82b636efebc5bc4bc4a15c321aad1",
-			FileWidth:     5000,
-			FileHeight:    10000,
-			TakenAtLocal:  taken,
-		},
+		{PhotoUID: uid1, FileHash: "hash1"},
+		{PhotoUID: uid2, FileHash: "hash2"},
 	}
 
-	b, err := items.ViewerJSON("/content", "/api/v1", "preview-token", "download-token")
-
+	data, err := items.ViewerJSON("/content", "/api", "preview", "download")
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 
-	t.Logf("result: %s", b)
+	var parsed viewer.Results
+	if err := json.Unmarshal(data, &parsed); err != nil {
+		t.Fatalf("failed to unmarshal viewer json: %v", err)
+	}
+
+	assert.Len(t, parsed, 2)
+	assert.Equal(t, uid1, parsed[0].UID)
+	assert.Equal(t, uid2, parsed[1].UID)
+}
+
+func TestPhotosViewerResults(t *testing.T) {
+	fixture := entity.PhotoFixtures.Get("19800101_000002_D640C559")
+	form := form.SearchPhotos{
+		UID:     fixture.PhotoUID,
+		Count:   1,
+		Primary: true,
+	}
+
+	results, count, err := PhotosViewerResults(form, "/content", "/api", "preview", "download")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	assert.Greater(t, count, 0)
+	if assert.NotEmpty(t, results) {
+		assert.Equal(t, fixture.PhotoUID, results[0].UID)
+		assert.NotNil(t, results[0].Thumbs)
+	}
 }

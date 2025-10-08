@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetMetrics(t *testing.T) {
-	t.Run("expose count statistics", func(t *testing.T) {
+	t.Run("ExposeCountStatistics", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetMetrics(router)
@@ -29,8 +29,7 @@ func TestGetMetrics(t *testing.T) {
 		assert.Regexp(t, regexp.MustCompile(`photoprism_statistics_media_count{stat="folders"} \d+`), body)
 		assert.Regexp(t, regexp.MustCompile(`photoprism_statistics_media_count{stat="files"} \d+`), body)
 	})
-
-	t.Run("expose build information", func(t *testing.T) {
+	t.Run("ExposeBuildInformation", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetMetrics(router)
@@ -45,8 +44,7 @@ func TestGetMetrics(t *testing.T) {
 
 		assert.Regexp(t, regexp.MustCompile(`photoprism_build_info{edition=".+",goversion=".+",version=".+"} 1`), body)
 	})
-
-	t.Run("has prometheus exposition format as content type", func(t *testing.T) {
+	t.Run("HasPrometheusExpositionFormatAsContentType", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetMetrics(router)

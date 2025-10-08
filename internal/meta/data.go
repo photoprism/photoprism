@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Extended image type constants extracted from vendor-specific metadata.
 const (
 	ImageTypeHDR = 3 // see https://exiftool.org/TagNames/Apple.html
 )

@@ -16,11 +16,12 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server/process"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -100,7 +101,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	router.Use(Security(conf))
 
 	// Create REST API router group.
-	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri), APIMiddleware(conf))
 
 	// Initialize package extensions.
 	Ext().Init(router, conf)
@@ -115,7 +116,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	isLive := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 		c.Header(header.AccessControlAllowOrigin, header.Any)
-		c.String(http.StatusOK, "OK")
+		c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
 	}
 	router.Any(conf.BaseUri("/livez"), isLive)
 	router.Any(conf.BaseUri("/health"), isLive)
@@ -126,9 +127,9 @@ func Start(ctx context.Context, conf *config.Config) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 		c.Header(header.AccessControlAllowOrigin, header.Any)
 		if conf.IsReady() {
-			c.String(http.StatusOK, "OK")
+			c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
 		} else {
-			c.String(http.StatusServiceUnavailable, "Service Unavailable")
+			c.JSON(http.StatusServiceUnavailable, api.NewHealthResponse("service unavailable"))
 		}
 	}
 	router.Any(conf.BaseUri("/readyz"), isReady)

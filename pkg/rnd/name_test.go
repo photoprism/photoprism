@@ -21,7 +21,7 @@ func TestName(t *testing.T) {
 }
 
 func BenchmarkName(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Name()
 	}
 }
