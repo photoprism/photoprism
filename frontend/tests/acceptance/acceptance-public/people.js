@@ -186,23 +186,16 @@ test.meta("testID", "people-005").meta({ mode: "public" })("Common: Remove face"
   const MarkerCount = await subject.getMarkerCount();
 
   if ((await photoedit.inputName.nth(0).value) == "") {
-    await t
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .notOk()
-      .expect(photoedit.inputName.nth(0).value)
-      .eql("")
-      .click(photoedit.removeMarker)
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .ok()
-      .click(photoedit.undoRemoveMarker);
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).notOk();
+    await t.expect(photoedit.inputName.nth(0).value).eql("");
+    await photoedit.removeFace();
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).ok();
+    await t.click(photoedit.undoRemoveMarker);
   } else if ((await photoedit.inputName.nth(0).value) != "") {
-    await t
-      .expect(photoedit.inputName.nth(1).value)
-      .eql("")
-      .click(photoedit.removeMarker)
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .ok()
-      .click(photoedit.undoRemoveMarker);
+    await t.expect(photoedit.inputName.nth(1).value).eql("");
+    await photoedit.removeFace(1);
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).ok();
+    await t.click(photoedit.undoRemoveMarker);
   }
 
   await t.click(photoedit.dialogClose);
@@ -214,23 +207,15 @@ test.meta("testID", "people-005").meta({ mode: "public" })("Common: Remove face"
   await t.click(photoedit.peopleTab);
 
   if ((await photoedit.inputName.nth(0).value) == "") {
-    await t
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .notOk()
-      .expect(photoedit.inputName.nth(0).value)
-      .eql("")
-      .click(photoedit.removeMarker)
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .ok();
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).notOk();
+    await t.expect(photoedit.inputName.nth(0).value).eql("");
+    await photoedit.removeFace();
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).ok();
   } else if ((await photoedit.inputName.nth(0).value) != "") {
-    await t
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .notOk()
-      .expect(photoedit.inputName.nth(1).value)
-      .eql("")
-      .click(photoedit.removeMarker)
-      .expect(photoedit.undoRemoveMarker.nth(0).visible)
-      .ok();
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).notOk();
+    await t.expect(photoedit.inputName.nth(1).value).eql("");
+    await photoedit.removeFace();
+    await t.expect(photoedit.undoRemoveMarker.nth(0).visible).ok();
   }
 
   await t.click(photoedit.dialogClose);
@@ -281,4 +266,77 @@ test.meta("testID", "people-007").meta({ mode: "public" })("Common: Hide person"
   await t.eval(() => location.reload());
   await t.wait(5000);
   await subject.checkSubjectVisibility("uid", FirstPersonUid, true);
+});
+
+test.meta("testID", "people-008").meta({ mode: "public" })("Common: Go to person from face menu", async (t) => {
+  await menu.openPage("people");
+  await t.click(subject.recognizedTab);
+  await t.wait(2000);
+
+  const firstPersonUid = await subject.getNthSubjectUid(0);
+  await subject.openSubjectWithUid(firstPersonUid);
+  await t.wait(2000);
+  await photo.triggerHoverAction("nth", 0, "select");
+  await contextmenu.triggerContextMenuAction("edit", "");
+  await t.click(photoedit.peopleTab);
+
+  const faceName = await photoedit.inputName.nth(0).value;
+  if (faceName && faceName !== "") {
+    await photoedit.openFaceMenu(0);
+    await t.expect(photoedit.goToPersonAction.nth(0).visible).ok();
+
+    // Note: Cannot click due to restriction with multiple windows
+  }
+
+  await t.click(photoedit.dialogClose);
+});
+
+test.meta("testID", "people-009").meta({ mode: "public" })("Common: Set person cover from face menu", async (t) => {
+  await menu.openPage("people");
+  await t.click(subject.recognizedTab);
+  await t.wait(3000);
+
+  const firstPersonUid = await subject.getNthSubjectUid(0);
+  const personCard = Selector("div.result.is-subject[data-uid='" + firstPersonUid + "']");
+
+  const initialThumb = await personCard.find("div.preview img").getAttribute("src");
+  await t
+    .expect(initialThumb !== undefined && initialThumb !== null)
+    .ok(`Could not get initial thumbnail for person ${firstPersonUid}`);
+
+  await subject.openSubjectWithUid(firstPersonUid);
+  await t.wait(2000);
+
+  const photoCount = await photo.getPhotoCount("all");
+  const photoIdx = photoCount > 1 ? 1 : 0;
+  await photo.triggerHoverAction("nth", photoIdx, "select");
+  await contextmenu.triggerContextMenuAction("edit", "");
+  await t.click(photoedit.peopleTab);
+
+  const faceName = await photoedit.inputName.nth(0).value;
+  if (faceName && faceName !== "") {
+    await photoedit.setPersonCover(0);
+    await t.wait(2000);
+
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+
+    await menu.openPage("people");
+    await t.click(subject.recognizedTab);
+    await t.wait(3000);
+
+    const updatedThumb = await personCard.find("div.preview img").getAttribute("src");
+    await t
+      .expect(updatedThumb !== undefined && updatedThumb !== null)
+      .ok(`Could not get updated thumbnail for person ${firstPersonUid} after setting cover.`);
+
+    await t
+      .expect(updatedThumb)
+      .notEql(
+        initialThumb,
+        `Person thumbnail should change (Person: ${firstPersonUid}, Initial: ${initialThumb}, New: ${updatedThumb})`
+      );
+
+    await t.expect(updatedThumb).contains("/t/");
+  }
 });
