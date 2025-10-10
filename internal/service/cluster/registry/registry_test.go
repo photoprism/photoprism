@@ -11,6 +11,7 @@ import (
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -27,12 +28,15 @@ func TestMain(m *testing.M) {
 	event.AuditLog = log
 
 	caller := "internal/service/cluster/registry/registry_test.go/TestMain"
-	dbc, err := testextras.AcquireDBMutex(log, caller)
+	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
 		os.Exit(1)
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
+
+	_, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
+	functions.SetDSNToEnv(dsn)
 
 	// Run unit tests.
 	beforeTimestamp := time.Now().UTC()

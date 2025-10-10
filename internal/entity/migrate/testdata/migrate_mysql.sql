@@ -1,14 +1,14 @@
-CREATE DATABASE IF NOT EXISTS `migrate`;
-CREATE USER IF NOT EXISTS 'migrate'@'%' IDENTIFIED BY 'migrate';
-GRANT ALL PRIVILEGES ON `migrate`.* TO 'migrate'@'%';
+-- CREATE DATABASE IF NOT EXISTS `migrate`;
+-- CREATE USER IF NOT EXISTS 'migrate'@'%' IDENTIFIED BY 'migrate';
+-- GRANT ALL PRIVILEGES ON `migrate`.* TO 'migrate'@'%';
 
-FLUSH PRIVILEGES;
+-- FLUSH PRIVILEGES;
 
--- ----------------------------------------------------------------------------------------
--- init "migrate" db
--- ----------------------------------------------------------------------------------------
+-- -- ----------------------------------------------------------------------------------------
+-- -- init "migrate" db
+-- -- ----------------------------------------------------------------------------------------
 
-USE migrate;
+-- USE migrate;
 
 -- Drop all tables that exist as at 2025-02-20
 DROP TABLE IF EXISTS `accounts`;

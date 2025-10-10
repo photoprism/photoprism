@@ -1,6 +1,7 @@
 package migrate
 
 import (
+	"fmt"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/internal/testextras"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -17,14 +19,16 @@ import (
 )
 
 func TestDialectMysql(t *testing.T) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn()
+	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
 	if driver != "mysql" {
 		t.Skip("skipping test as not MariaDB")
 	}
 
 	if dumpName, err := filepath.Abs("./testdata/migrate_mysql.sql"); err != nil {
 		t.Fatal(err)
-	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+	} else if err = testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		t.Fatal(err)
+	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
 		"-e", "source "+dumpName).Run(); err != nil {
 		t.Fatal(err)
 	}
@@ -33,8 +37,10 @@ func TestDialectMysql(t *testing.T) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
+	dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+
 	db, err := gorm.Open(mysql.Open(
-		"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"),
+		dbDSN),
 		&gorm.Config{
 			Logger: logger.New(
 				log,

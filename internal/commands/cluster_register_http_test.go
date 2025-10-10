@@ -13,6 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	cfg "github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
@@ -49,7 +50,7 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 	assert.Equal(t, cluster.ExampleClientSecret, gjson.Get(out, "secrets.clientSecret").String())
 	assert.Equal(t, "pwd", gjson.Get(out, "database.password").String())
 	dsn := gjson.Get(out, "database.dsn").String()
-	parsed := cfg.NewDSN(dsn)
+	parsed := functions.NewDSN(dsn)
 	assert.Equal(t, "user", parsed.User)
 	assert.Equal(t, "pwd", parsed.Password)
 	assert.Equal(t, "tcp", parsed.Net)
@@ -134,7 +135,7 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 	assert.Equal(t, secret, gjson.Get(out, "secrets.clientSecret").String())
 	assert.Equal(t, "pwd3", gjson.Get(out, "database.password").String())
 	dsn := gjson.Get(out, "database.dsn").String()
-	parsed := cfg.NewDSN(dsn)
+	parsed := functions.NewDSN(dsn)
 	assert.Equal(t, "user", parsed.User)
 	assert.Equal(t, "pwd3", parsed.Password)
 	assert.Equal(t, "tcp", parsed.Net)
@@ -186,7 +187,7 @@ func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 	assert.Equal(t, "pp-node-05", gjson.Get(out, "node.name").String())
 	assert.Equal(t, "pwd4", gjson.Get(out, "database.password").String())
 	dsn := gjson.Get(out, "database.dsn").String()
-	parsed := cfg.NewDSN(dsn)
+	parsed := functions.NewDSN(dsn)
 	assert.Equal(t, "pp_user", parsed.User)
 	assert.Equal(t, "pwd4", parsed.Password)
 	assert.Equal(t, "tcp", parsed.Net)
@@ -448,7 +449,7 @@ func TestClusterRegister_RotateDatabase_JSON(t *testing.T) {
 	assert.Equal(t, "pp-node-07", gjson.Get(out, "node.name").String())
 	assert.Equal(t, "pwd7", gjson.Get(out, "database.password").String())
 	dsn := gjson.Get(out, "database.dsn").String()
-	parsed := cfg.NewDSN(dsn)
+	parsed := functions.NewDSN(dsn)
 	assert.Equal(t, "pp_user", parsed.User)
 	assert.Equal(t, "pwd7", parsed.Password)
 	assert.Equal(t, "tcp", parsed.Net)

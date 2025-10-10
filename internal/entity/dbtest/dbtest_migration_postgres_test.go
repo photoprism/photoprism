@@ -2,6 +2,7 @@ package entity
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/testextras"
 )
 
 func TestDialectPostgreSQL(t *testing.T) {
@@ -33,10 +35,19 @@ func TestDialectPostgreSQL(t *testing.T) {
 	defer dbtestMutex.Unlock()
 	log.Info("Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 	t.Run("ValidMigration", func(t *testing.T) {
+		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+
 		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
 		} else {
-			if err = exec.Command("psql", "postgresql://photoprism:photoprism@postgres:5432/postgres", "--file="+dumpName).Run(); err != nil {
+			// Clear Postgres source (migrate)
+			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+				t.Fatal(err)
+			}
+
+			psqlDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d", testextras.GetDBMutexID())
+
+			if err = exec.Command("psql", psqlDSN, "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -45,7 +56,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			"postgresql://migrate:migrate@postgres:5432/migrate?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -124,19 +135,18 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("EmptyDB", func(t *testing.T) {
-		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_postgres_newdb.sql"); err != nil {
+		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+
+		// Clear Postgres source (migrate)
+		if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
 			t.Fatal(err)
-		} else {
-			if err = exec.Command("psql", "postgresql://photoprism:photoprism@postgres:5432/postgres", "--file="+dumpName).Run(); err != nil {
-				t.Fatal(err)
-			}
 		}
 
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			"postgresql://migrate:migrate@postgres:5432/migrate?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,

@@ -24,7 +24,7 @@ func TestResetCommand(t *testing.T) {
 		}
 		assert.Greater(t, count, int64(0))
 
-		dbDrv, dbDSN := functions.PhotoPrismTestToDriverDsn()
+		dbDrv, dbDSN := functions.PhotoPrismTestToDriverDsn(0)
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,

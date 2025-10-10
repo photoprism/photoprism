@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,133 +8,107 @@ import (
 
 func TestPhotoPrismTestToDriverDsn(t *testing.T) {
 	t.Run("sqlite", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		originalDsn := os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlite")
+		t.Setenv("PHOTOPRISM_TEST_DSN_SQLITE", ":memory:?cache=shared&_foreign_keys=on")
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlite")
-		os.Setenv("PHOTOPRISM_TEST_DSN_SQLITE", ":memory:?cache=shared&_foreign_keys=on")
-
-		driver, dsn := PhotoPrismTestToDriverDsn()
+		driver, dsn := PhotoPrismTestToDriverDsn(0)
 
 		assert.Equal(t, "sqlite", driver)
 		assert.Equal(t, ":memory:?cache=shared&_foreign_keys=on", dsn)
+		driver, dsn = PhotoPrismTestToDriverDsn(1)
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
-		os.Setenv("PHOTOPRISM_TEST_DSN_SQLITE", originalDsn)
+		assert.Equal(t, "sqlite", driver)
+		assert.Equal(t, ":memory:?cache=shared&_foreign_keys=on", dsn)
 	})
 
 	t.Run("sqlitefile", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		originalDsn := os.Getenv("PHOTOPRISM_TEST_DSN_SQLITE")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlitefile")
+		t.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", "file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db?_foreign_keys=on&_busy_timeout=5000")
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlitefile")
-		os.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", ".test.db")
-
-		driver, dsn := PhotoPrismTestToDriverDsn()
+		driver, dsn := PhotoPrismTestToDriverDsn(0)
 
 		assert.Equal(t, "sqlite", driver)
-		assert.Equal(t, ".test.db", dsn)
+		assert.Equal(t, "file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db?_foreign_keys=on&_busy_timeout=5000", dsn)
+		driver, dsn = PhotoPrismTestToDriverDsn(1)
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
-		os.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", originalDsn)
+		assert.Equal(t, "sqlite", driver)
+		assert.Equal(t, "file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db_01.db?_foreign_keys=on&_busy_timeout=5000", dsn)
 	})
 
 	t.Run("mariadb", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		originalDsn := os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "mariadb")
+		t.Setenv("PHOTOPRISM_TEST_DSN_MARIADB", "root:photoprism@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true")
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "mariadb")
-		os.Setenv("PHOTOPRISM_TEST_DSN_MARIADB", ".test.db")
-
-		driver, dsn := PhotoPrismTestToDriverDsn()
+		driver, dsn := PhotoPrismTestToDriverDsn(0)
 
 		assert.Equal(t, "mysql", driver)
-		assert.Equal(t, ".test.db", dsn)
+		assert.Equal(t, "root:photoprism@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", dsn)
+		driver, dsn = PhotoPrismTestToDriverDsn(1)
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
-		os.Setenv("PHOTOPRISM_TEST_DSN_MARIADB", originalDsn)
+		assert.Equal(t, "mysql", driver)
+		assert.Equal(t, "root:photoprism@tcp(mariadb:4001)/testdb_01?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", dsn)
 	})
 
 	t.Run("mysql8", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		originalDsn := os.Getenv("PHOTOPRISM_TEST_DSN_MYSQL8")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "mysql8")
+		t.Setenv("PHOTOPRISM_TEST_DSN_MYSQL8", "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s")
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "mysql8")
-		os.Setenv("PHOTOPRISM_TEST_DSN_MYSQL8", ".test.db")
-
-		driver, dsn := PhotoPrismTestToDriverDsn()
+		driver, dsn := PhotoPrismTestToDriverDsn(0)
 
 		assert.Equal(t, "mysql", driver)
-		assert.Equal(t, ".test.db", dsn)
+		assert.Equal(t, "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", dsn)
+		driver, dsn = PhotoPrismTestToDriverDsn(1)
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
-		os.Setenv("PHOTOPRISM_TEST_DSN_MYSQL8", originalDsn)
+		assert.Equal(t, "mysql", driver)
+		assert.Equal(t, "root:photoprism@tcp(mysql:4001)/photoprism_01?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", dsn)
 	})
 
 	t.Run("postgres", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-		originalDsn := os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "postgres")
+		t.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", "postgresql://testdb:testdb@postgres:5432/testdb?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable")
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "postgres")
-		os.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", ".test.db")
-
-		driver, dsn := PhotoPrismTestToDriverDsn()
+		driver, dsn := PhotoPrismTestToDriverDsn(0)
 
 		assert.Equal(t, "postgres", driver)
-		assert.Equal(t, ".test.db", dsn)
+		assert.Equal(t, "postgresql://testdb:testdb@postgres:5432/testdb?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", dsn)
+		driver, dsn = PhotoPrismTestToDriverDsn(1)
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
-		os.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", originalDsn)
+		assert.Equal(t, "postgres", driver)
+		assert.Equal(t, "postgresql://testdb:testdb@postgres:5432/testdb_01?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", dsn)
 	})
 
 	t.Run("default", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "unknown")
 
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "unknown")
-
-		driver, dsn := PhotoPrismTestToDriverDsn()
+		driver, dsn := PhotoPrismTestToDriverDsn(0)
 
 		assert.Equal(t, "sqlite", driver)
 		assert.Equal(t, "", dsn)
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
 	})
 }
 
 func TestPhotoPrismTestToFolderName(t *testing.T) {
 	t.Run("sqlitefile", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlitefile")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlitefile")
 
 		folder := PhotoPrismTestToFolderName()
 
 		assert.Equal(t, "sqlitefile", folder)
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
 	})
 
 	t.Run("default", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "unknown")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "unknown")
 
 		folder := PhotoPrismTestToFolderName()
 
 		assert.Equal(t, "unknown", folder)
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
 	})
 
 	t.Run("empty", func(t *testing.T) {
-		originalDsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", "")
+		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "")
 
 		folder := PhotoPrismTestToFolderName()
 
 		assert.Equal(t, "sqlite", folder)
-
-		os.Setenv("PHOTOPRISM_TEST_DSN_NAME", originalDsnName)
 	})
 }

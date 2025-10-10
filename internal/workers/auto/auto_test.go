@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -17,12 +18,15 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 
 	caller := "internal/workers/auto/auto_test.go/TestMain"
-	dbc, err := testextras.AcquireDBMutex(log, caller)
+	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
 		os.Exit(1)
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
+
+	_, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
+	functions.SetDSNToEnv(dsn)
 
 	c := config.TestConfig()
 	defer c.CloseDb()
@@ -30,7 +34,7 @@ func TestMain(m *testing.M) {
 	// Run unit tests.
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
-	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
+	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 	// Close database connection.
 	_ = c.CloseDb()

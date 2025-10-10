@@ -2,6 +2,7 @@ package entity
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -37,16 +39,17 @@ func TestDialectMysql(t *testing.T) {
 		// Prepare migrate mariadb db.
 		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_mysql.sql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
 
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
+		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
 
 		db, err := gorm.Open(mysql.Open(
-			"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -92,10 +95,10 @@ func TestDialectMysql(t *testing.T) {
 		// Reset logger
 		log.SetOutput(os.Stdout)
 
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_sessions' doesn't exist")
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_users_details' doesn't exist")
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_users_settings' doesn't exist")
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_users_shares' doesn't exist")
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_sessions' doesn't exist", testextras.GetDBMutexID()))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_details' doesn't exist", testextras.GetDBMutexID()))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_settings' doesn't exist", testextras.GetDBMutexID()))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_shares' doesn't exist", testextras.GetDBMutexID()))
 		// There is a blank record.
 		assert.Equal(t, 6, len(strings.Split(buffer.String(), "\n")))
 		if len(strings.Split(buffer.String(), "\n")) != 6 {
@@ -132,7 +135,7 @@ func TestDialectMysql(t *testing.T) {
 		// Prepare migrate mariadb db.
 		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_mysql.sql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -140,8 +143,10 @@ func TestDialectMysql(t *testing.T) {
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
 
+		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+
 		db, err := gorm.Open(mysql.Open(
-			"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -190,10 +195,10 @@ func TestDialectMysql(t *testing.T) {
 		// Reset logger
 		log.SetOutput(os.Stdout)
 
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_sessions' doesn't exist")
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_users_details' doesn't exist")
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_users_settings' doesn't exist")
-		assert.Contains(t, buffer.String(), "Table 'migrate.auth_users_shares' doesn't exist")
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_sessions' doesn't exist", testextras.GetDBMutexID()))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_details' doesn't exist", testextras.GetDBMutexID()))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_settings' doesn't exist", testextras.GetDBMutexID()))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_shares' doesn't exist", testextras.GetDBMutexID()))
 		// There is a blank record.
 		assert.Equal(t, 6, len(strings.Split(buffer.String(), "\n")))
 		if len(strings.Split(buffer.String(), "\n")) != 6 {

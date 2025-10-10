@@ -81,9 +81,9 @@ test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
 test-short: run-test-short
-test-mariadb: reset-mariadb-testdb run-test-mariadb
-test-postgres: reset-postgres-testdb run-test-postgres
-test-sqlite: reset-sqlite-unit run-test-sqlite
+test-mariadb: reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
+test-postgres: reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
+test-sqlite: reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
 # SQLite acceptance tests - These setup, configure and then call the actual tests.
 acceptance-run-chromium: storage/acceptance storage/sqlite acceptance-exec-chromium
 acceptance-run-chromium-short: storage/acceptance storage/sqlite acceptance-exec-chromium-short
@@ -228,7 +228,7 @@ acceptance-database-reset-%:
 	@if [ -f storage/acceptance/config-active/dbms.mariadb ]; then \
 		echo "resetting mariadb"; \
 		cp -f storage/acceptance/backup.db storage/acceptance/index.db; \
-		mysql < scripts/sql/reset-acceptance.sql; \
+		mysql < scripts/sql/mariadb/reset-acceptance.sql; \
 		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver mysql --transfer-dsn "$(subst testdb,acceptance,$(PHOTOPRISM_TEST_DSN_MARIADB))" migrations transfer -force; \
 		cp -f storage/acceptance/config-active/settingsBackup.yml storage/acceptance/config-active/settings.yml; \
 	fi
@@ -432,21 +432,24 @@ vitest-component:
 	(cd frontend && npm run test-component)
 reset-mariadb:
 	$(info Resetting photoprism database...)
-	mysql < scripts/sql/reset-photoprism.sql
+	mysql < scripts/sql/mariadb/reset-photoprism.sql
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
-	mysql < scripts/sql/reset-testdb.sql
+	mysql < scripts/sql/mariadb/reset-testdb.sql
 reset-mariadb-local:
 	$(info Resetting local database...)
-	mysql < scripts/sql/reset-local.sql
+	mysql < scripts/sql/mariadb/reset-local.sql
 reset-mariadb-acceptance:
 	$(info Resetting acceptance database...)
-	mysql < scripts/sql/reset-acceptance.sql
+	mysql < scripts/sql/mariadb/reset-acceptance.sql
+reset-mariadb-migrate:
+	$(info Resetting migrate database...)
+	mysql < scripts/sql/mariadb/reset-migrate.sql
 reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
 	rm --force ./storage/testdata/unit.test.db
 	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
-reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-migrate
 reset-postgres:
 	$(info Resetting photoprism database...)
 	psql postgresql://photoprism:photoprism@postgres:5432/postgres -f scripts/sql/postgresql/reset-photoprism.sql
@@ -459,8 +462,11 @@ reset-postgres-local:
 reset-postgres-acceptance:
 	$(info Resetting acceptance database...)
 	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-acceptance.sql
+reset-postgres-migrate:
+	$(info Resetting migrate database...)
+	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-migrate.sql
 reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance
-reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb
+reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb reset-postgres-migrate
 # reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
 	$(info Removing test database files...)

@@ -1,6 +1,7 @@
 package migrate
 
 import (
+	"fmt"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/internal/testextras"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,15 +19,23 @@ import (
 )
 
 func TestDialectPostgreSQL(t *testing.T) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn()
+	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
 	if driver != "postgres" {
 		t.Skip("skipping test as not PostgreSQL")
 	}
 	t.Run("Existing", func(t *testing.T) {
+		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+
 		if dumpName, err := filepath.Abs("./testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
 		} else {
-			if err = exec.Command("psql", "postgresql://photoprism:photoprism@postgres:5432/postgres", "--file="+dumpName).Run(); err != nil {
+			// Clear Postgres source (migrate)
+			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+				t.Fatal(err)
+			}
+			psqlDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d", testextras.GetDBMutexID())
+
+			if err = exec.Command("psql", psqlDSN, "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -35,7 +45,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			"postgresql://migrate:migrate@postgres:5432/migrate?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -101,10 +111,19 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("New", func(t *testing.T) {
+		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+
 		if dumpName, err := filepath.Abs("./testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
 		} else {
-			if err = exec.Command("psql", "postgresql://photoprism:photoprism@postgres:5432/postgres", "--file="+dumpName).Run(); err != nil {
+			// Clear Postgres source (migrate)
+			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+				t.Fatal(err)
+			}
+
+			psqlDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d", testextras.GetDBMutexID())
+
+			if err = exec.Command("psql", psqlDSN, "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -114,7 +133,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			"postgresql://migrate:migrate@postgres:5432/migrate?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,

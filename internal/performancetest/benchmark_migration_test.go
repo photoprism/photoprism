@@ -13,7 +13,7 @@ import (
 )
 
 func BenchmarkMigration_SQLite(b *testing.B) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn()
+	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
 	if driver != "sqlite" {
 		b.Skip("skipping benchmark as not SQLite")
 	}
@@ -83,7 +83,7 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 }
 
 func BenchmarkMigration_MySQL(b *testing.B) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn()
+	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
 	if driver != "mysql" {
 		b.Skip("skipping benchmark as not MariaDB")
 	}
@@ -147,7 +147,7 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 }
 
 func BenchmarkMigration_PostgreSQL(b *testing.B) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn()
+	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
 	if driver != "postgres" {
 		b.Skip("skipping benchmark as not PostgreSQL")
 	}

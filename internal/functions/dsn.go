@@ -1,10 +1,20 @@
-package config
+package functions
 
 import (
+	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
 	"unicode"
+)
+
+// SQL Databases.
+const (
+	MySQL      = "mysql"
+	MariaDB    = "mariadb"
+	Postgres   = "postgres"
+	PostgreSQL = "postgresql"
+	SQLite3    = "sqlite"
 )
 
 // dsnPattern is a regular expression matching a database DSN string.
@@ -117,5 +127,44 @@ func (d *DSN) Parse(dsn string) {
 		if len(pairs) > 1 {
 			d.Driver = "postgresql"
 		}
+	}
+}
+
+// ToString returns the DSN in the format that gorm expects
+func (d *DSN) ToString() string {
+	driver := d.Driver
+	if driver == "" {
+		if d.User == "" {
+			driver = SQLite3
+		} else {
+			driver = MariaDB
+		}
+	}
+
+	switch driver {
+	case SQLite3, "sqlitefile":
+		if d.Params != "" {
+			return fmt.Sprintf("%s/%s?%s", d.Server, d.Name, d.Params)
+		} else {
+			return fmt.Sprintf("%s/%s", d.Server, d.Name)
+		}
+	case PostgreSQL, Postgres:
+		if d.Params != "" {
+			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", PostgreSQL, d.User, d.Password, d.Server, d.Name, d.Params)
+		} else {
+			return fmt.Sprintf("%s://%s:%s@%s/%s", PostgreSQL, d.User, d.Password, d.Server, d.Name)
+		}
+	case MariaDB, MySQL:
+		databaseServer := d.Server
+		if d.Net != "" {
+			databaseServer = fmt.Sprintf("%s(%s)", d.Net, databaseServer)
+		}
+		if d.Params != "" {
+			return fmt.Sprintf("%s:%s@%s/%s?%s", d.User, d.Password, databaseServer, d.Name, d.Params)
+		} else {
+			return fmt.Sprintf("%s:%s@%s/%s", d.User, d.Password, databaseServer, d.Name)
+		}
+	default:
+		return ""
 	}
 }

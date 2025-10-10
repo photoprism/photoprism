@@ -90,7 +90,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	}
 
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
-	driver, dsn := functions.PhotoPrismTestToDriverDsn()
+	driver, dsn := functions.PhotoPrismTestToDriverDsn(0)
 
 	// Config example for MySQL / MariaDB:
 	//   driver = MySQL,

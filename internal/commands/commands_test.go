@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/capture"
@@ -38,12 +39,15 @@ func TestMain(m *testing.M) {
 	fs.PurgeTestDbFiles(".", false)
 
 	caller := "internal/commands/commands_test.go/TestMain"
-	dbc, err := testextras.AcquireDBMutex(log, caller)
+	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
 		os.Exit(1)
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
+
+	_, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
+	functions.SetDSNToEnv(dsn)
 
 	tempDir, err := os.MkdirTemp("", "commands-test")
 	if err != nil {
@@ -66,7 +70,7 @@ func TestMain(m *testing.M) {
 	// Run unit tests.
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
-	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
+	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 

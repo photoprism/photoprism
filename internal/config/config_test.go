@@ -29,19 +29,22 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 
 	caller := "internal/config/config_test.go/TestMain"
-	dbc, err := testextras.AcquireDBMutex(log, caller)
+	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
 		os.Exit(1)
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
+	_, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
+	functions.SetDSNToEnv(dsn)
+
 	c := TestConfig()
 	defer c.CloseDb()
 
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
-	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
+	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
