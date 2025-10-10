@@ -91,7 +91,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/beach_sand.jpg")
 		if err != nil {
 			t.Fatal(err)
@@ -178,7 +178,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		}
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 		mediaFile, err := NewMediaFile(cfg.OriginalsPath() + "/mediarestoring.png")
 
 		if err != nil {

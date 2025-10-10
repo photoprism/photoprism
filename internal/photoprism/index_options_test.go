@@ -49,7 +49,7 @@ func TestIndexOptionsFacesOnly(t *testing.T) {
 }
 
 func TestNewIndexOptions_DefaultDetectors(t *testing.T) {
-	conf := config.NewMinimalTestConfig(t.TempDir())
+	conf := config.NewMinimalTestConfig("photoprism", t.TempDir())
 	conf.Options().FaceEngineThreads = 4
 
 	prevVision := vision.Config
@@ -66,7 +66,7 @@ func TestNewIndexOptions_DefaultDetectors(t *testing.T) {
 }
 
 func TestNewIndexOptions_FacesOnlyOverridesSchedulers(t *testing.T) {
-	conf := config.NewMinimalTestConfig(t.TempDir())
+	conf := config.NewMinimalTestConfig("photoprism", t.TempDir())
 	conf.Options().FaceEngineThreads = 1
 
 	prevVision := vision.Config
@@ -83,7 +83,7 @@ func TestNewIndexOptions_FacesOnlyOverridesSchedulers(t *testing.T) {
 }
 
 func TestNewIndexOptions_DisabledModels(t *testing.T) {
-	conf := config.NewMinimalTestConfig(t.TempDir())
+	conf := config.NewMinimalTestConfig("photoprism", t.TempDir())
 	conf.Options().DetectNSFW = false
 	conf.Options().DisableFaces = true
 

@@ -2,12 +2,9 @@ package api
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 	"time"
 
@@ -106,9 +103,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		newUUID := rnd.UUIDv7()
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-lock","nodeUUID":"`+newUUID+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusConflict, r.Code)
-		if assert.Contains(t, rCreate.Body.String(), "database") {
-			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
-		}
+		cleanupRegisterProvisioning(t, conf, rCreate)
 	})
 	t.Run("BadAdvertiseUrlRejected", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -131,9 +126,6 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 
-		if assert.Contains(t, r.Body.String(), "database") {
-			cleanupDatabases(r.Body.Bytes(), conf, t)
-		}
 		// http is allowed for localhost
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-04b","advertiseUrl":"http://localhost:2342"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
@@ -172,10 +164,6 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		if assert.NotNil(t, n) {
 			assert.Equal(t, "my-node-name-prod", n.Name)
-		}
-
-		if assert.Contains(t, r.Body.String(), "database") {
-			cleanupDatabases(r.Body.Bytes(), conf, t)
 		}
 	})
 	t.Run("BadName", func(t *testing.T) {
@@ -216,10 +204,6 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		// With client-backed registry, plaintext secret is not persisted; only rotation timestamp is updated.
 		assert.NotEmpty(t, n2.RotatedAt)
-
-		if assert.Contains(t, rCreate.Body.String(), "database") {
-			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
-		}
 	})
 	t.Run("ExistingNodeSiteUrlPersistsAndRespondsOK", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -244,9 +228,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "https://photos.example.com", n2.SiteUrl)
 
-		if assert.Contains(t, rCreate.Body.String(), "database") {
-			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
-		}
+		cleanupRegisterProvisioning(t, conf, rCreate)
 
 	})
 	t.Run("AssignNodeUUIDWhenMissing", func(t *testing.T) {
@@ -273,94 +255,6 @@ func TestClusterNodesRegister(t *testing.T) {
 			assert.NotEmpty(t, n.UUID)
 		}
 
-		if assert.Contains(t, r.Body.String(), "database") {
-			cleanupDatabases(r.Body.Bytes(), conf, t)
-		}
-	})
-}
-
-func quoteIdent(s string) string { return "`" + strings.ReplaceAll(s, "`", "``") + "`" }
-
-// cleanupDatabases expects a byte array that contains a cluster.RegisterResponse, config.Config and testing.T and drops the database created by the register.
-func cleanupDatabases(jb []byte, c *config.Config, t *testing.T) {
-	var resp cluster.RegisterResponse
-	json.Unmarshal(jb, &resp)
-	log.Debugf("Cleanup Database %s, User %s and node_uuid %s", resp.Database.Name, resp.Database.User, resp.Node.UUID)
-	// These statements must run against the Node DB server, not the config database.
-	ctx := context.Background()
-	adb, err := prov.GetDB(ctx)
-	if err != nil {
-		assert.Empty(t, err)
-	} else {
-		if resp.Database.Name != `` {
-			if err := execTimeout(ctx, adb, 15*time.Second, fmt.Sprintf("DROP DATABASE IF EXISTS %s", quoteIdent(resp.Database.Name))); err != nil {
-				assert.Empty(t, err)
-				t.Logf("Unable to drop database %s", quoteIdent(resp.Database.Name))
-			}
-		}
-		if resp.Database.User != `` {
-			if err := execTimeout(ctx, adb, 10*time.Second, fmt.Sprintf("DROP USER IF EXISTS %s", quoteIdent(resp.Database.User))); err != nil {
-				assert.Empty(t, err)
-				t.Logf("Unable to drop user %s", quoteIdent(resp.Database.User))
-			}
-		}
-		cleanupNode(resp.Node.UUID, c, t)
-	}
-}
-
-// cleanupNode removes a node record from the auth_clients table
-func cleanupNode(uuid string, c *config.Config, t *testing.T) {
-	if uuid != `` {
-		if err := c.Db().Unscoped().Exec("DELETE FROM auth_clients WHERE node_uuid = ?", uuid).Error; err != nil {
-			assert.Empty(t, err)
-			t.Logf("Unable to remove node_uuid %s", quoteIdent(uuid))
-		}
-	}
-}
-
-// Exec with a timeout.
-func execTimeout(ctx context.Context, db *sql.DB, d time.Duration, stmt string) error {
-	c, cancel := context.WithTimeout(ctx, d)
-	defer cancel()
-	_, err := db.ExecContext(c, stmt)
-	return err
-}
-
-func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.ResponseRecorder) {
-	t.Helper()
-
-	if r.Code != http.StatusOK && r.Code != http.StatusCreated {
-		return
-	}
-
-	var resp cluster.RegisterResponse
-	if err := json.Unmarshal(r.Body.Bytes(), &resp); err != nil {
-		t.Fatalf("unmarshal register response: %v", err)
-	}
-
-	name := resp.Database.Name
-	user := resp.Database.User
-
-	if conf != nil && (name == "" || user == "") && resp.Node.Name != "" && resp.Node.UUID != "" {
-		genName, genUser, _ := provisioner.GenerateCredentials(conf, resp.Node.UUID, resp.Node.Name)
-		if name == "" {
-			name = genName
-		}
-		if user == "" {
-			user = genUser
-		}
-	}
-
-	if name == "" && user == "" {
-		return
-	}
-
-	t.Cleanup(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		if err := provisioner.DropCredentials(ctx, name, user); err != nil {
-			t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
-		}
 	})
 }
 
