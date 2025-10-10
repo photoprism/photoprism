@@ -56,11 +56,16 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (up
 
 	checked := Now()
 
-	// Skip persistence when nothing changed besides the CheckedAt timestamp.
+	// Skip persistence when nothing changed besides the indexing timestamps.
 	if reflect.DeepEqual(*m, current) {
-		return false, merged, m.Update("CheckedAt", &checked)
+		return false, merged, m.Updates(Values{
+			"IndexedAt": m.Indexed(),
+			"CheckedAt": &checked},
+		)
 	}
 
+	// Ensure IndexedAt remains set even when CheckedAt gets refreshed.
+	m.IndexedAt = m.Indexed()
 	m.CheckedAt = &checked
 
 	// Persist the updated metadata to the database.

@@ -11,10 +11,10 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// TestGetCredentials_MariaDB exercises the direct mysql driver path using the
+// TestEnsureCredentials_MariaDB exercises the direct mysql driver path using the
 // ProvisionDSN. It skips if MariaDB is not reachable or when not explicitly enabled
 // via environment (PHOTOPRISM_TEST_DRIVER=mysql).
-func TestGetCredentials_MariaDB(t *testing.T) {
+func TestEnsureCredentials_MariaDB(t *testing.T) {
 	ctx := context.Background()
 
 	// Quick liveness probe for AdminDsn; skip fast if not reachable.
@@ -37,10 +37,21 @@ func TestGetCredentials_MariaDB(t *testing.T) {
 	nodeName := "pp-itest-node"
 
 	// 1st call: rotate=true so we receive a password + DSN.
-	creds, created, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", nodeName, true)
+	creds, created, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", nodeName, true)
 	if err != nil {
-		t.Fatalf("GetCredentials(rotate=true) error: %v", err)
+		t.Fatalf("EnsureCredentials(rotate=true) error: %v", err)
 	}
+
+	// Ensure we always drop the temporary DB/user created during this test.
+	t.Cleanup(func() {
+		if creds.Name == "" || creds.User == "" {
+			return
+		}
+		if dropErr := DropCredentials(ctx, creds.Name, creds.User); dropErr != nil {
+			t.Logf("cleanup: %v", dropErr)
+		}
+	})
+
 	if creds.Name == "" || creds.User == "" {
 		t.Fatalf("missing db name/user in creds: %+v", creds)
 	}
@@ -63,9 +74,9 @@ func TestGetCredentials_MariaDB(t *testing.T) {
 	_ = udb.Close()
 
 	// 2nd call: rotate=false should not return a password (idempotent ensure).
-	creds2, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", nodeName, false)
+	creds2, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", nodeName, false)
 	if err != nil {
-		t.Fatalf("GetCredentials(rotate=false) error: %v", err)
+		t.Fatalf("EnsureCredentials(rotate=false) error: %v", err)
 	}
 	if creds2.Password != "" || creds2.DSN != "" {
 		t.Fatalf("expected no password/DSN without rotation; got: %+v", creds2)
@@ -75,9 +86,8 @@ func TestGetCredentials_MariaDB(t *testing.T) {
 	cleanupDB(t, ctx, creds)
 }
 
-// Verifies that GetCredentials normalizes DatabaseDriver case and rejects
-// non-MySQL/MariaDB drivers early without attempting a DB connection.
-func TestGetCredentials_DriverNormalization(t *testing.T) {
+// TestEnsureCredentials_DriverNormalization verifies driver normalization and rejections.
+func TestEnsureCredentials_DriverNormalization(t *testing.T) {
 	orig := DatabaseDriver
 	t.Cleanup(func() { DatabaseDriver = orig })
 
@@ -86,13 +96,13 @@ func TestGetCredentials_DriverNormalization(t *testing.T) {
 
 	// Postgres in weird case should hit the explicit rejection path.
 	DatabaseDriver = "PostGreS"
-	_, _, err := GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
+	_, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
 	assert.Error(t, err)
 	assert.Equal(t, "PostGreS", DatabaseDriver)
 
 	// Unknown driver should return the unsupported error including normalized name.
 	DatabaseDriver = "TiDB"
-	_, _, err = GetCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
+	_, _, err = EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "unsupported auto-provisioning database driver: tidb")
 	}

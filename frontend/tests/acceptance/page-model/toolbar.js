@@ -108,9 +108,7 @@ export default class Page {
       (t.browser.platform === "mobile") &
       (action !== "edit") &
       (action !== "share") &
-      (action !== "add") &
-      (action !== "show-all") &
-      (action !== "show-important" || action === "show-important")
+      (action !== "add")
     ) {
       if (await this.openMobileToolbar.exists) {
         await t.click(this.openMobileToolbar);
@@ -126,9 +124,7 @@ export default class Page {
         action === "view-list" ||
         action === "view-cards" ||
         action === "add" ||
-        action === "show-hidden" ||
-        action === "show-all" ||
-        action === "show-important"
+        action === "show-hidden"
       ) {
         await t.click(Selector("button.action-" + action));
       } else {

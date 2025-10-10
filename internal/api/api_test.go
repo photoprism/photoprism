@@ -23,13 +23,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
-// Ensure assets path is set so TestMain in this package can initialize config.
-func init() {
-	if os.Getenv("PHOTOPRISM_ASSETS_PATH") == "" {
-		_ = os.Setenv("PHOTOPRISM_ASSETS_PATH", fs.Abs("../../assets"))
-	}
-}
-
 func TestMain(m *testing.M) {
 	// Init test logger.
 	log = logrus.StandardLogger()

@@ -148,10 +148,14 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
 		if oidcErr := ctx.Writer.Header().Get("oidc_error"); oidcErr == "" {
-			return userInfo, tokens, errors.New("failed to exchange token for user info")
+			err = errors.New("failed to exchange token for user info")
 		} else {
-			return userInfo, tokens, errors.New(oidcErr)
+			err = errors.New(oidcErr)
 		}
+
+		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, err.Error())
+
+		return userInfo, tokens, err
 	}
 
 	return userInfo, tokens, nil

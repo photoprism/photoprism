@@ -19,8 +19,8 @@ func SetCaptionFunc(fn func(Files, media.Src) (*CaptionResult, *Model, error)) {
 	captionFunc = fn
 }
 
-// Caption returns generated captions for the specified images.
-func Caption(images Files, mediaSrc media.Src) (*CaptionResult, *Model, error) {
+// GenerateCaption returns generated captions for the specified images.
+func GenerateCaption(images Files, mediaSrc media.Src) (*CaptionResult, *Model, error) {
 	return captionFunc(images, mediaSrc)
 }
 

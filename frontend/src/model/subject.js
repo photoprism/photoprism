@@ -1,15 +1,15 @@
-import RestModel from "model/rest";
 import $api from "common/api";
 import { DateTime } from "luxon";
 import { $config } from "app/session";
 import { $gettext } from "common/gettext";
+import Collection from "model/collection";
 
 const SubjPerson = "person";
 
 export let BatchSize = 60;
 
 // Subject tracks people and other recognizable subjects derived from face/marker data.
-export class Subject extends RestModel {
+export class Subject extends Collection {
   getDefaults() {
     return {
       UID: "",

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
@@ -14,7 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	prov "github.com/photoprism/photoprism/internal/service/cluster/provisioner"
+	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -63,10 +64,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		body = `{"nodeName":"pp-auth","clientId":"` + nr.ClientID + `","clientSecret":"` + secret + `"}`
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusOK, r.Code)
-
-		if assert.Contains(t, rCreate.Body.String(), "database") {
-			cleanupDatabases(rCreate.Body.Bytes(), conf, t)
-		}
+		cleanupRegisterProvisioning(t, conf, r)
 	})
 	t.Run("MissingToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -91,10 +89,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.Contains(t, body, "\"secrets\"")
 		// New nodes return the client secret; include alias for clarity.
 		assert.Contains(t, body, "\"clientSecret\"")
-
-		if assert.Contains(t, r.Body.String(), "database") {
-			cleanupDatabases(r.Body.Bytes(), conf, t)
-		}
+		cleanupRegisterProvisioning(t, conf, r)
 	})
 	t.Run("UUIDChangeRequiresSecret", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -134,6 +129,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// https is allowed for public host
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-04","advertiseUrl":"https://example.com"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 
 		if assert.Contains(t, r.Body.String(), "database") {
 			cleanupDatabases(r.Body.Bytes(), conf, t)
@@ -141,9 +137,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// http is allowed for localhost
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-04b","advertiseUrl":"http://localhost:2342"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
-		if assert.Contains(t, r.Body.String(), "database") {
-			cleanupDatabases(r.Body.Bytes(), conf, t)
-		}
+		cleanupRegisterProvisioning(t, conf, r)
 	})
 	t.Run("SiteUrlValidation", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -158,10 +152,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Accept https siteUrl
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-06","siteUrl":"https://photos.example.com"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
-
-		if assert.Contains(t, r.Body.String(), "database") {
-			cleanupDatabases(r.Body.Bytes(), conf, t)
-		}
+		cleanupRegisterProvisioning(t, conf, r)
 	})
 	t.Run("NormalizeName", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -173,6 +164,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		body := `{"nodeName":"My.Node/Name:Prod"}`
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
@@ -215,6 +207,7 @@ func TestClusterNodesRegister(t *testing.T) {
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01","rotateSecret":true}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusOK, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 
 		// Secret should have rotated and been persisted even though DB ensure failed.
 		// Fetch by name (most-recently-updated) to avoid flakiness if another test adds
@@ -244,6 +237,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Provisioner is independent; endpoint should respond 200 and persist metadata.
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-02","siteUrl":"https://Photos.Example.COM"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusOK, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 
 		// Ensure normalized/persisted siteUrl.
 		n2, err := regy.FindByName("pp-node-02")
@@ -264,6 +258,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Register without nodeUUID; server should assign one (UUID v7 preferred).
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-uuid"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 
 		// Response must include node.uuid
 		body := r.Body.String()
@@ -329,4 +324,80 @@ func execTimeout(ctx context.Context, db *sql.DB, d time.Duration, stmt string) 
 	defer cancel()
 	_, err := db.ExecContext(c, stmt)
 	return err
+}
+
+func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if r.Code != http.StatusOK && r.Code != http.StatusCreated {
+		return
+	}
+
+	var resp cluster.RegisterResponse
+	if err := json.Unmarshal(r.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal register response: %v", err)
+	}
+
+	name := resp.Database.Name
+	user := resp.Database.User
+
+	if conf != nil && (name == "" || user == "") && resp.Node.Name != "" && resp.Node.UUID != "" {
+		genName, genUser, _ := provisioner.GenerateCredentials(conf, resp.Node.UUID, resp.Node.Name)
+		if name == "" {
+			name = genName
+		}
+		if user == "" {
+			user = genUser
+		}
+	}
+
+	if name == "" && user == "" {
+		return
+	}
+
+	t.Cleanup(func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := provisioner.DropCredentials(ctx, name, user); err != nil {
+			t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
+		}
+	})
+}
+
+func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if r.Code != http.StatusOK && r.Code != http.StatusCreated {
+		return
+	}
+
+	var resp cluster.RegisterResponse
+	if err := json.Unmarshal(r.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal register response: %v", err)
+	}
+
+	name := resp.Database.Name
+	user := resp.Database.User
+
+	if conf != nil && (name == "" || user == "") && resp.Node.Name != "" && resp.Node.UUID != "" {
+		genName, genUser, _ := provisioner.GenerateCredentials(conf, resp.Node.UUID, resp.Node.Name)
+		if name == "" {
+			name = genName
+		}
+		if user == "" {
+			user = genUser
+		}
+	}
+
+	if name == "" && user == "" {
+		return
+	}
+
+	t.Cleanup(func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := provisioner.DropCredentials(ctx, name, user); err != nil {
+			t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
+		}
+	})
 }

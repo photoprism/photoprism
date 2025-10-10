@@ -11,16 +11,14 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Set the assets path so that NewConfig(CliTestContext) always works for the package tests.
+// Runs first when package is tested.
 func init() {
-	if os.Getenv("PHOTOPRISM_ASSETS_PATH") == "" {
-		// From internal/config to repo root assets.
-		_ = os.Setenv("PHOTOPRISM_ASSETS_PATH", filepath.Clean("../../assets"))
-	}
+	hub.ApplyTestConfig()
 }
 
 func TestMain(m *testing.M) {

@@ -14,13 +14,14 @@ type PhotoLabels []PhotoLabel
 // PhotoLabel represents the many-to-many relation between Photo and Label.
 // Labels are weighted by uncertainty (100 - confidence).
 type PhotoLabel struct {
-	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false"`
-	LabelID     uint   `gorm:"primaryKey;autoIncrement:false;index"`
-	LabelSrc    string `gorm:"type:bytes;size:8;"`
-	Uncertainty int    `gorm:"type:int;size:16;"`
-	Topicality  int    `gorm:"type:int;size:16;"`
-	Photo       *Photo `gorm:"foreignKey:PhotoID;references:ID;" yaml:"-"`
-	Label       *Label `gorm:"foreignKey:LabelID;references:ID;"`
+	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false" json:"PhotoID,omitempty" yaml:"PhotoID"`
+	LabelID     uint   `gorm:"primaryKey;autoIncrement:false;index" json:"LabelID,omitempty" yaml:"LabelID"`
+	LabelSrc    string `gorm:"type:bytes;size:8;" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
+	Uncertainty int    `gorm:"type:int;size:16;" json:"Uncertainty" yaml:"Uncertainty"`
+	Topicality  int    `gorm:"type:int;size:16;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
+	NSFW        int    `gorm:"type:int;size:16;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
+	Photo       *Photo `gorm:"foreignKey:PhotoID;references:ID;" yaml:"-" json:"-" yaml:"-"`
+	Label       *Label `gorm:"foreignKey:LabelID;references:ID;" json:"Label,omitempty" yaml:"-"`
 }
 
 // TableName returns the database table name for PhotoLabel.
@@ -157,11 +158,13 @@ func (m *PhotoLabel) ClassifyLabel() classify.Label {
 	}
 
 	result := classify.Label{
-		Name:        m.Label.LabelName,
-		Source:      m.LabelSrc,
-		Uncertainty: m.Uncertainty,
-		Topicality:  m.Topicality,
-		Priority:    m.Label.LabelPriority,
+		Name:           m.Label.LabelName,
+		Source:         m.LabelSrc,
+		Uncertainty:    m.Uncertainty,
+		Topicality:     m.Topicality,
+		Priority:       m.Label.LabelPriority,
+		NSFW:           m.Label.LabelNSFW,
+		NSFWConfidence: m.NSFW,
 	}
 
 	return result

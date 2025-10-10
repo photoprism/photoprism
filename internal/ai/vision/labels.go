@@ -25,10 +25,10 @@ func SetLabelsFunc(fn func(Files, media.Src, string) (classify.Labels, error)) {
 	labelsFunc = fn
 }
 
-// Labels finds matching labels for the specified image.
+// GenerateLabels finds matching labels for the specified image.
 // Caller must pass the appropriate metadata source string (e.g., entity.SrcOllama, entity.SrcOpenAI)
 // so that downstream indexing can record where the labels originated.
-func Labels(images Files, mediaSrc media.Src, labelSrc string) (classify.Labels, error) {
+func GenerateLabels(images Files, mediaSrc media.Src, labelSrc string) (classify.Labels, error) {
 	return labelsFunc(images, mediaSrc, labelSrc)
 }
 
@@ -160,6 +160,13 @@ func mergeLabels(result, labels classify.Labels) classify.Labels {
 
 				if labels[j].Priority > result[k].Priority {
 					result[k].Priority = labels[j].Priority
+				}
+
+				if labels[j].NSFW && !result[k].NSFW {
+					result[k].NSFW = true
+					result[k].NSFWConfidence = labels[j].NSFWConfidence
+				} else if labels[j].NSFWConfidence > result[k].NSFWConfidence {
+					result[k].NSFWConfidence = labels[j].NSFWConfidence
 				}
 			}
 		}

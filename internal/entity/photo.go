@@ -16,7 +16,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -98,13 +97,14 @@ type Photo struct {
 	Files            []File         `yaml:"-"`
 	Labels           []PhotoLabel   `yaml:"-"`
 	CreatedBy        string         `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time      `yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time      `yaml:"UpdatedAt,omitempty"`
-	EditedAt         *time.Time     `yaml:"EditedAt,omitempty"`
+	CreatedAt        time.Time      `json:"CreatedAt,omitempty" yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time      `json:"UpdatedAt,omitempty" yaml:"UpdatedAt,omitempty"`
+	EditedAt         *time.Time     `json:"EditedAt,omitempty" yaml:"EditedAt,omitempty"`
 	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	CheckedAt        *time.Time     `sql:"index" yaml:"-"`
+	IndexedAt        *time.Time     `json:"IndexedAt,omitempty" yaml:"-"`
+	CheckedAt        *time.Time     `sql:"index" json:"CheckedAt,omitempty" yaml:"-"`
 	EstimatedAt      *time.Time     `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        gorm.DeletedAt `sql:"index" yaml:"DeletedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -335,23 +335,29 @@ func (m *Photo) SetMediaType(newType media.Type, typeSrc string) {
 	return
 }
 
-// String returns the id or name as string.
+// PhotoLogString returns a sanitized identifier for logging that prefers
+// photo name, falling back to original name, UID, or numeric ID.
+func PhotoLogString(photoPath, photoName, originalName, photoUID string, id uint) string {
+	if photoName != "" {
+		return clean.Log(path.Join(photoPath, photoName))
+	} else if originalName != "" {
+		return clean.Log(originalName)
+	} else if photoUID != "" {
+		return "uid " + clean.Log(photoUID)
+	} else if id > 0 {
+		return fmt.Sprintf("id %d", id)
+	}
+
+	return "*Photo"
+}
+
+// String returns the id or name as string for logging purposes.
 func (m *Photo) String() string {
 	if m == nil {
 		return "Photo<nil>"
 	}
 
-	if m.PhotoName != "" {
-		return clean.Log(path.Join(m.PhotoPath, m.PhotoName))
-	} else if m.OriginalName != "" {
-		return clean.Log(m.OriginalName)
-	} else if m.PhotoUID != "" {
-		return "uid " + clean.Log(m.PhotoUID)
-	} else if m.ID > 0 {
-		return fmt.Sprintf("id %d", m.ID)
-	}
-
-	return "*Photo"
+	return PhotoLogString(m.PhotoPath, m.PhotoName, m.OriginalName, m.PhotoUID, m.ID)
 }
 
 // FirstOrCreate inserts the Photo if it does not exist and otherwise reloads the persisted row with its associations.
@@ -848,9 +854,9 @@ func (m *Photo) ShouldGenerateLabels(force bool) bool {
 			continue
 		}
 
-		if list.Contains(VisionSrcList, l.LabelSrc) {
+		if SrcGenerated[l.LabelSrc] > 0 {
 			return false
-		} else if l.LabelSrc == SrcCaption && list.Contains(VisionSrcList, m.CaptionSrc) {
+		} else if l.LabelSrc == SrcCaption && SrcGenerated[m.CaptionSrc] > 0 {
 			return false
 		}
 	}
@@ -863,7 +869,6 @@ func (m *Photo) ShouldGenerateLabels(force bool) bool {
 // never receives invalid input from upstream detectors.
 func (m *Photo) AddLabels(labels classify.Labels) {
 	for _, classifyLabel := range labels {
-
 		title := classifyLabel.Title()
 
 		if title == "" || txt.Slug(title) == "" {
@@ -902,6 +907,21 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 
 		template := NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, labelSrc)
 		template.Topicality = classifyLabel.Topicality
+		score := 0
+
+		if classifyLabel.NSFWConfidence > 0 {
+			score = classifyLabel.NSFWConfidence
+		}
+
+		if classifyLabel.NSFW && score == 0 {
+			score = 100
+		}
+
+		if score > 100 {
+			score = 100
+		}
+
+		template.NSFW = score
 		photoLabel := FirstOrCreatePhotoLabel(template)
 
 		if photoLabel == nil {
@@ -911,13 +931,32 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 
 		if photoLabel.HasID() {
 			updates := Values{}
+
 			if photoLabel.Uncertainty > classifyLabel.Uncertainty && photoLabel.Uncertainty < 100 {
 				updates["Uncertainty"] = classifyLabel.Uncertainty
 				updates["LabelSrc"] = labelSrc
 			}
+
 			if classifyLabel.Topicality > 0 && photoLabel.Topicality != classifyLabel.Topicality {
 				updates["Topicality"] = classifyLabel.Topicality
 			}
+
+			if classifyLabel.NSFWConfidence > 0 || classifyLabel.NSFW {
+				nsfwScore := 0
+				if classifyLabel.NSFWConfidence > 0 {
+					nsfwScore = classifyLabel.NSFWConfidence
+				}
+				if classifyLabel.NSFW && nsfwScore == 0 {
+					nsfwScore = 100
+				}
+				if nsfwScore > 100 {
+					nsfwScore = 100
+				}
+				if photoLabel.NSFW != nsfwScore {
+					updates["NSFW"] = nsfwScore
+				}
+			}
+
 			if len(updates) > 0 {
 				if err := photoLabel.Updates(updates); err != nil {
 					log.Errorf("index: %s", err)
@@ -1298,15 +1337,44 @@ func (m *Photo) FaceCount() int {
 	}
 }
 
-// IsNewlyIndexed returns true if no CheckedAt timestamp is set yet.
+// Indexed returns the immutable timestamp recorded when the photo completed indexing.
+// It automatically initializes the timestamp when missing so workers can rely on it even if CheckedAt resets.
+func (m *Photo) Indexed() *time.Time {
+	if m == nil {
+		return nil
+	} else if m.IndexedAt == nil {
+		m.IndexedAt = TimeStamp()
+	} else if m.IndexedAt.IsZero() {
+		m.IndexedAt = TimeStamp()
+	}
+
+	return m.IndexedAt
+}
+
+// IsNewlyIndexed reports whether the photo still awaits its first indexing timestamp while not being deleted.
 func (m *Photo) IsNewlyIndexed() bool {
-	if m.CheckedAt == nil {
-		return true
-	} else if m.CheckedAt.IsZero() {
-		return true
+	if m == nil {
+		return false
+	} else if m.IndexedAt == nil {
+		return !m.IsDeleted()
+	} else if m.IndexedAt.IsZero() {
+		return !m.IsDeleted()
 	}
 
 	return false
+}
+
+// IsDeleted returns true if the photo was deleted.
+func (m *Photo) IsDeleted() bool {
+	if m == nil {
+		return true
+	} else if m.DeletedAt == nil {
+		return false
+	} else if m.DeletedAt.IsZero() {
+		return false
+	}
+
+	return true
 }
 
 // UnscopedSearchFirstPhoto populates photo with the results of a Where(query, values) including soft delete records

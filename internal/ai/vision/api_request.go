@@ -23,6 +23,9 @@ type Files = []string
 
 const (
 	FormatJSON = "json"
+
+	logDataPreviewLength   = 16
+	logDataTruncatedSuffix = "... (truncated)"
 )
 
 // ApiRequestOptions represents additional model parameters listed in the documentation.
@@ -201,7 +204,86 @@ func (r *ApiRequest) WriteLog() {
 		return
 	}
 
-	if data, _ := r.JSON(); len(data) > 0 {
+	sanitized := r.sanitizedForLog()
+
+	if data, _ := json.Marshal(sanitized); len(data) > 0 {
 		log.Tracef("vision: %s", data)
 	}
+}
+
+// sanitizedForLog returns a shallow copy of the request with large base64 payloads shortened.
+func (r *ApiRequest) sanitizedForLog() ApiRequest {
+	if r == nil {
+		return ApiRequest{}
+	}
+
+	sanitized := *r
+
+	if len(r.Images) > 0 {
+		sanitized.Images = make(Files, len(r.Images))
+
+		for i := range r.Images {
+			sanitized.Images[i] = sanitizeLogPayload(r.Images[i])
+		}
+	}
+
+	sanitized.Url = sanitizeLogPayload(r.Url)
+
+	return sanitized
+}
+
+// sanitizeLogPayload shortens base64-encoded data so trace logs remain readable.
+func sanitizeLogPayload(value string) string {
+	if value == "" {
+		return value
+	}
+
+	if strings.HasPrefix(value, "data:") {
+		if prefix, encoded, found := strings.Cut(value, ","); found {
+			sanitized := truncateBase64ForLog(encoded)
+
+			if sanitized != encoded {
+				return prefix + "," + sanitized
+			}
+		}
+
+		return value
+	}
+
+	if isLikelyBase64(value) {
+		return truncateBase64ForLog(value)
+	}
+
+	return value
+}
+
+func truncateBase64ForLog(value string) string {
+	if len(value) <= logDataPreviewLength {
+		return value
+	}
+
+	return value[:logDataPreviewLength] + logDataTruncatedSuffix
+}
+
+func isLikelyBase64(value string) bool {
+	if len(value) < logDataPreviewLength {
+		return false
+	}
+
+	for i := 0; i < len(value); i++ {
+		c := value[i]
+
+		switch {
+		case c >= 'A' && c <= 'Z':
+		case c >= 'a' && c <= 'z':
+		case c >= '0' && c <= '9':
+		case c == '+', c == '/', c == '=', c == '-', c == '_':
+		case c == '\n' || c == '\r':
+			continue
+		default:
+			return false
+		}
+	}
+
+	return true
 }

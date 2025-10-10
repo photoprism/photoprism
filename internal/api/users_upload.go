@@ -199,7 +199,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			containsNSFW := false
 
 			for _, filename := range uploads {
-				labels, nsfwErr := vision.Nsfw([]string{filename}, media.SrcLocal)
+				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
 
 				if nsfwErr != nil {
 					log.Debug(nsfwErr)

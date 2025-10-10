@@ -55,7 +55,7 @@ func PostVisionLabels(router *gin.RouterGroup) {
 		}
 
 		// Run inference to find matching labels.
-		labels, err := vision.Labels(request.Images, media.SrcRemote, entity.SrcAuto)
+		labels, err := vision.GenerateLabels(request.Images, media.SrcRemote, entity.SrcAuto)
 
 		if err != nil {
 			log.Errorf("vision: %s (run labels)", err)

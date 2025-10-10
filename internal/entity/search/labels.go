@@ -26,6 +26,13 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		Where("labels.photo_count > 0").
 		Group("labels.id")
 
+	// Filter private labels.
+	if frm.Public {
+		s = s.Where("labels.label_nsfw = 0")
+	} else if frm.NSFW {
+		s = s.Where("labels.label_nsfw = 1")
+	}
+
 	// Limit result count.
 	if frm.Count > 0 && frm.Count <= MaxResults {
 		s = s.Limit(frm.Count).Offset(frm.Offset)

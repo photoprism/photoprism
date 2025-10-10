@@ -30,10 +30,10 @@ func TestOllamaDefaultConfidenceApplied(t *testing.T) {
 		t.Fatalf("expected one label, got %d", len(resp.Result.Labels))
 	}
 
-	if resp.Result.Labels[0].Confidence != ollama.DefaultLabelConfidence {
-		t.Fatalf("expected default confidence %.2f, got %.2f", ollama.DefaultLabelConfidence, resp.Result.Labels[0].Confidence)
+	if resp.Result.Labels[0].Confidence != ollama.LabelConfidenceDefault {
+		t.Fatalf("expected default confidence %.2f, got %.2f", ollama.LabelConfidenceDefault, resp.Result.Labels[0].Confidence)
 	}
-	if resp.Result.Labels[0].Topicality != ollama.DefaultLabelConfidence {
+	if resp.Result.Labels[0].Topicality != ollama.LabelConfidenceDefault {
 		t.Fatalf("expected topicality to default to confidence, got %.2f", resp.Result.Labels[0].Topicality)
 	}
 }

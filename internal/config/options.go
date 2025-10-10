@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -229,6 +230,9 @@ type Options struct {
 	VisionSchedule          string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter            string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	DetectNSFW              bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
+	FaceEngine              string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
+	FaceEngineRetry         bool          `yaml:"-" json:"-" flag:"-"`
+	FaceEngineThreads       int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
 	FaceSize                int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore               float64       `yaml:"-" json:"-" flag:"face-score"`
 	FaceAngles              []float64     `yaml:"-" json:"-" flag:"face-angle"`
@@ -256,7 +260,7 @@ type Options struct {
 //  2. ApplyCliContext: Which comes after Load and overrides
 //     any previous options giving an option two override file configs through the CLI.
 func NewOptions(ctx *cli.Context) *Options {
-	c := &Options{}
+	c := &Options{FaceEngine: face.EngineAuto}
 
 	// Has context?
 	if ctx == nil {

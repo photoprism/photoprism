@@ -42,6 +42,7 @@ var SpecialWords = map[string]string{
 	"rth":                "RTH",
 	"tradingview":        "TradingView",
 	"ftse":               "FTSE",
+	"usb":                "USB",
 	"usd":                "USD",
 	"usdt":               "USDT",
 	"gbp":                "GBP",

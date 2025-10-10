@@ -25,6 +25,7 @@ SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
 
 set -e
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 case $DESTARCH in

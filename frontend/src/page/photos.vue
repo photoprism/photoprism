@@ -668,7 +668,7 @@ export default {
        * back-navigation. We therefore reset the remembered scroll-position
        * in any other scenario
        */
-      if (!window.backwardsNavigationDetected) {
+      if (!this.$view.wasBackwardNavigation()) {
         this.setOffset(0);
       }
       this.scrollDisabled = true;

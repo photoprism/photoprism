@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
@@ -36,13 +37,20 @@ var testConfigOnce sync.Once
 var testConfigMutex sync.Mutex
 var testDataMutex sync.Mutex
 
+// testDataPath resolves the QA fixture directory that ships with the assets
+// bundle. Helpers fall back to this location when the caller does not provide
+// an explicit storage path.
 func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
+// PkgNameRegexp normalizes database file names by stripping unsupported
+// characters from the Go package identifier supplied by tests.
 var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
 
-// NewTestOptions returns valid config options for tests.
+// NewTestOptions builds fully-populated Options suited for backend tests. It
+// creates an isolated storage directory under storage/testdata (or the
+// PHOTOPRISM_STORAGE_PATH override) and enables all test-friendly defaults.
 func NewTestOptions(dbName string) *Options {
 	// Find storage path.
 	storagePath := os.Getenv("PHOTOPRISM_STORAGE_PATH")
@@ -55,7 +63,9 @@ func NewTestOptions(dbName string) *Options {
 	return NewTestOptionsForPath(dbName, dataPath)
 }
 
-// NewTestOptionsForPath returns new test Options using the specified data path as storage.
+// NewTestOptionsForPath returns test Options using the provided storage path.
+// When the caller omits the path, it falls back to storage/testdata, discovers
+// the repo-level assets directory, and ensures Hub traffic is disabled.
 func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Default to storage/testdata is no path was specified.
 	if dataPath == "" {
@@ -69,26 +79,45 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 		dataPath = filepath.Join(storagePath, fs.TestdataDir, functions.PhotoPrismTestToFolderName())
 	}
 
-	dataPath = fs.Abs(dataPath)
+	// Enable test mode in dependencies.
+	hub.ApplyTestConfig()
 
+	// Create specified data path as storage.
+	dataPath = fs.Abs(dataPath)
 	if err := fs.MkdirAll(dataPath); err != nil {
 		log.Errorf("config: %s (create test data path)", err)
 		return &Options{}
 	}
 
+	// Create a config directory within the data path.
 	configPath := filepath.Join(dataPath, "config")
-
 	if err := fs.MkdirAll(configPath); err != nil {
 		log.Errorf("config: %s (create test config path)", err)
 		return &Options{}
 	}
 
-	// Find assets path.
+	// Find the assets paths containing models and frontend assets.
 	assetsPath := os.Getenv("PHOTOPRISM_ASSETS_PATH")
 	if assetsPath == "" {
-		fs.Abs("../../assets")
+		if wd, err := os.Getwd(); err == nil {
+			for dir := wd; dir != "" && dir != filepath.Dir(dir); dir = filepath.Dir(dir) {
+				candidate := filepath.Join(dir, "assets")
+				if fs.PathExists(candidate) {
+					assetsPath = candidate
+					break
+				}
+			}
+		}
+
+		if assetsPath == "" {
+			assetsPath = fs.Abs("../../assets")
+		}
 	}
 
+	// Obtain test database credentials.
+	//
+	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
+	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	driver, dsn := functions.PhotoPrismTestToDriverDsn(0)
 
@@ -187,6 +216,8 @@ func NewTestOptionsError() *Options {
 	return c
 }
 
+// SetNewTestConfig resets the singleton returned by TestConfig() so follow-up
+// calls build a fresh fixture-backed config instance.
 func SetNewTestConfig() {
 	testConfig = NewTestConfig("test")
 }

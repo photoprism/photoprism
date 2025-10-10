@@ -1167,6 +1167,17 @@ var Flags = CliFlags{
 			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-engine",
+			Usage:   "face detection engine `NAME` (auto, pigo, onnx)",
+			Value:   face.EngineAuto,
+			EnvVars: EnvVars("FACE_ENGINE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-engine-threads",
+			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",
+			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
+		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
 			Usage:   "minimum size of faces in `PIXELS` (20-10000)",

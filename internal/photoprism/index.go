@@ -11,6 +11,7 @@ import (
 
 	"github.com/karrick/godirwalk"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -24,15 +25,12 @@ import (
 
 // Index coordinates filesystem scans, metadata extraction, and database updates for originals.
 type Index struct {
-	conf       *config.Config
-	convert    *Convert
-	files      *Files
-	photos     *Photos
-	lastRun    time.Time
-	lastFound  int
-	findFaces  bool
-	findLabels bool
-	detectNsfw bool
+	conf      *config.Config
+	convert   *Convert
+	files     *Files
+	photos    *Photos
+	lastRun   time.Time
+	lastFound int
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -44,16 +42,29 @@ func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photo
 
 	// Create new indexer instance.
 	i := &Index{
-		conf:       conf,
-		convert:    convert,
-		files:      files,
-		photos:     photos,
-		findFaces:  !conf.DisableFaces(),
-		findLabels: conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex),
-		detectNsfw: conf.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex),
+		conf:    conf,
+		convert: convert,
+		files:   files,
+		photos:  photos,
 	}
 
 	return i
+}
+
+func (ind *Index) shouldFlagPrivate(labels classify.Labels) bool {
+	if ind == nil || ind.conf == nil || !ind.conf.DetectNSFW() {
+		return false
+	}
+
+	threshold := vision.Config.Thresholds.GetNSFW()
+
+	for _, label := range labels {
+		if label.NSFW || label.NSFWConfidence >= threshold {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (ind *Index) originalsPath() string {

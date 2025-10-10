@@ -70,6 +70,29 @@ func TestPerformApiRequestOllama(t *testing.T) {
 		assert.Equal(t, "Test", resp.Result.Labels[0].Name)
 		assert.Nil(t, resp.Result.Caption)
 	})
+	t.Run("LabelsWithCodeFence", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{
+				Model:    "gemma3:latest",
+				Response: "```json\n{\"labels\":[{\"name\":\"lingerie\",\"confidence\":0.81,\"topicality\":0.73}]}\n```\nThe model provided additional commentary.",
+			}))
+		}))
+		defer server.Close()
+
+		apiRequest := &ApiRequest{
+			Id:             "fenced",
+			Model:          "gemma3:latest",
+			Format:         FormatJSON,
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		if assert.Len(t, resp.Result.Labels, 1) {
+			assert.Equal(t, "Lingerie", resp.Result.Labels[0].Name)
+		}
+	})
 	t.Run("CaptionFallback", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{

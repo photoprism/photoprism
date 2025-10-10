@@ -54,7 +54,7 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 		}
 
 		// Run inference to check the specified images for inappropriate content.
-		results, err := vision.Nsfw(request.Images, media.SrcRemote)
+		results, err := vision.DetectNSFW(request.Images, media.SrcRemote)
 
 		if err != nil {
 			log.Errorf("vision: %s (run nsfw)", err)

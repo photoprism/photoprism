@@ -22,11 +22,11 @@ type Credentials struct {
 	RotatedAt string
 }
 
-// GetCredentials ensures a per-node database and user exist with minimal grants.
+// EnsureCredentials ensures a per-node database and user exist with minimal grants.
 // - Requires a MySQL/MariaDB admin connection (this package maintains it).
 // - Returns created=true if the database schema did not exist before.
 // - If rotate is true or created, rotates the user password and includes it (and DSN) in the result.
-func GetCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeName string, rotate bool) (Credentials, bool, error) {
+func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeName string, rotate bool) (Credentials, bool, error) {
 	out := Credentials{}
 
 	// Normalize the configured admin driver locally so we accept variants like "MySQL"/"MariaDB"
@@ -130,4 +130,46 @@ func GetCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeName
 	}
 
 	return out, created, nil
+}
+
+// DropCredentials removes the database and user created for a node. It is safe to call
+// even if the user or schema no longer exist; errors are aggregated and returned.
+func DropCredentials(ctx context.Context, dbName, user string) error {
+	db, err := GetDB(ctx)
+	if err != nil {
+		return err
+	}
+
+	var errs []string
+
+	if user != "" {
+		acc, accErr := quoteAccount("%", user)
+		if accErr != nil {
+			errs = append(errs, fmt.Sprintf("quote account: %v", accErr))
+		} else {
+			if err := execTimeout(ctx, db, 10*time.Second, "REVOKE ALL PRIVILEGES, GRANT OPTION FROM "+acc); err != nil {
+				errs = append(errs, fmt.Sprintf("revoke privileges: %v", err))
+			}
+			if err := execTimeout(ctx, db, 10*time.Second, "DROP USER IF EXISTS "+acc); err != nil {
+				errs = append(errs, fmt.Sprintf("drop user: %v", err))
+			}
+		}
+	}
+
+	if dbName != "" {
+		qdb, qErr := quoteIdent(dbName)
+		if qErr != nil {
+			errs = append(errs, fmt.Sprintf("quote database: %v", qErr))
+		} else {
+			if err := execTimeout(ctx, db, 15*time.Second, "DROP DATABASE IF EXISTS "+qdb); err != nil {
+				errs = append(errs, fmt.Sprintf("drop database: %v", err))
+			}
+		}
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("drop credentials: %s", strings.Join(errs, "; "))
+	}
+
+	return nil
 }

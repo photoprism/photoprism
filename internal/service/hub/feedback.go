@@ -3,6 +3,7 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"runtime"
@@ -12,9 +13,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-// FeedbackURL is the service endpoint for submitting user feedback.
-var FeedbackURL = ServiceURL + "/%s/feedback"
 
 // Feedback represents user feedback submitted through the user interface.
 type Feedback struct {
@@ -67,12 +65,19 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 60 * time.Second}
 
-	endpointUrl := fmt.Sprintf(FeedbackURL, c.Key)
+	// Get feedback endpoint URL.
+	endpointUrl := GetFeedbackServiceURL(c.Key)
+
+	// Return if no endpoint URL is set.
+	if endpointUrl == "" {
+		return errors.New("unable to send feedback (service disabled)")
+	}
+
 	method := http.MethodPost
 
 	var req *http.Request
 
-	log.Debugf("sending feedback to %s", ApiHost())
+	log.Debugf("config: sending feedback to %s", GetServiceHost())
 
 	if j, reqErr := json.Marshal(feedback); reqErr != nil {
 		return reqErr
@@ -103,7 +108,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	if err != nil {
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("sending feedback to %s failed (error %d)", ApiHost(), r.StatusCode)
+		err = fmt.Errorf("request to %s failed (error %d)", GetServiceHost(), r.StatusCode)
 		return err
 	}
 

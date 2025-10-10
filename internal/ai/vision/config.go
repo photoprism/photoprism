@@ -30,6 +30,7 @@ var (
 	DefaultTemperature    = 0.1
 	MaxTemperature        = 2.0
 	DefaultSrc            = entity.SrcImage
+	DetectNSFWLabels      = false
 )
 
 // Config reference the current configuration options.
@@ -84,6 +85,8 @@ func (c *ConfigValues) Load(fileName string) error {
 			continue
 		}
 
+		runType := model.Run
+
 		switch model.Type {
 		case ModelTypeLabels:
 			c.Models[i] = NasnetModel
@@ -94,6 +97,10 @@ func (c *ConfigValues) Load(fileName string) error {
 		case ModelTypeCaption:
 			c.Models[i] = CaptionModel
 		}
+
+		if runType != RunAuto {
+			c.Models[i].Run = runType
+		}
 	}
 
 	for _, model := range c.Models {
@@ -102,6 +109,14 @@ func (c *ConfigValues) Load(fileName string) error {
 
 	if c.Thresholds.Confidence <= 0 || c.Thresholds.Confidence > 100 {
 		c.Thresholds.Confidence = DefaultThresholds.Confidence
+	}
+
+	if c.Thresholds.Topicality <= 0 || c.Thresholds.Topicality > 100 {
+		c.Thresholds.Topicality = DefaultThresholds.Topicality
+	}
+
+	if c.Thresholds.NSFW <= 0 || c.Thresholds.NSFW > 100 {
+		c.Thresholds.NSFW = DefaultThresholds.NSFW
 	}
 
 	return nil
@@ -148,9 +163,26 @@ func (c *ConfigValues) ShouldRun(t ModelType, when RunType) bool {
 
 	if m == nil {
 		return false
+	} else if m.Disabled {
+		return false
 	}
 
 	return m.ShouldRun(when)
+}
+
+// RunType returns the normalized run type for the first enabled model matching
+// the provided type. Disabled or missing models fall back to RunNever so
+// callers can treat the result as authoritative scheduling information.
+func (c *ConfigValues) RunType(t ModelType) RunType {
+	m := c.Model(t)
+
+	if m == nil {
+		return RunNever
+	} else if m.Disabled {
+		return RunNever
+	}
+
+	return m.RunType()
 }
 
 // IsDefault checks whether the specified type is the built-in default model.

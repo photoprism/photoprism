@@ -222,10 +222,19 @@ func (m *Model) GetPrompt() string {
 	case ModelTypeCaption:
 		return ollama.CaptionPrompt
 	case ModelTypeLabels:
-		return ollama.LabelPrompt
+		return ollama.LabelPromptDefault
 	default:
 		return ""
 	}
+}
+
+// PromptContains returns true if the prompt contains the specified substring.
+func (m *Model) PromptContains(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	return strings.Contains(m.GetSystemPrompt()+m.GetPrompt(), s)
 }
 
 // GetSystemPrompt returns the configured system prompt, falling back to
@@ -479,10 +488,10 @@ func (m *Model) SchemaTemplate() string {
 			if defaults := m.engineDefaults(); defaults != nil {
 				m.schema = strings.TrimSpace(defaults.SchemaTemplate(m))
 			}
-		}
 
-		if m.schema == "" && m.Type == ModelTypeLabels {
-			m.schema = visionschema.LabelsDefaultV1
+			if m.schema == "" {
+				m.schema = visionschema.Labels(m.PromptContains("nsfw"))
+			}
 		}
 	})
 

@@ -15,6 +15,9 @@ var log = event.Log
 func SetLogLevel(level logrus.Level) {
 	SetTensorFlowLogLevel(level)
 	log.SetLevel(level)
+	if event.SystemLog != nil {
+		event.SystemLog.SetLevel(level)
+	}
 }
 
 // SetTensorFlowLogLevel sets the TensorFlow log level.

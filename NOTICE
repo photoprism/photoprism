@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-09-14
+Date generated: 2025-10-10
 
 ================================================================================
 
@@ -1122,8 +1122,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-gonic/gin
-Version: v1.10.1
-License: MIT (https://github.com/gin-gonic/gin/blob/v1.10.1/LICENSE)
+Version: v1.11.0
+License: MIT (https://github.com/gin-gonic/gin/blob/v1.11.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -1150,8 +1150,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.16.5
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.16.5/LICENSE)
+Version: v2.17.0
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.17.0/LICENSE)
 
 MIT License
 
@@ -1935,8 +1935,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-sql-driver/mysql
-Version: v1.9.0
-License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.9.0/LICENSE)
+Version: v1.9.3
+License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.9.3/LICENSE)
 
 Mozilla Public License Version 2.0
 ==================================
@@ -2342,9 +2342,53 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 
+Package: github.com/goccy/go-yaml
+Version: v1.18.0
+License: MIT (https://github.com/goccy/go-yaml/blob/v1.18.0/LICENSE)
+
+MIT License
+
+Copyright (c) 2019 Masaaki Goshima
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/golang-jwt/jwt/v5
+Version: v5.3.0
+License: MIT (https://github.com/golang-jwt/jwt/blob/v5.3.0/LICENSE)
+
+Copyright (c) 2012 Dave Grijalva
+Copyright (c) 2021 golang-jwt maintainers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+--------------------------------------------------------------------------------
+
 Package: github.com/golang/geo
-Version: v0.0.0-20250912065020-b504328d3ef3
-License: Apache-2.0 (https://github.com/golang/geo/blob/b504328d3ef3/LICENSE)
+Version: v0.0.0-20251008113719-ccf458c07da6
+License: Apache-2.0 (https://github.com/golang/geo/blob/ccf458c07da6/LICENSE)
 
 
                                  Apache License
@@ -4373,6 +4417,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 --------------------------------------------------------------------------------
 
+Package: github.com/olekukonko/cat
+Version: v0.0.0-20250911104152-50322a0618f6
+License: MIT (https://github.com/olekukonko/cat/blob/50322a0618f6/LICENSE)
+
+MIT License
+
+Copyright (c) 2025 Oleku Konko
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
 Package: github.com/olekukonko/errors
 Version: v1.1.0
 License: MIT (https://github.com/olekukonko/errors/blob/v1.1.0/LICENSE)
@@ -4402,8 +4474,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/olekukonko/ll
-Version: v0.0.9
-License: MIT (https://github.com/olekukonko/ll/blob/v0.0.9/LICENSE)
+Version: v0.1.1
+License: MIT (https://github.com/olekukonko/ll/blob/v0.1.1/LICENSE)
 
 MIT License
 
@@ -4430,8 +4502,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/olekukonko/tablewriter
-Version: v1.0.9
-License: MIT (https://github.com/olekukonko/tablewriter/blob/v1.0.9/LICENSE.md)
+Version: v1.1.0
+License: MIT (https://github.com/olekukonko/tablewriter/blob/v1.1.0/LICENSE.md)
 
 Copyright (C) 2014 by Oleku Konko
 
@@ -5197,8 +5269,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.2/LICE
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/common
-Version: v0.66.1
-License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.66.1/LICENSE)
+Version: v0.67.1
+License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.67.1/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5609,6 +5681,48 @@ License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.16.1/LICENSE)
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/quic-go/qpack
+Version: v0.5.1
+License: MIT (https://github.com/quic-go/qpack/blob/v0.5.1/LICENSE.md)
+
+Copyright 2019 Marten Seemann
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+Package: github.com/quic-go/quic-go
+Version: v0.54.0
+License: MIT (https://github.com/quic-go/quic-go/blob/v0.54.0/LICENSE)
+
+MIT License
+
+Copyright (c) 2016 the quic-go authors & Google, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 --------------------------------------------------------------------------------
 
@@ -6205,6 +6319,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 
+Package: github.com/yalue/onnxruntime_go
+Version: v1.21.0
+License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.21.0/LICENSE)
+
+Copyright (c) 2023 Nathan Otterness
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
 Package: github.com/zitadel/logging
 Version: v0.6.2
 License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.6.2/LICENSE)
@@ -6414,8 +6554,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.6.2/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3
-Version: v3.44.0
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.44.0/LICENSE)
+Version: v3.45.0
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.45.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6864,8 +7004,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrume
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel
-Version: v1.37.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.37.0/LICENSE)
+Version: v1.38.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.38.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7069,11 +7209,40 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.
    See the License for the specific language governing permissions and
    limitations under the License.
 
+--------------------------------------------------------------------------------
+
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/metric
-Version: v1.37.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.37.0/metric/LICENSE)
+Version: v1.38.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.38.0/metric/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7277,11 +7446,40 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/met
    See the License for the specific language governing permissions and
    limitations under the License.
 
+--------------------------------------------------------------------------------
+
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/trace
-Version: v1.37.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.37.0/trace/LICENSE)
+Version: v1.38.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.38.0/trace/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7487,9 +7685,38 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/tra
 
 --------------------------------------------------------------------------------
 
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+--------------------------------------------------------------------------------
+
 Package: go.yaml.in/yaml/v2
-Version: v2.4.2
-License: Apache-2.0 (https://github.com/yaml/go-yaml/blob/v2.4.2/LICENSE)
+Version: v2.4.3
+License: Apache-2.0 (https://github.com/yaml/go-yaml/blob/v2.4.3/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7905,8 +8132,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/214862532bf5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.42.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.42.0:LICENSE)
+Version: v0.43.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.43.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7939,8 +8166,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/image
-Version: v0.31.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.31.0:LICENSE)
+Version: v0.32.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.32.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -7973,8 +8200,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/mod/semver
-Version: v0.28.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.28.0:LICENSE)
+Version: v0.29.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.29.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8007,8 +8234,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.44.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.44.0:LICENSE)
+Version: v0.46.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.46.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8041,8 +8268,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/oauth2
-Version: v0.30.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.30.0:LICENSE)
+Version: v0.31.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.31.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8109,8 +8336,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sys
-Version: v0.36.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.36.0:LICENSE)
+Version: v0.37.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.37.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8143,8 +8370,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.29.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.29.0:LICENSE)
+Version: v0.30.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.30.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8177,8 +8404,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/time/rate
-Version: v0.13.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/time/+/v0.13.0:LICENSE)
+Version: v0.14.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/time/+/v0.14.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8240,8 +8467,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: google.golang.org/protobuf
-Version: v1.36.9
-License: BSD-3-Clause (https://github.com/protocolbuffers/protobuf-go/blob/v1.36.9/LICENSE)
+Version: v1.36.10
+License: BSD-3-Clause (https://github.com/protocolbuffers/protobuf-go/blob/v1.36.10/LICENSE)
 
 Copyright (c) 2018 The Go Authors. All rights reserved.
 
@@ -8478,63 +8705,6 @@ License: Apache-2.0 (https://github.com/go-yaml/yaml/blob/v2.4.0/LICENSE)
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
---------------------------------------------------------------------------------
-
-Package: gopkg.in/yaml.v3
-Version: v3.0.1
-License: MIT (https://github.com/go-yaml/yaml/blob/v3.0.1/LICENSE)
-
-
-This project is covered by two different licenses: MIT and Apache.
-
-#### MIT License ####
-
-The following files were ported to Go from C files of libyaml, and thus
-are still covered by their original MIT license, with the additional
-copyright staring in 2011 when the project was ported over:
-
-    apic.go emitterc.go parserc.go readerc.go scannerc.go
-    writerc.go yamlh.go yamlprivateh.go
-
-Copyright (c) 2006-2010 Kirill Simonov
-Copyright (c) 2006-2011 Kirill Simonov
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-### Apache License ###
-
-All the remaining project files are covered by the Apache license:
-
-Copyright (c) 2011-2019 Canonical Ltd
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 --------------------------------------------------------------------------------
 

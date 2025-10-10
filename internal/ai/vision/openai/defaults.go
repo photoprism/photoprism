@@ -11,5 +11,5 @@ var (
 
 // LabelsSchema returns the canonical label schema string consumed by OpenAI models.
 func LabelsSchema() string {
-	return schema.LabelsDefaultV1
+	return schema.LabelsDefault
 }

@@ -1586,6 +1586,9 @@
                 "ID": {
                     "type": "integer"
                 },
+                "NSFW": {
+                    "type": "boolean"
+                },
                 "Name": {
                     "type": "string"
                 },
@@ -1824,10 +1827,16 @@
                 "CellID": {
                     "type": "string"
                 },
+                "CheckedAt": {
+                    "type": "string"
+                },
                 "Color": {
                     "type": "integer"
                 },
                 "Country": {
+                    "type": "string"
+                },
+                "CreatedAt": {
                     "type": "string"
                 },
                 "CreatedBy": {
@@ -1835,6 +1844,9 @@
                 },
                 "Day": {
                     "type": "integer"
+                },
+                "DeletedAt": {
+                    "type": "string"
                 },
                 "Description": {
                     "type": "string"
@@ -1850,6 +1862,9 @@
                 },
                 "Duration": {
                     "$ref": "#/definitions/time.Duration"
+                },
+                "EditedAt": {
+                    "type": "string"
                 },
                 "EstimatedAt": {
                     "type": "string"
@@ -1868,6 +1883,9 @@
                 },
                 "FocalLength": {
                     "type": "integer"
+                },
+                "IndexedAt": {
+                    "type": "string"
                 },
                 "Iso": {
                     "type": "integer"
@@ -1953,20 +1971,11 @@
                 "UID": {
                     "type": "string"
                 },
+                "UpdatedAt": {
+                    "type": "string"
+                },
                 "Year": {
                     "type": "integer"
-                },
-                "checkedAt": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "editedAt": {
-                    "type": "string"
                 },
                 "files": {
                     "items": {
@@ -1982,34 +1991,31 @@
                         "$ref": "#/definitions/entity.PhotoLabel"
                     },
                     "type": "array"
-                },
-                "updatedAt": {
-                    "type": "string"
                 }
             },
             "type": "object"
         },
         "entity.PhotoLabel": {
             "properties": {
-                "label": {
+                "Label": {
                     "$ref": "#/definitions/entity.Label"
                 },
-                "labelID": {
+                "LabelID": {
                     "type": "integer"
                 },
-                "labelSrc": {
+                "LabelSrc": {
                     "type": "string"
                 },
-                "photo": {
-                    "$ref": "#/definitions/entity.Photo"
-                },
-                "photoID": {
+                "NSFW": {
                     "type": "integer"
                 },
-                "topicality": {
+                "PhotoID": {
                     "type": "integer"
                 },
-                "uncertainty": {
+                "Topicality": {
+                    "type": "integer"
+                },
+                "Uncertainty": {
                     "type": "integer"
                 }
             },
@@ -4007,6 +4013,9 @@
                 "ID": {
                     "type": "integer"
                 },
+                "NSFW": {
+                    "type": "boolean"
+                },
                 "Name": {
                     "type": "string"
                 },
@@ -4700,6 +4709,12 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "nsfw": {
+                    "type": "boolean"
+                },
+                "nsfw_confidence": {
+                    "type": "number"
                 },
                 "priority": {
                     "type": "integer"

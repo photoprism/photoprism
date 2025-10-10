@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -28,8 +29,15 @@ var ClusterNodesRotateCommand = &cli.Command{
 	Name:      "rotate",
 	Usage:     "Rotates a node's DB and/or secret via Portal (HTTP)",
 	ArgsUsage: "<id|name>",
-	Flags:     append([]cli.Flag{rotateDatabaseFlag, rotateSecretFlag, &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}, rotatePortalURL, rotatePortalTok}, report.CliFlags...),
-	Action:    clusterNodesRotateAction,
+	Flags: append([]cli.Flag{
+		DryRunFlag("preview rotation without contacting the Portal"),
+		rotateDatabaseFlag,
+		rotateSecretFlag,
+		rotatePortalURL,
+		rotatePortalTok,
+		YesFlag(),
+	}, report.CliFlags...),
+	Action: clusterNodesRotateAction,
 }
 
 func clusterNodesRotateAction(ctx *cli.Context) error {
@@ -64,9 +72,6 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		if portalURL == "" {
 			portalURL = os.Getenv(config.EnvVar("portal-url"))
 		}
-		if portalURL == "" {
-			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
-		}
 		token := ctx.String("join-token")
 		if token == "" {
 			token = conf.JoinToken()
@@ -74,13 +79,40 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		if token == "" {
 			token = os.Getenv(config.EnvVar("join-token"))
 		}
-		if token == "" {
-			return cli.Exit(fmt.Errorf("portal token is required (use --join-token or set join-token)"), 2)
-		}
 
 		// Default: rotate DB only if no flag given (safer default)
 		rotateDatabase := ctx.Bool("database") || (!ctx.IsSet("database") && !ctx.IsSet("secret"))
 		rotateSecret := ctx.Bool("secret")
+
+		if ctx.Bool("dry-run") {
+			target := clean.LogQuote(name)
+			if target == "" {
+				target = "(unnamed node)"
+			}
+			var what []string
+			if rotateDatabase {
+				what = append(what, "database credentials")
+			}
+			if rotateSecret {
+				what = append(what, "node secret")
+			}
+			if len(what) == 0 {
+				what = append(what, "no resources (no rotation flags set)")
+			}
+			if portalURL == "" {
+				log.Infof("dry-run: would rotate %s for %s (portal URL not set)", txt.JoinAnd(what), target)
+			} else {
+				log.Infof("dry-run: would rotate %s for %s via %s", txt.JoinAnd(what), target, clean.Log(portalURL))
+			}
+			return nil
+		}
+
+		if portalURL == "" {
+			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
+		}
+		if token == "" {
+			return cli.Exit(fmt.Errorf("portal token is required (use --join-token or set join-token)"), 2)
+		}
 
 		confirmed := RunNonInteractively(ctx.Bool("yes"))
 		if !confirmed {

@@ -68,7 +68,7 @@ func PostVisionFace(router *gin.RouterGroup) {
 			if data, err := media.ReadUrl(request.Images[i], scheme.HttpsData); err != nil {
 				results[i] = face.Embeddings{}
 				log.Errorf("vision: %s (read face embedding from url)", err)
-			} else if result, faceErr := vision.Face(data); faceErr != nil {
+			} else if result, faceErr := vision.GenerateFaceEmbeddings(data); faceErr != nil {
 				results[i] = face.Embeddings{}
 				log.Errorf("vision: %s (run face embeddings)", faceErr)
 			} else {

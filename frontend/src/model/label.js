@@ -1,8 +1,8 @@
-import Collection from "model/collection";
 import $api from "common/api";
 import { DateTime } from "luxon";
 import { $config } from "app/session";
 import { $gettext } from "common/gettext";
+import Collection from "model/collection";
 
 export let BatchSize = 180;
 
@@ -20,6 +20,8 @@ export class Label extends Collection {
       Description: "",
       Notes: "",
       PhotoCount: 0,
+      Thumb: "",
+      ThumbSrc: "",
       CreatedAt: "",
       UpdatedAt: "",
       DeletedAt: "",

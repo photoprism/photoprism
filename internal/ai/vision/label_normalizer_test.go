@@ -70,7 +70,39 @@ func TestNormalizeLabelResult(t *testing.T) {
 		normalizeLabelResult(&label)
 
 		if label.Name != "" {
-			t.Fatalf("expected label to be dropped due to global threshold, got %q", label.Name)
+			t.Fatalf("expected label to be dropped due to global Confidence threshold, got %q", label.Name)
+		}
+	})
+	t.Run("TopicalityThreshold", func(t *testing.T) {
+		prev := Config.Thresholds
+		Config.Thresholds.Topicality = 80
+		defer func() { Config.Thresholds = prev }()
+
+		label := LabelResult{Name: "low topicality", Confidence: 0.9, Topicality: 0.5}
+		normalizeLabelResult(&label)
+
+		if label.Name != "" {
+			t.Fatalf("expected label to be dropped due to Topicality threshold, got %q", label.Name)
+		}
+	})
+	t.Run("NSFWConfidenceClamp", func(t *testing.T) {
+		label := LabelResult{Name: "nsfw-high", Confidence: 0.9, Topicality: 0.9, NSFW: true, NSFWConfidence: 2.5}
+		normalizeLabelResult(&label)
+
+		if !label.NSFW {
+			t.Fatalf("expected label to remain NSFW")
+		}
+
+		if label.NSFWConfidence != 1 {
+			t.Fatalf("expected NSFW confidence to be clamped to 1, got %f", label.NSFWConfidence)
+		}
+	})
+	t.Run("NSFWBooleanWithoutConfidence", func(t *testing.T) {
+		label := LabelResult{Name: "nsfw-bool", Confidence: 0.9, Topicality: 0.9, NSFW: true}
+		normalizeLabelResult(&label)
+
+		if label.NSFWConfidence != 1 {
+			t.Fatalf("expected NSFW confidence to default to 1 when NSFW is true, got %f", label.NSFWConfidence)
 		}
 	})
 	t.Run("Apostrophe", func(t *testing.T) {

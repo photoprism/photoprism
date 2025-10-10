@@ -535,17 +535,18 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
 
-		if frm.Private {
-			s = s.Where("photos.photo_private = TRUE")
-		} else if frm.Public {
-			s = s.Where("photos.photo_private = FALSE")
-		}
-
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
 		} else if frm.Quality != 0 && frm.Private == false {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
+	}
+
+	// Filter private pictures.
+	if frm.Public {
+		s = s.Where("photos.photo_private = FALSE")
+	} else if frm.Private {
+		s = s.Where("photos.photo_private = TRUE")
 	}
 
 	// Filter by camera id or name.

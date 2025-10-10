@@ -29,6 +29,8 @@ type Face struct {
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
+	MergeRetry      uint8           `gorm:"default:0" json:"-" yaml:"-"`
+	MergeNotes      string          `gorm:"size:255;default:'';" json:"-" yaml:"-"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:bytes;size:66666;" json:"-" yaml:"EmbeddingJSON,omitempty"`
 	embedding       face.Embedding  `gorm:"-" yaml:"-"`
 	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
@@ -89,8 +91,8 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	}
 
 	// Limit sample radius to reduce false positives.
-	if m.SampleRadius > 0.35 {
-		m.SampleRadius = 0.35
+	if m.SampleRadius > face.SampleRadius {
+		m.SampleRadius = face.SampleRadius
 	}
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
@@ -202,7 +204,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
-		m.CollisionRadius = dist - 0.01
+		m.CollisionRadius = dist - face.Epsilon
 		UpdateFaces.Store(true)
 	}
 
@@ -283,10 +285,12 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 		return nil
 	}
 
-	radius := maxDistance + 0.01
-	if radius > 0.35 {
-		radius = 0.35
+	radius := maxDistance + face.Epsilon
+
+	if radius > face.SampleRadius {
+		radius = face.SampleRadius
 	}
+
 	if radius < 0 {
 		radius = 0
 	}

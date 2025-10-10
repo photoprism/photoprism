@@ -169,6 +169,7 @@ test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Delete label
   await label.openLabelWithUid(LabelDomeUid);
   const FirstPhotoDomeUid = await photo.getNthPhotoUid("all", 0);
   await menu.openPage("labels");
+  await toolbar.search("dome");
   await label.triggerHoverAction("uid", LabelDomeUid, "select");
   await contextmenu.checkContextMenuCount("1");
   await contextmenu.triggerContextMenuAction("delete", "");
