@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-05 19:02+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2025-10-10 12:25+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -568,7 +568,7 @@ msgstr "Parcourir les dossiers et fichiers indexés dans la bibliothèque."
 
 #: src/component/photo/edit/people.vue:107
 msgid "Browse Pictures"
-msgstr ""
+msgstr "Parcourir les images"
 
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
@@ -842,7 +842,7 @@ msgstr "Copyright"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr ""
+msgstr "Impossible de mettre à jour la couverture de la personne"
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2338,12 +2338,12 @@ msgstr "Personne"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr ""
+msgstr "Mise à jour de la couverture de la personne"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
 msgid "Person not found"
-msgstr ""
+msgstr "Personne non trouvée"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2796,7 +2796,7 @@ msgstr "Utiliser cette photo comme couverture de l'album"
 
 #: src/component/photo/edit/people.vue:115
 msgid "Set as Cover Image"
-msgstr ""
+msgstr "Définir comme image de couverture"
 
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558

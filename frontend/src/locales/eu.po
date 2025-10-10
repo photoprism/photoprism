@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-04 09:03+0000\n"
+"PO-Revision-Date: 2025-10-10 12:26+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -565,7 +565,7 @@ msgstr "Arakatu indexatutako fitxategiak eta karpetak Liburutegian."
 
 #: src/component/photo/edit/people.vue:107
 msgid "Browse Pictures"
-msgstr ""
+msgstr "Arakatu argazkiak"
 
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
@@ -839,7 +839,7 @@ msgstr "Copyright"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr ""
+msgstr "Ezin izan da pertsonaren azala eguneratu"
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2335,12 +2335,12 @@ msgstr "Pertsona"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr ""
+msgstr "Pertsonaren azala eguneratua"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
 msgid "Person not found"
-msgstr ""
+msgstr "Pertsona ez da aurkitu"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2793,7 +2793,7 @@ msgstr "Ezarri albumaren azala"
 
 #: src/component/photo/edit/people.vue:115
 msgid "Set as Cover Image"
-msgstr ""
+msgstr "Ezarri azaleko irudi gisa"
 
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-04 09:03+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2025-10-10 12:26+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -565,7 +565,7 @@ msgstr "Duyệt các tệp và thư mục được lập chỉ mục trong Thư 
 
 #: src/component/photo/edit/people.vue:107
 msgid "Browse Pictures"
-msgstr ""
+msgstr "Duyệt hình ảnh"
 
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
@@ -839,7 +839,7 @@ msgstr "Bản quyền"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr ""
+msgstr "Không thể cập nhật thông tin cá nhân"
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2335,12 +2335,12 @@ msgstr "Người"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr ""
+msgstr "Bìa người đã được cập nhật"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
 msgid "Person not found"
-msgstr ""
+msgstr "Không tìm thấy người"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2793,7 +2793,7 @@ msgstr "Đặt làm Bìa Album"
 
 #: src/component/photo/edit/people.vue:115
 msgid "Set as Cover Image"
-msgstr ""
+msgstr "Đặt làm Ảnh bìa"
 
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558

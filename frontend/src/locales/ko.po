@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-04 09:03+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-10-10 12:25+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -568,7 +568,7 @@ msgstr "라이브러리에서 인덱싱된 파일 및 폴더를 검색합니다.
 
 #: src/component/photo/edit/people.vue:107
 msgid "Browse Pictures"
-msgstr ""
+msgstr "사진 찾아보기"
 
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
@@ -842,7 +842,7 @@ msgstr "저작권"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr ""
+msgstr "사람 표지를 업데이트할 수 없습니다."
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2338,12 +2338,12 @@ msgstr "사람"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr ""
+msgstr "인물 표지 업데이트"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
 msgid "Person not found"
-msgstr ""
+msgstr "사람을 찾을 수 없음"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2797,7 +2797,7 @@ msgstr "앨범 표지로 설정"
 
 #: src/component/photo/edit/people.vue:115
 msgid "Set as Cover Image"
-msgstr ""
+msgstr "표지 이미지로 설정"
 
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558

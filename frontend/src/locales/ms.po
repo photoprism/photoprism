@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-04 09:03+0000\n"
+"PO-Revision-Date: 2025-10-10 12:26+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -568,7 +568,7 @@ msgstr "Semak imbas fail dan folder yang telah diindeks dalam Perpustakaan."
 
 #: src/component/photo/edit/people.vue:107
 msgid "Browse Pictures"
-msgstr ""
+msgstr "Layari Gambar"
 
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
@@ -842,7 +842,7 @@ msgstr "Hak Cipta"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr ""
+msgstr "Tidak dapat mengemas kini muka depan orang"
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2338,12 +2338,12 @@ msgstr "Orang"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr ""
+msgstr "Muka depan orang dikemas kini"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
 msgid "Person not found"
-msgstr ""
+msgstr "Orang tidak ditemui"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2796,7 +2796,7 @@ msgstr "Tetapkan sebagai Kulit Album"
 
 #: src/component/photo/edit/people.vue:115
 msgid "Set as Cover Image"
-msgstr ""
+msgstr "Tetapkan sebagai Imej Muka Depan"
 
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558

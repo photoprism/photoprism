@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-04 09:03+0000\n"
+"PO-Revision-Date: 2025-10-10 12:26+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -565,7 +565,7 @@ msgstr "Прагляд праіндэксаваных файлаў і папак
 
 #: src/component/photo/edit/people.vue:107
 msgid "Browse Pictures"
-msgstr ""
+msgstr "Праглядзець выявы"
 
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
@@ -839,7 +839,7 @@ msgstr "Аўтарскае права"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr ""
+msgstr "Не атрымалася абнавіць вокладку чалавека"
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2335,12 +2335,12 @@ msgstr "Асоба"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr ""
+msgstr "Вокладка чалавека абноўлена"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
 msgid "Person not found"
-msgstr ""
+msgstr "Чалавек не знойдзены"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2793,7 +2793,7 @@ msgstr "Усталяваць у якасці вокладкі альбома"
 
 #: src/component/photo/edit/people.vue:115
 msgid "Set as Cover Image"
-msgstr ""
+msgstr "Устанавіць як выяву вокладкі"
 
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558
