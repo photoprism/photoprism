@@ -1744,7 +1744,8 @@ func TestPhoto_IsNewlyIndexed(t *testing.T) {
 		assert.False(t, photo.IsNewlyIndexed())
 	})
 	t.Run("HasDeletedAt", func(t *testing.T) {
-		photo := Photo{IndexedAt: nil, DeletedAt: TimeStamp()}
+		ts := TimeStamp()
+		photo := Photo{IndexedAt: nil, DeletedAt: gorm.DeletedAt{Time: *ts, Valid: true}}
 		assert.False(t, photo.IsNewlyIndexed())
 	})
 }

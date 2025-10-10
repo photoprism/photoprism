@@ -1368,13 +1368,9 @@ func (m *Photo) IsNewlyIndexed() bool {
 func (m *Photo) IsDeleted() bool {
 	if m == nil {
 		return true
-	} else if m.DeletedAt == nil {
-		return false
-	} else if m.DeletedAt.IsZero() {
-		return false
 	}
 
-	return true
+	return m.DeletedAt.Valid
 }
 
 // UnscopedSearchFirstPhoto populates photo with the results of a Where(query, values) including soft delete records
