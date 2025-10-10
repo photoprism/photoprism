@@ -16,7 +16,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -98,13 +97,14 @@ type Photo struct {
 	Files            []File        `yaml:"-"`
 	Labels           []PhotoLabel  `yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time     `yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time     `yaml:"UpdatedAt,omitempty"`
-	EditedAt         *time.Time    `yaml:"EditedAt,omitempty"`
+	CreatedAt        time.Time     `json:"CreatedAt,omitempty" yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time     `json:"UpdatedAt,omitempty" yaml:"UpdatedAt,omitempty"`
+	EditedAt         *time.Time    `json:"EditedAt,omitempty" yaml:"EditedAt,omitempty"`
 	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	CheckedAt        *time.Time    `sql:"index" yaml:"-"`
+	IndexedAt        *time.Time    `json:"IndexedAt,omitempty" yaml:"-"`
+	CheckedAt        *time.Time    `sql:"index" json:"CheckedAt,omitempty" yaml:"-"`
 	EstimatedAt      *time.Time    `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        *time.Time    `sql:"index" yaml:"DeletedAt,omitempty"`
+	DeletedAt        *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -775,9 +775,9 @@ func (m *Photo) ShouldGenerateLabels(force bool) bool {
 			continue
 		}
 
-		if list.Contains(VisionSrcList, l.LabelSrc) {
+		if SrcGenerated[l.LabelSrc] > 0 {
 			return false
-		} else if l.LabelSrc == SrcCaption && list.Contains(VisionSrcList, m.CaptionSrc) {
+		} else if l.LabelSrc == SrcCaption && SrcGenerated[m.CaptionSrc] > 0 {
 			return false
 		}
 	}
@@ -1258,13 +1258,42 @@ func (m *Photo) FaceCount() int {
 	}
 }
 
-// IsNewlyIndexed returns true if no CheckedAt timestamp is set yet.
+// Indexed returns the immutable timestamp recorded when the photo completed indexing.
+// It automatically initializes the timestamp when missing so workers can rely on it even if CheckedAt resets.
+func (m *Photo) Indexed() *time.Time {
+	if m == nil {
+		return nil
+	} else if m.IndexedAt == nil {
+		m.IndexedAt = TimeStamp()
+	} else if m.IndexedAt.IsZero() {
+		m.IndexedAt = TimeStamp()
+	}
+
+	return m.IndexedAt
+}
+
+// IsNewlyIndexed reports whether the photo still awaits its first indexing timestamp while not being deleted.
 func (m *Photo) IsNewlyIndexed() bool {
-	if m.CheckedAt == nil {
-		return true
-	} else if m.CheckedAt.IsZero() {
-		return true
+	if m == nil {
+		return false
+	} else if m.IndexedAt == nil {
+		return !m.IsDeleted()
+	} else if m.IndexedAt.IsZero() {
+		return !m.IsDeleted()
 	}
 
 	return false
+}
+
+// IsDeleted returns true if the photo was deleted.
+func (m *Photo) IsDeleted() bool {
+	if m == nil {
+		return true
+	} else if m.DeletedAt == nil {
+		return false
+	} else if m.DeletedAt.IsZero() {
+		return false
+	}
+
+	return true
 }

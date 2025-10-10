@@ -29,6 +29,27 @@ func TestOptions(t *testing.T) {
 	})
 }
 
+func TestConfigValues_LoadDefaultModelWithCustomRun(t *testing.T) {
+	originalRun := NasnetModel.Run
+	t.Cleanup(func() {
+		NasnetModel.Run = originalRun
+	})
+
+	tempDir := t.TempDir()
+	configFile := filepath.Join(tempDir, "vision.yml")
+
+	err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Default: true\n  Run: on-demand\n"), fs.ModeConfigFile)
+	assert.NoError(t, err)
+
+	cfg := NewConfig()
+	err = cfg.Load(configFile)
+	assert.NoError(t, err)
+
+	assert.Equal(t, RunOnDemand, cfg.RunType(ModelTypeLabels))
+	assert.True(t, cfg.ShouldRun(ModelTypeLabels, RunOnSchedule))
+	assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunOnIndex))
+}
+
 func TestConfigModelPrefersLastEnabled(t *testing.T) {
 	defaultModel := *NasnetModel
 	defaultModel.Disabled = false

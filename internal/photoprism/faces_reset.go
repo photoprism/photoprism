@@ -7,13 +7,12 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-var runFacesReindex = func(conf *config.Config, opt IndexOptions) (fs.Done, int, error) {
-	index := NewIndex(conf, NewConvert(conf), NewFiles(), NewPhotos())
+// runFacesReindex delegates face-only indexing to the supplied Index instance; tests may override it.
+var runFacesReindex = func(index *Index, opt IndexOptions) (fs.Done, int, error) {
 	if index == nil {
 		return nil, 0, fmt.Errorf("faces: index service unavailable")
 	}
@@ -49,8 +48,7 @@ func (w *Faces) Reset() (err error) {
 }
 
 // ResetAndReindex resets face data and optionally regenerates markers with the specified engine.
-
-func (w *Faces) ResetAndReindex(engine string) error {
+func (w *Faces) ResetAndReindex(engine string, index *Index) error {
 	trimmed := strings.TrimSpace(engine)
 	lowered := strings.ToLower(trimmed)
 	if lowered != "" {
@@ -86,10 +84,10 @@ func (w *Faces) ResetAndReindex(engine string) error {
 	}
 
 	convert := w.conf.Settings().Index.Convert && w.conf.SidecarWritable()
-	opt := IndexOptionsFacesOnly()
+	opt := IndexOptionsFacesOnly(w.conf)
 	opt.Convert = convert
 
-	found, updated, err := runFacesReindex(w.conf, opt)
+	found, updated, err := runFacesReindex(index, opt)
 	if err != nil {
 		return err
 	}

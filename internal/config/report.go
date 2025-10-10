@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"github.com/photoprism/photoprism/internal/ai/vision"
 )
 
 // Report returns global config values as a table for reporting.
@@ -284,8 +286,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Facial Recognition.
 		{"face-engine", c.FaceEngine()},
-		{"face-engine-run", c.FaceEngineRunType()},
-		{"face-engine-retry", fmt.Sprintf("%t", c.FaceEngineRetry())},
+		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},

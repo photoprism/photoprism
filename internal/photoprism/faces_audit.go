@@ -16,7 +16,7 @@ import (
 )
 
 // Audit face clusters and subjects.
-func (w *Faces) Audit(fix bool) (err error) {
+func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	invalidFaces, invalidSubj, err := query.MarkersWithNonExistentReferences()
 
 	if err != nil {
@@ -29,10 +29,14 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Errorf("faces: %s (find subjects)", err)
 	}
 
-	if n := len(subj); n == 0 {
-		log.Infof("faces: found no subjects")
+	if subjUID == "" {
+		if n := len(subj); n == 0 {
+			log.Infof("faces: found no subjects")
+		} else {
+			log.Infof("faces: found %s", english.Plural(n, "subject", "subjects"))
+		}
 	} else {
-		log.Infof("faces: found %s", english.Plural(n, "subject", "subjects"))
+		log.Infof("faces: auditing subject %s (%s)", entity.SubjNames.Log(subjUID), clean.Log(subjUID))
 	}
 
 	// Fix non-existent marker subjects references?
@@ -69,6 +73,54 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 	if err != nil {
 		return err
+	}
+
+	if subjUID != "" {
+		filtered := make(query.FaceMap, len(faces))
+		filteredIDs := make(query.IDs, 0, len(ids))
+
+		for _, id := range ids {
+			faceEntry := faces[id]
+			if faceEntry.SubjUID != subjUID {
+				continue
+			}
+
+			filtered[id] = faceEntry
+			filteredIDs = append(filteredIDs, id)
+		}
+
+		faces = filtered
+		ids = filteredIDs
+
+		if len(ids) == 0 {
+			log.Infof("faces: found no clusters for subject %s", entity.SubjNames.Log(subjUID))
+		}
+	}
+
+	stubborn := make([]entity.Face, 0)
+	stubbornIDs := make([]string, 0)
+
+	for _, id := range ids {
+		if entry, ok := faces[id]; ok {
+			if entry.MergeRetry > 0 {
+				stubborn = append(stubborn, entry)
+				stubbornIDs = append(stubbornIDs, entry.ID)
+			}
+		}
+	}
+
+	if len(stubborn) > 0 {
+		counts, countErr := query.MarkerCountsByFaceIDs(stubbornIDs)
+		if countErr != nil {
+			logErr("faces", "marker counts", countErr)
+		} else if subjUID != "" {
+			log.Warnf("faces: %s awaiting merge for subject %s", english.Plural(len(stubborn), "manual cluster", "manual clusters"), entity.SubjNames.Log(subjUID))
+			for _, entry := range stubborn {
+				log.Warnf("faces: cluster %s retry=%d markers=%d notes=%s", entry.ID, entry.MergeRetry, counts[entry.ID], clean.Log(entry.MergeNotes))
+			}
+		} else {
+			log.Warnf("faces: %s pending manual cluster merge – use 'photoprism faces audit --subject=<uid>' for details", english.Plural(len(stubborn), "manual cluster", "manual clusters"))
+		}
 	}
 
 	// Remembers matched combinations.

@@ -2,6 +2,8 @@ package event
 
 import (
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
 // AuditLog optionally logs security events.
@@ -28,7 +30,7 @@ func Audit(level logrus.Level, ev []string, args ...interface{}) {
 	// Publish event if log level is info or higher.
 	if level <= logrus.InfoLevel {
 		Publish(
-			"audit.log."+level.String(),
+			string(acl.ChannelAudit)+".log."+level.String(),
 			Data{
 				"time":    TimeStamp(),
 				"level":   level.String(),

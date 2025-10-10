@@ -1,6 +1,7 @@
 package face
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -12,6 +13,7 @@ const (
 	EngineAuto EngineName = "auto"
 	EnginePigo EngineName = "pigo"
 	EngineONNX EngineName = "onnx"
+	EngineNone EngineName = "none"
 )
 
 // ParseEngine normalizes user input and returns a supported engine name or EngineAuto when unknown.
@@ -19,7 +21,7 @@ func ParseEngine(s string) EngineName {
 	s = strings.ToLower(strings.TrimSpace(s))
 
 	switch s {
-	case EnginePigo, EngineONNX:
+	case EnginePigo, EngineONNX, EngineNone:
 		return s
 	default:
 		return EngineAuto
@@ -28,7 +30,7 @@ func ParseEngine(s string) EngineName {
 
 // DetectionEngine represents a strategy for locating faces in an image.
 type DetectionEngine interface {
-	Name() string
+	Name() EngineName
 	Detect(fileName string, findLandmarks bool, minSize int) (Faces, error)
 	Close() error
 }
@@ -75,9 +77,11 @@ func ConfigureEngine(settings EngineSettings) error {
 	)
 
 	switch desired {
+	case EngineNone:
+		return errors.New("no engine selected")
 	case EngineONNX:
 		if settings.ONNX.ModelPath == "" {
-			initErr = fmt.Errorf("faces: ONNX model path is empty")
+			initErr = fmt.Errorf("ONNX model path is empty")
 			newEngine = newPigoEngine()
 			break
 		}
@@ -110,6 +114,16 @@ func ActiveEngine() DetectionEngine {
 	return engine
 }
 
+// ActiveEngineName returns the name of the active engine.
+// If there is no active engine, it returns "none."
+func ActiveEngineName() EngineName {
+	if engine := ActiveEngine(); engine != nil {
+		return engine.Name()
+	}
+
+	return EngineNone
+}
+
 // Detect runs the active engine on the provided file and returns the detected faces.
 func Detect(fileName string, findLandmarks bool, minSize int) (Faces, error) {
 	engine := ActiveEngine()
@@ -117,11 +131,4 @@ func Detect(fileName string, findLandmarks bool, minSize int) (Faces, error) {
 		return Faces{}, fmt.Errorf("faces: detection engine not configured")
 	}
 	return engine.Detect(fileName, findLandmarks, minSize)
-}
-
-// resetEngine restores the default Pigo engine.
-func resetEngine() {
-	engineMu.Lock()
-	activeEngine = newPigoEngine()
-	engineMu.Unlock()
 }

@@ -6,19 +6,26 @@ TODAY=$(date -u +%Y%m%d)
 
 MODEL_SOURCE="scrfd_500m_bnkps_shape640x640.onnx"
 LOCAL_MODEL_NAME="scrfd.onnx"
-PRIMARY_URL="https://dl.photoprism.app/onnx/scrfd/${MODEL_SOURCE}?${TODAY}"
+PRIMARY_URL="https://dl.photoprism.app/onnx/models/${MODEL_SOURCE}?${TODAY}"
 FALLBACK_URL="https://raw.githubusercontent.com/laolaolulu/FaceTrain/master/model/scrfd/${MODEL_SOURCE}"
 MODEL_URL=${MODEL_URL:-"${PRIMARY_URL}"}
 MODELS_PATH="assets/models"
-MODEL_DIR="$MODELS_PATH/scrfs"
+MODEL_DIR="$MODELS_PATH/scrfd"
+LEGACY_MODEL_DIR="$MODELS_PATH/scrfs"
 MODEL_FILE="$MODEL_DIR/${LOCAL_MODEL_NAME}"
 MODEL_TMP="/tmp/photoprism/${MODEL_SOURCE}"
 MODEL_HASH="ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24  ${MODEL_TMP}"
 MODEL_VERSION="$MODEL_DIR/version.txt"
-MODEL_BACKUP="storage/backup/scrfs-${TODAY}"
+MODEL_BACKUP="storage/backup/scrfd-${TODAY}"
 
 mkdir -p /tmp/photoprism
 mkdir -p storage/backup
+
+if [[ -d "${LEGACY_MODEL_DIR}" && ! -d "${MODEL_DIR}" ]]; then
+  echo "Migrating legacy SCRFD directory from ${LEGACY_MODEL_DIR} to ${MODEL_DIR}."
+  mv "${LEGACY_MODEL_DIR}" "${MODEL_DIR}"
+fi
+
 mkdir -p "${MODEL_DIR}"
 
 hash_file() {
@@ -41,7 +48,7 @@ verify_hash() {
 
 if [[ -f "${MODEL_FILE}" ]]; then
   CURRENT_HASH=$(hash_file "${MODEL_FILE}")
-  if [[ "${CURRENT_HASH}" == ${MODEL_HASH%% *} ]]; then
+  if [[ "${CURRENT_HASH}" == "${MODEL_HASH%% *}" ]]; then
     echo "SCRFD model already up to date."
     exit 0
   fi

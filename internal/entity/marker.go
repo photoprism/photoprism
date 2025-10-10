@@ -660,7 +660,7 @@ func (m *Marker) ValidFace() bool {
 
 // DetectedFace tests if the marker is an automatically detected face.
 func (m *Marker) DetectedFace() bool {
-	return m.MarkerType == MarkerFace && m.MarkerSrc == SrcImage
+	return m.MarkerType == MarkerFace && SrcGenerated[m.MarkerSrc] > 0
 }
 
 // Uncertainty returns the detection uncertainty based on the score in percent.

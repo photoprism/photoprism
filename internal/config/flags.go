@@ -1173,12 +1173,6 @@ var Flags = CliFlags{
 			Value:   face.EngineAuto,
 			EnvVars: EnvVars("FACE_ENGINE"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "face-engine-run",
-			Usage:   "face detection run `MODE` (auto, never, manual, newly-indexed, on-demand, on-index, on-schedule, always)",
-			Value:   "auto",
-			EnvVars: EnvVars("FACE_ENGINE_RUN"),
-		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-engine-threads",
 			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",

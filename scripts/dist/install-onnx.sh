@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ONNX_VERSION=${ONNX_VERSION:-1.22.0}
+TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
 SYSTEM=$(uname -s)
 ARCH=${PHOTOPRISM_ARCH:-$(uname -m)}
@@ -14,7 +15,7 @@ fi
 
 DESTDIR=$(realpath "${DESTDIR_ARG}")
 
-if [[ $(id -u) != 0 ]] && ([[ "${DESTDIR}" == "/usr" ]] || [[ "${DESTDIR}" == "/usr/local" ]]); then
+if [[ $(id -u) != 0 ]] && { [[ "${DESTDIR}" == "/usr" ]] || [[ "${DESTDIR}" == "/usr/local" ]]; }; then
   echo "Error: Run ${0##*/} as root to install in '${DESTDIR}'." >&2
   exit 1
 fi
@@ -74,7 +75,8 @@ if [[ -z "${archive}" ]]; then
   exit 1
 fi
 
-url="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/${archive}"
+primary_url="https://dl.photoprism.app/onnx/runtime/v${ONNX_VERSION}/${archive}?${TODAY}"
+fallback_url="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/${archive}"
 package_path="${TMPDIR}/${archive}"
 
 if [[ -f "${package_path}" ]]; then
@@ -88,7 +90,13 @@ fi
 
 if [[ ! -f "${package_path}" ]]; then
   echo "Downloading ONNX Runtime ${ONNX_VERSION} (${archive})..."
-  curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${url}"
+  if ! curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${primary_url}"; then
+    echo "Primary download failed, trying upstream release..."
+    if ! curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${fallback_url}"; then
+      echo "Failed to download ONNX Runtime archive." >&2
+      exit 1
+    fi
+  fi
 fi
 
 echo "Verifying checksum..."

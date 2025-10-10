@@ -37,6 +37,10 @@ var FacesCommands = &cli.Command{
 					Aliases: []string{"f"},
 					Usage:   "fix discovered issues",
 				},
+				&cli.StringFlag{
+					Name:  "subject",
+					Usage: "limit audit to the specific subject UID",
+				},
 			},
 			Action: facesAuditAction,
 		},
@@ -75,8 +79,14 @@ var FacesCommands = &cli.Command{
 			Action: facesUpdateAction,
 		},
 		{
-			Name:   "optimize",
-			Usage:  "Optimizes face clusters",
+			Name:  "optimize",
+			Usage: "Optimizes face clusters",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:  "retry",
+					Usage: "reset merge retry counters before optimizing",
+				},
+			},
 			Action: facesOptimizeAction,
 		},
 	},
@@ -130,7 +140,9 @@ func facesAuditAction(ctx *cli.Context) error {
 
 	w := get.Faces()
 
-	if err := w.Audit(ctx.Bool("fix")); err != nil {
+	subject := strings.TrimSpace(ctx.String("subject"))
+
+	if err := w.Audit(ctx.Bool("fix"), subject); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)
@@ -176,7 +188,7 @@ func facesResetAction(ctx *cli.Context) error {
 	engine := strings.TrimSpace(ctx.String("engine"))
 
 	if engine != "" {
-		if err := w.ResetAndReindex(engine); err != nil {
+		if err := w.ResetAndReindex(engine, get.Index()); err != nil {
 			return err
 		}
 	} else {
@@ -267,7 +279,7 @@ func facesIndexAction(ctx *cli.Context) error {
 		indexStart := time.Now()
 		_, lastFound = w.LastRun()
 		convert := settings.Index.Convert && conf.SidecarWritable()
-		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true)
+		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true, conf)
 
 		found, indexed = w.Start(opt)
 
@@ -347,6 +359,14 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	w := get.Faces()
+
+	if ctx.Bool("retry") {
+		if reset, err := query.ResetFaceMergeRetry(""); err != nil {
+			return err
+		} else if reset > 0 {
+			log.Infof("faces: reset merge retry counters for %s", english.Plural(reset, "cluster", "clusters"))
+		}
+	}
 
 	if res, err := w.Optimize(); err != nil {
 		return err

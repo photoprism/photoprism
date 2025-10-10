@@ -8,6 +8,38 @@ const TouchMoveEvent = "touchmove";
 const debug = window.__CONFIG__?.debug;
 const trace = window.__CONFIG__?.trace;
 
+// Enumerates the possible navigation directions observed between Vue Router history states.
+const NavigationDirection = Object.freeze({
+  None: "none",
+  Back: "back",
+  Forward: "forward",
+  Replace: "replace",
+});
+
+// Reads the current history state if the environment exposes the history API.
+const getHistoryState = () => {
+  if (typeof window === "undefined" || typeof window.history === "undefined") {
+    return undefined;
+  }
+
+  return window.history.state;
+};
+
+// Extracts the numeric `position` field Vue Router stores inside history.state.
+const parseHistoryPosition = (state) => {
+  if (!state || typeof state !== "object") {
+    return undefined;
+  }
+
+  const numeric = Number(state.position);
+
+  if (!Number.isFinite(numeric)) {
+    return undefined;
+  }
+
+  return numeric;
+};
+
 // Returns the <html> element.
 export function getHtmlElement() {
   return document.documentElement;
@@ -118,6 +150,42 @@ const storage = {
       /* ignore */
     }
   },
+};
+
+// Minimal sessionStorage wrapper for ephemeral navigation state.
+const sessionStore = {
+  get(key) {
+    try {
+      return sessionStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key, val) {
+    try {
+      sessionStorage.setItem(key, val);
+    } catch {
+      /* ignore */
+    }
+  },
+  remove(key) {
+    try {
+      sessionStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+  },
+};
+
+const restoreNamespace = "view.restore.";
+const restoreMaxAgeMs = 30 * 60 * 1000; // 30 minutes
+
+const encodeRestoreKey = (key) => {
+  if (!key || typeof key !== "string") {
+    return "";
+  }
+
+  return restoreNamespace + encodeURIComponent(key);
 };
 
 // Returns the most likely focus element for the given component, or null if none exists.
@@ -264,6 +332,15 @@ export class View {
     this.scopes = [];
     this.hideScrollbar = false;
     this.preventNavigation = false;
+
+    // Tracks the most recent history position and derived navigation direction so components can
+    // determine whether a transition was triggered by browser back/forward buttons.
+    this.navigation = {
+      currentPosition: parseHistoryPosition(getHistoryState()),
+      pendingPosition: undefined,
+      direction: NavigationDirection.None,
+      consumed: false,
+    };
 
     addEventListener("keydown", this.onKeyDown.bind(this));
 
@@ -625,6 +702,181 @@ export class View {
     const c = this.scopes[this.scopes.length - 1];
 
     return c?.$options?.name === "App" || c?.$?.uid === 0;
+  }
+
+  // Persists batched restore data (e.g., number of items loaded, scroll offset) for the specified key.
+  saveRestoreState(key, state) {
+    if (!key || !state || typeof state !== "object") {
+      return false;
+    }
+
+    const storageKey = encodeRestoreKey(key);
+
+    if (!storageKey) {
+      return false;
+    }
+
+    const payload = { ...state };
+
+    if (!Object.prototype.hasOwnProperty.call(payload, "filterKey")) {
+      payload.filterKey = key;
+    }
+
+    payload.timestamp = Date.now();
+
+    sessionStore.set(storageKey, JSON.stringify(payload));
+
+    return true;
+  }
+
+  // Reads stored restore data without removing it. Returns undefined if none exists or the entry expired.
+  getRestoreState(key, maxAge = restoreMaxAgeMs) {
+    const storageKey = encodeRestoreKey(key);
+
+    if (!storageKey) {
+      return undefined;
+    }
+
+    const raw = sessionStore.get(storageKey);
+
+    if (!raw) {
+      return undefined;
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+
+      if (!parsed || typeof parsed !== "object") {
+        sessionStore.remove(storageKey);
+        return undefined;
+      }
+
+      const ts = Number(parsed.timestamp);
+
+      if (Number.isFinite(ts) && maxAge > 0 && Date.now() - ts > maxAge) {
+        sessionStore.remove(storageKey);
+        return undefined;
+      }
+
+      return { ...parsed };
+    } catch {
+      sessionStore.remove(storageKey);
+      return undefined;
+    }
+  }
+
+  // Reads and removes stored restore data atomically.
+  consumeRestoreState(key, maxAge = restoreMaxAgeMs) {
+    const restore = this.getRestoreState(key, maxAge);
+    const storageKey = encodeRestoreKey(key);
+
+    if (storageKey) {
+      sessionStore.remove(storageKey);
+    }
+
+    return restore;
+  }
+
+  // Removes stored restore data for the specified key.
+  clearRestoreState(key) {
+    const storageKey = encodeRestoreKey(key);
+
+    if (!storageKey) {
+      return false;
+    }
+
+    sessionStore.remove(storageKey);
+
+    return true;
+  }
+
+  // Computes the direction of the upcoming navigation using the provided history state snapshot.
+  prepareNavigation(state) {
+    const nextPos = parseHistoryPosition(state);
+
+    if (typeof nextPos !== "number") {
+      this.navigation.pendingPosition = undefined;
+      this.navigation.direction = NavigationDirection.None;
+      this.navigation.consumed = false;
+      return this.navigation.direction;
+    }
+
+    const current = typeof this.navigation.currentPosition === "number" ? this.navigation.currentPosition : nextPos;
+    let direction = NavigationDirection.Replace;
+
+    if (nextPos < current) {
+      direction = NavigationDirection.Back;
+    } else if (nextPos > current) {
+      direction = NavigationDirection.Forward;
+    }
+
+    this.navigation.pendingPosition = nextPos;
+    this.navigation.direction = direction;
+    this.navigation.consumed = false;
+
+    return direction;
+  }
+
+  // Commits the navigation after Vue Router resolves and updates the tracked history position.
+  commitNavigation(state) {
+    const nextPos = parseHistoryPosition(state);
+
+    if (typeof nextPos !== "number") {
+      this.navigation.pendingPosition = undefined;
+      return this.navigation.currentPosition;
+    }
+
+    const current = typeof this.navigation.currentPosition === "number" ? this.navigation.currentPosition : nextPos;
+
+    if (
+      this.navigation.direction !== NavigationDirection.Back &&
+      this.navigation.direction !== NavigationDirection.Forward
+    ) {
+      if (nextPos < current) {
+        this.navigation.direction = NavigationDirection.Back;
+      } else if (nextPos > current) {
+        this.navigation.direction = NavigationDirection.Forward;
+      } else {
+        this.navigation.direction = NavigationDirection.Replace;
+      }
+    }
+
+    this.navigation.currentPosition = nextPos;
+    this.navigation.pendingPosition = undefined;
+
+    return nextPos;
+  }
+
+  // Returns the last known navigation direction.
+  navigationDirection() {
+    return this.navigation.direction;
+  }
+
+  // True when the latest navigation moved backwards in the history stack and has not been consumed.
+  wasBackwardNavigation() {
+    return this.navigation.direction === NavigationDirection.Back;
+  }
+
+  // Alias retained for legacy call sites that expect a boolean guard.
+  isBackwardNavigationActive() {
+    return this.navigation.direction === NavigationDirection.Back;
+  }
+
+  // Marks the back-navigation flag as consumed so subsequent queries revert to the default flow.
+  consumeBackwardNavigation() {
+    if (this.navigation.direction === NavigationDirection.Back && !this.navigation.consumed) {
+      this.navigation.consumed = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  // Clears the cached navigation direction once components have reacted to it.
+  resetNavigationDirection(direction = NavigationDirection.None) {
+    this.navigation.direction = direction;
+    this.navigation.consumed = false;
+    this.navigation.pendingPosition = undefined;
   }
 
   // Saves the window scroll position.

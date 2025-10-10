@@ -26,18 +26,18 @@ func TestFaces_ResetAndReindex_InvalidEngine(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex("invalid")
+	err := m.ResetAndReindex("invalid", nil)
 	require.Error(t, err)
 }
 
 func TestFaces_ResetAndReindex_Pigo(t *testing.T) {
-	defer func(prev func(*config.Config, IndexOptions) (fs.Done, int, error)) {
+	defer func(prev func(*Index, IndexOptions) (fs.Done, int, error)) {
 		runFacesReindex = prev
 	}(runFacesReindex)
 
 	called := false
 	var received IndexOptions
-	runFacesReindex = func(conf *config.Config, opt IndexOptions) (fs.Done, int, error) {
+	runFacesReindex = func(idx *Index, opt IndexOptions) (fs.Done, int, error) {
 		called = true
 		received = opt
 		return fs.Done{}, 0, nil
@@ -46,7 +46,7 @@ func TestFaces_ResetAndReindex_Pigo(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex(face.EnginePigo)
+	err := m.ResetAndReindex(face.EnginePigo, nil)
 	require.NoError(t, err)
 	require.True(t, called)
 	require.True(t, received.FacesOnly)

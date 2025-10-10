@@ -20,6 +20,7 @@ fi
 
 DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 case $DESTARCH in

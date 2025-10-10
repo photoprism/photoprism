@@ -258,8 +258,6 @@ dep-npm:
 	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
         fi
 dep-js:
-	# TODO: If in the future we want to test in a real browser environment, add this (Playwright)
-	# (cd frontend && npx playwright install chromium)
 	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
 codex: dep-codex codex-version
 codex-version:
@@ -284,7 +282,7 @@ dep-tensorflow:
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
 dep-onnx:
-	scripts/download-scrfs.sh
+	scripts/download-scrfd.sh
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)

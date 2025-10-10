@@ -57,7 +57,11 @@ func (w *Vision) StartScheduled() {
 
 // scheduledModels returns the model types that should run for scheduled jobs.
 func (w *Vision) scheduledModels() []string {
-	models := make([]string, 0, 3)
+	if w.conf == nil {
+		return nil
+	}
+
+	models := make([]string, 0, 4)
 
 	if w.conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnSchedule) {
 		models = append(models, vision.ModelTypeLabels)
@@ -69,6 +73,10 @@ func (w *Vision) scheduledModels() []string {
 
 	if w.conf.VisionModelShouldRun(vision.ModelTypeCaption, vision.RunOnSchedule) {
 		models = append(models, vision.ModelTypeCaption)
+	}
+
+	if w.conf.VisionModelShouldRun(vision.ModelTypeFace, vision.RunOnSchedule) {
+		models = append(models, vision.ModelTypeFace)
 	}
 
 	return models
@@ -99,17 +107,13 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	defer mutex.VisionWorker.Stop()
 
 	models = vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
-		if mt == vision.ModelTypeFace {
-			return w.conf.FaceEngineShouldRun(when)
-		}
-
 		return w.conf.VisionModelShouldRun(mt, when)
 	})
 
 	updateLabels := slices.Contains(models, vision.ModelTypeLabels)
 	updateNsfw := slices.Contains(models, vision.ModelTypeNsfw)
 	updateCaptions := slices.Contains(models, vision.ModelTypeCaption)
-	updateFaces := slices.Contains(models, vision.ModelTypeFace)
+	detectFaces := slices.Contains(models, vision.ModelTypeFace)
 
 	// Refresh index metadata.
 	if n := len(models); n == 0 {
@@ -123,7 +127,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	// Check time when worker was last executed.
 	updateIndex := false
-	facesJobRequired := false
+	// Remember if we saved new face markers so recognition can run after the loop.
+	updateFaces := false
 
 	start := time.Now()
 	done := make(map[string]bool)
@@ -187,7 +192,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		generateCaptions := updateCaptions && m.ShouldGenerateCaption(customSrc, force)
 		detectNsfw := updateNsfw && (!photo.PhotoPrivate || force)
 
-		if !(generateLabels || generateCaptions || detectNsfw || updateFaces) {
+		if !(generateLabels || generateCaptions || detectNsfw || detectFaces) {
 			continue
 		}
 
@@ -199,9 +204,10 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			continue
 		}
 
+		// Track whether this iteration produced metadata that needs persisting.
 		changed := false
 
-		if updateFaces {
+		if detectFaces {
 			if primaryFile, err := m.PrimaryFile(); err != nil {
 				log.Debugf("vision: photo %s has invalid primary file (%s)", logName, clean.Error(err))
 			} else if primaryFile == nil {
@@ -213,11 +219,11 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 				faces, detectErr := photoprism.DetectFaces(file, expected)
 				if detectErr != nil {
 					log.Debugf("vision: %s in %s (detect faces)", detectErr, clean.Log(file.BaseName()))
-				} else if saved, count, applyErr := photoprism.ApplyDetectedFaces(primaryFile, faces); applyErr != nil {
+				} else if saved, faceCount, applyErr := photoprism.ApplyDetectedFaces(primaryFile, faces); applyErr != nil {
 					log.Warnf("vision: %s in %s (save faces)", clean.Error(applyErr), logName)
 				} else if saved {
-					m.PhotoFaces = count
-					facesJobRequired = true
+					m.PhotoFaces = faceCount
+					updateFaces = true
 					changed = true
 				}
 			}
@@ -262,11 +268,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		}
 
 		if changed {
-			if saveErr := m.GenerateAndSaveTitle(); saveErr != nil {
-				log.Errorf("vision: failed to update %s (%s)", logName, clean.Error(saveErr))
-			} else {
+			if saveErr := m.SaveVision(); saveErr == nil {
 				updated++
-				log.Infof("vision: updated %s", logName)
 			}
 		}
 
@@ -279,6 +282,16 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	if updated > 0 {
 		updateIndex = true
+	}
+
+	if updateFaces {
+		// Perform face recognition after saving new face markers.
+		log.Debugf("vision: running face recognition")
+		if faces := photoprism.NewFaces(w.conf); faces.Disabled() {
+			log.Debugf("vision: skipping face recognition")
+		} else if facesErr := faces.Start(photoprism.FacesOptions{}); facesErr != nil {
+			log.Warn(facesErr)
+		}
 	}
 
 	// Only update index if photo metadata has changed or the force flag was used.
@@ -298,15 +311,6 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		// Update album, subject, and label cover thumbs.
 		if err = query.UpdateCovers(); err != nil {
 			log.Warnf("vision: %s in optimization worker", err)
-		}
-	}
-
-	if facesJobRequired {
-		log.Debugf("vision: running face recognition")
-		if faces := photoprism.NewFaces(w.conf); faces.Disabled() {
-			log.Debugf("vision: skipping face recognition")
-		} else if facesErr := faces.Start(photoprism.FacesOptions{}); facesErr != nil {
-			log.Warn(facesErr)
 		}
 	}
 

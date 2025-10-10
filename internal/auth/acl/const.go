@@ -98,4 +98,5 @@ const (
 	ChannelPeople    Resource = "people"
 	ChannelSync      Resource = "sync"
 	ChannelInstance  Resource = "instance"
+	ChannelSystem    Resource = "system"
 )

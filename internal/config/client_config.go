@@ -626,7 +626,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Select("MAX(photo_count) AS label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
-		Where("(label_priority >= 0 OR label_favorite = 1)").
+		Where("(labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1)").
 		Take(&cfg.Count)
 
 	if hidePrivate {

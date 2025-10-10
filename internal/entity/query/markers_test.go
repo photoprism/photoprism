@@ -151,6 +151,36 @@ func TestEmbeddings(t *testing.T) {
 	})
 }
 
+func TestMarkerCountsByFaceIDs(t *testing.T) {
+	counts, err := MarkerCountsByFaceIDs(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Empty(t, counts)
+
+	faces, err := Faces(false, false, false, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(faces) == 0 {
+		t.Skip("no faces available in test dataset")
+	}
+
+	ids := []string{faces[0].ID}
+
+	counts, err = MarkerCountsByFaceIDs(ids)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(counts) == 0 {
+		t.Skip("no markers found for sampled face")
+	}
+
+	assert.GreaterOrEqual(t, counts[faces[0].ID], 0)
+}
+
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	affected, err := RemoveInvalidMarkerReferences()
 

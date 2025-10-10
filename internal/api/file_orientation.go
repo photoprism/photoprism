@@ -91,7 +91,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 
 			// Update index.
 			ind := get.Index()
-			if res := ind.FileName(mf.FileName(), photoprism.IndexOptionsSingle()); res.Failed() {
+			if res := ind.FileName(mf.FileName(), photoprism.IndexOptionsSingle(conf)); res.Failed() {
 				log.Errorf("file: %s in %s (change orientation)", res.Err, clean.Log(mf.BaseName()))
 				AbortSaveFailed(c)
 				return

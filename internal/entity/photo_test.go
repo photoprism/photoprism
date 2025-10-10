@@ -137,23 +137,6 @@ func TestPhoto_HasMediaType(t *testing.T) {
 	})
 }
 
-func TestPhoto_IsNewlyIndexed(t *testing.T) {
-	t.Run("NilTimestamp", func(t *testing.T) {
-		photo := Photo{}
-		assert.True(t, photo.IsNewlyIndexed())
-	})
-	t.Run("ZeroTimestamp", func(t *testing.T) {
-		zero := time.Time{}
-		photo := Photo{CheckedAt: &zero}
-		assert.True(t, photo.IsNewlyIndexed())
-	})
-	t.Run("HasCheckedAt", func(t *testing.T) {
-		now := time.Now()
-		photo := Photo{CheckedAt: &now}
-		assert.False(t, photo.IsNewlyIndexed())
-	})
-}
-
 func TestPhoto_SetMediaType(t *testing.T) {
 	t.Run("Image", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
@@ -1446,5 +1429,37 @@ func TestPhoto_FaceCount(t *testing.T) {
 	t.Run("Photo04", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.Equal(t, 3, m.FaceCount())
+	})
+}
+
+func TestPhoto_Indexed(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		photo := Photo{}
+		assert.True(t, photo.IsNewlyIndexed())
+		photo.Indexed()
+		assert.False(t, photo.IsNewlyIndexed())
+		assert.IsType(t, &time.Time{}, photo.IndexedAt)
+	})
+}
+
+func TestPhoto_IsNewlyIndexed(t *testing.T) {
+	t.Run("ChangeStatus", func(t *testing.T) {
+		photo := Photo{IndexedAt: nil}
+		assert.True(t, photo.IsNewlyIndexed())
+		photo.Indexed()
+		assert.False(t, photo.IsNewlyIndexed())
+	})
+	t.Run("ZeroTimestamp", func(t *testing.T) {
+		zero := time.Time{}
+		photo := Photo{IndexedAt: &zero}
+		assert.True(t, photo.IsNewlyIndexed())
+	})
+	t.Run("HasIndexedAt", func(t *testing.T) {
+		photo := Photo{IndexedAt: TimeStamp()}
+		assert.False(t, photo.IsNewlyIndexed())
+	})
+	t.Run("HasDeletedAt", func(t *testing.T) {
+		photo := Photo{IndexedAt: nil, DeletedAt: TimeStamp()}
+		assert.False(t, photo.IsNewlyIndexed())
 	})
 }

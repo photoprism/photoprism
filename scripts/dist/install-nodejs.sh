@@ -7,6 +7,7 @@ PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PAT
 
 set -e
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 # NodeJS version to be installed.

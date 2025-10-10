@@ -343,7 +343,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
-	} else if ind.findFaces && file.FilePrimary {
+	} else if o.DetectFaces && file.FilePrimary {
+		// Run face detection on primary files when enabled for this indexing run.
 		if markers := file.Markers(); markers != nil {
 			// Detect faces.
 			faces := ind.Faces(m, markers.DetectedFaceCount())
@@ -812,8 +813,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if file.FilePrimary {
 		primaryFile = file
 
-		// Classify images with TensorFlow?
-		if ind.findLabels {
+		// Classify images with TensorFlow if the run enables automatic labels.
+		if o.GenerateLabels {
 			labels = m.GenerateLabels(entity.SrcAuto)
 
 			// Append labels from other sources such as face detection.
@@ -828,7 +829,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if !photoExists {
 			if isNSFW {
 				photo.PhotoPrivate = true
-			} else if ind.detectNsfw {
+			} else if o.DetectNsfw {
 				photo.PhotoPrivate = m.DetectNSFW()
 			}
 		}

@@ -25,15 +25,12 @@ import (
 
 // Index coordinates filesystem scans, metadata extraction, and database updates for originals.
 type Index struct {
-	conf       *config.Config
-	convert    *Convert
-	files      *Files
-	photos     *Photos
-	lastRun    time.Time
-	lastFound  int
-	findFaces  bool
-	findLabels bool
-	detectNsfw bool
+	conf      *config.Config
+	convert   *Convert
+	files     *Files
+	photos    *Photos
+	lastRun   time.Time
+	lastFound int
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -45,31 +42,13 @@ func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photo
 
 	// Create new indexer instance.
 	i := &Index{
-		conf:       conf,
-		convert:    convert,
-		files:      files,
-		photos:     photos,
-		findFaces:  conf.FaceEngineShouldRun(vision.RunOnIndex),
-		findLabels: conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex),
-		detectNsfw: conf.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex),
+		conf:    conf,
+		convert: convert,
+		files:   files,
+		photos:  photos,
 	}
 
 	return i
-}
-
-// configureFaceDetection updates the face detection flag for a given indexing run.
-func (ind *Index) configureFaceDetection(o IndexOptions) {
-	if ind == nil || ind.conf == nil {
-		ind.findFaces = false
-		return
-	}
-
-	faceRun := vision.RunOnIndex
-	if o.FacesOnly {
-		faceRun = vision.RunManual
-	}
-
-	ind.findFaces = ind.conf.FaceEngineShouldRun(faceRun)
 }
 
 func (ind *Index) shouldFlagPrivate(labels classify.Labels) bool {
@@ -117,8 +96,6 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		log.Errorf("index: config is not set")
 		return found, updated
 	}
-
-	ind.configureFaceDetection(o)
 
 	originalsPath := ind.originalsPath()
 	optionsPath := filepath.Join(originalsPath, o.Path)

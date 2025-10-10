@@ -122,6 +122,39 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 	return result, nil
 }
 
+// MarkerCountsByFaceIDs returns a map of marker counts for the provided face IDs.
+func MarkerCountsByFaceIDs(faceIDs []string) (map[string]int, error) {
+	counts := make(map[string]int, len(faceIDs))
+
+	if len(faceIDs) == 0 {
+		return counts, nil
+	}
+
+	type row struct {
+		FaceID string
+		Count  int
+	}
+
+	var rows []row
+
+	if err := Db().
+		Model(&entity.Marker{}).
+		Select("face_id, COUNT(*) AS count").
+		Where("marker_invalid = 0").
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("face_id IN (?)", faceIDs).
+		Group("face_id").
+		Scan(&rows).Error; err != nil {
+		return counts, err
+	}
+
+	for _, r := range rows {
+		counts[r.FaceID] = r.Count
+	}
+
+	return counts, nil
+}
+
 // RemoveInvalidMarkerReferences removes face and subject references from invalid markers.
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
 	result := Db().

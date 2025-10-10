@@ -14,7 +14,7 @@ import (
 )
 
 func TestPostVisionFace(t *testing.T) {
-	t.Run("Face", func(t *testing.T) {
+	t.Run("GenerateFaceEmbeddings", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PostVisionFace(router)
 

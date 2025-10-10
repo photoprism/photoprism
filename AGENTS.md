@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 4, 2025
+**Last Updated:** October 10, 2025
 
 ## Purpose
 
@@ -15,20 +15,22 @@ Learn more: https://agents.md/
 - Contributing: https://github.com/photoprism/photoprism/blob/develop/CONTRIBUTING.md
 - Security: https://github.com/photoprism/photoprism/blob/develop/SECURITY.md
 - REST API: https://docs.photoprism.dev/ (Swagger), https://docs.photoprism.app/developer-guide/api/ (Docs)
-- Code Maps: `CODEMAP.md` (Backend/Go), `frontend/CODEMAP.md` (Frontend/JS)
-- Face Detection & Embeddings Notes: `internal/ai/face/README.md`
+- Code Maps: [`CODEMAP.md`](CODEMAP.md) (Backend/Go), [`frontend/CODEMAP.md`](frontend/CODEMAP.md) (Frontend/JS)
+- Face Detection & Embeddings Notes: [`internal/ai/face/README.md`](internal/ai/face/README.md)
 
 ### Specifications (Versioning & Usage)
 
-- Always use the latest spec version for a topic (highest `-vN`), as linked from `specs/README.md` and the portal cheatsheet (`specs/portal/README.md`).
+- In the main repo, `specs/` appears ignored because it is managed as a nested Git repository; change into `specs/` before staging or committing spec updates.
+- Availability: The `specs/` repository is private and is not guaranteed to be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths. When `specs/` is available, run its tools directly (e.g., `bash specs/scripts/lint-status.sh`).
+- If available, always use the latest spec version for a topic (highest `-vN`), as linked from `specs/README.md`.
 - Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
 - Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
 - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
+- Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
 
-Note on specs repository availability
-- The `specs/` repository may be private and is not guaranteed to be present in every clone or environment. Do not add Makefile targets in the main project that depend on `specs/` paths. When `specs/` is available, run its tools directly (e.g., `bash specs/scripts/lint-status.sh`).
-- In the main repo, `specs/` appears ignored because it is managed as a nested Git repository; change into `specs/` before staging or committing spec updates.
-- When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
+**Style note:** Document headings must use Title Case (capitalize every significant word) across Markdown files to keep generated navigation and changelogs consistent.
+
+**CLI note:** When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 
 ## Project Structure & Languages
 
@@ -117,6 +119,7 @@ console.log(inContainer || inDevPath ? "container" : "host");
     - Or https://app.localssl.dev/ (HTTPS via Traefik reverse proxy)
       - Only if Traefik is running and the dev compose labels are active
       - Labels for `*.localssl.dev` are defined in the dev compose files, e.g. https://github.com/photoprism/photoprism/blob/develop/compose.yaml
+  - Admin Login: Local compose files set `PHOTOPRISM_ADMIN_USER=admin` and `PHOTOPRISM_ADMIN_PASSWORD=photoprism`; if the credentials differ, inspect `compose.yaml` (or the active environment) for these variables before logging in.
   - Do not use the Docker CLI inside the container; starting/stopping services requires host Docker access.
 
 Note: Across our public documentation, official images, and in production, the command-line interface (CLI) name is `photoprism`. Other PhotoPrism binary names are only used in development builds for side-by-side comparisons of the Community Edition (CE) with PhotoPrism Plus (`photoprism-plus`) and PhotoPrism Pro (`photoprism-pro`).
@@ -132,6 +135,16 @@ Note: Across our public documentation, official images, and in production, the c
 - Frontend unit tests are driven by Vitest; see scripts in `frontend/package.json`
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
+
+### Playwright MCP Usage
+
+- Playwright MCP is preconfigured to reach the dev server at http://localhost:2342/; use `playwright__browser_navigate` to load `/library/login`, sign in, then `playwright__browser_take_screenshot`.
+- Desktop sessions should open with a 1280x900 viewport by default; call `playwright__browser_resize` if the viewport size is not pre-configured or you need a different size mid-run.
+- Where available, use the `playwright_mobile` server for mobile workflows (for example, `playwright_mobile__browser_navigate`), which launches at 375x667 so you can capture smartphone layouts without manual resizing.
+- Default admin credentials remain `admin` / `photoprism`; if login fails, inspect the active compose file or environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
+- When capturing artifacts, keep Playwright screenshots to the visible viewport (leave `fullPage` unset/false) unless a full-page capture is explicitly required, then copy the MCP output file into `.local/screenshots/` (create the folder if needed).
+- The sidebar navigation nests items such as `Library` → `Errors`; expand the parent entry by clicking its chevron before targeting links inside.
+- After scripted interactions, close the browser tab with `playwright__browser_close` (or `playwright_mobile__browser_close`) so the MCP session stays tidy for subsequent runs.
 
 ### FFmpeg Tests & Hardware Gating
 
@@ -268,9 +281,11 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 - ImportWorker may skip files if an identical file already exists (duplicate detection). Use unique copies or assert DB rows after ensuring a non‑duplicate destination.
 - Mixed roots: when testing related files, keep `ExamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
+- `IndexOptions*` helpers now require a `*config.Config`; pass the active config (or `config.NewMinimalTestConfig(t.TempDir())` in unit tests) so face/label/NSFW scheduling matches the current run.
 
 ### CLI Usage & Assertions
 
+- Prefer the shared helpers like `DryRunFlag(...)` and `YesFlag()` when adding new CLI flags so behaviour stays consistent across commands.
 - Wrap CLI tests in `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process; assert quoted `show` output with `assert.Contains`/regex for the trailing ", or <last>" rule.
 - Prefer `--json` responses for automation. `photoprism show commands --json [--nested]` exposes the tree view (add `--all` for hidden entries).
 - Use `internal/commands/catalog` to inspect commands/flags without running the binary; when validating large JSON docs, marshal DTOs via `catalog.BuildFlat/BuildNode` instead of parsing CLI stdout.
@@ -280,6 +295,7 @@ If anything in this file conflicts with the `Makefile` or the Developer Guide, t
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
 - When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
+- When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 - Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
 - Logging: use the shared logger (`event.Log`) via the package-level `log` variable (see `internal/auth/jwt/logger.go`) instead of direct `fmt.Print*` or ad-hoc loggers.
 - Cluster registry tests (`internal/service/cluster/registry`) currently rely on a full test config because they persist `entity.Client` rows. They run migrations and seed the SQLite DB, so they are intentionally slow. If you refactor them, consider sharing a single `config.TestConfig()` across subtests or building a lightweight schema harness; do not swap to the minimal config helper unless the tests stop touching the database.

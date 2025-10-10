@@ -11,6 +11,18 @@ func (m Embedding) IsBackground() bool {
 
 // Background contains out-of-distribution (OOD) embeddings
 // of inputs that are not faces, such as plants, the sky, etc.
+//
+// NOTE: Checking an embedding against this list requires ~3–4 µs when it
+// fails to match (BenchmarkIsBackgroundMiss, temporary bench) because every
+// call scans all 24 clusters. We currently invoke IsBackground from:
+//   - Embedding.CanMatch() -> NewEmbeddings() at ingest time
+//   - Embeddings.Kind() / Embedding.SkipMatching() via entity.Face.SetEmbeddings()
+//   - buildFaceIndex() in internal/photoprism/faces_match.go
+//
+// Enabling IgnoreBackground therefore shortens index rebuilds roughly 5×,
+// but also removes the legacy guard that filtered Pigo false positives. When
+// we add detector provenance (TODO: record entity.SrcONNX on SCRFD detections),
+// we can conditionally skip this scan for ONNX-derived embeddings only.
 var Background = Clusters{
 	{
 		Radius:    0.35,
