@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
@@ -38,6 +40,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-auth"}`, cluster.ExampleJoinToken)
+		cleanupRegisterProvisioning(t, conf, rCreate)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
 		var resp cluster.RegisterResponse
@@ -192,6 +195,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
+		cleanupRegisterProvisioning(t, conf, rCreate)
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01","rotateSecret":true}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -291,7 +295,21 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := provisioner.DropCredentials(ctx, name, user); err != nil {
-			t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
+			if strings.Contains(err.Error(), "1268") { // Only abort if there was an issue dropping the user
+				t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
+			} else {
+				t.Logf("drop credentials for %s/%s: %v", name, user, err)
+			}
 		}
 	})
+
+	if resp.Node.UUID != "" {
+		t.Cleanup(func() {
+			if err := entity.UnscopedDb().Where("node_uuid = ?", resp.Node.UUID).Delete(&entity.Client{}).Error; err != nil {
+				t.Fatalf("remove client for %s: %v", resp.Node.UUID, err)
+			}
+		})
+
+	}
+
 }
