@@ -323,7 +323,7 @@ func refreshFolderAlbumCover(album entity.Album) error {
 	}
 
 	switch DbDialect() {
-	case MySQL:
+	case enum.MySQL:
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
@@ -339,7 +339,7 @@ func refreshFolderAlbumCover(album entity.Album) error {
 		)
 
 		return res.Error
-	case SQLite3:
+	case enum.SQLite3:
 		res := Db().Table(entity.Album{}.TableName()).
 			Where("album_uid = ? AND album_type = ? AND thumb_src = ?", album.AlbumUID, entity.AlbumFolder, entity.SrcAuto).
 			UpdateColumn("thumb", gorm.Expr(`(
@@ -367,7 +367,7 @@ func refreshMonthAlbumCover(album entity.Album) error {
 	}
 
 	switch DbDialect() {
-	case MySQL:
+	case enum.MySQL:
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
@@ -384,7 +384,7 @@ func refreshMonthAlbumCover(album entity.Album) error {
 		)
 
 		return res.Error
-	case SQLite3:
+	case enum.SQLite3:
 		res := Db().Table(entity.Album{}.TableName()).
 			Where("album_uid = ? AND album_type = ? AND thumb_src = ?", album.AlbumUID, entity.AlbumMonth, entity.SrcAuto).
 			UpdateColumn("thumb", gorm.Expr(`(
