@@ -296,7 +296,7 @@ export default [
       title: $pgettext("Noun", "Archive"),
       requiresAuth: true,
     },
-    props: { staticFilter: { archived: "true" } },
+    props: { staticFilter: { archived: "true", public: "" } },
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next({ name: loginRoute });

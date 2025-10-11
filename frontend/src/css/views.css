@@ -679,12 +679,32 @@
     visibility: hidden;
 }
 
+.cards-view .input-menu,
+.mosaic-view .input-menu,
 .cards-view .input-reject,
 .mosaic-view .input-reject {
-    opacity: 0.75;
+    text-shadow: -1px -1px 0 #0003, 1px -1px 0 #0003, -1px 1px 0 #0003, 1px 1px 0 #0003;
+    background-color: rgba(255, 255, 255, 0);
+    color: #f6f6f6;
+    opacity: 0.9;
     top: 0;
     right: 0;
     margin: 3px;
+}
+
+.cards-view .face-actions,
+.mosaic-view .face-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 3px;
+    z-index: 2;
+}
+
+.is-rtl .cards-view .face-actions,
+.is-rtl .mosaic-view .face-actions {
+    left: 0;
+    right: auto;
 }
 
 .cards-view .input-hidden,

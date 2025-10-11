@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-04 09:03+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-10-10 12:26+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -39,7 +39,7 @@ msgstr "{0} επιλεγμένο"
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} του {2}"
 
-#: src/page/albums.vue:621
+#: src/page/albums.vue:821
 msgid "%{n} albums found"
 msgstr "%{n} συλλογές βρέθηκαν"
 
@@ -55,7 +55,7 @@ msgstr "%{n} φάκελοι βρέθηκαν"
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB του %{q} GB που χρησιμοποιήθηκαν"
 
-#: src/page/labels.vue:609
+#: src/page/labels.vue:808
 msgid "%{n} labels found"
 msgstr "%{n} ετικέτες βρέθηκαν"
 
@@ -180,7 +180,7 @@ msgstr "Κωδικός ενεργοποίησης"
 msgid "Add"
 msgstr "Προσθέστε"
 
-#: src/component/photo/edit/people.vue:162 src/page/people/new.vue:244
+#: src/component/photo/edit/people.vue:176 src/page/people/new.vue:244
 msgid "Add %{s}?"
 msgstr "Προσθέστε %{s}?"
 
@@ -200,8 +200,8 @@ msgstr "Προσθήκη αρχείων στην βιβλιοθήκη μέσω W
 msgid "Add Link"
 msgstr "Προσθήκη Συνδέσμου"
 
-#: src/component/photo/edit/people.vue:25
-#: src/component/photo/edit/people.vue:162 src/page/people/new.vue:57
+#: src/component/photo/edit/people.vue:27
+#: src/component/photo/edit/people.vue:176 src/page/people/new.vue:57
 #: src/page/people/new.vue:244
 msgid "Add person?"
 msgstr "Προσθέστε άτομο;"
@@ -279,7 +279,7 @@ msgstr "Συλλογή"
 msgid "Album Backups"
 msgstr "Αντίγραφα ασφαλείας άλμπουμ"
 
-#: src/page/albums.vue:689
+#: src/page/albums.vue:909
 msgid "Album created"
 msgstr "Η Συλλογή δημιουργήθηκε"
 
@@ -301,11 +301,11 @@ msgstr "Οι Συλλογές διαγράφηκαν"
 msgid "All"
 msgstr "Όλα"
 
-#: src/page/albums.vue:470
+#: src/page/albums.vue:644
 msgid "All %{n} albums loaded"
 msgstr "%{n} Συλλογές φορτώθηκαν"
 
-#: src/page/labels.vue:439
+#: src/page/labels.vue:610
 msgid "All %{n} labels loaded"
 msgstr "%{n} ετικέτες φορτώθηκαν"
 
@@ -318,7 +318,7 @@ msgid "All Cameras"
 msgstr "Όλες οι Κάμερες"
 
 #: src/component/photo/toolbar.vue:74 src/page/albums.vue:45
-#: src/page/albums.vue:242 src/page/albums.vue:761
+#: src/page/albums.vue:257 src/page/albums.vue:981
 msgid "All Categories"
 msgstr "Όλες οι Κατηγορίες"
 
@@ -350,7 +350,7 @@ msgstr "Όλοι οι Μήνες"
 msgid "All originals"
 msgstr "Όλα τα πρωτότυπα"
 
-#: src/component/photo/toolbar.vue:76 src/page/albums.vue:94
+#: src/component/photo/toolbar.vue:76 src/page/albums.vue:99
 msgid "All Years"
 msgstr "Όλα τα έτη"
 
@@ -563,6 +563,10 @@ msgstr "Αναζήτηση αρχείων"
 msgid "Browse indexed files and folders in Library."
 msgstr "Περιήγηση σε αρχεία και φακέλους στη Βιβλιοθήκη."
 
+#: src/component/photo/edit/people.vue:107
+msgid "Browse Pictures"
+msgstr "Αναζήτηση εικόνων"
+
 #: src/page/about/feedback.vue:10 src/options/options.js:403
 msgid "Bug Report"
 msgstr "Αναφορά σφάλματος"
@@ -598,8 +602,8 @@ msgid "Can't load more, limit reached"
 msgstr "Δεν μπορείτε να φορτώσετε περισσότερα διότι θα ξεπεράσετε το όριο"
 
 #: src/common/clipboard.js:102 src/common/clipboard.js:139
-#: src/page/albums.vue:699 src/page/albums.vue:715 src/page/labels.vue:365
-#: src/page/labels.vue:385 src/page/library/browse.vue:233
+#: src/page/albums.vue:919 src/page/albums.vue:935 src/page/labels.vue:506
+#: src/page/labels.vue:526 src/page/library/browse.vue:233
 #: src/page/library/browse.vue:249 src/page/people/new.vue:278
 #: src/page/people/new.vue:294 src/page/people/recognized.vue:305
 #: src/page/people/recognized.vue:321
@@ -681,7 +685,7 @@ msgstr "Οι αλλαγές δεν μπόρεσαν να αποθηκευτού�
 #: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1963
 #: src/component/photo/edit/files.vue:178 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
-#: src/page/albums.vue:692 src/page/people/recognized.vue:119
+#: src/page/albums.vue:912 src/page/people/recognized.vue:119
 #: src/page/settings/advanced.vue:62 src/page/settings/content.vue:62
 #: src/page/settings/general.vue:108
 msgid "Changes successfully saved"
@@ -833,6 +837,10 @@ msgstr "αντίγραφο"
 msgid "Copyright"
 msgstr "Πνευματικά δικαιώματα"
 
+#: src/component/photo/edit/people.vue:179
+msgid "Could not update person cover"
+msgstr "Δεν ήταν δυνατή η ενημέρωση της κάλυψης προσώπου"
+
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
 msgstr "Δεν μπόρεσα να βρω τίποτα."
@@ -878,7 +886,7 @@ msgstr "Κυβικό: Μέτρια ποιότητα, καλή επίδοση"
 msgid "Current Password"
 msgstr "Τρέχων κωδικός πρόσβασης"
 
-#: src/options/themes.js:994 src/options/themes.js:1003
+#: src/options/themes.js:995 src/options/themes.js:1004
 msgid "Custom"
 msgstr "Προσαρμοσμένο"
 
@@ -912,7 +920,7 @@ msgstr "Αρχεία καταγραφής σφαλμάτων"
 #: src/model/user.js:237 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:196
 #: src/options/options.js:232 src/options/options.js:316
-#: src/options/themes.js:843
+#: src/options/themes.js:844
 msgid "Default"
 msgstr "Προεπιλογή"
 
@@ -1307,7 +1315,7 @@ msgid "Favorite"
 msgstr "Αγαπημένο"
 
 #: src/app/routes.js:230 src/component/navigation.vue:893
-#: src/options/options.js:202 src/page/albums.vue:98
+#: src/options/options.js:202 src/page/albums.vue:103
 msgid "Favorites"
 msgstr "Αγαπημένα"
 
@@ -1648,7 +1656,7 @@ msgstr "Μη έγκυρο URL"
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr "Είναι ένας κωδικός μίας χρήσης που θα απενεργοποιήσει το 2FA για τον λογαριασμό σας όταν τον χρησιμοποιείτε."
 
-#: src/model/rest.js:155
+#: src/model/rest.js:157
 msgid "Item"
 msgstr "Αντικείμενο"
 
@@ -1735,7 +1743,7 @@ msgid "Learn more"
 msgstr "Μάθετε περισσότερα"
 
 #: src/page/admin/sessions.vue:110 src/page/admin/users.vue:137
-#: src/page/labels.vue:184
+#: src/page/labels.vue:199
 msgid "Learn More"
 msgstr "Μάθετε περισσότερα"
 
@@ -1824,7 +1832,7 @@ msgstr "Τοπική ώρα"
 #: src/component/photo/edit/details.vue:116
 #: src/component/photo/edit/details.vue:210
 #: src/component/photo/view/cards.vue:555 src/component/photo/view/list.vue:117
-#: src/component/sidebar/info.vue:107 src/page/albums.vue:100
+#: src/component/sidebar/info.vue:107 src/page/albums.vue:105
 #: src/page/settings/account.vue:557 src/page/settings/account.vue:559
 msgid "Location"
 msgstr "Τοποθεσία"
@@ -1984,9 +1992,9 @@ msgstr "Σίγαση"
 #: src/component/label/edit/dialog.vue:71
 #: src/component/people/edit/dialog.vue:71
 #: src/component/photo/edit/files.vue:43 src/component/photo/edit/info.vue:125
-#: src/component/photo/edit/people.vue:36 src/component/photo/view/list.vue:117
+#: src/component/photo/edit/people.vue:38 src/component/photo/view/list.vue:117
 #: src/component/service/edit.vue:310 src/component/settings/apps.vue:53
-#: src/component/settings/apps.vue:286 src/page/albums.vue:99
+#: src/component/settings/apps.vue:286 src/page/albums.vue:104
 #: src/page/auth/login.vue:168 src/page/people/new.vue:68
 #: src/page/settings/services.vue:37
 msgid "Name"
@@ -1996,7 +2004,7 @@ msgstr "Όνομα"
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:46
-#: src/component/photo/edit/people.vue:39 src/page/labels.vue:60
+#: src/component/photo/edit/people.vue:41 src/page/labels.vue:60
 #: src/page/library/browse.vue:46 src/page/people/new.vue:51
 #: src/page/people/recognized.vue:46
 msgid "Name too long"
@@ -2017,7 +2025,7 @@ msgstr "Νέος κωδικός πρόσβασης"
 
 #: src/component/album/edit/dialog.vue:24 src/component/photo/toolbar.vue:114
 #: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:136
-#: src/page/albums.vue:101
+#: src/page/albums.vue:106
 msgid "Newest First"
 msgstr "Το νεότερο πρώτα"
 
@@ -2041,7 +2049,7 @@ msgstr "Επόμενο οπτικό υλικό"
 msgid "No"
 msgstr "Όχι"
 
-#: src/page/albums.vue:616 src/page/albums.vue:282
+#: src/page/albums.vue:816 src/page/albums.vue:282
 msgid "No albums found"
 msgstr "Δεν βρέθηκαν συλλογές"
 
@@ -2049,7 +2057,7 @@ msgstr "Δεν βρέθηκαν συλλογές"
 msgid "No data available"
 msgstr "Δεν υπάρχουν διαθέσιμα στοιχεία"
 
-#: src/page/labels.vue:604 src/page/labels.vue:139
+#: src/page/labels.vue:803 src/page/labels.vue:139
 msgid "No labels found"
 msgstr "Δεν βρέθηκαν ετικέτες"
 
@@ -2061,7 +2069,7 @@ msgstr "Δεν βρέθηκαν ταιριαστές εγγραφές"
 msgid "No more"
 msgstr "Όχι άλλο"
 
-#: src/component/photo/edit/people.vue:34 src/page/people/new.vue:346
+#: src/component/photo/edit/people.vue:40 src/page/people/new.vue:346
 #: src/page/people/new.vue:452 src/page/people/new.vue:103
 #: src/page/people/recognized.vue:538 src/page/people/recognized.vue:146
 msgid "No people found"
@@ -2170,7 +2178,7 @@ msgstr "OK"
 
 #: src/component/album/edit/dialog.vue:25 src/component/photo/toolbar.vue:115
 #: src/component/photo/toolbar.vue:127 src/component/photo/toolbar.vue:137
-#: src/page/albums.vue:102
+#: src/page/albums.vue:107
 msgid "Oldest First"
 msgstr "Ο παλαιότερος πρώτος"
 
@@ -2186,7 +2194,7 @@ msgstr "Η κατά παραγγελία δημιουργία μικρογραφ
 msgid "Once a week"
 msgstr "Μία φορά την εβδομάδα"
 
-#: src/page/albums.vue:618
+#: src/page/albums.vue:818
 msgid "One album found"
 msgstr "Βρέθηκε μια συλλογή"
 
@@ -2202,7 +2210,7 @@ msgstr "Ένα αρχείο μεταφορτώθηκε"
 msgid "One folder found"
 msgstr "Βρέθηκε ένας φάκελος"
 
-#: src/page/labels.vue:606
+#: src/page/labels.vue:805
 msgid "One label found"
 msgstr "Μια ετικέτα βρέθηκε"
 
@@ -2324,6 +2332,15 @@ msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερ�
 #: src/model/subject.js:134
 msgid "Person"
 msgstr "Πρόσωπο"
+
+#: src/component/photo/edit/people.vue:176
+msgid "Person cover updated"
+msgstr "Ενημέρωση κάλυψης προσώπου"
+
+#: src/component/photo/edit/people.vue:140
+#: src/component/photo/edit/people.vue:170
+msgid "Person not found"
+msgstr "Το Άτομο δεν βρέθηκε"
 
 #: src/options/auth.js:43
 msgid "Personal"
@@ -2512,7 +2529,7 @@ msgstr "Λειτουργία μόνο για ανάγνωση"
 
 #: src/component/album/edit/dialog.vue:26 src/component/photo/toolbar.vue:116
 #: src/component/photo/toolbar.vue:128 src/component/photo/toolbar.vue:138
-#: src/page/albums.vue:103
+#: src/page/albums.vue:108
 msgid "Recently Added"
 msgstr "Πρόσφατα προστέθηκε"
 
@@ -2520,11 +2537,11 @@ msgstr "Πρόσφατα προστέθηκε"
 msgid "Recently Archived"
 msgstr "Πρόσφατα αρχειοθετημένο"
 
-#: src/component/photo/toolbar.vue:139 src/page/albums.vue:104
+#: src/component/photo/toolbar.vue:139 src/page/albums.vue:109
 msgid "Recently Edited"
 msgstr "Πρόσφατη επεξεργασία"
 
-#: src/component/photo/edit/people.vue:35 src/page/people/new.vue:104
+#: src/component/photo/edit/people.vue:41 src/page/people/new.vue:104
 #: src/page/people/recognized.vue:147
 msgid "Recognition starts after indexing has been completed."
 msgstr "Η αναγνώριση ξεκινά μετά την ολοκλήρωση της δημιουργίας ευρετηρίου."
@@ -2547,7 +2564,7 @@ msgstr "Κόκκινο"
 
 #: src/page/admin/sessions.vue:101 src/page/admin/users.vue:128
 #: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:175 src/page/labels.vue:119
+#: src/page/albums.vue:190 src/page/labels.vue:134
 #: src/page/library/browse.vue:90 src/page/library/errors.vue:81
 #: src/page/people/new.vue:54 src/page/people/recognized.vue:88
 msgid "Refresh"
@@ -2575,7 +2592,7 @@ msgstr "Επαναγέμισμα…"
 msgid "Remote Sync"
 msgstr "Απομακρυσμένος συγχρονισμός"
 
-#: src/component/photo/edit/people.vue:66
+#: src/component/photo/edit/people.vue:72
 msgid "Remove"
 msgstr "Απομάκρυνση"
 
@@ -2774,6 +2791,10 @@ msgstr "Συνεδρίες"
 msgid "Set as Album Cover"
 msgstr "Ορίστε ως εξώφυλλο άλμπουμ"
 
+#: src/component/photo/edit/people.vue:115
+msgid "Set as Cover Image"
+msgstr "Ορισμός ως εικόνα εξωφύλλου"
+
 #: src/app/routes.js:101 src/app/routes.js:503 src/app/routes.js:515
 #: src/app/routes.js:532 src/app/routes.js:545 src/app/routes.js:558
 #: src/component/navigation.vue:1394 src/component/navigation.vue:1806
@@ -2806,7 +2827,7 @@ msgstr "Μοιραστείτε τις φωτογραφίες σας με άλλ�
 msgid "Show"
 msgstr "Εμφάνιση"
 
-#: src/page/labels.vue:129 src/page/labels.vue:237
+#: src/page/labels.vue:144 src/page/labels.vue:237
 msgid "Show All Labels"
 msgstr "Εμφάνιση όλων των ετικετών"
 
@@ -2822,7 +2843,7 @@ msgstr "Εμφάνιση λεζάντων"
 msgid "Show hidden"
 msgstr "Εμφάνιση κρυφών"
 
-#: src/page/labels.vue:138
+#: src/page/labels.vue:153
 msgid "Show Important Only"
 msgstr "Εμφάνιση μόνο σημαντικών"
 
@@ -2879,15 +2900,15 @@ msgstr "Κάτι πήγε στραβά, δοκιμάστε ξανά"
 msgid "Sort by"
 msgstr "Ταξινόμηση κατά"
 
-#: src/page/labels.vue:156
+#: src/page/labels.vue:171
 msgid "Sort by Name (A–Z)"
 msgstr "Ταξινόμηση με βάση το όνομα (A-Z)"
 
-#: src/page/labels.vue:165
+#: src/page/labels.vue:180
 msgid "Sort by Photo Count"
 msgstr "Ταξινόμηση ανά αριθμό φωτογραφιών"
 
-#: src/page/labels.vue:147
+#: src/page/labels.vue:162
 msgid "Sort by Relevance"
 msgstr "Ταξινόμηση κατά συνάφεια"
 
@@ -3160,7 +3181,7 @@ msgstr "Αδυναμία διαγραφής"
 msgid "Unauthorized"
 msgstr "Μη εξουσιοδοτημένο"
 
-#: src/component/photo/edit/people.vue:94
+#: src/component/photo/edit/people.vue:108
 msgid "Undo"
 msgstr "Αναίρεση"
 
@@ -3240,8 +3261,8 @@ msgstr "Αναβάθμιση τώρα"
 
 #: src/component/album/toolbar.vue:113 src/component/navigation.vue:1824
 #: src/component/photo/toolbar.vue:179 src/component/service/upload.vue:144
-#: src/component/upload/dialog.vue:51 src/page/albums.vue:185
-#: src/page/labels.vue:174 src/page/library/import.vue:133
+#: src/component/upload/dialog.vue:51 src/page/albums.vue:200
+#: src/page/labels.vue:189 src/page/library/import.vue:133
 #: src/page/settings/general.vue:307 src/page/settings/services.vue:38
 msgid "Upload"
 msgstr "Ανέβασμα"
@@ -3480,7 +3501,7 @@ msgstr "Μπορείτε να ανεβάσετε έως και %{n} αρχεία
 msgid "You may only select one item"
 msgstr "Μπορείτε να επιλέξετε μόνο ένα στοιχείο"
 
-#: src/component/photo/edit/people.vue:35 src/page/people/new.vue:104
+#: src/component/photo/edit/people.vue:41 src/page/people/new.vue:104
 #: src/page/people/recognized.vue:147
 msgid "You may rescan your library to find additional faces."
 msgstr "Μπορείτε να σαρώσετε εκ νέου τη βιβλιοθήκη σας για να βρείτε επιπλέον πρόσωπα."

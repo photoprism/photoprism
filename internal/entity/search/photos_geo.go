@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/geo/pluscode"
@@ -583,9 +584,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Filter by title.
 	if txt.NotEmpty(frm.Title) {
-		if frm.Title == txt.False {
+		if frm.Title == enum.False {
 			s = s.Where("photos.photo_title = ''")
-		} else if frm.Title == txt.True {
+		} else if frm.Title == enum.True {
 			s = s.Where("photos.photo_title <> ''")
 		} else {
 			where, values := OrLike("photos.photo_title", frm.Title)
@@ -595,9 +596,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Filter by caption.
 	if txt.NotEmpty(frm.Caption) {
-		if frm.Caption == txt.False {
+		if frm.Caption == enum.False {
 			s = s.Where("photos.photo_caption = ''")
-		} else if frm.Caption == txt.True {
+		} else if frm.Caption == enum.True {
 			s = s.Where("photos.photo_caption <> ''")
 		} else {
 			where, values := OrLike("photos.photo_caption", frm.Caption)
@@ -607,9 +608,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Filter by description.
 	if txt.NotEmpty(frm.Description) {
-		if frm.Description == txt.False {
+		if frm.Description == enum.False {
 			s = s.Where("photos.photo_title = '' AND photos.photo_caption = ''")
-		} else if frm.Description == txt.True {
+		} else if frm.Description == enum.True {
 			s = s.Where("photos.photo_title <> '' OR photos.photo_caption <> ''")
 		} else {
 			where, values := OrLikeCols([]string{"photos.photo_title", "photos.photo_caption"}, frm.Description)

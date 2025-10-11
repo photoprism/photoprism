@@ -48,8 +48,7 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 			facesRunType = vision.RunOnIndex
 		}
 
-		result.DetectFaces = c.FaceEngineShouldRun(facesRunType)
-
+		result.DetectFaces = c.VisionModelShouldRun(vision.ModelTypeFace, facesRunType)
 		result.DetectNsfw = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex)
 		result.GenerateLabels = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex)
 

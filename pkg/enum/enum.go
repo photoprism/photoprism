@@ -1,5 +1,6 @@
 /*
-Package enum provides enumerated values.
+Package enum centralizes canonical string constants and lookup tables that we
+use when interpreting enumerations throughout PhotoPrism.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 

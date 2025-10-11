@@ -45,9 +45,15 @@ func (c *Config) VisionFilter() string {
 	return strings.TrimSpace(c.options.VisionFilter)
 }
 
-// VisionModelShouldRun checks when the specified model type should run.
+// VisionModelShouldRun reports whether the configured vision model of the
+// specified type should execute in a given scheduling context. Face detection
+// delegates to FaceEngineShouldRun so detection and embedding stay aligned.
 func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) bool {
 	if c == nil {
+		return false
+	}
+
+	if t == vision.ModelTypeFace && c.DisableFaces() {
 		return false
 	}
 
@@ -61,6 +67,10 @@ func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) b
 
 	if vision.Config == nil {
 		return false
+	}
+
+	if t == vision.ModelTypeFace {
+		return c.FaceEngineShouldRun(when)
 	}
 
 	return vision.Config.ShouldRun(t, when)

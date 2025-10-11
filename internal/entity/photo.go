@@ -97,14 +97,14 @@ type Photo struct {
 	Files            []File        `yaml:"-"`
 	Labels           []PhotoLabel  `yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time     `yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time     `yaml:"UpdatedAt,omitempty"`
-	EditedAt         *time.Time    `yaml:"EditedAt,omitempty"`
+	CreatedAt        time.Time     `json:"CreatedAt,omitempty" yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time     `json:"UpdatedAt,omitempty" yaml:"UpdatedAt,omitempty"`
+	EditedAt         *time.Time    `json:"EditedAt,omitempty" yaml:"EditedAt,omitempty"`
 	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	IndexedAt        *time.Time    `json:"IndexedAt,omitempty" yaml:"-"`
 	CheckedAt        *time.Time    `sql:"index" json:"CheckedAt,omitempty" yaml:"-"`
 	EstimatedAt      *time.Time    `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        *time.Time    `sql:"index" yaml:"DeletedAt,omitempty"`
+	DeletedAt        *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.

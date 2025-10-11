@@ -101,6 +101,8 @@ func Username(s string) string {
 }
 
 // Email returns the sanitized email with trimmed whitespace and in lowercase.
+// It accepts common mailbox patterns such as plus addressing and single-label domains
+// while rejecting inputs that do not match the backend validation regex.
 func Email(s string) string {
 	// Empty or too long?
 	if s == "" || reject(s, txt.ClipEmail) {

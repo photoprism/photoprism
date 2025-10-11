@@ -4,6 +4,8 @@ import Model from "model.js";
 import Link from "link.js";
 import { $gettext } from "common/gettext";
 
+export const BatchRestoreMultiplier = 10;
+
 // Rest is the abstract base for models backed by RESTful API resources.
 export class Rest extends Model {
   getId() {
@@ -161,6 +163,29 @@ export class Rest extends Model {
 
   static limit() {
     return 100000;
+  }
+
+  static restoreCap(batchSize, multiplier = BatchRestoreMultiplier) {
+    let size = Number(batchSize);
+
+    if (!Number.isFinite(size) || size <= 0) {
+      size = Number(this.batchSize ? this.batchSize() : 0);
+    }
+
+    if (!Number.isFinite(size) || size <= 0) {
+      return 0;
+    }
+
+    const factor = Number(multiplier);
+    const effectiveMultiplier = Number.isFinite(factor) && factor > 0 ? factor : BatchRestoreMultiplier;
+    const cap = size * effectiveMultiplier;
+    const limit = this.limit ? Number(this.limit()) : cap;
+
+    if (Number.isFinite(limit) && limit > 0) {
+      return Math.min(cap, limit);
+    }
+
+    return cap;
   }
 
   static search(params) {

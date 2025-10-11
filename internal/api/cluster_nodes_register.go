@@ -198,7 +198,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			}
 
 			// Ensure that a database for this node exists (rotation optional).
-			creds, _, credsErr := provisioner.GetCredentials(c, conf, n.UUID, name, req.RotateDatabase)
+			creds, _, credsErr := provisioner.EnsureCredentials(c, conf, n.UUID, name, req.RotateDatabase)
 
 			if credsErr != nil {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "ensure database", event.Failed, "%s"}, clean.Error(credsErr))
@@ -279,7 +279,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		n.RotatedAt = nowRFC3339()
 
 		// Ensure DB (force rotation at create path to return password).
-		creds, _, err := provisioner.GetCredentials(c, conf, n.UUID, name, true)
+		creds, _, err := provisioner.EnsureCredentials(c, conf, n.UUID, name, true)
 		if err != nil {
 			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "ensure database", event.Failed, "%s"}, clean.Error(err))
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})

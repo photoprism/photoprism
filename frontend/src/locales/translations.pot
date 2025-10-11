@@ -33,7 +33,7 @@ msgstr ""
 msgid "{0}-{1} of {2}"
 msgstr ""
 
-#: src/page/albums.vue:621
+#: src/page/albums.vue:821
 msgid "%{n} albums found"
 msgstr ""
 
@@ -49,7 +49,7 @@ msgstr ""
 msgid "%{n} GB of %{q} GB used"
 msgstr ""
 
-#: src/page/labels.vue:609
+#: src/page/labels.vue:808
 msgid "%{n} labels found"
 msgstr ""
 
@@ -196,7 +196,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:162
+#: src/component/photo/edit/people.vue:176
 #: src/page/people/new.vue:244
 msgid "Add %{s}?"
 msgstr ""
@@ -219,8 +219,8 @@ msgstr ""
 msgid "Add Link"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:25
-#: src/component/photo/edit/people.vue:162
+#: src/component/photo/edit/people.vue:27
+#: src/component/photo/edit/people.vue:176
 #: src/page/people/new.vue:57
 #: src/page/people/new.vue:244
 msgid "Add person?"
@@ -304,7 +304,7 @@ msgstr ""
 msgid "Album Backups"
 msgstr ""
 
-#: src/page/albums.vue:689
+#: src/page/albums.vue:909
 msgid "Album created"
 msgstr ""
 
@@ -330,11 +330,11 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: src/page/albums.vue:470
+#: src/page/albums.vue:644
 msgid "All %{n} albums loaded"
 msgstr ""
 
-#: src/page/labels.vue:439
+#: src/page/labels.vue:610
 msgid "All %{n} labels loaded"
 msgstr ""
 
@@ -348,8 +348,8 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:74
 #: src/page/albums.vue:45
-#: src/page/albums.vue:242
-#: src/page/albums.vue:761
+#: src/page/albums.vue:257
+#: src/page/albums.vue:981
 msgid "All Categories"
 msgstr ""
 
@@ -383,7 +383,7 @@ msgid "All originals"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:76
-#: src/page/albums.vue:94
+#: src/page/albums.vue:99
 msgid "All Years"
 msgstr ""
 
@@ -616,6 +616,10 @@ msgstr ""
 msgid "Browse indexed files and folders in Library."
 msgstr ""
 
+#: src/component/photo/edit/people.vue:107
+msgid "Browse Pictures"
+msgstr ""
+
 #: src/page/about/feedback.vue:10
 #: src/options/options.js:403
 msgid "Bug Report"
@@ -660,10 +664,10 @@ msgstr ""
 
 #: src/common/clipboard.js:102
 #: src/common/clipboard.js:139
-#: src/page/albums.vue:699
-#: src/page/albums.vue:715
-#: src/page/labels.vue:365
-#: src/page/labels.vue:385
+#: src/page/albums.vue:919
+#: src/page/albums.vue:935
+#: src/page/labels.vue:506
+#: src/page/labels.vue:526
 #: src/page/library/browse.vue:233
 #: src/page/library/browse.vue:249
 #: src/page/people/new.vue:278
@@ -779,7 +783,7 @@ msgstr ""
 #: src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92
 #: src/component/share/dialog.vue:111
-#: src/page/albums.vue:692
+#: src/page/albums.vue:912
 #: src/page/people/recognized.vue:119
 #: src/page/settings/advanced.vue:62
 #: src/page/settings/content.vue:62
@@ -955,6 +959,10 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
+#: src/component/photo/edit/people.vue:179
+msgid "Could not update person cover"
+msgstr ""
+
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
 msgstr ""
@@ -1003,8 +1011,8 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
-#: src/options/themes.js:994
-#: src/options/themes.js:1003
+#: src/options/themes.js:995
+#: src/options/themes.js:1004
 msgid "Custom"
 msgstr ""
 
@@ -1048,7 +1056,7 @@ msgstr ""
 #: src/options/options.js:196
 #: src/options/options.js:232
 #: src/options/options.js:316
-#: src/options/themes.js:843
+#: src/options/themes.js:844
 msgid "Default"
 msgstr ""
 
@@ -1494,7 +1502,7 @@ msgstr ""
 #: src/app/routes.js:230
 #: src/component/navigation.vue:893
 #: src/options/options.js:202
-#: src/page/albums.vue:98
+#: src/page/albums.vue:103
 msgid "Favorites"
 msgstr ""
 
@@ -1885,7 +1893,7 @@ msgstr ""
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr ""
 
-#: src/model/rest.js:155
+#: src/model/rest.js:157
 msgid "Item"
 msgstr ""
 
@@ -1982,7 +1990,7 @@ msgstr ""
 
 #: src/page/admin/sessions.vue:110
 #: src/page/admin/users.vue:137
-#: src/page/labels.vue:184
+#: src/page/labels.vue:199
 msgid "Learn More"
 msgstr ""
 
@@ -2089,7 +2097,7 @@ msgstr ""
 #: src/component/photo/view/cards.vue:555
 #: src/component/photo/view/list.vue:117
 #: src/component/sidebar/info.vue:107
-#: src/page/albums.vue:100
+#: src/page/albums.vue:105
 #: src/page/settings/account.vue:557
 #: src/page/settings/account.vue:559
 msgid "Location"
@@ -2271,14 +2279,14 @@ msgstr ""
 #: src/component/people/edit/dialog.vue:71
 #: src/component/photo/edit/files.vue:43
 #: src/component/photo/edit/info.vue:125
-#: src/component/photo/edit/people.vue:36
+#: src/component/photo/edit/people.vue:38
 #: src/component/photo/view/list.vue:117
 #: src/component/service/edit.vue:310
 #: src/component/settings/apps.vue:53
 #: src/component/settings/apps.vue:286
 #: src/page/about/feedback.vue:121
 #: src/page/about/feedback.vue:122
-#: src/page/albums.vue:99
+#: src/page/albums.vue:104
 #: src/page/auth/login.vue:168
 #: src/page/people/new.vue:68
 #: src/page/settings/services.vue:37
@@ -2290,7 +2298,7 @@ msgstr ""
 #: src/component/label/edit/dialog.vue:19
 #: src/component/people/edit/dialog.vue:19
 #: src/component/photo/edit/labels.vue:46
-#: src/component/photo/edit/people.vue:39
+#: src/component/photo/edit/people.vue:41
 #: src/page/labels.vue:60
 #: src/page/library/browse.vue:46
 #: src/page/people/new.vue:51
@@ -2317,7 +2325,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:114
 #: src/component/photo/toolbar.vue:126
 #: src/component/photo/toolbar.vue:136
-#: src/page/albums.vue:101
+#: src/page/albums.vue:106
 msgid "Newest First"
 msgstr ""
 
@@ -2345,7 +2353,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: src/page/albums.vue:616
+#: src/page/albums.vue:816
 #: src/page/albums.vue:282
 msgid "No albums found"
 msgstr ""
@@ -2354,7 +2362,7 @@ msgstr ""
 msgid "No data available"
 msgstr ""
 
-#: src/page/labels.vue:604
+#: src/page/labels.vue:803
 #: src/page/labels.vue:139
 msgid "No labels found"
 msgstr ""
@@ -2367,7 +2375,7 @@ msgstr ""
 msgid "No more"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:34
+#: src/component/photo/edit/people.vue:40
 #: src/page/people/new.vue:346
 #: src/page/people/new.vue:452
 #: src/page/people/new.vue:103
@@ -2495,7 +2503,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:115
 #: src/component/photo/toolbar.vue:127
 #: src/component/photo/toolbar.vue:137
-#: src/page/albums.vue:102
+#: src/page/albums.vue:107
 msgid "Oldest First"
 msgstr ""
 
@@ -2511,7 +2519,7 @@ msgstr ""
 msgid "Once a week"
 msgstr ""
 
-#: src/page/albums.vue:618
+#: src/page/albums.vue:818
 msgid "One album found"
 msgstr ""
 
@@ -2527,7 +2535,7 @@ msgstr ""
 msgid "One folder found"
 msgstr ""
 
-#: src/page/labels.vue:606
+#: src/page/labels.vue:805
 msgid "One label found"
 msgstr ""
 
@@ -2669,6 +2677,15 @@ msgstr ""
 
 #: src/model/subject.js:134
 msgid "Person"
+msgstr ""
+
+#: src/component/photo/edit/people.vue:176
+msgid "Person cover updated"
+msgstr ""
+
+#: src/component/photo/edit/people.vue:140
+#: src/component/photo/edit/people.vue:170
+msgid "Person not found"
 msgstr ""
 
 #: src/options/auth.js:43
@@ -2875,7 +2892,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:116
 #: src/component/photo/toolbar.vue:128
 #: src/component/photo/toolbar.vue:138
-#: src/page/albums.vue:103
+#: src/page/albums.vue:108
 msgid "Recently Added"
 msgstr ""
 
@@ -2884,11 +2901,11 @@ msgid "Recently Archived"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:139
-#: src/page/albums.vue:104
+#: src/page/albums.vue:109
 msgid "Recently Edited"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:35
+#: src/component/photo/edit/people.vue:41
 #: src/page/people/new.vue:104
 #: src/page/people/recognized.vue:147
 msgid "Recognition starts after indexing has been completed."
@@ -2914,8 +2931,8 @@ msgstr ""
 #: src/page/admin/users.vue:128
 #: src/component/album/toolbar.vue:84
 #: src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:175
-#: src/page/labels.vue:119
+#: src/page/albums.vue:190
+#: src/page/labels.vue:134
 #: src/page/library/browse.vue:90
 #: src/page/library/errors.vue:81
 #: src/page/people/new.vue:54
@@ -2949,7 +2966,7 @@ msgstr ""
 msgid "Remote Sync"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:66
+#: src/component/photo/edit/people.vue:72
 msgid "Remove"
 msgstr ""
 
@@ -3173,6 +3190,10 @@ msgstr ""
 msgid "Set as Album Cover"
 msgstr ""
 
+#: src/component/photo/edit/people.vue:115
+msgid "Set as Cover Image"
+msgstr ""
+
 #: src/app/routes.js:101
 #: src/app/routes.js:503
 #: src/app/routes.js:515
@@ -3217,7 +3238,7 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-#: src/page/labels.vue:129
+#: src/page/labels.vue:144
 #: src/page/labels.vue:237
 msgid "Show All Labels"
 msgstr ""
@@ -3236,7 +3257,7 @@ msgstr ""
 msgid "Show hidden"
 msgstr ""
 
-#: src/page/labels.vue:138
+#: src/page/labels.vue:153
 msgid "Show Important Only"
 msgstr ""
 
@@ -3297,15 +3318,15 @@ msgstr ""
 msgid "Sort by"
 msgstr ""
 
-#: src/page/labels.vue:156
+#: src/page/labels.vue:171
 msgid "Sort by Name (A–Z)"
 msgstr ""
 
-#: src/page/labels.vue:165
+#: src/page/labels.vue:180
 msgid "Sort by Photo Count"
 msgstr ""
 
-#: src/page/labels.vue:147
+#: src/page/labels.vue:162
 msgid "Sort by Relevance"
 msgstr ""
 
@@ -3613,7 +3634,7 @@ msgstr ""
 msgid "Unauthorized"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:94
+#: src/component/photo/edit/people.vue:108
 msgid "Undo"
 msgstr ""
 
@@ -3723,8 +3744,8 @@ msgstr ""
 #: src/component/photo/toolbar.vue:179
 #: src/component/service/upload.vue:144
 #: src/component/upload/dialog.vue:51
-#: src/page/albums.vue:185
-#: src/page/labels.vue:174
+#: src/page/albums.vue:200
+#: src/page/labels.vue:189
 #: src/page/library/import.vue:133
 #: src/page/settings/general.vue:307
 #: src/page/settings/services.vue:38
@@ -4005,7 +4026,7 @@ msgstr ""
 msgid "You may only select one item"
 msgstr ""
 
-#: src/component/photo/edit/people.vue:35
+#: src/component/photo/edit/people.vue:41
 #: src/page/people/new.vue:104
 #: src/page/people/recognized.vue:147
 msgid "You may rescan your library to find additional faces."

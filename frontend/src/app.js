@@ -25,7 +25,6 @@ Additional information can be found in our Developer Guide:
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import "common/navigation";
 import $api from "common/api";
 import $notify from "common/notify";
 import { $view } from "common/view";
@@ -198,6 +197,30 @@ $config.update().finally(() => {
         return { left: 0, top: 0 };
       }
     },
+  });
+
+  const currentHistoryState = () => {
+    if (router.options?.history?.state) {
+      return router.options.history.state;
+    }
+
+    if (typeof window !== "undefined" && typeof window.history !== "undefined") {
+      return window.history.state;
+    }
+
+    return undefined;
+  };
+
+  router.beforeEach((to, from, next) => {
+    $view.prepareNavigation(currentHistoryState());
+    next();
+  });
+
+  router.afterEach(() => {
+    $view.commitNavigation(currentHistoryState());
+    requestAnimationFrame(() => {
+      $view.resetNavigationDirection();
+    });
   });
 
   // Add global guards to block navigation when dialogs are open and enforce auth/settings rules.

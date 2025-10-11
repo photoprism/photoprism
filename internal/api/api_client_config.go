@@ -11,7 +11,9 @@ import (
 
 // UpdateClientConfig publishes updated client configuration values over the websocket connections.
 func UpdateClientConfig() {
-	event.Publish("config.updated", event.Data{"config": get.Config().ClientUser(false)})
+	go func() {
+		event.Publish("config.updated", event.Data{"config": get.Config().ClientUser(false)})
+	}()
 }
 
 // GetClientConfig returns the client configuration values as JSON.

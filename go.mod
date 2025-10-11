@@ -14,7 +14,7 @@ require (
 	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v1.2.3
 	github.com/gin-gonic/gin v1.11.0
-	github.com/golang/geo v0.0.0-20250929211357-dcefb4abe9c7
+	github.com/golang/geo v0.0.0-20251008113719-ccf458c07da6
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -40,15 +40,15 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.42.0
-	golang.org/x/net v0.44.0
+	golang.org/x/crypto v0.43.0
+	golang.org/x/net v0.46.0
 	gonum.org/v1/gonum v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.31.0
+	golang.org/x/image v0.32.0
 )
 
 require github.com/olekukonko/tablewriter v1.1.0
@@ -61,24 +61,24 @@ require github.com/gabriel-vasile/mimetype v1.4.10
 
 require (
 	golang.org/x/sync v0.17.0
-	golang.org/x/time v0.13.0
+	golang.org/x/time v0.14.0
 )
 
 require github.com/go-ldap/ldap/v3 v3.4.12
 
 require (
 	github.com/prometheus/client_golang v1.23.2
-	github.com/prometheus/common v0.66.1
+	github.com/prometheus/common v0.67.1
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 
-require golang.org/x/text v0.29.0
+require golang.org/x/text v0.30.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
 	github.com/davidbyttow/govips/v2 v2.16.0
-	github.com/go-co-op/gocron/v2 v2.16.6
+	github.com/go-co-op/gocron/v2 v2.17.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/pquerna/otp v1.5.0
@@ -91,8 +91,8 @@ require (
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.21.0
 	github.com/zitadel/oidc/v3 v3.45.0
-	golang.org/x/mod v0.28.0
-	golang.org/x/sys v0.36.0
+	golang.org/x/mod v0.29.0
+	golang.org/x/sys v0.37.0
 	google.golang.org/protobuf v1.36.10
 )
 
@@ -172,7 +172,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
-	go.yaml.in/yaml/v2 v2.4.2 // indirect
+	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

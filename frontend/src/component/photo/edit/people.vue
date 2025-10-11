@@ -33,6 +33,13 @@
               >
                 <v-icon class="action-reject">mdi-close</v-icon>
               </v-btn>
+              <div v-else-if="hasFaceMenu(m)" class="face-actions" data-testid="face-actions">
+                <p-action-menu
+                  :items="() => getFaceActions(m)"
+                  button-class="input-menu"
+                  list-class="opacity-85"
+                ></p-action-menu>
+              </div>
             </v-img>
             <v-card-actions class="meta pa-0">
               <v-btn
@@ -105,11 +112,13 @@
 
 <script>
 import Marker from "model/marker";
+import Subject from "model/subject";
 import PConfirmDialog from "component/confirm/dialog.vue";
+import PActionMenu from "component/action/menu.vue";
 
 export default {
   name: "PTabPhotoPeople",
-  components: { PConfirmDialog },
+  components: { PConfirmDialog, PActionMenu },
   props: {
     uid: {
       type: String,
@@ -167,6 +176,124 @@ export default {
         this.$notify.unblockUI();
         this.busy = false;
       });
+    },
+    findPerson(uid) {
+      const people = this.$config?.values?.people;
+
+      if (!uid || !Array.isArray(people)) {
+        return null;
+      }
+
+      return people.find((person) => person.UID === uid) || null;
+    },
+    updatePersonList(subject) {
+      if (!subject) {
+        return;
+      }
+
+      const people = this.$config?.values?.people;
+
+      if (!Array.isArray(people)) {
+        return;
+      }
+
+      const data = subject.getValues();
+      const index = people.findIndex((person) => person.UID === subject.UID);
+      if (index >= 0) {
+        people[index] = Object.assign({}, people[index], data);
+      } else {
+        people.push(data);
+      }
+    },
+    hasFaceMenu(marker) {
+      return this.getFaceActions(marker).some((action) => action.visible);
+    },
+    getFaceActions(marker) {
+      const assigned = !!marker?.SubjUID;
+      const invalid = !!marker?.Invalid;
+      const disabled = this.busy || this.disabled;
+
+      return [
+        {
+          name: "go-to-person",
+          /* icon: "mdi-account-search", */
+          text: this.$gettext("Browse Pictures"),
+          visible: assigned && !invalid,
+          disabled,
+          click: () => this.onGoToPerson(marker),
+        },
+        {
+          name: "set-person-cover",
+          /* icon: "mdi-account-check", */
+          text: this.$gettext("Set as Cover Image"),
+          visible: assigned && !invalid && !!marker?.Thumb,
+          disabled,
+          click: () => this.onSetPersonCover(marker),
+        },
+      ];
+    },
+    async loadSubject(uid) {
+      try {
+        return await new Subject({ UID: uid }).find(uid);
+      } catch (err) {
+        console.error("faces: failed loading subject", err);
+        return null;
+      }
+    },
+    async onGoToPerson(marker) {
+      if (!marker?.SubjUID) {
+        return;
+      }
+
+      let subject = this.findPerson(marker.SubjUID);
+
+      if (!subject) {
+        subject = await this.loadSubject(marker.SubjUID);
+        if (!subject) {
+          this.$notify.error(this.$gettext("Person not found"));
+          return;
+        }
+        this.updatePersonList(subject);
+      } else {
+        subject = new Subject(subject);
+      }
+
+      const route = subject.route("all");
+      const resolved = this.$router.resolve(route);
+      window.open(resolved.href, "_blank");
+    },
+    async onSetPersonCover(marker) {
+      if (this.busy || !marker?.SubjUID || !marker?.Thumb) {
+        return;
+      }
+
+      this.busy = true;
+      this.$notify.blockUI("busy");
+
+      try {
+        let subject = this.findPerson(marker.SubjUID);
+
+        if (subject) {
+          subject = new Subject(subject);
+        } else {
+          subject = await this.loadSubject(marker.SubjUID);
+        }
+
+        if (!subject) {
+          this.$notify.error(this.$gettext("Person not found"));
+          return;
+        }
+
+        const updated = await subject.setCover(marker.Thumb);
+        this.updatePersonList(updated);
+        this.$notify.success(this.$gettext("Person cover updated"));
+      } catch (err) {
+        console.error("faces: failed setting person cover", err);
+        this.$notify.error(this.$gettext("Could not update person cover"));
+      } finally {
+        this.$notify.unblockUI();
+        this.busy = false;
+      }
     },
     onApprove(model) {
       if (this.busy || !model) return;

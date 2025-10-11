@@ -5,7 +5,7 @@ import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 import Collection from "model/collection";
 
-export let BatchSize = 60;
+export let BatchSize = 180;
 
 // Album models server-managed photo collections, including manual albums and moments.
 export class Album extends Collection {

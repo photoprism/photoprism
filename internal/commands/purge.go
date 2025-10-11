@@ -28,10 +28,7 @@ var purgeFlags = []cli.Flag{
 		Name:  "hard",
 		Usage: "permanently removes data from the index",
 	},
-	&cli.BoolFlag{
-		Name:  "dry",
-		Usage: "performs a dry run that doesn't actually remove anything",
-	},
+	DryRunFlag("performs a dry run that doesn't actually remove anything"),
 }
 
 // purgeAction removes missing files from search results
@@ -67,7 +64,7 @@ func purgeAction(ctx *cli.Context) error {
 
 	opt := photoprism.PurgeOptions{
 		Path:  subPath,
-		Dry:   ctx.Bool("dry"),
+		Dry:   ctx.Bool("dry-run"),
 		Hard:  ctx.Bool("hard"),
 		Force: true,
 	}
