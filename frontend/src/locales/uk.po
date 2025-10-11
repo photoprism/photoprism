@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-10 12:26+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-10-11 13:23+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -2739,7 +2739,7 @@ msgstr "Виберіть дати"
 
 #: src/component/photo/album/dialog.vue:66 src/component/upload/dialog.vue:154
 msgid "Select or create albums"
-msgstr ""
+msgstr "Виберіть або створіть альбоми"
 
 #: src/component/upload/dialog.vue:138
 msgid "Select the files to upload…"
@@ -2897,16 +2897,16 @@ msgstr "Оновлення програмного забезпечення"
 
 #: src/component/album/clipboard.vue:100
 msgid "Some albums could not be cloned"
-msgstr ""
+msgstr "Деякі альбоми не вдалося клонувати"
 
 #: src/component/photo/album/dialog.vue:117
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr ""
+msgstr "Деякі альбоми не вдалося створити. Будь ласка, відредагуйте назви і спробуйте ще раз."
 
 #: src/component/file/clipboard.vue:65 src/component/label/clipboard.vue:66
 #: src/component/people/clipboard.vue:65 src/component/photo/clipboard.vue:167
 msgid "Some albums could not be updated"
-msgstr ""
+msgstr "Деякі альбоми не вдалося оновити"
 
 #: src/component/lightbox.vue:738
 msgid "Something went wrong, try again"

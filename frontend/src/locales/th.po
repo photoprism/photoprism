@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-10 12:26+0000\n"
+"PO-Revision-Date: 2025-10-11 13:23+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -2739,7 +2739,7 @@ msgstr "เลือกวันที่"
 
 #: src/component/photo/album/dialog.vue:66 src/component/upload/dialog.vue:154
 msgid "Select or create albums"
-msgstr ""
+msgstr "เลือกหรือสร้างอัลบั้ม"
 
 #: src/component/upload/dialog.vue:138
 msgid "Select the files to upload…"
@@ -2897,16 +2897,16 @@ msgstr "การอัปเดตซอฟต์แวร์"
 
 #: src/component/album/clipboard.vue:100
 msgid "Some albums could not be cloned"
-msgstr ""
+msgstr "บางอัลบั้มไม่สามารถโคลนได้"
 
 #: src/component/photo/album/dialog.vue:117
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr ""
+msgstr "ไม่สามารถสร้างอัลบั้มบางรายการได้ โปรดแก้ไขชื่อและลองอีกครั้ง"
 
 #: src/component/file/clipboard.vue:65 src/component/label/clipboard.vue:66
 #: src/component/people/clipboard.vue:65 src/component/photo/clipboard.vue:167
 msgid "Some albums could not be updated"
-msgstr ""
+msgstr "ไม่สามารถอัปเดตอัลบั้มบางอัลบั้มได้"
 
 #: src/component/lightbox.vue:738
 msgid "Something went wrong, try again"

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-10 12:25+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-10-11 13:23+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
@@ -2741,7 +2741,7 @@ msgstr "选择日期"
 
 #: src/component/photo/album/dialog.vue:66 src/component/upload/dialog.vue:154
 msgid "Select or create albums"
-msgstr ""
+msgstr "选择或创建相册"
 
 #: src/component/upload/dialog.vue:138
 msgid "Select the files to upload…"
@@ -2899,16 +2899,16 @@ msgstr "软件更新"
 
 #: src/component/album/clipboard.vue:100
 msgid "Some albums could not be cloned"
-msgstr ""
+msgstr "某些相册无法克隆"
 
 #: src/component/photo/album/dialog.vue:117
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr ""
+msgstr "某些相册无法创建。请编辑名称后重试。"
 
 #: src/component/file/clipboard.vue:65 src/component/label/clipboard.vue:66
 #: src/component/people/clipboard.vue:65 src/component/photo/clipboard.vue:167
 msgid "Some albums could not be updated"
-msgstr ""
+msgstr "某些相册无法更新"
 
 #: src/component/lightbox.vue:738
 msgid "Something went wrong, try again"

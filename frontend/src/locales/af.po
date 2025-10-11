@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-10 12:26+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-10-11 13:23+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2736,7 +2736,7 @@ msgstr "Kies datums"
 
 #: src/component/photo/album/dialog.vue:66 src/component/upload/dialog.vue:154
 msgid "Select or create albums"
-msgstr ""
+msgstr "Kies of skep albums"
 
 #: src/component/upload/dialog.vue:138
 msgid "Select the files to upload…"
@@ -2894,16 +2894,16 @@ msgstr "Sagteware-opdatering"
 
 #: src/component/album/clipboard.vue:100
 msgid "Some albums could not be cloned"
-msgstr ""
+msgstr "Sommige albums kon nie gekloon word nie"
 
 #: src/component/photo/album/dialog.vue:117
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr ""
+msgstr "Sommige albums kon nie geskep word nie. Wysig asseblief die name en probeer weer."
 
 #: src/component/file/clipboard.vue:65 src/component/label/clipboard.vue:66
 #: src/component/people/clipboard.vue:65 src/component/photo/clipboard.vue:167
 msgid "Some albums could not be updated"
-msgstr ""
+msgstr "Sommige albums kon nie opgedateer word nie"
 
 #: src/component/lightbox.vue:738
 msgid "Something went wrong, try again"
