@@ -5,18 +5,18 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestConfig_BackupPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := "/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/backup"
+	expected := "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/backup"
 	assert.Contains(t, c.BackupPath(""), expected)
 }
 
 func TestConfig_BackupBasePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := "/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/backup"
+	expected := "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/backup"
 	assert.Contains(t, c.BackupBasePath(), expected)
 	path := c.options.BackupPath
 	c.options.BackupPath = "./"
@@ -63,7 +63,7 @@ func TestConfig_BackupDatabasePath(t *testing.T) {
 	// Ensure DB defaults (SQLite) so path resolves to sqlite backup path
 	c.options.DatabaseDriver = ""
 	c.options.DatabaseDSN = ""
-	expected := "/storage/testdata/" + functions.PhotoPrismTestToFolderName() + "/backup/sqlite"
+	expected := "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/backup/sqlite"
 	assert.Contains(t, c.BackupDatabasePath(), expected)
 }
 

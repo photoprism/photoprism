@@ -20,8 +20,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestMigrationCommand(t *testing.T) {
@@ -64,7 +64,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("RunTraceAndFailed", func(t *testing.T) {
-		dbDrv, dbDSN := functions.PhotoPrismTestToDriverDsn(0)
+		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDsn(0)
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,

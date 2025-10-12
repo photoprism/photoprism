@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestUsersResetCommand(t *testing.T) {
@@ -52,7 +52,7 @@ func TestUsersResetCommand(t *testing.T) {
 		}
 		assert.Greater(t, count, int64(3)) // Make sure we have a populated database
 
-		dbDrv, dbDSN := functions.PhotoPrismTestToDriverDsn(0)
+		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDsn(0)
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,

@@ -20,9 +20,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // SQL Databases.
@@ -169,7 +169,7 @@ func (c *Config) ParseDatabaseDSN() {
 		return
 	}
 
-	d := functions.NewDSN(c.options.DatabaseDSN)
+	d := dsn.NewDSN(c.options.DatabaseDSN)
 
 	c.options.DatabaseName = d.Name
 	c.options.DatabaseServer = d.Server

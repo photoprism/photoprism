@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // People returns the sorted names of the first 2000 people.
@@ -31,7 +31,7 @@ func PeopleCount() (count int, err error) {
 		Where("subj_type = ?", entity.SubjPerson).
 		Count(&countData).Error
 
-	return functions.SafeInt64toint(countData), err
+	return convert.SafeInt64toint(countData), err
 }
 
 // Subjects returns subjects from the index.

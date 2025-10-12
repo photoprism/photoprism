@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // MarkerByUID returns a Marker based on the UID.
@@ -264,7 +264,7 @@ func CountUnmatchedFaceMarkers() (n int) {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return functions.SafeInt64toint(nData)
+	return convert.SafeInt64toint(nData)
 }
 
 // CountMarkers counts the number of face markers in the index.
@@ -280,7 +280,7 @@ func CountMarkers(markerType string) (n int) {
 		log.Errorf("faces: %s (count markers)", err)
 	}
 
-	return functions.SafeInt64toint(nData)
+	return convert.SafeInt64toint(nData)
 }
 
 // RemoveOrphanMarkers removes markers without an existing file.

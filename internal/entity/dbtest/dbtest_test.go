@@ -10,9 +10,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 var log = event.Log
@@ -41,28 +41,28 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	driver, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
-	functions.SetDSNToEnv(dsn)
+	driver, dsname := dsn.PhotoPrismTestToDriverDsn(dbn)
+	dsn.SetDSNToEnv(dsname)
 
 	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+	if driver == "test" || driver == "sqlite" || driver == "" || dsname == "" {
 		driver = entity.SQLite3
 	}
 
 	// Set default database DSN.
 	if driver == entity.SQLite3 {
-		if dsn == "" {
-			dsn = entity.SQLiteMemoryDSN
-		} else if dsn != entity.SQLiteTestDB {
+		if dsname == "" {
+			dsname = entity.SQLiteMemoryDSN
+		} else if dsname != entity.SQLiteTestDB {
 			// Continue.
-		} else if err := os.Remove(dsn); err == nil {
-			log.Debugf("sqlite: test file %s removed", clean.Log(dsn))
+		} else if err := os.Remove(dsname); err == nil {
+			log.Debugf("sqlite: test file %s removed", clean.Log(dsname))
 		}
 	}
 
 	db := entity.InitTestDb(
 		driver,
-		dsn)
+		dsname)
 
 	defer db.Close()
 

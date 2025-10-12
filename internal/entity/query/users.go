@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -45,7 +45,7 @@ func CountUsers(registered, active bool, roles, excludeRoles []string) (count in
 		log.Errorf("users: %s (count)", err)
 	}
 
-	return functions.SafeInt64toint(countData)
+	return convert.SafeInt64toint(countData)
 }
 
 // Users finds user accounts based on the specified parameters.

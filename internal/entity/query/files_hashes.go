@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // HashMap records the existence of hashes for originals or thumbnails.
@@ -20,7 +20,7 @@ func CountFileHashes() (count int) {
 		log.Errorf("files: %s (count hashes)", err)
 	}
 
-	return functions.SafeInt64toint(countData)
+	return convert.SafeInt64toint(countData)
 }
 
 // FetchHashMap populates a hash map from the database.

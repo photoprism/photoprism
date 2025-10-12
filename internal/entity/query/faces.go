@@ -12,9 +12,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // IDs represents a list of identifier strings.
@@ -181,7 +181,7 @@ func CountNewFaceMarkers(size, score int) (n int) {
 		log.Errorf("faces: %s (count new markers)", err)
 	}
 
-	return functions.SafeInt64toint(nData)
+	return convert.SafeInt64toint(nData)
 }
 
 // PurgeOrphanFaces removes unused faces from the index.

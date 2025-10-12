@@ -9,10 +9,10 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -33,8 +33,8 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	_, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
-	functions.SetDSNToEnv(dsn)
+	_, dsname := dsn.PhotoPrismTestToDriverDsn(dbn)
+	dsn.SetDSNToEnv(dsname)
 
 	// Init test config.
 	c := config.TestConfig()

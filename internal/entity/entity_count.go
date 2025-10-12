@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // Count returns the number of records for a given a model and key values.
@@ -36,5 +36,5 @@ func Count(m interface{}, keys []string, values []interface{}) int {
 		return -1
 	}
 
-	return functions.SafeInt64toint(count)
+	return convert.SafeInt64toint(count)
 }

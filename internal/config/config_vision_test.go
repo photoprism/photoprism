@@ -7,13 +7,12 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
-
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestConfig_VisionYaml(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/config/vision.yml", c.VisionYaml())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/config/vision.yml", c.VisionYaml())
 }
 
 func TestConfig_VisionApi(t *testing.T) {

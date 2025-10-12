@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	driver, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
+	driver, dsn := dsn.PhotoPrismTestToDriverDsn(dbn)
 	db := entity.InitTestDb(
 		driver,
 		dsn)

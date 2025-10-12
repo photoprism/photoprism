@@ -11,8 +11,8 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Stores the number of test databases that are supported.
@@ -134,7 +134,7 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 
 	err = nil
 
-	driver, dsn := functions.PhotoPrismTestToDriverDsn(0)
+	driver, dsn := dsn.PhotoPrismTestToDriverDsn(0)
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {

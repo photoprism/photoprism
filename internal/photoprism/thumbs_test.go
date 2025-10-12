@@ -11,8 +11,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestResample_Start(t *testing.T) {
@@ -64,7 +64,7 @@ func TestThumb_Filename(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/"+functions.PhotoPrismTestToFolderName()+"/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
+		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
 	})
 	t.Run("InvalidHash", func(t *testing.T) {
 		_, err := thumb.FileName("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)

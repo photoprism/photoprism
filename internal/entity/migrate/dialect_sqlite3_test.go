@@ -14,12 +14,12 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestDialectSQLite3(t *testing.T) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDsn(0)
 	if driver != "sqlite" {
 		t.Skip("skipping test as not SQLite")
 	}

@@ -14,12 +14,12 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -58,7 +58,7 @@ func NewTestOptions(dbName string) *Options {
 		storagePath = fs.Abs("../../storage")
 	}
 
-	dataPath := filepath.Join(storagePath, fs.TestdataDir, functions.PhotoPrismTestToFolderName())
+	dataPath := filepath.Join(storagePath, fs.TestdataDir, dsn.PhotoPrismTestToFolderName())
 
 	return NewTestOptionsForPath(dbName, dataPath)
 }
@@ -76,7 +76,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 		}
 
 		// enforce folder separation for testdata folders to prevent parallel tests of DBMS' clashing
-		dataPath = filepath.Join(storagePath, fs.TestdataDir, functions.PhotoPrismTestToFolderName())
+		dataPath = filepath.Join(storagePath, fs.TestdataDir, dsn.PhotoPrismTestToFolderName())
 	}
 
 	// Enable test mode in dependencies.
@@ -119,7 +119,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
-	driver, dsn := functions.PhotoPrismTestToDriverDsn(0)
+	driver, dsn := dsn.PhotoPrismTestToDriverDsn(0)
 
 	// Config example for MySQL / MariaDB:
 	//   driver = MySQL,

@@ -10,8 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,7 +19,7 @@ import (
 )
 
 func TestDialectPostgreSQL(t *testing.T) {
-	driver, _ := functions.PhotoPrismTestToDriverDsn(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDsn(0)
 	if driver != "postgres" {
 		t.Skip("skipping test as not PostgreSQL")
 	}

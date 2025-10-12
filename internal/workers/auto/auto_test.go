@@ -8,8 +8,8 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -25,8 +25,8 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	_, dsn := functions.PhotoPrismTestToDriverDsn(dbn)
-	functions.SetDSNToEnv(dsn)
+	_, dsname := dsn.PhotoPrismTestToDriverDsn(dbn)
+	dsn.SetDSNToEnv(dsname)
 
 	c := config.TestConfig()
 	defer c.CloseDb()

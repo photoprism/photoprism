@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 	"github.com/photoprism/photoprism/pkg/media/colors"
 )
@@ -18,7 +18,7 @@ import (
 func TestMediaFile_Colors_Testdata(t *testing.T) {
 	conf := config.TestConfig()
 
-	thumbsPath := filepath.Join(os.TempDir(), functions.PhotoPrismTestToFolderName(), "TestMediaFile_Colors_Testdata")
+	thumbsPath := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "TestMediaFile_Colors_Testdata")
 	defer os.RemoveAll(thumbsPath)
 
 	/*

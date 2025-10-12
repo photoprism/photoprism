@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/functions"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -479,6 +479,6 @@ func ValidFaceCount(fileUid string) (c int) {
 		log.Errorf("file: %s (count faces)", err)
 		return 0
 	} else {
-		return functions.SafeInt64toint(cValue)
+		return convert.SafeInt64toint(cValue)
 	}
 }
