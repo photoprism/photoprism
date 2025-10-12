@@ -1,6 +1,6 @@
 ## Face Detection and Embedding Guidelines
 
-**Last Updated:** October 8, 2025
+**Last Updated:** October 10, 2025
 
 ### Overview
 
@@ -126,6 +126,7 @@ Additional safeguards were introduced in October 2025 so stubborn clusters are o
 | `FACE_OVERLAP`           | `42`                         | Maximum allowed IoU when deduplicating markers.                                                 |
 
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
+When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.
 
 > Additional merge tuning: set `PHOTOPRISM_FACE_MERGE_MAX_RETRY` to control how often manual clusters are retried (default 1, `0` = unlimited). See the optimiser notes above.
 

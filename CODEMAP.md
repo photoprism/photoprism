@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 4, 2025
+**Last Updated:** October 12, 2025
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -30,7 +30,7 @@ Executables & Entry Points
 
 High-Level Package Map (Go)
 - `internal/api` — Gin handlers and Swagger annotations; only glue, no business logic
-- `internal/commands/catalog` — DTOs (App, Command, Flag, Node), builders (BuildFlat/BuildNode, CommandInfo, FlagsToCatalog), and a templated Markdown renderer (RenderMarkdown) for the CLI commands catalog. Depends only on `urfave/cli/v2` and stdlib.
+- `internal/commands` — CLI command definitions and orchestration (`start`, `index`, `import`, `migrate`, etc.); `commands.go` wires them into the app and subpackages like `catalog` emit CLI documentation.
 - `internal/server` — HTTP server, middleware, routing, static/ui/webdav
 - `internal/config` — configuration, flags/env/options, client config, DB init/migrate
 - `internal/entity` — GORM v1 models, queries, search helpers, migrations
@@ -40,7 +40,13 @@ High-Level Package Map (Go)
 - `internal/service` — cluster/portal, maps, hub, webdav
 - `internal/event` — logging, pub/sub, audit
 - `internal/ffmpeg`, `internal/thumb`, `internal/meta`, `internal/form`, `internal/mutex` — media, thumbs, metadata, forms, coordination
-- `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/fs`, `pkg/log`, `pkg/service/http/header`
+- `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/clean`, `pkg/enum`, `pkg/fs`, `pkg/txt`, `pkg/service/http/header`
+
+Templates & Static Assets
+- Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
+- The loader script is implemented in `assets/static/js/app-loader.js` (included via `app.js.gohtml`) and performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before injecting `window.__CONFIG__.jsUri`. Update this file (and the partial) in lockstep with the templates in private repos (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`) because they import the same partial.
+- `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
+- When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.
 
 HTTP API
 - Handlers live in `internal/api/*.go` and are registered in `internal/server/routes.go`.

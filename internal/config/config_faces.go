@@ -89,7 +89,7 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	case vision.RunNewlyIndexed:
 		return when == vision.RunManual || when == vision.RunNewlyIndexed || when == vision.RunOnDemand
 	case vision.RunOnDemand:
-		return when == vision.RunAuto || when == vision.RunManual || when == vision.RunNewlyIndexed || when == vision.RunOnDemand || when == vision.RunOnSchedule
+		return when == vision.RunAuto || when == vision.RunManual || when == vision.RunNewlyIndexed || when == vision.RunOnDemand
 	case vision.RunOnSchedule:
 		return when == vision.RunAuto || when == vision.RunManual || when == vision.RunOnSchedule || when == vision.RunOnDemand
 	case vision.RunOnIndex:
@@ -98,13 +98,13 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 		fallthrough
 	default:
 		switch when {
-		case vision.RunAuto, vision.RunAlways, vision.RunManual, vision.RunOnDemand, vision.RunOnSchedule:
+		case vision.RunAuto, vision.RunAlways, vision.RunManual, vision.RunOnDemand:
 			return true
 		case vision.RunOnIndex:
 			return c.FaceEngineThreads() > 2
 		case vision.RunNewlyIndexed:
 			return c.FaceEngineThreads() <= 2
-		case vision.RunNever:
+		case vision.RunOnSchedule, vision.RunNever:
 			return false
 		}
 	}

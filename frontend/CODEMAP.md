@@ -1,5 +1,7 @@
 PhotoPrism — Frontend CODEMAP
 
+**Last Updated:** October 11, 2025
+
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
 - Use Makefile targets and scripts in `frontend/package.json` as sources of truth.
@@ -23,6 +25,12 @@ Directory Map (src)
 - `src/options/*` — UI/theme options, formats, auth options
 - `src/css/*` — styles loaded by Webpack
 - `src/locales/*` — gettext catalogs; extraction/compile scripts in `package.json`
+
+Startup Templates & Splash Screen
+- The HTML shell is rendered from `assets/templates/index.gohtml` (and `pro/assets/templates/index.gohtml` / `plus/...`). Each template includes `app.gohtml` for the splash markup and `app.js.gohtml` to inject the bundle.
+- The loader script lives in `assets/static/js/app-loader.js` (included via `app.js.gohtml`) and checks for modern browser features (Promise, fetch, AbortController, `script.noModule`, etc.) before loading `window.__CONFIG__.jsUri`. Update the same files in private repos whenever the loader logic changes.
+- Splash styles, including the `.splash-warning` fallback banner, live in `frontend/src/css/splash.css`. Keep styling changes there so public and private editions stay aligned.
+- Baseline support: Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. If the support matrix changes, revise the warning text in `app.js.gohtml` and the CSS message accordingly.
 
 Runtime & Plugins
 - Vue 3 + Vuetify 3 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`

@@ -232,13 +232,15 @@ export function findFocusElement(c) {
         return ref;
       }
 
-      try {
-        el = ref.querySelector('input[tabindex="1"]');
-        if (el && el instanceof HTMLElement) {
-          return el;
+      if (!window.$isMobile) {
+        try {
+          el = ref.querySelector('input[tabindex="1"]');
+          if (el && el instanceof HTMLElement) {
+            return el;
+          }
+        } catch (_) {
+          // Ignore.
         }
-      } catch (_) {
-        // Ignore.
       }
     }
   }

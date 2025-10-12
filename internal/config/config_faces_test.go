@@ -61,6 +61,8 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 		assert.True(t, c.FaceEngineShouldRun(vision.RunOnIndex))
 		assert.False(t, c.FaceEngineShouldRun(vision.RunNewlyIndexed))
 		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
+		assert.True(t, c.FaceEngineShouldRun(vision.RunAuto))
+		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
 	})
 	t.Run("AutoLowThreads", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -68,12 +70,30 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex))
 		assert.True(t, c.FaceEngineShouldRun(vision.RunNewlyIndexed))
+		assert.True(t, c.FaceEngineShouldRun(vision.RunAuto))
+		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
 	})
 	t.Run("ExplicitRunModes", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.DisableFaces = true
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex))
 		c.options.DisableFaces = false
+	})
+	t.Run("RunOnDemandSkipsSchedule", func(t *testing.T) {
+		origVision := vision.Config
+		t.Cleanup(func() { vision.Config = origVision })
+
+		vision.Config = &vision.ConfigValues{Models: vision.Models{{Type: vision.ModelTypeFace}}}
+
+		c := NewConfig(CliTestContext())
+		m := vision.Config.Model(vision.ModelTypeFace)
+		require.NotNil(t, m)
+		m.Run = vision.RunOnDemand
+
+		assert.True(t, c.FaceEngineShouldRun(vision.RunOnDemand))
+		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
+		assert.True(t, c.FaceEngineShouldRun(vision.RunAuto))
+		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
 	})
 }
 

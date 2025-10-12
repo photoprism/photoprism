@@ -326,8 +326,13 @@ export default {
       $notify.success(this.$gettext("Selection restored"));
       this.clearClipboard();
     },
-    addToAlbum(ppid) {
-      if (!ppid || !this.canManage) {
+    addToAlbum(ppidOrList) {
+      if (!ppidOrList || !this.canManage) {
+        return;
+      }
+
+      // Validate array input
+      if (Array.isArray(ppidOrList) && ppidOrList.length === 0) {
         return;
       }
 
@@ -338,9 +343,16 @@ export default {
       this.busy = true;
       this.dialog.album = false;
 
-      $api
-        .post(`albums/${ppid}/photos`, { photos: this.selection })
+      const albumUids = Array.isArray(ppidOrList) ? ppidOrList : [ppidOrList];
+      // Deduplicate album UIDs
+      const uniqueAlbumUids = [...new Set(albumUids.filter((uid) => uid))];
+      const body = { photos: this.selection };
+
+      Promise.all(uniqueAlbumUids.map((uid) => $api.post(`albums/${uid}/photos`, body)))
         .then(() => this.onAdded())
+        .catch((error) => {
+          $notify.error(this.$gettext("Some albums could not be updated"));
+        })
         .finally(() => {
           this.busy = false;
         });

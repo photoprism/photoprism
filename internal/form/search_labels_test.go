@@ -74,7 +74,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
 	t.Run("QueryForFavoritesWithUncommonBoolValue", func(t *testing.T) {
-		form := &SearchLabels{Query: "favorite:0.99"}
+		form := &SearchLabels{Query: "favorite:0"}
 
 		err := form.ParseQueryString()
 

@@ -82,21 +82,21 @@ func TestUpdateAlbum(t *testing.T) {
 	})
 }
 func TestDeleteAlbum(t *testing.T) {
-	app, router, _ := NewApiTest()
-	CreateAlbum(router)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Delete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
-	assert.Equal(t, http.StatusOK, r.Code)
-	uid := gjson.Get(r.Body.String(), "UID").String()
+	createApp, createRouter, _ := NewApiTest()
+	CreateAlbum(createRouter)
+	createResp := PerformRequestWithBody(createApp, "POST", "/api/v1/albums", `{"Title": "Delete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
+	assert.Equal(t, http.StatusOK, createResp.Code)
+	albumUid := gjson.Get(createResp.Body.String(), "UID").String()
 
 	t.Run("ExistingAlbum", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteAlbum(router)
-		r := PerformRequest(app, "DELETE", "/api/v1/albums/"+uid)
+		r := PerformRequest(app, "DELETE", "/api/v1/albums/"+albumUid)
 		assert.Equal(t, http.StatusOK, r.Code)
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "delete", val.String())
 		SearchAlbums(router)
-		r2 := PerformRequest(app, "GET", "/api/v1/albums/"+uid)
+		r2 := PerformRequest(app, "GET", "/api/v1/albums/"+albumUid)
 		assert.Equal(t, http.StatusNotFound, r2.Code)
 	})
 	t.Run("NotExistingAlbum", func(t *testing.T) {
@@ -108,15 +108,38 @@ func TestDeleteAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("ExistingMoment", func(t *testing.T) {
-		app, router, _ = NewApiTest()
+		app, router, _ := NewApiTest()
 		DeleteAlbum(router)
-		r = PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bipotaaj10")
+		r := PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bipotaaj10")
 		assert.Equal(t, http.StatusOK, r.Code)
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "mexico", val.String())
 		SearchAlbums(router)
 		r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bipotaaj10")
 		assert.Equal(t, http.StatusNotFound, r2.Code)
+	})
+	t.Run("ForceDeleteManualAlbum", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CreateAlbum(router)
+		DeleteAlbum(router)
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "ForceDelete", "Favorite": false}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		uid := gjson.Get(r.Body.String(), "UID").String()
+		slug := gjson.Get(r.Body.String(), "Slug").String()
+
+		delResp := PerformRequest(app, "DELETE", "/api/v1/albums/"+uid+"?force=true")
+		assert.Equal(t, http.StatusOK, delResp.Code)
+
+		recreateResp := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "ForceDelete", "Favorite": false}`)
+		assert.Equal(t, http.StatusOK, recreateResp.Code)
+		newUID := gjson.Get(recreateResp.Body.String(), "UID").String()
+		newSlug := gjson.Get(recreateResp.Body.String(), "Slug").String()
+
+		assert.NotEmpty(t, uid)
+		assert.NotEmpty(t, newUID)
+		assert.NotEqual(t, uid, newUID)
+		assert.Equal(t, slug, newSlug)
 	})
 }
 

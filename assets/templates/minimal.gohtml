@@ -19,6 +19,6 @@
 <body class="{{ .config.Flags }} nojs">
 
 {{template "app.gohtml" .}}
-<script src="{{ .config.JsUri }}"></script>
+{{template "app.js.gohtml" .}}
 </body>
 </html>

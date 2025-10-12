@@ -221,6 +221,15 @@ a.logo-large {
     color: #bbbbb5;
 }
 
+.splash-warning {
+    display: block;
+    font-weight: 600;
+    color: #bbbbb5;
+    margin: 0 auto;
+    max-width: 520px;
+    line-height: 1.5;
+}
+
 #noscript-info.splash-info,
 #noscript-info.splash-info a {
     font-weight: 500;
@@ -286,4 +295,3 @@ div.loading-bar {
     right: 10%;
     left: 10%;
 }
-

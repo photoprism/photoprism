@@ -4971,6 +4971,7 @@
                 "consumes": [
                     "application/json"
                 ],
+                "description": "Posting a title that matches a soft-deleted manual album restores it (including existing photo assignments). Use DELETE with `force=true` to purge an album before recreating it from scratch.",
                 "operationId": "CreateAlbum",
                 "parameters": [
                     {
@@ -5043,6 +5044,12 @@
                         "name": "uid",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "description": "Set to true to permanently delete a manual album instead of archiving it.",
+                        "in": "query",
+                        "name": "force",
+                        "type": "boolean"
                     }
                 ],
                 "produces": [

@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 10, 2025
+**Last Updated:** October 12, 2025
 
 ## Purpose
 
@@ -17,6 +17,8 @@ Learn more: https://agents.md/
 - REST API: https://docs.photoprism.dev/ (Swagger), https://docs.photoprism.app/developer-guide/api/ (Docs)
 - Code Maps: [`CODEMAP.md`](CODEMAP.md) (Backend/Go), [`frontend/CODEMAP.md`](frontend/CODEMAP.md) (Frontend/JS)
 - Face Detection & Embeddings Notes: [`internal/ai/face/README.md`](internal/ai/face/README.md)
+
+> Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`.
 
 ### Specifications (Versioning & Usage)
 
@@ -40,6 +42,13 @@ Learn more: https://agents.md/
   - GORM field naming: When adding struct fields that include uppercase abbreviations (e.g., `LabelNSFW`), set an explicit `gorm:"column:<name>"` tag so column names stay consistent (`label_nsfw` instead of `label_n_s_f_w`).
 - Frontend: Vue 3 + Vuetify 3 (`frontend/`)
 - Docker/compose for dev/CI; Traefik is used for local TLS (`*.localssl.dev`)
+
+### Web Templates & Shared Assets
+
+- HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The SPA loader logic resides in `assets/static/js/app-loader.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before appending `window.__CONFIG__.jsUri`.
+- The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus`) to confirm they include the shared partial instead of hard-coding `<script src="{{ .config.JsUri }}">`.
+- Splash styles are defined in `frontend/src/css/splash.css`. Add new splash elements (for example `.splash-warning`) there so both public and private editions remain visually consistent.
+- Browser baseline: PhotoPrism requires Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. Update the message in `assets/templates/app.js.gohtml` (and the matching CSS) if support changes.
 
 ## Agent Runtime (Host vs Container)
 
@@ -131,20 +140,28 @@ Note: Across our public documentation, official images, and in production, the c
   - Test frontend/backend: `make test-js` and `make test-go`
   - Go packages: `go test` (all tests) or `go test -run <name>` (specific tests only)
 - Need to inspect the MariaDB data while iterating? Connect directly inside the dev shell with `mariadb -D photoprism` and run SQL without rebuilding Go code.
-- Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and use PascalCase subtest names (for example, `t.Run("Success", ...)`).
-- Frontend unit tests are driven by Vitest; see scripts in `frontend/package.json`
+- Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and use **PascalCase** for subtest names (for example, `t.Run("Success", ...)`).
+- Frontend unit tests use **Vitest**; see scripts in `frontend/package.json`.
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
 
 ### Playwright MCP Usage
 
-- Playwright MCP is preconfigured to reach the dev server at http://localhost:2342/; use `playwright__browser_navigate` to load `/library/login`, sign in, then `playwright__browser_take_screenshot`.
-- Desktop sessions should open with a 1280x900 viewport by default; call `playwright__browser_resize` if the viewport size is not pre-configured or you need a different size mid-run.
-- Where available, use the `playwright_mobile` server for mobile workflows (for example, `playwright_mobile__browser_navigate`), which launches at 375x667 so you can capture smartphone layouts without manual resizing.
-- Default admin credentials remain `admin` / `photoprism`; if login fails, inspect the active compose file or environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
-- When capturing artifacts, keep Playwright screenshots to the visible viewport (leave `fullPage` unset/false) unless a full-page capture is explicitly required, then copy the MCP output file into `.local/screenshots/` (create the folder if needed).
-- The sidebar navigation nests items such as `Library` → `Errors`; expand the parent entry by clicking its chevron before targeting links inside.
-- After scripted interactions, close the browser tab with `playwright__browser_close` (or `playwright_mobile__browser_close`) so the MCP session stays tidy for subsequent runs.
+- **Endpoint & Navigation** — Playwright MCP is preconfigured to reach the dev server at `http://localhost:2342/`.  
+  Use `playwright__browser_navigate` to open `/library/login`, sign in, and then call `playwright__browser_take_screenshot` to capture the page state.
+- **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.  
+  Use `playwright__browser_resize` if the viewport is not preconfigured or you need to adjust it mid-run.
+- **Mobile Workflows** — When testing responsive layouts, use the `playwright_mobile` server (for example, `playwright_mobile__browser_navigate`).  
+  It launches with a `375×667` viewport, matching a typical smartphone display, so you can capture mobile layouts without manual resizing.
+- **Authentication** — Default admin credentials are `admin` / `photoprism`.  
+  If login fails, check your active Compose file or container environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
+- **Capturing Artifacts** —
+  - Keep screenshots limited to the visible viewport (`fullPage: false` or unset) unless a full-page capture is explicitly required.
+  - Copy the MCP output file into `.local/screenshots/` (create the folder if it doesn’t exist).
+  - To reduce context size, avoid embedding large screenshots in chat history—reference the file path instead.
+- **Sidebar Navigation** — The sidebar nests items such as `Library → Errors`.  
+  Expand a parent entry by clicking its chevron before selecting links inside.
+- **Session Cleanup** — After scripted interactions, close the browser tab with `playwright__browser_close` (or `playwright_mobile__browser_close`) to keep the MCP session tidy for subsequent runs.
 
 ### FFmpeg Tests & Hardware Gating
 
@@ -190,6 +207,8 @@ Note: Across our public documentation, official images, and in production, the c
   - Ensure `.env` and `.local` are ignored in `.gitignore` and `.dockerignore`.
 - Prefer using existing caches, workers, and batching strategies referenced in code and `Makefile`. Consider memory/CPU impact; suggest benchmarks or profiling only when justified.
 - Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures when running acceptance tests.
+
+> If anything in this file conflicts with the `Makefile` or the Developer Guide, the `Makefile` and the documentation win. When unsure, **ask** for clarification before proceeding.
 
 ### Filesystem Permissions & io/fs Aliasing (Go)
 
@@ -245,8 +264,6 @@ Note: Across our public documentation, official images, and in production, the c
 - Avatars and small images: use the thin wrapper in `internal/thumb/avatar.SafeDownload` which applies stricter defaults (15s timeout, 10 MiB, `AllowPrivate=false`).
 - Tests using `httptest.Server` on 127.0.0.1 must pass `AllowPrivate=true` explicitly to succeed.
 - Keep per‑resource size budgets small; rely on `io.LimitReader` + `Content-Length` prechecks.
-
-If anything in this file conflicts with the `Makefile` or the Developer Guide, the `Makefile` and the documentation win. When unsure, **ask** for clarification before proceeding.
 
 ## Agent Quick Tips (Do This)
 

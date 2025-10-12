@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -152,7 +153,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	// Find photos without captions when only
 	// captions are updated without force flag.
 	if !updateLabels && !updateNsfw && !force {
-		frm.Caption = txt.False
+		frm.Caption = enum.False
 	}
 
 	photos, _, queryErr := search.Photos(frm)
