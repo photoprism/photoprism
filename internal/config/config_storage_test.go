@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -168,6 +169,7 @@ func TestConfig_TempPath(t *testing.T) {
 	} else {
 		t.Logf("temp paths match: '%s' == '%s'", d4, d0)
 	}
+	os.RemoveAll(d1)
 }
 
 func TestConfig_CmdCachePath(t *testing.T) {

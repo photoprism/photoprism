@@ -35,7 +35,6 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
 	get.SetConfig(c)
@@ -54,6 +53,7 @@ func TestMain(m *testing.M) {
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
+	os.RemoveAll(tempDir) // os.Exit prevents defer from executing.
 	os.Exit(code)
 }
 
