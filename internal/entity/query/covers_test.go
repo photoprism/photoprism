@@ -16,6 +16,7 @@ func TestUpdateAlbumManualCovers(t *testing.T) {
 func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
 	var album entity.Album
 
+	assert.NoError(t, UpdateAlbumManualCovers())
 	if err := UnscopedDb().Where("album_type = ? AND thumb_src = ? AND thumb <> ''", entity.AlbumManual, entity.SrcAuto).First(&album).Error; err != nil {
 		t.Skipf("no auto-managed manual album available: %v", err)
 	}
@@ -46,6 +47,7 @@ func TestUpdateAlbumFolderCovers(t *testing.T) {
 func TestUpdateAlbumFolderCoversFiltered(t *testing.T) {
 	var album entity.Album
 
+	assert.NoError(t, UpdateAlbumFolderCovers())
 	if err := UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_path <> '' AND thumb <> ''", entity.AlbumFolder, entity.SrcAuto).First(&album).Error; err != nil {
 		t.Skipf("no auto-managed folder album available: %v", err)
 	}
