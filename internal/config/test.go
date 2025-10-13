@@ -621,6 +621,10 @@ func (c *Config) AssertTestData(t *testing.T) {
 
 // CleanupTestFolder uses RemoveAll to remove the storage path above testdata.
 func (c *Config) CleanupTestFolder() {
+	if c.options == nil {
+		log.Warn("config: c.options is nil in CleanupTestFolder")
+		return
+	}
 	td := c.StoragePath()
 	if strings.HasSuffix(td, "/testdata") && strings.Contains(td, "test-photoprism") {
 		td = strings.TrimSuffix(td, "/testdata")
