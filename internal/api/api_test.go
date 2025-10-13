@@ -43,6 +43,7 @@ func TestMain(m *testing.M) {
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
+	c.CleanupTestFolder()
 	os.Exit(code)
 }
 

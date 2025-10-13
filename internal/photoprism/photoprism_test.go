@@ -18,6 +18,7 @@ func TestMain(m *testing.M) {
 	fs.PurgeTestDbFiles(".", false)
 
 	c := config.NewTestConfig("photoprism")
+	config.OnceTestConfig(c)
 	SetConfig(c)
 	defer c.CloseDb()
 
@@ -26,5 +27,6 @@ func TestMain(m *testing.M) {
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
+	c.CleanupTestFolder()
 	os.Exit(code)
 }

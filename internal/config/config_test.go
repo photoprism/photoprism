@@ -32,6 +32,7 @@ func TestMain(m *testing.M) {
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
+	c.CleanupTestFolder()
 	os.Exit(code)
 }
 
@@ -359,7 +360,7 @@ func TestConfig_ResolutionLimit(t *testing.T) {
 }
 
 func TestConfig_Serial(t *testing.T) {
-	c := NewConfig(CliTestContext())
+	c := TestConfig() // Use complete test context, as NewConfig may not have the required file.
 
 	result := c.Serial()
 
