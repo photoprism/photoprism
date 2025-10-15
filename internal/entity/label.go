@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/inflection"
@@ -207,6 +208,16 @@ func (m *Label) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
+// isASCII checks if there are any runes that exceed the ASCII codeset.
+func isASCII(s string) bool {
+	for _, r := range s {
+		if r > unicode.MaxASCII {
+			return false
+		}
+	}
+	return true
+}
+
 // FirstOrCreateLabel reuses an existing label matched by slug/custom slug or creates and returns a new one; nil signals lookup/create failure.
 func FirstOrCreateLabel(m *Label) *Label {
 	if m.LabelSlug == "" && m.CustomSlug == "" {
@@ -216,12 +227,14 @@ func FirstOrCreateLabel(m *Label) *Label {
 	var labels []Label
 	slugLike := m.LabelSlug + "-c-_"
 
+	nameASCII := isASCII(m.LabelName)
+
 	if err := UnscopedDb().
 		Where("((custom_slug <> '' AND custom_slug = ?) OR (label_slug <> '' AND (label_slug = ? OR label_slug like ?)))", m.CustomSlug, m.LabelSlug, slugLike).
 		Find(&labels).Error; err == nil {
 		slugChar := byte('a')
 		for _, l := range labels {
-			if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(m.LabelName)) {
+			if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(m.LabelName)) || (nameASCII && isASCII(l.LabelName)) {
 				return &l
 			} else {
 				sl := len(l.LabelSlug)
@@ -261,7 +274,7 @@ func FirstOrCreateLabel(m *Label) *Label {
 		Where("((custom_slug <> '' AND custom_slug = ?) OR (label_slug <> '' AND (label_slug = ? OR label_slug like ?)))", m.CustomSlug, m.LabelSlug, slugLike).
 		Find(&labels).Error; err == nil {
 		for _, l := range labels {
-			if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(m.LabelName)) {
+			if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(m.LabelName)) || (nameASCII && isASCII(l.LabelName)) {
 				return &l
 			}
 		}
@@ -445,7 +458,7 @@ func FindLabels(names string, sep string, unscoped bool) (labels []Label, err er
 			for _, w := range nameSlice {
 				w = strings.TrimSpace(w)
 				// If the cleansed Name matches or it's an exact match between the name and the Slug, append.
-				if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(w)) || l.LabelSlug == w {
+				if strings.EqualFold(clean.LabelName(l.LabelName), clean.LabelName(w)) || l.LabelSlug == w || l.CustomSlug == w {
 					labels = append(labels, l)
 				}
 			}

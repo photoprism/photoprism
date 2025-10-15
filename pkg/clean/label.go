@@ -13,6 +13,8 @@ import (
 // that LabelSlug clashes are only created appropriately
 func LabelName(s string) string {
 	s = strings.ReplaceAll(s, "-", " ")
+	s = strings.ReplaceAll(s, "@", "at")
+	s = strings.ReplaceAll(s, "&", "and")
 	s = strings.TrimSpace(s)
 	if s == "" || s == "-" {
 		return s
