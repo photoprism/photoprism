@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -24,7 +25,7 @@ func TestNewLabel(t *testing.T) {
 		assert.Equal(t, "unknown", label.LabelSlug)
 		assert.Equal(t, -6, label.LabelPriority)
 	})
-	t.Run("homophones", func(T *testing.T) {
+	t.Run("Homophones", func(t *testing.T) {
 		label := NewLabel("老板", 10)
 		assert.Equal(t, "老板", label.LabelName)
 		assert.Equal(t, "lao-ban", label.LabelSlug)
@@ -116,7 +117,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.Equal(t, LabelFixtures.Get("batchdelete").LabelUID, result.LabelUID)
 	})
 
-	t.Run("homophones", func(t *testing.T) {
+	t.Run("Homophones", func(t *testing.T) {
 		// Add a homophone
 		label := NewLabel("老板", 10)
 		assert.Equal(t, "老板", label.LabelName)
@@ -146,7 +147,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		//t.Logf("result = %+v", result)
 		assert.NotEqual(t, label.LabelName, label2.LabelName, "LabelName should not be the same")
 		assert.NotEqual(t, label.LabelSlug, label2.LabelSlug, "LabelSlug should not be the same")
-		assert.Equal(t, result2.LabelSlug, "lao-ban-c-a")
+		assert.Equal(t, "lao-ban-c-a", result2.LabelSlug)
 		assert.Equal(t, "a", result2.MaxHomophone)
 
 		// Add the homophone in ascii
@@ -158,7 +159,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		//t.Logf("result = %+v", result)
 		assert.NotEqual(t, label.LabelName, label3.LabelName, "LabelName should be the same")
 		assert.NotEqual(t, label.LabelSlug, label3.LabelSlug, "LabelSlug should not be the same")
-		assert.Equal(t, result3.LabelSlug, "lao-ban-c-b")
+		assert.Equal(t, "lao-ban-c-b", result3.LabelSlug)
 		assert.Equal(t, "b", result3.MaxHomophone)
 
 		assert.NotEqual(t, result1.LabelUID, result2.LabelUID)
@@ -194,28 +195,28 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.NoError(t, UnscopedDb().Delete(&result2).Error)
 		assert.NoError(t, UnscopedDb().Delete(&result3).Error)
 	})
-	t.Run("exceed homophones", func(t *testing.T) {
+	t.Run("ExceedHomophones", func(t *testing.T) {
 		label := NewLabel("送钟", 10)
 		result := FirstOrCreateLabel(label)
 		//t.Logf("result = %+v", result)
-		assert.Equal(t, result.LabelSlug, "song-zhong")
+		assert.Equal(t, "song-zhong", result.LabelSlug)
 		assert.NotNil(t, result)
-		label = NewLabel("送终", 10)
+		label = NewLabel("song-zhong", 10)
 		result = FirstOrCreateLabel(label)
 		assert.NotNil(t, result)
-		assert.Equal(t, result.LabelSlug, "song-zhong-c-a")
+		assert.Equal(t, "song-zhong-c-a", result.LabelSlug)
 		// Force increment to maximum
 		label = NewLabel("song-zhong-c-z", 10)
 		result = FirstOrCreateLabel(label)
 		assert.NotNil(t, result)
-		assert.Equal(t, result.LabelSlug, "song-zhong-c-z")
+		assert.Equal(t, "song-zhong-c-z", result.LabelSlug)
 		// This one should fail as we have run out of incrementers
-		label = NewLabel("song-zhong", 10)
+		label = NewLabel("送终", 10)
 		result = FirstOrCreateLabel(label)
 		//t.Logf("result = %+v", result)
 		assert.Nil(t, result)
 	})
-	t.Run("Unicode Emoji", func(t *testing.T) {
+	t.Run("UnicodeEmoji", func(t *testing.T) {
 		// Test emitocons
 		label := NewLabel("😖😕", 10)
 		assert.Equal(t, "😖😕", label.LabelName)
@@ -307,6 +308,173 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.Equal(t, result.LabelUID, result2.LabelUID, "LabelUID should be the same")
 		assert.Equal(t, 10, result2.LabelPriority)
 
+	})
+	t.Run("Renamed", func(t *testing.T) {
+		// Find cow
+		label := LabelFixtures.Get("cow")
+		result := FirstOrCreateLabel(&label)
+
+		if !assert.NotNil(t, result) {
+			t.Fatal("result should not be nil")
+		}
+		assert.Equal(t, label.LabelName, result.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, result.LabelSlug, "LabelSlug should be the same")
+
+		label1 := NewLabel("Cow", 5)
+		result1 := FirstOrCreateLabel(label1)
+		require.NotNil(t, result1)
+
+		assert.Equal(t, label.ID, result1.ID)
+	})
+	t.Run("AmpersandVsAnd", func(t *testing.T) {
+		// Add base record
+		label := NewLabel("Fire and Station", 10)
+		assert.Equal(t, "Fire and Station", label.LabelName)
+		assert.Equal(t, "fire-and-station", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result1 := FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result1) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, label.LabelName, result1.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, result1.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "", result1.MaxHomophone)
+
+		// Find Base Record with slug
+		label2 := NewLabel("Fire & Station", 10)
+		assert.Equal(t, "Fire & Station", label2.LabelName)
+		assert.Equal(t, "fire-and-station", label2.LabelSlug)
+		assert.Equal(t, 10, label2.LabelPriority)
+
+		result2 := FirstOrCreateLabel(label2)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label2.LabelName, "LabelName should not be the same")
+		assert.Equal(t, label.LabelSlug, label2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "fire-and-station", result2.LabelSlug)
+		assert.Equal(t, "", result2.MaxHomophone)
+
+		assert.Equal(t, result1.LabelUID, result2.LabelUID)
+
+		assert.NoError(t, UnscopedDb().Delete(&result1).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result2).Error)
+	})
+	t.Run("AtVsAt", func(t *testing.T) {
+		// Add base record
+		label := NewLabel("老伴 at 伤害", 10)
+		assert.Equal(t, "老伴 at 伤害", label.LabelName)
+		assert.Equal(t, "lao-ban-at-shang-hai", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result1 := FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result1) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, label.LabelName, result1.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, result1.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "", result1.MaxHomophone)
+
+		// Find Base Record with slug
+		label2 := NewLabel("老伴 @ 伤害", 10)
+		assert.Equal(t, "老伴 @ 伤害", label2.LabelName)
+		assert.Equal(t, "lao-ban-at-shang-hai", label2.LabelSlug)
+		assert.Equal(t, 10, label2.LabelPriority)
+
+		result2 := FirstOrCreateLabel(label2)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label2.LabelName, "LabelName should not be the same")
+		assert.Equal(t, label.LabelSlug, label2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "lao-ban-at-shang-hai", result2.LabelSlug)
+		assert.Equal(t, "", result2.MaxHomophone)
+
+		assert.Equal(t, result1.LabelUID, result2.LabelUID)
+
+		label3 := NewLabel("老伴 @ 上海", 10)
+		assert.Equal(t, "老伴 @ 上海", label3.LabelName)
+		assert.Equal(t, "lao-ban-at-shang-hai", label3.LabelSlug)
+		assert.Equal(t, 10, label3.LabelPriority)
+
+		result3 := FirstOrCreateLabel(label3)
+		if !assert.NotNil(t, result3) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label3.LabelName, "LabelName should not be the same")
+		assert.NotEqual(t, label.LabelSlug, label3.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "lao-ban-at-shang-hai-c-a", result3.LabelSlug)
+		assert.Equal(t, "a", result3.MaxHomophone)
+
+		assert.NotEqual(t, result1.LabelUID, result3.LabelUID)
+
+		assert.NoError(t, UnscopedDb().Delete(&result1).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result2).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result3).Error)
+	})
+	t.Run("RemovedRunes", func(t *testing.T) {
+		// Add base record
+		label := NewLabel("Fire Station", 10)
+		assert.Equal(t, "Fire Station", label.LabelName)
+		assert.Equal(t, "fire-station", label.LabelSlug)
+		assert.Equal(t, 10, label.LabelPriority)
+
+		result1 := FirstOrCreateLabel(label)
+
+		if !assert.NotNil(t, result1) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.Equal(t, label.LabelName, result1.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, result1.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "", result1.MaxHomophone)
+
+		// Find Base Record with slug
+		label2 := NewLabel("fire-station", 10)
+		assert.Equal(t, "Fire-Station", label2.LabelName)
+		assert.Equal(t, "fire-station", label2.LabelSlug)
+		assert.Equal(t, 10, label2.LabelPriority)
+
+		result2 := FirstOrCreateLabel(label2)
+		if !assert.NotNil(t, result2) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label2.LabelName, "LabelName should not be the same")
+		assert.Equal(t, label.LabelSlug, label2.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "fire-station", result2.LabelSlug)
+		assert.Equal(t, "", result2.MaxHomophone)
+
+		// Find Base Record due to character removal
+		label3 := NewLabel("Fire+Station", 10)
+		assert.Equal(t, "Fire+Station", label3.LabelName)
+		assert.Equal(t, "fire-station", label3.LabelSlug)
+		assert.Equal(t, 10, label3.LabelPriority)
+		result3 := FirstOrCreateLabel(label3)
+		if !assert.NotNil(t, result3) {
+			t.Fatal("result should not be nil")
+		}
+		//t.Logf("result = %+v", result)
+		assert.NotEqual(t, label.LabelName, label3.LabelName, "LabelName should be the same")
+		assert.Equal(t, label.LabelSlug, label3.LabelSlug, "LabelSlug should be the same")
+		assert.Equal(t, "fire-station", result3.LabelSlug)
+		assert.Equal(t, "", result3.MaxHomophone)
+
+		assert.Equal(t, result1.LabelUID, result2.LabelUID)
+		assert.Equal(t, result1.LabelUID, result3.LabelUID)
+		assert.Equal(t, result2.LabelUID, result3.LabelUID)
+
+		assert.NoError(t, UnscopedDb().Delete(&result1).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result2).Error)
+		assert.NoError(t, UnscopedDb().Delete(&result3).Error)
 	})
 }
 
@@ -474,7 +642,7 @@ func TestLabel_Update(t *testing.T) {
 }
 
 func TestFindLabels(t *testing.T) {
-	t.Run("Success Singular", func(t *testing.T) {
+	t.Run("SuccessSingular", func(t *testing.T) {
 		label := LabelFixtures.Get("flower")
 		labels, err := FindLabels(label.LabelName, txt.Or, false)
 		assert.NoError(t, err)
@@ -482,7 +650,7 @@ func TestFindLabels(t *testing.T) {
 			assert.Equal(t, label.ID, labels[0].ID)
 		}
 	})
-	t.Run("Success Plural", func(t *testing.T) {
+	t.Run("SuccessPlural", func(t *testing.T) {
 		label := LabelFixtures.Get("flower")
 		labels, err := FindLabels(label.LabelName+"s", txt.Or, false)
 		assert.NoError(t, err)
@@ -490,7 +658,7 @@ func TestFindLabels(t *testing.T) {
 			assert.Equal(t, label.ID, labels[0].ID)
 		}
 	})
-	t.Run("Success Multiple", func(t *testing.T) {
+	t.Run("SuccessMultiple", func(t *testing.T) {
 		label1 := LabelFixtures.Get("landscape")
 		label2 := LabelFixtures.Get("flower")
 		labels, err := FindLabels(fmt.Sprintf("%s%s%s", label1.LabelName, txt.Or, label2.LabelName), txt.Or, false)
@@ -511,7 +679,7 @@ func TestFindLabels(t *testing.T) {
 			assert.True(t, found2, "Unable to find %+v", label2)
 		}
 	})
-	t.Run("Success homophone", func(t *testing.T) {
+	t.Run("SuccessHomophone", func(t *testing.T) {
 		label1 := LabelFixtures.Get("shanghai1")
 		label2 := LabelFixtures.Get("shanghai2")
 		labels, err := FindLabels(label1.LabelName, txt.Or, false)
@@ -532,7 +700,7 @@ func TestFindLabels(t *testing.T) {
 			assert.False(t, found2, "Able to find %+v", label2)
 		}
 	})
-	t.Run("Success homophones", func(t *testing.T) {
+	t.Run("SuccessHomophones", func(t *testing.T) {
 		label1 := LabelFixtures.Get("shanghai1")
 		label2 := LabelFixtures.Get("shanghai2")
 		labels, err := FindLabels(fmt.Sprintf("%s%s%s", label1.LabelName, txt.Or, label2.LabelName), txt.Or, false)
@@ -553,7 +721,7 @@ func TestFindLabels(t *testing.T) {
 			assert.True(t, found2, "Unable to find %+v", label2)
 		}
 	})
-	t.Run("Success homophone slug", func(t *testing.T) {
+	t.Run("SuccessHomophoneSlug", func(t *testing.T) {
 		label1 := LabelFixtures.Get("shanghai1")
 		label2 := LabelFixtures.Get("shanghai2")
 		labels, err := FindLabels(label1.LabelSlug, txt.Or, false)
@@ -574,7 +742,7 @@ func TestFindLabels(t *testing.T) {
 			assert.False(t, found2, "Able to find %+v", label2)
 		}
 	})
-	t.Run("Success homophone slug-a", func(t *testing.T) {
+	t.Run("SuccessHomophoneSlug-A", func(t *testing.T) {
 		label1 := LabelFixtures.Get("shanghai1")
 		label2 := LabelFixtures.Get("shanghai2")
 		labels, err := FindLabels(label2.LabelSlug, txt.Or, false)

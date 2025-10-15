@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
@@ -64,6 +65,36 @@ func TestLabels(t *testing.T) {
 				assert.Equal(t, fix.LabelName, r.LabelName)
 				assert.Equal(t, fix.LabelSlug, r.LabelSlug)
 				assert.Equal(t, fix.CustomSlug, r.CustomSlug)
+			}
+		}
+	})
+	t.Run("SearchForKuh", func(t *testing.T) {
+		query := form.NewLabelSearch("Q:Kuh")
+		query.Count = 1005
+		query.Order = "slug"
+		result, err := Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results: %+v", result)
+
+		assert.LessOrEqual(t, 1, len(result))
+
+		for _, r := range result {
+			assert.IsType(t, Label{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LabelName)
+			assert.NotEmpty(t, r.LabelSlug)
+			assert.NotEmpty(t, r.CustomSlug)
+
+			if fix, ok := entity.LabelFixtures[r.LabelSlug]; ok {
+				assert.Equal(t, fix.LabelName, r.LabelName)
+				assert.Equal(t, fix.LabelSlug, r.LabelSlug)
+				assert.Equal(t, fix.CustomSlug, r.CustomSlug)
+			} else {
+				assert.Fail(t, "fixture not found by slug")
 			}
 		}
 	})
@@ -197,7 +228,7 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, "flower", result[0].LabelSlug)
 	})
-	t.Run("search for homophones", func(t *testing.T) {
+	t.Run("SearchForHomophones", func(t *testing.T) {
 		t.Log("Create Label 老板")
 		label1 := entity.FirstOrCreateLabel(entity.NewLabel("老板", 10))
 		query := form.NewLabelSearch("q:老板")
@@ -248,6 +279,56 @@ func TestLabels(t *testing.T) {
 
 		if assert.Len(t, result, 1) {
 			assert.Equal(t, label2.LabelName, result[0].LabelName)
+		}
+
+		query = form.NewLabelSearch("q:lao-ban")
+		query.Count = 5
+		query.Order = "slug"
+		result, err = Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results for search query q:lao-ban: %+v", result)
+
+		if assert.Len(t, result, 1) {
+			assert.Equal(t, label1.LabelName, result[0].LabelName)
+		}
+
+		t.Log("Rename Label 老板 to 老板renamed")
+
+		updFrm := &form.Label{LabelName: "老板renamed"}
+		require.NoError(t, label1.SaveForm(updFrm))
+
+		query = form.NewLabelSearch("q:老板renamed")
+		query.Count = 5
+		query.Order = "slug"
+		result, err = Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results for search query q:老板renamed: %+v", result)
+
+		if assert.Len(t, result, 1) {
+			assert.Equal(t, label1.LabelName, result[0].LabelName)
+		}
+
+		query = form.NewLabelSearch("q:lao-ban-renamed")
+		query.Count = 5
+		query.Order = "slug"
+		result, err = Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("results for search query q:lao-ban-renamed: %+v", result)
+
+		if assert.Len(t, result, 1) {
+			assert.Equal(t, label1.LabelName, result[0].LabelName)
 		}
 
 		label1.Delete()

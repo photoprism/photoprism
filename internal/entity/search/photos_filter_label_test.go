@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -723,5 +725,97 @@ func TestPhotosQueryLabel(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Len(t, photos, 2)
+	})
+	t.Run("Homophones", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = `label:"上海"`
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
+
+		f.Query = `label:"伤害"`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
+
+		f.Query = `label:shang-hai`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
+
+		// Rename the label
+		label1, err := entity.FindLabel("上海", true)
+		require.NoError(t, err)
+		updFrm := &form.Label{LabelName: "上海renamed"}
+		require.NoError(t, label1.SaveForm(updFrm))
+
+		f.Query = `label:"上海"`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 0)
+
+		f.Query = `label:上海renamed`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
+
+		f.Query = `label:shang-hai`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
+
+		f.Query = `label:shang-hai-renamed`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
+
+		updFrm = &form.Label{LabelName: "上海"}
+		require.NoError(t, label1.SaveForm(updFrm))
+
+		f.Query = `label:"上海"`
+		f.Merged = true
+
+		photos, _, err = Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, photos, 1)
 	})
 }

@@ -37,7 +37,7 @@ func TestLabelByUID(t *testing.T) {
 		}
 
 		assert.IsType(t, &entity.Label{}, result)
-		assert.Equal(t, "COW", result.LabelName)
+		assert.Equal(t, "Kuh", result.LabelName)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		result, err := LabelByUID("111")
