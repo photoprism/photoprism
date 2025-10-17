@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-10-17 18:02+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -842,7 +842,7 @@ msgstr "Copyright"
 
 #: src/component/photo/edit/people.vue:179
 msgid "Could not update person cover"
-msgstr "Impossible de mettre à jour la couverture de la personne"
+msgstr "Impossible de mettre à jour l'image de couverture de la personne"
 
 #: src/component/photo/view/list.vue:52
 msgid "Couldn't find anything."
@@ -2338,7 +2338,7 @@ msgstr "Personne"
 
 #: src/component/photo/edit/people.vue:176
 msgid "Person cover updated"
-msgstr "Mise à jour de la couverture de la personne"
+msgstr "L'image de couverture de la personne a été mise à jour"
 
 #: src/component/photo/edit/people.vue:140
 #: src/component/photo/edit/people.vue:170
@@ -2739,7 +2739,7 @@ msgstr "Sélectionner les dates"
 
 #: src/component/photo/album/dialog.vue:66 src/component/upload/dialog.vue:154
 msgid "Select or create albums"
-msgstr "Sélectionne ou crée des albums"
+msgstr "Sélectionner ou créer des albums"
 
 #: src/component/upload/dialog.vue:138
 msgid "Select the files to upload…"
@@ -2897,16 +2897,16 @@ msgstr "Mise à jour du logiciel"
 
 #: src/component/album/clipboard.vue:100
 msgid "Some albums could not be copied"
-msgstr "Certains albums n'ont pas pu être copiés"
+msgstr "Certains albums n'ont pu être copiés"
 
 #: src/component/photo/album/dialog.vue:117
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr "Certains albums n'ont pas pu être créés. Modifie les noms et essaie à nouveau."
+msgstr "Certains albums n'ont pu être créés. Modifiez leur nom et réessayez."
 
 #: src/component/file/clipboard.vue:65 src/component/label/clipboard.vue:66
 #: src/component/people/clipboard.vue:65 src/component/photo/clipboard.vue:167
 msgid "Some albums could not be updated"
-msgstr "Certains albums n'ont pas pu être mis à jour"
+msgstr "Certains albums n'ont pu être mis à jour"
 
 #: src/component/lightbox.vue:741
 msgid "Something went wrong, try again"
