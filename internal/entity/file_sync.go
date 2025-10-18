@@ -23,8 +23,8 @@ type FileSync struct {
 	Status     string    `gorm:"type:bytes;size:16;" json:"Status" yaml:"Status,omitempty"`
 	Error      string    `gorm:"type:bytes;size:512;" json:"Error,omitempty" yaml:"Error,omitempty"`
 	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
-	File       *File     `json:"File,omitempty" yaml:"-"`    `gorm:"foreignKey:FileID"`
-	Account    *Service  `json:"Account,omitempty" yaml:"-"` `gorm:"foreignKey:ServiceID"`
+	File       *File     `gorm:"foreignKey:FileID" json:"File,omitempty" yaml:"-"`
+	Account    *Service  `gorm:"foreignKey:ServiceID" json:"Account,omitempty" yaml:"-"`
 	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }
