@@ -158,7 +158,7 @@ services:
   ## Docs: https://www.postgresql.org/docs/
   postgres:
     image: postgres:17-alpine
-#    image: postgres:16-bookworm
+    stop_grace_period: 15s
     expose:
       - "5432"
     ports:
@@ -167,9 +167,6 @@ services:
       - "postgresql:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
-      # POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=und-u-ks-level2"
-      # these error.  --lc-collate=und-u-ks-level2 --lc-ctype=und-u-ks-level2 --lc-messages=und-u-ks-level2"
-      # POSTGRES_INITDB_ARGS: "--encoding=UTF8"
       POSTGRES_DB: photoprism
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
