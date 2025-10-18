@@ -369,12 +369,31 @@ func refreshFolderAlbumCover(album entity.Album) error {
 	}
 
 	switch DbDialect() {
+	case Postgres:
+		res := Db().Exec(`UPDATE albums SET thumb = b.file_hash 
+		FROM (
+			SELECT p2.photo_path, f.file_hash FROM files f, (
+					SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+					WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
+					GROUP BY p.photo_path
+				) p2 
+			WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b
+		WHERE b.photo_path = albums.album_path AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumPath,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumFolder,
+			entity.SrcAuto,
+		)
+
+		return res.Error
 	case MySQL:
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
-			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumPath,
@@ -391,10 +410,10 @@ func refreshFolderAlbumCover(album entity.Album) error {
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
 			  GROUP BY p.photo_path
 			) b
-		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_path = albums.album_path LIMIT 1
 		)`, album.AlbumPath, media.PreviewExpr))
 
@@ -413,12 +432,33 @@ func refreshMonthAlbumCover(album entity.Album) error {
 	}
 
 	switch DbDialect() {
+	case Postgres:
+		res := Db().Exec(`UPDATE albums SET thumb = b.file_hash 
+		FROM (
+			SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+					SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+					WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+					GROUP BY p.photo_year, p.photo_month
+				) p2 
+			WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b
+		WHERE b.photo_year = albums.album_year AND b.photo_month = albums.album_month AND b.photo_path = albums.album_path 
+		AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumYear,
+			album.AlbumMonth,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumMonth,
+			entity.SrcAuto,
+		)
+
+		return res.Error
 	case MySQL:
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
-			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumYear,
@@ -436,10 +476,10 @@ func refreshMonthAlbumCover(album entity.Album) error {
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
 			  GROUP BY p.photo_year, p.photo_month
 			) b
-		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1
 		)`, album.AlbumYear, album.AlbumMonth, media.PreviewExpr))
 
