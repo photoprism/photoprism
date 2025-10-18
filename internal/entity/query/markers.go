@@ -141,7 +141,7 @@ func MarkerCountsByFaceIDs(faceIDs []string) (map[string]int, error) {
 	if err := Db().
 		Model(&entity.Marker{}).
 		Select("face_id, COUNT(*) AS count").
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("face_id IN (?)", faceIDs).
 		Group("face_id").
