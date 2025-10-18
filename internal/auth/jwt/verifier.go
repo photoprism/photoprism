@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -49,7 +49,7 @@ const (
 )
 
 // randInt63n is defined for deterministic testing of jitter (overridable in tests).
-var randInt63n = rand.Int63n
+var randInt63n = rand.Int64N
 
 // cacheEntry stores the JWKS material cached on disk and in memory.
 type cacheEntry struct {

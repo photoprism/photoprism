@@ -1,0 +1,92 @@
+name: Bug Report 🐞
+description: Report a new and clearly identified bug that must be fixed directly in the application.
+title: "Category: Short bug description (PLEASE CHANGE)"
+labels:
+  - bug
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        PLEASE ONLY PROCEED IF YOU ARE SURE THIS IS NOT A SUPPORT REQUEST, AND THE ISSUE IS NOT RELATED TO A CUSTOM SETUP OR OTHER SOFTWARE YOU ARE USING:
+        1. Thoroughly review our [Getting Started](https://docs.photoprism.app/getting-started/) and [User Guides](https://docs.photoprism.app/user-guide/).          
+        2. Work through the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) we provide.
+        3. Do not report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs.
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before You Continue
+      description: Confirm that you reviewed the guidance above.
+      options:
+        - label: This is a new, confirmed bug that has not yet been reported or documented
+          required: true
+  - type: textarea
+    id: documented-behavior
+    attributes:
+      label: What Is Not Working as Documented?
+      description: Be specific and include links to the relevant documentation when possible.
+      placeholder: Describe the incorrect behavior and link to the related documentation on https://docs.photoprism.app/.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: How Can We Reproduce It?
+      description: Provide numbered steps so we can reproduce the behavior reliably.
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. Scroll to ...
+        4. Expected vs. actual result
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: What Behavior Do You Expect?
+      description: Share the correct outcome you expected to see.
+    validations:
+      required: true
+  - type: textarea
+    id: possible-cause
+    attributes:
+      label: What Could Be the Cause?
+      description: Summarize any investigation you have already completed and the potential root cause.
+  - type: textarea
+    id: supporting-material
+    attributes:
+      label: Logs, Sample Files, or Screenshots
+      description: Attach or link to files that help us reproduce the problem. Import and indexing issues require sample files and logs.
+      placeholder: Provide links to archives, logs, or screenshots. See https://www.photoprism.app/contact for secure sharing options.
+  - type: textarea
+    id: software-versions
+    attributes:
+      label: Which Software Versions Do You Use?
+      description: Include all relevant software versions so we can reproduce the environment.
+      placeholder: |
+        - PhotoPrism Architecture & Build Number (AMD64, ARM64, ARMv7, ...):
+        - Database Type & Version (MariaDB, MySQL, SQLite, ...):
+        - Operating System Types & Versions (Linux, Windows, Android, ...):
+        - Browser Types & Versions (Firefox, Chrome, Safari on iPhone, ...):
+        - Ad Blockers, Browser Plugins, or Firewall Software:
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: installation-device
+    attributes:
+      label: On What Device Is PhotoPrism Installed?
+      description: Provide hardware details, especially for performance, import, or indexing issues.
+      placeholder: |
+        - Device / Processor Type (Raspberry Pi 4, Intel Core i7-3770, AMD Ryzen 7 3800X, ...):
+        - Physical Memory & Swap Space (GB):
+        - Storage Type (HDD, SSD, RAID, USB, Network Storage, ...):
+        - Additional Context:
+      render: markdown
+  - type: textarea
+    id: networking-setup
+    attributes:
+      label: Do You Use a Reverse Proxy, Firewall, VPN, or CDN?
+      description: Specify type and version if applicable; include NGINX configuration when relevant.
+      placeholder: Describe proxies, VPNs, CDNs, or firewall software involved. Include versions and configuration snippets when helpful.

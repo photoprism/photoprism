@@ -25,8 +25,10 @@ Additional information can be found in our Developer Guide:
 package config
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
+	"math/rand/v2"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -76,6 +78,8 @@ type Config struct {
 	pool      *pgxpool.Pool
 	dbVersion string
 	hub       *hub.Config
+	hubCancel context.CancelFunc
+	hubLock   sync.Mutex
 	token     string
 	serial    string
 	env       string
@@ -623,8 +627,22 @@ func (c *Config) SetLogLevel(level logrus.Level) {
 	SetLogLevel(level)
 }
 
+// stopHubTicker stops the periodic hub renewal ticker if it is running.
+func (c *Config) stopHubTicker() {
+	c.hubLock.Lock()
+	cancel := c.hubCancel
+	c.hubCancel = nil
+	c.hubLock.Unlock()
+
+	if cancel != nil {
+		cancel()
+	}
+}
+
 // Shutdown shuts down the active processes and closes the database connection.
 func (c *Config) Shutdown() {
+	c.stopHubTicker()
+
 	// App is no longer accepting requests.
 	c.ready.Store(false)
 
@@ -824,13 +842,24 @@ func (c *Config) initHub() {
 
 	c.hub.Propagate()
 
-	ticker := time.NewTicker(time.Hour * 24)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	c.hubLock.Lock()
+	c.hubCancel = cancel
+	c.hubLock.Unlock()
+
+	d := 23*time.Hour + time.Duration(float64(2*time.Hour)*rand.Float64())
+	ticker := time.NewTicker(d)
 
 	go func() {
+		defer ticker.Stop()
+
 		for {
 			select {
 			case <-ticker.C:
 				c.RenewApiKeys()
+			case <-ctx.Done():
+				return
 			}
 		}
 	}()

@@ -129,6 +129,7 @@ export default {
       mapError: false,
       markers: {},
       markersOnScreen: {},
+      markerHandlers: {},
       clusterIds: [],
       loading: false,
       style: "",
@@ -173,6 +174,7 @@ export default {
     },
   },
   created() {
+    this._mapDataHandler = null;
     if (this.$config.has("mapKey")) {
       this.mapStyles = options.MapsStyle(this.featExperimental);
     } else {
@@ -197,11 +199,103 @@ export default {
   beforeUnmount() {
     // Exit fullscreen mode if enabled, has no effect otherwise.
     $fullscreen.exit();
+    this.teardownMap();
   },
   unmounted() {
     this.$view.leave(this);
   },
   methods: {
+    // Removes map event listeners and marker handlers before the component is disposed.
+    teardownMap() {
+      if (!this.map) {
+        return;
+      }
+
+      if (typeof this.map.off === "function") {
+        if (this._mapDataHandler) {
+          this.map.off("data", this._mapDataHandler);
+        }
+        this.map.off("move", this.updateMarkers);
+        this.map.off("moveend", this.updateMarkers);
+        this.map.off("resize", this.updateMarkers);
+        this.map.off("idle", this.updateMarkers);
+      }
+
+      this._mapDataHandler = null;
+
+      this.clearAllMarkerClicks();
+
+      Object.keys(this.markersOnScreen).forEach((markerId) => {
+        const marker = this.markersOnScreen[markerId];
+        if (marker && typeof marker.remove === "function") {
+          marker.remove();
+        }
+      });
+
+      this.markers = {};
+      this.markersOnScreen = {};
+      this.markerHandlers = {};
+
+      if (typeof this.map.remove === "function") {
+        this.map.remove();
+      }
+
+      this.map = null;
+    },
+    ensureMarkerClick(id, marker, key, handlerFactory) {
+      const markerId = String(id);
+      if (!marker || typeof marker.getElement !== "function") {
+        return;
+      }
+
+      const element = marker.getElement();
+
+      if (!element || typeof element.addEventListener !== "function") {
+        return;
+      }
+
+      const existing = this.markerHandlers[markerId];
+
+      if (existing && existing.key === key && typeof existing.handler === "function") {
+        return;
+      }
+
+      if (existing && typeof existing.handler === "function" && typeof element.removeEventListener === "function") {
+        element.removeEventListener("click", existing.handler);
+      }
+
+      const handler = handlerFactory();
+
+      if (typeof handler !== "function") {
+        delete this.markerHandlers[markerId];
+        return;
+      }
+
+      element.addEventListener("click", handler);
+      this.markerHandlers[markerId] = { handler, key };
+    },
+    clearMarkerClick(id, marker) {
+      const markerId = String(id);
+      const existing = this.markerHandlers[markerId];
+
+      if (!existing) {
+        return;
+      }
+
+      const element = marker && typeof marker.getElement === "function" ? marker.getElement() : null;
+
+      if (element && typeof element.removeEventListener === "function" && typeof existing.handler === "function") {
+        element.removeEventListener("click", existing.handler);
+      }
+
+      delete this.markerHandlers[markerId];
+    },
+    clearAllMarkerClicks() {
+      Object.keys(this.markerHandlers).forEach((markerId) => {
+        const marker = this.markers[markerId] || this.markersOnScreen[markerId];
+        this.clearMarkerClick(markerId, marker);
+      });
+    },
     renderSky() {
       if (!this.skyRendered && sky.render && this.$refs.background) {
         this.$nextTick(() => {
@@ -758,10 +852,21 @@ export default {
     },
     reset() {
       Object.assign(this.result, { features: [] });
-      if (this.map) {
-        this.map.getSource("photos").setData(this.result);
-        this.updateMarkers();
+      const map = this.map;
+
+      if (!map || typeof map.getSource !== "function") {
+        return;
       }
+
+      const source = map.getSource("photos");
+
+      if (!source || typeof source.setData !== "function") {
+        return;
+      }
+
+      source.setData(this.result);
+
+      this.updateMarkers();
     },
     search(force) {
       if (this.loading) {
@@ -802,16 +907,34 @@ export default {
 
           this.result = response.data;
 
-          this.map.getSource("photos").setData(this.result);
+          const map = this.map;
+
+          if (!map || typeof map.getSource !== "function") {
+            this.initialized = true;
+            this.loading = false;
+            return;
+          }
+
+          const source = map.getSource("photos");
+
+          if (!source || typeof source.setData !== "function") {
+            this.initialized = true;
+            this.loading = false;
+            return;
+          }
+
+          source.setData(this.result);
 
           if (this.filter.q || !this.initialized) {
-            this.map.fitBounds(this.result.bbox, {
-              maxZoom: 17,
-              padding: 100,
-              duration: this.animate,
-              essential: false,
-              animate: true,
-            });
+            if (typeof map.fitBounds === "function") {
+              map.fitBounds(this.result.bbox, {
+                maxZoom: 17,
+                padding: 100,
+                duration: this.animate,
+                essential: false,
+                animate: true,
+              });
+            }
           }
 
           this.initialized = true;
@@ -901,12 +1024,21 @@ export default {
       this.map.on("load", () => this.onMapLoad());
     },
     getClusterFeatures(clusterId, limit, callback) {
-      this.map
-        .getSource("photos")
-        .getClusterLeaves(clusterId, limit, undefined)
-        .then((clusterFeatures) => {
-          callback(clusterFeatures);
-        });
+      const map = this.map;
+
+      if (!map || typeof map.getSource !== "function") {
+        return;
+      }
+
+      const source = map.getSource("photos");
+
+      if (!source || typeof source.getClusterLeaves !== "function") {
+        return;
+      }
+
+      source.getClusterLeaves(clusterId, limit, undefined).then((clusterFeatures) => {
+        callback(clusterFeatures);
+      });
     },
     getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 10000) {
@@ -937,10 +1069,22 @@ export default {
         return;
       }
 
-      let newMarkers = {};
+      const map = this.map;
+
+      if (!map || typeof map.querySourceFeatures !== "function") {
+        return;
+      }
+
+      // Maps may emit resize events while a style reloads; skip processing until the source is ready.
+      const source = typeof map.getSource === "function" ? map.getSource("photos") : null;
+      if (!source) {
+        return;
+      }
+
+      const newMarkers = {};
 
       // Get map features from the "photos" layer.
-      let features = this.map.querySourceFeatures("photos");
+      const features = map.querySourceFeatures("photos");
 
       // Get API token required to show thumbnails.
       let token = this.$config.previewToken;
@@ -970,8 +1114,7 @@ export default {
             const imageContainer = document.createElement("div");
             imageContainer.className = "marker cluster-marker";
 
-            this.map
-              .getSource("photos")
+            source
               .getClusterLeaves(props.cluster_id, 4, 0)
               .then((clusterFeatures) => {
                 const previewImageCount = clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
@@ -986,9 +1129,7 @@ export default {
 
                 imageContainer.append(...images);
               })
-              .catch((error) => {
-                return;
-              });
+              .catch(() => {});
 
             const counterBubble = document.createElement("div");
 
@@ -997,10 +1138,6 @@ export default {
 
             el.append(imageContainer);
             el.append(counterBubble);
-            el.addEventListener("click", () => {
-              this.selectClusterById(props.cluster_id);
-            });
-
             marker = this.markers[id] = new maplibregl.Marker({
               element: el,
             }).setLngLat(coords);
@@ -1008,25 +1145,27 @@ export default {
             marker.setLngLat(coords);
           }
 
+          const clusterId = props.cluster_id;
+          this.ensureMarkerClick(id, marker, clusterId, () => () => this.selectClusterById(clusterId));
+
           newMarkers[id] = marker;
 
           if (!this.markersOnScreen[id]) {
-            marker.addTo(this.map);
+            marker.addTo(map);
           }
         } else {
           // Update photo marker.
-          let id = features[i].id;
+          const id = features[i].id;
 
           let marker = this.markers[id];
           if (!marker) {
-            let el = document.createElement("div");
+            const el = document.createElement("div");
             el.className = "marker";
             el.title = props.Title;
             el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
             el.style.width = "50px";
             el.style.height = "50px";
 
-            el.addEventListener("click", () => this.openPhoto(props.UID));
             marker = this.markers[id] = new maplibregl.Marker({
               element: el,
             }).setLngLat(coords);
@@ -1034,20 +1173,27 @@ export default {
             marker.setLngLat(coords);
           }
 
+          const photoUid = props.UID;
+          this.ensureMarkerClick(id, marker, photoUid, () => () => this.openPhoto(photoUid));
+
           newMarkers[id] = marker;
 
           if (!this.markersOnScreen[id]) {
-            marker.addTo(this.map);
+            marker.addTo(map);
           }
         }
       }
 
       // Hide markers that are not currently visible.
-      for (let id in this.markersOnScreen) {
+      Object.keys(this.markersOnScreen).forEach((id) => {
         if (!newMarkers[id]) {
-          this.markersOnScreen[id].remove();
+          const marker = this.markersOnScreen[id];
+          this.clearMarkerClick(id, marker);
+          if (marker && typeof marker.remove === "function") {
+            marker.remove();
+          }
         }
-      }
+      });
 
       // Remember the markers displayed on the map.
       this.markersOnScreen = newMarkers;
@@ -1092,11 +1238,17 @@ export default {
 
       // Example of dynamic map cluster rendering:
       // https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
-      this.map.on("data", (e) => {
-        if (e.sourceId === "photos" && e.isSourceLoaded) {
+      if (this._mapDataHandler && typeof this.map.off === "function") {
+        this.map.off("data", this._mapDataHandler);
+      }
+
+      this._mapDataHandler = (e) => {
+        if (e?.sourceId === "photos" && e.isSourceLoaded) {
           this.updateMarkers();
         }
-      });
+      };
+
+      this.map.on("data", this._mapDataHandler);
 
       // Add additional event handlers to update the marker previews.
       this.map.on("move", this.updateMarkers);

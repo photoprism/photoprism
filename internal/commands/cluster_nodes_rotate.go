@@ -49,7 +49,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 
 		// Determine node name. On portal, resolve id->name via registry; otherwise treat key as name.
 		name := clean.DNSLabel(key)
-		if conf.IsPortal() {
+		if conf.Portal() {
 			if r, err := reg.NewClientRegistryWithConfig(conf); err == nil {
 				if n, err := r.FindByNodeUUID(key); err == nil && n != nil {
 					name = n.Name

@@ -1,7 +1,7 @@
 /* Transitions */
 
 .no-transition {
-    transition: none;
+    transition: none!important;
 }
 
 /* Animations */

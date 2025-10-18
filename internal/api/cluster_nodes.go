@@ -57,7 +57,7 @@ func ClusterListNodes(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -134,7 +134,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -194,7 +194,7 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -274,7 +274,7 @@ func ClusterDeleteNode(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}

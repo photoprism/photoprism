@@ -224,9 +224,9 @@ a.logo-large {
 .splash-warning {
     display: block;
     font-weight: 600;
-    color: #bbbbb5;
+    color: #bbbaba;
     margin: 0 auto;
-    max-width: 520px;
+    max-width: 580px;
     line-height: 1.5;
 }
 

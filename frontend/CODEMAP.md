@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 11, 2025
+**Last Updated:** October 13, 2025
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -28,9 +28,10 @@ Directory Map (src)
 
 Startup Templates & Splash Screen
 - The HTML shell is rendered from `assets/templates/index.gohtml` (and `pro/assets/templates/index.gohtml` / `plus/...`). Each template includes `app.gohtml` for the splash markup and `app.js.gohtml` to inject the bundle.
-- The loader script lives in `assets/static/js/app-loader.js` (included via `app.js.gohtml`) and checks for modern browser features (Promise, fetch, AbortController, `script.noModule`, etc.) before loading `window.__CONFIG__.jsUri`. Update the same files in private repos whenever the loader logic changes.
+- The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes. Update the same files in private repos whenever the loader logic changes, and keep the script order so the check runs first.
 - Splash styles, including the `.splash-warning` fallback banner, live in `frontend/src/css/splash.css`. Keep styling changes there so public and private editions stay aligned.
 - Baseline support: Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. If the support matrix changes, revise the warning text in `app.js.gohtml` and the CSS message accordingly.
+- Lightbox videos: `createVideoElement` wires listeners through an `AbortController` stored in `content.data.events`; `contentDestroy` aborts it so video and RemotePlayback handlers vanish with the slide.
 
 Runtime & Plugins
 - Vue 3 + Vuetify 3 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
@@ -39,7 +40,7 @@ Runtime & Plugins
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
 - Tooltips: `floating-vue`
 - Video: HLS.js assigned to `window.Hls`
-- PWA: `@lcdp/offline-plugin/runtime` installs when `baseUri === ""`
+- PWA: Workbox registers a service worker after config load (see `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work.
 - WebSocket: `src/common/websocket.js` publishes `websocket.*` events, used by `$session` for client info
 
 HTTP Client
@@ -78,6 +79,7 @@ Build & Tooling
   - `npm run build` (prod), `npm run build-dev` (dev), `npm run watch`
   - Lint/format: `npm run lint`, `npm run fmt`
   - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
+- Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
 - Browser automation (Playwright MCP): workflows are documented in `AGENTS.md` under “Playwright MCP Usage”; use those directions when agents need to script UI checks or capture screenshots.
 

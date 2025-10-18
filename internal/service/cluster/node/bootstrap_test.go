@@ -248,7 +248,7 @@ func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
 	assert.NoError(t, err)
 	defer func() { _ = os.RemoveAll(tempTheme) }()
 	c.SetThemePath(tempTheme)
-	assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("// app\n"), fs.ModeFile))
+	assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, fs.AppJsFile), []byte("// app\n"), fs.ModeFile))
 
 	assert.NoError(t, InitConfig(c))
 	// Should have skipped request because app.js already exists.

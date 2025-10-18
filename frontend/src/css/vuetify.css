@@ -91,7 +91,10 @@ body.dark-theme {
 
 /* Dialogs & Overlays */
 
-.v-overlay-container {
+.v-overlay-container,
+body > .v-overlay-container,
+body > .v-overlay-container .v-overlay,
+body > .v-overlay-container .v-overlay__scrim {
     transition: none !important;
 }
 

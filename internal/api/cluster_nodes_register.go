@@ -42,7 +42,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		conf := get.Config()
 
 		// Must be a portal.
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}

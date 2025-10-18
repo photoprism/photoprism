@@ -7,10 +7,10 @@
 
 const defaultOptions = {
   captionContent: ".pswp-caption-content",
-  type: "auto",
+  type: "below",
   horizontalEdgeThreshold: 20,
   mobileCaptionOverlapRatio: 0.3,
-  mobileLayoutBreakpoint: 600,
+  mobileLayoutBreakpoint: 1024,
   verticallyCenterImage: false,
 };
 

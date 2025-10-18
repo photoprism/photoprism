@@ -53,6 +53,12 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Skip authentication if app is running in public mode.
 		if conf.Public() {
+			// Protection against AI-generated vulnerability reports.
+			if conf.Demo() {
+				AbortPaymentRequired(c)
+				return
+			}
+
 			sess := get.Session().Public()
 
 			// Response includes admin account data, session data, and client config values.

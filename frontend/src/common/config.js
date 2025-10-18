@@ -668,6 +668,10 @@ export default class Config {
 
   // getDefaultRoute returns the default route to use after login or in case of routing errors.
   getDefaultRoute() {
+    if (this.isPortal()) {
+      return "cluster";
+    }
+
     const albumsRoute = "albums";
     const browseRoute = "browse";
     const defaultRoute = this.deny("photos", "access_library") ? albumsRoute : browseRoute;
@@ -816,6 +820,16 @@ export default class Config {
   // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
     return this.values && this.values.demo;
+  }
+
+  // isPortal returns true if this is a cluster portal server.
+  isPortal() {
+    return this.values && this.values.portal;
+  }
+
+  // isPro returns true if this is team version.
+  isPro() {
+    return !!this.values?.ext["pro"];
   }
 
   isSponsor() {

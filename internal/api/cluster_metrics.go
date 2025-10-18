@@ -29,7 +29,7 @@ func ClusterMetrics(router *gin.RouterGroup) {
 		}
 
 		conf := get.Config()
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}

@@ -420,13 +420,13 @@ msgctxt "Noun"
 msgid "Archive"
 msgstr "Arquivo"
 
-#: src/component/lightbox.vue:1209 src/component/photo/clipboard.vue:142
+#: src/component/lightbox.vue:1212 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arquivo"
 
-#: src/component/lightbox.vue:2004 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:2006 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "Arquivado"
 
@@ -685,7 +685,7 @@ msgstr "As mudanças não foram salvas"
 
 #: src/component/user/edit/dialog.vue:85 src/component/user/edit/dialog.vue:161
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1963
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1965
 #: src/component/photo/edit/files.vue:178 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
 #: src/page/albums.vue:912 src/page/people/recognized.vue:119
@@ -727,8 +727,8 @@ msgid "Client Credentials"
 msgstr "Credenciais do cliente"
 
 #: src/component/user/edit/dialog.vue:473 src/page/admin/sessions.vue:529
-#: src/component/lightbox.vue:285 src/component/lightbox.vue:1011
-#: src/component/lightbox.vue:1012 src/component/photo/edit/details.vue:599
+#: src/component/lightbox.vue:288 src/component/lightbox.vue:1014
+#: src/component/lightbox.vue:1015 src/component/photo/edit/details.vue:599
 #: src/component/photo/edit/details.vue:606 src/component/photo/toolbar.vue:160
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
 #: src/component/settings/passcode.vue:148
@@ -1096,7 +1096,7 @@ msgid "Done."
 msgstr "Concluído."
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:123
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1237
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1240
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:332
@@ -1117,7 +1117,7 @@ msgstr "Descarregar ficheiros individuais e arquivos zip."
 
 #: src/component/album/clipboard.vue:121 src/component/album/toolbar.vue:172
 #: src/component/file/clipboard.vue:79 src/component/label/clipboard.vue:100
-#: src/component/lightbox.vue:2043 src/component/people/clipboard.vue:77
+#: src/component/lightbox.vue:2045 src/component/people/clipboard.vue:77
 #: src/component/photo/clipboard.vue:232 src/component/photo/edit/files.vue:135
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:139
@@ -1157,7 +1157,7 @@ msgid "E-Mail"
 msgstr "Email"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:94
-#: src/component/lightbox.vue:1138 src/component/lightbox.vue:1139
+#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1142
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:407
 msgid "Edit"
 msgstr "Editar"
@@ -1221,7 +1221,7 @@ msgstr "Digite o código de verificação"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Digite sua senha para confirmar a ação e continuar:"
 
-#: src/page/connect.vue:54 src/component/lightbox.vue:289
+#: src/page/connect.vue:54 src/component/lightbox.vue:292
 #: src/page/connect.vue:57 src/page/library/errors.vue:246
 msgid "Error"
 msgstr "Erro"
@@ -1415,7 +1415,7 @@ msgstr "Quadros"
 msgid "Full Access"
 msgstr "Acesso total"
 
-#: src/component/lightbox.vue:1086 src/component/lightbox.vue:1087
+#: src/component/lightbox.vue:1089 src/component/lightbox.vue:1090
 msgid "Fullscreen"
 msgstr "Ecrã inteiro"
 
@@ -1599,7 +1599,7 @@ msgstr "Falha ao indexar"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexando ficheiro multimédia e secundários…"
 
-#: src/component/lightbox.vue:1034 src/component/lightbox.vue:1035
+#: src/component/lightbox.vue:1037 src/component/lightbox.vue:1038
 #: src/component/sidebar/info.vue:31
 msgid "Information"
 msgstr "Informações"
@@ -1770,7 +1770,7 @@ msgstr "Biblioteca"
 msgid "License"
 msgstr "Licença"
 
-#: src/component/lightbox.vue:1104 src/component/lightbox.vue:1105
+#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
 msgid "Like"
 msgstr "Gosto"
 
@@ -1966,7 +1966,7 @@ msgstr "Monocromático"
 msgid "Month"
 msgstr "Mês"
 
-#: src/component/lightbox.vue:1157
+#: src/component/lightbox.vue:1160
 msgid "More options"
 msgstr "Mais opções"
 
@@ -1986,7 +1986,7 @@ msgstr "Mover ficheiro"
 msgid "Must have at least %{n} characters."
 msgstr "Deve ter pelo menos %{n} caracteres."
 
-#: src/component/lightbox.vue:1053 src/component/lightbox.vue:1054
+#: src/component/lightbox.vue:1056 src/component/lightbox.vue:1057
 msgid "Mute"
 msgstr "Silenciar"
 
@@ -2032,7 +2032,7 @@ msgstr "Nova senha"
 msgid "Newest First"
 msgstr "Recentes primeiro"
 
-#: src/component/lightbox.vue:288 src/locales.js:297
+#: src/component/lightbox.vue:291 src/locales.js:297
 msgid "Next"
 msgstr "Seguinte"
 
@@ -2078,7 +2078,7 @@ msgstr "Não mais"
 msgid "No people found"
 msgstr "Nenhuma pessoa encontrada"
 
-#: src/component/lightbox.vue:366 src/component/photo/view/cards.vue:144
+#: src/component/lightbox.vue:369 src/component/photo/view/cards.vue:144
 #: src/component/photo/view/list.vue:82 src/component/photo/view/mosaic.vue:68
 #: src/page/album/photos.vue:501 src/page/library/browse.vue:123
 #: src/page/photos.vue:638 src/page/places.vue:624 src/page/places.vue:734
@@ -2125,12 +2125,12 @@ msgstr "Imagens de baixa qualidade ou não-fotográficas necessitam de revisão 
 msgid "None"
 msgstr "Nenhum"
 
-#: src/component/lightbox.vue:634 src/component/service/upload.vue:75
+#: src/component/lightbox.vue:637 src/component/service/upload.vue:75
 #: src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Não autorizado"
 
-#: src/component/lightbox.vue:631
+#: src/component/lightbox.vue:634
 msgid "Not found"
 msgstr "Não encontrado"
 
@@ -2138,7 +2138,7 @@ msgstr "Não encontrado"
 msgid "Not sorted."
 msgstr "Não estás classificado."
 
-#: src/component/lightbox.vue:628 src/component/lightbox.vue:745
+#: src/component/lightbox.vue:631 src/component/lightbox.vue:748
 msgid "Not supported"
 msgstr "Não suportado"
 
@@ -2458,7 +2458,7 @@ msgstr "Pré-visualização"
 msgid "Preview Images"
 msgstr "Imagens de pré-visualização"
 
-#: src/component/lightbox.vue:287 src/locales.js:298
+#: src/component/lightbox.vue:290 src/locales.js:298
 msgid "Previous"
 msgstr "Anterior"
 
@@ -2603,7 +2603,7 @@ msgstr "Remover"
 msgid "remove failed: unknown album"
 msgstr "remoção falhou: álbum desconhecido"
 
-#: src/component/lightbox.vue:1194 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1197 src/component/photo/clipboard.vue:155
 msgid "Remove from Album"
 msgstr "Remover do álbum"
 
@@ -2611,7 +2611,7 @@ msgstr "Remover do álbum"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Remover ficheiros já importados ao armazenamento. Tipos de ficheiros não suportados nunca serão apagados, eles continuam na localização atual."
 
-#: src/common/api.js:102 src/component/lightbox.vue:741
+#: src/common/api.js:102 src/component/lightbox.vue:744
 msgid "Request failed - are you offline?"
 msgstr "Falha na solicitação - você está offline?"
 
@@ -2632,12 +2632,12 @@ msgstr "Resolução"
 msgid "Restart"
 msgstr "Reiniciar"
 
-#: src/component/user/edit/dialog.vue:487 src/component/lightbox.vue:1223
+#: src/component/user/edit/dialog.vue:487 src/component/lightbox.vue:1226
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "Restaurar"
 
-#: src/component/lightbox.vue:2022
+#: src/component/lightbox.vue:2024
 msgid "Restored"
 msgstr "Restaurado"
 
@@ -2721,7 +2721,7 @@ msgstr "Segredo"
 msgid "Security and Access"
 msgstr "Segurança e acesso"
 
-#: src/component/lightbox.vue:1121 src/component/lightbox.vue:1122
+#: src/component/lightbox.vue:1124 src/component/lightbox.vue:1125
 msgid "Select"
 msgstr "Selecionar"
 
@@ -2790,7 +2790,7 @@ msgstr "Identificação de sessão"
 msgid "Sessions"
 msgstr "Sessões"
 
-#: src/component/lightbox.vue:1179
+#: src/component/lightbox.vue:1182
 msgid "Set as Album Cover"
 msgstr "Define como capa do álbum"
 
@@ -2879,7 +2879,7 @@ msgstr "Semelhante"
 msgid "Size"
 msgstr "Tamanho"
 
-#: src/component/lightbox.vue:1069 src/component/lightbox.vue:1070
+#: src/component/lightbox.vue:1072 src/component/lightbox.vue:1073
 msgid "Slideshow"
 msgstr "Apresentação de diapositivos"
 
@@ -2908,7 +2908,7 @@ msgstr "Não foi possível criar alguns álbuns. Edita os nomes e tenta novament
 msgid "Some albums could not be updated"
 msgstr "Alguns álbuns não puderam ser actualizados"
 
-#: src/component/lightbox.vue:738
+#: src/component/lightbox.vue:741
 msgid "Something went wrong, try again"
 msgstr "Algo deu errado, tente novamente"
 
@@ -3539,7 +3539,7 @@ msgstr "Seu apoio contínuo nos ajuda a fornecer atualizações regulares e a pe
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Sua biblioteca é continuamente analisada para criar automaticamente álbuns de momentos, viagens e lugares especiais."
 
-#: src/component/lightbox.vue:286
+#: src/component/lightbox.vue:289
 msgid "Zoom in/out"
 msgstr "Aproximar/Afastar"
 

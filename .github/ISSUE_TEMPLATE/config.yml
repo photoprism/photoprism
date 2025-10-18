@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a Question in GitHub Discussions
+    url: https://github.com/photoprism/photoprism/discussions
+    about: Use Discussions for general questions, community support, and troubleshooting help.
+  - name: Read Our Support Guide
+    url: https://www.photoprism.app/kb/getting-support
+    about: Learn about official support options and how to get assistance with PhotoPrism.

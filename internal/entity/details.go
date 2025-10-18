@@ -12,7 +12,7 @@ var photoDetailsMutex = sync.Mutex{}
 
 // Details stores denormalized photo metadata to speed up search and filtering.
 type Details struct {
-	PhotoID      uint      `gorm:"primaryKey;autoIncrement:false" yaml:"-"`
+	PhotoID      uint      `gorm:"primaryKey;autoIncrement:false" json:"PhotoID" yaml:"-"`
 	Keywords     string    `gorm:"size:2048;" json:"Keywords" yaml:"Keywords"`
 	KeywordsSrc  string    `gorm:"type:bytes;size:8;" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
 	Notes        string    `gorm:"size:2048;" json:"Notes" yaml:"Notes,omitempty"`
@@ -27,8 +27,8 @@ type Details struct {
 	LicenseSrc   string    `gorm:"type:bytes;size:8;" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
 	Software     string    `gorm:"size:1024;" json:"Software" yaml:"Software,omitempty"`
 	SoftwareSrc  string    `gorm:"type:bytes;size:8;" json:"SoftwareSrc" yaml:"SoftwareSrc,omitempty"`
-	CreatedAt    time.Time `yaml:"-"`
-	UpdatedAt    time.Time `yaml:"-"`
+	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.

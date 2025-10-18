@@ -64,7 +64,7 @@
               <v-select
                 v-model="settings.ui.startPage"
                 :disabled="busy"
-                :items="options.StartPages(settings.features)"
+                :items="options.StartPages(settings.features, isPortal)"
                 tabindex="2"
                 item-title="text"
                 item-value="value"
@@ -79,7 +79,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="isDemo || isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
+      <v-card v-if="!isPortal && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
           <v-row align="start" dense>
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
@@ -437,7 +437,8 @@ export default {
       isDemo: this.$config.isDemo(),
       isAdmin: this.$session.isAdmin(),
       isSuperAdmin: this.$session.isSuperAdmin(),
-      isPublic: this.$config.get("public"),
+      isPublic: this.$config.isPublic(),
+      isPortal: this.$config.isPortal(),
       config: this.$config.values,
       settings: new Settings(this.$config.getSettings()),
       options: options,

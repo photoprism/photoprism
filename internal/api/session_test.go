@@ -135,6 +135,21 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "1jxf3jfn2k"}`)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("PublicDemoForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		CreateSession(router)
+
+		origDemo := conf.Options().Demo
+		t.Cleanup(func() {
+			conf.Options().Demo = origDemo
+		})
+
+		conf.Options().Demo = true
+
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
+		assert.Equal(t, http.StatusPaymentRequired, r.Code)
+	})
 	t.Run("AdminInvalidPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)

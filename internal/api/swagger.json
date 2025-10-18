@@ -1255,6 +1255,9 @@
                 "CopyrightSrc": {
                     "type": "string"
                 },
+                "CreatedAt": {
+                    "type": "string"
+                },
                 "Keywords": {
                     "type": "string"
                 },
@@ -1273,6 +1276,9 @@
                 "NotesSrc": {
                     "type": "string"
                 },
+                "PhotoID": {
+                    "type": "integer"
+                },
                 "Software": {
                     "type": "string"
                 },
@@ -1285,13 +1291,7 @@
                 "SubjectSrc": {
                     "type": "string"
                 },
-                "createdAt": {
-                    "type": "string"
-                },
-                "photoID": {
-                    "type": "integer"
-                },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 }
             },

@@ -31,7 +31,7 @@ func ClusterSummary(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -73,7 +73,7 @@ func ClusterHealth(router *gin.RouterGroup) {
 		c.Header(header.AccessControlAllowOrigin, header.Any)
 
 		// Return error if not a portal node.
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}

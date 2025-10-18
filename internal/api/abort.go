@@ -82,6 +82,11 @@ func AbortUnauthorized(c *gin.Context) {
 	Abort(c, http.StatusUnauthorized, i18n.ErrUnauthorized)
 }
 
+// AbortPaymentRequired aborts with status code 402.
+func AbortPaymentRequired(c *gin.Context) {
+	Abort(c, http.StatusPaymentRequired, i18n.ErrPaymentRequired)
+}
+
 // AbortForbidden aborts with status code 403.
 func AbortForbidden(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrForbidden)

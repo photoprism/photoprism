@@ -13,16 +13,16 @@ const (
 
 // FileShare represents remote-sharing state for a file and a single connected service account.
 type FileShare struct {
-	FileID     uint   `gorm:"primaryKey;autoIncrement:false"`
-	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false"`
-	RemoteName string `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false"`
-	Status     string `gorm:"type:bytes;size:16;"`
-	Error      string `gorm:"type:bytes;size:512;"`
-	Errors     int
-	File       *File    `gorm:"foreignKey:FileID"`
-	Account    *Service `gorm:"foreignKey:ServiceID"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	FileID     uint      `gorm:"primaryKey;autoIncrement:false" json:"FileID" yaml:"FileID,omitempty"`
+	ServiceID  uint      `gorm:"primaryKey;autoIncrement:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
+	RemoteName string    `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	Status     string    `gorm:"type:bytes;size:16;" json:"Status" yaml:"Status,omitempty"`
+	Error      string    `gorm:"type:bytes;size:512;" json:"Error,omitempty" yaml:"Error,omitempty"`
+	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
+	File       *File     `json:"File,omitempty" yaml:"-"`    `gorm:"foreignKey:FileID"`
+	Account    *Service  `json:"Account,omitempty" yaml:"-"` `gorm:"foreignKey:ServiceID"`
+	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
+	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }
 
 // TableName returns the entity table name.

@@ -238,7 +238,7 @@ export function findFocusElement(c) {
           if (el && el instanceof HTMLElement) {
             return el;
           }
-        } catch (_) {
+        } catch {
           // Ignore.
         }
       }
@@ -344,15 +344,25 @@ export class View {
       consumed: false,
     };
 
-    addEventListener("keydown", this.onKeyDown.bind(this));
+    // Bind keydown handler once so it can be removed if needed (avoids leaking bound fns).
+    this._onKeyDownListener = this.onKeyDown.bind(this);
+    addEventListener("keydown", this._onKeyDownListener);
+
+    // Options used when preventing navigation touch gestures; keep a stable
+    // object reference so add/removeEventListener calls can match on all browsers.
+    this._preventNavOptions = { passive: false };
 
     if (trace) {
-      document.addEventListener("focusin", (ev) => {
+      // Store trace handlers so they can be removed later if needed.
+      this._traceFocusIn = (ev) => {
         console.log("%cdocument.focusin", "color: #B2EBF2;", ev.target);
-      });
-      document.addEventListener("focusout", (ev) => {
+      };
+      this._traceFocusOut = (ev) => {
         console.log("%cdocument.focusout", "color: #B2EBF2;", ev.target);
-      });
+      };
+
+      document.addEventListener("focusin", this._traceFocusIn);
+      document.addEventListener("focusout", this._traceFocusOut);
     }
   }
 
@@ -553,16 +563,16 @@ export class View {
     if (disableNavigationGestures) {
       if (!bodyEl.classList.contains("disable-navigation-gestures")) {
         bodyEl.classList.add("disable-navigation-gestures");
-        window.addEventListener(TouchStartEvent, preventNavigationTouchEvent, { passive: false });
-        window.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, { passive: false });
+        window.addEventListener(TouchStartEvent, preventNavigationTouchEvent, this._preventNavOptions);
+        window.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, this._preventNavOptions);
         if (debug) {
           console.log(`view: disabled touch navigation gestures`);
         }
       }
     } else if (bodyEl.classList.contains("disable-navigation-gestures")) {
       bodyEl.classList.remove("disable-navigation-gestures");
-      window.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, false);
-      window.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, false);
+      window.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, this._preventNavOptions);
+      window.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, this._preventNavOptions);
       if (debug) {
         console.log(`view: re-enabled touch navigation gestures`);
       }

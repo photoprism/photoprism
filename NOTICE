@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-10-10
+Date generated: 2025-10-18
 
 ================================================================================
 
@@ -1906,8 +1906,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-playground/validator/v10
-Version: v10.27.0
-License: MIT (https://github.com/go-playground/validator/blob/v10.27.0/LICENSE)
+Version: v10.28.0
+License: MIT (https://github.com/go-playground/validator/blob/v10.28.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -2387,8 +2387,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20251008113719-ccf458c07da6
-License: Apache-2.0 (https://github.com/golang/geo/blob/ccf458c07da6/LICENSE)
+Version: v0.0.0-20251014162054-f262919d8753
+License: Apache-2.0 (https://github.com/golang/geo/blob/f262919d8753/LICENSE)
 
 
                                  Apache License
@@ -5699,8 +5699,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/quic-go/quic-go
-Version: v0.54.0
-License: MIT (https://github.com/quic-go/quic-go/blob/v0.54.0/LICENSE)
+Version: v0.55.0
+License: MIT (https://github.com/quic-go/quic-go/blob/v0.55.0/LICENSE)
 
 MIT License
 
@@ -8725,7 +8725,6 @@ Package                           License       Copyright
 @babel/runtime                   MIT           The Babel Team (https://babel.dev/team)
 @eslint/eslintrc                 MIT           Nicholas C. Zakas
 @eslint/js                       MIT           n/a
-@lcdp/offline-plugin             MIT           Le Comptoir Des Pharmacies <webmaster@lecomptoirdespharmacies.fr>
 @mdi/font                        Apache-2.0    Austin Andrews
 @testing-library/jest-dom        MIT           Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
 @testing-library/react           MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
@@ -8749,7 +8748,7 @@ core-js                          MIT           Denis Pushkarev zloirock@zloirock
 cross-env                        MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 css-loader                       MIT           Tobias Koppers @sokra
 cssnano                          MIT           Ben Briggs beneb.info@gmail.com http://beneb.info
-easygettext                      MIT           Polyconseil
+escape-string-regexp             MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 eslint                           MIT           Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
 eslint-config-prettier           MIT           Simon Lydell
 eslint-formatter-pretty          MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
@@ -8790,7 +8789,6 @@ resolve-url-loader               MIT           bholloway
 sanitize-html                    MIT           Apostrophe Technologies, Inc.
 sass                             MIT           Natalie Weizenbaum nweiz@google.com https://github.com/nex3
 sass-loader                      MIT           J. Tangelder
-server                           MIT           Francisco Presencia <public@francisco.io> (https://francisco.io/)
 sockette                         MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
 style-loader                     MIT           Tobias Koppers @sokra
 svg-url-loader                   MIT           Hovhannes Babayan
@@ -8817,3 +8815,4 @@ webpack-manifest-plugin          MIT           Dane Thurber <dane.thurber@gmail.
 webpack-md5-hash                 MIT           Kirill Ermolov
 webpack-merge                    MIT           Juho Vepsalainen <bebraw@gmail.com>
 webpack-plugin-vuetify           MIT           Kael Watts-Deuchar
+workbox-webpack-plugin           MIT           Google's Web DevRel Team and Google's Aurora Team

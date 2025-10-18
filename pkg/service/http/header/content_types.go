@@ -101,6 +101,8 @@ const (
 	ContentTypeMultipart  = "multipart/form-data"
 	ContentTypeJson       = "application/json"
 	ContentTypeJsonUtf8   = "application/json; charset=utf-8"
+	ContentTypeJavaScript = "application/javascript"
+	ContentTypeCSS        = "text/css"
 	ContentTypeXml        = "text/xml"
 	ContentTypeHtml       = "text/html; charset=utf-8"
 	ContentTypeText       = "text/plain; charset=utf-8"

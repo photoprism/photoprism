@@ -11,7 +11,7 @@
     @after-leave="afterLeave"
     @keydown.left.exact="onKeyLeft"
     @keydown.right.exact="onKeyRight"
-    @keydown.esc.exact="onClose"
+    @keydown.esc.stop="onClose"
     @focusout="onFocusOut"
   >
     <v-card ref="content" tabindex="1" :tile="$vuetify.display.smAndDown">

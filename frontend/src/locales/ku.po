@@ -420,13 +420,13 @@ msgctxt "Noun"
 msgid "Archive"
 msgstr "ئەرشیف"
 
-#: src/component/lightbox.vue:1209 src/component/photo/clipboard.vue:142
+#: src/component/lightbox.vue:1212 src/component/photo/clipboard.vue:142
 #: src/component/photo/view/cards.vue:398
 msgctxt "Verb"
 msgid "Archive"
 msgstr "ئەرشیف"
 
-#: src/component/lightbox.vue:2004 src/component/photo/edit/info.vue:433
+#: src/component/lightbox.vue:2006 src/component/photo/edit/info.vue:433
 msgid "Archived"
 msgstr "ئەرشیفکراو"
 
@@ -685,7 +685,7 @@ msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
 
 #: src/component/user/edit/dialog.vue:85 src/component/user/edit/dialog.vue:161
 #: src/component/album/edit/dialog.vue:73
-#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1963
+#: src/component/label/edit/dialog.vue:46 src/component/lightbox.vue:1965
 #: src/component/photo/edit/files.vue:178 src/component/service/edit.vue:90
 #: src/component/share/dialog.vue:92 src/component/share/dialog.vue:111
 #: src/page/albums.vue:912 src/page/people/recognized.vue:119
@@ -727,8 +727,8 @@ msgid "Client Credentials"
 msgstr "Bawernameyên Client"
 
 #: src/component/user/edit/dialog.vue:473 src/page/admin/sessions.vue:529
-#: src/component/lightbox.vue:285 src/component/lightbox.vue:1011
-#: src/component/lightbox.vue:1012 src/component/photo/edit/details.vue:599
+#: src/component/lightbox.vue:288 src/component/lightbox.vue:1014
+#: src/component/lightbox.vue:1015 src/component/photo/edit/details.vue:599
 #: src/component/photo/edit/details.vue:606 src/component/photo/toolbar.vue:160
 #: src/component/settings/apps.vue:224 src/component/settings/apps.vue:437
 #: src/component/settings/passcode.vue:148
@@ -1096,7 +1096,7 @@ msgid "Done."
 msgstr "تەواوبوو."
 
 #: src/component/album/clipboard.vue:73 src/component/album/toolbar.vue:123
-#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1237
+#: src/component/file/clipboard.vue:48 src/component/lightbox.vue:1240
 #: src/component/people/clipboard.vue:47 src/component/photo/clipboard.vue:116
 #: src/component/photo/edit/files.vue:168 src/page/settings/content.vue:331
 #: src/page/settings/general.vue:332
@@ -1117,7 +1117,7 @@ msgstr "داگرتنی فایلە تاکەکان و ئەرشیفی زیپ."
 
 #: src/component/album/clipboard.vue:121 src/component/album/toolbar.vue:172
 #: src/component/file/clipboard.vue:79 src/component/label/clipboard.vue:100
-#: src/component/lightbox.vue:2043 src/component/people/clipboard.vue:77
+#: src/component/lightbox.vue:2045 src/component/people/clipboard.vue:77
 #: src/component/photo/clipboard.vue:232 src/component/photo/edit/files.vue:135
 #: src/component/photo/view/cards.vue:169 src/component/photo/view/list.vue:142
 #: src/page/library/browse.vue:139
@@ -1157,7 +1157,7 @@ msgid "E-Mail"
 msgstr "ئیمەیڵ"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:94
-#: src/component/lightbox.vue:1138 src/component/lightbox.vue:1139
+#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1142
 #: src/component/photo/clipboard.vue:90 src/page/settings/general.vue:407
 msgid "Edit"
 msgstr "دەستکاری"
@@ -1221,7 +1221,7 @@ msgstr "Koda verastkirinê binivîse"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Şîfreya xwe binivîse ku çalakiyê piştrast bike û berdewam bike:"
 
-#: src/page/connect.vue:54 src/component/lightbox.vue:289
+#: src/page/connect.vue:54 src/component/lightbox.vue:292
 #: src/page/connect.vue:57 src/page/library/errors.vue:246
 msgid "Error"
 msgstr "هەڵە"
@@ -1415,7 +1415,7 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr "Têketinê Full"
 
-#: src/component/lightbox.vue:1086 src/component/lightbox.vue:1087
+#: src/component/lightbox.vue:1089 src/component/lightbox.vue:1090
 msgid "Fullscreen"
 msgstr "پڕاوپڕ بەشاشە"
 
@@ -1599,7 +1599,7 @@ msgstr "نیشانەسازی شکستی هێنا"
 msgid "Indexing media and sidecar files…"
 msgstr "پێڕستکردنی پەڕگەکانی میدیا و لاتەنیشتەکان…"
 
-#: src/component/lightbox.vue:1034 src/component/lightbox.vue:1035
+#: src/component/lightbox.vue:1037 src/component/lightbox.vue:1038
 #: src/component/sidebar/info.vue:31
 msgid "Information"
 msgstr "Agahî"
@@ -1770,7 +1770,7 @@ msgstr "کتێبخانە"
 msgid "License"
 msgstr "مۆڵەت"
 
-#: src/component/lightbox.vue:1104 src/component/lightbox.vue:1105
+#: src/component/lightbox.vue:1107 src/component/lightbox.vue:1108
 msgid "Like"
 msgstr "بەدڵمە"
 
@@ -1966,7 +1966,7 @@ msgstr "Monochrome"
 msgid "Month"
 msgstr "مانگ"
 
-#: src/component/lightbox.vue:1157
+#: src/component/lightbox.vue:1160
 msgid "More options"
 msgstr "Vebijarkên bêtir"
 
@@ -1986,7 +1986,7 @@ msgstr "دۆسیەی زیاتر"
 msgid "Must have at least %{n} characters."
 msgstr "بەلایەنی کەمەوە 6 نووسە"
 
-#: src/component/lightbox.vue:1053 src/component/lightbox.vue:1054
+#: src/component/lightbox.vue:1056 src/component/lightbox.vue:1057
 msgid "Mute"
 msgstr "Bêdeng"
 
@@ -2032,7 +2032,7 @@ msgstr "تێپەڕەوشەی نوێ"
 msgid "Newest First"
 msgstr "یەکەم تازەترین"
 
-#: src/component/lightbox.vue:288 src/locales.js:297
+#: src/component/lightbox.vue:291 src/locales.js:297
 msgid "Next"
 msgstr "Piştî"
 
@@ -2078,7 +2078,7 @@ msgstr "Bêtir na"
 msgid "No people found"
 msgstr "Kes nehat dîtin"
 
-#: src/component/lightbox.vue:366 src/component/photo/view/cards.vue:144
+#: src/component/lightbox.vue:369 src/component/photo/view/cards.vue:144
 #: src/component/photo/view/list.vue:82 src/component/photo/view/mosaic.vue:68
 #: src/page/album/photos.vue:501 src/page/library/browse.vue:123
 #: src/page/photos.vue:638 src/page/places.vue:624 src/page/places.vue:734
@@ -2125,12 +2125,12 @@ msgstr "وێنە نافۆتۆگرافی و کوالێتی نزمەکان پێو�
 msgid "None"
 msgstr "هیچ"
 
-#: src/component/lightbox.vue:634 src/component/service/upload.vue:75
+#: src/component/lightbox.vue:637 src/component/service/upload.vue:75
 #: src/component/service/upload.vue:87
 msgid "Not allowed"
 msgstr "Destûr nayê dayîn"
 
-#: src/component/lightbox.vue:631
+#: src/component/lightbox.vue:634
 msgid "Not found"
 msgstr "نەدۆزرایەوە"
 
@@ -2138,7 +2138,7 @@ msgstr "نەدۆزرایەوە"
 msgid "Not sorted."
 msgstr "Ne veqetandin."
 
-#: src/component/lightbox.vue:628 src/component/lightbox.vue:745
+#: src/component/lightbox.vue:631 src/component/lightbox.vue:748
 msgid "Not supported"
 msgstr "Ne piştgirî kirin"
 
@@ -2458,7 +2458,7 @@ msgstr "پێشبینین"
 msgid "Preview Images"
 msgstr "Pêşdîtina Wêneyan"
 
-#: src/component/lightbox.vue:287 src/locales.js:298
+#: src/component/lightbox.vue:290 src/locales.js:298
 msgid "Previous"
 msgstr "Pêşî"
 
@@ -2603,7 +2603,7 @@ msgstr "سڕینەوە"
 msgid "remove failed: unknown album"
 msgstr "سڕینەوەکە سەرکەوتوو نەبوو: ئەلبومی نەناسراو"
 
-#: src/component/lightbox.vue:1194 src/component/photo/clipboard.vue:155
+#: src/component/lightbox.vue:1197 src/component/photo/clipboard.vue:155
 msgid "Remove from Album"
 msgstr "Ji albûmê derxe"
 
@@ -2611,7 +2611,7 @@ msgstr "Ji albûmê derxe"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "لابردنی پەڕگە هاوردەکان بۆ بەتاڵکردنی بیرگە. جۆرەکانی پەڕگەی پشتیوانی نەکراو هەرگیز ناسڕدرێتەوە، ئەوان لە شوێنی ئێستایان دەمێننەوە."
 
-#: src/common/api.js:102 src/component/lightbox.vue:741
+#: src/common/api.js:102 src/component/lightbox.vue:744
 msgid "Request failed - are you offline?"
 msgstr "Daxwaz bi ser neket - tu negirêdayî yî?"
 
@@ -2632,12 +2632,12 @@ msgstr "Resolution"
 msgid "Restart"
 msgstr "Restart"
 
-#: src/component/user/edit/dialog.vue:487 src/component/lightbox.vue:1223
+#: src/component/user/edit/dialog.vue:487 src/component/lightbox.vue:1226
 #: src/component/photo/clipboard.vue:77
 msgid "Restore"
 msgstr "گەڕاندنەوە"
 
-#: src/component/lightbox.vue:2022
+#: src/component/lightbox.vue:2024
 msgid "Restored"
 msgstr "Restored"
 
@@ -2721,7 +2721,7 @@ msgstr "نهێنی"
 msgid "Security and Access"
 msgstr "Ewlekarî û Gihîştin"
 
-#: src/component/lightbox.vue:1121 src/component/lightbox.vue:1122
+#: src/component/lightbox.vue:1124 src/component/lightbox.vue:1125
 msgid "Select"
 msgstr "دەستنیشانکردن"
 
@@ -2790,7 +2790,7 @@ msgstr "Nasnameya rûniştinê"
 msgid "Sessions"
 msgstr "Sessions"
 
-#: src/component/lightbox.vue:1179
+#: src/component/lightbox.vue:1182
 msgid "Set as Album Cover"
 msgstr "Set wek Album Cover"
 
@@ -2879,7 +2879,7 @@ msgstr "وەکویەک"
 msgid "Size"
 msgstr "ڕووبەر"
 
-#: src/component/lightbox.vue:1069 src/component/lightbox.vue:1070
+#: src/component/lightbox.vue:1072 src/component/lightbox.vue:1073
 msgid "Slideshow"
 msgstr "Slideshow"
 
@@ -2908,7 +2908,7 @@ msgstr "Hin albûm nehatin afirandin. Ji kerema xwe navan biguherînin û dîsa 
 msgid "Some albums could not be updated"
 msgstr "Hin albûm nehatin nûvekirin"
 
-#: src/component/lightbox.vue:738
+#: src/component/lightbox.vue:741
 msgid "Something went wrong, try again"
 msgstr "Tiştek xelet derket, dîsa biceribîne"
 
@@ -3539,7 +3539,7 @@ msgstr "Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitand
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên demên taybetî, rêwîtî û deveran çêdike."
 
-#: src/component/lightbox.vue:286
+#: src/component/lightbox.vue:289
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
 

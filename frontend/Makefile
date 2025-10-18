@@ -65,6 +65,10 @@ fmt:
 	npm run fmt
 test:
 	npm run test
+test-coverage:
+	npm run test-coverage
+test-component:
+	npm run test-component
 testcafe:
 	npm run testcafe
 acceptance-local:

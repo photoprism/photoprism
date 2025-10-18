@@ -37,7 +37,7 @@ var ClusterNodesModCommand = &cli.Command{
 
 func clusterNodesModAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			return cli.Exit(fmt.Errorf("node update is only available on a Portal node"), 2)
 		}
 

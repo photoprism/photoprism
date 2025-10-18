@@ -35,6 +35,7 @@ venv
 /pro
 /plus
 /tmp/
+/internal/tmp/
 /test/
 *-lock.json
 /node_modules

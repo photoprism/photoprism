@@ -59,7 +59,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		*/
 
 		// Abort if this is not a portal server.
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}

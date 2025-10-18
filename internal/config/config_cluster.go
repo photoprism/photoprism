@@ -84,8 +84,8 @@ func (c *Config) PortalUrl() string {
 	return c.options.PortalUrl
 }
 
-// IsPortal returns true if the configured node type is "portal".
-func (c *Config) IsPortal() bool {
+// Portal returns true if the configured node type is "portal".
+func (c *Config) Portal() bool {
 	return c.NodeRole() == cluster.RolePortal
 }
 
@@ -123,7 +123,7 @@ func (c *Config) JoinToken() string {
 		}
 	}
 
-	if !c.IsPortal() {
+	if !c.Portal() {
 		return ""
 	}
 
@@ -182,7 +182,7 @@ func (c *Config) NodeName() string {
 	}
 
 	// Default: portal nodes → "portal".
-	if c.IsPortal() {
+	if c.Portal() {
 		return "portal"
 	}
 

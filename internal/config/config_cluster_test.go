@@ -94,11 +94,11 @@ func TestConfig_Cluster(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
 		// Defaults
-		assert.False(t, c.IsPortal())
+		assert.False(t, c.Portal())
 
 		// Toggle values
 		c.Options().NodeRole = string(cluster.RolePortal)
-		assert.True(t, c.IsPortal())
+		assert.True(t, c.Portal())
 		c.Options().NodeRole = ""
 	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {

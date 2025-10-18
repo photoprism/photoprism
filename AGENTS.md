@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 12, 2025
+**Last Updated:** October 15, 2025
 
 ## Purpose
 
@@ -29,8 +29,9 @@ Learn more: https://agents.md/
 - Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
 - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
 - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
+- Regenerate NOTICE files with `make notice` when dependencies change. Do not edit `NOTICE` or `frontend/NOTICE` manually.
 
-**Style note:** Document headings must use Title Case (capitalize every significant word) across Markdown files to keep generated navigation and changelogs consistent.
+**Style note:** Document headings must use Title Case (capitalize words ≥4 letters in AP-style) across Markdown files to keep generated navigation and changelogs consistent.
 
 **CLI note:** When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 
@@ -45,7 +46,8 @@ Learn more: https://agents.md/
 
 ### Web Templates & Shared Assets
 
-- HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The SPA loader logic resides in `assets/static/js/app-loader.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before appending `window.__CONFIG__.jsUri`.
+- HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes.
+- To preserve the fallback messaging, keep the `<script>` order in `app.js.gohtml` so `browser-check.js` loads before `{{ .config.JsUri }}`. Do not add `defer` or `async` to the bundle tag unless you reintroduce a guarded loader.
 - The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus`) to confirm they include the shared partial instead of hard-coding `<script src="{{ .config.JsUri }}">`.
 - Splash styles are defined in `frontend/src/css/splash.css`. Add new splash elements (for example `.splash-warning`) there so both public and private editions remain visually consistent.
 - Browser baseline: PhotoPrism requires Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. Update the message in `assets/templates/app.js.gohtml` (and the matching CSS) if support changes.
@@ -147,21 +149,37 @@ Note: Across our public documentation, official images, and in production, the c
 
 ### Playwright MCP Usage
 
-- **Endpoint & Navigation** — Playwright MCP is preconfigured to reach the dev server at `http://localhost:2342/`.  
+- **Endpoint & Navigation** — Playwright MCP is preconfigured to reach the dev server at `http://localhost:2342/`.
   Use `playwright__browser_navigate` to open `/library/login`, sign in, and then call `playwright__browser_take_screenshot` to capture the page state.
-- **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.  
+- **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.
   Use `playwright__browser_resize` if the viewport is not preconfigured or you need to adjust it mid-run.
 - **Mobile Workflows** — When testing responsive layouts, use the `playwright_mobile` server (for example, `playwright_mobile__browser_navigate`).  
   It launches with a `375×667` viewport, matching a typical smartphone display, so you can capture mobile layouts without manual resizing.
-- **Authentication** — Default admin credentials are `admin` / `photoprism`.  
-  If login fails, check your active Compose file or container environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
-- **Capturing Artifacts** —
-  - Keep screenshots limited to the visible viewport (`fullPage: false` or unset) unless a full-page capture is explicitly required.
-  - Copy the MCP output file into `.local/screenshots/` (create the folder if it doesn’t exist).
-  - To reduce context size, avoid embedding large screenshots in chat history—reference the file path instead.
-- **Sidebar Navigation** — The sidebar nests items such as `Library → Errors`.  
-  Expand a parent entry by clicking its chevron before selecting links inside.
+- **Authentication** — Default admin credentials are `admin` / `photoprism`:
+  - If login fails, check your active Compose file or container environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
+  - Tip: if your MCP supports it, persist a storage state after login and reuse it in later steps to skip re-authentication.
+- **Sidebar Navigation** — The sidebar nests items such as `Library → Errors`:
+  - Expand a parent entry by clicking its chevron before selecting links inside.
 - **Session Cleanup** — After scripted interactions, close the browser tab with `playwright__browser_close` (or `playwright_mobile__browser_close`) to keep the MCP session tidy for subsequent runs.
+- **Stability / Waiting** — Prefer robust waits over sleeps:
+  - After navigation: `waitUntil: 'networkidle'` (or wait for a key locator).
+  - Before clicking: ensure the locator is `visible` and `enabled`.
+  - Use role/label/text selectors over brittle XPaths.
+- **Screenshot Format & Size** — Keep artifacts small and reproducible:
+  - Prefer **JPEG** with quality (e.g., `quality: 80`) instead of PNG.
+  - Limit to the visible viewport (`fullPage: false`), unless explicitly required.
+  - Name files deterministically, e.g., `.local/screenshots/<case>/<step>__<viewport>.jpg` (create the folder if it doesn’t exist).
+  - Avoid embedding large screenshots in chat history—reference the file path instead.
+  - **Desktop example** (if your MCP tool exposes Playwright options 1:1):
+    ```json
+    {
+      "path": ".local/screenshots/fix-event-leaks/login__desktop.jpg",
+      "type": "jpeg",
+      "quality": 80,
+      "fullPage": false
+    }
+    ```
+- **Non-interactive runs** — If `npx` is fetching the MCP server at runtime, add `--yes` to its args (or preinstall and use `--no-install`) to avoid prompts in CI.
 
 ### FFmpeg Tests & Hardware Gating
 
@@ -193,6 +211,7 @@ Note: Across our public documentation, official images, and in production, the c
 
 - Go: run `make fmt-go swag-fmt` to reformat the backend code + Swagger annotations (see `Makefile` for additional targets)
   - Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period.
+  - All newly added functions, including unexported helpers, must have a concise doc comment that explains their behavior.
   - For short examples inside comments, indent code rather than using backticks; godoc treats indented blocks as preformatted.
 - Branding: Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
 - Every Go package must contain a `<package>.go` file in its root (for example, `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment explaining its purpose.
@@ -270,6 +289,7 @@ Note: Across our public documentation, official images, and in production, the c
 ### Testing & Fixtures
 
 - Go tests live next to their sources (`path/to/pkg/<file>_test.go`); group related cases as `t.Run(...)` sub-tests to keep table-driven coverage readable, and name each subtest with a PascalCase string.
+- Keep Go scratch work inside `internal/...`; Go refuses to import `internal/` packages from directories like `/tmp`, so create temporary helpers under a throwaway folder such as `internal/tmp/` instead of using external paths.
 - Prefer focused `go test` runs for speed (`go test ./internal/<pkg> -run <Name> -count=1`, `go test ./internal/commands -run <Name> -count=1`) and avoid `./...` unless you need the entire suite.
 - Heavy packages such as `internal/entity` and `internal/photoprism` run migrations and fixtures; expect 30–120s on first run and narrow with `-run` to keep iterations low.
 - For CLI-driven tests, wrap commands with `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process, and assert CLI output with `assert.Contains`/regex because `show` reports quote strings.
@@ -370,6 +390,7 @@ Note: Across our public documentation, official images, and in production, the c
   - Pipe method: PhotoPrism remux (ffmpeg) always embeds title/description/created.
   - File method: yt‑dlp writes files; we pass `--postprocessor-args 'ffmpeg:-metadata creation_time=<RFC3339>'` so imports get `Created` even without local remux (fallback from `upload_date`/`release_date`).
   - Default remux policy: `auto`; use `always` for the most complete metadata (chapters, extended tags).
+  - CLI defaults: `photoprism dl` now defaults to `--method pipe` and `--impersonate firefox`; pass `-i none` to disable impersonation. Pipe mode streams raw media and PhotoPrism handles the final FFmpeg remux so metadata (title, description, author, creation time) still comes from `RemuxOptionsFromInfo`.
 
 - Testing workflow: lean on the focused commands above; if importer dedupe kicks in, vary bytes with `YTDLP_DUMMY_CONTENT` or adjust `dest`, and remember `internal/photoprism` is heavy so validate downstream packages first.
 

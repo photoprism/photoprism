@@ -28,7 +28,7 @@ func registerWellknownRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Registers the "/.well-known/jwks.json" endpoint for cluster JWT verification.
 	router.GET(conf.BaseUri("/.well-known/jwks.json"), func(c *gin.Context) {
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
 			return
 		}

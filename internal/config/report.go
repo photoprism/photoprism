@@ -80,8 +80,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"assets-path", c.AssetsPath()},
 		{"models-path", c.ModelsPath()},
 		{"static-path", c.StaticPath()},
-		{"build-path", c.BuildPath()},
-		{"img-path", c.ImgPath()},
+		{"static-build-path", c.StaticBuildPath()},
+		{"static-img-path", c.StaticImgPath()},
 		{"templates-path", c.TemplatesPath()},
 
 		// Sidecar Files.

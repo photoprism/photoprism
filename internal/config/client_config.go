@@ -62,6 +62,7 @@ type ClientConfig struct {
 	Trace            bool                `json:"trace"`
 	Test             bool                `json:"test"`
 	Demo             bool                `json:"demo"`
+	Portal           bool                `json:"portal"`
 	Sponsor          bool                `json:"sponsor"`
 	ReadOnly         bool                `json:"readonly"`
 	UploadNSFW       bool                `json:"uploadNSFW"`
@@ -312,6 +313,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		Public:           c.Public(),
@@ -407,6 +409,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
@@ -510,6 +513,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),

@@ -24,7 +24,7 @@ var ClusterSummaryCommand = &cli.Command{
 
 func clusterSummaryAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			return fmt.Errorf("cluster summary is only available on a Portal node")
 		}
 

@@ -4,7 +4,7 @@ import "time"
 
 // BootstrapAutoJoinEnabled indicates whether cluster bootstrap logic is enabled
 // for nodes by default. Portal nodes ignore this value; gating is decided by
-// runtime checks (e.g., conf.IsPortal() and conf.NodeRole()).
+// runtime checks (e.g., conf.Portal() and conf.NodeRole()).
 var BootstrapAutoJoinEnabled = true
 
 // BootstrapAutoThemeEnabled indicates whether bootstrap should attempt to

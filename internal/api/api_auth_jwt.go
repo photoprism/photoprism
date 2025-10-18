@@ -86,7 +86,7 @@ func shouldAttemptJWT(c *gin.Context, token string) bool {
 // shouldAllowJWT reports whether the current node configuration permits JWT
 // authentication for the request originating from clientIP.
 func shouldAllowJWT(conf *config.Config, clientIP string) bool {
-	if conf == nil || conf.IsPortal() {
+	if conf == nil || conf.Portal() {
 		return false
 	}
 

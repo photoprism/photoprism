@@ -192,20 +192,25 @@ export const ItemsPerPage = () => [
   { text: "100", title: "100", value: 100 },
 ];
 
-export const StartPages = (features) => [
-  { value: "default", text: $gettext("Default"), visible: true },
-  { value: "browse", text: $gettext("Search"), props: { disabled: !features?.library } },
-  { value: "albums", text: $gettext("Albums"), props: { disabled: !features?.albums } },
-  { value: "media", text: $gettext("Media"), props: { disabled: !features?.videos } },
-  { value: "videos", text: $gettext("Videos"), props: { disabled: !features?.videos } },
-  { value: "people", text: $gettext("People"), props: { disabled: !(features?.people && features?.edit) } },
-  { value: "favorites", text: $gettext("Favorites"), props: { disabled: !features?.favorites } },
-  { value: "places", text: $gettext("Places"), props: { disabled: !features?.places } },
-  { value: "calendar", text: $gettext("Calendar"), props: { disabled: !features?.calendar } },
-  { value: "moments", text: $gettext("Moments"), props: { disabled: !features?.moments } },
-  { value: "labels", text: $gettext("Labels"), props: { disabled: !features?.labels } },
-  { value: "folders", text: $gettext("Folders"), props: { disabled: !features?.folders } },
-];
+export const StartPages = (features, isPortal) => {
+  if (isPortal) {
+    return [{ value: "default", text: $gettext("Default"), visible: true }];
+  }
+  return [
+    { value: "default", text: $gettext("Default"), visible: true },
+    { value: "browse", text: $gettext("Search"), props: { disabled: !features?.library } },
+    { value: "albums", text: $gettext("Albums"), props: { disabled: !features?.albums } },
+    { value: "media", text: $gettext("Media"), props: { disabled: !features?.videos } },
+    { value: "videos", text: $gettext("Videos"), props: { disabled: !features?.videos } },
+    { value: "people", text: $gettext("People"), props: { disabled: !(features?.people && features?.edit) } },
+    { value: "favorites", text: $gettext("Favorites"), props: { disabled: !features?.favorites } },
+    { value: "places", text: $gettext("Places"), props: { disabled: !features?.places } },
+    { value: "calendar", text: $gettext("Calendar"), props: { disabled: !features?.calendar } },
+    { value: "moments", text: $gettext("Moments"), props: { disabled: !features?.moments } },
+    { value: "labels", text: $gettext("Labels"), props: { disabled: !features?.labels } },
+    { value: "folders", text: $gettext("Folders"), props: { disabled: !features?.folders } },
+  ];
+};
 
 export const MapsAnimate = () => [
   {

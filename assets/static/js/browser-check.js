@@ -56,29 +56,11 @@
     }
   }
 
-  function loadBundle(jsUri) {
-    var script = document.createElement('script');
-    script.src = jsUri;
-    script.defer = true;
-    document.body.appendChild(script);
-  }
-
-  var config = window.__CONFIG__ || {};
-  var jsUri = config.jsUri || config.JsUri;
-
   var support = supportsModernJs();
   window.__PHOTOPRISM_SUPPORTS__ = support.ok;
 
   if (!support.ok) {
     window.__PHOTOPRISM_SUPPORTS_REASON__ = support.reason;
-    showUnsupportedMessage('PhotoPrism requires Safari 13 (iOS 13) or a current version of Chrome, Edge, or Firefox. Please update your browser or switch to a supported device.');
-    return;
+    showUnsupportedMessage('PhotoPrism requires a current version of Chrome, Safari, Edge, or Firefox. Please update your browser or switch to a supported device.');
   }
-
-  if (!jsUri) {
-    console.warn('PhotoPrism: Unable to find bundle URL (jsUri) in configuration.');
-    return;
-  }
-
-  loadBundle(jsUri);
 })();

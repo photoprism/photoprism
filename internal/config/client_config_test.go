@@ -53,6 +53,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.Equal(t, true, cfg.Debug)
 		assert.Equal(t, AuthModePublic, cfg.AuthMode)
 		assert.Equal(t, false, cfg.Demo)
+		assert.Equal(t, false, cfg.Portal)
 		assert.Equal(t, true, cfg.Sponsor)
 		assert.Equal(t, false, cfg.ReadOnly)
 
