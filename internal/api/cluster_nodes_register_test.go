@@ -40,10 +40,10 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create a node via registry and rotate to get a plaintext secret for tests
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-auth"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-auth"}`, cluster.ExampleJoinToken)
 		cleanupRegisterProvisioning(t, conf, rCreate)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
+		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 		var resp cluster.RegisterResponse
 		json.Unmarshal(rCreate.Body.Bytes(), &resp)
 		n := resp.Node
@@ -114,9 +114,9 @@ func TestClusterNodesRegister(t *testing.T) {
 		ClusterNodesRegister(router)
 
 		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-lock"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
+		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 
 		// Attempt to change UUID via name without client credentials → 409
 		newUUID := rnd.UUIDv7()
@@ -191,7 +191,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
-		// Empty nodeName → 400
+		// Empty NodeName → 400
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -208,9 +208,9 @@ func TestClusterNodesRegister(t *testing.T) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-01"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
+		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 		cleanupRegisterProvisioning(t, conf, rCreate)
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01","RotateSecret":true}`, cluster.ExampleJoinToken)
@@ -234,9 +234,9 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create node in registry so handler goes through existing-node path.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"nodeName":"pp-node-02"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"alreadyProvisioned":false`)
+		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 
 		// Provisioner is independent; endpoint should respond 200 and persist metadata.
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02","SiteUrl":"https://Photos.Example.COM"}`, cluster.ExampleJoinToken)
@@ -290,9 +290,14 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 		t.Fatalf("unmarshal register response: %v", err)
 	}
 
-	if !resp.AlreadyProvisioned {
-		return
-	}
+	// Why?  This prevents cleanup in most cases, which means that some tests are failing because the item
+	// is still there after execution of a previous test.  Which means that a test that expects it not to be
+	// there fails.
+	// Every unit test should be able to be run without depending on the results of a previous unit test,
+	// so you should clean up fully every time.
+	// if !resp.AlreadyProvisioned {
+	// 	return
+	// }
 
 	name := resp.Database.Name
 	user := resp.Database.User
@@ -315,10 +320,10 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := provisioner.DropCredentials(ctx, name, user); err != nil {
-			if strings.Contains(err.Error(), "1268") { // Only abort if there was an issue dropping the user
+			count1269 := strings.Count(err.Error(), "Error 1269")
+			countError := strings.Count(err.Error(), "Error")
+			if countError > count1269 { // Only abort if there was an issue other than Error 1269 (HY000): Can't revoke all privileges for one or more of the requested users
 				t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
-			} else {
-				t.Logf("drop credentials for %s/%s: %v", name, user, err)
 			}
 		}
 	})
@@ -329,7 +334,6 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 				t.Fatalf("remove client for %s: %v", resp.Node.UUID, err)
 			}
 		})
-
 	}
 
 }
