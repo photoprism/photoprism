@@ -169,6 +169,7 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 		conf.Options().DatabaseName = "photoprism"
 		conf.Options().DatabaseUser = ""
 		conf.Options().DatabasePassword = ""
+		conf.Options().DatabaseDSN = ""
 		assert.True(t, conf.ShouldAutoRotateDatabase())
 	})
 }
