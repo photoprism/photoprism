@@ -172,7 +172,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 	})
 }
 
-// ClusterUpdateNode updates mutable fields: role, labels, advertiseUrl.
+// ClusterUpdateNode updates mutable fields: role, labels, AdvertiseUrl.
 //
 //	@Summary	update node fields
 //	@Id			ClusterUpdateNode
@@ -180,7 +180,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //	@Param		uuid				path		string	true	"node uuid"
-//	@Param		node				body		object	true	"properties to update (role, labels, advertiseUrl, siteUrl)"
+//	@Param		node				body		object	true	"properties to update (Role, Labels, AdvertiseUrl, SiteUrl)"
 //	@Success	200					{object}	cluster.StatusResponse
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/{uuid} [patch]
@@ -202,10 +202,10 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 		uuid := c.Param("uuid")
 
 		var req struct {
-			Role         string            `json:"role"`
-			Labels       map[string]string `json:"labels"`
-			AdvertiseUrl string            `json:"advertiseUrl"`
-			SiteUrl      string            `json:"siteUrl"`
+			Role         string            `json:"Role"`
+			Labels       map[string]string `json:"Labels"`
+			AdvertiseUrl string            `json:"AdvertiseUrl"`
+			SiteUrl      string            `json:"SiteUrl"`
 		}
 
 		if err := c.ShouldBindJSON(&req); err != nil {

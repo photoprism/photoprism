@@ -47,7 +47,7 @@ func TestClusterEndpoints(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, r.Code)
 
 	// Patch (manage requires Auth; our Auth() in tests allows admin; skip strict role checks here)
-	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"advertiseUrl":"http://n1:2342"}`)
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"AdvertiseUrl":"http://n1:2342"}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// Pagination: count=1 returns exactly one

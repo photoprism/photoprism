@@ -287,6 +287,20 @@ func (c *Config) DatabasePassword() string {
 	}
 }
 
+// ShouldAutoRotateDatabase decides whether callers should request DB rotation automatically.
+// It is used by both the CLI and node bootstrap to avoid unnecessary provisioning calls.
+func (c *Config) ShouldAutoRotateDatabase() bool {
+	if c.Portal() || c.DatabaseDriver() != MySQL {
+		return false
+	}
+
+	if c.DatabaseName() == "" || c.DatabaseUser() == "" || c.DatabasePassword() == "" {
+		return true
+	}
+
+	return false
+}
+
 // DatabaseTimeout returns the TCP timeout in seconds for establishing a database connection:
 // - https://github.com/photoprism/photoprism/issues/4059#issuecomment-1989119004
 // - https://github.com/go-sql-driver/mysql/blob/master/README.md#timeout

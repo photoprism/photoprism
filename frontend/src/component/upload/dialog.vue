@@ -207,7 +207,7 @@ export default {
         this.reset();
       }
     },
-    selectedAlbums: createAlbumSelectionWatcher('albums'),
+    selectedAlbums: createAlbumSelectionWatcher("albums"),
   },
   methods: {
     afterEnter() {

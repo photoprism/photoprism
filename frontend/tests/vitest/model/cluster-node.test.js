@@ -33,13 +33,12 @@ describe("pro/portal/model/cluster-node", () => {
   it("reports database metadata availability", () => {
     const node = new ClusterNode({
       Database: {
-        name: "photoprism",
-        user: "photoprism",
-        driver: "mysql",
+        Name: "photoprism",
+        User: "photoprism",
+        Driver: "mysql",
       },
     });
 
     expect(node.hasDatabase()).toBe(true);
   });
 });
-

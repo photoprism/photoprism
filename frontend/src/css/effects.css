@@ -1,44 +1,44 @@
 /* Transitions */
 
 .no-transition {
-    transition: none!important;
+    transition: none !important;
 }
 
 /* Animations */
 
 @-webkit-keyframes rainbow {
     0% {
-        background-position: 0 50%
+        background-position: 0 50%;
     }
     50% {
-        background-position: 100% 50%
+        background-position: 100% 50%;
     }
     100% {
-        background-position: 0 50%
+        background-position: 0 50%;
     }
 }
 
 @-moz-keyframes rainbow {
     0% {
-        background-position: 0 50%
+        background-position: 0 50%;
     }
     50% {
-        background-position: 100% 50%
+        background-position: 100% 50%;
     }
     100% {
-        background-position: 0 50%
+        background-position: 0 50%;
     }
 }
 
 @keyframes rainbow {
     0% {
-        background-position: 0 50%
+        background-position: 0 50%;
     }
     50% {
-        background-position: 100% 50%
+        background-position: 100% 50%;
     }
     100% {
-        background-position: 0 50%
+        background-position: 0 50%;
     }
 }
 
@@ -90,13 +90,13 @@
 
 @keyframes stretch {
     0% {
-        transform: scale(.3);
+        transform: scale(0.3);
     }
     50% {
         transform: scale(1);
     }
     100% {
-        transform: scale(.3);
+        transform: scale(0.3);
     }
 }
 
@@ -106,7 +106,7 @@
 
 @keyframes slide-left {
     0% {
-        transform: translateX(105%);;
+        transform: translateX(105%);
     }
     100% {
         transform: translateX(0%);
@@ -271,10 +271,14 @@
 /* Beating Heart Animation */
 
 @keyframes heart {
-    0%, 40%, 80%, 100% {
+    0%,
+    40%,
+    80%,
+    100% {
         transform: scale(1);
     }
-    20%, 60% {
+    20%,
+    60% {
         transform: scale(1.15);
     }
 }

@@ -7,7 +7,7 @@ import { Marker } from "model/marker";
 describe("PTabPhotoPeople face actions", () => {
   let wrapper;
   let setCoverSpy;
-  let windowOpenSpy;
+  let openUrlSpy;
   let assignedMarker;
   let unassignedMarker;
 
@@ -28,7 +28,7 @@ describe("PTabPhotoPeople face actions", () => {
       return Promise.resolve(this);
     });
 
-    windowOpenSpy = vi.spyOn(window, "open").mockImplementation(() => {});
+    openUrlSpy = vi.fn();
 
     assignedMarker = new Marker({
       UID: "marker-assigned",
@@ -72,6 +72,9 @@ describe("PTabPhotoPeople face actions", () => {
             })),
             push: vi.fn(),
           },
+          $util: {
+            openUrl: openUrlSpy,
+          },
           $view: {
             getData: vi.fn(() => ({
               model: {
@@ -99,7 +102,7 @@ describe("PTabPhotoPeople face actions", () => {
 
   afterEach(() => {
     setCoverSpy.mockRestore();
-    windowOpenSpy.mockRestore();
+    openUrlSpy.mockReset();
     if (wrapper) {
       wrapper.unmount();
     }
@@ -142,7 +145,7 @@ describe("PTabPhotoPeople face actions", () => {
     await wrapper.vm.onGoToPerson(marker);
 
     expect(wrapper.vm.$router.resolve).toHaveBeenCalledWith({ name: "all", query: { q: "person:john-doe" } });
-    expect(windowOpenSpy).toHaveBeenCalledWith("/library/all?q=person:john-doe", "_blank");
+    expect(openUrlSpy).toHaveBeenCalledWith("/library/all?q=person:john-doe");
   });
 
   it("sets person cover with manual thumb source", async () => {

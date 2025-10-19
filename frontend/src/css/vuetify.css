@@ -2,7 +2,7 @@
 
 .v-overlay__scrim {
     background: rgb(var(--v-overlay-color, #121212));
-    opacity: var(--v-overlay-opacity, .32);
+    opacity: var(--v-overlay-opacity, 0.32);
 }
 
 /* Tabs */
@@ -12,7 +12,7 @@
 }
 
 .v-tabs button.v-tab.v-btn--disabled {
-    opacity: var(--v-disabled-opacity, .6);
+    opacity: var(--v-disabled-opacity, 0.6);
 }
 
 .v-tab.v-tab.v-btn {
@@ -140,7 +140,10 @@ body > .v-overlay-container .v-overlay__scrim {
 .v-overlay.v-dialog > .v-overlay__content > .v-card,
 .v-overlay.v-dialog > .v-overlay__content > form > .v-card {
     border-radius: 8px;
-    box-shadow: 0 11px 15px -7px var(--v-shadow-key-umbra-opacity, #0003), 0 24px 38px 3px var(--v-shadow-key-penumbra-opacity, #00000024), 0 9px 46px 8px var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+    box-shadow:
+        0 11px 15px -7px var(--v-shadow-key-umbra-opacity, #0003),
+        0 24px 38px 3px var(--v-shadow-key-penumbra-opacity, #00000024),
+        0 9px 46px 8px var(--v-shadow-key-ambient-opacity, #0000001f) !important;
 }
 
 div.v-dialog.v-dialog--fullscreen > div.v-card {
@@ -290,7 +293,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 }
 
 .v-selection-control--density-compact .v-label {
-    margin-inline-start: .5em;
+    margin-inline-start: 0.5em;
 }
 
 .v-selection-control--density-compact {
@@ -310,7 +313,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 }
 
 .v-btn {
-    letter-spacing: .0125em;
+    letter-spacing: 0.0125em;
 }
 
 .v-btn--disabled {
@@ -321,7 +324,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 .v-btn--disabled.v-btn--variant-flat {
     background: rgb(var(--v-theme-surface)) !important;
     box-shadow: none;
-    color: rgba(var(--v-theme-on-surface), .5) !important;
+    color: rgba(var(--v-theme-on-surface), 0.5) !important;
     opacity: var(--v-disabled-opacity);
 }
 
@@ -337,7 +340,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 
 .v-input.v-text-field .v-field .v-label.v-field-label:not(.v-field-label--floating),
 .v-input.v-text-field .v-field:not(.v-field--focused) .v-label.v-field-label.v-field-label--floating {
-    opacity: var(--v-label-opacity, .7);
+    opacity: var(--v-label-opacity, 0.7);
 }
 
 .input-search--focus .v-field--variant-solo.v-field--focused .v-field__prepend-inner .v-icon,
@@ -369,7 +372,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 }
 
 .v-field--variant-solo-filled .v-field__overlay {
-    opacity: var(--v-fill-opacity, .04);
+    opacity: var(--v-fill-opacity, 0.04);
 }
 
 .v-input.v-select.v-input--density-compact > .v-input__control > .v-field .v-select__selection,
@@ -449,7 +452,10 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 }
 
 .clipboard-container .v-btn.v-btn--icon {
-    box-shadow: 0 3px 5px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 6px 10px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 18px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+    box-shadow:
+        0 3px 5px -1px var(--v-shadow-key-umbra-opacity, #0003),
+        0 6px 10px 0 var(--v-shadow-key-penumbra-opacity, #00000024),
+        0 1px 18px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
 }
 
 /* Badges */
@@ -534,11 +540,13 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     margin: 0;
 }
 
-.v-row--dense > .v-col, .v-row--dense > [class*=v-col-] {
+.v-row--dense > .v-col,
+.v-row--dense > [class*="v-col-"] {
     padding: 8px;
 }
 
-.v-row--dense > .v-col, .v-row--dense > [class*=v-col-] {
+.v-row--dense > .v-col,
+.v-row--dense > [class*="v-col-"] {
     padding: 8px;
 }
 

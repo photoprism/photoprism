@@ -103,7 +103,16 @@ const config = {
         clientsClaim: false,
         skipWaiting: false,
         navigateFallback: undefined,
-        exclude: [/\.map$/, /assets\.json$/, /\.txt$/],
+        exclude: [
+          /\.map$/,
+          /\.txt$/,
+          /\.ttf(\?.*)?$/,
+          /\.woff(\?.*)?$/,
+          /assets\.json$/,
+          /chunk\/.*-json\.[a-f0-9]+\.js$/,
+          /locales\/json\/.*\.json$/,
+          /share\.[a-f0-9]+\.(js|css)$/,
+        ],
         modifyURLPrefix: {
           "": "static/build/",
         },

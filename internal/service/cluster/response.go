@@ -3,89 +3,89 @@ package cluster
 // NodeDatabase represents database metadata returned for a node.
 // swagger:model NodeDatabase
 type NodeDatabase struct {
-	Name      string `json:"name"`
-	User      string `json:"user"`
-	Driver    string `json:"driver,omitempty"`
-	RotatedAt string `json:"rotatedAt"`
+	Name      string `json:"Name"`
+	User      string `json:"User"`
+	Driver    string `json:"Driver,omitempty"`
+	RotatedAt string `json:"RotatedAt"`
 }
 
 // Node is the API response DTO for a cluster node.
 // swagger:model Node
 type Node struct {
-	UUID         string            `json:"uuid"` // NodeUUID
-	Name         string            `json:"name"` // NodeName
-	Role         string            `json:"role"` // NodeRole
-	ClientID     string            `json:"clientId,omitempty"`
-	SiteUrl      string            `json:"siteUrl,omitempty"`
-	AdvertiseUrl string            `json:"advertiseUrl,omitempty"`
-	Labels       map[string]string `json:"labels,omitempty"`
-	CreatedAt    string            `json:"createdAt"`
-	UpdatedAt    string            `json:"updatedAt"`
-	Database     *NodeDatabase     `json:"database,omitempty"`
+	UUID         string            `json:"UUID"` // NodeUUID
+	Name         string            `json:"Name"` // NodeName
+	Role         string            `json:"Role"` // NodeRole
+	ClientID     string            `json:"ClientID,omitempty"`
+	SiteUrl      string            `json:"SiteUrl,omitempty"`
+	AdvertiseUrl string            `json:"AdvertiseUrl,omitempty"`
+	Labels       map[string]string `json:"Labels,omitempty"`
+	CreatedAt    string            `json:"CreatedAt"`
+	UpdatedAt    string            `json:"UpdatedAt"`
+	Database     *NodeDatabase     `json:"Database,omitempty"`
 }
 
 // DatabaseInfo provides basic database connection metadata for summary endpoints.
 // swagger:model DatabaseInfo
 type DatabaseInfo struct {
-	Driver string `json:"driver"`
-	Host   string `json:"host"`
-	Port   int    `json:"port"`
+	Driver string `json:"Driver"`
+	Host   string `json:"Host"`
+	Port   int    `json:"Port"`
 }
 
 // SummaryResponse is the response type for GET /api/v1/cluster.
 // swagger:model SummaryResponse
 type SummaryResponse struct {
-	UUID        string       `json:"uuid"` // ClusterUUID
-	ClusterCIDR string       `json:"clusterCidr,omitempty"`
-	Nodes       int          `json:"nodes"`
-	Database    DatabaseInfo `json:"database"`
-	Time        string       `json:"time"`
+	UUID        string       `json:"UUID"` // ClusterUUID
+	ClusterCIDR string       `json:"ClusterCIDR,omitempty"`
+	Nodes       int          `json:"Nodes"`
+	Database    DatabaseInfo `json:"Database"`
+	Time        string       `json:"Time"`
 }
 
 // MetricsResponse is the response type for GET /api/v1/cluster/metrics.
 // swagger:model MetricsResponse
 type MetricsResponse struct {
-	UUID        string         `json:"uuid"`
-	ClusterCIDR string         `json:"clusterCidr,omitempty"`
-	Nodes       map[string]int `json:"nodes"`
-	Time        string         `json:"time"`
+	UUID        string         `json:"UUID"`
+	ClusterCIDR string         `json:"ClusterCIDR,omitempty"`
+	Nodes       map[string]int `json:"Nodes"`
+	Time        string         `json:"Time"`
 }
 
 // RegisterSecrets contains newly issued or rotated node secrets.
 // swagger:model RegisterSecrets
 type RegisterSecrets struct {
-	ClientSecret string `json:"clientSecret,omitempty"`
-	RotatedAt    string `json:"rotatedAt,omitempty"`
+	ClientSecret string `json:"ClientSecret,omitempty"`
+	RotatedAt    string `json:"RotatedAt,omitempty"`
 }
 
 // RegisterDatabase describes database credentials returned during registration/rotation.
 // swagger:model RegisterDatabase
 type RegisterDatabase struct {
-	Driver    string `json:"driver"`
-	Host      string `json:"host"`
-	Port      int    `json:"port"`
-	Name      string `json:"name"`
-	User      string `json:"user"`
-	Password  string `json:"password,omitempty"`
-	DSN       string `json:"dsn,omitempty"`
-	RotatedAt string `json:"rotatedAt,omitempty"`
+	Driver    string `json:"Driver"`
+	Host      string `json:"Host"`
+	Port      int    `json:"Port"`
+	Name      string `json:"Name"`
+	User      string `json:"User"`
+	Password  string `json:"Password,omitempty"`
+	DSN       string `json:"DSN,omitempty"`
+	RotatedAt string `json:"RotatedAt,omitempty"`
 }
 
 // RegisterResponse is the response body for POST /api/v1/cluster/nodes/register.
 // swagger:model RegisterResponse
 type RegisterResponse struct {
-	UUID               string           `json:"uuid"` // ClusterUUID
-	ClusterCIDR        string           `json:"clusterCidr,omitempty"`
-	Node               Node             `json:"node"`
-	Database           RegisterDatabase `json:"database"`
-	Secrets            *RegisterSecrets `json:"secrets,omitempty"`
-	JWKSUrl            string           `json:"jwksUrl,omitempty"`
-	AlreadyRegistered  bool             `json:"alreadyRegistered"`
-	AlreadyProvisioned bool             `json:"alreadyProvisioned"`
+	UUID               string           `json:"UUID"` // ClusterUUID
+	ClusterCIDR        string           `json:"ClusterCIDR,omitempty"`
+	Node               Node             `json:"Node"`
+	Database           RegisterDatabase `json:"Database"`
+	Secrets            *RegisterSecrets `json:"Secrets,omitempty"`
+	JWKSUrl            string           `json:"JWKSUrl,omitempty"`
+	AlreadyRegistered  bool             `json:"AlreadyRegistered"`
+	AlreadyProvisioned bool             `json:"AlreadyProvisioned"`
 }
 
 // StatusResponse is a generic status wrapper for simple ok responses.
 // swagger:model StatusResponse
 type StatusResponse struct {
-	Status string `json:"status"`
+	Status string `json:"Status"`
 }

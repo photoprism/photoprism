@@ -54,7 +54,9 @@
 
 /* Layout Widths */
 
-.width-sm, .width-md, .width-lg {
+.width-sm,
+.width-md,
+.width-lg {
     margin-left: auto;
     margin-right: auto;
 }
@@ -229,13 +231,13 @@ footer.p-about-footer {
     padding: 12px 24px 4px;
 }
 
-footer.p-about-footer>div {
+footer.p-about-footer > div {
     user-select: text;
-    font-size: .875rem;
+    font-size: 0.875rem;
     font-weight: 400;
-    letter-spacing: .0178571429em;
+    letter-spacing: 0.0178571429em;
     line-height: 1.425;
-    margin-bottom: .85rem;
+    margin-bottom: 0.85rem;
     text-transform: none;
     text-align: center;
 }
@@ -254,9 +256,9 @@ footer.p-about-footer > div > strong {
 }
 
 @media only screen and (min-width: 600px) {
-    footer.p-about-footer>div > * {
+    footer.p-about-footer > div > * {
         display: block;
-        float: none!important;
+        float: none !important;
         margin: 0;
         padding: 0;
     }

@@ -39,9 +39,13 @@ func TestInitConfig_ServiceRole(t *testing.T) {
 func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Fake Portal server.
 	var jwksURL string
+	expectedSite := "https://public.example.test/"
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
+			var req cluster.RegisterRequest
+			assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+			assert.Equal(t, expectedSite, req.SiteUrl)
 			// Minimal successful registration with secrets + DSN.
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
@@ -78,6 +82,8 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Configure Portal.
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().SiteUrl = expectedSite
+	c.Options().AdvertiseUrl = expectedSite
 	// Gate rotate=true: driver mysql and no DSN/fields.
 	c.Options().DatabaseDriver = config.MySQL
 	c.Options().DatabaseDSN = ""
@@ -116,7 +122,11 @@ func TestThemeInstall_Missing(t *testing.T) {
 			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{UUID: rnd.UUID(), ClusterCIDR: "198.51.100.0/24", Node: cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"}, Secrets: &cluster.RegisterSecrets{ClientSecret: clientSecret}, JWKSUrl: jwksURL2})
 		case "/api/v1/oauth/token":
 			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "token_type": "Bearer"})
+			type tokenResponse struct {
+				AccessToken string `json:"access_token"`
+				TokenType   string `json:"token_type"`
+			}
+			_ = json.NewEncoder(w).Encode(tokenResponse{AccessToken: "tok", TokenType: "Bearer"})
 		case "/api/v1/cluster/theme":
 			w.Header().Set("Content-Type", "application/zip")
 			w.WriteHeader(http.StatusOK)
@@ -194,6 +204,51 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())
+}
+
+func TestDefaultClusterDomain(t *testing.T) {
+	t.Run("explicit domain", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-explicit", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().ClusterDomain = "photoprism.example"
+		assert.Equal(t, "photoprism.example", defaultClusterDomain(c))
+	})
+	t.Run("portal host fallback", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-portal", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "https://portal.photoprism.example"
+		assert.Equal(t, "photoprism.example", defaultClusterDomain(c))
+	})
+	t.Run("no portal domain", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-none", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "https://localhost:8443"
+		assert.Equal(t, "", defaultClusterDomain(c))
+	})
+	t.Run("portal ip fallback empty", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-ip", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "https://203.0.113.10"
+		assert.Equal(t, "", defaultClusterDomain(c))
+	})
+	t.Run("invalid Portal URL", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-invalid", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "://bad url"
+		assert.Equal(t, "", defaultClusterDomain(c))
+	})
+}
+
+func TestDefaultNodeURL(t *testing.T) {
+	assert.Equal(t, "https://node1.photoprism.example", defaultNodeURL("Node1", "photoprism.example"))
+	assert.Equal(t, "", defaultNodeURL("", "photoprism.example"))
+	assert.Equal(t, "", defaultNodeURL("node1", ""))
+	assert.Equal(t, "https://node-1.photoprism.example", defaultNodeURL("NODE_1", "photoprism.example"))
 }
 
 func TestRegister_404_NoRetry(t *testing.T) {

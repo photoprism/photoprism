@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 
@@ -11,6 +12,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
+
+var MethodsGetHead = []string{http.MethodGet, http.MethodHead}
 
 // registerWebAppRoutes adds routes for the web user interface.
 func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
@@ -82,10 +85,48 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 	}
 
 	// Primary service worker endpoint (/sw.js relative to the site root).
-	router.Match([]string{http.MethodGet, http.MethodHead}, "/"+fs.SwJsFile, swWorker)
+	router.Match(MethodsGetHead, "/"+fs.SwJsFile, swWorker)
 
-	// Serve the service worker under the site base URI as well (e.g. /photoprism/sw.js).
-	if swUri := conf.BaseUri("/" + fs.SwJsFile); swUri != "/"+fs.SwJsFile {
-		router.Match([]string{http.MethodGet, http.MethodHead}, swUri, swWorker)
+	// Expose hashed Workbox runtime helpers alongside sw.js so service worker imports succeed
+	// regardless of whether the app is hosted at the root or under a base URI.
+	workboxHandler := newWorkboxHandler(conf)
+
+	// Handler for shared domain (service worker registered from /sw.js).
+	router.Match(MethodsGetHead, "/workbox-:hash", workboxHandler)
+
+	// Handle service worker requests on a shared domain.
+	if conf.BaseUri("") != "" {
+		router.Match(MethodsGetHead, conf.BaseUri("/"+fs.SwJsFile), swWorker)
+		router.Match(MethodsGetHead, conf.BaseUri("/workbox-:hash"), workboxHandler)
+	}
+}
+
+// newWorkboxHandler serves hashed workbox helpers (workbox-<hash>.js). The regex
+// matches the raw filename (without the "workbox-" prefix) as seen by Gin, so
+// the pattern must be `^[A-Za-z0-9_-]+\.js$`. Note the single backslash – the
+// string is a raw literal, meaning the regex engine receives an escaped dot.
+func newWorkboxHandler(conf *config.Config) gin.HandlerFunc {
+	workboxPattern := regexp.MustCompile(`^[A-Za-z0-9_-]+\.js$`)
+
+	return func(c *gin.Context) {
+		raw := c.Param("hash")
+		if !workboxPattern.MatchString(raw) {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		filePath := conf.StaticBuildFile("workbox-" + raw)
+		if !fs.FileExists(filePath) {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		// Return if only headers are requested.
+		if c.Request.Method == http.MethodHead {
+			c.Header(header.ContentType, header.ContentTypeJavaScript)
+			return
+		}
+
+		c.File(filePath)
 	}
 }

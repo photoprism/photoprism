@@ -47,6 +47,7 @@ Templates & Static Assets
 - The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs. Update this file (and the partial) in lockstep with the templates in private repos (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`) because they import the same partial, and keep the `<script>` order so the check is executed first.
 - `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
 - When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.
+- Service worker routes live in `internal/server/routes_webapp.go`. The helper that serves Workbox runtime files (`/workbox-:hash`) sits there as well so service workers run under both the site root and a base URI; remember Gin’s `:hash` parameter excludes the `.js` suffix, so the handler/test matches the full filename manually.
 
 HTTP API
 - Handlers live in `internal/api/*.go` and are registered in `internal/server/routes.go`.
@@ -184,7 +185,7 @@ Conventions & Rules of Thumb
 - Never log secrets; compare tokens constant‑time.
 - Don’t import Portal internals from cluster instance/service bootstraps; use HTTP.
 - Prefer small, hermetic unit tests; isolate filesystem paths with `t.TempDir()` and env like `PHOTOPRISM_STORAGE_PATH`.
-- Cluster nodes: identify by UUID v7 (internally stored as `NodeUUID`; exposed as `uuid` in API/CLI). The OAuth client ID (`NodeClientID`, exposed as `clientId`) is for OAuth only. Registry lookups and CLI commands accept uuid, clientId, or DNS‑label name (priority in that order).
+- Cluster nodes: identify by UUID v7 (internally stored as `NodeUUID`; exposed as `UUID` in API/CLI). The OAuth client ID (`NodeClientID`, exposed as `ClientID`) is for OAuth only. Registry lookups and CLI commands accept UUID, ClientID, or DNS-label name (priority in that order).
 
 Filesystem Permissions & io/fs Aliasing
 - Use `github.com/photoprism/photoprism/pkg/fs` permission variables when creating files/dirs:
@@ -202,10 +203,13 @@ Cluster Registry & Provisioner Cheatsheet
 - DSN builder: `BuildDSN(driver, host, port, user, pass, name)`; warns and falls back to MySQL format for unsupported drivers.
 - Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and name each subtest string in PascalCase.
 - Public API and internal registry DTOs use normalized field names:
-  - `database` (not `db`) with `name`, `user`, `driver`, `rotatedAt`.
-  - Node-level rotation timestamps use `rotatedAt`.
-  - Registration returns `secrets.clientSecret`; the CLI persists it under config `NodeClientSecret`.
-  - Admin responses may include `advertiseUrl` and `database`; non-admin responses are redacted by default.
+  - `Database` (not `db`) with `Name`, `User`, `Driver`, `RotatedAt`.
+  - Node-level rotation timestamps use `RotatedAt`.
+  - Registration returns `Secrets.ClientSecret`; the CLI persists it under config `NodeClientSecret`.
+  - Admin responses may include `AdvertiseUrl` and `Database`; non-admin responses are redacted by default.
+- Cluster CLI highlights:
+  - `photoprism cluster register` supports `--site-url` and `--advertise-url`. Both values are always forwarded to the Portal; `SiteUrl` no longer depends on being different from the advertised URL.
+  - Automatic MariaDB credential rotation logic now lives in `config.ShouldAutoRotateDatabase()` and is shared by both the CLI and node bootstrap.
 
 Frequently Touched Files (by topic)
 - CLI wiring: `cmd/photoprism/photoprism.go`, `internal/commands/commands.go`

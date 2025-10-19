@@ -81,18 +81,29 @@ func authJWTIssueAction(ctx *cli.Context) error {
 		}
 
 		if ctx.Bool("json") {
-			payload := map[string]any{
-				"token":  token,
-				"header": header,
-				"claims": claims,
-				"node": map[string]string{
-					"uuid":     node.UUID,
-					"clientId": node.ClientID,
-					"name":     node.Name,
-					"role":     string(node.Role),
+			type nodePayload struct {
+				UUID     string `json:"UUID"`
+				ClientID string `json:"ClientID"`
+				Name     string `json:"Name"`
+				Role     string `json:"Role"`
+			}
+			response := struct {
+				Token  string             `json:"Token"`
+				Header map[string]any     `json:"Header"`
+				Claims *clusterjwt.Claims `json:"Claims"`
+				Node   nodePayload        `json:"Node"`
+			}{
+				Token:  token,
+				Header: header,
+				Claims: claims,
+				Node: nodePayload{
+					UUID:     node.UUID,
+					ClientID: node.ClientID,
+					Name:     node.Name,
+					Role:     string(node.Role),
 				},
 			}
-			return printJSON(payload)
+			return printJSON(response)
 		}
 
 		expires := "unknown"

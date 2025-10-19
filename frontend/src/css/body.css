@@ -42,15 +42,15 @@ body.firefox.dark-theme {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: rgba(var(--v-theme-secondary), .20);
+    background-color: rgba(var(--v-theme-secondary), 0.2);
     border: solid transparent;
     border-width: 0 0 0 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--v-theme-on-surface), .28);
+    background-color: rgba(var(--v-theme-on-surface), 0.28);
     border-style: solid;
-    border-color: rgba(var(--v-theme-secondary), .56);
+    border-color: rgba(var(--v-theme-secondary), 0.56);
     border-width: 1px;
     border-radius: 6px;
     min-height: 28px;

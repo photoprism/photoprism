@@ -215,9 +215,13 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, os.MkdirAll(expectedCluster, fs.ModeDir))
 		assert.Equal(t, expectedTheme, c.PortalThemePath())
 
-		// When the cluster theme directory exists, PortalThemePath returns it.
+		// When the cluster theme directory exists, PortalThemePath returns it only when app.js is present.
 		expectedClusterTheme := filepath.Join(expectedCluster, fs.ThemeDir)
 		assert.NoError(t, os.MkdirAll(expectedClusterTheme, fs.ModeDir))
+		// Still falls back without app.js.
+		assert.Equal(t, expectedTheme, c.PortalThemePath())
+		// Create app.js to activate portal-specific theme.
+		assert.NoError(t, os.WriteFile(filepath.Join(expectedClusterTheme, fs.AppJsFile), []byte("console.log('theme');\n"), fs.ModeFile))
 		assert.Equal(t, expectedClusterTheme, c.PortalThemePath())
 	})
 	t.Run("PortalAndSecrets", func(t *testing.T) {

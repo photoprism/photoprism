@@ -28,12 +28,12 @@ var RegisterRequireClientSecret = true
 
 // ClusterNodesRegister registers the Portal-only node registration endpoint.
 //
-//	@Summary	registers a node, provisions DB credentials, and issues clientSecret
+//	@Summary	registers a node, provisions DB credentials, and issues ClientSecret
 //	@Id			ClusterNodesRegister
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		request				body		object	true	"registration payload (nodeName required; optional: nodeRole, labels, advertiseUrl, siteUrl; to authorize UUID/name changes include clientId+clientSecret; rotation: rotateDatabase, rotateSecret)"
+//	@Param		request				body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)"
 //	@Success	200,201				{object}	cluster.RegisterResponse
 //	@Failure	400,401,403,409,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/register [post]
@@ -197,49 +197,54 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				}
 			}
 
-			// Ensure that a database for this node exists (rotation optional).
-			creds, _, credsErr := provisioner.EnsureCredentials(c, conf, n.UUID, name, req.RotateDatabase)
+			shouldProvisionDB := req.RotateDatabase || n.Database == nil || n.Database.Name == ""
 
-			if credsErr != nil {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "ensure database", event.Failed, "%s"}, clean.Error(credsErr))
-				c.JSON(http.StatusConflict, gin.H{"error": credsErr.Error()})
-				return
-			}
+			var creds provisioner.Credentials
+			haveCreds := false
+			if shouldProvisionDB {
+				var credsErr error
+				creds, _, credsErr = provisioner.EnsureCredentials(c, conf, n.UUID, name, req.RotateDatabase)
 
-			if req.RotateDatabase {
-				n.Database.RotatedAt = creds.RotatedAt
-				n.Database.Driver = provisioner.DatabaseDriver
-				if putErr := regy.Put(n); putErr != nil {
-					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "persist node", event.Failed, "%s"}, clean.Error(putErr))
-					AbortUnexpectedError(c)
+				if credsErr != nil {
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "ensure database", event.Failed, "%s"}, clean.Error(credsErr))
+					c.JSON(http.StatusConflict, gin.H{"error": credsErr.Error()})
 					return
 				}
-				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "rotate db", event.Succeeded, "node %s"}, clean.LogQuote(name))
+				haveCreds = true
+
+				if req.RotateDatabase {
+					n.Database.RotatedAt = creds.RotatedAt
+					n.Database.Driver = provisioner.DatabaseDriver
+					if putErr := regy.Put(n); putErr != nil {
+						event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "persist node", event.Failed, "%s"}, clean.Error(putErr))
+						AbortUnexpectedError(c)
+						return
+					}
+					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "rotate db", event.Succeeded, "node %s"}, clean.LogQuote(name))
+				}
 			}
 
 			jwksURL := buildJWKSURL(conf)
 
 			// Build response with struct types.
 			opts := reg.NodeOptsForSession(nil) // registration is token-based, not session; default redaction is fine
-			dbInfo := cluster.NodeDatabase{}
-
-			if n.Database != nil {
-				dbInfo = *n.Database
-			}
 
 			resp := cluster.RegisterResponse{
 				UUID:               conf.ClusterUUID(),
 				ClusterCIDR:        conf.ClusterCIDR(),
 				Node:               reg.BuildClusterNode(*n, opts),
-				Database:           cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: dbInfo.Name, User: dbInfo.User, Driver: provisioner.DatabaseDriver},
 				Secrets:            respSecret,
 				JWKSUrl:            jwksURL,
 				AlreadyRegistered:  true,
-				AlreadyProvisioned: true,
+				AlreadyProvisioned: n.Database != nil && n.Database.Name != "",
+			}
+
+			if n.Database != nil {
+				resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: n.Database.Name, User: n.Database.User, Driver: provisioner.DatabaseDriver, RotatedAt: n.Database.RotatedAt}
 			}
 
 			// Include password/dsn only if rotated now.
-			if req.RotateDatabase {
+			if req.RotateDatabase && haveCreds {
 				resp.Database.Password = creds.Password
 				resp.Database.DSN = creds.DSN
 				resp.Database.RotatedAt = creds.RotatedAt
@@ -279,19 +284,23 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		n.RotatedAt = nowRFC3339()
 
 		// Ensure DB (force rotation at create path to return password).
-		creds, _, err := provisioner.EnsureCredentials(c, conf, n.UUID, name, true)
-		if err != nil {
-			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "ensure database", event.Failed, "%s"}, clean.Error(err))
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-			return
-		}
+		shouldProvisionDB := req.RotateDatabase
+		var creds provisioner.Credentials
 
-		if n.Database == nil {
-			n.Database = &cluster.NodeDatabase{}
-		}
+		if shouldProvisionDB {
+			if creds, _, err = provisioner.EnsureCredentials(c, conf, n.UUID, name, true); err != nil {
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "ensure database", event.Failed, "%s"}, clean.Error(err))
+				c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+				return
+			}
 
-		n.Database.Name, n.Database.User, n.Database.RotatedAt = creds.Name, creds.User, creds.RotatedAt
-		n.Database.Driver = provisioner.DatabaseDriver
+			if n.Database == nil {
+				n.Database = &cluster.NodeDatabase{}
+			}
+
+			n.Database.Name, n.Database.User, n.Database.RotatedAt = creds.Name, creds.User, creds.RotatedAt
+			n.Database.Driver = provisioner.DatabaseDriver
+		}
 
 		if err = regy.Put(n); err != nil {
 			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", "persist node", event.Failed, "%s"}, clean.Error(err))
@@ -304,11 +313,16 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			ClusterCIDR:        conf.ClusterCIDR(),
 			Node:               reg.BuildClusterNode(*n, reg.NodeOptsForSession(nil)),
 			Secrets:            &cluster.RegisterSecrets{ClientSecret: n.ClientSecret, RotatedAt: n.RotatedAt},
-			Database:           cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: provisioner.DatabaseDriver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt},
 			JWKSUrl:            buildJWKSURL(conf),
 			AlreadyRegistered:  false,
-			AlreadyProvisioned: false,
+			AlreadyProvisioned: shouldProvisionDB,
 		}
+
+		if shouldProvisionDB {
+			resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: provisioner.DatabaseDriver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt}
+		}
+
+		// When DB provisioning is skipped, leave Database fields zero-value.
 
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 		event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "nodes", "register", event.Created, event.Succeeded, "node %s"}, clean.LogQuote(name))

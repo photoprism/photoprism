@@ -104,7 +104,7 @@ export default {
         this.load("");
       }
     },
-    selectedAlbums: createAlbumSelectionWatcher('items'),
+    selectedAlbums: createAlbumSelectionWatcher("items"),
   },
   methods: {
     afterEnter() {
@@ -185,16 +185,12 @@ export default {
             });
 
             // Notify user and keep dialog open for corrections
-            this.$notify.error(
-              this.$gettext("Some albums could not be created. Please edit the names and try again.")
-            );
+            this.$notify.error(this.$gettext("Some albums could not be created. Please edit the names and try again."));
             return; // Do not emit confirm; keep dialog open
           }
 
           // All created successfully → emit and let parent close the dialog
-          const createdUids = createdAlbums
-            .map((a) => a && a.UID)
-            .filter((u) => typeof u === "string" && u.length > 0);
+          const createdUids = createdAlbums.map((a) => a && a.UID).filter((u) => typeof u === "string" && u.length > 0);
           this.$emit("confirm", [...uniqueExistingUids, ...createdUids]);
         })
         .finally(() => {

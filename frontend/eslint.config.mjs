@@ -124,6 +124,23 @@ export default defineConfig([
           multiline: "ignore",
         },
       ],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.object.name='window'][callee.property.name='open'][arguments.length<3]",
+          message: "window.open must include a features string with 'noopener,noreferrer'.",
+        },
+        {
+          selector:
+            "CallExpression[callee.object.name='window'][callee.property.name='open']:not([arguments.2.value=/noopener/])",
+          message: "window.open features must include 'noopener'.",
+        },
+        {
+          selector:
+            "CallExpression[callee.object.name='window'][callee.property.name='open']:not([arguments.2.value=/noreferrer/])",
+          message: "window.open features must include 'noreferrer'.",
+        },
+      ],
       "prettier/prettier": [
         "warn",
         {

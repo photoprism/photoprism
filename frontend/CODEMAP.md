@@ -40,7 +40,7 @@ Runtime & Plugins
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
 - Tooltips: `floating-vue`
 - Video: HLS.js assigned to `window.Hls`
-- PWA: Workbox registers a service worker after config load (see `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work.
+- PWA: Workbox registers a service worker after config load (see `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
 - WebSocket: `src/common/websocket.js` publishes `websocket.*` events, used by `$session` for client info
 
 HTTP Client

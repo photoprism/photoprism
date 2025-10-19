@@ -96,9 +96,10 @@ func (c *Config) PortalConfigPath() string {
 
 // PortalThemePath returns the path to the theme files for cluster nodes to use.
 func (c *Config) PortalThemePath() string {
-	// Prefer the cluster-specific theme directory if it exists.
-	if dir := filepath.Join(c.PortalConfigPath(), fs.ThemeDir); fs.PathExists(dir) {
-		return dir
+	themeDir := filepath.Join(c.PortalConfigPath(), fs.ThemeDir)
+
+	if fs.PathExists(themeDir) && fs.FileExists(filepath.Join(themeDir, fs.AppJsFile)) {
+		return themeDir
 	}
 
 	// Fallback to the default theme directory in the main config path.

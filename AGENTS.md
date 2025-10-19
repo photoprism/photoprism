@@ -398,13 +398,13 @@ Note: Across our public documentation, official images, and in production, the c
 
 - Admin session (full view): `AuthenticateAdmin(app, router)`.
 - User session: Create a non‑admin test user (role=guest), set a password, then `AuthenticateUser`.
-- Client session (redacted internal fields; `siteUrl` visible):
+- Client session (redacted internal fields; `SiteUrl` visible):
   ```go
   s, _ := entity.AddClientSession("test-client", conf.SessionMaxAge(), "cluster", authn.GrantClientCredentials, nil)
   token := s.AuthToken()
   r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", token)
   ```
-  Admins see `advertiseUrl` and `database`; client/user sessions don’t. `siteUrl` is safe to show to all roles.
+  Admins see `AdvertiseUrl` and `Database`; client/user sessions don’t. `SiteUrl` is safe to show to all roles.
 
 ### Preflight Checklist
 
@@ -420,8 +420,8 @@ Note: Across our public documentation, official images, and in production, the c
 - Keep bootstrap code decoupled: avoid importing `internal/service/cluster/node/*` from `internal/config` or the cluster root, let nodes talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
 - Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then invoke `Ext().Init(c)`.
 - Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/service/http/header`.
-- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `clientId` + `clientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
-- Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → clientId → name`, and DTOs normalize `database.{name,user,driver,rotatedAt}` while exposing `clientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `advertiseUrl`/`database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
+- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `ClientID` + `ClientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
+- Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → ClientID → name`, and DTOs normalize `Database.{Name,User,Driver,RotatedAt}` while exposing `ClientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `AdvertiseUrl`/`Database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
 - Provisioner & DSN: database/user names use UUID-based HMACs (`photoprism_d<hmac11>`, `photoprism_u<hmac11>`); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
 - If we add Postgres provisioning support, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API/CLI.
 - Testing: exercise Portal endpoints with `httptest`, guard extraction paths with `pkg/fs.Unzip` size caps, and expect admin-only fields to disappear when authenticated as a client/user session.

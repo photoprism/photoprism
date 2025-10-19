@@ -475,7 +475,7 @@ export default {
       });
     },
     onChangeTheme(value) {
-      if (!value || !themes.Get(value)) {
+      if (!value || !themes.Get(value, false)) {
         return false;
       }
 

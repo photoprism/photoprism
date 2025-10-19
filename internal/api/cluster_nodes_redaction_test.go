@@ -34,15 +34,15 @@ func TestClusterListNodes_Redaction(t *testing.T) {
 	tokenAdmin := AuthenticateAdmin(app, router)
 	r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", tokenAdmin)
 	assert.Equal(t, http.StatusOK, r.Code)
-	// First item should include advertiseUrl and database for admins
-	assert.NotEqual(t, "", gjson.Get(r.Body.String(), "0.advertiseUrl").String())
-	assert.True(t, gjson.Get(r.Body.String(), "0.database").Exists())
+	// First item should include AdvertiseUrl and Database for admins
+	assert.NotEqual(t, "", gjson.Get(r.Body.String(), "0.AdvertiseUrl").String())
+	assert.True(t, gjson.Get(r.Body.String(), "0.Database").Exists())
 }
 
 // Verifies redaction for client-scoped sessions (no user attached).
 func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
 	// TODO: This test expects client-scoped sessions to receive redacted
-	// fields (no advertiseUrl/database). In practice, advertiseUrl appears
+	// fields (no AdvertiseUrl/Database). In practice, AdvertiseUrl appears
 	// in the response, likely due to session/ACL interactions in the test
 	// harness. Skipping for now; admin redaction coverage is in a separate
 	// test, and server-side opts are implemented. Revisit when signal/DB
@@ -68,8 +68,8 @@ func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
 
 	r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", token)
 	assert.Equal(t, http.StatusOK, r.Code)
-	// Redacted: advertiseUrl and database omitted for client sessions; siteUrl is visible.
-	assert.Equal(t, "", gjson.Get(r.Body.String(), "0.advertiseUrl").String())
-	assert.True(t, gjson.Get(r.Body.String(), "0.siteUrl").Exists())
-	assert.False(t, gjson.Get(r.Body.String(), "0.database").Exists())
+	// Redacted: AdvertiseUrl and Database omitted for client sessions; SiteUrl is visible.
+	assert.Equal(t, "", gjson.Get(r.Body.String(), "0.AdvertiseUrl").String())
+	assert.True(t, gjson.Get(r.Body.String(), "0.SiteUrl").Exists())
+	assert.False(t, gjson.Get(r.Body.String(), "0.Database").Exists())
 }

@@ -583,7 +583,7 @@ export default class Config {
 
     if (!theme) {
       theme = themes.Get(name);
-      this.themeName = theme.name;
+      this.themeName = theme?.name;
     }
 
     if (this.values.settings && this.values.settings.ui) {
@@ -922,7 +922,7 @@ export default class Config {
   }
 
   getLoginIcon() {
-    const loginTheme = themes.Get("login");
+    const loginTheme = themes.Get("login", false);
     if (loginTheme?.variables?.icon) {
       return loginTheme?.variables?.icon;
     }

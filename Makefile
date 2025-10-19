@@ -284,6 +284,8 @@ clean-local-config:
 	rm -f $(BUILD_PATH)/config/*
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
+dep-list-all:
+	go list -u -m -json all | go-mod-outdated
 npm: dep-npm npm-version
 npm-version:
 	@echo "📦 Installed npm $$(npm --version)."

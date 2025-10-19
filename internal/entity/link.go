@@ -85,7 +85,7 @@ func (m *Link) Redeem() *Link {
 	m.LinkViews += 1
 
 	if err := Db().Model(m).UpdateColumn("link_views", gorm.Expr("link_views + 1")).Error; err != nil {
-		event.AuditWarn([]string{"link %s", "failed to update view counter"}, clean.Log(m.RefID), err)
+		event.AuditWarn([]string{"link %s", "update views", "%s"}, clean.Log(m.RefID), clean.Error(err))
 	}
 
 	return m

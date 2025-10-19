@@ -1,3 +1,5 @@
+import $util from "common/util";
+
 /**
  * PhotoSwipe Dynamic Caption plugin v1.2.7
  * https://github.com/dimsemenov/photoswipe-dynamic-caption-plugin
@@ -396,7 +398,7 @@ class PhotoSwipeDynamicCaption {
       const hiddenCaption = currSlideElement.querySelector(this.options.captionContent);
       if (hiddenCaption) {
         // get caption from element with class pswp-caption-content
-        captionHTML = hiddenCaption.innerHTML;
+        captionHTML = $util.sanitizeHtml(hiddenCaption.innerHTML);
       } else {
         const img = currSlideElement.querySelector("img");
         if (img) {

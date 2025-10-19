@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import "../fixtures";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
+import * as themes from "options/themes";
 
 const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
@@ -90,6 +91,62 @@ describe("common/config", () => {
 
   it("should return app about", () => {
     expect(defaultConfig.getAbout()).toBe("PhotoPrism® CE");
+  });
+
+  it("honors forced themes when setting theme", () => {
+    const storage = new StorageShim();
+    const cfg = new Config(storage, {
+      settings: {
+        ui: {
+          theme: "default",
+        },
+      },
+    });
+
+    const forcedTheme = {
+      name: "portal-forced",
+      title: "Portal Forced",
+      force: true,
+      colors: { background: "#111111" },
+      variables: {},
+    };
+
+    themes.SetOptions([
+      {
+        text: "Default",
+        value: "default",
+        disabled: false,
+      },
+    ]);
+
+    themes.Set("default", {
+      name: "default",
+      title: "Default",
+      colors: {},
+      variables: {},
+    });
+
+    themes.Assign([forcedTheme]);
+
+    cfg.setTheme("default");
+
+    expect(cfg.themeName).toBe("portal-forced");
+    expect(cfg.theme.colors.background).toBe("#111111");
+
+    themes.Remove("portal-forced");
+    themes.SetOptions([
+      {
+        text: "Default",
+        value: "default",
+        disabled: false,
+      },
+    ]);
+    themes.Set("default", {
+      name: "default",
+      title: "Default",
+      colors: {},
+      variables: {},
+    });
   });
 
   it("should return app edition", () => {

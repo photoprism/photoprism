@@ -952,7 +952,7 @@
             </router-link>
           </div>
           <div class="menu-action nav-manual">
-            <a :href="links.docs" target="_blank">
+            <a :href="links.docs" target="_blank" rel="noopener">
               <v-icon>mdi-book-open-page-variant</v-icon>
               {{ $gettext(`User Guide`) }}
             </a>
@@ -965,7 +965,7 @@
             </router-link>
           </div>
           <div v-if="config.legalUrl" class="menu-action nav-legal">
-            <a :href="config.legalUrl" target="_blank">
+            <a :href="config.legalUrl" target="_blank" rel="noopener">
               <v-icon>mdi-information</v-icon>
               {{ $gettext(`Legal Information`) }}
             </a>
@@ -1151,7 +1151,7 @@ export default {
     },
     showLegalInfo() {
       if (this.config.legalUrl) {
-        window.open(this.config.legalUrl, "_blank").focus();
+        this.$util.openUrl(this.config.legalUrl);
       } else {
         this.$router.push({ name: "about" });
       }
