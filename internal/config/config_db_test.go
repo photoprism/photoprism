@@ -151,20 +151,20 @@ func TestConfig_DatabasePassword(t *testing.T) {
 
 func TestShouldAutoRotateDatabase(t *testing.T) {
 	t.Run("PortalAlwaysFalse", func(t *testing.T) {
-		conf := NewMinimalTestConfig(t.TempDir())
+		conf := NewMinimalTestConfig("config", t.TempDir())
 		conf.Options().NodeRole = cluster.RolePortal
 		conf.Options().DatabaseDriver = MySQL
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 
 	t.Run("NonMySQLDriverFalse", func(t *testing.T) {
-		conf := NewMinimalTestConfig(t.TempDir())
+		conf := NewMinimalTestConfig("config", t.TempDir())
 		conf.Options().DatabaseDriver = SQLite3
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 
 	t.Run("MySQLMissingFieldsTrue", func(t *testing.T) {
-		conf := NewMinimalTestConfig(t.TempDir())
+		conf := NewMinimalTestConfig("config", t.TempDir())
 		conf.Options().DatabaseDriver = MySQL
 		conf.Options().DatabaseName = "photoprism"
 		conf.Options().DatabaseUser = ""
