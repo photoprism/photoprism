@@ -33,6 +33,8 @@ func toNode(c *entity.Client) *Node {
 		Role:         c.ClientRole,
 		ClientID:     c.ClientUID,
 		AdvertiseUrl: c.ClientURL,
+		AppName:      c.AppName,
+		AppVersion:   c.AppVersion,
 		Labels:       map[string]string{},
 		CreatedAt:    c.CreatedAt.UTC().Format(time.RFC3339),
 		UpdatedAt:    c.UpdatedAt.UTC().Format(time.RFC3339),
@@ -51,6 +53,7 @@ func toNode(c *entity.Client) *Node {
 			dest.RotatedAt = db.RotatedAt
 		}
 		n.RotatedAt = data.RotatedAt
+		n.Theme = data.Theme
 	}
 	return n
 }
@@ -61,9 +64,8 @@ func (r *ClientRegistry) Put(n *Node) error {
 
 	// 1) Try NodeUUID first, if provided.
 	if n.UUID != "" {
-		var existing entity.Client
-		if err := entity.UnscopedDb().Where("node_uuid = ?", n.UUID).First(&existing).Error; err == nil && existing.ClientUID != "" {
-			m = &existing
+		if existing := entity.FindClientByNodeUUID(n.UUID); existing != nil && existing.ClientUID != "" {
+			m = existing
 		}
 	}
 
@@ -114,6 +116,12 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if n.AdvertiseUrl != "" {
 		m.ClientURL = n.AdvertiseUrl
 	}
+	if v := clean.TypeUnicode(n.AppName); v != "" {
+		m.AppName = v
+	}
+	if v := clean.TypeUnicode(n.AppVersion); v != "" {
+		m.AppVersion = v
+	}
 	data := m.GetData()
 	if data.Labels == nil {
 		data.Labels = map[string]string{}
@@ -128,6 +136,9 @@ func (r *ClientRegistry) Put(n *Node) error {
 		m.NodeUUID = n.UUID
 	}
 	data.RotatedAt = n.RotatedAt
+	if theme := clean.TypeUnicode(n.Theme); theme != "" {
+		data.Theme = theme
+	}
 	if db := n.Database; db != nil && (db.Name != "" || db.User != "" || db.RotatedAt != "") {
 		if data.Database == nil {
 			data.Database = &entity.ClientDatabase{}
@@ -157,6 +168,8 @@ func (r *ClientRegistry) Put(n *Node) error {
 	n.Name = m.ClientName
 	n.Role = m.ClientRole
 	n.AdvertiseUrl = m.ClientURL
+	n.AppName = m.AppName
+	n.AppVersion = m.AppVersion
 	n.CreatedAt = m.CreatedAt.UTC().Format(time.RFC3339)
 	n.UpdatedAt = m.UpdatedAt.UTC().Format(time.RFC3339)
 
@@ -173,6 +186,7 @@ func (r *ClientRegistry) Put(n *Node) error {
 			dest.RotatedAt = db.RotatedAt
 		}
 		n.RotatedAt = data.RotatedAt
+		n.Theme = data.Theme
 	}
 	// Set initial secret if provided on create/update.
 	if n.ClientSecret != "" {
@@ -188,11 +202,11 @@ func (r *ClientRegistry) Get(id string) (*Node, error) {
 	if id == "" {
 		return nil, ErrNotFound
 	}
-	var c entity.Client
-	if err := entity.UnscopedDb().Where("node_uuid = ?", id).First(&c).Error; err != nil || c.ClientUID == "" {
+	c := entity.FindClientByNodeUUID(id)
+	if c == nil || c.ClientUID == "" {
 		return nil, ErrNotFound
 	}
-	return toNode(&c), nil
+	return toNode(c), nil
 }
 
 func (r *ClientRegistry) FindByName(name string) (*Node, error) {
@@ -221,20 +235,11 @@ func (r *ClientRegistry) FindByNodeUUID(nodeUUID string) (*Node, error) {
 	if nodeUUID == "" {
 		return nil, ErrNotFound
 	}
-	var list []entity.Client
-	if err := entity.UnscopedDb().Where("node_uuid = ?", nodeUUID).Find(&list).Error; err != nil {
-		return nil, err
-	}
+	list := entity.FindClientsByNodeUUID(nodeUUID)
 	if len(list) == 0 {
 		return nil, ErrNotFound
 	}
-	latest := &list[0]
-	for i := 1; i < len(list); i++ {
-		if list[i].UpdatedAt.After(latest.UpdatedAt) {
-			latest = &list[i]
-		}
-	}
-	return toNode(latest), nil
+	return toNode(&list[0]), nil
 }
 
 // FindByClientID looks up a node by its OAuth client identifier.
@@ -296,10 +301,7 @@ func (r *ClientRegistry) DeleteAllByUUID(uuid string) error {
 	if uuid == "" {
 		return ErrNotFound
 	}
-	var list []entity.Client
-	if err := entity.UnscopedDb().Where("node_uuid = ?", uuid).Find(&list).Error; err != nil {
-		return err
-	}
+	list := entity.FindClientsByNodeUUID(uuid)
 	if len(list) == 0 {
 		return ErrNotFound
 	}

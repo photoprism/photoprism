@@ -349,6 +349,12 @@
                 "AdvertiseUrl": {
                     "type": "string"
                 },
+                "AppName": {
+                    "type": "string"
+                },
+                "AppVersion": {
+                    "type": "string"
+                },
                 "ClientID": {
                     "type": "string"
                 },
@@ -373,6 +379,9 @@
                     "type": "string"
                 },
                 "SiteUrl": {
+                    "type": "string"
+                },
+                "Theme": {
                     "type": "string"
                 },
                 "UUID": {
@@ -454,6 +463,9 @@
                 "Secrets": {
                     "$ref": "#/definitions/cluster.RegisterSecrets"
                 },
+                "Theme": {
+                    "type": "string"
+                },
                 "UUID": {
                     "description": "ClusterUUID",
                     "type": "string"
@@ -490,6 +502,9 @@
                 },
                 "Nodes": {
                     "type": "integer"
+                },
+                "Theme": {
+                    "type": "string"
                 },
                 "Time": {
                     "type": "string"
@@ -6644,7 +6659,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
+                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
                         "in": "body",
                         "name": "request",
                         "required": true,

@@ -3,7 +3,9 @@ package config
 import (
 	"strings"
 	"testing"
+	"time"
 
+	gc "github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -234,6 +236,7 @@ func TestConfig_CreateDirectories(t *testing.T) {
 		c := &Config{
 			options: NewTestOptions("config"),
 			token:   rnd.Base36(8),
+			cache:   gc.New(time.Second, time.Minute),
 		}
 
 		assert.NoError(t, c.CreateDirectories())
@@ -245,6 +248,7 @@ func TestConfig_CreateDirectories(t *testing.T) {
 		c := &Config{
 			options: NewTestOptions("config"),
 			token:   rnd.Base36(8),
+			cache:   gc.New(time.Second, time.Minute),
 		}
 
 		c.options.StoragePath = "./testdata"

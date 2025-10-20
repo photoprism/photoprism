@@ -27,6 +27,14 @@ func YesFlag() *cli.BoolFlag {
 	return &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}
 }
 
+// SaveFlag returns a reusable flag definition for commands that can persist generated values.
+func SaveFlag(usage string) *cli.BoolFlag {
+	if usage == "" {
+		usage = "save the generated value to the configuration"
+	}
+	return &cli.BoolFlag{Name: "save", Aliases: []string{"s"}, Usage: usage}
+}
+
 // PicturesCountFlag returns a shared flag definition limiting how many pictures a batch operation processes.
 // Usage: commands from the vision or import tooling that need to cap result size per invocation.
 func PicturesCountFlag() *cli.IntFlag {

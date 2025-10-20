@@ -16,6 +16,9 @@ type Node struct {
 	Name         string            `json:"Name"` // NodeName
 	Role         string            `json:"Role"` // NodeRole
 	ClientID     string            `json:"ClientID,omitempty"`
+	AppName      string            `json:"AppName,omitempty"`
+	AppVersion   string            `json:"AppVersion,omitempty"`
+	Theme        string            `json:"Theme,omitempty"`
 	SiteUrl      string            `json:"SiteUrl,omitempty"`
 	AdvertiseUrl string            `json:"AdvertiseUrl,omitempty"`
 	Labels       map[string]string `json:"Labels,omitempty"`
@@ -39,6 +42,7 @@ type SummaryResponse struct {
 	ClusterCIDR string       `json:"ClusterCIDR,omitempty"`
 	Nodes       int          `json:"Nodes"`
 	Database    DatabaseInfo `json:"Database"`
+	Theme       string       `json:"Theme,omitempty"`
 	Time        string       `json:"Time"`
 }
 
@@ -82,6 +86,7 @@ type RegisterResponse struct {
 	JWKSUrl            string           `json:"JWKSUrl,omitempty"`
 	AlreadyRegistered  bool             `json:"AlreadyRegistered"`
 	AlreadyProvisioned bool             `json:"AlreadyProvisioned"`
+	Theme              string           `json:"Theme,omitempty"`
 }
 
 // StatusResponse is a generic status wrapper for simple ok responses.

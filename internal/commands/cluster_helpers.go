@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // obtainClientCredentialsViaRegister calls the portal register endpoint using a join token
@@ -22,12 +22,12 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	endpoint := *u
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/nodes/register"
 
-	reqBody := map[string]any{
-		"nodeName":     nodeName,
-		"nodeRole":     cluster.RoleInstance,
-		"rotateSecret": true,
+	payload := cluster.RegisterRequest{
+		NodeName:     nodeName,
+		NodeRole:     cluster.RoleInstance,
+		RotateSecret: true,
 	}
-	b, _ := json.Marshal(reqBody)
+	b, _ := json.Marshal(payload)
 	req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(b))
 	req.Header.Set("Content-Type", "application/json")
 	header.SetAuthorization(req, joinToken)

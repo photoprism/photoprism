@@ -3,7 +3,7 @@ package clean
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // ContentType normalizes media content type strings, see https://en.wikipedia.org/wiki/Media_type.

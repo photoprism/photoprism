@@ -40,7 +40,7 @@ High-Level Package Map (Go)
 - `internal/service` — cluster/portal, maps, hub, webdav
 - `internal/event` — logging, pub/sub, audit
 - `internal/ffmpeg`, `internal/thumb`, `internal/meta`, `internal/form`, `internal/mutex` — media, thumbs, metadata, forms, coordination
-- `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/clean`, `pkg/enum`, `pkg/fs`, `pkg/txt`, `pkg/service/http/header`
+- `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/clean`, `pkg/enum`, `pkg/fs`, `pkg/txt`, `pkg/http/header`
 
 Templates & Static Assets
 - Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
@@ -109,7 +109,7 @@ Cluster / Portal
 
 Logging & Events
 - Logger and event hub: `internal/event/*`; `event.Log` is the shared logger.
-- HTTP headers/constants: `pkg/service/http/header/*` — always prefer these in handlers and tests.
+- HTTP headers/constants: `pkg/http/header/*` — always prefer these in handlers and tests.
 
 Server Startup Flow (happy path)
 1) `photoprism start` (CLI) → `internal/commands/start.go`
@@ -170,10 +170,10 @@ Security & Hot Spots (Where to Look)
   - Sizes & names: `internal/thumb/sizes.go`, `internal/thumb/names.go`, `internal/thumb/filter.go`; face/marker crop helpers live in `internal/thumb/crop` (e.g., `ParseThumb`, `IsCroppedThumb`).
 
 - Safe HTTP downloader:
-  - Shared utility: `pkg/service/http/safe` (`Download`, `Options`).
+  - Shared utility: `pkg/http/safe` (`Download`, `Options`).
   - Protections: scheme allow‑list (http/https), pre‑DNS + per‑redirect hostname/IP validation, final peer IP check, size and timeout enforcement, temp file `0600` + rename.
   - Avatars: wrapper `internal/thumb/avatar.SafeDownload` applies stricter defaults (15s, 10 MiB, `AllowPrivate=false`, image‑focused `Accept`).
-  - Tests: `go test ./pkg/service/http/safe -count=1` (includes redirect SSRF cases); avatars: `go test ./internal/thumb/avatar -count=1`.
+  - Tests: `go test ./pkg/http/safe -count=1` (includes redirect SSRF cases); avatars: `go test ./internal/thumb/avatar -count=1`.
 
 Performance & Limits
 - Prefer existing caches/workers/batching as per Makefile and code.
@@ -181,7 +181,7 @@ Performance & Limits
 
 Conventions & Rules of Thumb
 - Respect package boundaries: code in `pkg/*` must not import `internal/*`.
-- Prefer constants/helpers from `pkg/service/http/header` over string literals.
+- Prefer constants/helpers from `pkg/http/header` over string literals.
 - Never log secrets; compare tokens constant‑time.
 - Don’t import Portal internals from cluster instance/service bootstraps; use HTTP.
 - Prefer small, hermetic unit tests; isolate filesystem paths with `t.TempDir()` and env like `PHOTOPRISM_STORAGE_PATH`.
@@ -220,7 +220,9 @@ Frequently Touched Files (by topic)
 - Migrations: `internal/entity/migrate/*`
 - Workers: `internal/workers/*`
 - Cluster: `internal/service/cluster/*`
-- Headers: `pkg/service/http/header/*`
+  - Theme support: `internal/service/cluster/theme/version.go` exposes `DetectVersion`, used by bootstrap, CLI, and API handlers to compare portal vs node theme revisions (prefers `fs.VersionTxtFile`, falls back to `app.js` mtime).
+  - Registration sanitizes `AppName`, `AppVersion`, and `Theme` with `clean.TypeUnicode`; defaults for app metadata come from `config.About()` / `config.Version()`. `cluster.RegisterResponse` now includes a `Theme` hint when the portal has a newer bundle so nodes can decide whether to download immediately.
+- Headers: `pkg/http/header/*`
 
 Downloads (CLI) & yt-dlp helpers
 - CLI command & core:

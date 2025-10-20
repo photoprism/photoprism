@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 // ModelEngine represents the canonical identifier for a computer vision service engine.

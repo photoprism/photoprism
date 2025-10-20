@@ -39,7 +39,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 ## Testing Strategy
 
 - Build tests around the API harness (`NewApiTest`) to obtain a configured Gin router, config, and dependencies. This isolates filesystem paths and avoids polluting global state.
-- Wrap requests with helper functions (for example, `PerformRequestJSON`, `PerformAuthenticatedRequest`) to capture status codes, headers, and payloads. Assert headers using constants from `pkg/service/http/header`.
+- Wrap requests with helper functions (for example, `PerformRequestJSON`, `PerformAuthenticatedRequest`) to capture status codes, headers, and payloads. Assert headers using constants from `pkg/http/header`.
 - When handlers interact with the database, initialize fixtures through config helpers such as `config.NewTestConfig("api")` or `config.NewMinimalTestConfigWithDb("api", t.TempDir())` depending on fixture needs.
 - Stub external dependencies (`httptest.Server`) for remote calls and set `AllowPrivate=true` explicitly when the test server binds to loopback addresses.
 - Structure tests with table-driven subtests (`t.Run("CaseName", ...)`) and use PascalCase names. Provide cleanup functions (`t.Cleanup`) to remove temporary files or databases created during tests.

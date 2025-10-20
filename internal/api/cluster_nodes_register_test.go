@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -17,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -274,7 +277,38 @@ func TestClusterNodesRegister(t *testing.T) {
 		if assert.NotNil(t, n) {
 			assert.NotEmpty(t, n.UUID)
 		}
+	})
+	t.Run("ThemeHintProvided", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.Options().NodeRole = cluster.RolePortal
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
 
+		themeDir := conf.PortalThemePath()
+		assert.NoError(t, os.MkdirAll(themeDir, fs.ModeDir))
+		assert.NoError(t, os.WriteFile(filepath.Join(themeDir, fs.AppJsFile), []byte("// app\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(themeDir, fs.VersionTxtFile), []byte(" 2.0.0\n"), fs.ModeFile))
+		t.Cleanup(func() { _ = os.RemoveAll(themeDir) })
+
+		body := `{"NodeName":"pp-node-theme","Theme":"1.0.0"}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusCreated, r.Code)
+		assert.Equal(t, "2.0.0", gjson.Get(r.Body.String(), "Theme").String())
+		cleanupRegisterProvisioning(t, conf, r)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+		node, err := regy.FindByName("pp-node-theme")
+		assert.NoError(t, err)
+		if assert.NotNil(t, node) {
+			assert.Equal(t, "1.0.0", node.Theme)
+		}
+
+		body = `{"NodeName":"pp-node-theme","Theme":"2.0.0"}`
+		r2 := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusOK, r2.Code)
+		assert.False(t, gjson.Get(r2.Body.String(), "Theme").Exists())
+		cleanupRegisterProvisioning(t, conf, r2)
 	})
 }
 

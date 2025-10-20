@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-10-18
+Date generated: 2025-10-19
 
 ================================================================================
 
@@ -322,8 +322,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/boombuler/barcode
-Version: v1.0.2
-License: MIT (https://github.com/boombuler/barcode/blob/v1.0.2/LICENSE)
+Version: v1.1.0
+License: MIT (https://github.com/boombuler/barcode/blob/v1.1.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -404,6 +404,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
+--------------------------------------------------------------------------------
+
+Package: github.com/clipperhouse/uax29/v2
+Version: v2.2.0
+License: MIT (https://github.com/clipperhouse/uax29/blob/v2.2.0/LICENSE)
+
+MIT License
+
+Copyright (c) 2020 Matt Sherman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 --------------------------------------------------------------------------------
 
@@ -955,8 +983,8 @@ License: Apache-2.0 (https://github.com/dustinkirkland/golang-petname/blob/eebce
 --------------------------------------------------------------------------------
 
 Package: github.com/emersion/go-webdav
-Version: v0.6.0
-License: MIT (https://github.com/emersion/go-webdav/blob/v0.6.0/LICENSE)
+Version: v0.7.0
+License: MIT (https://github.com/emersion/go-webdav/blob/v0.7.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -1192,8 +1220,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/go-jose/go-jose/v4
-Version: v4.0.5
-License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.0.5/LICENSE)
+Version: v4.1.3
+License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.3/LICENSE)
 
 
                                  Apache License
@@ -1401,8 +1429,8 @@ License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.0.5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/go-jose/go-jose/v4/json
-Version: v4.0.5
-License: BSD-3-Clause (https://github.com/go-jose/go-jose/blob/v4.0.5/json/LICENSE)
+Version: v4.1.3
+License: BSD-3-Clause (https://github.com/go-jose/go-jose/blob/v4.1.3/json/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 
@@ -4265,8 +4293,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-runewidth
-Version: v0.0.16
-License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.16/LICENSE)
+Version: v0.0.19
+License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.19/LICENSE)
 
 The MIT License (MIT)
 
@@ -4293,8 +4321,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-sqlite3
-Version: v1.14.24
-License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.24/LICENSE)
+Version: v1.14.32
+License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.32/LICENSE)
 
 The MIT License (MIT)
 
@@ -4474,8 +4502,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/olekukonko/ll
-Version: v0.1.1
-License: MIT (https://github.com/olekukonko/ll/blob/v0.1.1/LICENSE)
+Version: v0.1.2
+License: MIT (https://github.com/olekukonko/ll/blob/v0.1.2/LICENSE)
 
 MIT License
 
@@ -5477,8 +5505,8 @@ License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.67.1/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/procfs
-Version: v0.16.1
-License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.16.1/LICENSE)
+Version: v0.17.0
+License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.17.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5916,8 +5944,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/tidwall/match
-Version: v1.1.1
-License: MIT (https://github.com/tidwall/match/blob/v1.1.1/LICENSE)
+Version: v1.2.0
+License: MIT (https://github.com/tidwall/match/blob/v1.2.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -6292,8 +6320,8 @@ License: Apache-2.0 (https://github.com/wamuir/graft/blob/v0.10.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/xrash/smetrics
-Version: v0.0.0-20240521201337-686a1a2994c1
-License: MIT (https://github.com/xrash/smetrics/blob/686a1a2994c1/LICENSE)
+Version: v0.0.0-20250705151800-55b8f293f342
+License: MIT (https://github.com/xrash/smetrics/blob/55b8f293f342/LICENSE)
 
 Copyright (C) 2016 Felipe da Cunha Gonçalves
 All Rights Reserved.
@@ -6796,8 +6824,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/auto/sdk
-Version: v1.1.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrumentation/blob/sdk/v1.1.0/sdk/LICENSE)
+Version: v1.2.1
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrumentation/blob/sdk/v1.2.1/sdk/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8268,8 +8296,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/oauth2
-Version: v0.31.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.31.0:LICENSE)
+Version: v0.32.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.32.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

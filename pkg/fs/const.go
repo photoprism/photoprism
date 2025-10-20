@@ -16,7 +16,9 @@ const (
 	BuildDir        = "build"
 	CacheDir        = "cache"
 	CertificatesDir = "certificates"
+	NodeDir         = "node"
 	PortalDir       = "portal"
+	SecretsDir      = "secrets"
 	CmdDir          = "cmd"
 	ConfigDir       = "config"
 	ExamplesDir     = "examples"
@@ -45,4 +47,7 @@ const (
 	AssetsJsonFile   = "assets.json"
 	ManifestJsonFile = "manifest.json"
 	SwJsFile         = "sw.js"
+	VersionTxtFile   = "version.txt"
+	JoinTokenFile    = "join_token"
+	ClientSecretFile = "client_secret"
 )

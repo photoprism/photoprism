@@ -63,7 +63,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc \
     && \
     apt-get -qq install \
-        build-essential software-properties-common pkg-config apt-utils \
+        build-essential software-properties-common pkg-config apt-utils htop \
         gcc g++ git autoconf automake cmake gettext apache2-utils davfs2 \
         chrpath tree ripgrep fd-find bat eza git-delta shellcheck shfmt fzf xxd \
         libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \

@@ -16,6 +16,50 @@ func Type(s string) string {
 	return clip.Chars(ASCII(s), LengthType)
 }
 
+// TypeUnicode removes unsafe runes, collapses whitespace, and enforces the
+// maximum type length while preserving non-ASCII characters when possible.
+func TypeUnicode(s string) string {
+	if s == "" {
+		return s
+	}
+
+	buf := make([]rune, 0, len([]rune(s)))
+	lastWasSpace := false
+
+	for _, r := range s {
+		if len(buf) >= LengthType {
+			break
+		}
+
+		if unicode.IsSpace(r) {
+			if len(buf) == 0 || lastWasSpace {
+				continue
+			}
+			buf = append(buf, ' ')
+			lastWasSpace = true
+			continue
+		}
+
+		if r <= 31 {
+			continue
+		}
+
+		switch r {
+		case '`', '\\', '|', '"', '\'', '?', '*', '<', '>', '{', '}':
+			continue
+		}
+
+		buf = append(buf, r)
+		lastWasSpace = false
+	}
+
+	for len(buf) > 0 && unicode.IsSpace(buf[len(buf)-1]) {
+		buf = buf[:len(buf)-1]
+	}
+
+	return string(buf)
+}
+
 // TypeUnderscore replaces whitespace, dividers, quotes, brackets, and other special characters with an underscore.
 func TypeUnderscore(s string) string {
 	if s == "" {

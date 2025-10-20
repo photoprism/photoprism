@@ -15,7 +15,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/config"
@@ -23,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -32,7 +32,7 @@ var log = event.Log
 // database connection is established.
 func init() {
 	// Register early so this can adjust DB settings before connectDb().
-	config.RegisterEarly("cluster-node", InitConfig, nil)
+	config.Register(config.StageBoot, "cluster-node", InitConfig, nil)
 }
 
 // InitConfig performs node bootstrap: optional registration with the Portal
@@ -46,7 +46,7 @@ func InitConfig(c *config.Config) error {
 
 	// Skip on portal nodes and unknown node types.
 	if c.Portal() || (role != cluster.RoleInstance && role != cluster.RoleService) {
-		log.Debugf("cluster: skipped node bootstrap role=%s", role)
+		log.Debugf("config: skipping cluster bootstrap for %s", clean.Log(role))
 		return nil
 	}
 
@@ -54,61 +54,50 @@ func InitConfig(c *config.Config) error {
 	joinToken := strings.TrimSpace(c.JoinToken())
 
 	if portalURL == "" || joinToken == "" {
-		log.Debugf("cluster: skipped node bootstrap portalUrl=%s joinToken=%s", portalURL, strings.Repeat("*", utf8.RuneCountInString(joinToken)))
+		log.Debugf("config: no cluster bootstrap configuration found")
 		return nil
 	}
 
-	log.Debugf("cluster: starting node bootstrap")
+	log.Debugf("config: attempting to join the configured cluster")
 
 	u, err := url.Parse(portalURL)
 	if err != nil || u.Scheme == "" || u.Host == "" {
-		log.Warnf("cluster: invalid portal url %s", clean.Log(portalURL))
+		log.Warnf("config: invalid cluster portal URL %s", clean.Log(portalURL))
 		return nil
 	}
 
 	// Enforce TLS for non-local URLs.
-	if u.Scheme != "https" && !isLocalHost(u.Hostname()) {
-		log.Warnf("cluster: refusing non-TLS portal url %s on non-local host", clean.Log(portalURL))
+	if u.Scheme != "https" && !dns.IsLoopbackHost(u.Hostname()) {
+		log.Warnf("config: refusing non-TLS portal URL %s on non-local host", clean.Log(portalURL))
 		return nil
 	}
 
 	// Register with retry policy.
+	var registerResp *cluster.RegisterResponse
 	if cluster.BootstrapAutoJoinEnabled {
-		if err = registerWithPortal(c, u, joinToken); err != nil {
+		if registerResp, err = registerWithPortal(c, u, joinToken); err != nil {
 			// Registration errors are expected when the Portal is temporarily unavailable
 			// or not configured with cluster endpoints (404). Keep as warn to signal
 			// exhaustion/terminal errors; per-attempt details are logged at debug level.
-			log.Warnf("cluster: could not join (%s)", clean.Error(err))
+			log.Warnf("config: failed to join the configured cluster (%s)", clean.Error(err))
 		}
 	}
 
-	// Pull theme if missing.
+	// Pull theme if missing or outdated, and activate it when present.
 	if cluster.BootstrapAutoThemeEnabled {
-		if err = installThemeIfMissing(c, u, joinToken); err != nil {
+		if err = syncNodeTheme(c, u, registerResp); err != nil {
 			// Theme install failures are non-critical; log at debug to avoid noise.
-			log.Debugf("cluster: could not install theme (%s)", clean.Error(err))
+			log.Debugf("config: portal theme download skipped (%s)", clean.Error(err))
 		}
+		activateNodeThemeIfPresent(c)
 	}
 
 	// Log cluster UUID.
 	if uuid := c.ClusterUUID(); uuid != "" {
-		log.Infof("cluster: UUID %s", clean.Log(uuid))
+		log.Infof("config: using portal cluster UUID %s", clean.Log(uuid))
 	}
 
 	return nil
-}
-
-// isLocalHost reports whether the given host string refers to a local loopback
-// address that may safely use plain HTTP during bootstrap.
-func isLocalHost(h string) bool {
-	switch strings.ToLower(h) {
-	case "localhost", "127.0.0.1", "::1":
-		return true
-	default:
-		// TODO: Consider treating RFC1918/link-local hosts as local for TLS enforcement
-		// if the operator explicitly opts in (e.g., via a policy var). Keep simple for now.
-		return false
-	}
 }
 
 // newHTTPClient returns a short-lived HTTP client configured with the provided
@@ -124,7 +113,7 @@ func newHTTPClient(timeout time.Duration) *http.Client {
 // registerWithPortal attempts to register the node with the Portal, retrying on
 // transient errors up to the configured limits. Successful registrations update
 // local configuration and prime JWKS credentials.
-func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
+func registerWithPortal(c *config.Config, portal *url.URL, token string) (*cluster.RegisterResponse, error) {
 	maxAttempts := cluster.BootstrapRegisterMaxAttempts
 	delay := cluster.BootstrapRegisterRetryDelay
 	timeout := cluster.BootstrapRegisterTimeout
@@ -140,6 +129,9 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 		NodeUUID:     c.NodeUUID(),
 		NodeRole:     c.NodeRole(),
 		AdvertiseUrl: c.AdvertiseUrl(),
+		AppName:      clean.TypeUnicode(c.About()),
+		AppVersion:   clean.TypeUnicode(c.Version()),
+		Theme:        clean.TypeUnicode(c.NodeThemeVersion()),
 	}
 
 	// Auto-derive Advertise/Site URLs from node name and cluster domain when not configured.
@@ -187,11 +179,11 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 		resp, err := newHTTPClient(timeout).Do(req)
 		if err != nil {
 			if attempt < maxAttempts {
-				log.Debugf("cluster: join attempt %d/%d error: %s", attempt, maxAttempts, clean.Error(err))
+				log.Debugf("config: join attempt %d/%d failed with network error: %s", attempt, maxAttempts, clean.Error(err))
 				time.Sleep(delay)
 				continue
 			}
-			return err
+			return nil, err
 		}
 
 		// Ensure body is closed after handling the response.
@@ -202,42 +194,42 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) error {
 			var r cluster.RegisterResponse
 			dec := json.NewDecoder(resp.Body)
 			if err = dec.Decode(&r); err != nil {
-				return err
+				return nil, err
 			}
 			if err = persistRegistration(c, &r, wantRotateDatabase); err != nil {
-				return err
+				return nil, err
 			}
 			primeJWKS(c, r.JWKSUrl)
 			if resp.StatusCode == http.StatusCreated {
-				log.Infof("cluster: joined as %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
+				log.Infof("config: successfully joined cluster as node %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
 			} else {
-				log.Infof("cluster: registration ok (%d)", resp.StatusCode)
+				log.Infof("config: cluster membership confirmed (%d)", resp.StatusCode)
 			}
-			return nil
+			return &r, nil
 		case http.StatusUnauthorized, http.StatusForbidden, http.StatusNotFound:
 			// Terminal errors (no retry). 404 likely indicates a Portal without cluster endpoints.
-			return errors.New(resp.Status)
+			return nil, errors.New(resp.Status)
 		case http.StatusTooManyRequests:
 			if attempt < maxAttempts {
-				log.Debugf("cluster: join attempt %d/%d rate limited", attempt, maxAttempts)
+				log.Debugf("config: join attempt %d/%d rate limited by portal", attempt, maxAttempts)
 				time.Sleep(delay)
 				continue
 			}
-			return errors.New(resp.Status)
+			return nil, errors.New(resp.Status)
 		case http.StatusConflict, http.StatusBadRequest:
 			// Do not retry on 400/409 per spec intent.
-			return errors.New(resp.Status)
+			return nil, errors.New(resp.Status)
 		default:
 			if attempt < maxAttempts {
-				log.Debugf("cluster: join attempt %d/%d server responded %s", attempt, maxAttempts, resp.Status)
+				log.Debugf("config: join attempt %d/%d received portal status %s", attempt, maxAttempts, resp.Status)
 				// TODO: Consider exponential backoff with jitter instead of constant delay.
 				time.Sleep(delay)
 				continue
 			}
-			return errors.New(resp.Status)
+			return nil, errors.New(resp.Status)
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 // defaultClusterDomain returns the configured cluster domain or, if absent,
@@ -272,7 +264,7 @@ func defaultClusterDomain(c *config.Config) string {
 	}
 
 	// Strip common prefixes like portal.<domain>.
-	if isLocalHost(host) {
+	if dns.IsLoopbackHost(host) {
 		return ""
 	}
 
@@ -329,7 +321,9 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 
 	// Persist node client secret only if missing locally and provided by server.
 	if r.Secrets != nil && r.Secrets.ClientSecret != "" && c.NodeClientSecret() == "" {
-		updates.SetNodeClientSecret(r.Secrets.ClientSecret)
+		if _, err := c.SaveNodeClientSecret(r.Secrets.ClientSecret); err != nil {
+			return fmt.Errorf("failed to persist node client secret: %w", err)
+		}
 	}
 
 	if jwksUrl := strings.TrimSpace(r.JWKSUrl); jwksUrl != "" {
@@ -376,7 +370,7 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		_ = c.Options().Load(c.OptionsYaml())
 
 		if updates.HasDatabaseUpdate() {
-			log.Infof("cluster: database settings applied; restart required to take effect")
+			log.Infof("config: applied portal database settings; restart required to connect with new credentials")
 		}
 	}
 
@@ -402,39 +396,64 @@ func primeJWKS(c *config.Config, url string) {
 	defer cancel()
 
 	if err := verifier.Prime(ctx, url); err != nil {
-		log.Debugf("cluster: jwks prime skipped (%s)", clean.Error(err))
+		log.Debugf("config: jwks prime skipped (%s)", clean.Error(err))
 	}
 }
 
-// installThemeIfMissing downloads and installs the Portal-provided theme if the
-// local theme directory is missing or lacks an app.js file.
-func installThemeIfMissing(c *config.Config, portal *url.URL, token string) error {
-	themeDir := c.ThemePath()
+// syncNodeTheme downloads or refreshes the Portal-provided theme in the node-specific
+// theme directory when the local version is missing or differs from the portal version.
+func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.RegisterResponse) error {
+	themeDir := c.NodeThemePath()
+	localVersion := strings.TrimSpace(c.NodeThemeVersion())
+	hasAppJS := fs.FileExists(filepath.Join(themeDir, fs.AppJsFile))
 
-	need := !fs.PathExists(themeDir) ||
-		(cluster.BootstrapThemeInstallOnlyIfMissingJS && !fs.FileExists(filepath.Join(themeDir, fs.AppJsFile)))
+	portalVersion := ""
+	if registerResp != nil {
+		portalVersion = clean.TypeUnicode(registerResp.Theme)
+	}
 
-	if !need && !cluster.BootstrapAllowThemeOverwrite {
+	shouldProbe := registerResp == nil
+
+	needsDownload := false
+	requiresOverwrite := false
+
+	switch {
+	case portalVersion != "":
+		if !hasAppJS {
+			needsDownload = true
+		} else if localVersion != portalVersion {
+			needsDownload = true
+			requiresOverwrite = true
+		}
+	case shouldProbe:
+		// Registration failed or was skipped; attempt to obtain the theme when missing.
+		needsDownload = !hasAppJS || localVersion == ""
+	default:
+		// Portal responded but has no theme configured; keep existing node theme.
+		return nil
+	}
+
+	if !needsDownload {
+		return nil
+	}
+
+	// Acquire OAuth bearer via client credentials; skip when credentials are unavailable.
+	bearer := ""
+	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
+		if t, err := oauthAccessToken(c, portal, id, secret); err != nil {
+			log.Debugf("config: portal access token request failed (%s)", clean.Error(err))
+		} else {
+			bearer = t
+		}
+	}
+
+	if bearer == "" {
+		log.Debugf("config: theme sync skipped because no portal credentials are available yet")
 		return nil
 	}
 
 	endpoint := *portal
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/theme"
-
-	// Prefer OAuth client-credentials using NodeClientID/NodeClientSecret if available; fallback to join token.
-	bearer := ""
-	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-		if t, err := oauthAccessToken(c, portal, id, secret); err != nil {
-			log.Debugf("cluster: oauth token request failed (%s)", clean.Error(err))
-		} else {
-			bearer = t
-		}
-	}
-	// If we do not have a bearer token, skip theme install for this run (no insecure fallback).
-	if bearer == "" {
-		log.Debugf("cluster: theme install skipped (missing OAuth credentials)")
-		return nil
-	}
 
 	req, _ := http.NewRequest(http.MethodGet, endpoint.String(), nil)
 	req.Header.Set("Authorization", "Bearer "+bearer)
@@ -448,14 +467,14 @@ func installThemeIfMissing(c *config.Config, portal *url.URL, token string) erro
 
 	switch resp.StatusCode {
 	case http.StatusOK:
-		// Save to temp zip.
-		if err := fs.MkdirAll(c.TempPath()); err != nil {
+		if err = fs.MkdirAll(c.TempPath()); err != nil {
 			return err
 		}
-		zipName := filepath.Join(c.TempPath(), "cluster-theme.zip")
-		out, err := os.Create(zipName)
 
-		if err != nil {
+		zipName := filepath.Join(c.TempPath(), "cluster-theme.zip")
+		var out *os.File
+
+		if out, err = os.Create(zipName); err != nil {
 			return err
 		}
 
@@ -466,16 +485,19 @@ func installThemeIfMissing(c *config.Config, portal *url.URL, token string) erro
 
 		_ = out.Close()
 
-		// Extract with moderate limits.
+		if requiresOverwrite && fs.PathExists(themeDir) {
+			if err = os.RemoveAll(themeDir); err != nil {
+				return err
+			}
+		}
+
 		if err = fs.MkdirAll(themeDir); err != nil {
 			return err
 		}
 
 		_, _, unzipErr := fs.Unzip(zipName, themeDir, 32*fs.MB, 512*fs.MB)
-
 		return unzipErr
 	case http.StatusNotFound:
-		// No theme configured at Portal.
 		return nil
 	case http.StatusUnauthorized, http.StatusForbidden:
 		return errors.New(resp.Status)
@@ -484,11 +506,40 @@ func installThemeIfMissing(c *config.Config, portal *url.URL, token string) erro
 	}
 }
 
+// activateNodeThemeIfPresent switches the active theme path to the node-specific
+// directory when a valid cluster-managed theme bundle is available.
+func activateNodeThemeIfPresent(c *config.Config) {
+	if c == nil {
+		return
+	}
+
+	// If NodeThemePath() does not exist or does not contain an app.js file,
+	// NodeThemeVersion() returns an empty string. No additional checks required.
+	if c.NodeThemeVersion() == "" {
+		return
+	}
+
+	// nodeDir is already clean, because filepath.Join() returns it that way.
+	nodeDir := c.NodeThemePath()
+
+	// Return is theme is already activated.
+	if filepath.Clean(c.ThemePath()) == nodeDir {
+		return
+	}
+
+	// Activate cluster theme.
+	c.SetThemePath(nodeDir)
+
+	// Report activation.
+	log.Debugf("config: activated portal theme from %s", clean.Log(nodeDir))
+}
+
 // oauthAccessToken requests an OAuth access token via client_credentials using Basic auth.
 func oauthAccessToken(c *config.Config, portal *url.URL, clientID, clientSecret string) (string, error) {
 	if portal == nil {
 		return "", fmt.Errorf("invalid portal url")
 	}
+
 	tokenURL := *portal
 	tokenURL.Path = strings.TrimRight(tokenURL.Path, "/") + "/api/v1/oauth/token"
 

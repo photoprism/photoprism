@@ -9,11 +9,15 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // ClusterGetTheme returns custom theme files as zip, if available.
@@ -33,6 +37,8 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 
 		// Optional IP-based allowance via ClusterCIDR.
 		refID := "-"
+		var session *entity.Session
+
 		if cidr := conf.ClusterCIDR(); cidr != "" {
 			if _, ipnet, err := net.ParseCIDR(cidr); err == nil {
 				if ip := net.ParseIP(clientIp); ip != nil && ipnet.Contains(ip) {
@@ -49,6 +55,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 				return
 			}
 			refID = s.RefID
+			session = s
 		}
 
 		/*
@@ -92,6 +99,12 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		}
 
 		event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", "creating theme archive from %s"}, refID, clean.Log(themePath))
+
+		if version, err := theme.DetectVersion(themePath); err == nil {
+			updateNodeThemeVersion(conf, session, version, clientIp, refID)
+		} else {
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "version", "%s"}, refID, clean.Error(err))
+		}
 
 		// Add response headers.
 		AddDownloadHeader(c, "theme.zip")
@@ -161,4 +174,63 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 			event.AuditInfo([]string{clientIp, "session %s", string(acl.ResourceCluster), "theme", "download", event.Succeeded}, refID)
 		}
 	})
+}
+
+// updateNodeThemeVersion persists the reported theme version for the active
+// node when the request is authenticated as a cluster client.
+func updateNodeThemeVersion(conf *config.Config, session *entity.Session, version, clientIP, refID string) {
+	if conf == nil || session == nil {
+		return
+	}
+
+	normalized := clean.TypeUnicode(version)
+
+	if normalized == "" {
+		return
+	}
+
+	client := session.GetClient()
+
+	if client == nil || client.ClientUID == "" {
+		return
+	}
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+
+	if err != nil {
+		event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme", "metadata", "registry", "%s"}, refID, clean.Error(err))
+		return
+	}
+
+	var node *reg.Node
+
+	if client.NodeUUID != "" {
+		if n, err := regy.Get(client.NodeUUID); err == nil {
+			node = n
+		}
+	}
+
+	if node == nil {
+		if n, err := regy.FindByClientID(client.ClientUID); err == nil {
+			node = n
+		}
+	}
+
+	if node == nil {
+		event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme", "metadata", "node not found"}, refID)
+		return
+	}
+
+	if node.Theme == normalized {
+		return
+	}
+
+	node.Theme = normalized
+
+	if err = regy.Put(node); err != nil {
+		event.AuditWarn([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme", "metadata", "%s"}, refID, clean.Error(err))
+		return
+	}
+
+	event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme", "metadata", "updated"}, refID)
 }

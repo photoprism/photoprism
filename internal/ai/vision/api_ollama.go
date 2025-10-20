@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // ApiResponseOllama represents a Ollama API service response.

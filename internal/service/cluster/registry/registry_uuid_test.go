@@ -88,10 +88,7 @@ func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
 	assert.NoError(t, r.DeleteAllByUUID(uuid))
 
 	// Ensure no rows remain for this UUID
-	var list []entity.Client
-	err := entity.UnscopedDb().Where("node_uuid = ?", uuid).Find(&list).Error
-	assert.NoError(t, err)
-	assert.Equal(t, 0, len(list))
+	assert.Empty(t, entity.FindClientsByNodeUUID(uuid))
 }
 
 // List() should only include clients that represent cluster nodes (i.e., have a NodeUUID).

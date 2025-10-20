@@ -10,7 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/internal/service/cluster/theme"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // ClusterSummary returns a minimal overview of the cluster/portal.
@@ -44,12 +45,18 @@ func ClusterSummary(router *gin.RouterGroup) {
 		}
 
 		nodes, _ := regy.List()
+		themeVersion := ""
+
+		if v, err := theme.DetectVersion(conf.PortalThemePath()); err == nil {
+			themeVersion = v
+		}
 
 		c.JSON(http.StatusOK, cluster.SummaryResponse{
 			UUID:        conf.ClusterUUID(),
 			ClusterCIDR: conf.ClusterCIDR(),
 			Nodes:       len(nodes),
 			Database:    cluster.DatabaseInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
+			Theme:       themeVersion,
 			Time:        time.Now().UTC().Format(time.RFC3339),
 		})
 	})

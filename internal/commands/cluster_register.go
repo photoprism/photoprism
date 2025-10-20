@@ -19,10 +19,11 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	clusternode "github.com/photoprism/photoprism/internal/service/cluster/node"
+	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -32,6 +33,8 @@ var (
 	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (instance, service)", Value: "instance"}
 	regIntUrlFlag     = &cli.StringFlag{Name: "advertise-url", Usage: "internal service `URL`"}
 	regSiteUrlFlag    = &cli.StringFlag{Name: "site-url", Usage: "public site `URL` (https://...)"}
+	regAppNameFlag    = &cli.StringFlag{Name: "app-name", Usage: "override application `NAME` reported to the portal"}
+	regAppVersionFlag = &cli.StringFlag{Name: "app-version", Usage: "override application `VERSION` reported to the portal"}
 	regLabelFlag      = &cli.StringSliceFlag{Name: "label", Usage: "`k=v` label (repeatable)"}
 	regRotateDatabase = &cli.BoolFlag{Name: "rotate", Usage: "rotates the node's database password"}
 	regRotateSec      = &cli.BoolFlag{Name: "rotate-secret", Usage: "rotates the node's secret used for JWT"}
@@ -55,6 +58,8 @@ var ClusterRegisterCommand = &cli.Command{
 		regPortalTok,
 		regIntUrlFlag,
 		regSiteUrlFlag,
+		regAppNameFlag,
+		regAppVersionFlag,
 		regLabelFlag,
 		regRotateDatabase,
 		regRotateSec,
@@ -109,6 +114,19 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			site = conf.SiteUrl()
 		}
 
+		overrideAppName := clean.TypeUnicode(ctx.String("app-name"))
+		overrideAppVersion := clean.TypeUnicode(ctx.String("app-version"))
+
+		defaultAppName := clean.TypeUnicode(conf.About())
+		defaultAppVersion := clean.TypeUnicode(conf.Version())
+
+		if overrideAppName == "" {
+			overrideAppName = defaultAppName
+		}
+		if overrideAppVersion == "" {
+			overrideAppVersion = defaultAppVersion
+		}
+
 		payload := cluster.RegisterRequest{
 			NodeName:       name,
 			NodeRole:       nodeRole,
@@ -116,6 +134,8 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			AdvertiseUrl:   advertise,
 			RotateDatabase: ctx.Bool("rotate"),
 			RotateSecret:   ctx.Bool("rotate-secret"),
+			AppName:        overrideAppName,
+			AppVersion:     overrideAppVersion,
 		}
 
 		// If auto detection is allowed, rotate database only when the current node lacks configured credentials.
@@ -133,6 +153,9 @@ func clusterRegisterAction(ctx *cli.Context) error {
 
 		if site != "" {
 			payload.SiteUrl = site
+		}
+		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
+			payload.Theme = themeVersion
 		}
 		b, _ := json.Marshal(payload)
 
@@ -154,6 +177,12 @@ func clusterRegisterAction(ctx *cli.Context) error {
 				fmt.Printf("Advertise:  %s\n", advertise)
 				if payload.SiteUrl != "" {
 					fmt.Printf("Site URL:   %s\n", payload.SiteUrl)
+				}
+				if overrideAppName != "" {
+					fmt.Printf("App Name:   %s\n", overrideAppName)
+				}
+				if overrideAppVersion != "" {
+					fmt.Printf("App Version:%s\n", overrideAppVersion)
 				}
 				// Warn if non-HTTPS on public host; server will enforce too.
 				if warnInsecurePublicURL(advertise) {

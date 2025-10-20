@@ -35,6 +35,8 @@ type Client struct {
 	UserUID      string          `gorm:"type:bytes;size:42;index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User           `gorm:"foreignKey:UserUID;references:UserUID" yaml:"-"`
+	AppName      string          `gorm:"size:64;" json:"AppName" yaml:"AppName,omitempty"`
+	AppVersion   string          `gorm:"size:64;" json:"AppVersion" yaml:"AppVersion,omitempty"`
 	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
 	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
 	ClientType   string          `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
@@ -112,10 +114,22 @@ func FindClientByNodeUUID(nodeUUID string) *Client {
 		return nil
 	}
 	m := &Client{}
-	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).First(m).Error; err != nil {
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").First(m).Error; err != nil {
 		return nil
 	}
 	return m
+}
+
+// FindClientsByNodeUUID returns all client rows matching the given NodeUUID ordered by UpdatedAt descending.
+func FindClientsByNodeUUID(nodeUUID string) []Client {
+	if nodeUUID == "" {
+		return nil
+	}
+	var list []Client
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").Find(&list).Error; err != nil {
+		return nil
+	}
+	return list
 }
 
 // GetUID returns the client uid string.
