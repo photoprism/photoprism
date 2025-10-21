@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -114,6 +115,7 @@ func GetAlbum(router *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200					{object}	entity.Album
+//	@Success		201					{object}	entity.Album
 //	@Failure		400,401,403,429,500	{object}	i18n.Response
 //	@Param			album				body		form.Album	true	"properties of the album to be created (currently supports Title and Favorite)"
 //	@Router			/api/v1/albums [post]
@@ -141,6 +143,8 @@ func CreateAlbum(router *gin.RouterGroup) {
 		album := entity.NewUserAlbum(frm.AlbumTitle, entity.AlbumManual, conf.Settings().Albums.Order.Album, s.UserUID)
 		album.AlbumFavorite = frm.AlbumFavorite
 
+		status := http.StatusOK
+
 		// Existing album?
 		if found := album.Find(); found == nil {
 			// Not found, create new album.
@@ -150,6 +154,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 				AbortUnexpectedError(c)
 				return
 			}
+			status = http.StatusCreated
 		} else {
 			// Exists, restore if necessary.
 			album = found
@@ -169,8 +174,13 @@ func CreateAlbum(router *gin.RouterGroup) {
 		// Update album YAML backup.
 		SaveAlbumYaml(*album)
 
+		// Add location header if newly created.
+		if status == http.StatusCreated {
+			header.SetLocation(c, c.FullPath(), album.AlbumUID)
+		}
+
 		// Return as JSON.
-		c.JSON(http.StatusOK, album)
+		c.JSON(status, album)
 	})
 }
 

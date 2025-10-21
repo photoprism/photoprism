@@ -29,6 +29,34 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
 
+## Audit Logging
+
+- Emit security events via `event.Audit*` (`AuditInfo`, `AuditWarn`, `AuditErr`, `AuditDebug`) and always build the slice as **Who → What → Outcome**.  
+  - **Who:** `ClientIP(c)` followed by the most specific actor context (`"session %s"`, `"client %s"`, `"user %s"`).  
+  - **What:** Resource constant plus action segments (for example, `string(acl.ResourceCluster)`, `"node %s"`). Place extra context such as counts or error placeholders in separate segments before the outcome.  
+  - **Outcome:** End with a single token like `event.Succeeded`, `event.Failed`, or `authn.Denied`; nothing comes after it.
+- Prefer existing helpers (`ClientIP`, `clean.Log`, `clean.LogQuote`, `clean.Error`) instead of formatting values manually, and avoid inline `=` expressions.
+- Example patterns:
+  ```go
+  event.AuditInfo([]string{
+      ClientIP(c),
+      "session %s",
+      string(acl.ResourceCluster),
+      "node %s",
+      event.Deleted,
+  }, s.RefID, uuid)
+
+  event.AuditErr([]string{
+      clientIp,
+      "session %s",
+      string(acl.ResourceCluster),
+      "download theme",
+      "%s",
+      event.Failed,
+  }, refID, clean.Error(err))
+  ```
+- See `specs/common/audit-logs.md` for the full conventions and additional examples that agents should follow.
+
 ## Swagger Documentation 
 
 - Annotate handlers with Swagger comments that include full `/api/v1/...` paths, request/response schemas, and security definitions. Only annotate routes that are externally accessible.

@@ -38,13 +38,15 @@ function splitSegments(message) {
     .filter((part) => part.length > 0);
 }
 
+// Audit logs only exist with the following levels:
+// error, warning, info, and debug.
 export const AuditSeverityNames = Object.freeze([
-  "emergency",
+  /* "emergency",
   "alert",
-  "critical",
+  "critical", */
   "error",
   "warning",
-  "notice",
+  /* "notice", */
   "info",
   "debug",
 ]);

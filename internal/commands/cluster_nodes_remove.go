@@ -8,7 +8,9 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -109,6 +111,13 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 			return cli.Exit(err, 1)
 		}
 
+		who := clusterAuditWho(ctx, conf)
+		event.AuditInfo(append(who,
+			string(acl.ResourceCluster),
+			"node %s",
+			event.Deleted,
+		), clean.Log(uuid))
+
 		loggedDeletion := false
 
 		if dropDB {
@@ -122,6 +131,11 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 					return cli.Exit(fmt.Errorf("failed to drop database credentials for node %s: %w", clean.Log(uuid), err), 1)
 				}
 				log.Infof("node %s database %s and user %s have been dropped", clean.Log(uuid), clean.Log(dbName), clean.Log(dbUser))
+				event.AuditInfo(append(who,
+					string(acl.ResourceCluster),
+					"drop database %s user %s",
+					event.Succeeded,
+				), clean.Log(dbName), clean.Log(dbUser))
 			}
 		}
 

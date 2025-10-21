@@ -103,7 +103,8 @@ func TestCreateUserPasscode(t *testing.T) {
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
-			assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, http.StatusCreated, r.Code)
+			assert.Equal(t, "/api/v1/users/uqxetse3cy5eo9z2/passcode", r.Header().Get("Location"))
 		}
 	})
 }
@@ -248,7 +249,7 @@ func TestUserPasscode(t *testing.T) {
 	}
 
 	r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
-	assert.Equal(t, http.StatusOK, r.Code)
+	assert.Equal(t, http.StatusCreated, r.Code)
 
 	secret := gjson.Get(r.Body.String(), "Secret").String()
 	activatedAt := gjson.Get(r.Body.String(), "ActivatedAt").String()

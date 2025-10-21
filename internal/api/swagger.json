@@ -5009,6 +5009,12 @@
                             "$ref": "#/definitions/entity.Album"
                         }
                     },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Album"
+                        }
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -8282,7 +8288,17 @@
         },
         "/api/v1/markers": {
             "post": {
-                "responses": {},
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Marker"
+                        }
+                    }
+                },
                 "tags": [
                     "Files"
                 ]
@@ -10030,8 +10046,8 @@
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/entity.Service"
                         }
@@ -11457,8 +11473,8 @@
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/entity.Passcode"
                         }

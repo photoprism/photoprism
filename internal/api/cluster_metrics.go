@@ -50,11 +50,13 @@ func ClusterMetrics(router *gin.RouterGroup) {
 			counts[role]++
 		}
 
-		c.JSON(http.StatusOK, cluster.MetricsResponse{
+		resp := cluster.MetricsResponse{
 			UUID:        conf.ClusterUUID(),
 			ClusterCIDR: conf.ClusterCIDR(),
 			Nodes:       counts,
 			Time:        time.Now().UTC().Format(time.RFC3339),
-		})
+		}
+
+		c.JSON(http.StatusOK, resp)
 	})
 }

@@ -7,9 +7,12 @@ const (
 	Granted     = "granted"
 	Created     = "created"
 	Added       = "added"
+	Updated     = "updated"
 	Deleted     = "deleted"
 	Removed     = "removed"
 	Verified    = "verified"
 	Activated   = "activated"
 	Deactivated = "deactivated"
+	Joined      = "joined"
+	Confirmed   = "confirmed"
 )

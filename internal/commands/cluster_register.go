@@ -16,7 +16,9 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	clusternode "github.com/photoprism/photoprism/internal/service/cluster/node"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
@@ -292,6 +294,18 @@ func clusterRegisterAction(ctx *cli.Context) error {
 				}
 			}
 		}
+
+		nodeID := resp.Node.UUID
+		if nodeID == "" {
+			nodeID = resp.Node.Name
+		}
+
+		who := clusterAuditWho(ctx, conf)
+		event.AuditInfo(append(who,
+			string(acl.ResourceCluster),
+			"register node %s",
+			event.Succeeded,
+		), clean.Log(nodeID))
 
 		// Optional persistence
 		if ctx.Bool("write-config") {

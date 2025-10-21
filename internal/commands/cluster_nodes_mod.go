@@ -7,7 +7,9 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -111,6 +113,29 @@ func clusterNodesModAction(ctx *cli.Context) error {
 		if err := r.Put(n); err != nil {
 			return cli.Exit(err, 1)
 		}
+
+		nodeID := n.UUID
+		if nodeID == "" {
+			nodeID = n.Name
+		}
+
+		changeSummary := strings.Join(changes, ", ")
+
+		who := clusterAuditWho(ctx, conf)
+		segments := []string{
+			string(acl.ResourceCluster),
+			"update node %s",
+		}
+		args := []interface{}{clean.Log(nodeID)}
+
+		if changeSummary != "" {
+			segments = append(segments, "%s")
+			args = append(args, clean.Log(changeSummary))
+		}
+
+		segments = append(segments, event.Updated)
+
+		event.AuditInfo(append(who, segments...), args...)
 
 		log.Infof("node %s has been updated", clean.LogQuote(n.Name))
 		return nil

@@ -108,7 +108,14 @@ func ClusterListNodes(router *gin.RouterGroup) {
 		resp := reg.BuildClusterNodes(page, opts)
 
 		// Audit list access.
-		event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "nodes", "list", event.Succeeded, "count=%d", "offset=%d", "returned=%d"}, s.RefID, count, offset, len(resp))
+		event.AuditDebug([]string{
+			ClientIP(c),
+			"session %s",
+			string(acl.ResourceCluster),
+			"list nodes",
+			"count %d offset %d returned %d",
+			event.Succeeded,
+		}, s.RefID, count, offset, len(resp))
 
 		c.JSON(http.StatusOK, resp)
 	})
@@ -166,7 +173,13 @@ func ClusterGetNode(router *gin.RouterGroup) {
 		resp := reg.BuildClusterNode(*n, opts)
 
 		// Audit get access.
-		event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "nodes", "get", uuid, event.Succeeded}, s.RefID)
+		event.AuditInfo([]string{
+			ClientIP(c),
+			"session %s",
+			string(acl.ResourceCluster),
+			"get node %s",
+			event.Succeeded,
+		}, s.RefID, uuid)
 
 		c.JSON(http.StatusOK, resp)
 	})
@@ -238,8 +251,9 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 		if req.AdvertiseUrl != "" {
 			n.AdvertiseUrl = req.AdvertiseUrl
 		}
-		if s := normalizeSiteURL(req.SiteUrl); s != "" {
-			n.SiteUrl = s
+
+		if u := normalizeSiteURL(req.SiteUrl); u != "" {
+			n.SiteUrl = u
 		}
 
 		n.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
@@ -249,7 +263,14 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), string(acl.ResourceCluster), "nodes", "update", uuid, event.Succeeded})
+		event.AuditInfo([]string{
+			ClientIP(c),
+			"session %s",
+			string(acl.ResourceCluster),
+			"node %s",
+			event.Updated,
+		}, s.RefID, uuid)
+
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})
 }
@@ -303,7 +324,14 @@ func ClusterDeleteNode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), string(acl.ResourceCluster), "nodes", "delete", uuid, event.Succeeded})
+		event.AuditWarn([]string{
+			ClientIP(c),
+			"session %s",
+			string(acl.ResourceCluster),
+			"node %s",
+			event.Deleted,
+		}, s.RefID, uuid)
+
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})
 }

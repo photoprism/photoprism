@@ -5,11 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
@@ -169,6 +172,35 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			}
 			return cli.Exit(err, 1)
 		}
+
+		nodeID := resp.Node.UUID
+		if nodeID == "" {
+			nodeID = resp.Node.Name
+		}
+
+		rotatedParts := make([]string, 0, 2)
+		if rotateDatabase {
+			rotatedParts = append(rotatedParts, "database")
+		}
+		if rotateSecret {
+			rotatedParts = append(rotatedParts, "secret")
+		}
+
+		detail := strings.Join(rotatedParts, ", ")
+
+		who := clusterAuditWho(ctx, conf)
+		segments := []string{
+			string(acl.ResourceCluster),
+			"rotate node %s",
+		}
+		args := []interface{}{clean.Log(nodeID)}
+		if detail != "" {
+			segments = append(segments, "%s")
+			args = append(args, clean.Log(detail))
+		}
+		segments = append(segments, event.Succeeded)
+
+		event.AuditInfo(append(who, segments...), args...)
 
 		if ctx.Bool("json") {
 			jb, _ := json.Marshal(resp)

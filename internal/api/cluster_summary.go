@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
@@ -51,14 +52,24 @@ func ClusterSummary(router *gin.RouterGroup) {
 			themeVersion = v
 		}
 
-		c.JSON(http.StatusOK, cluster.SummaryResponse{
+		resp := cluster.SummaryResponse{
 			UUID:        conf.ClusterUUID(),
 			ClusterCIDR: conf.ClusterCIDR(),
 			Nodes:       len(nodes),
 			Database:    cluster.DatabaseInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
 			Theme:       themeVersion,
 			Time:        time.Now().UTC().Format(time.RFC3339),
-		})
+		}
+
+		event.AuditDebug([]string{
+			ClientIP(c),
+			"session %s",
+			string(acl.ResourceCluster),
+			"get summary for cluster uuid %s",
+			event.Succeeded,
+		}, s.RefID, conf.ClusterUUID())
+
+		c.JSON(http.StatusOK, resp)
 	})
 }
 
@@ -84,6 +95,13 @@ func ClusterHealth(router *gin.RouterGroup) {
 			AbortFeatureDisabled(c)
 			return
 		}
+
+		event.AuditDebug([]string{
+			ClientIP(c),
+			string(acl.ResourceCluster),
+			"health check",
+			event.Succeeded,
+		})
 
 		c.JSON(http.StatusOK, NewHealthResponse("ok"))
 	})

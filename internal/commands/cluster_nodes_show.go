@@ -6,7 +6,9 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -56,6 +58,13 @@ func clusterNodesShowAction(ctx *cli.Context) error {
 
 		opts := reg.NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true}
 		dto := reg.BuildClusterNode(*n, opts)
+
+		who := clusterAuditWho(ctx, conf)
+		event.AuditInfo(append(who,
+			string(acl.ResourceCluster),
+			"show node %s",
+			event.Succeeded,
+		), clean.Log(dto.UUID))
 
 		if ctx.Bool("json") {
 			b, _ := json.Marshal(dto)
