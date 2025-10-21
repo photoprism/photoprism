@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-10-21 15:18+0000\n"
+"Last-Translator: NoufAM <Nouf.almashghouni@deg.shj.ae>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgstr "تم تحميل %{n} من الملفات"
 
 #: src/page/library/browse.vue:370
 msgid "%{n} folders found"
-msgstr "تم العثور على %{n} من مجلدات"
+msgstr "تم العثور على %{n} من المجلدات"
 
 #: src/component/navigation.vue:1676
 msgid "%{n} GB of %{q} GB used"
@@ -70,7 +70,7 @@ msgstr "تم العثور على %{n} من الأشخاص"
 #: src/page/album/photos.vue:313 src/page/album/photos.vue:506
 #: src/page/photos.vue:446 src/page/photos.vue:643
 msgid "%{n} pictures found"
-msgstr "تم العثور على %{n} صورة"
+msgstr "تم العثور على %{n} من الصور"
 
 #: src/common/form.js:291 src/common/form.js:296
 msgid "%{s} is too long"
@@ -82,7 +82,7 @@ msgstr "%{s} قصير جدًا"
 
 #: src/options/options.js:362
 msgid "1 hour"
-msgstr "1 ساعة"
+msgstr "ساعة واحدة"
 
 #: src/options/options.js:364
 msgid "12 hours"
@@ -119,7 +119,7 @@ msgstr "عن"
 
 #: src/options/auth.js:27 src/options/auth.js:45
 msgid "Access Token"
-msgstr "رمز وصول"
+msgstr "رمز الوصول"
 
 #: src/component/navigation.vue:87 src/component/navigation.vue:1788
 #: src/component/service/upload.vue:71 src/model/service.js:72
@@ -142,7 +142,7 @@ msgstr "تم استعادة الحساب"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "حسابات"
+msgstr "الحسابات"
 
 #: src/component/photo/edit/info.vue:391
 msgid "Accuracy"
@@ -193,7 +193,7 @@ msgstr "إضافة حساب"
 
 #: src/page/albums.vue:121 src/page/albums.vue:310
 msgid "Add Album"
-msgstr "أضف البوم"
+msgstr "أضف ألبوم"
 
 #: src/page/settings/general.vue:308
 msgid "Add files to your library via Web Upload."
@@ -232,7 +232,7 @@ msgstr "ضبط الموقع"
 
 #: src/options/admin.js:6 src/common/util.js:752 src/options/auth.js:6
 msgid "Admin"
-msgstr "مسؤل"
+msgstr "مسؤول"
 
 #: src/page/settings.vue:61
 msgid "Advanced"
@@ -276,7 +276,7 @@ msgstr "بعد أسبوعين"
 
 #: src/model/album.js:205
 msgid "Album"
-msgstr "البوم"
+msgstr "ألبوم"
 
 #: src/page/settings/advanced.vue:343
 msgid "Album Backups"
@@ -671,7 +671,7 @@ msgstr "تغيير ملف التعريف الشخصي وإعدادات الأم�
 
 #: src/page/settings/general.vue:408
 msgid "Change photo titles, locations, and other metadata."
-msgstr "قم بتغيير عناوين الصور والمواقع والبيانات الوصفية الأخرى."
+msgstr "قم بتغيير عناوين الصور والمواقع والبيانات الوصفية الاخرى."
 
 #: src/component/photo/clipboard.vue:103
 msgid "Change private flag"
@@ -1842,7 +1842,7 @@ msgstr "موقع"
 
 #: src/page/library/errors.vue:184
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "تظهر السجلات هنا كلما صادف PhotoPrism ملفات معطلة ، أو كانت هناك مشكلات أخرى محتملة."
+msgstr "تظهر السجلات هنا كلما وجد PhotoPrism ملفات معطلة ، أو كانت هناك مشكلات أخرى محتملة."
 
 #: src/component/navigation.vue:1552 src/component/navigation.vue:1840
 msgid "Login"
@@ -2318,7 +2318,7 @@ msgstr "تم تغيير كلمة السر"
 #: src/component/photo/edit/dialog.vue:245 src/options/options.js:201
 #: src/page/settings/general.vue:180
 msgid "People"
-msgstr "الناس"
+msgstr "الأشخاص"
 
 #: src/component/share/dialog.vue:207
 msgid "People you share a link with will be able to view public contents."
@@ -2330,7 +2330,7 @@ msgstr "تم الحذف بشكل نهائي"
 
 #: src/page/settings/general.vue:458
 msgid "Permanently remove files to free up storage."
-msgstr "قم بإزالة الملفات بشكل دائم لتحرير مساحة التخزين."
+msgstr "قم بإزالة الملفات بشكل دائم لتوفير مساحة التخزين."
 
 #: src/model/subject.js:134
 msgid "Person"
@@ -2412,7 +2412,7 @@ msgstr "الرجاء إدخال حرف OTP {0}"
 
 #: src/component/settings/password.vue:66
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "يرجى ملاحظة أن تغيير كلمة المرور الخاصة بك سيؤدي إلى تسجيل خروجك على الأجهزة والمتصفحات الأخرى."
+msgstr "يرجى ملاحظة أن تغيير كلمة المرور الخاصة بك سيؤدي إلى تسجيل خروجك على الأجهزة والمتصفحات الاخرى."
 
 #: src/page/connect.vue:148 src/page/connect.vue:152
 msgid "Please restart your instance for the changes to take effect."
@@ -2448,7 +2448,7 @@ msgstr "منع إنشاء النسخ الاحتياطية لقاعدة البي�
 
 #: src/page/settings/advanced.vue:201
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "منع التطبيقات الأخرى من الوصول إلى PhotoPrism كمحرك أقراص شبكة مشترك."
+msgstr "منع التطبيقات الاخرى من الوصول إلى PhotoPrism كمحرك أقراص شبكة مشترك."
 
 #: src/component/photo/edit/files.vue:139
 msgid "Preview"
@@ -2703,7 +2703,7 @@ msgstr "نطاق"
 #: src/page/library/errors.vue:76 src/page/people/recognized.vue:66
 #: src/page/places.vue:79 src/page/settings/content.vue:235
 msgid "Search"
-msgstr "بحث"
+msgstr "البحث"
 
 #: src/page/settings/general.vue:610
 msgid "Search and display photos on a map."
@@ -2824,7 +2824,7 @@ msgstr "مشاركة %{s}"
 
 #: src/page/settings/general.vue:483
 msgid "Share your pictures with other apps and services."
-msgstr "شارك الصور مع التطبيقات والخدمات الأخرى."
+msgstr "شارك الصور مع التطبيقات والخدمات الاخرى."
 
 #: src/page/people/new.vue:155 src/page/people/recognized.vue:195
 msgid "Show"
