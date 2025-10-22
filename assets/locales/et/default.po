@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
-"PO-Revision-Date: 2025-03-11 19:36+0000\n"
+"PO-Revision-Date: 2025-10-22 08:25+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: et\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: messages.go:104
 msgid "Something went wrong, try again"
@@ -116,7 +116,7 @@ msgstr "Õigused puuduvad"
 
 #: messages.go:129
 msgid "Payment required"
-msgstr ""
+msgstr "Nõutav makse"
 
 #: messages.go:130
 msgid "Upload might be offensive"

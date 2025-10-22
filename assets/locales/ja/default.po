@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
-"PO-Revision-Date: 2025-05-12 23:50+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-10-22 08:25+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/backend/ja/>\n"
 "Language: ja\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.11.1\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: messages.go:104
 msgid "Something went wrong, try again"
@@ -117,7 +117,7 @@ msgstr "アクセスが拒否されました"
 
 #: messages.go:129
 msgid "Payment required"
-msgstr ""
+msgstr "要支払い"
 
 #: messages.go:130
 msgid "Upload might be offensive"

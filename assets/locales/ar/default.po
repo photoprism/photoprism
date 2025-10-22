@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
-"PO-Revision-Date: 2025-07-21 11:32+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-10-22 08:25+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: messages.go:104
 msgid "Something went wrong, try again"
@@ -117,7 +117,7 @@ msgstr "طلب الاذن مرفوض"
 
 #: messages.go:129
 msgid "Payment required"
-msgstr ""
+msgstr "الدفع مطلوب"
 
 #: messages.go:130
 msgid "Upload might be offensive"
