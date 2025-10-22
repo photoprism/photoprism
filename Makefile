@@ -223,6 +223,7 @@ acceptance-file-reset:
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
+	rm storage/acceptance/photoprism.log
 acceptance-database-reset-%:
 	@if [ -f storage/acceptance/config-active/dbms.sqlite ]; then \
 		echo "resetting sqlite"; \
@@ -332,12 +333,12 @@ storage/sqlite:
 storage/mariadb:
 	rm -rf storage/acceptance/config-active
 	cp storage/acceptance/config-sqlite/ storage/acceptance/config-active -r
-	sed "s/DatabaseDriver: sqlite/DatabaseDriver: mysql/;s/DatabaseDsn[: a-z./]\+/DatabaseDsn: $(subst &,\&,$(subst /,\/,$(PHOTOPRISM_TEST_DSN_MARIADB)))/" storage/acceptance/config-sqlite/options.yml | sed "s/testdb/acceptance/g" > storage/acceptance/config-active/options.yml
+	sed "s/DatabaseDriver: sqlite/DatabaseDriver: mysql/;s/DatabaseD[sS][nN][: a-z./]\+/DatabaseDSN: $(subst &,\&,$(subst /,\/,$(PHOTOPRISM_TEST_DSN_MARIADB)))/" storage/acceptance/config-sqlite/options.yml | sed "s/testdb/acceptance/g" > storage/acceptance/config-active/options.yml
 	echo mariadb > storage/acceptance/config-active/dbms.mariadb
 storage/postgres:
 	rm -rf storage/acceptance/config-active
 	cp storage/acceptance/config-sqlite/ storage/acceptance/config-active -r
-	sed "s/DatabaseDriver: sqlite/DatabaseDriver: postgres/;s/DatabaseDsn[: a-z./]\+/DatabaseDsn: $(subst &,\&,$(subst /,\/,$(PHOTOPRISM_TEST_DSN_POSTGRES)))/" storage/acceptance/config-sqlite/options.yml | sed "s/testdb/acceptance/g" > storage/acceptance/config-active/options.yml
+	sed "s/DatabaseDriver: sqlite/DatabaseDriver: postgres/;s/DatabaseD[sS][nN][: a-z./]\+/DatabaseDSN: $(subst &,\&,$(subst /,\/,$(PHOTOPRISM_TEST_DSN_POSTGRES)))/" storage/acceptance/config-sqlite/options.yml | sed "s/testdb/acceptance/g" > storage/acceptance/config-active/options.yml
 	echo postgresql > storage/acceptance/config-active/dbms.postgresql
 zip-facenet:
 	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
@@ -415,13 +416,15 @@ test-js:
 	(cd frontend && npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json --test "testname" "tests/acceptance"'  && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=public --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json --test "testname" "tests/acceptance"'  && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Multi-Window)\:*" --test-meta mode=auth --config-file ./testcaferc.json --experimental-multiple-windows "tests/acceptance" && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
