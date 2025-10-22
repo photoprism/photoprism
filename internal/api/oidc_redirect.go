@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -346,11 +347,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Save session after successful authentication.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, "%s"}, err)
+			event.AuditErr([]string{clientIp, "create session", "oidc", userName, status.Error(err)})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.Failed})
+			event.AuditErr([]string{clientIp, "create session", "oidc", userName, status.Failed})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrUnexpected)))
 			return
 		}
@@ -362,7 +363,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
 		// Log session created event.
-		event.AuditInfo([]string{clientIp, "session %s", "oidc", userName, authn.Created}, sess.RefID)
+		event.AuditInfo([]string{clientIp, "session %s", "oidc", userName, status.Created}, sess.RefID)
 
 		// Log session expiration time.
 		if expires := sess.ExpiresAt(); !expires.IsZero() {

@@ -276,38 +276,38 @@ func VerifyTokenWithKeys(tokenString string, expected ExpectedClaims, keys []Pub
 
 // Status returns diagnostic information about the verifier's current JWKS cache.
 func (v *Verifier) Status(ttl time.Duration) VerifierStatus {
-	status := VerifierStatus{}
+	result := VerifierStatus{}
 
 	if ttl > 0 {
-		status.CacheTTLSeconds = int(ttl / time.Second)
+		result.CacheTTLSeconds = int(ttl / time.Second)
 	}
 
 	v.mu.Lock()
 	defer v.mu.Unlock()
 
-	status.CacheURL = v.cache.URL
-	status.CacheETag = v.cache.ETag
-	status.JWKSURL = v.cache.URL
-	status.KeyCount = len(v.cache.Keys)
-	status.KeyIDs = make([]string, 0, len(v.cache.Keys))
+	result.CacheURL = v.cache.URL
+	result.CacheETag = v.cache.ETag
+	result.JWKSURL = v.cache.URL
+	result.KeyCount = len(v.cache.Keys)
+	result.KeyIDs = make([]string, 0, len(v.cache.Keys))
 
 	for _, key := range v.cache.Keys {
-		status.KeyIDs = append(status.KeyIDs, key.Kid)
+		result.KeyIDs = append(result.KeyIDs, key.Kid)
 	}
 
-	status.CachePath = v.cachePath
+	result.CachePath = v.cachePath
 
 	if v.cache.FetchedAt > 0 {
 		fetched := time.Unix(v.cache.FetchedAt, 0).UTC()
-		status.CacheFetchedAt = fetched
+		result.CacheFetchedAt = fetched
 		age := time.Since(fetched)
-		status.CacheAgeSeconds = int64(age.Seconds())
+		result.CacheAgeSeconds = int64(age.Seconds())
 		if ttl > 0 && age > ttl {
-			status.CacheStale = true
+			result.CacheStale = true
 		}
 	}
 
-	return status
+	return result
 }
 
 // publicKeyForKid resolves the public key for the given key ID, fetching JWKS data if needed.

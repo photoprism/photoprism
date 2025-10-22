@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -32,11 +33,11 @@ type Client struct {
 func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl string, insecure bool) (result *Client, err error) {
 	if issuerUri == nil {
 		err = errors.New("issuer uri required")
-		event.AuditErr([]string{"oidc", "provider", "%s"}, err)
+		event.AuditErr([]string{"oidc", "provider", status.Error(err)})
 		return nil, errors.New("issuer uri required")
 	} else if insecure == false && issuerUri.Scheme != "https" {
 		err = errors.New("issuer uri must use https")
-		event.AuditErr([]string{"oidc", "provider", "%s"}, err)
+		event.AuditErr([]string{"oidc", "provider", status.Error(err)})
 		return nil, err
 	}
 
@@ -44,20 +45,20 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	redirectUrl, urlErr := RedirectURL(siteUrl)
 
 	if urlErr != nil {
-		event.AuditErr([]string{"oidc", "redirect url", "%s"}, err)
-		return nil, err
+		event.AuditErr([]string{"oidc", "redirect url", status.Error(urlErr)})
+		return nil, urlErr
 	}
 
 	// Generate cryptographic keys.
 	var hashKey, encryptKey []byte
 
 	if hashKey, err = rnd.RandomBytes(16); err != nil {
-		event.AuditErr([]string{"oidc", "hash key", "%s"}, err)
+		event.AuditErr([]string{"oidc", "hash key", status.Error(err)})
 		return nil, err
 	}
 
 	if encryptKey, err = rnd.RandomBytes(16); err != nil {
-		event.AuditErr([]string{"oidc", "encrypt key", "%s"}, err)
+		event.AuditErr([]string{"oidc", "encrypt key", status.Error(err)})
 		return nil, err
 	}
 
@@ -85,7 +86,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	discover, err := client.Discover(context.TODO(), issuerUri.String(), httpClient)
 
 	if err != nil {
-		event.AuditErr([]string{"oidc", "provider", "service discovery", "%s"}, err)
+		event.AuditErr([]string{"oidc", "provider", "service discovery", status.Error(err)})
 		return nil, err
 	}
 
@@ -110,7 +111,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	provider, err := rp.NewRelyingPartyOIDC(context.TODO(), issuerUri.String(), oidcClient, oidcSecret, redirectUrl, scopes, clientOpt...)
 
 	if err != nil {
-		event.AuditErr([]string{"oidc", "provider", "%s"}, err)
+		event.AuditErr([]string{"oidc", "provider", status.Error(err)})
 		return nil, err
 	}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // CreateSession creates a new client session (login) and returns session data.
@@ -41,7 +42,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err := c.BindJSON(&frm); err != nil {
-			event.AuditWarn([]string{clientIp, "create session", "invalid request", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "create session", "invalid request", status.Error(err)})
 			AbortBadRequest(c, err)
 			return
 		}
@@ -119,7 +120,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Save session after successful authentication.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "%s"}, err)
+			event.AuditErr([]string{clientIp, status.Error(err)})
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess == nil {

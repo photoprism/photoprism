@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -81,7 +82,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
 		if err = c.ShouldBind(&frm); err != nil && authToken == "" {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortBadRequest(c, err)
 			return
 		} else if frm.Empty() {
@@ -91,7 +92,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 
 		// Validate revocation form values.
 		if err = frm.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		}
@@ -133,18 +134,18 @@ func OAuthRevoke(router *gin.RouterGroup) {
 
 		// Check revocation request and abort if invalid.
 		if err != nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err.Error())
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Error(err)}, clean.Log(sess.RefID), role.String())
 			AbortInvalidCredentials(c)
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			AbortInvalidCredentials(c)
 			return
 		} else if sess.Abort(c) {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			return
 		} else if !sess.IsClient() {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
 		} else if sUserUID != "" && sess.UserUID != sUserUID {
@@ -152,13 +153,13 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			AbortInvalidCredentials(c)
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Granted}, clean.Log(sess.RefID), role.String())
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Granted}, clean.Log(sess.RefID), role.String())
 		}
 
 		// Delete session cache and database record.
 		if err = sess.Delete(); err != nil {
 			// Log error.
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err)
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Error(err)}, clean.Log(sess.RefID), role.String())
 
 			// Return JSON error.
 			c.AbortWithStatusJSON(http.StatusNotFound, i18n.NewResponse(http.StatusNotFound, i18n.ErrNotFound))

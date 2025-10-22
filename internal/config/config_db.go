@@ -115,6 +115,11 @@ func (c *Config) DatabaseSsl() bool {
 
 // DatabaseDSN returns the database data source name (DSN).
 func (c *Config) DatabaseDSN() string {
+	if c.options.DatabaseDSN == "" && c.options.Deprecated.DatabaseDsn != "" {
+		c.options.DatabaseDSN = c.options.Deprecated.DatabaseDsn
+		c.options.Deprecated.DatabaseDsn = ""
+	}
+
 	if c.options.DatabaseDSN == "" {
 		switch c.DatabaseDriver() {
 		case MySQL, MariaDB:
@@ -165,6 +170,11 @@ func (c *Config) DatabaseFile() string {
 
 // ParseDatabaseDSN parses the database dsn and extracts user, password, database server, and name.
 func (c *Config) ParseDatabaseDSN() {
+	if c.options.DatabaseDSN == "" && c.options.Deprecated.DatabaseDsn != "" {
+		c.options.DatabaseDSN = c.options.Deprecated.DatabaseDsn
+		c.options.Deprecated.DatabaseDsn = ""
+	}
+
 	if c.options.DatabaseDSN == "" || c.options.DatabaseServer != "" {
 		return
 	}

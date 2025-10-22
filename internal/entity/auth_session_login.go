@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -155,7 +156,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 					s.SessExpires = authSess.SessExpires
 				}
 
-				event.AuditInfo([]string{clientIp, "session %s", "login as %s", "app password", authn.Succeeded}, s.RefID, clean.LogQuote(username))
+				event.AuditInfo([]string{clientIp, "session %s", "login as %s", "app password", status.Succeeded}, s.RefID, clean.LogQuote(username))
 				event.LoginInfo(clientIp, "api", username, s.UserAgent)
 			}
 
@@ -226,7 +227,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 	}
 
 	if s != nil {
-		event.AuditInfo([]string{clientIp, "session %s", "login as %s", authn.Succeeded}, s.RefID, clean.LogQuote(username))
+		event.AuditInfo([]string{clientIp, "session %s", "login as %s", status.Succeeded}, s.RefID, clean.LogQuote(username))
 		event.LoginInfo(clientIp, "api", username, s.UserAgent)
 	}
 

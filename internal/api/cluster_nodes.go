@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -108,14 +109,13 @@ func ClusterListNodes(router *gin.RouterGroup) {
 		resp := reg.BuildClusterNodes(page, opts)
 
 		// Audit list access.
-		event.AuditDebug([]string{
-			ClientIP(c),
-			"session %s",
-			string(acl.ResourceCluster),
-			"list nodes",
-			"count %d offset %d returned %d",
-			event.Succeeded,
-		}, s.RefID, count, offset, len(resp))
+		event.AuditDebug(
+			[]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "list nodes", "count %d offset %d returned %d", status.Succeeded},
+			s.RefID,
+			count,
+			offset,
+			len(resp),
+		)
 
 		c.JSON(http.StatusOK, resp)
 	})
@@ -173,13 +173,11 @@ func ClusterGetNode(router *gin.RouterGroup) {
 		resp := reg.BuildClusterNode(*n, opts)
 
 		// Audit get access.
-		event.AuditInfo([]string{
-			ClientIP(c),
-			"session %s",
-			string(acl.ResourceCluster),
-			"get node %s",
-			event.Succeeded,
-		}, s.RefID, uuid)
+		event.AuditInfo(
+			[]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "get node", "%s", status.Succeeded},
+			s.RefID,
+			uuid,
+		)
 
 		c.JSON(http.StatusOK, resp)
 	})
@@ -263,13 +261,11 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{
-			ClientIP(c),
-			"session %s",
-			string(acl.ResourceCluster),
-			"node %s",
-			event.Updated,
-		}, s.RefID, uuid)
+		event.AuditInfo(
+			[]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "node", "%s", status.Updated},
+			s.RefID,
+			uuid,
+		)
 
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})
@@ -324,13 +320,11 @@ func ClusterDeleteNode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditWarn([]string{
-			ClientIP(c),
-			"session %s",
-			string(acl.ResourceCluster),
-			"node %s",
-			event.Deleted,
-		}, s.RefID, uuid)
+		event.AuditWarn(
+			[]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "node", "%s", status.Deleted},
+			s.RefID,
+			uuid,
+		)
 
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})

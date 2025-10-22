@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ClusterNodesRemoveCommand deletes a node from the registry.
@@ -114,8 +115,8 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 		who := clusterAuditWho(ctx, conf)
 		event.AuditInfo(append(who,
 			string(acl.ResourceCluster),
-			"node %s",
-			event.Deleted,
+			"node", "%s",
+			status.Deleted,
 		), clean.Log(uuid))
 
 		loggedDeletion := false
@@ -134,7 +135,7 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 				event.AuditInfo(append(who,
 					string(acl.ResourceCluster),
 					"drop database %s user %s",
-					event.Succeeded,
+					status.Succeeded,
 				), clean.Log(dbName), clean.Log(dbUser))
 			}
 		}

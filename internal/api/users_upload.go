@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -67,7 +68,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		// Abort if there is not enough free storage to upload new files.
 		if conf.FilesQuotaReached() {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "insufficient storage"}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}

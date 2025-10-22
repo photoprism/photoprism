@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -82,7 +83,7 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Created}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Created}, s.RefID)
 
 		header.SetLocation(c)
 		c.JSON(http.StatusCreated, passcode)
@@ -134,7 +135,7 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		// Return the reserved request rate limit tokens after successful authentication.
 		r.Success()
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Verified}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Verified}, s.RefID)
 
 		// Clear session cache.
 		s.ClearCache()
@@ -172,7 +173,7 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Activated}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Activated}, s.RefID)
 
 		// Invalidate any other user sessions to protect the account:
 		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
@@ -235,7 +236,7 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Deactivated}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Deactivated}, s.RefID)
 
 		// Clear session cache.
 		s.ClearCache()

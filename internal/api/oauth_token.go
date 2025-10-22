@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
@@ -17,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // OAuthToken creates a new access token for clients using OAuth2 grant types.
@@ -65,14 +65,14 @@ func OAuthToken(router *gin.RouterGroup) {
 			frm.ClientID = clientId
 			frm.ClientSecret = clientSecret
 		} else if err = c.ShouldBind(&frm); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortBadRequest(c, err)
 			return
 		}
 
 		// Check the credentials for completeness and the correct format.
 		if err = frm.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		}
@@ -110,7 +110,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				AbortInvalidCredentials(c)
 				return
 			} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
-				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "method %s not supported"}, clean.LogQuote(method.String()))
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "method %s", status.Unsupported}, clean.LogQuote(method.String()))
 				AbortInvalidCredentials(c)
 				return
 			} else if client.InvalidSecret(frm.ClientSecret) {
@@ -151,13 +151,13 @@ func OAuthToken(router *gin.RouterGroup) {
 				authUser, authProvider, authMethod, authErr := entity.Auth(loginForm, nil, c)
 
 				if authProvider.IsClient() {
-					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.Denied})
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Denied})
 					AbortInvalidCredentials(c)
 					return
 				} else if authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired) {
 					// Ok.
 				} else if authErr != nil {
-					event.AuditErr([]string{clientIp, "oauth2", actor, action, "%s"}, strings.ToLower(clean.Error(authErr)))
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(authErr)})
 					AbortInvalidCredentials(c)
 					return
 				} else if !authUser.Equal(s.GetUser()) {
@@ -183,7 +183,7 @@ func OAuthToken(router *gin.RouterGroup) {
 
 		// Save new session.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, err.Error()})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		} else if sess == nil {
@@ -191,7 +191,7 @@ func OAuthToken(router *gin.RouterGroup) {
 			AbortUnexpectedError(c)
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "oauth2", actor, action, authn.Created})
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, status.Created})
 		}
 
 		// Delete any existing client sessions above the configured limit.

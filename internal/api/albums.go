@@ -143,7 +143,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 		album := entity.NewUserAlbum(frm.AlbumTitle, entity.AlbumManual, conf.Settings().Albums.Order.Album, s.UserUID)
 		album.AlbumFavorite = frm.AlbumFavorite
 
-		status := http.StatusOK
+		code := http.StatusOK
 
 		// Existing album?
 		if found := album.Find(); found == nil {
@@ -154,7 +154,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 				AbortUnexpectedError(c)
 				return
 			}
-			status = http.StatusCreated
+			code = http.StatusCreated
 		} else {
 			// Exists, restore if necessary.
 			album = found
@@ -175,12 +175,12 @@ func CreateAlbum(router *gin.RouterGroup) {
 		SaveAlbumYaml(*album)
 
 		// Add location header if newly created.
-		if status == http.StatusCreated {
+		if code == http.StatusCreated {
 			header.SetLocation(c, c.FullPath(), album.AlbumUID)
 		}
 
 		// Return as JSON.
-		c.JSON(status, album)
+		c.JSON(code, album)
 	})
 }
 

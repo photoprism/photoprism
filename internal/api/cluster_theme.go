@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ClusterGetTheme returns custom theme files as zip, if available.
@@ -75,7 +76,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 
 		// Resolve symbolic links.
 		if resolved, err := filepath.EvalSymlinks(themePath); err != nil {
-			event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme resolve", "%s", event.Failed}, refID, clean.Error(err))
+			event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme resolve", status.Error(err)}, refID)
 			AbortNotFound(c)
 			return
 		} else {
@@ -84,7 +85,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 
 		// Check if theme path exists.
 		if !fs.PathExists(themePath) {
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme path", "not found"}, refID)
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme path", status.NotFound}, refID)
 			AbortNotFound(c)
 			return
 		}
@@ -93,7 +94,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		// This aligns with bootstrap behavior, which only installs a theme when
 		// app.js exists locally or can be fetched from the Portal.
 		if !fs.FileExistsNotEmpty(filepath.Join(themePath, "app.js")) {
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme app.js", "not found"}, refID)
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme app.js", status.NotFound}, refID)
 			AbortNotFound(c)
 			return
 		}
@@ -103,7 +104,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		if version, err := theme.DetectVersion(themePath); err == nil {
 			updateNodeThemeVersion(conf, session, version, clientIp, refID)
 		} else {
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "detect theme version", "%s", event.Failed}, refID, clean.Error(err))
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "detect theme version", "%s", status.Failed}, refID, clean.Error(err))
 		}
 
 		// Add response headers.
@@ -114,14 +115,14 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		zipWriter := zip.NewWriter(c.Writer)
 		defer func(w *zip.Writer) {
 			if closeErr := w.Close(); closeErr != nil {
-				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme close", "%s", event.Failed}, refID, clean.Error(closeErr))
+				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme close", status.Error(closeErr)}, refID)
 			}
 		}(zipWriter)
 
 		err := filepath.WalkDir(themePath, func(filePath string, info gofs.DirEntry, walkErr error) error {
 			// Handle errors.
 			if walkErr != nil {
-				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme traverse", "%s", event.Failed}, refID, clean.Error(walkErr))
+				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme traverse", status.Error(walkErr)}, refID)
 
 				// If the error occurs on a directory, skip descending to avoid cascading errors.
 				if info != nil && info.IsDir() {
@@ -157,11 +158,11 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 			// Get the relative file name to use as alias in the zip.
 			alias := filepath.ToSlash(fs.RelName(filePath, themePath))
 
-			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme add", "%s", event.Added}, refID, clean.Log(alias))
+			event.AuditDebug([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme add", "%s", status.Added}, refID, clean.Log(alias))
 
 			// Stream zipped file contents.
 			if zipErr := fs.ZipFile(zipWriter, filePath, alias, false); zipErr != nil {
-				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme add %s", "%s", event.Failed}, refID, clean.Log(alias), clean.Error(zipErr))
+				event.AuditWarn([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme add %s", status.Error(zipErr)}, refID, clean.Log(alias))
 			}
 
 			return nil
@@ -169,9 +170,9 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 
 		// Log result.
 		if err != nil {
-			event.AuditErr([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme", "%s", event.Failed}, refID, clean.Error(err))
+			event.AuditErr([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme", status.Error(err)}, refID)
 		} else {
-			event.AuditInfo([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme", event.Succeeded}, refID)
+			event.AuditInfo([]string{clientIp, "session %s", string(acl.ResourceCluster), "download theme", status.Succeeded}, refID)
 		}
 	})
 }
@@ -198,7 +199,7 @@ func updateNodeThemeVersion(conf *config.Config, session *entity.Session, versio
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 
 	if err != nil {
-		event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata registry", "%s", event.Failed}, refID, clean.Error(err))
+		event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata registry", "%s", status.Failed}, refID, clean.Error(err))
 		return
 	}
 
@@ -217,7 +218,7 @@ func updateNodeThemeVersion(conf *config.Config, session *entity.Session, versio
 	}
 
 	if node == nil {
-		event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata node", "skipped"}, refID)
+		event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata node", status.Skipped}, refID)
 		return
 	}
 
@@ -228,9 +229,9 @@ func updateNodeThemeVersion(conf *config.Config, session *entity.Session, versio
 	node.Theme = normalized
 
 	if err = regy.Put(node); err != nil {
-		event.AuditWarn([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata", "%s", event.Failed}, refID, clean.Error(err))
+		event.AuditWarn([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata", status.Error(err)}, refID)
 		return
 	}
 
-	event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata", event.Updated}, refID)
+	event.AuditDebug([]string{clientIP, "session %s", string(acl.ResourceCluster), "theme metadata", status.Updated}, refID)
 }

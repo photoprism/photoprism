@@ -13,6 +13,7 @@ import (
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ClusterSummary returns a minimal overview of the cluster/portal.
@@ -61,13 +62,11 @@ func ClusterSummary(router *gin.RouterGroup) {
 			Time:        time.Now().UTC().Format(time.RFC3339),
 		}
 
-		event.AuditDebug([]string{
-			ClientIP(c),
-			"session %s",
-			string(acl.ResourceCluster),
-			"get summary for cluster uuid %s",
-			event.Succeeded,
-		}, s.RefID, conf.ClusterUUID())
+		event.AuditDebug(
+			[]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "get summary for cluster uuid %s", status.Succeeded},
+			s.RefID,
+			conf.ClusterUUID(),
+		)
 
 		c.JSON(http.StatusOK, resp)
 	})
@@ -96,12 +95,7 @@ func ClusterHealth(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditDebug([]string{
-			ClientIP(c),
-			string(acl.ResourceCluster),
-			"health check",
-			event.Succeeded,
-		})
+		event.AuditDebug([]string{ClientIP(c), string(acl.ResourceCluster), "health check", status.Succeeded})
 
 		c.JSON(http.StatusOK, NewHealthResponse("ok"))
 	})

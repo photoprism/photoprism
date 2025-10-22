@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -479,7 +480,7 @@ func (m *Client) UpdateLastActive(save bool) *Client {
 	if !save {
 		return m
 	} else if err := Db().Model(m).UpdateColumn("last_active", m.LastActive).Error; err != nil {
-		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", "%s"}, m.ClientUID, err)
+		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", status.Error(err)}, m.ClientUID)
 	}
 
 	return m

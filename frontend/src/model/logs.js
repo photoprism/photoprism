@@ -38,18 +38,27 @@ function splitSegments(message) {
     .filter((part) => part.length > 0);
 }
 
-// Audit logs only exist with the following levels:
-// error, warning, info, and debug.
+// All log levels ordered by severity.
 export const AuditSeverityNames = Object.freeze([
-  /* "emergency",
+  "emergency",
   "alert",
-  "critical", */
+  "critical",
   "error",
   "warning",
-  /* "notice", */
+  "notice",
   "info",
   "debug",
 ]);
+
+// Audit logs currently only exist with the following levels:
+// error, warning, info, and debug.
+export const AuditSeverityOptions = [
+  { title: "—", value: "" }, // unselected option
+  { title: "Debug", value: "debug" },
+  { title: "Info", value: "info" },
+  { title: "Warning", value: "warning" },
+  { title: "Error", value: "error" },
+];
 
 // LogEntry represents an audit log row returned by GET /api/v1/logs/audit.
 export class LogEntry extends RestModel {

@@ -25,6 +25,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -303,8 +304,8 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		who := clusterAuditWho(ctx, conf)
 		event.AuditInfo(append(who,
 			string(acl.ResourceCluster),
-			"register node %s",
-			event.Succeeded,
+			"register node", "%s",
+			status.Succeeded,
 		), clean.Log(nodeID))
 
 		// Optional persistence

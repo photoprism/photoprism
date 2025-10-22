@@ -33,8 +33,8 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 
 - Emit security events via `event.Audit*` (`AuditInfo`, `AuditWarn`, `AuditErr`, `AuditDebug`) and always build the slice as **Who → What → Outcome**.  
   - **Who:** `ClientIP(c)` followed by the most specific actor context (`"session %s"`, `"client %s"`, `"user %s"`).  
-  - **What:** Resource constant plus action segments (for example, `string(acl.ResourceCluster)`, `"node %s"`). Place extra context such as counts or error placeholders in separate segments before the outcome.  
-  - **Outcome:** End with a single token like `event.Succeeded`, `event.Failed`, or `authn.Denied`; nothing comes after it.
+  - **What:** Resource constant plus action segments (for example, `string(acl.ResourceCluster)`, `"node", "%s"`). Place extra context such as counts or error placeholders in separate segments before the outcome.  
+  - **Outcome:** End with a single token such as `status.Succeeded`, `status.Failed`, `status.Denied`, or `status.Error(err)` when the sanitized error message should be the outcome; nothing comes after it.
 - Prefer existing helpers (`ClientIP`, `clean.Log`, `clean.LogQuote`, `clean.Error`) instead of formatting values manually, and avoid inline `=` expressions.
 - Example patterns:
   ```go
@@ -42,8 +42,8 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
       ClientIP(c),
       "session %s",
       string(acl.ResourceCluster),
-      "node %s",
-      event.Deleted,
+      "node", "%s",
+      status.Deleted,
   }, s.RefID, uuid)
 
   event.AuditErr([]string{
@@ -51,9 +51,8 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
       "session %s",
       string(acl.ResourceCluster),
       "download theme",
-      "%s",
-      event.Failed,
-  }, refID, clean.Error(err))
+      status.Error(err),
+  }, refID)
   ```
 - See `specs/common/audit-logs.md` for the full conventions and additional examples that agents should follow.
 

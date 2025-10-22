@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -58,12 +58,12 @@ func DeleteSession(router *gin.RouterGroup) {
 		// Only admins may delete other sessions by ref id.
 		if rnd.IsRefID(id) {
 			if !acl.Rules.AllowAll(acl.ResourceSessions, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
-				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", authn.Denied}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
+				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", status.Denied}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 				Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 				return
 			}
 
-			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", authn.Granted}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
+			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", status.Granted}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 
 			if s = entity.FindSessionByRefID(id); s == nil {
 				Abort(c, http.StatusNotFound, i18n.ErrNotFound)
@@ -77,7 +77,7 @@ func DeleteSession(router *gin.RouterGroup) {
 
 		// Delete session cache and database record.
 		if err := s.Delete(); err != nil {
-			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", "%s"}, s.RefID, s.GetUserRole(), err)
+			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", status.Error(err)}, s.RefID, s.GetUserRole())
 		} else {
 			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, s.RefID)
 		}

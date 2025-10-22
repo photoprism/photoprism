@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -48,12 +49,15 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			return
 		}
 
+		// Don't cache requests to this endpoint.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+
 		// Rate limit by IP (reuse existing limiter).
 		clientIp := ClientIP(c)
 		r := limiter.Auth.Request(clientIp)
 
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
-			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "rate limit exceeded", event.Denied})
+			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", status.RateLimited})
 			limiter.AbortJSON(c)
 			return
 		}
@@ -63,7 +67,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		token := header.BearerToken(c)
 
 		if expected == "" || token == "" || subtle.ConstantTimeCompare([]byte(expected), []byte(token)) != 1 {
-			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid join token", event.Denied})
+			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid join token", status.Denied})
 			r.Success() // return reserved tokens; still unauthorized
 			AbortUnauthorized(c)
 			return
@@ -73,7 +77,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		var req cluster.RegisterRequest
 
 		if err := c.ShouldBindJSON(&req); err != nil {
-			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid form", "%s", event.Failed}, clean.Error(err))
+			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid form", status.Error(err)})
 			AbortBadRequest(c)
 			return
 		}
@@ -85,13 +89,13 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// If an existing ClientID is provided, require the corresponding client secret for verification.
 		if RegisterRequireClientSecret && req.ClientID != "" {
 			if !rnd.IsUID(req.ClientID, entity.ClientUID) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid client id", event.Failed})
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid client id", status.Failed})
 				AbortBadRequest(c)
 				return
 			}
 			pw := entity.FindPassword(req.ClientID)
 			if pw == nil || req.ClientSecret == "" || !pw.Valid(req.ClientSecret) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid client secret", event.Denied})
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid client secret", status.Denied})
 				AbortUnauthorized(c)
 				return
 			}
@@ -101,14 +105,14 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		// Enforce DNS label semantics for node names: lowercase [a-z0-9-], 1–32, start/end alnum.
 		if name == "" || len(name) > 32 || name[0] == '-' || name[len(name)-1] == '-' {
-			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid name", event.Failed})
+			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid name", status.Failed})
 			AbortBadRequest(c)
 			return
 		}
 		for i := 0; i < len(name); i++ {
 			b := name[i]
 			if !(b == '-' || (b >= 'a' && b <= 'z') || (b >= '0' && b <= '9')) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid name chars", event.Failed})
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid name chars", status.Failed})
 				AbortBadRequest(c)
 				return
 			}
@@ -117,7 +121,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// Validate advertise URL if provided (https required for non-local domains).
 		if u := strings.TrimSpace(req.AdvertiseUrl); u != "" {
 			if !validateAdvertiseURL(u) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid advertise url", event.Failed})
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid advertise url", status.Failed})
 				AbortBadRequest(c)
 				return
 			}
@@ -126,7 +130,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// Validate site URL if provided (https required for non-local domains).
 		if su := strings.TrimSpace(req.SiteUrl); su != "" {
 			if !validateSiteURL(su) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid site url", event.Failed})
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid site url", status.Failed})
 				AbortBadRequest(c)
 				return
 			}
@@ -139,7 +143,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 
 		if err != nil {
-			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "register", "%s", event.Failed}, clean.Error(err))
+			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "register", status.Error(err)})
 			AbortUnexpectedError(c)
 			return
 		}
@@ -154,7 +158,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			// If caller attempts to change UUID by name without proving client secret, block with 409.
 			if RegisterRequireClientSecret {
 				if requestedUUID != "" && n.UUID != "" && requestedUUID != n.UUID && req.ClientID == "" {
-					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node %s", "invalid client secret", event.Denied}, clean.Log(name))
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "invalid client secret", status.Denied}, clean.Log(name))
 					c.JSON(http.StatusConflict, gin.H{"error": "client secret required to change node uuid"})
 					return
 				}
@@ -186,17 +190,17 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				if oldUUID != requestedUUID {
 					n.UUID = requestedUUID
 					// Emit audit event for UUID change.
-					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node %s", "change uuid old %s new %s", event.Updated}, clean.Log(name), clean.Log(oldUUID), clean.Log(requestedUUID))
+					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "change uuid old %s new %s", status.Updated}, clean.Log(name), clean.Log(oldUUID), clean.Log(requestedUUID))
 				}
 			} else if n.UUID == "" {
 				// Assign a fresh UUID if missing and none requested.
 				n.UUID = rnd.UUIDv7()
-				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node %s", "assign uuid %s", event.Created}, clean.Log(name), clean.Log(n.UUID))
+				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "assign uuid %s", status.Created}, clean.Log(name), clean.Log(n.UUID))
 			}
 
 			// Persist metadata changes so UpdatedAt advances.
 			if putErr := regy.Put(n); putErr != nil {
-				event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node %s", "persist node", "%s", event.Failed}, clean.Log(name), clean.Error(putErr))
+				event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist node", status.Error(putErr)}, clean.Log(name))
 				AbortUnexpectedError(c)
 				return
 			}
@@ -205,16 +209,16 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			var respSecret *cluster.RegisterSecrets
 			if req.RotateSecret {
 				if n, err = regy.RotateSecret(n.UUID); err != nil {
-					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node %s", "rotate secret", "%s", event.Failed}, clean.Log(name), clean.Error(err))
+					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Error(err)}, clean.Log(name))
 					AbortUnexpectedError(c)
 					return
 				}
 				respSecret = &cluster.RegisterSecrets{ClientSecret: n.ClientSecret, RotatedAt: n.RotatedAt}
-				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node %s", "rotate secret", event.Succeeded}, clean.Log(name))
+				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Succeeded}, clean.Log(name))
 
 				// Extra safety: ensure the updated secret is persisted even if subsequent steps fail.
 				if putErr := regy.Put(n); putErr != nil {
-					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node %s", "persist rotated secret", "%s", event.Failed}, clean.Log(name), clean.Error(putErr))
+					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist rotated secret", status.Error(putErr)}, clean.Log(name))
 					AbortUnexpectedError(c)
 					return
 				}
@@ -229,7 +233,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				creds, _, credsErr = provisioner.EnsureCredentials(c, conf, n.UUID, name, req.RotateDatabase)
 
 				if credsErr != nil {
-					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node %s", "ensure database", "%s", event.Failed}, clean.Log(name), clean.Error(credsErr))
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "ensure database", status.Error(credsErr)}, clean.Log(name))
 					c.JSON(http.StatusConflict, gin.H{"error": credsErr.Error()})
 					return
 				}
@@ -239,11 +243,11 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 					n.Database.RotatedAt = creds.RotatedAt
 					n.Database.Driver = provisioner.DatabaseDriver
 					if putErr := regy.Put(n); putErr != nil {
-						event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node %s", "persist node", "%s", event.Failed}, clean.Log(name), clean.Error(putErr))
+						event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist node", status.Error(putErr)}, clean.Log(name))
 						AbortUnexpectedError(c)
 						return
 					}
-					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node %s", "rotate database", event.Succeeded}, clean.Log(name))
+					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate database", status.Succeeded}, clean.Log(name))
 				}
 			}
 
@@ -276,8 +280,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				resp.Database.DSN = creds.DSN
 				resp.Database.RotatedAt = creds.RotatedAt
 			}
-			c.Header(header.CacheControl, header.CacheControlNoStore)
-			event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node %s", event.Updated}, clean.Log(name))
+
+			event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", status.Confirmed}, clean.Log(name))
 			c.JSON(http.StatusOK, resp)
 			return
 		}
@@ -319,7 +323,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		if shouldProvisionDB {
 			if creds, _, err = provisioner.EnsureCredentials(c, conf, n.UUID, name, true); err != nil {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "ensure database", "%s", event.Failed}, clean.Error(err))
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "ensure database", status.Error(err)})
 				c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 				return
 			}
@@ -333,7 +337,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		}
 
 		if err = regy.Put(n); err != nil {
-			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "register", "persist node", "%s", event.Failed}, clean.Error(err))
+			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "register", "persist node", status.Error(err)})
 			AbortUnexpectedError(c)
 			return
 		}
@@ -352,14 +356,12 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			resp.Theme = portalTheme
 		}
 
+		// If DB provisioning is skipped, leave Database fields zero-value.
 		if shouldProvisionDB {
 			resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: provisioner.DatabaseDriver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt}
 		}
 
-		// When DB provisioning is skipped, leave Database fields zero-value.
-
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-		event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node %s", event.Joined}, clean.Log(name))
+		event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", status.Joined}, clean.Log(name))
 		c.JSON(http.StatusCreated, resp)
 	})
 }

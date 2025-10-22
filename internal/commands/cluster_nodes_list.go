@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -80,7 +81,7 @@ func clusterNodesListAction(ctx *cli.Context) error {
 		event.AuditInfo(append(who,
 			string(acl.ResourceCluster),
 			"list nodes count %d",
-			event.Succeeded,
+			status.Succeeded,
 		), len(out))
 
 		if ctx.Bool("json") {

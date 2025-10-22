@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // flags for nodes mod
@@ -124,7 +125,7 @@ func clusterNodesModAction(ctx *cli.Context) error {
 		who := clusterAuditWho(ctx, conf)
 		segments := []string{
 			string(acl.ResourceCluster),
-			"update node %s",
+			"update node", "%s",
 		}
 		args := []interface{}{clean.Log(nodeID)}
 
@@ -133,7 +134,7 @@ func clusterNodesModAction(ctx *cli.Context) error {
 			args = append(args, clean.Log(changeSummary))
 		}
 
-		segments = append(segments, event.Updated)
+		segments = append(segments, status.Updated)
 
 		event.AuditInfo(append(who, segments...), args...)
 

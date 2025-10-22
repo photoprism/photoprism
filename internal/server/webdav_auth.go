@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -103,14 +104,14 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			}
 
 			limiter.Auth.Reserve(clientIp)
-			event.AuditErr([]string{clientIp, "webdav", "access as %s with authorization granted to %s", authn.Denied}, clean.Log(username), clean.Log(user.Username()))
+			event.AuditErr([]string{clientIp, "webdav", "access as %s with authorization granted to %s", status.Denied}, clean.Log(username), clean.Log(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess == nil {
 			// Ignore and try basic auth next.
 		} else if !sess.HasUser() || user == nil {
 			// Log error if session does not belong to an authorized user account.
-			event.AuditErr([]string{clientIp, "webdav", "client %s", "session %s", "access without user account", authn.Denied}, clean.Log(sess.GetClientInfo()), sess.RefID)
+			event.AuditErr([]string{clientIp, "webdav", "client %s", "session %s", "access without user account", status.Denied}, clean.Log(sess.GetClientInfo()), sess.RefID)
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess.IsClient() && sess.InsufficientScope(acl.ResourceWebDAV, nil) {
@@ -143,7 +144,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			sess.UpdateLastActive(true)
 
 			// Log successful authentication.
-			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", authn.Succeeded}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", status.Succeeded}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			event.LoginInfo(clientIp, "webdav", user.Username(), api.UserAgent(c))
 
 			// Cache authentication to improve performance.
@@ -213,7 +214,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			r.Success()
 
 			// Log successful authentication.
-			event.AuditInfo([]string{clientIp, "webdav", "login as %s", authn.Succeeded}, clean.LogQuote(username))
+			event.AuditInfo([]string{clientIp, "webdav", "login as %s", status.Succeeded}, clean.LogQuote(username))
 			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
 
 			// Cache authentication to improve performance.
