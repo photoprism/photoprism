@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-22 04:02+0000\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -189,7 +189,7 @@ msgstr "Aktivointikoodi"
 
 #: src/page/admin.vue:76
 msgid "Activity"
-msgstr ""
+msgstr "Toiminta"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -1833,7 +1833,7 @@ msgstr "Virheellinen URL-osoite"
 
 #: src/page/admin/activity.vue:129
 msgid "IP Address"
-msgstr ""
+msgstr "IP-osoite"
 
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
@@ -2900,7 +2900,7 @@ msgstr ""
 
 #: src/page/admin/activity.vue:132
 msgid "Repeated"
-msgstr ""
+msgstr "Toistuva"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -3152,7 +3152,7 @@ msgstr "Määritä"
 
 #: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
 msgid "Severity"
-msgstr ""
+msgstr "Vakavuusaste"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3483,7 +3483,7 @@ msgstr ""
 
 #: src/page/admin/activity.vue:127
 msgid "Time"
-msgstr ""
+msgstr "Aika"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"

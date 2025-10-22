@@ -3,9 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
 "MIME-Version: 1.0\n"
@@ -193,7 +192,7 @@ msgstr "Kod pengaktifan"
 
 #: src/page/admin.vue:76
 msgid "Activity"
-msgstr ""
+msgstr "Aktiviti"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -812,7 +811,7 @@ msgstr "Tutup"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr ""
+msgstr "Kluster"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -1833,7 +1832,7 @@ msgstr "URL tidak sah"
 
 #: src/page/admin/activity.vue:129
 msgid "IP Address"
-msgstr ""
+msgstr "Alamat IP"
 
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
@@ -2903,7 +2902,7 @@ msgstr ""
 
 #: src/page/admin/activity.vue:132
 msgid "Repeated"
-msgstr ""
+msgstr "Diulang"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -3155,7 +3154,7 @@ msgstr "Persediaan"
 
 #: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
 msgid "Severity"
-msgstr ""
+msgstr "Keterukan"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3487,7 +3486,7 @@ msgstr ""
 
 #: src/page/admin/activity.vue:127
 msgid "Time"
-msgstr ""
+msgstr "Masa"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"
