@@ -41,7 +41,7 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	driver, dsname := dsn.PhotoPrismTestToDriverDsn(dbn)
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
 	dsn.SetDSNToEnv(dsname)
 
 	// Set default test database driver.

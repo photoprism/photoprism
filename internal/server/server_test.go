@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	_, dsname := dsn.PhotoPrismTestToDriverDsn(dbn)
+	_, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
 	dsn.SetDSNToEnv(dsname)
 
 	// Init test config.

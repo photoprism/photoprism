@@ -6,7 +6,7 @@ import (
 )
 
 // function to transform PHOTOPRISM_TEST_DSN environment variables to driver and dsn strings
-func PhotoPrismTestToDriverDsn(dbn int) (driver string, dsn string) {
+func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 	dsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
 	switch dsnName {
 	case "sqlite":
@@ -60,7 +60,7 @@ func PhotoPrismTestToDriverDsn(dbn int) (driver string, dsn string) {
 func PhotoPrismTestToFolderName() (folderName string) {
 	folderName = os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
 	if folderName == "" {
-		folderName, _ = PhotoPrismTestToDriverDsn(0)
+		folderName, _ = PhotoPrismTestToDriverDSN(0)
 	}
 	return folderName
 }

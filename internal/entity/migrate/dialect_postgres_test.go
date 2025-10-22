@@ -19,7 +19,7 @@ import (
 )
 
 func TestDialectPostgreSQL(t *testing.T) {
-	driver, _ := dsn.PhotoPrismTestToDriverDsn(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
 	if driver != "postgres" {
 		t.Skip("skipping test as not PostgreSQL")
 	}

@@ -19,7 +19,7 @@ import (
 )
 
 func TestDialectSQLite3(t *testing.T) {
-	driver, _ := dsn.PhotoPrismTestToDriverDsn(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
 	if driver != "sqlite" {
 		t.Skip("skipping test as not SQLite")
 	}

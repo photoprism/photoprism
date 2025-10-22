@@ -120,7 +120,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
-	driver, dsn := dsn.PhotoPrismTestToDriverDsn(0)
+	driver, dsn := dsn.PhotoPrismTestToDriverDSN(0)
 
 	// Config example for MySQL / MariaDB:
 	//   driver = MySQL,

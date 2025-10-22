@@ -241,7 +241,7 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 
 func TestImportSQL(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	c.options.DatabaseDriver, c.options.DatabaseDSN = dsn.PhotoPrismTestToDriverDsn(0)
+	c.options.DatabaseDriver, c.options.DatabaseDSN = dsn.PhotoPrismTestToDriverDSN(0)
 
 	if err := c.connectDb(); err != nil {
 		assert.Empty(t, err)

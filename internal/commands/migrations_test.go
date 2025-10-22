@@ -64,7 +64,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("RunTraceAndFailed", func(t *testing.T) {
-		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDsn(0)
+		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDSN(0)
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,
