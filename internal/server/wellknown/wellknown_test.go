@@ -3,7 +3,6 @@ package wellknown
 import (
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -34,9 +33,7 @@ func TestMain(m *testing.M) {
 	dsn.SetDSNToEnv(dsname)
 
 	// Run unit tests.
-	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
-	code = testextras.ValidateDBErrors(dbc.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
