@@ -3,6 +3,7 @@ package testextras
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"runtime"
 	"syscall"
@@ -134,7 +135,7 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 
 	err = nil
 
-	driver, dsn := dsn.PhotoPrismTestToDriverDsn(0)
+	driver, dsn := dsn.PhotoPrismTestToDriverDSN(0)
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
@@ -145,6 +146,8 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 	if driver == SQLite3 {
 		if dsn == "" {
 			dsn = SQLiteMutexDSN
+			// Try to create the path, ignoring errors
+			_ = os.MkdirAll("/go/src/github.com/photoprism/photoprism/storage/testdata", fs.ModePerm)
 		} else if dsn != SQLiteTestDB {
 			// Continue.
 		} else if err := os.Remove(dsn); err == nil {
