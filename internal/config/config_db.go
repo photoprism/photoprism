@@ -586,13 +586,13 @@ func (c *Config) connectDb() error {
 
 	// Get database driver and data source name.
 	dbDriver := c.DatabaseDriver()
-	dbDsn := c.DatabaseDSN()
+	dbDSN := c.DatabaseDSN()
 
 	if dbDriver == "" {
 		return errors.New("config: database driver not specified")
 	}
 
-	if dbDsn == "" {
+	if dbDSN == "" {
 		return errors.New("config: database DSN not specified")
 	}
 
@@ -604,24 +604,24 @@ func (c *Config) connectDb() error {
 		var db *gorm.DB
 		var err error
 		if dbDriver == Postgres {
-			postgresDB, pgxPool := entity.OpenPostgreSQL(dbDsn)
+			postgresDB, pgxPool := entity.OpenPostgreSQL(dbDSN)
 			c.pool = pgxPool
 			db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 		} else {
 			c.pool = nil
-			db, err = gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
+			db, err = gorm.Open(drivers[dbDriver](dbDSN), gormConfig())
 		}
 		if err != nil || db == nil {
 			log.Infof("config: waiting for the database to become available")
 
 			for i := 1; i <= 12; i++ {
 				if dbDriver == Postgres {
-					postgresDB, pgxPool := entity.OpenPostgreSQL(dbDsn)
+					postgresDB, pgxPool := entity.OpenPostgreSQL(dbDSN)
 					c.pool = pgxPool
 					db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 				} else {
 					c.pool = nil
-					db, err = gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
+					db, err = gorm.Open(drivers[dbDriver](dbDSN), gormConfig())
 				}
 
 				if db != nil && err == nil {

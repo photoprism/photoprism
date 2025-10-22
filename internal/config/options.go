@@ -246,7 +246,7 @@ type Options struct {
 	LogFilename             string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	DetachServer            bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
 	DBTransferDriver        string        `yaml:"DBTransferDriver" json:"-" flag:"transfer-driver"`
-	DBTransferDSN           string        `yaml:"DBTransferDsn" json:"-" flag:"transfer-dsn"`
+	DBTransferDSN           string        `yaml:"DBTransferDSN" json:"-" flag:"transfer-dsn"`
 	DBTransferName          string        `yaml:"DBTransferName" json:"-" flag:"transfer-name"`
 	DBTransferServer        string        `yaml:"DBTransferServer" json:"-" flag:"transfer-server"`
 	DBTransferUser          string        `yaml:"DBTransferUser" json:"-" flag:"transfer-user"`
