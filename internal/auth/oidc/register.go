@@ -7,12 +7,12 @@ import (
 // init initializes the package.
 func init() {
 	// Register OpenID Connect extension.
-	config.Register("oidc", InitConfig, ClientConfig)
+	config.Register(config.StageInit, "oidc", InitConfig, ClientConfig)
 }
 
 // ClientConfig returns the OIDC client config values.
-func ClientConfig(c *config.Config, t config.ClientType) config.Map {
-	result := config.Map{
+func ClientConfig(c *config.Config, t config.ClientType) config.Values {
+	result := config.Values{
 		"enabled":  c.OIDCEnabled(),
 		"provider": c.OIDCProvider(),
 		"icon":     c.OIDCIcon(),

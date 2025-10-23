@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/photoprism/photoprism/internal/event"
+import (
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/log/status"
+)
 
 // PhotoUser represents the user and group ownership of a Photo and the corresponding permissions.
 type PhotoUser struct {
@@ -44,7 +47,7 @@ func FirstOrCreatePhotoUser(m *PhotoUser) *PhotoUser {
 	if err := Db().Where("uid = ?", m.UID).First(&found).Error; err == nil {
 		return &found
 	} else if err = m.Create(); err != nil {
-		event.AuditErr([]string{"photo %s", "failed to set owner and permissions", "%s"}, m.UID, err)
+		event.AuditErr([]string{"photo %s", "failed to set owner and permissions", status.Error(err)}, m.UID)
 		return nil
 	}
 

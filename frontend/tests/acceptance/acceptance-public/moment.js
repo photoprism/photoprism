@@ -116,15 +116,24 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
   async (t) => {
     await menu.openPage("albums");
     const AlbumCount = await album.getAlbumCount("all");
+    await toolbar.search("Holiday");
+    const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.openAlbumWithUid(HolidayAlbumUid);
+    const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
     await menu.openPage("moments");
-    const FirstMomentUid = await album.getNthAlbumUid("all", 0);
-    await album.openAlbumWithUid(FirstMomentUid);
+    const SecondMomentUid = await album.getNthAlbumUid("all", 1);
+    await album.openAlbumWithUid(SecondMomentUid);
     const PhotoCountInMoment = await photo.getPhotoCount("all");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    const ThirdPhotoUid = await photo.getNthPhotoUid("image", 2);
+    const FourthPhotoUid = await photo.getNthPhotoUid("image", 3);
+    const FifthPhotoUid = await photo.getNthPhotoUid("image", 4);
+    const SixthPhotoUid = await photo.getNthPhotoUid("image", 5);
+    const SeventhPhotoUid = await photo.getNthPhotoUid("image", 6);
     await menu.openPage("moments");
-    await album.selectAlbumFromUID(FirstMomentUid);
-    await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForMoment");
+    await album.selectAlbumFromUID(SecondMomentUid);
+    await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForMoment", "Holiday"]);
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
@@ -144,10 +153,24 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     await contextmenu.triggerContextMenuAction("delete", "");
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
+    await album.openAlbumWithUid(HolidayAlbumUid);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await photo.selectPhotoFromUID(ThirdPhotoUid);
+    await photo.selectPhotoFromUID(FourthPhotoUid);
+    await photo.selectPhotoFromUID(FifthPhotoUid);
+    await photo.selectPhotoFromUID(SixthPhotoUid);
+    await photo.selectPhotoFromUID(SeventhPhotoUid);
+    await contextmenu.triggerContextMenuAction("remove", "");
+
+    const PhotoCountHolidayAfterDelete = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
+
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
 
     await menu.openPage("moments");
-    await album.openAlbumWithUid(FirstMomentUid);
+    await album.openAlbumWithUid(SecondMomentUid);
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
     await photo.checkPhotoVisibility(SecondPhotoUid, true);
   }

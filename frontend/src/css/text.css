@@ -14,7 +14,8 @@ body #app,
 .text-caption,
 .text-button,
 .text-overline {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
 }
 
 body #app,
@@ -38,12 +39,12 @@ body #app,
     -moz-osx-font-smoothing: grayscale;
 
     /* Enable font features. */
-    font-feature-settings: 'kern', 'liga';
+    font-feature-settings: "kern", "liga";
 }
 
 .text-body-3,
 .text-subtitle-3 {
-    font-size: .8125rem;
+    font-size: 0.8125rem;
     letter-spacing: normal;
     line-height: normal;
 }
@@ -140,7 +141,7 @@ body #app,
 }
 
 .lh-20 {
-    line-height: 2.0rem !important;
+    line-height: 2rem !important;
 }
 
 /* Headings */

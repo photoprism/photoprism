@@ -14,6 +14,8 @@ import (
 // ClientRegistry implements Registry using auth_clients + passwords.
 type ClientRegistry struct{ conf *config.Config }
 
+// NewClientRegistry creates a client-backed registry without wiring a config.
+// It exists for legacy callers that only depend on the registry interface.
 func NewClientRegistry() *ClientRegistry { return &ClientRegistry{} }
 
 // NewClientRegistryWithConfig returns a client-backed registry; the config is accepted for parity with file-backed init.
@@ -26,18 +28,23 @@ func toNode(c *entity.Client) *Node {
 	if c == nil {
 		return nil
 	}
+
 	n := &Node{}
+
 	n.Node = cluster.Node{
 		UUID:         c.NodeUUID,
 		Name:         c.ClientName,
 		Role:         c.ClientRole,
 		ClientID:     c.ClientUID,
 		AdvertiseUrl: c.ClientURL,
+		AppName:      c.AppName,
+		AppVersion:   c.AppVersion,
 		Labels:       map[string]string{},
 		CreatedAt:    c.CreatedAt.UTC().Format(time.RFC3339),
 		UpdatedAt:    c.UpdatedAt.UTC().Format(time.RFC3339),
 	}
 	data := c.GetData()
+
 	if data != nil {
 		if data.Labels != nil {
 			n.Labels = data.Labels
@@ -51,19 +58,23 @@ func toNode(c *entity.Client) *Node {
 			dest.RotatedAt = db.RotatedAt
 		}
 		n.RotatedAt = data.RotatedAt
+		n.Theme = data.Theme
 	}
+
 	return n
 }
 
+// Put creates or updates a node record, preferring NodeUUID as the primary key
+// and falling back to ClientID or Name when required. The provided Node pointer
+// is updated with persisted identifiers so API/CLI layers can echo the result.
 func (r *ClientRegistry) Put(n *Node) error {
 	// Upsert client preferring NodeUUID (primary), then ClientID, then Name.
 	var m *entity.Client
 
 	// 1) Try NodeUUID first, if provided.
 	if n.UUID != "" {
-		var existing entity.Client
-		if err := entity.UnscopedDb().Where("node_uuid = ?", n.UUID).First(&existing).Error; err == nil && existing.ClientUID != "" {
-			m = &existing
+		if existing := entity.FindClientByNodeUUID(n.UUID); existing != nil && existing.ClientUID != "" {
+			m = existing
 		}
 	}
 
@@ -103,6 +114,7 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if n.Role != "" {
 		m.SetRole(n.Role)
 	}
+
 	// Ensure a default scope for node clients (instance/service) if none is set.
 	// Always include "vision"; this only permits access to Vision endpoints WHEN the Portal enables them.
 	if m.Scope() == "" {
@@ -114,7 +126,15 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if n.AdvertiseUrl != "" {
 		m.ClientURL = n.AdvertiseUrl
 	}
+	if v := clean.TypeUnicode(n.AppName); v != "" {
+		m.AppName = v
+	}
+	if v := clean.TypeUnicode(n.AppVersion); v != "" {
+		m.AppVersion = v
+	}
+
 	data := m.GetData()
+
 	if data.Labels == nil {
 		data.Labels = map[string]string{}
 	}
@@ -127,7 +147,13 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if n.UUID != "" {
 		m.NodeUUID = n.UUID
 	}
+
 	data.RotatedAt = n.RotatedAt
+
+	if theme := clean.TypeUnicode(n.Theme); theme != "" {
+		data.Theme = theme
+	}
+
 	if db := n.Database; db != nil && (db.Name != "" || db.User != "" || db.RotatedAt != "") {
 		if data.Database == nil {
 			data.Database = &entity.ClientDatabase{}
@@ -137,6 +163,7 @@ func (r *ClientRegistry) Put(n *Node) error {
 		data.Database.Driver = db.Driver
 		data.Database.RotatedAt = db.RotatedAt
 	}
+
 	m.SetData(data)
 
 	// Persist base record.
@@ -157,62 +184,77 @@ func (r *ClientRegistry) Put(n *Node) error {
 	n.Name = m.ClientName
 	n.Role = m.ClientRole
 	n.AdvertiseUrl = m.ClientURL
+	n.AppName = m.AppName
+	n.AppVersion = m.AppVersion
 	n.CreatedAt = m.CreatedAt.UTC().Format(time.RFC3339)
 	n.UpdatedAt = m.UpdatedAt.UTC().Format(time.RFC3339)
 
-	if data := m.GetData(); data != nil {
+	if d := m.GetData(); d != nil {
 		// Labels and Site URL as persisted.
-		if data.Labels != nil {
-			n.Labels = data.Labels
+		if d.Labels != nil {
+			n.Labels = d.Labels
 		}
-		n.SiteUrl = data.SiteURL
-		if db := data.Database; db != nil {
+		n.SiteUrl = d.SiteURL
+		if db := d.Database; db != nil {
 			dest := n.ensureDatabase()
 			dest.Name = db.Name
 			dest.User = db.User
 			dest.RotatedAt = db.RotatedAt
 		}
-		n.RotatedAt = data.RotatedAt
+		n.RotatedAt = d.RotatedAt
+		n.Theme = d.Theme
 	}
+
 	// Set initial secret if provided on create/update.
 	if n.ClientSecret != "" {
 		if err := m.SetSecret(n.ClientSecret); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
+// Get returns the latest node record for the given NodeUUID.
 func (r *ClientRegistry) Get(id string) (*Node, error) {
 	// Get by NodeUUID (UUID is primary identifier)
 	if id == "" {
 		return nil, ErrNotFound
 	}
-	var c entity.Client
-	if err := entity.UnscopedDb().Where("node_uuid = ?", id).First(&c).Error; err != nil || c.ClientUID == "" {
+
+	c := entity.FindClientByNodeUUID(id)
+
+	if c == nil || c.ClientUID == "" {
 		return nil, ErrNotFound
 	}
-	return toNode(&c), nil
+
+	return toNode(c), nil
 }
 
+// FindByName resolves a node by its sanitized DNS label and returns the most
+// recently updated record when multiple matches exist.
 func (r *ClientRegistry) FindByName(name string) (*Node, error) {
-	name = clean.DNSLabel(name)
-	if name == "" {
+	if name = clean.DNSLabel(name); name == "" {
 		return nil, ErrNotFound
 	}
+
 	var list []entity.Client
 	if err := entity.UnscopedDb().Where("client_name = ?", name).Find(&list).Error; err != nil {
 		return nil, err
 	}
+
 	if len(list) == 0 {
 		return nil, ErrNotFound
 	}
+
 	latest := &list[0]
+
 	for i := 1; i < len(list); i++ {
 		if list[i].UpdatedAt.After(latest.UpdatedAt) {
 			latest = &list[i]
 		}
 	}
+
 	return toNode(latest), nil
 }
 
@@ -221,20 +263,14 @@ func (r *ClientRegistry) FindByNodeUUID(nodeUUID string) (*Node, error) {
 	if nodeUUID == "" {
 		return nil, ErrNotFound
 	}
-	var list []entity.Client
-	if err := entity.UnscopedDb().Where("node_uuid = ?", nodeUUID).Find(&list).Error; err != nil {
-		return nil, err
-	}
+
+	list := entity.FindClientsByNodeUUID(nodeUUID)
+
 	if len(list) == 0 {
 		return nil, ErrNotFound
 	}
-	latest := &list[0]
-	for i := 1; i < len(list); i++ {
-		if list[i].UpdatedAt.After(latest.UpdatedAt) {
-			latest = &list[i]
-		}
-	}
-	return toNode(latest), nil
+
+	return toNode(&list[0]), nil
 }
 
 // FindByClientID looks up a node by its OAuth client identifier.
@@ -242,10 +278,13 @@ func (r *ClientRegistry) FindByClientID(id string) (*Node, error) {
 	if !rnd.IsUID(id, entity.ClientUID) {
 		return nil, ErrNotFound
 	}
+
 	c := entity.FindClientByUID(id)
+
 	if c == nil {
 		return nil, ErrNotFound
 	}
+
 	return toNode(c), nil
 }
 
@@ -253,41 +292,55 @@ func (r *ClientRegistry) FindByClientID(id string) (*Node, error) {
 // Use NodeOptsForSession to control exposure when wiring to HTTP handlers.
 func (r *ClientRegistry) GetClusterNodeByUUID(nodeUUID string, opts NodeOpts) (cluster.Node, error) {
 	n, err := r.FindByNodeUUID(nodeUUID)
+
 	if err != nil || n == nil {
 		return cluster.Node{}, err
 	}
+
 	return BuildClusterNode(*n, opts), nil
 }
 
+// List returns all nodes that currently register a NodeUUID, ordered by
+// latest update first.
 func (r *ClientRegistry) List() ([]Node, error) {
 	var list []entity.Client
+
 	// Identify cluster nodes primarily by presence of NodeUUID.
 	if err := entity.UnscopedDb().Where("node_uuid <> ''").Find(&list).Error; err != nil {
 		return nil, err
 	}
+
 	sort.Slice(list, func(i, j int) bool { return list[i].UpdatedAt.After(list[j].UpdatedAt) })
 	out := make([]Node, 0, len(list))
+
 	for i := range list {
 		if n := toNode(&list[i]); n != nil {
 			out = append(out, *n)
 		}
 	}
+
 	return out, nil
 }
 
+// Delete removes the most recent client record for the provided NodeUUID.
 func (r *ClientRegistry) Delete(uuid string) error {
 	if uuid == "" {
 		return ErrNotFound
 	}
+
 	// Delete the latest record for this UUID (typical case: only one).
 	n, err := r.FindByNodeUUID(uuid)
+
 	if err != nil || n == nil || n.ClientID == "" {
 		return ErrNotFound
 	}
+
 	c := entity.FindClientByUID(n.ClientID)
+
 	if c == nil {
 		return ErrNotFound
 	}
+
 	return c.Delete()
 }
 
@@ -296,38 +349,48 @@ func (r *ClientRegistry) DeleteAllByUUID(uuid string) error {
 	if uuid == "" {
 		return ErrNotFound
 	}
-	var list []entity.Client
-	if err := entity.UnscopedDb().Where("node_uuid = ?", uuid).Find(&list).Error; err != nil {
-		return err
-	}
+
+	list := entity.FindClientsByNodeUUID(uuid)
+
 	if len(list) == 0 {
 		return ErrNotFound
 	}
+
 	for i := range list {
 		if err := list[i].Delete(); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
+// RotateSecret issues a new client secret for the node identified by NodeUUID
+// and returns the updated node with the plaintext secret populated for the
+// caller to deliver.
 func (r *ClientRegistry) RotateSecret(uuid string) (*Node, error) {
 	if uuid == "" {
 		return nil, ErrNotFound
 	}
+
 	n, err := r.FindByNodeUUID(uuid)
+
 	if err != nil || n == nil || n.ClientID == "" {
 		return nil, ErrNotFound
 	}
+
 	c := entity.FindClientByUID(n.ClientID)
+
 	if c == nil {
 		return nil, ErrNotFound
 	}
+
 	// Generate and persist new secret (hashed in passwords).
 	secret, err := c.NewSecret()
 	if err != nil {
 		return nil, err
 	}
+
 	// Update rotation timestamp in data.
 	data := c.GetData()
 	data.RotatedAt = time.Now().UTC().Format(time.RFC3339)
@@ -337,5 +400,6 @@ func (r *ClientRegistry) RotateSecret(uuid string) (*Node, error) {
 	}
 	n = toNode(c)
 	n.ClientSecret = secret // plaintext only in-memory for response composition
+
 	return n, nil
 }

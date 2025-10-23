@@ -12,11 +12,11 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -238,7 +238,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	} else if mt, ok := data.json["MIMEType"]; ok && data.TakenAtLocal.IsZero() && (mt == MimeVideoMp4 || mt == MimeQuicktime) {
 		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
-		log.Debugf("metadata: default time zone for %s is UTC (%s)", logName, clean.Log(mt))
+		log.Tracef("metadata: default time zone for %s is UTC (%s)", logName, clean.Log(mt))
 		data.TimeZone = tz.UTC
 		data.TakenAt = data.TakenAt.UTC()
 		data.TakenAtLocal = time.Time{}

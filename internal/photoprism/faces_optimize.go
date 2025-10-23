@@ -60,11 +60,7 @@ func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err er
 							"faces",
 							"optimize",
 							"retained manual clusters after merge",
-							"subject %s",
-							"iteration %d",
-							"cluster %d",
-							"count %d",
-							"ids %s",
+							"subject %s, iteration %d, cluster %d, count %d, ids %s",
 						}, subject, i, j, len(merge), clusterIDs)
 
 						log.Debugf("faces: retained manual clusters after merge: kept %d candidate cluster(s) [%s] for subject %s (merge) itr %d cluster %d", len(merge), clusterIDs, subject, i, j)

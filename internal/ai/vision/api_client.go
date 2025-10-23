@@ -10,7 +10,7 @@ import (
 	"net/http"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // PerformApiRequest performs a Vision API request and returns the result.

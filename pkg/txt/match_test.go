@@ -61,6 +61,15 @@ func TestBool(t *testing.T) {
 	t.Run("UppercaseNo", func(t *testing.T) {
 		assert.False(t, Bool("NO"))
 	})
+	t.Run("ShortTrue", func(t *testing.T) {
+		assert.True(t, Bool("t"))
+	})
+	t.Run("ShortFalse", func(t *testing.T) {
+		assert.False(t, Bool("F"))
+	})
+	t.Run("Zero", func(t *testing.T) {
+		assert.False(t, Bool("0"))
+	})
 }
 
 func TestYes(t *testing.T) {
@@ -117,6 +126,13 @@ func TestYes(t *testing.T) {
 	t.Run("Zero", func(t *testing.T) {
 		assert.False(t, Yes("0"))
 	})
+	t.Run("ShortTrue", func(t *testing.T) {
+		assert.True(t, Yes("t"))
+		assert.True(t, Yes("T"))
+	})
+	t.Run("ShortFalse", func(t *testing.T) {
+		assert.False(t, Yes("f"))
+	})
 	t.Run("tak", func(t *testing.T) {
 		assert.True(t, Yes("так"))
 		assert.True(t, Yes("ТАК"))
@@ -158,6 +174,13 @@ func TestNo(t *testing.T) {
 	})
 	t.Run("False", func(t *testing.T) {
 		assert.True(t, No("false"))
+	})
+	t.Run("ShortFalse", func(t *testing.T) {
+		assert.True(t, No("f"))
+		assert.True(t, No("F"))
+	})
+	t.Run("ShortTrue", func(t *testing.T) {
+		assert.False(t, No("t"))
 	})
 	t.Run("Exclude", func(t *testing.T) {
 		assert.True(t, No("exclude"))

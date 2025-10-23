@@ -16,6 +16,7 @@ type ClientDatabase struct {
 type ClientData struct {
 	Labels          map[string]string `json:"labels,omitempty"`
 	Database        *ClientDatabase   `json:"database,omitempty"`
+	Theme           string            `json:"theme,omitempty"`
 	RotatedAt       string            `json:"rotatedAt,omitempty"`
 	SiteURL         string            `json:"siteUrl,omitempty"`
 	ClusterUUID     string            `json:"clusterUUID,omitempty"`

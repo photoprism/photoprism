@@ -27,29 +27,29 @@
 
 .p-log-message span,
 .p-log-message .p-log-message__text {
-    color: rgba(var(--v-theme-on-surface), .95);
+    color: rgba(var(--v-theme-on-surface), 0.95);
     font-weight: normal;
 }
 
 .p-log-message .p-log-message__time {
     font-weight: 600;
-    color: rgba(var(--v-theme-on-surface), .95);
+    color: rgba(var(--v-theme-on-surface), 0.95);
 }
 
 .p-log-fatal,
 .p-log-critical,
 .p-log-error {
-    color: rgba(var(--v-theme-error), .95);
+    color: rgba(var(--v-theme-error), 0.95);
 }
 
 .p-log-warning {
-    color: rgba(var(--v-theme-warning), .95);
+    color: rgba(var(--v-theme-warning), 0.95);
 }
 
 .p-log-info {
-    color: rgba(var(--v-theme-info), .95);
+    color: rgba(var(--v-theme-info), 0.95);
 }
 
 .p-log-debug {
-    color: rgba(var(--v-theme-on-surface), .9);
+    color: rgba(var(--v-theme-on-surface), 0.9);
 }

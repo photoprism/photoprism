@@ -28,7 +28,7 @@ var allowedJWTScope = func() map[string]struct{} {
 
 // requirePortal returns a CLI error when the active configuration is not a portal node.
 func requirePortal(conf *config.Config) error {
-	if conf == nil || !conf.IsPortal() {
+	if conf == nil || !conf.Portal() {
 		return cli.Exit(errors.New("command requires a Portal node"), 2)
 	}
 	return nil

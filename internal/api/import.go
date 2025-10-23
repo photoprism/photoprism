@@ -17,10 +17,10 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -58,7 +58,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Abort if there is not enough free storage to import new files.
 		if conf.FilesQuotaReached() {
-			event.AuditErr([]string{ClientIP(c), "session %s", "import files", "insufficient storage"}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}
@@ -86,9 +86,9 @@ func StartImport(router *gin.RouterGroup) {
 		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
 		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
 			srcFolder = path.Join(UploadPath, s.RefID+token)
-			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", authn.Granted}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
+			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", status.Granted}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
 		} else if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
-			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", authn.Denied}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", status.Denied}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
 			AbortForbidden(c)
 			return
 		}

@@ -10,7 +10,7 @@
         {{ $gettext(`License`) }}
       </v-toolbar-title>
 
-      <a target="_blank" href="https://www.gnu.org/licenses/agpl-3.0.en.html">
+      <a target="_blank" rel="noopener" href="https://www.gnu.org/licenses/agpl-3.0.en.html">
         <img :src="$config.staticUri + '/img/agplv3-small.png'" alt="AGPLv3 Logo" />
       </a>
     </v-toolbar>
@@ -19,7 +19,7 @@
       <p style="text-align: center">Version 3, 19 November 2007</p>
 
       <p>
-        Copyright © 2007 Free Software Foundation, Inc. &lt;<a target="_blank" href="https://fsf.org/"
+        Copyright © 2007 Free Software Foundation, Inc. &lt;<a target="_blank" rel="noopener" href="https://fsf.org/"
           >https://fsf.org/</a
         >&gt;
         <br />
@@ -641,7 +641,7 @@
         names, and any other brand features and elements, whether registered or unregistered („Brand Assets“) — are
         proprietary assets owned exclusively by PhotoPrism UG („PhotoPrism“). We reserve the right to object to any use
         or misuse in any jurisdiction worldwide. Visit
-        <a target="_blank" href="https://www.photoprism.app/trademark">photoprism.app/trademark</a>
+        <a target="_blank" rel="noopener" href="https://www.photoprism.app/trademark">photoprism.app/trademark</a>
         to learn more.
       </p>
       <p>

@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -35,7 +36,7 @@ func FindSession(id string) (*Session, error) {
 			cached.UpdateLastActive(cached.LastActive <= 0)
 			return cached, nil
 		} else if err := cached.Delete(); err != nil {
-			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", "%s"}, cached.RefID, err)
+			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", status.Error(err)}, cached.RefID)
 		}
 	} else if res := Db().First(&found, "id = ?", id); res.RecordNotFound() {
 		return found, fmt.Errorf("invalid session")
@@ -49,7 +50,7 @@ func FindSession(id string) (*Session, error) {
 		CacheSession(found, SessionCacheDuration)
 		return found, nil
 	} else if err := found.Delete(); err != nil {
-		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", "%s"}, found.RefID, err)
+		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", status.Error(err)}, found.RefID)
 	}
 
 	return found, fmt.Errorf("session expired")

@@ -2,7 +2,7 @@
   <v-dialog
     :model-value="visible"
     persistent
-    max-width="390"
+    max-width="500"
     class="p-dialog p-photo-album-dialog"
     @keydown.esc.exact="close"
     @after-enter="afterEnter"
@@ -17,20 +17,38 @@
         <v-card-text>
           <v-combobox
             ref="input"
-            v-model="album"
-            autocomplete="off"
-            :placeholder="$gettext('Select or create an album')"
-            :items="items"
+            v-model="selectedAlbums"
             :disabled="loading"
             :loading="loading"
-            hide-no-data
             hide-details
-            return-object
+            chips
+            closable-chips
+            multiple
+            class="input-albums"
+            :items="items"
             item-title="Title"
             item-value="UID"
-            class="input-album"
-            @keyup.enter.native="confirm"
+            :placeholder="$gettext('Select or create albums')"
+            return-object
           >
+            <template #no-data>
+              <v-list-item>
+                <v-list-item-title>
+                  {{ $gettext(`Press enter to create a new album.`) }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+            <template #chip="chip">
+              <v-chip
+                :model-value="chip.selected"
+                :disabled="chip.disabled"
+                prepend-icon="mdi-bookmark"
+                class="text-truncate"
+                @click:close="removeSelection(chip.index)"
+              >
+                {{ chip.item.title ? chip.item.title : chip.item }}
+              </v-chip>
+            </template>
           </v-combobox>
         </v-card-text>
         <v-card-actions class="action-buttons">
@@ -38,7 +56,7 @@
             {{ $gettext(`Cancel`) }}
           </v-btn>
           <v-btn
-            :disabled="!album"
+            :disabled="selectedAlbums.length === 0"
             variant="flat"
             color="highlight"
             class="action-confirm text-white"
@@ -53,6 +71,7 @@
 </template>
 <script>
 import Album from "model/album";
+import { createAlbumSelectionWatcher } from "common/albums";
 
 // TODO: Handle cases where users have more than 10000 albums.
 const MaxResults = 10000;
@@ -65,13 +84,13 @@ export default {
       default: false,
     },
   },
+  emits: ["close", "confirm"],
   data() {
     return {
       loading: false,
-      newAlbum: null,
-      album: null,
       albums: [],
       items: [],
+      selectedAlbums: [],
       labels: {
         addToAlbum: this.$gettext("Add to album"),
         createAlbum: this.$gettext("Create album"),
@@ -85,6 +104,7 @@ export default {
         this.load("");
       }
     },
+    selectedAlbums: createAlbumSelectionWatcher("items"),
   },
   methods: {
     afterEnter() {
@@ -101,23 +121,81 @@ export default {
         return;
       }
 
-      if (typeof this.album === "object" && this.album?.UID) {
-        this.loading = true;
-        this.$emit("confirm", this.album?.UID);
-      } else if (typeof this.album === "string" && this.album.length > 0) {
-        this.loading = true;
-        let newAlbum = new Album({ Title: this.album, UID: "", Favorite: false });
+      const existingUids = [];
+      const namesToCreate = [];
 
-        newAlbum
-          .save()
-          .then((a) => {
-            this.album = a;
-            this.$emit("confirm", a.UID);
-          })
-          .catch(() => {
-            this.loading = false;
-          });
+      (this.selectedAlbums || []).forEach((a) => {
+        if (typeof a === "object" && a?.UID) {
+          existingUids.push(a.UID);
+        } else if (typeof a === "string" && a.length > 0) {
+          namesToCreate.push(a);
+        }
+      });
+
+      // Deduplicate existing UIDs
+      const uniqueExistingUids = [...new Set(existingUids)];
+
+      this.loading = true;
+
+      if (namesToCreate.length === 0) {
+        this.$emit("confirm", uniqueExistingUids);
+        this.loading = false;
+        return;
       }
+
+      // Create albums in parallel and handle partial failures without closing the dialog
+      const creations = namesToCreate.map((title) => ({
+        title,
+        promise: new Album({ Title: title, UID: "", Favorite: false }).save(),
+      }));
+
+      Promise.allSettled(creations.map((c) => c.promise))
+        .then((results) => {
+          const createdAlbums = [];
+          const failedTitles = [];
+
+          results.forEach((res, idx) => {
+            const originalTitle = creations[idx].title;
+            if (res.status === "fulfilled" && res.value && res.value.UID) {
+              createdAlbums.push(res.value);
+            } else {
+              failedTitles.push(originalTitle);
+            }
+          });
+
+          if (failedTitles.length > 0) {
+            // Replace successfully created string tokens with album objects so they are not retried
+            const byTitle = new Map(createdAlbums.map((a) => [a.Title || a.title || "", a]));
+            this.selectedAlbums = (this.selectedAlbums || []).map((it) => {
+              if (typeof it === "string") {
+                const t = it.trim();
+                const created = byTitle.get(t);
+                return created ? created : it;
+              }
+              return it;
+            });
+
+            // Add created albums to the combobox items so they can be selected by object
+            const known = new Set((this.items || []).map((a) => a.UID));
+            createdAlbums.forEach((a) => {
+              if (a && a.UID && !known.has(a.UID)) {
+                this.items.push(a);
+                known.add(a.UID);
+              }
+            });
+
+            // Notify user and keep dialog open for corrections
+            this.$notify.error(this.$gettext("Some albums could not be created. Please edit the names and try again."));
+            return; // Do not emit confirm; keep dialog open
+          }
+
+          // All created successfully → emit and let parent close the dialog
+          const createdUids = createdAlbums.map((a) => a && a.UID).filter((u) => typeof u === "string" && u.length > 0);
+          this.$emit("confirm", [...uniqueExistingUids, ...createdUids]);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     onLoad() {
       this.loading = true;
@@ -137,9 +215,12 @@ export default {
     },
     reset() {
       this.loading = false;
-      this.newAlbum = null;
+      this.selectedAlbums = [];
       this.albums = [];
       this.items = [];
+    },
+    removeSelection(index) {
+      this.selectedAlbums.splice(index, 1);
     },
     load(q) {
       if (this.loading) {

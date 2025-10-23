@@ -23,7 +23,14 @@
         </span>
       </v-toolbar-title>
 
-      <v-btn icon :href="links.compare" target="_blank" class="action-upgrade" :title="$gettext('Learn more')">
+      <v-btn
+        icon
+        :href="links.compare"
+        target="_blank"
+        rel="noopener"
+        class="action-upgrade"
+        :title="$gettext('Learn more')"
+      >
         <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
       </v-btn>
     </v-toolbar>
@@ -45,6 +52,7 @@
               :block="$vuetify.display.xs"
               :href="links.contact"
               target="_blank"
+              rel="noopener"
               variant="flat"
               class="action-contact"
             >
@@ -64,6 +72,7 @@
             <v-btn
               href="https://my.photoprism.app/dashboard"
               target="_blank"
+              rel="noopener"
               color="primary"
               :block="$vuetify.display.xs"
               variant="outlined"
@@ -88,6 +97,7 @@
               v-if="$config.getTier() < 4"
               href="https://my.photoprism.app/dashboard/membership"
               target="_blank"
+              rel="noopener"
               color="highlight"
               :block="$vuetify.display.xs"
               variant="flat"
@@ -258,7 +268,7 @@ export default {
       this.error = "";
     },
     compare() {
-      window.open(links.compare, "_blank").focus();
+      this.$util.openUrl(links.compare);
     },
     connect() {
       this.$view.redirect(links.connect + encodeURIComponent(window.location));

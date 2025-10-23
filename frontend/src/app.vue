@@ -46,9 +46,7 @@ export default {
     },
   },
   created() {
-    this.subscriptions["view.refresh"] = this.$event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
-    // this.subscriptions["lightbox"] = this.$event.subscribe("lightbox", (ev, data) => { console.log(ev); });
-
+    this.subscriptions.push(this.$event.subscribe("view.refresh", (ev, data) => this.onRefresh(data)));
     this.$config.setVuetify(this.$vuetify);
   },
   mounted() {

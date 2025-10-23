@@ -27,6 +27,11 @@ func Echo(router *gin.RouterGroup) {
 		http.MethodTrace,
 	}
 	router.Match(methods, "/echo", func(c *gin.Context) {
+		// Return if only headers are requested.
+		if c.Request.Method == http.MethodHead {
+			return
+		}
+
 		// Abort if debug mode is disabled.
 		if !get.Config().Debug() {
 			AbortFeatureDisabled(c)

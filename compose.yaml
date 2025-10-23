@@ -154,6 +154,7 @@ services:
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
     image: mariadb:11
+    stop_grace_period: 15s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
@@ -180,6 +181,7 @@ services:
   qdrant:
     image: qdrant/qdrant:latest
     profiles: [ "all", "qdrant" ]
+    stop_grace_period: 15s
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
@@ -208,7 +210,6 @@ services:
   ## docker compose exec ollama ollama pull gemma3:latest
   ollama:
     image: ollama/ollama:latest
-    restart: unless-stopped
     stop_grace_period: 10s
     ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
     ## docker compose --profile ollama up -d
@@ -261,8 +262,7 @@ services:
   ## see https://github.com/open-webui/open-webui
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
-    restart: unless-stopped
-    stop_grace_period: 5s
+    stop_grace_period: 10s
     ## Only starts this service if the "all", "ollama", "open-webui", or "vision" profile is specified::
     ## docker compose --profile ollama up -d
     profiles: [ "all", "ollama", "open-webui", "vision" ]
@@ -290,10 +290,10 @@ services:
   ## see https://github.com/photoprism/photoprism-vision
   photoprism-vision:
     image: photoprism/vision:latest
+    stop_grace_period: 15s
     ## Only starts this service if the "all" or "vision" profile is specified::
     ## docker compose --profile vision up -d
     profiles: [ "all", "vision" ]
-    stop_grace_period: 15s
     working_dir: "/app"
     links:
       - "traefik:localssl.dev"
@@ -322,6 +322,7 @@ services:
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
     image: photoprism/traefik:latest
+    stop_grace_period: 15s
     security_opt:
       - no-new-privileges:true
     ports:
@@ -335,6 +336,7 @@ services:
   ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:240627
+    stop_grace_period: 30s
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
@@ -351,6 +353,7 @@ services:
   ## Dummy OIDC Identity Provider
   dummy-oidc:
     image: photoprism/dummy-oidc:240627
+    stop_grace_period: 30s
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
@@ -365,6 +368,7 @@ services:
   ## Docs: https://glauth.github.io/docs/
   dummy-ldap:
     image: glauth/glauth-plugins:latest
+    stop_grace_period: 15s
     ports:
       - "127.0.0.1:389:389"
     labels:
@@ -384,6 +388,7 @@ services:
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
+    stop_grace_period: 30s
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
@@ -415,6 +420,7 @@ services:
   ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
+    stop_grace_period: 15s
     profiles: [ "all", "auth", "prometheus" ]
     labels:
       - "traefik.enable=true"

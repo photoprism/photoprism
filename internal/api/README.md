@@ -29,6 +29,33 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
 
+## Audit Logging
+
+- Emit security events via `event.Audit*` (`AuditInfo`, `AuditWarn`, `AuditErr`, `AuditDebug`) and always build the slice as **Who → What → Outcome**.  
+  - **Who:** `ClientIP(c)` followed by the most specific actor context (`"session %s"`, `"client %s"`, `"user %s"`).  
+  - **What:** Resource constant plus action segments (for example, `string(acl.ResourceCluster)`, `"node", "%s"`). Place extra context such as counts or error placeholders in separate segments before the outcome.  
+  - **Outcome:** End with a single token such as `status.Succeeded`, `status.Failed`, `status.Denied`, or `status.Error(err)` when the sanitized error message should be the outcome; nothing comes after it.
+- Prefer existing helpers (`ClientIP`, `clean.Log`, `clean.LogQuote`, `clean.Error`) instead of formatting values manually, and avoid inline `=` expressions.
+- Example patterns:
+  ```go
+  event.AuditInfo([]string{
+      ClientIP(c),
+      "session %s",
+      string(acl.ResourceCluster),
+      "node", "%s",
+      status.Deleted,
+  }, s.RefID, uuid)
+
+  event.AuditErr([]string{
+      clientIp,
+      "session %s",
+      string(acl.ResourceCluster),
+      "download theme",
+      status.Error(err),
+  }, refID)
+  ```
+- See `specs/common/audit-logs.md` for the full conventions and additional examples that agents should follow.
+
 ## Swagger Documentation 
 
 - Annotate handlers with Swagger comments that include full `/api/v1/...` paths, request/response schemas, and security definitions. Only annotate routes that are externally accessible.
@@ -39,7 +66,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 ## Testing Strategy
 
 - Build tests around the API harness (`NewApiTest`) to obtain a configured Gin router, config, and dependencies. This isolates filesystem paths and avoids polluting global state.
-- Wrap requests with helper functions (for example, `PerformRequestJSON`, `PerformAuthenticatedRequest`) to capture status codes, headers, and payloads. Assert headers using constants from `pkg/service/http/header`.
+- Wrap requests with helper functions (for example, `PerformRequestJSON`, `PerformAuthenticatedRequest`) to capture status codes, headers, and payloads. Assert headers using constants from `pkg/http/header`.
 - When handlers interact with the database, initialize fixtures through config helpers such as `config.NewTestConfig("api")` or `config.NewMinimalTestConfigWithDb("api", t.TempDir())` depending on fixture needs.
 - Stub external dependencies (`httptest.Server`) for remote calls and set `AllowPrivate=true` explicitly when the test server binds to loopback addresses.
 - Structure tests with table-driven subtests (`t.Run("CaseName", ...)`) and use PascalCase names. Provide cleanup functions (`t.Cleanup`) to remove temporary files or databases created during tests.

@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/service/http/safe"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 func TestSafeDownload_InvalidScheme(t *testing.T) {

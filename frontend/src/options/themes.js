@@ -955,7 +955,14 @@ export const All = () => {
 };
 
 // Get returns a theme by name.
-export const Get = (name) => {
+export const Get = (name, preferForced = true) => {
+  if (Array.isArray(options) && preferForced) {
+    const forced = options.find((t) => t.force && t.value);
+    if (forced) {
+      name = forced.value;
+    }
+  }
+
   if (typeof themes[name] === "undefined") {
     name = options[0].value;
   }
@@ -995,6 +1002,7 @@ export const Set = (name, theme) => {
         text: theme.title ? theme.title : $gettext("Custom"),
         value: name,
         disabled: false,
+        force: true,
       },
     ];
   } else if (typeof themes[name] === "undefined") {

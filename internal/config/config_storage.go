@@ -203,7 +203,7 @@ func (c *Config) CreateDirectories() error {
 	}
 
 	// Create frontend build path if it doesn't exist yet.
-	if dir := c.BuildPath(); dir == "" {
+	if dir := c.StaticBuildPath(); dir == "" {
 		return notFoundError("build")
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)

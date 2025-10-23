@@ -1,5 +1,5 @@
 ---
-name: Bug Report
+name: Bug Report 🐞
 about: Report a new and clearly identified bug that must be fixed directly in the application
 title: 'SHORT DESCRIPTION OF THE PROBLEM YOU ARE REPORTING'
 labels: bug

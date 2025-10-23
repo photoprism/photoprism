@@ -283,7 +283,7 @@ export default {
               }
             });
           }
-        } catch (_) {
+        } catch {
           // Ignore.
         }
       }

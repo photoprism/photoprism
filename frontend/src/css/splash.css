@@ -9,14 +9,14 @@ html.hide-scrollbar {
     scrollbar-width: none;
 }
 
-[data-color-mode=light][data-light-theme*=dark],
-[data-color-mode=dark][data-dark-theme*=dark] {
+[data-color-mode="light"][data-light-theme*="dark"],
+[data-color-mode="dark"][data-dark-theme*="dark"] {
     color-scheme: dark;
 }
 
 :root,
-[data-color-mode=light][data-light-theme*=light],
-[data-color-mode=dark][data-dark-theme*=light] {
+[data-color-mode="light"][data-light-theme*="light"],
+[data-color-mode="dark"][data-dark-theme*="light"] {
     color-scheme: light;
 }
 
@@ -45,7 +45,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 
     /* Enable font features. */
-    font-feature-settings: 'kern', 'liga';
+    font-feature-settings: "kern", "liga";
 }
 
 body.nojs::-webkit-scrollbar,
@@ -221,12 +221,20 @@ a.logo-large {
     color: #bbbbb5;
 }
 
+.splash-warning {
+    display: block;
+    font-weight: 600;
+    color: #bbbaba;
+    margin: 0 auto;
+    max-width: 580px;
+    line-height: 1.5;
+}
+
 #noscript-info.splash-info,
 #noscript-info.splash-info a {
     font-weight: 500;
     font-size: 16px;
 }
-
 
 .splash-center,
 #busy-overlay .splash-center {
@@ -286,4 +294,3 @@ div.loading-bar {
     right: 10%;
     left: 10%;
 }
-

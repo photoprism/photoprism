@@ -8,7 +8,6 @@ Package                          License       Copyright
 @babel/runtime                   MIT           The Babel Team (https://babel.dev/team)
 @eslint/eslintrc                 MIT           Nicholas C. Zakas
 @eslint/js                       MIT           n/a
-@lcdp/offline-plugin             MIT           Le Comptoir Des Pharmacies <webmaster@lecomptoirdespharmacies.fr>
 @mdi/font                        Apache-2.0    Austin Andrews
 @testing-library/jest-dom        MIT           Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
 @testing-library/react           MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
@@ -32,7 +31,7 @@ core-js                          MIT           Denis Pushkarev zloirock@zloirock
 cross-env                        MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 css-loader                       MIT           Tobias Koppers @sokra
 cssnano                          MIT           Ben Briggs beneb.info@gmail.com http://beneb.info
-easygettext                      MIT           Polyconseil
+escape-string-regexp             MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 eslint                           MIT           Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
 eslint-config-prettier           MIT           Simon Lydell
 eslint-formatter-pretty          MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
@@ -73,7 +72,6 @@ resolve-url-loader               MIT           bholloway
 sanitize-html                    MIT           Apostrophe Technologies, Inc.
 sass                             MIT           Natalie Weizenbaum nweiz@google.com https://github.com/nex3
 sass-loader                      MIT           J. Tangelder
-server                           MIT           Francisco Presencia <public@francisco.io> (https://francisco.io/)
 sockette                         MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
 style-loader                     MIT           Tobias Koppers @sokra
 svg-url-loader                   MIT           Hovhannes Babayan
@@ -100,3 +98,4 @@ webpack-manifest-plugin          MIT           Dane Thurber <dane.thurber@gmail.
 webpack-md5-hash                 MIT           Kirill Ermolov
 webpack-merge                    MIT           Juho Vepsalainen <bebraw@gmail.com>
 webpack-plugin-vuetify           MIT           Kael Watts-Deuchar
+workbox-webpack-plugin           MIT           Google's Web DevRel Team and Google's Aurora Team

@@ -561,7 +561,7 @@ export default {
         const routeUrl = this.$router.resolve(route).href;
 
         if (routeUrl) {
-          window.open(routeUrl, "_blank");
+          this.$util.openUrl(routeUrl);
         }
       }
     },

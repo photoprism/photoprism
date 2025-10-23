@@ -53,7 +53,6 @@ import * as themes from "options/themes";
 import Hls from "hls.js";
 import { createGettext, T } from "common/gettext";
 import { Locale } from "locales";
-import * as offline from "@lcdp/offline-plugin/runtime";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
@@ -290,7 +289,14 @@ $config.update().finally(() => {
   app.mount("#app");
 
   // Allows the application to be installed as a PWA.
-  if ($config.baseUri === "") {
-    offline.install();
+  if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+    const scopeBase = $config.baseUri ? $config.baseUri.replace(/\/+$/, "") + "/" : "/";
+    const swUrl = `${scopeBase}sw.js`.replace(/\/\/+/g, "/");
+
+    navigator.serviceWorker
+      .register(swUrl, { scope: scopeBase })
+      .catch((err) => {
+        $log.warn("service worker: register failed", err);
+      });
   }
 });

@@ -8,8 +8,12 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // obtainClientCredentialsViaRegister calls the portal register endpoint using a join token
@@ -22,12 +26,12 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	endpoint := *u
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/nodes/register"
 
-	reqBody := map[string]any{
-		"nodeName":     nodeName,
-		"nodeRole":     cluster.RoleInstance,
-		"rotateSecret": true,
+	payload := cluster.RegisterRequest{
+		NodeName:     nodeName,
+		NodeRole:     cluster.RoleInstance,
+		RotateSecret: true,
 	}
-	b, _ := json.Marshal(reqBody)
+	b, _ := json.Marshal(payload)
 	req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(b))
 	req.Header.Set("Content-Type", "application/json")
 	header.SetAuthorization(req, joinToken)
@@ -52,4 +56,24 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 		return "", "", fmt.Errorf("missing client credentials in response")
 	}
 	return id, secret, nil
+}
+
+// clusterAuditWho builds the leading audit log segments for CLI commands.
+func clusterAuditWho(ctx *cli.Context, conf *config.Config) []string {
+	actor := clean.Log(conf.NodeName())
+	if actor == "" {
+		actor = clean.Log(conf.SiteUrl())
+	}
+	if actor == "" {
+		actor = "cli"
+	}
+
+	context := "cli"
+	if ctx != nil && ctx.Command != nil {
+		if full := strings.TrimSpace(ctx.Command.FullName()); full != "" {
+			context = "cli " + full
+		}
+	}
+
+	return []string{actor, context}
 }

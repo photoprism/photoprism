@@ -11,9 +11,9 @@ var keywordMutex = sync.Mutex{}
 
 // Keyword represents a normalized word used for full-text search and tagging.
 type Keyword struct {
-	ID      uint   `gorm:"primary_key"`
-	Keyword string `gorm:"type:VARCHAR(64);index;"`
-	Skip    bool
+	ID      uint   `gorm:"primary_key" json:"ID,omitempty" yaml:"ID,omitempty"`
+	Keyword string `gorm:"type:VARCHAR(64);index;" json:"Keyword" yaml:"Keyword,omitempty"`
+	Skip    bool   `json:"Skip" yaml:"Skip"`
 }
 
 // TableName returns the entity table name.

@@ -31,6 +31,7 @@ type Options struct {
 	NoHub                   bool          `yaml:"-" json:"-" flag:"no-hub"`
 	AdminUser               string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword           string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
+	AdminScope              string        `yaml:"AdminScope" json:"-" flag:"admin-scope" tags:"pro"`
 	PasswordLength          int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
 	PasswordResetUri        string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri" tags:"plus,pro"`
 	RegisterUri             string        `yaml:"RegisterUri" json:"-" flag:"register-uri" tags:"pro"`
@@ -245,6 +246,9 @@ type Options struct {
 	PIDFilename             string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename             string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	DetachServer            bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
+	Deprecated              struct {
+		DatabaseDsn string `yaml:"DatabaseDsn,omitempty" json:"-" flag:"-"`
+	} `yaml:",inline,omitempty" json:"-" flag:"-"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:
@@ -303,22 +307,22 @@ func NewOptions(ctx *cli.Context) *Options {
 }
 
 // expandFilenames converts path in config to absolute path
-func (c *Options) expandFilenames() {
-	c.ConfigPath = fs.Abs(c.ConfigPath)
-	c.StoragePath = fs.Abs(c.StoragePath)
-	c.UsersPath = fs.Abs(c.UsersPath)
-	c.BackupPath = fs.Abs(c.BackupPath)
-	c.AssetsPath = fs.Abs(c.AssetsPath)
-	c.CachePath = fs.Abs(c.CachePath)
-	c.OriginalsPath = fs.Abs(c.OriginalsPath)
-	c.ImportPath = fs.Abs(c.ImportPath)
-	c.TempPath = fs.Abs(c.TempPath)
-	c.PIDFilename = fs.Abs(c.PIDFilename)
-	c.LogFilename = fs.Abs(c.LogFilename)
+func (o *Options) expandFilenames() {
+	o.ConfigPath = fs.Abs(o.ConfigPath)
+	o.StoragePath = fs.Abs(o.StoragePath)
+	o.UsersPath = fs.Abs(o.UsersPath)
+	o.BackupPath = fs.Abs(o.BackupPath)
+	o.AssetsPath = fs.Abs(o.AssetsPath)
+	o.CachePath = fs.Abs(o.CachePath)
+	o.OriginalsPath = fs.Abs(o.OriginalsPath)
+	o.ImportPath = fs.Abs(o.ImportPath)
+	o.TempPath = fs.Abs(o.TempPath)
+	o.PIDFilename = fs.Abs(o.PIDFilename)
+	o.LogFilename = fs.Abs(o.LogFilename)
 }
 
 // Load uses a yaml config file to initiate the configuration entity.
-func (c *Options) Load(fileName string) error {
+func (o *Options) Load(fileName string) error {
 	if fileName == "" {
 		return nil
 	}
@@ -333,11 +337,11 @@ func (c *Options) Load(fileName string) error {
 		return err
 	}
 
-	return yaml.Unmarshal(yamlConfig, c)
+	return yaml.Unmarshal(yamlConfig, o)
 }
 
 // ApplyCliContext uses options from the CLI to setup configuration overrides
 // for the entity.
-func (c *Options) ApplyCliContext(ctx *cli.Context) error {
-	return ApplyCliContext(c, ctx)
+func (o *Options) ApplyCliContext(ctx *cli.Context) error {
+	return ApplyCliContext(o, ctx)
 }

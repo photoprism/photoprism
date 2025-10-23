@@ -27,7 +27,7 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
-const OfflinePlugin = require("@lcdp/offline-plugin");
+const WorkboxPlugin = require("workbox-webpack-plugin");
 const webpack = require("webpack");
 const isAnalyze = process.env?.BUILD_ENV === "analyze" || process.env?.NODE_ENV === "analyze";
 const isDev = isAnalyze || process.env?.BUILD_ENV === "development" || process.env?.NODE_ENV === "development";
@@ -96,21 +96,35 @@ const config = {
     }),
     new webpack.ProgressPlugin(),
     new VueLoaderPlugin(),
-    new OfflinePlugin({
-      relativePaths: false,
-      publicPath: "/",
-      excludes: ["**/*.txt", "**/*.css", "**/*.js", "**/*.*"],
-      rewrites: function (asset) {
-        return "/static/build/" + asset;
-      },
-    }),
+    !isDev &&
+      new WorkboxPlugin.GenerateSW({
+        swDest: "sw.js",
+        cleanupOutdatedCaches: true,
+        clientsClaim: false,
+        skipWaiting: false,
+        navigateFallback: undefined,
+        exclude: [
+          /\.map$/,
+          /\.txt$/,
+          /\.ttf(\?.*)?$/,
+          /\.woff(\?.*)?$/,
+          /assets\.json$/,
+          /chunk\/.*-json\.[a-f0-9]+\.js$/,
+          /locales\/json\/.*\.json$/,
+          /share\.[a-f0-9]+\.(js|css)$/,
+        ],
+        modifyURLPrefix: {
+          "": "static/build/",
+        },
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      }),
     new VuetifyPlugin({ autoImport: true }),
     new DefinePlugin({
       __VUE_OPTIONS_API__: JSON.stringify(true), // Change to false as needed
       __VUE_PROD_DEVTOOLS__: JSON.stringify(false), // Change to true to enable in production
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // Change to true for detailed warnings
     }),
-  ],
+  ].filter(Boolean),
   performance: {
     hints: isDev ? false : "warning",
     maxEntrypointSize: 7500000,

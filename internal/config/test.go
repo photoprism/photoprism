@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	gc "github.com/patrickmn/go-cache"
 	"github.com/urfave/cli/v2"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -294,6 +295,7 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 	c := &Config{
 		options: opts,
 		token:   rnd.Base36(8),
+		cache:   gc.New(time.Second, time.Minute),
 	}
 
 	if !createDirs {
@@ -319,6 +321,7 @@ func NewTestConfig(dbName string) *Config {
 		cliCtx:  CliTestContext(),
 		options: NewTestOptions(dbName),
 		token:   rnd.Base36(8),
+		cache:   gc.New(time.Second, time.Minute),
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
@@ -352,7 +355,10 @@ func NewTestConfig(dbName string) *Config {
 
 // NewTestErrorConfig returns an invalid test config.
 func NewTestErrorConfig() *Config {
-	c := &Config{options: NewTestOptionsError()}
+	c := &Config{
+		options: NewTestOptionsError(),
+		cache:   gc.New(time.Second, time.Minute),
+	}
 
 	return c
 }
@@ -366,7 +372,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
 	app.EnableBashCompletion = true
 	app.Flags = Flags.Cli()
-	app.Metadata = Map{
+	app.Metadata = Values{
 		"Name":    "PhotoPrism",
 		"About":   "PhotoPrism®",
 		"Edition": "ce",

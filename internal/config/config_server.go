@@ -9,8 +9,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 const (
@@ -272,19 +272,35 @@ func (c *Config) StaticPath() string {
 	return filepath.Join(c.AssetsPath(), fs.StaticDir)
 }
 
-// StaticFile returns the path to a static file.
+// StaticFile joins the static assets directory with the given path (leading
+// slashes are preserved inside the static tree) and returns an absolute file
+// system location.
 func (c *Config) StaticFile(fileName string) string {
 	return filepath.Join(c.AssetsPath(), fs.StaticDir, fileName)
 }
 
-// BuildPath returns the static build path.
-func (c *Config) BuildPath() string {
+// StaticBuildPath returns the static build path.
+func (c *Config) StaticBuildPath() string {
 	return filepath.Join(c.StaticPath(), fs.BuildDir)
 }
 
-// ImgPath returns the path to static image files.
-func (c *Config) ImgPath() string {
+// StaticBuildFile joins the static build directory with the given path (leading
+// slashes are preserved inside the build tree) and returns an absolute file system
+// location (e.g. hashed bundles or sw.js).
+func (c *Config) StaticBuildFile(fileName string) string {
+	return filepath.Join(c.StaticBuildPath(), fileName)
+}
+
+// StaticImgPath returns the path to static image files.
+func (c *Config) StaticImgPath() string {
 	return filepath.Join(c.StaticPath(), fs.ImgDir)
+}
+
+// StaticImgFile joins the static image directory with the given path (leading
+// slashes are preserved inside the image tree) and returns an absolute file system
+// location (e.g. icons or wallpapers).
+func (c *Config) StaticImgFile(fileName string) string {
+	return filepath.Join(c.StaticImgPath(), fileName)
 }
 
 // ThemePath returns the path to static theme files.

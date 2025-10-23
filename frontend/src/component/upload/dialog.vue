@@ -60,7 +60,7 @@
                   :items="albums"
                   item-title="Title"
                   item-value="UID"
-                  :placeholder="$gettext('Select or create an album')"
+                  :placeholder="$gettext('Select or create albums')"
                   return-object
                 >
                   <template #no-data>
@@ -134,6 +134,7 @@
 import $api from "common/api";
 import $notify from "common/notify";
 import Album from "model/album";
+import { createAlbumSelectionWatcher } from "common/albums";
 import { Duration } from "luxon";
 
 export default {
@@ -206,6 +207,7 @@ export default {
         this.reset();
       }
     },
+    selectedAlbums: createAlbumSelectionWatcher("albums"),
   },
   methods: {
     afterEnter() {
@@ -393,9 +395,14 @@ export default {
             addToAlbums.push(a);
           } else if (a instanceof Album && a.UID) {
             addToAlbums.push(a.UID);
+          } else if (typeof a === "object" && a?.UID) {
+            addToAlbums.push(a.UID);
           }
         });
       }
+
+      // Deduplicate album UIDs
+      addToAlbums = [...new Set(addToAlbums)];
 
       async function performUpload(ctx) {
         for (let i = 0; i < ctx.selected.length; i++) {

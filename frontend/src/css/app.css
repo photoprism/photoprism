@@ -92,7 +92,7 @@ main {
     top: 72px;
     left: 50%;
     transform: translate(-50%, 0);
-    padding: .6rem 1.2rem;
+    padding: 0.6rem 1.2rem;
     margin: auto;
     opacity: 1;
     color: rgb(var(--v-theme-on-button, #000000));
@@ -115,7 +115,7 @@ main {
 
 .p-scroll svg {
     display: inline-block;
-    vertical-align: -.4em;
+    vertical-align: -0.4em;
     fill: currentcolor;
     height: 1.33rem;
     width: 1.33rem;
@@ -151,14 +151,15 @@ span.text-selectable,
 
 .p-page pre {
     overflow: auto;
-    font-size: 0.875rem
+    font-size: 0.875rem;
 }
 
 .is-rtl .v-card .caption {
     text-align: right;
 }
 
-ol, ul {
+ol,
+ul {
     padding-left: 24px;
     padding-right: 24px;
 }

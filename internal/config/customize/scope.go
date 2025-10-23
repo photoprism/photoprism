@@ -1,8 +1,6 @@
 package customize
 
 import (
-	"strings"
-
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/list"
 )
@@ -13,11 +11,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 		return s
 	}
 
-	scopes := list.ParseAttr(strings.ToLower(scope))
-
-	if scopes.Contains(acl.ResourceSettings.String()) {
-		return s
-	}
+	scopes := acl.ScopeAttr(scope)
 
 	m := *s
 

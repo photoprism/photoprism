@@ -254,20 +254,37 @@ func TestConfig_StaticFile(t *testing.T) {
 
 	path := c.StaticFile("video/404.mp4")
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/video/404.mp4", path)
+
+	path = c.StaticFile("/img/logo.png")
+	assert.Equal(t, filepath.Join(c.StaticPath(), "img/logo.png"), path)
 }
 
-func TestConfig_BuildPath(t *testing.T) {
+func TestConfig_StaticBuildPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.BuildPath()
+	path := c.StaticBuildPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/build", path)
 }
 
-func TestConfig_ImgPath(t *testing.T) {
+func TestConfig_StaticBuildFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	result := c.ImgPath()
+	assert.Equal(t, filepath.Join(c.StaticBuildPath(), fs.SwJsFile), c.StaticBuildFile(fs.SwJsFile))
+	assert.Equal(t, filepath.Join(c.StaticBuildPath(), "chunk/app.js"), c.StaticBuildFile("chunk/app.js"))
+}
+
+func TestConfig_StaticImgPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.StaticImgPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", result)
+}
+
+func TestConfig_StaticImgFile(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, filepath.Join(c.StaticImgPath(), "favicon.ico"), c.StaticImgFile("favicon.ico"))
+	assert.Equal(t, filepath.Join(c.StaticImgPath(), "wallpapers/default.jpg"), c.StaticImgFile("/wallpapers/default.jpg"))
 }
 
 func TestConfig_ThemePath(t *testing.T) {

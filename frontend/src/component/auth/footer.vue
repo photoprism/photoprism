@@ -6,11 +6,11 @@
           {{ about }}
         </v-col>
         <v-col v-if="loginInfo" xs="12" class="pa-0 text-subtitle-2 text-center text-sm-end">
-          <a v-if="legalUrl" :href="legalUrl" target="_blank" class="text-link">{{ loginInfo }}</a>
+          <a v-if="legalUrl" :href="legalUrl" target="_blank" rel="noopener" class="text-link">{{ loginInfo }}</a>
           <span v-else>{{ loginInfo }}</span>
         </v-col>
         <v-col v-else-if="legalInfo" xs="12" class="pa-0 text-subtitle-2 text-center text-sm-end">
-          <a v-if="legalUrl" :href="legalUrl" target="_blank" class="text-link">{{ legalInfo }}</a>
+          <a v-if="legalUrl" :href="legalUrl" target="_blank" rel="noopener" class="text-link">{{ legalInfo }}</a>
           <span v-else>{{ legalInfo }}</span>
         </v-col>
         <v-col v-else-if="caption" xs="12" class="pa-0 text-subtitle-2 text-selectable text-center text-sm-end">

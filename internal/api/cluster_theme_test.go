@@ -11,9 +11,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClusterGetTheme(t *testing.T) {
@@ -58,6 +61,7 @@ func TestClusterGetTheme(t *testing.T) {
 		// Visible files
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("console.log('ok')\n"), fs.ModeFile))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "style.css"), []byte("body{}\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, fs.VersionTxtFile), []byte(" 1.0.0\n"), fs.ModeFile))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "sub", "visible.txt"), []byte("ok\n"), fs.ModeFile))
 		// Hidden file
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, ".hidden.txt"), []byte("secret\n"), fs.ModeFile))
@@ -142,5 +146,27 @@ func TestClusterGetTheme(t *testing.T) {
 		app.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, header.ContentTypeZip, w.Header().Get(header.ContentType))
+	})
+	t.Run("UpdateThemeVersion", func(t *testing.T) {
+		app, _, conf := NewApiTest()
+		_ = app // unused
+		conf.Options().NodeRole = cluster.RolePortal
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		node := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: "instance", UUID: rnd.UUIDv7()}}
+		assert.NoError(t, regy.Put(node))
+
+		client := entity.FindClientByUID(node.ClientID)
+		sess := entity.NewSession(-1, -1)
+		sess.SetClient(client)
+		sess.RefID = "sess-test"
+
+		updateNodeThemeVersion(conf, sess, " theme-v1 \n", "127.0.0.1", sess.RefID)
+
+		stored, err := regy.Get(node.UUID)
+		assert.NoError(t, err)
+		assert.Equal(t, "theme-v1", stored.Theme)
 	})
 }

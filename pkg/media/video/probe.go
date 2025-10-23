@@ -10,8 +10,8 @@ import (
 	"github.com/abema/go-mp4"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // ProbeFile returns information for the given filename.

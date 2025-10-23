@@ -20,17 +20,17 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 var downloadExamples = `
 Usage examples:
 
 photoprism dl --cookies cookies.txt \
- --add-header 'Authorization: Bearer <token>' \
- --dl-method file --file-remux auto -- \
+ --header 'Authorization: Bearer <token>' \
+ --method file --remux auto -- \
  https://example.com/a.mp4 https://example.com/b.jpg
 
 photoprism dl -a 'Authorization: Bearer <token>' \
@@ -50,31 +50,37 @@ var DownloadCommand = &cli.Command{
 			Usage:   "relative originals `PATH` in which new files should be imported",
 		},
 		&cli.StringFlag{
-			Name:    "cookies",
-			Aliases: []string{"c"},
-			Usage:   "use Netscape-format cookies.txt `FILE` for HTTP authentication",
-		},
-		&cli.StringSliceFlag{
-			Name:    "add-header",
-			Aliases: []string{"a"},
-			Usage:   "add HTTP request `HEADER` in the form 'Name: Value' (repeatable)",
+			Name:    "impersonate",
+			Aliases: []string{"i"},
+			Usage:   "impersonate browser `IDENTITY` (e.g. chrome, edge or safari; 'none' to disable)",
+			Value:   "firefox",
 		},
 		&cli.StringFlag{
-			Name:    "dl-method",
+			Name:    "method",
 			Aliases: []string{"m"},
 			Value:   "pipe",
 			Usage:   "download `METHOD` when using external commands: pipe (stdio stream) or file (temporary files)",
 		},
 		&cli.StringFlag{
-			Name:    "file-remux",
+			Name:    "remux",
 			Aliases: []string{"r"},
 			Value:   "auto",
-			Usage:   "remux `POLICY` for videos when using --dl-method file: auto (skip if MP4), always, or skip",
+			Usage:   "remux `POLICY` for videos when using --method file: auto (skip if MP4), always, or skip",
 		},
 		&cli.StringFlag{
-			Name:    "format-sort",
+			Name:    "sort",
 			Aliases: []string{"s"},
-			Usage:   "custom FORMAT sort expression passed to yt-dlp",
+			Usage:   "custom `FORMAT` sort expression, e.g. 'quality,res,fps,codec:avc:m4a,size,br,asr,proto,ext,hasaud,source,id'",
+		},
+		&cli.StringFlag{
+			Name:    "cookies",
+			Aliases: []string{"c"},
+			Usage:   "use Netscape-format cookies.txt `FILE` for HTTP authentication",
+		},
+		&cli.StringSliceFlag{
+			Name:    "header",
+			Aliases: []string{"a"},
+			Usage:   "add HTTP request `HEADER` in the form 'Name: Value' (repeatable)",
 		},
 	},
 	Action: downloadAction,
@@ -148,29 +154,47 @@ func downloadAction(ctx *cli.Context) error {
 
 	// Flags for yt-dlp auth and headers
 	cookies := strings.TrimSpace(ctx.String("cookies"))
+
 	// cookiesFromBrowser := strings.TrimSpace(ctx.String("cookies-from-browser"))
-	addHeaders := ctx.StringSlice("add-header")
-	flagMethod := ""
-	if ctx.IsSet("dl-method") {
-		flagMethod = ctx.String("dl-method")
+	addHeaders := ctx.StringSlice("header")
+
+	impersonate := strings.ToLower(strings.TrimSpace(ctx.String("impersonate")))
+
+	if impersonate == "" {
+		impersonate = "firefox"
+	} else if impersonate == "none" {
+		impersonate = ""
 	}
+
+	flagMethod := ""
+
+	if ctx.IsSet("method") {
+		flagMethod = ctx.String("method")
+	}
+
 	method, _, err := resolveDownloadMethod(flagMethod)
+
 	if err != nil {
 		return err
 	}
-	formatSort := strings.TrimSpace(ctx.String("format-sort"))
+
+	formatSort := strings.TrimSpace(ctx.String("sort"))
 	sortingFormat := formatSort
+
 	if sortingFormat == "" && method == "pipe" {
 		sortingFormat = pipeSortingFormat
 	}
-	fileRemux := strings.ToLower(strings.TrimSpace(ctx.String("file-remux")))
+
+	fileRemux := strings.ToLower(strings.TrimSpace(ctx.String("remux")))
+
 	if fileRemux == "" {
 		fileRemux = "auto"
 	}
+
 	switch fileRemux {
 	case "always", "auto", "skip":
 	default:
-		return fmt.Errorf("invalid --file-remux: %s (expected 'always', 'auto', or 'skip')", fileRemux)
+		return fmt.Errorf("invalid --remux: %s (expected 'always', 'auto', or 'skip')", fileRemux)
 	}
 
 	// Process inputs sequentially (Phase 1)
@@ -210,17 +234,22 @@ func downloadAction(ctx *cli.Context) error {
 			log.Infof("downloading %s from %s", mt, clean.Log(u.String()))
 
 			opt := dl.Options{
-				MergeOutputFormat: fs.VideoMp4.String(),
-				RemuxVideo:        fs.VideoMp4.String(),
-				SortingFormat:     sortingFormat,
-				Cookies:           cookies,
-				AddHeaders:        addHeaders,
+				SortingFormat: sortingFormat,
+				Cookies:       cookies,
+				AddHeaders:    addHeaders,
+				Impersonate:   impersonate,
+			}
+			ytRemux := method != "pipe"
+			if ytRemux {
+				opt.MergeOutputFormat = fs.VideoMp4.String()
+				opt.RemuxVideo = fs.VideoMp4.String()
 			}
 
-			result, err := dl.NewMetadata(context.Background(), u.String(), opt)
-			if err != nil {
-				log.Errorf("metadata failed: %v", err)
-				if hint, ok := missingFormatsHint(err); ok {
+			result, metaErr := dl.NewMetadata(context.Background(), u.String(), opt)
+
+			if metaErr != nil {
+				log.Errorf("metadata failed: %v", metaErr)
+				if hint, ok := missingFormatsHint(metaErr); ok {
 					log.Info(hint)
 				}
 				failures++
@@ -228,9 +257,11 @@ func downloadAction(ctx *cli.Context) error {
 			}
 
 			// Best-effort creation time for file method when not remuxing locally.
-			if created := dl.CreatedFromInfo(result.Info); !created.IsZero() {
-				// Apply via yt-dlp ffmpeg post-processor so creation_time exists even without our remux.
-				result.Options.FFmpegPostArgs = "-metadata creation_time=" + created.UTC().Format(time.RFC3339)
+			if ytRemux {
+				if created := dl.CreatedFromInfo(result.Info); !created.IsZero() {
+					// Apply via yt-dlp ffmpeg post-processor so creation_time exists even without our remux.
+					result.Options.FFmpegPostArgs = "-metadata creation_time=" + created.UTC().Format(time.RFC3339)
+				}
 			}
 
 			// Base filename for pipe method
@@ -243,17 +274,9 @@ func downloadAction(ctx *cli.Context) error {
 
 			if method == "pipe" {
 				// Stream to stdout
-				downloadResult, err := result.DownloadWithOptions(context.Background(), dl.DownloadOptions{
-					Filter:            "best",
-					DownloadAudioOnly: false,
-					EmbedMetadata:     true,
-					EmbedSubs:         false,
-					ForceOverwrites:   false,
-					DisableCaching:    false,
-					PlaylistIndex:     1,
-				})
-				if err != nil {
-					log.Errorf("download failed: %v", err)
+				downloadResult, dlErr := dl.Download(context.Background(), u.String(), opt, "best")
+				if dlErr != nil {
+					log.Errorf("download failed: %v", dlErr)
 					failures++
 					continue
 				}
@@ -285,7 +308,7 @@ func downloadAction(ctx *cli.Context) error {
 				// file method
 				// Deterministic output template within the session temp dir
 				outTpl := filepath.Join(downloadPath, "ppdl_%(id)s.%(ext)s")
-				files, err := result.DownloadToFileWithOptions(context.Background(), dl.DownloadOptions{
+				files, dlErr := result.DownloadToFileWithOptions(context.Background(), dl.DownloadOptions{
 					Filter:            "best",
 					DownloadAudioOnly: false,
 					EmbedMetadata:     true,
@@ -295,10 +318,12 @@ func downloadAction(ctx *cli.Context) error {
 					PlaylistIndex:     1,
 					Output:            outTpl,
 				})
-				if err != nil {
-					log.Errorf("download failed: %v", err)
+
+				if dlErr != nil {
+					log.Errorf("download failed: %v", dlErr)
 					// even on error, any completed files returned will be imported
 				}
+
 				// Ensure container/metadata per remux policy for file method
 				if fileRemux != "skip" {
 					for _, fp := range files {
@@ -325,6 +350,7 @@ func downloadAction(ctx *cli.Context) error {
 	w.Start(opt)
 
 	elapsed := time.Since(start)
+
 	if failures > 0 {
 		log.Warnf("completed with %d error(s) in %s", failures, elapsed)
 	} else {
@@ -334,5 +360,6 @@ func downloadAction(ctx *cli.Context) error {
 	if failures > 0 {
 		return fmt.Errorf("some downloads failed: %d", failures)
 	}
+
 	return nil
 }

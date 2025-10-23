@@ -1,7 +1,7 @@
 package fs
 
 import (
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // TypeAnimated maps animated file types to their mime type.

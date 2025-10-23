@@ -53,10 +53,16 @@ export default {
     };
   },
   created() {
-    window.addEventListener("scroll", this.onScroll, { passive: true });
+    this._scrollOptions = { passive: true };
+    if (typeof window !== "undefined") {
+      // Use a stable options object so removeEventListener can match it reliably.
+      window.addEventListener("scroll", this.onScroll, this._scrollOptions);
+    }
   },
   beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll, false);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("scroll", this.onScroll, this._scrollOptions);
+    }
   },
   methods: {
     onScroll() {

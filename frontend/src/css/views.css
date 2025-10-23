@@ -95,17 +95,17 @@
 
 /* Black */
 .img-color-1 {
-    background-color: #DCDCDC !important;
+    background-color: #dcdcdc !important;
 }
 
 /* Grey */
 .img-color-2 {
-    background-color: #98817B !important;
+    background-color: #98817b !important;
 }
 
 /* Brown */
 .img-color-3 {
-    background-color: #E5E4E2 !important;
+    background-color: #e5e4e2 !important;
 }
 
 /* Gold */
@@ -115,22 +115,22 @@
 
 /* White */
 .img-color-5 {
-    background-color: #AB47BC !important;
+    background-color: #ab47bc !important;
 }
 
 /* Purple */
 .img-color-6 {
-    background-color: #8A7F8D !important;
+    background-color: #8a7f8d !important;
 }
 
 /* Blue */
 .img-color-7 {
-    background-color: #91A3B0 !important;
+    background-color: #91a3b0 !important;
 }
 
 /* Cyan */
 .img-color-8 {
-    background-color: #B2BEB5 !important;
+    background-color: #b2beb5 !important;
 }
 
 /* Teal */
@@ -140,32 +140,32 @@
 
 /* Green */
 .img-color-10 {
-    background-color: #5E716A !important;
+    background-color: #5e716a !important;
 }
 
 /* Lime */
 .img-color-11 {
-    background-color: #928E85 !important;
+    background-color: #928e85 !important;
 }
 
 /* Yellow */
 .img-color-12 {
-    background-color: #CC8899 !important;
+    background-color: #cc8899 !important;
 }
 
 /* Magenta */
 .img-color-13 {
-    background-color: #98817B !important;
+    background-color: #98817b !important;
 }
 
 /* Orange */
 .img-color-14 {
-    background-color: #CC8899 !important;
+    background-color: #cc8899 !important;
 }
 
 /* Red */
 .img-color-15 {
-    background-color: #AA98A9 !important;
+    background-color: #aa98a9 !important;
 }
 
 /* Cards, Mosaic and List View */
@@ -179,7 +179,10 @@
 }
 
 .list-view {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
+    box-shadow:
+        0 0 0 0 rgba(0, 0, 0, 0.2),
+        0 0 0 0 rgba(0, 0, 0, 0.14),
+        0 0 0 0 rgba(0, 0, 0, 0.12) !important;
 }
 
 .cards-view .result,
@@ -254,16 +257,16 @@
     overflow: hidden !important;
 }
 
-.search-results.list-view .v-table>.v-table__wrapper>table>thead>tr>th {
+.search-results.list-view .v-table > .v-table__wrapper > table > thead > tr > th {
     height: 44px;
     padding: 0 8px;
 }
 
-.search-results.list-view .v-table>.v-table__wrapper>table {
+.search-results.list-view .v-table > .v-table__wrapper > table {
     table-layout: auto;
 }
 
-.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td {
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td {
     padding: 1px 8px;
     height: 50px;
     max-height: 50px;
@@ -274,21 +277,21 @@
     text-overflow: ellipsis;
 }
 
-.search-results.list-view .v-table>.v-table__wrapper>table>thead>tr>th.col-auto,
-.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.col-auto {
+.search-results.list-view .v-table > .v-table__wrapper > table > thead > tr > th.col-auto,
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.col-auto {
     max-width: 200px;
 }
 
-.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.result {
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result {
     padding: 1px 4px 1px 0;
     text-align: center;
 }
 
-.is-rtl .search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.result {
+.is-rtl .search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result {
     padding: 1px 0 1px 4px;
 }
 
-.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.result .preview {
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview {
     width: 50px;
     height: 50px;
 }
@@ -402,7 +405,7 @@
     width: 28px;
     height: 28px;
     padding: 0;
-    transition: background-color .3s cubic-bezier(.25, .8, .5, 1);
+    transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 }
 
 .cards-view .result .preview > .preview-details,
@@ -440,7 +443,11 @@
     height: auto;
     margin: 4px;
     padding: 0;
-    text-shadow: -1px -1px 0 #0003, 1px -1px 0 #0003, -1px 1px 0 #0003, 1px 1px 0 #0003;
+    text-shadow:
+        -1px -1px 0 #0003,
+        1px -1px 0 #0003,
+        -1px 1px 0 #0003,
+        1px 1px 0 #0003;
 }
 
 .search-results .preview .preview-details > div.info-text {
@@ -458,7 +465,6 @@
     margin: 5px;
     font-size: 15px;
 }
-
 
 .list-view td.meta-data {
     min-width: 90px;
@@ -512,7 +518,7 @@
 }
 
 .cards-view .result .meta {
-    font-size: .825rem;
+    font-size: 0.825rem;
     line-height: normal;
     letter-spacing: normal;
     font-weight: normal;
@@ -535,7 +541,7 @@
 .cards-view .result .meta button,
 .cards-view .result .meta .meta-details,
 .cards-view .result .meta .meta-details button {
-    font-size: .75rem;
+    font-size: 0.75rem;
     line-height: normal;
     letter-spacing: normal;
     white-space: normal;
@@ -556,7 +562,7 @@
 }
 
 .cards-view .result .meta .meta-title {
-    font-size: .875rem;
+    font-size: 0.875rem;
     font-weight: bold;
     line-height: normal;
     letter-spacing: normal;
@@ -628,7 +634,11 @@
 .cards-view .result .preview button,
 .list-view .result .preview button,
 .mosaic-view .result.preview button {
-    text-shadow: -1px -1px 0 #0003, 1px -1px 0 #0003, -1px 1px 0 #0003, 1px 1px 0 #0003;
+    text-shadow:
+        -1px -1px 0 #0003,
+        1px -1px 0 #0003,
+        -1px 1px 0 #0003,
+        1px 1px 0 #0003;
 }
 
 .cards-view .result.is-favorite .preview button.input-favorite,
@@ -683,7 +693,11 @@
 .mosaic-view .input-menu,
 .cards-view .input-reject,
 .mosaic-view .input-reject {
-    text-shadow: -1px -1px 0 #0003, 1px -1px 0 #0003, -1px 1px 0 #0003, 1px 1px 0 #0003;
+    text-shadow:
+        -1px -1px 0 #0003,
+        1px -1px 0 #0003,
+        -1px 1px 0 #0003,
+        1px 1px 0 #0003;
     background-color: rgba(255, 255, 255, 0);
     color: #f6f6f6;
     opacity: 0.9;
@@ -823,7 +837,7 @@
 }
 
 .cards-view .result .review .v-btn {
-    font-size: .875rem;
+    font-size: 0.875rem;
     flex: 0 0 50%;
     height: 100%;
     max-width: 50%;
@@ -879,7 +893,7 @@ body.mobile .face-results.cards-view {
     .list-view .result.preview,
     .mosaic-view .result.is-selected {
         height: 0;
-        padding-bottom: 100%
+        padding-bottom: 100%;
     }
 
     /* elements with aspect-ratio 1 and with margin */
@@ -889,7 +903,7 @@ body.mobile .face-results.cards-view {
            8px is required because this aspect-ratio-fallback doesn't take
            margins into consideration
         */
-        padding-bottom: calc(100% - 8px)
+        padding-bottom: calc(100% - 8px);
     }
 
     .live-player video {

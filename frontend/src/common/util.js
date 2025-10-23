@@ -271,6 +271,18 @@ export default class $util {
     return sanitizeHtml(html);
   }
 
+  static openUrl(externalUrl) {
+    if (!externalUrl) {
+      return;
+    }
+
+    const newWindow = window.open(externalUrl, "_blank", "noopener,noreferrer");
+
+    if (newWindow) {
+      newWindow.focus();
+    }
+  }
+
   static encodeHTML(text) {
     const linkRegex = /(https?:\/\/)[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&;/=]*)/g;
 

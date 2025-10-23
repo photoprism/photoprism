@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // HttpClient returns an HTTP client tailored for OIDC requests. When debug is true, it wraps the
@@ -32,7 +33,7 @@ func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response,
 
 	// Log the request method, URL and error, if any.
 	if err != nil {
-		event.AuditErr([]string{"oidc", "provider", "request", "%s %s", "%s"}, req.Method, req.URL.String(), err)
+		event.AuditErr([]string{"oidc", "provider", "request", "%s %s", status.Error(err)}, req.Method, req.URL.String())
 	} else {
 		event.AuditDebug([]string{"oidc", "provider", "request", "%s %s", "%s"}, req.Method, req.URL.String(), res.Status)
 	}

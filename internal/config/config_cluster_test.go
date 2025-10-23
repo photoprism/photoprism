@@ -5,12 +5,14 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -44,7 +46,7 @@ func TestConfig_PortalUrl(t *testing.T) {
 		assert.True(t, rnd.IsJoinToken(token, false))
 		assert.True(t, rnd.IsJoinToken(token, true))
 
-		secretFile := filepath.Join(c.PortalConfigPath(), "secrets", "join_token")
+		secretFile := filepath.Join(c.PortalConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 		assert.FileExists(t, secretFile)
 		info, err := os.Stat(secretFile)
 		assert.NoError(t, err)
@@ -94,11 +96,11 @@ func TestConfig_Cluster(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
 		// Defaults
-		assert.False(t, c.IsPortal())
+		assert.False(t, c.Portal())
 
 		// Toggle values
 		c.Options().NodeRole = string(cluster.RolePortal)
-		assert.True(t, c.IsPortal())
+		assert.True(t, c.Portal())
 		c.Options().NodeRole = ""
 	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {
@@ -215,9 +217,13 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, os.MkdirAll(expectedCluster, fs.ModeDir))
 		assert.Equal(t, expectedTheme, c.PortalThemePath())
 
-		// When the cluster theme directory exists, PortalThemePath returns it.
+		// When the cluster theme directory exists, PortalThemePath returns it only when app.js is present.
 		expectedClusterTheme := filepath.Join(expectedCluster, fs.ThemeDir)
 		assert.NoError(t, os.MkdirAll(expectedClusterTheme, fs.ModeDir))
+		// Still falls back without app.js.
+		assert.Equal(t, expectedTheme, c.PortalThemePath())
+		// Create app.js to activate portal-specific theme.
+		assert.NoError(t, os.WriteFile(filepath.Join(expectedClusterTheme, fs.AppJsFile), []byte("console.log('theme');\n"), fs.ModeFile))
 		assert.Equal(t, expectedClusterTheme, c.PortalThemePath())
 	})
 	t.Run("PortalAndSecrets", func(t *testing.T) {
@@ -243,6 +249,102 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Equal(t, "https://portal.example.test", c.PortalUrl())
 		assert.Equal(t, cluster.ExampleJoinToken, c.JoinToken())
 		assert.Equal(t, "node-secret", c.NodeClientSecret())
+	})
+	t.Run("NodePathsAndVersion", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		expectedNode := filepath.Join(c.ConfigPath(), fs.NodeDir)
+		assert.Equal(t, expectedNode, c.NodeConfigPath())
+
+		expectedTheme := filepath.Join(expectedNode, fs.ThemeDir)
+		assert.Equal(t, expectedTheme, c.NodeThemePath())
+
+		// No files yet → empty version.
+		assert.Equal(t, "", c.NodeThemeVersion())
+
+		assert.NoError(t, os.MkdirAll(expectedTheme, fs.ModeDir))
+
+		// Version file takes precedence and is sanitized.
+		appJsFile := filepath.Join(expectedTheme, fs.AppJsFile)
+		assert.NoError(t, os.WriteFile(appJsFile, []byte(`{foo:"bar"}`), fs.ModeFile))
+		versionFile := filepath.Join(expectedTheme, fs.VersionTxtFile)
+		assert.NoError(t, os.WriteFile(versionFile, []byte(" demo-theme \n"), fs.ModeFile))
+		assert.Equal(t, "demo-theme", c.NodeThemeVersion())
+
+		// Removing version file should fall back to app.js modification time.
+		assert.NoError(t, os.Remove(versionFile))
+		appJS := filepath.Join(expectedTheme, fs.AppJsFile)
+		assert.NoError(t, os.WriteFile(appJS, []byte("console.log('theme');\n"), fs.ModeFile))
+		modTime := time.Date(2025, 10, 18, 12, 0, 0, 0, time.UTC)
+		assert.NoError(t, os.Chtimes(appJS, modTime, modTime))
+		assert.Equal(t, modTime.Format(time.RFC3339), c.NodeThemeVersion())
+	})
+	t.Run("SaveJoinToken", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+		c.options.NodeRole = cluster.RolePortal
+
+		c.options.JoinToken = "onwnOVt-MZCCkA0z-YJXHnzJ"
+		token, tokenFile, err := c.SaveJoinToken("")
+		assert.NoError(t, err)
+		assert.Empty(t, c.options.JoinToken)
+		assert.Equal(t, token, c.JoinToken())
+		assert.True(t, rnd.IsJoinToken(token, false))
+		assert.FileExists(t, tokenFile)
+
+		data, readErr := os.ReadFile(tokenFile)
+		assert.NoError(t, readErr)
+		assert.Equal(t, token, strings.TrimSpace(string(data)))
+	})
+	t.Run("SaveNodeClientSecret", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		fileName, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.NoError(t, err)
+		assert.FileExists(t, fileName)
+
+		data, readErr := os.ReadFile(fileName)
+		assert.NoError(t, readErr)
+		assert.Equal(t, cluster.ExampleClientSecret, strings.TrimSpace(string(data)))
+	})
+	t.Run("JoinTokenFilePortal", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+		c.options.NodeRole = cluster.RolePortal
+
+		expected := filepath.Join(c.PortalConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
+		assert.Equal(t, expected, c.JoinTokenFile())
+		assert.Equal(t, expected, c.PortalJoinTokenFile())
+	})
+	t.Run("JoinTokenFileInstance", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+		c.options.NodeRole = cluster.RoleInstance
+
+		expected := filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
+		assert.Equal(t, expected, c.JoinTokenFile())
+		assert.Equal(t, expected, c.NodeJoinTokenFile())
+	})
+	t.Run("NodeClientSecretFile", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		expected := filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.ClientSecretFile)
+		assert.Equal(t, expected, c.NodeClientSecretFile())
 	})
 	t.Run("AbsolutePaths", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -279,9 +381,9 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Regexp(t, `^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$`, got)
 	})
 	t.Run("NodeNameNormalization", func(t *testing.T) {
-		orig := getHostname
-		getHostname = func() (string, error) { return "", nil }
-		t.Cleanup(func() { getHostname = orig })
+		orig := dns.GetHostname
+		dns.GetHostname = func() (string, error) { return "", nil }
+		t.Cleanup(func() { dns.GetHostname = orig })
 
 		c := NewConfig(CliTestContext())
 		c.options.NodeName = " My.Host/Name:Prod "
@@ -294,9 +396,9 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Equal(t, strings.Repeat("a", 32), c.NodeName())
 	})
 	t.Run("NodeNameFromHostname", func(t *testing.T) {
-		orig := getHostname
-		getHostname = func() (string, error) { return "My.Host/Name:Prod", nil }
-		t.Cleanup(func() { getHostname = orig })
+		orig := dns.GetHostname
+		dns.GetHostname = func() (string, error) { return "My.Host/Name:Prod", nil }
+		t.Cleanup(func() { dns.GetHostname = orig })
 
 		c := NewConfig(CliTestContext())
 		c.options.NodeName = ""
@@ -338,6 +440,13 @@ func TestConfig_Cluster(t *testing.T) {
 		t.Setenv("PHOTOPRISM_JOIN_TOKEN_FILE", tkFile)
 		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
 		assert.Equal(t, cluster.ExampleJoinTokenAlt, c.JoinToken())
+
+		// Refreshing the token file should invalidate the cache.
+		time.Sleep(5 * time.Millisecond)
+		newToken := cluster.ExampleJoinToken
+		assert.NoError(t, os.WriteFile(tkFile, []byte(newToken), fs.ModeSecretFile))
+		c.clearJoinTokenFileCache()
+		assert.Equal(t, newToken, c.JoinToken())
 
 		// Empty / missing should yield empty strings.
 		t.Setenv("PHOTOPRISM_NODE_CLIENT_SECRET_FILE", filepath.Join(dir, "missing"))

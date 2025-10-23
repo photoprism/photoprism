@@ -32,7 +32,7 @@ func TestAuthJWTCommands(t *testing.T) {
 	get.SetConfig(conf)
 	conf.RegisterDb()
 
-	require.True(t, conf.IsPortal())
+	require.True(t, conf.Portal())
 
 	manager := get.JWTManager()
 	require.NotNil(t, manager)

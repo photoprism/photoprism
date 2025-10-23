@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -57,7 +58,8 @@ type User struct {
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
 	UserRole      string        `gorm:"size:64;default:'';" json:"Role" yaml:"Role,omitempty"`
-	UserAttr      string        `gorm:"size:1024;" json:"Attr" yaml:"Attr,omitempty"`
+	UserScope     string        `gorm:"size:1024;default:'*';" json:"Scope" yaml:"Scope,omitempty"`
+	UserAttr      string        `gorm:"size:1024;default:'';" json:"Attr" yaml:"Attr,omitempty"`
 	SuperAdmin    bool          `json:"SuperAdmin" yaml:"SuperAdmin,omitempty"`
 	CanLogin      bool          `json:"CanLogin" yaml:"CanLogin,omitempty"`
 	LoginAt       *time.Time    `json:"LoginAt" yaml:"LoginAt,omitempty"`
@@ -180,7 +182,7 @@ func FirstOrCreateUser(m *User) *User {
 	if found := FindUser(*m); found != nil {
 		return found
 	} else if err := m.Create(); err != nil {
-		event.AuditErr([]string{"user", "failed to create", "%s"}, err)
+		event.AuditErr([]string{"user", "failed to create", status.Error(err)})
 		return nil
 	} else {
 		return m
@@ -260,7 +262,7 @@ func (m *User) SameUID(uid string) bool {
 }
 
 // InitAccount sets the name and password of the initial admin account.
-func (m *User) InitAccount(initName, initPasswd string) (updated bool) {
+func (m *User) InitAccount(initName, initPasswd, scope string) (updated bool) {
 	// User must exist and the password must not be empty.
 	initPasswd = strings.TrimSpace(initPasswd)
 	if rnd.InvalidUID(m.UserUID, UserUID) || initPasswd == "" {
@@ -281,14 +283,21 @@ func (m *User) InitAccount(initName, initPasswd string) (updated bool) {
 
 	// Save password.
 	if err := initialPasswd.Save(); err != nil {
-		event.AuditErr([]string{"user %s", "failed to change password", "%s"}, m.RefID, err)
+		event.AuditErr([]string{"user %s", "failed to change password", status.Error(err)}, m.RefID)
 		return false
 	}
 
 	// Change username if needed.
 	if initName != "" && initName != m.UserName {
 		if err := m.UpdateUsername(initName); err != nil {
-			event.AuditErr([]string{"user %s", "failed to change username to %s", "%s"}, m.RefID, clean.Log(initName), err)
+			event.AuditErr([]string{"user %s", "failed to change username to %s", status.Error(err)}, m.RefID, clean.Log(initName))
+		}
+	}
+
+	// Limit account scope if needed.
+	if scope != "" && scope != m.UserScope {
+		if err := m.UpdateScope(scope); err != nil {
+			event.AuditErr([]string{"user %s", "failed to change scope to %s", status.Error(err)}, m.RefID, clean.Log(scope))
 		}
 	}
 
@@ -328,7 +337,7 @@ func (m *User) Delete() (err error) {
 	}
 
 	if err = UnscopedDb().Delete(Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
-		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", "%s"}, m.RefID, err)
+		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", status.Error(err)}, m.RefID)
 	}
 
 	err = Db().Delete(m).Error
@@ -359,10 +368,10 @@ func (m *User) LoadRelated() *User {
 // SaveRelated saves related settings and details.
 func (m *User) SaveRelated() *User {
 	if err := m.Settings().Save(); err != nil {
-		event.AuditErr([]string{"user %s", "failed to save settings", "%s"}, m.RefID, err)
+		event.AuditErr([]string{"user %s", "failed to save settings", status.Error(err)}, m.RefID)
 	}
 	if err := m.Details().Save(); err != nil {
-		event.AuditErr([]string{"user %s", "failed to save details", "%s"}, m.RefID, err)
+		event.AuditErr([]string{"user %s", "failed to save details", status.Error(err)}, m.RefID)
 	}
 
 	return m
@@ -630,7 +639,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 		if err := UnscopedDb().Model(&User{}).
 			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, m.AuthID).
 			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
-			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", "%s"}, m.RefID, err)
+			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
 		}
 	}
 
@@ -808,10 +817,41 @@ func (m *User) Details() *UserDetails {
 	return m.UserDetails
 }
 
+// Scope returns optional user account scope as sanitized string.
+func (m *User) Scope() string {
+	if m.UserScope == "" {
+		return "*"
+	}
+
+	return clean.Scope(m.UserScope)
+}
+
+// HasScope returns true if the user has scope restrictions.
+func (m *User) HasScope() bool {
+	return m.UserScope != "" && m.UserScope != list.Any
+}
+
+// NoScope returns true if the user has no scope restrictions.
+func (m *User) NoScope() bool {
+	return !m.HasScope()
+}
+
+// UpdateScope updates optional user account scope.
+func (m *User) UpdateScope(scope string) error {
+	m.UserScope = clean.Scope(scope)
+	return m.Updates(Values{"UserScope": m.UserScope})
+}
+
 // Attr returns optional user account attributes as sanitized string.
 // Example: https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity/useraccountcontrol-manipulate-account-properties
 func (m *User) Attr() string {
 	return clean.Attr(m.UserAttr)
+}
+
+// UpdateAttr updates optional user account attributes.
+func (m *User) UpdateAttr(attr string) error {
+	m.UserAttr = clean.Attr(attr)
+	return m.Updates(Values{"UserAttr": m.UserAttr})
 }
 
 // IsRegistered checks if this user has a registered account with a valid ID, username, and role.
@@ -902,14 +942,14 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 	sess := Sessions{}
 
 	if err := stmt.Find(&sess).Error; err != nil {
-		event.AuditErr([]string{"user %s", "failed to invalidate sessions", "%s"}, m.RefID, err)
+		event.AuditErr([]string{"user %s", "failed to invalidate sessions", status.Error(err)}, m.RefID)
 		return 0
 	}
 
 	// Delete sessions from cache and database.
 	for _, s := range sess {
 		if err := s.Delete(); err != nil {
-			event.AuditWarn([]string{"user %s", "failed to invalidate session %s", "%s"}, m.RefID, clean.Log(s.RefID), err)
+			event.AuditWarn([]string{"user %s", "failed to invalidate session %s", status.Error(err)}, m.RefID, clean.Log(s.RefID))
 		} else {
 			deleted++
 		}
@@ -957,7 +997,7 @@ func (m *User) DeletePassword() (err error) {
 
 	// Remove local account password.
 	if err = pw.Delete(); err != nil {
-		event.AuditErr([]string{"user %s", "failed to remove password", "%s"}, m.RefID, err)
+		event.AuditErr([]string{"user %s", "failed to remove password", status.Error(err)}, m.RefID)
 	} else {
 		event.AuditWarn([]string{"user %s", "password has been removed"}, m.RefID)
 	}
@@ -1138,6 +1178,9 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.CanLogin = frm.CanLogin
 	m.WebDAV = frm.WebDAV
 	m.SetRole(frm.Role())
+	if scope := frm.Scope(); scope != "" {
+		m.UserScope = scope
+	}
 	m.UserAttr = frm.Attr()
 	m.SetBasePath(frm.BasePath)
 	m.SetUploadPath(frm.UploadPath)
@@ -1239,12 +1282,12 @@ func (m *User) RedeemToken(token string) (n int) {
 			share.Comment = link.Comment
 
 			if err := share.Save(); err != nil {
-				event.AuditErr([]string{"user %s", "token %s", "failed to redeem shares", "%s"}, m.RefID, clean.Log(token), err)
+				event.AuditErr([]string{"user %s", "token %s", "failed to redeem shares", status.Error(err)}, m.RefID, clean.Log(token))
 			} else {
 				link.Redeem()
 			}
 		} else if err := found.UpdateLink(link); err != nil {
-			event.AuditErr([]string{"user %s", "token %s", "failed to update shares", "%s"}, m.RefID, clean.Log(token), err)
+			event.AuditErr([]string{"user %s", "token %s", "failed to update shares", status.Error(err)}, m.RefID, clean.Log(token))
 		}
 	}
 

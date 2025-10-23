@@ -4,6 +4,9 @@ import (
 	"sync"
 )
 
-var once sync.Once
-var LowMem = false
-var TotalMem uint64
+var (
+	once            sync.Once
+	initThumbsMutex sync.Mutex
+	LowMem          = false
+	TotalMem        uint64
+)

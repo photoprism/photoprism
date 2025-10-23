@@ -71,10 +71,17 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		var settings *customize.Settings
 
-		// Only super admins can change global config defaults.
-		if s.GetUser().IsSuperAdmin() {
+		user := s.GetUser()
+
+		// Update user preferences without changing global defaults.
+		if user == nil {
+			AbortUnexpectedError(c)
+			return
+		}
+
+		// Only super admins without scope restrictions can change global config defaults.
+		if user.IsSuperAdmin() && s.NoScope() {
 			// Update global defaults and user preferences.
-			user := s.GetUser()
 			settings = conf.Settings()
 
 			// Set values from request.
@@ -102,14 +109,6 @@ func SaveSettings(router *gin.RouterGroup) {
 			entity.FlushSessionCache()
 			UpdateClientConfig()
 		} else {
-			// Update user preferences without changing global defaults.
-			user := s.GetUser()
-
-			if user == nil {
-				AbortUnexpectedError(c)
-				return
-			}
-
 			settings = &customize.Settings{}
 
 			// Set values from request.

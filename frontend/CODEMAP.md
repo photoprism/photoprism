@@ -1,5 +1,7 @@
 PhotoPrism — Frontend CODEMAP
 
+**Last Updated:** October 13, 2025
+
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
 - Use Makefile targets and scripts in `frontend/package.json` as sources of truth.
@@ -24,6 +26,13 @@ Directory Map (src)
 - `src/css/*` — styles loaded by Webpack
 - `src/locales/*` — gettext catalogs; extraction/compile scripts in `package.json`
 
+Startup Templates & Splash Screen
+- The HTML shell is rendered from `assets/templates/index.gohtml` (and `pro/assets/templates/index.gohtml` / `plus/...`). Each template includes `app.gohtml` for the splash markup and `app.js.gohtml` to inject the bundle.
+- The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes. Update the same files in private repos whenever the loader logic changes, and keep the script order so the check runs first.
+- Splash styles, including the `.splash-warning` fallback banner, live in `frontend/src/css/splash.css`. Keep styling changes there so public and private editions stay aligned.
+- Baseline support: Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. If the support matrix changes, revise the warning text in `app.js.gohtml` and the CSS message accordingly.
+- Lightbox videos: `createVideoElement` wires listeners through an `AbortController` stored in `content.data.events`; `contentDestroy` aborts it so video and RemotePlayback handlers vanish with the slide.
+
 Runtime & Plugins
 - Vue 3 + Vuetify 3 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
 - Router: Vue Router 4, history base at `$config.baseUri + "/library/"`
@@ -31,7 +40,7 @@ Runtime & Plugins
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
 - Tooltips: `floating-vue`
 - Video: HLS.js assigned to `window.Hls`
-- PWA: `@lcdp/offline-plugin/runtime` installs when `baseUri === ""`
+- PWA: Workbox registers a service worker after config load (see `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
 - WebSocket: `src/common/websocket.js` publishes `websocket.*` events, used by `$session` for client info
 
 HTTP Client
@@ -70,6 +79,7 @@ Build & Tooling
   - `npm run build` (prod), `npm run build-dev` (dev), `npm run watch`
   - Lint/format: `npm run lint`, `npm run fmt`
   - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
+- Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
 - Browser automation (Playwright MCP): workflows are documented in `AGENTS.md` under “Playwright MCP Usage”; use those directions when agents need to script UI checks or capture screenshots.
 

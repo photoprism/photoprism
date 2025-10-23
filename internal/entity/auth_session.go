@@ -16,9 +16,11 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -144,7 +146,7 @@ func (m *Session) Regenerate() *Session {
 		// Skip deleting existing session if session ID is not set (or invalid).
 	} else if err := m.Delete(); err != nil {
 		// Failed to delete existing session.
-		event.AuditErr([]string{m.IP(), "session %s", "failed to delete", "%s"}, m.RefID, err)
+		event.AuditErr([]string{m.IP(), "session %s", "failed to delete", status.Error(err)}, m.RefID)
 	} else {
 		// Successfully deleted existing session.
 		event.AuditErr([]string{m.IP(), "session %s", "deleted"}, m.RefID)
@@ -381,6 +383,11 @@ func (m *Session) SetUser(u *User) *Session {
 	m.UserUID = u.UserUID
 	m.UserName = u.UserName
 
+	// Default to user scope.
+	if m.NoScope() {
+		m.AuthScope = u.Scope()
+	}
+
 	// Update tokens.
 	m.SetPreviewToken(u.PreviewToken)
 	m.SetDownloadToken(u.DownloadToken)
@@ -487,6 +494,16 @@ func (m *Session) SetMethod(method authn.MethodType) *Session {
 // Scope returns the authorization scope as a sanitized string.
 func (m *Session) Scope() string {
 	return clean.Scope(m.AuthScope)
+}
+
+// NoScope checks if the session has no scope restrictions.
+func (m *Session) NoScope() bool {
+	return m.AuthScope == "" || m.AuthScope == list.Any
+}
+
+// HasScope checks if the session has scope restrictions.
+func (m *Session) HasScope() bool {
+	return m.AuthScope != "" && m.AuthScope != list.Any
 }
 
 // ValidateScope checks if the scope does not exclude access to specified resource.
@@ -856,14 +873,14 @@ func (m *Session) UpdateLastActive(save bool) *Session {
 	if !save {
 		return m
 	} else if err := Db().Model(m).UpdateColumn("last_active", m.LastActive).Error; err != nil {
-		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp", "%s"}, m.RefID, err)
+		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp", status.Error(err)}, m.RefID)
 	}
 
 	// Update the activity timestamp of the parent session, if any.
 	if m.GetMethod().IsNot(authn.MethodSession) || m.AuthID == "" || m.AuthID == m.ID {
 		return m
 	} else if err := Db().Table(Session{}.TableName()).Where("id = ?", m.AuthID).UpdateColumn("last_active", m.LastActive).Error; err != nil {
-		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp of parent session", "%s"}, m.RefID, err)
+		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp of parent session", status.Error(err)}, m.RefID)
 	}
 
 	return m

@@ -184,10 +184,27 @@ export default {
       this.clearSelection();
       this.expanded = false;
     },
-    cloneAlbums(ppid) {
+    cloneAlbums(ppidOrList) {
+      if (!ppidOrList) {
+        return;
+      }
+
+      // Validate array input
+      if (Array.isArray(ppidOrList) && ppidOrList.length === 0) {
+        return;
+      }
+
       this.dialog.album = false;
 
-      $api.post(`albums/${ppid}/clone`, { albums: this.selection }).then(() => this.onCloned());
+      const targets = Array.isArray(ppidOrList) ? ppidOrList : [ppidOrList];
+      // Deduplicate target album UIDs
+      const uniqueTargets = [...new Set(targets.filter((uid) => uid))];
+
+      Promise.all(uniqueTargets.map((uid) => $api.post(`albums/${uid}/clone`, { albums: this.selection })))
+        .then(() => this.onCloned())
+        .catch((error) => {
+          $notify.error(this.$gettext("Some albums could not be copied"));
+        });
     },
     onCloned() {
       this.clearClipboard();

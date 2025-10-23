@@ -132,6 +132,11 @@ func isJoinTokenSeparatorIndex(i int) bool {
 
 // IsJoinToken checks if the string represents a join token.
 func IsJoinToken(s string, strict bool) bool {
+	// Basic mode: No token, not valid.
+	if s == "" {
+		return false
+	}
+
 	// Non-strict mode: only enforce minimum length so legacy tokens that were
 	// longer than the auto-generated format continue to work.
 	if !strict {
