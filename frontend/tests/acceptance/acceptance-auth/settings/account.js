@@ -189,7 +189,36 @@ test.meta("testID", "account-006").meta({ type: "short", mode: "auth" })(
   }
 );
 
-test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })("Common: Display usage info", async (t) => {
+test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })("Common: Force rate limiting", async (t) => {
+  let counter = 0
+  do {
+    if (await Selector(".p-notify--error").exists) {
+      await t.click(Selector(".p-notify__close"));
+    }
+    await t
+      .typeText(Selector(".input-username input"), "admin", { replace: true })
+      .typeText(Selector(".input-password input"), "wrongpassword", { replace: true })
+      .click(Selector(".action-confirm"));
+      if (await Selector(".p-notify--error").withText("Too many requests").exists) {
+        break
+      }
+  } while (counter++ < 10)
+  if (await Selector(".p-notify--error").exists) {
+    await t.click(Selector(".p-notify__close"));
+  }
+
+  await page.login("admin", "photoprism", false);
+  await t.expect(Selector(".p-notify--error").withText("Too many requests").visible).ok();
+  await t.click(Selector(".p-notify__close"));
+
+  await page.login("admin", "photoprism");
+  await t.navigateTo("/library/favorites");
+
+  await t.expect(page.usernameInput.visible).notOk().expect(Selector(".input-search input").visible).ok();
+  await page.logout();
+});
+
+test.meta("testID", "account-008").meta({ type: "short", mode: "auth" })("Common: Display usage info", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openNav();
   await t.expect(Selector("div.text-caption").withText("1 GB of 2 GB used").visible).ok();
