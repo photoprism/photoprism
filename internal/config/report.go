@@ -13,14 +13,6 @@ import (
 func (c *Config) Report() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
-	var dbKey string
-
-	if c.DatabaseDriver() == SQLite3 {
-		dbKey = "database-dsn"
-	} else {
-		dbKey = "database-name"
-	}
-
 	rows = [][]string{
 		// Authentication.
 		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
@@ -222,7 +214,21 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Database.
 		{"database-driver", c.DatabaseDriver()},
-		{dbKey, c.DatabaseName()},
+	}...)
+
+	if c.DatabaseDriver() == SQLite3 {
+		rows = append(rows, [][]string{
+			{"database-dsn", c.DatabaseDSN()},
+		}...)
+	} else {
+		rows = append(rows, [][]string{
+			{"database-dsn", strings.ReplaceAll(c.DatabaseDSN(), ":"+c.DatabasePassword(), ":******")},
+			{"database-name", c.DatabaseName()},
+		}...)
+
+	}
+
+	rows = append(rows, [][]string{
 		{"database-server", c.DatabaseServer()},
 		{"database-host", c.DatabaseHost()},
 		{"database-port", c.DatabasePortString()},
