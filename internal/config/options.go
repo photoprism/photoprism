@@ -337,7 +337,19 @@ func (o *Options) Load(fileName string) error {
 		return err
 	}
 
-	return yaml.Unmarshal(yamlConfig, o)
+	beforeDSN := o.DatabaseDSN
+	beforeDepDsn := o.Deprecated.DatabaseDsn
+	err = yaml.Unmarshal(yamlConfig, o)
+	if err == nil {
+		// If a DSN value has become populated (or changed), then remove the base values as the DSN wins.
+		if (o.DatabaseDSN != "" && o.DatabaseDSN != beforeDSN) || (o.Deprecated.DatabaseDsn != "" && o.Deprecated.DatabaseDsn != beforeDepDsn) {
+			o.DatabaseName = ""
+			o.DatabaseUser = ""
+			o.DatabasePassword = ""
+			o.DatabaseServer = ""
+		}
+	}
+	return err
 }
 
 // ApplyCliContext uses options from the CLI to setup configuration overrides

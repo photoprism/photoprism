@@ -1,0 +1,14 @@
+BackupPath: ./storage/acceptance/backup
+DatabaseDriver: mysql
+DatabaseDsn: acceptance:accpass@tcp(mariadb:12345)/accdb?charset=utf8mb4,utf8&parseTime=true
+DisableBackups: true
+FilesQuota: 2
+HttpPort: 2343
+ImportPath: ./storage/acceptance/import
+NodeUUID: 019a0ec6-e01e-7170-b22f-c962af0c93a5
+OriginalsPath: ./storage/acceptance/originals
+SiteUrl: http://localhost:2343/
+StoragePath: ./storage/acceptance
+UploadNSFW: false
+UsageInfo: true
+Workers: 1
