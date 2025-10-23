@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"PO-Revision-Date: 2025-10-23 08:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -258,7 +258,7 @@ msgstr "Lisäasetukset"
 
 #: src/locales.js:363
 msgid "Advertise URL"
-msgstr ""
+msgstr "Mainosta URL-osoite"
 
 #: src/options/options.js:378
 msgid "After 1 day"
@@ -430,7 +430,7 @@ msgstr "Hakemus"
 
 #: src/locales.js:355
 msgid "Applications"
-msgstr ""
+msgstr "Sovellukset"
 
 #: src/component/photo/clipboard.vue:44
 #: src/component/photo/edit/details.vue:418
@@ -497,7 +497,7 @@ msgstr "Kuvasuhde"
 
 #: src/locales.js:339
 msgid "Attributes"
-msgstr ""
+msgstr "Attribuutit"
 
 #: src/app/routes.js:279 src/component/navigation.vue:198
 #: src/component/navigation.vue:199 src/component/navigation.vue:223
@@ -613,7 +613,7 @@ msgstr "Ilmoita virheestä"
 
 #: src/locales.js:323
 msgid "Build"
-msgstr ""
+msgstr "Rakenna"
 
 #: src/page/connect.vue:8 src/common/notify.js:119 src/page/connect.vue:13
 msgid "Busy, please wait…"
@@ -775,11 +775,11 @@ msgstr "Asiakkaan valtakirjat"
 
 #: src/locales.js:364
 msgid "Client ID"
-msgstr ""
+msgstr "Asiakastunnus"
 
 #: src/locales.js:365
 msgid "Client Secret"
-msgstr ""
+msgstr "Asiakassalaisuus"
 
 #: src/component/user/edit/dialog.vue:311 src/page/admin/sessions.vue:224
 #: src/component/lightbox.vue:1211 src/component/lightbox.vue:1212
@@ -1000,7 +1000,7 @@ msgstr "Päivittäin"
 
 #: src/locales.js:328
 msgid "Database"
-msgstr ""
+msgstr "Tietokanta"
 
 #: src/page/settings/advanced.vue:177
 msgid "Database Backups"
@@ -1008,7 +1008,7 @@ msgstr "Tietokannan varmuuskopiot"
 
 #: src/locales.js:329
 msgid "Databases"
-msgstr ""
+msgstr "Tietokannat"
 
 #: src/page/settings/account.vue:220 src/component/photo/edit/details.vue:58
 msgid "Day"
@@ -1245,7 +1245,7 @@ msgstr "Vedä ja pudota tiedostot tänne"
 
 #: src/locales.js:345
 msgid "Driver"
-msgstr ""
+msgstr "Kuljettaja"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1320,7 +1320,7 @@ msgstr "Kaksivaiheisen todennuksen ottaminen käyttöön tarkoittaa, että tarvi
 
 #: src/locales.js:346
 msgid "Engine"
-msgstr ""
+msgstr "Moottori"
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1746,7 +1746,7 @@ msgstr "Tiedot"
 
 #: src/locales.js:360
 msgid "Instance"
-msgstr ""
+msgstr "Instanssi"
 
 #: src/component/photo/edit/files.vue:82
 msgid "Instance ID"
@@ -1754,7 +1754,7 @@ msgstr "Ilmentymän tunnus"
 
 #: src/locales.js:361
 msgid "Instances"
-msgstr ""
+msgstr "Instanssit"
 
 #: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2287,11 +2287,11 @@ msgstr "Ei varoituksia tai virheitä, jotka sisältävät tämän avainsanan. Hu
 
 #: src/locales.js:356
 msgid "Node"
-msgstr ""
+msgstr "Solmu"
 
 #: src/locales.js:357
 msgid "Nodes"
-msgstr ""
+msgstr "Solmut"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
@@ -2629,7 +2629,7 @@ msgstr "PNG-kokorajoitus: %{n}px"
 
 #: src/locales.js:324
 msgid "Portal"
-msgstr ""
+msgstr "Portaali"
 
 #: src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:198
@@ -2828,11 +2828,11 @@ msgstr "Poista tuodut tiedostot tallennustilan säästämiseksi. Ei-tuettuja tie
 
 #: src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
-msgstr ""
+msgstr "Poista valittu instanssi klusterirekisteristä?"
 
 #: src/locales.js:327
 msgid "Removed"
-msgstr ""
+msgstr "Poistettu"
 
 #: src/page/admin/activity.vue:132 src/locales.js:353
 msgid "Repeated"
@@ -2896,11 +2896,11 @@ msgstr "Rooli"
 
 #: src/locales.js:338
 msgid "Roles"
-msgstr ""
+msgstr "Roolit"
 
 #: src/locales.js:347
 msgid "Rotated"
-msgstr ""
+msgstr "Käännetty"
 
 #: src/locales.js:217
 msgid "Rows per page:"
@@ -2968,7 +2968,7 @@ msgstr "Laajuus"
 
 #: src/locales.js:341
 msgid "Scopes"
-msgstr ""
+msgstr "Laajuusalueet"
 
 #: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
@@ -3046,7 +3046,7 @@ msgstr "Peräkkäinen nimi"
 
 #: src/locales.js:358
 msgid "Service"
-msgstr ""
+msgstr "Palvelu"
 
 #: src/component/service/add.vue:26 src/component/service/edit.vue:166
 #: src/component/share/dialog.vue:172
@@ -3169,7 +3169,7 @@ msgstr "Samanlainen"
 
 #: src/locales.js:362
 msgid "Site URL"
-msgstr ""
+msgstr "Sivuston URL-osoite"
 
 #: src/component/photo/edit/files.vue:127
 #: src/component/photo/edit/files.vue:128
@@ -3704,7 +3704,7 @@ msgstr "Vahvistuskoodi"
 
 #: src/locales.js:322
 msgid "Version"
-msgstr ""
+msgstr "Versio"
 
 #: src/component/photo/view/cards.vue:161
 #: src/component/photo/view/cards.vue:271 src/component/photo/view/list.vue:96

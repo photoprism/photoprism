@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"PO-Revision-Date: 2025-10-23 08:33+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -261,7 +261,7 @@ msgstr "پیشرفته"
 
 #: src/locales.js:363
 msgid "Advertise URL"
-msgstr ""
+msgstr "آدرس اینترنتی تبلیغات"
 
 #: src/options/options.js:378
 msgid "After 1 day"
@@ -433,7 +433,7 @@ msgstr "کاربرد"
 
 #: src/locales.js:355
 msgid "Applications"
-msgstr ""
+msgstr "کاربردها"
 
 #: src/component/photo/clipboard.vue:44
 #: src/component/photo/edit/details.vue:418
@@ -500,7 +500,7 @@ msgstr "نسبت ابعاد"
 
 #: src/locales.js:339
 msgid "Attributes"
-msgstr ""
+msgstr "ویژگی‌ها"
 
 #: src/app/routes.js:279 src/component/navigation.vue:198
 #: src/component/navigation.vue:199 src/component/navigation.vue:223
@@ -616,7 +616,7 @@ msgstr "گزارش اشکال"
 
 #: src/locales.js:323
 msgid "Build"
-msgstr ""
+msgstr "ساختن"
 
 #: src/page/connect.vue:8 src/common/notify.js:119 src/page/connect.vue:13
 msgid "Busy, please wait…"
@@ -778,11 +778,11 @@ msgstr "اعتبار مشتری"
 
 #: src/locales.js:364
 msgid "Client ID"
-msgstr ""
+msgstr "شناسه مشتری"
 
 #: src/locales.js:365
 msgid "Client Secret"
-msgstr ""
+msgstr "راز مشتری"
 
 #: src/component/user/edit/dialog.vue:311 src/page/admin/sessions.vue:224
 #: src/component/lightbox.vue:1211 src/component/lightbox.vue:1212
@@ -1003,7 +1003,7 @@ msgstr "روزانه"
 
 #: src/locales.js:328
 msgid "Database"
-msgstr ""
+msgstr "پایگاه داده"
 
 #: src/page/settings/advanced.vue:177
 msgid "Database Backups"
@@ -1011,7 +1011,7 @@ msgstr "پشتیبان گیری از پایگاه داده"
 
 #: src/locales.js:329
 msgid "Databases"
-msgstr ""
+msgstr "پایگاه‌های داده"
 
 #: src/page/settings/account.vue:220 src/component/photo/edit/details.vue:58
 msgid "Day"
@@ -1248,7 +1248,7 @@ msgstr "فایل ها را در اینجا بکشید و رها کنید"
 
 #: src/locales.js:345
 msgid "Driver"
-msgstr ""
+msgstr "راننده"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1323,7 +1323,7 @@ msgstr "فعال کردن احراز هویت دو مرحله‌ای به این
 
 #: src/locales.js:346
 msgid "Engine"
-msgstr ""
+msgstr "موتور"
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1749,7 +1749,7 @@ msgstr "اطلاعات"
 
 #: src/locales.js:360
 msgid "Instance"
-msgstr ""
+msgstr "نمونه"
 
 #: src/component/photo/edit/files.vue:82
 msgid "Instance ID"
@@ -1757,7 +1757,7 @@ msgstr "ID نمونه"
 
 #: src/locales.js:361
 msgid "Instances"
-msgstr ""
+msgstr "موارد"
 
 #: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2290,11 +2290,11 @@ msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی ن
 
 #: src/locales.js:356
 msgid "Node"
-msgstr ""
+msgstr "گره"
 
 #: src/locales.js:357
 msgid "Nodes"
-msgstr ""
+msgstr "گره‌ها"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
@@ -2632,7 +2632,7 @@ msgstr "محدودیت اندازه PNG: %{n}px"
 
 #: src/locales.js:324
 msgid "Portal"
-msgstr ""
+msgstr "پورتال"
 
 #: src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:198
@@ -2831,11 +2831,11 @@ msgstr "برای صرفه جویی در فضای ذخیره سازی، فایل 
 
 #: src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
-msgstr ""
+msgstr "نمونه انتخاب شده از رجیستری خوشه حذف شود؟"
 
 #: src/locales.js:327
 msgid "Removed"
-msgstr ""
+msgstr "حذف شد"
 
 #: src/page/admin/activity.vue:132 src/locales.js:353
 msgid "Repeated"
@@ -2899,11 +2899,11 @@ msgstr "نقش"
 
 #: src/locales.js:338
 msgid "Roles"
-msgstr ""
+msgstr "نقش‌ها"
 
 #: src/locales.js:347
 msgid "Rotated"
-msgstr ""
+msgstr "چرخانده شده"
 
 #: src/locales.js:217
 msgid "Rows per page:"
@@ -2971,7 +2971,7 @@ msgstr "محدوده"
 
 #: src/locales.js:341
 msgid "Scopes"
-msgstr ""
+msgstr "محدوده‌ها"
 
 #: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
@@ -3049,7 +3049,7 @@ msgstr "نام ترتیبی"
 
 #: src/locales.js:358
 msgid "Service"
-msgstr ""
+msgstr "خدمات"
 
 #: src/component/service/add.vue:26 src/component/service/edit.vue:166
 #: src/component/share/dialog.vue:172
@@ -3172,7 +3172,7 @@ msgstr "مشابه"
 
 #: src/locales.js:362
 msgid "Site URL"
-msgstr ""
+msgstr "آدرس سایت"
 
 #: src/component/photo/edit/files.vue:127
 #: src/component/photo/edit/files.vue:128
@@ -3707,7 +3707,7 @@ msgstr "کد تایید"
 
 #: src/locales.js:322
 msgid "Version"
-msgstr ""
+msgstr "نسخه"
 
 #: src/component/photo/view/cards.vue:161
 #: src/component/photo/view/cards.vue:271 src/component/photo/view/list.vue:96

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"PO-Revision-Date: 2025-10-23 08:33+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -258,7 +258,7 @@ msgstr "Пашыраныя"
 
 #: src/locales.js:363
 msgid "Advertise URL"
-msgstr ""
+msgstr "URL рэкламы"
 
 #: src/options/options.js:378
 msgid "After 1 day"
@@ -430,7 +430,7 @@ msgstr "Ужыванне"
 
 #: src/locales.js:355
 msgid "Applications"
-msgstr ""
+msgstr "Прыкладанні"
 
 #: src/component/photo/clipboard.vue:44
 #: src/component/photo/edit/details.vue:418
@@ -497,7 +497,7 @@ msgstr "Суадносіны бакоў"
 
 #: src/locales.js:339
 msgid "Attributes"
-msgstr ""
+msgstr "Атрыбуты"
 
 #: src/app/routes.js:279 src/component/navigation.vue:198
 #: src/component/navigation.vue:199 src/component/navigation.vue:223
@@ -613,7 +613,7 @@ msgstr "Справаздача пра памылку"
 
 #: src/locales.js:323
 msgid "Build"
-msgstr ""
+msgstr "Зборка"
 
 #: src/page/connect.vue:8 src/common/notify.js:119 src/page/connect.vue:13
 msgid "Busy, please wait…"
@@ -775,11 +775,11 @@ msgstr "Уліковыя даныя кліента"
 
 #: src/locales.js:364
 msgid "Client ID"
-msgstr ""
+msgstr "Ідэнтыфікатар кліента"
 
 #: src/locales.js:365
 msgid "Client Secret"
-msgstr ""
+msgstr "Сакрэт кліента"
 
 #: src/component/user/edit/dialog.vue:311 src/page/admin/sessions.vue:224
 #: src/component/lightbox.vue:1211 src/component/lightbox.vue:1212
@@ -1000,7 +1000,7 @@ msgstr "Штодня"
 
 #: src/locales.js:328
 msgid "Database"
-msgstr ""
+msgstr "База дадзеных"
 
 #: src/page/settings/advanced.vue:177
 msgid "Database Backups"
@@ -1008,7 +1008,7 @@ msgstr "Рэзервовыя копіі баз даных"
 
 #: src/locales.js:329
 msgid "Databases"
-msgstr ""
+msgstr "Базы дадзеных"
 
 #: src/page/settings/account.vue:220 src/component/photo/edit/details.vue:58
 msgid "Day"
@@ -1245,7 +1245,7 @@ msgstr "Перацягнуць файлы сюды"
 
 #: src/locales.js:345
 msgid "Driver"
-msgstr ""
+msgstr "Кіроўца"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1320,7 +1320,7 @@ msgstr "Уключэнне двухфактарнай аўтэнтыфікацы
 
 #: src/locales.js:346
 msgid "Engine"
-msgstr ""
+msgstr "Рухавік"
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1746,7 +1746,7 @@ msgstr "інфармацыя"
 
 #: src/locales.js:360
 msgid "Instance"
-msgstr ""
+msgstr "Экземпляр"
 
 #: src/component/photo/edit/files.vue:82
 msgid "Instance ID"
@@ -1754,7 +1754,7 @@ msgstr "Ідэнтыфікатар асобніка"
 
 #: src/locales.js:361
 msgid "Instances"
-msgstr ""
+msgstr "Экземпляры"
 
 #: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2287,11 +2287,11 @@ msgstr "Няма папярэджанняў або памылак з гэтым 
 
 #: src/locales.js:356
 msgid "Node"
-msgstr ""
+msgstr "Вузел"
 
 #: src/locales.js:357
 msgid "Nodes"
-msgstr ""
+msgstr "Вузлы"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
@@ -2629,7 +2629,7 @@ msgstr "Ліміт памеру PNG: %{n}px"
 
 #: src/locales.js:324
 msgid "Portal"
-msgstr ""
+msgstr "Партал"
 
 #: src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:198
@@ -2828,11 +2828,11 @@ msgstr "Выдаліце імпартаваныя файлы, каб зэкан�
 
 #: src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
-msgstr ""
+msgstr "Выдаліць выбраны экзэмпляр з рэестра кластара?"
 
 #: src/locales.js:327
 msgid "Removed"
-msgstr ""
+msgstr "Выдалена"
 
 #: src/page/admin/activity.vue:132 src/locales.js:353
 msgid "Repeated"
@@ -2896,11 +2896,11 @@ msgstr "Роля"
 
 #: src/locales.js:338
 msgid "Roles"
-msgstr ""
+msgstr "Ролі"
 
 #: src/locales.js:347
 msgid "Rotated"
-msgstr ""
+msgstr "Павернута"
 
 #: src/locales.js:217
 msgid "Rows per page:"
@@ -2968,7 +2968,7 @@ msgstr "Вобласць прымянення"
 
 #: src/locales.js:341
 msgid "Scopes"
-msgstr ""
+msgstr "Прыклады"
 
 #: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
@@ -3046,7 +3046,7 @@ msgstr "Паслядоўнае імя"
 
 #: src/locales.js:358
 msgid "Service"
-msgstr ""
+msgstr "Абслугоўванне"
 
 #: src/component/service/add.vue:26 src/component/service/edit.vue:166
 #: src/component/share/dialog.vue:172
@@ -3169,7 +3169,7 @@ msgstr "Падобныя"
 
 #: src/locales.js:362
 msgid "Site URL"
-msgstr ""
+msgstr "URL-адрас сайта"
 
 #: src/component/photo/edit/files.vue:127
 #: src/component/photo/edit/files.vue:128
@@ -3704,7 +3704,7 @@ msgstr "Код верыфікацыі"
 
 #: src/locales.js:322
 msgid "Version"
-msgstr ""
+msgstr "Версія"
 
 #: src/component/photo/view/cards.vue:161
 #: src/component/photo/view/cards.vue:271 src/component/photo/view/list.vue:96

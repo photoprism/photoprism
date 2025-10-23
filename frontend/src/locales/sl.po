@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"PO-Revision-Date: 2025-10-23 08:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -258,7 +258,7 @@ msgstr "Napredno"
 
 #: src/locales.js:363
 msgid "Advertise URL"
-msgstr ""
+msgstr "Oglaševanje URL"
 
 #: src/options/options.js:378
 msgid "After 1 day"
@@ -430,7 +430,7 @@ msgstr "Aplikacija"
 
 #: src/locales.js:355
 msgid "Applications"
-msgstr ""
+msgstr "Aplikacije"
 
 #: src/component/photo/clipboard.vue:44
 #: src/component/photo/edit/details.vue:418
@@ -497,7 +497,7 @@ msgstr "Razmerje stranic"
 
 #: src/locales.js:339
 msgid "Attributes"
-msgstr ""
+msgstr "Atributi"
 
 #: src/app/routes.js:279 src/component/navigation.vue:198
 #: src/component/navigation.vue:199 src/component/navigation.vue:223
@@ -613,7 +613,7 @@ msgstr "Poročilo o napaki"
 
 #: src/locales.js:323
 msgid "Build"
-msgstr ""
+msgstr "Sestavite"
 
 #: src/page/connect.vue:8 src/common/notify.js:119 src/page/connect.vue:13
 msgid "Busy, please wait…"
@@ -775,11 +775,11 @@ msgstr "Pooblastila stranke"
 
 #: src/locales.js:364
 msgid "Client ID"
-msgstr ""
+msgstr "ID stranke"
 
 #: src/locales.js:365
 msgid "Client Secret"
-msgstr ""
+msgstr "Skrivnost stranke"
 
 #: src/component/user/edit/dialog.vue:311 src/page/admin/sessions.vue:224
 #: src/component/lightbox.vue:1211 src/component/lightbox.vue:1212
@@ -1000,7 +1000,7 @@ msgstr "Dnevno"
 
 #: src/locales.js:328
 msgid "Database"
-msgstr ""
+msgstr "Podatkovna zbirka"
 
 #: src/page/settings/advanced.vue:177
 msgid "Database Backups"
@@ -1008,7 +1008,7 @@ msgstr "Varnostne kopije podatkovne baze"
 
 #: src/locales.js:329
 msgid "Databases"
-msgstr ""
+msgstr "Podatkovne zbirke"
 
 #: src/page/settings/account.vue:220 src/component/photo/edit/details.vue:58
 msgid "Day"
@@ -1245,7 +1245,7 @@ msgstr "Povlecite in spustite datoteke sem"
 
 #: src/locales.js:345
 msgid "Driver"
-msgstr ""
+msgstr "Voznik"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1320,7 +1320,7 @@ msgstr "Omogočanje dvostopenjske avtentikacije pomeni, da boste za prijavo potr
 
 #: src/locales.js:346
 msgid "Engine"
-msgstr ""
+msgstr "Motor"
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1746,7 +1746,7 @@ msgstr "Informacije"
 
 #: src/locales.js:360
 msgid "Instance"
-msgstr ""
+msgstr "Primer"
 
 #: src/component/photo/edit/files.vue:82
 msgid "Instance ID"
@@ -1754,7 +1754,7 @@ msgstr "ID instance"
 
 #: src/locales.js:361
 msgid "Instances"
-msgstr ""
+msgstr "Primerki"
 
 #: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2287,11 +2287,11 @@ msgstr "Ni opozoril ali napak, ki bi vsebovale to ključno besedo. Upoštevajte,
 
 #: src/locales.js:356
 msgid "Node"
-msgstr ""
+msgstr "Vozlišče"
 
 #: src/locales.js:357
 msgid "Nodes"
-msgstr ""
+msgstr "Vozlišča"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
@@ -2629,7 +2629,7 @@ msgstr "Omejitev velikosti PNG: %{n}px"
 
 #: src/locales.js:324
 msgid "Portal"
-msgstr ""
+msgstr "Portal"
 
 #: src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:198
@@ -2828,11 +2828,11 @@ msgstr "Odstranite uvožene datoteke, da prihranite prostor za shranjevanje. Nep
 
 #: src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
-msgstr ""
+msgstr "Odstranitev izbranega primerka iz registra gruče?"
 
 #: src/locales.js:327
 msgid "Removed"
-msgstr ""
+msgstr "Odstranjeno"
 
 #: src/page/admin/activity.vue:132 src/locales.js:353
 msgid "Repeated"
@@ -2896,11 +2896,11 @@ msgstr "Vloga"
 
 #: src/locales.js:338
 msgid "Roles"
-msgstr ""
+msgstr "Vloge"
 
 #: src/locales.js:347
 msgid "Rotated"
-msgstr ""
+msgstr "Obrnjeno"
 
 #: src/locales.js:217
 msgid "Rows per page:"
@@ -2968,7 +2968,7 @@ msgstr "Področje uporabe"
 
 #: src/locales.js:341
 msgid "Scopes"
-msgstr ""
+msgstr "Obseg"
 
 #: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
@@ -3046,7 +3046,7 @@ msgstr "Zaporedno ime"
 
 #: src/locales.js:358
 msgid "Service"
-msgstr ""
+msgstr "Storitev"
 
 #: src/component/service/add.vue:26 src/component/service/edit.vue:166
 #: src/component/share/dialog.vue:172
@@ -3169,7 +3169,7 @@ msgstr "Podobno"
 
 #: src/locales.js:362
 msgid "Site URL"
-msgstr ""
+msgstr "URL spletnega mesta"
 
 #: src/component/photo/edit/files.vue:127
 #: src/component/photo/edit/files.vue:128
@@ -3704,7 +3704,7 @@ msgstr "Koda za preverjanje"
 
 #: src/locales.js:322
 msgid "Version"
-msgstr ""
+msgstr "Različica"
 
 #: src/component/photo/view/cards.vue:161
 #: src/component/photo/view/cards.vue:271 src/component/photo/view/list.vue:96
