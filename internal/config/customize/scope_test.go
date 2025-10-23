@@ -130,7 +130,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		result := guest.ApplyScope("settings")
+		result := guest.ApplyScope("*")
 		t.Logf("GuestSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
@@ -169,7 +169,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		result := visitor.ApplyScope("settings")
+		result := visitor.ApplyScope("photos albums moments folders calendar places settings")
 		t.Logf("VisitorSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})

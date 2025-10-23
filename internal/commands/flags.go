@@ -27,6 +27,19 @@ func YesFlag() *cli.BoolFlag {
 	return &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}
 }
 
+// ScopeFlag returns the shared CLI flag definition for scopes.
+func ScopeFlag(usage string, aliases []string) *cli.StringFlag {
+	if usage == "" {
+		usage = "authorization `SCOPE` (space-separated resource:permission pairs or '*' for full access)"
+	}
+
+	return &cli.StringFlag{
+		Name:    "scope",
+		Aliases: aliases,
+		Usage:   usage,
+	}
+}
+
 // SaveFlag returns a reusable flag definition for commands that can persist generated values.
 func SaveFlag(usage string) *cli.BoolFlag {
 	if usage == "" {

@@ -22,11 +22,7 @@ var AuthAddFlags = []cli.Flag{
 		Aliases: []string{"n"},
 		Usage:   "`CLIENT` name to help identify the application",
 	},
-	&cli.StringFlag{
-		Name:    "scope",
-		Aliases: []string{"s"},
-		Usage:   "authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)",
-	},
+	ScopeFlag("", []string{"s"}),
 	&cli.Int64Flag{
 		Name:    "expires",
 		Aliases: []string{"e"},

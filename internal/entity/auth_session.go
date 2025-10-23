@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -383,6 +384,11 @@ func (m *Session) SetUser(u *User) *Session {
 	m.UserUID = u.UserUID
 	m.UserName = u.UserName
 
+	// Default to user scope.
+	if m.NoScope() {
+		m.AuthScope = u.Scope()
+	}
+
 	// Update tokens.
 	m.SetPreviewToken(u.PreviewToken)
 	m.SetDownloadToken(u.DownloadToken)
@@ -489,6 +495,16 @@ func (m *Session) SetMethod(method authn.MethodType) *Session {
 // Scope returns the authorization scope as a sanitized string.
 func (m *Session) Scope() string {
 	return clean.Scope(m.AuthScope)
+}
+
+// NoScope checks if the session has no scope restrictions.
+func (m *Session) NoScope() bool {
+	return m.AuthScope == "" || m.AuthScope == list.Any
+}
+
+// HasScope checks if the session has scope restrictions.
+func (m *Session) HasScope() bool {
+	return m.AuthScope != "" && m.AuthScope != list.Any
 }
 
 // ValidateScope checks if the scope does not exclude access to specified resource.

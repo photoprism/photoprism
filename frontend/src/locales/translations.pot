@@ -155,7 +155,7 @@ msgstr ""
 msgid "Account restored"
 msgstr ""
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr ""
 
@@ -209,6 +209,10 @@ msgstr ""
 #: src/page/connect.vue:125
 #: src/page/connect.vue:136
 msgid "Activation Code"
+msgstr ""
+
+#: src/page/admin.vue:76
+msgid "Activity"
 msgstr ""
 
 #: src/component/user/add/dialog.vue:203
@@ -558,7 +562,7 @@ msgstr ""
 msgid "Audio"
 msgstr ""
 
-#: src/model/logs.js:173
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr ""
 
@@ -2080,6 +2084,10 @@ msgstr ""
 msgid "Invalid URL"
 msgstr ""
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr ""
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
@@ -2408,6 +2416,7 @@ msgid "Merge %{a} with %{b}?"
 msgstr ""
 
 #: src/page/about/feedback.vue:51
+#: src/page/admin/activity.vue:130
 #: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr ""
@@ -2701,6 +2710,7 @@ msgstr ""
 msgid "Nothing to see here yet."
 msgstr ""
 
+#: src/page/admin/activity.vue:60
 #: src/page/admin/sessions.vue:47
 #: src/page/admin/users.vue:56
 #: src/component/settings/apps.vue:197
@@ -3193,6 +3203,7 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
+#: src/page/admin/activity.vue:42
 #: src/page/admin/sessions.vue:333
 #: src/page/admin/users.vue:321
 #: src/component/album/toolbar.vue:164
@@ -3263,6 +3274,10 @@ msgstr ""
 
 #: src/page/library/import.vue:46
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr ""
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
 msgstr ""
 
 #: src/common/api.js:102
@@ -3407,6 +3422,7 @@ msgstr ""
 msgid "Scope"
 msgstr ""
 
+#: src/page/admin/activity.vue:13
 #: src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13
 #: src/component/location/dialog.vue:63
@@ -3513,7 +3529,7 @@ msgstr ""
 msgid "Session ID"
 msgstr ""
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr ""
 
@@ -3551,6 +3567,11 @@ msgstr ""
 #: src/component/settings/passcode.vue:54
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
+msgstr ""
+
+#: src/page/admin/activity.vue:128
+#: src/page/admin/activity.vue:36
+msgid "Severity"
 msgstr ""
 
 #: src/component/album/clipboard.vue:32
@@ -3886,6 +3907,10 @@ msgstr ""
 
 #: src/page/settings/services.vue:85
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
+msgstr ""
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
 msgstr ""
 
 #: src/component/photo/edit/details.vue:122

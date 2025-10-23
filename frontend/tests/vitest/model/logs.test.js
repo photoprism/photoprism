@@ -13,7 +13,7 @@ describe("model/logs", () => {
   });
 
   it("maps severity names and tags", () => {
-    const entry = new LogEntry({ Severity: 4 });
+    const entry = new LogEntry({ Severity: 3 });
 
     expect(entry.severityName()).toBe("warning");
     expect(entry.severityTag()).toBe("WARNING");
@@ -26,10 +26,10 @@ describe("model/logs", () => {
     expect(entry.severityTag()).toBe("WARNING");
 
     entry.Severity = "4";
-    expect(entry.severityName()).toBe("warning");
+    expect(entry.severityName()).toBe("info");
 
-    entry.Severity = "ALERT";
-    expect(entry.severityName()).toBe("alert");
+    entry.Severity = "ERROR";
+    expect(entry.severityName()).toBe("error");
   });
 
   it("splits audit messages into parts", () => {

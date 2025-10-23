@@ -50,7 +50,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	if s.IsClient() {
 		// Check the resource and required permissions against the session scope.
 		if s.InsufficientScope(resource, perms) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", authn.ErrInsufficientScope.Error()}, clean.Log(s.GetClientInfo()), s.RefID, string(resource))
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", status.Error(authn.ErrInsufficientScope)}, clean.Log(s.GetClientInfo()), s.RefID, string(resource))
 			return entity.SessionStatusForbidden()
 		}
 
@@ -81,17 +81,32 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 		return s
 	}
 
-	// Otherwise, perform a regular ACL authorization check based on the user role.
-	if u := s.GetUser(); u.IsUnknown() || u.IsDisabled() {
+	// Perform a regular ACL authorization check based on the user role.
+	u := s.GetUser()
+
+	// Reject requests from unknown or disabled users.
+	if u.IsUnknown() || u.IsDisabled() {
 		event.AuditWarn([]string{clientIp, "session %s", "%s %s as unauthorized user", status.Denied}, s.RefID, perms.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
-	} else if acl.Rules.DenyAll(resource, u.AclRole(), perms) {
+	}
+
+	// Perform session scope check.
+	if s.HasScope() {
+		if s.InsufficientScope(resource, perms) {
+			event.AuditErr([]string{clientIp, "session %s", "access %s", status.Error(authn.ErrInsufficientScope)}, s.RefID, string(resource))
+			return entity.SessionStatusForbidden()
+		}
+	}
+
+	// Perform ACL authorization check.
+	if acl.Rules.DenyAll(resource, u.AclRole(), perms) {
 		event.AuditErr([]string{clientIp, "session %s", "%s %s as %s", status.Denied}, s.RefID, perms.String(), string(resource), u.AclRole().String())
 		return entity.SessionStatusForbidden()
-	} else {
-		event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.String(), string(resource), u.AclRole().String())
-		return s
 	}
+
+	// Permit access if all checks pass.
+	event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.String(), string(resource), u.AclRole().String())
+	return s
 }
 
 // AuthToken returns the client authentication token from the request context if one was found,

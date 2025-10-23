@@ -61,6 +61,20 @@ func TestConfig_DatabaseSsl(t *testing.T) {
 	}
 }
 
+func TestConfig_normalizeDatabaseDSN(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.Deprecated.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
+	c.options.DatabaseDriver = MySQL
+
+	assert.Equal(t, "honeypot:1234", c.DatabaseServer())
+	assert.Equal(t, "honeypot", c.DatabaseHost())
+	assert.Equal(t, 1234, c.DatabasePort())
+	assert.Equal(t, "baz", c.DatabaseName())
+	assert.Equal(t, "foo", c.DatabaseUser())
+	assert.Equal(t, "b@r", c.DatabasePassword())
+}
+
 func TestConfig_ParseDatabaseDSN(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

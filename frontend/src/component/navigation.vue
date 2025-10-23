@@ -998,6 +998,7 @@ export default {
     const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
     const isSuperAdmin = this.$session.isSuperAdmin();
+    const hasScope = this.$session.hasScope();
     const tier = this.$config.getTier();
 
     return {
@@ -1017,7 +1018,7 @@ export default {
       drawer: null,
       featUpgrade: tier < 6 && isSuperAdmin && !isPublic && !isDemo,
       featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
-      featFeedback: tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
+      featFeedback: !hasScope && tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
       featFiles: this.$config.feature("files"),
       featUsage: canManagePhotos && this.$config.feature("files") && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,

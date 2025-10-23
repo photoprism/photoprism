@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
@@ -144,7 +144,7 @@ msgstr "Изтрит акаунт"
 msgid "Account restored"
 msgstr "Възстановена сметка"
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr "Сметки"
 
@@ -189,6 +189,10 @@ msgstr "Активирайте, за да сортирате в низходящ
 #: src/page/connect.vue:125 src/page/connect.vue:136
 msgid "Activation Code"
 msgstr "Код за активиране"
+
+#: src/page/admin.vue:76
+msgid "Activity"
+msgstr "Дейност"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -268,8 +272,13 @@ msgid "After 7 days"
 msgstr "След 7 дни"
 
 #: src/component/settings/passcode.vue:32
-msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr "След като въведете паролата си за потвърждение, можете да настроите двуфакторно удостоверяване със съвместимо приложение или устройство за удостоверяване:"
+msgid ""
+"After entering your password for confirmation, you can set up two-factor "
+"authentication with a compatible authenticator app or device:"
+msgstr ""
+"След като въведете паролата си за потвърждение, можете да настроите "
+"двуфакторно удостоверяване със съвместимо приложение или устройство за "
+"удостоверяване:"
 
 #: src/options/options.js:381
 msgid "After one month"
@@ -280,8 +289,12 @@ msgid "After one year"
 msgstr "След една година"
 
 #: src/page/albums.vue:175
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "След като изберете снимки от резултатите от търсенето, можете да ги добавите в албум чрез контекстното меню."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"След като изберете снимки от резултатите от търсенето, можете да ги добавите "
+"в албум чрез контекстното меню."
 
 #: src/options/options.js:382
 msgid "After two months"
@@ -376,8 +389,12 @@ msgid "All Years"
 msgstr "Всички години"
 
 #: src/component/share/dialog.vue:133
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Освен това можете да качвате файлове директно на WebDAV сървъри като Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Освен това можете да качвате файлове директно на WebDAV сървъри като "
+"Nextcloud."
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
 msgid "Altitude"
@@ -413,7 +430,8 @@ msgstr "Анимации"
 
 #: src/component/share/dialog.vue:132
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Всички лични снимки и видеоклипове остават лични и няма да бъдат споделяни."
+msgstr ""
+"Всички лични снимки и видеоклипове остават лични и няма да бъдат споделяни."
 
 #: src/component/service/edit.vue:191
 msgid "API Key"
@@ -494,8 +512,7 @@ msgstr "Съотношение"
 msgid "Audio"
 msgstr "Аудио"
 
-#: src/model/logs.js:173
-#, fuzzy
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr "Аудио"
 
@@ -535,12 +552,21 @@ msgid "Batch"
 msgstr "Партида"
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Станете член днес, подкрепете нашата мисия и се възползвайте от нашите ползи за членовете!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Станете член днес, подкрепете нашата мисия и се възползвайте от нашите ползи "
+"за членовете!"
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по отношение на нашия софтуер и услуги."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Тъй като сме 100% самофинансирани и независими, можем да ви обещаем, че "
+"никога няма да продадем вашите данни и че винаги ще бъдем прозрачни по "
+"отношение на нашия софтуер и услуги."
 
 #: src/component/user/edit/dialog.vue:151
 #: src/component/user/edit/dialog.vue:152 src/page/settings/account.vue:123
@@ -604,8 +630,13 @@ msgid "Busy, please wait…"
 msgstr "Заето, моля, изчакайте…"
 
 #: src/page/connect.vue:198
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "С използването на софтуера и услугите, които предоставяме, вие се съгласявате с нашите условия за ползване, политика за поверителност и кодекс на поведение."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"С използването на софтуера и услугите, които предоставяме, вие се "
+"съгласявате с нашите условия за ползване, политика за поверителност и кодекс "
+"на поведение."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
 #: src/options/options.js:208 src/page/settings/general.vue:108
@@ -625,7 +656,9 @@ msgstr "Серийна камера"
 #: src/page/auth/login.vue:46 src/page/auth/login.vue:47
 #: src/page/auth/login.vue:54 src/page/auth/login.vue:69
 msgid "Can't access your authenticator app or device?"
-msgstr "Не можете да получите достъп до приложението или устройството си за удостоверяване?"
+msgstr ""
+"Не можете да получите достъп до приложението или устройството си за "
+"удостоверяване?"
 
 #: src/page/album/photos.vue:391 src/page/photos.vue:525
 msgid "Can't load more, limit reached"
@@ -725,7 +758,8 @@ msgstr "Промените са успешно записани"
 
 #: src/page/settings/advanced.vue:16
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr "Промените в разширените настройки изискват рестартиране, за да влязат в сила."
+msgstr ""
+"Промените в разширените настройки изискват рестартиране, за да влязат в сила."
 
 #: src/component/photo/edit/info.vue:230 src/component/photo/edit/info.vue:231
 msgid "Checked"
@@ -781,7 +815,7 @@ msgstr "Затвори"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr ""
+msgstr "Клъстер"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -935,7 +969,8 @@ msgstr "Създаване на албум"
 
 #: src/page/settings/advanced.vue:178
 msgid "Create regular backups based on the configured schedule."
-msgstr "Създаване на резервни копия на индекси въз основа на конфигуриран график."
+msgstr ""
+"Създаване на резервни копия на индекси въз основа на конфигуриран график."
 
 #: src/page/settings/advanced.vue:194
 msgid "Create YAML files to back up album metadata."
@@ -943,7 +978,9 @@ msgstr "Създаване на YAML файлове за архивиране н
 
 #: src/page/settings/advanced.vue:210
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "Създаване на странични файлове YAML за архивиране на метаданните на картината."
+msgstr ""
+"Създаване на странични файлове YAML за архивиране на метаданните на "
+"картината."
 
 #: src/page/admin/sessions.vue:191 src/component/photo/edit/info.vue:206
 #: src/component/photo/edit/info.vue:207
@@ -1029,7 +1066,8 @@ msgstr "Изтриване на всички?"
 
 #: src/page/library/index.vue:51
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "Изтриване на осиротели записи в индекса, странични файлове и миниатюри."
+msgstr ""
+"Изтриване на осиротели записи в индекса, странични файлове и миниатюри."
 
 #: src/component/album/edit/dialog.vue:56 src/page/albums.vue:291
 msgid "Description"
@@ -1037,7 +1075,8 @@ msgstr "Описание"
 
 #: src/component/settings/webdav.vue:66
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Подробни инструкции можете да намерите в нашето ръководство за потребителя."
+msgstr ""
+"Подробни инструкции можете да намерите в нашето ръководство за потребителя."
 
 #: src/component/photo/edit/dialog.vue:42
 #: src/component/photo/edit/dialog.vue:45
@@ -1061,8 +1100,11 @@ msgid "Disable ExifTool"
 msgstr "Деактивиране на ExifTool"
 
 #: src/page/settings/advanced.vue:69
-msgid "Disable features that require write permission for the originals folder."
-msgstr "Деактивирайте функциите, които изискват разрешение за запис в папката с оригинали."
+msgid ""
+"Disable features that require write permission for the originals folder."
+msgstr ""
+"Деактивирайте функциите, които изискват разрешение за запис в папката с "
+"оригинали."
 
 #: src/page/settings/advanced.vue:430
 msgid "Disable FFmpeg"
@@ -1183,8 +1225,12 @@ msgid "Download"
 msgstr "Изтегляне"
 
 #: src/page/settings/content.vue:194
-msgid "Download only original media files, without any automatically generated files."
-msgstr "Изтегляйте само оригинални мултимедийни файлове, без автоматично генерирани файлове."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"Изтегляйте само оригинални мултимедийни файлове, без автоматично генерирани "
+"файлове."
 
 #: src/component/service/edit.vue:117
 msgid "Download remote files"
@@ -1212,8 +1258,12 @@ msgid "Drag and drop files here"
 msgstr "Влачете и пуснете файлове тук"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Поради големия брой имейли, които получаваме, нашият екип може да не успее да ви отговори веднага."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Поради големия брой имейли, които получаваме, нашият екип може да не успее "
+"да ви отговори веднага."
 
 #: src/page/library/browse.vue:46
 msgid "Duplicates will be skipped and only appear once."
@@ -1267,8 +1317,11 @@ msgid "Email"
 msgstr "Имейл"
 
 #: src/page/settings/advanced.vue:37
-msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "Активирайте режима за отстраняване на грешки, за да покажете допълнителни логове и да помогнете при отстраняването на неизправности."
+msgid ""
+"Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+"Активирайте режима за отстраняване на грешки, за да покажете допълнителни "
+"логове и да помогнете при отстраняването на неизправности."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1276,11 +1329,19 @@ msgstr "Разрешаване на нови функции, които може
 
 #: src/page/settings/advanced.vue:399
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Активира предварителните настройки на конвертора RAW. Може да намали производителността."
+msgstr ""
+"Активира предварителните настройки на конвертора RAW. Може да намали "
+"производителността."
 
 #: src/component/settings/passcode.vue:58
-msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "Активирането на двуфакторно удостоверяване означава, че ще ви трябва произволно генериран код за потвърждение, за да влезете, така че дори ако някой получи достъп до вашата парола, той няма да може да влезе в акаунта ви."
+msgid ""
+"Enabling two-factor authentication means that you will need a randomly "
+"generated verification code to log in, so even if someone gains access to "
+"your password, they will not be able to access your account."
+msgstr ""
+"Активирането на двуфакторно удостоверяване означава, че ще ви трябва "
+"произволно генериран код за потвърждение, за да влезете, така че дори ако "
+"някой получи достъп до вашата парола, той няма да може да влезе в акаунта ви."
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1332,16 +1393,24 @@ msgid "Every two days"
 msgstr "На всеки два дни"
 
 #: src/page/settings/general.vue:157
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Изключване на съдържание, маркирано като лично, от резултатите от търсенето, споделените албуми, етикетите и местата."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Изключване на съдържание, маркирано като лично, от резултатите от търсенето, "
+"споделените албуми, етикетите и местата."
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
 msgid "Exclude hidden"
 msgstr "Изключване на скрити"
 
 #: src/page/settings/advanced.vue:133
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Извличането на метаданни с ExifTool е необходимо за пълна поддръжка на видео, снимки в реално време и XMP."
+msgid ""
+"ExifTool is required for full support of XMP metadata, videos and Live "
+"Photos."
+msgstr ""
+"Извличането на метаданни с ExifTool е необходимо за пълна поддръжка на "
+"видео, снимки в реално време и XMP."
 
 #: src/page/settings/advanced.vue:52
 msgid "Experimental Features"
@@ -1359,7 +1428,9 @@ msgstr "Експозиция"
 
 #: src/page/settings/content.vue:59
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr "Извличане на неподвижни изображения и генериране на миниатюри по време на индексирането."
+msgstr ""
+"Извличане на неподвижни изображения и генериране на миниатюри по време на "
+"индексирането."
 
 #: src/component/photo/edit/details.vue:281
 msgid "F Number"
@@ -1459,8 +1530,12 @@ msgid "Files"
 msgstr "Файлове"
 
 #: src/page/settings/content.vue:115
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Файлове с последователни имена като 'IMG_1234 (2)' и 'IMG_1234 (3)' принадлежат на една и съща снимка."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Файлове с последователни имена като 'IMG_1234 (2)' и 'IMG_1234 (3)' "
+"принадлежат на една и съща снимка."
 
 #: src/locales.js:234 src/locales.js:292
 msgid "First page"
@@ -1621,8 +1696,13 @@ msgid "Hybrid"
 msgstr "Хибрид"
 
 #: src/component/settings/passcode.vue:195
-msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr "Ако загубите достъп до приложението или устройството си за удостоверяване, можете да използвате своя код за възстановяване, за да си възвърнете достъпа до акаунта си."
+msgid ""
+"If you lose access to your authenticator app or device, you can use your "
+"recovery code to regain access to your account."
+msgstr ""
+"Ако загубите достъп до приложението или устройството си за удостоверяване, "
+"можете да използвате своя код за възстановяване, за да си възвърнете достъпа "
+"до акаунта си."
 
 #: src/common/util.js:736 src/component/photo/view/cards.vue:307
 #: src/model/file.js:194 src/options/options.js:286
@@ -1640,12 +1720,18 @@ msgid "Import"
 msgstr "Внос"
 
 #: src/page/library/import.vue:57
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Внесените файлове ще бъдат сортирани по дата и ще получат уникално име, за да се избегнат дублирания."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Внесените файлове ще бъдат сортирани по дата и ще получат уникално име, за "
+"да се избегнат дублирания."
 
 #: src/page/settings/general.vue:206
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Внесените файлове ще бъдат сортирани по дата и ще им бъде дадено уникално име."
+msgstr ""
+"Внесените файлове ще бъдат сортирани по дата и ще им бъде дадено уникално "
+"име."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1667,12 +1753,17 @@ msgstr "в"
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "В случай че очакваните от вас снимки липсват, моля сканирайте отново библиотеката си и изчакайте, докато индексирането приключи."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"В случай че очакваните от вас снимки липсват, моля сканирайте отново "
+"библиотеката си и изчакайте, докато индексирането приключи."
 
 #: src/page/settings/content.vue:208
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr "Включване на файлове с RAW изображения при изтегляне на стекове и архиви."
+msgstr ""
+"Включване на файлове с RAW изображения при изтегляне на стекове и архиви."
 
 #: src/page/settings/content.vue:222
 msgid "Include sidecar files when downloading stacks and archives."
@@ -1754,10 +1845,18 @@ msgstr "Невалидно време"
 msgid "Invalid URL"
 msgstr "Невалиден URL адрес"
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr "IP адрес"
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Това е код за еднократна употреба, който ще деактивира 2FA за вашия акаунт, когато го използвате."
+msgid ""
+"It is a one-time use code that will disable 2FA for your account when you "
+"use it."
+msgstr ""
+"Това е код за еднократна употреба, който ще деактивира 2FA за вашия акаунт, "
+"когато го използвате."
 
 #: src/model/rest.js:157
 msgid "Item"
@@ -1950,8 +2049,12 @@ msgid "Location"
 msgstr "Местоположение"
 
 #: src/page/library/errors.vue:103
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Съобщенията в дневника се появяват тук, когато PhotoPrism се натъкне на повредени файлове или има други потенциални проблеми."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Съобщенията в дневника се появяват тук, когато PhotoPrism се натъкне на "
+"повредени файлове или има други потенциални проблеми."
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
 msgid "Login"
@@ -2035,7 +2138,8 @@ msgstr "Членство"
 msgid "Merge %{a} with %{b}?"
 msgstr "Сливане на %{a} с %{b}?"
 
-#: src/page/about/feedback.vue:51 src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
+#: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr "Съобщение"
 
@@ -2228,14 +2332,22 @@ msgid "No thanks"
 msgstr "Не, благодаря"
 
 #: src/page/library/errors.vue:99
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Няма предупреждения или грешки, съдържащи тази ключова дума. Обърнете внимание, че при търсенето се отчитат малки и големи букви."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Няма предупреждения или грешки, съдържащи тази ключова дума. Обърнете "
+"внимание, че при търсенето се отчитат малки и големи букви."
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
 #: src/component/upload/dialog.vue:106
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Нефотографските изображения и изображенията с ниско качество изискват преглед, преди да се появят в резултатите от търсенето."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Нефотографските изображения и изображенията с ниско качество изискват "
+"преглед, преди да се появят в резултатите от търсенето."
 
 #: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
 #: src/options/options.js:333
@@ -2260,16 +2372,24 @@ msgid "Not supported"
 msgstr "Не се поддържа"
 
 #: src/page/library/import.vue:60
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Имайте предвид, че можете да управлявате ръчно папката с оригинали, а импортирането не е задължително."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Имайте предвид, че можете да управлявате ръчно папката с оригинали, а "
+"импортирането не е задължително."
 
 #: src/page/settings/services.vue:78
 msgid "Note:"
 msgstr "Забележка:"
 
 #: src/component/service/add.vue:60
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Забележка: Само WebDAV сървъри, като Nextcloud или PhotoPrism, могат да бъдат конфигурирани като отдалечена услуга за архивиране и качване на файлове."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Забележка: Само WebDAV сървъри, като Nextcloud или PhotoPrism, могат да "
+"бъдат конфигурирани като отдалечена услуга за архивиране и качване на "
+"файлове."
 
 #: src/component/photo/edit/details.vue:388
 msgid "Notes"
@@ -2279,8 +2399,8 @@ msgstr "Бележки"
 msgid "Nothing to see here yet."
 msgstr "Все още няма нищо за гледане тук. Бъдете търпеливи."
 
-#: src/page/admin/sessions.vue:47 src/page/admin/users.vue:56
-#: src/component/settings/apps.vue:197
+#: src/page/admin/activity.vue:60 src/page/admin/sessions.vue:47
+#: src/page/admin/users.vue:56 src/component/settings/apps.vue:197
 msgid "Nothing was found."
 msgstr "Нищо не беше намерено."
 
@@ -2308,8 +2428,13 @@ msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "В Windows въведете следния ресурс в диалоговия прозорец за връзка:"
 
 #: src/page/settings/advanced.vue:287
-msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "Генерирането на миниатюри при поискване може да доведе до голямо използване на процесора и паметта. Това не се препоръчва за сървъри и NAS устройства с ограничени ресурси."
+msgid ""
+"On-demand generation of thumbnails may cause high CPU and memory usage. It "
+"is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
+"Генерирането на миниатюри при поискване може да доведе до голямо използване "
+"на процесора и паметта. Това не се препоръчва за сървъри и NAS устройства с "
+"ограничени ресурси."
 
 #: src/options/options.js:372
 msgid "Once a week"
@@ -2345,8 +2470,11 @@ msgid "One picture found"
 msgstr "Една намерена снимка"
 
 #: src/component/settings/passcode.vue:249
-msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr "Само локално управлявани акаунти могат да бъдат настроени за удостоверяване с 2FA."
+msgid ""
+"Only locally managed accounts can be set up for authentication with 2FA."
+msgstr ""
+"Само локално управлявани акаунти могат да бъдат настроени за удостоверяване "
+"с 2FA."
 
 #: src/locales.js:205
 msgid "Open"
@@ -2401,8 +2529,12 @@ msgid "Other"
 msgstr "Други"
 
 #: src/page/about/about.vue:29
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "Нашата мисия е да предоставим най-удобното за потребителя и поверителността решение за организиране и достъп до вашите снимки."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"Нашата мисия е да предоставим най-удобното за потребителя и поверителността "
+"решение за организиране и достъп до вашите снимки."
 
 #: src/options/options.js:260
 msgid "Outdoor"
@@ -2457,7 +2589,8 @@ msgstr "Хора"
 
 #: src/component/share/dialog.vue:129
 msgid "People you share a link with will be able to view public contents."
-msgstr "Хората, с които споделяте връзката, ще могат да виждат публичното съдържание."
+msgstr ""
+"Хората, с които споделяте връзката, ще могат да виждат публичното съдържание."
 
 #: src/component/photo/clipboard.vue:313 src/component/photo/toolbar.vue:581
 msgid "Permanently deleted"
@@ -2530,11 +2663,14 @@ msgid "Please confirm your new password."
 msgstr "Моля, потвърдете новата си парола."
 
 #: src/component/settings/apps.vue:75
-msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Моля, копирайте следната произволно генерирана парола за приложение и я запазете на сигурно място, тъй като няма да можете да я видите отново:"
+msgid ""
+"Please copy the following randomly generated app password and keep it in a "
+"safe place, as you will not be able to see it again:"
+msgstr ""
+"Моля, копирайте следната произволно генерирана парола за приложение и я "
+"запазете на сигурно място, тъй като няма да можете да я видите отново:"
 
 #: src/component/upload/dialog.vue:98
-#, fuzzy
 msgid "Please do not upload any private, unlawful or offensive pictures. "
 msgstr "Моля, не качвайте лични, незаконни или обидни снимки."
 
@@ -2547,8 +2683,12 @@ msgid "Please enter OTP character {0}"
 msgstr "Моля, въведете OTP символ {0}"
 
 #: src/component/settings/password.vue:20
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Моля, имайте предвид, че промяната на паролата ви ще доведе до излизане от системата на други устройства и браузъри."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Моля, имайте предвид, че промяната на паролата ви ще доведе до излизане от "
+"системата на други устройства и браузъри."
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
 msgid "Please restart your instance for the changes to take effect."
@@ -2581,12 +2721,18 @@ msgid "Press enter to create a new album."
 msgstr "Натиснете Enter, за да създадете нов албум."
 
 #: src/page/settings/advanced.vue:85
-msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr "Предотвратяване на създаването на резервни копия на бази данни и албуми, както и на странични файлове YAML."
+msgid ""
+"Prevent database and album backups as well as YAML sidecar files from being "
+"created."
+msgstr ""
+"Предотвратяване на създаването на резервни копия на бази данни и албуми, "
+"както и на странични файлове YAML."
 
 #: src/page/settings/advanced.vue:101
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Предотвратяване на достъпа на други приложения до PhotoPrism като споделено мрежово устройство."
+msgstr ""
+"Предотвратяване на достъпа на други приложения до PhotoPrism като споделено "
+"мрежово устройство."
 
 #: src/component/photo/edit/files.vue:30
 msgid "Preview"
@@ -2667,7 +2813,9 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Индексирайте отново всички оригинали, включително вече индексираните и непроменените файлове."
+msgstr ""
+"Индексирайте отново всички оригинали, включително вече индексираните и "
+"непроменените файлове."
 
 #: src/page/settings/advanced.vue:68
 msgid "Read-Only Mode"
@@ -2708,11 +2856,12 @@ msgstr "Код за възстановяване"
 msgid "Red"
 msgstr "Червено"
 
-#: src/page/admin/sessions.vue:333 src/page/admin/users.vue:321
-#: src/component/album/toolbar.vue:164 src/component/photo/toolbar.vue:488
-#: src/page/albums.vue:552 src/page/labels.vue:297
-#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
-#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
+#: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
+#: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
+#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
+#: src/page/labels.vue:297 src/page/library/browse.vue:21
+#: src/page/library/errors.vue:226 src/page/people/new.vue:7
+#: src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr "Обновяване"
 
@@ -2757,8 +2906,17 @@ msgid "Remove from Album"
 msgstr "Премахване от албума"
 
 #: src/page/library/import.vue:46
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Премахване на импортирани файлове, за да се спести място за съхранение. Неподдържаните типове файлове никога не се изтриват, те остават в текущото си местоположение."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Премахване на импортирани файлове, за да се спести място за съхранение. "
+"Неподдържаните типове файлове никога не се изтриват, те остават в текущото "
+"си местоположение."
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
+msgstr "Повтарящи се"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -2769,8 +2927,12 @@ msgid "Request failed - invalid response"
 msgstr "Заявката е неуспешна - невалиден отговор"
 
 #: src/page/settings/content.vue:25
-msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr "Изискване за преглед на нефотографски и нискокачествени изображения, преди да се появят в резултатите от търсенето."
+msgid ""
+"Require non-photographic and low-quality images to be reviewed before they "
+"appear in search results."
+msgstr ""
+"Изискване за преглед на нефотографски и нискокачествени изображения, преди "
+"да се появят в резултатите от търсенето."
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
 msgid "Resolution"
@@ -2863,8 +3025,13 @@ msgid "Scan"
 msgstr "Сканиране"
 
 #: src/component/settings/passcode.vue:86
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr "Сканирайте QR кода с вашето приложение за удостоверяване или използвайте ключа за настройка, показан по-долу, и след това въведете генерирания код за потвърждение:"
+msgid ""
+"Scan the QR code with your authenticator app or use the setup key shown "
+"below and then enter the generated verification code:"
+msgstr ""
+"Сканирайте QR кода с вашето приложение за удостоверяване или използвайте "
+"ключа за настройка, показан по-долу, и след това въведете генерирания код за "
+"потвърждение:"
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
 #: src/component/navigation.vue:125 src/component/navigation.vue:131
@@ -2878,12 +3045,13 @@ msgstr "Сканиране"
 msgid "Scope"
 msgstr "Обхват"
 
-#: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:63 src/component/navigation.vue:122
-#: src/component/navigation.vue:903 src/component/photo/toolbar.vue:35
-#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
-#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
-#: src/page/places.vue:33 src/page/settings/content.vue:131
+#: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
+#: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
+#: src/component/navigation.vue:122 src/component/navigation.vue:903
+#: src/component/photo/toolbar.vue:35 src/options/options.js:201
+#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
+#: src/page/people/recognized.vue:15 src/page/places.vue:33
+#: src/page/settings/content.vue:131
 msgid "Search"
 msgstr "Търсене"
 
@@ -2968,7 +3136,7 @@ msgstr "Сесия"
 msgid "Session ID"
 msgstr "Идентификатор на сесията"
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr "Сесии"
 
@@ -2998,6 +3166,10 @@ msgstr "Запазени настройки"
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
 msgstr "Настройка"
+
+#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+msgid "Severity"
+msgstr "Тежест"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3094,7 +3266,9 @@ msgstr "Някои албуми не могат да бъдат копирани
 
 #: src/component/photo/album/dialog.vue:188
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr "Някои албуми не могат да бъдат създадени. Моля, редактирайте имената и опитайте отново."
+msgstr ""
+"Някои албуми не могат да бъдат създадени. Моля, редактирайте имената и "
+"опитайте отново."
 
 #: src/component/file/clipboard.vue:136 src/component/label/clipboard.vue:138
 #: src/component/people/clipboard.vue:132 src/component/photo/clipboard.vue:354
@@ -3146,11 +3320,17 @@ msgstr "Стек"
 
 #: src/page/settings/content.vue:99
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Стекиране на файлове с един и същ уникален идентификатор на изображение или инстанция."
+msgstr ""
+"Стекиране на файлове с един и същ уникален идентификатор на изображение или "
+"инстанция."
 
 #: src/page/settings/content.vue:84
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Подреждайте снимки, направени по едно и също време и на едно и също място, въз основа на техните метаданни."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Подреждайте снимки, направени по едно и също време и на едно и също място, "
+"въз основа на техните метаданни."
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
 msgid "Stackable"
@@ -3220,8 +3400,11 @@ msgid "Super Admin"
 msgstr "Супер администратор"
 
 #: src/component/service/add.vue:64
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Поддръжката на допълнителни услуги, като например Google Drive, ще бъде добавена с течение на времето."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Поддръжката на допълнителни услуги, като например Google Drive, ще бъде "
+"добавена с течение на времето."
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
 msgid "Support Our Mission"
@@ -3246,8 +3429,12 @@ msgid "Teal"
 msgstr "Teal"
 
 #: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow е необходим за класификация на изображения, разпознаване на лица и откриване на опасно съдържание."
+msgid ""
+"TensorFlow is required for image classification, facial recognition, and "
+"detecting unsafe content."
+msgstr ""
+"TensorFlow е необходим за класификация на изображения, разпознаване на лица "
+"и откриване на опасно съдържание."
 
 #: src/options/options.js:266
 msgid "Terrain"
@@ -3266,16 +3453,25 @@ msgid "Thank You for Your Support!"
 msgstr "Благодарим ви за подкрепата!"
 
 #: src/page/about/about.vue:34
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "Ето защо PhotoPrism е създадена от самото начало, за да работи навсякъде, където ви е необходима, без да прави компромиси със свободата, поверителността или функционалността."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"Ето защо PhotoPrism е създадена от самото начало, за да работи навсякъде, "
+"където ви е необходима, без да прави компромиси със свободата, "
+"поверителността или функционалността."
 
 #: src/page/library/index.vue:84
 msgid "The index currently contains %{n} hidden files."
 msgstr "Индексът в момента съдържа %{n} скрити файлове."
 
 #: src/page/library/index.vue:86
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Възможно е техният формат да не се поддържа, да не са били конвертирани в JPEG или да има дубликати."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Възможно е техният формат да не се поддържа, да не са били конвертирани в "
+"JPEG или да има дубликати."
 
 #: src/page/settings/general.vue:25
 msgid "Theme"
@@ -3289,13 +3485,28 @@ msgid "This field is required"
 msgstr "Това поле е задължително"
 
 #: src/component/settings/webdav.vue:57
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Това монтира папката с оригинали като мрежово устройство и ви позволява да отваряте, редактирате и изтривате файлове от компютъра или смартфона си, сякаш са локални."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Това монтира папката с оригинали като мрежово устройство и ви позволява да "
+"отваряте, редактирате и изтривате файлове от компютъра или смартфона си, "
+"сякаш са локални."
 
 #: src/page/settings/services.vue:85
-#, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Това монтира папката с оригинали като мрежово устройство и ви позволява да отваряте, редактирате и изтривате файлове от компютъра или смартфона си, сякаш са локални."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local. "
+msgstr ""
+"Това монтира папката с оригинали като мрежово устройство и ви позволява да "
+"отваряте, редактирате и изтривате файлове от компютъра или смартфона си, "
+"сякаш са локални."
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
+msgstr "Време"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"
@@ -3327,20 +3538,37 @@ msgid "to"
 msgstr "към"
 
 #: src/component/settings/passcode.vue:160
-msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "За да избегнете изключване на вашия акаунт, моля, изтеглете, отпечатайте или копирайте този код за възстановяване сега и го запазете на сигурно място."
+msgid ""
+"To avoid being locked out of your account, please download, print or copy "
+"this recovery code now and keep it in a safe place."
+msgstr ""
+"За да избегнете изключване на вашия акаунт, моля, изтеглете, отпечатайте или "
+"копирайте този код за възстановяване сега и го запазете на сигурно място."
 
 #: src/component/settings/apps.vue:122
-msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "За да генерирате нова парола за конкретно приложение, моля, въведете името и обхвата на разрешението на приложението и изберете дата на изтичане:"
+msgid ""
+"To generate a new app-specific password, please enter the name and "
+"authorization scope of the application and select an expiration date:"
+msgstr ""
+"За да генерирате нова парола за конкретно приложение, моля, въведете името и "
+"обхвата на разрешението на приложението и изберете дата на изтичане:"
 
 #: src/component/settings/passcode.vue:203
-msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr "За да превключите към ново приложение или устройство за удостоверяване, първо деактивирайте двуфакторното удостоверяване и след това го активирайте отново:"
+msgid ""
+"To switch to a new authenticator app or device, first deactivate two-factor "
+"authentication and then reactivate it:"
+msgstr ""
+"За да превключите към ново приложение или устройство за удостоверяване, "
+"първо деактивирайте двуфакторното удостоверяване и след това го активирайте "
+"отново:"
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "За да надстроите, можете да въведете код за активиране или да кликнете върху \"Регистрация\", за да се регистрирате на нашия уебсайт:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"За да надстроите, можете да въведете код за активиране или да кликнете върху "
+"\"Регистрация\", за да се регистрирате на нашия уебсайт:"
 
 #: src/locales.js:263
 msgid "Today"
@@ -3528,21 +3756,30 @@ msgstr "Презареждане…"
 
 #: src/component/upload/dialog.vue:102
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Качванията, които могат да съдържат такива изображения, ще бъдат отхвърлени автоматично."
+msgstr ""
+"Качванията, които могат да съдържат такива изображения, ще бъдат отхвърлени "
+"автоматично."
 
 #: src/page/settings/advanced.vue:398
 msgid "Use Presets"
 msgstr "Използване на предварителни настройки"
 
 #: src/component/settings/passcode.vue:138
-msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "Използвайте следния код за възстановяване за достъп до акаунта си, когато не можете да генерирате валиден код за потвърждение с вашето приложение за удостоверяване:"
+msgid ""
+"Use the following recovery code to access your account when you are unable "
+"to generate a valid verification code with your authenticator app:"
+msgstr ""
+"Използвайте следния код за възстановяване за достъп до акаунта си, когато не "
+"можете да генерирате валиден код за потвърждение с вашето приложение за "
+"удостоверяване:"
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
 #: src/page/auth/login.vue:47 src/page/auth/login.vue:48
 #: src/page/auth/login.vue:55 src/page/auth/login.vue:70
 msgid "Use your recovery code or contact an administrator for help."
-msgstr "Използвайте кода си за възстановяване или се свържете с администратор за помощ."
+msgstr ""
+"Използвайте кода си за възстановяване или се свържете с администратор за "
+"помощ."
 
 #: src/options/admin.js:14 src/page/admin/sessions.vue:138
 #: src/page/admin/sessions.vue:291 src/model/user.js:352 src/options/auth.js:8
@@ -3657,12 +3894,17 @@ msgstr "WebDAV"
 
 #: src/component/settings/webdav.vue:18
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "Клиентите на WebDAV могат да се свържат с PhotoPrism, като използват следния URL адрес:"
+msgstr ""
+"Клиентите на WebDAV могат да се свържат с PhotoPrism, като използват следния "
+"URL адрес:"
 
 #: src/page/settings/services.vue:80
-#, fuzzy
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "WebDAV клиенти, като Windows Explorer на Microsoft или Finder на Apple, могат да се свързват директно с PhotoPrism."
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism. "
+msgstr ""
+"WebDAV клиенти, като Windows Explorer на Microsoft или Finder на Apple, "
+"могат да се свързват директно с PhotoPrism."
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
 msgid "WebDAV Upload"
@@ -3720,8 +3962,12 @@ msgstr "Да"
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "Можете да се свържете с нас на membership@photoprism.app за въпроси, свързани с членството ви."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"Можете да се свържете с нас на membership@photoprism.app за въпроси, "
+"свързани с членството ви."
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
 msgid "You can only download one album"
@@ -3732,8 +3978,12 @@ msgid "You can only download one label"
 msgstr "Можете да изтеглите само един етикет"
 
 #: src/component/location/dialog.vue:101
-msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr "Можете да търсите местоположение или да преместите маркера на картата, за да промените позицията:"
+msgid ""
+"You can search for a location or move the marker on the map to change the "
+"position:"
+msgstr ""
+"Можете да търсите местоположение или да преместите маркера на картата, за да "
+"промените позицията:"
 
 #: src/component/upload/dialog.vue:97
 msgid "You can upload up to %{n} files for test purposes."
@@ -3746,7 +3996,8 @@ msgstr "Можете да изберете само един елемент."
 #: src/component/photo/edit/people.vue:15 src/page/people/new.vue:48
 #: src/page/people/recognized.vue:91
 msgid "You may rescan your library to find additional faces."
-msgstr "Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
+msgstr ""
+"Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
 
 #: src/page/connect.vue:63 src/page/connect.vue:65
 msgid "Your account has been successfully connected."
@@ -3758,12 +4009,20 @@ msgstr "Вашият браузър не поддържа WebGL"
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и услуги като световни карти."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и "
+"услуги като световни карти."
 
 #: src/page/albums.vue:182
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Библиотеката ви се анализира непрекъснато, за да се създават автоматично албуми със специални моменти, пътувания и места."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Библиотеката ви се анализира непрекъснато, за да се създават автоматично "
+"албуми със специални моменти, пътувания и места."
 
 #: src/component/lightbox.vue:434
 msgid "Zoom in/out"
@@ -3915,8 +4174,12 @@ msgstr "Архив"
 #~ msgid "close"
 #~ msgstr "затворете"
 
-#~ msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-#~ msgstr "В стекове се групират файлове със сходна референтна рамка, но с различно качество, формат, размер или цвят."
+#~ msgid ""
+#~ "Stacks group files with a similar frame of reference, but differences of "
+#~ "quality, format, size or color."
+#~ msgstr ""
+#~ "В стекове се групират файлове със сходна референтна рамка, но с различно "
+#~ "качество, формат, размер или цвят."
 
 #~ msgid "URL"
 #~ msgstr "URL"
@@ -3961,13 +4224,18 @@ msgstr "Архив"
 #~ msgstr "Активиране на вашия лиценз"
 
 #~ msgid "Enter the verification code generated by your authenticator app:"
-#~ msgstr "Въведете кода за проверка, генериран от приложението за удостоверяване:"
+#~ msgstr ""
+#~ "Въведете кода за проверка, генериран от приложението за удостоверяване:"
 
 #~ msgid "No video selected"
 #~ msgstr "Не е избрано видео"
 
-#~ msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-#~ msgstr "Автоматично създаване на миниатюри за файлове, които не могат да бъдат индексирани или прегледани по друг начин."
+#~ msgid ""
+#~ "Automatically generate thumbnails for files that cannot otherwise be "
+#~ "indexed or viewed."
+#~ msgstr ""
+#~ "Автоматично създаване на миниатюри за файлове, които не могат да бъдат "
+#~ "индексирани или прегледани по друг начин."
 
 #~ msgid "Estimate the approximate location of pictures without coordinates."
 #~ msgstr "Оценка на приблизителното местоположение на снимки без координати."
@@ -4005,8 +4273,12 @@ msgstr "Архив"
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Качване на NSFW"
 
-#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-#~ msgstr "Разрешаване на качвания, които могат да бъдат обидни. Откриването на опасно съдържание изисква TensorFlow."
+#~ msgid ""
+#~ "Pictures that might be offensive will otherwise be rejected when using "
+#~ "the web upload."
+#~ msgstr ""
+#~ "Разрешаване на качвания, които могат да бъдат обидни. Откриването на "
+#~ "опасно съдържание изисква TensorFlow."
 
 #~ msgid "File Format Support"
 #~ msgstr "Поддръжка на файлови формати"
@@ -4018,16 +4290,24 @@ msgstr "Архив"
 #~ msgstr "Деактивира обратното геокодиране и картите."
 
 #~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
-#~ msgstr "Не създавайте JSON файлове на ExifTool за подобрено извличане на метаданни."
+#~ msgstr ""
+#~ "Не създавайте JSON файлове на ExifTool за подобрено извличане на "
+#~ "метаданни."
 
 #~ msgid "Don't modify originals folder. Disables import, upload, and delete."
-#~ msgstr "Не променяйте папката с оригинали. Деактивира импортирането, качването и изтриването."
+#~ msgstr ""
+#~ "Не променяйте папката с оригинали. Деактивира импортирането, качването и "
+#~ "изтриването."
 
 #~ msgid "Don't use TensorFlow for image classification."
 #~ msgstr "Не използвайте TensorFlow за класификация на изображения."
 
-#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-#~ msgstr "Динамичното рендиране изисква мощен сървър. Не се препоръчва за NAS устройства."
+#~ msgid ""
+#~ "Dynamic rendering requires a powerful server. It is not recommended for "
+#~ "NAS devices."
+#~ msgstr ""
+#~ "Динамичното рендиране изисква мощен сървър. Не се препоръчва за NAS "
+#~ "устройства."
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Показва по-подробни съобщения в дневника. Изисква рестартиране."
@@ -4035,30 +4315,47 @@ msgstr "Архив"
 #~ msgid "Thumbnail Generation"
 #~ msgstr "Създаване на миниатюри"
 
-#~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-#~ msgstr "Нямате достъп до вашето приложение или устройство за удостоверяване? Въведете своя код за възстановяване или поискайте помощ."
+#~ msgid ""
+#~ "Can't access your authenticator app or device? Enter your recovery code "
+#~ "or ask for assistance."
+#~ msgstr ""
+#~ "Нямате достъп до вашето приложение или устройство за удостоверяване? "
+#~ "Въведете своя код за възстановяване или поискайте помощ."
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
-#~ msgstr "Не правете резервно копие на метаданните на снимки и албуми във файлове YAML."
+#~ msgstr ""
+#~ "Не правете резервно копие на метаданните на снимки и албуми във файлове "
+#~ "YAML."
 
 #~ msgid "providerName"
 #~ msgstr "providerName"
 
 #~ msgid ""
-#~ "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+#~ "This mounts the originals folder as a network drive and allows you to "
+#~ "open, edit, and delete files\n"
 #~ "          from your computer or smartphone as if they were local."
-#~ msgstr "Това монтира папката с оригинали като мрежово устройство и ви позволява да отваряте, редактирате и изтривате файлове от компютъра или смартфона си, сякаш са локални."
+#~ msgstr ""
+#~ "Това монтира папката с оригинали като мрежово устройство и ви позволява "
+#~ "да отваряте, редактирате и изтривате файлове от компютъра или смартфона "
+#~ "си, сякаш са локални."
 
 #~ msgid ""
-#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+#~ "connect directly to\n"
 #~ "          PhotoPrism."
-#~ msgstr "Клиентите WebDAV, като Windows Explorer на Microsoft или Apple's Finder, могат да се свързват директно с PhotoPrism."
+#~ msgstr ""
+#~ "Клиентите WebDAV, като Windows Explorer на Microsoft или Apple's Finder, "
+#~ "могат да се свързват директно с PhotoPrism."
 
 #~ msgid "Basic"
 #~ msgstr "Основен"
 
-#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-#~ msgstr "Автоматично създаване на JPEG за други типове файлове, така че да могат да се показват в браузър."
+#~ msgid ""
+#~ "Automatically create JPEGs for other file types so that they can be "
+#~ "displayed in a browser."
+#~ msgstr ""
+#~ "Автоматично създаване на JPEG за други типове файлове, така че да могат "
+#~ "да се показват в браузър."
 
 #~ msgid "Convert to JPEG"
 #~ msgstr "Конвертиране в JPEG"
@@ -4069,8 +4366,12 @@ msgstr "Архив"
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Моля, внимавайте да не качвате лично или обидно съдържание."
 
-#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
-#~ msgstr "Можете да качвате файлове в тази публична демо версия, за които притежавате авторски права."
+#~ msgid ""
+#~ "You are welcome to upload files to this public demo for which you own the "
+#~ "copyright."
+#~ msgstr ""
+#~ "Можете да качвате файлове в тази публична демо версия, за които "
+#~ "притежавате авторски права."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "Не можете да качвате повече от %{n} файлове"
@@ -4096,23 +4397,44 @@ msgstr "Архив"
 #~ msgid "Not Found"
 #~ msgstr "Не е намерен"
 
-#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-#~ msgstr "Тъй като това ни помага да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
+#~ msgid ""
+#~ "As this helps us provide more features to the public, we encourage all "
+#~ "users to support our mission."
+#~ msgstr ""
+#~ "Тъй като това ни помага да предоставяме повече функции на обществеността, "
+#~ "насърчаваме всички потребители да подкрепят нашата мисия."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "Често задавани въпроси"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-#~ msgstr "Екипът ни решава това текущо в зависимост от необходимите усилия за поддръжка, разходите за сървър и лицензиране, както и от това дали функциите са необходими на всички или се изискват предимно от организации и напреднали потребители."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users."
+#~ msgstr ""
+#~ "Екипът ни решава това текущо в зависимост от необходимите усилия за "
+#~ "поддръжка, разходите за сървър и лицензиране, както и от това дали "
+#~ "функциите са необходими на всички или се изискват предимно от организации "
+#~ "и напреднали потребители."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "Каква функционалност е общодостъпна?"
 
-#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителни ползи."
+#~ msgid ""
+#~ "It is your decision whether you want to sign up to enjoy additional "
+#~ "benefits."
+#~ msgstr ""
+#~ "Вие решавате дали искате да се регистрирате, за да се възползвате от "
+#~ "допълнителни ползи."
 
-#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-#~ msgstr "Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка."
+#~ msgid ""
+#~ "Voluntary donations do not cover the cost of a team working full time to "
+#~ "provide you with updates, documentation, and support."
+#~ msgstr ""
+#~ "Доброволните дарения не покриват разходите на екипа, който работи на "
+#~ "пълен работен ден, за да ви предоставя актуализации, документация и "
+#~ "поддръжка."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Защо някои функции са достъпни само за спонсори?"
@@ -4123,35 +4445,69 @@ msgstr "Архив"
 #~ msgid "Proceed"
 #~ msgstr "Продължете"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-#~ msgstr "За да извършите ъпгрейд, можете да въведете код за активиране или да кликнете върху \"Продължи\", за да се регистрирате на нашия уебсайт:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on "
+#~ "\"Proceed\" to sign up on our website:"
+#~ msgstr ""
+#~ "За да извършите ъпгрейд, можете да въведете код за активиране или да "
+#~ "кликнете върху \"Продължи\", за да се регистрирате на нашия уебсайт:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Нещо се обърка, офлайн ли сте?"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "Във PhotoPrism вярваме, че всеки момент, уловен чрез снимка, е ценен, а нашата мисия е да дадем възможност на хората да съхранят тези моменти за поколения напред."
+#~ msgid ""
+#~ "At PhotoPrism, we believe that every moment captured through a photograph "
+#~ "is precious, and our mission is to enable people to cherish those moments "
+#~ "for generations to come."
+#~ msgstr ""
+#~ "Във PhotoPrism вярваме, че всеки момент, уловен чрез снимка, е ценен, а "
+#~ "нашата мисия е да дадем възможност на хората да съхранят тези моменти за "
+#~ "поколения напред."
 
-#~ msgid "Become a member today to enjoy additional features and support our mission!"
-#~ msgstr "Станете член днес, за да се възползвате от допълнителни функции и да подкрепите нашата мисия!"
+#~ msgid ""
+#~ "Become a member today to enjoy additional features and support our "
+#~ "mission!"
+#~ msgstr ""
+#~ "Станете член днес, за да се възползвате от допълнителни функции и да "
+#~ "подкрепите нашата мисия!"
 
-#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате някакви въпроси."
+#~ msgid ""
+#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr ""
+#~ "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате "
+#~ "някакви въпроси."
 
-#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
-#~ msgstr "Не се колебайте да се свържете с нас на membership@photoprism.app за въпроси относно членството ви."
+#~ msgid ""
+#~ "Feel free to contact us at membership@photoprism.app for questions "
+#~ "regarding your membership."
+#~ msgstr ""
+#~ "Не се колебайте да се свържете с нас на membership@photoprism.app за "
+#~ "въпроси относно членството ви."
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Възникна грешка - офлайн ли сте?"
 
-#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-#~ msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
+#~ msgid ""
+#~ "Before submitting a support request, please use our Troubleshooting "
+#~ "Checklists to determine the cause of your problem."
+#~ msgstr ""
+#~ "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за "
+#~ "отстраняване на проблеми\" за да определите причината за проблема."
 
-#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-#~ msgstr "Разгледайте Базата с познания за подробна информация за конкретни продуктови характеристики, услуги и свързани ресурси."
+#~ msgid ""
+#~ "Browse the Knowledge Base for detailed information on specific product "
+#~ "features, services, and related resources."
+#~ msgstr ""
+#~ "Разгледайте Базата с познания за подробна информация за конкретни "
+#~ "продуктови характеристики, услуги и свързани ресурси."
 
-#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-#~ msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
+#~ msgid ""
+#~ "Common issues can be quickly diagnosed and solved using the "
+#~ "troubleshooting checklists we provide."
+#~ msgstr ""
+#~ "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с "
+#~ "помощта на предоставените от нас контролни списъци за отстраняване на "
+#~ "неизправности."
 
 #~ msgid "Getting Support"
 #~ msgstr "Получаване на подкрепа"
@@ -4160,7 +4516,8 @@ msgstr "Архив"
 #~ msgstr "Ако това не ви помогне или имате други въпроси:"
 
 #~ msgid "In addition, sponsors receive direct technical support via email."
-#~ msgstr "Освен това спонсорите получават директна техническа поддръжка по имейл."
+#~ msgstr ""
+#~ "Освен това спонсорите получават директна техническа поддръжка по имейл."
 
 #~ msgid "Knowledge Base"
 #~ msgstr "База знания"
@@ -4171,8 +4528,12 @@ msgstr "Архив"
 #~ msgid "or ask in our Community Chat"
 #~ msgstr "или попитайте в нашия чат в общността"
 
-#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-#~ msgstr "Нашето ръководство за потребителя обхваща и много теми за напреднали, като мигриране от Google Photos и настройки на качеството на миниатюрите."
+#~ msgid ""
+#~ "Our User Guide also covers many advanced topics, such as migrating from "
+#~ "Google Photos and thumbnail quality settings."
+#~ msgstr ""
+#~ "Нашето ръководство за потребителя обхваща и много теми за напреднали, "
+#~ "като мигриране от Google Photos и настройки на качеството на миниатюрите."
 
 #~ msgid "post your question in GitHub Discussions"
 #~ msgstr "публикувайте въпроса си в GitHub Discussions"
@@ -4180,11 +4541,19 @@ msgstr "Архив"
 #~ msgid "Read the Docs"
 #~ msgstr "Прочетете документите"
 
-#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-#~ msgstr "Посетете docs.photoprism.app/user-guide, за да научите как да синхронизирате, организирате и споделяте снимките си."
+#~ msgid ""
+#~ "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+#~ "share your pictures."
+#~ msgstr ""
+#~ "Посетете docs.photoprism.app/user-guide, за да научите как да "
+#~ "синхронизирате, организирате и споделяте снимките си."
 
-#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-#~ msgstr "Ще се постараем да отговорим на всичките ви въпроси. В замяна ви молим да ни подкрепите в Patreon или GitHub Sponsors."
+#~ msgid ""
+#~ "We'll do our best to answer all your questions. In return, we ask you to "
+#~ "back us on Patreon or GitHub Sponsors."
+#~ msgstr ""
+#~ "Ще се постараем да отговорим на всичките ви въпроси. В замяна ви молим да "
+#~ "ни подкрепите в Patreon или GitHub Sponsors."
 
 #~ msgid "you are welcome to join us on Reddit"
 #~ msgstr "можете да се присъедините към нас в Reddit"
@@ -4237,11 +4606,17 @@ msgstr "Архив"
 #~ msgid "Connect Customer Account"
 #~ msgstr "Свързване на клиентски акаунт"
 
-#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-#~ msgstr "Той използва най-новите технологии за автоматично маркиране и намиране на снимки, без да ви пречи."
+#~ msgid ""
+#~ "It makes use of the latest technologies to tag and find pictures "
+#~ "automatically without getting in your way."
+#~ msgstr ""
+#~ "Той използва най-новите технологии за автоматично маркиране и намиране на "
+#~ "снимки, без да ви пречи."
 
 #~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-#~ msgstr "PhotoPrism® е приложение за снимки с изкуствен интелект за децентрализираната мрежа."
+#~ msgstr ""
+#~ "PhotoPrism® е приложение за снимки с изкуствен интелект за "
+#~ "децентрализираната мрежа."
 
 #~ msgid "Uploader"
 #~ msgstr "Качващ"
@@ -4252,8 +4627,12 @@ msgstr "Архив"
 #~ msgid "Downloads"
 #~ msgstr "Изтегляне"
 
-#~ msgid "Download only original media files, without any automatically generated sidecar files."
-#~ msgstr "Изтеглете само оригинални мултимедийни файлове, без автоматично генерирани странични файлове."
+#~ msgid ""
+#~ "Download only original media files, without any automatically generated "
+#~ "sidecar files."
+#~ msgstr ""
+#~ "Изтеглете само оригинални мултимедийни файлове, без автоматично "
+#~ "генерирани странични файлове."
 
 #~ msgid "Web Login "
 #~ msgstr "Уеб вход "
@@ -4262,7 +4641,9 @@ msgstr "Архив"
 #~ msgstr "Опции"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
-#~ msgstr "Не използвайте ImageMagick за конвертиране или модифициране на изображения."
+#~ msgstr ""
+#~ "Не използвайте ImageMagick за конвертиране или модифициране на "
+#~ "изображения."
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "Не прекодирайте видеоклипове с FFmpeg."
@@ -4279,35 +4660,74 @@ msgstr "Архив"
 #~ msgid "Don't use RawTherapee to convert RAW files."
 #~ msgstr "Не използвайте RawTherapee, за да конвертирате RAW файлове."
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr "Станете спонсор днес, подкрепете мисията ни и се възползвайте от предимствата за членовете ни!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr ""
+#~ "Станете спонсор днес, подкрепете мисията ни и се възползвайте от "
+#~ "предимствата за членовете ни!"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Екипът ни преценява това постоянно, в зависимост от усилията за "
+#~ "поддръжка, които изискват функциите, разходите за нас и дали те са "
+#~ "необходими на всички или се изискват предимно от организации и напреднали "
+#~ "потребители. Тъй като това ни позволява да предоставяме повече функции на "
+#~ "обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка. Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителните ползи."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "PhotoPrism се финансира 100% самостоятелно. Доброволните дарения не "
+#~ "покриват разходите на екипа, който работи на пълен работен ден, за да ви "
+#~ "предоставя актуализации, документация и поддръжка. Вие решавате дали "
+#~ "искате да се регистрирате, за да се възползвате от допълнителните ползи."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Не би ли трябвало свободният софтуер да е свободен от разходи?"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича \"libre software\", като заимства френската или испанската дума за \"free\" (свободен), за да покаже, че няма предвид, че софтуерът е безплатен."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "Мислете за \"свободен софтуер\" като за \"свобода на словото\", а не като "
+#~ "за \"свободна бира\". Фондацията за свободен софтуер понякога го нарича "
+#~ "\"libre software\", като заимства френската или испанската дума за "
+#~ "\"free\" (свободен), за да покаже, че няма предвид, че софтуерът е "
+#~ "безплатен."
 
 #~ msgid "Moonlight"
 #~ msgstr "Лунна светлина"
 
 #~ msgid "Upgrade now and enjoy our member benefits!"
-#~ msgstr "Актуализирайте сега и се възползвайте от предимствата на нашите членове!"
+#~ msgstr ""
+#~ "Актуализирайте сега и се възползвайте от предимствата на нашите членове!"
 
 #~ msgid "Sign Up"
 #~ msgstr "Регистрирайте се"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "За да надстроите, можете да въведете код за активиране или да кликнете върху \"Регистрация\", за да надстроите на нашия уебсайт:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "За да надстроите, можете да въведете код за активиране или да кликнете "
+#~ "върху \"Регистрация\", за да надстроите на нашия уебсайт:"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "За да надстроите, можете да въведете код за активиране или да кликнете върху \"Регистрация\", за да надстроите на нашия уебсайт:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "За да надстроите, можете да въведете код за активиране или да кликнете "
+#~ "върху \"Регистрация\", за да надстроите на нашия уебсайт:"
 
 #~ msgid "Sign up"
 #~ msgstr "Регистрирайте се"
@@ -4315,11 +4735,26 @@ msgstr "Архив"
 #~ msgid "Compare Features"
 #~ msgstr "Сравняване на функциите"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Екипът ни оценява това постоянно, в зависимост от усилията, които функциите и опциите за конфигуриране изискват или са изисквали в миналото, и от това дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на разположение на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Екипът ни оценява това постоянно, в зависимост от усилията, които "
+#~ "функциите и опциите за конфигуриране изискват или са изисквали в "
+#~ "миналото, и от това дали те са необходими на всички или се изискват "
+#~ "предимно от организации и напреднали потребители. Тъй като това ни "
+#~ "позволява да предоставяме повече функции на разположение на "
+#~ "обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "Също така, моля, оставете звезда в GitHub, ако този проект ви харесва. Това е допълнителна мотивация да продължим."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "Също така, моля, оставете звезда в GitHub, ако този проект ви харесва. "
+#~ "Това е допълнителна мотивация да продължим."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Станете спонсор"
@@ -4327,17 +4762,34 @@ msgstr "Архив"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Аз'съм спонсор"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "Спонсорите получават достъп до допълнителни функции, получават директна техническа поддръжка по имейл и могат да се присъединят към нашата частна чат стая в matrix.org."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "Спонсорите получават достъп до допълнителни функции, получават директна "
+#~ "техническа поддръжка по имейл и могат да се присъединят към нашата частна "
+#~ "чат стая в matrix.org."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-#~ msgstr "В момента това е функция на спонсор, за да благодарим на всички, които подкрепят разработването на това приложение."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
+#~ msgstr ""
+#~ "В момента това е функция на спонсор, за да благодарим на всички, които "
+#~ "подкрепят разработването на това приложение."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "Ще ви уведомим как да го активирате, когато се регистрирате в Patreon или GitHub Sponsors."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "Ще ви уведомим как да го активирате, когато се регистрирате в Patreon или "
+#~ "GitHub Sponsors."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации и услуги като световни карти."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "Вашата постоянна подкрепа ни помага да предоставяме редовни актуализации "
+#~ "и услуги като световни карти."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -4401,8 +4853,12 @@ msgstr "Архив"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Неуспех при импортиране на качени файлове"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Забележка: Актуализирането на паролата не води до отнемане на достъпа на вече удостоверени потребители."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Забележка: Актуализирането на паролата не води до отнемане на достъпа на "
+#~ "вече удостоверени потребители."
 
 #~ msgid "Play"
 #~ msgstr "Играйте"
@@ -4416,8 +4872,12 @@ msgstr "Архив"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Показване на библиотека в навигационното меню."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Пътната карта показва кои задачи са в процес на изпълнение, какво трябва да се тества и кои заявки за функции ще бъдат изпълнени след това."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Пътната карта показва кои задачи са в процес на изпълнение, какво трябва "
+#~ "да се тества и кои заявки за функции ще бъдат изпълнени след това."
 
 #~ msgid "Your message has been sent"
 #~ msgstr "Вашето съобщение е изпратено"
@@ -4432,8 +4892,10 @@ msgstr "Архив"
 #~ msgstr "Благодарим ви, че подкрепяте PhotoPrism®"
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "Their format may not be supported, they haven't been converted to JPEG "
+#~ "yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
-#~ "Възможно е техният формат да не се поддържа, да не са били конвертирани в JPEG или да има\n"
+#~ "Възможно е техният формат да не се поддържа, да не са били конвертирани в "
+#~ "JPEG или да има\n"
 #~ "            са дублирани."

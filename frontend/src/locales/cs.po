@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
@@ -144,7 +144,7 @@ msgstr "Účet vymazán"
 msgid "Account restored"
 msgstr "Obnovení účtu"
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr "Účty"
 
@@ -189,6 +189,10 @@ msgstr "Aktivací seřadíte sestupně."
 #: src/page/connect.vue:125 src/page/connect.vue:136
 msgid "Activation Code"
 msgstr "Aktivační kód"
+
+#: src/page/admin.vue:76
+msgid "Activity"
+msgstr "Aktivita"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -268,8 +272,12 @@ msgid "After 7 days"
 msgstr "Po 7 dnech"
 
 #: src/component/settings/passcode.vue:32
-msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr "Po zadání hesla pro potvrzení můžete nastavit dvoufaktorové ověřování pomocí kompatibilní ověřovací aplikace nebo zařízení:"
+msgid ""
+"After entering your password for confirmation, you can set up two-factor "
+"authentication with a compatible authenticator app or device:"
+msgstr ""
+"Po zadání hesla pro potvrzení můžete nastavit dvoufaktorové ověřování pomocí "
+"kompatibilní ověřovací aplikace nebo zařízení:"
 
 #: src/options/options.js:381
 msgid "After one month"
@@ -280,8 +288,12 @@ msgid "After one year"
 msgstr "Po jednom roce"
 
 #: src/page/albums.vue:175
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Po výběru obrázků z výsledků vyhledávání je můžete přidat do alba pomocí kontextové nabídky."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Po výběru obrázků z výsledků vyhledávání je můžete přidat do alba pomocí "
+"kontextové nabídky."
 
 #: src/options/options.js:382
 msgid "After two months"
@@ -376,8 +388,11 @@ msgid "All Years"
 msgstr "Všechny roky"
 
 #: src/component/share/dialog.vue:133
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativně lze nahrát soubory přímo do WebDAV serverů jako je Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Alternativně lze nahrát soubory přímo do WebDAV serverů jako je Nextcloud."
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
 msgid "Altitude"
@@ -413,7 +428,8 @@ msgstr "Animace"
 
 #: src/component/share/dialog.vue:132
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Jakékoliv soukromé fotografie nebo videa zůstanou soukromé a nebudou sdílena."
+msgstr ""
+"Jakékoliv soukromé fotografie nebo videa zůstanou soukromé a nebudou sdílena."
 
 #: src/component/service/edit.vue:191
 msgid "API Key"
@@ -494,8 +510,7 @@ msgstr "Poměr stran"
 msgid "Audio"
 msgstr "Audio"
 
-#: src/model/logs.js:173
-#, fuzzy
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr "Audio"
 
@@ -535,12 +550,21 @@ msgid "Batch"
 msgstr "Dávka"
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Staňte se členem ještě dnes, podpořte naše poslání a využívejte naše členské výhody!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Staňte se členem ještě dnes, podpořte naše poslání a využívejte naše členské "
+"výhody!"
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Vzhledem k tomu, že jsme stoprocentně financováni z vlastních zdrojů a nezávislí, můžeme vám slíbit, že vaše údaje nikdy neprodáme a že budeme vždy transparentní, pokud jde o náš software a služby."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Vzhledem k tomu, že jsme stoprocentně financováni z vlastních zdrojů a "
+"nezávislí, můžeme vám slíbit, že vaše údaje nikdy neprodáme a že budeme vždy "
+"transparentní, pokud jde o náš software a služby."
 
 #: src/component/user/edit/dialog.vue:151
 #: src/component/user/edit/dialog.vue:152 src/page/settings/account.vue:123
@@ -604,8 +628,12 @@ msgid "Busy, please wait…"
 msgstr "Zaneprázdněn, čekejte prosím…"
 
 #: src/page/connect.vue:198
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Používáním softwaru a služeb, které poskytujeme, souhlasíte s našimi podmínkami služby, zásadami ochrany osobních údajů a kodexem chování."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Používáním softwaru a služeb, které poskytujeme, souhlasíte s našimi "
+"podmínkami služby, zásadami ochrany osobních údajů a kodexem chování."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
 #: src/options/options.js:208 src/page/settings/general.vue:108
@@ -781,7 +809,7 @@ msgstr "Zavřít"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr ""
+msgstr "Cluster"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -1029,7 +1057,8 @@ msgstr "Smazat vše?"
 
 #: src/page/library/index.vue:51
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "Odstranění osiřelých položek indexu, souborů postranních oddílů a miniatur."
+msgstr ""
+"Odstranění osiřelých položek indexu, souborů postranních oddílů a miniatur."
 
 #: src/component/album/edit/dialog.vue:56 src/page/albums.vue:291
 msgid "Description"
@@ -1061,7 +1090,8 @@ msgid "Disable ExifTool"
 msgstr "Deaktivovat ExifTool"
 
 #: src/page/settings/advanced.vue:69
-msgid "Disable features that require write permission for the originals folder."
+msgid ""
+"Disable features that require write permission for the originals folder."
 msgstr "Zakázat funkce, které vyžadují oprávnění k zápisu do složky originálů."
 
 #: src/page/settings/advanced.vue:430
@@ -1183,8 +1213,12 @@ msgid "Download"
 msgstr "Stáhnout"
 
 #: src/page/settings/content.vue:194
-msgid "Download only original media files, without any automatically generated files."
-msgstr "Stahujte pouze originální mediální soubory bez automaticky generovaných souborů."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"Stahujte pouze originální mediální soubory bez automaticky generovaných "
+"souborů."
 
 #: src/component/service/edit.vue:117
 msgid "Download remote files"
@@ -1212,8 +1246,12 @@ msgid "Drag and drop files here"
 msgstr "Přetáhněte sem soubory"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Vzhledem k velkému množství e-mailů, které dostáváme, se může stát, že vám náš tým nebude schopen okamžitě odpovědět."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Vzhledem k velkému množství e-mailů, které dostáváme, se může stát, že vám "
+"náš tým nebude schopen okamžitě odpovědět."
 
 #: src/page/library/browse.vue:46
 msgid "Duplicates will be skipped and only appear once."
@@ -1267,8 +1305,11 @@ msgid "Email"
 msgstr "Email"
 
 #: src/page/settings/advanced.vue:37
-msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "Povolením režimu ladění zobrazíte další protokoly a pomůžete při řešení problémů."
+msgid ""
+"Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+"Povolením režimu ladění zobrazíte další protokoly a pomůžete při řešení "
+"problémů."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1279,8 +1320,14 @@ msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Povolí předvolby konvertoru RAW. Může snížit výkon."
 
 #: src/component/settings/passcode.vue:58
-msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "Povolení dvoufaktorové autentizace znamená, že k přihlášení budete potřebovat libovolně vygenerovaný kód, takže i když někdo získá přístup k vašemu heslu, nebude mít přístup k vašemu účtu."
+msgid ""
+"Enabling two-factor authentication means that you will need a randomly "
+"generated verification code to log in, so even if someone gains access to "
+"your password, they will not be able to access your account."
+msgstr ""
+"Povolení dvoufaktorové autentizace znamená, že k přihlášení budete "
+"potřebovat libovolně vygenerovaný kód, takže i když někdo získá přístup k "
+"vašemu heslu, nebude mít přístup k vašemu účtu."
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1332,16 +1379,24 @@ msgid "Every two days"
 msgstr "Každé dva dny"
 
 #: src/page/settings/general.vue:157
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Vyloučit obsah označený jako soukromý z výsledků vyhledávání, sdílených alb, štítků a míst."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Vyloučit obsah označený jako soukromý z výsledků vyhledávání, sdílených alb, "
+"štítků a míst."
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
 msgid "Exclude hidden"
 msgstr "Vyloučit skryté"
 
 #: src/page/settings/advanced.vue:133
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Pro plnou podporu videa, živých fotografií a XMP je nutná extrakce metadat pomocí nástroje ExifTool."
+msgid ""
+"ExifTool is required for full support of XMP metadata, videos and Live "
+"Photos."
+msgstr ""
+"Pro plnou podporu videa, živých fotografií a XMP je nutná extrakce metadat "
+"pomocí nástroje ExifTool."
 
 #: src/page/settings/advanced.vue:52
 msgid "Experimental Features"
@@ -1459,8 +1514,12 @@ msgid "Files"
 msgstr "Soubory"
 
 #: src/page/settings/content.vue:115
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Soubory s pořadovými názvy jako 'IMG_1234 (2)' a 'IMG_1234 (3)' náleží stejnému obrázku."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Soubory s pořadovými názvy jako 'IMG_1234 (2)' a 'IMG_1234 (3)' náleží "
+"stejnému obrázku."
 
 #: src/locales.js:234 src/locales.js:292
 msgid "First page"
@@ -1621,8 +1680,12 @@ msgid "Hybrid"
 msgstr "Smíšeně"
 
 #: src/component/settings/passcode.vue:195
-msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr "Pokud ztratíte přístup ke své ověřovací aplikaci nebo zařízení, můžete pomocí kódu pro obnovení znovu získat přístup ke svému účtu."
+msgid ""
+"If you lose access to your authenticator app or device, you can use your "
+"recovery code to regain access to your account."
+msgstr ""
+"Pokud ztratíte přístup ke své ověřovací aplikaci nebo zařízení, můžete "
+"pomocí kódu pro obnovení znovu získat přístup ke svému účtu."
 
 #: src/common/util.js:736 src/component/photo/view/cards.vue:307
 #: src/model/file.js:194 src/options/options.js:286
@@ -1640,12 +1703,18 @@ msgid "Import"
 msgstr "Importovat"
 
 #: src/page/library/import.vue:57
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Importované soubory budou seřazeny podle data a přiděleného jedinečného názvu, aby se předešlo duplicitám."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Importované soubory budou seřazeny podle data a přiděleného jedinečného "
+"názvu, aby se předešlo duplicitám."
 
 #: src/page/settings/general.vue:206
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Importované soubory budou seřazeny podle data a přiděleného jedinečného názvu."
+msgstr ""
+"Importované soubory budou seřazeny podle data a přiděleného jedinečného "
+"názvu."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1667,8 +1736,12 @@ msgstr "v"
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "V případě, že očekávané obrázky chybí, prohledejte knihovnu znovu a počkejte, až bude indexace dokončena."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"V případě, že očekávané obrázky chybí, prohledejte knihovnu znovu a "
+"počkejte, až bude indexace dokončena."
 
 #: src/page/settings/content.vue:208
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1680,7 +1753,8 @@ msgstr "Při stahování zásobníků a archivů zahrnout soubory sidecar."
 
 #: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
-msgstr "Chcete-li pokračovat, zvětšete velikost úložiště nebo odstraňte soubory."
+msgstr ""
+"Chcete-li pokračovat, zvětšete velikost úložiště nebo odstraňte soubory."
 
 #: src/component/navigation.vue:942 src/page/library.vue:64
 #: src/page/settings/content.vue:12
@@ -1689,7 +1763,8 @@ msgstr "Indexovat"
 
 #: src/page/settings/general.vue:301
 msgid "Index and import files through the user interface."
-msgstr "Indexování a importování souborů prostřednictvím uživatelského rozhraní."
+msgstr ""
+"Indexování a importování souborů prostřednictvím uživatelského rozhraní."
 
 #: src/page/library/index.vue:245 src/page/library/index.vue:251
 msgid "Indexing"
@@ -1754,10 +1829,18 @@ msgstr "Neplatný čas"
 msgid "Invalid URL"
 msgstr "Neplatná adresa URL"
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr "IP adresa"
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Jedná se o jednorázový kód, který deaktivuje 2FA pro váš účet, když jej použijete."
+msgid ""
+"It is a one-time use code that will disable 2FA for your account when you "
+"use it."
+msgstr ""
+"Jedná se o jednorázový kód, který deaktivuje 2FA pro váš účet, když jej "
+"použijete."
 
 #: src/model/rest.js:157
 msgid "Item"
@@ -1950,8 +2033,12 @@ msgid "Location"
 msgstr "Lokalita"
 
 #: src/page/library/errors.vue:103
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Zprávy logu se zde zobrazují vždy, když PhotoPrism narazí na poškozené soubory nebo se vyskytnou jiné potenciální problémy."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Zprávy logu se zde zobrazují vždy, když PhotoPrism narazí na poškozené "
+"soubory nebo se vyskytnou jiné potenciální problémy."
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
 msgid "Login"
@@ -2035,7 +2122,8 @@ msgstr "Členství"
 msgid "Merge %{a} with %{b}?"
 msgstr "Sloučit %{a} s %{b}?"
 
-#: src/page/about/feedback.vue:51 src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
+#: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr "Zpráva"
 
@@ -2228,14 +2316,22 @@ msgid "No thanks"
 msgstr "Ne, děkuji"
 
 #: src/page/library/errors.vue:99
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Žádná varování nebo chyba obsahující toto klíčové slovo. Mějte na paměti, že při vyhledávání se rozlišují velká a malá písmena."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Žádná varování nebo chyba obsahující toto klíčové slovo. Mějte na paměti, že "
+"při vyhledávání se rozlišují velká a malá písmena."
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
 #: src/component/upload/dialog.vue:106
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Nefotografické obrázky a snímky nízké kvality vyžadují kontrolu, než se objeví ve výsledcích vyhledávání."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Nefotografické obrázky a snímky nízké kvality vyžadují kontrolu, než se "
+"objeví ve výsledcích vyhledávání."
 
 #: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
 #: src/options/options.js:333
@@ -2260,7 +2356,8 @@ msgid "Not supported"
 msgstr "Není podporováno"
 
 #: src/page/library/import.vue:60
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr "Složku originálů můžete spravovat ručně a import je volitelný."
 
 #: src/page/settings/services.vue:78
@@ -2268,8 +2365,12 @@ msgid "Note:"
 msgstr "Poznámka:"
 
 #: src/component/service/add.vue:60
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Poznámka: Pouze WebDAV servery, jako Nextcloud nebo PhotoPrism, mohou být nakonfigurovány jako vzdálená služba pro zálohu a nahrávání souborů."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Poznámka: Pouze WebDAV servery, jako Nextcloud nebo PhotoPrism, mohou být "
+"nakonfigurovány jako vzdálená služba pro zálohu a nahrávání souborů."
 
 #: src/component/photo/edit/details.vue:388
 msgid "Notes"
@@ -2279,8 +2380,8 @@ msgstr "Poznámky"
 msgid "Nothing to see here yet."
 msgstr "Není tu nic k vidění. Prosíme o trpělivost."
 
-#: src/page/admin/sessions.vue:47 src/page/admin/users.vue:56
-#: src/component/settings/apps.vue:197
+#: src/page/admin/activity.vue:60 src/page/admin/sessions.vue:47
+#: src/page/admin/users.vue:56 src/component/settings/apps.vue:197
 msgid "Nothing was found."
 msgstr "Nic nebylo nalezeno."
 
@@ -2305,11 +2406,17 @@ msgstr "Od nejstarších"
 #: src/component/settings/webdav.vue:17 src/component/settings/webdav.vue:18
 #: src/component/settings/webdav.vue:26 src/component/settings/webdav.vue:37
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "V systému Windows zadejte do dialogového okna připojení následující prostředek:"
+msgstr ""
+"V systému Windows zadejte do dialogového okna připojení následující "
+"prostředek:"
 
 #: src/page/settings/advanced.vue:287
-msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "Generování miniatur na vyžádání může způsobit vysoké využití procesoru a paměti. Nedoporučuje se pro servery a zařízení NAS s omezenými zdroji."
+msgid ""
+"On-demand generation of thumbnails may cause high CPU and memory usage. It "
+"is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
+"Generování miniatur na vyžádání může způsobit vysoké využití procesoru a "
+"paměti. Nedoporučuje se pro servery a zařízení NAS s omezenými zdroji."
 
 #: src/options/options.js:372
 msgid "Once a week"
@@ -2345,7 +2452,8 @@ msgid "One picture found"
 msgstr "Nalezen jeden obrázek"
 
 #: src/component/settings/passcode.vue:249
-msgid "Only locally managed accounts can be set up for authentication with 2FA."
+msgid ""
+"Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "Pro ověřování pomocí 2FA lze nastavit pouze lokálně spravované účty."
 
 #: src/locales.js:205
@@ -2401,8 +2509,12 @@ msgid "Other"
 msgstr "Jiné"
 
 #: src/page/about/about.vue:29
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "Naším posláním je poskytovat uživatelsky nejpřívětivější řešení pro uspořádání a zpřístupnění vašich fotografií."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"Naším posláním je poskytovat uživatelsky nejpřívětivější řešení pro "
+"uspořádání a zpřístupnění vašich fotografií."
 
 #: src/options/options.js:260
 msgid "Outdoor"
@@ -2490,7 +2602,8 @@ msgstr "Fotografie"
 
 #: src/page/about/about.vue:87
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr "Společnost PhotoPrism je 100% nezávislá a financovaná z vlastních zdrojů."
+msgstr ""
+"Společnost PhotoPrism je 100% nezávislá a financovaná z vlastních zdrojů."
 
 #: src/page/about/about.vue:44
 msgid "PhotoPrism+ Membership"
@@ -2530,11 +2643,14 @@ msgid "Please confirm your new password."
 msgstr "Potvrďte prosím nové heslo."
 
 #: src/component/settings/apps.vue:75
-msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Zkopírujte prosím následující náhodně vygenerované heslo aplikace a uschovejte je na bezpečném místě, protože je již neuvidíte:"
+msgid ""
+"Please copy the following randomly generated app password and keep it in a "
+"safe place, as you will not be able to see it again:"
+msgstr ""
+"Zkopírujte prosím následující náhodně vygenerované heslo aplikace a "
+"uschovejte je na bezpečném místě, protože je již neuvidíte:"
 
 #: src/component/upload/dialog.vue:98
-#, fuzzy
 msgid "Please do not upload any private, unlawful or offensive pictures. "
 msgstr "Nevkládejte prosím žádné soukromé, nezákonné nebo urážlivé obrázky."
 
@@ -2547,8 +2663,12 @@ msgid "Please enter OTP character {0}"
 msgstr "Zadejte prosím znak OTP {0}"
 
 #: src/component/settings/password.vue:20
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Vezměte prosím na vědomí, že změna hesla vás odhlásí i na jiných zařízeních a v jiných prohlížečích."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Vezměte prosím na vědomí, že změna hesla vás odhlásí i na jiných zařízeních "
+"a v jiných prohlížečích."
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
 msgid "Please restart your instance for the changes to take effect."
@@ -2581,12 +2701,16 @@ msgid "Press enter to create a new album."
 msgstr "Stiskněte Enter pro vytvoření nového alba."
 
 #: src/page/settings/advanced.vue:85
-msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgid ""
+"Prevent database and album backups as well as YAML sidecar files from being "
+"created."
 msgstr "Zabránit vytváření záloh databáze a alb a souborů YAML sidecar."
 
 #: src/page/settings/advanced.vue:101
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Zabránit ostatním aplikacím v přístupu k aplikaci PhotoPrism jako ke sdílené síťové jednotce."
+msgstr ""
+"Zabránit ostatním aplikacím v přístupu k aplikaci PhotoPrism jako ke sdílené "
+"síťové jednotce."
 
 #: src/component/photo/edit/files.vue:30
 msgid "Preview"
@@ -2667,7 +2791,9 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Znovu indexovat všechny originály, včetně již zaindexovaných a nezměněných souborů."
+msgstr ""
+"Znovu indexovat všechny originály, včetně již zaindexovaných a nezměněných "
+"souborů."
 
 #: src/page/settings/advanced.vue:68
 msgid "Read-Only Mode"
@@ -2708,11 +2834,12 @@ msgstr "Kód obnovy"
 msgid "Red"
 msgstr "Červená"
 
-#: src/page/admin/sessions.vue:333 src/page/admin/users.vue:321
-#: src/component/album/toolbar.vue:164 src/component/photo/toolbar.vue:488
-#: src/page/albums.vue:552 src/page/labels.vue:297
-#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
-#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
+#: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
+#: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
+#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
+#: src/page/labels.vue:297 src/page/library/browse.vue:21
+#: src/page/library/errors.vue:226 src/page/people/new.vue:7
+#: src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr "Obnovit"
 
@@ -2757,8 +2884,16 @@ msgid "Remove from Album"
 msgstr "Odebrat z alba"
 
 #: src/page/library/import.vue:46
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Odstranit importované soubory pro ušetření úložného prostoru. Nepodporované typy souborů odstraněny nikdy nebudou, zůstanou ve svém aktuálním umístění."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Odstranit importované soubory pro ušetření úložného prostoru. Nepodporované "
+"typy souborů odstraněny nikdy nebudou, zůstanou ve svém aktuálním umístění."
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
+msgstr "Opakované"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -2769,8 +2904,12 @@ msgid "Request failed - invalid response"
 msgstr "Požadavek selhal - neplatná odpověď"
 
 #: src/page/settings/content.vue:25
-msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr "Požadavek na kontrolu nefotografických a nekvalitních obrázků před jejich zobrazením ve výsledcích vyhledávání."
+msgid ""
+"Require non-photographic and low-quality images to be reviewed before they "
+"appear in search results."
+msgstr ""
+"Požadavek na kontrolu nefotografických a nekvalitních obrázků před jejich "
+"zobrazením ve výsledcích vyhledávání."
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
 msgid "Resolution"
@@ -2863,8 +3002,12 @@ msgid "Scan"
 msgstr "Sken"
 
 #: src/component/settings/passcode.vue:86
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr "Naskenujte QR kód pomocí své ověřovací aplikace nebo použijte klíč nastavení uvedený níže a poté zadejte vygenerovaný ověřovací kód:"
+msgid ""
+"Scan the QR code with your authenticator app or use the setup key shown "
+"below and then enter the generated verification code:"
+msgstr ""
+"Naskenujte QR kód pomocí své ověřovací aplikace nebo použijte klíč nastavení "
+"uvedený níže a poté zadejte vygenerovaný ověřovací kód:"
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
 #: src/component/navigation.vue:125 src/component/navigation.vue:131
@@ -2878,12 +3021,13 @@ msgstr "Skeny"
 msgid "Scope"
 msgstr "Oblast působnosti"
 
-#: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:63 src/component/navigation.vue:122
-#: src/component/navigation.vue:903 src/component/photo/toolbar.vue:35
-#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
-#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
-#: src/page/places.vue:33 src/page/settings/content.vue:131
+#: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
+#: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
+#: src/component/navigation.vue:122 src/component/navigation.vue:903
+#: src/component/photo/toolbar.vue:35 src/options/options.js:201
+#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
+#: src/page/people/recognized.vue:15 src/page/places.vue:33
+#: src/page/settings/content.vue:131
 msgid "Search"
 msgstr "Vyhledat"
 
@@ -2968,7 +3112,7 @@ msgstr "Relace"
 msgid "Session ID"
 msgstr "ID relace"
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr "Relace"
 
@@ -2998,6 +3142,10 @@ msgstr "Nastavení uloženo"
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
 msgstr "Prvotní nastavení"
+
+#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+msgid "Severity"
+msgstr "Závažnost"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3094,7 +3242,8 @@ msgstr "Některá alba nebylo možné zkopírovat"
 
 #: src/component/photo/album/dialog.vue:188
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr "Některá alba nebylo možné vytvořit. Upravte prosím názvy a zkuste to znovu."
+msgstr ""
+"Některá alba nebylo možné vytvořit. Upravte prosím názvy a zkuste to znovu."
 
 #: src/component/file/clipboard.vue:136 src/component/label/clipboard.vue:138
 #: src/component/people/clipboard.vue:132 src/component/photo/clipboard.vue:354
@@ -3146,11 +3295,17 @@ msgstr "Stohovat"
 
 #: src/page/settings/content.vue:99
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Stohovat soubory, které sdílí stejný jedinečný snímek nebo identifikátor instance."
+msgstr ""
+"Stohovat soubory, které sdílí stejný jedinečný snímek nebo identifikátor "
+"instance."
 
 #: src/page/settings/content.vue:84
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Stohovat snímky pořízené ve stejnou chvíli a ve stejné lokalitě na základě jejich metadat."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Stohovat snímky pořízené ve stejnou chvíli a ve stejné lokalitě na základě "
+"jejich metadat."
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
 msgid "Stackable"
@@ -3220,7 +3375,8 @@ msgid "Super Admin"
 msgstr "Super administrátor"
 
 #: src/component/service/add.vue:64
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "Podpora dalších služeb, jako Google Disk, budou postupně přidávány."
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
@@ -3246,8 +3402,12 @@ msgid "Teal"
 msgstr "Šedozelená"
 
 #: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow je nutný pro klasifikaci obrázků, rozpoznávání obličejů a detekci nebezpečného obsahu."
+msgid ""
+"TensorFlow is required for image classification, facial recognition, and "
+"detecting unsafe content."
+msgstr ""
+"TensorFlow je nutný pro klasifikaci obrázků, rozpoznávání obličejů a detekci "
+"nebezpečného obsahu."
 
 #: src/options/options.js:266
 msgid "Terrain"
@@ -3266,16 +3426,24 @@ msgid "Thank You for Your Support!"
 msgstr "Děkujeme za vaši podporu!"
 
 #: src/page/about/about.vue:34
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "Proto byl PhotoPrism od základu vytvořen tak, aby fungoval všude, kde ho potřebujete, aniž by byla ohrožena svoboda, soukromí nebo funkčnost."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"Proto byl PhotoPrism od základu vytvořen tak, aby fungoval všude, kde ho "
+"potřebujete, aniž by byla ohrožena svoboda, soukromí nebo funkčnost."
 
 #: src/page/library/index.vue:84
 msgid "The index currently contains %{n} hidden files."
 msgstr "Index aktuálně obsahuje %{n} skrytých souborů."
 
 #: src/page/library/index.vue:86
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Jejich formát nemusí být podporován, nebyly dosud převedeny do JPEG nebo existují duplikáty."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Jejich formát nemusí být podporován, nebyly dosud převedeny do JPEG nebo "
+"existují duplikáty."
 
 #: src/page/settings/general.vue:25
 msgid "Theme"
@@ -3289,13 +3457,28 @@ msgid "This field is required"
 msgstr "Toto pole je povinné"
 
 #: src/component/settings/webdav.vue:57
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Toto nastaví složku originálů jako síťový disk a umožní vám otevírat, upravovat a mazat soubory prostřednictvím vašeho počítače nebo telefonu jako by byly lokálně."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Toto nastaví složku originálů jako síťový disk a umožní vám otevírat, "
+"upravovat a mazat soubory prostřednictvím vašeho počítače nebo telefonu jako "
+"by byly lokálně."
 
 #: src/page/settings/services.vue:85
-#, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Toto nastaví složku originálů jako síťový disk a umožní vám otevírat, upravovat a mazat soubory prostřednictvím vašeho počítače nebo telefonu jako by byly lokálně."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local. "
+msgstr ""
+"Toto nastaví složku originálů jako síťový disk a umožní vám otevírat, "
+"upravovat a mazat soubory prostřednictvím vašeho počítače nebo telefonu jako "
+"by byly lokálně."
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
+msgstr "Čas"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"
@@ -3327,20 +3510,37 @@ msgid "to"
 msgstr "do"
 
 #: src/component/settings/passcode.vue:160
-msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "Abyste se vyhnuli uzamčení svého účtu, stáhněte si, vytiskněte nebo zkopírujte tento kód pro obnovení a uschovejte jej na bezpečném místě."
+msgid ""
+"To avoid being locked out of your account, please download, print or copy "
+"this recovery code now and keep it in a safe place."
+msgstr ""
+"Abyste se vyhnuli uzamčení svého účtu, stáhněte si, vytiskněte nebo "
+"zkopírujte tento kód pro obnovení a uschovejte jej na bezpečném místě."
 
 #: src/component/settings/apps.vue:122
-msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "Chcete-li vygenerovat nové heslo pro konkrétní aplikaci, zadejte název a rozsah oprávnění aplikace a vyberte datum vypršení platnosti:"
+msgid ""
+"To generate a new app-specific password, please enter the name and "
+"authorization scope of the application and select an expiration date:"
+msgstr ""
+"Chcete-li vygenerovat nové heslo pro konkrétní aplikaci, zadejte název a "
+"rozsah oprávnění aplikace a vyberte datum vypršení platnosti:"
 
 #: src/component/settings/passcode.vue:203
-msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr "Chcete-li přepnout na novou ověřovací aplikaci nebo zařízení, nejprve deaktivujte dvoufaktorové ověřování a poté jej znovu aktivujte:"
+msgid ""
+"To switch to a new authenticator app or device, first deactivate two-factor "
+"authentication and then reactivate it:"
+msgstr ""
+"Chcete-li přepnout na novou ověřovací aplikaci nebo zařízení, nejprve "
+"deaktivujte dvoufaktorové ověřování a poté jej znovu aktivujte:"
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "Chcete-li provést aktualizaci, můžete zadat aktivační kód nebo se zaregistrovat kliknutím na tlačítko \"Registrovat\" na našich webových stránkách:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"Chcete-li provést aktualizaci, můžete zadat aktivační kód nebo se "
+"zaregistrovat kliknutím na tlačítko \"Registrovat\" na našich webových "
+"stránkách:"
 
 #: src/locales.js:263
 msgid "Today"
@@ -3535,8 +3735,12 @@ msgid "Use Presets"
 msgstr "Použít předvolby"
 
 #: src/component/settings/passcode.vue:138
-msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "Pokud se vám nedaří vygenerovat platný ověřovací kód pomocí aplikace pro ověřování, použijte pro přístup k účtu následující kód pro obnovení:"
+msgid ""
+"Use the following recovery code to access your account when you are unable "
+"to generate a valid verification code with your authenticator app:"
+msgstr ""
+"Pokud se vám nedaří vygenerovat platný ověřovací kód pomocí aplikace pro "
+"ověřování, použijte pro přístup k účtu následující kód pro obnovení:"
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
 #: src/page/auth/login.vue:47 src/page/auth/login.vue:48
@@ -3660,9 +3864,12 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV klienti se mohou k PhotoPrism připojit pomocí následující URL:"
 
 #: src/page/settings/services.vue:80
-#, fuzzy
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "WebDAC klienti, jako Microsoftí Windows Exporer nebo Applovský Finder, se mohou k PhotoPrism připojit přímo."
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism. "
+msgstr ""
+"WebDAC klienti, jako Microsoftí Windows Exporer nebo Applovský Finder, se "
+"mohou k PhotoPrism připojit přímo."
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
 msgid "WebDAV Upload"
@@ -3720,8 +3927,12 @@ msgstr "Ano"
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "V případě dotazů týkajících se vašeho členství nás můžete kontaktovat na adrese membership@photoprism.app."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"V případě dotazů týkajících se vašeho členství nás můžete kontaktovat na "
+"adrese membership@photoprism.app."
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
 msgid "You can only download one album"
@@ -3732,7 +3943,9 @@ msgid "You can only download one label"
 msgstr "Stáhnout lze pouze jeden štítek"
 
 #: src/component/location/dialog.vue:101
-msgid "You can search for a location or move the marker on the map to change the position:"
+msgid ""
+"You can search for a location or move the marker on the map to change the "
+"position:"
 msgstr "Můžete vyhledat místo nebo přesunout značku na mapě a změnit polohu:"
 
 #: src/component/upload/dialog.vue:97
@@ -3758,12 +3971,20 @@ msgstr "Váš prohlížeč nepodporuje WebGL"
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Vaše trvalá podpora nám pomáhá poskytovat pravidelné aktualizace a zůstat nezávislými, abychom mohli plnit naše poslání a chránit vaše soukromí."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Vaše trvalá podpora nám pomáhá poskytovat pravidelné aktualizace a zůstat "
+"nezávislými, abychom mohli plnit naše poslání a chránit vaše soukromí."
 
 #: src/page/albums.vue:182
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alba zvláštních okamžiků, výletů a míst."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Vaše knihovna je průběžně analyzována a automaticky vytváří alba zvláštních "
+"okamžiků, výletů a míst."
 
 #: src/component/lightbox.vue:434
 msgid "Zoom in/out"
@@ -3915,8 +4136,12 @@ msgstr "Archivovat"
 #~ msgid "close"
 #~ msgstr "zavřít"
 
-#~ msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-#~ msgstr "Stohuje seskupené soubory s podobným referenčním rámcem, ale odlišné kvality, formátu, velikosti nebo barvy."
+#~ msgid ""
+#~ "Stacks group files with a similar frame of reference, but differences of "
+#~ "quality, format, size or color."
+#~ msgstr ""
+#~ "Stohuje seskupené soubory s podobným referenčním rámcem, ale odlišné "
+#~ "kvality, formátu, velikosti nebo barvy."
 
 #~ msgid "URL"
 #~ msgstr "URL"
@@ -3931,7 +4156,8 @@ msgstr "Archivovat"
 #~ msgstr "Vyberte si album nebo vytvořte nové"
 
 #~ msgid "Press \"Browse\" to select the files to upload…"
-#~ msgstr "Stisknutím tlačítka \"Procházet\" vyberte soubory, které chcete nahrát…"
+#~ msgstr ""
+#~ "Stisknutím tlačítka \"Procházet\" vyberte soubory, které chcete nahrát…"
 
 #~ msgid "Failed copying to clipboard"
 #~ msgstr "Kopírování do schránky selhalo"
@@ -3966,8 +4192,12 @@ msgstr "Archivovat"
 #~ msgid "No video selected"
 #~ msgstr "Není vybráno žádné video"
 
-#~ msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-#~ msgstr "Automatické vytváření miniatur souborů, které nelze jinak indexovat nebo zobrazit."
+#~ msgid ""
+#~ "Automatically generate thumbnails for files that cannot otherwise be "
+#~ "indexed or viewed."
+#~ msgstr ""
+#~ "Automatické vytváření miniatur souborů, které nelze jinak indexovat nebo "
+#~ "zobrazit."
 
 #~ msgid "Estimate the approximate location of pictures without coordinates."
 #~ msgstr "Odhadnout přibližné polohy obrázků bez souřadnic."
@@ -4005,8 +4235,12 @@ msgstr "Archivovat"
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Nahrát NSFW"
 
-#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-#~ msgstr "Povolit nahrávání, které by mohlo být urážlivé. Detekce nebezpečného obsahu vyžaduje TensorFlow."
+#~ msgid ""
+#~ "Pictures that might be offensive will otherwise be rejected when using "
+#~ "the web upload."
+#~ msgstr ""
+#~ "Povolit nahrávání, které by mohlo být urážlivé. Detekce nebezpečného "
+#~ "obsahu vyžaduje TensorFlow."
 
 #~ msgid "File Format Support"
 #~ msgstr "Podpora formátů souborů"
@@ -4018,16 +4252,23 @@ msgstr "Archivovat"
 #~ msgstr "Deaktivuje zpětné geokódování a mapy."
 
 #~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
-#~ msgstr "Nevytvářet soubory JSON nástroje ExifTool pro lepší extrakci metadat."
+#~ msgstr ""
+#~ "Nevytvářet soubory JSON nástroje ExifTool pro lepší extrakci metadat."
 
 #~ msgid "Don't modify originals folder. Disables import, upload, and delete."
-#~ msgstr "Neupravovat složku originálů. Deaktivuje importování, nahrávání a odstraňování."
+#~ msgstr ""
+#~ "Neupravovat složku originálů. Deaktivuje importování, nahrávání a "
+#~ "odstraňování."
 
 #~ msgid "Don't use TensorFlow for image classification."
 #~ msgstr "Nepoužívat TensorFlow pro klasifikaci obrazu."
 
-#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-#~ msgstr "Dynamické vykreslování vyžaduje výkonný server. Není doporučeno pro zařízení NAS."
+#~ msgid ""
+#~ "Dynamic rendering requires a powerful server. It is not recommended for "
+#~ "NAS devices."
+#~ msgstr ""
+#~ "Dynamické vykreslování vyžaduje výkonný server. Není doporučeno pro "
+#~ "zařízení NAS."
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Zobrazí podrobnější zprávy protokolu. Vyžaduje restart."
@@ -4035,8 +4276,12 @@ msgstr "Archivovat"
 #~ msgid "Thumbnail Generation"
 #~ msgstr "Vytváření miniatur"
 
-#~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-#~ msgstr "Nemáte přístup k autentizační aplikaci nebo zařízení pro ověřováni? Zadejte obnovovací kód nebo požádejte o pomoc."
+#~ msgid ""
+#~ "Can't access your authenticator app or device? Enter your recovery code "
+#~ "or ask for assistance."
+#~ msgstr ""
+#~ "Nemáte přístup k autentizační aplikaci nebo zařízení pro ověřováni? "
+#~ "Zadejte obnovovací kód nebo požádejte o pomoc."
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Nezálohovat metadata fotografií a alb do souborů YAML."
@@ -4045,22 +4290,32 @@ msgstr "Archivovat"
 #~ msgstr "providerName"
 
 #~ msgid ""
-#~ "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+#~ "This mounts the originals folder as a network drive and allows you to "
+#~ "open, edit, and delete files\n"
 #~ "          from your computer or smartphone as if they were local."
-#~ msgstr "Toto nastaví složku originálů jako síťový disk a umožní vám otevírat, upravovat a mazat soubory prostřednictvím vašeho počítače nebo telefonu jako by byli lokálně."
+#~ msgstr ""
+#~ "Toto nastaví složku originálů jako síťový disk a umožní vám otevírat, "
+#~ "upravovat a mazat soubory prostřednictvím vašeho počítače nebo telefonu "
+#~ "jako by byli lokálně."
 
 #~ msgid ""
-#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+#~ "connect directly to\n"
 #~ "          PhotoPrism."
 #~ msgstr ""
-#~ "Klienti WebDAV, jako je Průzkumník Windows od společnosti Microsoft nebo Finder od společnosti Apple, se mohou připojit přímo k aplikaci\n"
+#~ "Klienti WebDAV, jako je Průzkumník Windows od společnosti Microsoft nebo "
+#~ "Finder od společnosti Apple, se mohou připojit přímo k aplikaci\n"
 #~ "          PhotoPrism."
 
 #~ msgid "Basic"
 #~ msgstr "Základní"
 
-#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-#~ msgstr "Automaticky vytvořit JPEG pro ostatní typy souborů, aby mohly být zobrazeny v prohlížeči."
+#~ msgid ""
+#~ "Automatically create JPEGs for other file types so that they can be "
+#~ "displayed in a browser."
+#~ msgstr ""
+#~ "Automaticky vytvořit JPEG pro ostatní typy souborů, aby mohly být "
+#~ "zobrazeny v prohlížeči."
 
 #~ msgid "Convert to JPEG"
 #~ msgstr "Převést do JPEG"
@@ -4069,10 +4324,16 @@ msgstr "Archivovat"
 #~ msgstr "Vyhrazujeme si právo je automaticky smazat."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
-#~ msgstr "Dávejte prosím pozor, abyste nenahrávali žádný soukromý nebo urážlivý obsah."
+#~ msgstr ""
+#~ "Dávejte prosím pozor, abyste nenahrávali žádný soukromý nebo urážlivý "
+#~ "obsah."
 
-#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
-#~ msgstr "Na tuto veřejnou ukázku můžete nahrávat soubory, k nimž vlastníte autorská práva."
+#~ msgid ""
+#~ "You are welcome to upload files to this public demo for which you own the "
+#~ "copyright."
+#~ msgstr ""
+#~ "Na tuto veřejnou ukázku můžete nahrávat soubory, k nimž vlastníte "
+#~ "autorská práva."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "Nesmíte nahrát více než %{n} souborů."
@@ -4098,23 +4359,42 @@ msgstr "Archivovat"
 #~ msgid "Not Found"
 #~ msgstr "Nenalezeno"
 
-#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-#~ msgstr "Protože nám to pomáhá poskytovat veřejnosti více funkcí, vyzýváme všechny uživatele, aby podpořili naše poslání."
+#~ msgid ""
+#~ "As this helps us provide more features to the public, we encourage all "
+#~ "users to support our mission."
+#~ msgstr ""
+#~ "Protože nám to pomáhá poskytovat veřejnosti více funkcí, vyzýváme všechny "
+#~ "uživatele, aby podpořili naše poslání."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "Často kladené otázky"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-#~ msgstr "Náš tým o tom rozhoduje průběžně v závislosti na náročnosti podpory, nákladech na server a licence a na tom, zda jsou funkce obecně potřebné pro všechny, nebo je požadují hlavně organizace a pokročilí uživatelé."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users."
+#~ msgstr ""
+#~ "Náš tým o tom rozhoduje průběžně v závislosti na náročnosti podpory, "
+#~ "nákladech na server a licence a na tom, zda jsou funkce obecně potřebné "
+#~ "pro všechny, nebo je požadují hlavně organizace a pokročilí uživatelé."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "Jaké funkce jsou obecně dostupné?"
 
-#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "Je na vašem rozhodnutí, zda se chcete zaregistrovat a využívat další výhody."
+#~ msgid ""
+#~ "It is your decision whether you want to sign up to enjoy additional "
+#~ "benefits."
+#~ msgstr ""
+#~ "Je na vašem rozhodnutí, zda se chcete zaregistrovat a využívat další "
+#~ "výhody."
 
-#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-#~ msgstr "Dobrovolné dary nepokryjí náklady na tým, který pracuje na plný úvazek a poskytuje vám aktualizace, dokumentaci a podporu."
+#~ msgid ""
+#~ "Voluntary donations do not cover the cost of a team working full time to "
+#~ "provide you with updates, documentation, and support."
+#~ msgstr ""
+#~ "Dobrovolné dary nepokryjí náklady na tým, který pracuje na plný úvazek a "
+#~ "poskytuje vám aktualizace, dokumentaci a podporu."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Proč jsou některé funkce dostupné pouze sponzorům?"
@@ -4125,35 +4405,69 @@ msgstr "Archivovat"
 #~ msgid "Proceed"
 #~ msgstr "Postupujte podle"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-#~ msgstr "Chcete-li provést aktualizaci, můžete zadat aktivační kód nebo kliknout na tlačítko \"Pokračovat\" a zaregistrovat se na našich webových stránkách:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on "
+#~ "\"Proceed\" to sign up on our website:"
+#~ msgstr ""
+#~ "Chcete-li provést aktualizaci, můžete zadat aktivační kód nebo kliknout "
+#~ "na tlačítko \"Pokračovat\" a zaregistrovat se na našich webových "
+#~ "stránkách:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Něco se pokazilo, jste offline?"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "Ve společnosti PhotoPrism věříme, že každý okamžik zachycený na fotografii je vzácný, a naším posláním je umožnit lidem, aby si tyto okamžiky uchovali pro další generace."
+#~ msgid ""
+#~ "At PhotoPrism, we believe that every moment captured through a photograph "
+#~ "is precious, and our mission is to enable people to cherish those moments "
+#~ "for generations to come."
+#~ msgstr ""
+#~ "Ve společnosti PhotoPrism věříme, že každý okamžik zachycený na "
+#~ "fotografii je vzácný, a naším posláním je umožnit lidem, aby si tyto "
+#~ "okamžiky uchovali pro další generace."
 
-#~ msgid "Become a member today to enjoy additional features and support our mission!"
-#~ msgstr "Staňte se členem ještě dnes a využívejte další funkce a podpořte naše poslání!"
+#~ msgid ""
+#~ "Become a member today to enjoy additional features and support our "
+#~ "mission!"
+#~ msgstr ""
+#~ "Staňte se členem ještě dnes a využívejte další funkce a podpořte naše "
+#~ "poslání!"
 
-#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr "V případě jakýchkoli dotazů nás kontaktujte na adrese hello@photoprism.app."
+#~ msgid ""
+#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr ""
+#~ "V případě jakýchkoli dotazů nás kontaktujte na adrese "
+#~ "hello@photoprism.app."
 
-#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
-#~ msgstr "V případě dotazů týkajících se vašeho členství nás neváhejte kontaktovat na adrese membership@photoprism.app."
+#~ msgid ""
+#~ "Feel free to contact us at membership@photoprism.app for questions "
+#~ "regarding your membership."
+#~ msgstr ""
+#~ "V případě dotazů týkajících se vašeho členství nás neváhejte kontaktovat "
+#~ "na adrese membership@photoprism.app."
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Došlo k chybě - jste offline?"
 
-#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-#~ msgstr "Před odesláním žádosti o podporu použijte naše kontrolní seznamy pro řešení problémů, abyste zjistili příčinu problému."
+#~ msgid ""
+#~ "Before submitting a support request, please use our Troubleshooting "
+#~ "Checklists to determine the cause of your problem."
+#~ msgstr ""
+#~ "Před odesláním žádosti o podporu použijte naše kontrolní seznamy pro "
+#~ "řešení problémů, abyste zjistili příčinu problému."
 
-#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-#~ msgstr "Podrobné informace o konkrétních funkcích produktu, službách a souvisejících zdrojích najdete ve znalostní databázi."
+#~ msgid ""
+#~ "Browse the Knowledge Base for detailed information on specific product "
+#~ "features, services, and related resources."
+#~ msgstr ""
+#~ "Podrobné informace o konkrétních funkcích produktu, službách a "
+#~ "souvisejících zdrojích najdete ve znalostní databázi."
 
-#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-#~ msgstr "Běžné problémy lze rychle diagnostikovat a vyřešit pomocí kontrolních seznamů pro řešení problémů, které poskytujeme."
+#~ msgid ""
+#~ "Common issues can be quickly diagnosed and solved using the "
+#~ "troubleshooting checklists we provide."
+#~ msgstr ""
+#~ "Běžné problémy lze rychle diagnostikovat a vyřešit pomocí kontrolních "
+#~ "seznamů pro řešení problémů, které poskytujeme."
 
 #~ msgid "Getting Support"
 #~ msgstr "Získání podpory"
@@ -4162,7 +4476,9 @@ msgstr "Archivovat"
 #~ msgstr "Pokud vám toto nepomůže nebo máte další otázky:"
 
 #~ msgid "In addition, sponsors receive direct technical support via email."
-#~ msgstr "Sponzoři navíc dostávají přímou technickou podporu prostřednictvím e-mailu."
+#~ msgstr ""
+#~ "Sponzoři navíc dostávají přímou technickou podporu prostřednictvím e-"
+#~ "mailu."
 
 #~ msgid "Knowledge Base"
 #~ msgstr "Znalostní databáze"
@@ -4173,8 +4489,12 @@ msgstr "Archivovat"
 #~ msgid "or ask in our Community Chat"
 #~ msgstr "nebo se zeptejte v našem komunitním chatu"
 
-#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-#~ msgstr "Naše uživatelská příručka se zabývá také mnoha pokročilými tématy, jako je migrace z aplikace Fotky Google a nastavení kvality miniatur."
+#~ msgid ""
+#~ "Our User Guide also covers many advanced topics, such as migrating from "
+#~ "Google Photos and thumbnail quality settings."
+#~ msgstr ""
+#~ "Naše uživatelská příručka se zabývá také mnoha pokročilými tématy, jako "
+#~ "je migrace z aplikace Fotky Google a nastavení kvality miniatur."
 
 #~ msgid "post your question in GitHub Discussions"
 #~ msgstr "položte svůj dotaz v diskuzích na GitHubu"
@@ -4182,11 +4502,19 @@ msgstr "Archivovat"
 #~ msgid "Read the Docs"
 #~ msgstr "Přečtěte si dokumenty"
 
-#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-#~ msgstr "Navštivte stránku docs.photoprism.app/user-guide, kde se dozvíte, jak synchronizovat, organizovat a sdílet své fotografie."
+#~ msgid ""
+#~ "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+#~ "share your pictures."
+#~ msgstr ""
+#~ "Navštivte stránku docs.photoprism.app/user-guide, kde se dozvíte, jak "
+#~ "synchronizovat, organizovat a sdílet své fotografie."
 
-#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-#~ msgstr "Budeme se snažit odpovědět na všechny vaše otázky. Na oplátku vás prosíme, abyste nás podpořili na Patreonu nebo GitHubu."
+#~ msgid ""
+#~ "We'll do our best to answer all your questions. In return, we ask you to "
+#~ "back us on Patreon or GitHub Sponsors."
+#~ msgstr ""
+#~ "Budeme se snažit odpovědět na všechny vaše otázky. Na oplátku vás "
+#~ "prosíme, abyste nás podpořili na Patreonu nebo GitHubu."
 
 #~ msgid "you are welcome to join us on Reddit"
 #~ msgstr "můžete se k nám připojit na Redditu"
@@ -4239,11 +4567,16 @@ msgstr "Archivovat"
 #~ msgid "Connect Customer Account"
 #~ msgstr "Připojení zákaznického účtu"
 
-#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-#~ msgstr "Využívá nejnovější technologie k automatickému označování a vyhledávání obrázků, aniž by vám překážel."
+#~ msgid ""
+#~ "It makes use of the latest technologies to tag and find pictures "
+#~ "automatically without getting in your way."
+#~ msgstr ""
+#~ "Využívá nejnovější technologie k automatickému označování a vyhledávání "
+#~ "obrázků, aniž by vám překážel."
 
 #~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-#~ msgstr "PhotoPrism® je aplikace pro decentralizovaný web s umělou inteligencí."
+#~ msgstr ""
+#~ "PhotoPrism® je aplikace pro decentralizovaný web s umělou inteligencí."
 
 #~ msgid "Uploader"
 #~ msgstr "Nahrávač"
@@ -4254,8 +4587,12 @@ msgstr "Archivovat"
 #~ msgid "Downloads"
 #~ msgstr "Ke stažení na"
 
-#~ msgid "Download only original media files, without any automatically generated sidecar files."
-#~ msgstr "Stahujte pouze originální mediální soubory bez automaticky generovaných vedlejších souborů."
+#~ msgid ""
+#~ "Download only original media files, without any automatically generated "
+#~ "sidecar files."
+#~ msgstr ""
+#~ "Stahujte pouze originální mediální soubory bez automaticky generovaných "
+#~ "vedlejších souborů."
 
 #~ msgid "Web Login "
 #~ msgstr "Webové přihlášení "
@@ -4275,20 +4612,50 @@ msgstr "Archivovat"
 #~ msgid "RAW Conversion"
 #~ msgstr "Převod RAW formátu"
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr "Staňte se sponzorem ještě dnes, podpořte naše poslání a využívejte naše členské výhody!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr ""
+#~ "Staňte se sponzorem ještě dnes, podpořte naše poslání a využívejte naše "
+#~ "členské výhody!"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Náš tým to průběžně vyhodnocuje v závislosti na náročnosti podpory, kterou funkce vyžadují, na nákladech, které pro nás představují, a na tom, zda je obecně potřebují všichni, nebo zda o ně žádají hlavně organizace a pokročilí uživatelé. Protože nám to umožňuje poskytovat více funkcí veřejnosti, vyzýváme všechny uživatele, aby podpořili naše poslání."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Náš tým to průběžně vyhodnocuje v závislosti na náročnosti podpory, "
+#~ "kterou funkce vyžadují, na nákladech, které pro nás představují, a na "
+#~ "tom, zda je obecně potřebují všichni, nebo zda o ně žádají hlavně "
+#~ "organizace a pokročilí uživatelé. Protože nám to umožňuje poskytovat více "
+#~ "funkcí veřejnosti, vyzýváme všechny uživatele, aby podpořili naše poslání."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "Společnost PhotoPrism je 100% financována z vlastních zdrojů. Dobrovolné dary nepokryjí náklady na tým pracující na plný úvazek, který by vám poskytoval aktualizace, dokumentaci a podporu. Je na vašem rozhodnutí, zda se chcete zaregistrovat a využívat další výhody."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "Společnost PhotoPrism je 100% financována z vlastních zdrojů. Dobrovolné "
+#~ "dary nepokryjí náklady na tým pracující na plný úvazek, který by vám "
+#~ "poskytoval aktualizace, dokumentaci a podporu. Je na vašem rozhodnutí, "
+#~ "zda se chcete zaregistrovat a využívat další výhody."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Neměl by být svobodný software bez nákladů?"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "O \"svobodném softwaru\" přemýšlejte jako o \"svobodě projevu\", ne jako o \"svobodném pivu\". Nadace pro svobodný software jej někdy nazývá \"libre software\", přičemž si vypůjčila francouzský nebo španělský výraz pro \"free\" ve smyslu svoboda, aby dala najevo, že tím nemyslí, že software je zdarma."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "O \"svobodném softwaru\" přemýšlejte jako o \"svobodě projevu\", ne jako "
+#~ "o \"svobodném pivu\". Nadace pro svobodný software jej někdy nazývá "
+#~ "\"libre software\", přičemž si vypůjčila francouzský nebo španělský výraz "
+#~ "pro \"free\" ve smyslu svoboda, aby dala najevo, že tím nemyslí, že "
+#~ "software je zdarma."
 
 #~ msgid "Moonlight"
 #~ msgstr "Moonlight"
@@ -4299,11 +4666,19 @@ msgstr "Archivovat"
 #~ msgid "Sign Up"
 #~ msgstr "Registrace"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "Chcete-li provést upgrade, můžete zadat aktivační kód nebo kliknout na \"Zaregistrovat se\" a provést upgrade na našich webových stránkách:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "Chcete-li provést upgrade, můžete zadat aktivační kód nebo kliknout na "
+#~ "\"Zaregistrovat se\" a provést upgrade na našich webových stránkách:"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "Chcete-li provést upgrade, můžete zadat aktivační kód nebo kliknout na \"Zaregistrovat se\" a provést upgrade na našich webových stránkách:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "Chcete-li provést upgrade, můžete zadat aktivační kód nebo kliknout na "
+#~ "\"Zaregistrovat se\" a provést upgrade na našich webových stránkách:"
 
 #~ msgid "Sign up"
 #~ msgstr "Registrace"
@@ -4311,11 +4686,26 @@ msgstr "Archivovat"
 #~ msgid "Compare Features"
 #~ msgstr "Porovnání funkcí"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Náš tým to průběžně vyhodnocuje v závislosti na tom, jaké nároky na podporu funkce a možnosti konfigurace způsobují nebo v minulosti způsobovaly a zda jsou obecně potřebné pro všechny nebo je požadují hlavně organizace a pokročilí uživatelé. Protože nám to umožňuje zpřístupnit více funkcí veřejnosti, vyzýváme všechny uživatele, aby podpořili naše poslání."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Náš tým to průběžně vyhodnocuje v závislosti na tom, jaké nároky na "
+#~ "podporu funkce a možnosti konfigurace způsobují nebo v minulosti "
+#~ "způsobovaly a zda jsou obecně potřebné pro všechny nebo je požadují "
+#~ "hlavně organizace a pokročilí uživatelé. Protože nám to umožňuje "
+#~ "zpřístupnit více funkcí veřejnosti, vyzýváme všechny uživatele, aby "
+#~ "podpořili naše poslání."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "Pokud se vám tento projekt líbí, zanechte na GitHubu hvězdičku. Poskytuje nám to další motivaci pokračovat."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "Pokud se vám tento projekt líbí, zanechte na GitHubu hvězdičku. Poskytuje "
+#~ "nám to další motivaci pokračovat."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Staňte se sponzorem"
@@ -4323,17 +4713,34 @@ msgstr "Archivovat"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Jsem sponzor"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "Sponzoři získají přístup k dalším funkcím, dostanou přímou technickou podporu e-mailem a mohou se připojit k naší soukromé chatovací místnosti na matrix.org."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "Sponzoři získají přístup k dalším funkcím, dostanou přímou technickou "
+#~ "podporu e-mailem a mohou se připojit k naší soukromé chatovací místnosti "
+#~ "na matrix.org."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-#~ msgstr "Jedná se o předčasně zpřístupněnou funkci, která je poděkováním našim sponzorům a přispěvatelům."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
+#~ msgstr ""
+#~ "Jedná se o předčasně zpřístupněnou funkci, která je poděkováním našim "
+#~ "sponzorům a přispěvatelům."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "Dáme vám vědět, jak ji povolit, když se zaregistrujete na Patreonu nebo GitHubu Sponzoři."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "Dáme vám vědět, jak ji povolit, když se zaregistrujete na Patreonu nebo "
+#~ "GitHubu Sponzoři."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "Vaše trvalá podpora nám pomáhá financovat provozní náklady, poskytovat služby, jako jsou satelitní mapy, a vyvíjet nové funkce."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "Vaše trvalá podpora nám pomáhá financovat provozní náklady, poskytovat "
+#~ "služby, jako jsou satelitní mapy, a vyvíjet nové funkce."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -4397,8 +4804,11 @@ msgstr "Archivovat"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Selhání při importování nahraných souborů"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "Poznámka: Aktualizace hesla neodebere přístup již ověřeným uživatelům."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "Poznámka: Aktualizace hesla neodebere přístup již ověřeným uživatelům."
 
 #~ msgid "Play"
 #~ msgstr "Přehrát"
@@ -4412,8 +4822,12 @@ msgstr "Archivovat"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Zobrazit Knihovnu v navigačním menu."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Plán ukazuje, jaké úkoly se provádějí, co je třeba otestovat a které požadavky na funkce budou implementovány jako další."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Plán ukazuje, jaké úkoly se provádějí, co je třeba otestovat a které "
+#~ "požadavky na funkce budou implementovány jako další."
 
 #~ msgid "Your message has been sent"
 #~ msgstr "Zpráva byla odeslána"
@@ -4496,17 +4910,26 @@ msgstr "Archivovat"
 #~ msgid "Spanish"
 #~ msgstr "Španělština"
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "Pokud se vám PhotoPrism líbí, zvažte prosím, zda nás podpořit na Patreonu nebo na GitHubu."
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "Pokud se vám PhotoPrism líbí, zvažte prosím, zda nás podpořit na Patreonu "
+#~ "nebo na GitHubu."
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
-#~ msgstr "Dejte nám vědět, když nějaký nápad omylem označíme jako nefinancovatelný."
+#~ msgstr ""
+#~ "Dejte nám vědět, když nějaký nápad omylem označíme jako nefinancovatelný."
 
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 #~ msgstr "PhotoPrism® je registrovaná značka Michael Mayer."
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-#~ msgstr "Žádosti podpořené stříbrnými a zlatými sponzory obdrží zlatou nálepku a budou upřednostněny."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "Žádosti podpořené stříbrnými a zlatými sponzory obdrží zlatou nálepku a "
+#~ "budou upřednostněny."
 
 #~ msgid "Thank you very much!"
 #~ msgstr "Děkuji mnohokrát!"
@@ -4517,8 +4940,16 @@ msgstr "Archivovat"
 #~ msgid "Trademarks"
 #~ msgstr "Ochranné známky"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "Můžete jej podle potřeby použít k popisu našeho softwaru, spuštění vlastního serveru, pro vzdělávací účely, ale ne k nabízení komerčního zboží, produktů nebo služeb bez předchozího písemného souhlasu. Jinými slovy, zeptejte se."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "Můžete jej podle potřeby použít k popisu našeho softwaru, spuštění "
+#~ "vlastního serveru, pro vzdělávací účely, ale ne k nabízení komerčního "
+#~ "zboží, produktů nebo služeb bez předchozího písemného souhlasu. Jinými "
+#~ "slovy, zeptejte se."
 
 #~ msgid "%{n} results"
 #~ msgstr "%{n} výsledků"
@@ -4532,8 +4963,10 @@ msgstr "Archivovat"
 #~ msgid "Couldn't find recently edited"
 #~ msgstr "Nedávno upravené nenalezeno"
 
-#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
-#~ msgstr "Deaktivuje simultánní převod RAW souborů pro aplikaci předvoleb Darktable."
+#~ msgid ""
+#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgstr ""
+#~ "Deaktivuje simultánní převod RAW souborů pro aplikaci předvoleb Darktable."
 
 #~ msgid "Hide Private"
 #~ msgstr "Skrýt Soukromé"
@@ -4547,8 +4980,10 @@ msgstr "Archivovat"
 #~ msgid "Not implemented yet"
 #~ msgstr "Zatím neimplementováno"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
-#~ msgstr "Pamatujte, že originály lze také spravovat a opětovně indexovat ručně."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
+#~ msgstr ""
+#~ "Pamatujte, že originály lze také spravovat a opětovně indexovat ručně."
 
 #~ msgid "One result"
 #~ msgstr "Jeden výsledek"
@@ -4557,8 +4992,10 @@ msgstr "Archivovat"
 #~ msgstr "Vložte prosím své jméno a heslo:"
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "Their format may not be supported, they haven't been converted to JPEG "
+#~ "yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
-#~ "Jejich formát nemusí být podporován, nebyly dosud převedeny do formátu JPEG nebo existují.\n"
+#~ "Jejich formát nemusí být podporován, nebyly dosud převedeny do formátu "
+#~ "JPEG nebo existují.\n"
 #~ "            duplikáty."

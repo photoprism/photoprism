@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -141,7 +141,7 @@ msgstr "Scriosadh an cuntas"
 msgid "Account restored"
 msgstr "Cuntas athchóirithe"
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr "Cuntais"
 
@@ -186,6 +186,10 @@ msgstr "Gníomhachtaigh chun íslitheach a shórtáil."
 #: src/page/connect.vue:125 src/page/connect.vue:136
 msgid "Activation Code"
 msgstr "Cód gníomhachtúcháin"
+
+#: src/page/admin.vue:76
+msgid "Activity"
+msgstr "Gníomhaíocht"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -265,8 +269,13 @@ msgid "After 7 days"
 msgstr "Tar éis 7 lá"
 
 #: src/component/settings/passcode.vue:32
-msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr "Tar éis duit do phasfhocal a chur isteach lena dheimhniú, is féidir leat fíordheimhniú dhá fhachtóir a shocrú le haip nó gléas fíordheimhneora comhoiriúnach:"
+msgid ""
+"After entering your password for confirmation, you can set up two-factor "
+"authentication with a compatible authenticator app or device:"
+msgstr ""
+"Tar éis duit do phasfhocal a chur isteach lena dheimhniú, is féidir leat "
+"fíordheimhniú dhá fhachtóir a shocrú le haip nó gléas fíordheimhneora "
+"comhoiriúnach:"
 
 #: src/options/options.js:381
 msgid "After one month"
@@ -277,8 +286,12 @@ msgid "After one year"
 msgstr "Tar éis bliana amháin"
 
 #: src/page/albums.vue:175
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Tar éis duit pictiúir a roghnú ó thorthaí cuardaigh, is féidir leat iad a chur le halbam ag baint úsáide as an roghchlár comhthéacs."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Tar éis duit pictiúir a roghnú ó thorthaí cuardaigh, is féidir leat iad a "
+"chur le halbam ag baint úsáide as an roghchlár comhthéacs."
 
 #: src/options/options.js:382
 msgid "After two months"
@@ -373,8 +386,12 @@ msgid "All Years"
 msgstr "Gach Bliain"
 
 #: src/component/share/dialog.vue:133
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Nó, is féidir leat comhaid a uaslódáil go díreach chuig freastalaithe WebDAV cosúil le Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Nó, is féidir leat comhaid a uaslódáil go díreach chuig freastalaithe WebDAV "
+"cosúil le Nextcloud."
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
 msgid "Altitude"
@@ -410,7 +427,9 @@ msgstr "Beochana"
 
 #: src/component/share/dialog.vue:132
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Fanann aon ghrianghraif agus físeáin phríobháideacha príobháideach agus ní roinnfear iad."
+msgstr ""
+"Fanann aon ghrianghraif agus físeáin phríobháideacha príobháideach agus ní "
+"roinnfear iad."
 
 #: src/component/service/edit.vue:191
 msgid "API Key"
@@ -461,7 +480,8 @@ msgstr "An bhfuil tú cinnte gur mian leat an t-albam seo a scriosadh?"
 
 #: src/component/photo/clipboard.vue:167
 msgid "Are you sure you want to permanently delete these pictures?"
-msgstr "An bhfuil tú cinnte gur mhaith leat na pictiúir seo a scriosadh go buan?"
+msgstr ""
+"An bhfuil tú cinnte gur mhaith leat na pictiúir seo a scriosadh go buan?"
 
 #: src/component/file/delete/dialog.vue:12
 msgid "Are you sure you want to permanently delete this file?"
@@ -491,8 +511,7 @@ msgstr "Cóimheas Gné"
 msgid "Audio"
 msgstr "Fuaime"
 
-#: src/model/logs.js:173
-#, fuzzy
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr "Fuaime"
 
@@ -532,12 +551,21 @@ msgid "Batch"
 msgstr "Baisc"
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Bí i do bhall inniu, tacaigh lenár misean agus bain taitneamh as ár mbuntáistí ball!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Bí i do bhall inniu, tacaigh lenár misean agus bain taitneamh as ár "
+"mbuntáistí ball!"
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Agus sinn 100% féinmhaoinithe agus neamhspleách, is féidir linn geallúint a thabhairt duit nach ndíolfaimid do shonraí choíche agus go mbeimid trédhearcach i gcónaí maidir lenár mbogearraí agus ár seirbhísí."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Agus sinn 100% féinmhaoinithe agus neamhspleách, is féidir linn geallúint a "
+"thabhairt duit nach ndíolfaimid do shonraí choíche agus go mbeimid "
+"trédhearcach i gcónaí maidir lenár mbogearraí agus ár seirbhísí."
 
 #: src/component/user/edit/dialog.vue:151
 #: src/component/user/edit/dialog.vue:152 src/page/settings/account.vue:123
@@ -601,8 +629,13 @@ msgid "Busy, please wait…"
 msgstr "Gnóthach, fan go fóill…"
 
 #: src/page/connect.vue:198
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Trí úsáid a bhaint as na bogearraí agus na seirbhísí a chuirimid ar fáil, aontaíonn tú lenár dtéarmaí seirbhíse, ár mbeartas príobháideachta, agus ár gcód iompair."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Trí úsáid a bhaint as na bogearraí agus na seirbhísí a chuirimid ar fáil, "
+"aontaíonn tú lenár dtéarmaí seirbhíse, ár mbeartas príobháideachta, agus ár "
+"gcód iompair."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
 #: src/options/options.js:208 src/page/settings/general.vue:108
@@ -722,7 +755,9 @@ msgstr "Sábháladh na hathruithe"
 
 #: src/page/settings/advanced.vue:16
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr "Teastaíonn atosú chun athruithe a dhéanamh ar na hardsocruithe chun dul i bhfeidhm."
+msgstr ""
+"Teastaíonn atosú chun athruithe a dhéanamh ar na hardsocruithe chun dul i "
+"bhfeidhm."
 
 #: src/component/photo/edit/info.vue:230 src/component/photo/edit/info.vue:231
 msgid "Checked"
@@ -778,7 +813,7 @@ msgstr "Dún"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr ""
+msgstr "Braisle"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -940,7 +975,8 @@ msgstr "Cruthaigh comhaid YAML chun meiteashonraí albam a chúltaca."
 
 #: src/page/settings/advanced.vue:210
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "Cruthaigh comhaid taobhcharr YAML chun meiteashonraí pictiúir a chúltaca."
+msgstr ""
+"Cruthaigh comhaid taobhcharr YAML chun meiteashonraí pictiúir a chúltaca."
 
 #: src/page/admin/sessions.vue:191 src/component/photo/edit/info.vue:206
 #: src/component/photo/edit/info.vue:207
@@ -1026,7 +1062,8 @@ msgstr "Scrios gach rud?"
 
 #: src/page/library/index.vue:51
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "Scrios iontrálacha innéacs dílleachta, comhaid taobhcharr agus mionsamhlacha."
+msgstr ""
+"Scrios iontrálacha innéacs dílleachta, comhaid taobhcharr agus mionsamhlacha."
 
 #: src/component/album/edit/dialog.vue:56 src/page/albums.vue:291
 msgid "Description"
@@ -1058,8 +1095,11 @@ msgid "Disable ExifTool"
 msgstr "Díchumasaigh ExifTool"
 
 #: src/page/settings/advanced.vue:69
-msgid "Disable features that require write permission for the originals folder."
-msgstr "Díchumasaigh gnéithe a dteastaíonn cead scríofa uathu don fhillteán bunleagan."
+msgid ""
+"Disable features that require write permission for the originals folder."
+msgstr ""
+"Díchumasaigh gnéithe a dteastaíonn cead scríofa uathu don fhillteán "
+"bunleagan."
 
 #: src/page/settings/advanced.vue:430
 msgid "Disable FFmpeg"
@@ -1071,7 +1111,9 @@ msgstr "Díchumasaigh ImageMagick"
 
 #: src/page/settings/advanced.vue:117
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr "Díchumasaigh léarscáileanna idirghníomhacha an domhain agus geochódú droim ar ais."
+msgstr ""
+"Díchumasaigh léarscáileanna idirghníomhacha an domhain agus geochódú droim "
+"ar ais."
 
 #: src/page/settings/advanced.vue:116
 msgid "Disable Places"
@@ -1180,8 +1222,12 @@ msgid "Download"
 msgstr "Íosluchtaigh"
 
 #: src/page/settings/content.vue:194
-msgid "Download only original media files, without any automatically generated files."
-msgstr "Íoslódáil comhaid meán bunaidh amháin, gan aon chomhaid a ghintear go huathoibríoch."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"Íoslódáil comhaid meán bunaidh amháin, gan aon chomhaid a ghintear go "
+"huathoibríoch."
 
 #: src/component/service/edit.vue:117
 msgid "Download remote files"
@@ -1209,8 +1255,12 @@ msgid "Drag and drop files here"
 msgstr "Tarraing agus scaoil comhaid anseo"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Mar gheall ar an líon ard ríomhphost a fhaighimid, seans nach mbeidh ár bhfoireann in ann teagmháil a dhéanamh leat láithreach."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Mar gheall ar an líon ard ríomhphost a fhaighimid, seans nach mbeidh ár "
+"bhfoireann in ann teagmháil a dhéanamh leat láithreach."
 
 #: src/page/library/browse.vue:46
 msgid "Duplicates will be skipped and only appear once."
@@ -1264,8 +1314,11 @@ msgid "Email"
 msgstr "Ríomhphost"
 
 #: src/page/settings/advanced.vue:37
-msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "Cumasaigh mód dífhabhtaithe chun logaí breise a thaispeáint agus chun cabhrú le fabhtcheartaithe."
+msgid ""
+"Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+"Cumasaigh mód dífhabhtaithe chun logaí breise a thaispeáint agus chun cabhrú "
+"le fabhtcheartaithe."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1273,11 +1326,20 @@ msgstr "Cumasaigh gnéithe nua a d'fhéadfadh a bheith neamhiomlán nó éagobhs
 
 #: src/page/settings/advanced.vue:399
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Cumasaíonn sé réamhshocruithe tiontaire RAW. D'fhéadfadh sé feidhmíocht a laghdú."
+msgstr ""
+"Cumasaíonn sé réamhshocruithe tiontaire RAW. D'fhéadfadh sé feidhmíocht a "
+"laghdú."
 
 #: src/component/settings/passcode.vue:58
-msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "Má chumasaíonn tú fíordheimhniú dhá fhachtóir beidh cód fíorúcháin randamach de dhíth ort chun logáil isteach, mar sin fiú má fhaigheann duine éigin rochtain ar do phasfhocal, ní bheidh siad in ann rochtain a fháil ar do chuntas."
+msgid ""
+"Enabling two-factor authentication means that you will need a randomly "
+"generated verification code to log in, so even if someone gains access to "
+"your password, they will not be able to access your account."
+msgstr ""
+"Má chumasaíonn tú fíordheimhniú dhá fhachtóir beidh cód fíorúcháin randamach "
+"de dhíth ort chun logáil isteach, mar sin fiú má fhaigheann duine éigin "
+"rochtain ar do phasfhocal, ní bheidh siad in ann rochtain a fháil ar do "
+"chuntas."
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1297,7 +1359,8 @@ msgstr "Cuir isteach cód fíorúcháin"
 
 #: src/component/settings/apps.vue:31
 msgid "Enter your password to confirm the action and continue:"
-msgstr "Cuir isteach do phasfhocal chun an gníomh a dhearbhú agus lean ar aghaidh:"
+msgstr ""
+"Cuir isteach do phasfhocal chun an gníomh a dhearbhú agus lean ar aghaidh:"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:437
 #: src/page/connect.vue:19 src/page/library/errors.vue:391
@@ -1329,16 +1392,24 @@ msgid "Every two days"
 msgstr "Gach dhá lá"
 
 #: src/page/settings/general.vue:157
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Fág amach ábhar atá marcáilte mar phríobháideach ó thorthaí cuardaigh, ó albaim chomhroinnte, ó lipéid agus ó áiteanna."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Fág amach ábhar atá marcáilte mar phríobháideach ó thorthaí cuardaigh, ó "
+"albaim chomhroinnte, ó lipéid agus ó áiteanna."
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
 msgid "Exclude hidden"
 msgstr "Fág i bhfolach"
 
 #: src/page/settings/advanced.vue:133
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Tá ExifTool ag teastáil chun tacaíocht iomlán a thabhairt do mheiteashonraí, físeáin agus Grianghraif Beo XMP."
+msgid ""
+"ExifTool is required for full support of XMP metadata, videos and Live "
+"Photos."
+msgstr ""
+"Tá ExifTool ag teastáil chun tacaíocht iomlán a thabhairt do mheiteashonraí, "
+"físeáin agus Grianghraif Beo XMP."
 
 #: src/page/settings/advanced.vue:52
 msgid "Experimental Features"
@@ -1356,7 +1427,8 @@ msgstr "Nochtadh"
 
 #: src/page/settings/content.vue:59
 msgid "Extract still images and generate thumbnails while indexing."
-msgstr "Sliocht íomhánna fósta agus mionsamhlacha a ghiniúint agus tú ag innéacsú."
+msgstr ""
+"Sliocht íomhánna fósta agus mionsamhlacha a ghiniúint agus tú ag innéacsú."
 
 #: src/component/photo/edit/details.vue:281
 msgid "F Number"
@@ -1456,8 +1528,12 @@ msgid "Files"
 msgstr "Comhaid"
 
 #: src/page/settings/content.vue:115
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Baineann comhaid a bhfuil ainmneacha seicheamhacha orthu mar 'IMG_1234 (2)' agus 'IMG_1234 (3)' leis an bpictiúr céanna."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Baineann comhaid a bhfuil ainmneacha seicheamhacha orthu mar 'IMG_1234 (2)' "
+"agus 'IMG_1234 (3)' leis an bpictiúr céanna."
 
 #: src/locales.js:234 src/locales.js:292
 msgid "First page"
@@ -1618,8 +1694,12 @@ msgid "Hybrid"
 msgstr "hibrideach"
 
 #: src/component/settings/passcode.vue:195
-msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr "Má chailleann tú rochtain ar d'aip nó gléas fíordheimhnitheora, is féidir leat do chód athshlánaithe a úsáid chun rochtain a fháil ar do chuntas arís."
+msgid ""
+"If you lose access to your authenticator app or device, you can use your "
+"recovery code to regain access to your account."
+msgstr ""
+"Má chailleann tú rochtain ar d'aip nó gléas fíordheimhnitheora, is féidir "
+"leat do chód athshlánaithe a úsáid chun rochtain a fháil ar do chuntas arís."
 
 #: src/common/util.js:736 src/component/photo/view/cards.vue:307
 #: src/model/file.js:194 src/options/options.js:286
@@ -1637,12 +1717,18 @@ msgid "Import"
 msgstr "Iompórtáil"
 
 #: src/page/library/import.vue:57
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Déanfar comhaid iompórtáilte a shórtáil de réir dáta agus tabharfar ainm uathúil dóibh chun dúbailt a sheachaint."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Déanfar comhaid iompórtáilte a shórtáil de réir dáta agus tabharfar ainm "
+"uathúil dóibh chun dúbailt a sheachaint."
 
 #: src/page/settings/general.vue:206
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Déanfar comhaid iompórtáilte a shórtáil de réir dáta agus tabharfar ainm uathúil orthu."
+msgstr ""
+"Déanfar comhaid iompórtáilte a shórtáil de réir dáta agus tabharfar ainm "
+"uathúil orthu."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1664,16 +1750,23 @@ msgstr "isteach"
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Ar eagla go bhfuil na pictiúir a bhfuil tú ag súil leo in easnamh, déan do leabharlann arís agus fan go dtí go mbeidh an t-innéacsú críochnaithe."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Ar eagla go bhfuil na pictiúir a bhfuil tú ag súil leo in easnamh, déan do "
+"leabharlann arís agus fan go dtí go mbeidh an t-innéacsú críochnaithe."
 
 #: src/page/settings/content.vue:208
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr "Cuir comhaid íomhá RAW san áireamh agus stoic agus cartlanna á n-íoslódáil agat."
+msgstr ""
+"Cuir comhaid íomhá RAW san áireamh agus stoic agus cartlanna á n-íoslódáil "
+"agat."
 
 #: src/page/settings/content.vue:222
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr "Cuir comhaid taobhcharr san áireamh agus stoic agus cartlanna á n-íoslódáil."
+msgstr ""
+"Cuir comhaid taobhcharr san áireamh agus stoic agus cartlanna á n-íoslódáil."
 
 #: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
@@ -1751,10 +1844,18 @@ msgstr "Am neamhbhailí"
 msgid "Invalid URL"
 msgstr "URL neamhbhailí"
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr "Seoladh IP"
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Is cód úsáide aonuaire é a dhíchumasóidh 2FA do do chuntas nuair a úsáideann tú é."
+msgid ""
+"It is a one-time use code that will disable 2FA for your account when you "
+"use it."
+msgstr ""
+"Is cód úsáide aonuaire é a dhíchumasóidh 2FA do do chuntas nuair a úsáideann "
+"tú é."
 
 #: src/model/rest.js:157
 msgid "Item"
@@ -1774,7 +1875,9 @@ msgstr "Teorainn Méid JPEG: %{n}px"
 
 #: src/page/library/import.vue:58
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "Déantar JPEG agus mionsamhlacha a rindreáil go huathoibríoch de réir mar is gá."
+msgstr ""
+"Déantar JPEG agus mionsamhlacha a rindreáil go huathoibríoch de réir mar is "
+"gá."
 
 #: src/common/util.js:748
 msgid "Keyword"
@@ -1947,8 +2050,12 @@ msgid "Location"
 msgstr "Suíomh"
 
 #: src/page/library/errors.vue:103
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Tá teachtaireachtaí logála le feiceáil anseo aon uair a thagann PhotoPrim ar chomhaid briste, nó nuair a bhíonn fadhbanna eile ann."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Tá teachtaireachtaí logála le feiceáil anseo aon uair a thagann PhotoPrim ar "
+"chomhaid briste, nó nuair a bhíonn fadhbanna eile ann."
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
 msgid "Login"
@@ -2032,7 +2139,8 @@ msgstr "Ballraíocht"
 msgid "Merge %{a} with %{b}?"
 msgstr "An bhfuil fonn ort %{a} a chumasc le %{b}?"
 
-#: src/page/about/feedback.vue:51 src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
+#: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr "Teachtaireacht"
 
@@ -2225,14 +2333,22 @@ msgid "No thanks"
 msgstr "Níl go raibh maith agat"
 
 #: src/page/library/errors.vue:99
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Níl aon rabhadh nó earráid ina bhfuil an eochairfhocal seo. Tabhair faoi deara go bhfuil an cuardach cás-íogair."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Níl aon rabhadh nó earráid ina bhfuil an eochairfhocal seo. Tabhair faoi "
+"deara go bhfuil an cuardach cás-íogair."
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
 #: src/component/upload/dialog.vue:106
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Teastaíonn athbhreithniú ar íomhánna nach bhfuil grianghrafadóireachta agus ar cháilíocht íseal sula bhfeictear iad i dtorthaí cuardaigh."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Teastaíonn athbhreithniú ar íomhánna nach bhfuil grianghrafadóireachta agus "
+"ar cháilíocht íseal sula bhfeictear iad i dtorthaí cuardaigh."
 
 #: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
 #: src/options/options.js:333
@@ -2257,16 +2373,23 @@ msgid "Not supported"
 msgstr "Ní thacaítear leis"
 
 #: src/page/library/import.vue:60
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Tabhair faoi deara gur féidir leat d’fhillteán bunleagan a bhainistiú de láimh agus go bhfuil sé roghnach iompórtáil."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Tabhair faoi deara gur féidir leat d’fhillteán bunleagan a bhainistiú de "
+"láimh agus go bhfuil sé roghnach iompórtáil."
 
 #: src/page/settings/services.vue:78
 msgid "Note:"
 msgstr "Nóta:"
 
 #: src/component/service/add.vue:60
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Nóta: Ní féidir ach freastalaithe WebDAV, cosúil le Nextcloud nó PhotoPrim, a chumrú mar chianseirbhís le haghaidh cúltaca agus uaslódáil comhad."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Nóta: Ní féidir ach freastalaithe WebDAV, cosúil le Nextcloud nó PhotoPrim, "
+"a chumrú mar chianseirbhís le haghaidh cúltaca agus uaslódáil comhad."
 
 #: src/component/photo/edit/details.vue:388
 msgid "Notes"
@@ -2276,8 +2399,8 @@ msgstr "Nótaí"
 msgid "Nothing to see here yet."
 msgstr "Níl faic le feiceáil anseo fós."
 
-#: src/page/admin/sessions.vue:47 src/page/admin/users.vue:56
-#: src/component/settings/apps.vue:197
+#: src/page/admin/activity.vue:60 src/page/admin/sessions.vue:47
+#: src/page/admin/users.vue:56 src/component/settings/apps.vue:197
 msgid "Nothing was found."
 msgstr "Ní bhfuarthas aon rud."
 
@@ -2305,8 +2428,13 @@ msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Ar Windows, cuir isteach an acmhainn seo a leanas sa dialóg naisc:"
 
 #: src/page/settings/advanced.vue:287
-msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "D'fhéadfadh úsáid ard LAP agus cuimhne a bheith mar chúis le giniúint mionsamhlacha ar éileamh. Ní mholtar é do fhreastalaithe teoranta ó thaobh acmhainní agus feistí NAS."
+msgid ""
+"On-demand generation of thumbnails may cause high CPU and memory usage. It "
+"is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
+"D'fhéadfadh úsáid ard LAP agus cuimhne a bheith mar chúis le giniúint "
+"mionsamhlacha ar éileamh. Ní mholtar é do fhreastalaithe teoranta ó thaobh "
+"acmhainní agus feistí NAS."
 
 #: src/options/options.js:372
 msgid "Once a week"
@@ -2342,8 +2470,11 @@ msgid "One picture found"
 msgstr "Fuarthas pictiúr amháin"
 
 #: src/component/settings/passcode.vue:249
-msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr "Ní féidir ach cuntais a bhainistítear go háitiúil a bhunú le haghaidh fíordheimhnithe le 2FA."
+msgid ""
+"Only locally managed accounts can be set up for authentication with 2FA."
+msgstr ""
+"Ní féidir ach cuntais a bhainistítear go háitiúil a bhunú le haghaidh "
+"fíordheimhnithe le 2FA."
 
 #: src/locales.js:205
 msgid "Open"
@@ -2398,8 +2529,13 @@ msgid "Other"
 msgstr "Eile"
 
 #: src/page/about/about.vue:29
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "Is é an misean atá againn ná an réiteach is cairdiúla don úsáideoir agus don phríobháideacht a sholáthar chun do phictiúr a choinneáil eagraithe agus inrochtana."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"Is é an misean atá againn ná an réiteach is cairdiúla don úsáideoir agus don "
+"phríobháideacht a sholáthar chun do phictiúr a choinneáil eagraithe agus "
+"inrochtana."
 
 #: src/options/options.js:260
 msgid "Outdoor"
@@ -2454,7 +2590,8 @@ msgstr "Daoine"
 
 #: src/component/share/dialog.vue:129
 msgid "People you share a link with will be able to view public contents."
-msgstr "Beidh daoine a roinneann tú nasc leo in ann féachaint ar inneachar poiblí."
+msgstr ""
+"Beidh daoine a roinneann tú nasc leo in ann féachaint ar inneachar poiblí."
 
 #: src/component/photo/clipboard.vue:313 src/component/photo/toolbar.vue:581
 msgid "Permanently deleted"
@@ -2527,13 +2664,17 @@ msgid "Please confirm your new password."
 msgstr "Deimhnigh do phasfhocal nua le do thoil."
 
 #: src/component/settings/apps.vue:75
-msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Cóipeáil an pasfhocal aipe a gineadh go randamach agus coinnigh in áit shábháilte é, mar ní bheidh tú in ann é a fheiceáil arís:"
+msgid ""
+"Please copy the following randomly generated app password and keep it in a "
+"safe place, as you will not be able to see it again:"
+msgstr ""
+"Cóipeáil an pasfhocal aipe a gineadh go randamach agus coinnigh in áit "
+"shábháilte é, mar ní bheidh tú in ann é a fheiceáil arís:"
 
 #: src/component/upload/dialog.vue:98
-#, fuzzy
 msgid "Please do not upload any private, unlawful or offensive pictures. "
-msgstr "Ná huaslódáil aon pictiúir phríobháideacha, neamhdhleathacha nó maslacha."
+msgstr ""
+"Ná huaslódáil aon pictiúir phríobháideacha, neamhdhleathacha nó maslacha."
 
 #: src/component/upload/dialog.vue:101
 msgid "Please don't upload photos containing offensive content."
@@ -2544,8 +2685,12 @@ msgid "Please enter OTP character {0}"
 msgstr "Cuir isteach carachtar OTP {0}"
 
 #: src/component/settings/password.vue:20
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Tabhair faoi deara le do thoil go ndéanfaidh athrú ar do phasfhocal tú a logáil amach ar ghléasanna agus brabhsálaithe eile."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Tabhair faoi deara le do thoil go ndéanfaidh athrú ar do phasfhocal tú a "
+"logáil amach ar ghléasanna agus brabhsálaithe eile."
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
 msgid "Please restart your instance for the changes to take effect."
@@ -2578,12 +2723,18 @@ msgid "Press enter to create a new album."
 msgstr "Brúigh Enter chun albam nua a chruthú."
 
 #: src/page/settings/advanced.vue:85
-msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr "Cosc a chur le cúltacaí bunachar sonraí agus albam chomh maith le comhaid taobhcharr YAML ó bheith cruthaithe."
+msgid ""
+"Prevent database and album backups as well as YAML sidecar files from being "
+"created."
+msgstr ""
+"Cosc a chur le cúltacaí bunachar sonraí agus albam chomh maith le comhaid "
+"taobhcharr YAML ó bheith cruthaithe."
 
 #: src/page/settings/advanced.vue:101
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Cosc a chur ar aipeanna eile rochtain a fháil ar PhotoPrim mar thiomántán líonra roinnte."
+msgstr ""
+"Cosc a chur ar aipeanna eile rochtain a fháil ar PhotoPrim mar thiomántán "
+"líonra roinnte."
 
 #: src/component/photo/edit/files.vue:30
 msgid "Preview"
@@ -2664,7 +2815,9 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Déan gach bunleagan a athinnéacsú, lena n-áirítear comhaid atá innéacsaithe cheana féin agus nach bhfuil aon athrú orthu."
+msgstr ""
+"Déan gach bunleagan a athinnéacsú, lena n-áirítear comhaid atá innéacsaithe "
+"cheana féin agus nach bhfuil aon athrú orthu."
 
 #: src/page/settings/advanced.vue:68
 msgid "Read-Only Mode"
@@ -2705,11 +2858,12 @@ msgstr "Cód Aisghabháil"
 msgid "Red"
 msgstr "Dearg"
 
-#: src/page/admin/sessions.vue:333 src/page/admin/users.vue:321
-#: src/component/album/toolbar.vue:164 src/component/photo/toolbar.vue:488
-#: src/page/albums.vue:552 src/page/labels.vue:297
-#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
-#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
+#: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
+#: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
+#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
+#: src/page/labels.vue:297 src/page/library/browse.vue:21
+#: src/page/library/errors.vue:226 src/page/people/new.vue:7
+#: src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr "Athnuaigh"
 
@@ -2754,8 +2908,16 @@ msgid "Remove from Album"
 msgstr "Bain as an albam"
 
 #: src/page/library/import.vue:46
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Bain comhaid iompórtáilte chun stóras a shábháil. Ní scriosfar cineálacha comhaid nach dtacaítear leo go deo, fanann siad ina suíomh reatha."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Bain comhaid iompórtáilte chun stóras a shábháil. Ní scriosfar cineálacha "
+"comhaid nach dtacaítear leo go deo, fanann siad ina suíomh reatha."
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
+msgstr "Arís agus arís eile"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -2766,8 +2928,12 @@ msgid "Request failed - invalid response"
 msgstr "Theip ar an iarratas - freagra neamhbhailí"
 
 #: src/page/settings/content.vue:25
-msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr "A éileamh go ndéanfaí athbhreithniú ar íomhánna neamh-ghrianghrafadóireachta agus ar cháilíocht íseal sula dtaispeánfar iad i dtorthaí cuardaigh."
+msgid ""
+"Require non-photographic and low-quality images to be reviewed before they "
+"appear in search results."
+msgstr ""
+"A éileamh go ndéanfaí athbhreithniú ar íomhánna neamh-ghrianghrafadóireachta "
+"agus ar cháilíocht íseal sula dtaispeánfar iad i dtorthaí cuardaigh."
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
 msgid "Resolution"
@@ -2860,8 +3026,13 @@ msgid "Scan"
 msgstr "Scanadh"
 
 #: src/component/settings/passcode.vue:86
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr "Scan an cód QR le d'aip fíordheimhnitheora nó bain úsáid as an eochair socraithe a thaispeántar thíos agus ansin cuir isteach an cód fíoraithe ginte:"
+msgid ""
+"Scan the QR code with your authenticator app or use the setup key shown "
+"below and then enter the generated verification code:"
+msgstr ""
+"Scan an cód QR le d'aip fíordheimhnitheora nó bain úsáid as an eochair "
+"socraithe a thaispeántar thíos agus ansin cuir isteach an cód fíoraithe "
+"ginte:"
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
 #: src/component/navigation.vue:125 src/component/navigation.vue:131
@@ -2875,12 +3046,13 @@ msgstr "Scananna"
 msgid "Scope"
 msgstr "Raon feidhme"
 
-#: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:63 src/component/navigation.vue:122
-#: src/component/navigation.vue:903 src/component/photo/toolbar.vue:35
-#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
-#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
-#: src/page/places.vue:33 src/page/settings/content.vue:131
+#: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
+#: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
+#: src/component/navigation.vue:122 src/component/navigation.vue:903
+#: src/component/photo/toolbar.vue:35 src/options/options.js:201
+#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
+#: src/page/people/recognized.vue:15 src/page/places.vue:33
+#: src/page/settings/content.vue:131
 msgid "Search"
 msgstr "Cuardach"
 
@@ -2965,7 +3137,7 @@ msgstr "Seisiún"
 msgid "Session ID"
 msgstr "Aitheantas an tseisiúin"
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr "Seisiúin"
 
@@ -2995,6 +3167,10 @@ msgstr "Socruithe sábháilte"
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
 msgstr "Socrú"
+
+#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+msgid "Severity"
+msgstr "Déine"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3091,7 +3267,9 @@ msgstr "Níorbh fhéidir roinnt albaim a chóipeáil"
 
 #: src/component/photo/album/dialog.vue:188
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr "Níorbh fhéidir roinnt albaim a chruthú. Cuir na hainmneacha in eagar agus déan iarracht arís."
+msgstr ""
+"Níorbh fhéidir roinnt albaim a chruthú. Cuir na hainmneacha in eagar agus "
+"déan iarracht arís."
 
 #: src/component/file/clipboard.vue:136 src/component/label/clipboard.vue:138
 #: src/component/people/clipboard.vue:132 src/component/photo/clipboard.vue:354
@@ -3143,11 +3321,16 @@ msgstr "Cruachán"
 
 #: src/page/settings/content.vue:99
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Stack comhaid a roinnt ar an íomhá uathúil céanna nó aitheantóir shampla."
+msgstr ""
+"Stack comhaid a roinnt ar an íomhá uathúil céanna nó aitheantóir shampla."
 
 #: src/page/settings/content.vue:84
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Stack pictiúir a tógadh ag an am céanna agus an suíomh céanna bunaithe ar a meiteashonraí."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Stack pictiúir a tógadh ag an am céanna agus an suíomh céanna bunaithe ar a "
+"meiteashonraí."
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
 msgid "Stackable"
@@ -3217,8 +3400,11 @@ msgid "Super Admin"
 msgstr "Sár-Riarachán"
 
 #: src/component/service/add.vue:64
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Cuirfear tacaíocht le haghaidh seirbhísí breise, amhail Google Drive, leis in imeacht ama."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Cuirfear tacaíocht le haghaidh seirbhísí breise, amhail Google Drive, leis "
+"in imeacht ama."
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
 msgid "Support Our Mission"
@@ -3243,8 +3429,12 @@ msgid "Teal"
 msgstr "Teal"
 
 #: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "Tá TensorFlow ag teastáil le haghaidh aicmiú íomhá, aithint aghaidhe, agus ábhar neamhshábháilte a bhrath."
+msgid ""
+"TensorFlow is required for image classification, facial recognition, and "
+"detecting unsafe content."
+msgstr ""
+"Tá TensorFlow ag teastáil le haghaidh aicmiú íomhá, aithint aghaidhe, agus "
+"ábhar neamhshábháilte a bhrath."
 
 #: src/options/options.js:266
 msgid "Terrain"
@@ -3263,16 +3453,25 @@ msgid "Thank You for Your Support!"
 msgstr "Go raibh maith agat as do Thacaíocht!"
 
 #: src/page/about/about.vue:34
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "Sin an fáth a tógadh PhotoPrim ón talamh aníos le rith cibé áit a dteastaíonn uait é, gan cur isteach ar shaoirse, ar phríobháideachas ná ar fheidhmiúlacht."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"Sin an fáth a tógadh PhotoPrim ón talamh aníos le rith cibé áit a "
+"dteastaíonn uait é, gan cur isteach ar shaoirse, ar phríobháideachas ná ar "
+"fheidhmiúlacht."
 
 #: src/page/library/index.vue:84
 msgid "The index currently contains %{n} hidden files."
 msgstr "Tá %{n} comhad folaithe san innéacs faoi láthair."
 
 #: src/page/library/index.vue:86
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Seans nach dtacaítear lena bhformáid, níor tiontaigh go JPEG iad go fóill nó go bhfuil dúbailt ann."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Seans nach dtacaítear lena bhformáid, níor tiontaigh go JPEG iad go fóill nó "
+"go bhfuil dúbailt ann."
 
 #: src/page/settings/general.vue:25
 msgid "Theme"
@@ -3286,13 +3485,28 @@ msgid "This field is required"
 msgstr "Tá an réimse seo ag teastáil"
 
 #: src/component/settings/webdav.vue:57
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Gléasann sé seo an bunfhillteán mar thiomántán líonra agus ligeann sé duit comhaid a oscailt, a chur in eagar agus a scriosadh ó do ríomhaire nó ó do ghuthán cliste amhail is go raibh siad áitiúil."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Gléasann sé seo an bunfhillteán mar thiomántán líonra agus ligeann sé duit "
+"comhaid a oscailt, a chur in eagar agus a scriosadh ó do ríomhaire nó ó do "
+"ghuthán cliste amhail is go raibh siad áitiúil."
 
 #: src/page/settings/services.vue:85
-#, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Gléasann sé seo an bunfhillteán mar thiomántán líonra agus ligeann sé duit comhaid a oscailt, a chur in eagar agus a scriosadh ó do ríomhaire nó ó do ghuthán cliste amhail is go raibh siad áitiúil."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local. "
+msgstr ""
+"Gléasann sé seo an bunfhillteán mar thiomántán líonra agus ligeann sé duit "
+"comhaid a oscailt, a chur in eagar agus a scriosadh ó do ríomhaire nó ó do "
+"ghuthán cliste amhail is go raibh siad áitiúil."
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
+msgstr "Am"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"
@@ -3324,20 +3538,37 @@ msgid "to"
 msgstr "chuig"
 
 #: src/component/settings/passcode.vue:160
-msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "Chun a sheachaint a bheith glasáilte amach ó do chuntas, íoslódáil, priontáil nó cóipeáil an cód athshlánaithe seo anois agus coinnigh in áit shábháilte é."
+msgid ""
+"To avoid being locked out of your account, please download, print or copy "
+"this recovery code now and keep it in a safe place."
+msgstr ""
+"Chun a sheachaint a bheith glasáilte amach ó do chuntas, íoslódáil, "
+"priontáil nó cóipeáil an cód athshlánaithe seo anois agus coinnigh in áit "
+"shábháilte é."
 
 #: src/component/settings/apps.vue:122
-msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "Chun pasfhocal nua a bhaineann go sonrach le haip a ghiniúint, cuir isteach ainm agus raon feidhme údaraithe an fheidhmchláir agus roghnaigh dáta éaga:"
+msgid ""
+"To generate a new app-specific password, please enter the name and "
+"authorization scope of the application and select an expiration date:"
+msgstr ""
+"Chun pasfhocal nua a bhaineann go sonrach le haip a ghiniúint, cuir isteach "
+"ainm agus raon feidhme údaraithe an fheidhmchláir agus roghnaigh dáta éaga:"
 
 #: src/component/settings/passcode.vue:203
-msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr "Chun athrú go haip nó gléas fíordheimhneora nua, díghníomhachtaigh fíordheimhniú dhá fhachtóir ar dtús agus ansin athghníomhaigh é:"
+msgid ""
+"To switch to a new authenticator app or device, first deactivate two-factor "
+"authentication and then reactivate it:"
+msgstr ""
+"Chun athrú go haip nó gléas fíordheimhneora nua, díghníomhachtaigh "
+"fíordheimhniú dhá fhachtóir ar dtús agus ansin athghníomhaigh é:"
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "Chun uasghrádú a dhéanamh, is féidir leat cód gníomhachtúcháin a chur isteach nó cliceáil \"Cláraigh\" chun clárú ar ár suíomh Gréasáin:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"Chun uasghrádú a dhéanamh, is féidir leat cód gníomhachtúcháin a chur "
+"isteach nó cliceáil \"Cláraigh\" chun clárú ar ár suíomh Gréasáin:"
 
 #: src/locales.js:263
 msgid "Today"
@@ -3525,21 +3756,30 @@ msgstr "Á uaslódáil…"
 
 #: src/component/upload/dialog.vue:102
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Diúltófar go huathoibríoch d’uaslódálacha a bhféadfadh íomhánna den sórt sin a bheith iontu."
+msgstr ""
+"Diúltófar go huathoibríoch d’uaslódálacha a bhféadfadh íomhánna den sórt sin "
+"a bheith iontu."
 
 #: src/page/settings/advanced.vue:398
 msgid "Use Presets"
 msgstr "Úsáid Réamhshocruithe"
 
 #: src/component/settings/passcode.vue:138
-msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "Úsáid an cód athshlánaithe seo a leanas chun rochtain a fháil ar do chuntas nuair nach bhfuil tú in ann cód fíoraithe bailí a ghiniúint le d’aip fíordheimhneora:"
+msgid ""
+"Use the following recovery code to access your account when you are unable "
+"to generate a valid verification code with your authenticator app:"
+msgstr ""
+"Úsáid an cód athshlánaithe seo a leanas chun rochtain a fháil ar do chuntas "
+"nuair nach bhfuil tú in ann cód fíoraithe bailí a ghiniúint le d’aip "
+"fíordheimhneora:"
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
 #: src/page/auth/login.vue:47 src/page/auth/login.vue:48
 #: src/page/auth/login.vue:55 src/page/auth/login.vue:70
 msgid "Use your recovery code or contact an administrator for help."
-msgstr "Bain úsáid as do chód athshlánaithe nó déan teagmháil le riarthóir chun cabhair a fháil."
+msgstr ""
+"Bain úsáid as do chód athshlánaithe nó déan teagmháil le riarthóir chun "
+"cabhair a fháil."
 
 #: src/options/admin.js:14 src/page/admin/sessions.vue:138
 #: src/page/admin/sessions.vue:291 src/model/user.js:352 src/options/auth.js:8
@@ -3639,7 +3879,9 @@ msgstr "Táimid buíoch as do chuid aiseolais!"
 
 #: src/page/about/feedback.vue:26 src/page/about/feedback.vue:27
 msgid "We do our best to respond within five business days or less."
-msgstr "Déanaimid ár ndícheall freagra a thabhairt laistigh de chúig lá gnó nó níos lú."
+msgstr ""
+"Déanaimid ár ndícheall freagra a thabhairt laistigh de chúig lá gnó nó níos "
+"lú."
 
 #: src/component/user/add/dialog.vue:141 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:275
@@ -3654,12 +3896,16 @@ msgstr "WebDAV"
 
 #: src/component/settings/webdav.vue:18
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "Is féidir le cliaint WebDAV ceangal le PhotoPrim leis an URL seo a leanas:"
+msgstr ""
+"Is féidir le cliaint WebDAV ceangal le PhotoPrim leis an URL seo a leanas:"
 
 #: src/page/settings/services.vue:80
-#, fuzzy
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "Is féidir le cliaint WebDAV, cosúil le Windows Explorer nó Aimsitheoir Apple de chuid Microsoft, nascadh go díreach le PhotoPrism."
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism. "
+msgstr ""
+"Is féidir le cliaint WebDAV, cosúil le Windows Explorer nó Aimsitheoir Apple "
+"de chuid Microsoft, nascadh go díreach le PhotoPrism."
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
 msgid "WebDAV Upload"
@@ -3717,8 +3963,12 @@ msgstr "Tá"
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "Tá fáilte romhat teagmháil a dhéanamh linn ag membership@photoprism.app le haghaidh ceisteanna maidir le do bhallraíocht."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"Tá fáilte romhat teagmháil a dhéanamh linn ag membership@photoprism.app le "
+"haghaidh ceisteanna maidir le do bhallraíocht."
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
 msgid "You can only download one album"
@@ -3729,8 +3979,12 @@ msgid "You can only download one label"
 msgstr "Ní féidir leat ach lipéad amháin a íoslódáil"
 
 #: src/component/location/dialog.vue:101
-msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr "Is féidir leat suíomh a chuardach nó an marcóir a bhogadh ar an léarscáil chun an suíomh a athrú:"
+msgid ""
+"You can search for a location or move the marker on the map to change the "
+"position:"
+msgstr ""
+"Is féidir leat suíomh a chuardach nó an marcóir a bhogadh ar an léarscáil "
+"chun an suíomh a athrú:"
 
 #: src/component/upload/dialog.vue:97
 msgid "You can upload up to %{n} files for test purposes."
@@ -3743,7 +3997,8 @@ msgstr "Ní féidir leat ach mír amháin a roghnú"
 #: src/component/photo/edit/people.vue:15 src/page/people/new.vue:48
 #: src/page/people/recognized.vue:91
 msgid "You may rescan your library to find additional faces."
-msgstr "Is féidir leat do leabharlann a athscanadh chun aghaidheanna breise a fháil."
+msgstr ""
+"Is féidir leat do leabharlann a athscanadh chun aghaidheanna breise a fháil."
 
 #: src/page/connect.vue:63 src/page/connect.vue:65
 msgid "Your account has been successfully connected."
@@ -3755,12 +4010,21 @@ msgstr "Ní thacaíonn do bhrabhsálaí le WebGL"
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Cuidíonn do thacaíocht leanúnach linn nuashonruithe rialta a sholáthar agus fanacht neamhspleách, ionas gur féidir linn ár misean a chomhlíonadh agus do phríobháideachas a chosaint."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Cuidíonn do thacaíocht leanúnach linn nuashonruithe rialta a sholáthar agus "
+"fanacht neamhspleách, ionas gur féidir linn ár misean a chomhlíonadh agus do "
+"phríobháideachas a chosaint."
 
 #: src/page/albums.vue:182
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Déantar anailís leanúnach ar do leabharlann chun albam chuimhneacháin, thurais agus áiteanna speisialta a chruthú go huathoibríoch."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Déantar anailís leanúnach ar do leabharlann chun albam chuimhneacháin, "
+"thurais agus áiteanna speisialta a chruthú go huathoibríoch."
 
 #: src/component/lightbox.vue:434
 msgid "Zoom in/out"
@@ -3877,7 +4141,8 @@ msgstr "Cartlann"
 #~ msgstr "Taispeáin meiteashonraí teidil sna torthaí cuardaigh."
 
 #~ msgid "Are you sure you want to delete all archived pictures?"
-#~ msgstr "An bhfuil tú cinnte gur mhaith leat gach pictiúr sa chartlann a scriosadh?"
+#~ msgstr ""
+#~ "An bhfuil tú cinnte gur mhaith leat gach pictiúr sa chartlann a scriosadh?"
 
 #~ msgid "Expand Search"
 #~ msgstr "Leathnaigh Cuardach"
@@ -3912,8 +4177,12 @@ msgstr "Cartlann"
 #~ msgid "close"
 #~ msgstr "dhúnadh"
 
-#~ msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-#~ msgstr "Cruachann comhaid ghrúpa a bhfuil fráma tagartha comhchosúil acu, ach éagsúlachtaí maidir le cáilíocht, formáid, méid nó dath."
+#~ msgid ""
+#~ "Stacks group files with a similar frame of reference, but differences of "
+#~ "quality, format, size or color."
+#~ msgstr ""
+#~ "Cruachann comhaid ghrúpa a bhfuil fráma tagartha comhchosúil acu, ach "
+#~ "éagsúlachtaí maidir le cáilíocht, formáid, méid nó dath."
 
 #~ msgid "URL"
 #~ msgstr "URL"
@@ -3958,13 +4227,18 @@ msgstr "Cartlann"
 #~ msgstr "Do Cheadúnas a Ghníomhachtú"
 
 #~ msgid "Enter the verification code generated by your authenticator app:"
-#~ msgstr "Cuir isteach an cód fíorúcháin arna ghiniúint ag d'aip fíordheimhnitheora:"
+#~ msgstr ""
+#~ "Cuir isteach an cód fíorúcháin arna ghiniúint ag d'aip fíordheimhnitheora:"
 
 #~ msgid "No video selected"
 #~ msgstr "Níl aon fhíseán roghnaithe"
 
-#~ msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-#~ msgstr "Gin mionsamhlacha go huathoibríoch do chomhaid nach féidir a innéacsú nó a fheiceáil ar shlí eile."
+#~ msgid ""
+#~ "Automatically generate thumbnails for files that cannot otherwise be "
+#~ "indexed or viewed."
+#~ msgstr ""
+#~ "Gin mionsamhlacha go huathoibríoch do chomhaid nach féidir a innéacsú nó "
+#~ "a fheiceáil ar shlí eile."
 
 #~ msgid "Estimate the approximate location of pictures without coordinates."
 #~ msgstr "Déan meastachán ar shuíomh na bpictiúr gan comhordanáidí."

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
-"PO-Revision-Date: 2025-03-11 19:36+0000\n"
+"PO-Revision-Date: 2025-10-22 08:25+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: sl\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
 "n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: messages.go:104
 msgid "Something went wrong, try again"
@@ -117,7 +117,7 @@ msgstr "Dovoljenje Zavrnjeno"
 
 #: messages.go:129
 msgid "Payment required"
-msgstr ""
+msgstr "Zahtevano plačilo"
 
 #: messages.go:130
 msgid "Upload might be offensive"

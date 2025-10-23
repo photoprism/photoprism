@@ -77,6 +77,17 @@ func TestConfig_AdminPassword(t *testing.T) {
 	assert.Equal(t, defaultPassword, c.AdminPassword())
 }
 
+func TestConfig_AdminScope(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Defaults to empty when no scope was configured.
+	assert.Equal(t, "", c.AdminScope())
+
+	// Sanitizes scope attributes using clean.Scope().
+	c.options.AdminScope = "  Photos:View   LOGS:* "
+	assert.Equal(t, "logs:* photos:view", c.AdminScope())
+}
+
 func TestConfig_PasswordLength(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 8, c.PasswordLength())

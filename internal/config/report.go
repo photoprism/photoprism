@@ -26,6 +26,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
 		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
+		{"admin-scope", c.AdminScope()},
 		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
 		{"password-reset-uri", c.PasswordResetUri()},
 		{"register-uri", c.RegisterUri()},

@@ -34,9 +34,9 @@ func System(level logrus.Level, ev []string, args ...interface{}) {
 	)
 }
 
-// SystemWarn records a system warning.
-func SystemWarn(ev []string, args ...interface{}) {
-	System(logrus.WarnLevel, ev, args...)
+// SystemDebug records a system debug message.
+func SystemDebug(ev []string, args ...interface{}) {
+	System(logrus.DebugLevel, ev, args...)
 }
 
 // SystemInfo records a system info message.
@@ -44,9 +44,9 @@ func SystemInfo(ev []string, args ...interface{}) {
 	System(logrus.InfoLevel, ev, args...)
 }
 
-// SystemDebug records a system debug message.
-func SystemDebug(ev []string, args ...interface{}) {
-	System(logrus.DebugLevel, ev, args...)
+// SystemWarn records a system warning.
+func SystemWarn(ev []string, args ...interface{}) {
+	System(logrus.WarnLevel, ev, args...)
 }
 
 // SystemError records a system error message.

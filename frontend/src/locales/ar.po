@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-21 15:18+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -144,7 +144,7 @@ msgstr "تم حذف الحساب"
 msgid "Account restored"
 msgstr "تم استعادة الحساب"
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr "الحسابات"
 
@@ -189,6 +189,10 @@ msgstr "قم بالتفعيل لفرز تنازليًا."
 #: src/page/connect.vue:125 src/page/connect.vue:136
 msgid "Activation Code"
 msgstr "رمز التفعيل"
+
+#: src/page/admin.vue:76
+msgid "Activity"
+msgstr "النشاط"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -268,8 +272,12 @@ msgid "After 7 days"
 msgstr "بعد 7 أيام"
 
 #: src/component/settings/passcode.vue:32
-msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr "بعد إدخال كلمة المرور الخاصة بك للتأكيد، يمكنك إعداد المصادقة الثنائية باستخدام تطبيق أو جهاز مصادقة متوافق:"
+msgid ""
+"After entering your password for confirmation, you can set up two-factor "
+"authentication with a compatible authenticator app or device:"
+msgstr ""
+"بعد إدخال كلمة المرور الخاصة بك للتأكيد، يمكنك إعداد المصادقة الثنائية "
+"باستخدام تطبيق أو جهاز مصادقة متوافق:"
 
 #: src/options/options.js:381
 msgid "After one month"
@@ -280,8 +288,12 @@ msgid "After one year"
 msgstr "بعد سنة"
 
 #: src/page/albums.vue:175
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "بعد تحديد الصور من نتائج البحث ، يمكنك إضافتها إلى ألبوم باستخدام قائمة السياق."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"بعد تحديد الصور من نتائج البحث ، يمكنك إضافتها إلى ألبوم باستخدام قائمة "
+"السياق."
 
 #: src/options/options.js:382
 msgid "After two months"
@@ -376,8 +388,11 @@ msgid "All Years"
 msgstr "جميع السنوات"
 
 #: src/component/share/dialog.vue:133
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "بدلاً من ذلك ، يمكنك تحميل الملفات مباشرة إلى خوادم WebDAV مثل Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"بدلاً من ذلك ، يمكنك تحميل الملفات مباشرة إلى خوادم WebDAV مثل Nextcloud."
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
 msgid "Altitude"
@@ -494,8 +509,7 @@ msgstr "نسبة العرض إلى الارتفاع"
 msgid "Audio"
 msgstr "صوتي"
 
-#: src/model/logs.js:173
-#, fuzzy
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr "صوتي"
 
@@ -535,12 +549,18 @@ msgid "Batch"
 msgstr "الدفعة"
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
 msgstr "كن عضوًا اليوم ، وادعم مهمتنا واستمتع بمزايا أعضائنا!"
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "نظرًا لكوننا 100 % s ممولًا ومستقلًا ، يمكننا أن نعدك بأننا لن نبيع بياناتك أبدًا وأننا سنتحلى دائمًا بالشفافية بشأن برامجنا وخدماتنا."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"نظرًا لكوننا 100 % s ممولًا ومستقلًا ، يمكننا أن نعدك بأننا لن نبيع بياناتك "
+"أبدًا وأننا سنتحلى دائمًا بالشفافية بشأن برامجنا وخدماتنا."
 
 #: src/component/user/edit/dialog.vue:151
 #: src/component/user/edit/dialog.vue:152 src/page/settings/account.vue:123
@@ -604,8 +624,12 @@ msgid "Busy, please wait…"
 msgstr "يتم العمل، الرجاء الانتظار …"
 
 #: src/page/connect.vue:198
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "باستخدام البرامج والخدمات التي نقدمها ، فإنك توافق على شروط الخدمة وسياسة الخصوصية ومدونة قواعد السلوك الخاصة بنا."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"باستخدام البرامج والخدمات التي نقدمها ، فإنك توافق على شروط الخدمة وسياسة "
+"الخصوصية ومدونة قواعد السلوك الخاصة بنا."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
 #: src/options/options.js:208 src/page/settings/general.vue:108
@@ -725,7 +749,8 @@ msgstr "تم حفظ التغييرات بنجاح"
 
 #: src/page/settings/advanced.vue:16
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr "تتطلب التغييرات في الإعدادات المتقدمة إعادة التشغيل لتصبح سارية المفعول."
+msgstr ""
+"تتطلب التغييرات في الإعدادات المتقدمة إعادة التشغيل لتصبح سارية المفعول."
 
 #: src/component/photo/edit/info.vue:230 src/component/photo/edit/info.vue:231
 msgid "Checked"
@@ -781,7 +806,7 @@ msgstr "قريب"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr ""
+msgstr "المجموعة العنقودية"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -943,7 +968,8 @@ msgstr "قم بإنشاء ملفات YAML لعمل نسخة احتياطية م�
 
 #: src/page/settings/advanced.vue:210
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "قم بإنشاء ملفات YAML الجانبية لعمل نسخة احتياطية من بيانات تعريف الصورة."
+msgstr ""
+"قم بإنشاء ملفات YAML الجانبية لعمل نسخة احتياطية من بيانات تعريف الصورة."
 
 #: src/page/admin/sessions.vue:191 src/component/photo/edit/info.vue:206
 #: src/component/photo/edit/info.vue:207
@@ -1061,7 +1087,8 @@ msgid "Disable ExifTool"
 msgstr "تعطيل ExifTool"
 
 #: src/page/settings/advanced.vue:69
-msgid "Disable features that require write permission for the originals folder."
+msgid ""
+"Disable features that require write permission for the originals folder."
 msgstr "قم بتعطيل الميزات التي تتطلب إذن الكتابة لمجلد النسخ الأصلية."
 
 #: src/page/settings/advanced.vue:430
@@ -1183,8 +1210,11 @@ msgid "Download"
 msgstr "تحميل"
 
 #: src/page/settings/content.vue:194
-msgid "Download only original media files, without any automatically generated files."
-msgstr "قم بتحميل ملفات الوسائط الأصلية فقط ، بدون أي ملفات تم إنشاؤها تلقائيًا."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"قم بتحميل ملفات الوسائط الأصلية فقط ، بدون أي ملفات تم إنشاؤها تلقائيًا."
 
 #: src/component/service/edit.vue:117
 msgid "Download remote files"
@@ -1212,8 +1242,12 @@ msgid "Drag and drop files here"
 msgstr "اسحب الملفات هنا"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "نظرًا للكم الهائل من رسائل البريد الإلكتروني التي نتلقاها ، فقد يتعذر على فريقنا الرد عليك على الفور."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"نظرًا للكم الهائل من رسائل البريد الإلكتروني التي نتلقاها ، فقد يتعذر على "
+"فريقنا الرد عليك على الفور."
 
 #: src/page/library/browse.vue:46
 msgid "Duplicates will be skipped and only appear once."
@@ -1267,8 +1301,11 @@ msgid "Email"
 msgstr "البريد"
 
 #: src/page/settings/advanced.vue:37
-msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "قم بتمكين وضع التصحيح لعرض سجلات إضافية التي تساعد على اكتشاف الأخطاء وإصلاحها."
+msgid ""
+"Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+"قم بتمكين وضع التصحيح لعرض سجلات إضافية التي تساعد على اكتشاف الأخطاء "
+"وإصلاحها."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1279,8 +1316,14 @@ msgid "Enables RAW converter presets. May reduce performance."
 msgstr "لتمكين الإعدادات المسبقة لمحول RAW. قد يقلل من الأداء."
 
 #: src/component/settings/passcode.vue:58
-msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "يعني تمكين المصادقة الثنائية أنك ستحتاج إلى رمز تحقق تم إنشاؤه عشوائيًا لتسجيل الدخول، لذلك حتى إذا تمكن شخص ما من الوصول إلى كلمة المرور الخاصة بك، فلن يتمكن من الوصول إلى حسابك."
+msgid ""
+"Enabling two-factor authentication means that you will need a randomly "
+"generated verification code to log in, so even if someone gains access to "
+"your password, they will not be able to access your account."
+msgstr ""
+"يعني تمكين المصادقة الثنائية أنك ستحتاج إلى رمز تحقق تم إنشاؤه عشوائيًا "
+"لتسجيل الدخول، لذلك حتى إذا تمكن شخص ما من الوصول إلى كلمة المرور الخاصة بك، "
+"فلن يتمكن من الوصول إلى حسابك."
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1332,16 +1375,24 @@ msgid "Every two days"
 msgstr "كل يومين"
 
 #: src/page/settings/general.vue:157
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "استبعاد المحتوى المحدد على أنه خاص من نتائج البحث والألبومات المشتركة والعلامات والأماكن."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"استبعاد المحتوى المحدد على أنه خاص من نتائج البحث والألبومات المشتركة "
+"والعلامات والأماكن."
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
 msgid "Exclude hidden"
 msgstr "استبعاد مخفي"
 
 #: src/page/settings/advanced.vue:133
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "يلزم استخراج البيانات التعريفية باستخدام ExifTool للحصول على دعم كامل للفيديو والصور المباشرة وXMP."
+msgid ""
+"ExifTool is required for full support of XMP metadata, videos and Live "
+"Photos."
+msgstr ""
+"يلزم استخراج البيانات التعريفية باستخدام ExifTool للحصول على دعم كامل "
+"للفيديو والصور المباشرة وXMP."
 
 #: src/page/settings/advanced.vue:52
 msgid "Experimental Features"
@@ -1459,8 +1510,12 @@ msgid "Files"
 msgstr "الملفات"
 
 #: src/page/settings/content.vue:115
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "الملفات ذات الأسماء المتسلسلة مثل \"IMG_1234 (2)\" و \"IMG_1234 (3)\" تنتمي إلى نفس الصورة."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"الملفات ذات الأسماء المتسلسلة مثل \"IMG_1234 (2)\" و \"IMG_1234 (3)\" تنتمي "
+"إلى نفس الصورة."
 
 #: src/locales.js:234 src/locales.js:292
 msgid "First page"
@@ -1621,8 +1676,12 @@ msgid "Hybrid"
 msgstr "هجين"
 
 #: src/component/settings/passcode.vue:195
-msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr "إذا فقدت الوصول إلى تطبيق أو جهاز المصادقة الخاص بك، فيمكنك استخدام رمز الاسترداد لاستعادة الوصول إلى حسابك."
+msgid ""
+"If you lose access to your authenticator app or device, you can use your "
+"recovery code to regain access to your account."
+msgstr ""
+"إذا فقدت الوصول إلى تطبيق أو جهاز المصادقة الخاص بك، فيمكنك استخدام رمز "
+"الاسترداد لاستعادة الوصول إلى حسابك."
 
 #: src/common/util.js:736 src/component/photo/view/cards.vue:307
 #: src/model/file.js:194 src/options/options.js:286
@@ -1640,7 +1699,9 @@ msgid "Import"
 msgstr "يستورد"
 
 #: src/page/library/import.vue:57
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
 msgstr "سيتم فرز الملفات المستوردة حسب التاريخ وإعطاء اسم فريد لتجنب التكرار."
 
 #: src/page/settings/general.vue:206
@@ -1667,8 +1728,12 @@ msgstr "في"
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "في حالة الصور التي تتوقعها مفقودة ، يرجى إعادة فحص مكتبتك وانتظر حتى تكتمل الفهرسة."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"في حالة الصور التي تتوقعها مفقودة ، يرجى إعادة فحص مكتبتك وانتظر حتى تكتمل "
+"الفهرسة."
 
 #: src/page/settings/content.vue:208
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1754,10 +1819,18 @@ msgstr "الوقت غير صالح"
 msgid "Invalid URL"
 msgstr "عنوان URL غير صالح"
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr "عنوان IP"
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "إنه رمز للاستخدام لمرة واحدة والذي سيؤدي إلى تعطيل المصادقة الثنائية لحسابك عند استخدامه."
+msgid ""
+"It is a one-time use code that will disable 2FA for your account when you "
+"use it."
+msgstr ""
+"إنه رمز للاستخدام لمرة واحدة والذي سيؤدي إلى تعطيل المصادقة الثنائية لحسابك "
+"عند استخدامه."
 
 #: src/model/rest.js:157
 msgid "Item"
@@ -1950,8 +2023,12 @@ msgid "Location"
 msgstr "موقع"
 
 #: src/page/library/errors.vue:103
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "تظهر السجلات هنا كلما وجد PhotoPrism ملفات معطلة ، أو كانت هناك مشكلات أخرى محتملة."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"تظهر السجلات هنا كلما وجد PhotoPrism ملفات معطلة ، أو كانت هناك مشكلات أخرى "
+"محتملة."
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
 msgid "Login"
@@ -2035,7 +2112,8 @@ msgstr "عضوية"
 msgid "Merge %{a} with %{b}?"
 msgstr "هل تريد دمج %{a} مع %{b}؟"
 
-#: src/page/about/feedback.vue:51 src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
+#: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr "رسالة"
 
@@ -2228,14 +2306,22 @@ msgid "No thanks"
 msgstr "لا شكرا"
 
 #: src/page/library/errors.vue:99
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "لا تحذيرات أو خطأ يحتوي على هذه الكلمة الأساسية. لاحظ أن البحث حساس لحالة الأحرف."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"لا تحذيرات أو خطأ يحتوي على هذه الكلمة الأساسية. لاحظ أن البحث حساس لحالة "
+"الأحرف."
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
 #: src/component/upload/dialog.vue:106
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "تتطلب الصور غير الفوتوغرافية وذات الجودة المنخفضة المراجعة قبل ظهورها في نتائج البحث."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"تتطلب الصور غير الفوتوغرافية وذات الجودة المنخفضة المراجعة قبل ظهورها في "
+"نتائج البحث."
 
 #: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
 #: src/options/options.js:333
@@ -2260,7 +2346,8 @@ msgid "Not supported"
 msgstr "غير مدعوم"
 
 #: src/page/library/import.vue:60
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr "لاحظ أنه يمكنك إدارة مجلد الأصول يدويًا والاستيراد اختياري."
 
 #: src/page/settings/services.vue:78
@@ -2268,8 +2355,12 @@ msgid "Note:"
 msgstr "ملحوظة:"
 
 #: src/component/service/add.vue:60
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "ملاحظة: يمكن تكوين خوادم WebDAV فقط ، مثل Nextcloud أو PhotoPrism ، كخدمة عن بُعد للنسخ الاحتياطي وتحميل الملفات."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"ملاحظة: يمكن تكوين خوادم WebDAV فقط ، مثل Nextcloud أو PhotoPrism ، كخدمة عن "
+"بُعد للنسخ الاحتياطي وتحميل الملفات."
 
 #: src/component/photo/edit/details.vue:388
 msgid "Notes"
@@ -2279,8 +2370,8 @@ msgstr "ملحوظات"
 msgid "Nothing to see here yet."
 msgstr "لا شيء لتراه هنا حتى الآن. كن صبوراً."
 
-#: src/page/admin/sessions.vue:47 src/page/admin/users.vue:56
-#: src/component/settings/apps.vue:197
+#: src/page/admin/activity.vue:60 src/page/admin/sessions.vue:47
+#: src/page/admin/users.vue:56 src/component/settings/apps.vue:197
 msgid "Nothing was found."
 msgstr "لم يتم العثور على شيء."
 
@@ -2308,8 +2399,13 @@ msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "في نظام التشغيل Windows ، أدخل المورد التالي في مربع حوار الاتصال:"
 
 #: src/page/settings/advanced.vue:287
-msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "قد يؤدي إنشاء الصور المصغرة عند الطلب إلى زيادة استخدام وحدة المعالجة المركزية والذاكرة. لا يُنصح باستخدامه مع الخوادم ذات الموارد المحدودة وأجهزة NAS."
+msgid ""
+"On-demand generation of thumbnails may cause high CPU and memory usage. It "
+"is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
+"قد يؤدي إنشاء الصور المصغرة عند الطلب إلى زيادة استخدام وحدة المعالجة "
+"المركزية والذاكرة. لا يُنصح باستخدامه مع الخوادم ذات الموارد المحدودة وأجهزة "
+"NAS."
 
 #: src/options/options.js:372
 msgid "Once a week"
@@ -2345,8 +2441,11 @@ msgid "One picture found"
 msgstr "تم العثور على صورة واحدة"
 
 #: src/component/settings/passcode.vue:249
-msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr "يمكن إعداد الحسابات المُدارة محليًا فقط للمصادقة باستخدام المصادقة الثنائية (2FA)."
+msgid ""
+"Only locally managed accounts can be set up for authentication with 2FA."
+msgstr ""
+"يمكن إعداد الحسابات المُدارة محليًا فقط للمصادقة باستخدام المصادقة الثنائية "
+"(2FA)."
 
 #: src/locales.js:205
 msgid "Open"
@@ -2401,8 +2500,12 @@ msgid "Other"
 msgstr "آخر"
 
 #: src/page/about/about.vue:29
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "مهمتنا هي توفير الحل الأكثر ملاءمة للمستخدم والخصوصية للحفاظ على صورك منظمة ويمكن الوصول إليها."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"مهمتنا هي توفير الحل الأكثر ملاءمة للمستخدم والخصوصية للحفاظ على صورك منظمة "
+"ويمكن الوصول إليها."
 
 #: src/options/options.js:260
 msgid "Outdoor"
@@ -2530,11 +2633,14 @@ msgid "Please confirm your new password."
 msgstr "يرجى تأكيد كلمة المرور الجديدة الخاصة بك."
 
 #: src/component/settings/apps.vue:75
-msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "يرجى نسخ كلمة مرور التطبيق التالية التي تم إنشاؤها عشوائيًا والاحتفاظ بها في مكان آمن، حيث لن تتمكن من رؤيتها مرة أخرى:"
+msgid ""
+"Please copy the following randomly generated app password and keep it in a "
+"safe place, as you will not be able to see it again:"
+msgstr ""
+"يرجى نسخ كلمة مرور التطبيق التالية التي تم إنشاؤها عشوائيًا والاحتفاظ بها في "
+"مكان آمن، حيث لن تتمكن من رؤيتها مرة أخرى:"
 
 #: src/component/upload/dialog.vue:98
-#, fuzzy
 msgid "Please do not upload any private, unlawful or offensive pictures. "
 msgstr "يرجى عدم تحميل أي صور خاصة أو غير قانونية أو مسيئة."
 
@@ -2547,8 +2653,12 @@ msgid "Please enter OTP character {0}"
 msgstr "الرجاء إدخال حرف OTP {0}"
 
 #: src/component/settings/password.vue:20
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "يرجى ملاحظة أن تغيير كلمة المرور الخاصة بك سيؤدي إلى تسجيل خروجك على الأجهزة والمتصفحات الاخرى."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"يرجى ملاحظة أن تغيير كلمة المرور الخاصة بك سيؤدي إلى تسجيل خروجك على الأجهزة "
+"والمتصفحات الاخرى."
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
 msgid "Please restart your instance for the changes to take effect."
@@ -2581,8 +2691,12 @@ msgid "Press enter to create a new album."
 msgstr "اضغط على Enter لإنشاء ألبوم جديد."
 
 #: src/page/settings/advanced.vue:85
-msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr "منع إنشاء النسخ الاحتياطية لقاعدة البيانات والألبومات وكذلك ملفات YAML الجانبية."
+msgid ""
+"Prevent database and album backups as well as YAML sidecar files from being "
+"created."
+msgstr ""
+"منع إنشاء النسخ الاحتياطية لقاعدة البيانات والألبومات وكذلك ملفات YAML "
+"الجانبية."
 
 #: src/page/settings/advanced.vue:101
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
@@ -2667,7 +2781,9 @@ msgstr "الخام"
 
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم تغييرها."
+msgstr ""
+"أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم "
+"تغييرها."
 
 #: src/page/settings/advanced.vue:68
 msgid "Read-Only Mode"
@@ -2708,11 +2824,12 @@ msgstr "رمز الاسترداد"
 msgid "Red"
 msgstr "أحمر"
 
-#: src/page/admin/sessions.vue:333 src/page/admin/users.vue:321
-#: src/component/album/toolbar.vue:164 src/component/photo/toolbar.vue:488
-#: src/page/albums.vue:552 src/page/labels.vue:297
-#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
-#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
+#: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
+#: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
+#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
+#: src/page/labels.vue:297 src/page/library/browse.vue:21
+#: src/page/library/errors.vue:226 src/page/people/new.vue:7
+#: src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr "ينعش"
 
@@ -2757,8 +2874,16 @@ msgid "Remove from Album"
 msgstr "إزالة من الألبوم"
 
 #: src/page/library/import.vue:46
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "إزالة الملفات المستوردة لحفظ المساحة. لن يتم حذف أنواع الملفات الغير مدعومة مطلقًا ، وستظل في موقعها الحالي."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"إزالة الملفات المستوردة لحفظ المساحة. لن يتم حذف أنواع الملفات الغير مدعومة "
+"مطلقًا ، وستظل في موقعها الحالي."
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
+msgstr "متكرر"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -2769,8 +2894,12 @@ msgid "Request failed - invalid response"
 msgstr "فشل الطلب - استجابة غير صالحة"
 
 #: src/page/settings/content.vue:25
-msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr "يجب مراجعة الصور الغير فوتوغرافية و الصور ذات الجودة المنخفضة قبل ظهورها في نتائج البحث."
+msgid ""
+"Require non-photographic and low-quality images to be reviewed before they "
+"appear in search results."
+msgstr ""
+"يجب مراجعة الصور الغير فوتوغرافية و الصور ذات الجودة المنخفضة قبل ظهورها في "
+"نتائج البحث."
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
 msgid "Resolution"
@@ -2863,8 +2992,12 @@ msgid "Scan"
 msgstr "مسح"
 
 #: src/component/settings/passcode.vue:86
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr "امسح رمز الاستجابة السريعة باستخدام تطبيق المصادقة الخاص بك أو استخدم مفتاح الإعداد الموضح أدناه ثم أدخل رمز التحقق الذي تم إنشاؤه:"
+msgid ""
+"Scan the QR code with your authenticator app or use the setup key shown "
+"below and then enter the generated verification code:"
+msgstr ""
+"امسح رمز الاستجابة السريعة باستخدام تطبيق المصادقة الخاص بك أو استخدم مفتاح "
+"الإعداد الموضح أدناه ثم أدخل رمز التحقق الذي تم إنشاؤه:"
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
 #: src/component/navigation.vue:125 src/component/navigation.vue:131
@@ -2878,12 +3011,13 @@ msgstr "عمليات المسح"
 msgid "Scope"
 msgstr "نطاق"
 
-#: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:63 src/component/navigation.vue:122
-#: src/component/navigation.vue:903 src/component/photo/toolbar.vue:35
-#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
-#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
-#: src/page/places.vue:33 src/page/settings/content.vue:131
+#: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
+#: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
+#: src/component/navigation.vue:122 src/component/navigation.vue:903
+#: src/component/photo/toolbar.vue:35 src/options/options.js:201
+#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
+#: src/page/people/recognized.vue:15 src/page/places.vue:33
+#: src/page/settings/content.vue:131
 msgid "Search"
 msgstr "البحث"
 
@@ -2968,7 +3102,7 @@ msgstr "جلسة العمل"
 msgid "Session ID"
 msgstr "معرف جلسة العمل"
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr "الجلسات"
 
@@ -2998,6 +3132,10 @@ msgstr "تم حفظ الإعدادات"
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
 msgstr "تخصيص"
+
+#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+msgid "Severity"
+msgstr "الخطورة"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3149,8 +3287,12 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "تكديس الملفات التي تشترك في نفس الصورة الفريدة أو معرّف المثيل."
 
 #: src/page/settings/content.vue:84
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "قم بتجميع الصور الملتقطة في نفس الوقت والمكان بالضبط بناءً على البيانات الوصفية الخاصة بها."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"قم بتجميع الصور الملتقطة في نفس الوقت والمكان بالضبط بناءً على البيانات "
+"الوصفية الخاصة بها."
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
 msgid "Stackable"
@@ -3220,7 +3362,8 @@ msgid "Super Admin"
 msgstr "Super Admin"
 
 #: src/component/service/add.vue:64
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "دعم الخدمات الإضافية ، مثل Google Drive ، ستتم إضافته بمرور الوقت."
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
@@ -3246,8 +3389,11 @@ msgid "Teal"
 msgstr "بط نهري صغير"
 
 #: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow مطلوب لتصنيف الصور والتعرف على الوجه واكتشاف المحتوى غير الآمن."
+msgid ""
+"TensorFlow is required for image classification, facial recognition, and "
+"detecting unsafe content."
+msgstr ""
+"TensorFlow مطلوب لتصنيف الصور والتعرف على الوجه واكتشاف المحتوى غير الآمن."
 
 #: src/options/options.js:266
 msgid "Terrain"
@@ -3266,16 +3412,24 @@ msgid "Thank You for Your Support!"
 msgstr "شكرا لدعمك!"
 
 #: src/page/about/about.vue:34
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "لهذا السبب تم إنشاء PhotoPrism من الألف إلى الياء للتشغيل أينما تريد ، دون المساس بالحرية أو الخصوصية أو الوظيفة."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"لهذا السبب تم إنشاء PhotoPrism من الألف إلى الياء للتشغيل أينما تريد ، دون "
+"المساس بالحرية أو الخصوصية أو الوظيفة."
 
 #: src/page/library/index.vue:84
 msgid "The index currently contains %{n} hidden files."
 msgstr "يحتوي الفهرس حاليًا على %{n} من الملفات المخفية."
 
 #: src/page/library/index.vue:86
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "قد لا يكون تنسيقها مدعومًا ، أو لم يتم تحويلها إلى JPEG بعد أو أن هناك نسخًا مكررة."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"قد لا يكون تنسيقها مدعومًا ، أو لم يتم تحويلها إلى JPEG بعد أو أن هناك نسخًا "
+"مكررة."
 
 #: src/page/settings/general.vue:25
 msgid "Theme"
@@ -3289,13 +3443,26 @@ msgid "This field is required"
 msgstr "هذه الخانة مطلوبة"
 
 #: src/component/settings/webdav.vue:57
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات "
+"وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
 
 #: src/page/settings/services.vue:85
-#, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local. "
+msgstr ""
+"يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات "
+"وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
+msgstr "الوقت"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"
@@ -3327,20 +3494,36 @@ msgid "to"
 msgstr "إلى"
 
 #: src/component/settings/passcode.vue:160
-msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "لتجنب حظر دخولك إلى حسابك، يرجى تنزيل رمز الاسترداد هذا أو طباعته أو نسخه الآن والاحتفاظ به في مكان آمن."
+msgid ""
+"To avoid being locked out of your account, please download, print or copy "
+"this recovery code now and keep it in a safe place."
+msgstr ""
+"لتجنب حظر دخولك إلى حسابك، يرجى تنزيل رمز الاسترداد هذا أو طباعته أو نسخه "
+"الآن والاحتفاظ به في مكان آمن."
 
 #: src/component/settings/apps.vue:122
-msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "لإنشاء كلمة مرور جديدة خاصة بالتطبيق، يرجى إدخال الاسم ونطاق الترخيص الخاص بالتطبيق وتحديد تاريخ انتهاء الصلاحية:"
+msgid ""
+"To generate a new app-specific password, please enter the name and "
+"authorization scope of the application and select an expiration date:"
+msgstr ""
+"لإنشاء كلمة مرور جديدة خاصة بالتطبيق، يرجى إدخال الاسم ونطاق الترخيص الخاص "
+"بالتطبيق وتحديد تاريخ انتهاء الصلاحية:"
 
 #: src/component/settings/passcode.vue:203
-msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr "للتبديل إلى تطبيق أو جهاز مصادقة جديد، قم أولاً بإلغاء تنشيط المصادقة الثنائية ثم أعد تنشيطها:"
+msgid ""
+"To switch to a new authenticator app or device, first deactivate two-factor "
+"authentication and then reactivate it:"
+msgstr ""
+"للتبديل إلى تطبيق أو جهاز مصادقة جديد، قم أولاً بإلغاء تنشيط المصادقة "
+"الثنائية ثم أعد تنشيطها:"
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للتسجيل على موقعنا الإلكتروني:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للتسجيل على "
+"موقعنا الإلكتروني:"
 
 #: src/locales.js:263
 msgid "Today"
@@ -3535,8 +3718,12 @@ msgid "Use Presets"
 msgstr "استخدم الإعدادات المسبقة"
 
 #: src/component/settings/passcode.vue:138
-msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "استخدم رمز الاسترداد التالي للوصول إلى حسابك عندما لا تتمكن من إنشاء رمز تحقق صالح باستخدام تطبيق المصادقة الخاص بك:"
+msgid ""
+"Use the following recovery code to access your account when you are unable "
+"to generate a valid verification code with your authenticator app:"
+msgstr ""
+"استخدم رمز الاسترداد التالي للوصول إلى حسابك عندما لا تتمكن من إنشاء رمز "
+"تحقق صالح باستخدام تطبيق المصادقة الخاص بك:"
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
 #: src/page/auth/login.vue:47 src/page/auth/login.vue:48
@@ -3660,9 +3847,12 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "يمكن لعملاء WebDAV الاتصال بـ PhotoPrism باستخدام عنوان URL التالي:"
 
 #: src/page/settings/services.vue:80
-#, fuzzy
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "يمكن لعملاء WebDAV، مثل Microsoft Windows Explorer أو Apple's Finder، الاتصال مباشرة بـ PhotoPrism."
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism. "
+msgstr ""
+"يمكن لعملاء WebDAV، مثل Microsoft Windows Explorer أو Apple's Finder، "
+"الاتصال مباشرة بـ PhotoPrism."
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
 msgid "WebDAV Upload"
@@ -3720,8 +3910,11 @@ msgstr "نعم"
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "نرحب باتصالك بنا على membership@photoprism.app لطرح أسئلة بخصوص عضويتك."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"نرحب باتصالك بنا على membership@photoprism.app لطرح أسئلة بخصوص عضويتك."
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
 msgid "You can only download one album"
@@ -3732,7 +3925,9 @@ msgid "You can only download one label"
 msgstr "يمكنك فقط تحميل تسمية واحدة"
 
 #: src/component/location/dialog.vue:101
-msgid "You can search for a location or move the marker on the map to change the position:"
+msgid ""
+"You can search for a location or move the marker on the map to change the "
+"position:"
 msgstr "يمكنك البحث عن موقع أو تحريك العلامة على الخريطة لتغيير الموقع:"
 
 #: src/component/upload/dialog.vue:97
@@ -3758,12 +3953,20 @@ msgstr "متصفحك لا يدعم WebGL"
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "يساعدنا دعمك المستمر في توفير تحديثات منتظمة والبقاء مستقلين ، حتى نتمكن من تنفيذ مهمتنا وحماية خصوصيتك."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"يساعدنا دعمك المستمر في توفير تحديثات منتظمة والبقاء مستقلين ، حتى نتمكن من "
+"تنفيذ مهمتنا وحماية خصوصيتك."
 
 #: src/page/albums.vue:182
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن تلقائيًا."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن "
+"تلقائيًا."
 
 #: src/component/lightbox.vue:434
 msgid "Zoom in/out"
@@ -3915,8 +4118,12 @@ msgstr "الأرشيف"
 #~ msgid "close"
 #~ msgstr "يغلق"
 
-#~ msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-#~ msgstr "يكدس الملفات بإطار مرجعي مماثل ، لكن مع وجود اختلافات في الجودة أو التنسيق أو الحجم أو اللون."
+#~ msgid ""
+#~ "Stacks group files with a similar frame of reference, but differences of "
+#~ "quality, format, size or color."
+#~ msgstr ""
+#~ "يكدس الملفات بإطار مرجعي مماثل ، لكن مع وجود اختلافات في الجودة أو "
+#~ "التنسيق أو الحجم أو اللون."
 
 #~ msgid "URL"
 #~ msgstr "URL"
@@ -3966,7 +4173,9 @@ msgstr "الأرشيف"
 #~ msgid "No video selected"
 #~ msgstr "لم يتم تحديد مقطع فيديو"
 
-#~ msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+#~ msgid ""
+#~ "Automatically generate thumbnails for files that cannot otherwise be "
+#~ "indexed or viewed."
 #~ msgstr "إنشاء صور مصغرة تلقائيًا للملفات التي لا يمكن فهرستها أو عرضها."
 
 #~ msgid "Estimate the approximate location of pictures without coordinates."
@@ -4005,8 +4214,12 @@ msgstr "الأرشيف"
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "تحميل NSFW"
 
-#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-#~ msgstr "السماح بالتحميلات التي قد تكون مسيئة. يتطلب اكتشاف المحتوى غير الآمن استخدام TensorFlow."
+#~ msgid ""
+#~ "Pictures that might be offensive will otherwise be rejected when using "
+#~ "the web upload."
+#~ msgstr ""
+#~ "السماح بالتحميلات التي قد تكون مسيئة. يتطلب اكتشاف المحتوى غير الآمن "
+#~ "استخدام TensorFlow."
 
 #~ msgid "File Format Support"
 #~ msgstr "دعم تنسيق الملف"
@@ -4026,7 +4239,9 @@ msgstr "الأرشيف"
 #~ msgid "Don't use TensorFlow for image classification."
 #~ msgstr "لا تستخدم TensorFlow لتصنيف الصور."
 
-#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgid ""
+#~ "Dynamic rendering requires a powerful server. It is not recommended for "
+#~ "NAS devices."
 #~ msgstr "يتطلب العرض الديناميكي خادمًا قويًا. لا ينصح به لأجهزة NAS."
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
@@ -4035,30 +4250,46 @@ msgstr "الأرشيف"
 #~ msgid "Thumbnail Generation"
 #~ msgstr "جيل المصغرات"
 
-#~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-#~ msgstr "لا يمكنك الوصول إلى تطبيق أو جهاز المصادقة الخاص بك؟ أدخل رمز الاسترداد الخاص بك أو اطلب المساعدة."
+#~ msgid ""
+#~ "Can't access your authenticator app or device? Enter your recovery code "
+#~ "or ask for assistance."
+#~ msgstr ""
+#~ "لا يمكنك الوصول إلى تطبيق أو جهاز المصادقة الخاص بك؟ أدخل رمز الاسترداد "
+#~ "الخاص بك أو اطلب المساعدة."
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
-#~ msgstr "لا تقم بنسخ البيانات الوصفية للصور والألبوم احتياطيًا إلى ملفات YAML."
+#~ msgstr ""
+#~ "لا تقم بنسخ البيانات الوصفية للصور والألبوم احتياطيًا إلى ملفات YAML."
 
 #~ msgid "providerName"
 #~ msgstr "اسم المزود"
 
 #~ msgid ""
-#~ "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+#~ "This mounts the originals folder as a network drive and allows you to "
+#~ "open, edit, and delete files\n"
 #~ "          from your computer or smartphone as if they were local."
-#~ msgstr "يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح الملفات وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت محلية."
+#~ msgstr ""
+#~ "يعمل هذا على تثبيت مجلد النسخ الأصلية كمحرك أقراص شبكة ويسمح لك بفتح "
+#~ "الملفات وتعديلها وحذفها من جهاز الكمبيوتر أو الهاتف الذكي كما لو كانت "
+#~ "محلية."
 
 #~ msgid ""
-#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+#~ "connect directly to\n"
 #~ "          PhotoPrism."
-#~ msgstr "يمكن لعملاء WebDAV ، مثل Microsoft Windows Explorer أو Apple's Finder ، الاتصال مباشرة بـ PhotoPrism."
+#~ msgstr ""
+#~ "يمكن لعملاء WebDAV ، مثل Microsoft Windows Explorer أو Apple's Finder ، "
+#~ "الاتصال مباشرة بـ PhotoPrism."
 
 #~ msgid "Basic"
 #~ msgstr "أساسي"
 
-#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-#~ msgstr "قم بإنشاء ملفات JPEG تلقائيًا لأنواع الملفات الأخرى بحيث يمكن عرضها في المستعرض."
+#~ msgid ""
+#~ "Automatically create JPEGs for other file types so that they can be "
+#~ "displayed in a browser."
+#~ msgstr ""
+#~ "قم بإنشاء ملفات JPEG تلقائيًا لأنواع الملفات الأخرى بحيث يمكن عرضها في "
+#~ "المستعرض."
 
 #~ msgid "Convert to JPEG"
 #~ msgstr "قم بالتحويل إلى JPEG"
@@ -4069,8 +4300,12 @@ msgstr "الأرشيف"
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "يرجى الحرص على عدم تحميل أي محتوى خاص أو مسيء."
 
-#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
-#~ msgstr "نرحب بك لتحميل الملفات إلى هذا العرض التوضيحي العام الذي تمتلك حقوق الطبع والنشر له."
+#~ msgid ""
+#~ "You are welcome to upload files to this public demo for which you own the "
+#~ "copyright."
+#~ msgstr ""
+#~ "نرحب بك لتحميل الملفات إلى هذا العرض التوضيحي العام الذي تمتلك حقوق الطبع "
+#~ "والنشر له."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "لا يجوز لك تحميل أكثر من %{n} من الملفات"
@@ -4091,28 +4326,46 @@ msgstr "الأرشيف"
 #~ msgstr "تم العثور على أكثر من %{n} صورة"
 
 #~ msgid "Delete orphaned index entries, cache files and thumbnails."
-#~ msgstr "حذف إدخالات الفهرس المعزولة وملفات ذاكرة التخزين المؤقت والصور المصغرة."
+#~ msgstr ""
+#~ "حذف إدخالات الفهرس المعزولة وملفات ذاكرة التخزين المؤقت والصور المصغرة."
 
 #~ msgid "Not Found"
 #~ msgstr "لم يتم العثور على"
 
-#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-#~ msgstr "نظرًا لأن هذا يساعدنا في توفير المزيد من الميزات للجمهور ، فإننا نشجع جميع المستخدمين على دعم مهمتنا."
+#~ msgid ""
+#~ "As this helps us provide more features to the public, we encourage all "
+#~ "users to support our mission."
+#~ msgstr ""
+#~ "نظرًا لأن هذا يساعدنا في توفير المزيد من الميزات للجمهور ، فإننا نشجع جميع "
+#~ "المستخدمين على دعم مهمتنا."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "أسئلة مكررة"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-#~ msgstr "يقرر فريقنا هذا على أساس مستمر اعتمادًا على جهد الدعم المطلوب ، وتكاليف الخادم والترخيص ، وما إذا كانت الميزات مطلوبة بشكل عام من قبل الجميع أو مطلوبة بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users."
+#~ msgstr ""
+#~ "يقرر فريقنا هذا على أساس مستمر اعتمادًا على جهد الدعم المطلوب ، وتكاليف "
+#~ "الخادم والترخيص ، وما إذا كانت الميزات مطلوبة بشكل عام من قبل الجميع أو "
+#~ "مطلوبة بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "ما هي الوظائف المتاحة بشكل عام؟"
 
-#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgid ""
+#~ "It is your decision whether you want to sign up to enjoy additional "
+#~ "benefits."
 #~ msgstr "إنه قرارك ما إذا كنت تريد التسجيل للتمتع بمزايا إضافية."
 
-#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-#~ msgstr "لا تغطي التبرعات الطوعية تكلفة فريق العمل بدوام كامل لتزويدك بالتحديثات والوثائق والدعم."
+#~ msgid ""
+#~ "Voluntary donations do not cover the cost of a team working full time to "
+#~ "provide you with updates, documentation, and support."
+#~ msgstr ""
+#~ "لا تغطي التبرعات الطوعية تكلفة فريق العمل بدوام كامل لتزويدك بالتحديثات "
+#~ "والوثائق والدعم."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "لماذا بعض الميزات متاحة فقط للجهات الراعية؟"
@@ -4123,35 +4376,64 @@ msgstr "الأرشيف"
 #~ msgid "Proceed"
 #~ msgstr "يتابع"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-#~ msgstr "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"متابعة\" للتسجيل على موقعنا الإلكتروني:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on "
+#~ "\"Proceed\" to sign up on our website:"
+#~ msgstr ""
+#~ "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"متابعة\" للتسجيل على "
+#~ "موقعنا الإلكتروني:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "حدث خطأ ما ، هل أنت غير متصل؟"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "في PhotoPrism ، نؤمن بأن كل لحظة يتم التقاطها من خلال صورة ما هي ثمينة ، ومهمتنا هي تمكين الناس من الاعتزاز بهذه اللحظات للأجيال القادمة."
+#~ msgid ""
+#~ "At PhotoPrism, we believe that every moment captured through a photograph "
+#~ "is precious, and our mission is to enable people to cherish those moments "
+#~ "for generations to come."
+#~ msgstr ""
+#~ "في PhotoPrism ، نؤمن بأن كل لحظة يتم التقاطها من خلال صورة ما هي ثمينة ، "
+#~ "ومهمتنا هي تمكين الناس من الاعتزاز بهذه اللحظات للأجيال القادمة."
 
-#~ msgid "Become a member today to enjoy additional features and support our mission!"
+#~ msgid ""
+#~ "Become a member today to enjoy additional features and support our "
+#~ "mission!"
 #~ msgstr "كن عضوًا اليوم للاستمتاع بميزات إضافية ودعم مهمتنا!"
 
-#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr "لا تتردد في الاتصال بنا على hello@photoprism.app إذا كان لديك أي أسئلة."
+#~ msgid ""
+#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr ""
+#~ "لا تتردد في الاتصال بنا على hello@photoprism.app إذا كان لديك أي أسئلة."
 
-#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
-#~ msgstr "لا تتردد في الاتصال بنا على membership@photoprism.app لطرح أسئلة بخصوص عضويتك."
+#~ msgid ""
+#~ "Feel free to contact us at membership@photoprism.app for questions "
+#~ "regarding your membership."
+#~ msgstr ""
+#~ "لا تتردد في الاتصال بنا على membership@photoprism.app لطرح أسئلة بخصوص "
+#~ "عضويتك."
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "حدث خطأ - هل أنت غير متصل؟"
 
-#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-#~ msgstr "قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها لتحديد سبب مشكلتك."
+#~ msgid ""
+#~ "Before submitting a support request, please use our Troubleshooting "
+#~ "Checklists to determine the cause of your problem."
+#~ msgstr ""
+#~ "قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء "
+#~ "وإصلاحها لتحديد سبب مشكلتك."
 
-#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-#~ msgstr "تصفح \"قاعدة المعارف\" للحصول على معلومات تفصيلية حول ميزات المنتج المحددة والخدمات والموارد ذات الصلة."
+#~ msgid ""
+#~ "Browse the Knowledge Base for detailed information on specific product "
+#~ "features, services, and related resources."
+#~ msgstr ""
+#~ "تصفح \"قاعدة المعارف\" للحصول على معلومات تفصيلية حول ميزات المنتج "
+#~ "المحددة والخدمات والموارد ذات الصلة."
 
-#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-#~ msgstr "يمكن تشخيص المشكلات الشائعة وحلها بسرعة باستخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها التي نقدمها."
+#~ msgid ""
+#~ "Common issues can be quickly diagnosed and solved using the "
+#~ "troubleshooting checklists we provide."
+#~ msgstr ""
+#~ "يمكن تشخيص المشكلات الشائعة وحلها بسرعة باستخدام قوائم التحقق الخاصة "
+#~ "باستكشاف الأخطاء وإصلاحها التي نقدمها."
 
 #~ msgid "Getting Support"
 #~ msgstr "الحصول على الدعم"
@@ -4160,7 +4442,8 @@ msgstr "الأرشيف"
 #~ msgstr "إذا لم يساعدك ذلك ، أو لديك أسئلة أخرى:"
 
 #~ msgid "In addition, sponsors receive direct technical support via email."
-#~ msgstr "بالإضافة إلى ذلك ، يتلقى الرعاة دعمًا فنيًا مباشرًا عبر البريد الإلكتروني."
+#~ msgstr ""
+#~ "بالإضافة إلى ذلك ، يتلقى الرعاة دعمًا فنيًا مباشرًا عبر البريد الإلكتروني."
 
 #~ msgid "Knowledge Base"
 #~ msgstr "قاعدة المعرفة"
@@ -4171,8 +4454,12 @@ msgstr "الأرشيف"
 #~ msgid "or ask in our Community Chat"
 #~ msgstr "أو اسأل في دردشة المجتمع"
 
-#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-#~ msgstr "يغطي دليل المستخدم الخاص بنا أيضًا العديد من الموضوعات المتقدمة ، مثل الترحيل من صور Google وإعدادات جودة الصورة المصغرة."
+#~ msgid ""
+#~ "Our User Guide also covers many advanced topics, such as migrating from "
+#~ "Google Photos and thumbnail quality settings."
+#~ msgstr ""
+#~ "يغطي دليل المستخدم الخاص بنا أيضًا العديد من الموضوعات المتقدمة ، مثل "
+#~ "الترحيل من صور Google وإعدادات جودة الصورة المصغرة."
 
 #~ msgid "post your question in GitHub Discussions"
 #~ msgstr "انشر سؤالك في GitHub Discussions"
@@ -4180,11 +4467,19 @@ msgstr "الأرشيف"
 #~ msgid "Read the Docs"
 #~ msgstr "اقرأ ملف المساعدة"
 
-#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-#~ msgstr "تفضل بزيارة docs.photoprism.app/user-guide للتعرف على كيفية مزامنة صورك وتنظيمها ومشاركتها."
+#~ msgid ""
+#~ "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+#~ "share your pictures."
+#~ msgstr ""
+#~ "تفضل بزيارة docs.photoprism.app/user-guide للتعرف على كيفية مزامنة صورك "
+#~ "وتنظيمها ومشاركتها."
 
-#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-#~ msgstr "سنبذل قصارى جهدنا للإجابة على جميع أسئلتك. في المقابل ، نطلب منك دعمنا على Patreon أو GitHub الرعاة."
+#~ msgid ""
+#~ "We'll do our best to answer all your questions. In return, we ask you to "
+#~ "back us on Patreon or GitHub Sponsors."
+#~ msgstr ""
+#~ "سنبذل قصارى جهدنا للإجابة على جميع أسئلتك. في المقابل ، نطلب منك دعمنا "
+#~ "على Patreon أو GitHub الرعاة."
 
 #~ msgid "you are welcome to join us on Reddit"
 #~ msgstr "اهلا وسهلا بكم للانضمام إلينا على Reddit"
@@ -4237,8 +4532,12 @@ msgstr "الأرشيف"
 #~ msgid "Connect Customer Account"
 #~ msgstr "ربط حساب العميل"
 
-#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-#~ msgstr "فهو يستخدم أحدث التقنيات لوضع علامة على الصور والعثور عليها تلقائيًا دون أن يعيقك ذلك."
+#~ msgid ""
+#~ "It makes use of the latest technologies to tag and find pictures "
+#~ "automatically without getting in your way."
+#~ msgstr ""
+#~ "فهو يستخدم أحدث التقنيات لوضع علامة على الصور والعثور عليها تلقائيًا دون "
+#~ "أن يعيقك ذلك."
 
 #~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
 #~ msgstr "PhotoPrism® هو تطبيق صور يعمل بالذكاء الاصطناعي للويب اللامركزي."
@@ -4252,8 +4551,12 @@ msgstr "الأرشيف"
 #~ msgid "Downloads"
 #~ msgstr "التحميلات"
 
-#~ msgid "Download only original media files, without any automatically generated sidecar files."
-#~ msgstr "قم بتنزيل ملفات الوسائط الأصلية فقط ، بدون أي ملفات جانبية يتم إنشاؤها تلقائيًا."
+#~ msgid ""
+#~ "Download only original media files, without any automatically generated "
+#~ "sidecar files."
+#~ msgstr ""
+#~ "قم بتنزيل ملفات الوسائط الأصلية فقط ، بدون أي ملفات جانبية يتم إنشاؤها "
+#~ "تلقائيًا."
 
 #~ msgid "Web Login "
 #~ msgstr "تسجيل الدخول عبر الويب "
@@ -4273,20 +4576,46 @@ msgstr "الأرشيف"
 #~ msgid "RAW Conversion"
 #~ msgstr "تحويل RAW"
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "كن راعياً اليوم ، وادعم مهمتنا واستمتع بمزايا أعضائنا!"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "يقوم فريقنا بتقييم ذلك على أساس مستمر ، اعتمادًا على جهود الدعم التي تتطلبها الميزات ، والتكلفة التي نتحملها ، وما إذا كان الجميع بحاجة إليها عمومًا أو طلبها بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين. نظرًا لأن هذا يتيح لنا توفير المزيد من الميزات للجمهور ، فإننا نشجع جميع المستخدمين على دعم مهمتنا."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "يقوم فريقنا بتقييم ذلك على أساس مستمر ، اعتمادًا على جهود الدعم التي "
+#~ "تتطلبها الميزات ، والتكلفة التي نتحملها ، وما إذا كان الجميع بحاجة إليها "
+#~ "عمومًا أو طلبها بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين. نظرًا لأن "
+#~ "هذا يتيح لنا توفير المزيد من الميزات للجمهور ، فإننا نشجع جميع المستخدمين "
+#~ "على دعم مهمتنا."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "PhotoPrism ممولة ذاتيًا بنسبة 100٪. لا تغطي التبرعات الطوعية تكلفة فريق العمل بدوام كامل لتزويدك بالتحديثات والوثائق والدعم. إنه قرارك ما إذا كنت تريد التسجيل للتمتع بمزايا إضافية."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "PhotoPrism ممولة ذاتيًا بنسبة 100٪. لا تغطي التبرعات الطوعية تكلفة فريق "
+#~ "العمل بدوام كامل لتزويدك بالتحديثات والوثائق والدعم. إنه قرارك ما إذا كنت "
+#~ "تريد التسجيل للتمتع بمزايا إضافية."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "ألا يجب أن تكون البرمجيات الحرة خالية من التكاليف؟"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "فكر في \"البرمجيات الحرة\" كما في \"حرية التعبير\" وليس \"البيرة المجانية\". أحيانًا تسميها مؤسسة البرمجيات الحرة \"البرمجيات الحرة\" ، مستعارةً الكلمة الفرنسية أو الإسبانية لكلمة \"مجاني\" كما هو الحال في الحرية ، لإثبات أنها لا تعني أن البرنامج مجاني."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "فكر في \"البرمجيات الحرة\" كما في \"حرية التعبير\" وليس \"البيرة "
+#~ "المجانية\". أحيانًا تسميها مؤسسة البرمجيات الحرة \"البرمجيات الحرة\" ، "
+#~ "مستعارةً الكلمة الفرنسية أو الإسبانية لكلمة \"مجاني\" كما هو الحال في "
+#~ "الحرية ، لإثبات أنها لا تعني أن البرنامج مجاني."
 
 #~ msgid "Moonlight"
 #~ msgstr "ضوء القمر"
@@ -4297,11 +4626,19 @@ msgstr "الأرشيف"
 #~ msgid "Sign Up"
 #~ msgstr "اشتراك"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للترقية على موقعنا الإلكتروني:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للترقية على "
+#~ "موقعنا الإلكتروني:"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للترقية على موقعنا الإلكتروني:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "للترقية ، يمكنك إما إدخال رمز التفعيل أو النقر فوق \"تسجيل\" للترقية على "
+#~ "موقعنا الإلكتروني:"
 
 #~ msgid "Sign up"
 #~ msgstr "اشتراك"
@@ -4309,11 +4646,25 @@ msgstr "الأرشيف"
 #~ msgid "Compare Features"
 #~ msgstr "قارن الميزات"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "يقوم فريقنا بتقييم ذلك على أساس مستمر ، اعتمادًا على ميزات جهود الدعم وخيارات التكوين التي سببها أو تسببها في الماضي ، وما إذا كان الجميع بحاجة إليها عمومًا أو طلبها بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين. نظرًا لأن هذا يسمح لنا بإتاحة المزيد من الميزات للجمهور ، فإننا نشجع جميع المستخدمين على دعم مهمتنا."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "يقوم فريقنا بتقييم ذلك على أساس مستمر ، اعتمادًا على ميزات جهود الدعم "
+#~ "وخيارات التكوين التي سببها أو تسببها في الماضي ، وما إذا كان الجميع بحاجة "
+#~ "إليها عمومًا أو طلبها بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين. "
+#~ "نظرًا لأن هذا يسمح لنا بإتاحة المزيد من الميزات للجمهور ، فإننا نشجع جميع "
+#~ "المستخدمين على دعم مهمتنا."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "أيضًا ، يرجى ترك نجمة على GitHub إذا كنت تحب هذا المشروع لتوفير دافعًا إضافيًا للاستمرار."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "أيضًا ، يرجى ترك نجمة على GitHub إذا كنت تحب هذا المشروع لتوفير دافعًا "
+#~ "إضافيًا للاستمرار."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "كن راعياً"
@@ -4321,17 +4672,28 @@ msgstr "الأرشيف"
 #~ msgid "I'm a sponsor"
 #~ msgstr "أنا الراعي"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "يحصل الرعاة على ميزات إضافية ، ويتلقون الدعم الفني المباشر عبر البريد الإلكتروني ، ويمكنهم الانضمام إلى غرفة الدردشة الخاصة بنا على matrix.org."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "يحصل الرعاة على ميزات إضافية ، ويتلقون الدعم الفني المباشر عبر البريد "
+#~ "الإلكتروني ، ويمكنهم الانضمام إلى غرفة الدردشة الخاصة بنا على matrix.org."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
 #~ msgstr "هذه ميزة الراعي حاليًا لشكر كل من يدعم تطوير هذا التطبيق."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
 #~ msgstr "سنخبرك بكيفية تمكينه عند التسجيل على Patreon أو GitHub الرعاة."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "يساعدنا دعمك المستمر في توفير تحديثات وخدمات منتظمة مثل خرائط العالم."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "يساعدنا دعمك المستمر في توفير تحديثات وخدمات منتظمة مثل خرائط العالم."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -4395,8 +4757,12 @@ msgstr "الأرشيف"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "فشل أثناء استيراد الملفات التي تم تحميلها"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "ملاحظة: لن يؤدي تحديث كلمة المرور إلى إبطال الوصول من المستخدمين المصادق عليهم بالفعل."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "ملاحظة: لن يؤدي تحديث كلمة المرور إلى إبطال الوصول من المستخدمين المصادق "
+#~ "عليهم بالفعل."
 
 #~ msgid "Play"
 #~ msgstr "لعب"
@@ -4410,15 +4776,21 @@ msgstr "الأرشيف"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "إظهار المكتبة في قائمة التنقل."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "توضح خارطة الطريق المهام الجارية ، وما الذي يحتاج إلى اختبار ، وطلبات الميزات التي سيتم تنفيذها بعد ذلك."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "توضح خارطة الطريق المهام الجارية ، وما الذي يحتاج إلى اختبار ، وطلبات "
+#~ "الميزات التي سيتم تنفيذها بعد ذلك."
 
 #~ msgid "Your message has been sent"
 #~ msgstr "تم ارسال رسالتك"
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "Their format may not be supported, they haven't been converted to JPEG "
+#~ "yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
-#~ "قد لا يكون تنسيقها مدعومًا، أو لم يتم تحويلها إلى JPEG بعد، أو قد يكون هناك دعم\n"
+#~ "قد لا يكون تنسيقها مدعومًا، أو لم يتم تحويلها إلى JPEG بعد، أو قد يكون "
+#~ "هناك دعم\n"
 #~ "            التكرارات."

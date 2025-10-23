@@ -79,7 +79,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="!isPortal && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
+      <v-card v-if="!isPortal && !hasScope && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
           <v-row align="start" dense>
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
@@ -436,6 +436,7 @@ export default {
     return {
       isDemo: this.$config.isDemo(),
       isAdmin: this.$session.isAdmin(),
+      hasScope: this.$session.hasScope(),
       isSuperAdmin: this.$session.isSuperAdmin(),
       isPublic: this.$config.isPublic(),
       isPortal: this.$config.isPortal(),

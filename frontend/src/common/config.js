@@ -674,9 +674,21 @@ export default class Config {
 
     const albumsRoute = "albums";
     const browseRoute = "browse";
-    const defaultRoute = this.deny("photos", "access_library") ? albumsRoute : browseRoute;
+    const settingsRoute = "settings";
 
-    if (this.allow("settings", "update")) {
+    let defaultRoute;
+
+    if (this.deny("photos", "access_library") || !this.feature("search")) {
+      if (this.deny("albums", "view") || !this.feature("albums")) {
+        defaultRoute = settingsRoute;
+      } else {
+        defaultRoute = albumsRoute;
+      }
+    } else {
+      defaultRoute = browseRoute;
+    }
+
+    if (defaultRoute !== settingsRoute && this.allow("settings", "update")) {
       const features = this.getSettings()?.features;
       const startPage = this.getSettings()?.ui?.startPage;
 
@@ -704,6 +716,8 @@ export default class Config {
             return features.labels ? startPage : defaultRoute;
           case "folders":
             return features.folders ? startPage : defaultRoute;
+          case "settings":
+            return features.settings ? startPage : defaultRoute;
           default:
             return defaultRoute;
         }

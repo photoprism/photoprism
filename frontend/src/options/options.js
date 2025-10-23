@@ -209,6 +209,7 @@ export const StartPages = (features, isPortal) => {
     { value: "moments", text: $gettext("Moments"), props: { disabled: !features?.moments } },
     { value: "labels", text: $gettext("Labels"), props: { disabled: !features?.labels } },
     { value: "folders", text: $gettext("Folders"), props: { disabled: !features?.folders } },
+    { value: "settings", text: $gettext("Settings"), props: { disabled: !features?.settings } },
   ];
 };
 

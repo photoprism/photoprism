@@ -204,24 +204,31 @@ func obtainOAuthToken(portalURL, clientID, clientSecret string) (string, error) 
 
 	client := &http.Client{Timeout: cluster.BootstrapRegisterTimeout}
 	resp, err := client.Do(req)
+
 	if err != nil {
 		return "", err
 	}
+
 	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("%s", resp.Status)
 	}
+
 	var tok struct {
 		AccessToken string `json:"access_token"`
 		TokenType   string `json:"token_type"`
 		Scope       string `json:"scope"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&tok); err != nil {
+
+	if err = json.NewDecoder(resp.Body).Decode(&tok); err != nil {
 		return "", err
 	}
+
 	if tok.AccessToken == "" {
 		return "", fmt.Errorf("empty access_token")
 	}
+
 	return tok.AccessToken, nil
 }
 

@@ -143,7 +143,7 @@ msgstr ""
 msgid "Account restored"
 msgstr ""
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr ""
 
@@ -187,6 +187,10 @@ msgstr ""
 
 #: src/page/connect.vue:125 src/page/connect.vue:136
 msgid "Activation Code"
+msgstr ""
+
+#: src/page/admin.vue:76
+msgid "Activity"
 msgstr ""
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
@@ -267,7 +271,9 @@ msgid "After 7 days"
 msgstr ""
 
 #: src/component/settings/passcode.vue:32
-msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
+msgid ""
+"After entering your password for confirmation, you can set up two-factor "
+"authentication with a compatible authenticator app or device:"
 msgstr ""
 
 #: src/options/options.js:381
@@ -279,7 +285,9 @@ msgid "After one year"
 msgstr ""
 
 #: src/page/albums.vue:175
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
 msgstr ""
 
 #: src/options/options.js:382
@@ -375,7 +383,9 @@ msgid "All Years"
 msgstr ""
 
 #: src/component/share/dialog.vue:133
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
 msgstr ""
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
@@ -493,7 +503,7 @@ msgstr ""
 msgid "Audio"
 msgstr ""
 
-#: src/model/logs.js:173
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr ""
 
@@ -533,11 +543,15 @@ msgid "Batch"
 msgstr ""
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
 msgstr ""
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
 msgstr ""
 
 #: src/component/user/edit/dialog.vue:151
@@ -602,7 +616,9 @@ msgid "Busy, please wait…"
 msgstr ""
 
 #: src/page/connect.vue:198
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
 msgstr ""
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
@@ -1059,7 +1075,8 @@ msgid "Disable ExifTool"
 msgstr ""
 
 #: src/page/settings/advanced.vue:69
-msgid "Disable features that require write permission for the originals folder."
+msgid ""
+"Disable features that require write permission for the originals folder."
 msgstr ""
 
 #: src/page/settings/advanced.vue:430
@@ -1181,7 +1198,9 @@ msgid "Download"
 msgstr ""
 
 #: src/page/settings/content.vue:194
-msgid "Download only original media files, without any automatically generated files."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
 msgstr ""
 
 #: src/component/service/edit.vue:117
@@ -1210,7 +1229,9 @@ msgid "Drag and drop files here"
 msgstr ""
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
 msgstr ""
 
 #: src/page/library/browse.vue:46
@@ -1265,7 +1286,8 @@ msgid "Email"
 msgstr ""
 
 #: src/page/settings/advanced.vue:37
-msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgid ""
+"Enable debug mode to display additional logs and help with troubleshooting."
 msgstr ""
 
 #: src/page/settings/advanced.vue:53
@@ -1277,7 +1299,10 @@ msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 
 #: src/component/settings/passcode.vue:58
-msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
+msgid ""
+"Enabling two-factor authentication means that you will need a randomly "
+"generated verification code to log in, so even if someone gains access to "
+"your password, they will not be able to access your account."
 msgstr ""
 
 #: src/locales.js:248 src/locales.js:250
@@ -1330,7 +1355,9 @@ msgid "Every two days"
 msgstr ""
 
 #: src/page/settings/general.vue:157
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
 msgstr ""
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
@@ -1338,7 +1365,9 @@ msgid "Exclude hidden"
 msgstr ""
 
 #: src/page/settings/advanced.vue:133
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
+msgid ""
+"ExifTool is required for full support of XMP metadata, videos and Live "
+"Photos."
 msgstr ""
 
 #: src/page/settings/advanced.vue:52
@@ -1457,7 +1486,9 @@ msgid "Files"
 msgstr ""
 
 #: src/page/settings/content.vue:115
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
 msgstr ""
 
 #: src/locales.js:234 src/locales.js:292
@@ -1619,7 +1650,9 @@ msgid "Hybrid"
 msgstr ""
 
 #: src/component/settings/passcode.vue:195
-msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
+msgid ""
+"If you lose access to your authenticator app or device, you can use your "
+"recovery code to regain access to your account."
 msgstr ""
 
 #: src/common/util.js:736 src/component/photo/view/cards.vue:307
@@ -1638,7 +1671,9 @@ msgid "Import"
 msgstr ""
 
 #: src/page/library/import.vue:57
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
 msgstr ""
 
 #: src/page/settings/general.vue:206
@@ -1665,7 +1700,9 @@ msgstr ""
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
 msgstr ""
 
 #: src/page/settings/content.vue:208
@@ -1752,9 +1789,15 @@ msgstr ""
 msgid "Invalid URL"
 msgstr ""
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr ""
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid "It is a one-time use code that will disable 2FA for your account when you use it."
+msgid ""
+"It is a one-time use code that will disable 2FA for your account when you "
+"use it."
 msgstr ""
 
 #: src/model/rest.js:157
@@ -1948,7 +1991,9 @@ msgid "Location"
 msgstr ""
 
 #: src/page/library/errors.vue:103
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
 msgstr ""
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
@@ -2033,7 +2078,8 @@ msgstr ""
 msgid "Merge %{a} with %{b}?"
 msgstr ""
 
-#: src/page/about/feedback.vue:51 src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
+#: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr ""
 
@@ -2226,13 +2272,17 @@ msgid "No thanks"
 msgstr ""
 
 #: src/page/library/errors.vue:99
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
 msgstr ""
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
 #: src/component/upload/dialog.vue:106
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
 msgstr ""
 
 #: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
@@ -2258,7 +2308,8 @@ msgid "Not supported"
 msgstr ""
 
 #: src/page/library/import.vue:60
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr ""
 
 #: src/page/settings/services.vue:78
@@ -2266,7 +2317,9 @@ msgid "Note:"
 msgstr ""
 
 #: src/component/service/add.vue:60
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
 msgstr ""
 
 #: src/component/photo/edit/details.vue:388
@@ -2277,8 +2330,8 @@ msgstr ""
 msgid "Nothing to see here yet."
 msgstr ""
 
-#: src/page/admin/sessions.vue:47 src/page/admin/users.vue:56
-#: src/component/settings/apps.vue:197
+#: src/page/admin/activity.vue:60 src/page/admin/sessions.vue:47
+#: src/page/admin/users.vue:56 src/component/settings/apps.vue:197
 msgid "Nothing was found."
 msgstr ""
 
@@ -2306,7 +2359,9 @@ msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr ""
 
 #: src/page/settings/advanced.vue:287
-msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgid ""
+"On-demand generation of thumbnails may cause high CPU and memory usage. It "
+"is not recommended for resource-constrained servers and NAS devices."
 msgstr ""
 
 #: src/options/options.js:372
@@ -2343,7 +2398,8 @@ msgid "One picture found"
 msgstr ""
 
 #: src/component/settings/passcode.vue:249
-msgid "Only locally managed accounts can be set up for authentication with 2FA."
+msgid ""
+"Only locally managed accounts can be set up for authentication with 2FA."
 msgstr ""
 
 #: src/locales.js:205
@@ -2399,7 +2455,9 @@ msgid "Other"
 msgstr ""
 
 #: src/page/about/about.vue:29
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
 msgstr ""
 
 #: src/options/options.js:260
@@ -2528,7 +2586,9 @@ msgid "Please confirm your new password."
 msgstr ""
 
 #: src/component/settings/apps.vue:75
-msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
+msgid ""
+"Please copy the following randomly generated app password and keep it in a "
+"safe place, as you will not be able to see it again:"
 msgstr ""
 
 #: src/component/upload/dialog.vue:98
@@ -2544,7 +2604,9 @@ msgid "Please enter OTP character {0}"
 msgstr ""
 
 #: src/component/settings/password.vue:20
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr ""
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
@@ -2578,7 +2640,9 @@ msgid "Press enter to create a new album."
 msgstr ""
 
 #: src/page/settings/advanced.vue:85
-msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgid ""
+"Prevent database and album backups as well as YAML sidecar files from being "
+"created."
 msgstr ""
 
 #: src/page/settings/advanced.vue:101
@@ -2705,11 +2769,12 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/page/admin/sessions.vue:333 src/page/admin/users.vue:321
-#: src/component/album/toolbar.vue:164 src/component/photo/toolbar.vue:488
-#: src/page/albums.vue:552 src/page/labels.vue:297
-#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
-#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
+#: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
+#: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
+#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
+#: src/page/labels.vue:297 src/page/library/browse.vue:21
+#: src/page/library/errors.vue:226 src/page/people/new.vue:7
+#: src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr ""
 
@@ -2754,7 +2819,13 @@ msgid "Remove from Album"
 msgstr ""
 
 #: src/page/library/import.vue:46
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
 msgstr ""
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
@@ -2766,7 +2837,9 @@ msgid "Request failed - invalid response"
 msgstr ""
 
 #: src/page/settings/content.vue:25
-msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
+msgid ""
+"Require non-photographic and low-quality images to be reviewed before they "
+"appear in search results."
 msgstr ""
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
@@ -2860,7 +2933,9 @@ msgid "Scan"
 msgstr ""
 
 #: src/component/settings/passcode.vue:86
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
+msgid ""
+"Scan the QR code with your authenticator app or use the setup key shown "
+"below and then enter the generated verification code:"
 msgstr ""
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
@@ -2875,12 +2950,13 @@ msgstr ""
 msgid "Scope"
 msgstr ""
 
-#: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:63 src/component/navigation.vue:122
-#: src/component/navigation.vue:903 src/component/photo/toolbar.vue:35
-#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
-#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
-#: src/page/places.vue:33 src/page/settings/content.vue:131
+#: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
+#: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
+#: src/component/navigation.vue:122 src/component/navigation.vue:903
+#: src/component/photo/toolbar.vue:35 src/options/options.js:201
+#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
+#: src/page/people/recognized.vue:15 src/page/places.vue:33
+#: src/page/settings/content.vue:131
 msgid "Search"
 msgstr ""
 
@@ -2965,7 +3041,7 @@ msgstr ""
 msgid "Session ID"
 msgstr ""
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr ""
 
@@ -2994,6 +3070,10 @@ msgstr ""
 #: src/component/settings/passcode.vue:54
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
+msgstr ""
+
+#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+msgid "Severity"
 msgstr ""
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
@@ -3146,7 +3226,9 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 
 #: src/page/settings/content.vue:84
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
 msgstr ""
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
@@ -3217,7 +3299,8 @@ msgid "Super Admin"
 msgstr ""
 
 #: src/component/service/add.vue:64
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
@@ -3243,7 +3326,9 @@ msgid "Teal"
 msgstr ""
 
 #: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgid ""
+"TensorFlow is required for image classification, facial recognition, and "
+"detecting unsafe content."
 msgstr ""
 
 #: src/options/options.js:266
@@ -3263,7 +3348,9 @@ msgid "Thank You for Your Support!"
 msgstr ""
 
 #: src/page/about/about.vue:34
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
 msgstr ""
 
 #: src/page/library/index.vue:84
@@ -3271,7 +3358,9 @@ msgid "The index currently contains %{n} hidden files."
 msgstr ""
 
 #: src/page/library/index.vue:86
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
 msgstr ""
 
 #: src/page/settings/general.vue:25
@@ -3286,11 +3375,21 @@ msgid "This field is required"
 msgstr ""
 
 #: src/component/settings/webdav.vue:57
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
 msgstr ""
 
 #: src/page/settings/services.vue:85
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local. "
+msgstr ""
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
 msgstr ""
 
 #: src/component/photo/edit/details.vue:122
@@ -3323,19 +3422,27 @@ msgid "to"
 msgstr ""
 
 #: src/component/settings/passcode.vue:160
-msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
+msgid ""
+"To avoid being locked out of your account, please download, print or copy "
+"this recovery code now and keep it in a safe place."
 msgstr ""
 
 #: src/component/settings/apps.vue:122
-msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
+msgid ""
+"To generate a new app-specific password, please enter the name and "
+"authorization scope of the application and select an expiration date:"
 msgstr ""
 
 #: src/component/settings/passcode.vue:203
-msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
+msgid ""
+"To switch to a new authenticator app or device, first deactivate two-factor "
+"authentication and then reactivate it:"
 msgstr ""
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
 msgstr ""
 
 #: src/locales.js:263
@@ -3531,7 +3638,9 @@ msgid "Use Presets"
 msgstr ""
 
 #: src/component/settings/passcode.vue:138
-msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
+msgid ""
+"Use the following recovery code to access your account when you are unable "
+"to generate a valid verification code with your authenticator app:"
 msgstr ""
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
@@ -3656,7 +3765,9 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 
 #: src/page/settings/services.vue:80
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism. "
 msgstr ""
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
@@ -3715,7 +3826,9 @@ msgstr ""
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
 msgstr ""
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
@@ -3727,7 +3840,9 @@ msgid "You can only download one label"
 msgstr ""
 
 #: src/component/location/dialog.vue:101
-msgid "You can search for a location or move the marker on the map to change the position:"
+msgid ""
+"You can search for a location or move the marker on the map to change the "
+"position:"
 msgstr ""
 
 #: src/component/upload/dialog.vue:97
@@ -3753,11 +3868,15 @@ msgstr ""
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
 msgstr ""
 
 #: src/page/albums.vue:182
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
 msgstr ""
 
 #: src/component/lightbox.vue:434
@@ -3790,8 +3909,15 @@ msgctxt "Verb"
 msgid "Archive"
 msgstr ""
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "You may use it as required to describe our software, run your server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "You may use it as required to describe our software, run your server, for "
+#~ "educational purposes, but not for offering commercial goods, products, or "
+#~ "services without prior written permission. In other words, please ask."
 
 #~ msgid " photos loaded"
 #~ msgstr " photos loaded"
@@ -3856,8 +3982,12 @@ msgstr ""
 #~ msgid "Try again using a related or otherwise similar term."
 #~ msgstr "Try again using a related or otherwise similar term."
 
-#~ msgid "Try using other terms and search options such as category, country and camera."
-#~ msgstr "Try using other terms and search options such as category, country and camera."
+#~ msgid ""
+#~ "Try using other terms and search options such as category, country and "
+#~ "camera."
+#~ msgstr ""
+#~ "Try using other terms and search options such as category, country and "
+#~ "camera."
 
 #~ msgid "Vibrant"
 #~ msgstr "Vibrant"

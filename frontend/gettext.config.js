@@ -31,6 +31,10 @@ const languageCodes = glob.sync(path.join(localesPath, "*.po")).map((filePath) =
   return fileName.replace(".po", "");
 });
 
+// vue3-gettext merges msgstr entries via msgmerge; disable this when GETTEXT_MERGE=0|false.
+const mergeEnv = (process.env.GETTEXT_MERGE || "").toLowerCase();
+const shouldMergeLocales = mergeEnv !== "0" && mergeEnv !== "false";
+
 // Generates one JSON file per locale from the gettext *.po files located in src/locales.
 module.exports = {
   input: {
@@ -42,7 +46,7 @@ module.exports = {
     path: localesPath,
     potPath: "translations.pot",
     jsonPath: "json",
-    locales: languageCodes,
+    locales: shouldMergeLocales ? languageCodes : [],
     splitJson: true,
     flat: true,
     linguas: false,

@@ -6,6 +6,11 @@ import * as themes from "options/themes";
 
 const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
+const createTestConfig = () => {
+  const values = JSON.parse(JSON.stringify(window.__CONFIG__));
+  return new Config(new StorageShim(), values);
+};
+
 describe("common/config", () => {
   it("should get all config values", () => {
     const storage = new StorageShim();
@@ -162,6 +167,86 @@ describe("common/config", () => {
   it("should return feature", () => {
     expect(defaultConfig.feature("places")).toBe(true);
     expect(defaultConfig.feature("download")).toBe(true);
+  });
+
+  it("returns albums when library access is restricted", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.features = {
+      ...settings.features,
+      search: true,
+      albums: true,
+      settings: true,
+    };
+    cfg.set("settings", settings);
+    cfg.set("acl", {
+      photos: { full_access: false, access_library: false },
+      albums: { full_access: false, view: true },
+      settings: { full_access: false, update: false },
+    });
+
+    expect(cfg.getDefaultRoute()).toBe("albums");
+  });
+
+  it("returns settings when library and albums are unavailable", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.features = {
+      ...settings.features,
+      search: true,
+      albums: false,
+      settings: true,
+    };
+    cfg.set("settings", settings);
+    cfg.set("acl", {
+      photos: { full_access: false, access_library: false },
+      albums: { full_access: false, view: false },
+      settings: { full_access: false, update: false },
+    });
+
+    expect(cfg.getDefaultRoute()).toBe("settings");
+  });
+
+  it("honors settings start page when permitted", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.ui = {
+      ...settings.ui,
+      startPage: "settings",
+    };
+    settings.features = {
+      ...settings.features,
+      search: true,
+      settings: true,
+    };
+    cfg.set("settings", settings);
+    cfg.set("acl", {
+      photos: { full_access: false, access_library: true },
+      settings: { full_access: false, update: true },
+    });
+
+    expect(cfg.getDefaultRoute()).toBe("settings");
+  });
+
+  it("falls back to default route when settings feature is disabled", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.ui = {
+      ...settings.ui,
+      startPage: "settings",
+    };
+    settings.features = {
+      ...settings.features,
+      search: true,
+      settings: false,
+    };
+    cfg.set("settings", settings);
+    cfg.set("acl", {
+      photos: { full_access: false, access_library: true },
+      settings: { full_access: false, update: true },
+    });
+
+    expect(cfg.getDefaultRoute()).toBe("browse");
   });
 
   it("should test get name", () => {

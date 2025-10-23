@@ -73,6 +73,12 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		privilegeLevelChange = true
 	}
 
+	// Authorization scope.
+	if ctx.IsSet("scope") {
+		m.UserScope = frm.Scope()
+		privilegeLevelChange = true
+	}
+
 	// Originals base folder.
 	if ctx.IsSet("base-path") {
 		m.SetBasePath(frm.BasePath)

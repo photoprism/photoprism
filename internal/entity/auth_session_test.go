@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -1080,4 +1081,41 @@ func TestSession_HttpStatus(t *testing.T) {
 	assert.Equal(t, 403, m.HttpStatus())
 	alice := FindSessionByRefID("sessxkkcabcd")
 	assert.Equal(t, 200, alice.HttpStatus())
+}
+
+func TestSession_NoScopeAndHasScope(t *testing.T) {
+	var sess Session
+
+	assert.True(t, sess.NoScope())
+	assert.False(t, sess.HasScope())
+
+	sess.AuthScope = list.Any
+	assert.True(t, sess.NoScope())
+	assert.False(t, sess.HasScope())
+
+	sess.AuthScope = "photos:view"
+	assert.False(t, sess.NoScope())
+	assert.True(t, sess.HasScope())
+}
+
+func TestSession_SetUserScopeDefault(t *testing.T) {
+	t.Run("DefaultsToUserScope", func(t *testing.T) {
+		sess := &Session{}
+		user := &User{UserUID: "u123", UserName: "scopeuser", UserScope: "photos:view"}
+
+		sess.SetUser(user)
+
+		assert.Equal(t, "photos:view", sess.AuthScope)
+		assert.Equal(t, user.UserUID, sess.UserUID)
+		assert.Equal(t, user.UserName, sess.UserName)
+	})
+
+	t.Run("KeepsExistingScope", func(t *testing.T) {
+		sess := &Session{AuthScope: "logs:*"}
+		user := &User{UserUID: "u456", UserName: "admin", UserScope: "photos:view"}
+
+		sess.SetUser(user)
+
+		assert.Equal(t, "logs:*", sess.AuthScope)
+	})
 }

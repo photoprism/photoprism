@@ -40,14 +40,13 @@ function splitSegments(message) {
 
 // All log levels ordered by severity.
 export const AuditSeverityNames = Object.freeze([
-  "emergency",
-  "alert",
-  "critical",
+  "panic",
+  "fatal",
   "error",
   "warning",
-  "notice",
   "info",
   "debug",
+  "trace",
 ]);
 
 // Audit logs currently only exist with the following levels:
@@ -59,6 +58,17 @@ export const AuditSeverityOptions = [
   { title: "Warning", value: "warning" },
   { title: "Error", value: "error" },
 ];
+
+// Colors to use for each level.
+export const SeverityPalette = {
+  panic: "error",
+  fatal: "error",
+  error: "error",
+  warning: "warning",
+  info: "primary",
+  debug: "surface-variant",
+  trace: "surface-variant",
+};
 
 // LogEntry represents an audit log row returned by GET /api/v1/logs/audit.
 export class LogEntry extends RestModel {

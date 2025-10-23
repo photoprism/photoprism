@@ -63,11 +63,7 @@ var ClientAddFlags = []cli.Flag{
 		Usage:   ClientRoleUsage,
 		Value:   acl.RoleClient.String(),
 	},
-	&cli.StringFlag{
-		Name:    "scope",
-		Aliases: []string{"s"},
-		Usage:   ClientAuthScope,
-	},
+	ScopeFlag(ClientAuthScope, []string{"s"}),
 	&cli.StringFlag{
 		Name:    "provider",
 		Aliases: []string{"p"},
@@ -114,11 +110,7 @@ var ClientModFlags = []cli.Flag{
 		Usage:   ClientRoleUsage,
 		Value:   acl.RoleClient.String(),
 	},
-	&cli.StringFlag{
-		Name:    "scope",
-		Aliases: []string{"s"},
-		Usage:   ClientAuthScope,
-	},
+	ScopeFlag(ClientAuthScope, []string{"s"}),
 	&cli.StringFlag{
 		Name:    "provider",
 		Aliases: []string{"p"},

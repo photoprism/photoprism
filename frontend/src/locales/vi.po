@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-11 13:44+0000\n"
+"PO-Revision-Date: 2025-10-22 08:05+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -141,7 +141,7 @@ msgstr "Tài khoản đã bị xóa"
 msgid "Account restored"
 msgstr "Tài khoản đã được khôi phục"
 
-#: src/page/admin.vue:53
+#: src/page/admin.vue:54
 msgid "Accounts"
 msgstr "Tài khoản"
 
@@ -186,6 +186,10 @@ msgstr "Kích hoạt để sắp xếp theo thứ tự giảm dần."
 #: src/page/connect.vue:125 src/page/connect.vue:136
 msgid "Activation Code"
 msgstr "Mã kích hoạt"
+
+#: src/page/admin.vue:76
+msgid "Activity"
+msgstr "Hoạt động"
 
 #: src/component/user/add/dialog.vue:203 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:127 src/component/settings/apps.vue:128
@@ -265,8 +269,12 @@ msgid "After 7 days"
 msgstr "Sau 7 ngày"
 
 #: src/component/settings/passcode.vue:32
-msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr "Sau khi nhập mật khẩu để xác nhận, bạn có thể thiết lập xác thực hai yếu tố bằng ứng dụng hoặc thiết bị xác thực tương thích:"
+msgid ""
+"After entering your password for confirmation, you can set up two-factor "
+"authentication with a compatible authenticator app or device:"
+msgstr ""
+"Sau khi nhập mật khẩu để xác nhận, bạn có thể thiết lập xác thực hai yếu tố "
+"bằng ứng dụng hoặc thiết bị xác thực tương thích:"
 
 #: src/options/options.js:381
 msgid "After one month"
@@ -277,8 +285,12 @@ msgid "After one year"
 msgstr "Sau một năm"
 
 #: src/page/albums.vue:175
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Sau khi chọn ảnh từ kết quả tìm kiếm, bạn có thể thêm chúng vào album bằng menu ngữ cảnh."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Sau khi chọn ảnh từ kết quả tìm kiếm, bạn có thể thêm chúng vào album bằng "
+"menu ngữ cảnh."
 
 #: src/options/options.js:382
 msgid "After two months"
@@ -373,8 +385,11 @@ msgid "All Years"
 msgstr "Mọi năm"
 
 #: src/component/share/dialog.vue:133
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Ngoài ra, bạn có thể tải tệp trực tiếp lên máy chủ WebDAV như Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Ngoài ra, bạn có thể tải tệp trực tiếp lên máy chủ WebDAV như Nextcloud."
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
 msgid "Altitude"
@@ -410,7 +425,8 @@ msgstr "Hoạt hình"
 
 #: src/component/share/dialog.vue:132
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Mọi ảnh và video riêng tư vẫn ở chế độ riêng tư và sẽ không được chia sẻ."
+msgstr ""
+"Mọi ảnh và video riêng tư vẫn ở chế độ riêng tư và sẽ không được chia sẻ."
 
 #: src/component/service/edit.vue:191
 msgid "API Key"
@@ -491,8 +507,7 @@ msgstr "Tỷ lệ khung hình"
 msgid "Audio"
 msgstr "Âm thanh"
 
-#: src/model/logs.js:173
-#, fuzzy
+#: src/model/logs.js:192
 msgid "Audit Log"
 msgstr "Âm thanh"
 
@@ -532,12 +547,21 @@ msgid "Batch"
 msgstr "Lô"
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Hãy trở thành thành viên ngay hôm nay, ủng hộ sứ mệnh của chúng tôi và tận hưởng các lợi ích dành cho thành viên của chúng tôi!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Hãy trở thành thành viên ngay hôm nay, ủng hộ sứ mệnh của chúng tôi và tận "
+"hưởng các lợi ích dành cho thành viên của chúng tôi!"
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Với hoạt động tự tài trợ và độc lập 100%, chúng tôi có thể hứa với bạn rằng chúng tôi sẽ không bao giờ bán dữ liệu của bạn và chúng tôi sẽ luôn minh bạch về phần mềm và dịch vụ của mình."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Với hoạt động tự tài trợ và độc lập 100%, chúng tôi có thể hứa với bạn rằng "
+"chúng tôi sẽ không bao giờ bán dữ liệu của bạn và chúng tôi sẽ luôn minh "
+"bạch về phần mềm và dịch vụ của mình."
 
 #: src/component/user/edit/dialog.vue:151
 #: src/component/user/edit/dialog.vue:152 src/page/settings/account.vue:123
@@ -601,8 +625,13 @@ msgid "Busy, please wait…"
 msgstr "Đang bận, vui lòng đợi…"
 
 #: src/page/connect.vue:198
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Bằng cách sử dụng phần mềm và dịch vụ chúng tôi cung cấp, bạn đồng ý với các điều khoản dịch vụ, chính sách quyền riêng tư và quy tắc ứng xử của chúng tôi."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Bằng cách sử dụng phần mềm và dịch vụ chúng tôi cung cấp, bạn đồng ý với các "
+"điều khoản dịch vụ, chính sách quyền riêng tư và quy tắc ứng xử của chúng "
+"tôi."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
 #: src/options/options.js:208 src/page/settings/general.vue:108
@@ -722,7 +751,8 @@ msgstr "Đã lưu thay đổi thành công"
 
 #: src/page/settings/advanced.vue:16
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr "Những thay đổi đối với cài đặt nâng cao yêu cầu khởi động lại để có hiệu lực."
+msgstr ""
+"Những thay đổi đối với cài đặt nâng cao yêu cầu khởi động lại để có hiệu lực."
 
 #: src/component/photo/edit/info.vue:230 src/component/photo/edit/info.vue:231
 msgid "Checked"
@@ -778,7 +808,7 @@ msgstr "Đóng"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr ""
+msgstr "Cụm"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -1034,7 +1064,9 @@ msgstr "Sự miêu tả"
 
 #: src/component/settings/webdav.vue:66
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Hướng dẫn chi tiết có thể được tìm thấy trong Hướng dẫn sử dụng của chúng tôi."
+msgstr ""
+"Hướng dẫn chi tiết có thể được tìm thấy trong Hướng dẫn sử dụng của chúng "
+"tôi."
 
 #: src/component/photo/edit/dialog.vue:42
 #: src/component/photo/edit/dialog.vue:45
@@ -1058,7 +1090,8 @@ msgid "Disable ExifTool"
 msgstr "Tắt ExifTool"
 
 #: src/page/settings/advanced.vue:69
-msgid "Disable features that require write permission for the originals folder."
+msgid ""
+"Disable features that require write permission for the originals folder."
 msgstr "Tắt các tính năng yêu cầu quyền ghi đối với thư mục gốc."
 
 #: src/page/settings/advanced.vue:430
@@ -1180,8 +1213,12 @@ msgid "Download"
 msgstr "Tải xuống"
 
 #: src/page/settings/content.vue:194
-msgid "Download only original media files, without any automatically generated files."
-msgstr "Chỉ tải xuống các tệp phương tiện gốc mà không có bất kỳ tệp nào được tạo tự động."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"Chỉ tải xuống các tệp phương tiện gốc mà không có bất kỳ tệp nào được tạo tự "
+"động."
 
 #: src/component/service/edit.vue:117
 msgid "Download remote files"
@@ -1209,8 +1246,12 @@ msgid "Drag and drop files here"
 msgstr "Kéo và thả tập tin vào đây"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Do chúng tôi nhận được số lượng lớn email nên nhóm của chúng tôi có thể không liên hệ lại với bạn ngay lập tức."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Do chúng tôi nhận được số lượng lớn email nên nhóm của chúng tôi có thể "
+"không liên hệ lại với bạn ngay lập tức."
 
 #: src/page/library/browse.vue:46
 msgid "Duplicates will be skipped and only appear once."
@@ -1264,8 +1305,10 @@ msgid "Email"
 msgstr "E-mail"
 
 #: src/page/settings/advanced.vue:37
-msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "Bật chế độ gỡ lỗi để hiển thị nhật ký bổ sung và trợ giúp khắc phục sự cố."
+msgid ""
+"Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+"Bật chế độ gỡ lỗi để hiển thị nhật ký bổ sung và trợ giúp khắc phục sự cố."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1276,8 +1319,14 @@ msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Cho phép cài đặt trước bộ chuyển đổi RAW. Có thể làm giảm hiệu suất."
 
 #: src/component/settings/passcode.vue:58
-msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "Kích hoạt xác thực hai yếu tố có nghĩa là bạn sẽ cần mã xác minh được tạo ngẫu nhiên để đăng nhập, vì vậy ngay cả khi ai đó có quyền truy cập vào mật khẩu của bạn, họ sẽ không thể truy cập vào tài khoản của bạn."
+msgid ""
+"Enabling two-factor authentication means that you will need a randomly "
+"generated verification code to log in, so even if someone gains access to "
+"your password, they will not be able to access your account."
+msgstr ""
+"Kích hoạt xác thực hai yếu tố có nghĩa là bạn sẽ cần mã xác minh được tạo "
+"ngẫu nhiên để đăng nhập, vì vậy ngay cả khi ai đó có quyền truy cập vào mật "
+"khẩu của bạn, họ sẽ không thể truy cập vào tài khoản của bạn."
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1329,16 +1378,24 @@ msgid "Every two days"
 msgstr "Mỗi hai ngày"
 
 #: src/page/settings/general.vue:157
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Loại trừ nội dung được đánh dấu là riêng tư khỏi kết quả tìm kiếm, album chia sẻ, nhãn và địa điểm."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Loại trừ nội dung được đánh dấu là riêng tư khỏi kết quả tìm kiếm, album "
+"chia sẻ, nhãn và địa điểm."
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
 msgid "Exclude hidden"
 msgstr "Loại trừ ẩn"
 
 #: src/page/settings/advanced.vue:133
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Cần phải trích xuất siêu dữ liệu bằng ExifTool để hỗ trợ đầy đủ Video, Live Photo và XMP."
+msgid ""
+"ExifTool is required for full support of XMP metadata, videos and Live "
+"Photos."
+msgstr ""
+"Cần phải trích xuất siêu dữ liệu bằng ExifTool để hỗ trợ đầy đủ Video, Live "
+"Photo và XMP."
 
 #: src/page/settings/advanced.vue:52
 msgid "Experimental Features"
@@ -1456,8 +1513,12 @@ msgid "Files"
 msgstr "Các tập tin"
 
 #: src/page/settings/content.vue:115
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Các tệp có tên tuần tự như “IMG_1234 (2)” và “IMG_1234 (3)” thuộc cùng một hình ảnh."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"Các tệp có tên tuần tự như “IMG_1234 (2)” và “IMG_1234 (3)” thuộc cùng một "
+"hình ảnh."
 
 #: src/locales.js:234 src/locales.js:292
 msgid "First page"
@@ -1524,7 +1585,8 @@ msgstr "Phát ra"
 
 #: src/page/settings/general.vue:125
 msgid "Generate albums of special moments, journeys, and places."
-msgstr "Tự động tạo album về những khoảnh khắc, chuyến đi và địa điểm đặc biệt."
+msgstr ""
+"Tự động tạo album về những khoảnh khắc, chuyến đi và địa điểm đặc biệt."
 
 #: src/page/settings/content.vue:58
 msgid "Generate Previews"
@@ -1618,8 +1680,12 @@ msgid "Hybrid"
 msgstr "lai"
 
 #: src/component/settings/passcode.vue:195
-msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr "Nếu mất quyền truy cập vào ứng dụng hoặc thiết bị xác thực, bạn có thể sử dụng mã khôi phục để lấy lại quyền truy cập vào tài khoản của mình."
+msgid ""
+"If you lose access to your authenticator app or device, you can use your "
+"recovery code to regain access to your account."
+msgstr ""
+"Nếu mất quyền truy cập vào ứng dụng hoặc thiết bị xác thực, bạn có thể sử "
+"dụng mã khôi phục để lấy lại quyền truy cập vào tài khoản của mình."
 
 #: src/common/util.js:736 src/component/photo/view/cards.vue:307
 #: src/model/file.js:194 src/options/options.js:286
@@ -1637,12 +1703,17 @@ msgid "Import"
 msgstr "Nhập khẩu"
 
 #: src/page/library/import.vue:57
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Các tệp đã nhập sẽ được sắp xếp theo ngày và đặt một tên duy nhất để tránh trùng lặp."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Các tệp đã nhập sẽ được sắp xếp theo ngày và đặt một tên duy nhất để tránh "
+"trùng lặp."
 
 #: src/page/settings/general.vue:206
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Các tệp đã nhập sẽ được sắp xếp theo ngày và được đặt một tên duy nhất."
+msgstr ""
+"Các tệp đã nhập sẽ được sắp xếp theo ngày và được đặt một tên duy nhất."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1664,12 +1735,17 @@ msgstr "TRONG"
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Trong trường hợp hình ảnh bạn mong đợi bị thiếu, vui lòng quét lại thư viện của bạn và đợi cho đến khi quá trình lập chỉ mục hoàn tất."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Trong trường hợp hình ảnh bạn mong đợi bị thiếu, vui lòng quét lại thư viện "
+"của bạn và đợi cho đến khi quá trình lập chỉ mục hoàn tất."
 
 #: src/page/settings/content.vue:208
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr "Bao gồm các tệp hình ảnh RAW khi tải xuống các ngăn xếp và kho lưu trữ."
+msgstr ""
+"Bao gồm các tệp hình ảnh RAW khi tải xuống các ngăn xếp và kho lưu trữ."
 
 #: src/page/settings/content.vue:222
 msgid "Include sidecar files when downloading stacks and archives."
@@ -1751,10 +1827,18 @@ msgstr "Thời gian không hợp lệ"
 msgid "Invalid URL"
 msgstr "URL không hợp lệ"
 
+#: src/page/admin/activity.vue:129
+msgid "IP Address"
+msgstr "Địa chỉ IP"
+
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Đây là mã sử dụng một lần sẽ vô hiệu hóa 2FA cho tài khoản của bạn khi bạn sử dụng."
+msgid ""
+"It is a one-time use code that will disable 2FA for your account when you "
+"use it."
+msgstr ""
+"Đây là mã sử dụng một lần sẽ vô hiệu hóa 2FA cho tài khoản của bạn khi bạn "
+"sử dụng."
 
 #: src/model/rest.js:157
 msgid "Item"
@@ -1947,8 +2031,12 @@ msgid "Location"
 msgstr "Vị trí"
 
 #: src/page/library/errors.vue:103
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Thông báo nhật ký xuất hiện ở đây bất cứ khi nào PhotoPrism gặp phải các tệp bị hỏng hoặc có các sự cố tiềm ẩn khác."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Thông báo nhật ký xuất hiện ở đây bất cứ khi nào PhotoPrism gặp phải các tệp "
+"bị hỏng hoặc có các sự cố tiềm ẩn khác."
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
 msgid "Login"
@@ -2032,7 +2120,8 @@ msgstr "Tư cách thành viên"
 msgid "Merge %{a} with %{b}?"
 msgstr "Hợp nhất %{a} với %{b}?"
 
-#: src/page/about/feedback.vue:51 src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
+#: src/page/about/feedback.vue:52
 msgid "Message"
 msgstr "Tin nhắn"
 
@@ -2225,14 +2314,22 @@ msgid "No thanks"
 msgstr "Không, cám ơn"
 
 #: src/page/library/errors.vue:99
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Không có cảnh báo hoặc lỗi có chứa từ khóa này. Lưu ý rằng tìm kiếm có phân biệt chữ hoa chữ thường."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Không có cảnh báo hoặc lỗi có chứa từ khóa này. Lưu ý rằng tìm kiếm có phân "
+"biệt chữ hoa chữ thường."
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
 #: src/component/upload/dialog.vue:106
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Hình ảnh không phải ảnh và chất lượng thấp cần được xem xét trước khi chúng xuất hiện trong kết quả tìm kiếm."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Hình ảnh không phải ảnh và chất lượng thấp cần được xem xét trước khi chúng "
+"xuất hiện trong kết quả tìm kiếm."
 
 #: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
 #: src/options/options.js:333
@@ -2257,16 +2354,23 @@ msgid "Not supported"
 msgstr "Không được hỗ trợ"
 
 #: src/page/library/import.vue:60
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Lưu ý rằng bạn có thể quản lý thư mục gốc của mình theo cách thủ công và việc nhập là tùy chọn."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Lưu ý rằng bạn có thể quản lý thư mục gốc của mình theo cách thủ công và "
+"việc nhập là tùy chọn."
 
 #: src/page/settings/services.vue:78
 msgid "Note:"
 msgstr "Ghi chú:"
 
 #: src/component/service/add.vue:60
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Lưu ý: Chỉ các máy chủ WebDAV, như Nextcloud hoặc PhotoPrism, mới có thể được định cấu hình làm dịch vụ từ xa để sao lưu và tải tệp lên."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Lưu ý: Chỉ các máy chủ WebDAV, như Nextcloud hoặc PhotoPrism, mới có thể "
+"được định cấu hình làm dịch vụ từ xa để sao lưu và tải tệp lên."
 
 #: src/component/photo/edit/details.vue:388
 msgid "Notes"
@@ -2276,8 +2380,8 @@ msgstr "Ghi chú"
 msgid "Nothing to see here yet."
 msgstr "Chưa có gì để xem ở đây."
 
-#: src/page/admin/sessions.vue:47 src/page/admin/users.vue:56
-#: src/component/settings/apps.vue:197
+#: src/page/admin/activity.vue:60 src/page/admin/sessions.vue:47
+#: src/page/admin/users.vue:56 src/component/settings/apps.vue:197
 msgid "Nothing was found."
 msgstr "Không có gì được tìm thấy."
 
@@ -2305,8 +2409,13 @@ msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Trên Windows, nhập tài nguyên sau vào hộp thoại kết nối:"
 
 #: src/page/settings/advanced.vue:287
-msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "Việc tạo hình thu nhỏ theo yêu cầu có thể gây ra mức sử dụng CPU và bộ nhớ cao. Nó không được khuyến khích cho các máy chủ và thiết bị NAS bị hạn chế về tài nguyên."
+msgid ""
+"On-demand generation of thumbnails may cause high CPU and memory usage. It "
+"is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
+"Việc tạo hình thu nhỏ theo yêu cầu có thể gây ra mức sử dụng CPU và bộ nhớ "
+"cao. Nó không được khuyến khích cho các máy chủ và thiết bị NAS bị hạn chế "
+"về tài nguyên."
 
 #: src/options/options.js:372
 msgid "Once a week"
@@ -2342,8 +2451,11 @@ msgid "One picture found"
 msgstr "Một hình ảnh được tìm thấy"
 
 #: src/component/settings/passcode.vue:249
-msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr "Chỉ những tài khoản được quản lý cục bộ mới có thể được thiết lập để xác thực bằng 2FA."
+msgid ""
+"Only locally managed accounts can be set up for authentication with 2FA."
+msgstr ""
+"Chỉ những tài khoản được quản lý cục bộ mới có thể được thiết lập để xác "
+"thực bằng 2FA."
 
 #: src/locales.js:205
 msgid "Open"
@@ -2398,8 +2510,12 @@ msgid "Other"
 msgstr "Khác"
 
 #: src/page/about/about.vue:29
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "Sứ mệnh của chúng tôi là cung cấp giải pháp thân thiện với người dùng và quyền riêng tư nhất để giữ cho hình ảnh của bạn được ngăn nắp và dễ truy cập."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"Sứ mệnh của chúng tôi là cung cấp giải pháp thân thiện với người dùng và "
+"quyền riêng tư nhất để giữ cho hình ảnh của bạn được ngăn nắp và dễ truy cập."
 
 #: src/options/options.js:260
 msgid "Outdoor"
@@ -2454,7 +2570,8 @@ msgstr "Mọi người"
 
 #: src/component/share/dialog.vue:129
 msgid "People you share a link with will be able to view public contents."
-msgstr "Những người được bạn chia sẻ liên kết sẽ có thể xem nội dung công khai."
+msgstr ""
+"Những người được bạn chia sẻ liên kết sẽ có thể xem nội dung công khai."
 
 #: src/component/photo/clipboard.vue:313 src/component/photo/toolbar.vue:581
 msgid "Permanently deleted"
@@ -2527,13 +2644,18 @@ msgid "Please confirm your new password."
 msgstr "Vui lòng xác nhận mật khẩu mới của bạn."
 
 #: src/component/settings/apps.vue:75
-msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Vui lòng sao chép mật khẩu ứng dụng được tạo ngẫu nhiên sau đây và giữ nó ở nơi an toàn vì bạn sẽ không thể nhìn thấy nó nữa:"
+msgid ""
+"Please copy the following randomly generated app password and keep it in a "
+"safe place, as you will not be able to see it again:"
+msgstr ""
+"Vui lòng sao chép mật khẩu ứng dụng được tạo ngẫu nhiên sau đây và giữ nó ở "
+"nơi an toàn vì bạn sẽ không thể nhìn thấy nó nữa:"
 
 #: src/component/upload/dialog.vue:98
-#, fuzzy
 msgid "Please do not upload any private, unlawful or offensive pictures. "
-msgstr "Vui lòng không tải lên bất kỳ hình ảnh riêng tư, bất hợp pháp hoặc xúc phạm nào."
+msgstr ""
+"Vui lòng không tải lên bất kỳ hình ảnh riêng tư, bất hợp pháp hoặc xúc phạm "
+"nào."
 
 #: src/component/upload/dialog.vue:101
 msgid "Please don't upload photos containing offensive content."
@@ -2544,12 +2666,17 @@ msgid "Please enter OTP character {0}"
 msgstr "Vui lòng nhập ký tự OTP {0}"
 
 #: src/component/settings/password.vue:20
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Xin lưu ý rằng việc thay đổi mật khẩu sẽ khiến bạn đăng xuất trên các thiết bị và trình duyệt khác."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Xin lưu ý rằng việc thay đổi mật khẩu sẽ khiến bạn đăng xuất trên các thiết "
+"bị và trình duyệt khác."
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
 msgid "Please restart your instance for the changes to take effect."
-msgstr "Vui lòng khởi động lại phiên bản của bạn để những thay đổi có hiệu lực."
+msgstr ""
+"Vui lòng khởi động lại phiên bản của bạn để những thay đổi có hiệu lực."
 
 #: src/common/notify.js:116
 msgid "Please wait…"
@@ -2578,8 +2705,12 @@ msgid "Press enter to create a new album."
 msgstr "Nhấn enter để tạo album mới."
 
 #: src/page/settings/advanced.vue:85
-msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr "Ngăn chặn việc tạo các bản sao lưu cơ sở dữ liệu và album cũng như các tệp sidecar YAML."
+msgid ""
+"Prevent database and album backups as well as YAML sidecar files from being "
+"created."
+msgstr ""
+"Ngăn chặn việc tạo các bản sao lưu cơ sở dữ liệu và album cũng như các tệp "
+"sidecar YAML."
 
 #: src/page/settings/advanced.vue:101
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
@@ -2664,7 +2795,9 @@ msgstr "NGUYÊN"
 
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Lập chỉ mục lại tất cả các bản gốc, bao gồm các tệp đã được lập chỉ mục và không thay đổi."
+msgstr ""
+"Lập chỉ mục lại tất cả các bản gốc, bao gồm các tệp đã được lập chỉ mục và "
+"không thay đổi."
 
 #: src/page/settings/advanced.vue:68
 msgid "Read-Only Mode"
@@ -2705,11 +2838,12 @@ msgstr "Mã phục hồi"
 msgid "Red"
 msgstr "Màu đỏ"
 
-#: src/page/admin/sessions.vue:333 src/page/admin/users.vue:321
-#: src/component/album/toolbar.vue:164 src/component/photo/toolbar.vue:488
-#: src/page/albums.vue:552 src/page/labels.vue:297
-#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
-#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
+#: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
+#: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
+#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
+#: src/page/labels.vue:297 src/page/library/browse.vue:21
+#: src/page/library/errors.vue:226 src/page/people/new.vue:7
+#: src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr "Làm cho khỏe lại"
 
@@ -2754,8 +2888,16 @@ msgid "Remove from Album"
 msgstr "Xóa khỏi album"
 
 #: src/page/library/import.vue:46
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Xóa các tập tin đã nhập để tiết kiệm dung lượng. Các loại tệp không được hỗ trợ sẽ không bao giờ bị xóa, chúng vẫn ở vị trí hiện tại."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Xóa các tập tin đã nhập để tiết kiệm dung lượng. Các loại tệp không được hỗ "
+"trợ sẽ không bao giờ bị xóa, chúng vẫn ở vị trí hiện tại."
+
+#: src/page/admin/activity.vue:132
+msgid "Repeated"
+msgstr "Lặp lại"
 
 #: src/common/api.js:102 src/component/lightbox.vue:921
 msgid "Request failed - are you offline?"
@@ -2766,8 +2908,12 @@ msgid "Request failed - invalid response"
 msgstr "Yêu cầu không thành công - phản hồi không hợp lệ"
 
 #: src/page/settings/content.vue:25
-msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
-msgstr "Yêu cầu xem xét những hình ảnh không phải là ảnh chụp và chất lượng thấp trước khi chúng xuất hiện trong kết quả tìm kiếm."
+msgid ""
+"Require non-photographic and low-quality images to be reviewed before they "
+"appear in search results."
+msgstr ""
+"Yêu cầu xem xét những hình ảnh không phải là ảnh chụp và chất lượng thấp "
+"trước khi chúng xuất hiện trong kết quả tìm kiếm."
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
 msgid "Resolution"
@@ -2860,8 +3006,12 @@ msgid "Scan"
 msgstr "Quét"
 
 #: src/component/settings/passcode.vue:86
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr "Quét mã QR bằng ứng dụng xác thực của bạn hoặc sử dụng phím thiết lập hiển thị bên dưới rồi nhập mã xác minh đã tạo:"
+msgid ""
+"Scan the QR code with your authenticator app or use the setup key shown "
+"below and then enter the generated verification code:"
+msgstr ""
+"Quét mã QR bằng ứng dụng xác thực của bạn hoặc sử dụng phím thiết lập hiển "
+"thị bên dưới rồi nhập mã xác minh đã tạo:"
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
 #: src/component/navigation.vue:125 src/component/navigation.vue:131
@@ -2875,12 +3025,13 @@ msgstr "Quét"
 msgid "Scope"
 msgstr "Phạm vi"
 
-#: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:63 src/component/navigation.vue:122
-#: src/component/navigation.vue:903 src/component/photo/toolbar.vue:35
-#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
-#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
-#: src/page/places.vue:33 src/page/settings/content.vue:131
+#: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
+#: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
+#: src/component/navigation.vue:122 src/component/navigation.vue:903
+#: src/component/photo/toolbar.vue:35 src/options/options.js:201
+#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
+#: src/page/people/recognized.vue:15 src/page/places.vue:33
+#: src/page/settings/content.vue:131
 msgid "Search"
 msgstr "Tìm kiếm"
 
@@ -2965,7 +3116,7 @@ msgstr "Phiên họp"
 msgid "Session ID"
 msgstr "ID phiên"
 
-#: src/page/admin.vue:64
+#: src/page/admin.vue:65
 msgid "Sessions"
 msgstr "Phiên"
 
@@ -2995,6 +3146,10 @@ msgstr "Đã lưu cài đặt"
 #: src/component/settings/passcode.vue:70
 msgid "Setup"
 msgstr "Cài đặt"
+
+#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+msgid "Severity"
+msgstr "Mức độ nghiêm trọng"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
 #: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:221
@@ -3143,11 +3298,17 @@ msgstr "Cây rơm"
 
 #: src/page/settings/content.vue:99
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Xếp chồng các tệp chia sẻ cùng một hình ảnh hoặc mã định danh cá thể duy nhất."
+msgstr ""
+"Xếp chồng các tệp chia sẻ cùng một hình ảnh hoặc mã định danh cá thể duy "
+"nhất."
 
 #: src/page/settings/content.vue:84
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Xếp chồng các ảnh được chụp vào cùng thời điểm và vị trí dựa trên siêu dữ liệu của chúng."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Xếp chồng các ảnh được chụp vào cùng thời điểm và vị trí dựa trên siêu dữ "
+"liệu của chúng."
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
 msgid "Stackable"
@@ -3217,8 +3378,11 @@ msgid "Super Admin"
 msgstr "Quản trị viên cấp cao"
 
 #: src/component/service/add.vue:64
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Hỗ trợ cho các dịch vụ bổ sung, như Google Drive, sẽ được bổ sung theo thời gian."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Hỗ trợ cho các dịch vụ bổ sung, như Google Drive, sẽ được bổ sung theo thời "
+"gian."
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
 msgid "Support Our Mission"
@@ -3243,8 +3407,12 @@ msgid "Teal"
 msgstr "màu xanh mòng két"
 
 #: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow cần thiết để phân loại hình ảnh, nhận dạng khuôn mặt và phát hiện nội dung không an toàn."
+msgid ""
+"TensorFlow is required for image classification, facial recognition, and "
+"detecting unsafe content."
+msgstr ""
+"TensorFlow cần thiết để phân loại hình ảnh, nhận dạng khuôn mặt và phát hiện "
+"nội dung không an toàn."
 
 #: src/options/options.js:266
 msgid "Terrain"
@@ -3263,16 +3431,24 @@ msgid "Thank You for Your Support!"
 msgstr "Cảm ơn sự hỗ trợ của bạn!"
 
 #: src/page/about/about.vue:34
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "Đó là lý do tại sao PhotoPrism được xây dựng từ đầu để chạy ở bất cứ nơi nào bạn cần mà không ảnh hưởng đến quyền tự do, quyền riêng tư hoặc chức năng."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"Đó là lý do tại sao PhotoPrism được xây dựng từ đầu để chạy ở bất cứ nơi nào "
+"bạn cần mà không ảnh hưởng đến quyền tự do, quyền riêng tư hoặc chức năng."
 
 #: src/page/library/index.vue:84
 msgid "The index currently contains %{n} hidden files."
 msgstr "Chỉ mục hiện chứa %{n} tệp ẩn."
 
 #: src/page/library/index.vue:86
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Định dạng của chúng có thể không được hỗ trợ, chúng chưa được chuyển đổi sang JPEG hoặc có bản sao."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Định dạng của chúng có thể không được hỗ trợ, chúng chưa được chuyển đổi "
+"sang JPEG hoặc có bản sao."
 
 #: src/page/settings/general.vue:25
 msgid "Theme"
@@ -3286,13 +3462,28 @@ msgid "This field is required"
 msgstr "Trường này là bắt buộc"
 
 #: src/component/settings/webdav.vue:57
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, "
+"chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn "
+"như thể chúng là cục bộ."
 
 #: src/page/settings/services.vue:85
-#, fuzzy
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local. "
+msgstr ""
+"Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, "
+"chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn "
+"như thể chúng là cục bộ."
+
+#: src/page/admin/activity.vue:127
+msgid "Time"
+msgstr "Thời gian"
 
 #: src/component/photo/edit/details.vue:122
 msgid "Time UTC"
@@ -3324,20 +3515,36 @@ msgid "to"
 msgstr "ĐẾN"
 
 #: src/component/settings/passcode.vue:160
-msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "Để tránh bị khóa tài khoản, vui lòng tải xuống, in hoặc sao chép mã khôi phục này ngay bây giờ và giữ nó ở nơi an toàn."
+msgid ""
+"To avoid being locked out of your account, please download, print or copy "
+"this recovery code now and keep it in a safe place."
+msgstr ""
+"Để tránh bị khóa tài khoản, vui lòng tải xuống, in hoặc sao chép mã khôi "
+"phục này ngay bây giờ và giữ nó ở nơi an toàn."
 
 #: src/component/settings/apps.vue:122
-msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "Để tạo mật khẩu mới dành riêng cho ứng dụng, vui lòng nhập tên và phạm vi ủy quyền của ứng dụng và chọn ngày hết hạn:"
+msgid ""
+"To generate a new app-specific password, please enter the name and "
+"authorization scope of the application and select an expiration date:"
+msgstr ""
+"Để tạo mật khẩu mới dành riêng cho ứng dụng, vui lòng nhập tên và phạm vi ủy "
+"quyền của ứng dụng và chọn ngày hết hạn:"
 
 #: src/component/settings/passcode.vue:203
-msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr "Để chuyển sang ứng dụng hoặc thiết bị xác thực mới, trước tiên hãy tắt xác thực hai yếu tố rồi kích hoạt lại:"
+msgid ""
+"To switch to a new authenticator app or device, first deactivate two-factor "
+"authentication and then reactivate it:"
+msgstr ""
+"Để chuyển sang ứng dụng hoặc thiết bị xác thực mới, trước tiên hãy tắt xác "
+"thực hai yếu tố rồi kích hoạt lại:"
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "Để nâng cấp, bạn có thể nhập mã kích hoạt hoặc nhấp vào \"Đăng ký\" để đăng ký trên trang web của chúng tôi:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"Để nâng cấp, bạn có thể nhập mã kích hoạt hoặc nhấp vào \"Đăng ký\" để đăng "
+"ký trên trang web của chúng tôi:"
 
 #: src/locales.js:263
 msgid "Today"
@@ -3525,21 +3732,27 @@ msgstr "Đang tải lên…"
 
 #: src/component/upload/dialog.vue:102
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Những tải lên có thể chứa những hình ảnh như vậy sẽ tự động bị từ chối."
+msgstr ""
+"Những tải lên có thể chứa những hình ảnh như vậy sẽ tự động bị từ chối."
 
 #: src/page/settings/advanced.vue:398
 msgid "Use Presets"
 msgstr "Sử dụng cài đặt trước"
 
 #: src/component/settings/passcode.vue:138
-msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "Sử dụng mã khôi phục sau để truy cập vào tài khoản của bạn khi bạn không thể tạo mã xác minh hợp lệ bằng ứng dụng xác thực của mình:"
+msgid ""
+"Use the following recovery code to access your account when you are unable "
+"to generate a valid verification code with your authenticator app:"
+msgstr ""
+"Sử dụng mã khôi phục sau để truy cập vào tài khoản của bạn khi bạn không thể "
+"tạo mã xác minh hợp lệ bằng ứng dụng xác thực của mình:"
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
 #: src/page/auth/login.vue:47 src/page/auth/login.vue:48
 #: src/page/auth/login.vue:55 src/page/auth/login.vue:70
 msgid "Use your recovery code or contact an administrator for help."
-msgstr "Sử dụng mã khôi phục của bạn hoặc liên hệ với quản trị viên để được trợ giúp."
+msgstr ""
+"Sử dụng mã khôi phục của bạn hoặc liên hệ với quản trị viên để được trợ giúp."
 
 #: src/options/admin.js:14 src/page/admin/sessions.vue:138
 #: src/page/admin/sessions.vue:291 src/model/user.js:352 src/options/auth.js:8
@@ -3639,7 +3852,9 @@ msgstr "Chúng tôi cảm kích những phản hồi của bạn!"
 
 #: src/page/about/feedback.vue:26 src/page/about/feedback.vue:27
 msgid "We do our best to respond within five business days or less."
-msgstr "Chúng tôi cố gắng hết sức để phản hồi trong vòng năm ngày làm việc hoặc ít hơn."
+msgstr ""
+"Chúng tôi cố gắng hết sức để phản hồi trong vòng năm ngày làm việc hoặc ít "
+"hơn."
 
 #: src/component/user/add/dialog.vue:141 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:275
@@ -3657,10 +3872,12 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Máy khách WebDAV có thể kết nối với PhotoPrism bằng URL sau:"
 
 #: src/page/settings/services.vue:80
-#, fuzzy
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism. "
 msgstr ""
-"Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của Apple, có thể kết nối trực tiếp với\n"
+"Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của "
+"Apple, có thể kết nối trực tiếp với\n"
 "          PhotoPrism."
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
@@ -3719,8 +3936,12 @@ msgstr "Đúng"
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "Bạn có thể liên hệ với chúng tôi theo địa chỉ member@photoprism.app nếu có câu hỏi liên quan đến tư cách thành viên của bạn."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"Bạn có thể liên hệ với chúng tôi theo địa chỉ member@photoprism.app nếu có "
+"câu hỏi liên quan đến tư cách thành viên của bạn."
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
 msgid "You can only download one album"
@@ -3731,8 +3952,12 @@ msgid "You can only download one label"
 msgstr "Bạn chỉ có thể tải xuống một nhãn"
 
 #: src/component/location/dialog.vue:101
-msgid "You can search for a location or move the marker on the map to change the position:"
-msgstr "Bạn có thể tìm kiếm vị trí hoặc di chuyển điểm đánh dấu trên bản đồ để thay đổi vị trí:"
+msgid ""
+"You can search for a location or move the marker on the map to change the "
+"position:"
+msgstr ""
+"Bạn có thể tìm kiếm vị trí hoặc di chuyển điểm đánh dấu trên bản đồ để thay "
+"đổi vị trí:"
 
 #: src/component/upload/dialog.vue:97
 msgid "You can upload up to %{n} files for test purposes."
@@ -3757,12 +3982,21 @@ msgstr "Trình duyệt của bạn không hỗ trợ WebGL"
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Sự hỗ trợ liên tục của bạn giúp chúng tôi cung cấp thông tin cập nhật thường xuyên và duy trì tính độc lập để chúng tôi có thể hoàn thành sứ mệnh của mình và bảo vệ quyền riêng tư của bạn."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Sự hỗ trợ liên tục của bạn giúp chúng tôi cung cấp thông tin cập nhật thường "
+"xuyên và duy trì tính độc lập để chúng tôi có thể hoàn thành sứ mệnh của "
+"mình và bảo vệ quyền riêng tư của bạn."
 
 #: src/page/albums.vue:182
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Thư viện của bạn được phân tích liên tục để tự động tạo album về những khoảnh khắc, chuyến đi và địa điểm đặc biệt."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Thư viện của bạn được phân tích liên tục để tự động tạo album về những "
+"khoảnh khắc, chuyến đi và địa điểm đặc biệt."
 
 #: src/component/lightbox.vue:434
 msgid "Zoom in/out"
@@ -3914,8 +4148,12 @@ msgstr "Lưu trữ"
 #~ msgid "close"
 #~ msgstr "đóng"
 
-#~ msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-#~ msgstr "Xếp chồng các tệp nhóm có khung tham chiếu tương tự nhưng khác nhau về chất lượng, định dạng, kích thước hoặc màu sắc."
+#~ msgid ""
+#~ "Stacks group files with a similar frame of reference, but differences of "
+#~ "quality, format, size or color."
+#~ msgstr ""
+#~ "Xếp chồng các tệp nhóm có khung tham chiếu tương tự nhưng khác nhau về "
+#~ "chất lượng, định dạng, kích thước hoặc màu sắc."
 
 #~ msgid "URL"
 #~ msgstr "URL"
@@ -3965,8 +4203,11 @@ msgstr "Lưu trữ"
 #~ msgid "No video selected"
 #~ msgstr "Không có video nào được chọn"
 
-#~ msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-#~ msgstr "Tự động tạo hình thu nhỏ cho các tệp không thể lập chỉ mục hoặc xem được."
+#~ msgid ""
+#~ "Automatically generate thumbnails for files that cannot otherwise be "
+#~ "indexed or viewed."
+#~ msgstr ""
+#~ "Tự động tạo hình thu nhỏ cho các tệp không thể lập chỉ mục hoặc xem được."
 
 #~ msgid "Estimate the approximate location of pictures without coordinates."
 #~ msgstr "Ước tính vị trí gần đúng của hình ảnh mà không cần tọa độ."
@@ -4004,8 +4245,12 @@ msgstr "Lưu trữ"
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Tải lên NSFW"
 
-#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-#~ msgstr "Cho phép tải lên những nội dung có thể gây khó chịu. Việc phát hiện nội dung không an toàn cần có TensorFlow."
+#~ msgid ""
+#~ "Pictures that might be offensive will otherwise be rejected when using "
+#~ "the web upload."
+#~ msgstr ""
+#~ "Cho phép tải lên những nội dung có thể gây khó chịu. Việc phát hiện nội "
+#~ "dung không an toàn cần có TensorFlow."
 
 #~ msgid "File Format Support"
 #~ msgstr "Hỗ trợ định dạng tệp"
@@ -4017,7 +4262,8 @@ msgstr "Lưu trữ"
 #~ msgstr "Vô hiệu hóa mã hóa địa lý đảo ngược và bản đồ."
 
 #~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
-#~ msgstr "Không tạo tệp JSON ExifTool để cải thiện khả năng trích xuất siêu dữ liệu."
+#~ msgstr ""
+#~ "Không tạo tệp JSON ExifTool để cải thiện khả năng trích xuất siêu dữ liệu."
 
 #~ msgid "Don't modify originals folder. Disables import, upload, and delete."
 #~ msgstr "Không sửa đổi thư mục gốc. Vô hiệu hóa nhập, tải lên và xóa."
@@ -4025,17 +4271,26 @@ msgstr "Lưu trữ"
 #~ msgid "Don't use TensorFlow for image classification."
 #~ msgstr "Không sử dụng TensorFlow để phân loại hình ảnh."
 
-#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-#~ msgstr "Kết xuất động yêu cầu một máy chủ mạnh mẽ. Nó không được khuyến khích cho các thiết bị NAS."
+#~ msgid ""
+#~ "Dynamic rendering requires a powerful server. It is not recommended for "
+#~ "NAS devices."
+#~ msgstr ""
+#~ "Kết xuất động yêu cầu một máy chủ mạnh mẽ. Nó không được khuyến khích cho "
+#~ "các thiết bị NAS."
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
-#~ msgstr "Hiển thị thông điệp tường trình chi tiết hơn. Yêu cầu khởi động lại."
+#~ msgstr ""
+#~ "Hiển thị thông điệp tường trình chi tiết hơn. Yêu cầu khởi động lại."
 
 #~ msgid "Thumbnail Generation"
 #~ msgstr "Tạo hình thu nhỏ"
 
-#~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-#~ msgstr "Không thể truy cập ứng dụng hoặc thiết bị xác thực của bạn? Nhập mã khôi phục của bạn hoặc yêu cầu hỗ trợ."
+#~ msgid ""
+#~ "Can't access your authenticator app or device? Enter your recovery code "
+#~ "or ask for assistance."
+#~ msgstr ""
+#~ "Không thể truy cập ứng dụng hoặc thiết bị xác thực của bạn? Nhập mã khôi "
+#~ "phục của bạn hoặc yêu cầu hỗ trợ."
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Không sao lưu siêu dữ liệu ảnh và album vào tệp YAML."
@@ -4044,15 +4299,20 @@ msgstr "Lưu trữ"
 #~ msgstr "tên nhà cung cấp"
 
 #~ msgid ""
-#~ "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+#~ "This mounts the originals folder as a network drive and allows you to "
+#~ "open, edit, and delete files\n"
 #~ "          from your computer or smartphone as if they were local."
 #~ msgstr ""
-#~ "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp\n"
-#~ "          từ máy tính hoặc điện thoại thông minh của bạn như thể chúng ở địa phương."
+#~ "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, "
+#~ "chỉnh sửa và xóa các tệp\n"
+#~ "          từ máy tính hoặc điện thoại thông minh của bạn như thể chúng ở "
+#~ "địa phương."
 
 #~ msgid ""
-#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+#~ "connect directly to\n"
 #~ "          PhotoPrism."
 #~ msgstr ""
-#~ "Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của Apple, có thể kết nối trực tiếp với\n"
+#~ "Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của "
+#~ "Apple, có thể kết nối trực tiếp với\n"
 #~ "          PhotoPrism."
