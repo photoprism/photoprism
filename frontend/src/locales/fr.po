@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-22 08:05+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-10-23 07:27+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -513,8 +513,9 @@ msgid "Audio"
 msgstr "Audio"
 
 #: src/model/logs.js:192
+#, fuzzy
 msgid "Audit Log"
-msgstr "Audio"
+msgstr "Journal d'audit"
 
 #: src/component/user/add/dialog.vue:107 src/component/user/edit/dialog.vue:183
 #: src/page/admin/sessions.vue:152 src/page/admin/sessions.vue:292
@@ -816,7 +817,7 @@ msgstr "Fermer"
 
 #: src/app/routes.js:122
 msgid "Cluster"
-msgstr "Groupement d'entreprises"
+msgstr "Cluster"
 
 #: src/component/photo/edit/files.vue:157
 #: src/component/photo/edit/files.vue:158
@@ -2687,8 +2688,7 @@ msgstr ""
 
 #: src/component/upload/dialog.vue:98
 msgid "Please do not upload any private, unlawful or offensive pictures. "
-msgstr ""
-"Attention à ne pas envoyer de photos privées, illégales ou offensantes."
+msgstr "Attention à ne pas charger de photos à caractère privé, illégal ou offensant. "
 
 #: src/component/upload/dialog.vue:101
 msgid "Please don't upload photos containing offensive content."
@@ -2934,6 +2934,7 @@ msgstr ""
 "emplacement actuel."
 
 #: src/page/admin/activity.vue:132
+#, fuzzy
 msgid "Repeated"
 msgstr "Répétition"
 
@@ -3187,6 +3188,7 @@ msgid "Setup"
 msgstr "Configurer"
 
 #: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+#, fuzzy
 msgid "Severity"
 msgstr "Gravité"
 
@@ -3514,12 +3516,10 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
 "local. "
-msgstr ""
-"Cela monte le dossier des originaux en tant que lecteur réseau et vous "
-"permet d'ouvrir, modifier et supprimer des fichiers de votre ordinateur ou "
-"smartphone comme s'ils étaient locaux."
+msgstr "Cela monte le dossier des originaux en tant que lecteur réseau et vous permet d'ouvrir, modifier et supprimer des fichiers de votre ordinateur ou smartphone comme s'ils étaient locaux. "
 
 #: src/page/admin/activity.vue:127
+#, fuzzy
 msgid "Time"
 msgstr "L'heure"
 
@@ -3921,9 +3921,7 @@ msgstr ""
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism. "
-msgstr ""
-"Les clients WebDAV, comme par exemple l'explorateur Windows de Microsoft ou "
-"le Finder d'Apple, peuvent se connecter directement à PhotoPrism."
+msgstr "Les clients WebDAV, comme par exemple Windows Explorer de Microsoft ou le Finder d'Apple, peuvent se connecter directement à PhotoPrism. "
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
 msgid "WebDAV Upload"
