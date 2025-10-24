@@ -221,11 +221,21 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 			{"database-dsn", c.DatabaseDSN()},
 		}...)
 	} else {
-		rows = append(rows, [][]string{
-			{"database-dsn", strings.ReplaceAll(c.DatabaseDSN(), ":"+c.DatabasePassword(), ":******")},
-			{"database-name", c.DatabaseName()},
-		}...)
-
+		// Create a config to enable generation of the dsn, so it can be compared to what is configured
+		nc := &Config{options: &Options{DatabaseDriver: c.DatabaseDriver(), DatabaseServer: c.DatabaseServer(), DatabaseUser: c.DatabaseUser(), DatabasePassword: c.DatabasePassword(), DatabaseName: c.DatabaseName()}}
+		if nc.DatabaseDSN() == c.DatabaseDSN() {
+			rows = append(rows, [][]string{
+				{"database-name", c.DatabaseName()},
+			}...)
+		} else {
+			// Create a config to allow extraction of the password to allow it to be obfuscated
+			dc := &Config{options: &Options{DatabaseDriver: c.DatabaseDriver(), DatabaseDSN: c.DatabaseDSN()}}
+			rows = append(rows, [][]string{
+				{"database-dsn", strings.ReplaceAll(c.DatabaseDSN(), ":"+dc.DatabasePassword(), ":"+strings.Repeat("*", utf8.RuneCountInString(dc.DatabasePassword())))},
+				{"database-dsn warning", "database-dsn overides the following database settings"},
+				{"database-name", c.DatabaseName()},
+			}...)
+		}
 	}
 
 	rows = append(rows, [][]string{

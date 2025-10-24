@@ -31,7 +31,8 @@ func TestConfig_Report(t *testing.T) {
 			case "database-dsn":
 				assert.Contains(t, row[1], "storage/testdata/test.db")
 				found = found + ",database-dsn"
-
+			case "database-dsn warning":
+				assert.Fail(t, "database-dsn warning should not appear")
 			}
 		}
 		assert.Contains(t, found, "database-driver")
@@ -54,8 +55,11 @@ func TestConfig_Report(t *testing.T) {
 				assert.Contains(t, row[1], MySQL)
 				found = found + ",database-driver"
 			case "database-dsn":
-				assert.Contains(t, row[1], "foo:******@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true")
+				assert.Contains(t, row[1], "foo:***@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true")
 				found = found + ",database-dsn"
+			case "database-dsn warning":
+				assert.Contains(t, row[1], "database-dsn overides the following database settings")
+				found = found + ",database-dsn warning"
 			case "database-name":
 				assert.Contains(t, row[1], "baz")
 				found = found + ",database-name"
@@ -73,6 +77,7 @@ func TestConfig_Report(t *testing.T) {
 		}
 		assert.Contains(t, found, "database-driver")
 		assert.Contains(t, found, "database-dsn")
+		assert.Contains(t, found, "database-dsn warning")
 		assert.Contains(t, found, "database-name")
 		assert.Contains(t, found, "database-server")
 		assert.Contains(t, found, "database-user")
