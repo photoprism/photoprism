@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-23 08:32+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-10-24 07:59+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -1231,8 +1231,9 @@ msgid "Drag and drop files here"
 msgstr "Glisser et déposer les fichiers ici"
 
 #: src/locales.js:344
+#, fuzzy
 msgid "Driver"
-msgstr "Conducteur"
+msgstr "Pilote"
 
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -1306,6 +1307,7 @@ msgid "Enabling two-factor authentication means that you will need a randomly ge
 msgstr "Avec l'authentification à deux facteurs, il faut un code de vérification généré de manière aléatoire pour se connecter, si bien que personne, même connaissant votre mot de passe, ne pourra se connecter à votre compte."
 
 #: src/locales.js:345
+#, fuzzy
 msgid "Engine"
 msgstr "Moteur"
 
@@ -2814,12 +2816,13 @@ msgid "Remove imported files to save storage. Unsupported file types will never 
 msgstr "Supprimez les fichiers importés pour économiser l'espace de stockage. Les fichiers non pris en charge ne sont jamais supprimés et demeurent à leur emplacement actuel."
 
 #: src/locales.js:362
+#, fuzzy
 msgid "Remove the selected instance from the cluster registry?"
-msgstr "Retirer l'instance sélectionnée du registre du cluster ?"
+msgstr "Retirer l'instance sélectionnée du cluster ?"
 
 #: src/locales.js:326
 msgid "Removed"
-msgstr "Supprimé"
+msgstr "Retrait effectué"
 
 #: src/page/admin/activity.vue:129 src/locales.js:353
 msgid "Repeated"
@@ -2886,8 +2889,9 @@ msgid "Roles"
 msgstr "Rôles"
 
 #: src/locales.js:346
+#, fuzzy
 msgid "Rotated"
-msgstr "Rotation"
+msgstr "Rotation effectuée"
 
 #: src/locales.js:217
 msgid "Rows per page:"
@@ -2955,7 +2959,7 @@ msgstr "Portée"
 
 #: src/locales.js:340
 msgid "Scopes"
-msgstr "Lunettes de visée"
+msgstr "Portées"
 
 #: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
