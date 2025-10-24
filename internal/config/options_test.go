@@ -44,7 +44,7 @@ func TestOptions_Load(t *testing.T) {
 		assert.NotEmpty(t, o.DatabaseDSN)
 		assert.Equal(t, 81, o.HttpPort)
 	})
-	t.Run("ChangeDSN", func(t *testing.T) {
+	t.Run("SetDSNFromFile", func(t *testing.T) {
 		o := NewOptions(CliTestContext())
 		o.DatabaseDSN = ""
 		o.DatabaseDriver = "sqlite"
@@ -65,19 +65,10 @@ func TestOptions_Load(t *testing.T) {
 		assert.Equal(t, "http://localhost:2343/", o.SiteUrl)
 		assert.Equal(t, "mysql", o.DatabaseDriver)
 		assert.Equal(t, "acceptance:accpass@tcp(mariadb:12345)/accdb?charset=utf8mb4,utf8&parseTime=true", o.Deprecated.DatabaseDsn)
-		assert.Empty(t, o.DatabaseName)
-		assert.Empty(t, o.DatabaseServer)
-		assert.Empty(t, o.DatabaseUser)
-		assert.Empty(t, o.DatabasePassword)
-
-		c := &Config{
-			options: o,
-		}
-
-		assert.Equal(t, "accdb", c.DatabaseName())
-		assert.Equal(t, "mariadb:12345", c.DatabaseServer())
-		assert.Equal(t, "acceptance", c.DatabaseUser())
-		assert.Equal(t, "accpass", c.DatabasePassword())
+		assert.Equal(t, "photoprism", o.DatabaseName)
+		assert.Equal(t, "photoprism", o.DatabasePassword)
+		assert.Equal(t, "mariadb:4001", o.DatabaseServer)
+		assert.Equal(t, "root", o.DatabaseUser)
 	})
 }
 
