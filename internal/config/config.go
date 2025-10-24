@@ -180,6 +180,10 @@ func NewConfig(ctx *cli.Context) *Config {
 		}
 	}
 
+	if c.options.DatabaseDriver != SQLite3 && c.options.DatabaseDriver != "sqlite" && (c.options.DatabaseDSN != "" || c.options.Deprecated.DatabaseDsn != "") {
+		log.Warn("config: database-dsn has been configured which is not recommended")
+	}
+
 	return c
 }
 
