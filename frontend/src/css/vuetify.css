@@ -482,6 +482,10 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
 }
 
+.v-table .v-data-table-column--align-left {
+    max-width: 60%;
+}
+
 .v-table .v-table__wrapper .v-input.v-select .v-field .v-field__input,
 .v-table .v-table__wrapper .v-input.v-text-field .v-field .v-field__input {
     padding-left: 0;

@@ -52,6 +52,29 @@ func TestShowSources_JSON(t *testing.T) {
 	}
 }
 
+func TestShowScopes_JSON(t *testing.T) {
+	out, err := RunWithTestContext(ShowScopesCommand, []string{"scopes", "--json"})
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var v []map[string]string
+
+	if err = json.Unmarshal([]byte(out), &v); err != nil {
+		t.Fatalf("invalid json: %v\n%s", err, out)
+	}
+	if len(v) == 0 {
+		t.Fatalf("expected at least one item")
+	}
+	if _, ok := v[0]["scope"]; !ok {
+		t.Fatalf("expected key 'scope' in first item")
+	}
+	if _, ok := v[0]["description"]; !ok {
+		t.Fatalf("expected key 'description' in first item")
+	}
+}
+
 func TestShowMetadata_JSON(t *testing.T) {
 	out, err := RunWithTestContext(ShowMetadataCommand, []string{"metadata", "--json"})
 

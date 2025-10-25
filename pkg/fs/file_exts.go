@@ -15,6 +15,8 @@ var Extensions = FileExtensions{
 	ExtJpeg:     ImageJpeg,   // .jpg
 	".jpeg":     ImageJpeg,
 	".jpe":      ImageJpeg,
+	".mp.jpg":   ImageJpeg,
+	".mp.jpeg":  ImageJpeg,
 	".jif":      ImageJpeg,
 	".jfif":     ImageJpeg,
 	".jfi":      ImageJpeg,

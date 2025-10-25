@@ -94,7 +94,7 @@ func InitConfig(c *config.Config) error {
 
 	// Log cluster UUID.
 	if uuid := c.ClusterUUID(); uuid != "" {
-		log.Infof("config: using portal cluster UUID %s", clean.Log(uuid))
+		log.Infof("config: portal cluster UUID %s", clean.Log(uuid))
 	}
 
 	return nil

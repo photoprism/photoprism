@@ -51,6 +51,8 @@
               <div class="form-controls">
                 <v-combobox
                   v-model="selectedAlbums"
+                  v-model:menu="albumsMenu"
+                  @update:menu="onAlbumsMenuUpdate"
                   :disabled="busy || loading || total > 0 || filesQuotaReached"
                   hide-details
                   chips
@@ -62,6 +64,7 @@
                   item-value="UID"
                   :placeholder="$gettext('Select or create albums')"
                   return-object
+                  @keydown.enter.stop="onAlbumsEnter"
                 >
                   <template #no-data>
                     <v-list-item>
@@ -156,6 +159,8 @@ export default {
       accept: this.$config.get("uploadAllow"),
       albums: [],
       selectedAlbums: [],
+      albumsMenu: false,
+      suppressAlbumsMenuOpen: false,
       selected: [],
       uploads: [],
       busy: false,
@@ -239,6 +244,20 @@ export default {
     onLoaded() {
       this.loading = false;
     },
+    onAlbumsEnter() {
+      this.suppressAlbumsMenuOpen = true;
+      this.albumsMenu = false;
+      window.setTimeout(() => {
+        this.suppressAlbumsMenuOpen = false;
+      }, 250);
+    },
+    onAlbumsMenuUpdate(val) {
+      if (val && this.suppressAlbumsMenuOpen) {
+        this.albumsMenu = false;
+        return;
+      }
+      this.albumsMenu = val;
+    },
     load(q) {
       if (this.loading) {
         return;
@@ -296,6 +315,8 @@ export default {
       this.remainingTime = -1;
       this.eta = "";
       this.token = "";
+      this.albumsMenu = false;
+      this.suppressAlbumsMenuOpen = false;
     },
     onUploadDialog() {
       this.$refs.upload.click();

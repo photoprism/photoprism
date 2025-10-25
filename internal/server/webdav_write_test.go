@@ -181,7 +181,10 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 }
 
 func TestWebDAVWrite_MoveMissingDestination(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 	// Ensure src exists
 	_ = os.MkdirAll(filepath.Join(conf.OriginalsPath(), "mv"), 0o700)
@@ -201,7 +204,10 @@ func TestWebDAVWrite_MoveMissingDestination(t *testing.T) {
 }
 
 func TestWebDAVWrite_CopyInvalidDestinationPrefix(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 	// Ensure src exists
 	_ = os.MkdirAll(filepath.Join(conf.OriginalsPath(), "cp"), 0o700)
@@ -222,7 +228,10 @@ func TestWebDAVWrite_CopyInvalidDestinationPrefix(t *testing.T) {
 }
 
 func TestWebDAVWrite_MoveNonExistentSource(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 	// Ensure destination dir exists
 	_ = os.MkdirAll(filepath.Join(conf.OriginalsPath(), "dst2"), 0o700)
@@ -240,7 +249,10 @@ func TestWebDAVWrite_MoveNonExistentSource(t *testing.T) {
 }
 
 func TestWebDAVWrite_CopyTraversalDestination(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 
 	// Create source file via PUT
@@ -268,7 +280,10 @@ func TestWebDAVWrite_CopyTraversalDestination(t *testing.T) {
 }
 
 func TestWebDAVWrite_MoveTraversalDestination(t *testing.T) {
-	conf := config.TestConfig()
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 
 	// Create source file via PUT

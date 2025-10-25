@@ -13,13 +13,7 @@ import (
 func (c *Config) Report() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
-	var dbKey string
-
-	if c.DatabaseDriver() == SQLite3 {
-		dbKey = "database-dsn"
-	} else {
-		dbKey = "database-name"
-	}
+	reportDatabaseDSN := c.ReportDatabaseDSN()
 
 	rows = [][]string{
 		// Authentication.
@@ -219,15 +213,27 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
+	}...)
 
-		// Database.
-		{"database-driver", c.DatabaseDriver()},
-		{dbKey, c.DatabaseName()},
-		{"database-server", c.DatabaseServer()},
-		{"database-host", c.DatabaseHost()},
-		{"database-port", c.DatabasePortString()},
-		{"database-user", c.DatabaseUser()},
-		{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+	// Database.
+	if reportDatabaseDSN {
+		rows = append(rows, [][]string{
+			{"database-driver", c.DatabaseDriver()},
+			{"database-dsn", c.DatabaseDSN()},
+		}...)
+	} else {
+		rows = append(rows, [][]string{
+			{"database-driver", c.DatabaseDriver()},
+			{"database-name", c.DatabaseName()},
+			{"database-server", c.DatabaseServer()},
+			{"database-host", c.DatabaseHost()},
+			{"database-port", c.DatabasePortString()},
+			{"database-user", c.DatabaseUser()},
+			{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+		}...)
+	}
+
+	rows = append(rows, [][]string{
 		{"database-timeout", fmt.Sprintf("%d", c.DatabaseTimeout())},
 		{"database-conns", fmt.Sprintf("%d", c.DatabaseConns())},
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},

@@ -24,11 +24,23 @@ func resetDatabaseOptions(c *Config) {
 }
 
 func TestConfig_DatabaseDriver(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	// Ensure defaults not overridden by repo fixtures.
-	resetDatabaseOptions(c)
-	driver := c.DatabaseDriver()
-	assert.Equal(t, SQLite3, driver)
+	t.Run("DefaultsToSQLite", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+
+		assert.Equal(t, SQLite3, c.DatabaseDriver())
+	})
+	t.Run("NormalizesDeprecatedDSN", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+
+		c.options.DatabaseDriver = MySQL
+		c.options.Deprecated.DatabaseDsn = "user:pass@tcp(localhost:3306)/photoprism"
+
+		assert.Equal(t, MySQL, c.DatabaseDriver())
+		assert.Equal(t, "user:pass@tcp(localhost:3306)/photoprism", c.options.DatabaseDSN)
+		assert.Empty(t, c.options.Deprecated.DatabaseDsn)
+	})
 }
 
 func TestConfig_DatabaseDriverName(t *testing.T) {
@@ -121,6 +133,26 @@ func TestConfig_ParseDatabaseDSN(t *testing.T) {
 	assert.Equal(t, "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true", c.DatabaseName())
 	assert.Equal(t, "", c.DatabaseUser())
 	assert.Equal(t, "", c.DatabasePassword())
+
+	t.Run("ManualServerConfig", func(t *testing.T) {
+		target := NewConfig(CliTestContext())
+		resetDatabaseOptions(target)
+
+		target.options.DatabaseDriver = MySQL
+		target.options.DatabaseServer = "db.internal:3306"
+		target.options.DatabaseName = "photoprism"
+		target.options.DatabaseUser = "app"
+		target.options.DatabasePassword = "secret"
+		target.options.DatabaseDSN = "foo:b@r@tcp(otherhost:3307)/other?charset=utf8mb4,utf8&parseTime=true"
+
+		target.ParseDatabaseDSN()
+
+		assert.Equal(t, "db.internal:3306", target.options.DatabaseServer)
+		assert.Equal(t, "db.internal", target.DatabaseHost())
+		assert.Equal(t, "photoprism", target.options.DatabaseName)
+		assert.Equal(t, "app", target.options.DatabaseUser)
+		assert.Equal(t, "secret", target.options.DatabasePassword)
+	})
 }
 
 func TestConfig_DatabaseServer(t *testing.T) {
@@ -219,6 +251,43 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 	c.options.DatabaseDriver = ""
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+}
+
+func TestConfig_DatabaseDSNFlags(t *testing.T) {
+	t.Run("NoDatabaseDSN", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		assert.True(t, conf.NoDatabaseDSN())
+		assert.False(t, conf.HasDatabaseDSN())
+	})
+	t.Run("DeprecatedDatabaseDsn", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = MySQL
+		conf.options.Deprecated.DatabaseDsn = "user:pass@tcp(db.internal:3306)/photoprism"
+
+		assert.False(t, conf.NoDatabaseDSN())
+		assert.True(t, conf.HasDatabaseDSN())
+		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism", conf.DatabaseDSN())
+		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
+	})
+}
+
+func TestConfig_ReportDatabaseDSN(t *testing.T) {
+	conf := NewConfig(CliTestContext())
+	resetDatabaseOptions(conf)
+
+	assert.Equal(t, SQLite3, conf.DatabaseDriver())
+	assert.True(t, conf.ReportDatabaseDSN())
+
+	conf.options.DatabaseDriver = MySQL
+	conf.options.DatabaseDSN = ""
+	assert.False(t, conf.ReportDatabaseDSN())
+
+	conf.options.DatabaseDSN = "user:pass@tcp(db.internal:3306)/photoprism"
+	assert.True(t, conf.ReportDatabaseDSN())
 }
 
 func TestConfig_DatabaseFile(t *testing.T) {

@@ -58,12 +58,6 @@ var Flags = CliFlags{
 			Usage:   fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVars: EnvVars("ADMIN_PASSWORD"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "admin-scope",
-			Usage:   "initial `SCOPE` of the superadmin account",
-			EnvVars: EnvVars("ADMIN_SCOPE"),
-			Hidden:  true,
-		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "password-length",
 			Usage:   "minimum password `LENGTH` in characters",

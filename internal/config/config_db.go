@@ -49,6 +49,8 @@ var drivers = map[string]func(string) gorm.Dialector{
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
+	c.normalizeDatabaseDSN()
+
 	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
 		c.options.DatabaseDriver = MySQL
@@ -126,9 +128,7 @@ func (c *Config) normalizeDatabaseDSN() {
 
 // DatabaseDSN returns the database data source name (DSN).
 func (c *Config) DatabaseDSN() string {
-	c.normalizeDatabaseDSN()
-
-	if c.options.DatabaseDSN == "" {
+	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
 		case MySQL, MariaDB:
 			databaseServer := c.DatabaseServer()
@@ -170,11 +170,33 @@ func (c *Config) DatabaseDSN() string {
 	return c.options.DatabaseDSN
 }
 
-// ParseDatabaseDSN parses the database dsn and extracts user, password, database server, and name.
-func (c *Config) ParseDatabaseDSN() {
+// NoDatabaseDSN checks if no manual database data source name (DSN) configuration is set.
+func (c *Config) NoDatabaseDSN() bool {
 	c.normalizeDatabaseDSN()
 
-	if c.options.DatabaseDSN == "" || c.options.DatabaseServer != "" {
+	return c.options.DatabaseDSN == ""
+}
+
+// HasDatabaseDSN checks if a manual database data source name (DSN) configuration is set.
+func (c *Config) HasDatabaseDSN() bool {
+	return !c.NoDatabaseDSN()
+}
+
+// ReportDatabaseDSN checks if the database data source name (DSN) should be reported
+// instead of database name, server, user, and password.
+func (c *Config) ReportDatabaseDSN() bool {
+	if c.DatabaseDriver() == SQLite3 {
+		return true
+	}
+
+	return c.HasDatabaseDSN()
+}
+
+// ParseDatabaseDSN parses the database dsn and extracts user, password, database server, and name.
+func (c *Config) ParseDatabaseDSN() {
+	if c.NoDatabaseDSN() {
+		return
+	} else if c.options.DatabaseServer != "" {
 		return
 	}
 

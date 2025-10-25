@@ -109,6 +109,10 @@ body #app,
     -webkit-hyphens: auto;
 }
 
+.text-nowrap {
+    white-space: nowrap;
+}
+
 .text-monospace {
     white-space: pre;
     font-family: monospace;

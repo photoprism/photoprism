@@ -31,7 +31,7 @@ type Options struct {
 	NoHub                   bool          `yaml:"-" json:"-" flag:"no-hub"`
 	AdminUser               string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword           string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
-	AdminScope              string        `yaml:"AdminScope" json:"-" flag:"admin-scope"`
+	AdminScope              string        `yaml:"AdminScope" json:"-" flag:"admin-scope" tags:"pro"`
 	PasswordLength          int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
 	PasswordResetUri        string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri" tags:"plus,pro"`
 	RegisterUri             string        `yaml:"RegisterUri" json:"-" flag:"register-uri" tags:"pro"`
