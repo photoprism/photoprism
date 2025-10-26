@@ -32,7 +32,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await menu.openNav();
       const InitialOriginalsCount = await Selector("a.nav-originals span.nav-count-item", { timeout: 5000 }).innerText;
       await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
-      await toolbar.search("digikam");
+      await toolbar.search("digikam", false);
       const PhotoCount = await photo.getPhotoCount("all");
 
       await t.expect(PhotoCount).eql(0);
@@ -51,7 +51,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
 
       const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
       await t.navigateTo("/library/index/files/2020/10");
-      await t.wait(5000);
+      await originals.waitForFoldersToLoad(5000, true);
       const FileCount = await originals.getFileCount();
 
       await t.expect(FileCount).eql(2);
@@ -106,7 +106,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })("Core: 
     console.log("Skipped on mobile");
   } else {
     await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).notOk();
-    await toolbar.search("korn");
+    await toolbar.search("korn", false);
     const PhotoCount = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCount).eql(0);
@@ -120,7 +120,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })("Core: 
 
     const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
     await t.navigateTo("/library/index/files/2020/06");
-    await t.wait(5000);
+    await originals.waitForFoldersToLoad(5000, true);
 
     const FileCount = await originals.getFileCount();
 
@@ -182,8 +182,7 @@ test.meta("testID", "photos-upload-delete-003").meta({ mode: "public" })(
       await toolbar.triggerToolbarAction("upload");
       await t.setFilesToUpload(Selector(".input-upload"), ["../../upload-files/ladybug.jpg"]).wait(15000);
       await toolbar.triggerToolbarAction("refresh");
-      await t.wait(5000);
-      const PhotoCountAfterUpload = await photo.getPhotoCount("all");
+      const PhotoCountAfterUpload = await photo.getPhotoCount("all", 12000);
 
       await t.expect(PhotoCountAfterUpload).eql(PhotoCount + 1);
 
@@ -252,8 +251,8 @@ test.meta("testID", "photos-upload-delete-004").meta({ mode: "public" })(
       await menu.openPage("albums");
       await toolbar.search("NewCreatedAlbum");
       await album.openNthAlbum(0);
-      await photo.checkPhotoVisibility(UploadedPhotoUid, false);
       const PhotoCountAfterDelete = await photo.getPhotoCount("all");
+      await photo.checkPhotoVisibility(UploadedPhotoUid, false);
 
       await t.expect(PhotoCountAfterDelete).eql(0);
 

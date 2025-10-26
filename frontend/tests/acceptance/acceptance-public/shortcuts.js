@@ -61,8 +61,9 @@ test.meta("testID", "shortcuts-001").meta({ type: "short", mode: "public" })(
     const initialScrollY = await getcurrentPosition();
     await t.expect(initialScrollY).gt(0, "Should have scrolled down before refresh");
 
+    await menu.closeEventPopups();
     await triggerKeyPress("r", "KeyR", 82, true, false);
-    await t.wait(2000); // Wait for page to reload
+    await photo.waitForPhotosToLoad(2000, true); // Wait for page to reload
 
     const finalScrollY = await getcurrentPosition();
     await t.expect(finalScrollY).eql(initialScrollY, "Scroll position should be restored after refresh");
@@ -128,15 +129,11 @@ test.meta("testID", "shortcuts-003").meta({ type: "short", mode: "public" })(
 
     await triggerKeyPress("a", "KeyA", 65, true, false);
 
-    await t.expect(Selector("div.p-notify--success").withText("Archived").visible).ok();
-
-    await t.wait(5000);
+    await t.click(Selector("div.p-notify--success").withText("Archived"));
 
     await triggerKeyPress("a", "KeyA", 65, true, false);
 
-    await t.expect(Selector("div.p-notify--success").withText("Restored").visible).ok();
-
-    await t.wait(5000);
+    await t.click(Selector("div.p-notify--success").withText("Restored"));
 
     await triggerKeyPress("d", "KeyD", 68, true, false);
     await t.expect(Selector("div.p-notify--success").withText("Downloading").visible).ok();
