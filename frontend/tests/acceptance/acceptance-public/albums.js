@@ -152,6 +152,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
   async (t) => {
     // Get initial counts for both Holiday and Christmas albums
     await menu.openPage("albums");
+    photo.waitForPhotosToLoad(2000);
     await toolbar.search("Holiday");
     const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
     await album.openAlbumWithUid(HolidayAlbumUid);
