@@ -18,8 +18,8 @@ export default class Page {
     }
   }
 
-  async getPhotoCount(type) {
-    await t.wait(7000);
+  async getPhotoCount(type, delay = 7000) {
+    await this.waitForPhotosToLoad(delay, true)
     if (type === "all") {
       const PhotoCount = await Selector("div.is-photo", { timeout: 2000 }).count;
       return PhotoCount;
@@ -144,4 +144,49 @@ export default class Page {
     const style = await selector.getStyleProperty("background-image");
     return style;
   }
+
+  async waitForPhotosToLoad(delay, close = true){
+    console.time("waitForPhotosToLoad")
+    // if (close) {
+    //   try {
+    //     await t.click(Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/));
+    //   } catch (e) {
+    //     // ignore the error as the item may not show up
+    //     console.log(e)
+    //   }
+    // } else {
+    //   await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible;
+    // }
+    while(await Selector(".p-notify__close", {timeout: 250}).visible) {
+      if (await Selector("div.p-notify__text", {timeout: 50}).withText(/(picture|pictures) found/).visible) {
+        break
+      }
+      try {
+        await t.click(Selector(".p-notify__close", {timeout: 250}));
+      } catch {
+        console.log(".p-notify__close missed in waitForPhotosToLoad Pre")
+      }
+    }
+
+    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible) && close){
+      try {
+        await t.click(Selector(".p-notify__close", {timeout: 250}));
+      } catch (e) {
+        // ignore the error as the item may not show up
+        console.log(".p-notify__close missed in waitForPhotosToLoad")
+      }
+    }
+    console.timeEnd("waitForPhotosToLoad")
+  }
+
+  async waitForPhotosToLoadSlow(delay, close = true){
+    console.time("waitForPhotosToLoad")
+    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible) && close){
+        while(await Selector(".p-notify__close", {timeout: 250}).visible) {
+          await t.wait(250);
+        }
+    }
+    console.timeEnd("waitForPhotosToLoad")
+  }
+
 }
