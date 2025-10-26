@@ -137,8 +137,22 @@ export default class Page {
     }
   }
 
-  async search(term) {
-    await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter").wait(7000);
+  async search(term, wait = true) {
+    // Wait for notifications to go away before we search
+    while(await Selector(".p-notify__close", {timeout: 250}).visible) {
+      await t.wait(250);
+      // try {
+      //   await t.click(Selector(".p-notify__close", {timeout: 250}));
+      // } catch (e) {
+      //   // Do Nothing
+      //   console.log(e)
+      // }
+    }
+
+    await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter"); // .wait(7000); <-- is breaking other tests.
+    if (wait) {
+      await this.waitForSearchToFinish(7000);
+    }
   }
 
   async setFilter(filter, option) {
@@ -178,4 +192,27 @@ export default class Page {
       await t.click(Selector("i.mdi-tune"));
     }
   }
+
+  async waitForSearchToFinish(delay, close = true){
+    console.time("waitForSearchToFinish")
+    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
+      try {
+        await t.click(Selector(".p-notify__close", {timeout: 250}));
+      } catch (e) {
+        // ignore the error as the item may not show up
+        console.log(".p-notify__close missed in waitForSearchToFinish")
+      }
+    }
+    console.timeEnd("waitForSearchToFinish")
+  }
+
+  async waitForSearchToFinishSlow(delay, close = true){
+    console.time("waitForSearchToFinish")
+    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
+        while(await Selector(".p-notify__close", {timeout: 250}).visible) {
+          await t.wait(250);
+        }
+    }
+    console.timeEnd("waitForSearchToFinish")
+  }  
 }
