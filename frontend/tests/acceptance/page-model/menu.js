@@ -10,7 +10,7 @@ export default class Page {
   }
 
   async openNav() {
-    console.time("openNav")
+    // console.time("openNav")
     if (await this.navActive.visible) { // Make sure that the nav has been rendered
       if (await this.navInRail.exists) { // fail fast looking for a minimized nav
         if (await this.expandButton.exists) {
@@ -20,7 +20,7 @@ export default class Page {
         }
       }
     }
-    console.timeEnd("openNav")
+    // console.timeEnd("openNav")
   }
 
   async openPage(page) {
@@ -137,7 +137,7 @@ export default class Page {
       try {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch {
-        console.log(".p-notify__close missed in closeEventPopups")
+        // console.log(".p-notify__close missed in closeEventPopups")
       }
     }
   }

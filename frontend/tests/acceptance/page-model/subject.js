@@ -171,17 +171,7 @@ export default class Page {
   }
 
   async waitForPeopleToLoad(delay, close = true) {
-    console.time("waitForPeopleToLoad")
-    // if (close) {
-    //   try {
-    //     await t.click(Selector("div.p-notify__text", {timeout: delay}).withText(/(people|person) (found|loaded)/));
-    //   } catch (e) {
-    //     // ignore the error as the item may not show up
-    //   }
-    // } else {
-    //   await Selector("div.p-notify__text", {timeout: delay}).withText(/(people|person) (found|loaded)/).visible;
-    // }
-
+    // console.time("waitForPeopleToLoad")
     while(await Selector(".p-notify__close", {timeout: 250}).visible) {
       if (await Selector("div.p-notify__text", {timeout: 50}).withText(/(people|person) (found|loaded)/).visible) {
         break
@@ -189,7 +179,7 @@ export default class Page {
       try {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch {
-        console.log(".p-notify__close missed in waitForPeopleToLoad Pre")
+        // console.log(".p-notify__close missed in waitForPeopleToLoad Pre")
       }
     }
 
@@ -198,24 +188,14 @@ export default class Page {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch (e) {
         // ignore the error as the item may not show up
-        console.log(".p-notify__close missed in waitForPeopleToLoad")
+        // console.log(".p-notify__close missed in waitForPeopleToLoad")
       }
     }
-    console.timeEnd("waitForPeopleToLoad")
+    // console.timeEnd("waitForPeopleToLoad")
   }
 
   async waitForPersonCoverUpdate(delay, close = true) {
-    console.time("waitForPersonCoverUpdate")
-    // if (close) {
-    //   try {
-    //     await t.click(Selector("div.p-notify__text", {timeout: delay}).withText("Person cover updated"));
-    //   } catch (e) {
-    //     // ignore the error as the item may not show up
-    //   }
-    // } else {
-    //   await Selector("div.p-notify__text", {timeout: delay}).withText("Person cover updated").visible;
-    // }
-
+    // console.time("waitForPersonCoverUpdate")
     // Get rid of the other selectors
     while(await Selector(".p-notify__close", {timeout: 250}).visible) {
       if (await Selector("div.p-notify__text", {timeout: 50}).withText("Person cover updated").visible) {
@@ -225,7 +205,7 @@ export default class Page {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch {
         // Do Nothing
-        console.log(".p-notify__close missed in waitForPersonCoverUpdate Pre")
+        // console.log(".p-notify__close missed in waitForPersonCoverUpdate Pre")
       }
     }
 
@@ -234,30 +214,10 @@ export default class Page {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch (e) {
         // ignore the error as the item may not show up
-        console.log(".p-notify__close missed in waitForPersonCoverUpdate")
+        // console.log(".p-notify__close missed in waitForPersonCoverUpdate")
       }
     }
-    console.timeEnd("waitForPersonCoverUpdate")
-  }
-
-  async waitForPeopleToLoadSlow(delay, close = true) {
-    console.time("waitForPeopleToLoad")
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(people|person) (found|loaded)/).visible) && close){
-        while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-          await t.wait(250);
-        }
-    }
-    console.timeEnd("waitForPeopleToLoad")
-  }
-
-  async waitForPersonCoverUpdateSlow(delay, close = true) {
-    console.time("waitForPersonCoverUpdate")
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText("Person cover updated").visible) && close){
-        while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-          await t.wait(250);
-        }
-    }
-    console.timeEnd("waitForPersonCoverUpdate")
+    // console.timeEnd("waitForPersonCoverUpdate")
   }
 
 }

@@ -194,25 +194,15 @@ export default class Page {
   }
 
   async waitForSearchToFinish(delay, close = true){
-    console.time("waitForSearchToFinish")
+    // console.time("waitForSearchToFinish")
     if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
       try {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch (e) {
         // ignore the error as the item may not show up
-        console.log(".p-notify__close missed in waitForSearchToFinish")
+        // console.log(".p-notify__close missed in waitForSearchToFinish")
       }
     }
-    console.timeEnd("waitForSearchToFinish")
+    // console.timeEnd("waitForSearchToFinish")
   }
-
-  async waitForSearchToFinishSlow(delay, close = true){
-    console.time("waitForSearchToFinish")
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
-        while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-          await t.wait(250);
-        }
-    }
-    console.timeEnd("waitForSearchToFinish")
-  }  
 }

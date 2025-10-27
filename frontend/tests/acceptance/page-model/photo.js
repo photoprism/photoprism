@@ -146,17 +146,8 @@ export default class Page {
   }
 
   async waitForPhotosToLoad(delay, close = true){
-    console.time("waitForPhotosToLoad")
-    // if (close) {
-    //   try {
-    //     await t.click(Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/));
-    //   } catch (e) {
-    //     // ignore the error as the item may not show up
-    //     console.log(e)
-    //   }
-    // } else {
-    //   await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible;
-    // }
+    // console.time("waitForPhotosToLoad")
+
     while(await Selector(".p-notify__close", {timeout: 250}).visible) {
       if (await Selector("div.p-notify__text", {timeout: 50}).withText(/(picture|pictures) found/).visible) {
         break
@@ -164,7 +155,7 @@ export default class Page {
       try {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch {
-        console.log(".p-notify__close missed in waitForPhotosToLoad Pre")
+        // console.log(".p-notify__close missed in waitForPhotosToLoad Pre")
       }
     }
 
@@ -173,20 +164,10 @@ export default class Page {
         await t.click(Selector(".p-notify__close", {timeout: 250}));
       } catch (e) {
         // ignore the error as the item may not show up
-        console.log(".p-notify__close missed in waitForPhotosToLoad")
+        // console.log(".p-notify__close missed in waitForPhotosToLoad")
       }
     }
-    console.timeEnd("waitForPhotosToLoad")
-  }
-
-  async waitForPhotosToLoadSlow(delay, close = true){
-    console.time("waitForPhotosToLoad")
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible) && close){
-        while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-          await t.wait(250);
-        }
-    }
-    console.timeEnd("waitForPhotosToLoad")
+    // console.timeEnd("waitForPhotosToLoad")
   }
 
 }
