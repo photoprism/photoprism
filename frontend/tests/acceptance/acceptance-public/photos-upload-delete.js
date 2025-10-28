@@ -10,6 +10,7 @@ import PhotoEdit from "../page-model/photo-edit";
 import Originals from "../page-model/originals";
 import Album from "../page-model/album";
 import Library from "../page-model/library";
+import Notifies from "../page-model/notifications";
 
 fixture`Test photos upload and delete`.page`${testcafeconfig.url}`;
 
@@ -22,6 +23,7 @@ const page = new Page();
 const photoedit = new PhotoEdit();
 const originals = new Originals();
 const library = new Library();
+const notifies = new Notifies();
 
 test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "public" })(
   "Core: Upload + Delete jpg/json",
@@ -51,7 +53,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
 
       const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
       await t.navigateTo("/library/index/files/2020/10");
-      await originals.waitForFoldersToLoad(5000, true);
+      await notifies.waitForFoldersToLoad(5000, true);
       const FileCount = await originals.getFileCount();
 
       await t.expect(FileCount).eql(2);
@@ -120,7 +122,7 @@ test.meta("testID", "photos-upload-delete-002").meta({ mode: "public" })("Core: 
 
     const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
     await t.navigateTo("/library/index/files/2020/06");
-    await originals.waitForFoldersToLoad(5000, true);
+    await notifies.waitForFoldersToLoad(5000, true);
 
     const FileCount = await originals.getFileCount();
 

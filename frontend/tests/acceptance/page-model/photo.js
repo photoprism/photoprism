@@ -1,7 +1,7 @@
 import { Selector, t } from "testcafe";
-import Toolbar from "./toolbar";
+import Notifies from "../page-model/notifications";
 
-const toolbar = new Toolbar();
+const notifies = new Notifies();
 
 export default class Page {
   constructor() {}
@@ -19,7 +19,7 @@ export default class Page {
   }
 
   async getPhotoCount(type, delay = 7000) {
-    await this.waitForPhotosToLoad(delay, true)
+    await notifies.waitForPhotosToLoad(delay, true)
     if (type === "all") {
       const PhotoCount = await Selector("div.is-photo", { timeout: 2000 }).count;
       return PhotoCount;
@@ -145,29 +145,39 @@ export default class Page {
     return style;
   }
 
-  async waitForPhotosToLoad(delay, close = true){
-    // console.time("waitForPhotosToLoad")
+  // async waitForPhotosToLoad(delay, close = true){
+  //   console.time("waitForPhotosToLoad")
 
-    while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-      if (await Selector("div.p-notify__text", {timeout: 50}).withText(/(picture|pictures) found/).visible) {
-        break
-      }
-      try {
-        await t.click(Selector(".p-notify__close", {timeout: 250}));
-      } catch {
-        // console.log(".p-notify__close missed in waitForPhotosToLoad Pre")
-      }
-    }
+  //   while(await Selector(".p-notify__close", {timeout: 250}).visible) {
+  //     if (await Selector("div.p-notify__text", {timeout: 50}).withText(/(picture|pictures) found/).visible) {
+  //       try {
+  //         if (close) {
+  //           await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
+  //         }
+  //       } catch {
+  //         // ignore the error as the item may not show up
+  //         console.trace(".p-notify__close missed in waitForPhotosToLoad")
+  //       } finally {
+  //         console.timeEnd("waitForPhotosToLoad")
+  //         return
+  //       }
+  //     }
+  //     try {
+  //       await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
+  //     } catch {
+  //       console.trace(".p-notify__close missed in waitForPhotosToLoad Pre")
+  //     }
+  //   }
 
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible) && close){
-      try {
-        await t.click(Selector(".p-notify__close", {timeout: 250}));
-      } catch (e) {
-        // ignore the error as the item may not show up
-        // console.log(".p-notify__close missed in waitForPhotosToLoad")
-      }
-    }
-    // console.timeEnd("waitForPhotosToLoad")
-  }
+  //   if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible) && close){
+  //     try {
+  //       await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
+  //     } catch {
+  //       // ignore the error as the item may not show up
+  //       console.trace(".p-notify__close missed in waitForPhotosToLoad")
+  //     }
+  //   }
+  //   console.timeEnd("waitForPhotosToLoad")
+  // }
 
 }

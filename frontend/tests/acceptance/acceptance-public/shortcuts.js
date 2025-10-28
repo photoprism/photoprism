@@ -9,6 +9,7 @@ import PhotoEdit from "../page-model/photo-edit";
 import Subject from "../page-model/subject";
 import Label from "../page-model/label";
 import Library from "../page-model/library";
+import Notifies from "../page-model/notifications";
 
 fixture`Test Keyboard Shortcuts`.page`${testcafeconfig.url}`;
 
@@ -21,6 +22,7 @@ const photoEdit = new PhotoEdit();
 const subject = new Subject();
 const label = new Label();
 const library = new Library();
+const notifies = new Notifies();
 
 const triggerKeyPress = ClientFunction((key, code, keyCode, ctrlKey, shiftKey, targetSelector) => {
   const target = targetSelector ? document.querySelector(targetSelector) : document;
@@ -61,9 +63,9 @@ test.meta("testID", "shortcuts-001").meta({ type: "short", mode: "public" })(
     const initialScrollY = await getcurrentPosition();
     await t.expect(initialScrollY).gt(0, "Should have scrolled down before refresh");
 
-    await menu.closeEventPopups();
+    await notifies.closeAllEventPopups();
     await triggerKeyPress("r", "KeyR", 82, true, false);
-    await photo.waitForPhotosToLoad(2000, true); // Wait for page to reload
+    await notifies.waitForPhotosToLoad(2000, true); // Wait for page to reload
 
     const finalScrollY = await getcurrentPosition();
     await t.expect(finalScrollY).eql(initialScrollY, "Scroll position should be restored after refresh");

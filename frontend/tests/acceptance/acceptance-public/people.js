@@ -6,6 +6,7 @@ import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import Subject from "../page-model/subject";
 import PhotoEdit from "../page-model/photo-edit";
+import Notifies from "../page-model/notifications";
 
 fixture`Test people`.page`${testcafeconfig.url}`;
 
@@ -15,6 +16,7 @@ const contextmenu = new ContextMenu();
 const photo = new Photo();
 const subject = new Subject();
 const photoedit = new PhotoEdit();
+const notifies = new Notifies();
 
 test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
   "Common: Add name to new face and rename subject",
@@ -41,9 +43,9 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
 
     await t.click(subject.recognizedTab);
     await subject.checkFaceVisibility(FirstFaceID, false);
-    await menu.closeEventPopups();
+    await notifies.closeAllEventPopups();
     await t.eval(() => location.reload());
-    await subject.waitForPeopleToLoad(6000, true);
+    await notifies.waitForPeopleToLoad(6000, true);
     const SubjectCountAfterAdd = await subject.getSubjectCount();
 
     await t.expect(SubjectCountAfterAdd).eql(SubjectCount + 1);
@@ -198,9 +200,9 @@ test.meta("testID", "people-005").meta({ mode: "public" })("Common: Remove face"
 
   await t.click(photoedit.dialogClose);
   await contextmenu.clearSelection();
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await photo.waitForPhotosToLoad(5000, true);
+  await notifies.waitForPhotosToLoad(5000, true);
   await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await t.click(photoedit.peopleTab);
@@ -233,20 +235,20 @@ test.meta("testID", "people-006").meta({ mode: "public" })("Common: Hide face", 
   const FirstFaceID = await subject.getNthFaceUid(0);
   await subject.checkFaceVisibility(FirstFaceID, true);
   await subject.triggerHoverAction("id", FirstFaceID, "hidden");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await subject.waitForPeopleToLoad(5000, true);
+  await notifies.waitForPeopleToLoad(5000, true);
   await subject.checkFaceVisibility(FirstFaceID, false);
   await subject.triggerToolbarAction("show-hidden");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await subject.waitForPeopleToLoad(6000, true);
+  await notifies.waitForPeopleToLoad(6000, true);
   await subject.checkFaceVisibility(FirstFaceID, true);
   await subject.triggerHoverAction("id", FirstFaceID, "hidden");
   await subject.triggerToolbarAction("exclude-hidden");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await subject.waitForPeopleToLoad(6000, true);
+  await notifies.waitForPeopleToLoad(6000, true);
   await subject.checkFaceVisibility(FirstFaceID, true);
 });
 
@@ -256,33 +258,33 @@ test.meta("testID", "people-007").meta({ mode: "public" })("Common: Hide person"
   const FirstPersonUid = await subject.getNthSubjectUid(0);
   await subject.checkSubjectVisibility("uid", FirstPersonUid, true);
   await subject.triggerHoverAction("uid", FirstPersonUid, "hidden");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await subject.waitForPeopleToLoad(6000, true);
+  await notifies.waitForPeopleToLoad(6000, true);
   await subject.checkSubjectVisibility("uid", FirstPersonUid, false);
   await subject.triggerToolbarAction("show-hidden");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await subject.waitForPeopleToLoad(6000, true);
+  await notifies.waitForPeopleToLoad(6000, true);
   await subject.checkSubjectVisibility("uid", FirstPersonUid, true);
   await subject.triggerHoverAction("uid", FirstPersonUid, "hidden");
   await subject.triggerToolbarAction("exclude-hidden");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.eval(() => location.reload());
-  await subject.waitForPeopleToLoad(5000, true);
+  await notifies.waitForPeopleToLoad(5000, true);
   await subject.checkSubjectVisibility("uid", FirstPersonUid, true);
 });
 
 test.meta("testID", "people-008").meta({ mode: "public" })("Common: Go to person from face menu", async (t) => {
   await menu.openPage("people");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.click(subject.recognizedTab);
-  await subject.waitForPeopleToLoad(2000, true);
+  await notifies.waitForPeopleToLoad(2000, true);
 
   const firstPersonUid = await subject.getNthSubjectUid(0);
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await subject.openSubjectWithUid(firstPersonUid);
-  await photo.waitForPhotosToLoad(2000, true);
+  await notifies.waitForPhotosToLoad(2000, true);
   await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await t.click(photoedit.peopleTab);
@@ -300,9 +302,9 @@ test.meta("testID", "people-008").meta({ mode: "public" })("Common: Go to person
 
 test.meta("testID", "people-009").meta({ mode: "public" })("Common: Set person cover from face menu", async (t) => {
   await menu.openPage("people");
-  await menu.closeEventPopups();
+  await notifies.closeAllEventPopups();
   await t.click(subject.recognizedTab);
-  await subject.waitForPeopleToLoad(3000, true);
+  await notifies.waitForPeopleToLoad(3000, true);
 
   const firstPersonUid = await subject.getNthSubjectUid(0);
   const personCard = Selector("div.result.is-subject[data-uid='" + firstPersonUid + "']");
@@ -322,17 +324,17 @@ test.meta("testID", "people-009").meta({ mode: "public" })("Common: Set person c
 
   const faceName = await photoedit.inputName.nth(0).value;
   if (faceName && faceName !== "") {
-    await menu.closeEventPopups();
+    await notifies.closeAllEventPopups();
     await photoedit.setPersonCover(0);
-    await subject.waitForPersonCoverUpdate(2000, true);
+    await notifies.waitForPersonCoverUpdate(2000, true);
 
     await t.click(photoedit.dialogClose);
     await contextmenu.clearSelection();
 
     await menu.openPage("people");
-    await menu.closeEventPopups();
+    await notifies.closeAllEventPopups();
     await t.click(subject.recognizedTab);
-    subject.waitForPeopleToLoad(3000, true);
+    await notifies.waitForPeopleToLoad(3000, true);
 
     const updatedThumb = await personCard.find("div.preview img").getAttribute("src");
     await t

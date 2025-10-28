@@ -1,4 +1,6 @@
 import { Selector, t } from "testcafe";
+import Notifies from "../page-model/notifications";
+const notifies = new Notifies();
 
 export default class Page {
   constructor() {
@@ -139,19 +141,19 @@ export default class Page {
 
   async search(term, wait = true) {
     // Wait for notifications to go away before we search
-    while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-      await t.wait(250);
-      // try {
-      //   await t.click(Selector(".p-notify__close", {timeout: 250}));
-      // } catch (e) {
-      //   // Do Nothing
-      //   console.log(e)
-      // }
-    }
+    // while(await Selector(".p-notify__close", {timeout: 250}).visible) {
+    //   try {
+    //     await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
+    //   } catch {
+    //     // Do Nothing
+    //     console.trace(".p-notify__close missed in search")
+    //   }
+    // }
+    await notifies.closeAllEventPopups();
 
     await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter"); // .wait(7000); <-- is breaking other tests.
     if (wait) {
-      await this.waitForSearchToFinish(7000);
+      await notifies.waitForSearchToFinish(7000);
     }
   }
 
@@ -193,16 +195,16 @@ export default class Page {
     }
   }
 
-  async waitForSearchToFinish(delay, close = true){
-    // console.time("waitForSearchToFinish")
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
-      try {
-        await t.click(Selector(".p-notify__close", {timeout: 250}));
-      } catch (e) {
-        // ignore the error as the item may not show up
-        // console.log(".p-notify__close missed in waitForSearchToFinish")
-      }
-    }
-    // console.timeEnd("waitForSearchToFinish")
-  }
+  // async waitForSearchToFinish(delay, close = true){
+  //   console.time("waitForSearchToFinish")
+  //   if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
+  //     try {
+  //       await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
+  //     } catch {
+  //       // ignore the error as the item may not show up
+  //       console.trace(".p-notify__close missed in waitForSearchToFinish")
+  //     }
+  //   }
+  //   console.timeEnd("waitForSearchToFinish")
+  // }
 }
