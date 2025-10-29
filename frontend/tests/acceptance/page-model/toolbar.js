@@ -140,18 +140,9 @@ export default class Page {
   }
 
   async search(term, wait = true) {
-    // Wait for notifications to go away before we search
-    // while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-    //   try {
-    //     await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
-    //   } catch {
-    //     // Do Nothing
-    //     console.trace(".p-notify__close missed in search")
-    //   }
-    // }
     await notifies.closeAllEventPopups();
 
-    await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter"); // .wait(7000); <-- is breaking other tests.
+    await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter");
     if (wait) {
       await notifies.waitForSearchToFinish(7000);
     }
@@ -194,17 +185,4 @@ export default class Page {
       await t.click(Selector("i.mdi-tune"));
     }
   }
-
-  // async waitForSearchToFinish(delay, close = true){
-  //   console.time("waitForSearchToFinish")
-  //   if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(found|contain|empty)/).visible) && close){
-  //     try {
-  //       await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
-  //     } catch {
-  //       // ignore the error as the item may not show up
-  //       console.trace(".p-notify__close missed in waitForSearchToFinish")
-  //     }
-  //   }
-  //   console.timeEnd("waitForSearchToFinish")
-  // }
 }

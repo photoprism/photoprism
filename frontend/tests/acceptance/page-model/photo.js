@@ -144,40 +144,4 @@ export default class Page {
     const style = await selector.getStyleProperty("background-image");
     return style;
   }
-
-  // async waitForPhotosToLoad(delay, close = true){
-  //   console.time("waitForPhotosToLoad")
-
-  //   while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-  //     if (await Selector("div.p-notify__text", {timeout: 50}).withText(/(picture|pictures) found/).visible) {
-  //       try {
-  //         if (close) {
-  //           await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
-  //         }
-  //       } catch {
-  //         // ignore the error as the item may not show up
-  //         console.trace(".p-notify__close missed in waitForPhotosToLoad")
-  //       } finally {
-  //         console.timeEnd("waitForPhotosToLoad")
-  //         return
-  //       }
-  //     }
-  //     try {
-  //       await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
-  //     } catch {
-  //       console.trace(".p-notify__close missed in waitForPhotosToLoad Pre")
-  //     }
-  //   }
-
-  //   if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/(picture|pictures) found/).visible) && close){
-  //     try {
-  //       await t.click(Selector(".p-notify__close", {timeout: 250})).wait(350);
-  //     } catch {
-  //       // ignore the error as the item may not show up
-  //       console.trace(".p-notify__close missed in waitForPhotosToLoad")
-  //     }
-  //   }
-  //   console.timeEnd("waitForPhotosToLoad")
-  // }
-
 }

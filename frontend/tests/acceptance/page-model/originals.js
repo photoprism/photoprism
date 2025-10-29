@@ -77,29 +77,4 @@ export default class Page {
       await t.click(Selector(`div.input-` + action));
     }
   }
-
-async waitForFoldersToLoad(delay, close) {
-    // console.time("waitForFoldersToLoad")
-    while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-      if (await Selector("div.p-notify__text", {timeout: 50}).withText(/[fF]older/).visible) {
-        break
-      }
-      try {
-        await t.click(Selector(".p-notify__close", {timeout: 250}));
-      } catch {
-        // console.log(".p-notify__close missed in waitForFoldersToLoad Pre")
-      }
-    }
-
-    if ((await Selector("div.p-notify__text", {timeout: delay}).withText(/[fF]older/).visible) && close){
-      try {
-        await t.click(Selector(".p-notify__close", {timeout: 250}));
-      } catch (e) {
-        // ignore the error as the item may not show up
-        // console.log(".p-notify__close missed in waitForFoldersToLoad")
-      }
-    }
-    // console.timeEnd("waitForFoldersToLoad")
-  }
-
 }
