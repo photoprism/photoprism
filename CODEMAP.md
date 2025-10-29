@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 21, 2025
+**Last Updated:** October 28, 2025
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -103,6 +103,8 @@ Background Workers
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
+  - Registration now retries once on 401/403 by rotating the node client secret with the join token and persists the new credentials (falling back to in-memory storage if the secrets directory is read-only).
+  - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
 - See specs cheat sheet: `specs/portal/README.md`.

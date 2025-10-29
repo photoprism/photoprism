@@ -294,7 +294,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		body = `{"NodeName":"pp-node-theme","Theme":"2.0.0"}`
 		r2 := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusOK, r2.Code)
-		assert.False(t, gjson.Get(r2.Body.String(), "Theme").Exists())
+		assert.Equal(t, "2.0.0", gjson.Get(r2.Body.String(), "Theme").String())
 		cleanupRegisterProvisioning(t, conf, r2)
 	})
 }
@@ -339,4 +339,48 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 			t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
 		}
 	})
+}
+
+// TestValidateAdvertiseURL ensures the validator accepts HTTPS everywhere and allows
+// HTTP only for loopback or cluster-internal service domains.
+func TestValidateAdvertiseURL(t *testing.T) {
+	cases := []struct {
+		u  string
+		ok bool
+	}{
+		{"https://example.com", true},
+		{"http://example.com", false},
+		{"http://localhost:2342", true},
+		{"http://photoprism.default.svc", true},
+		{"http://photoprism.default.svc.cluster.local", true},
+		{"http://photoprism.internal", true},
+		{"https://127.0.0.1", true},
+		{"ftp://example.com", false},
+		{"https://", false},
+		{"", false},
+	}
+	for _, c := range cases {
+		if got := validateAdvertiseURL(c.u); got != c.ok {
+			t.Fatalf("validateAdvertiseURL(%q) = %v, want %v", c.u, got, c.ok)
+		}
+	}
+}
+
+// TestValidateSiteURL mirrors the advertise URL rules for site URLs.
+func TestValidateSiteURL(t *testing.T) {
+	cases := []struct {
+		u  string
+		ok bool
+	}{
+		{"https://photos.example.com", true},
+		{"http://photos.example.com", false},
+		{"http://127.0.0.1:2342", true},
+		{"mailto:me@example.com", false},
+		{"://bad", false},
+	}
+	for _, c := range cases {
+		if got := validateSiteURL(c.u); got != c.ok {
+			t.Fatalf("validateSiteURL(%q) = %v, want %v", c.u, got, c.ok)
+		}
+	}
 }

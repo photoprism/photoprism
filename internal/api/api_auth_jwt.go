@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
@@ -33,6 +34,13 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 
 	conf := get.Config()
 
+	if conf == nil {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debug("auth: skipping portal jwt (config unavailable)")
+		}
+		return nil
+	}
+
 	// Determine whether JWT authentication is possible
 	// based on the local config and client IP address.
 	if !shouldAllowJWT(conf, clientIP) {
@@ -49,18 +57,33 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 	claims := verifyTokenFromPortal(c.Request.Context(), authToken, expected, jwtIssuerCandidates(conf))
 
 	if claims == nil {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf(
+				"auth: portal jwt rejected for resource %s (client=%s required_scope=%q perms=%s)",
+				resource,
+				clean.IP(clientIP, "?"),
+				strings.Join(expected.Scope, " "),
+				perms.String(),
+			)
+		}
 		return nil
 	}
 
 	// Check if config allows resource access to be authorized with JWT.
 	allowedScopes := conf.JWTAllowedScopes()
 	if !acl.ScopeAttrPermits(allowedScopes, resource, perms) {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("auth: portal jwt scope blocked by node allow-list (allowed=%q resource=%s perms=%s)", allowedScopes.String(), resource, perms.String())
+		}
 		return nil
 	}
 
 	// Check if token allows access to specified resource.
 	tokenScopes := acl.ScopeAttr(claims.Scope)
 	if !acl.ScopeAttrPermits(tokenScopes, resource, perms) {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("auth: portal jwt missing required scope (token=%q resource=%s perms=%s)", clean.Scope(claims.Scope), resource, perms.String())
+		}
 		return nil
 	}
 
@@ -87,10 +110,16 @@ func shouldAttemptJWT(c *gin.Context, token string) bool {
 // authentication for the request originating from clientIP.
 func shouldAllowJWT(conf *config.Config, clientIP string) bool {
 	if conf == nil || conf.Portal() {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debug("auth: skipping portal jwt (not a node)")
+		}
 		return false
 	}
 
 	if conf.JWKSUrl() == "" {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debug("auth: skipping portal jwt (jwks url not configured)")
+		}
 		return false
 	}
 
@@ -102,10 +131,20 @@ func shouldAllowJWT(conf *config.Config, clientIP string) bool {
 	ip := net.ParseIP(clientIP)
 	_, block, err := net.ParseCIDR(cidr)
 	if err != nil || ip == nil {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("auth: skipping portal jwt (invalid cidr %q or client ip %q)", clean.Log(cidr), clean.Log(clientIP))
+		}
 		return false
 	}
 
-	return block.Contains(ip)
+	if !block.Contains(ip) {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("auth: skipping portal jwt (client ip %q outside allowed cidr %q)", clean.Log(clientIP), clean.Log(cidr))
+		}
+		return false
+	}
+
+	return true
 }
 
 // expectedClaimsFor builds the ExpectedClaims used to validate JWTs for the
@@ -127,8 +166,13 @@ func expectedClaimsFor(conf *config.Config, requiredScope string) clusterjwt.Exp
 // returns the verified claims on success.
 func verifyTokenFromPortal(ctx context.Context, token string, expected clusterjwt.ExpectedClaims, issuers []string) *clusterjwt.Claims {
 	if len(issuers) == 0 {
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debug("auth: portal jwt verification skipped (no issuer candidates)")
+		}
 		return nil
 	}
+
+	var lastErr error
 
 	for _, issuer := range issuers {
 		expected.Issuer = issuer
@@ -136,6 +180,14 @@ func verifyTokenFromPortal(ctx context.Context, token string, expected clusterjw
 		if err == nil {
 			return claims
 		}
+		lastErr = err
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("auth: portal jwt issuer candidate %s rejected (%s)", clean.Log(issuer), clean.Error(err))
+		}
+	}
+
+	if lastErr != nil && log.IsLevelEnabled(logrus.DebugLevel) {
+		log.Debugf("auth: portal jwt verification failed after %d issuer attempts (%s)", len(issuers), clean.Error(lastErr))
 	}
 
 	return nil

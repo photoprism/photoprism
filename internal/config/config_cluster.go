@@ -23,6 +23,7 @@ import (
 // DefaultPortalUrl specifies the default portal URL with variable cluster domain.
 var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
 var DefaultNodeRole = cluster.RoleInstance
+var DefaultJWTAllowedScopes = "cluster vision metrics"
 
 // ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
 func (c *Config) ClusterDomain() string {
@@ -183,10 +184,6 @@ func (c *Config) SaveJoinToken(customToken string) (token string, fileName strin
 		return "", "", fmt.Errorf("invalid cluster secrets directory")
 	}
 
-	if err = fs.MkdirAll(dir); err != nil {
-		return "", "", fmt.Errorf("could not create cluster secrets path (%w)", err)
-	}
-
 	if customToken != "" {
 		if !rnd.IsJoinToken(customToken, false) {
 			return "", "", fmt.Errorf("insecure custom cluster join token specified")
@@ -199,7 +196,17 @@ func (c *Config) SaveJoinToken(customToken string) (token string, fileName strin
 		}
 	}
 
+	// Create secret directory.
+	if err = fs.MkdirAll(dir); err != nil {
+		// Use memory to store join token if directory is not writable.
+		c.options.JoinToken = token
+		return "", "", fmt.Errorf("could not create cluster secrets path (%w)", err)
+	}
+
+	// Write secret to file.
 	if err = fs.WriteFile(fileName, []byte(token), fs.ModeSecretFile); err != nil {
+		// Use memory to store join token if file is not writable.
+		c.options.JoinToken = token
 		return "", "", fmt.Errorf("could not write cluster join token (%w)", err)
 	}
 
@@ -340,14 +347,31 @@ func (c *Config) NodeClientID() string {
 func (c *Config) NodeClientSecret() string {
 	if c.options.NodeClientSecret != "" {
 		return c.options.NodeClientSecret
-	} else if fileName := FlagFilePath("NODE_CLIENT_SECRET"); fileName == "" {
+	}
+
+	fileName := c.NodeClientSecretFile()
+
+	if fileName == "" {
 		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
-		log.Warnf("config: failed to read node client secret from %s (%s)", fileName, err)
-		return ""
-	} else {
+	}
+
+	if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
+		// Do not cache the value. Always read from the disk to ensure
+		// that updates from other processes are observed.
 		return string(b)
 	}
+
+	if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
+		log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
+	}
+
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
+	} else if err != nil {
+		log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
+	}
+
+	return c.options.NodeClientSecret
 }
 
 // SaveNodeClientSecret stores a new node client secret on disk and updates the
@@ -364,15 +388,21 @@ func (c *Config) SaveNodeClientSecret(clientSecret string) (fileName string, err
 		return fileName, fmt.Errorf("invalid node client secret filename %s", clean.Log(fileName))
 	}
 
+	// Create secret directory.
 	if err = fs.MkdirAll(dir); err != nil {
+		// Use memory to store client secret if directory is not writable.
+		c.options.NodeClientSecret = clientSecret
 		return fileName, fmt.Errorf("could not create node secrets path (%s)", err)
 	}
 
+	// Write secret to file.
 	if err = fs.WriteFile(fileName, []byte(clientSecret), fs.ModeSecretFile); err != nil {
+		// Use memory to store client secret if file is not writable.
+		c.options.NodeClientSecret = clientSecret
 		return "", fmt.Errorf("could not write node client secret (%s)", err)
 	}
 
-	c.options.NodeClientSecret = clientSecret
+	c.options.NodeClientSecret = ""
 
 	return fileName, nil
 }
@@ -462,10 +492,12 @@ func (c *Config) JWTAllowedScopes() list.Attr {
 		}
 	}
 
-	return list.ParseAttr("cluster vision metrics")
+	return list.ParseAttr(DefaultJWTAllowedScopes)
 }
 
 // AdvertiseUrl returns the advertised node URL for intra-cluster calls (scheme://host[:port]).
+// Portal validation permits HTTPS for external hosts and HTTP only for loopback
+// or cluster-internal service domains (e.g., *.svc, *.cluster.local, *.internal).
 func (c *Config) AdvertiseUrl() string {
 	if c.options.AdvertiseUrl != "" {
 		return strings.TrimRight(c.options.AdvertiseUrl, "/") + "/"

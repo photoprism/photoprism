@@ -217,20 +217,65 @@ func (c *Config) FaceClusterCore() int {
 
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
-	if c.options.FaceClusterDist < 0.1 || c.options.FaceClusterDist > 1.5 {
+	if c.options.FaceClusterDist < c.FaceCollisionDist() || c.options.FaceClusterDist > 1.5 {
 		return face.ClusterDist
 	}
 
 	return c.options.FaceClusterDist
 }
 
+// FaceClusterRadius returns the maximum radius used when matching face clusters.
+func (c *Config) FaceClusterRadius() float64 {
+	if c.options.FaceClusterRadius < c.FaceCollisionDist() || c.options.FaceClusterRadius > 1.5 {
+		return face.ClusterRadius
+	}
+
+	return c.options.FaceClusterRadius
+}
+
+// FaceCollisionDist returns the minimum distance used to differentiate embeddings.
+func (c *Config) FaceCollisionDist() float64 {
+	if c.options.FaceCollisionDist <= 0 || c.options.FaceCollisionDist > 1 {
+		return face.CollisionDist
+	}
+
+	return c.options.FaceCollisionDist
+}
+
+// FaceEpsilonDist returns the distance slack applied to collision checks.
+func (c *Config) FaceEpsilonDist() float64 {
+	if c.options.FaceEpsilonDist <= 0 || c.options.FaceEpsilonDist > 0.1 {
+		return face.Epsilon
+	}
+
+	return c.options.FaceEpsilonDist
+}
+
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
-	if c.options.FaceMatchDist < 0.1 || c.options.FaceMatchDist > 1.5 {
+	if c.options.FaceMatchDist < c.FaceCollisionDist() || c.options.FaceMatchDist > 1.5 {
 		return face.MatchDist
 	}
 
 	return c.options.FaceMatchDist
+}
+
+// FaceMatchChildren reports whether child embeddings should be matched automatically.
+func (c *Config) FaceMatchChildren() bool {
+	if c == nil {
+		return false
+	}
+
+	return c.options.FaceMatchChildren
+}
+
+// FaceMatchBackground reports whether background embeddings should be matched.
+func (c *Config) FaceMatchBackground() bool {
+	if c == nil {
+		return false
+	}
+
+	return c.options.FaceMatchBackground
 }
 
 // FaceAngles returns the set of detection angles in radians.

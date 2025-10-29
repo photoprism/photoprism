@@ -183,7 +183,7 @@ func (c *Config) ReportDatabaseDSN() bool {
 func (c *Config) ParseDatabaseDSN() {
 	if c.NoDatabaseDSN() {
 		return
-	} else if c.options.DatabaseServer != "" {
+	} else if c.options.DatabaseServer != "" && c.DatabaseDriver() == SQLite3 {
 		return
 	}
 

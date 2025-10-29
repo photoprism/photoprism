@@ -244,8 +244,39 @@ func TestConfig_FaceClusterDist(t *testing.T) {
 	assert.Equal(t, 0.64, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.01
 	assert.Equal(t, 0.64, c.FaceClusterDist())
+	c.options.FaceCollisionDist = 0.05
+	c.options.FaceClusterDist = 0.06
+	assert.Equal(t, 0.06, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.34
 	assert.Equal(t, 0.34, c.FaceClusterDist())
+}
+
+func TestConfig_FaceClusterRadius(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.ClusterRadius, c.FaceClusterRadius())
+	c.options.FaceClusterRadius = 0.01
+	assert.Equal(t, face.ClusterRadius, c.FaceClusterRadius())
+	c.options.FaceCollisionDist = 0.05
+	c.options.FaceClusterRadius = 0.5
+	assert.Equal(t, 0.5, c.FaceClusterRadius())
+}
+
+func TestConfig_FaceCollisionDist(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())
+	c.options.FaceCollisionDist = 0.05
+	assert.Equal(t, 0.05, c.FaceCollisionDist())
+	c.options.FaceCollisionDist = 0
+	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())
+}
+
+func TestConfig_FaceEpsilonDist(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.Epsilon, c.FaceEpsilonDist())
+	c.options.FaceEpsilonDist = 0.02
+	assert.Equal(t, 0.02, c.FaceEpsilonDist())
+	c.options.FaceEpsilonDist = 0.2
+	assert.Equal(t, face.Epsilon, c.FaceEpsilonDist())
 }
 
 func TestConfig_FaceMatchDist(t *testing.T) {
@@ -255,6 +286,20 @@ func TestConfig_FaceMatchDist(t *testing.T) {
 	assert.Equal(t, 0.1, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.01
 	assert.Equal(t, face.MatchDist, c.FaceMatchDist())
+}
+
+func TestConfig_FaceMatchChildren(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.FaceMatchChildren())
+	c.options.FaceMatchChildren = true
+	assert.True(t, c.FaceMatchChildren())
+}
+
+func TestConfig_FaceMatchBackground(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.FaceMatchBackground())
+	c.options.FaceMatchBackground = true
+	assert.True(t, c.FaceMatchBackground())
 }
 
 func TestConfig_FaceAngles(t *testing.T) {

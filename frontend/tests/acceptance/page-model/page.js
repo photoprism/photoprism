@@ -37,11 +37,26 @@ export default class Page {
     this.snackbar = Selector(".v-snackbar__content");
   }
 
-  async login(username, password) {
+  async login(username, password, handleTMR = true) {
     await t
       .typeText(Selector(".input-username input"), username, { replace: true })
       .typeText(Selector(".input-password input"), password, { replace: true })
       .click(Selector(".action-confirm"));
+    if (handleTMR) {
+      if (await Selector(".p-notify--error").withText("Too many requests").exists) {
+        console.log("Rate Limiting recovery in progress, test may be slowed by 1 minute")
+        let counter = 0
+        while (await Selector(".p-notify--error").withText("Too many requests").exists) {
+          if (counter === 62) {
+            break;
+          }
+          await t.click(Selector(".p-notify__close"));
+          await t.wait(1000);
+          await t.click(Selector(".action-confirm"));
+          counter++;
+        }
+      }
+    }
   }
 
   async logout() {

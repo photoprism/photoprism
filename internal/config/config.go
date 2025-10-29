@@ -359,8 +359,13 @@ func (c *Config) Propagate() {
 	face.ClusterScoreThreshold = c.FaceClusterScore()
 	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
+	face.CollisionDist = c.FaceCollisionDist()
+	face.Epsilon = c.FaceEpsilonDist()
+	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+	face.SkipChildren = !c.FaceMatchChildren()
+	face.IgnoreBackground = !c.FaceMatchBackground()
 	face.DetectionAngles = c.FaceAngles()
 	if err := face.ConfigureEngine(face.EngineSettings{
 		Name: c.FaceEngine(),

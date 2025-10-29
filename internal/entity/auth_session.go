@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -276,17 +277,25 @@ func (m *Session) GetClient() *Client {
 		return &Client{}
 	} else if m.client != nil {
 		return m.client
-	} else if c := FindClientByUID(m.ClientUID); c != nil {
+	}
+
+	// Get client ID.
+	uid := m.ClientUID
+
+	if c := FindClientByUID(uid); c != nil {
 		m.SetClient(c)
 		return m.client
 	}
 
+	// Get client role.
+	role := m.clientRole(false)
+
 	return &Client{
 		UserUID:    m.UserUID,
 		UserName:   m.UserName,
-		ClientUID:  m.ClientUID,
+		ClientUID:  uid,
 		ClientName: m.GetClientName(),
-		ClientRole: m.GetClientRole().String(),
+		ClientRole: role.String(),
 		AuthScope:  m.Scope(),
 		AuthMethod: m.AuthMethod,
 	}
@@ -299,13 +308,7 @@ func (m *Session) GetClientName() string {
 
 // GetClientRole returns the client ACL role.
 func (m *Session) GetClientRole() acl.Role {
-	if m.HasClient() {
-		return m.GetClient().AclRole()
-	} else if m.IsClient() {
-		return acl.RoleClient
-	}
-
-	return acl.RoleNone
+	return m.clientRole(true)
 }
 
 // GetClientInfo returns the client identifier string.
@@ -336,6 +339,43 @@ func (m *Session) NoClient() bool {
 // IsClient checks if this session authenticates an API client.
 func (m *Session) IsClient() bool {
 	return authn.Provider(m.AuthProvider).IsClient()
+}
+
+// clientRole resolves the client role for this session. When resolve is true it
+// may perform a one-time lookup via FindClientByUID; callers that already
+// depend on GetClientRole must pass resolve=false to avoid the recursive loop
+// that previously caused stack overflows between GetClient() and GetClientRole().
+func (m *Session) clientRole(resolve bool) acl.Role {
+	if m == nil {
+		return acl.RoleNone
+	}
+
+	if c := m.client; c != nil {
+		return c.AclRole()
+	}
+
+	if !resolve {
+		// Skip lookup to avoid recursive loop.
+	} else if uid := m.ClientUID; uid != "" {
+		if c := FindClientByUID(uid); c != nil {
+			m.SetClient(c)
+			return c.AclRole()
+		}
+	}
+
+	if m.IsClient() {
+		if authn.MethodJWT.NotEqual(m.AuthMethod) {
+			// Do nothing.
+		} else if role, _, hasRole := strings.Cut(m.AuthIssuer, ":"); !hasRole {
+			// Do nothing.
+		} else if aclRole, roleFound := acl.ClientRoles[role]; roleFound {
+			return aclRole
+		}
+
+		return acl.RoleClient
+	}
+
+	return acl.RoleNone
 }
 
 // GetUser returns the related user entity.

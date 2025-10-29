@@ -349,6 +349,31 @@ func TestSession_ClientRole(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, acl.RoleNone, m.GetClientRole())
 	})
+	t.Run("MissingClientEntityPortal", func(t *testing.T) {
+		m := &Session{
+			ClientUID:    "cs5cpu17n6gj2zzz",
+			AuthProvider: authn.ProviderClient.String(),
+			AuthMethod:   authn.MethodJWT.String(),
+			AuthIssuer:   "portal:cbaa0276-07d3-43ac-b420-25e2601b0ad4",
+		}
+
+		role := m.GetClientRole()
+		assert.Equal(t, acl.RolePortal, role)
+		client := m.GetClient()
+		assert.Equal(t, "cs5cpu17n6gj2zzz", client.ClientUID)
+		assert.Equal(t, acl.RolePortal, client.AclRole())
+	})
+	t.Run("MissingClientEntityDefault", func(t *testing.T) {
+		m := &Session{
+			ClientUID:    "cs5cpu17n6gj2xxx",
+			AuthProvider: authn.ProviderClient.String(),
+			AuthMethod:   authn.MethodJWT.String(),
+			AuthIssuer:   "https://example.com/oauth",
+		}
+
+		role := m.GetClientRole()
+		assert.Equal(t, acl.RoleClient, role)
+	})
 }
 
 func TestSession_ClientInfo(t *testing.T) {

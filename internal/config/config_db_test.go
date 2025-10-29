@@ -119,11 +119,29 @@ func TestConfig_ParseDatabaseDSN(t *testing.T) {
 
 		target.ParseDatabaseDSN()
 
-		assert.Equal(t, "db.internal:3306", target.options.DatabaseServer)
-		assert.Equal(t, "db.internal", target.DatabaseHost())
-		assert.Equal(t, "photoprism", target.options.DatabaseName)
-		assert.Equal(t, "app", target.options.DatabaseUser)
-		assert.Equal(t, "secret", target.options.DatabasePassword)
+		assert.Equal(t, "otherhost:3307", target.options.DatabaseServer)
+		assert.Equal(t, "otherhost", target.DatabaseHost())
+		assert.Equal(t, "other", target.options.DatabaseName)
+		assert.Equal(t, "foo", target.options.DatabaseUser)
+		assert.Equal(t, "b@r", target.options.DatabasePassword)
+	})
+	t.Run("SQLiteSkipWhenServerPreset", func(t *testing.T) {
+		cfg := NewConfig(CliTestContext())
+		resetDatabaseOptions(cfg)
+
+		cfg.options.DatabaseDriver = SQLite3
+		cfg.options.DatabaseDSN = "file:/data/app.db?_busy_timeout=5000"
+		cfg.options.DatabaseServer = "/tmp/mysql.sock"
+		cfg.options.DatabaseName = "existing-name"
+		cfg.options.DatabaseUser = "existing-user"
+		cfg.options.DatabasePassword = "existing-pass"
+
+		cfg.ParseDatabaseDSN()
+
+		assert.Equal(t, "/tmp/mysql.sock", cfg.options.DatabaseServer)
+		assert.Equal(t, "existing-name", cfg.options.DatabaseName)
+		assert.Equal(t, "existing-user", cfg.options.DatabaseUser)
+		assert.Equal(t, "existing-pass", cfg.options.DatabasePassword)
 	})
 }
 

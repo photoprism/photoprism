@@ -90,8 +90,8 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	}
 
 	// Limit sample radius to reduce false positives.
-	if m.SampleRadius > face.SampleRadius {
-		m.SampleRadius = face.SampleRadius
+	if m.SampleRadius > face.ClusterRadius {
+		m.SampleRadius = face.ClusterRadius
 	}
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
@@ -164,7 +164,7 @@ func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 	case dist > (m.SampleRadius + face.MatchDist):
 		// Too far.
 		return false, dist
-	case m.CollisionRadius > 0.1 && dist > m.CollisionRadius:
+	case m.CollisionRadius > face.CollisionDist && dist > m.CollisionRadius:
 		// Within radius of reported collisions.
 		return false, dist
 	}
@@ -286,8 +286,8 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 
 	radius := maxDistance + face.Epsilon
 
-	if radius > face.SampleRadius {
-		radius = face.SampleRadius
+	if radius > face.ClusterRadius {
+		radius = face.ClusterRadius
 	}
 
 	if radius < 0 {
