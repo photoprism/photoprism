@@ -1,5 +1,7 @@
 import { Selector, t } from "testcafe";
 
+const showLogs = process.env.SHOW_LOGS == "true";
+
 export default class Page {
   constructor() {
     this.navDrawer = Selector(".v-navigation-drawer");
@@ -10,7 +12,7 @@ export default class Page {
   }
 
   async openNav() {
-    // console.time("openNav")
+    showLogs && console.time("openNav")
     if (await this.navActive.visible) { // Make sure that the nav has been rendered
       if (await this.navInRail.exists) { // fail fast looking for a minimized nav
         if (await this.expandButton.exists) {
@@ -20,7 +22,7 @@ export default class Page {
         }
       }
     }
-    // console.timeEnd("openNav")
+    showLogs && console.timeEnd("openNav")
   }
 
   async openPage(page) {
@@ -128,17 +130,6 @@ export default class Page {
       await t.expect(Selector(".nav-" + page).visible).ok();
     } else {
       await t.expect(Selector(".nav-" + page).visible).notOk();
-    }
-  }
-
-  // Close any event popups that are open, ignoring any click issues.
-  async closeEventPopups() {
-    while(await Selector(".p-notify__close", {timeout: 250}).visible) {
-      try {
-        await t.click(Selector(".p-notify__close", {timeout: 250}));
-      } catch {
-        // console.log(".p-notify__close missed in closeEventPopups")
-      }
     }
   }
 }
