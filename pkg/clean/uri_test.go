@@ -26,13 +26,13 @@ func TestUri(t *testing.T) {
 }
 
 func BenchmarkUri(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Uri("https://docs.photoprism.app/getting-started/config-options/#file-converters")
 	}
 }
 
 func BenchmarkUriEmpty(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Uri("")
 	}
 }

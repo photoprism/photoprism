@@ -33,7 +33,7 @@ func BenchmarkContainsAny_LargeOverlap(b *testing.B) {
 		bList[i] = a[i*4]
 	}
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		if !ContainsAny(a, bList) {
 			b.Fatalf("expected overlap")
 		}
@@ -44,7 +44,7 @@ func BenchmarkContainsAny_Disjoint(b *testing.B) {
 	a := makeStrings("a", 5000)
 	bList := makeStrings("b", 5000)
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		if ContainsAny(a, bList) {
 			b.Fatalf("expected disjoint")
 		}
@@ -56,7 +56,7 @@ func BenchmarkJoin_Large(b *testing.B) {
 	j := append(makeStrings("y", 5000), a[:1000]...) // 1000 duplicates
 	j = shuffleEveryK(j, 7)
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		out := Join(a, j)
 		if len(out) != 10000 {
 			b.Fatalf("unexpected length: %d", len(out))

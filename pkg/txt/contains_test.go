@@ -115,7 +115,7 @@ func TestContainsAlnumLower(t *testing.T) {
 func BenchmarkContainsNumber(b *testing.B) {
 	s := "The quick brown fox jumps over 13 lazy dogs"
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = ContainsNumber(s)
 	}
 }
@@ -123,7 +123,7 @@ func BenchmarkContainsNumber(b *testing.B) {
 func BenchmarkSortCaseInsensitive(b *testing.B) {
 	words := []string{"Zebra", "apple", "Banana", "cherry", "Apricot", "banana", "zebra", "Cherry"}
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		w := append([]string(nil), words...)
 		SortCaseInsensitive(w)
 	}

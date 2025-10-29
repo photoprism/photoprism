@@ -27,13 +27,13 @@ func TestCacheControlMaxAge(t *testing.T) {
 }
 
 func BenchmarkTestCacheControlMaxAge(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		_ = CacheControlMaxAge(DurationYear, false)
 	}
 }
 
 func BenchmarkTestCacheControlMaxAgeImmutable(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		_ = CacheControlMaxAge(DurationYear, false) + ", " + CacheControlImmutable
 	}
 }
