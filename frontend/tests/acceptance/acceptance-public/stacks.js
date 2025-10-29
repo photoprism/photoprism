@@ -7,6 +7,7 @@ import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import PhotoEdit from "../page-model/photo-edit";
 import Library from "../page-model/library";
+import Notifies from "../page-model/notifications";
 
 fixture`Test stacks`.page`${testcafeconfig.url}`;
 
@@ -17,6 +18,7 @@ const photoviewer = new PhotoViewer();
 const page = new Page();
 const photoedit = new PhotoEdit();
 const library = new Library();
+const notifies = new Notifies();
 
 test.meta("testID", "stacks-001").meta({ type: "short", mode: "public" })(
   "Common: View all files of a stack",
@@ -72,9 +74,9 @@ test.meta("testID", "stacks-003").meta({ type: "short", mode: "public" })("Commo
     .click(photoedit.filesTab)
     .click(photoedit.toggleExpandFile.nth(0))
     .click(photoedit.toggleExpandFile.nth(1))
-    .click(photoedit.unstackFile)
-    .wait(12000)
-    .click(photoedit.dialogClose);
+    .click(photoedit.unstackFile);
+  await notifies.waitForUnstack();
+  await t.click(photoedit.dialogClose);
   await menu.openPage("browse");
   await toolbar.search("group");
   if (t.browser.platform === "mobile") {
@@ -94,8 +96,8 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })("Common: Delete non p
     .click(library.importTab)
     .click(library.openImportFolderSelect)
     .click(page.selectOption.withText("/pizza"))
-    .click(library.import)
-    .wait(10000);
+    .click(library.import);
+  await notifies.waitForImport();
   await menu.openPage("browse");
   await toolbar.search("pizza", false);
   const PhotoCount = await photo.getPhotoCount("all");
@@ -113,8 +115,8 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })("Common: Delete non p
   await t
     .click(photoedit.toggleExpandFile.nth(1))
     .click(Selector(photoedit.deleteFile))
-    .click(Selector(".action-confirm"))
-    .wait(10000);
+    .click(Selector(".action-confirm"));
+  await notifies.waitForFileDeleted();
   const FileCountAfterDeletion = await photoedit.getFileCount();
 
   await t.expect(FileCountAfterDeletion).eql(1);

@@ -72,10 +72,28 @@ export default class Page {
     }
   }
 
-  async waitForPhotosToLoad(delay, close = true){
-    showLogs && console.time("waitForPhotosToLoad")
-    await this.waitForSpecficEvent(/(picture|pictures) found/, delay, close);
-    showLogs && console.timeEnd("waitForPhotosToLoad")
+  async waitForFileDeleted(delay = 10000, close = true) {
+    showLogs && console.time("waitForFileDeleted")
+    await this.waitForSpecficEvent("File deleted", delay, close);
+    showLogs && console.timeEnd("waitForFileDeleted")
+  }  
+
+  async waitForFoldersToLoad(delay, close) {
+    showLogs && console.time("waitForFoldersToLoad")
+    await this.waitForSpecficEvent(/[fF]older/, delay, close);
+    showLogs && console.timeEnd("waitForFoldersToLoad")
+  }
+
+  async waitForImport(delay = 10000, close = true) {
+    showLogs && console.time("waitForImport")
+    await this.waitForSpecficEvent("Import completed in", delay, close);
+    showLogs && console.timeEnd("waitForImport")
+  }
+
+  async waitForIndexing(delay = 10000, close = true) {
+    showLogs && console.time("waitForIndexing")
+    await this.waitForSpecficEvent("Indexing completed in", delay, close);
+    showLogs && console.timeEnd("waitForIndexing")
   }
 
   async waitForPeopleToLoad(delay, close = true) {
@@ -90,15 +108,33 @@ export default class Page {
     showLogs && console.timeEnd("waitForPersonCoverUpdate")
   }
 
+  async waitForPhotosToLoad(delay, close = true){
+    showLogs && console.time("waitForPhotosToLoad")
+    await this.waitForSpecficEvent(/(picture|pictures) found/, delay, close);
+    showLogs && console.timeEnd("waitForPhotosToLoad")
+  }
+
   async waitForSearchToFinish(delay, close = true){
     showLogs && console.time("waitForSearchToFinish")
     await this.waitForSpecficEvent(/(found|contain|empty)/, delay, close);
     showLogs && console.timeEnd("waitForSearchToFinish")
   }
 
-  async waitForFoldersToLoad(delay, close) {
-    showLogs && console.time("waitForFoldersToLoad")
-    await this.waitForSpecficEvent(/[fF]older/, delay, close);
-    showLogs && console.timeEnd("waitForFoldersToLoad")
+  async waitForUnstack(delay = 12000, close = true) {
+    showLogs && console.time("waitForUnstack")
+    await this.waitForSpecficEvent("File removed from stack", delay, close);
+    showLogs && console.timeEnd("waitForUnstack")
+  }
+
+  async waitForUpload(delay = 15000, close = true) {
+    showLogs && console.time("waitForUpload")
+    await this.waitForSpecficEvent("Upload has been processed", delay, close);
+    showLogs && console.timeEnd("waitForUpload")
+  }
+
+  async waitForUploadFailed(delay = 15000, close = true) {
+    showLogs && console.time("waitForUploadFailed")
+    await this.waitForSpecficEvent("Upload failed", delay, close);
+    showLogs && console.timeEnd("waitForUploadFailed")
   }
 }
