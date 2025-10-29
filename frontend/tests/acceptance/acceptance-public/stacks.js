@@ -57,9 +57,9 @@ test.meta("testID", "stacks-002").meta({ type: "short", mode: "public" })("Commo
 });
 
 test.meta("testID", "stacks-003").meta({ type: "short", mode: "public" })("Common: Ungroup files", async (t) => {
-  await toolbar.search("group");
-  await t.click(toolbar.cardsViewAction);
+  await toolbar.search("group", false);
   const PhotoCount = await photo.getPhotoCount("all");
+  await t.click(toolbar.cardsViewAction);
   const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
 
   await t.expect(PhotoCount).eql(1);
@@ -97,9 +97,9 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })("Common: Delete non p
     .click(library.import)
     .wait(10000);
   await menu.openPage("browse");
-  await toolbar.search("pizza");
-  await t.click(toolbar.cardsViewAction);
+  await toolbar.search("pizza", false);
   const PhotoCount = await photo.getPhotoCount("all");
+  await t.click(toolbar.cardsViewAction);
   const PhotoUid = await photo.getNthPhotoUid("all", 0);
 
   await t.expect(PhotoCount).eql(1);
