@@ -1,6 +1,7 @@
 package node
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -54,7 +55,7 @@ func InitConfig(c *config.Config) error {
 	joinToken := strings.TrimSpace(c.JoinToken())
 
 	if portalURL == "" || joinToken == "" {
-		log.Debugf("config: no cluster bootstrap configuration found")
+		log.Debugf("cluster: no bootstrap configuration found")
 		return nil
 	}
 
@@ -62,13 +63,13 @@ func InitConfig(c *config.Config) error {
 
 	u, err := url.Parse(portalURL)
 	if err != nil || u.Scheme == "" || u.Host == "" {
-		log.Warnf("config: invalid cluster portal URL %s", clean.Log(portalURL))
+		log.Warnf("cluster: invalid portal URL %s", clean.Log(portalURL))
 		return nil
 	}
 
 	// Enforce TLS for non-local URLs.
 	if u.Scheme != "https" && !dns.IsLoopbackHost(u.Hostname()) {
-		log.Warnf("config: refusing non-TLS portal URL %s on non-local host", clean.Log(portalURL))
+		log.Warnf("cluster: refusing non-TLS portal URL %s on non-local host", clean.Log(portalURL))
 		return nil
 	}
 
@@ -76,10 +77,15 @@ func InitConfig(c *config.Config) error {
 	var registerResp *cluster.RegisterResponse
 	if cluster.BootstrapAutoJoinEnabled {
 		if registerResp, err = registerWithPortal(c, u, joinToken); err != nil {
-			// Registration errors are expected when the Portal is temporarily unavailable
-			// or not configured with cluster endpoints (404). Keep as warn to signal
-			// exhaustion/terminal errors; per-attempt details are logged at debug level.
 			log.Warnf("config: failed to join the configured cluster (%s)", clean.Error(err))
+			if isAuthError(err) {
+				log.Infof("cluster: refreshing credentials after authentication failure")
+			}
+			if isAuthError(err) && refreshNodeCredentials(c, u) {
+				if registerResp, err = registerWithPortal(c, u, joinToken); err != nil {
+					log.Warnf("cluster: retry join attempt failed (%s)", clean.Error(err))
+				}
+			}
 		}
 	}
 
@@ -87,14 +93,14 @@ func InitConfig(c *config.Config) error {
 	if cluster.BootstrapAutoThemeEnabled {
 		if err = syncNodeTheme(c, u, registerResp); err != nil {
 			// Theme install failures are non-critical; log at debug to avoid noise.
-			log.Debugf("config: portal theme download skipped (%s)", clean.Error(err))
+			log.Debugf("cluster: theme download skipped (%s)", clean.Error(err))
 		}
 		activateNodeThemeIfPresent(c)
 	}
 
 	// Log cluster UUID.
 	if uuid := c.ClusterUUID(); uuid != "" {
-		log.Infof("config: portal cluster UUID %s", clean.Log(uuid))
+		log.Infof("cluster: UUID %s", clean.Log(uuid))
 	}
 
 	return nil
@@ -179,7 +185,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 		resp, err := newHTTPClient(timeout).Do(req)
 		if err != nil {
 			if attempt < maxAttempts {
-				log.Debugf("config: join attempt %d/%d failed with network error: %s", attempt, maxAttempts, clean.Error(err))
+				log.Debugf("cluster: join attempt %d/%d failed with %s", attempt, maxAttempts, clean.Error(err))
 				time.Sleep(delay)
 				continue
 			}
@@ -203,7 +209,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 			if resp.StatusCode == http.StatusCreated {
 				log.Infof("config: successfully joined cluster as node %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
 			} else {
-				log.Infof("config: cluster membership confirmed (%d)", resp.StatusCode)
+				log.Infof("cluster: membership confirmed")
 			}
 			return &r, nil
 		case http.StatusUnauthorized, http.StatusForbidden, http.StatusNotFound:
@@ -211,7 +217,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 			return nil, errors.New(resp.Status)
 		case http.StatusTooManyRequests:
 			if attempt < maxAttempts {
-				log.Debugf("config: join attempt %d/%d rate limited by portal", attempt, maxAttempts)
+				log.Debugf("cluster: join attempt %d/%d rate limited by portal", attempt, maxAttempts)
 				time.Sleep(delay)
 				continue
 			}
@@ -221,7 +227,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 			return nil, errors.New(resp.Status)
 		default:
 			if attempt < maxAttempts {
-				log.Debugf("config: join attempt %d/%d received portal status %s", attempt, maxAttempts, resp.Status)
+				log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, resp.Status)
 				// TODO: Consider exponential backoff with jitter instead of constant delay.
 				time.Sleep(delay)
 				continue
@@ -396,7 +402,7 @@ func primeJWKS(c *config.Config, url string) {
 	defer cancel()
 
 	if err := verifier.Prime(ctx, url); err != nil {
-		log.Debugf("config: jwks prime skipped (%s)", clean.Error(err))
+		log.Debugf("auth: jwks prime skipped (%s)", clean.Error(err))
 	}
 }
 
@@ -420,16 +426,24 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	switch {
 	case portalVersion != "":
 		if !hasAppJS {
+			log.Infof("theme: %s not installed yet; scheduling download", clean.Log(portalVersion))
 			needsDownload = true
 		} else if localVersion != portalVersion {
+			log.Infof("theme: update detected (local %s, portal %s); scheduling download", clean.Log(localVersion), clean.Log(portalVersion))
 			needsDownload = true
 			requiresOverwrite = true
+		} else {
+			log.Infof("theme: version %s already installed", clean.Log(localVersion))
 		}
 	case shouldProbe:
 		// Registration failed or was skipped; attempt to obtain the theme when missing.
 		needsDownload = !hasAppJS || localVersion == ""
+		if needsDownload {
+			log.Infof("theme: probing portal because local bundle is missing")
+		}
 	default:
 		// Portal responded but has no theme configured; keep existing node theme.
+		log.Infof("cluster: portal did not advertise a theme; skipping download")
 		return nil
 	}
 
@@ -439,16 +453,40 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 
 	// Acquire OAuth bearer via client credentials; skip when credentials are unavailable.
 	bearer := ""
+	var tokenErr error
 	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
 		if t, err := oauthAccessToken(c, portal, id, secret); err != nil {
-			log.Debugf("config: portal access token request failed (%s)", clean.Error(err))
+			tokenErr = err
+			log.Infof("config: portal access token request failed (%s)", clean.Error(err))
 		} else {
 			bearer = t
 		}
 	}
 
 	if bearer == "" {
-		log.Debugf("config: theme sync skipped because no portal credentials are available yet")
+		shouldRefresh := false
+		if tokenErr != nil && isAuthError(tokenErr) {
+			shouldRefresh = true
+		} else if registerResp != nil && (strings.TrimSpace(c.NodeClientID()) == "" || strings.TrimSpace(c.NodeClientSecret()) == "") {
+			shouldRefresh = true
+		}
+
+		if shouldRefresh {
+			log.Infof("config: refreshing node credentials for portal theme download")
+		}
+		if shouldRefresh && refreshNodeCredentials(c, portal) {
+			if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
+				if t, err := oauthAccessToken(c, portal, id, secret); err == nil {
+					bearer = t
+				} else {
+					log.Infof("config: portal access token retry failed (%s)", clean.Error(err))
+				}
+			}
+		}
+	}
+
+	if bearer == "" {
+		log.Infof("theme: sync skipped because no portal credentials are available yet")
 		return nil
 	}
 
@@ -582,4 +620,107 @@ func oauthAccessToken(c *config.Config, portal *url.URL, clientID, clientSecret 
 	}
 
 	return tok.AccessToken, nil
+}
+
+// refreshNodeCredentials rotates the node OAuth client secret using the join token
+// and persists the new client ID / secret pair. It returns true when credentials
+// were refreshed successfully.
+func refreshNodeCredentials(c *config.Config, portal *url.URL) bool {
+	if c == nil || portal == nil {
+		return false
+	}
+
+	joinToken := strings.TrimSpace(c.JoinToken())
+	if joinToken == "" {
+		log.Infof("cluster: cannot refresh credentials without a join token")
+		return false
+	}
+
+	id, secret, err := obtainNodeCredentialsViaRegister(c, portal, joinToken)
+	if err != nil {
+		log.Infof("cluster: failed to refresh credentials (%s)", clean.Error(err))
+		return false
+	}
+
+	if _, err = c.SaveNodeClientSecret(secret); err != nil {
+		log.Warnf("cluster: failed to persist client secret (%s)", clean.Error(err))
+		return false
+	}
+
+	c.Options().NodeClientID = id
+	updates := cluster.OptionsUpdate{}
+	if id != "" {
+		updates.SetNodeClientID(id)
+	}
+
+	if wrote, err := ApplyOptionsUpdate(c, updates); err != nil {
+		log.Warnf("cluster: failed to persist client id (%s)", clean.Error(err))
+	} else if wrote {
+		if loadErr := c.Options().Load(c.OptionsYaml()); loadErr != nil {
+			log.Warnf("cluster: failed to reload options.yml after credential refresh (%s)", clean.Error(loadErr))
+		}
+	}
+
+	return true
+}
+
+// isAuthError reports whether the error indicates an authentication failure
+// (HTTP 401 or 403) so callers can decide when to refresh credentials.
+func isAuthError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	msg := err.Error()
+	return strings.Contains(msg, "401") || strings.Contains(msg, "403")
+}
+
+// obtainNodeCredentialsViaRegister calls the portal registration endpoint to
+// rotate the node secret and returns the new client ID and secret.
+func obtainNodeCredentialsViaRegister(c *config.Config, portal *url.URL, joinToken string) (string, string, error) {
+	if portal == nil {
+		return "", "", fmt.Errorf("invalid portal url")
+	}
+
+	endpoint := *portal
+	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/nodes/register"
+
+	payload := cluster.RegisterRequest{
+		NodeName:     c.NodeName(),
+		NodeRole:     c.NodeRole(),
+		RotateSecret: true,
+	}
+
+	body, _ := json.Marshal(payload)
+	req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", "Bearer "+joinToken)
+
+	resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req)
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case http.StatusOK, http.StatusCreated, http.StatusConflict:
+		var regResp cluster.RegisterResponse
+		if err := json.NewDecoder(resp.Body).Decode(&regResp); err != nil {
+			return "", "", err
+		}
+		id := regResp.Node.ClientID
+		secret := ""
+		if regResp.Secrets != nil {
+			secret = regResp.Secrets.ClientSecret
+		}
+		if id == "" || secret == "" {
+			return "", "", fmt.Errorf("missing client credentials in response")
+		}
+		return id, secret, nil
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return "", "", fmt.Errorf("%s", resp.Status)
+	default:
+		return "", "", fmt.Errorf("%s", resp.Status)
+	}
 }

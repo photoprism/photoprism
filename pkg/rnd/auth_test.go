@@ -1,7 +1,9 @@
 package rnd
 
 import (
+	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -40,6 +42,25 @@ func TestIsAuthToken(t *testing.T) {
 func BenchmarkIsAuthToken(b *testing.B) {
 	for b.Loop() {
 		IsAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2")
+	}
+}
+
+func TestAuthTokenID(t *testing.T) {
+	result := AuthTokenID("jwt")
+	assert.Equal(t, 14, len(result))
+	assert.True(t, strings.HasPrefix(result, "jwt"))
+	assert.True(t, IsAlnum(result))
+	for _, r := range result[3:] {
+		assert.True(t, unicode.IsDigit(r) || (r >= 'a' && r <= 'z'))
+	}
+
+	for n := 0; n < 10; n++ {
+		s := AuthTokenID("jwt")
+		t.Logf("AuthTokenID %d: %s", n, s)
+		assert.NotEmpty(t, s)
+		assert.True(t, strings.HasPrefix(s, "jwt"))
+		assert.Equal(t, 14, len(s))
+		assert.True(t, IsAlnum(s))
 	}
 }
 
@@ -170,6 +191,7 @@ func BenchmarkIsAuthAny(b *testing.B) {
 		IsAuthAny("MPkOqm-RtKGOi-ctIvXm-Qv3XhN")
 	}
 }
+
 func TestSessionID(t *testing.T) {
 	result := SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2")
 	assert.Equal(t, SessionIdLength, len(result))

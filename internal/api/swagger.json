@@ -42,6 +42,7 @@
                 "",
                 "cli",
                 "implicit",
+                "token",
                 "session",
                 "password",
                 "client_credentials",
@@ -57,6 +58,7 @@
                 "GrantUndefined",
                 "GrantCLI",
                 "GrantImplicit",
+                "GrantToken",
                 "GrantSession",
                 "GrantPassword",
                 "GrantClientCredentials",
@@ -2358,6 +2360,9 @@
                 "Role": {
                     "type": "string"
                 },
+                "Scope": {
+                    "type": "string"
+                },
                 "Settings": {
                     "$ref": "#/definitions/entity.UserSettings"
                 },
@@ -3276,6 +3281,9 @@
                     "type": "string"
                 },
                 "Role": {
+                    "type": "string"
+                },
+                "Scope": {
                     "type": "string"
                 },
                 "SuperAdmin": {

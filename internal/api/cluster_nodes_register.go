@@ -200,7 +200,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 			// Persist metadata changes so UpdatedAt advances.
 			if putErr := regy.Put(n); putErr != nil {
-				event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist node", status.Error(putErr)}, clean.Log(name))
+				event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist", status.Error(putErr)}, clean.Log(name))
 				AbortUnexpectedError(c)
 				return
 			}
@@ -239,14 +239,24 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				}
 				haveCreds = true
 
-				if req.RotateDatabase {
+				if n.Database == nil {
+					n.Database = &cluster.NodeDatabase{}
+				}
+
+				n.Database.Name = creds.Name
+				n.Database.User = creds.User
+				n.Database.Driver = creds.Driver
+				if creds.RotatedAt != "" {
 					n.Database.RotatedAt = creds.RotatedAt
-					n.Database.Driver = provisioner.DatabaseDriver
-					if putErr := regy.Put(n); putErr != nil {
-						event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist node", status.Error(putErr)}, clean.Log(name))
-						AbortUnexpectedError(c)
-						return
-					}
+				}
+
+				if putErr := regy.Put(n); putErr != nil {
+					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist", status.Error(putErr)}, clean.Log(name))
+					AbortUnexpectedError(c)
+					return
+				}
+
+				if req.RotateDatabase {
 					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate database", status.Succeeded}, clean.Log(name))
 				}
 			}
@@ -266,12 +276,17 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				AlreadyProvisioned: n.Database != nil && n.Database.Name != "",
 			}
 
-			if portalTheme != "" && (nodeTheme == "" || nodeTheme != portalTheme) {
+			if portalTheme != "" {
 				resp.Theme = portalTheme
+				log.Debugf("cluster: reporting portal theme hint %s for node %s", clean.Log(portalTheme), clean.Log(name))
 			}
 
 			if n.Database != nil {
-				resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: n.Database.Name, User: n.Database.User, Driver: provisioner.DatabaseDriver, RotatedAt: n.Database.RotatedAt}
+				driver := n.Database.Driver
+				if driver == "" {
+					driver = provisioner.DatabaseDriver
+				}
+				resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: n.Database.Name, User: n.Database.User, Driver: driver, RotatedAt: n.Database.RotatedAt}
 			}
 
 			// Include password/dsn only if rotated now.
@@ -333,11 +348,11 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			}
 
 			n.Database.Name, n.Database.User, n.Database.RotatedAt = creds.Name, creds.User, creds.RotatedAt
-			n.Database.Driver = provisioner.DatabaseDriver
+			n.Database.Driver = creds.Driver
 		}
 
 		if err = regy.Put(n); err != nil {
-			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "register", "persist node", status.Error(err)})
+			event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "register", "persist", status.Error(err)})
 			AbortUnexpectedError(c)
 			return
 		}
@@ -352,13 +367,14 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			AlreadyProvisioned: shouldProvisionDB,
 		}
 
-		if portalTheme != "" && (nodeTheme == "" || nodeTheme != portalTheme) {
+		if portalTheme != "" {
 			resp.Theme = portalTheme
+			log.Debugf("cluster: portal theme hint %s for node %s", clean.Log(portalTheme), clean.Log(name))
 		}
 
 		// If DB provisioning is skipped, leave Database fields zero-value.
 		if shouldProvisionDB {
-			resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: provisioner.DatabaseDriver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt}
+			resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: creds.Driver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt}
 		}
 
 		event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", status.Joined}, clean.Log(name))
@@ -414,7 +430,7 @@ func validateAdvertiseURL(u string) bool {
 	}
 
 	if parsed.Scheme == "http" {
-		if host == "localhost" || host == "127.0.0.1" || host == "::1" {
+		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
 			return true
 		}
 		return false
@@ -448,4 +464,28 @@ func buildJWKSURL(conf *config.Config) string {
 }
 
 // validateSiteURL applies the same rules as validateAdvertiseURL.
-func validateSiteURL(u string) bool { return validateAdvertiseURL(u) }
+func validateSiteURL(u string) bool {
+	return validateAdvertiseURL(u)
+}
+
+// isClusterServiceHost reports whether the host refers to a cluster-internal
+// service DNS name so that HTTP can be permitted for intra-cluster traffic.
+func isClusterServiceHost(host string) bool {
+	host = strings.TrimSuffix(host, ".")
+
+	if host == "" {
+		return false
+	}
+
+	// Allow cluster internal service hosts.
+	if strings.HasSuffix(host, ".svc") || strings.Contains(host, ".svc.") {
+		return true
+	}
+
+	// Allow hosts with .local or .internal domain.
+	if strings.HasSuffix(host, ".local") || strings.HasSuffix(host, ".internal") {
+		return true
+	}
+
+	return false
+}

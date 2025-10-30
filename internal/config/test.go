@@ -188,6 +188,8 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 		DatabaseDriver:  driver,
 		DatabaseDSN:     dsn,
 		AdminPassword:   "photoprism",
+		ClusterCIDR:     "",
+		JWTScope:        DefaultJWTAllowedScopes,
 		OriginalsLimit:  66,
 		ResolutionLimit: 33,
 		VisionApi:       true,

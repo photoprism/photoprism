@@ -42,6 +42,15 @@ func IsAuthToken(s string) bool {
 	return false
 }
 
+// AuthTokenID returns a unique 14 character authentication token ID, e.g. for use in JWTs.
+func AuthTokenID(prefix string) string {
+	if len(prefix) > 8 {
+		prefix = prefix[:8]
+	}
+
+	return prefix + Base36(14-len(prefix))
+}
+
 // AppPassword generates a random, human-friendly authentication token that can also be used as
 // password replacement for client applications. It is separated by 3 dashes for better readability
 // and has a total length of 27 characters.

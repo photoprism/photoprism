@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 21, 2025
+**Last Updated:** October 28, 2025
 
 ## Purpose
 
@@ -420,6 +420,8 @@ Note: Across our public documentation, official images, and in production, the c
 ### Cluster Operations
 
 - Keep bootstrap code decoupled: avoid importing `internal/service/cluster/node/*` from `internal/config` or the cluster root, let nodes talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
+- Bootstrap refreshes node OAuth credentials on 401/403 responses (rotate secret + retry) and logs the refresh at info level; if the secret file cannot be written, the value stays cached in memory so the current process can continue.
+- Portal validation now accepts HTTP advertise URLs only for loopback hosts or cluster-internal domains (`*.svc`, `*.cluster.local`, `*.internal`); everything else must use HTTPS.
 - Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then invoke `Ext().Init(c)`.
 - Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/http/header`.
 - Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `ClientID` + `ClientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.

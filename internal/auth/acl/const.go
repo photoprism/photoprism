@@ -1,5 +1,8 @@
 package acl
 
+// Any matches everything.
+const Any = "*"
+
 // RoleAliasNone is a more explicit, user-friendly alias for RoleNone.
 const RoleAliasNone = "none"
 

@@ -992,6 +992,7 @@ export default {
     }
 
     const canManagePhotos = this.$config.allow("photos", "manage");
+    const canSeeUsage = this.$session.isAdmin() || (canManagePhotos && this.$config.feature("files"));
     const isDemo = this.$config.get("demo");
     const isPro = this.$config.isPro();
     const isPublic = this.$config.get("public");
@@ -1020,7 +1021,7 @@ export default {
       featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
       featFeedback: !hasScope && tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
       featFiles: this.$config.feature("files"),
-      featUsage: canManagePhotos && this.$config.feature("files") && this.$config.values?.usage?.filesTotal,
+      featUsage: canSeeUsage && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,
       isMini: localStorage.getItem("navigation.mode") !== "false" || isRestricted,
       isDemo: isDemo,

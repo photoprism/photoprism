@@ -35,10 +35,10 @@ func TestBuildFaceCandidates(t *testing.T) {
 	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace))
 	require.NotNil(t, regular)
 
-	children := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.ChildrenFace))
-	require.NotNil(t, children)
+	background := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.BackgroundFace))
+	require.NotNil(t, background)
 
-	faces := entity.Faces{*regular, *children}
+	faces := entity.Faces{*regular, *background}
 
 	index := buildFaceIndex(faces)
 

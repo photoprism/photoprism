@@ -2,7 +2,7 @@ package acl
 
 // ScopeDescriptions maps supported authorization scopes to human-readable summaries for CLI help and docs.
 var ScopeDescriptions = map[string]string{
-	"*":                        "Wildcard granting full access to every resource and permission.",
+	Any:                        "Wildcard granting full access to every resource and permission.",
 	ScopeRead.String():         "Read-only access across all resources (search, view, download).",
 	ScopeWrite.String():        "Write access across all resources (create, update, delete) without implicit read permissions.",
 	ResourceFiles.String():     "Full access to original and derived files on disk.",

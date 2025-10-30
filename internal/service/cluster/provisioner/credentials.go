@@ -62,7 +62,7 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 	{
 		c, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
-		if err := db.QueryRowContext(
+		if err = db.QueryRowContext(
 			c,
 			"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
 			dbName,
@@ -78,7 +78,7 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 		return out, created, err
 	}
 	createDB := "CREATE DATABASE IF NOT EXISTS " + qDB + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-	if err := execTimeout(ctx, db, 15*time.Second, createDB); err != nil {
+	if err = execTimeout(ctx, db, 15*time.Second, createDB); err != nil {
 		return out, created, err
 	}
 
@@ -93,14 +93,14 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 	}
 
 	createUser := "CREATE USER IF NOT EXISTS " + acc + " IDENTIFIED BY " + pass
-	if err := execTimeout(ctx, db, 10*time.Second, createUser); err != nil {
+	if err = execTimeout(ctx, db, 10*time.Second, createUser); err != nil {
 		return out, created, err
 	}
 
 	// 4) Rotate or set password explicitly on first creation.
 	if rotate || created {
 		alterUser := "ALTER USER " + acc + " IDENTIFIED BY " + pass
-		if err := execTimeout(ctx, db, 10*time.Second, alterUser); err != nil {
+		if err = execTimeout(ctx, db, 10*time.Second, alterUser); err != nil {
 			return out, created, err
 		}
 		out.Password = dbPass
@@ -109,12 +109,12 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 
 	// 5) Grant privileges on schema.
 	grant := "GRANT ALL PRIVILEGES ON " + qDB + ".* TO " + acc
-	if err := execTimeout(ctx, db, 10*time.Second, grant); err != nil {
+	if err = execTimeout(ctx, db, 10*time.Second, grant); err != nil {
 		return out, created, err
 	}
 
 	// 6) Optional on modern MariaDB/MySQL; harmless if included.
-	if err := execTimeout(ctx, db, 5*time.Second, "FLUSH PRIVILEGES"); err != nil {
+	if err = execTimeout(ctx, db, 5*time.Second, "FLUSH PRIVILEGES"); err != nil {
 		return out, created, err
 	}
 

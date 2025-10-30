@@ -308,36 +308,41 @@ func addCanonicalMapping(name string, meta canonicalLabel) {
 		return
 	}
 
+	// Update existing canonical label.
 	if existing, ok := canonicalLabels[slug]; ok {
-		if existing.Name == "" {
+		if existing.Name == "" || meta.Name != "" && len(meta.Name) < len(existing.Name) {
 			existing.Name = meta.Name
 		}
 
-		if existing.Priority == 0 {
+		if meta.Priority != 0 && (existing.Priority == 0 || meta.Priority > existing.Priority) {
 			existing.Priority = meta.Priority
 		}
 
 		existing.Categories = mergeCategories(existing.Categories, meta.Categories)
-		if meta.Threshold > existing.Threshold {
+
+		if meta.Threshold > 0 && (existing.Threshold <= 0 || meta.Threshold < existing.Threshold) {
 			existing.Threshold = meta.Threshold
 		}
+
 		existing.hasRule = existing.hasRule || meta.hasRule
 		canonicalLabels[slug] = existing
 		return
 	}
 
+	// Create new canonical label.
 	canonicalLabels[slug] = canonicalLabel{
 		Name:       meta.Name,
 		Priority:   meta.Priority,
-		Categories: append([]string(nil), meta.Categories...),
+		Categories: mergeCategories(nil, meta.Categories),
 		Threshold:  meta.Threshold,
+		hasRule:    meta.hasRule,
 	}
 }
 
 // mergeCategories keeps categories unique by comparing slugs case-insensitively.
 func mergeCategories(existing, additional []string) []string {
-	if len(additional) == 0 {
-		return existing
+	if len(existing) == 0 && len(additional) == 0 {
+		return nil
 	}
 
 	seen := make(map[string]struct{}, len(existing)+len(additional))
@@ -352,7 +357,13 @@ func mergeCategories(existing, additional []string) []string {
 			continue
 		}
 		seen[slug] = struct{}{}
-		merged = append(merged, c)
+
+		normalized := txt.Title(c)
+		if normalized == "" {
+			continue
+		}
+
+		merged = append(merged, normalized)
 	}
 
 	for _, c := range additional {
@@ -364,7 +375,17 @@ func mergeCategories(existing, additional []string) []string {
 			continue
 		}
 		seen[slug] = struct{}{}
-		merged = append(merged, txt.Title(c))
+
+		normalized := txt.Title(c)
+		if normalized == "" {
+			continue
+		}
+
+		merged = append(merged, normalized)
+	}
+
+	if len(merged) == 0 {
+		return nil
 	}
 
 	return merged

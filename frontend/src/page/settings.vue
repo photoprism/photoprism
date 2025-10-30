@@ -51,6 +51,7 @@ export default {
     const isPublic = this.$config.isPublic();
     const isPortal = this.$config.isPortal();
     const isSuperAdmin = this.$session.isSuperAdmin();
+    const hasScope = this.$session.hasScope();
 
     const tabs = [
       {
@@ -77,7 +78,7 @@ export default {
         portal: false,
         admin: true,
         demo: true,
-        show: $config.feature("settings"),
+        show: $config.feature("settings") && !hasScope,
       },
       {
         name: "settings_advanced",

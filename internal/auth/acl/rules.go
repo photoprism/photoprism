@@ -58,6 +58,7 @@ var Rules = ACL{
 	},
 	ResourceConfig: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RolePortal:  GrantFullAccess,
 		RoleClient:  GrantViewOwn,
 		RoleDefault: GrantViewOwn,
 	},

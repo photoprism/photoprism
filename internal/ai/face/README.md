@@ -56,7 +56,8 @@ All embeddings, regardless of origin, are normalized to unit length (‖x‖₂�
 - Static datasets (children/background samples) and random generators now normalize their entries after perturbation.
 - `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors.
 - `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) now reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
-- Face clusters update their sample statistics (`Samples`, `SampleRadius`) from the latest matches via `Face.UpdateMatchStats`, avoiding stale radii during optimize loops.
+- Face clusters update their sample statistics (`Samples`, `ClusterRadius`) from the latest matches via `Face.UpdateMatchStats`, avoiding stale radii during optimize loops. The radius is capped at **0.42** so automatic matches accept new embeddings up to `ClusterRadius + MatchDist` (≈0.88) away from the centroid.
+- Child and background embeddings remain opt-in for automated matching. Set `PHOTOPRISM_FACE_MATCH_CHILDREN=true` (or the `FaceMatchChildren` option) to include children, and `PHOTOPRISM_FACE_MATCH_BACKGROUND=true` to include background samples; both default to `false` so operators explicitly choose when these categories participate.
 - Cluster materialisation now pre-sizes buffers; `BenchmarkClusterMaterialize` reports ~14.8 µs/op with 64 allocations (≈56 KB) versus the legacy ~29.8 µs/op with 384 allocations (≈105 KB).
 
 This guarantees that Euclidean distance comparisons are equivalent to cosine comparisons, aligning our thresholds with [FaceNet](https://maucher.pages.mi.hdm-stuttgart.de/orbook/face/faceRecognition.html) literature.

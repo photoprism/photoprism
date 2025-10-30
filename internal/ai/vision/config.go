@@ -19,6 +19,7 @@ var (
 	CachePath             = ""
 	ModelsPath            = ""
 	DownloadUrl           = ""
+	ServiceApi            = false
 	ServiceUri            = ""
 	ServiceKey            = ""
 	ServiceTimeout        = 10 * time.Minute
