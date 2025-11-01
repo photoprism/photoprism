@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-10-23 08:33+0000\n"
+"PO-Revision-Date: 2025-11-01 11:05+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2009,7 +2009,7 @@ msgstr "Domhanfhad"
 
 #: src/component/navigation.vue:799
 msgid "Lost server connection"
-msgstr ""
+msgstr "Ceangal freastalaí caillte"
 
 #: src/options/options.js:330
 msgid "Low"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-23 08:33+0000\n"
+"PO-Revision-Date: 2025-11-01 11:05+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -2012,7 +2012,7 @@ msgstr "Boylam"
 
 #: src/component/navigation.vue:799
 msgid "Lost server connection"
-msgstr ""
+msgstr "Kayıp sunucu bağlantısı"
 
 #: src/options/options.js:330
 msgid "Low"
