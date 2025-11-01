@@ -24,7 +24,7 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 		Node: cluster.Node{
 			UUID:         rnd.UUIDv7(),
 			Name:         "pp-node-a",
-			Role:         "instance",
+			Role:         cluster.RoleApp,
 			AppName:      "PhotoPrism",
 			AppVersion:   "1.0.0",
 			Theme:        "theme-v1",
@@ -50,7 +50,7 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 		assert.True(t, rnd.IsUID(got.ClientID, entity.ClientUID))
 		assert.True(t, rnd.IsUUID(got.UUID))
 		assert.Equal(t, "pp-node-a", got.Name)
-		assert.Equal(t, "instance", got.Role)
+		assert.Equal(t, cluster.RoleApp, got.Role)
 		assert.Equal(t, "PhotoPrism", got.AppName)
 		assert.Equal(t, "1.0.0", got.AppVersion)
 		assert.Equal(t, "theme-v1", got.Theme)

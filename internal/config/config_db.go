@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -322,6 +323,55 @@ func (c *Config) DatabasePassword() string {
 	} else {
 		return clean.Password(string(b))
 	}
+}
+
+// DatabaseProvisionPrefix returns the sanitized prefix for provisioned database names and users.
+func (c *Config) DatabaseProvisionPrefix() string {
+	prefix := strings.TrimSpace(c.options.DatabaseProvisionPrefix)
+
+	if prefix == "" {
+		return cluster.DefaultDatabaseProvisionPrefix
+	}
+
+	prefix = strings.ToLower(prefix)
+
+	cleaned := make([]rune, 0, len(prefix))
+	prevUnderscore := false
+
+	for _, r := range prefix {
+		switch {
+		case r >= 'a' && r <= 'z':
+			cleaned = append(cleaned, r)
+			prevUnderscore = false
+		case r >= '0' && r <= '9':
+			if len(cleaned) == 0 {
+				continue
+			}
+			cleaned = append(cleaned, r)
+			prevUnderscore = false
+		case r == '_' || r == '-' || r == ' ':
+			if len(cleaned) == 0 || prevUnderscore {
+				continue
+			}
+			cleaned = append(cleaned, '_')
+			prevUnderscore = true
+		default:
+			continue
+		}
+
+		if len(cleaned) >= cluster.DatabaseProvisionPrefixMaxLen {
+			break
+		}
+	}
+
+	if len(cleaned) == 0 {
+		return cluster.DefaultDatabaseProvisionPrefix
+	}
+
+	result := string(cleaned)
+	c.options.DatabaseProvisionPrefix = result
+
+	return result
 }
 
 // ShouldAutoRotateDatabase decides whether callers should request DB rotation automatically.

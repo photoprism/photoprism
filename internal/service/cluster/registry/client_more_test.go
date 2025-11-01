@@ -18,11 +18,11 @@ func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
 	defer c.CloseDb()
 
 	// Create two clients directly to simulate duplicates with same name.
-	c1 := entity.NewClient().SetName("pp-dupe").SetRole("instance")
+	c1 := entity.NewClient().SetName("pp-dupe").SetRole(cluster.RoleApp)
 	assert.NoError(t, c1.Create())
 	// Stagger times
 	time.Sleep(10 * time.Millisecond)
-	c2 := entity.NewClient().SetName("pp-dupe").SetRole("service")
+	c2 := entity.NewClient().SetName("pp-dupe").SetRole(cluster.RoleService)
 	assert.NoError(t, c2.Create())
 
 	r, _ := NewClientRegistryWithConfig(c)
@@ -43,19 +43,19 @@ func TestClientRegistry_RoleChange(t *testing.T) {
 	defer c.CloseDb()
 
 	r, _ := NewClientRegistryWithConfig(c)
-	n := &Node{Node: cluster.Node{Name: "pp-role", Role: "service"}}
+	n := &Node{Node: cluster.Node{Name: "pp-role", Role: cluster.RoleService}}
 	assert.NoError(t, r.Put(n))
 	got, err := r.FindByName("pp-role")
 	assert.NoError(t, err)
 	if assert.NotNil(t, got) {
 		assert.Equal(t, "service", got.Role)
 	}
-	// Change to instance
-	upd := &Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, Role: "instance"}}
+	// Change to app
+	upd := &Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, Role: cluster.RoleApp}}
 	assert.NoError(t, r.Put(upd))
 	got2, err := r.FindByName("pp-role")
 	assert.NoError(t, err)
 	if assert.NotNil(t, got2) {
-		assert.Equal(t, "instance", got2.Role)
+		assert.Equal(t, cluster.RoleApp, got2.Role)
 	}
 }

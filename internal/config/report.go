@@ -192,7 +192,17 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwt-scope", c.JWTAllowedScopes().String()},
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
 		{"advertise-url", c.AdvertiseUrl()},
+	}...)
 
+	if c.Portal() {
+		rows = append(rows, [][]string{
+			{"database-provision-driver", c.options.DatabaseProvisionDriver},
+			{"database-provision-prefix", c.DatabaseProvisionPrefix()},
+			{"database-provision-dsn", maskDatabaseProvisionDSN(c.options.DatabaseProvisionDSN)},
+		}...)
+	}
+
+	rows = append(rows, [][]string{
 		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},
 		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
@@ -344,4 +354,22 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	}
 
 	return rows, cols
+}
+
+func maskDatabaseProvisionDSN(dsn string) string {
+	if dsn == "" {
+		return ""
+	}
+
+	ds := NewDSN(dsn)
+	if ds.Password == "" {
+		return dsn
+	}
+
+	needle := ":" + ds.Password + "@"
+	if strings.Contains(dsn, needle) {
+		return strings.Replace(dsn, needle, ":***@", 1)
+	}
+
+	return dsn
 }

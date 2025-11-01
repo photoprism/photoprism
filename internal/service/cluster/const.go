@@ -1,5 +1,13 @@
 package cluster
 
+// Default values used by cluster provisioning helpers.
+const (
+	// DefaultDatabaseProvisionPrefix is applied to auto-provisioned database names and user accounts.
+	DefaultDatabaseProvisionPrefix = "cluster_"
+	// DatabaseProvisionPrefixMaxLen keeps generated usernames within the MySQL 32 character budget.
+	DatabaseProvisionPrefixMaxLen = 20
+)
+
 // Example values used by documentation and tests to illustrate cluster tokens.
 const (
 	// ExampleJoinToken represents a valid portal join token.

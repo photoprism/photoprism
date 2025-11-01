@@ -78,7 +78,8 @@ func (c *ConfigValues) Load(fileName string) error {
 	// 1. Ensure that there is at least one configuration for each model type,
 	//    so that adding a copy of the default configuration to the vision.yml file
 	//    is not required. We could alternatively require a model to included in
-	//    the "vision.yml" file, but set the defaults if the "Default" flag is set.
+	//    the "vision.yml" file, but set the defaults if the "Default" flag is set
+	//    while preserving explicit Run / Disabled overrides.
 	// 2. Use the default "Thresholds" if no custom thresholds are configured.
 
 	for i, model := range c.Models {
@@ -87,20 +88,25 @@ func (c *ConfigValues) Load(fileName string) error {
 		}
 
 		runType := model.Run
+		disabled := model.Disabled
 
 		switch model.Type {
 		case ModelTypeLabels:
-			c.Models[i] = NasnetModel
+			c.Models[i] = NasnetModel.Clone()
 		case ModelTypeNsfw:
-			c.Models[i] = NsfwModel
+			c.Models[i] = NsfwModel.Clone()
 		case ModelTypeFace:
-			c.Models[i] = FacenetModel
+			c.Models[i] = FacenetModel.Clone()
 		case ModelTypeCaption:
-			c.Models[i] = CaptionModel
+			c.Models[i] = CaptionModel.Clone()
 		}
 
 		if runType != RunAuto {
 			c.Models[i].Run = runType
+		}
+
+		if disabled {
+			c.Models[i].Disabled = disabled
 		}
 	}
 

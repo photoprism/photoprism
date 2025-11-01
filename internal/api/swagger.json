@@ -7232,7 +7232,7 @@
                 },
                 "summary": "removes all entries from the error logs",
                 "tags": [
-                    "Errors"
+                    "Logs"
                 ]
             },
             "get": {
@@ -7299,7 +7299,7 @@
                 },
                 "summary": "searches the error logs and returns the results as JSON",
                 "tags": [
-                    "Errors"
+                    "Logs"
                 ]
             }
         },
@@ -7568,7 +7568,7 @@
                 },
                 "summary": "allows members to submit a feedback message to the PhotoPrism team",
                 "tags": [
-                    "Admin"
+                    "Internal"
                 ]
             }
         },
@@ -7871,6 +7871,50 @@
                 ]
             }
         },
+        "/api/v1/import": {
+            "delete": {
+                "operationId": "CancelImport",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "cancels the active import job",
+                "tags": [
+                    "Library"
+                ]
+            }
+        },
         "/api/v1/import/": {
             "post": {
                 "consumes": [
@@ -7924,6 +7968,48 @@
             }
         },
         "/api/v1/index": {
+            "delete": {
+                "operationId": "CancelIndexing",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "cancels the active indexing job",
+                "tags": [
+                    "Library"
+                ]
+            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -8446,7 +8532,7 @@
             "get": {
                 "operationId": "GetMetrics",
                 "produces": [
-                    "text/event-stream"
+                    "text/plain"
                 ],
                 "responses": {
                     "200": {
@@ -8652,6 +8738,26 @@
                     }
                 },
                 "summary": "create an OAuth2 access token",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/oauth/userinfo": {
+            "get": {
+                "operationId": "OAuthUserinfo",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2 userinfo endpoint (not implemented)",
                 "tags": [
                     "Authentication"
                 ]
@@ -9973,7 +10079,7 @@
                 },
                 "summary": "allows authorized admins to restart the server",
                 "tags": [
-                    "Admin"
+                    "Internal"
                 ]
             }
         },
@@ -11236,6 +11342,56 @@
                 ]
             }
         },
+        "/api/v1/svg/{icon}": {
+            "get": {
+                "operationId": "GetSvg",
+                "parameters": [
+                    {
+                        "description": "SVG icon name",
+                        "enum": [
+                            "user",
+                            "face",
+                            "camera",
+                            "photo",
+                            "raw",
+                            "file",
+                            "video",
+                            "label",
+                            "portrait",
+                            "folder",
+                            "album",
+                            "broken",
+                            "uncached"
+                        ],
+                        "in": "path",
+                        "name": "icon",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "image/svg+xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SVG icon",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Icon not found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                },
+                "summary": "returns SVG placeholder symbols for UI fallbacks",
+                "tags": [
+                    "Assets"
+                ]
+            }
+        },
         "/api/v1/t/{thumb}/{token}/{size}": {
             "get": {
                 "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
@@ -12380,6 +12536,168 @@
                 "summary": "returns CORS headers with an empty response body",
                 "tags": [
                     "CORS"
+                ]
+            }
+        },
+        "/s/{token}": {
+            "get": {
+                "operationId": "ShareToken",
+                "parameters": [
+                    {
+                        "description": "Share token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rendered HTML page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "302": {
+                        "description": "Redirect to the base site when the token is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "creates a session using the specified share token and renders the generic sharing bootstrap page",
+                "tags": [
+                    "Sharing"
+                ]
+            }
+        },
+        "/s/{token}/{shared}": {
+            "get": {
+                "operationId": "ShareTokenShared",
+                "parameters": [
+                    {
+                        "description": "Share token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Shared resource UID",
+                        "in": "path",
+                        "name": "shared",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rendered HTML page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "302": {
+                        "description": "Redirect to the base site when the token is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "creates a session with the specified share token and redirects to the shared content",
+                "tags": [
+                    "Sharing"
+                ]
+            }
+        },
+        "/s/{token}/{shared}/preview": {
+            "get": {
+                "operationId": "SharePreview",
+                "parameters": [
+                    {
+                        "description": "Share token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Shared resource UID",
+                        "in": "path",
+                        "name": "shared",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Preview image",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "302": {
+                        "description": "Redirect to the default preview page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "returns a share preview image when the token is valid",
+                "tags": [
+                    "Sharing"
+                ]
+            }
+        },
+        "/swagger.json": {
+            "get": {
+                "operationId": "GetDocs",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Swagger JSON",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                },
+                "summary": "serves embedded Swagger documentation (debug builds only)",
+                "tags": [
+                    "Debug"
+                ]
+            }
+        },
+        "/ws": {
+            "get": {
+                "operationId": "WebSocket",
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "opens a WebSocket connection for real-time events",
+                "tags": [
+                    "WebSocket"
                 ]
             }
         }

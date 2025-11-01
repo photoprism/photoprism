@@ -33,11 +33,11 @@ import (
 // Supported cluster node register flags.
 var (
 	regNameFlag       = &cli.StringFlag{Name: "name", Usage: "node `NAME` (lowercase letters, digits, hyphens)"}
-	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (instance, service)", Value: "instance"}
+	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (app, service)", Value: "app"}
 	regIntUrlFlag     = &cli.StringFlag{Name: "advertise-url", Usage: "internal service `URL`"}
 	regSiteUrlFlag    = &cli.StringFlag{Name: "site-url", Usage: "public site `URL` (https://...)"}
-	regAppNameFlag    = &cli.StringFlag{Name: "app-name", Usage: "override application `NAME` reported to the portal"}
-	regAppVersionFlag = &cli.StringFlag{Name: "app-version", Usage: "override application `VERSION` reported to the portal"}
+	regAppNameFlag    = &cli.StringFlag{Name: "app-name", Usage: "override app `NAME` reported to the portal"}
+	regAppVersionFlag = &cli.StringFlag{Name: "app-version", Usage: "override app `VERSION` reported to the portal"}
 	regLabelFlag      = &cli.StringSliceFlag{Name: "label", Usage: "`k=v` label (repeatable)"}
 	regRotateDatabase = &cli.BoolFlag{Name: "rotate", Usage: "rotates the node's database password"}
 	regRotateSec      = &cli.BoolFlag{Name: "rotate-secret", Usage: "rotates the node's secret used for JWT"}
@@ -93,9 +93,9 @@ func clusterRegisterAction(ctx *cli.Context) error {
 
 		nodeRole := clean.TypeLowerDash(ctx.String("role"))
 		switch nodeRole {
-		case "instance", "service":
+		case cluster.RoleApp, cluster.RoleService:
 		default:
-			return cli.Exit(fmt.Errorf("invalid --role (must be instance or service)"), 2)
+			return cli.Exit(fmt.Errorf("invalid --role (must be app or service)"), 2)
 		}
 
 		portalURL := ctx.String("portal-url")

@@ -64,7 +64,7 @@ func TestClusterThemePullCommand(t *testing.T) {
 
 func TestClusterRegisterCommand(t *testing.T) {
 	t.Run("ValidationMissingURL", func(t *testing.T) {
-		out, err := RunWithTestContext(ClusterRegisterCommand, []string{"register", "--name", "pp-node-01", "--role", "instance", "--join-token", cluster.ExampleJoinToken})
+		out, err := RunWithTestContext(ClusterRegisterCommand, []string{"register", "--name", "pp-node-01", "--role", "app", "--join-token", cluster.ExampleJoinToken})
 		assert.Error(t, err)
 		_ = out
 	})
@@ -96,7 +96,7 @@ func TestClusterSuccessPaths_PortalLocal(t *testing.T) {
 	// Create a registry node via FileRegistry.
 	r, err := reg.NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: "instance", Labels: map[string]string{"env": "test"}}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: cluster.RoleApp, Labels: map[string]string{"env": "test"}}}
 	assert.NoError(t, r.Put(n))
 
 	// nodes ls (JSON)

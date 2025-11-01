@@ -189,6 +189,7 @@ type Options struct {
 	DatabaseConns           int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle       int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
 	DatabaseProvisionDriver string        `yaml:"DatabaseProvisionDriver" json:"-" flag:"database-provision-driver"`
+	DatabaseProvisionPrefix string        `yaml:"DatabaseProvisionPrefix" json:"-" flag:"database-provision-prefix"`
 	DatabaseProvisionDSN    string        `yaml:"DatabaseProvisionDSN" json:"-" flag:"database-provision-dsn"`
 	FFmpegBin               string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	FFmpegEncoder           string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`

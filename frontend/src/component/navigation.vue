@@ -1153,7 +1153,7 @@ export default {
     },
     showLegalInfo() {
       if (this.config.legalUrl) {
-        this.$util.openUrl(this.config.legalUrl);
+        this.$util.openExternalUrl(this.config.legalUrl);
       } else {
         this.$router.push({ name: "about" });
       }

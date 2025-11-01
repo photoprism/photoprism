@@ -35,7 +35,7 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n1",
 				Name:      "pp-node-02",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -60,7 +60,7 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 	defer ts.Close()
 
 	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp-node-02", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
+		"register", "--name", "pp-node-02", "--role", "app", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
 	})
 	assert.NoError(t, err)
 	// Parse JSON
@@ -103,7 +103,7 @@ func TestClusterRegister_SiteURLFlag(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n-site",
 				Name:      "neon",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 				SiteUrl:   site,
@@ -145,7 +145,7 @@ func TestClusterNodesRotate_HTTPHappyPath(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n1",
 				Name:      "pp-node-03",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -202,7 +202,7 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n2",
 				Name:      "pp-node-04",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -273,7 +273,7 @@ func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n3",
 				Name:      "pp-node-05",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -340,7 +340,7 @@ func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n4",
 				Name:      "pp-node-06",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -382,7 +382,7 @@ func TestClusterRegister_HTTPUnauthorized(t *testing.T) {
 	defer ts.Close()
 
 	_, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp-node-unauth", "--role", "instance", "--portal-url", ts.URL, "--join-token", "wrong", "--json",
+		"register", "--name", "pp-node-unauth", "--role", "app", "--portal-url", ts.URL, "--join-token", "wrong", "--json",
 	})
 	if ec, ok := err.(cli.ExitCoder); ok {
 		assert.Equal(t, 4, ec.ExitCode())
@@ -398,7 +398,7 @@ func TestClusterRegister_HTTPConflict(t *testing.T) {
 	defer ts.Close()
 
 	_, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp-node-conflict", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
+		"register", "--name", "pp-node-conflict", "--role", "app", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
 	})
 	if ec, ok := err.(cli.ExitCoder); ok {
 		assert.Equal(t, 5, ec.ExitCode())
@@ -419,7 +419,7 @@ func TestClusterRegister_DryRun_JSON(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	assert.NotEmpty(t, gjson.Get(out, "PortalUrl").String())
-	assert.Equal(t, "instance", gjson.Get(out, "Payload.NodeRole").String())
+	assert.Equal(t, cluster.RoleApp, gjson.Get(out, "Payload.NodeRole").String())
 	// NodeName may be derived; ensure non-empty
 	assert.NotEmpty(t, gjson.Get(out, "Payload.NodeName").String())
 }
@@ -442,7 +442,7 @@ func TestClusterRegister_HTTPBadRequest(t *testing.T) {
 	defer ts.Close()
 
 	_, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp node invalid", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
+		"register", "--name", "pp node invalid", "--role", "app", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
 	})
 	if ec, ok := err.(cli.ExitCoder); ok {
 		assert.Equal(t, 2, ec.ExitCode())
@@ -465,7 +465,7 @@ func TestClusterRegister_HTTPRateLimitOnceThenOK(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n7",
 				Name:      "pp-node-rl",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -486,7 +486,7 @@ func TestClusterRegister_HTTPRateLimitOnceThenOK(t *testing.T) {
 	defer ts.Close()
 
 	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp-node-rl", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--rotate", "--json",
+		"register", "--name", "pp-node-rl", "--role", "app", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--rotate", "--json",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "pp-node-rl", gjson.Get(out, "Node.Name").String())
@@ -554,7 +554,7 @@ func TestClusterNodesRotate_HTTPRateLimitOnceThenOK_JSON(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n8",
 				Name:      "pp-node-rl2",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -602,7 +602,7 @@ func TestClusterRegister_RotateDatabase_JSON(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n5",
 				Name:      "pp-node-07",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -623,7 +623,7 @@ func TestClusterRegister_RotateDatabase_JSON(t *testing.T) {
 	defer ts.Close()
 
 	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp-node-07", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--rotate", "--json",
+		"register", "--name", "pp-node-07", "--role", "app", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--rotate", "--json",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "pp-node-07", gjson.Get(out, "Node.Name").String())
@@ -659,7 +659,7 @@ func TestClusterRegister_RotateSecret_JSON(t *testing.T) {
 			Node: cluster.Node{
 				UUID:      "n6",
 				Name:      "pp-node-08",
-				Role:      "instance",
+				Role:      cluster.RoleApp,
 				CreatedAt: "2025-09-15T00:00:00Z",
 				UpdatedAt: "2025-09-15T00:00:00Z",
 			},
@@ -682,7 +682,7 @@ func TestClusterRegister_RotateSecret_JSON(t *testing.T) {
 	defer ts.Close()
 
 	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
-		"register", "--name", "pp-node-08", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--rotate-secret", "--json",
+		"register", "--name", "pp-node-08", "--role", "app", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--rotate-secret", "--json",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "pp-node-08", gjson.Get(out, "Node.Name").String())

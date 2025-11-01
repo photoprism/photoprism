@@ -16,7 +16,7 @@ import (
 var labelsFunc = labelsInternal
 
 // SetLabelsFunc overrides the labels generator. Intended for tests.
-func SetLabelsFunc(fn func(Files, media.Src, string) (classify.Labels, error)) {
+func SetLabelsFunc(fn func(Files, media.Src, entity.Src) (classify.Labels, error)) {
 	if fn == nil {
 		labelsFunc = labelsInternal
 		return
@@ -28,11 +28,11 @@ func SetLabelsFunc(fn func(Files, media.Src, string) (classify.Labels, error)) {
 // GenerateLabels finds matching labels for the specified image.
 // Caller must pass the appropriate metadata source string (e.g., entity.SrcOllama, entity.SrcOpenAI)
 // so that downstream indexing can record where the labels originated.
-func GenerateLabels(images Files, mediaSrc media.Src, labelSrc string) (classify.Labels, error) {
+func GenerateLabels(images Files, mediaSrc media.Src, labelSrc entity.Src) (classify.Labels, error) {
 	return labelsFunc(images, mediaSrc, labelSrc)
 }
 
-func labelsInternal(images Files, mediaSrc media.Src, labelSrc string) (result classify.Labels, err error) {
+func labelsInternal(images Files, mediaSrc media.Src, labelSrc entity.Src) (result classify.Labels, err error) {
 	// Return if no thumbnail filenames were given.
 	if len(images) == 0 {
 		return result, errors.New("at least one image required")
@@ -127,7 +127,7 @@ func labelsInternal(images Files, mediaSrc media.Src, labelSrc string) (result c
 					return result, err
 				}
 
-				result = mergeLabels(result, labels)
+				result = mergeLabels(result, labels, labelSrc)
 			}
 		} else {
 			return result, errors.New("invalid labels model configuration")
@@ -141,14 +141,18 @@ func labelsInternal(images Files, mediaSrc media.Src, labelSrc string) (result c
 	return result, nil
 }
 
-// mergeLabels combines existing labels with newly detected labels and returns the result.
-func mergeLabels(result, labels classify.Labels) classify.Labels {
+// mergeLabels combines existing labels with newly detected labels, applies a custom source, and returns the result.
+func mergeLabels(result, labels classify.Labels, labelSrc entity.Src) classify.Labels {
 	if len(labels) == 0 {
 		return result
 	}
 
 	for j := range labels {
 		found := false
+
+		if labelSrc != entity.SrcAuto {
+			labels[j].Source = labelSrc
+		}
 
 		for k := range result {
 			if labels[j].Name == result[k].Name {

@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -444,7 +445,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-tensorflow",
-			Usage:   "disables features depending on TensorFlow, e.g. image classification and face recognition",
+			Usage:   "disables features depending on TensorFlow, e.g. face recognition",
 			EnvVars: EnvVars("DISABLE_TENSORFLOW"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -454,7 +455,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-classification",
-			Usage:   "disables image classification (requires TensorFlow)",
+			Usage:   "disables label generation for image classification",
 			EnvVars: EnvVars("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -699,7 +700,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-role",
-			Usage:   "node `ROLE` (instance or service)",
+			Usage:   fmt.Sprintf("node `ROLE` (%s or %s)", cluster.RoleApp, cluster.RoleService),
 			EnvVars: EnvVars("NODE_ROLE"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -918,6 +919,13 @@ var Flags = CliFlags{
 			Usage:   "auto-provisioning `DRIVER` (auto, mysql)",
 			Value:   Auto,
 			EnvVars: EnvVars("DATABASE_PROVISION_DRIVER"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "database-provision-prefix",
+			Usage:   "auto-provisioning name `PREFIX` for generated database names and users",
+			Value:   cluster.DefaultDatabaseProvisionPrefix,
+			EnvVars: EnvVars("DATABASE_PROVISION_PREFIX"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{

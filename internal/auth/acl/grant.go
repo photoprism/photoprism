@@ -154,13 +154,13 @@ var (
 
 // GrantDefaults defines default grants for all supported roles.
 var GrantDefaults = Roles{
-	RoleAdmin:    GrantFullAccess,
-	RoleGuest:    GrantReactShared,
-	RoleVisitor:  GrantViewShared,
-	RoleInstance: GrantSearchShared,
-	RoleService:  GrantSearchShared,
-	RolePortal:   GrantFullAccess,
-	RoleClient:   GrantFullAccess,
+	RoleAdmin:   GrantFullAccess,
+	RoleGuest:   GrantReactShared,
+	RoleVisitor: GrantViewShared,
+	RoleApp:     GrantSearchShared,
+	RoleService: GrantSearchShared,
+	RolePortal:  GrantFullAccess,
+	RoleClient:  GrantFullAccess,
 }
 
 // Allow checks if this Grant includes the specified Permission.

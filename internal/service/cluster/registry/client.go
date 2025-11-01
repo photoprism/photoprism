@@ -115,11 +115,11 @@ func (r *ClientRegistry) Put(n *Node) error {
 		m.SetRole(n.Role)
 	}
 
-	// Ensure a default scope for node clients (instance/service) if none is set.
+	// Ensure a default scope for node clients (app/service) if none is set.
 	// Always include "vision"; this only permits access to Vision endpoints WHEN the Portal enables them.
 	if m.Scope() == "" {
 		role := m.AclRole().String()
-		if role == "instance" || role == "service" {
+		if role == cluster.RoleApp || role == cluster.RoleService {
 			m.SetScope("cluster vision")
 		}
 	}

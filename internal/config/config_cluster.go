@@ -22,7 +22,7 @@ import (
 
 // DefaultPortalUrl specifies the default portal URL with variable cluster domain.
 var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
-var DefaultNodeRole = cluster.RoleInstance
+var DefaultNodeRole = cluster.RoleApp
 var DefaultJWTAllowedScopes = "config cluster vision metrics"
 
 // ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
@@ -304,7 +304,7 @@ func (c *Config) NodeName() string {
 	return "node-" + s
 }
 
-// NodeRole returns the cluster node ROLE (portal, instance, or service).
+// NodeRole returns the cluster node role (portal, app, or service).
 func (c *Config) NodeRole() string {
 	if c.Edition() == Portal {
 		c.options.NodeRole = cluster.RolePortal
@@ -312,7 +312,7 @@ func (c *Config) NodeRole() string {
 	}
 
 	switch c.options.NodeRole {
-	case cluster.RolePortal, cluster.RoleInstance, cluster.RoleService:
+	case cluster.RolePortal, cluster.RoleApp, cluster.RoleService:
 		return c.options.NodeRole
 	default:
 		return DefaultNodeRole

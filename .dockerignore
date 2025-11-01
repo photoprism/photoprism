@@ -74,6 +74,7 @@ Thumbs.db
 .heartbeat
 .idea
 .codex
+.config
 .local
 *~
 .goutputstream*

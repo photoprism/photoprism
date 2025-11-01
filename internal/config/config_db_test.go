@@ -228,6 +228,25 @@ func TestConfig_DatabasePassword(t *testing.T) {
 	assert.Equal(t, "", c.DatabasePassword())
 }
 
+func TestDatabaseProvisionPrefix(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+		assert.Equal(t, cluster.DefaultDatabaseProvisionPrefix, conf.DatabaseProvisionPrefix())
+	})
+	t.Run("SanitizeAndTrim", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+		conf.options.DatabaseProvisionPrefix = "  My Custom-Prefix!!  "
+
+		got := conf.DatabaseProvisionPrefix()
+
+		assert.Equal(t, "my_custom_prefix", got)
+		assert.LessOrEqual(t, len(got), cluster.DatabaseProvisionPrefixMaxLen)
+		assert.Equal(t, got, conf.options.DatabaseProvisionPrefix)
+	})
+}
+
 func TestShouldAutoRotateDatabase(t *testing.T) {
 	t.Run("PortalAlwaysFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig("config", t.TempDir())

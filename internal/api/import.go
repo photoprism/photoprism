@@ -187,7 +187,13 @@ func StartImport(router *gin.RouterGroup) {
 
 // CancelImport stops the current import operation.
 //
-// DELETE /api/v1/import
+//	@Summary	cancels the active import job
+//	@Id			CancelImport
+//	@Tags		Library
+//	@Produce	json
+//	@Success	200				{object}	i18n.Response
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/import [delete]
 func CancelImport(router *gin.RouterGroup) {
 	router.DELETE("/import", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionManage)

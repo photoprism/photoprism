@@ -8,9 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
 func TestGenerateCredentials_StabilityAndBudgets(t *testing.T) {
+	DatabasePrefix = cluster.DefaultDatabaseProvisionPrefix
+
 	c := config.NewConfig(config.CliTestContext())
 	// Fix the cluster UUID via options to ensure determinism.
 	c.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
@@ -26,11 +29,13 @@ func TestGenerateCredentials_StabilityAndBudgets(t *testing.T) {
 	// Budgets and patterns.
 	assert.LessOrEqual(t, len(user1), 32)
 	assert.LessOrEqual(t, len(db1), 64)
-	assert.Contains(t, db1, "photoprism_")
-	assert.Contains(t, user1, "photoprism_")
+	assert.Contains(t, db1, cluster.DefaultDatabaseProvisionPrefix)
+	assert.Contains(t, user1, cluster.DefaultDatabaseProvisionPrefix)
 }
 
 func TestGenerateCredentials_DifferentPortal(t *testing.T) {
+	DatabasePrefix = cluster.DefaultDatabaseProvisionPrefix
+
 	c1 := config.NewConfig(config.CliTestContext())
 	c2 := config.NewConfig(config.CliTestContext())
 	c1.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
@@ -44,11 +49,31 @@ func TestGenerateCredentials_DifferentPortal(t *testing.T) {
 }
 
 func TestGenerateCredentials_Truncation(t *testing.T) {
+	DatabasePrefix = cluster.DefaultDatabaseProvisionPrefix
+
 	c := config.NewConfig(config.CliTestContext())
 	c.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
 	longName := "this-is-a-very-very-long-node-name-that-should-be-truncated-to-fit-username-and-db-budgets"
 	db, user, _ := GenerateCredentials(c, "11111111-1111-4111-8111-111111111111", longName)
 
+	assert.LessOrEqual(t, len(user), 32)
+	assert.LessOrEqual(t, len(db), 64)
+}
+
+func TestGenerateCredentials_CustomPrefix(t *testing.T) {
+	DatabasePrefix = cluster.DefaultDatabaseProvisionPrefix
+
+	c := config.NewConfig(config.CliTestContext())
+	c.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
+	c.Options().DatabaseProvisionPrefix = "My-Custom Prefix!"
+
+	prefix := c.DatabaseProvisionPrefix()
+	assert.Equal(t, "my_custom_prefix", prefix)
+
+	db, user, _ := GenerateCredentials(c, "11111111-1111-4111-8111-222222222222", "pp-node-02")
+
+	assert.True(t, strings.HasPrefix(db, prefix+"d"))
+	assert.True(t, strings.HasPrefix(user, prefix+"u"))
 	assert.LessOrEqual(t, len(user), 32)
 	assert.LessOrEqual(t, len(db), 64)
 }

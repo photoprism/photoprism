@@ -26,7 +26,7 @@ import (
 func TestClusterNodesRegister(t *testing.T) {
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RoleInstance
+		conf.Options().NodeRole = cluster.RoleApp
 		ClusterNodesRegister(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`)
@@ -43,7 +43,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create a node via registry and rotate to get a plaintext secret for tests
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-auth"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-auth", "NodeRole":"`+cluster.RoleApp+`"}`, cluster.ExampleJoinToken)
 		cleanupRegisterProvisioning(t, conf, rCreate)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
@@ -117,7 +117,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		ClusterNodesRegister(router)
 
 		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock", "NodeRole":"`+cluster.RoleApp+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 
@@ -211,7 +211,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01", "NodeRole":"`+cluster.RoleApp+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 		cleanupRegisterProvisioning(t, conf, rCreate)
@@ -237,7 +237,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create node in registry so handler goes through existing-node path.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02", "NodeRole":"`+cluster.RoleApp+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 
