@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Report returns global config values as a table for reporting.
@@ -356,20 +357,20 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	return rows, cols
 }
 
-func maskDatabaseProvisionDSN(dsn string) string {
-	if dsn == "" {
+func maskDatabaseProvisionDSN(dsname string) string {
+	if dsname == "" {
 		return ""
 	}
 
-	ds := NewDSN(dsn)
+	ds := dsn.NewDSN(dsname)
 	if ds.Password == "" {
-		return dsn
+		return dsname
 	}
 
 	needle := ":" + ds.Password + "@"
-	if strings.Contains(dsn, needle) {
-		return strings.Replace(dsn, needle, ":***@", 1)
+	if strings.Contains(dsname, needle) {
+		return strings.Replace(dsname, needle, ":***@", 1)
 	}
 
-	return dsn
+	return dsname
 }
