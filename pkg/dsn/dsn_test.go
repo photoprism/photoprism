@@ -1,100 +1,156 @@
 package dsn
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewDSN(t *testing.T) {
-	t.Run("File", func(t *testing.T) {
-		dsn := NewDSN("/go/src/github.com/photoprism/photoprism/storage/index.db?_busy_timeout=5000")
+func TestDSN_HostAndPort(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		host string
+		port int
+	}{
+		{
+			name: "MySQLTCP",
+			in:   "user:secret@tcp(localhost:3307)/photoprism?parseTime=true",
+			host: "localhost",
+			port: 3307,
+		},
+		{
+			name: "MySQLIPv6",
+			in:   "user:secret@tcp([2001:db8::1]:3307)/photoprism",
+			host: "2001:db8::1",
+			port: 3307,
+		},
+		{
+			name: "MySQLDefaultPort",
+			in:   "user:secret@tcp(mysql.local)/photoprism",
+			host: "mysql.local",
+			port: 3306,
+		},
+		{
+			name: "PostgresURL",
+			in:   "postgres://user:secret@localhost/mydb",
+			host: "localhost",
+			port: 5432,
+		},
+		{
+			name: "PostgresKeyValue",
+			in:   "user=alice password=secret host=/var/run/postgresql port=6432 dbname=app",
+			host: "/var/run/postgresql",
+			port: 6432,
+		},
+		{
+			name: "PostgresPortOnly",
+			in:   "user=alice password=secret port=5433 dbname=app",
+			host: "",
+			port: 5433,
+		},
+		{
+			name: "SQLite",
+			in:   "file:/data/index.db",
+			host: "",
+			port: 0,
+		},
+		{
+			name: "InvalidPortFallback",
+			in:   "user:secret@tcp(localhost:abc)/photoprism",
+			host: "localhost",
+			port: 3306,
+		},
+	}
 
-		assert.Equal(t, "", dsn.Driver)
-		assert.Equal(t, "", dsn.User)
-		assert.Equal(t, "", dsn.Password)
-		assert.Equal(t, "", dsn.Net)
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage", dsn.Server)
-		assert.Equal(t, "index.db", dsn.Name)
-		assert.Equal(t, "_busy_timeout=5000", dsn.Params)
-	})
-	t.Run("Server", func(t *testing.T) {
-		dsn := NewDSN(fmt.Sprintf(
-			"%s:%s@%s/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
-			"root",
-			"FooBar23!",
-			"127.0.0.1:3306",
-			"test",
-		))
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := Parse(tt.in)
+			assert.Equal(t, tt.host, d.Host())
+			assert.Equal(t, tt.port, d.Port())
+		})
+	}
+}
 
-		assert.Equal(t, "", dsn.Driver)
-		assert.Equal(t, "root", dsn.User)
-		assert.Equal(t, "FooBar23!", dsn.Password)
-		assert.Equal(t, "", dsn.Net)
-		assert.Equal(t, "127.0.0.1:3306", dsn.Server)
-		assert.Equal(t, "test", dsn.Name)
-		assert.Equal(t, "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", dsn.Params)
-	})
-	t.Run("Driver", func(t *testing.T) {
-		dsn := NewDSN("mysql://john:pass@localhost:3306/my_db")
+func TestDSN_MaskPassword(t *testing.T) {
+	d := Parse("user:secret@tcp(localhost:3306)/db")
+	assert.Equal(t, "user:***@tcp(localhost:3306)/db", d.MaskPassword())
 
-		assert.Equal(t, "mysql", dsn.Driver)
-		assert.Equal(t, "john", dsn.User)
-		assert.Equal(t, "pass", dsn.Password)
-		assert.Equal(t, "", dsn.Net)
-		assert.Equal(t, "localhost:3306", dsn.Server)
-		assert.Equal(t, "my_db", dsn.Name)
-		assert.Equal(t, "", dsn.Params)
-	})
-	t.Run("Net", func(t *testing.T) {
-		dsn := NewDSN("mysql://john:pass@tcp(localhost:3306)/my_db")
+	p := Parse("user=alice password=s3cr3t dbname=app")
+	assert.Equal(t, "user=alice password=*** dbname=app", p.MaskPassword())
 
-		assert.Equal(t, "mysql", dsn.Driver)
-		assert.Equal(t, "john", dsn.User)
-		assert.Equal(t, "pass", dsn.Password)
-		assert.Equal(t, "tcp", dsn.Net)
-		assert.Equal(t, "localhost:3306", dsn.Server)
-		assert.Equal(t, "my_db", dsn.Name)
-		assert.Equal(t, "", dsn.Params)
-	})
+	noPass := Parse("user@tcp(localhost:3306)/db")
+	assert.Equal(t, "user@tcp(localhost:3306)/db", noPass.MaskPassword())
+}
 
-	t.Run("PostgreSQL URI 1", func(t *testing.T) {
-		dsn := NewDSN("postgresql://john:pass@postgres:5432/my_db?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable")
+func TestDSN_ParsePostgres(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want DSN
+		ok   bool
+	}{
+		{
+			name: "Basic",
+			in:   "user=alice password=s3cr3t dbname=app",
+			want: DSN{
+				DSN:      "user=alice password=s3cr3t dbname=app",
+				Driver:   DriverPostgres,
+				User:     "alice",
+				Password: "s3cr3t",
+				Name:     "app",
+			},
+			ok: true,
+		},
+		{
+			name: "WithHostPortAndParams",
+			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
+			want: DSN{
+				DSN:      "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
+				Driver:   DriverPostgres,
+				User:     "alice",
+				Password: "s3cr3t",
+				Server:   "db.internal:5432",
+				Name:     "app",
+				Params:   "connect_timeout=5 sslmode=require",
+			},
+			ok: true,
+		},
+		{
+			name: "QuotedValues",
+			in:   `user="alice" password="s ec ret" dbname="app" host=db.internal`,
+			want: DSN{
+				DSN:      `user="alice" password="s ec ret" dbname="app" host=db.internal`,
+				Driver:   DriverPostgres,
+				User:     "alice",
+				Password: "s ec ret",
+				Server:   "db.internal",
+				Name:     "app",
+			},
+			ok: true,
+		},
+		{
+			name: "MissingDatabase",
+			in:   "user=alice host=db.internal",
+			want: DSN{DSN: "user=alice host=db.internal"},
+			ok:   false,
+		},
+	}
 
-		assert.Equal(t, "postgresql", dsn.Driver)
-		assert.Equal(t, "john", dsn.User)
-		assert.Equal(t, "pass", dsn.Password)
-		assert.Equal(t, "", dsn.Net)
-		assert.Equal(t, "postgres:5432", dsn.Server)
-		assert.Equal(t, "my_db", dsn.Name)
-		assert.Equal(t, "TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", dsn.Params)
-	})
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := DSN{DSN: tt.in}
+			ok := d.parsePostgres()
 
-	t.Run("PostgreSQL URI 2", func(t *testing.T) {
-		dsn := NewDSN("postgres://john:pass@postgres:5432/my_db?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable")
+			assert.Equal(t, tt.in, d.String())
 
-		assert.Equal(t, "postgres", dsn.Driver)
-		assert.Equal(t, "john", dsn.User)
-		assert.Equal(t, "pass", dsn.Password)
-		assert.Equal(t, "", dsn.Net)
-		assert.Equal(t, "postgres:5432", dsn.Server)
-		assert.Equal(t, "my_db", dsn.Name)
-		assert.Equal(t, "TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", dsn.Params)
-	})
+			if ok != tt.ok {
+				t.Fatalf("parsePostgres(%q) ok=%v, want %v", tt.in, ok, tt.ok)
+			}
 
-	t.Run("PostgreSQL Keywords", func(t *testing.T) {
-		dsn := NewDSN("host=postgres port=5432 dbname=my_db user=john password=pass connect_timeout=15 sslmode=disable TimeZone=UTC application_name='Photo Prism'")
-
-		assert.Equal(t, "postgresql", dsn.Driver)
-		assert.Equal(t, "john", dsn.User)
-		assert.Equal(t, "pass", dsn.Password)
-		assert.Equal(t, "", dsn.Net)
-		assert.Equal(t, "postgres:5432", dsn.Server)
-		assert.Equal(t, "my_db", dsn.Name)
-		assert.Contains(t, dsn.Params, "connect_timeout=15")
-		assert.Contains(t, dsn.Params, "sslmode=disable")
-		assert.Contains(t, dsn.Params, "TimeZone=UTC")
-		assert.Contains(t, dsn.Params, "application_name=%27Photo+Prism%27")
-	})
+			if ok && d != tt.want {
+				t.Fatalf("parsePostgres(%q) = %#v, want %#v", tt.in, d, tt.want)
+			}
+		})
+	}
 }

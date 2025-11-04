@@ -16,7 +16,7 @@ func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 		driver = "sqlite"
 		dsn = os.Getenv("PHOTOPRISM_TEST_DSN_SQLITEFILE")
 		if dbn > 0 {
-			d := NewDSN(dsn)
+			d := Parse(dsn)
 			d.Driver = driver
 			d.Name = fmt.Sprintf("%s_%02d.db", d.Name, dbn)
 			dsn = d.ToString()
@@ -25,7 +25,7 @@ func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 		driver = "mysql"
 		dsn = os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
 		if dbn > 0 {
-			d := NewDSN(dsn)
+			d := Parse(dsn)
 			d.Driver = driver
 			d.Name = fmt.Sprintf("%s_%02d", d.Name, dbn)
 			dsn = d.ToString()
@@ -34,7 +34,7 @@ func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 		driver = "mysql"
 		dsn = os.Getenv("PHOTOPRISM_TEST_DSN_MYSQL8")
 		if dbn > 0 {
-			d := NewDSN(dsn)
+			d := Parse(dsn)
 			d.Driver = driver
 			d.Name = fmt.Sprintf("%s_%02d", d.Name, dbn)
 			dsn = d.ToString()
@@ -43,7 +43,7 @@ func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 		driver = "postgres"
 		dsn = os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
 		if dbn > 0 {
-			d := NewDSN(dsn)
+			d := Parse(dsn)
 			d.Driver = driver
 			d.Name = fmt.Sprintf("%s_%02d", d.Name, dbn)
 			dsn = d.ToString()

@@ -128,7 +128,7 @@ func (d *DSN) Port() int {
 	switch d.Driver {
 	case DriverMySQL, DriverMariaDB:
 		defaultPort = 3306
-	case DriverPostgres:
+	case DriverPostgres, DriverPostgreSQL:
 		defaultPort = 5432
 	}
 
@@ -420,26 +420,26 @@ func (d *DSN) ToString() string {
 	driver := d.Driver
 	if driver == "" {
 		if d.User == "" {
-			driver = SQLite3
+			driver = DriverSQLite3
 		} else {
-			driver = MariaDB
+			driver = DriverMariaDB
 		}
 	}
 
 	switch driver {
-	case SQLite3, "sqlitefile":
+	case DriverSQLite3, "sqlitefile":
 		if d.Params != "" {
 			return fmt.Sprintf("%s/%s?%s", d.Server, d.Name, d.Params)
 		} else {
 			return fmt.Sprintf("%s/%s", d.Server, d.Name)
 		}
-	case PostgreSQL, Postgres:
+	case DriverPostgreSQL, DriverPostgres:
 		if d.Params != "" {
-			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", PostgreSQL, d.User, d.Password, d.Server, d.Name, d.Params)
+			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name, d.Params)
 		} else {
-			return fmt.Sprintf("%s://%s:%s@%s/%s", PostgreSQL, d.User, d.Password, d.Server, d.Name)
+			return fmt.Sprintf("%s://%s:%s@%s/%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name)
 		}
-	case MariaDB, MySQL:
+	case DriverMariaDB, DriverMySQL:
 		databaseServer := d.Server
 		if d.Net != "" {
 			databaseServer = fmt.Sprintf("%s(%s)", d.Net, databaseServer)
