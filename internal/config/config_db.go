@@ -149,14 +149,13 @@ func (c *Config) DatabaseDSN() string {
 			)
 		case Postgres:
 			return fmt.Sprintf(
-				"postgresql://%s:%s@%s:%d/%s?connect_timeout=%d&%s",
+				"postgresql://%s:%s@%s/%s?connect_timeout=%d&%s",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
-				c.DatabaseHost(),
-				c.DatabasePort(),
+				c.DatabaseServer(),
 				c.DatabaseName(),
 				c.DatabaseTimeout(),
-				dsn.Params[dsn.DriverPostgres],
+				dsn.Params[dsn.DriverPostgreSQL],
 			)
 		case SQLite3:
 			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
@@ -239,8 +238,9 @@ func (c *Config) DatabaseServer() string {
 func (c *Config) DatabaseHost() string {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 {
-		return ""
+	if c.DatabaseDriver() == SQLite3 || c.NoDatabaseDSN() {
+		d := dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer(), DSN: ""}
+		return d.Host()
 	}
 
 	d := dsn.Parse(c.DatabaseDSN())
@@ -251,8 +251,9 @@ func (c *Config) DatabaseHost() string {
 func (c *Config) DatabasePort() int {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 {
-		return 0
+	if c.DatabaseDriver() == SQLite3 || c.NoDatabaseDSN() {
+		d := dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer(), DSN: ""}
+		return d.Port()
 	}
 
 	d := dsn.Parse(c.DatabaseDSN())

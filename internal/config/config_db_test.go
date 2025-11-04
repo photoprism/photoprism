@@ -283,7 +283,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 	c.options.DatabaseDriver = "tidb"
 	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 	c.options.DatabaseDriver = "Postgres"
-	assert.Equal(t, "postgresql://photoprism:@localhost:5432/photoprism?TimeZone=UTC&connect_timeout=15&lock_timeout=50000&sslmode=disable", c.DatabaseDSN())
+	assert.Equal(t, "postgresql://photoprism:@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN())
 	c.options.DatabaseDriver = "SQLite"
 	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 	c.options.DatabaseDriver = ""
