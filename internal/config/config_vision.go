@@ -10,11 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// VisionYaml returns the vision config YAML filename.
-//
-// TODO: Call fs.YamlFilePath to use ".yaml" extension for new YAML files, unless a .yml" file already exists.
-//
-//	return fs.YamlFilePath("vision", c.ConfigPath(), c.options.VisionYaml)
+// VisionYaml returns the path to the computer-vision configuration file,
+// preferring an explicit override and otherwise letting fs.ConfigFilePath pick
+// the right `.yml`/`.yaml` variant in the config directory.
 func (c *Config) VisionYaml() string {
 	if c == nil {
 		return ""
@@ -23,7 +21,7 @@ func (c *Config) VisionYaml() string {
 	if c.options.VisionYaml != "" {
 		return fs.Abs(c.options.VisionYaml)
 	} else {
-		return filepath.Join(c.ConfigPath(), "vision.yml")
+		return fs.ConfigFilePath(c.ConfigPath(), "vision", fs.ExtYml)
 	}
 }
 

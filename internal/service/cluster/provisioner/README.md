@@ -70,3 +70,43 @@ The provisioner package manages per-node MariaDB schemas and users for cluster d
 
 - Fast pass: `go test ./internal/service/cluster/provisioner -count=1`
 - End-to-end sanity with API: `go test ./internal/api -run 'ClusterNodesRegister' -count=1` (ensures the API cleanup helper stays aligned with the provisioner)
+
+## ProxySQL Integration
+
+Use ProxySQL to verify tenant provisioning stays in sync with the proxy in addition to MariaDB. The unit test suite ships with an opt-in integration test (`TestEnsureCredentials_ProxySQLIntegration`) that exercises the full flow once ProxySQL is available locally.
+
+### One-Time Setup (inside the dev container)
+
+1. Download and install ProxySQL (v3.0.2 shown here):
+   ```bash
+   cd /tmp
+   curl -fL -o proxysql_3.0.2-debian12_amd64.deb https://github.com/sysown/proxysql/releases/download/v3.0.2/proxysql_3.0.2-debian12_amd64.deb
+   sudo dpkg -i proxysql_3.0.2-debian12_amd64.deb
+   ```
+2. Start ProxySQL as a daemon using the default config (/etc/proxysql.cnf ships with admin `admin:admin`):
+   ```bash
+   sudo proxysql --config /etc/proxysql.cnf --pidfile /tmp/proxysql.pid --daemon
+   ```
+3. Confirm the admin listener is reachable:
+   ```bash
+   sudo mysql --protocol=TCP --host=127.0.0.1 --port=6032 --user=admin --password=admin -e 'SELECT 1'
+   ```
+
+The bundled MariaDB instance (credentials in `.my.cnf` at the repo root) is sufficient as a backend; no extra ProxySQL configuration is required for the integration test.
+
+### Running the Integration Test
+
+1. When ProxySQL is running, toggle the test via an environment variable:
+   ```bash
+   PHOTOPRISM_TEST_PROXYSQL=1 go test ./internal/service/cluster/provisioner -run TestEnsureCredentials_ProxySQLIntegration -count=1
+   ```
+   - Override the admin DSN with `PHOTOPRISM_TEST_PROXYSQL_DSN=user:pass@tcp(host:6032)/` if you changed the default credentials or port.
+2. The test provisions a tenant, verifies the ProxySQL `mysql_users` row, reruns the idempotent ensure path, and exercises `DropCredentials`. Cleanup hooks remove both the MariaDB schema/user and the ProxySQL account.
+
+### Tearing Down / Restarting
+
+- Stop ProxySQL when finished:
+  ```bash
+  sudo kill "$(cat /tmp/proxysql.pid)"
+  ```
+- To restart, re-run the daemon command from the setup section. The generated SSL materials live under `/var/lib/proxysql`.

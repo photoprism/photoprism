@@ -796,7 +796,7 @@
               <v-icon icon="mdi-wifi-off" color="warning" size="21"></v-icon>
             </div>
             <div v-if="!isMini" class="text-start text-body-2">
-              {{ $gettext(`No server connection`) }}
+              {{ $gettext(`Lost server connection`) }}
             </div>
           </div>
           <div v-else-if="!isMini && featUsage" class="nav-info usage-info clickable" @click.stop="showUsageInfo">

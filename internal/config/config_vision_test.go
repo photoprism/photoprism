@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -8,11 +10,27 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestConfig_VisionYaml(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/config/vision.yml", c.VisionYaml())
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/config/vision.yml", c.VisionYaml())
+	})
+	t.Run("PreferYamlExtension", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempDir := t.TempDir()
+		c.options.ConfigPath = tempDir
+		c.options.VisionYaml = ""
+
+		yamlPath := filepath.Join(tempDir, "vision"+fs.ExtYaml)
+		if err := os.WriteFile(yamlPath, []byte("models: []\n"), fs.ModeFile); err != nil {
+			t.Fatalf("write %s: %v", yamlPath, err)
+		}
+
+		assert.Equal(t, yamlPath, c.VisionYaml())
+	})
 }
 
 func TestConfig_VisionApi(t *testing.T) {
@@ -43,7 +61,7 @@ func TestConfig_ModelsPath(t *testing.T) {
 
 	path := c.NasnetModelPath()
 	assert.True(t, strings.HasPrefix(path, c.ModelsPath()))
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/models/nasnet", path)
+	assert.Equal(t, ProjectRoot+"/assets/models/nasnet", path)
 }
 
 func TestConfig_TensorFlowDisabled(t *testing.T) {

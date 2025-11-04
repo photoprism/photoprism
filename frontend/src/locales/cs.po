@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-23 08:32+0000\n"
+"PO-Revision-Date: 2025-11-01 11:04+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
@@ -125,9 +125,9 @@ msgstr "O nás"
 msgid "Access Token"
 msgstr "Přístupový token"
 
-#: src/component/navigation.vue:1067 src/component/navigation.vue:868
+#: src/component/navigation.vue:1068 src/component/navigation.vue:868
 #: src/component/service/upload.vue:24 src/locales.js:331
-#: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:111
+#: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:112
 #: src/page/settings/general.vue:348
 msgid "Account"
 msgstr "Účet"
@@ -251,11 +251,11 @@ msgstr "Přidáno"
 msgid "Adjust Location"
 msgstr "Upravit umístění"
 
-#: src/options/admin.js:6 src/common/util.js:764 src/options/auth.js:6
+#: src/options/admin.js:6 src/common/util.js:798 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
-#: src/page/settings.vue:85
+#: src/page/settings.vue:86
 msgid "Advanced"
 msgstr "Pokročilé"
 
@@ -445,7 +445,7 @@ msgstr "Schválení a uložení změn"
 msgid "Apps and Devices"
 msgstr "Aplikace a zařízení"
 
-#: src/component/lightbox.vue:2339 src/component/photo/edit/info.vue:238
+#: src/component/lightbox.vue:2340 src/component/photo/edit/info.vue:238
 #: src/component/photo/edit/info.vue:239
 msgid "Archived"
 msgstr "Archivováno"
@@ -516,7 +516,7 @@ msgstr "Audio"
 msgid "Authentication"
 msgstr "Ověřování"
 
-#: src/common/util.js:726
+#: src/common/util.js:760
 msgid "Auto"
 msgstr "Auto"
 
@@ -541,7 +541,7 @@ msgstr "Odznak"
 msgid "Base Path"
 msgstr "Základní cesta"
 
-#: src/common/util.js:758
+#: src/common/util.js:792
 msgid "Batch"
 msgstr "Dávka"
 
@@ -671,11 +671,11 @@ msgstr "Není možné vybrat více položek"
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/common/util.js:927 src/common/util.js:934
+#: src/common/util.js:965 src/common/util.js:972
 msgid "Cannot copy to clipboard"
 msgstr "Nelze zkopírovat do schránky"
 
-#: src/common/util.js:746 src/component/photo/edit/details.vue:44
+#: src/common/util.js:780 src/component/photo/edit/details.vue:44
 #: src/component/photo/view/cards.vue:240 src/component/sidebar/info.vue:25
 msgid "Caption"
 msgstr "Popisek"
@@ -725,7 +725,7 @@ msgstr "Změny nemohly být uloženy"
 #: src/component/user/edit/dialog.vue:413
 #: src/component/user/edit/dialog.vue:489
 #: src/component/album/edit/dialog.vue:191
-#: src/component/label/edit/dialog.vue:109 src/component/lightbox.vue:2298
+#: src/component/label/edit/dialog.vue:109 src/component/lightbox.vue:2299
 #: src/component/photo/edit/files.vue:570 src/component/service/edit.vue:342
 #: src/component/share/dialog.vue:239 src/component/share/dialog.vue:258
 #: src/page/albums.vue:1274 src/page/people/recognized.vue:324
@@ -769,8 +769,8 @@ msgid "Client Credentials"
 msgstr "Pověření klienta"
 
 #: src/component/user/edit/dialog.vue:311 src/page/admin/sessions.vue:224
-#: src/component/lightbox.vue:1211 src/component/lightbox.vue:1212
-#: src/component/lightbox.vue:433 src/component/photo/edit/details.vue:403
+#: src/component/lightbox.vue:1212 src/component/lightbox.vue:1213
+#: src/component/lightbox.vue:434 src/component/photo/edit/details.vue:403
 #: src/component/photo/edit/details.vue:408 src/component/photo/toolbar.vue:112
 #: src/component/settings/apps.vue:236 src/component/settings/apps.vue:99
 #: src/component/settings/passcode.vue:146
@@ -886,7 +886,7 @@ msgstr "Obsahuje %{n} obrázků."
 msgid "Contains one picture."
 msgstr "Obsahuje jeden obrázek."
 
-#: src/page/settings.vue:72
+#: src/page/settings.vue:73
 msgid "Content"
 msgstr "Obsah"
 
@@ -902,7 +902,7 @@ msgstr "Přispěvatel"
 msgid "Converting"
 msgstr "Převádí se"
 
-#: src/common/util.js:920
+#: src/common/util.js:958
 msgid "Copied to clipboard"
 msgstr "Zkopírováno do schránky"
 
@@ -1010,7 +1010,7 @@ msgid "Debug Logs"
 msgstr "Protokoly ladění"
 
 #: src/options/admin.js:35 src/page/admin/sessions.vue:368
-#: src/page/admin/users.vue:371 src/common/util.js:728 src/model/session.js:42
+#: src/page/admin/users.vue:371 src/common/util.js:762 src/model/session.js:42
 #: src/model/user.js:250 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:197
 #: src/options/options.js:200 src/options/options.js:238
@@ -1194,7 +1194,7 @@ msgid "Done."
 msgstr "Hotovo."
 
 #: src/component/album/clipboard.vue:54 src/component/album/toolbar.vue:203
-#: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1439
+#: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1440
 #: src/component/people/clipboard.vue:31 src/component/photo/clipboard.vue:92
 #: src/component/photo/edit/files.vue:51 src/page/settings/content.vue:183
 #: src/page/settings/general.vue:189
@@ -1215,7 +1215,7 @@ msgstr "Stáhnout jednotlivé soubory a archivy zip."
 
 #: src/component/album/clipboard.vue:227 src/component/album/toolbar.vue:252
 #: src/component/file/clipboard.vue:150 src/component/label/clipboard.vue:172
-#: src/component/lightbox.vue:2378 src/component/people/clipboard.vue:144
+#: src/component/lightbox.vue:2379 src/component/people/clipboard.vue:144
 #: src/component/photo/clipboard.vue:419 src/component/photo/edit/files.vue:527
 #: src/component/photo/view/cards.vue:509 src/component/photo/view/list.vue:300
 #: src/page/library/browse.vue:252
@@ -1261,7 +1261,7 @@ msgid "E-Mail"
 msgstr "E-Mail"
 
 #: src/component/album/clipboard.vue:43 src/component/album/toolbar.vue:174
-#: src/component/lightbox.vue:1340 src/component/lightbox.vue:1341
+#: src/component/lightbox.vue:1341 src/component/lightbox.vue:1342
 #: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:237
 msgid "Edit"
 msgstr "Upravit"
@@ -1329,7 +1329,7 @@ msgstr "Vložte ověřovací kód"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Pro potvrzení zadejte své heslo a pokračujte:"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:437
+#: src/page/connect.vue:14 src/component/lightbox.vue:438
 #: src/page/connect.vue:19 src/page/library/errors.vue:391
 msgid "Error"
 msgstr "Chyba"
@@ -1342,7 +1342,7 @@ msgstr "Chyba"
 msgid "Errors"
 msgstr "Chyby"
 
-#: src/common/util.js:730
+#: src/common/util.js:764
 msgid "Estimate"
 msgstr "Odhad"
 
@@ -1449,7 +1449,7 @@ msgstr "Zpětná vazba"
 msgid "Female"
 msgstr "Žena"
 
-#: src/common/util.js:732 src/component/photo/edit/info.vue:104
+#: src/common/util.js:766 src/component/photo/edit/info.vue:104
 #: src/model/file.js:266
 msgid "File"
 msgstr "Soubor"
@@ -1538,11 +1538,11 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr "Volný přístup"
 
-#: src/component/lightbox.vue:1288 src/component/lightbox.vue:1289
+#: src/component/lightbox.vue:1289 src/component/lightbox.vue:1290
 msgid "Fullscreen"
 msgstr "Celá obrazovka"
 
-#: src/page/settings.vue:59
+#: src/page/settings.vue:60
 msgid "General"
 msgstr "Obecné"
 
@@ -1651,7 +1651,7 @@ msgstr "Smíšeně"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Pokud ztratíte přístup ke své ověřovací aplikaci nebo zařízení, můžete pomocí kódu pro obnovení znovu získat přístup ke svému účtu."
 
-#: src/common/util.js:736 src/component/photo/view/cards.vue:307
+#: src/common/util.js:770 src/component/photo/view/cards.vue:307
 #: src/model/file.js:194 src/options/options.js:287
 msgid "Image"
 msgstr "Snímek"
@@ -1726,7 +1726,7 @@ msgstr "Indexování"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexování media a přidružených souborů…"
 
-#: src/component/lightbox.vue:1236 src/component/lightbox.vue:1237
+#: src/component/lightbox.vue:1237 src/component/lightbox.vue:1238
 #: src/component/sidebar/info.vue:9
 msgid "Information"
 msgstr "Informace"
@@ -1818,7 +1818,7 @@ msgstr "JPEG limit velikosti: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG a miniatury se vykreslují automaticky dle potřeby."
 
-#: src/common/util.js:748
+#: src/common/util.js:782
 msgid "Keyword"
 msgstr "Klíčové slovo"
 
@@ -1915,7 +1915,7 @@ msgstr "Knihovna"
 msgid "License"
 msgstr "Licence"
 
-#: src/component/lightbox.vue:1306 src/component/lightbox.vue:1307
+#: src/component/lightbox.vue:1307 src/component/lightbox.vue:1308
 msgid "Like"
 msgstr "Líbí se mi"
 
@@ -1979,7 +1979,7 @@ msgid "Local Time"
 msgstr "Místní čas"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:738 src/component/album/edit/dialog.vue:45
+#: src/common/util.js:772 src/component/album/edit/dialog.vue:45
 #: src/component/photo/edit/details.vue:471
 #: src/component/photo/edit/details.vue:549
 #: src/component/photo/edit/details.vue:643
@@ -2010,6 +2010,10 @@ msgstr "Logy"
 msgid "Longitude"
 msgstr "Zeměpisná délka"
 
+#: src/component/navigation.vue:799
+msgid "Lost server connection"
+msgstr "Ztráta připojení k serveru"
+
 #: src/options/options.js:330
 msgid "Low"
 msgstr "Nízká"
@@ -2038,7 +2042,7 @@ msgstr "Správa účtu"
 msgid "Manager"
 msgstr "Manažer"
 
-#: src/common/util.js:760
+#: src/common/util.js:794
 msgid "Manual"
 msgstr "Manuální"
 
@@ -2050,7 +2054,7 @@ msgstr "Ruční nahrání"
 msgid "Maps"
 msgstr "Mapy"
 
-#: src/common/util.js:740 src/model/marker.js:120
+#: src/common/util.js:774 src/model/marker.js:120
 msgid "Marker"
 msgstr "Značka"
 
@@ -2084,7 +2088,7 @@ msgstr "Zpráva"
 msgid "Message sent"
 msgstr "Zpráva odeslána"
 
-#: src/common/util.js:750
+#: src/common/util.js:784
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -2123,7 +2127,7 @@ msgstr "Monochromatické"
 msgid "Month"
 msgstr "Měsíc"
 
-#: src/component/lightbox.vue:1359
+#: src/component/lightbox.vue:1360
 msgid "More options"
 msgstr "Další možnosti"
 
@@ -2143,12 +2147,12 @@ msgstr "Přesunout soubory"
 msgid "Must have at least %{n} characters."
 msgstr "Musí mít alespoň %{n} znaků."
 
-#: src/component/lightbox.vue:1255 src/component/lightbox.vue:1256
+#: src/component/lightbox.vue:1256 src/component/lightbox.vue:1257
 msgid "Mute"
 msgstr "Ztlumit"
 
 #: src/page/about/feedback.vue:64 src/page/about/feedback.vue:65
-#: src/common/util.js:734 src/component/album/edit/dialog.vue:35
+#: src/common/util.js:768 src/component/album/edit/dialog.vue:35
 #: src/component/label/edit/dialog.vue:33
 #: src/component/people/edit/dialog.vue:33
 #: src/component/photo/edit/files.vue:435 src/component/photo/edit/info.vue:42
@@ -2190,7 +2194,7 @@ msgstr "Nové heslo"
 msgid "Newest First"
 msgstr "Od nejnovějších"
 
-#: src/component/lightbox.vue:436 src/locales.js:297
+#: src/component/lightbox.vue:437 src/locales.js:297
 msgid "Next"
 msgstr "Další"
 
@@ -2252,10 +2256,6 @@ msgstr "Žádné nedávno upravené obrázky"
 msgid "No results"
 msgstr "Žádné výsledky"
 
-#: src/component/navigation.vue:799
-msgid "No server connection"
-msgstr "Žádné připojení k serveru"
-
 #: src/component/service/upload.vue:173
 msgid "No servers configured."
 msgstr "Žádný server nebyl nakonfigurován."
@@ -2291,12 +2291,12 @@ msgstr "Nefotografické obrázky a snímky nízké kvality vyžadují kontrolu, 
 msgid "None"
 msgstr "Žádné"
 
-#: src/component/lightbox.vue:810 src/component/service/upload.vue:158
+#: src/component/lightbox.vue:811 src/component/service/upload.vue:158
 #: src/component/service/upload.vue:170
 msgid "Not allowed"
 msgstr "Není povoleno"
 
-#: src/component/lightbox.vue:807
+#: src/component/lightbox.vue:808
 msgid "Not found"
 msgstr "Nenalezeno"
 
@@ -2304,7 +2304,7 @@ msgstr "Nenalezeno"
 msgid "Not sorted."
 msgstr "Netřídí se."
 
-#: src/component/lightbox.vue:804 src/component/lightbox.vue:925
+#: src/component/lightbox.vue:805 src/component/lightbox.vue:926
 msgid "Not supported"
 msgstr "Není podporováno"
 
@@ -2648,7 +2648,7 @@ msgstr "Náhled"
 msgid "Preview Images"
 msgstr "Náhled obrázků"
 
-#: src/component/lightbox.vue:435 src/locales.js:298
+#: src/component/lightbox.vue:436 src/locales.js:298
 msgid "Previous"
 msgstr "Předchozí"
 
@@ -2788,7 +2788,7 @@ msgstr "Registrace"
 msgid "Reload"
 msgstr "Znovu načíst"
 
-#: src/component/navigation.vue:1088 src/component/update.vue:61
+#: src/component/navigation.vue:1089 src/component/update.vue:61
 #: src/page/settings/general.vue:528
 msgid "Reloading…"
 msgstr "Načítání…"
@@ -2805,7 +2805,7 @@ msgstr "Odstranit"
 msgid "remove failed: unknown album"
 msgstr "odstranění selhalo: neznámé album"
 
-#: src/component/lightbox.vue:1396 src/component/photo/clipboard.vue:128
+#: src/component/lightbox.vue:1397 src/component/photo/clipboard.vue:128
 msgid "Remove from Album"
 msgstr "Odebrat z alba"
 
@@ -2825,7 +2825,7 @@ msgstr "Odstraněno"
 msgid "Repeated"
 msgstr "Opakované"
 
-#: src/common/api.js:102 src/component/lightbox.vue:921
+#: src/common/api.js:102 src/component/lightbox.vue:922
 msgid "Request failed - are you offline?"
 msgstr "Požadavek se nezdařil - jste offline?"
 
@@ -2850,12 +2850,12 @@ msgstr "Restartování"
 #: src/component/user/edit/dialog.vue:107
 #: src/component/user/edit/dialog.vue:115
 #: src/component/user/edit/dialog.vue:121
-#: src/component/user/edit/dialog.vue:314 src/component/lightbox.vue:1425
+#: src/component/user/edit/dialog.vue:314 src/component/lightbox.vue:1426
 #: src/component/photo/clipboard.vue:56
 msgid "Restore"
 msgstr "Obnovit"
 
-#: src/component/lightbox.vue:2357
+#: src/component/lightbox.vue:2358
 msgid "Restored"
 msgstr "Obnovené stránky"
 
@@ -2983,7 +2983,7 @@ msgstr "Tajemství"
 msgid "Security and Access"
 msgstr "Zabezpečení a přístup"
 
-#: src/component/lightbox.vue:1323 src/component/lightbox.vue:1324
+#: src/component/lightbox.vue:1324 src/component/lightbox.vue:1325
 msgid "Select"
 msgstr "Označit"
 
@@ -3040,7 +3040,7 @@ msgstr "Služba"
 msgid "Service URL"
 msgstr "URL služby"
 
-#: src/locales.js:359 src/page/settings.vue:98
+#: src/locales.js:359 src/page/settings.vue:99
 #: src/page/settings/general.vue:284
 msgid "Services"
 msgstr "Služby"
@@ -3058,7 +3058,7 @@ msgstr "ID relace"
 msgid "Sessions"
 msgstr "Relace"
 
-#: src/component/lightbox.vue:1381
+#: src/component/lightbox.vue:1382
 msgid "Set as Album Cover"
 msgstr "Nastavit jako obal alba"
 
@@ -3166,7 +3166,7 @@ msgstr "Adresa URL webu"
 msgid "Size"
 msgstr "Velikost"
 
-#: src/component/lightbox.vue:1271 src/component/lightbox.vue:1272
+#: src/component/lightbox.vue:1272 src/component/lightbox.vue:1273
 msgid "Slideshow"
 msgstr "Prezentace"
 
@@ -3197,7 +3197,7 @@ msgstr "Některá alba nebylo možné vytvořit. Upravte prosím názvy a zkuste
 msgid "Some albums could not be updated"
 msgstr "Některá alba nebylo možné aktualizovat"
 
-#: src/component/lightbox.vue:918
+#: src/component/lightbox.vue:919
 msgid "Something went wrong, try again"
 msgstr "Něco se pokazilo, zkuste to znovu"
 
@@ -3286,7 +3286,7 @@ msgstr "Úložiště"
 msgid "Streets"
 msgstr "Ulice"
 
-#: src/common/util.js:752 src/component/photo/edit/details.vue:314
+#: src/common/util.js:786 src/component/photo/edit/details.vue:314
 msgid "Subject"
 msgstr "Předmět"
 
@@ -3408,7 +3408,7 @@ msgstr "Časová zóna"
 msgid "Timeout"
 msgstr "Časový limit"
 
-#: src/common/util.js:754 src/component/photo/edit/info.vue:87
+#: src/common/util.js:788 src/component/photo/edit/info.vue:87
 #: src/component/photo/view/list.vue:47 src/component/sidebar/info.vue:14
 msgid "Title"
 msgstr "Titulek"
@@ -3501,7 +3501,7 @@ msgid "Unique ID"
 msgstr "Jedinečné ID"
 
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:241
-#: src/page/settings/account.vue:261 src/common/util.js:500
+#: src/page/settings/account.vue:261 src/common/util.js:532
 #: src/component/photo/edit/details.vue:102
 #: src/component/photo/edit/details.vue:460
 #: src/component/photo/edit/details.vue:59
@@ -3518,7 +3518,7 @@ msgid "Unknown"
 msgstr "Neznámé"
 
 #: src/page/settings/account.vue:467 src/page/settings/account.vue:475
-#: src/component/navigation.vue:1056 src/page/settings/account.vue:400
+#: src/component/navigation.vue:1057 src/page/settings/account.vue:400
 #: src/page/settings/account.vue:408
 msgid "Unregistered"
 msgstr "Neregistrovaný"
@@ -3725,7 +3725,7 @@ msgstr "Zobrazení výsledků vyhledávání jako seznamu."
 msgid "Viewer"
 msgstr "Prohlížeč"
 
-#: src/common/util.js:762
+#: src/common/util.js:796
 msgid "Vision"
 msgstr "Vize"
 
@@ -3869,7 +3869,7 @@ msgstr "Vaše trvalá podpora nám pomáhá poskytovat pravidelné aktualizace a
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alba zvláštních okamžiků, výletů a míst."
 
-#: src/component/lightbox.vue:434
+#: src/component/lightbox.vue:435
 msgid "Zoom in/out"
 msgstr "Přiblížit/Oddálit"
 
@@ -3893,11 +3893,14 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Titulek"
 
-#: src/component/lightbox.vue:1411 src/component/photo/clipboard.vue:116
+#: src/component/lightbox.vue:1412 src/component/photo/clipboard.vue:116
 #: src/component/photo/view/cards.vue:204
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archivovat"
+
+#~ msgid "No server connection"
+#~ msgstr "Žádné připojení k serveru"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Inzerovat adresu URL"

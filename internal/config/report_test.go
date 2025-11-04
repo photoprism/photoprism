@@ -73,7 +73,7 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		values := collect(rows)
 
 		assert.Equal(t, MySQL, values["database-driver"])
-		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism", values["database-dsn"])
+		assert.Equal(t, "user:***@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", values["database-dsn"])
 		_, hasName := values["database-name"]
 		assert.False(t, hasName)
 		_, hasPassword := values["database-password"]

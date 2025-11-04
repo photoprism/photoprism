@@ -202,7 +202,7 @@ func TestConfig_DatabasePortString(t *testing.T) {
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	resetDatabaseOptions(c)
-	expected := "/go/src/github.com/photoprism/photoprism/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
+	expected := ProjectRoot + "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
 	assert.Equal(t, expected, c.DatabaseName())
 }
 
@@ -281,13 +281,46 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 	c.options.DatabaseDriver = "MariaDB"
 	assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", c.DatabaseDSN())
 	c.options.DatabaseDriver = "tidb"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 	c.options.DatabaseDriver = "Postgres"
 	assert.Equal(t, "postgresql://photoprism:@localhost:5432/photoprism?TimeZone=UTC&connect_timeout=15&lock_timeout=50000&sslmode=disable", c.DatabaseDSN())
 	c.options.DatabaseDriver = "SQLite"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 	c.options.DatabaseDriver = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+
+	t.Run("CustomServer", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseServer = "proxy.internal:6032"
+		conf.options.DatabaseName = "tenantdb"
+		conf.options.DatabaseUser = "tenant"
+		conf.options.DatabasePassword = "secret"
+		conf.options.DatabaseTimeout = 42
+
+		want := "tenant:secret@tcp(proxy.internal:6032)/tenantdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=42s"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+	})
+	t.Run("UnixSocket", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseServer = "/var/run/mysql.sock"
+		conf.options.DatabaseName = "tenantdb"
+		conf.options.DatabaseUser = "tenant"
+		conf.options.DatabasePassword = "secret"
+		conf.options.DatabaseTimeout = 21
+
+		want := "tenant:secret@unix(/var/run/mysql.sock)/tenantdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=21s"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+	})
 }
 
 func TestConfig_DatabaseDSNFlags(t *testing.T) {
@@ -307,7 +340,7 @@ func TestConfig_DatabaseDSNFlags(t *testing.T) {
 
 		assert.False(t, conf.NoDatabaseDSN())
 		assert.True(t, conf.HasDatabaseDSN())
-		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism", conf.DatabaseDSN())
+		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", conf.DatabaseDSN())
 		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
 	})
 }
@@ -334,8 +367,8 @@ func TestConfig_DatabaseFile(t *testing.T) {
 	driver := c.DatabaseDriver()
 	assert.Equal(t, SQLite3, driver)
 	c.options.DatabaseDSN = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db", c.DatabaseFile())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db", c.DatabaseFile())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 }
 
 func TestConfig_DatabaseTimeout(t *testing.T) {
@@ -394,4 +427,13 @@ func TestImportSQL(t *testing.T) {
 	log.SetOutput(os.Stdout)
 
 	assert.NotContains(t, buffer.String(), "level=error")
+}
+
+func TestConfig_checkDb(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Setenv("PHOTOPRISM_DATABASE_SKIP_VERSION_CHECK", "true")
+	assert.NoError(t, c.checkDb(nil))
+	t.Setenv("PHOTOPRISM_DATABASE_SKIP_VERSION_CHECK", "")
+	assert.Error(t, c.checkDb(nil))
 }

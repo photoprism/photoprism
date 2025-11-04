@@ -17,13 +17,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Supported test databases.
 const (
-	MySQL           = "mysql"
-	Postgres        = "postgres"
-	SQLite3         = "sqlite"
+	MySQL           = dsn.DriverMySQL
+	Postgres        = dsn.DriverPostgres
+	SQLite3         = dsn.DriverSQLite3
 	SQLiteTestDB    = ".test.db"
 	SQLiteMemoryDSN = ":memory:?cache=shared&_foreign_keys=on"
 )

@@ -49,6 +49,6 @@ func TestOptions_ExpandFilenames(t *testing.T) {
 	assert.Equal(t, "tmp", p.TempPath)
 	assert.Equal(t, "import", p.ImportPath)
 	p.expandFilenames()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/tmp", p.TempPath)
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/import", p.ImportPath)
+	assert.Equal(t, ProjectRoot+"/internal/config/tmp", p.TempPath)
+	assert.Equal(t, ProjectRoot+"/internal/config/import", p.ImportPath)
 }

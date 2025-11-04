@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -66,9 +67,9 @@ func GenerateCredentials(conf *config.Config, nodeUUID, nodeName string) (dbName
 func BuildDSN(driver, host string, port int, user, pass, name string) string {
 	d := strings.ToLower(driver)
 	switch d {
-	case config.MySQL, config.MariaDB:
-		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
-			user, pass, host, port, name,
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
+		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
+			user, pass, host, port, name, dsn.Params[dsn.DriverMySQL],
 		)
 	default:
 		log.Warnf("provisioner: unsupported driver %q, falling back to mysql DSN format", driver)

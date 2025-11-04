@@ -25,21 +25,16 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
 const (
 	Auto     = "auto"
-	MySQL    = "mysql"
-	MariaDB  = "mariadb"
-	Postgres = "postgres"
-	SQLite3  = "sqlite"
-)
-
-// SQLite default DSNs.
-const (
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:"
+	MySQL    = dsn.DriverMySQL
+	MariaDB  = dsn.DriverMariaDB
+	Postgres = dsn.DriverPostgres
+	SQLite3  = dsn.DriverSQLite3
 )
 
 var drivers = map[string]func(string) gorm.Dialector{
@@ -129,9 +124,10 @@ func (c *Config) normalizeDatabaseDSN() {
 
 // DatabaseDSN returns the database data source name (DSN).
 func (c *Config) DatabaseDSN() string {
+	// Generate matching database DSN based on the configured database driver.
 	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
-		case MySQL, MariaDB:
+		case MySQL:
 			databaseServer := c.DatabaseServer()
 
 			// Connect via Unix Domain Socket?
@@ -143,29 +139,40 @@ func (c *Config) DatabaseDSN() string {
 			}
 
 			return fmt.Sprintf(
-				"%s:%s@%s/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=%ds",
+				"%s:%s@%s/%s?%s&timeout=%ds",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
 				databaseServer,
 				c.DatabaseName(),
+				dsn.Params[dsn.DriverMySQL],
 				c.DatabaseTimeout(),
 			)
 		case Postgres:
 			return fmt.Sprintf(
-				"postgresql://%s:%s@%s:%d/%s?TimeZone=UTC&connect_timeout=%d&lock_timeout=50000&sslmode=disable",
+				"postgresql://%s:%s@%s:%d/%s?connect_timeout=%d&%s",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
 				c.DatabaseHost(),
 				c.DatabasePort(),
 				c.DatabaseName(),
 				c.DatabaseTimeout(),
+				dsn.Params[dsn.DriverPostgres],
 			)
 		case SQLite3:
-			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000&_foreign_keys=on")
+			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
 		}
+	}
+
+	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
+	if c.DatabaseDriver() == MySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
+		c.options.DatabaseDSN = fmt.Sprintf(
+			"%s?%s&timeout=%ds",
+			c.options.DatabaseDSN,
+			dsn.Params[dsn.DriverMySQL],
+			c.DatabaseTimeout())
 	}
 
 	return c.options.DatabaseDSN
@@ -201,7 +208,7 @@ func (c *Config) ParseDatabaseDSN() {
 		return
 	}
 
-	d := dsn.NewDSN(c.options.DatabaseDSN)
+	d := dsn.Parse(c.options.DatabaseDSN)
 
 	c.options.DatabaseName = d.Name
 	c.options.DatabaseServer = d.Server
@@ -230,40 +237,26 @@ func (c *Config) DatabaseServer() string {
 
 // DatabaseHost the database server host.
 func (c *Config) DatabaseHost() string {
+	c.ParseDatabaseDSN()
+
 	if c.DatabaseDriver() == SQLite3 {
 		return ""
 	}
 
-	if s := strings.Split(c.DatabaseServer(), ":"); len(s) > 0 {
-		return s[0]
-	}
-
-	return c.options.DatabaseServer
-}
-
-// Get the port based on the database driver Postgres vs MySQL/MariaDB
-func (c *Config) _DefaultDatabasePort() int {
-	if c.DatabaseDriver() == Postgres {
-		return 5432
-	}
-	return 3306
+	d := dsn.Parse(c.DatabaseDSN())
+	return d.Host()
 }
 
 // DatabasePort the database server port.
 func (c *Config) DatabasePort() int {
-	defaultPort := c._DefaultDatabasePort()
+	c.ParseDatabaseDSN()
 
-	if server := c.DatabaseServer(); server == "" {
+	if c.DatabaseDriver() == SQLite3 {
 		return 0
-	} else if s := strings.Split(server, ":"); len(s) != 2 {
-		return defaultPort
-	} else if port, err := strconv.Atoi(s[1]); err != nil {
-		return defaultPort
-	} else if port < 1 || port > 65535 {
-		return defaultPort
-	} else {
-		return port
 	}
+
+	d := dsn.Parse(c.DatabaseDSN())
+	return d.Port()
 }
 
 // DatabasePortString the database server port as string.
@@ -562,6 +555,15 @@ func (c *Config) InitTestDb() {
 
 // checkDb checks the database server version.
 func (c *Config) checkDb(db *gorm.DB) error {
+	if txt.Bool(os.Getenv(EnvVar("DATABASE_SKIP_VERSION_CHECK"))) {
+		log.Debugf("config: skipping database version check")
+		return nil
+	}
+
+	if db == nil {
+		return fmt.Errorf("config: missing database connection")
+	}
+
 	switch c.DatabaseDriver() {
 	case MySQL:
 		type Res struct {

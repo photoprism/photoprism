@@ -79,10 +79,10 @@ func TestGenerateCredentials_CustomPrefix(t *testing.T) {
 }
 
 func TestBuildDSN(t *testing.T) {
-	dsn := BuildDSN("mysql", "mariadb", 3306, "user", "pass", "dbname")
-	assert.Contains(t, dsn, "user:pass@tcp(mariadb:3306)/dbname")
-	assert.Contains(t, dsn, "charset=utf8mb4")
-	assert.Contains(t, dsn, "parseTime=true")
+	d := BuildDSN("mysql", "mariadb", 3306, "user", "pass", "dbname")
+	assert.Contains(t, d, "user:pass@tcp(mariadb:3306)/dbname")
+	assert.Contains(t, d, "charset=utf8mb4")
+	assert.Contains(t, d, "parseTime=true")
 }
 
 func TestHmacBase32_LowercaseDeterministic(t *testing.T) {

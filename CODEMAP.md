@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 29, 2025
+**Last Updated:** November 2, 2025
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -142,6 +142,7 @@ Common How‑Tos
   - Expose a getter (e.g., in `config_server.go` or topic file)
   - Append to `rows` in `*config.Report()` after the same option as in `options.go`
   - If value must persist, write back to `options.yml` and reload into memory
+  - When you need the path to defaults/options/settings files, call `pkg/fs.ConfigFilePath` so `.yml` and `.yaml` stay interchangeable.
   - Tests: cover CLI/env/file precedence (see `internal/config/test.go` helpers)
 
 - Touch the DB schema

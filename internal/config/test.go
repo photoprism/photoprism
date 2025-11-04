@@ -120,18 +120,24 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
+<<<<<<< HEAD
 	driver, dsn := dsn.PhotoPrismTestToDriverDSN(0)
 
 	// Config example for MySQL / MariaDB:
 	//   driver = MySQL,
 	//   dsn = "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true",
+=======
+	testDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	testDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+>>>>>>> origin/develop
 
 	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
-		driver = SQLite3
+	if testDriver == "test" || testDriver == "sqlite" || testDriver == "" || testDsn == "" {
+		testDriver = dsn.DriverSQLite3
 	}
 
 	// Set default database DSN.
+<<<<<<< HEAD
 	if driver == SQLite3 {
 		if dsn == "" && dbName != "" {
 			dsnFile, _ := filepath.Abs(fmt.Sprintf(".%s.db", clean.TypeLower(dbName)))
@@ -151,6 +157,21 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(SQLiteTestDB), err)
 			} else {
 				log.Debugf("sqlite: test database %s removed", clean.Log(SQLiteTestDB))
+=======
+	if testDriver == dsn.DriverSQLite3 {
+		if testDsn == "" && dbName != "" {
+			if testDsn = fmt.Sprintf(".%s.db", clean.TypeLower(dbName)); !fs.FileExists(testDsn) {
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
+			} else if err := os.Remove(testDsn); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
+			}
+		} else if testDsn == "" || testDsn == dsn.SQLiteTestDB {
+			testDsn = dsn.SQLiteTestDB
+			if !fs.FileExists(testDsn) {
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
+			} else if err := os.Remove(testDsn); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
+>>>>>>> origin/develop
 			}
 		}
 	}
@@ -185,8 +206,8 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 		TempPath:        filepath.Join(dataPath, "temp"),
 		BackupRetain:    DefaultBackupRetain,
 		BackupSchedule:  DefaultBackupSchedule,
-		DatabaseDriver:  driver,
-		DatabaseDSN:     dsn,
+		DatabaseDriver:  testDriver,
+		DatabaseDSN:     testDsn,
 		AdminPassword:   "photoprism",
 		ClusterCIDR:     "",
 		JWTScope:        DefaultJWTAllowedScopes,
@@ -350,7 +371,9 @@ func NewTestConfig(dbName string) *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	if err := s.Save(filepath.Join(c.ConfigPath(), "settings.yml")); err != nil {
+	// Save settings next to the test config path, reusing any existing
+	// `.yaml`/`.yml` variant so the tests mirror production behavior.
+	if err := s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 

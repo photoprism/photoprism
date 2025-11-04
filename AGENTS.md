@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 28, 2025
+**Last Updated:** November 2, 2025
 
 ## Purpose
 
@@ -295,6 +295,7 @@ Note: Across our public documentation, official images, and in production, the c
 - For CLI-driven tests, wrap commands with `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process, and assert CLI output with `assert.Contains`/regex because `show` reports quote strings.
 - In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it via `photoprism.SetConfig`.
 - Generate identifiers with `rnd.GenerateUID(entity.ClientUID)` for OAuth client IDs and `rnd.UUIDv7()` for node UUIDs; treat `node.uuid` as required in responses.
+- When creating or editing shell scripts, run `shellcheck <file>` (or the relevant `make` target) and resolve warnings before exiting the task.
 - When adding persistent fixtures (photos, files, labels, etc.), always obtain new IDs via `rnd.GenerateUID(...)` with the matching prefix (`entity.PhotoUID`, `entity.FileUID`, `entity.LabelUID`, …) instead of inventing manual strings so the search helpers recognize them.
 - For database updates, prefer the `entity.Values` type alias over raw `map[string]interface{}` so helpers stay type-safe and consistent with existing code.
 - Reach for `config.NewMinimalTestConfig(t.TempDir())` when a test only needs filesystem/config scaffolding, and use `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` when you need a fresh SQLite schema without the cached fixture snapshot.
@@ -331,6 +332,7 @@ Note: Across our public documentation, official images, and in production, the c
 ### API & Config Changes
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
+- Use `pkg/fs.ConfigFilePath` when you need a config filename so existing `.yml` files remain valid and new installs can adopt `.yaml` transparently (the helper also covers other paired extensions such as `.toml`/`.tml`).
 - When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
 - When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 - Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
