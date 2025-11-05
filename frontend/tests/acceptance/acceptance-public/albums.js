@@ -9,6 +9,7 @@ import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
 import PhotoEdit from "../page-model/photo-edit";
+import Notifies from "../page-model/notifications";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
@@ -21,6 +22,7 @@ const photoviewer = new PhotoViewer();
 const page = new Page();
 const albumdialog = new AlbumDialog();
 const photoedit = new PhotoEdit();
+const notifies = new Notifies();
 
 test.meta("testID", "albums-001").meta({ type: "short", mode: "public" })(
   "Common: Create/delete album on /albums",
@@ -152,6 +154,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
   async (t) => {
     // Get initial counts for both Holiday and Christmas albums
     await menu.openPage("albums");
+    await notifies.waitForPhotosToLoad(2000);
     await toolbar.search("Holiday");
     const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
     await album.openAlbumWithUid(HolidayAlbumUid);

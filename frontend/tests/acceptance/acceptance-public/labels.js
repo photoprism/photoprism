@@ -97,8 +97,8 @@ test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Rename Label
   await toolbar.search("zebra");
   const LabelZebraUid = await label.getNthLabeltUid(0);
   await label.openNthLabel(0);
-  const FirstPhotoZebraUid = await photo.getNthPhotoUid("all", 0);
   const PhotoCountZebra = await photo.getPhotoCount("all");
+  const FirstPhotoZebraUid = await photo.getNthPhotoUid("all", 0);
   await menu.openPage("labels");
   await toolbar.search("zebra");
   await t
