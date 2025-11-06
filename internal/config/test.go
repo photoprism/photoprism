@@ -23,7 +23,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -139,8 +138,8 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 			} else if err := os.Remove(testDsn); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
 			}
-		} else if testDsn == "" || testDsn == dsn.SQLiteTestDB {
-			testDsn = dsn.SQLiteTestDB
+		} else if testDsn == "" || testDsn == enum.SQLiteTestDB {
+			testDsn = enum.SQLiteTestDB
 			if !fs.FileExists(testDsn) {
 				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
 			} else if err := os.Remove(testDsn); err != nil {

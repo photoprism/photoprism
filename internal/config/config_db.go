@@ -26,12 +26,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// SQLite default DSNs.
-const (
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:"
-)
-
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
 	c.normalizeDatabaseDSN()
@@ -129,7 +123,7 @@ func (c *Config) DatabaseDSN() string {
 				c.DatabasePassword(),
 				databaseServer,
 				c.DatabaseName(),
-				dsn.Params[dsn.DriverMySQL],
+				dsn.Params[enum.MySQL],
 				c.DatabaseTimeout(),
 			)
 		case enum.Postgres:
@@ -141,10 +135,10 @@ func (c *Config) DatabaseDSN() string {
 				c.DatabaseHost(),
 				c.DatabasePort(),
 				c.DatabaseTimeout(),
-				dsn.Params[dsn.DriverPostgres],
+				dsn.Params[enum.Postgres],
 			)
 		case enum.SQLite3:
-			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
+			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[enum.SQLite3]))
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
@@ -152,11 +146,11 @@ func (c *Config) DatabaseDSN() string {
 	}
 
 	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
-	if c.DatabaseDriver() == MySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
+	if c.DatabaseDriver() == enum.MySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
 		c.options.DatabaseDSN = fmt.Sprintf(
 			"%s?%s&timeout=%ds",
 			c.options.DatabaseDSN,
-			dsn.Params[dsn.DriverMySQL],
+			dsn.Params[enum.MySQL],
 			c.DatabaseTimeout())
 	}
 
@@ -178,7 +172,7 @@ func (c *Config) HasDatabaseDSN() bool {
 // ReportDatabaseDSN checks if the database data source name (DSN) should be reported
 // instead of database name, server, user, and password.
 func (c *Config) ReportDatabaseDSN() bool {
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return true
 	}
 
@@ -189,7 +183,7 @@ func (c *Config) ReportDatabaseDSN() bool {
 func (c *Config) ParseDatabaseDSN() {
 	if c.NoDatabaseDSN() {
 		return
-	} else if c.options.DatabaseServer != "" && c.DatabaseDriver() == SQLite3 {
+	} else if c.options.DatabaseServer != "" && c.DatabaseDriver() == enum.SQLite3 {
 		return
 	}
 
@@ -236,7 +230,7 @@ func (c *Config) DatabaseHost() string {
 func (c *Config) DatabasePort() int {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == enum.SQLite3 {
 		return 0
 	}
 
@@ -355,7 +349,7 @@ func (c *Config) DatabaseProvisionPrefix() string {
 // ShouldAutoRotateDatabase decides whether callers should request DB rotation automatically.
 // It is used by both the CLI and node bootstrap to avoid unnecessary provisioning calls.
 func (c *Config) ShouldAutoRotateDatabase() bool {
-	if c.Portal() || c.DatabaseDriver() != MySQL {
+	if c.Portal() || c.DatabaseDriver() != enum.MySQL {
 		return false
 	}
 

@@ -67,7 +67,7 @@ func TestConfig_normalizeDatabaseDSN(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	c.options.Deprecated.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
-	c.options.DatabaseDriver = MySQL
+	c.options.DatabaseDriver = enum.MySQL
 
 	assert.Equal(t, "honeypot:1234", c.DatabaseServer())
 	assert.Equal(t, "honeypot", c.DatabaseHost())
@@ -112,7 +112,7 @@ func TestConfig_ParseDatabaseDSN(t *testing.T) {
 		target := NewConfig(CliTestContext())
 		resetDatabaseOptions(target)
 
-		target.options.DatabaseDriver = MySQL
+		target.options.DatabaseDriver = enum.MySQL
 		target.options.DatabaseServer = "db.internal:3306"
 		target.options.DatabaseName = "photoprism"
 		target.options.DatabaseUser = "app"
@@ -131,7 +131,7 @@ func TestConfig_ParseDatabaseDSN(t *testing.T) {
 		cfg := NewConfig(CliTestContext())
 		resetDatabaseOptions(cfg)
 
-		cfg.options.DatabaseDriver = SQLite3
+		cfg.options.DatabaseDriver = enum.SQLite3
 		cfg.options.DatabaseDSN = "file:/data/app.db?_busy_timeout=5000"
 		cfg.options.DatabaseServer = "/tmp/mysql.sock"
 		cfg.options.DatabaseName = "existing-name"
@@ -224,19 +224,19 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 	t.Run("PortalAlwaysFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig(t.TempDir())
 		conf.Options().NodeRole = cluster.RolePortal
-		conf.Options().DatabaseDriver = MySQL
+		conf.Options().DatabaseDriver = enum.MySQL
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 
 	t.Run("NonMySQLDriverFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig(t.TempDir())
-		conf.Options().DatabaseDriver = SQLite3
+		conf.Options().DatabaseDriver = enum.SQLite3
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 
 	t.Run("MySQLMissingFieldsTrue", func(t *testing.T) {
 		conf := NewMinimalTestConfig(t.TempDir())
-		conf.Options().DatabaseDriver = MySQL
+		conf.Options().DatabaseDriver = enum.MySQL
 		conf.Options().DatabaseName = "photoprism"
 		conf.Options().DatabaseUser = ""
 		conf.Options().DatabasePassword = ""
@@ -265,7 +265,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf := NewConfig(CliTestContext())
 		resetDatabaseOptions(conf)
 
-		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseDriver = enum.MySQL
 		conf.options.DatabaseServer = "proxy.internal:6032"
 		conf.options.DatabaseName = "tenantdb"
 		conf.options.DatabaseUser = "tenant"
@@ -281,7 +281,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf := NewConfig(CliTestContext())
 		resetDatabaseOptions(conf)
 
-		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseDriver = enum.MySQL
 		conf.options.DatabaseServer = "/var/run/mysql.sock"
 		conf.options.DatabaseName = "tenantdb"
 		conf.options.DatabaseUser = "tenant"
@@ -307,7 +307,7 @@ func TestConfig_DatabaseDSNFlags(t *testing.T) {
 		conf := NewConfig(CliTestContext())
 		resetDatabaseOptions(conf)
 
-		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseDriver = enum.MySQL
 		conf.options.Deprecated.DatabaseDsn = "user:pass@tcp(db.internal:3306)/photoprism"
 
 		assert.False(t, conf.NoDatabaseDSN())
@@ -321,10 +321,10 @@ func TestConfig_ReportDatabaseDSN(t *testing.T) {
 	conf := NewConfig(CliTestContext())
 	resetDatabaseOptions(conf)
 
-	assert.Equal(t, SQLite3, conf.DatabaseDriver())
+	assert.Equal(t, enum.SQLite3, conf.DatabaseDriver())
 	assert.True(t, conf.ReportDatabaseDSN())
 
-	conf.options.DatabaseDriver = MySQL
+	conf.options.DatabaseDriver = enum.MySQL
 	conf.options.DatabaseDSN = ""
 	assert.False(t, conf.ReportDatabaseDSN())
 
