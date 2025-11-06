@@ -70,6 +70,25 @@ func TestOidcUser(t *testing.T) {
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "Jane Doe", m.DisplayName)
 	})
+	t.Run("LongNumberAsSubject", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.GivenName = "Jane"
+		info.FamilyName = "Doe"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = "12345678901234567890"
+		info.PreferredUsername = "Jane Doe"
+
+		m := OidcUser(info, "", "jane.doe")
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "", m.AuthIssuer)
+		assert.Equal(t, "12345678901234567890", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jane.doe", m.UserName)
+		assert.Equal(t, "Jane Doe", m.DisplayName)
+	})
 	t.Run("NoUsername", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"
@@ -1808,6 +1827,7 @@ func TestUser_SetAuthID(t *testing.T) {
 func TestUser_UpdateAuthID(t *testing.T) {
 	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
+	longnumber := "12345678901234567890"
 
 	t.Run("UUID", func(t *testing.T) {
 		m := UserFixtures.Get("friend")
@@ -1832,6 +1852,20 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		assert.Equal(t, issuer, m.AuthIssuer)
 		err := m.UpdateAuthID(uuid, "")
 		assert.Error(t, err)
+	})
+	t.Run("LongNumber", func(t *testing.T) {
+		m := UserFixtures.Get("friend")
+
+		m.SetAuthID("", issuer)
+		assert.Equal(t, "", m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+		m.SetAuthID(longnumber, issuer)
+		assert.Equal(t, longnumber, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+		err := m.UpdateAuthID(longnumber, "")
+		assert.NoError(t, err)
+		assert.Equal(t, longnumber, m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
 	})
 }
 
@@ -2355,4 +2389,24 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 	ctx := cli.NewContext(app, set, nil)
 	require.NoError(t, user.SetValuesFromCli(ctx))
 	assert.Equal(t, "videos:view", user.UserScope)
+}
+
+func TestUser_AuthIDSQLite(t *testing.T) {
+	user := FindLocalUser("alice")
+	require.NotNil(t, user)
+
+	original := user.AuthID
+	t.Cleanup(func() {
+		user.AuthID = original
+		user.Save()
+	})
+
+	expected := "012345678901234567890123456789"
+	user.AuthID = expected
+	user.Save()
+
+	user2 := FindLocalUser("alice")
+	require.NotNil(t, user2)
+
+	assert.Equal(t, expected, user2.AuthID)
 }

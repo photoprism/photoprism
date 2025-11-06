@@ -52,7 +52,7 @@ type User struct {
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthIssuer    string        `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthID        string        `gorm:"type:VARBINARY(264);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
@@ -382,6 +382,20 @@ func (m *User) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
+// Wraps the AuthID field so that SQLite will save it correctly
+func (m *User) wrapAuthID() {
+	if m.AuthID != "" && !strings.HasPrefix(m.AuthID, "<pp>") && !strings.HasSuffix(m.AuthID, "</pp>") {
+		m.AuthID = fmt.Sprintf("<pp>%s</pp>", m.AuthID)
+	}
+}
+
+// Unwraps the AuthID field so that PhotoPrism can use it correctly
+func (m *User) unwrapAuthID() {
+	if m.AuthID != "" && strings.HasPrefix(m.AuthID, "<pp>") && strings.HasSuffix(m.AuthID, "</pp>") {
+		m.AuthID = strings.TrimSuffix(strings.TrimPrefix(m.AuthID, "<pp>"), "</pp>")
+	}
+}
+
 // BeforeCreate sets a random UID if needed before inserting a new row to the database.
 func (m *User) BeforeCreate(scope *gorm.Scope) error {
 	if m.UserSettings != nil {
@@ -403,8 +417,40 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 		return nil
 	}
 
+	m.wrapAuthID()
+
 	m.UserUID = rnd.GenerateUID(UserUID)
 	return scope.SetColumn("UserUID", m.UserUID)
+}
+
+// BeforeSave ensures that the AuthID will save correctly on SQLite
+func (m *User) BeforeSave(scope *gorm.Scope) error {
+	m.wrapAuthID()
+	return nil
+}
+
+// BeforeUpdate ensures that the AuthID will save correctly on SQLite
+func (m *User) BeforeUpdate(scope *gorm.Scope) error {
+	m.wrapAuthID()
+	return nil
+}
+
+// AfterSave ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
+func (m *User) AfterSave(scope *gorm.Scope) error {
+	m.unwrapAuthID()
+	return nil
+}
+
+// AfterUpdate ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
+func (m *User) AfterUpdate(scope *gorm.Scope) error {
+	m.unwrapAuthID()
+	return nil
+}
+
+// AfterFind ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
+func (m *User) AfterFind(scope *gorm.Scope) error {
+	m.unwrapAuthID()
+	return nil
 }
 
 // IsExpired checks if the user account has expired.
