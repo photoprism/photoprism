@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestParse(t *testing.T) {
@@ -17,7 +19,7 @@ func TestParse(t *testing.T) {
 			in:   "user:secret@tcp(localhost:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
 			want: DSN{
 				DSN:      "user:secret@tcp(localhost:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
-				Driver:   DriverMySQL,
+				Driver:   enum.MySQL,
 				User:     "user",
 				Password: "secret",
 				Net:      "tcp",
@@ -31,7 +33,7 @@ func TestParse(t *testing.T) {
 			in:   "mysql://user:secret@localhost:3306/photoprism?parseTime=true",
 			want: DSN{
 				DSN:      "mysql://user:secret@localhost:3306/photoprism?parseTime=true",
-				Driver:   DriverMySQL,
+				Driver:   enum.MySQL,
 				User:     "user",
 				Password: "secret",
 				Server:   "localhost:3306",
@@ -44,7 +46,7 @@ func TestParse(t *testing.T) {
 			in:   "user:secret@unix(/var/run/mysql.sock)/photoprism",
 			want: DSN{
 				DSN:      "user:secret@unix(/var/run/mysql.sock)/photoprism",
-				Driver:   DriverMySQL,
+				Driver:   enum.MySQL,
 				User:     "user",
 				Password: "secret",
 				Net:      "unix",
@@ -57,7 +59,7 @@ func TestParse(t *testing.T) {
 			in:   "file:/data/index.db?_busy_timeout=5000",
 			want: DSN{
 				DSN:    "file:/data/index.db?_busy_timeout=5000",
-				Driver: DriverSQLite3,
+				Driver: enum.SQLite3,
 				Server: "file:/data",
 				Name:   "index.db",
 				Params: "_busy_timeout=5000",
@@ -68,7 +70,7 @@ func TestParse(t *testing.T) {
 			in:   "/index.db?_busy_timeout=5000",
 			want: DSN{
 				DSN:    "/index.db?_busy_timeout=5000",
-				Driver: DriverSQLite3,
+				Driver: enum.SQLite3,
 				Server: "",
 				Name:   "index.db",
 				Params: "_busy_timeout=5000",
@@ -79,7 +81,7 @@ func TestParse(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
-				Driver:   DriverPostgres,
+				Driver:   enum.Postgres,
 				User:     "alice",
 				Password: "s3cr3t",
 				Server:   "db.internal:5432",

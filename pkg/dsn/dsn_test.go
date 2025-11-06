@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestDSN_HostAndPort(t *testing.T) {
@@ -95,7 +97,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app",
-				Driver:   DriverPostgres,
+				Driver:   enum.Postgres,
 				User:     "alice",
 				Password: "s3cr3t",
 				Name:     "app",
@@ -107,7 +109,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
-				Driver:   DriverPostgres,
+				Driver:   enum.Postgres,
 				User:     "alice",
 				Password: "s3cr3t",
 				Server:   "db.internal:5432",
@@ -121,7 +123,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   `user="alice" password="s ec ret" dbname="app" host=db.internal`,
 			want: DSN{
 				DSN:      `user="alice" password="s ec ret" dbname="app" host=db.internal`,
-				Driver:   DriverPostgres,
+				Driver:   enum.Postgres,
 				User:     "alice",
 				Password: "s ec ret",
 				Server:   "db.internal",

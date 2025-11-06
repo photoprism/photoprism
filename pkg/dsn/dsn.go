@@ -31,6 +31,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // dsnPattern is a regular expression matching a database DSN string.
@@ -75,7 +77,7 @@ func (d *DSN) MaskPassword() (s string) {
 	}
 
 	// Mask password in PostgreSQL-style DSN.
-	if d.Driver == DriverPostgres || strings.Contains(s, "password=") {
+	if d.Driver == enum.Postgres || strings.Contains(s, "password=") {
 		return dsnPostgresPasswordPattern.ReplaceAllStringFunc(s, func(segment string) string {
 			matches := dsnPostgresPasswordPattern.FindStringSubmatch(segment)
 			if len(matches) != 3 {
@@ -107,7 +109,7 @@ func (d *DSN) MaskPassword() (s string) {
 
 // Host the database server host.
 func (d *DSN) Host() string {
-	if d.Driver == DriverSQLite3 {
+	if d.Driver == enum.SQLite3 {
 		return ""
 	}
 
@@ -118,16 +120,16 @@ func (d *DSN) Host() string {
 // Port the database server port.
 func (d *DSN) Port() int {
 	switch d.Driver {
-	case DriverSQLite3:
+	case enum.SQLite3:
 		return 0
 	}
 
 	defaultPort := 0
 
 	switch d.Driver {
-	case DriverMySQL, DriverMariaDB:
+	case enum.MySQL, enum.MariaDB:
 		defaultPort = 3306
-	case DriverPostgres:
+	case enum.Postgres:
 		defaultPort = 5432
 	}
 
@@ -250,7 +252,7 @@ func (d *DSN) parsePostgres() bool {
 		}
 	}
 
-	d.Driver = DriverPostgres
+	d.Driver = enum.Postgres
 	d.User = values["user"]
 	d.Password = values["password"]
 	d.Name = name
@@ -372,13 +374,13 @@ func (d *DSN) detectDriver() {
 
 	switch driver {
 	case "postgres", "postgresql":
-		d.Driver = DriverPostgres
+		d.Driver = enum.Postgres
 		return
 	case "mysql", "mariadb":
-		d.Driver = DriverMySQL
+		d.Driver = enum.MySQL
 		return
 	case "sqlite", "sqlite3", "file":
-		d.Driver = DriverSQLite3
+		d.Driver = enum.SQLite3
 		return
 	}
 
@@ -390,26 +392,26 @@ func (d *DSN) detectDriver() {
 	lower := strings.ToLower(d.DSN)
 
 	if strings.Contains(lower, "postgres://") || strings.Contains(lower, "postgresql://") {
-		d.Driver = DriverPostgres
+		d.Driver = enum.Postgres
 		return
 	}
 
 	if d.Net == "tcp" || d.Net == "unix" || strings.Contains(lower, "@tcp(") || strings.Contains(lower, "@unix(") {
-		d.Driver = DriverMySQL
+		d.Driver = enum.MySQL
 		return
 	}
 
 	if strings.HasPrefix(lower, "file:") || strings.HasSuffix(lower, ".db") || strings.HasSuffix(strings.ToLower(d.Name), ".db") {
-		d.Driver = DriverSQLite3
+		d.Driver = enum.SQLite3
 		return
 	}
 
 	if strings.Contains(lower, " host=") && strings.Contains(lower, " dbname=") {
-		d.Driver = DriverPostgres
+		d.Driver = enum.Postgres
 		return
 	}
 
 	if d.Server != "" && (strings.Contains(d.Server, ":") || d.Net != "") && d.Driver == "" {
-		d.Driver = DriverMySQL
+		d.Driver = enum.MySQL
 	}
 }
