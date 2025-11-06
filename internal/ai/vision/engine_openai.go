@@ -2,7 +2,7 @@ package vision
 
 import (
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 // init registers the OpenAI engine alias so models can set Engine: "openai"

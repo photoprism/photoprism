@@ -50,6 +50,25 @@ func TestConfigValues_LoadDefaultModelWithCustomRun(t *testing.T) {
 	assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunOnIndex))
 }
 
+func TestConfigValues_LoadDefaultModelDisabled(t *testing.T) {
+	tempDir := t.TempDir()
+	configFile := filepath.Join(tempDir, "vision.yml")
+
+	err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Default: true\n  Disabled: true\n"), fs.ModeConfigFile)
+	assert.NoError(t, err)
+
+	cfg := NewConfig()
+	err = cfg.Load(configFile)
+	assert.NoError(t, err)
+
+	if m := cfg.Model(ModelTypeLabels); m != nil {
+		t.Fatalf("expected disabled default model to be ignored, got %v", m)
+	}
+
+	assert.Equal(t, RunNever, cfg.RunType(ModelTypeLabels))
+	assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunManual))
+}
+
 func TestConfigModelPrefersLastEnabled(t *testing.T) {
 	defaultModel := *NasnetModel
 	defaultModel.Disabled = false

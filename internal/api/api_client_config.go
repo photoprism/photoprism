@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
@@ -27,16 +28,12 @@ func UpdateClientConfig() {
 //	@Router		/api/v1/config [get]
 func GetClientConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
-		sess := Session(ClientIP(c), AuthToken(c))
 		conf := get.Config()
 
-		// Check authentication.
-		if sess != nil {
-			// Return custom client config for authenticated user.
-			c.JSON(http.StatusOK, conf.ClientSession(sess))
+		if s := AuthAny(c, acl.ResourceConfig, acl.Permissions{acl.ActionView}); s.Valid() {
+			c.JSON(http.StatusOK, conf.ClientSession(s))
 			return
 		} else if conf.DisableFrontend() {
-			// Abort if not authenticated, and the web frontend is disabled.
 			AbortUnauthorized(c)
 			return
 		}

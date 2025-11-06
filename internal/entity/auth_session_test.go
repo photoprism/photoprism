@@ -2,6 +2,7 @@ package entity
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -10,8 +11,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -58,6 +60,41 @@ func TestNewSession(t *testing.T) {
 		assert.Len(t, m.GetData().Tokens, 2)
 		assert.Equal(t, "foo", m.GetData().Tokens[0])
 		assert.Equal(t, "bar", m.GetData().Tokens[1])
+	})
+}
+
+func TestNewSessionFromToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	t.Run("EmptyToken", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+
+		assert.Nil(t, NewSessionFromToken(c, "", acl.ResourceVision.String(), "vision-api"))
+	})
+	t.Run("PopulatedSession", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/vision/labels", nil)
+		req.RemoteAddr = "198.51.100.42:8080"
+		req.Header.Set(header.UserAgent, "VisionClient/1.0")
+		c.Request = req
+
+		token := "vision-service-key-abc123"
+		sess := NewSessionFromToken(c, token, acl.ResourceVision.String(), "vision-api")
+		if assert.NotNil(t, sess) {
+			assert.Equal(t, http.StatusOK, sess.HttpStatus())
+			assert.Equal(t, token, sess.AuthToken())
+			assert.Equal(t, rnd.SessionID(token), sess.ID)
+			assert.Equal(t, acl.ResourceVision.String(), sess.Scope())
+			assert.Equal(t, authn.GrantToken, sess.GetGrantType())
+			assert.Equal(t, authn.MethodDefault, sess.GetMethod())
+			assert.Equal(t, authn.ProviderAccessToken, sess.GetProvider())
+			assert.Equal(t, header.ClientIP(c), sess.ClientIP)
+			assert.Equal(t, req.UserAgent(), sess.UserAgent)
+			assert.EqualValues(t, 60, sess.SessTimeout)
+			assert.True(t, rnd.IsRefID(sess.RefID))
+		}
 	})
 }
 
@@ -347,6 +384,31 @@ func TestSession_ClientRole(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, acl.RoleNone, m.GetClientRole())
+	})
+	t.Run("MissingClientEntityPortal", func(t *testing.T) {
+		m := &Session{
+			ClientUID:    "cs5cpu17n6gj2zzz",
+			AuthProvider: authn.ProviderClient.String(),
+			AuthMethod:   authn.MethodJWT.String(),
+			AuthIssuer:   "portal:cbaa0276-07d3-43ac-b420-25e2601b0ad4",
+		}
+
+		role := m.GetClientRole()
+		assert.Equal(t, acl.RolePortal, role)
+		client := m.GetClient()
+		assert.Equal(t, "cs5cpu17n6gj2zzz", client.ClientUID)
+		assert.Equal(t, acl.RolePortal, client.AclRole())
+	})
+	t.Run("MissingClientEntityDefault", func(t *testing.T) {
+		m := &Session{
+			ClientUID:    "cs5cpu17n6gj2xxx",
+			AuthProvider: authn.ProviderClient.String(),
+			AuthMethod:   authn.MethodJWT.String(),
+			AuthIssuer:   "https://example.com/oauth",
+		}
+
+		role := m.GetClientRole()
+		assert.Equal(t, acl.RoleClient, role)
 	})
 }
 
@@ -1038,4 +1100,41 @@ func TestSession_HttpStatus(t *testing.T) {
 	assert.Equal(t, 403, m.HttpStatus())
 	alice := FindSessionByRefID("sessxkkcabcd")
 	assert.Equal(t, 200, alice.HttpStatus())
+}
+
+func TestSession_NoScopeAndHasScope(t *testing.T) {
+	var sess Session
+
+	assert.True(t, sess.NoScope())
+	assert.False(t, sess.HasScope())
+
+	sess.AuthScope = list.Any
+	assert.True(t, sess.NoScope())
+	assert.False(t, sess.HasScope())
+
+	sess.AuthScope = "photos:view"
+	assert.False(t, sess.NoScope())
+	assert.True(t, sess.HasScope())
+}
+
+func TestSession_SetUserScopeDefault(t *testing.T) {
+	t.Run("DefaultsToUserScope", func(t *testing.T) {
+		sess := &Session{}
+		user := &User{UserUID: "u123", UserName: "scopeuser", UserScope: "photos:view"}
+
+		sess.SetUser(user)
+
+		assert.Equal(t, "photos:view", sess.AuthScope)
+		assert.Equal(t, user.UserUID, sess.UserUID)
+		assert.Equal(t, user.UserName, sess.UserName)
+	})
+
+	t.Run("KeepsExistingScope", func(t *testing.T) {
+		sess := &Session{AuthScope: "logs:*"}
+		user := &User{UserUID: "u456", UserName: "admin", UserScope: "photos:view"}
+
+		sess.SetUser(user)
+
+		assert.Equal(t, "logs:*", sess.AuthScope)
+	})
 }

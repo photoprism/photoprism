@@ -1,10 +1,16 @@
 package cluster
 
-import "time"
+import (
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+)
 
 // BootstrapAutoJoinEnabled indicates whether cluster bootstrap logic is enabled
 // for nodes by default. Portal nodes ignore this value; gating is decided by
-// runtime checks (e.g., conf.IsPortal() and conf.NodeRole()).
+// runtime checks (e.g., conf.Portal() and conf.NodeRole()).
 var BootstrapAutoJoinEnabled = true
 
 // BootstrapAutoThemeEnabled indicates whether bootstrap should attempt to
@@ -23,14 +29,52 @@ var BootstrapRegisterRetryDelay = 15 * time.Second
 // request to the Portal.
 var BootstrapRegisterTimeout = 15 * time.Second
 
-// BootstrapThemeInstallOnlyIfMissingJS ensures theme installation only happens
-// when the local theme directory is missing or does not contain an app.js file.
-var BootstrapThemeInstallOnlyIfMissingJS = true
+func init() {
+	applyPolicyEnv()
+}
 
-// BootstrapAllowThemeOverwrite indicates whether bootstrap may overwrite an
-// existing local theme. The default is false to protect local modifications.
-var BootstrapAllowThemeOverwrite = false
+// applyPolicyEnv allows advanced users to fine-tune bootstrap behaviour via environment
+// variables without exposing additional user-facing configuration options.
+func applyPolicyEnv() {
+	if v := os.Getenv(clean.EnvVar("cluster-bootstrap-auto-join-enabled")); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
+			BootstrapAutoJoinEnabled = b
+		}
+	}
 
-// TODO: Consider allowing these policy defaults to be overridden via environment
-// variables (e.g., for CI) without exposing user-facing config flags. Keep the
-// public surface area small until we see demand.
+	if v := os.Getenv(clean.EnvVar("cluster-bootstrap-auto-theme-enabled")); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
+			BootstrapAutoThemeEnabled = b
+		}
+	}
+
+	if v := os.Getenv(clean.EnvVar("cluster-bootstrap-max-attempts")); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			BootstrapRegisterMaxAttempts = n
+		}
+	}
+
+	if v := os.Getenv(clean.EnvVar("cluster-bootstrap-retry-delay")); v != "" {
+		if d, ok := parseDurationEnv(v); ok {
+			BootstrapRegisterRetryDelay = d
+		}
+	}
+
+	if v := os.Getenv(clean.EnvVar("cluster-bootstrap-timeout")); v != "" {
+		if d, ok := parseDurationEnv(v); ok {
+			BootstrapRegisterTimeout = d
+		}
+	}
+}
+
+func parseDurationEnv(value string) (time.Duration, bool) {
+	if d, err := time.ParseDuration(value); err == nil {
+		return d, true
+	}
+
+	if n, err := strconv.Atoi(value); err == nil && n >= 0 {
+		return time.Duration(n) * time.Second, true
+	}
+
+	return 0, false
+}

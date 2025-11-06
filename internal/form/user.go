@@ -19,6 +19,7 @@ type User struct {
 	UserEmail    string       `json:"Email,omitempty" yaml:"Email,omitempty"`
 	DisplayName  string       `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
 	UserRole     string       `json:"Role,omitempty" yaml:"Role,omitempty"`
+	UserScope    string       `json:"Scope,omitempty" yaml:"Scope,omitempty"`
 	SuperAdmin   bool         `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin     bool         `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
 	WebDAV       bool         `json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
@@ -39,6 +40,7 @@ func NewUserFromCli(ctx *cli.Context) User {
 		UserEmail:    clean.Email(ctx.String("email")),
 		DisplayName:  clean.Name(ctx.String("name")),
 		UserRole:     clean.Role(ctx.String("role")),
+		UserScope:    clean.Scope(ctx.String("scope")),
 		SuperAdmin:   ctx.Bool("superadmin"),
 		CanLogin:     !ctx.Bool("no-login"),
 		WebDAV:       ctx.Bool("webdav"),
@@ -72,6 +74,11 @@ func (f *User) Email() string {
 // Role returns the sanitized user role string.
 func (f *User) Role() string {
 	return clean.Role(f.UserRole)
+}
+
+// Scope returns the sanitized user scope.
+func (f *User) Scope() string {
+	return clean.Scope(f.UserScope)
 }
 
 // Attr returns the sanitized user account attributes.

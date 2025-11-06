@@ -7,8 +7,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // registerStaticRoutes adds routes for serving static content and templates.

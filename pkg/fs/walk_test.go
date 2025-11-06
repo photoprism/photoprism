@@ -108,8 +108,10 @@ func TestSkipWalk(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, dirs, "testdata/directory/subdirectory/.hiddendir")
 
-		expected := []string{
+		mustSkip := []string{
 			"testdata",
+			"testdata/config",
+			"testdata/config/.foo.local",
 			"testdata/directory",
 			"testdata/directory/.ppignore",
 			"testdata/directory/bar.txt",
@@ -131,6 +133,6 @@ func TestSkipWalk(t *testing.T) {
 			"testdata/originals",
 		}
 
-		assert.Equal(t, expected, skipped)
+		assert.Equal(t, mustSkip, skipped)
 	})
 }

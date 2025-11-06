@@ -31,9 +31,9 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/video"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 

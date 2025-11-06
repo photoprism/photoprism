@@ -3,30 +3,31 @@
     ref="dialog"
     :model-value="visible"
     :scrollable="false"
+    :transition="false"
+    :close-delay="0"
+    :open-delay="0"
     fullscreen
     scrim
     persistent
     tiled
     theme="lightbox"
-    class="p-dialog p-lightbox v-dialog--lightbox"
+    class="p-dialog p-lightbox v-dialog--lightbox no-transition"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
     @focusout="onFocusOut"
     @keydown.space.exact="onKeyDown"
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
+    @keydown.esc.stop="close"
+    @click.capture="captureDialogClick"
+    @pointerdown.capture="captureDialogPointerDown"
   >
-    <div class="p-lightbox__underlay"></div>
-    <div
-      ref="container"
-      class="p-lightbox__container"
-      @click.capture="onContainerClick"
-      @pointerdown.capture="onContainerPointerDown"
-    >
+    <div class="p-lightbox__underlay no-transition"></div>
+    <div ref="container" class="p-lightbox__container no-transition">
       <div
         ref="content"
         tabindex="1"
-        class="p-lightbox__content"
+        class="p-lightbox__content no-transition"
         :class="{
           'sidebar-visible': info,
           'slideshow-active': slideshow.active,
@@ -34,11 +35,12 @@
           'is-zoomable': isZoomable,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
+          'is-video': model?.Type === 'video',
           'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"
       >
-        <div ref="lightbox" tabindex="2" class="p-lightbox__pswp"></div>
+        <div ref="lightbox" tabindex="2" class="p-lightbox__pswp no-transition"></div>
         <div
           v-show="video.controls && controlsShown !== 0"
           ref="controls"
@@ -160,6 +162,7 @@ export default {
       trace,
       visible: false,
       busy: false,
+      closing: false,
       info: localStorage.getItem("lightbox.info") === "true",
       menuElement: null,
       menuBgColor: "#252525",
@@ -192,15 +195,8 @@ export default {
       models: [], // Slide models.
       index: 0, // Current slide index in models.
       subscriptions: [], // Event subscriptions.
-      videoEventListener: (ev) => this.onVideo(ev),
-      videoRemoteEventListener: (ev) => this.onVideoRemote(ev),
-      videoAvailabilityListener: (castable) => {
-        this.video.castable = castable;
-      },
-      videoRemoteWatched: new WeakSet(),
       // Video properties for rendering the controls.
       video: {
-        element: null,
         controls: false,
         src: "",
         error: "",
@@ -217,7 +213,6 @@ export default {
         castable: false,
         casting: false,
         remote: "",
-        uid: null,
       },
       // Slideshow properties.
       slideshow: {
@@ -230,6 +225,13 @@ export default {
       touchStartListener: (ev) => this.onTouchStartOnce(ev),
       mouseMoveListener: (ev) => this.onMouseMoveOnce(ev),
       lightboxPointerListener: (ev) => this.onLightboxPointerEvent(ev),
+      videoEventListener: (ev) => this.onVideoEvent(ev),
+      videoRemoteListener: (ev) => this.onVideoRemote(ev),
+      videoAvailabilityListener: (castable) => {
+        if (typeof this.video === "object") {
+          this.video.castable = castable;
+        }
+      },
     };
   },
   created() {
@@ -287,6 +289,7 @@ export default {
     showDialog() {
       this.$view.enter(this, this.$refs?.content);
       this.busy = true;
+      this.closing = false;
       this.visible = true;
       this.wasFullscreen = $fullscreen.isEnabled();
       this.info = localStorage.getItem("lightbox.info") === "true";
@@ -308,6 +311,7 @@ export default {
       }
 
       this.busy = false;
+      this.closing = false;
 
       // Publish event to be consumed by other components.
       this.$event.publish("lightbox.closed");
@@ -322,6 +326,7 @@ export default {
       // Publish enter event.
       this.visible = false;
       this.busy = false;
+      this.closing = false;
       this.$view.leave(this);
       this.$event.publish("lightbox.leave");
       this.$emit("leave");
@@ -329,7 +334,7 @@ export default {
     // Traps the focus inside the lightbox dialog.
     onFocusOut(ev) {
       if (this.debug) {
-        this.log(`dialog.${ev.type}`, ev);
+        this.log(`dialog.${ev.type}`, { ev });
       }
 
       if (!this.$view.isActive(this)) {
@@ -452,7 +457,8 @@ export default {
             this.busy = false;
           })
           .catch(() => {
-            this.hideDialog();
+            this.busy = false;
+            this.close();
           });
       });
 
@@ -617,8 +623,6 @@ export default {
         // Prevent default loading behavior.
         ev.preventDefault();
 
-        this.cleanupContentElement(content.element);
-
         try {
           // Create pswp__media element.
           const mediaElement = document.createElement("div");
@@ -626,7 +630,7 @@ export default {
           mediaElement.classList.add(`pswp__media--${content.data.model.Type}`);
 
           // Create and append video player.
-          mediaElement.appendChild(this.createVideoElement(content.data, false, false, false));
+          mediaElement.appendChild(this.createVideoElement(content, false, false, false));
 
           // Create and append cover image.
           if (content.data.msrc) {
@@ -650,16 +654,22 @@ export default {
         }
       }
     },
-    onContentRemove(ev) {
-      const element = ev?.content?.element ?? ev?.content ?? null;
-      this.cleanupContentElement(element);
-    },
     onContentDestroy(ev) {
-      const element = ev?.content?.element ?? ev?.content ?? null;
-      this.cleanupContentElement(element);
+      if (typeof ev?.content?.data?.events === "object") {
+        const data = ev.content.data;
+
+        if (this.debug) {
+          this.log(`content.destroy`, data);
+        }
+
+        // Remove video event listeners.
+        data.events?.abort();
+        data.events = null;
+      }
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
-    createVideoElement(data, autoplay = false, loop = false, mute = false) {
+    createVideoElement(content, autoplay = false, loop = false, mute = false) {
+      const data = content.data;
       const model = data.model;
       const format = data.format;
       const posterSrc = data.msrc;
@@ -681,14 +691,27 @@ export default {
       // Set HTMLMediaElement properties.
       video.className = "pswp__video";
       video.poster = posterSrc;
-      video.autoplay = autoplay;
-      video.loop = loop && !slideshow;
-      video.muted = mute || this.muted;
+      video.autoplay = Boolean(autoplay);
+      video.loop = Boolean(loop && !slideshow);
+      video.muted = Boolean(mute || this.muted);
       video.preload = preload;
+      video.setAttribute("playsinline", ""); // iOS requires attribute
       video.playsInline = true;
       video.disableRemotePlayback = false;
       video.controls = false;
       video.dir = document.dir ? document.dir : this.$config.dir(this.$isRtl);
+
+      // Create AbortController instance to clean up the event handlers.
+      const ctrl = new AbortController();
+
+      // Abort any existing controller.
+      data.events?.abort();
+      data.events = ctrl;
+
+      // Attach video event handlers.
+      VIDEO_EVENT_TYPES.forEach((ev) => {
+        video.addEventListener(ev, this.videoEventListener, { signal: ctrl.signal });
+      });
 
       // Create and append video source elements, depending on file format support.
       if (
@@ -708,138 +731,45 @@ export default {
         video.appendChild(avcSource);
       }
 
-      this.attachVideoEventListeners(video);
+      // If we set preload programmatically, kick Safari to honor it.
+      if (preload !== "none") {
+        try {
+          video.load();
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.load", { err });
+          }
+        }
+      }
+
+      // Check if remote playback is supported by this browser.
+      if (this.featExperimental && video.remote && video.remote instanceof RemotePlayback) {
+        if (!this.video.castable) {
+          const cancel = () => {
+            video.remote
+              .cancelWatchAvailability?.(this.videoAvailabilityListener)
+              .catch(this.trace ? this.log : () => {});
+          };
+
+          ctrl.signal.addEventListener("abort", cancel, { once: true });
+          video.remote.watchAvailability(this.videoAvailabilityListener).catch(this.trace ? this.log : () => {});
+        }
+
+        // Attach video remote event handlers.
+        VIDEO_REMOTE_EVENT_TYPES.forEach((ev) => {
+          video.addEventListener(ev, this.videoRemoteListener, { signal: ctrl.signal });
+        });
+      }
 
       // Return HTMLMediaElement.
       return video;
     },
-    attachVideoEventListeners(video) {
-      if (!video || !(video instanceof HTMLMediaElement)) {
-        return;
-      }
-
-      this.detachVideoEventListeners(video);
-
-      VIDEO_EVENT_TYPES.forEach((event) => {
-        video.addEventListener(event, this.videoEventListener);
-      });
-
-      this.attachVideoRemoteListeners(video);
-    },
-    attachVideoRemoteListeners(video) {
-      if (!video || !(video instanceof HTMLMediaElement)) {
-        return;
-      }
-
-      const RemotePlaybackCtor = typeof window !== "undefined" ? window.RemotePlayback : undefined;
-
-      if (!RemotePlaybackCtor || !video.remote || !(video.remote instanceof RemotePlaybackCtor)) {
-        return;
-      }
-
-      const remote = video.remote;
-
-      if (typeof remote.cancelWatchAvailability === "function" && this.videoRemoteWatched.has(video)) {
-        remote
-          .cancelWatchAvailability(this.videoAvailabilityListener)
-          .catch((err) => {
-            if (this.trace) {
-              this.log(err);
-            }
-          })
-          .finally(() => {
-            this.videoRemoteWatched.delete(video);
-          });
-      }
-
-      remote.watchAvailability(this.videoAvailabilityListener).then(
-        () => {
-          this.videoRemoteWatched.add(video);
-        },
-        (err) => {
-          if (this.trace) {
-            this.log(err);
-          }
-        }
-      );
-
-      VIDEO_REMOTE_EVENT_TYPES.forEach((event) => {
-        video.addEventListener(event, this.videoRemoteEventListener);
-      });
-    },
-    detachVideoEventListeners(video) {
-      if (!video || !(video instanceof HTMLMediaElement)) {
-        return;
-      }
-
-      VIDEO_EVENT_TYPES.forEach((event) => {
-        video.removeEventListener(event, this.videoEventListener);
-      });
-
-      this.detachVideoRemoteListeners(video);
-    },
-    detachVideoRemoteListeners(video) {
-      if (!video || !(video instanceof HTMLMediaElement)) {
-        return;
-      }
-
-      VIDEO_REMOTE_EVENT_TYPES.forEach((event) => {
-        video.removeEventListener(event, this.videoRemoteEventListener);
-      });
-
-      if (!this.videoRemoteWatched.has(video)) {
-        return;
-      }
-
-      const RemotePlaybackCtor = typeof window !== "undefined" ? window.RemotePlayback : undefined;
-
-      if (!RemotePlaybackCtor || !video.remote || !(video.remote instanceof RemotePlaybackCtor)) {
-        this.videoRemoteWatched.delete(video);
-        return;
-      }
-
-      const remote = video.remote;
-
-      if (typeof remote.cancelWatchAvailability === "function") {
-        remote
-          .cancelWatchAvailability(this.videoAvailabilityListener)
-          .catch((err) => {
-            if (this.trace) {
-              this.log(err);
-            }
-          })
-          .finally(() => {
-            this.videoRemoteWatched.delete(video);
-          });
-      } else {
-        this.videoRemoteWatched.delete(video);
-      }
-    },
-    cleanupContentElement(element) {
-      if (!element) {
-        return;
-      }
-
-      let video = null;
-
-      if (element instanceof HTMLMediaElement) {
-        video = element;
-      } else if (element instanceof HTMLElement) {
-        video = element.querySelector("video");
-      }
-
-      if (video) {
-        this.detachVideoEventListeners(video);
-      }
-    },
-    onVideo(ev) {
+    onVideoEvent(ev) {
       const { video, data } = this.getContent();
 
       if (!video || !data) {
         return;
-      }
-
-      if (ev && ev.target instanceof HTMLMediaElement && ev.target !== video) {
+      } else if (ev && ev.target.src !== video.src) {
         return;
       }
 
@@ -884,7 +814,7 @@ export default {
             this.$notify.error(err.message);
         }
       } else {
-        this.log(err);
+        this.log("video.remote", { err });
       }
     },
     onVideoRemote(ev) {
@@ -892,7 +822,7 @@ export default {
 
       if (!video || !data) {
         return;
-      } else if (ev && ev.target instanceof HTMLMediaElement && ev.target !== video) {
+      } else if (ev && ev.target.src !== video.src) {
         return;
       }
 
@@ -907,59 +837,43 @@ export default {
         return;
       }
 
-      const modelUid = data?.model?.UID ?? data?.model?.Hash ?? null;
-      const currentSrc = video.currentSrc || video.src || "";
-      const mediaContainer = video.parentElement instanceof HTMLElement ? video.parentElement : null;
-
-      let shouldReset = false;
-
-      if (this.video.element && this.video.element !== video) {
-        shouldReset = true;
-      } else if (this.video.uid && modelUid && this.video.uid !== modelUid) {
-        shouldReset = true;
-      }
-
-      if (shouldReset) {
+      if (video.src !== this.video.src) {
         this.resetVideo();
       }
 
-      const isPlaying =
+      let isPlaying =
         video.readyState && !video.paused && !video.ended && !video.waiting && (!video.error || video.error.code === 0);
 
       if (ev && ev.type) {
         switch (ev.type) {
           case "playing":
             // Automatically hide the lightbox controls after a video has started playing.
-            this.video.waiting = false;
             this.hideControlsWithDelay(this.playControlHideDelay);
-            if (mediaContainer) {
-              mediaContainer.classList.add("is-playing");
-              mediaContainer.classList.remove("is-waiting");
-            }
+            this.video.waiting = false;
+            isPlaying = true;
             break;
           case "ended":
           case "pause":
-            if (mediaContainer) {
-              mediaContainer.classList.remove("is-playing");
-            }
+            this.video.waiting = false;
+            video.parentElement.classList.remove("is-playing");
+            video.parentElement.classList.remove("is-waiting");
             break;
           case "abort":
           case "error":
-            if (mediaContainer) {
-              mediaContainer.classList.add("is-broken");
-              mediaContainer.classList.remove("is-playing");
-            }
+            this.video.waiting = false;
+            video.parentElement.classList.add("is-broken");
+            video.parentElement.classList.remove("is-playing");
+            video.parentElement.classList.remove("is-waiting");
             break;
           case "timeupdate":
           case "loadeddata":
           case "loadedmetadata":
             this.video.waiting = false;
+            video.parentElement.classList.remove("is-waiting");
             break;
           case "waiting":
             this.video.waiting = true;
-            if (mediaContainer) {
-              mediaContainer.classList.add("is-waiting");
-            }
+            video.parentElement.classList.add("is-waiting");
         }
 
         // Automatically hide the lightbox controls after a video has started playing.
@@ -974,9 +888,8 @@ export default {
         }
       }
 
-      this.video.element = video;
-      this.video.uid = modelUid || null;
-      this.video.src = currentSrc;
+      // URL of the currently playing video.
+      this.video.src = video.src;
 
       // Loop short videos of 5 seconds or less, even if the server does not know the duration.
       if (
@@ -998,7 +911,7 @@ export default {
       // https://developer.mozilla.org/de/docs/Web/API/HTMLMediaElement/error
       if (video.error && video.error instanceof MediaError && video.error.code > 0) {
         if (this.debug) {
-          this.log(video.error.message);
+          this.log("video.error", video.error);
         }
 
         switch (video.error.code) {
@@ -1016,14 +929,10 @@ export default {
             this.video.error = video.error.message;
         }
 
-        if (mediaContainer) {
-          mediaContainer.classList.add("is-broken");
-        }
+        video.parentElement.classList.add("is-broken");
         this.video.errorCode = video.error.code;
       } else {
-        if (mediaContainer) {
-          mediaContainer.classList.remove("is-broken");
-        }
+        video.parentElement.classList.remove("is-broken");
         this.video.error = "";
         this.video.errorCode = 0;
       }
@@ -1047,27 +956,18 @@ export default {
         this.video.seekable = false;
       }
 
-      this.video.playing = isPlaying;
       this.video.paused = video.paused;
       this.video.ended = video.ended;
+      this.video.playing = isPlaying;
 
-      if (mediaContainer) {
-        if (isPlaying) {
-          mediaContainer.classList.add("is-playing");
-        } else {
-          mediaContainer.classList.remove("is-playing");
-        }
-
-        if (this.video.waiting) {
-          mediaContainer.classList.add("is-waiting");
-        } else {
-          mediaContainer.classList.remove("is-waiting");
-        }
+      if (this.video.playing) {
+        video.parentElement.classList.add("is-playing");
+        video.parentElement.classList.remove("is-waiting");
+        video.parentElement.classList.remove("is-broken");
       }
     },
     resetVideo(showControls = false) {
       this.video = {
-        element: null,
         controls: !!showControls,
         src: "",
         error: "",
@@ -1081,10 +981,9 @@ export default {
         playing: false,
         paused: false,
         ended: false,
-        castable: false,
+        castable: this.video.castable,
         casting: false,
         remote: "",
-        uid: null,
       };
     },
     // Initializes and opens the PhotoSwipe lightbox with the
@@ -1155,23 +1054,35 @@ export default {
       // Register animation event handlers to prevent user actions during animations,
       // see https://photoswipe.com/events/#opening-or-closing-transition-events.
       this.lightbox.on("openingAnimationStart", () => {
+        if (this.debug) {
+          this.log("start opening animation");
+        }
         this.busy = true;
       });
       this.lightbox.on("openingAnimationEnd", () => {
         this.busy = false;
+        if (this.debug) {
+          this.log("end opening animation");
+        }
       });
       this.lightbox.on("closingAnimationStart", () => {
+        if (this.debug) {
+          this.log("start closing animation");
+        }
         this.busy = true;
       });
       this.lightbox.on("closingAnimationEnd", () => {
         this.busy = false;
+        if (this.debug) {
+          this.log("end closing animation");
+        }
       });
 
       // Add a custom pointer event handler to prevent the default
       // action when events are triggered on an HTMLMediaElement.
       this.lightbox.on("pointerUp", this.lightboxPointerListener);
       this.lightbox.on("pointerDown", this.lightboxPointerListener);
-      this.lightbox.on("pointerMove", this.lightboxPointerListener);
+      // this.lightbox.on("pointerMove", this.lightboxPointerListener);
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -1200,7 +1111,7 @@ export default {
       // see https://photoswipe.com/events/#slide-content-events.
       this.lightbox.on("contentLoad", this.onContentLoad.bind(this));
       // this.lightbox.on("contentResize", this.onContentResize.bind(this));
-      this.lightbox.on("contentRemove", this.onContentRemove.bind(this));
+      // this.lightbox.on("contentRemove", this.onContentRemove.bind(this));
       this.lightbox.on("contentDestroy", this.onContentDestroy.bind(this));
 
       // Pauses videos, animations, and live photos when slide content becomes active (can be default prevented),
@@ -1280,6 +1191,7 @@ export default {
 
       // Show first image.
       this.lightbox.loadAndOpen(this.index);
+      this.busy = false;
 
       return Promise.resolve();
     },
@@ -1309,9 +1221,11 @@ export default {
           },
           onClick: (ev) =>
             this.onControlClick(ev, () => {
-              if (lightbox && lightbox.pswp) {
-                lightbox.pswp.close();
+              if (this.debug) {
+                this.log("pswp.ui.close", ev);
               }
+
+              this.close();
             }),
         });
 
@@ -1540,22 +1454,28 @@ export default {
     onHideMenu() {
       this.menuVisible = false;
     },
-    closeLightbox() {
-      if (this.isBusy("close lightbox")) {
-        return Promise.reject();
-      }
-
-      const pswp = this.pswp();
-
-      if (pswp) {
-        this.busy = true;
+    close() {
+      if (this.closing) {
         return new Promise((resolve) => {
           this.$event.subscribeOnce("lightbox.leave", resolve);
-          this.destroyLightbox();
         });
       }
 
-      return this.hideDialog();
+      this.closing = true;
+
+      if (this.lightbox) {
+        return new Promise((resolve) => {
+          this.$event.subscribeOnce("lightbox.leave", resolve);
+          setTimeout(() => {
+            this.destroyLightbox();
+          }, 150);
+        });
+      }
+
+      return new Promise((resolve) => {
+        this.$event.subscribeOnce("lightbox.leave", resolve);
+        this.hideDialog();
+      });
     },
     onLightboxOpened() {
       this.addEventListeners();
@@ -1567,29 +1487,23 @@ export default {
     },
     // Destroys the PhotoSwipe lightbox instance after use, see onClose().
     destroyLightbox() {
-      if (this.lightbox) {
-        const pswp = this.pswp();
-
-        if (pswp && Array.isArray(pswp.slides)) {
-          pswp.slides.forEach((slide) => {
-            const element = slide?.content?.element ?? null;
-            this.cleanupContentElement(element);
-          });
+      this.$nextTick(() => {
+        if (this.lightbox) {
+          this.lightbox.destroy();
+          return;
         }
 
-        this.lightbox.destroy();
-        this.$event.publish("lightbox.destroy");
-        return;
-      }
-
-      this.hideDialog();
+        this.hideDialog();
+      });
     },
     onLightboxDestroyed() {
       // Remove lightbox reference.
       this.lightbox = null;
 
       // Hide lightbox and sidebar.
-      this.hideDialog();
+      this.$nextTick(() => {
+        this.hideDialog();
+      });
     },
     // Returns the picture (model) caption as sanitized HTML, if any.
     formatCaption(model) {
@@ -1638,6 +1552,7 @@ export default {
 
       this.clearTimeouts();
       this.removeEventListeners();
+      this.closing = true;
     },
     // Resets the component state after closing the lightbox.
     onReset() {
@@ -1701,19 +1616,98 @@ export default {
         return;
       }
 
+      if (this.debug) {
+        this.log(`background.${ev?.type}`, { ev });
+      }
+
       if (this.controlsVisible()) {
-        this.closeLightbox();
+        this.close();
       } else {
         this.showControls();
       }
     },
-    // Called when the lightbox receives a pointer move, down or up event.
-    onLightboxPointerEvent(ev) {
-      if (ev && ev.originalEvent.target.closest(".pswp__dynamic-caption")) {
+    // Returns the type of control if the event originates
+    // from a PhotoSwipe UI control, like the close button.
+    pswpControl(ev) {
+      if (!ev) {
+        return false;
+      }
+
+      let target;
+
+      if (ev.originalEvent?.target) {
+        target = ev.originalEvent.target;
+      } else if (ev.target) {
+        target = ev.target;
+      } else {
+        return false;
+      }
+
+      if (typeof target.closest === "function") {
+        if (target.closest(".pswp__button--close-button")) {
+          if (this.debug) {
+            this.log(`${ev?.type} on close`, { ev });
+          }
+
+          return "close";
+        }
+
+        if (target.closest(".pswp__button")) {
+          if (this.debug) {
+            this.log(`${ev?.type} on button`, { ev });
+          }
+
+          return "button";
+        }
+
+        if (target.closest(".pswp__top-bar")) {
+          if (this.debug) {
+            this.log(`${ev?.type} on top-bar`, { ev });
+          }
+
+          return "top-bar";
+        }
+      }
+
+      return false;
+    },
+    // Called when the lightbox receives a pointer down or up event.
+    // Move events are ignored for now.
+    onLightboxPointerEvent(ev, action) {
+      if (!ev || !ev.originalEvent?.target) {
+        return;
+      }
+
+      const target = ev.originalEvent.target;
+
+      if (this.debug) {
+        this.log(`pointer.${ev.type}`, { ev, target, action });
+      }
+
+      // Close the lightbox when the user clicks the close button if it is visible.
+      const pswpControl = this.pswpControl(ev);
+      if (pswpControl === "close") {
+        if (this.controlsVisible()) {
+          ev.preventDefault();
+          this.close();
+        }
+        return;
+      }
+
+      if (target.closest(".pswp__dynamic-caption")) {
         ev.preventDefault();
       }
     },
+    // Handle user clicks on a control. Does not reliably work for the close button.
     onControlClick(ev, action) {
+      if (!ev) {
+        return;
+      }
+
+      if (this.debug) {
+        this.log(`control.${ev.type}`, { ev, action });
+      }
+
       if (ev && ev.cancelable) {
         ev.stopPropagation();
         ev.preventDefault();
@@ -1732,9 +1726,14 @@ export default {
 
       return false;
     },
-    onContainerClick(ev) {
+    // Capture click events on the dialog component.
+    captureDialogClick(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`dialog.capture.${ev.type}`, { ev, target: ev.target });
       }
 
       // Reveal the controls when the user clicks or touches the top of the screen,
@@ -1751,10 +1750,14 @@ export default {
         ev.preventDefault();
       }
     },
-    // Called when a pointer down (click, touch) event is captured by the lightbox container.
-    onContainerPointerDown(ev) {
+    // Capture pointer down events on the dialog component.
+    captureDialogPointerDown(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`dialog.capture.${ev.type}`, { ev, target: ev.target });
       }
 
       // Handle the click and touch events on custom content.
@@ -1791,10 +1794,14 @@ export default {
         this.toggleVideo();
       }
     },
-    // Called when the user clicks on an image slide in the lightbox.
+    // Handle user clicks on an image slide in the lightbox.
     onContentClick(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`content.${ev.type}`, { ev, target: ev.target, originalTarget: ev.originalEvent?.target });
       }
 
       if (this.slideshow.active) {
@@ -1809,10 +1816,14 @@ export default {
         pswp.currSlide.toggleZoom();
       }
     },
-    // Called when the user taps on an image slide in the lightbox.
+    // Handle user taps on an image slide in the lightbox.
     onContentTap(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`content.${ev.type}`, { ev, target: ev.target, originalTarget: ev.originalEvent?.target });
       }
 
       if (ev.target instanceof HTMLMediaElement) {
@@ -1898,9 +1909,12 @@ export default {
       if (!video.paused) {
         try {
           video.pause();
-        } catch (e) {
-          this.log(e);
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.pause", { err });
+          }
         }
+        video.parentElement?.classList.remove("is-playing");
       }
     },
     // Starts playback on the specified video element, if any.
@@ -1915,27 +1929,40 @@ export default {
 
       if (video.preload === "none") {
         video.preload = "auto";
+        try {
+          video.load();
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.load", { err });
+          }
+        }
       }
 
       video.loop = loop && !this.slideshow.active;
       video.muted = this.muted;
 
+      if (this.muted) {
+        video.setAttribute("muted", "");
+      } else {
+        video.removeAttribute("muted");
+      }
+
       if (video.paused || video.ended) {
         try {
-          // Calling pause() before a play promise has been resolved may result in an error,
-          // see https://developer.chrome.com/blog/play-request-was-interrupted.
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.catch((err) => {
-              if (this.trace && err && err.message) {
-                this.log(err.message);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(async () => {
+              const playPromise = video.play();
+              if (playPromise !== undefined) {
+                playPromise.catch((err) => {
+                  if (this.trace && err && err.message) {
+                    this.log("video.play", { err });
+                  }
+                });
               }
             });
-          }
-        } catch (err) {
-          if (this.trace) {
-            this.log(err);
-          }
+          });
+        } catch {
+          // Ignore.
         }
       }
     },
@@ -1947,7 +1974,7 @@ export default {
 
       switch (ev.code) {
         case "Escape":
-          this.closeLightbox();
+          this.close();
           return true;
         case "Period":
           this.onShowMenu();
@@ -2138,10 +2165,13 @@ export default {
       if (!video.paused) {
         try {
           video.pause();
-          this.showControls();
-        } catch (e) {
-          this.log(e);
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.pause", { err });
+          }
         }
+        video.parentElement?.classList.remove("is-playing");
+        this.showControls();
       }
     },
     // Mutes/unmutes the sound for videos.
@@ -2157,6 +2187,12 @@ export default {
       }
 
       video.muted = this.muted;
+
+      if (this.muted) {
+        video.setAttribute("muted", "");
+      } else {
+        video.removeAttribute("muted");
+      }
     },
     // Starts/stops a slideshow so that the next slide opens automatically at regular intervals.
     toggleSlideshow() {
@@ -2365,7 +2401,7 @@ export default {
       let album = null;
 
       // Close lightbox and open edit dialog when closed.
-      this.closeLightbox().then(() => {
+      this.close().then(() => {
         this.$event.publish("dialog.edit", { selection, album, index });
       });
     },
@@ -2671,7 +2707,7 @@ export default {
           data.loading = false;
 
           if (this.trace) {
-            this.log(`image.${ev.type}`, [ev, ev.target]);
+            this.log(`image.${ev.type}`, { ev, target: ev.target });
           }
 
           // Abort if image URL is empty or the current slide is undefined.
@@ -2710,7 +2746,7 @@ export default {
         // Set thumbnail src to load the new image.
         image.src = thumb.src;
       } catch (err) {
-        this.log(`failed to load image size ${thumb.size}`, err);
+        this.log(`failed to load image size ${thumb.size}`, { err });
         data.loading = false;
       }
     },

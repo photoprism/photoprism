@@ -86,10 +86,7 @@ func TestClusterThemePull_JoinTokenToOAuth(t *testing.T) {
 				return
 			}
 			// Read body to check rotateSecret flag
-			var req struct {
-				RotateSecret bool   `json:"rotateSecret"`
-				NodeName     string `json:"nodeName"`
-			}
+			var req cluster.RegisterRequest
 			_ = json.NewDecoder(r.Body).Decode(&req)
 			sawRotateSecret = req.RotateSecret
 			w.Header().Set("Content-Type", "application/json")

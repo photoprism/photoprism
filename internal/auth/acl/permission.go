@@ -10,11 +10,6 @@ func (p Permission) String() string {
 	return strings.ReplaceAll(string(p), "_", " ")
 }
 
-// LogId returns an identifier string for use in log messages.
-func (p Permission) LogId() string {
-	return p.String()
-}
-
 // Equal checks if the type matches.
 func (p Permission) Equal(s string) bool {
 	return strings.EqualFold(s, p.String())

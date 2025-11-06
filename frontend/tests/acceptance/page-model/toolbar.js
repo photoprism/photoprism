@@ -1,4 +1,6 @@
 import { Selector, t } from "testcafe";
+import Notifies from "../page-model/notifications";
+const notifies = new Notifies();
 
 export default class Page {
   constructor() {
@@ -137,8 +139,13 @@ export default class Page {
     }
   }
 
-  async search(term) {
-    await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter").wait(7000);
+  async search(term, wait = true) {
+    await notifies.closeAllEventPopups();
+
+    await t.click(this.search1).typeText(this.search1, term, { replace: true }).pressKey("enter");
+    if (wait) {
+      await notifies.waitForSearchToFinish(7000);
+    }
   }
 
   async setFilter(filter, option) {

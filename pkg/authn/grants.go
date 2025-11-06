@@ -15,6 +15,7 @@ const (
 	GrantUndefined         GrantType = ""
 	GrantCLI               GrantType = "cli"
 	GrantImplicit          GrantType = "implicit"
+	GrantToken             GrantType = "token"
 	GrantSession           GrantType = "session"
 	GrantPassword          GrantType = "password"
 	GrantClientCredentials GrantType = "client_credentials"
@@ -36,6 +37,8 @@ func Grant(s string) GrantType {
 		return GrantCLI
 	case "implicit":
 		return GrantImplicit
+	case "token":
+		return GrantToken
 	case "session":
 		return GrantSession
 	case "password", "passwd", "pass":
@@ -66,6 +69,8 @@ func (t GrantType) Pretty() string {
 		return "CLI"
 	case GrantImplicit:
 		return "Implicit"
+	case GrantToken:
+		return "Token"
 	case GrantSession:
 		return "Session"
 	case GrantPassword:

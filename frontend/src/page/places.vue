@@ -142,7 +142,7 @@ export default {
         "414c531c-926d-4164-a057-455a215c0eee": "terrain_rgb_virtual",
       },
       attribution:
-        '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+        '<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">&copy; OpenStreetMap contributors</a>',
       maxCount: 500000,
       options: {},
       mapFont: ["Open Sans Regular"],

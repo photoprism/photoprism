@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -35,6 +36,8 @@ type Client struct {
 	UserUID      string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User           `gorm:"-" yaml:"-"`
+	AppName      string          `gorm:"size:64;" json:"AppName" yaml:"AppName,omitempty"`
+	AppVersion   string          `gorm:"size:64;" json:"AppVersion" yaml:"AppVersion,omitempty"`
 	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
 	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
 	ClientType   string          `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
@@ -92,7 +95,9 @@ func (m *Client) BeforeCreate(scope *gorm.Scope) error {
 
 // FindClientByUID returns the matching client or nil if it was not found.
 func FindClientByUID(uid string) *Client {
-	if rnd.InvalidUID(uid, ClientUID) {
+	if uid == "" {
+		return nil
+	} else if rnd.InvalidUID(uid, ClientUID) {
 		return nil
 	}
 
@@ -111,11 +116,29 @@ func FindClientByNodeUUID(nodeUUID string) *Client {
 	if nodeUUID == "" {
 		return nil
 	}
+
 	m := &Client{}
-	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).First(m).Error; err != nil {
+
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").First(m).Error; err != nil {
 		return nil
 	}
+
 	return m
+}
+
+// FindClientsByNodeUUID returns all client rows matching the given NodeUUID ordered by UpdatedAt descending.
+func FindClientsByNodeUUID(nodeUUID string) []Client {
+	if nodeUUID == "" {
+		return nil
+	}
+
+	var list []Client
+
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").Find(&list).Error; err != nil {
+		return nil
+	}
+
+	return list
 }
 
 // GetUID returns the client uid string.
@@ -465,7 +488,7 @@ func (m *Client) UpdateLastActive(save bool) *Client {
 	if !save {
 		return m
 	} else if err := Db().Model(m).UpdateColumn("last_active", m.LastActive).Error; err != nil {
-		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", "%s"}, m.ClientUID, err)
+		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", status.Error(err)}, m.ClientUID)
 	}
 
 	return m

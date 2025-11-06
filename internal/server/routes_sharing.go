@@ -16,7 +16,8 @@ func registerSharingRoutes(router *gin.Engine, conf *config.Config) {
 
 	s := router.Group(conf.BaseUri("/s"))
 	{
-		api.Shares(s)
+		api.ShareToken(s)
+		api.ShareTokenShared(s)
 		api.SharePreview(s)
 	}
 }

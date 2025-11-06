@@ -418,7 +418,7 @@ export default {
       } else {
         const routeUrl = this.$router.resolve({ name: "all", query: { q: "taken:" + takenDate } }).href;
         if (routeUrl) {
-          window.open(routeUrl, "_blank");
+          this.$util.openUrl(routeUrl);
         }
       }
     },

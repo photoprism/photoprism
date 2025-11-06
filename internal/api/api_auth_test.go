@@ -11,14 +11,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 func TestAuth(t *testing.T) {
@@ -146,6 +148,44 @@ func TestAuthToken(t *testing.T) {
 	})
 }
 
+func TestAuthAnyVisionServiceKey(t *testing.T) {
+	origAPI := vision.ServiceApi
+	origKey := vision.ServiceKey
+	defer func() {
+		vision.ServiceApi = origAPI
+		vision.ServiceKey = origKey
+	}()
+
+	vision.ServiceApi = true
+	vision.ServiceKey = "vision-service-key-abc123"
+
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/vision/labels", nil)
+	header.SetAuthorization(req, vision.ServiceKey)
+	req.RemoteAddr = "198.51.100.24:1234"
+	req.Header.Set(header.UserAgent, "VisionClient/1.0")
+	c.Request = req
+
+	s := AuthAny(c, acl.ResourceVision, acl.Permissions{acl.ActionUse})
+	require.NotNil(t, s)
+	assert.False(t, s.Abort(c))
+	assert.Equal(t, http.StatusOK, s.HttpStatus())
+	assert.Equal(t, vision.ServiceKey, s.AuthToken())
+	assert.Equal(t, rnd.SessionID(vision.ServiceKey), s.ID)
+	assert.Equal(t, acl.ResourceVision.String(), s.Scope())
+	assert.Equal(t, authn.GrantToken, s.GetGrantType())
+	assert.Equal(t, authn.ProviderAccessToken, s.GetProvider())
+	assert.Equal(t, authn.MethodDefault, s.GetMethod())
+	assert.Equal(t, header.ClientIP(c), s.ClientIP)
+	assert.Equal(t, req.UserAgent(), s.UserAgent)
+	assert.True(t, s.IsClient())
+	assert.Equal(t, acl.RoleClient, s.GetClientRole())
+	assert.EqualValues(t, 60, s.SessTimeout)
+	assert.True(t, rnd.IsRefID(s.RefID))
+}
+
 func TestAuthAnyPortalJWT(t *testing.T) {
 	fx := newPortalJWTFixture(t, "ok")
 
@@ -166,7 +206,8 @@ func TestAuthAnyPortalJWT(t *testing.T) {
 	assert.Equal(t, http.StatusOK, s.HttpStatus())
 	assert.Contains(t, s.AuthScope, "cluster")
 	assert.Equal(t, fmt.Sprintf("portal:%s", fx.clusterUUID), s.AuthIssuer)
-	assert.Equal(t, "portal:client-test", s.ClientUID)
+	assert.Empty(t, s.ClientUID)
+	assert.Equal(t, "portal:client-test", s.GetClientName())
 	assert.False(t, s.Abort(c))
 
 	// Audience mismatch should reject the token once the node UUID changes.
@@ -249,6 +290,8 @@ type portalJWTFixture struct {
 	issuer      *clusterjwt.Issuer
 	clusterUUID string
 	nodeUUID    string
+	preview     string
+	download    string
 }
 
 func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
@@ -259,7 +302,7 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 
 	nodeConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-"+suffix, t.TempDir())
 
-	nodeConf.Options().NodeRole = cluster.RoleInstance
+	nodeConf.Options().NodeRole = cluster.RoleApp
 	nodeConf.Options().Public = false
 	clusterUUID := rnd.UUID()
 	nodeConf.Options().ClusterUUID = clusterUUID
@@ -293,6 +336,8 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 		issuer:      clusterjwt.NewIssuer(mgr),
 		clusterUUID: clusterUUID,
 		nodeUUID:    nodeUUID,
+		preview:     nodeConf.PreviewToken(),
+		download:    nodeConf.DownloadToken(),
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // SearchPhotos finds pictures and returns them as JSON.
@@ -48,7 +49,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Abort if request params are invalid.
 		if err = c.MustBindWith(&frm, binding.Form); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", status.Error(err)}, s.RefID)
 			AbortBadRequest(c, err)
 			return frm, s, err
 		}
@@ -84,7 +85,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Ok?
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "search", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "search", status.Error(err)}, s.RefID)
 			AbortBadRequest(c, err)
 			return
 		}
@@ -113,7 +114,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
 
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", status.Error(err)}, s.RefID)
 			AbortBadRequest(c, err)
 			return
 		}

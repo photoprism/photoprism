@@ -65,11 +65,16 @@ fmt:
 	npm run fmt
 test:
 	npm run test
+test-coverage:
+	npm run test-coverage
+test-component:
+	npm run test-component
 testcafe:
 	npm run testcafe
 acceptance-local:
 	npm run acceptance-local
 gettext-extract:
+	# Script sets GETTEXT_MERGE=0 by default so vue-gettext skips msgmerge; scripts/gettext-merge.sh handles merging.
 	npm run gettext-extract
 gettext-compile:
 	npm run gettext-compile

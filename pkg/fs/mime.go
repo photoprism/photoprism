@@ -7,7 +7,7 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 const (

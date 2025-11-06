@@ -260,7 +260,7 @@ export default {
 
       const route = subject.route("all");
       const resolved = this.$router.resolve(route);
-      window.open(resolved.href, "_blank");
+      this.$util.openUrl(resolved.href);
     },
     async onSetPersonCover(marker) {
       if (this.busy || !marker?.SubjUID || !marker?.Thumb) {

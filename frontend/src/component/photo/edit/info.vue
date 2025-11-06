@@ -116,7 +116,13 @@
                 {{ $gettext(`Albums`) }}
               </td>
               <td class="text-break">
-                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="text-primary text-link" target="_blank"
+                <a
+                  v-for="(a, i) in albums"
+                  :key="i"
+                  :href="a.url"
+                  class="text-primary text-link"
+                  target="_blank"
+                  rel="noopener"
                   ><span v-if="i > 0">, </span>{{ a.title }}</a
                 >
               </td>
@@ -325,7 +331,7 @@
 <script>
 import { DateTime } from "luxon";
 import * as options from "options/options";
-import { $gettext, T } from "common/gettext";
+import { $gettext } from "common/gettext";
 import * as formats from "options/formats";
 
 export default {

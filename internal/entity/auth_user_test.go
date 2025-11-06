@@ -1,17 +1,47 @@
 package entity
 
 import (
+	"flag"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
+
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+func createScopedTestUser(t *testing.T) *User {
+	t.Helper()
+
+	user := NewUser()
+	user.UserName = "scope-" + rnd.Base36(6)
+	user.DisplayName = "Scoped User"
+	user.UserEmail = user.UserName + "@example.com"
+	user.UserRole = acl.RoleAdmin.String()
+	user.SuperAdmin = true
+	user.CanLogin = true
+
+	require.NoError(t, user.Create())
+
+	t.Cleanup(func() {
+		if err := UnscopedDb().Delete(&Password{}, "uid = ?", user.UserUID).Error; err != nil {
+			t.Fatalf("cleanup password: %v", err)
+		}
+		if err := UnscopedDb().Delete(&User{}, "user_uid = ?", user.UserUID).Error; err != nil {
+			t.Fatalf("cleanup user: %v", err)
+		}
+	})
+
+	return user
+}
 
 func TestNewUser(t *testing.T) {
 	m := NewUser()
@@ -754,7 +784,7 @@ func TestUser_InitAccount(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		p := User{UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", CanLogin: true}
 		assert.Nil(t, FindPassword("u000000000000009"))
-		assert.True(t, p.InitAccount("admin", "insecure"))
+		assert.True(t, p.InitAccount("admin", "insecure", ""))
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
@@ -773,7 +803,7 @@ func TestUser_InitAccount(t *testing.T) {
 		}
 
 		assert.NotNil(t, FindPassword("u000000000000010"))
-		assert.False(t, p.InitAccount("admin", "insecure"))
+		assert.False(t, p.InitAccount("admin", "insecure", ""))
 		m := FindPassword("u000000000000010")
 
 		if m == nil {
@@ -783,14 +813,26 @@ func TestUser_InitAccount(t *testing.T) {
 	t.Run("NotRegistered", func(t *testing.T) {
 		p := User{UserUID: "u12", UserName: "", DisplayName: ""}
 		assert.Nil(t, FindPassword("u12"))
-		assert.False(t, p.InitAccount("admin", "insecure"))
+		assert.False(t, p.InitAccount("admin", "insecure", ""))
 		assert.Nil(t, FindPassword("u12"))
 	})
 	t.Run("EmptyPassword", func(t *testing.T) {
 		p := User{UserUID: "u000000000000011", UserName: "User", DisplayName: ""}
 		assert.Nil(t, FindPassword("u000000000000011"))
-		assert.False(t, p.InitAccount("admin", ""))
+		assert.False(t, p.InitAccount("admin", "", ""))
 		assert.Nil(t, FindPassword("u000000000000011"))
+	})
+	t.Run("SetsScope", func(t *testing.T) {
+		user := createScopedTestUser(t)
+
+		assert.True(t, user.InitAccount(user.UserName, "insecure", "photos:view"))
+		assert.Equal(t, "photos:view", user.UserScope)
+		assert.True(t, user.HasScope())
+
+		m := FindPassword(user.UserUID)
+		if m == nil {
+			t.Fatal("expected password to be created")
+		}
 	})
 }
 
@@ -2233,4 +2275,84 @@ func TestUser_RedeemToken(t *testing.T) {
 		assert.Equal(t, "as6sg6bxpogaaba7", m.UserShares[0].ShareUID)
 		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[1].ShareUID)
 	})
+}
+
+func TestUser_ScopeHelpers(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		u := &User{}
+		assert.Equal(t, "*", u.Scope())
+		assert.False(t, u.HasScope())
+		assert.True(t, u.NoScope())
+	})
+
+	t.Run("AnyScope", func(t *testing.T) {
+		u := &User{UserScope: list.Any}
+		assert.Equal(t, "*", u.Scope())
+		assert.False(t, u.HasScope())
+		assert.True(t, u.NoScope())
+	})
+
+	t.Run("RestrictedScope", func(t *testing.T) {
+		u := &User{UserScope: "Photos:View"}
+		assert.Equal(t, "photos:view", u.Scope())
+		assert.True(t, u.HasScope())
+		assert.False(t, u.NoScope())
+	})
+}
+
+func TestUser_UpdateScope(t *testing.T) {
+	user := createScopedTestUser(t)
+
+	err := user.UpdateScope(" photos:view  LOGS:* ")
+	assert.NoError(t, err)
+	assert.Equal(t, "logs:* photos:view", user.UserScope)
+	assert.Equal(t, "logs:* photos:view", user.Scope())
+	assert.True(t, user.HasScope())
+}
+
+func TestUser_UpdateAttr(t *testing.T) {
+	user := createScopedTestUser(t)
+
+	err := user.UpdateAttr(" photos:view logs:false ")
+	assert.NoError(t, err)
+	assert.Equal(t, "logs:false photos:view", user.UserAttr)
+}
+
+func TestUser_SetFormValuesScope(t *testing.T) {
+	formValues := form.User{
+		UserName:  "scopeuser",
+		UserEmail: "scope@example.com",
+		UserRole:  acl.RoleAdmin.String(),
+		UserScope: "photos:view logs:*",
+	}
+
+	user := NewUser()
+	user.SetFormValues(formValues)
+
+	assert.Equal(t, "logs:* photos:view", user.UserScope)
+
+	formValues.UserScope = ""
+	user.UserScope = "*"
+	user.SetFormValues(formValues)
+
+	assert.Equal(t, "*", user.UserScope)
+}
+
+func TestUser_SetValuesFromCliScope(t *testing.T) {
+	user := FindLocalUser("alice")
+	require.NotNil(t, user)
+
+	original := user.UserScope
+	t.Cleanup(func() {
+		user.UserScope = original
+	})
+
+	app := cli.NewApp()
+	set := flag.NewFlagSet("users mod", flag.ContinueOnError)
+	_ = set.String("scope", "", "")
+	require.NoError(t, set.Parse([]string{"--scope", "videos:view"}))
+
+	ctx := cli.NewContext(app, set, nil)
+	require.NoError(t, user.SetValuesFromCli(ctx))
+	assert.Equal(t, "videos:view", user.UserScope)
 }

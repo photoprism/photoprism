@@ -31,32 +31,32 @@ func authJWTStatusAction(ctx *cli.Context) error {
 		}
 
 		ttl := time.Duration(conf.JWKSCacheTTL()) * time.Second
-		status := verifier.Status(ttl)
-		status.JWKSURL = strings.TrimSpace(conf.JWKSUrl())
+		s := verifier.Status(ttl)
+		s.JWKSURL = strings.TrimSpace(conf.JWKSUrl())
 
 		if ctx.Bool("json") {
-			return printJSON(status)
+			return printJSON(s)
 		}
 
 		fmt.Println()
-		fmt.Printf("JWKS URL: %s\n", status.JWKSURL)
-		fmt.Printf("Cache Path: %s\n", status.CachePath)
-		fmt.Printf("Cache URL: %s\n", status.CacheURL)
-		fmt.Printf("Cache ETag: %s\n", status.CacheETag)
-		fmt.Printf("Cached Keys: %d\n", status.KeyCount)
-		if len(status.KeyIDs) > 0 {
-			fmt.Printf("Key IDs: %s\n", strings.Join(status.KeyIDs, ", "))
+		fmt.Printf("JWKS URL: %s\n", s.JWKSURL)
+		fmt.Printf("Cache Path: %s\n", s.CachePath)
+		fmt.Printf("Cache URL: %s\n", s.CacheURL)
+		fmt.Printf("Cache ETag: %s\n", s.CacheETag)
+		fmt.Printf("Cached Keys: %d\n", s.KeyCount)
+		if len(s.KeyIDs) > 0 {
+			fmt.Printf("Key IDs: %s\n", strings.Join(s.KeyIDs, ", "))
 		}
-		if !status.CacheFetchedAt.IsZero() {
-			fmt.Printf("Last Fetch: %s\n", status.CacheFetchedAt.Format(time.RFC3339))
+		if !s.CacheFetchedAt.IsZero() {
+			fmt.Printf("Last Fetch: %s\n", s.CacheFetchedAt.Format(time.RFC3339))
 		} else {
 			fmt.Println("Last Fetch: never")
 		}
-		fmt.Printf("Cache Age: %ds\n", status.CacheAgeSeconds)
-		if status.CacheTTLSeconds > 0 {
-			fmt.Printf("Cache TTL: %ds\n", status.CacheTTLSeconds)
+		fmt.Printf("Cache Age: %ds\n", s.CacheAgeSeconds)
+		if s.CacheTTLSeconds > 0 {
+			fmt.Printf("Cache TTL: %ds\n", s.CacheTTLSeconds)
 		}
-		if status.CacheStale {
+		if s.CacheStale {
 			fmt.Println("Cache Status: STALE")
 		} else {
 			fmt.Println("Cache Status: fresh")

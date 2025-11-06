@@ -5,14 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -49,7 +54,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 
 		// Determine node name. On portal, resolve id->name via registry; otherwise treat key as name.
 		name := clean.DNSLabel(key)
-		if conf.IsPortal() {
+		if conf.Portal() {
 			if r, err := reg.NewClientRegistryWithConfig(conf); err == nil {
 				if n, err := r.FindByNodeUUID(key); err == nil && n != nil {
 					name = n.Name
@@ -74,10 +79,10 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		}
 		token := ctx.String("join-token")
 		if token == "" {
-			token = conf.JoinToken()
+			token = os.Getenv(config.EnvVar("join-token"))
 		}
 		if token == "" {
-			token = os.Getenv(config.EnvVar("join-token"))
+			token = conf.JoinToken()
 		}
 
 		// Default: rotate DB only if no flag given (safer default)
@@ -136,7 +141,14 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			NodeName:       name,
 			RotateDatabase: rotateDatabase,
 			RotateSecret:   rotateSecret,
+			AppName:        clean.TypeUnicode(conf.About()),
+			AppVersion:     clean.TypeUnicode(conf.Version()),
 		}
+
+		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
+			payload.Theme = themeVersion
+		}
+
 		b, _ := json.Marshal(payload)
 
 		endpointUrl := stringsTrimRightSlash(portalURL) + "/api/v1/cluster/nodes/register"
@@ -161,6 +173,35 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			}
 			return cli.Exit(err, 1)
 		}
+
+		nodeID := resp.Node.UUID
+		if nodeID == "" {
+			nodeID = resp.Node.Name
+		}
+
+		rotatedParts := make([]string, 0, 2)
+		if rotateDatabase {
+			rotatedParts = append(rotatedParts, "database")
+		}
+		if rotateSecret {
+			rotatedParts = append(rotatedParts, "secret")
+		}
+
+		detail := strings.Join(rotatedParts, ", ")
+
+		who := clusterAuditWho(ctx, conf)
+		segments := []string{
+			string(acl.ResourceCluster),
+			"rotate node", "%s",
+		}
+		args := []interface{}{clean.Log(nodeID)}
+		if detail != "" {
+			segments = append(segments, "%s")
+			args = append(args, clean.Log(detail))
+		}
+		segments = append(segments, status.Succeeded)
+
+		event.AuditInfo(append(who, segments...), args...)
 
 		if ctx.Bool("json") {
 			jb, _ := json.Marshal(resp)

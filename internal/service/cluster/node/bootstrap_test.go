@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -22,8 +23,8 @@ func TestInitConfig_NoPortal_NoOp(t *testing.T) {
 	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
 	defer c.CloseDb()
 
-	// Default NodeRole() resolves to instance; no Portal configured.
-	assert.Equal(t, cluster.RoleInstance, c.NodeRole())
+	// Default NodeRole() resolves to app; no Portal configured.
+	assert.Equal(t, cluster.RoleApp, c.NodeRole())
 	assert.NoError(t, InitConfig(c))
 }
 
@@ -39,9 +40,17 @@ func TestInitConfig_ServiceRole(t *testing.T) {
 func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Fake Portal server.
 	var jwksURL string
+	expectedSite := "https://public.example.test/"
+	var expectedAppName string
+	var expectedAppVersion string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/v1/cluster/nodes/register":
+			var req cluster.RegisterRequest
+			assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+			assert.Equal(t, expectedSite, req.SiteUrl)
+			assert.Equal(t, expectedAppName, req.AppName)
+			assert.Equal(t, expectedAppVersion, req.AppVersion)
 			// Minimal successful registration with secrets + DSN.
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
@@ -52,7 +61,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
 				JWKSUrl:     jwksURL,
 				Database: cluster.RegisterDatabase{
-					Driver:   config.MySQL,
+					Driver:   dsn.DriverMySQL,
 					Host:     "db.local",
 					Port:     3306,
 					Name:     "pp_db",
@@ -78,8 +87,12 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Configure Portal.
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().SiteUrl = expectedSite
+	c.Options().AdvertiseUrl = expectedSite
+	expectedAppName = c.About()
+	expectedAppVersion = c.Version()
 	// Gate rotate=true: driver mysql and no DSN/fields.
-	c.Options().DatabaseDriver = config.MySQL
+	c.Options().DatabaseDriver = dsn.DriverMySQL
 	c.Options().DatabaseDSN = ""
 	c.Options().DatabaseName = ""
 	c.Options().DatabaseUser = ""
@@ -92,17 +105,21 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
 	// DSN branch should be preferred and persisted.
 	assert.Contains(t, c.Options().DatabaseDSN, "@tcp(db.local:3306)/pp_db")
-	assert.Equal(t, config.MySQL, c.Options().DatabaseDriver)
+	assert.Equal(t, dsn.DriverMySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
 }
 
 func TestThemeInstall_Missing(t *testing.T) {
-	// Build a tiny zip in-memory with one file style.css
+	// Build a tiny zip in-memory with app.js, version.txt, and style.css.
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
-	f, _ := zw.Create("style.css")
-	_, _ = f.Write([]byte("body{}\n"))
+	appJS, _ := zw.Create(fs.AppJsFile)
+	_, _ = appJS.Write([]byte("console.log('theme');\n"))
+	versionTxt, _ := zw.Create(fs.VersionTxtFile)
+	_, _ = versionTxt.Write([]byte(" theme-v1 \n"))
+	styleCSS, _ := zw.Create("style.css")
+	_, _ = styleCSS.Write([]byte("body{}\n"))
 	_ = zw.Close()
 
 	// Fake Portal server (register -> oauth token -> theme)
@@ -113,10 +130,21 @@ func TestThemeInstall_Missing(t *testing.T) {
 		case "/api/v1/cluster/nodes/register":
 			w.Header().Set("Content-Type", "application/json")
 			// Return NodeClientID + NodeClientSecret so bootstrap can request OAuth token
-			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{UUID: rnd.UUID(), ClusterCIDR: "198.51.100.0/24", Node: cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"}, Secrets: &cluster.RegisterSecrets{ClientSecret: clientSecret}, JWKSUrl: jwksURL2})
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+				UUID:        rnd.UUID(),
+				ClusterCIDR: "198.51.100.0/24",
+				Node:        cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01", Theme: "theme-v1"},
+				Secrets:     &cluster.RegisterSecrets{ClientSecret: clientSecret},
+				JWKSUrl:     jwksURL2,
+				Theme:       "theme-v1",
+			})
 		case "/api/v1/oauth/token":
 			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "token_type": "Bearer"})
+			type tokenResponse struct {
+				AccessToken string `json:"access_token"`
+				TokenType   string `json:"token_type"`
+			}
+			_ = json.NewEncoder(w).Encode(tokenResponse{AccessToken: "tok", TokenType: "Bearer"})
 		case "/api/v1/cluster/theme":
 			w.Header().Set("Content-Type", "application/zip")
 			w.WriteHeader(http.StatusOK)
@@ -135,20 +163,80 @@ func TestThemeInstall_Missing(t *testing.T) {
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
 
-	// Ensure theme dir is empty and unique.
-	tempTheme, err := os.MkdirTemp("", "pp-theme-*")
-	assert.NoError(t, err)
-	defer func() { _ = os.RemoveAll(tempTheme) }()
-	c.SetThemePath(tempTheme)
-	// Remove style.css if any left from previous runs.
-	_ = os.Remove(filepath.Join(tempTheme, "style.css"))
+	nodeThemeDir := c.NodeThemePath()
+	assert.NoError(t, os.RemoveAll(nodeThemeDir))
 
 	// Run bootstrap.
 	assert.NoError(t, InitConfig(c))
 
-	// Expect style.css to exist in theme dir.
-	_, statErr := os.Stat(filepath.Join(tempTheme, "style.css"))
-	assert.NoError(t, statErr)
+	// Expect theme artifacts to exist in node theme dir and version to match portal hint.
+	assert.FileExists(t, filepath.Join(nodeThemeDir, fs.AppJsFile))
+	assert.FileExists(t, filepath.Join(nodeThemeDir, fs.VersionTxtFile))
+	assert.Equal(t, "theme-v1", c.NodeThemeVersion())
+	assert.Equal(t, nodeThemeDir, c.ThemePath())
+}
+
+func TestThemeInstall_VersionMismatch(t *testing.T) {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	appJS, _ := zw.Create(fs.AppJsFile)
+	_, _ = appJS.Write([]byte("console.log('theme-v2');\n"))
+	versionTxt, _ := zw.Create(fs.VersionTxtFile)
+	_, _ = versionTxt.Write([]byte(" theme-v2 \n"))
+	_ = zw.Close()
+
+	clientSecret := cluster.ExampleClientSecret
+	var jwksURL string
+	var themeHits int
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/v1/cluster/nodes/register":
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+				UUID:        rnd.UUID(),
+				ClusterCIDR: "198.51.100.0/24",
+				Node:        cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01"},
+				Secrets:     &cluster.RegisterSecrets{ClientSecret: clientSecret},
+				JWKSUrl:     jwksURL,
+				Theme:       "theme-v2",
+			})
+		case "/api/v1/oauth/token":
+			w.Header().Set("Content-Type", "application/json")
+			type tokenResponse struct {
+				AccessToken string `json:"access_token"`
+				TokenType   string `json:"token_type"`
+			}
+			_ = json.NewEncoder(w).Encode(tokenResponse{AccessToken: "tok", TokenType: "Bearer"})
+		case "/api/v1/cluster/theme":
+			themeHits++
+			w.Header().Set("Content-Type", "application/zip")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(buf.Bytes())
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	jwksURL = srv.URL + "/.well-known/jwks.json"
+	defer srv.Close()
+
+	c := config.NewMinimalTestConfigWithDb("bootstrap-theme-mismatch", t.TempDir())
+	defer c.CloseDb()
+
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+
+	nodeThemeDir := c.NodeThemePath()
+	assert.NoError(t, os.MkdirAll(nodeThemeDir, fs.ModeDir))
+	assert.NoError(t, os.WriteFile(filepath.Join(nodeThemeDir, fs.AppJsFile), []byte("console.log('theme-v1');\n"), fs.ModeFile))
+	assert.NoError(t, os.WriteFile(filepath.Join(nodeThemeDir, fs.VersionTxtFile), []byte("theme-v1"), fs.ModeFile))
+	assert.Equal(t, "theme-v1", c.NodeThemeVersion())
+
+	assert.NoError(t, InitConfig(c))
+
+	assert.Equal(t, "theme-v2", c.NodeThemeVersion())
+	assert.Equal(t, 1, themeHits)
+	assert.Equal(t, nodeThemeDir, c.ThemePath())
 }
 
 func TestRegister_SQLite_NoDBPersist(t *testing.T) {
@@ -193,6 +281,51 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())
+}
+
+func TestDefaultClusterDomain(t *testing.T) {
+	t.Run("explicit domain", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-explicit", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().ClusterDomain = "photoprism.example"
+		assert.Equal(t, "photoprism.example", defaultClusterDomain(c))
+	})
+	t.Run("portal host fallback", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-portal", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "https://portal.photoprism.example"
+		assert.Equal(t, "photoprism.example", defaultClusterDomain(c))
+	})
+	t.Run("no portal domain", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-none", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "https://localhost:8443"
+		assert.Equal(t, "", defaultClusterDomain(c))
+	})
+	t.Run("portal ip fallback empty", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-ip", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "https://203.0.113.10"
+		assert.Equal(t, "", defaultClusterDomain(c))
+	})
+	t.Run("invalid Portal URL", func(t *testing.T) {
+		c := config.NewMinimalTestConfigWithDb("domain-invalid", t.TempDir())
+		defer c.CloseDb()
+
+		c.Options().PortalUrl = "://bad url"
+		assert.Equal(t, "", defaultClusterDomain(c))
+	})
+}
+
+func TestDefaultNodeURL(t *testing.T) {
+	assert.Equal(t, "https://node1.photoprism.example", defaultNodeURL("Node1", "photoprism.example"))
+	assert.Equal(t, "", defaultNodeURL("", "photoprism.example"))
+	assert.Equal(t, "", defaultNodeURL("node1", ""))
+	assert.Equal(t, "https://node-1.photoprism.example", defaultNodeURL("NODE_1", "photoprism.example"))
 }
 
 func TestRegister_404_NoRetry(t *testing.T) {
@@ -247,7 +380,7 @@ func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
 	assert.NoError(t, err)
 	defer func() { _ = os.RemoveAll(tempTheme) }()
 	c.SetThemePath(tempTheme)
-	assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("// app\n"), fs.ModeFile))
+	assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, fs.AppJsFile), []byte("// app\n"), fs.ModeFile))
 
 	assert.NoError(t, InitConfig(c))
 	// Should have skipped request because app.js already exists.

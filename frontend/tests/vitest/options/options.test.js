@@ -149,17 +149,24 @@ describe("options/options", () => {
       upload: true,
       videos: true,
     };
-    expect(StartPages(features).length).toBe(12);
-    expect(StartPages(features)[5].value).toBe("people");
-    expect(StartPages(features)[5].props.disabled).toBe(false);
+    let pages = StartPages(features);
+    expect(pages.length).toBe(13);
+    expect(pages[5].value).toBe("people");
+    expect(pages[5].props.disabled).toBe(false);
+    expect(pages[pages.length - 1].value).toBe("settings");
+    expect(pages[pages.length - 1].props.disabled).toBe(false);
     features = {
       ...features, // copy previous settings
       calendar: false,
       people: false,
+      settings: false,
     };
-    expect(StartPages(features).length).toBe(12);
-    expect(StartPages(features)[5].value).toBe("people");
-    expect(StartPages(features)[5].props.disabled).toBe(true);
+    pages = StartPages(features);
+    expect(pages.length).toBe(13);
+    expect(pages[5].value).toBe("people");
+    expect(pages[5].props.disabled).toBe(true);
+    expect(pages[pages.length - 1].value).toBe("settings");
+    expect(pages[pages.length - 1].props.disabled).toBe(true);
   });
 
   it("should return animation options", () => {

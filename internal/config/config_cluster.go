@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"net"
+	"fmt"
 	urlpkg "net/url"
 	"os"
 	"path/filepath"
@@ -11,16 +11,19 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/dns"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // DefaultPortalUrl specifies the default portal URL with variable cluster domain.
 var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
-var DefaultNodeRole = cluster.RoleInstance
+var DefaultNodeRole = cluster.RoleApp
+var DefaultJWTAllowedScopes = "config cluster vision metrics"
 
 // ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
 func (c *Config) ClusterDomain() string {
@@ -33,7 +36,7 @@ func (c *Config) ClusterDomain() string {
 	}
 
 	// Attempt to derive from system configuration when not explicitly set.
-	if d := deriveSystemDomain(); d != "" {
+	if d := dns.GetSystemDomain(); d != "" {
 		return d
 	}
 
@@ -84,82 +87,185 @@ func (c *Config) PortalUrl() string {
 	return c.options.PortalUrl
 }
 
-// IsPortal returns true if the configured node type is "portal".
-func (c *Config) IsPortal() bool {
+// Portal returns true if the configured node type is "portal".
+func (c *Config) Portal() bool {
 	return c.NodeRole() == cluster.RolePortal
 }
 
-// PortalConfigPath returns the path to the default configuration for cluster nodes.
+// PortalConfigPath returns the path to the default configuration for cluster portals.
 func (c *Config) PortalConfigPath() string {
 	return filepath.Join(c.ConfigPath(), fs.PortalDir)
 }
 
-// PortalThemePath returns the path to the theme files for cluster nodes to use.
+// PortalThemePath returns the path to the theme files for cluster portals to use.
 func (c *Config) PortalThemePath() string {
-	// Prefer the cluster-specific theme directory if it exists.
-	if dir := filepath.Join(c.PortalConfigPath(), fs.ThemeDir); fs.PathExists(dir) {
-		return dir
+	themeDir := filepath.Join(c.PortalConfigPath(), fs.ThemeDir)
+
+	if fs.PathExists(themeDir) && fs.FileExists(filepath.Join(themeDir, fs.AppJsFile)) {
+		return themeDir
 	}
 
 	// Fallback to the default theme directory in the main config path.
 	return c.ThemePath()
 }
 
-// JoinToken returns the token required to use the node register API endpoint.
-// Example: k9sEFe6-A7gt6zqm-gY9gFh0
+// NodeConfigPath returns the path to the default configuration for cluster nodes.
+func (c *Config) NodeConfigPath() string {
+	return filepath.Join(c.ConfigPath(), fs.NodeDir)
+}
+
+// NodeThemePath returns the path to the theme files for cluster nodes to use.
+func (c *Config) NodeThemePath() string {
+	return filepath.Join(c.NodeConfigPath(), fs.ThemeDir)
+}
+
+// NodeThemeVersion returns the version to the theme files of the cluster node.
+func (c *Config) NodeThemeVersion() string {
+	if version, err := theme.DetectVersion(c.NodeThemePath()); err == nil {
+		return version
+	}
+
+	return ""
+}
+
+// JoinToken returns the portal join token used when registering nodes. It
+// lazily loads the token from disk (or generates a new one) and caches it in
+// memory. Example format: k9sEFe6-A7gt6zqm-gY9gFh0.
 func (c *Config) JoinToken() string {
-	if s := strings.TrimSpace(c.options.JoinToken); rnd.IsJoinToken(s, false) {
-		c.options.JoinToken = s
-		return s
+	// Read token from config options (memory).
+	if rnd.IsJoinToken(c.options.JoinToken, false) {
+		return c.options.JoinToken
 	}
 
-	if fileName := FlagFilePath("JOIN_TOKEN"); fileName != "" && fs.FileExistsNotEmpty(fileName) {
-		if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
-			log.Warnf("config: could not read portal token from %s (%s)", fileName, err)
-		} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
-			return s
-		} else {
-			log.Warnf("config: portal join token from %s is shorter than %d characters", fileName, rnd.JoinTokenLength)
+	// Read token from file if possible. Uses a cache to reduce I/O.
+	if fileName := c.JoinTokenFile(); fileName != "" {
+		if c.cache == nil {
+			// Skip cache lookup.
+		} else if s, hit := c.cache.Get(fileName); hit && s != nil {
+			return s.(string)
+		}
+
+		if fs.FileExistsNotEmpty(fileName) {
+			if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+				log.Warnf("config: could not read cluster join token from %s (%s)", fileName, err)
+			} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
+				if c.cache != nil {
+					c.cache.SetDefault(fileName, s)
+				}
+				return s
+			} else {
+				log.Warnf("config: cluster join token from %s is shorter than %d characters", fileName, rnd.JoinTokenLength)
+			}
 		}
 	}
 
-	if !c.IsPortal() {
+	// Do not proceed with generating a token on nodes.
+	if !c.Portal() {
 		return ""
+	} else if token, _, err := c.SaveJoinToken(""); err != nil {
+		log.Errorf("config: %v", err)
+		return ""
+	} else {
+		return token
+	}
+}
+
+// SaveJoinToken writes a fresh portal join token to disk and updates the
+// in-memory value. When customToken is provided it must already be valid.
+func (c *Config) SaveJoinToken(customToken string) (token string, fileName string, err error) {
+	fileName = c.JoinTokenFile()
+
+	if fileName == "" {
+		return "", "", fmt.Errorf("invalid cluster join token path")
 	}
 
-	fileName := filepath.Join(c.PortalConfigPath(), "secrets", "join_token")
+	dir := filepath.Dir(fileName)
+	if dir == "" {
+		return "", "", fmt.Errorf("invalid cluster secrets directory")
+	}
 
-	if fs.FileExistsNotEmpty(fileName) {
-		if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
-			log.Warnf("config: could not read portal token from %s (%s)", fileName, err)
-		} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
-			c.options.JoinToken = s
-			return s
-		} else {
-			log.Warnf("config: portal join token stored in %s is shorter than %d characters; generating a new one", fileName, rnd.JoinTokenLength)
+	if customToken != "" {
+		if !rnd.IsJoinToken(customToken, false) {
+			return "", "", fmt.Errorf("insecure custom cluster join token specified")
+		}
+		token = customToken
+	} else {
+		token = rnd.JoinToken()
+		if !rnd.IsJoinToken(token, true) {
+			return "", "", fmt.Errorf("invalid cluster join token generated")
 		}
 	}
 
-	token := rnd.JoinToken()
-	if !rnd.IsJoinToken(token, true) {
-		return ""
+	// Create secret directory.
+	if err = fs.MkdirAll(dir); err != nil {
+		// Use memory to store join token if directory is not writable.
+		c.options.JoinToken = token
+		return "", "", fmt.Errorf("could not create cluster secrets path (%w)", err)
 	}
 
-	if err := fs.WriteFile(fileName, []byte(token), fs.ModeSecretFile); err != nil {
-		log.Errorf("config: could not write portal join token (%s)", err)
-		return ""
+	// Write secret to file.
+	if err = fs.WriteFile(fileName, []byte(token), fs.ModeSecretFile); err != nil {
+		// Use memory to store join token if file is not writable.
+		c.options.JoinToken = token
+		return "", "", fmt.Errorf("could not write cluster join token (%w)", err)
 	}
 
-	c.options.JoinToken = token
+	// Use an in-memory cache with a
+	// short TTL to cache the token.
+	if c.cache != nil {
+		c.cache.SetDefault(fileName, token)
+		c.options.JoinToken = ""
+	} else {
+		// Store token in Options
+		// if cache is unavailable.
+		c.options.JoinToken = token
+	}
 
-	return token
+	return token, fileName, nil
+}
+
+// clearJoinTokenFileCache invalidates the cached join token file cache.
+func (c *Config) clearJoinTokenFileCache() {
+	if c.cache != nil {
+		c.cache.Delete(c.JoinTokenFile())
+	}
+}
+
+// JoinTokenFile returns the path where the portal join token is stored for the
+// active configuration (portal nodes use config/portal/secrets/join_token,
+// regular nodes use config/node/secrets/join_token).
+func (c *Config) JoinTokenFile() string {
+	if c.Portal() {
+		return c.PortalJoinTokenFile()
+	}
+
+	return c.NodeJoinTokenFile()
+}
+
+// PortalJoinTokenFile returns the filepath where the portal cluster join token is stored.
+func (c *Config) PortalJoinTokenFile() string {
+	if filePath := FlagFilePath("JOIN_TOKEN"); filePath != "" {
+		return filePath
+	}
+
+	return filepath.Join(c.PortalConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
+
+}
+
+// NodeJoinTokenFile returns the filepath where the node cluster join token is stored.
+func (c *Config) NodeJoinTokenFile() string {
+	if filePath := FlagFilePath("JOIN_TOKEN"); filePath != "" {
+		return filePath
+	}
+
+	return filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 }
 
 // deriveNodeNameAndDomainFromHttpHost attempts to derive cluster host and domain name from the site URL.
 func (c *Config) deriveNodeNameAndDomainFromHttpHost() (hostName, domainName string, found bool) {
 	if fqdn := c.SiteDomain(); fqdn != "" && !header.IsIP(fqdn) {
 		hostName, domainName, found = strings.Cut(fqdn, ".")
-		if hostName = clean.DNSLabel(hostName); found && isDNSLabel(hostName) && isDNSDomain(domainName) {
+		if hostName = clean.DNSLabel(hostName); found && dns.IsLabel(hostName) && dns.IsDomain(domainName) {
 			c.options.NodeName = hostName
 			if c.options.ClusterDomain == "" {
 				c.options.ClusterDomain = strings.ToLower(domainName)
@@ -182,12 +288,12 @@ func (c *Config) NodeName() string {
 	}
 
 	// Default: portal nodes → "portal".
-	if c.IsPortal() {
+	if c.Portal() {
 		return "portal"
 	}
 
 	// Instances/services: derive from hostname via DNSLabel normalization.
-	if hn, _ := getHostname(); hn != "" {
+	if hn, _ := dns.GetHostname(); hn != "" {
 		if cand := clean.DNSLabel(hn); cand != "" {
 			return cand
 		}
@@ -198,7 +304,7 @@ func (c *Config) NodeName() string {
 	return "node-" + s
 }
 
-// NodeRole returns the cluster node ROLE (portal, instance, or service).
+// NodeRole returns the cluster node role (portal, app, or service).
 func (c *Config) NodeRole() string {
 	if c.Edition() == Portal {
 		c.options.NodeRole = cluster.RolePortal
@@ -206,7 +312,7 @@ func (c *Config) NodeRole() string {
 	}
 
 	switch c.options.NodeRole {
-	case cluster.RolePortal, cluster.RoleInstance, cluster.RoleService:
+	case cluster.RolePortal, cluster.RoleApp, cluster.RoleService:
 		return c.options.NodeRole
 	default:
 		return DefaultNodeRole
@@ -235,18 +341,80 @@ func (c *Config) NodeClientID() string {
 	return clean.ID(c.options.NodeClientID)
 }
 
-// NodeClientSecret returns the OAuth client SECRET registered with the portal (auto-assigned via join token).
+// NodeClientSecret returns the node OAuth client secret, reading it from disk
+// when necessary. Portal registration writes this secret so nodes can obtain
+// access tokens in future runs.
 func (c *Config) NodeClientSecret() string {
 	if c.options.NodeClientSecret != "" {
 		return c.options.NodeClientSecret
-	} else if fileName := FlagFilePath("NODE_CLIENT_SECRET"); fileName == "" {
+	}
+
+	fileName := c.NodeClientSecretFile()
+
+	if fileName == "" {
 		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
-		log.Warnf("config: failed to read node client secret from %s (%s)", fileName, err)
-		return ""
-	} else {
+	}
+
+	if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
+		// Do not cache the value. Always read from the disk to ensure
+		// that updates from other processes are observed.
 		return string(b)
 	}
+
+	if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
+		log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
+	}
+
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
+	} else if err != nil {
+		log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
+	}
+
+	return c.options.NodeClientSecret
+}
+
+// SaveNodeClientSecret stores a new node client secret on disk and updates the
+// in-memory value. The secret must already pass rnd.IsClientSecret.
+func (c *Config) SaveNodeClientSecret(clientSecret string) (fileName string, err error) {
+	fileName = c.NodeClientSecretFile()
+
+	if !rnd.IsClientSecret(clientSecret) {
+		return fileName, errors.New("invalid node client secret")
+	}
+
+	dir := filepath.Dir(fileName)
+	if fileName == "" || dir == "" {
+		return fileName, fmt.Errorf("invalid node client secret filename %s", clean.Log(fileName))
+	}
+
+	// Create secret directory.
+	if err = fs.MkdirAll(dir); err != nil {
+		// Use memory to store client secret if directory is not writable.
+		c.options.NodeClientSecret = clientSecret
+		return fileName, fmt.Errorf("could not create node secrets path (%s)", err)
+	}
+
+	// Write secret to file.
+	if err = fs.WriteFile(fileName, []byte(clientSecret), fs.ModeSecretFile); err != nil {
+		// Use memory to store client secret if file is not writable.
+		c.options.NodeClientSecret = clientSecret
+		return "", fmt.Errorf("could not write node client secret (%s)", err)
+	}
+
+	c.options.NodeClientSecret = ""
+
+	return fileName, nil
+}
+
+// NodeClientSecretFile returns the path holding the node client secret (defaults
+// to config/node/secrets/client_secret unless overridden via *_FILE).
+func (c *Config) NodeClientSecretFile() string {
+	if filePath := FlagFilePath("NODE_CLIENT_SECRET"); filePath != "" {
+		return filePath
+	}
+
+	return filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.ClientSecretFile)
 }
 
 // JWKSUrl returns the configured JWKS endpoint for portal-issued JWTs. Nodes normally
@@ -281,7 +449,7 @@ func (c *Config) SetJWKSUrl(url string) {
 	case "https":
 		// Always allowed.
 	case "http":
-		if !isLoopbackHost(host) {
+		if !dns.IsLoopbackHost(host) {
 			log.Warnf("config: rejecting JWKS URL %q (http only allowed for localhost/loopback)", trimmed)
 			return
 		}
@@ -324,38 +492,23 @@ func (c *Config) JWTAllowedScopes() list.Attr {
 		}
 	}
 
-	return list.ParseAttr("cluster vision metrics")
+	return list.ParseAttr(DefaultJWTAllowedScopes)
 }
 
 // AdvertiseUrl returns the advertised node URL for intra-cluster calls (scheme://host[:port]).
+// Portal validation permits HTTPS for external hosts and HTTP only for loopback
+// or cluster-internal service domains (e.g., *.svc, *.cluster.local, *.internal).
 func (c *Config) AdvertiseUrl() string {
 	if c.options.AdvertiseUrl != "" {
 		return strings.TrimRight(c.options.AdvertiseUrl, "/") + "/"
 	}
 	// Derive from cluster domain and node name if available; otherwise fall back to SiteUrl().
 	if d := c.ClusterDomain(); d != "" {
-		if n := c.NodeName(); n != "" && isDNSLabel(n) {
+		if n := c.NodeName(); n != "" && dns.IsLabel(n) {
 			return "https://" + n + "." + d + "/"
 		}
 	}
 	return c.SiteUrl()
-}
-
-// isLoopbackHost returns true when host represents localhost or a loopback IP.
-func isLoopbackHost(host string) bool {
-	if host == "" {
-		return false
-	}
-
-	if strings.EqualFold(host, "localhost") {
-		return true
-	}
-
-	if ip := net.ParseIP(host); ip != nil {
-		return ip.IsLoopback()
-	}
-
-	return false
 }
 
 // SaveClusterUUID writes or updates the ClusterUUID key in options.yml without
@@ -374,7 +527,7 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 
 	fileName := c.OptionsYaml()
 
-	var m Map
+	var m Values
 
 	if fs.FileExists(fileName) {
 		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
@@ -383,7 +536,7 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 	}
 
 	if m == nil {
-		m = Map{}
+		m = Values{}
 	}
 
 	m["ClusterUUID"] = uuid
@@ -418,14 +571,14 @@ func (c *Config) SaveNodeUUID(uuid string) error {
 
 	fileName := c.OptionsYaml()
 
-	var m Map
+	var m Values
 	if fs.FileExists(fileName) {
 		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
 			_ = yaml.Unmarshal(b, &m)
 		}
 	}
 	if m == nil {
-		m = Map{}
+		m = Values{}
 	}
 	m["NodeUUID"] = uuid
 	if b, err := yaml.Marshal(m); err != nil {

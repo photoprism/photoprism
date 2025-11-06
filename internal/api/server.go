@@ -15,7 +15,7 @@ import (
 //
 //	@Summary	allows authorized admins to restart the server
 //	@Id			StopServer
-//	@Tags		Admin
+//	@Tags		Internal
 //	@Produce	json
 //	@Success	200		{object}	config.Options
 //	@Failure	401,403	{object}	i18n.Response

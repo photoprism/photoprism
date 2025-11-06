@@ -6,6 +6,7 @@ import Photo from "../../page-model/photo";
 import Page from "../../page-model/page";
 import Library from "../../page-model/library";
 import Album from "../../page-model/album";
+import Notifies from "../../page-model/notifications";
 
 fixture`Test index`.page`${testcafeconfig.url}`;
 
@@ -15,6 +16,7 @@ const photo = new Photo();
 const page = new Page();
 const library = new Library();
 const album = new Album();
+const notifies = new Notifies();
 
 test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })(
   "Common: Index files from folder",
@@ -66,9 +68,8 @@ test.meta("testID", "library-index-001").meta({ type: "short", mode: "public" })
       .click(library.indexFolderSelect)
       .typeText(library.indexFolderSelect, "/mo", { replace: true })
       .click(page.selectOption.withText("/moment"))
-      .click(library.index)
-      //TODO replace wait
-      .wait(50000);
+      .click(library.index);
+    await notifies.waitForIndexing(50000);
 
     await t.expect(Selector("span").withText("Done.").visible, { timeout: 60000 }).ok();
 

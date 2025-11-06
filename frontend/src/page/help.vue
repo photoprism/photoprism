@@ -14,6 +14,7 @@
         icon
         :href="links.troubleshooting"
         target="_blank"
+        rel="noopener"
         class="action-info mx-2"
         :title="$gettext('Learn more')"
       >

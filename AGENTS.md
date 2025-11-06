@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 12, 2025
+**Last Updated:** November 2, 2025
 
 ## Purpose
 
@@ -29,8 +29,9 @@ Learn more: https://agents.md/
 - Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
 - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
 - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
+- Regenerate NOTICE files with `make notice` when dependencies change. Do not edit `NOTICE` or `frontend/NOTICE` manually.
 
-**Style note:** Document headings must use Title Case (capitalize every significant word) across Markdown files to keep generated navigation and changelogs consistent.
+**Style note:** Document headings must use Title Case (capitalize words ≥4 letters in AP-style) across Markdown files to keep generated navigation and changelogs consistent.
 
 **CLI note:** When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 
@@ -148,21 +149,37 @@ Note: Across our public documentation, official images, and in production, the c
 
 ### Playwright MCP Usage
 
-- **Endpoint & Navigation** — Playwright MCP is preconfigured to reach the dev server at `http://localhost:2342/`.  
+- **Endpoint & Navigation** — Playwright MCP is preconfigured to reach the dev server at `http://localhost:2342/`.
   Use `playwright__browser_navigate` to open `/library/login`, sign in, and then call `playwright__browser_take_screenshot` to capture the page state.
-- **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.  
+- **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.
   Use `playwright__browser_resize` if the viewport is not preconfigured or you need to adjust it mid-run.
 - **Mobile Workflows** — When testing responsive layouts, use the `playwright_mobile` server (for example, `playwright_mobile__browser_navigate`).  
   It launches with a `375×667` viewport, matching a typical smartphone display, so you can capture mobile layouts without manual resizing.
-- **Authentication** — Default admin credentials are `admin` / `photoprism`.  
-  If login fails, check your active Compose file or container environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
-- **Capturing Artifacts** —
-  - Keep screenshots limited to the visible viewport (`fullPage: false` or unset) unless a full-page capture is explicitly required.
-  - Copy the MCP output file into `.local/screenshots/` (create the folder if it doesn’t exist).
-  - To reduce context size, avoid embedding large screenshots in chat history—reference the file path instead.
-- **Sidebar Navigation** — The sidebar nests items such as `Library → Errors`.  
-  Expand a parent entry by clicking its chevron before selecting links inside.
+- **Authentication** — Default admin credentials are `admin` / `photoprism`:
+  - If login fails, check your active Compose file or container environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
+  - Tip: if your MCP supports it, persist a storage state after login and reuse it in later steps to skip re-authentication.
+- **Sidebar Navigation** — The sidebar nests items such as `Library → Errors`:
+  - Expand a parent entry by clicking its chevron before selecting links inside.
 - **Session Cleanup** — After scripted interactions, close the browser tab with `playwright__browser_close` (or `playwright_mobile__browser_close`) to keep the MCP session tidy for subsequent runs.
+- **Stability / Waiting** — Prefer robust waits over sleeps:
+  - After navigation: `waitUntil: 'networkidle'` (or wait for a key locator).
+  - Before clicking: ensure the locator is `visible` and `enabled`.
+  - Use role/label/text selectors over brittle XPaths.
+- **Screenshot Format & Size** — Keep artifacts small and reproducible:
+  - Prefer **JPEG** with quality (e.g., `quality: 80`) instead of PNG.
+  - Limit to the visible viewport (`fullPage: false`), unless explicitly required.
+  - Name files deterministically, e.g., `.local/screenshots/<case>/<step>__<viewport>.jpg` (create the folder if it doesn’t exist).
+  - Avoid embedding large screenshots in chat history—reference the file path instead.
+  - **Desktop example** (if your MCP tool exposes Playwright options 1:1):
+    ```json
+    {
+      "path": ".local/screenshots/fix-event-leaks/login__desktop.jpg",
+      "type": "jpeg",
+      "quality": 80,
+      "fullPage": false
+    }
+    ```
+- **Non-interactive runs** — If `npx` is fetching the MCP server at runtime, add `--yes` to its args (or preinstall and use `--no-install`) to avoid prompts in CI.
 
 ### FFmpeg Tests & Hardware Gating
 
@@ -257,7 +274,7 @@ Note: Across our public documentation, official images, and in production, the c
 ### HTTP Download — Security Checklist
 
 - Use the shared safe HTTP helper instead of ad‑hoc `net/http` code:
-  - Package: `pkg/service/http/safe` → `safe.Download(destPath, url, *safe.Options)`.
+  - Package: `pkg/http/safe` → `safe.Download(destPath, url, *safe.Options)`.
   - Default policy in this repo: allow only `http/https`, enforce timeouts and max size, write to a `0600` temp file then rename.
 - SSRF protection (mandatory unless explicitly needed for tests):
   - Set `AllowPrivate=false` to block private/loopback/multicast/link‑local ranges.
@@ -272,11 +289,13 @@ Note: Across our public documentation, official images, and in production, the c
 ### Testing & Fixtures
 
 - Go tests live next to their sources (`path/to/pkg/<file>_test.go`); group related cases as `t.Run(...)` sub-tests to keep table-driven coverage readable, and name each subtest with a PascalCase string.
+- Keep Go scratch work inside `internal/...`; Go refuses to import `internal/` packages from directories like `/tmp`, so create temporary helpers under a throwaway folder such as `internal/tmp/` instead of using external paths.
 - Prefer focused `go test` runs for speed (`go test ./internal/<pkg> -run <Name> -count=1`, `go test ./internal/commands -run <Name> -count=1`) and avoid `./...` unless you need the entire suite.
 - Heavy packages such as `internal/entity` and `internal/photoprism` run migrations and fixtures; expect 30–120s on first run and narrow with `-run` to keep iterations low.
 - For CLI-driven tests, wrap commands with `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process, and assert CLI output with `assert.Contains`/regex because `show` reports quote strings.
 - In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it via `photoprism.SetConfig`.
 - Generate identifiers with `rnd.GenerateUID(entity.ClientUID)` for OAuth client IDs and `rnd.UUIDv7()` for node UUIDs; treat `node.uuid` as required in responses.
+- When creating or editing shell scripts, run `shellcheck <file>` (or the relevant `make` target) and resolve warnings before exiting the task.
 - When adding persistent fixtures (photos, files, labels, etc.), always obtain new IDs via `rnd.GenerateUID(...)` with the matching prefix (`entity.PhotoUID`, `entity.FileUID`, `entity.LabelUID`, …) instead of inventing manual strings so the search helpers recognize them.
 - For database updates, prefer the `entity.Values` type alias over raw `map[string]interface{}` so helpers stay type-safe and consistent with existing code.
 - Reach for `config.NewMinimalTestConfig(t.TempDir())` when a test only needs filesystem/config scaffolding, and use `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` when you need a fresh SQLite schema without the cached fixture snapshot.
@@ -313,10 +332,13 @@ Note: Across our public documentation, official images, and in production, the c
 ### API & Config Changes
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
+- Use `pkg/fs.ConfigFilePath` when you need a config filename so existing `.yml` files remain valid and new installs can adopt `.yaml` transparently (the helper also covers other paired extensions such as `.toml`/`.tml`).
 - When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
 - When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 - Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
 - Logging: use the shared logger (`event.Log`) via the package-level `log` variable (see `internal/auth/jwt/logger.go`) instead of direct `fmt.Print*` or ad-hoc loggers.
+- Audit outcomes: import `github.com/photoprism/photoprism/pkg/log/status` and end every `event.Audit*` slice with a single outcome token such as `status.Succeeded`, `status.Failed`, `status.Denied`, or other constants defined there (no additional segments afterwards).
+- Error outcomes: when a sanitized error string should be the outcome, call `status.Error(err)` instead of adding a placeholder and passing `clean.Error(err)` manually.
 - Cluster registry tests (`internal/service/cluster/registry`) currently rely on a full test config because they persist `entity.Client` rows. They run migrations and seed the SQLite DB, so they are intentionally slow. If you refactor them, consider sharing a single `config.TestConfig()` across subtests or building a lightweight schema harness; do not swap to the minimal config helper unless the tests stop touching the database.
 - Favor explicit CLI flags: check `c.cliCtx.IsSet("<flag>")` before overriding user-supplied values, and follow the `ClusterUUID` pattern (`options.yml` → CLI/env → generated UUIDv4 persisted).
 - Database helpers: reuse `conf.Db()` / `conf.Database*()`, avoid GORM `WithContext`, quote MySQL identifiers, and reject unsupported drivers early.
@@ -380,13 +402,13 @@ Note: Across our public documentation, official images, and in production, the c
 
 - Admin session (full view): `AuthenticateAdmin(app, router)`.
 - User session: Create a non‑admin test user (role=guest), set a password, then `AuthenticateUser`.
-- Client session (redacted internal fields; `siteUrl` visible):
+- Client session (redacted internal fields; `SiteUrl` visible):
   ```go
   s, _ := entity.AddClientSession("test-client", conf.SessionMaxAge(), "cluster", authn.GrantClientCredentials, nil)
   token := s.AuthToken()
   r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", token)
   ```
-  Admins see `advertiseUrl` and `database`; client/user sessions don’t. `siteUrl` is safe to show to all roles.
+  Admins see `AdvertiseUrl` and `Database`; client/user sessions don’t. `SiteUrl` is safe to show to all roles.
 
 ### Preflight Checklist
 
@@ -400,10 +422,12 @@ Note: Across our public documentation, official images, and in production, the c
 ### Cluster Operations
 
 - Keep bootstrap code decoupled: avoid importing `internal/service/cluster/node/*` from `internal/config` or the cluster root, let nodes talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
+- Bootstrap refreshes node OAuth credentials on 401/403 responses (rotate secret + retry) and logs the refresh at info level; if the secret file cannot be written, the value stays cached in memory so the current process can continue.
+- Portal validation now accepts HTTP advertise URLs only for loopback hosts or cluster-internal domains (`*.svc`, `*.cluster.local`, `*.internal`); everything else must use HTTPS.
 - Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then invoke `Ext().Init(c)`.
-- Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/service/http/header`.
-- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `clientId` + `clientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
-- Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → clientId → name`, and DTOs normalize `database.{name,user,driver,rotatedAt}` while exposing `clientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `advertiseUrl`/`database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
-- Provisioner & DSN: database/user names use UUID-based HMACs (`photoprism_d<hmac11>`, `photoprism_u<hmac11>`); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
+- Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/http/header`.
+- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `ClientID` + `ClientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
+- Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → ClientID → name`, and DTOs normalize `Database.{Name,User,Driver,RotatedAt}` while exposing `ClientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `AdvertiseUrl`/`Database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
+- Provisioner & DSN: database/user names use UUID-based HMACs (`<prefix>d<hmac11>`, `<prefix>u<hmac11>` where the prefix defaults to `cluster_` but may be overridden via the portal-only `database-provision-prefix` flag); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
 - If we add Postgres provisioning support, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API/CLI.
 - Testing: exercise Portal endpoints with `httptest`, guard extraction paths with `pkg/fs.Unzip` size caps, and expect admin-only fields to disappear when authenticated as a client/user session.

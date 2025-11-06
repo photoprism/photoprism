@@ -15,7 +15,7 @@ import (
 //
 //	@Summary	allows members to submit a feedback message to the PhotoPrism team
 //	@Id			SendFeedback
-//	@Tags		Admin
+//	@Tags		Internal
 //	@Produce	json
 //	@Success	200			{object}	form.Feedback
 //	@Failure	400,401,403	{object}	i18n.Response

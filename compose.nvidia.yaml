@@ -159,7 +159,6 @@ services:
   ## docker compose exec ollama ollama pull gemma3:latest
   ollama:
     image: ollama/ollama:latest
-    restart: unless-stopped
     stop_grace_period: 15s
     ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
     ## docker compose --profile ollama up -d

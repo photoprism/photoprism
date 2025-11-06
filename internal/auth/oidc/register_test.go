@@ -11,5 +11,5 @@ import (
 func TestClientConfig(t *testing.T) {
 	c := config.NewConfig(config.CliTestContext())
 	result := ClientConfig(c, config.ClientPublic)
-	assert.IsType(t, config.Map{}, result)
+	assert.IsType(t, config.Values{}, result)
 }

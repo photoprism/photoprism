@@ -1,0 +1,19 @@
+{
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "quoteProps": "consistent",
+    "proseWrap": "never",
+    "htmlWhitespaceSensitivity": "css",
+    "overrides": [
+        {
+            "files": ["*.css", "*.scss", "*.sass"],
+            "options": {
+                "tabWidth": 4,
+                "printWidth": 160
+            }
+        }
+    ]
+}

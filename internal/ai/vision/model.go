@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 var modelMutex = sync.Mutex{}

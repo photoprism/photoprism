@@ -18,6 +18,7 @@
           <v-combobox
             ref="input"
             v-model="selectedAlbums"
+            v-model:menu="albumsMenu"
             :disabled="loading"
             :loading="loading"
             hide-details
@@ -28,8 +29,10 @@
             :items="items"
             item-title="Title"
             item-value="UID"
-            :placeholder="$gettext('Select or create albums')"
             return-object
+            :placeholder="$gettext('Select or create albums')"
+            @update:menu="onAlbumsMenuUpdate"
+            @keydown.enter.stop="onAlbumsEnter"
           >
             <template #no-data>
               <v-list-item>
@@ -91,6 +94,8 @@ export default {
       albums: [],
       items: [],
       selectedAlbums: [],
+      albumsMenu: false,
+      suppressAlbumsMenuOpen: false,
       labels: {
         addToAlbum: this.$gettext("Add to album"),
         createAlbum: this.$gettext("Create album"),
@@ -104,7 +109,7 @@ export default {
         this.load("");
       }
     },
-    selectedAlbums: createAlbumSelectionWatcher('items'),
+    selectedAlbums: createAlbumSelectionWatcher("items"),
   },
   methods: {
     afterEnter() {
@@ -185,16 +190,12 @@ export default {
             });
 
             // Notify user and keep dialog open for corrections
-            this.$notify.error(
-              this.$gettext("Some albums could not be created. Please edit the names and try again.")
-            );
+            this.$notify.error(this.$gettext("Some albums could not be created. Please edit the names and try again."));
             return; // Do not emit confirm; keep dialog open
           }
 
           // All created successfully → emit and let parent close the dialog
-          const createdUids = createdAlbums
-            .map((a) => a && a.UID)
-            .filter((u) => typeof u === "string" && u.length > 0);
+          const createdUids = createdAlbums.map((a) => a && a.UID).filter((u) => typeof u === "string" && u.length > 0);
           this.$emit("confirm", [...uniqueExistingUids, ...createdUids]);
         })
         .finally(() => {
@@ -217,11 +218,27 @@ export default {
         }
       });
     },
+    onAlbumsEnter() {
+      this.suppressAlbumsMenuOpen = true;
+      this.albumsMenu = false;
+      window.setTimeout(() => {
+        this.suppressAlbumsMenuOpen = false;
+      }, 250);
+    },
+    onAlbumsMenuUpdate(val) {
+      if (val && this.suppressAlbumsMenuOpen) {
+        this.albumsMenu = false;
+        return;
+      }
+      this.albumsMenu = val;
+    },
     reset() {
       this.loading = false;
       this.selectedAlbums = [];
       this.albums = [];
       this.items = [];
+      this.albumsMenu = false;
+      this.suppressAlbumsMenuOpen = false;
     },
     removeSelection(index) {
       this.selectedAlbums.splice(index, 1);

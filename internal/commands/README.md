@@ -18,7 +18,7 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 - Follow the overwrite policy used by media helpers: require explicit confirmation (`force` flags) before replacing non-empty files. Where replacements are expected, open destinations with `O_WRONLY|O_CREATE|O_TRUNC`.
 - Use shared logging through `event.Log` rather than direct `fmt` printing. Sensitive information such as secrets or tokens must never be logged.
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
-- For HTTP interactions, depend on the safe download helpers in `pkg/service/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
+- For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
 
 ## Configuration & Flags Integration
 
@@ -48,7 +48,7 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 
 - Stub external binaries such as `yt-dlp` with lightweight shell scripts that honor `--dump-single-json` and `--print` requests. Support environment variables like `YTDLP_ARGS_LOG`, `YTDLP_OUTPUT_FILE`, and `YTDLP_DUMMY_CONTENT` to capture arguments, create deterministic artifacts, and avoid duplicate detection in importer flows.
 - Disable FFmpeg during tests that focus on command construction by setting `conf.Options().FFmpegBin = "/bin/false"` and `conf.Settings().Index.Convert = false`.
-- When asserting HTTP responses, rely on header constants from `pkg/service/http/header` (for example, `header.ContentTypeZip`) to keep expectations aligned with middleware.
+- When asserting HTTP responses, rely on header constants from `pkg/http/header` (for example, `header.ContentTypeZip`) to keep expectations aligned with middleware.
 - For role and scope checks, reuse helpers in `internal/auth/acl` such as `acl.ParseRole`, `acl.ScopePermits`, and `acl.ScopeAttrPermits` instead of duplicating logic inside commands.
 
 ## Preflight Checklist

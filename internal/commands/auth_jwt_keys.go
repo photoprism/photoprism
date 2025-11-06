@@ -88,11 +88,11 @@ func authJWTKeysListAction(ctx *cli.Context) error {
 		fmt.Println()
 		fmt.Println("JWT signing keys:")
 		for _, row := range rows {
-			status := ""
+			stat := ""
 			if row.Active {
-				status = " (active)"
+				stat = " (active)"
 			}
-			parts := []string{fmt.Sprintf("KID: %s%s", row.Kid, status)}
+			parts := []string{fmt.Sprintf("KID: %s%s", row.Kid, stat)}
 			if row.CreatedAt != "" {
 				parts = append(parts, fmt.Sprintf("created %s", row.CreatedAt))
 			}

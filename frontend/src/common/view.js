@@ -238,7 +238,7 @@ export function findFocusElement(c) {
           if (el && el instanceof HTMLElement) {
             return el;
           }
-        } catch (_) {
+        } catch {
           // Ignore.
         }
       }

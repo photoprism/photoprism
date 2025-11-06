@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // Info represents video file information.

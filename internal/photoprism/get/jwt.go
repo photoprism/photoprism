@@ -22,7 +22,7 @@ var (
 func initJWTManager() {
 	if conf == nil {
 		return
-	} else if !conf.IsPortal() {
+	} else if !conf.Portal() {
 		return
 	}
 
@@ -121,7 +121,7 @@ func IssuePortalJWT(spec jwt.ClaimsSpec) (string, error) {
 func IssuePortalJWTForNode(nodeUUID string, scopes []string, ttl time.Duration) (string, error) {
 	if conf == nil {
 		return "", errors.New("jwt: missing config")
-	} else if !conf.IsPortal() {
+	} else if !conf.Portal() {
 		return "", errors.New("jwt: not supported on nodes")
 	}
 

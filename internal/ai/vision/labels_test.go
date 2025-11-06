@@ -49,6 +49,17 @@ func TestGenerateLabels(t *testing.T) {
 		assert.InDelta(t, 60, result[0].Uncertainty, 10)
 		assert.InDelta(t, float32(0.4), result[0].Confidence(), 0.1)
 	})
+	t.Run("CustomSourceLocal", func(t *testing.T) {
+		labels, err := GenerateLabels(Files{examplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcManual)
+		if err != nil {
+			t.Fatalf("GenerateLabels error: %v", err)
+		}
+		for _, label := range labels {
+			if label.Source != entity.SrcManual {
+				t.Fatalf("expected custom source %q, got %q", entity.SrcManual, label.Source)
+			}
+		}
+	})
 	t.Run("InvalidFile", func(t *testing.T) {
 		_, err := GenerateLabels(Files{examplesPath + "/notexisting.jpg"}, media.SrcLocal, entity.SrcAuto)
 		assert.Error(t, err)

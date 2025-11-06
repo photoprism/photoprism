@@ -227,7 +227,7 @@ func (d *pigoDetector) Faces(det []pigo.Detection, params pigo.CascadeParams, fi
 	for _, face := range det {
 		score := face.Q
 		scale := face.Scale
-		requiredScore := QualityThreshold(scale)
+		requiredScore := PigoQualityThreshold(scale)
 		scaleMin := LandmarkQualityScaleMin
 		scaleMax := LandmarkQualityScaleMax
 		fallbackCandidate := false

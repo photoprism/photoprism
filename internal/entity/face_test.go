@@ -193,7 +193,7 @@ func TestFace_SetEmbeddings(t *testing.T) {
 
 		require.NoError(t, m.SetEmbeddings(embeddings))
 		require.Equal(t, 2, m.Samples)
-		assert.InDelta(t, face.SampleRadius, m.SampleRadius, 1e-9)
+		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
 }
 

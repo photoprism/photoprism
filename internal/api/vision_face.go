@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // PostVisionFace returns the embeddings of a face.
