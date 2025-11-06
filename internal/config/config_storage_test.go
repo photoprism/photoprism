@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -30,7 +32,7 @@ func TestConfig_SidecarPath(t *testing.T) {
 	c.options.SidecarPath = ".photoprism"
 	assert.Equal(t, ".photoprism", c.SidecarPath())
 	c.options.SidecarPath = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/sidecar", c.SidecarPath())
 }
 
 func TestConfig_SidecarYaml(t *testing.T) {
@@ -135,7 +137,7 @@ func TestConfig_TempPath(t *testing.T) {
 	t.Logf("c.options.TempPath: '%s'", c.options.TempPath)
 	t.Logf("c.tempPath(): '%s'", d0)
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/temp", c.tempPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/temp", c.tempPath())
 
 	c.options.TempPath = ""
 
@@ -192,22 +194,60 @@ func TestConfig_CmdLibPath(t *testing.T) {
 
 func TestConfig_CachePath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/cache", c.CachePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/cache", c.CachePath())
 	c.options.CachePath = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/cache", c.CachePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/cache", c.CachePath())
+}
+
+func TestConfig_SettingsYaml(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Contains(t, c.SettingsYaml(), "settings.yml")
+	})
+	t.Run("PreferYamlExtension", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempDir := t.TempDir()
+		c.options.ConfigPath = tempDir
+
+		yamlPath := filepath.Join(tempDir, "settings"+fs.ExtYaml)
+		if err := os.WriteFile(yamlPath, []byte("ui:\n"), fs.ModeFile); err != nil {
+			t.Fatalf("write %s: %v", yamlPath, err)
+		}
+
+		assert.Equal(t, yamlPath, c.SettingsYaml())
+	})
+}
+
+func TestConfig_HubConfigFile(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Contains(t, c.HubConfigFile(), "hub.yml")
+	})
+	t.Run("PreferYamlExtension", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempDir := t.TempDir()
+		c.options.ConfigPath = tempDir
+
+		yamlPath := filepath.Join(tempDir, "hub"+fs.ExtYaml)
+		if err := os.WriteFile(yamlPath, []byte("host: example\n"), fs.ModeFile); err != nil {
+			t.Fatalf("write %s: %v", yamlPath, err)
+		}
+
+		assert.Equal(t, yamlPath, c.HubConfigFile())
+	})
 }
 
 func TestConfig_StoragePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata", c.StoragePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata", c.StoragePath())
 	c.options.StoragePath = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals/.photoprism/storage", c.StoragePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/originals/.photoprism/storage", c.StoragePath())
 }
 
 func TestConfig_TestdataPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/testdata", c.TestdataPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/testdata", c.TestdataPath())
 }
 
 func TestConfig_AlbumsPath(t *testing.T) {
@@ -218,13 +258,13 @@ func TestConfig_AlbumsPath(t *testing.T) {
 	// If this test fails, please manually move “albums” to the “backup” folder
 	// in the “storage/testdata” directory within your development environment:
 	// https://github.com/photoprism/photoprism/discussions/4520
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/backup/albums", c.BackupAlbumsPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/backup/albums", c.BackupAlbumsPath())
 }
 
 func TestConfig_OriginalsAlbumsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals/albums", c.OriginalsAlbumsPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/originals/albums", c.OriginalsAlbumsPath())
 }
 
 func TestConfig_CreateDirectories(t *testing.T) {
@@ -419,21 +459,21 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 
 func TestConfig_PIDFilename2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/photoprism.pid", c.PIDFilename())
-	c.options.PIDFilename = "/go/src/github.com/photoprism/photoprism/internal/config/testdata/test.pid"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/test.pid", c.PIDFilename())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/photoprism.pid", c.PIDFilename())
+	c.options.PIDFilename = ProjectRoot + "/internal/config/testdata/test.pid"
+	assert.Equal(t, ProjectRoot+"/internal/config/testdata/test.pid", c.PIDFilename())
 }
 
 func TestConfig_LogFilename2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/photoprism.log", c.LogFilename())
-	c.options.LogFilename = "/go/src/github.com/photoprism/photoprism/internal/config/testdata/test.log"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/test.log", c.LogFilename())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/photoprism.log", c.LogFilename())
+	c.options.LogFilename = ProjectRoot + "/internal/config/testdata/test.log"
+	assert.Equal(t, ProjectRoot+"/internal/config/testdata/test.log", c.LogFilename())
 }
 
 func TestConfig_OriginalsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals", c.OriginalsPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/originals", c.OriginalsPath())
 	c.options.OriginalsPath = ""
 	if s := c.OriginalsPath(); s != "" && s != "/photoprism/originals" {
 		t.Errorf("unexpected originals path: %s", s)
@@ -467,7 +507,7 @@ func TestConfig_AssetsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.True(t, strings.HasSuffix(c.AssetsPath(), "/assets"))
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets", c.AssetsPath())
+	assert.Equal(t, ProjectRoot+"/assets", c.AssetsPath())
 	c.options.AssetsPath = ""
 	if s := c.AssetsPath(); s != "" && s != "/opt/photoprism/assets" {
 		t.Errorf("unexpected assets path: %s", s)

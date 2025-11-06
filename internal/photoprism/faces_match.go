@@ -107,7 +107,7 @@ func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
 		return false, dist
 	}
 
-	if c.collisionRadius > 0.1 && dist > c.collisionRadius {
+	if c.collisionRadius > face.CollisionDist && dist > c.collisionRadius {
 		return false, dist
 	}
 

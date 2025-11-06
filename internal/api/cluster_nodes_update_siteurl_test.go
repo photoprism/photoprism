@@ -23,7 +23,7 @@ func TestClusterUpdateNode_SiteUrl(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Seed node
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-siteurl", Role: "instance", UUID: rnd.UUIDv7()}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-siteurl", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
 	n, err = regy.FindByName("pp-node-siteurl")
 	assert.NoError(t, err)

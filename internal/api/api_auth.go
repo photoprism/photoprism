@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -33,9 +34,20 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Disable response caching.
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
+	// Allow requests based on an access token for specific resources.
+	switch resource {
+	case acl.ResourceVision:
+		if perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && vision.ServiceKey == authToken {
+			s = entity.NewSessionFromToken(c, authToken, acl.ResourceVision.String(), "service-key")
+			event.AuditInfo([]string{clientIp, "%s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
+			return s
+		}
+	}
+
 	// Find active session to perform authorization check or deny if no session was found.
 	if s = Session(clientIp, authToken); s == nil {
 		if s = authAnyJWT(c, clientIp, authToken, resource, perms); s != nil {
+			event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 			return s
 		}
 		event.AuditWarn([]string{clientIp, "%s %s without authentication", status.Denied}, perms.String(), string(resource))

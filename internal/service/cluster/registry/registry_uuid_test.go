@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -21,7 +22,7 @@ func TestClientRegistry_PutUpdateByUUID(t *testing.T) {
 	uuid := rnd.UUIDv7()
 
 	// Create via UUID
-	n := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-uuid", Role: "instance", Labels: map[string]string{"a": "1"}}}
+	n := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-uuid", Role: cluster.RoleApp, Labels: map[string]string{"a": "1"}}}
 	assert.NoError(t, r.Put(n))
 	assert.NotEmpty(t, n.ClientID)
 	assert.True(t, rnd.IsUUID(n.UUID))
@@ -51,11 +52,11 @@ func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
 
 	uuid := rnd.UUIDv7()
 	// Create two raw client rows with the same NodeUUID and different UpdatedAt
-	c1 := entity.NewClient().SetName("pp-dup-1").SetRole("instance")
+	c1 := entity.NewClient().SetName("pp-dup-1").SetRole(cluster.RoleApp)
 	c1.NodeUUID = uuid
 	assert.NoError(t, c1.Create())
 	time.Sleep(1100 * time.Millisecond)
-	c2 := entity.NewClient().SetName("pp-dup-2").SetRole("service")
+	c2 := entity.NewClient().SetName("pp-dup-2").SetRole(cluster.RoleService)
 	c2.NodeUUID = uuid
 	assert.NoError(t, c2.Create())
 
@@ -77,10 +78,10 @@ func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
 
 	uuid := rnd.UUIDv7()
 	// Two rows with same UUID
-	a := entity.NewClient().SetName("pp-del-a").SetRole("instance")
+	a := entity.NewClient().SetName("pp-del-a").SetRole(cluster.RoleApp)
 	a.NodeUUID = uuid
 	assert.NoError(t, a.Create())
-	b := entity.NewClient().SetName("pp-del-b").SetRole("service")
+	b := entity.NewClient().SetName("pp-del-b").SetRole(cluster.RoleService)
 	b.NodeUUID = uuid
 	assert.NoError(t, b.Create())
 
@@ -97,9 +98,9 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	defer c.CloseDb()
 
 	// Create one client with empty NodeUUID (non-node), and one proper node
-	nonNode := entity.NewClient().SetName("webapp").SetRole("client")
+	nonNode := entity.NewClient().SetName("webapp").SetRole(acl.RoleClient.String())
 	assert.NoError(t, nonNode.Create())
-	node := entity.NewClient().SetName("pp-node").SetRole("instance")
+	node := entity.NewClient().SetName("pp-node").SetRole(cluster.RoleApp)
 	node.NodeUUID = rnd.UUIDv7()
 	assert.NoError(t, node.Create())
 
@@ -120,26 +121,26 @@ func TestClientRegistry_PutPrefersUUIDOverClientID(t *testing.T) {
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two separate records
-	n1 := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: "instance"}}
+	n1 := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: cluster.RoleApp}}
 	assert.NoError(t, r.Put(n1))
-	n2 := &Node{Node: cluster.Node{Name: "pp-b", Role: "service"}}
+	n2 := &Node{Node: cluster.Node{Name: "pp-b", Role: cluster.RoleService}}
 	assert.NoError(t, r.Put(n2))
 
 	// Now attempt to update by UUID of n1 while also passing n2.ClientID:
 	// implementation must use UUID and not attach to n2.
-	upd := &Node{Node: cluster.Node{UUID: n1.UUID, ClientID: n2.ClientID, Role: "service"}}
+	upd := &Node{Node: cluster.Node{UUID: n1.UUID, ClientID: n2.ClientID, Role: cluster.RoleService}}
 	assert.NoError(t, r.Put(upd))
 
 	got1, err := r.FindByNodeUUID(n1.UUID)
 	assert.NoError(t, err)
 	if assert.NotNil(t, got1) {
-		assert.Equal(t, "service", got1.Role)
+		assert.Equal(t, cluster.RoleService, got1.Role)
 		assert.Equal(t, n1.ClientID, got1.ClientID)
 	}
 	// n2 should remain unchanged
 	got2 := entity.FindClientByUID(n2.ClientID)
 	if assert.NotNil(t, got2) {
-		assert.Equal(t, "service", got2.ClientRole)
+		assert.Equal(t, cluster.RoleService, got2.ClientRole)
 		assert.NotEqual(t, got2.ClientUID, got1.ClientID)
 	}
 }

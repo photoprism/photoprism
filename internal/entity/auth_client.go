@@ -95,7 +95,9 @@ func (m *Client) BeforeCreate(scope *gorm.Scope) error {
 
 // FindClientByUID returns the matching client or nil if it was not found.
 func FindClientByUID(uid string) *Client {
-	if rnd.InvalidUID(uid, ClientUID) {
+	if uid == "" {
+		return nil
+	} else if rnd.InvalidUID(uid, ClientUID) {
 		return nil
 	}
 
@@ -114,10 +116,13 @@ func FindClientByNodeUUID(nodeUUID string) *Client {
 	if nodeUUID == "" {
 		return nil
 	}
+
 	m := &Client{}
+
 	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").First(m).Error; err != nil {
 		return nil
 	}
+
 	return m
 }
 
@@ -126,10 +131,13 @@ func FindClientsByNodeUUID(nodeUUID string) []Client {
 	if nodeUUID == "" {
 		return nil
 	}
+
 	var list []Client
+
 	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").Find(&list).Error; err != nil {
 		return nil
 	}
+
 	return list
 }
 

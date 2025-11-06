@@ -86,7 +86,7 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 	t.Run("ClientRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
 		got := ClientRoles.Strings()
 		// Contains exactly the expected elements, order not enforced.
-		assert.ElementsMatch(t, []string{"admin", "client", "instance", "none", "portal", "service"}, got)
+		assert.ElementsMatch(t, []string{"admin", "app", "client", "none", "portal", "service"}, got)
 		// Does not include empty string
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
@@ -102,7 +102,7 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 	t.Run("ClientRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
 		u := ClientRoles.CliUsageString()
 		// Should list known roles and end with "or none" (alias present).
-		for _, s := range []string{"admin", "client", "instance", "portal", "service", "none"} {
+		for _, s := range []string{"admin", "client", "app", "portal", "service", "none"} {
 			assert.Contains(t, u, s)
 		}
 		assert.Regexp(t, `, or none$`, u)

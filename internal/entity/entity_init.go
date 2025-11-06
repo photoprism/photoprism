@@ -47,7 +47,7 @@ func InitDb(opt migrate.Options) {
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
-func InitTestDb(driver, dsn string) *DbConn {
+func InitTestDb(driver, dbDsn string) *DbConn {
 	if HasDbProvider() {
 		return nil
 	}
@@ -55,28 +55,28 @@ func InitTestDb(driver, dsn string) *DbConn {
 	start := time.Now()
 
 	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+	if driver == "test" || driver == "sqlite" || driver == "" || dbDsn == "" {
 		driver = enum.SQLite3
 	}
 
 	// Set default database DSN.
 	if driver == enum.SQLite3 {
-		if dsn == "" || dsn == enum.SQLiteTestDB {
-			dsn = enum.SQLiteTestDB
-			if !fs.FileExists(dsn) {
-				log.Debugf("sqlite: test database %s does not already exist", clean.Log(dsn))
-			} else if err := os.Remove(dsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dsn), err)
+		if dbDsn == "" || dbDsn == enum.SQLiteTestDB {
+			dbDsn = enum.SQLiteTestDB
+			if !fs.FileExists(dbDsn) {
+				log.Debugf("sqlite: test database %s does not already exist", clean.Log(dbDsn))
+			} else if err := os.Remove(dbDsn); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dbDsn), err)
 			}
 		}
 	}
 
-	log.Infof("initializing %s test db in %s", driver, dsn)
+	log.Infof("initializing %s test db in %s", driver, dbDsn)
 
 	// Create gorm.DB connection provider.
 	db := &DbConn{
 		Driver: driver,
-		Dsn:    dsn,
+		Dsn:    dbDsn,
 	}
 
 	// Insert test fixtures into the database.

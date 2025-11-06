@@ -187,11 +187,11 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 
 func TestConfig_FaceSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 50, c.FaceSize())
+	assert.Equal(t, face.SizeThreshold, c.FaceSize())
 	c.options.FaceSize = 30
 	assert.Equal(t, 30, c.FaceSize())
 	c.options.FaceSize = 1
-	assert.Equal(t, 50, c.FaceSize())
+	assert.Equal(t, face.SizeThreshold, c.FaceSize())
 }
 
 func TestConfig_FaceScore(t *testing.T) {
@@ -205,27 +205,27 @@ func TestConfig_FaceScore(t *testing.T) {
 
 func TestConfig_FaceOverlap(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 42, c.FaceOverlap())
+	assert.Equal(t, face.OverlapThreshold, c.FaceOverlap())
 	c.options.FaceOverlap = 300
-	assert.Equal(t, 42, c.FaceOverlap())
+	assert.Equal(t, face.OverlapThreshold, c.FaceOverlap())
 	c.options.FaceOverlap = 1
 	assert.Equal(t, 1, c.FaceOverlap())
 }
 
 func TestConfig_FaceClusterSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 80, c.FaceClusterSize())
+	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
 	c.options.FaceClusterSize = 10
-	assert.Equal(t, 80, c.FaceClusterSize())
+	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
 	c.options.FaceClusterSize = 66
 	assert.Equal(t, 66, c.FaceClusterSize())
 }
 
 func TestConfig_FaceClusterScore(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 15, c.FaceClusterScore())
+	assert.Equal(t, face.ClusterScoreThreshold, c.FaceClusterScore())
 	c.options.FaceClusterScore = 0
-	assert.Equal(t, 15, c.FaceClusterScore())
+	assert.Equal(t, face.ClusterScoreThreshold, c.FaceClusterScore())
 	c.options.FaceClusterScore = 55
 	assert.Equal(t, 55, c.FaceClusterScore())
 }
@@ -244,17 +244,62 @@ func TestConfig_FaceClusterDist(t *testing.T) {
 	assert.Equal(t, 0.64, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.01
 	assert.Equal(t, 0.64, c.FaceClusterDist())
+	c.options.FaceCollisionDist = 0.05
+	c.options.FaceClusterDist = 0.06
+	assert.Equal(t, 0.06, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.34
 	assert.Equal(t, 0.34, c.FaceClusterDist())
 }
 
+func TestConfig_FaceClusterRadius(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.ClusterRadius, c.FaceClusterRadius())
+	c.options.FaceClusterRadius = 0.01
+	assert.Equal(t, face.ClusterRadius, c.FaceClusterRadius())
+	c.options.FaceCollisionDist = 0.05
+	c.options.FaceClusterRadius = 0.5
+	assert.Equal(t, 0.5, c.FaceClusterRadius())
+}
+
+func TestConfig_FaceCollisionDist(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())
+	c.options.FaceCollisionDist = 0.05
+	assert.Equal(t, 0.05, c.FaceCollisionDist())
+	c.options.FaceCollisionDist = 0
+	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())
+}
+
+func TestConfig_FaceEpsilonDist(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.Epsilon, c.FaceEpsilonDist())
+	c.options.FaceEpsilonDist = 0.02
+	assert.Equal(t, 0.02, c.FaceEpsilonDist())
+	c.options.FaceEpsilonDist = 0.2
+	assert.Equal(t, face.Epsilon, c.FaceEpsilonDist())
+}
+
 func TestConfig_FaceMatchDist(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 0.46, c.FaceMatchDist())
+	assert.Equal(t, face.MatchDist, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.1
 	assert.Equal(t, 0.1, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.01
-	assert.Equal(t, 0.46, c.FaceMatchDist())
+	assert.Equal(t, face.MatchDist, c.FaceMatchDist())
+}
+
+func TestConfig_FaceSkipChildren(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.FaceSkipChildren())
+	c.options.FaceSkipChildren = true
+	assert.True(t, c.FaceSkipChildren())
+}
+
+func TestConfig_FaceAllowBackground(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.FaceAllowBackground())
+	c.options.FaceAllowBackground = true
+	assert.True(t, c.FaceAllowBackground())
 }
 
 func TestConfig_FaceAngles(t *testing.T) {

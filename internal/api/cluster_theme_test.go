@@ -23,7 +23,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Ensure portal feature flag is disabled.
-		conf.Options().NodeRole = cluster.RoleInstance
+		conf.Options().NodeRole = cluster.RoleApp
 		ClusterGetTheme(router)
 
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/theme")
@@ -155,7 +155,7 @@ func TestClusterGetTheme(t *testing.T) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 
-		node := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: "instance", UUID: rnd.UUIDv7()}}
+		node := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
 		assert.NoError(t, regy.Put(node))
 
 		client := entity.FindClientByUID(node.ClientID)

@@ -282,7 +282,7 @@
     touch-action: auto;
 }
 
-.p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__dynamic-caption {
+.p-lightbox__container > .p-lightbox__content.slideshow-active:not(.is-video) .pswp__dynamic-caption {
     opacity: 1 !important;
 }
 
@@ -290,6 +290,7 @@
     display: none !important;
 }
 
+.p-lightbox__container > .p-lightbox__content.is-video .pswp__dynamic-caption--faded,
 .p-lightbox__container > .p-lightbox__content:not(.slideshow-active) .pswp__dynamic-caption--faded {
     opacity: 0 !important;
 }

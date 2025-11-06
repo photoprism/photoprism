@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** October 21, 2025
+**Last Updated:** November 2, 2025
 
 ## Purpose
 
@@ -295,6 +295,7 @@ Note: Across our public documentation, official images, and in production, the c
 - For CLI-driven tests, wrap commands with `RunWithTestContext(cmd, args)` so `urfave/cli` cannot exit the process, and assert CLI output with `assert.Contains`/regex because `show` reports quote strings.
 - In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it via `photoprism.SetConfig`.
 - Generate identifiers with `rnd.GenerateUID(entity.ClientUID)` for OAuth client IDs and `rnd.UUIDv7()` for node UUIDs; treat `node.uuid` as required in responses.
+- When creating or editing shell scripts, run `shellcheck <file>` (or the relevant `make` target) and resolve warnings before exiting the task.
 - When adding persistent fixtures (photos, files, labels, etc.), always obtain new IDs via `rnd.GenerateUID(...)` with the matching prefix (`entity.PhotoUID`, `entity.FileUID`, `entity.LabelUID`, …) instead of inventing manual strings so the search helpers recognize them.
 - For database updates, prefer the `entity.Values` type alias over raw `map[string]interface{}` so helpers stay type-safe and consistent with existing code.
 - Reach for `config.NewMinimalTestConfig(t.TempDir())` when a test only needs filesystem/config scaffolding, and use `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` when you need a fresh SQLite schema without the cached fixture snapshot.
@@ -331,6 +332,7 @@ Note: Across our public documentation, official images, and in production, the c
 ### API & Config Changes
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
+- Use `pkg/fs.ConfigFilePath` when you need a config filename so existing `.yml` files remain valid and new installs can adopt `.yaml` transparently (the helper also covers other paired extensions such as `.toml`/`.tml`).
 - When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
 - When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 - Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
@@ -420,10 +422,12 @@ Note: Across our public documentation, official images, and in production, the c
 ### Cluster Operations
 
 - Keep bootstrap code decoupled: avoid importing `internal/service/cluster/node/*` from `internal/config` or the cluster root, let nodes talk to the Portal over HTTP(S), and rely on constants from `internal/service/cluster/const.go`.
+- Bootstrap refreshes node OAuth credentials on 401/403 responses (rotate secret + retry) and logs the refresh at info level; if the secret file cannot be written, the value stays cached in memory so the current process can continue.
+- Portal validation now accepts HTTP advertise URLs only for loopback hosts or cluster-internal domains (`*.svc`, `*.cluster.local`, `*.internal`); everything else must use HTTPS.
 - Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then invoke `Ext().Init(c)`.
 - Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; only reinstall when `app.js` is missing and always use the header helpers in `pkg/http/header`.
 - Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials, treat 401/403/404 as terminal, include `ClientID` + `ClientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
 - Registry & DTOs: use the client-backed registry (`NewClientRegistryWithConfig`)—the file-backed version is legacy—and treat migration as complete only after swapping callsites, building, and running focused API/CLI tests. Nodes are keyed by UUID v7 (`/api/v1/cluster/nodes/{uuid}`), the registry interface stays UUID-first (`Get`, `FindByNodeUUID`, `FindByClientID`, `RotateSecret`, `DeleteAllByUUID`), CLI lookups resolve `uuid → ClientID → name`, and DTOs normalize `Database.{Name,User,Driver,RotatedAt}` while exposing `ClientSecret` only during creation/rotation. `nodes rm --all-ids` cleans duplicate client rows, admin responses may include `AdvertiseUrl`/`Database`, client/user sessions stay redacted, registry files live under `conf.PortalConfigPath()/nodes/` (mode 0600), and `ClientData` no longer stores `NodeUUID`.
-- Provisioner & DSN: database/user names use UUID-based HMACs (`photoprism_d<hmac11>`, `photoprism_u<hmac11>`); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
+- Provisioner & DSN: database/user names use UUID-based HMACs (`<prefix>d<hmac11>`, `<prefix>u<hmac11>` where the prefix defaults to `cluster_` but may be overridden via the portal-only `database-provision-prefix` flag); `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported.
 - If we add Postgres provisioning support, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API/CLI.
 - Testing: exercise Portal endpoints with `httptest`, guard extraction paths with `pkg/fs.Unzip` size caps, and expect admin-only fields to disappear when authenticated as a client/user session.

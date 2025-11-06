@@ -217,20 +217,65 @@ func (c *Config) FaceClusterCore() int {
 
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
-	if c.options.FaceClusterDist < 0.1 || c.options.FaceClusterDist > 1.5 {
+	if c.options.FaceClusterDist < c.FaceCollisionDist() || c.options.FaceClusterDist > 1.5 {
 		return face.ClusterDist
 	}
 
 	return c.options.FaceClusterDist
 }
 
+// FaceClusterRadius returns the maximum radius used when matching face clusters.
+func (c *Config) FaceClusterRadius() float64 {
+	if c.options.FaceClusterRadius < c.FaceCollisionDist() || c.options.FaceClusterRadius > 1.5 {
+		return face.ClusterRadius
+	}
+
+	return c.options.FaceClusterRadius
+}
+
+// FaceCollisionDist returns the minimum distance used to differentiate embeddings.
+func (c *Config) FaceCollisionDist() float64 {
+	if c.options.FaceCollisionDist <= 0 || c.options.FaceCollisionDist > 1 {
+		return face.CollisionDist
+	}
+
+	return c.options.FaceCollisionDist
+}
+
+// FaceEpsilonDist returns the distance slack applied to collision checks.
+func (c *Config) FaceEpsilonDist() float64 {
+	if c.options.FaceEpsilonDist <= 0 || c.options.FaceEpsilonDist > 0.1 {
+		return face.Epsilon
+	}
+
+	return c.options.FaceEpsilonDist
+}
+
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
-	if c.options.FaceMatchDist < 0.1 || c.options.FaceMatchDist > 1.5 {
+	if c.options.FaceMatchDist < c.FaceCollisionDist() || c.options.FaceMatchDist > 1.5 {
 		return face.MatchDist
 	}
 
 	return c.options.FaceMatchDist
+}
+
+// FaceSkipChildren reports whether child embeddings should be skipped when matching.
+func (c *Config) FaceSkipChildren() bool {
+	if c == nil {
+		return face.SkipChildren
+	}
+
+	return c.options.FaceSkipChildren
+}
+
+// FaceAllowBackground reports whether background embeddings should not be ignored.
+func (c *Config) FaceAllowBackground() bool {
+	if c == nil {
+		return !face.IgnoreBackground
+	}
+
+	return c.options.FaceAllowBackground
 }
 
 // FaceAngles returns the set of detection angles in radians.

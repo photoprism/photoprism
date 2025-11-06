@@ -20,7 +20,7 @@ func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two independent nodes
-	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: "instance"}}
+	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: cluster.RoleApp}}
 	b := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-b", Role: "service"}}
 	assert.NoError(t, r.Put(a))
 	assert.NoError(t, r.Put(b))
@@ -55,7 +55,7 @@ func TestClientRegistry_ClientIDReuse_ChangesUUIDWhenTargetMissing(t *testing.T)
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed one node
-	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-x", Role: "instance"}}
+	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-x", Role: cluster.RoleApp}}
 	assert.NoError(t, r.Put(a))
 
 	// Move the row to a new UUID by referencing the same ClientID and a new UUID

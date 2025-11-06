@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-10-22 08:05+0000\n"
+"PO-Revision-Date: 2025-11-01 11:04+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -80,11 +80,11 @@ msgstr "%{s} is te lang"
 msgid "%{s} is too short"
 msgstr "%{s} is te kort"
 
-#: src/options/options.js:367
+#: src/options/options.js:368
 msgid "1 hour"
 msgstr "1 uur"
 
-#: src/options/options.js:369
+#: src/options/options.js:370
 msgid "12 hours"
 msgstr "12 uren"
 
@@ -97,7 +97,7 @@ msgstr "2-Factor Authenticatie"
 msgid "2FA"
 msgstr "2FA"
 
-#: src/options/options.js:368
+#: src/options/options.js:369
 msgid "4 hours"
 msgstr "4 uren"
 
@@ -125,9 +125,9 @@ msgstr "Over"
 msgid "Access Token"
 msgstr "Toegangssleutel"
 
-#: src/component/navigation.vue:1066 src/component/navigation.vue:868
-#: src/component/service/upload.vue:24 src/model/service.js:72
-#: src/model/user.js:150 src/page/settings.vue:111
+#: src/component/navigation.vue:1068 src/component/navigation.vue:868
+#: src/component/service/upload.vue:24 src/locales.js:331
+#: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:112
 #: src/page/settings/general.vue:348
 msgid "Account"
 msgstr "Account"
@@ -144,7 +144,7 @@ msgstr "Account verwijderd"
 msgid "Account restored"
 msgstr "Account hersteld"
 
-#: src/page/admin.vue:54
+#: src/page/admin.vue:54 src/locales.js:332
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -190,7 +190,7 @@ msgstr "Activeren om aflopend te sorteren."
 msgid "Activation Code"
 msgstr "Activeringscode"
 
-#: src/page/admin.vue:76
+#: src/page/admin.vue:76 src/locales.js:348
 msgid "Activity"
 msgstr "Activiteit"
 
@@ -234,8 +234,8 @@ msgstr "Voeg foto's toe uit zoekresultaten door ze te selecteren."
 
 #: src/component/album/clipboard.vue:65 src/component/file/clipboard.vue:44
 #: src/component/label/clipboard.vue:32 src/component/people/clipboard.vue:42
+#: src/component/photo/album/dialog.vue:100
 #: src/component/photo/album/dialog.vue:15
-#: src/component/photo/album/dialog.vue:95
 #: src/component/photo/clipboard.vue:104
 msgid "Add to album"
 msgstr "Toevoegen aan album"
@@ -251,56 +251,47 @@ msgstr "Toegevoegd"
 msgid "Adjust Location"
 msgstr "Locatie aanpassen"
 
-#: src/options/admin.js:6 src/common/util.js:764 src/options/auth.js:6
+#: src/options/admin.js:6 src/common/util.js:798 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
-#: src/page/settings.vue:85
+#: src/page/settings.vue:86
 msgid "Advanced"
 msgstr "Geavanceerd"
 
-#: src/options/options.js:377
+#: src/options/options.js:378
 msgid "After 1 day"
 msgstr "Na 1 dag"
 
-#: src/options/options.js:378
+#: src/options/options.js:379
 msgid "After 3 days"
 msgstr "Na 3 dagen"
 
-#: src/options/options.js:379
+#: src/options/options.js:380
 msgid "After 7 days"
 msgstr "Na 7 dagen"
 
 #: src/component/settings/passcode.vue:32
-msgid ""
-"After entering your password for confirmation, you can set up two-factor "
-"authentication with a compatible authenticator app or device:"
-msgstr ""
-"Nadat je je wachtwoord hebt ingevoerd ter bevestiging, kun je "
-"tweefactorauthenticatie instellen met een compatibele authenticatie-app of "
-"-apparaat:"
+msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
+msgstr "Nadat je je wachtwoord hebt ingevoerd ter bevestiging, kun je tweefactorauthenticatie instellen met een compatibele authenticatie-app of -apparaat:"
 
-#: src/options/options.js:381
+#: src/options/options.js:382
 msgid "After one month"
 msgstr "Na een maand"
 
-#: src/options/options.js:383
+#: src/options/options.js:384
 msgid "After one year"
 msgstr "Na een jaar"
 
 #: src/page/albums.vue:175
-msgid ""
-"After selecting pictures from search results, you can add them to an album "
-"using the context menu."
-msgstr ""
-"Nadat u foto's uit de zoekresultaten hebt geselecteerd, kunt u ze via het "
-"contextmenu aan een album toevoegen."
+msgid "After selecting pictures from search results, you can add them to an album using the context menu."
+msgstr "Nadat u foto's uit de zoekresultaten hebt geselecteerd, kunt u ze via het contextmenu aan een album toevoegen."
 
-#: src/options/options.js:382
+#: src/options/options.js:383
 msgid "After two months"
 msgstr "Na twee maanden"
 
-#: src/options/options.js:380
+#: src/options/options.js:381
 msgid "After two weeks"
 msgstr "Na twee weken"
 
@@ -389,12 +380,8 @@ msgid "All Years"
 msgstr "Alle jaren"
 
 #: src/component/share/dialog.vue:133
-msgid ""
-"Alternatively, you can upload files directly to WebDAV servers like "
-"Nextcloud."
-msgstr ""
-"U kunt ook rechtstreeks bestanden uploaden naar WebDAV-servers zoals "
-"Nextcloud."
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "U kunt ook rechtstreeks bestanden uploaden naar WebDAV-servers zoals Nextcloud."
 
 #: src/component/photo/edit/info.vue:192 src/component/photo/edit/info.vue:193
 msgid "Altitude"
@@ -413,7 +400,7 @@ msgstr "AM"
 #: src/component/photo/edit/files.vue:156
 #: src/component/photo/view/cards.vue:140
 #: src/component/photo/view/cards.vue:289 src/component/photo/view/list.vue:95
-#: src/component/photo/view/mosaic.vue:87 src/options/options.js:306
+#: src/component/photo/view/mosaic.vue:87 src/options/options.js:307
 msgid "Animated"
 msgstr "Geanimeerd"
 
@@ -436,9 +423,13 @@ msgstr "Alle privéfoto's en -video's blijven privé en worden niet gedeeld."
 msgid "API Key"
 msgstr "API sleutel"
 
-#: src/page/admin/sessions.vue:172 src/options/auth.js:26
+#: src/page/admin/sessions.vue:172 src/locales.js:354 src/options/auth.js:26
 msgid "Application"
 msgstr "Toepassing"
+
+#: src/locales.js:355
+msgid "Applications"
+msgstr "Toepassingen"
 
 #: src/component/photo/clipboard.vue:44
 #: src/component/photo/edit/details.vue:418
@@ -454,7 +445,7 @@ msgstr "Wijzigingen goedkeuren en opslaan"
 msgid "Apps and Devices"
 msgstr "Apps en apparaten"
 
-#: src/component/lightbox.vue:2339 src/component/photo/edit/info.vue:238
+#: src/component/lightbox.vue:2340 src/component/photo/edit/info.vue:238
 #: src/component/photo/edit/info.vue:239
 msgid "Archived"
 msgstr "Gearchiveerd"
@@ -503,11 +494,15 @@ msgstr "Artiest"
 msgid "Aspect Ratio"
 msgstr "Verhoudingen"
 
+#: src/locales.js:338
+msgid "Attributes"
+msgstr "Attributen"
+
 #: src/app/routes.js:279 src/component/navigation.vue:198
 #: src/component/navigation.vue:199 src/component/navigation.vue:223
 #: src/component/navigation.vue:229 src/component/navigation.vue:244
 #: src/component/navigation.vue:338 src/component/navigation.vue:344
-#: src/options/options.js:302
+#: src/options/options.js:303
 msgid "Audio"
 msgstr "Audio"
 
@@ -517,11 +512,11 @@ msgstr "Audio"
 
 #: src/component/user/add/dialog.vue:107 src/component/user/edit/dialog.vue:183
 #: src/page/admin/sessions.vue:152 src/page/admin/sessions.vue:292
-#: src/page/admin/users.vue:270
+#: src/page/admin/users.vue:270 src/locales.js:333
 msgid "Authentication"
 msgstr "Authenticatie"
 
-#: src/common/util.js:726
+#: src/common/util.js:760
 msgid "Auto"
 msgstr "Auto"
 
@@ -546,25 +541,17 @@ msgstr "Badge"
 msgid "Base Path"
 msgstr "Basispad"
 
-#: src/common/util.js:758
+#: src/common/util.js:792
 msgid "Batch"
 msgstr "Batch"
 
 #: src/page/about/about.vue:48 src/page/connect.vue:114
-msgid ""
-"Become a member today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Word vandaag nog lid, steun onze missie en geniet van onze ledenvoordelen!"
+msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgstr "Word vandaag nog lid, steun onze missie en geniet van onze ledenvoordelen!"
 
 #: src/component/confirm/sponsor.vue:22 src/page/about/about.vue:56
-msgid ""
-"Being 100% self-funded and independent, we can promise you that we will "
-"never sell your data and that we will always be transparent about our "
-"software and services."
-msgstr ""
-"Omdat we 100% zelf gefinancierd en onafhankelijk zijn, kunnen we u beloven "
-"dat we uw gegevens nooit zullen verkopen en dat we altijd transparant zullen "
-"zijn over onze software en diensten."
+msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
+msgstr "Omdat we 100% zelf gefinancierd en onafhankelijk zijn, kunnen we u beloven dat we uw gegevens nooit zullen verkopen en dat we altijd transparant zullen zijn over onze software en diensten."
 
 #: src/component/user/edit/dialog.vue:151
 #: src/component/user/edit/dialog.vue:152 src/page/settings/account.vue:123
@@ -576,25 +563,25 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Geboortedatum"
 
-#: src/options/options.js:402
+#: src/options/options.js:403
 msgid "Black"
 msgstr "Zwart"
 
-#: src/options/options.js:430
+#: src/options/options.js:431
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Wijziging, Minder Ringing Artifacts"
 
-#: src/options/options.js:398
+#: src/options/options.js:399
 msgid "Blue"
 msgstr "Blauw"
 
-#: src/options/options.js:399
+#: src/options/options.js:400
 msgid "Brown"
 msgstr "Bruin"
 
 #: src/component/photo/edit/files.vue:107 src/component/photo/edit/files.vue:67
 #: src/component/photo/edit/files.vue:75 src/component/photo/toolbar.vue:109
-#: src/component/upload/dialog.vue:120 src/component/upload/dialog.vue:75
+#: src/component/upload/dialog.vue:123 src/component/upload/dialog.vue:75
 #: src/component/upload/dialog.vue:76 src/component/upload/dialog.vue:87
 msgid "Browse"
 msgstr "Blader door"
@@ -619,7 +606,7 @@ msgstr "Blader door geïndexeerde bestanden en mappen in de bibliotheek."
 msgid "Browse Pictures"
 msgstr "Foto's bekijken"
 
-#: src/page/about/feedback.vue:111 src/options/options.js:408
+#: src/page/about/feedback.vue:111 src/options/options.js:409
 msgid "Bug Report"
 msgstr "Bugmelding"
 
@@ -628,12 +615,8 @@ msgid "Busy, please wait…"
 msgstr "Bezig, wacht even…"
 
 #: src/page/connect.vue:198
-msgid ""
-"By using the software and services we provide, you agree to our terms of "
-"service, privacy policy, and code of conduct."
-msgstr ""
-"Door gebruik te maken van de software en diensten die wij leveren, gaat u "
-"akkoord met onze servicevoorwaarden, ons privacybeleid en onze gedragscode."
+msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
+msgstr "Door gebruik te maken van de software en diensten die wij leveren, gaat u akkoord met onze servicevoorwaarden, ons privacybeleid en onze gedragscode."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
 #: src/options/options.js:208 src/page/settings/general.vue:108
@@ -677,7 +660,7 @@ msgstr "Kan niet meer items selecteren"
 #: src/component/label/delete/dialog.vue:16
 #: src/component/label/edit/dialog.vue:53 src/component/location/dialog.vue:119
 #: src/component/people/edit/dialog.vue:63
-#: src/component/photo/album/dialog.vue:56 src/component/service/add.vue:99
+#: src/component/photo/album/dialog.vue:59 src/component/service/add.vue:99
 #: src/component/service/edit.vue:242 src/component/service/remove.vue:18
 #: src/component/service/upload.vue:56 src/component/settings/apps.vue:172
 #: src/component/settings/passcode.vue:119
@@ -688,11 +671,11 @@ msgstr "Kan niet meer items selecteren"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/common/util.js:927 src/common/util.js:934
+#: src/common/util.js:965 src/common/util.js:972
 msgid "Cannot copy to clipboard"
 msgstr "Kan niet naar klembord kopiëren"
 
-#: src/common/util.js:746 src/component/photo/edit/details.vue:44
+#: src/common/util.js:780 src/component/photo/edit/details.vue:44
 #: src/component/photo/view/cards.vue:240 src/component/sidebar/info.vue:25
 msgid "Caption"
 msgstr "Onderschrift"
@@ -742,20 +725,18 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen"
 #: src/component/user/edit/dialog.vue:413
 #: src/component/user/edit/dialog.vue:489
 #: src/component/album/edit/dialog.vue:191
-#: src/component/label/edit/dialog.vue:109 src/component/lightbox.vue:2298
+#: src/component/label/edit/dialog.vue:109 src/component/lightbox.vue:2299
 #: src/component/photo/edit/files.vue:570 src/component/service/edit.vue:342
 #: src/component/share/dialog.vue:239 src/component/share/dialog.vue:258
 #: src/page/albums.vue:1274 src/page/people/recognized.vue:324
 #: src/page/settings/advanced.vue:539 src/page/settings/content.vue:300
-#: src/page/settings/general.vue:531
+#: src/page/settings/general.vue:532
 msgid "Changes successfully saved"
 msgstr "Wijzigingen succesvol opgeslagen"
 
 #: src/page/settings/advanced.vue:16
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
-"Wijzigingen aan de geavanceerde instellingen vereisen een herstart om van "
-"kracht te worden."
+msgstr "Wijzigingen aan de geavanceerde instellingen vereisen een herstart om van kracht te worden."
 
 #: src/component/photo/edit/info.vue:230 src/component/photo/edit/info.vue:231
 msgid "Checked"
@@ -788,8 +769,8 @@ msgid "Client Credentials"
 msgstr "Klantgegevens"
 
 #: src/component/user/edit/dialog.vue:311 src/page/admin/sessions.vue:224
-#: src/component/lightbox.vue:1211 src/component/lightbox.vue:1212
-#: src/component/lightbox.vue:433 src/component/photo/edit/details.vue:403
+#: src/component/lightbox.vue:1212 src/component/lightbox.vue:1213
+#: src/component/lightbox.vue:434 src/component/photo/edit/details.vue:403
 #: src/component/photo/edit/details.vue:408 src/component/photo/toolbar.vue:112
 #: src/component/settings/apps.vue:236 src/component/settings/apps.vue:99
 #: src/component/settings/passcode.vue:146
@@ -804,7 +785,7 @@ msgstr "Klantgegevens"
 #: src/component/share/dialog.vue:141 src/component/share/dialog.vue:72
 #: src/component/share/dialog.vue:73 src/component/share/dialog.vue:81
 #: src/component/sidebar/info.vue:6 src/component/update.vue:24
-#: src/component/upload/dialog.vue:117 src/locales.js:206
+#: src/component/upload/dialog.vue:120 src/locales.js:206
 #: src/page/library/errors.vue:137
 msgid "Close"
 msgstr "Sluiten"
@@ -852,7 +833,7 @@ msgstr "Vertrouwen"
 #: src/component/location/dialog.vue:81 src/component/photo/album/dialog.vue:29
 #: src/component/photo/album/dialog.vue:30
 #: src/component/photo/album/dialog.vue:38
-#: src/component/photo/album/dialog.vue:59
+#: src/component/photo/album/dialog.vue:62
 #: src/component/settings/passcode.vue:112
 #: src/component/settings/passcode.vue:122
 #: src/component/settings/passcode.vue:74
@@ -905,7 +886,7 @@ msgstr "Bevat %{n} foto's."
 msgid "Contains one picture."
 msgstr "Bevat één foto."
 
-#: src/page/settings.vue:72
+#: src/page/settings.vue:73
 msgid "Content"
 msgstr "Inhoud"
 
@@ -921,7 +902,7 @@ msgstr "Bijdrager"
 msgid "Converting"
 msgstr "Converteren"
 
-#: src/common/util.js:920
+#: src/common/util.js:958
 msgid "Copied to clipboard"
 msgstr "Gekopieerd naar klembord"
 
@@ -959,7 +940,7 @@ msgstr "Land"
 msgid "Create Account"
 msgstr "Account aanmaken"
 
-#: src/component/photo/album/dialog.vue:96
+#: src/component/photo/album/dialog.vue:101
 msgid "Create album"
 msgstr "Nieuw album"
 
@@ -973,9 +954,7 @@ msgstr "YAML-bestanden maken om albummetadata te back-uppen."
 
 #: src/page/settings/advanced.vue:210
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
-"Maak YAML sidecar-bestanden om een back-up te maken van "
-"afbeeldingsmetagegevens."
+msgstr "Maak YAML sidecar-bestanden om een back-up te maken van afbeeldingsmetagegevens."
 
 #: src/page/admin/sessions.vue:191 src/component/photo/edit/info.vue:206
 #: src/component/photo/edit/info.vue:207
@@ -986,7 +965,7 @@ msgstr "Aangemaakt"
 msgid "Creating thumbnails for"
 msgstr "Het maken van miniaturen voor"
 
-#: src/options/options.js:432
+#: src/options/options.js:433
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubiek: Gematigde kwaliteit, goede prestaties"
 
@@ -998,17 +977,25 @@ msgstr "Huidig Wachtwoord"
 msgid "Custom"
 msgstr "Aangepast"
 
-#: src/options/options.js:397
+#: src/options/options.js:398
 msgid "Cyan"
 msgstr "Cyaan"
 
-#: src/options/options.js:370
+#: src/options/options.js:371
 msgid "Daily"
 msgstr "Dagelijks"
+
+#: src/locales.js:327
+msgid "Database"
+msgstr "Database"
 
 #: src/page/settings/advanced.vue:177
 msgid "Database Backups"
 msgstr "Back-ups van databases"
+
+#: src/locales.js:328
+msgid "Databases"
+msgstr "Databases"
 
 #: src/page/settings/account.vue:220 src/component/photo/edit/details.vue:58
 msgid "Day"
@@ -1023,11 +1010,11 @@ msgid "Debug Logs"
 msgstr "Debug-logs"
 
 #: src/options/admin.js:35 src/page/admin/sessions.vue:368
-#: src/page/admin/users.vue:371 src/common/util.js:728 src/model/session.js:42
-#: src/model/user.js:237 src/options/auth.js:21 src/options/auth.js:22
+#: src/page/admin/users.vue:371 src/common/util.js:762 src/model/session.js:42
+#: src/model/user.js:250 src/options/auth.js:21 src/options/auth.js:22
 #: src/options/auth.js:40 src/options/auth.js:41 src/options/options.js:197
-#: src/options/options.js:200 src/options/options.js:237
-#: src/options/options.js:321 src/options/themes.js:844
+#: src/options/options.js:200 src/options/options.js:238
+#: src/options/options.js:322 src/options/themes.js:844
 msgid "Default"
 msgstr "Standaard"
 
@@ -1043,7 +1030,7 @@ msgstr "Standaard map"
 #: src/component/photo/clipboard.vue:140 src/component/photo/edit/files.vue:62
 #: src/component/photo/edit/files.vue:70 src/component/photo/edit/files.vue:94
 #: src/component/service/remove.vue:21 src/component/share/dialog.vue:111
-#: src/page/settings/general.vue:269
+#: src/locales.js:317 src/page/settings/general.vue:269
 msgid "Delete"
 msgstr "Verwijder"
 
@@ -1069,8 +1056,7 @@ msgstr "Omschrijving"
 
 #: src/component/settings/webdav.vue:66
 msgid "Detailed instructions can be found in our User Guide."
-msgstr ""
-"Gedetailleerde instructies zijn te vinden in onze gebruikershandleiding."
+msgstr "Gedetailleerde instructies zijn te vinden in onze gebruikershandleiding."
 
 #: src/component/photo/edit/dialog.vue:42
 #: src/component/photo/edit/dialog.vue:45
@@ -1094,10 +1080,8 @@ msgid "Disable ExifTool"
 msgstr "Schakel ExifTool uit"
 
 #: src/page/settings/advanced.vue:69
-msgid ""
-"Disable features that require write permission for the originals folder."
-msgstr ""
-"Schakel functies uit die schrijfrechten vereisen voor de map Originals."
+msgid "Disable features that require write permission for the originals folder."
+msgstr "Schakel functies uit die schrijfrechten vereisen voor de map Originals."
 
 #: src/page/settings/advanced.vue:430
 msgid "Disable FFmpeg"
@@ -1159,7 +1143,7 @@ msgstr "Ontsla"
 #: src/component/user/add/dialog.vue:66 src/component/user/add/dialog.vue:67
 #: src/component/user/edit/dialog.vue:84 src/component/user/edit/dialog.vue:85
 #: src/page/admin/users.vue:267 src/page/settings/account.vue:76
-#: src/page/settings/account.vue:78
+#: src/page/settings/account.vue:78 src/locales.js:321
 msgid "Display Name"
 msgstr "Naam op scherm"
 
@@ -1174,7 +1158,7 @@ msgstr "Afbeeldings titels weergeven in zoekresultaten."
 #: src/component/photo/view/cards.vue:149
 #: src/component/photo/view/cards.vue:298
 #: src/component/photo/view/mosaic.vue:96 src/model/thumb.js:152
-#: src/options/options.js:314
+#: src/options/options.js:315
 msgid "Document"
 msgstr "Document"
 
@@ -1210,7 +1194,7 @@ msgid "Done."
 msgstr "Klaar."
 
 #: src/component/album/clipboard.vue:54 src/component/album/toolbar.vue:203
-#: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1439
+#: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1440
 #: src/component/people/clipboard.vue:31 src/component/photo/clipboard.vue:92
 #: src/component/photo/edit/files.vue:51 src/page/settings/content.vue:183
 #: src/page/settings/general.vue:189
@@ -1218,12 +1202,8 @@ msgid "Download"
 msgstr "Download"
 
 #: src/page/settings/content.vue:194
-msgid ""
-"Download only original media files, without any automatically generated "
-"files."
-msgstr ""
-"Download alleen originele mediabestanden, zonder automatisch gegenereerde "
-"bestanden."
+msgid "Download only original media files, without any automatically generated files."
+msgstr "Download alleen originele mediabestanden, zonder automatisch gegenereerde bestanden."
 
 #: src/component/service/edit.vue:117
 msgid "Download remote files"
@@ -1235,7 +1215,7 @@ msgstr "Download enkele bestanden en zip-archieven."
 
 #: src/component/album/clipboard.vue:227 src/component/album/toolbar.vue:252
 #: src/component/file/clipboard.vue:150 src/component/label/clipboard.vue:172
-#: src/component/lightbox.vue:2378 src/component/people/clipboard.vue:144
+#: src/component/lightbox.vue:2379 src/component/people/clipboard.vue:144
 #: src/component/photo/clipboard.vue:419 src/component/photo/edit/files.vue:527
 #: src/component/photo/view/cards.vue:509 src/component/photo/view/list.vue:300
 #: src/page/library/browse.vue:252
@@ -1250,13 +1230,13 @@ msgstr "Downscaling filter"
 msgid "Drag and drop files here"
 msgstr "Sleep bestanden hier naartoe"
 
+#: src/locales.js:344
+msgid "Driver"
+msgstr "Bestuurder"
+
 #: src/page/about/feedback.vue:22 src/page/about/feedback.vue:23
-msgid ""
-"Due to the high volume of emails we receive, our team may be unable to get "
-"back to you immediately."
-msgstr ""
-"Vanwege het grote aantal e-mails dat wij ontvangen, kan het voorkomen dat "
-"ons team u niet onmiddellijk antwoord kan geven."
+msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+msgstr "Vanwege het grote aantal e-mails dat wij ontvangen, kan het voorkomen dat ons team u niet onmiddellijk antwoord kan geven."
 
 #: src/page/library/browse.vue:46
 msgid "Duplicates will be skipped and only appear once."
@@ -1281,7 +1261,7 @@ msgid "E-Mail"
 msgstr "E-mail"
 
 #: src/component/album/clipboard.vue:43 src/component/album/toolbar.vue:174
-#: src/component/lightbox.vue:1340 src/component/lightbox.vue:1341
+#: src/component/lightbox.vue:1341 src/component/lightbox.vue:1342
 #: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:237
 msgid "Edit"
 msgstr "Bewerken"
@@ -1310,11 +1290,8 @@ msgid "Email"
 msgstr "E-mail"
 
 #: src/page/settings/advanced.vue:37
-msgid ""
-"Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
-"Schakel de debugmodus in om extra logs weer te geven en te helpen bij het "
-"oplossen van problemen."
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr "Schakel de debugmodus in om extra logs weer te geven en te helpen bij het oplossen van problemen."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1325,15 +1302,12 @@ msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Schakelt RAW-converterpresets in. Kan de prestaties verminderen."
 
 #: src/component/settings/passcode.vue:58
-msgid ""
-"Enabling two-factor authentication means that you will need a randomly "
-"generated verification code to log in, so even if someone gains access to "
-"your password, they will not be able to access your account."
-msgstr ""
-"Het inschakelen van twee-factor authenticatie betekent dat je een "
-"willekeurig gegenereerde verificatiecode nodig hebt om in te loggen, dus "
-"zelfs als iemand toegang krijgt tot je wachtwoord, zal hij geen toegang "
-"kunnen krijgen tot je account."
+msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
+msgstr "Het inschakelen van twee-factor authenticatie betekent dat je een willekeurig gegenereerde verificatiecode nodig hebt om in te loggen, dus zelfs als iemand toegang krijgt tot je wachtwoord, zal hij geen toegang kunnen krijgen tot je account."
+
+#: src/locales.js:345
+msgid "Engine"
+msgstr "Motor"
 
 #: src/locales.js:248 src/locales.js:250
 msgid "Enter date"
@@ -1355,7 +1329,7 @@ msgstr "Verificatiecode invoeren"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Voer je wachtwoord in om de actie te bevestigen en door te gaan:"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:437
+#: src/page/connect.vue:14 src/component/lightbox.vue:438
 #: src/page/connect.vue:19 src/page/library/errors.vue:391
 msgid "Error"
 msgstr "Fout"
@@ -1368,7 +1342,7 @@ msgstr "Fout"
 msgid "Errors"
 msgstr "Fouten"
 
-#: src/common/util.js:730
+#: src/common/util.js:764
 msgid "Estimate"
 msgstr "Schatting"
 
@@ -1380,29 +1354,21 @@ msgstr "Locaties schatten"
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "De locatie van foto's bij benadering schatten zonder GPS-coördinaten."
 
-#: src/options/options.js:371
+#: src/options/options.js:372
 msgid "Every two days"
 msgstr "Om de twee dagen"
 
 #: src/page/settings/general.vue:157
-msgid ""
-"Exclude content marked as private from search results, shared albums, "
-"labels, and places."
-msgstr ""
-"Sluit inhoud gemarkeerd als privé uit van zoekresultaten, gedeelde albums, "
-"labels en plaatsen."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+msgstr "Sluit inhoud gemarkeerd als privé uit van zoekresultaten, gedeelde albums, labels en plaatsen."
 
 #: src/page/people/new.vue:22 src/page/people/recognized.vue:56
 msgid "Exclude hidden"
 msgstr "Verborgen uitsluiten"
 
 #: src/page/settings/advanced.vue:133
-msgid ""
-"ExifTool is required for full support of XMP metadata, videos and Live "
-"Photos."
-msgstr ""
-"Metadata-extractie met ExifTool is vereist voor volledige ondersteuning van "
-"video, live foto's en XMP."
+msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
+msgstr "Metadata-extractie met ExifTool is vereist voor volledige ondersteuning van video, live foto's en XMP."
 
 #: src/page/settings/advanced.vue:52
 msgid "Experimental Features"
@@ -1451,7 +1417,7 @@ msgstr "Mislukte actualiseringslink"
 msgid "Family Name"
 msgstr "Familienaam"
 
-#: src/options/options.js:221
+#: src/options/options.js:222
 msgid "Fast"
 msgstr "Snel"
 
@@ -1467,7 +1433,7 @@ msgstr "Favoriet"
 msgid "Favorites"
 msgstr "Favorieten"
 
-#: src/page/about/feedback.vue:110 src/options/options.js:407
+#: src/page/about/feedback.vue:110 src/options/options.js:408
 msgid "Feature Request"
 msgstr "Verzoek voor nieuwe functionaliteit"
 
@@ -1479,11 +1445,11 @@ msgstr "Verzoek voor nieuwe functionaliteit"
 msgid "Feedback"
 msgstr "Feedback"
 
-#: src/options/options.js:438
+#: src/options/options.js:439
 msgid "Female"
 msgstr "Vrouw"
 
-#: src/common/util.js:732 src/component/photo/edit/info.vue:104
+#: src/common/util.js:766 src/component/photo/edit/info.vue:104
 #: src/model/file.js:266
 msgid "File"
 msgstr "Bestand"
@@ -1520,12 +1486,8 @@ msgid "Files"
 msgstr "Bestanden"
 
 #: src/page/settings/content.vue:115
-msgid ""
-"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
-"the same picture."
-msgstr ""
-"Bestanden met opeenvolgende namen zoals 'IMG_1234 (2)' en 'IMG_1234 (3)' "
-"behoren tot hetzelfde beeld."
+msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
+msgstr "Bestanden met opeenvolgende namen zoals 'IMG_1234 (2)' en 'IMG_1234 (3)' behoren tot hetzelfde beeld."
 
 #: src/locales.js:234 src/locales.js:292
 msgid "First page"
@@ -1576,11 +1538,11 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr "Volledige Toegang"
 
-#: src/component/lightbox.vue:1288 src/component/lightbox.vue:1289
+#: src/component/lightbox.vue:1289 src/component/lightbox.vue:1290
 msgid "Fullscreen"
 msgstr "Volledig scherm"
 
-#: src/page/settings.vue:59
+#: src/page/settings.vue:60
 msgid "General"
 msgstr "Algemeen"
 
@@ -1619,15 +1581,15 @@ msgstr "Overkoepelende instellingen"
 msgid "Go to page {0}"
 msgstr "Ga naar pagina {0}"
 
-#: src/options/options.js:392
+#: src/options/options.js:393
 msgid "Gold"
 msgstr "Goud"
 
-#: src/options/options.js:395
+#: src/options/options.js:396
 msgid "Green"
 msgstr "Groen"
 
-#: src/options/options.js:401
+#: src/options/options.js:402
 msgid "Grey"
 msgstr "Grijs"
 
@@ -1667,7 +1629,7 @@ msgstr "Verberg"
 msgid "Hide photos that have been moved to archive."
 msgstr "Verberg foto's die zijn verplaatst naar het archief."
 
-#: src/options/options.js:325
+#: src/options/options.js:326
 msgid "High"
 msgstr "Hoog"
 
@@ -1681,20 +1643,16 @@ msgstr "Hoog dynamisch bereik (HDR)"
 msgid "How can we help?"
 msgstr "Hoe kunnen we je helpen?"
 
-#: src/options/options.js:248
+#: src/options/options.js:249
 msgid "Hybrid"
 msgstr "Hybride"
 
 #: src/component/settings/passcode.vue:195
-msgid ""
-"If you lose access to your authenticator app or device, you can use your "
-"recovery code to regain access to your account."
-msgstr ""
-"Als u de toegang tot uw authenticatie-app of -apparaat verliest, kunt u uw "
-"herstelcode gebruiken om weer toegang te krijgen tot uw account."
+msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
+msgstr "Als u de toegang tot uw authenticatie-app of -apparaat verliest, kunt u uw herstelcode gebruiken om weer toegang te krijgen tot uw account."
 
-#: src/common/util.js:736 src/component/photo/view/cards.vue:307
-#: src/model/file.js:194 src/options/options.js:286
+#: src/common/util.js:770 src/component/photo/view/cards.vue:307
+#: src/model/file.js:194 src/options/options.js:287
 msgid "Image"
 msgstr "Afbeelding"
 
@@ -1709,18 +1667,12 @@ msgid "Import"
 msgstr "Importeren"
 
 #: src/page/library/import.vue:57
-msgid ""
-"Imported files will be sorted by date and given a unique name to avoid "
-"duplicates."
-msgstr ""
-"Geïmporteerde bestanden worden gesorteerd op datum en krijgen een unieke "
-"naam om duplicaten te voorkomen."
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr "Geïmporteerde bestanden worden gesorteerd op datum en krijgen een unieke naam om duplicaten te voorkomen."
 
 #: src/page/settings/general.vue:206
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Geïmporteerde bestanden worden gesorteerd op datum en krijgen een unieke "
-"naam."
+msgstr "Geïmporteerde bestanden worden gesorteerd op datum en krijgen een unieke naam."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1742,12 +1694,8 @@ msgstr "in"
 #: src/component/photo/view/cards.vue:20 src/component/photo/view/list.vue:20
 #: src/component/photo/view/mosaic.vue:20 src/page/labels.vue:76
 #: src/page/library/browse.vue:48
-msgid ""
-"In case pictures you expect are missing, please rescan your library and wait "
-"until indexing has been completed."
-msgstr ""
-"Mochten er foto's ontbreken die u verwacht, scan dan uw bibliotheek opnieuw "
-"en wacht tot het indexeren is voltooid."
+msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "Mochten er foto's ontbreken die u verwacht, scan dan uw bibliotheek opnieuw en wacht tot het indexeren is voltooid."
 
 #: src/page/settings/content.vue:208
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1755,8 +1703,7 @@ msgstr "RAW-beeldbestanden opnemen bij het downloaden van stacks en archieven."
 
 #: src/page/settings/content.vue:222
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
-"Download ook sidecar-bestanden bij het downloaden van stacks en archieven."
+msgstr "Download ook sidecar-bestanden bij het downloaden van stacks en archieven."
 
 #: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
@@ -1779,14 +1726,22 @@ msgstr "Indexeren"
 msgid "Indexing media and sidecar files…"
 msgstr "Foto’s en sidecar-bestanden aan het indexeren…"
 
-#: src/component/lightbox.vue:1236 src/component/lightbox.vue:1237
+#: src/component/lightbox.vue:1237 src/component/lightbox.vue:1238
 #: src/component/sidebar/info.vue:9
 msgid "Information"
 msgstr "Informatie"
 
+#: src/locales.js:360
+msgid "Instance"
+msgstr "Instantie"
+
 #: src/component/photo/edit/files.vue:82
 msgid "Instance ID"
 msgstr "Instantie-ID"
+
+#: src/locales.js:361
+msgid "Instances"
+msgstr "Instanties"
 
 #: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -1834,18 +1789,14 @@ msgstr "Ongeldige tijd"
 msgid "Invalid URL"
 msgstr "Ongeldige URL"
 
-#: src/page/admin/activity.vue:129
+#: src/page/admin/activity.vue:126 src/locales.js:350
 msgid "IP Address"
 msgstr "IP-adres"
 
 #: src/component/settings/passcode.vue:164
 #: src/component/settings/passcode.vue:199
-msgid ""
-"It is a one-time use code that will disable 2FA for your account when you "
-"use it."
-msgstr ""
-"Het is een eenmalige code die 2FA voor je account uitschakelt als je hem "
-"gebruikt."
+msgid "It is a one-time use code that will disable 2FA for your account when you use it."
+msgstr "Het is een eenmalige code die 2FA voor je account uitschakelt als je hem gebruikt."
 
 #: src/model/rest.js:157
 msgid "Item"
@@ -1867,7 +1818,7 @@ msgstr "JPEG-groottegrens: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG's en thumbnails worden automatisch weergegeven als dat nodig is."
 
-#: src/common/util.js:748
+#: src/common/util.js:782
 msgid "Keyword"
 msgstr "Trefwoord"
 
@@ -1885,8 +1836,8 @@ msgstr "Label"
 #: src/component/photo/edit/dialog.vue:38
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
-#: src/component/photo/edit/dialog.vue:53 src/options/options.js:210
-#: src/page/settings/general.vue:140
+#: src/component/photo/edit/dialog.vue:53 src/locales.js:325
+#: src/options/options.js:210 src/page/settings/general.vue:140
 msgid "Labels"
 msgstr "Labels"
 
@@ -1894,7 +1845,7 @@ msgstr "Labels"
 msgid "Labels deleted"
 msgstr "Labels verwijderd"
 
-#: src/options/options.js:431
+#: src/options/options.js:432
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detailbewaring, Minimale artefacten"
 
@@ -1906,7 +1857,7 @@ msgstr "Taal"
 msgid "Last Active"
 msgstr "Laatste actief"
 
-#: src/page/admin/users.vue:276
+#: src/page/admin/users.vue:276 src/locales.js:335
 msgid "Last Login"
 msgstr "Laatste aanmelding"
 
@@ -1964,11 +1915,11 @@ msgstr "Bibliotheek"
 msgid "License"
 msgstr "Licentie"
 
-#: src/component/lightbox.vue:1306 src/component/lightbox.vue:1307
+#: src/component/lightbox.vue:1307 src/component/lightbox.vue:1308
 msgid "Like"
 msgstr "Vind ik leuk"
 
-#: src/options/options.js:394
+#: src/options/options.js:395
 msgid "Lime"
 msgstr "Limoen"
 
@@ -1976,7 +1927,7 @@ msgstr "Limoen"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiet bereikt, toont eerste %{n} bestanden"
 
-#: src/options/options.js:433
+#: src/options/options.js:434
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineair: Zeer glad, beste prestaties"
 
@@ -1994,7 +1945,7 @@ msgstr "Lijstweergave"
 
 #: src/component/photo/view/cards.vue:139
 #: src/component/photo/view/cards.vue:280 src/component/photo/view/list.vue:94
-#: src/component/photo/view/mosaic.vue:86 src/options/options.js:294
+#: src/component/photo/view/mosaic.vue:86 src/options/options.js:295
 msgid "Live"
 msgstr "Live"
 
@@ -2017,8 +1968,9 @@ msgstr "Artikelen laden..."
 msgid "Loading..."
 msgstr "Aan het laden..."
 
-#: src/options/admin.js:39 src/options/auth.js:23 src/options/auth.js:28
-#: src/options/options.js:38 src/page/settings/general.vue:55
+#: src/options/admin.js:39 src/locales.js:341 src/options/auth.js:23
+#: src/options/auth.js:28 src/options/options.js:38
+#: src/page/settings/general.vue:55
 msgid "Local"
 msgstr "Lokaal"
 
@@ -2027,7 +1979,7 @@ msgid "Local Time"
 msgstr "Lokale tijd"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:738 src/component/album/edit/dialog.vue:45
+#: src/common/util.js:772 src/component/album/edit/dialog.vue:45
 #: src/component/photo/edit/details.vue:471
 #: src/component/photo/edit/details.vue:549
 #: src/component/photo/edit/details.vue:643
@@ -2038,12 +1990,8 @@ msgid "Location"
 msgstr "Locatie"
 
 #: src/page/library/errors.vue:103
-msgid ""
-"Log messages appear here whenever PhotoPrism comes across broken files, or "
-"there are other potential issues."
-msgstr ""
-"Logboekberichten verschijnen hier wanneer PhotoPrism op gebroken bestanden "
-"stuit, of wanneer er andere potentiële problemen zijn."
+msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
+msgstr "Logboekberichten verschijnen hier wanneer PhotoPrism op gebroken bestanden stuit, of wanneer er andere potentiële problemen zijn."
 
 #: src/component/navigation.vue:757 src/component/navigation.vue:893
 msgid "Login"
@@ -2062,11 +2010,15 @@ msgstr "Logboeken"
 msgid "Longitude"
 msgstr "Lengtegraad"
 
-#: src/options/options.js:329
+#: src/component/navigation.vue:799
+msgid "Lost server connection"
+msgstr "Verbroken serververbinding"
+
+#: src/options/options.js:330
 msgid "Low"
 msgstr "Laag"
 
-#: src/options/options.js:388
+#: src/options/options.js:389
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -2076,7 +2028,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hoofdkleur"
 
-#: src/options/options.js:437
+#: src/options/options.js:438
 msgid "Male"
 msgstr "Man"
 
@@ -2090,7 +2042,7 @@ msgstr "Account beheren"
 msgid "Manager"
 msgstr "Manager"
 
-#: src/common/util.js:760
+#: src/common/util.js:794
 msgid "Manual"
 msgstr "Handmatig"
 
@@ -2102,7 +2054,7 @@ msgstr "Uploaden"
 msgid "Maps"
 msgstr "Kaarten"
 
-#: src/common/util.js:740 src/model/marker.js:120
+#: src/common/util.js:774 src/model/marker.js:120
 msgid "Marker"
 msgstr "Symbool"
 
@@ -2115,7 +2067,7 @@ msgstr "Het maximum aantal accounts is bereikt."
 msgid "Media"
 msgstr "Media"
 
-#: src/options/options.js:225
+#: src/options/options.js:226
 msgid "Medium"
 msgstr "Medium"
 
@@ -2127,8 +2079,8 @@ msgstr "Lidmaatschap"
 msgid "Merge %{a} with %{b}?"
 msgstr "%{a} samenvoegen met %{b}?"
 
-#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:130
-#: src/page/about/feedback.vue:52
+#: src/page/about/feedback.vue:51 src/page/admin/activity.vue:127
+#: src/locales.js:352 src/page/about/feedback.vue:52
 msgid "Message"
 msgstr "Bericht"
 
@@ -2136,7 +2088,7 @@ msgstr "Bericht"
 msgid "Message sent"
 msgstr "Bericht verzonden"
 
-#: src/common/util.js:750
+#: src/common/util.js:784
 msgid "Metadata"
 msgstr "Metagegevens"
 
@@ -2175,7 +2127,7 @@ msgstr "Monochroom"
 msgid "Month"
 msgstr "Maand"
 
-#: src/component/lightbox.vue:1359
+#: src/component/lightbox.vue:1360
 msgid "More options"
 msgstr "Meer opties"
 
@@ -2195,19 +2147,19 @@ msgstr "Bestanden verplaatsen"
 msgid "Must have at least %{n} characters."
 msgstr "Moet minstens %{n} tekens bevatten."
 
-#: src/component/lightbox.vue:1255 src/component/lightbox.vue:1256
+#: src/component/lightbox.vue:1256 src/component/lightbox.vue:1257
 msgid "Mute"
 msgstr "Stomme"
 
 #: src/page/about/feedback.vue:64 src/page/about/feedback.vue:65
-#: src/common/util.js:734 src/component/album/edit/dialog.vue:35
+#: src/common/util.js:768 src/component/album/edit/dialog.vue:35
 #: src/component/label/edit/dialog.vue:33
 #: src/component/people/edit/dialog.vue:33
 #: src/component/photo/edit/files.vue:435 src/component/photo/edit/info.vue:42
 #: src/component/photo/edit/info.vue:43 src/component/photo/edit/people.vue:151
 #: src/component/photo/view/list.vue:56 src/component/service/edit.vue:158
 #: src/component/settings/apps.vue:133 src/component/settings/apps.vue:306
-#: src/page/about/feedback.vue:66 src/page/albums.vue:466
+#: src/locales.js:319 src/page/about/feedback.vue:66 src/page/albums.vue:466
 #: src/page/auth/login.vue:88 src/page/people/new.vue:204
 #: src/page/settings/services.vue:183
 msgid "Name"
@@ -2223,8 +2175,8 @@ msgstr "Naam"
 msgid "Name too long"
 msgstr "Titel is te lang"
 
-#: src/page/admin/users.vue:399 src/options/options.js:366
-#: src/options/options.js:376 src/page/settings/services.vue:221
+#: src/page/admin/users.vue:399 src/options/options.js:367
+#: src/options/options.js:377 src/page/settings/services.vue:221
 msgid "Never"
 msgstr "Nooit"
 
@@ -2242,7 +2194,7 @@ msgstr "Nieuw wachtwoord"
 msgid "Newest First"
 msgstr "Nieuwste eerst"
 
-#: src/component/lightbox.vue:436 src/locales.js:297
+#: src/component/lightbox.vue:437 src/locales.js:297
 msgid "Next"
 msgstr "Volgende"
 
@@ -2304,10 +2256,6 @@ msgstr "Geen recent bewerkte foto's"
 msgid "No results"
 msgstr "Geen resultaten"
 
-#: src/component/navigation.vue:799
-msgid "No server connection"
-msgstr "Geen serververbinding"
-
 #: src/component/service/upload.vue:173
 msgid "No servers configured."
 msgstr "Geen servers geconfigureerd."
@@ -2321,34 +2269,34 @@ msgid "No thanks"
 msgstr "Nee bedankt"
 
 #: src/page/library/errors.vue:99
-msgid ""
-"No warnings or error containing this keyword. Note that search is case-"
-"sensitive."
-msgstr ""
-"Geen waarschuwingen of fouten met dit trefwoord. Let op: zoeken is "
-"hoofdlettergevoelig."
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "Geen waarschuwingen of fouten met dit trefwoord. Let op: zoeken is hoofdlettergevoelig."
+
+#: src/locales.js:356
+msgid "Node"
+msgstr "Knooppunt"
+
+#: src/locales.js:357
+msgid "Nodes"
+msgstr "Knooppunten"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
-#: src/component/upload/dialog.vue:106
-msgid ""
-"Non-photographic and low-quality images require a review before they appear "
-"in search results."
-msgstr ""
-"Niet-fotografische beelden en beelden van lage kwaliteit moeten worden "
-"beoordeeld voordat ze in de zoekresultaten verschijnen."
+#: src/component/upload/dialog.vue:109
+msgid "Non-photographic and low-quality images require a review before they appear in search results."
+msgstr "Niet-fotografische beelden en beelden van lage kwaliteit moeten worden beoordeeld voordat ze in de zoekresultaten verschijnen."
 
-#: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:217
-#: src/options/options.js:333
+#: src/options/admin.js:51 src/options/auth.js:33 src/options/options.js:218
+#: src/options/options.js:334
 msgid "None"
 msgstr "Geen"
 
-#: src/component/lightbox.vue:810 src/component/service/upload.vue:158
+#: src/component/lightbox.vue:811 src/component/service/upload.vue:158
 #: src/component/service/upload.vue:170
 msgid "Not allowed"
 msgstr "Niet toegestaan"
 
-#: src/component/lightbox.vue:807
+#: src/component/lightbox.vue:808
 msgid "Not found"
 msgstr "Niet gevonden"
 
@@ -2356,28 +2304,21 @@ msgstr "Niet gevonden"
 msgid "Not sorted."
 msgstr "Niet gesorteerd."
 
-#: src/component/lightbox.vue:804 src/component/lightbox.vue:925
+#: src/component/lightbox.vue:805 src/component/lightbox.vue:926
 msgid "Not supported"
 msgstr "Niet ondersteund"
 
 #: src/page/library/import.vue:60
-msgid ""
-"Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Let op: u kunt uw originelenmap handmatig beheren en importeren is optioneel."
+msgid "Note you may manually manage your originals folder and importing is optional."
+msgstr "Let op: u kunt uw originelenmap handmatig beheren en importeren is optioneel."
 
 #: src/page/settings/services.vue:78
 msgid "Note:"
 msgstr "Notitie:"
 
 #: src/component/service/add.vue:60
-msgid ""
-"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
-"as remote service for backup and file upload."
-msgstr ""
-"Opmerking: Alleen WebDAV-servers, zoals Nextcloud of PhotoPrism, kunnen "
-"worden geconfigureerd als service op afstand voor het maken van back-ups en "
-"het uploaden van bestanden."
+msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
+msgstr "Opmerking: Alleen WebDAV-servers, zoals Nextcloud of PhotoPrism, kunnen worden geconfigureerd als service op afstand voor het maken van back-ups en het uploaden van bestanden."
 
 #: src/component/photo/edit/details.vue:388
 msgid "Notes"
@@ -2392,7 +2333,7 @@ msgstr "Hier is nog niets te zien."
 msgid "Nothing was found."
 msgstr "Er is niets gevonden."
 
-#: src/options/options.js:275
+#: src/options/options.js:276
 msgid "Offline"
 msgstr "Offline"
 
@@ -2413,19 +2354,13 @@ msgstr "Oudste eerst"
 #: src/component/settings/webdav.vue:17 src/component/settings/webdav.vue:18
 #: src/component/settings/webdav.vue:26 src/component/settings/webdav.vue:37
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr ""
-"In Windows voert u de volgende bron in het verbindingsdialoogvenster in:"
+msgstr "In Windows voert u de volgende bron in het verbindingsdialoogvenster in:"
 
 #: src/page/settings/advanced.vue:287
-msgid ""
-"On-demand generation of thumbnails may cause high CPU and memory usage. It "
-"is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
-"Het op aanvraag genereren van miniaturen kan een hoog CPU- en "
-"geheugengebruik veroorzaken. Het wordt niet aanbevolen voor servers en NAS-"
-"apparaten met beperkte bronnen."
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr "Het op aanvraag genereren van miniaturen kan een hoog CPU- en geheugengebruik veroorzaken. Het wordt niet aanbevolen voor servers en NAS-apparaten met beperkte bronnen."
 
-#: src/options/options.js:372
+#: src/options/options.js:373
 msgid "Once a week"
 msgstr "Eenmaal per week"
 
@@ -2459,13 +2394,10 @@ msgid "One picture found"
 msgstr "Een foto gevonden"
 
 #: src/component/settings/passcode.vue:249
-msgid ""
-"Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
-"Alleen lokaal beheerde accounts kunnen worden ingesteld voor verificatie met "
-"2FA."
+msgid "Only locally managed accounts can be set up for authentication with 2FA."
+msgstr "Alleen lokaal beheerde accounts kunnen worden ingesteld voor verificatie met 2FA."
 
-#: src/locales.js:205
+#: src/locales.js:205 src/locales.js:318
 msgid "Open"
 msgstr "Open"
 
@@ -2477,7 +2409,7 @@ msgstr "optioneel"
 msgid "or"
 msgstr "of"
 
-#: src/options/options.js:391
+#: src/options/options.js:392
 msgid "Orange"
 msgstr "Oranje"
 
@@ -2506,26 +2438,22 @@ msgstr "Originele naam"
 #: src/component/navigation.vue:381 src/component/navigation.vue:387
 #: src/component/navigation.vue:402 src/component/navigation.vue:621
 #: src/component/navigation.vue:627 src/component/navigation.vue:633
-#: src/model/file.js:172 src/options/options.js:418
+#: src/model/file.js:172 src/options/options.js:419
 #: src/page/library/browse.vue:12 src/page/settings/content.vue:193
 #: src/page/settings/general.vue:316
 msgid "Originals"
 msgstr "Originelen"
 
-#: src/page/about/feedback.vue:112 src/options/options.js:409
-#: src/options/options.js:439
+#: src/page/about/feedback.vue:112 src/options/options.js:410
+#: src/options/options.js:440
 msgid "Other"
 msgstr "Andere"
 
 #: src/page/about/about.vue:29
-msgid ""
-"Our mission is to provide the most user- and privacy-friendly solution to "
-"keep your pictures organized and accessible."
-msgstr ""
-"Onze missie is om de meest gebruiks- en privacyvriendelijke oplossing te "
-"bieden om uw foto's georganiseerd en toegankelijk te houden."
+msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgstr "Onze missie is om de meest gebruiks- en privacyvriendelijke oplossing te bieden om uw foto's georganiseerd en toegankelijk te houden."
 
-#: src/options/options.js:260
+#: src/options/options.js:261
 msgid "Outdoor"
 msgstr "Outdoor"
 
@@ -2626,7 +2554,7 @@ msgstr "Foto’s"
 msgid "Picture Title"
 msgstr "Titel afbeelding"
 
-#: src/options/options.js:389
+#: src/options/options.js:390
 msgid "Pink"
 msgstr "Roze"
 
@@ -2651,18 +2579,14 @@ msgid "Please confirm your new password."
 msgstr "Bevestig uw nieuwe wachtwoord."
 
 #: src/component/settings/apps.vue:75
-msgid ""
-"Please copy the following randomly generated app password and keep it in a "
-"safe place, as you will not be able to see it again:"
-msgstr ""
-"Kopieer het volgende willekeurig gegenereerde app-wachtwoord en bewaar het "
-"op een veilige plaats, want je zult het niet meer kunnen zien:"
+msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
+msgstr "Kopieer het volgende willekeurig gegenereerde app-wachtwoord en bewaar het op een veilige plaats, want je zult het niet meer kunnen zien:"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:101
 msgid "Please do not upload any private, unlawful or offensive pictures. "
 msgstr "Upload geen foto's die privé, onwettig of aanstootgevend zijn."
 
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:104
 msgid "Please don't upload photos containing offensive content."
 msgstr "Upload geen foto's met aanstootgevende inhoud."
 
@@ -2671,12 +2595,8 @@ msgid "Please enter OTP character {0}"
 msgstr "Voer OTP-teken {0} in"
 
 #: src/component/settings/password.vue:20
-msgid ""
-"Please note that changing your password will log you out on other devices "
-"and browsers."
-msgstr ""
-"Houd er rekening mee dat het wijzigen van uw wachtwoord u zal afmelden op "
-"andere apparaten en browsers."
+msgid "Please note that changing your password will log you out on other devices and browsers."
+msgstr "Houd er rekening mee dat het wijzigen van uw wachtwoord u zal afmelden op andere apparaten en browsers."
 
 #: src/page/connect.vue:65 src/page/connect.vue:67
 msgid "Please restart your instance for the changes to take effect."
@@ -2694,6 +2614,10 @@ msgstr "PM"
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG-groottegrens: %{n}px"
 
+#: src/locales.js:323
+msgid "Portal"
+msgstr "Portaal"
+
 #: src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:198
 #: src/component/photo/edit/files.vue:204
@@ -2704,23 +2628,17 @@ msgstr "Staand"
 msgid "Preserve filenames"
 msgstr "Bewaar bestandsnamen"
 
-#: src/component/photo/album/dialog.vue:37 src/component/upload/dialog.vue:69
+#: src/component/photo/album/dialog.vue:40 src/component/upload/dialog.vue:72
 msgid "Press enter to create a new album."
 msgstr "Druk op enter om een nieuw album te maken."
 
 #: src/page/settings/advanced.vue:85
-msgid ""
-"Prevent database and album backups as well as YAML sidecar files from being "
-"created."
-msgstr ""
-"Voorkom dat database- en albumback-ups en YAML sidecar-bestanden worden "
-"gemaakt."
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr "Voorkom dat database- en albumback-ups en YAML sidecar-bestanden worden gemaakt."
 
 #: src/page/settings/advanced.vue:101
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
-"Voorkom dat andere apps toegang hebben tot PhotoPrism als een gedeeld "
-"netwerkstation."
+msgstr "Voorkom dat andere apps toegang hebben tot PhotoPrism als een gedeeld netwerkstation."
 
 #: src/component/photo/edit/files.vue:30
 msgid "Preview"
@@ -2730,7 +2648,7 @@ msgstr "Voorbeeld"
 msgid "Preview Images"
 msgstr "Voorbeeldafbeeldingen"
 
-#: src/component/lightbox.vue:435 src/locales.js:298
+#: src/component/lightbox.vue:436 src/locales.js:298
 msgid "Previous"
 msgstr "Vorige"
 
@@ -2760,7 +2678,7 @@ msgstr "Primair"
 msgid "Private"
 msgstr "Privé"
 
-#: src/page/about/feedback.vue:109 src/options/options.js:406
+#: src/page/about/feedback.vue:109 src/options/options.js:407
 msgid "Product Feedback"
 msgstr "Terugkoppeling van producten"
 
@@ -2770,7 +2688,7 @@ msgstr "Terugkoppeling van producten"
 msgid "Projection"
 msgstr "Projectie"
 
-#: src/options/options.js:387
+#: src/options/options.js:388
 msgid "Purple"
 msgstr "Paars"
 
@@ -2790,7 +2708,7 @@ msgstr "Willekeurig"
 msgid "Rating {0} of {1}"
 msgstr "Beoordeling {0} van {1}"
 
-#: src/options/options.js:290
+#: src/options/options.js:291
 msgid "Raw"
 msgstr "Raw"
 
@@ -2801,9 +2719,7 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Herindexeer alle originelen, inclusief de reeds geïndexeerde en ongewijzigde "
-"bestanden."
+msgstr "Herindexeer alle originelen, inclusief de reeds geïndexeerde en ongewijzigde bestanden."
 
 #: src/page/settings/advanced.vue:68
 msgid "Read-Only Mode"
@@ -2840,16 +2756,16 @@ msgstr "Erkend"
 msgid "Recovery Code"
 msgstr "Herstelcode"
 
-#: src/options/options.js:390
+#: src/options/options.js:391
 msgid "Red"
 msgstr "Rood"
 
 #: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:333
 #: src/page/admin/users.vue:321 src/component/album/toolbar.vue:164
-#: src/component/photo/toolbar.vue:488 src/page/albums.vue:552
-#: src/page/labels.vue:297 src/page/library/browse.vue:21
-#: src/page/library/errors.vue:226 src/page/people/new.vue:7
-#: src/page/people/recognized.vue:37
+#: src/component/photo/toolbar.vue:488 src/locales.js:316
+#: src/page/albums.vue:552 src/page/labels.vue:297
+#: src/page/library/browse.vue:21 src/page/library/errors.vue:226
+#: src/page/people/new.vue:7 src/page/people/recognized.vue:37
 msgid "Refresh"
 msgstr "Vernieuw"
 
@@ -2872,8 +2788,8 @@ msgstr "Registreer"
 msgid "Reload"
 msgstr "Ververs"
 
-#: src/component/navigation.vue:1087 src/component/update.vue:61
-#: src/page/settings/general.vue:527
+#: src/component/navigation.vue:1089 src/component/update.vue:61
+#: src/page/settings/general.vue:528
 msgid "Reloading…"
 msgstr "Herladen…"
 
@@ -2889,23 +2805,27 @@ msgstr "Verwijderen"
 msgid "remove failed: unknown album"
 msgstr "verwijderen mislukt: onbekend album"
 
-#: src/component/lightbox.vue:1396 src/component/photo/clipboard.vue:128
+#: src/component/lightbox.vue:1397 src/component/photo/clipboard.vue:128
 msgid "Remove from Album"
 msgstr "Verwijder uit album"
 
 #: src/page/library/import.vue:46
-msgid ""
-"Remove imported files to save storage. Unsupported file types will never be "
-"deleted, they remain in their current location."
-msgstr ""
-"Verwijder geïmporteerde bestanden om opslag op te slaan. Niet-ondersteunde "
-"bestandstypen worden nooit verwijderd, ze blijven op hun huidige locatie."
+msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr "Verwijder geïmporteerde bestanden om opslag op te slaan. Niet-ondersteunde bestandstypen worden nooit verwijderd, ze blijven op hun huidige locatie."
 
-#: src/page/admin/activity.vue:132
+#: src/locales.js:362
+msgid "Remove the selected instance from the cluster registry?"
+msgstr "De geselecteerde instantie uit het clusterregister verwijderen?"
+
+#: src/locales.js:326
+msgid "Removed"
+msgstr "Verwijderd"
+
+#: src/page/admin/activity.vue:129 src/locales.js:353
 msgid "Repeated"
 msgstr "Herhaald"
 
-#: src/common/api.js:102 src/component/lightbox.vue:921
+#: src/common/api.js:102 src/component/lightbox.vue:922
 msgid "Request failed - are you offline?"
 msgstr "Aanvraag mislukt - bent u offline?"
 
@@ -2914,12 +2834,8 @@ msgid "Request failed - invalid response"
 msgstr "Verzoek mislukt - ongeldig antwoord"
 
 #: src/page/settings/content.vue:25
-msgid ""
-"Require non-photographic and low-quality images to be reviewed before they "
-"appear in search results."
-msgstr ""
-"Eis dat niet-fotografische afbeeldingen en afbeeldingen van lage kwaliteit "
-"worden beoordeeld voordat ze in de zoekresultaten verschijnen."
+msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
+msgstr "Eis dat niet-fotografische afbeeldingen en afbeeldingen van lage kwaliteit worden beoordeeld voordat ze in de zoekresultaten verschijnen."
 
 #: src/component/photo/edit/info.vue:105 src/component/photo/edit/info.vue:106
 msgid "Resolution"
@@ -2934,12 +2850,12 @@ msgstr "Herstart"
 #: src/component/user/edit/dialog.vue:107
 #: src/component/user/edit/dialog.vue:115
 #: src/component/user/edit/dialog.vue:121
-#: src/component/user/edit/dialog.vue:314 src/component/lightbox.vue:1425
+#: src/component/user/edit/dialog.vue:314 src/component/lightbox.vue:1426
 #: src/component/photo/clipboard.vue:56
 msgid "Restore"
 msgstr "Herstellen"
 
-#: src/component/lightbox.vue:2357
+#: src/component/lightbox.vue:2358
 msgid "Restored"
 msgstr "Gerestaureerd"
 
@@ -2961,14 +2877,23 @@ msgstr "Beoordeling"
 
 #: src/component/user/add/dialog.vue:93 src/component/user/edit/dialog.vue:166
 #: src/page/admin/sessions.vue:145 src/page/admin/users.vue:268
+#: src/locales.js:336
 msgid "Role"
 msgstr "Rol"
+
+#: src/locales.js:337
+msgid "Roles"
+msgstr "Rollen"
+
+#: src/locales.js:346
+msgid "Rotated"
+msgstr "Gedraaid"
 
 #: src/locales.js:217
 msgid "Rows per page:"
 msgstr "Rijen per pagina:"
 
-#: src/options/options.js:254
+#: src/options/options.js:255
 msgid "Satellite"
 msgstr "Satelliet"
 
@@ -3012,12 +2937,8 @@ msgid "Scan"
 msgstr "Scan"
 
 #: src/component/settings/passcode.vue:86
-msgid ""
-"Scan the QR code with your authenticator app or use the setup key shown "
-"below and then enter the generated verification code:"
-msgstr ""
-"Scan de QR-code met je authenticatie-app of gebruik de onderstaande sleutel "
-"en voer vervolgens de gegenereerde verificatiecode in:"
+msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
+msgstr "Scan de QR-code met je authenticatie-app of gebruik de onderstaande sleutel en voer vervolgens de gegenereerde verificatiecode in:"
 
 #: src/component/navigation.vue:100 src/component/navigation.vue:101
 #: src/component/navigation.vue:125 src/component/navigation.vue:131
@@ -3028,16 +2949,21 @@ msgstr "Scans"
 
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:293
 #: src/component/settings/apps.vue:150 src/component/settings/apps.vue:308
+#: src/locales.js:339
 msgid "Scope"
 msgstr "Toepassingsgebied"
+
+#: src/locales.js:340
+msgid "Scopes"
+msgstr "Scopes"
 
 #: src/page/admin/activity.vue:13 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/component/location/dialog.vue:63
 #: src/component/navigation.vue:122 src/component/navigation.vue:903
-#: src/component/photo/toolbar.vue:35 src/options/options.js:201
-#: src/page/albums.vue:31 src/page/labels.vue:26 src/page/library/errors.vue:29
-#: src/page/people/recognized.vue:15 src/page/places.vue:33
-#: src/page/settings/content.vue:131
+#: src/component/photo/toolbar.vue:35 src/locales.js:315
+#: src/options/options.js:201 src/page/albums.vue:31 src/page/labels.vue:26
+#: src/page/library/errors.vue:29 src/page/people/recognized.vue:15
+#: src/page/places.vue:33 src/page/settings/content.vue:131
 msgid "Search"
 msgstr "Zoeken"
 
@@ -3057,7 +2983,7 @@ msgstr "Geheim"
 msgid "Security and Access"
 msgstr "Veiligheid en toegang"
 
-#: src/component/lightbox.vue:1323 src/component/lightbox.vue:1324
+#: src/component/lightbox.vue:1324 src/component/lightbox.vue:1325
 msgid "Select"
 msgstr "Selecteer"
 
@@ -3073,7 +2999,7 @@ msgstr "Selecteer datum"
 msgid "Select dates"
 msgstr "Kies data"
 
-#: src/component/photo/album/dialog.vue:31 src/component/upload/dialog.vue:63
+#: src/component/photo/album/dialog.vue:33 src/component/upload/dialog.vue:65
 msgid "Select or create albums"
 msgstr "Albums selecteren of aanmaken"
 
@@ -3105,16 +3031,22 @@ msgstr "Selectie hersteld"
 msgid "Sequential Name"
 msgstr "Opeenvolgende naam"
 
+#: src/locales.js:358
+msgid "Service"
+msgstr "Service"
+
 #: src/component/service/add.vue:26 src/component/service/edit.vue:166
 #: src/component/share/dialog.vue:172
 msgid "Service URL"
 msgstr "Service URL"
 
-#: src/page/settings.vue:98 src/page/settings/general.vue:284
+#: src/locales.js:359 src/page/settings.vue:99
+#: src/page/settings/general.vue:284
 msgid "Services"
 msgstr "Diensten"
 
-#: src/model/session.js:83 src/options/auth.js:42 src/options/auth.js:91
+#: src/locales.js:342 src/model/session.js:83 src/options/auth.js:42
+#: src/options/auth.js:91
 msgid "Session"
 msgstr "Sessie"
 
@@ -3122,11 +3054,11 @@ msgstr "Sessie"
 msgid "Session ID"
 msgstr "Sessie-ID"
 
-#: src/page/admin.vue:65
+#: src/page/admin.vue:65 src/locales.js:343
 msgid "Sessions"
 msgstr "Sessies"
 
-#: src/component/lightbox.vue:1381
+#: src/component/lightbox.vue:1382
 msgid "Set as Album Cover"
 msgstr "Ingesteld als albumhoes"
 
@@ -3137,6 +3069,7 @@ msgstr "Instellen als omslagafbeelding"
 #: src/app/routes.js:102 src/app/routes.js:524 src/app/routes.js:536
 #: src/app/routes.js:553 src/app/routes.js:566 src/app/routes.js:579
 #: src/component/navigation.vue:671 src/component/navigation.vue:876
+#: src/options/options.js:212
 msgid "Settings"
 msgstr "Instellingen"
 
@@ -3153,7 +3086,8 @@ msgstr "Instellingen opgeslagen"
 msgid "Setup"
 msgstr "Setup"
 
-#: src/page/admin/activity.vue:128 src/page/admin/activity.vue:36
+#: src/page/admin/activity.vue:125 src/page/admin/activity.vue:36
+#: src/locales.js:347
 msgid "Severity"
 msgstr "Ernst"
 
@@ -3220,6 +3154,10 @@ msgstr "Inloggen"
 msgid "Similar"
 msgstr "Vergelijkbaar"
 
+#: src/locales.js:351
+msgid "Site URL"
+msgstr "URL website"
+
 #: src/component/photo/edit/files.vue:127
 #: src/component/photo/edit/files.vue:128
 #: src/component/photo/edit/files.vue:134
@@ -3228,11 +3166,11 @@ msgstr "Vergelijkbaar"
 msgid "Size"
 msgstr "Grootte"
 
-#: src/component/lightbox.vue:1271 src/component/lightbox.vue:1272
+#: src/component/lightbox.vue:1272 src/component/lightbox.vue:1273
 msgid "Slideshow"
 msgstr "Diashow"
 
-#: src/options/options.js:229
+#: src/options/options.js:230
 msgid "Slow"
 msgstr "Langzaam"
 
@@ -3250,18 +3188,16 @@ msgstr "Software bijwerken"
 msgid "Some albums could not be copied"
 msgstr "Sommige albums konden niet worden gekopieerd"
 
-#: src/component/photo/album/dialog.vue:188
+#: src/component/photo/album/dialog.vue:193
 msgid "Some albums could not be created. Please edit the names and try again."
-msgstr ""
-"Sommige albums konden niet worden aangemaakt. Pas de namen aan en probeer "
-"het opnieuw."
+msgstr "Sommige albums konden niet worden aangemaakt. Pas de namen aan en probeer het opnieuw."
 
 #: src/component/file/clipboard.vue:136 src/component/label/clipboard.vue:138
 #: src/component/people/clipboard.vue:132 src/component/photo/clipboard.vue:354
 msgid "Some albums could not be updated"
 msgstr "Sommige albums konden niet worden bijgewerkt"
 
-#: src/component/lightbox.vue:918
+#: src/component/lightbox.vue:919
 msgid "Something went wrong, try again"
 msgstr "Er ging iets mis, probeer het opnieuw."
 
@@ -3306,16 +3242,11 @@ msgstr "Stapel"
 
 #: src/page/settings/content.vue:99
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Stapel bestanden met dezelfde unieke beeld- of instantie-identificatie."
+msgstr "Stapel bestanden met dezelfde unieke beeld- of instantie-identificatie."
 
 #: src/page/settings/content.vue:84
-msgid ""
-"Stack pictures taken at the exact same time and location based on their "
-"metadata."
-msgstr ""
-"Stapel foto's die op exact dezelfde tijd en locatie zijn genomen op basis "
-"van hun metagegevens."
+msgid "Stack pictures taken at the exact same time and location based on their metadata."
+msgstr "Stapel foto's die op exact dezelfde tijd en locatie zijn genomen op basis van hun metagegevens."
 
 #: src/component/photo/edit/info.vue:123 src/component/photo/edit/info.vue:124
 msgid "Stackable"
@@ -3351,11 +3282,11 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Opslag"
 
-#: src/options/options.js:242
+#: src/options/options.js:243
 msgid "Streets"
 msgstr "Straat"
 
-#: src/common/util.js:752 src/component/photo/edit/details.vue:314
+#: src/common/util.js:786 src/component/photo/edit/details.vue:314
 msgid "Subject"
 msgstr "Onderwerp"
 
@@ -3385,11 +3316,8 @@ msgid "Super Admin"
 msgstr "Super Admin"
 
 #: src/component/service/add.vue:64
-msgid ""
-"Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"Ondersteuning voor aanvullende diensten, zoals Google Drive, zal in de loop "
-"van de tijd worden toegevoegd."
+msgid "Support for additional services, like Google Drive, will be added over time."
+msgstr "Ondersteuning voor aanvullende diensten, zoals Google Drive, zal in de loop van de tijd worden toegevoegd."
 
 #: src/component/confirm/sponsor.vue:14 src/component/navigation.vue:787
 msgid "Support Our Mission"
@@ -3409,19 +3337,15 @@ msgstr "Ruwe en videobestanden synchroniseren"
 msgid "Taken"
 msgstr "Bezet"
 
-#: src/options/options.js:396
+#: src/options/options.js:397
 msgid "Teal"
 msgstr "Groenblauw"
 
 #: src/page/settings/advanced.vue:150
-msgid ""
-"TensorFlow is required for image classification, facial recognition, and "
-"detecting unsafe content."
-msgstr ""
-"TensorFlow is nodig voor beeldclassificatie, gezichtsherkenning en het "
-"detecteren van onveilige inhoud."
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr "TensorFlow is nodig voor beeldclassificatie, gezichtsherkenning en het detecteren van onveilige inhoud."
 
-#: src/options/options.js:266
+#: src/options/options.js:267
 msgid "Terrain"
 msgstr "Terrein"
 
@@ -3438,26 +3362,18 @@ msgid "Thank You for Your Support!"
 msgstr "Bedankt voor uw steun!"
 
 #: src/page/about/about.vue:34
-msgid ""
-"That's why PhotoPrism was built from the ground up to run wherever you need "
-"it, without compromising freedom, privacy, or functionality."
-msgstr ""
-"Daarom is PhotoPrism vanaf de grond opgebouwd om te werken waar u maar wilt, "
-"zonder afbreuk te doen aan vrijheid, privacy of functionaliteit."
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgstr "Daarom is PhotoPrism vanaf de grond opgebouwd om te werken waar u maar wilt, zonder afbreuk te doen aan vrijheid, privacy of functionaliteit."
 
 #: src/page/library/index.vue:84
 msgid "The index currently contains %{n} hidden files."
 msgstr "De index bevat momenteel %{n} verborgen bestanden."
 
 #: src/page/library/index.vue:86
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet "
-"or there are duplicates."
-msgstr ""
-"Hun formaat wordt mogelijk niet ondersteund, ze zijn nog niet geconverteerd "
-"naar JPEG of er zijn duplicaten."
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Hun formaat wordt mogelijk niet ondersteund, ze zijn nog niet geconverteerd naar JPEG of er zijn duplicaten."
 
-#: src/page/settings/general.vue:25
+#: src/locales.js:324 src/page/settings/general.vue:25
 msgid "Theme"
 msgstr "Thema"
 
@@ -3469,26 +3385,14 @@ msgid "This field is required"
 msgstr "Dit veld is verplicht"
 
 #: src/component/settings/webdav.vue:57
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local."
-msgstr ""
-"Hierdoor wordt de map met de originelen als een netwerkstation gemonteerd en "
-"kunt u bestanden openen, bewerken en verwijderen van uw computer of "
-"smartphone alsof ze lokaal zijn."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr "Hierdoor wordt de map met de originelen als een netwerkstation gemonteerd en kunt u bestanden openen, bewerken en verwijderen van uw computer of smartphone alsof ze lokaal zijn."
 
 #: src/page/settings/services.vue:85
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, "
-"edit, and delete files from your computer or smartphone as if they were "
-"local. "
-msgstr ""
-"Hierdoor wordt de map met de originelen als een netwerkstation gemonteerd en "
-"kunt u bestanden openen, bewerken en verwijderen van uw computer of "
-"smartphone alsof ze lokaal zijn."
+msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
+msgstr "Hierdoor wordt de map met de originelen als een netwerkstation gemonteerd en kunt u bestanden openen, bewerken en verwijderen van uw computer of smartphone alsof ze lokaal zijn."
 
-#: src/page/admin/activity.vue:127
+#: src/page/admin/activity.vue:124 src/locales.js:349
 msgid "Time"
 msgstr "Tijd"
 
@@ -3504,7 +3408,7 @@ msgstr "Tijdzone"
 msgid "Timeout"
 msgstr "time-out"
 
-#: src/common/util.js:754 src/component/photo/edit/info.vue:87
+#: src/common/util.js:788 src/component/photo/edit/info.vue:87
 #: src/component/photo/view/list.vue:47 src/component/sidebar/info.vue:14
 msgid "Title"
 msgstr "Titel"
@@ -3522,37 +3426,20 @@ msgid "to"
 msgstr "tot"
 
 #: src/component/settings/passcode.vue:160
-msgid ""
-"To avoid being locked out of your account, please download, print or copy "
-"this recovery code now and keep it in a safe place."
-msgstr ""
-"Download, print of kopieer deze herstelcode en bewaar deze op een veilige "
-"plek om te voorkomen dat je wordt uitgesloten van je account."
+msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
+msgstr "Download, print of kopieer deze herstelcode en bewaar deze op een veilige plek om te voorkomen dat je wordt uitgesloten van je account."
 
 #: src/component/settings/apps.vue:122
-msgid ""
-"To generate a new app-specific password, please enter the name and "
-"authorization scope of the application and select an expiration date:"
-msgstr ""
-"Om een nieuw app-specifiek wachtwoord te genereren, voert u de naam en het "
-"autorisatiebereik van de applicatie in en selecteert u een vervaldatum:"
+msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
+msgstr "Om een nieuw app-specifiek wachtwoord te genereren, voert u de naam en het autorisatiebereik van de applicatie in en selecteert u een vervaldatum:"
 
 #: src/component/settings/passcode.vue:203
-msgid ""
-"To switch to a new authenticator app or device, first deactivate two-factor "
-"authentication and then reactivate it:"
-msgstr ""
-"Om over te schakelen naar een nieuwe authenticatie-app of -apparaat, moet je "
-"eerst de twee-factor authenticatie uitschakelen en vervolgens weer "
-"inschakelen:"
+msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
+msgstr "Om over te schakelen naar een nieuwe authenticatie-app of -apparaat, moet je eerst de twee-factor authenticatie uitschakelen en vervolgens weer inschakelen:"
 
 #: src/page/connect.vue:114 src/page/connect.vue:125
-msgid ""
-"To upgrade, you can either enter an activation code or click \"Register\" to "
-"sign up on our website:"
-msgstr ""
-"Om te upgraden kunt u een activeringscode invoeren of op \"Registreren\" "
-"klikken om u aan te melden op onze website:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr "Om te upgraden kunt u een activeringscode invoeren of op \"Registreren\" klikken om u aan te melden op onze website:"
 
 #: src/locales.js:263
 msgid "Today"
@@ -3566,7 +3453,7 @@ msgstr "Schakelweergave"
 msgid "Token"
 msgstr "Token"
 
-#: src/component/upload/dialog.vue:352
+#: src/component/upload/dialog.vue:373
 msgid "Too many files selected"
 msgstr "Te veel bestanden geselecteerd"
 
@@ -3614,7 +3501,7 @@ msgid "Unique ID"
 msgstr "Unieke id"
 
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:241
-#: src/page/settings/account.vue:261 src/common/util.js:500
+#: src/page/settings/account.vue:261 src/common/util.js:532
 #: src/component/photo/edit/details.vue:102
 #: src/component/photo/edit/details.vue:460
 #: src/component/photo/edit/details.vue:59
@@ -3623,7 +3510,7 @@ msgstr "Unieke id"
 #: src/model/photo.js:1074 src/model/photo.js:1087 src/model/photo.js:307
 #: src/model/photo.js:797 src/model/photo.js:822 src/model/photo.js:845
 #: src/model/photo.js:863 src/model/photo.js:910 src/model/photo.js:918
-#: src/model/user.js:136 src/options/options.js:100 src/options/options.js:112
+#: src/model/user.js:137 src/options/options.js:100 src/options/options.js:112
 #: src/options/options.js:51 src/options/options.js:69
 #: src/options/options.js:86 src/page/library/errors.vue:400
 #: src/page/library/errors.vue:407
@@ -3631,7 +3518,7 @@ msgid "Unknown"
 msgstr "Onbekend"
 
 #: src/page/settings/account.vue:467 src/page/settings/account.vue:475
-#: src/component/navigation.vue:1055 src/page/settings/account.vue:400
+#: src/component/navigation.vue:1057 src/page/settings/account.vue:400
 #: src/page/settings/account.vue:408
 msgid "Unregistered"
 msgstr "Ongeregistreerd"
@@ -3697,7 +3584,7 @@ msgstr "Nu upgraden"
 #: src/component/photo/toolbar.vue:498 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:37
 #: src/component/service/upload.vue:62 src/component/service/upload.vue:69
-#: src/component/upload/dialog.vue:185 src/page/albums.vue:562
+#: src/component/upload/dialog.vue:190 src/page/albums.vue:562
 #: src/page/labels.vue:352 src/page/library/import.vue:69
 #: src/page/library/import.vue:75 src/page/settings/general.vue:173
 #: src/page/settings/services.vue:184
@@ -3708,7 +3595,7 @@ msgstr "Uploaden"
 msgid "Upload complete. Indexing…"
 msgstr "Uploaden klaar. Indexeren…"
 
-#: src/component/upload/dialog.vue:38 src/component/upload/dialog.vue:436
+#: src/component/upload/dialog.vue:38 src/component/upload/dialog.vue:457
 msgid "Upload failed"
 msgstr "Uploaden mislukt"
 
@@ -3729,8 +3616,8 @@ msgstr "Upload naar WebDAV en deel links met vrienden."
 msgid "Uploading %{n} of %{t}…"
 msgstr "Het uploaden van %{n} van %{t}…"
 
-#: src/component/upload/dialog.vue:266 src/component/upload/dialog.vue:274
-#: src/component/upload/dialog.vue:388
+#: src/component/upload/dialog.vue:285 src/component/upload/dialog.vue:293
+#: src/component/upload/dialog.vue:409
 msgid "Uploading photos…"
 msgstr "Foto’s uploaden…"
 
@@ -3738,22 +3625,17 @@ msgstr "Foto’s uploaden…"
 msgid "Uploading…"
 msgstr "Uploaden…"
 
-#: src/component/upload/dialog.vue:102
+#: src/component/upload/dialog.vue:105
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Uploads die dergelijke beelden kunnen bevatten, worden automatisch geweigerd."
+msgstr "Uploads die dergelijke beelden kunnen bevatten, worden automatisch geweigerd."
 
 #: src/page/settings/advanced.vue:398
 msgid "Use Presets"
 msgstr "Gebruik Voorinstellingen"
 
 #: src/component/settings/passcode.vue:138
-msgid ""
-"Use the following recovery code to access your account when you are unable "
-"to generate a valid verification code with your authenticator app:"
-msgstr ""
-"Gebruik de volgende herstelcode om toegang te krijgen tot je account als je "
-"geen geldige verificatiecode kunt genereren met je authenticatie-app:"
+msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
+msgstr "Gebruik de volgende herstelcode om toegang te krijgen tot je account als je geen geldige verificatiecode kunt genereren met je authenticatie-app:"
 
 #: src/page/auth/login.vue:141 src/page/auth/login.vue:165
 #: src/page/auth/login.vue:47 src/page/auth/login.vue:48
@@ -3762,7 +3644,8 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "Gebruik je herstelcode of neem contact op met een beheerder voor hulp."
 
 #: src/options/admin.js:14 src/page/admin/sessions.vue:138
-#: src/page/admin/sessions.vue:291 src/model/user.js:352 src/options/auth.js:8
+#: src/page/admin/sessions.vue:291 src/locales.js:329 src/model/user.js:365
+#: src/options/auth.js:8
 msgid "User"
 msgstr "Gebruiker"
 
@@ -3777,7 +3660,7 @@ msgstr "Gebruikersinterface"
 #: src/component/user/add/dialog.vue:33 src/component/user/add/dialog.vue:34
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:266
 #: src/component/service/add.vue:37 src/component/service/edit.vue:171
-#: src/component/share/dialog.vue:173
+#: src/component/share/dialog.vue:173 src/locales.js:320
 msgid "Username"
 msgstr "Gebruikersnaam"
 
@@ -3785,12 +3668,13 @@ msgstr "Gebruikersnaam"
 #: src/component/navigation.vue:425 src/component/navigation.vue:431
 #: src/component/navigation.vue:446 src/component/navigation.vue:677
 #: src/component/navigation.vue:685 src/component/navigation.vue:693
+#: src/locales.js:330
 msgid "Users"
 msgstr "Gebruikers"
 
 #: src/component/photo/view/cards.vue:144
 #: src/component/photo/view/cards.vue:298
-#: src/component/photo/view/mosaic.vue:91 src/options/options.js:310
+#: src/component/photo/view/mosaic.vue:91 src/options/options.js:311
 msgid "Vector"
 msgstr "Vector"
 
@@ -3805,10 +3689,14 @@ msgstr "Vectoren"
 msgid "Verification Code"
 msgstr "Verificatiecode"
 
+#: src/locales.js:322
+msgid "Version"
+msgstr "Versie"
+
 #: src/component/photo/view/cards.vue:161
 #: src/component/photo/view/cards.vue:271 src/component/photo/view/list.vue:96
 #: src/component/photo/view/mosaic.vue:108 src/model/file.js:197
-#: src/model/photo.js:934 src/model/photo.js:952 src/options/options.js:298
+#: src/model/photo.js:934 src/model/photo.js:952 src/options/options.js:299
 msgid "Video"
 msgstr "Video"
 
@@ -3837,7 +3725,7 @@ msgstr "Bekijk zoekresultaten als een lijst."
 msgid "Viewer"
 msgstr "Kijker"
 
-#: src/common/util.js:762
+#: src/common/util.js:796
 msgid "Vision"
 msgstr "Visie"
 
@@ -3862,28 +3750,23 @@ msgid "We do our best to respond within five business days or less."
 msgstr "We doen ons best om binnen vijf werkdagen of minder te reageren."
 
 #: src/component/user/add/dialog.vue:141 src/component/user/edit/dialog.vue:280
-#: src/page/admin/users.vue:275
+#: src/page/admin/users.vue:275 src/locales.js:334
 msgid "Web Login"
 msgstr "Web Login"
 
 #: src/component/user/add/dialog.vue:150 src/component/user/edit/dialog.vue:290
 #: src/page/admin/users.vue:277 src/options/auth.js:56 src/options/auth.js:69
-#: src/options/options.js:449
+#: src/options/options.js:450
 msgid "WebDAV"
 msgstr "WebDAV"
 
 #: src/component/settings/webdav.vue:18
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"WebDAV-cliënten kunnen verbinding maken met PhotoPrism via de volgende URL:"
+msgstr "WebDAV-cliënten kunnen verbinding maken met PhotoPrism via de volgende URL:"
 
 #: src/page/settings/services.vue:80
-msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-"connect directly to PhotoPrism. "
-msgstr ""
-"WebDAV cliënten, zoals Microsoft's Windows Explorer of Apple's Finder, "
-"kunnen rechtstreeks verbinding maken met PhotoPrism."
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgstr "WebDAV cliënten, zoals Microsoft's Windows Explorer of Apple's Finder, kunnen rechtstreeks verbinding maken met PhotoPrism."
 
 #: src/component/service/upload.vue:15 src/component/share/dialog.vue:138
 msgid "WebDAV Upload"
@@ -3898,7 +3781,7 @@ msgstr "WebGL-ondersteuning is uitgeschakeld in uw browser"
 msgid "Website"
 msgstr "Website"
 
-#: src/options/options.js:400
+#: src/options/options.js:401
 msgid "White"
 msgstr "Wit"
 
@@ -3911,7 +3794,7 @@ msgstr "Werk Details"
 msgid "Year"
 msgstr "Jaar"
 
-#: src/options/options.js:393
+#: src/options/options.js:394
 msgid "Yellow"
 msgstr "Geel"
 
@@ -3941,12 +3824,8 @@ msgstr "Ja"
 
 #: src/component/confirm/sponsor.vue:27 src/page/about/about.vue:94
 #: src/page/connect.vue:193
-msgid ""
-"You are welcome to contact us at membership@photoprism.app for questions "
-"regarding your membership."
-msgstr ""
-"U kunt contact met ons opnemen via membership@photoprism.app voor vragen "
-"over uw lidmaatschap."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "U kunt contact met ons opnemen via membership@photoprism.app voor vragen over uw lidmaatschap."
 
 #: src/component/album/clipboard.vue:223 src/component/people/clipboard.vue:140
 msgid "You can only download one album"
@@ -3957,14 +3836,10 @@ msgid "You can only download one label"
 msgstr "Je kunt slechts een album downloaden"
 
 #: src/component/location/dialog.vue:101
-msgid ""
-"You can search for a location or move the marker on the map to change the "
-"position:"
-msgstr ""
-"Je kunt een locatie zoeken of de marker op de kaart verplaatsen om de "
-"positie te veranderen:"
+msgid "You can search for a location or move the marker on the map to change the position:"
+msgstr "Je kunt een locatie zoeken of de marker op de kaart verplaatsen om de positie te veranderen:"
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:100
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Je kunt tot %{n} bestanden uploaden voor testdoeleinden."
 
@@ -3987,23 +3862,14 @@ msgstr "Uw browser ondersteunt WebGL niet"
 
 #: src/component/confirm/sponsor.vue:17 src/page/about/about.vue:51
 #: src/page/about/about.vue:89 src/page/connect.vue:116
-msgid ""
-"Your continued support helps us provide regular updates and remain "
-"independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Uw blijvende steun helpt ons om regelmatig updates te geven en onafhankelijk "
-"te blijven, zodat we onze missie kunnen vervullen en uw privacy kunnen "
-"beschermen."
+msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
+msgstr "Uw blijvende steun helpt ons om regelmatig updates te geven en onafhankelijk te blijven, zodat we onze missie kunnen vervullen en uw privacy kunnen beschermen."
 
 #: src/page/albums.vue:182
-msgid ""
-"Your library is continuously analyzed to automatically create albums of "
-"special moments, trips, and places."
-msgstr ""
-"Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te maken "
-"van speciale momenten, reizen en plaatsen."
+msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
+msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te maken van speciale momenten, reizen en plaatsen."
 
-#: src/component/lightbox.vue:434
+#: src/component/lightbox.vue:435
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
 
@@ -4027,11 +3893,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Titel"
 
-#: src/component/lightbox.vue:1411 src/component/photo/clipboard.vue:116
+#: src/component/lightbox.vue:1412 src/component/photo/clipboard.vue:116
 #: src/component/photo/view/cards.vue:204
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archief"
+
+#~ msgid "No server connection"
+#~ msgstr "Geen serververbinding"
+
+#~ msgid "Advertise URL"
+#~ msgstr "URL adverteren"
+
+#~ msgid "Build"
+#~ msgstr "Bouw"
+
+#~ msgid "Client ID"
+#~ msgstr "Klant ID"
+
+#~ msgid "Client Secret"
+#~ msgstr "Geheim van de klant"
 
 #~ msgid "Continue with %{provider}"
 #~ msgstr "Ga verder met %{provider}"
@@ -4127,8 +4008,7 @@ msgstr "Archief"
 #~ msgstr "Checklists voor probleemoplossing"
 
 #~ msgid "No new files can be added to your library."
-#~ msgstr ""
-#~ "Er kunnen geen nieuwe bestanden worden toegevoegd aan je bibliotheek."
+#~ msgstr "Er kunnen geen nieuwe bestanden worden toegevoegd aan je bibliotheek."
 
 #~ msgid "Your storage is full."
 #~ msgstr "Je opslagruimte is vol."
@@ -4154,12 +4034,8 @@ msgstr "Archief"
 #~ msgid "close"
 #~ msgstr "sluiten"
 
-#~ msgid ""
-#~ "Stacks group files with a similar frame of reference, but differences of "
-#~ "quality, format, size or color."
-#~ msgstr ""
-#~ "Stapelt groepsbestanden met een vergelijkbaar referentiekader, maar met "
-#~ "verschillen in kwaliteit, formaat, grootte of kleur."
+#~ msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
+#~ msgstr "Stapelt groepsbestanden met een vergelijkbaar referentiekader, maar met verschillen in kwaliteit, formaat, grootte of kleur."
 
 #~ msgid "URL"
 #~ msgstr "URL"
@@ -4174,8 +4050,7 @@ msgstr "Archief"
 #~ msgstr "Kies een album of maak een nieuw album"
 
 #~ msgid "Press \"Browse\" to select the files to upload…"
-#~ msgstr ""
-#~ "Druk op \"Bladeren\" om de bestanden te selecteren die je wilt uploaden…"
+#~ msgstr "Druk op \"Bladeren\" om de bestanden te selecteren die je wilt uploaden…"
 
 #~ msgid "Failed copying to clipboard"
 #~ msgstr "Mislukt kopiëren naar klembord"
@@ -4205,18 +4080,13 @@ msgstr "Archief"
 #~ msgstr "Je licentie activeren"
 
 #~ msgid "Enter the verification code generated by your authenticator app:"
-#~ msgstr ""
-#~ "Voer de verificatiecode in die is gegenereerd door je authenticator app:"
+#~ msgstr "Voer de verificatiecode in die is gegenereerd door je authenticator app:"
 
 #~ msgid "No video selected"
 #~ msgstr "Geen video geselecteerd"
 
-#~ msgid ""
-#~ "Automatically generate thumbnails for files that cannot otherwise be "
-#~ "indexed or viewed."
-#~ msgstr ""
-#~ "Maak automatisch miniaturen voor bestanden die anders niet geïndexeerd of "
-#~ "bekeken kunnen worden."
+#~ msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+#~ msgstr "Maak automatisch miniaturen voor bestanden die anders niet geïndexeerd of bekeken kunnen worden."
 
 #~ msgid "Estimate the approximate location of pictures without coordinates."
 #~ msgstr "Schatting van de geschatte locatie van foto's zonder coördinaten."
@@ -4254,12 +4124,8 @@ msgstr "Archief"
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "NSFW uploaden"
 
-#~ msgid ""
-#~ "Pictures that might be offensive will otherwise be rejected when using "
-#~ "the web upload."
-#~ msgstr ""
-#~ "Uploads toestaan die aanstootgevend kunnen zijn. Voor het detecteren van "
-#~ "onveilige inhoud is TensorFlow nodig."
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "Uploads toestaan die aanstootgevend kunnen zijn. Voor het detecteren van onveilige inhoud is TensorFlow nodig."
 
 #~ msgid "File Format Support"
 #~ msgstr "Ondersteuning voor bestandsindelingen"
@@ -4271,24 +4137,16 @@ msgstr "Archief"
 #~ msgstr "Schakelt de omgekeerde geocodering en kaarten uit."
 
 #~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
-#~ msgstr ""
-#~ "Maak geen ExifTool JSON-bestanden aan voor een verbeterde metadata-"
-#~ "extractie."
+#~ msgstr "Maak geen ExifTool JSON-bestanden aan voor een verbeterde metadata-extractie."
 
 #~ msgid "Don't modify originals folder. Disables import, upload, and delete."
-#~ msgstr ""
-#~ "Wijzig de map met de originelen niet. Schakel het importeren, uploaden en "
-#~ "verwijderen uit."
+#~ msgstr "Wijzig de map met de originelen niet. Schakel het importeren, uploaden en verwijderen uit."
 
 #~ msgid "Don't use TensorFlow for image classification."
 #~ msgstr "Gebruik TensorFlow niet voor beeldclassificatie."
 
-#~ msgid ""
-#~ "Dynamic rendering requires a powerful server. It is not recommended for "
-#~ "NAS devices."
-#~ msgstr ""
-#~ "On-demand rendering vereist een krachtige CPU en wordt niet aanbevolen "
-#~ "voor kleinere homeservers of NAS-apparaten."
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "On-demand rendering vereist een krachtige CPU en wordt niet aanbevolen voor kleinere homeservers of NAS-apparaten."
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Toont meer gedetailleerde logberichten. Vereist een herstart."
@@ -4296,47 +4154,34 @@ msgstr "Archief"
 #~ msgid "Thumbnail Generation"
 #~ msgstr "Thumbnail generatie"
 
-#~ msgid ""
-#~ "Can't access your authenticator app or device? Enter your recovery code "
-#~ "or ask for assistance."
-#~ msgstr ""
-#~ "Krijg je geen toegang tot je authenticatie-app of -apparaat? Voer dan uw "
-#~ "herstelcode in of vraag om assistentie."
+#~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
+#~ msgstr "Krijg je geen toegang tot je authenticatie-app of -apparaat? Voer dan uw herstelcode in of vraag om assistentie."
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
-#~ msgstr ""
-#~ "Maak geen back-up van foto- en albummetagegevens naar YAML-bestanden."
+#~ msgstr "Maak geen back-up van foto- en albummetagegevens naar YAML-bestanden."
 
 #~ msgid "providerName"
 #~ msgstr "providerNaam"
 
 #~ msgid ""
-#~ "This mounts the originals folder as a network drive and allows you to "
-#~ "open, edit, and delete files\n"
+#~ "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 #~ "          from your computer or smartphone as if they were local."
 #~ msgstr ""
-#~ "Dit koppelt de originelenmap als een netwerkstation en stelt u in staat "
-#~ "bestanden te openen, te bewerken en te verwijderen\n"
+#~ "Dit koppelt de originelenmap als een netwerkstation en stelt u in staat bestanden te openen, te bewerken en te verwijderen\n"
 #~ "          van uw computer of smartphone alsof ze lokaal zijn."
 
 #~ msgid ""
-#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
-#~ "connect directly to\n"
+#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 #~ "          PhotoPrism."
 #~ msgstr ""
-#~ "WebDAV clients, zoals Microsoft's Windows Verkenner of Apple's Finder, "
-#~ "kunnen direct verbinding maken met\n"
+#~ "WebDAV clients, zoals Microsoft's Windows Verkenner of Apple's Finder, kunnen direct verbinding maken met\n"
 #~ "          PhotoPrism."
 
 #~ msgid "Basic"
 #~ msgstr "Basis"
 
-#~ msgid ""
-#~ "Automatically create JPEGs for other file types so that they can be "
-#~ "displayed in a browser."
-#~ msgstr ""
-#~ "Maak automatisch JPEG's aan voor andere bestandstypen, zodat deze in een "
-#~ "browser kunnen worden weergegeven."
+#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+#~ msgstr "Maak automatisch JPEG's aan voor andere bestandstypen, zodat deze in een browser kunnen worden weergegeven."
 
 #~ msgid "Convert to JPEG"
 #~ msgstr "Omzetten in JPEG"
@@ -4347,12 +4192,8 @@ msgstr "Archief"
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Zorg ervoor dat u geen privé- of aanstootgevende inhoud uploadt."
 
-#~ msgid ""
-#~ "You are welcome to upload files to this public demo for which you own the "
-#~ "copyright."
-#~ msgstr ""
-#~ "Je bent welkom om bestanden te uploaden naar deze publieke demo waarvan "
-#~ "je het copyright bezit."
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Je bent welkom om bestanden te uploaden naar deze publieke demo waarvan je het copyright bezit."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "Je mag niet meer dan %{n} bestanden uploaden"
@@ -4373,49 +4214,28 @@ msgstr "Archief"
 #~ msgstr "Meer dan %{n} foto's gevonden"
 
 #~ msgid "Delete orphaned index entries, cache files and thumbnails."
-#~ msgstr ""
-#~ "Verwijder verweesde indexvermeldingen, cachebestanden en miniaturen."
+#~ msgstr "Verwijder verweesde indexvermeldingen, cachebestanden en miniaturen."
 
 #~ msgid "Not Found"
 #~ msgstr "Niet gevonden"
 
-#~ msgid ""
-#~ "As this helps us provide more features to the public, we encourage all "
-#~ "users to support our mission."
-#~ msgstr ""
-#~ "Omdat dit ons helpt meer functies aan het publiek aan te bieden, moedigen "
-#~ "wij alle gebruikers aan onze missie te steunen."
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "Omdat dit ons helpt meer functies aan het publiek aan te bieden, moedigen wij alle gebruikers aan onze missie te steunen."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "Vaak gestelde vragen"
 
-#~ msgid ""
-#~ "Our team decides this on an ongoing basis depending on the support effort "
-#~ "required, server and licensing costs, and whether the features are "
-#~ "generally needed by everyone or mainly requested by organizations and "
-#~ "advanced users."
-#~ msgstr ""
-#~ "Ons team beslist hierover op permanente basis, afhankelijk van de "
-#~ "vereiste ondersteuningsinspanning, de server- en licentiekosten, en of de "
-#~ "functies algemeen door iedereen nodig zijn of vooral gevraagd worden door "
-#~ "organisaties en gevorderde gebruikers."
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "Ons team beslist hierover op permanente basis, afhankelijk van de vereiste ondersteuningsinspanning, de server- en licentiekosten, en of de functies algemeen door iedereen nodig zijn of vooral gevraagd worden door organisaties en gevorderde gebruikers."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "Welke functionaliteit is algemeen beschikbaar?"
 
-#~ msgid ""
-#~ "It is your decision whether you want to sign up to enjoy additional "
-#~ "benefits."
-#~ msgstr ""
-#~ "Het is uw beslissing of u zich wilt inschrijven om van extra voordelen te "
-#~ "genieten."
+#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "Het is uw beslissing of u zich wilt inschrijven om van extra voordelen te genieten."
 
-#~ msgid ""
-#~ "Voluntary donations do not cover the cost of a team working full time to "
-#~ "provide you with updates, documentation, and support."
-#~ msgstr ""
-#~ "Vrijwillige donaties dekken niet de kosten van een team dat fulltime "
-#~ "werkt om u te voorzien van updates, documentatie en ondersteuning."
+#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+#~ msgstr "Vrijwillige donaties dekken niet de kosten van een team dat fulltime werkt om u te voorzien van updates, documentatie en ondersteuning."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Waarom zijn sommige functies alleen beschikbaar voor sponsors?"
@@ -4426,70 +4246,35 @@ msgstr "Archief"
 #~ msgid "Proceed"
 #~ msgstr "Ga verder"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on "
-#~ "\"Proceed\" to sign up on our website:"
-#~ msgstr ""
-#~ "Om te upgraden kunt u een activeringscode invoeren of op \"Doorgaan\" "
-#~ "klikken om u aan te melden op onze website:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Om te upgraden kunt u een activeringscode invoeren of op \"Doorgaan\" klikken om u aan te melden op onze website:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Er ging iets mis, ben je offline?"
 
-#~ msgid ""
-#~ "At PhotoPrism, we believe that every moment captured through a photograph "
-#~ "is precious, and our mission is to enable people to cherish those moments "
-#~ "for generations to come."
-#~ msgstr ""
-#~ "Bij PhotoPrism geloven we dat elk moment vastgelegd door middel van een "
-#~ "foto kostbaar is, en het is onze missie om mensen in staat te stellen "
-#~ "deze momenten te koesteren voor de komende generaties."
+#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+#~ msgstr "Bij PhotoPrism geloven we dat elk moment vastgelegd door middel van een foto kostbaar is, en het is onze missie om mensen in staat te stellen deze momenten te koesteren voor de komende generaties."
 
-#~ msgid ""
-#~ "Become a member today to enjoy additional features and support our "
-#~ "mission!"
-#~ msgstr ""
-#~ "Word vandaag nog lid om van extra functies te genieten en onze missie te "
-#~ "steunen!"
+#~ msgid "Become a member today to enjoy additional features and support our mission!"
+#~ msgstr "Word vandaag nog lid om van extra functies te genieten en onze missie te steunen!"
 
-#~ msgid ""
-#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr ""
-#~ "Neem contact met ons op via hello@photoprism.app als u vragen hebt of "
-#~ "hulp nodig hebt."
+#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr "Neem contact met ons op via hello@photoprism.app als u vragen hebt of hulp nodig hebt."
 
-#~ msgid ""
-#~ "Feel free to contact us at membership@photoprism.app for questions "
-#~ "regarding your membership."
-#~ msgstr ""
-#~ "Neem gerust contact met ons op via membership@photoprism.app voor vragen "
-#~ "over uw lidmaatschap."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "Neem gerust contact met ons op via membership@photoprism.app voor vragen over uw lidmaatschap."
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Er is een fout opgetreden. Bent u offline?"
 
-#~ msgid ""
-#~ "Before submitting a support request, please use our Troubleshooting "
-#~ "Checklists to determine the cause of your problem."
-#~ msgstr ""
-#~ "Voordat u een ondersteuningsverzoek indient, kunt u onze controlelijsten "
-#~ "voor het oplossen van problemen gebruiken om de oorzaak van uw probleem "
-#~ "vast te stellen."
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Voordat u een ondersteuningsverzoek indient, kunt u onze controlelijsten voor het oplossen van problemen gebruiken om de oorzaak van uw probleem vast te stellen."
 
-#~ msgid ""
-#~ "Browse the Knowledge Base for detailed information on specific product "
-#~ "features, services, and related resources."
-#~ msgstr ""
-#~ "Blader door de Kennisbank voor gedetailleerde informatie over specifieke "
-#~ "productfuncties, diensten en aanverwante bronnen."
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "Blader door de Kennisbank voor gedetailleerde informatie over specifieke productfuncties, diensten en aanverwante bronnen."
 
-#~ msgid ""
-#~ "Common issues can be quickly diagnosed and solved using the "
-#~ "troubleshooting checklists we provide."
-#~ msgstr ""
-#~ "Veel voorkomende problemen kunnen snel worden gediagnosticeerd en "
-#~ "opgelost met behulp van de controlelijsten voor probleemoplossing die wij "
-#~ "verstrekken."
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "Veel voorkomende problemen kunnen snel worden gediagnosticeerd en opgelost met behulp van de controlelijsten voor probleemoplossing die wij verstrekken."
 
 #~ msgid "Getting Support"
 #~ msgstr "Ondersteuning krijgen"
@@ -4498,8 +4283,7 @@ msgstr "Archief"
 #~ msgstr "Als dit niet helpt, of je hebt andere vragen:"
 
 #~ msgid "In addition, sponsors receive direct technical support via email."
-#~ msgstr ""
-#~ "Bovendien krijgen sponsors directe technische ondersteuning via e-mail."
+#~ msgstr "Bovendien krijgen sponsors directe technische ondersteuning via e-mail."
 
 #~ msgid "Knowledge Base"
 #~ msgstr "Kennisbank"
@@ -4510,13 +4294,8 @@ msgstr "Archief"
 #~ msgid "or ask in our Community Chat"
 #~ msgstr "of vraag het in onze Community Chat"
 
-#~ msgid ""
-#~ "Our User Guide also covers many advanced topics, such as migrating from "
-#~ "Google Photos and thumbnail quality settings."
-#~ msgstr ""
-#~ "Onze Gebruikershandleiding behandelt ook veel geavanceerde onderwerpen, "
-#~ "zoals het migreren vanuit Google Foto's en de kwaliteitsinstellingen voor "
-#~ "miniaturen."
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "Onze Gebruikershandleiding behandelt ook veel geavanceerde onderwerpen, zoals het migreren vanuit Google Foto's en de kwaliteitsinstellingen voor miniaturen."
 
 #~ msgid "post your question in GitHub Discussions"
 #~ msgstr "stel uw vraag in GitHub Discussies"
@@ -4524,19 +4303,11 @@ msgstr "Archief"
 #~ msgid "Read the Docs"
 #~ msgstr "Lees de Documentatie"
 
-#~ msgid ""
-#~ "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
-#~ "share your pictures."
-#~ msgstr ""
-#~ "Bezoek docs.photoprism.app/user-guide voor meer informatie over het "
-#~ "synchroniseren, organiseren en delen van uw foto's."
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Bezoek docs.photoprism.app/user-guide voor meer informatie over het synchroniseren, organiseren en delen van uw foto's."
 
-#~ msgid ""
-#~ "We'll do our best to answer all your questions. In return, we ask you to "
-#~ "back us on Patreon or GitHub Sponsors."
-#~ msgstr ""
-#~ "We zullen ons best doen om al je vragen te beantwoorden. In ruil daarvoor "
-#~ "vragen we je om ons te steunen op Patreon of GitHub Sponsors."
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "We zullen ons best doen om al je vragen te beantwoorden. In ruil daarvoor vragen we je om ons te steunen op Patreon of GitHub Sponsors."
 
 #~ msgid "you are welcome to join us on Reddit"
 #~ msgstr "je bent welkom om ons te vervoegen op Reddit"
@@ -4589,16 +4360,11 @@ msgstr "Archief"
 #~ msgid "Connect Customer Account"
 #~ msgstr "Klant account aansluiten"
 
-#~ msgid ""
-#~ "It makes use of the latest technologies to tag and find pictures "
-#~ "automatically without getting in your way."
-#~ msgstr ""
-#~ "Het maakt gebruik van de nieuwste technologieën om foto's automatisch te "
-#~ "taggen en te vinden zonder je lastig te vallen."
+#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+#~ msgstr "Het maakt gebruik van de nieuwste technologieën om foto's automatisch te taggen en te vinden zonder je lastig te vallen."
 
 #~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-#~ msgstr ""
-#~ "PhotoPrism® is een AI-gestuurde foto-app voor het gedecentraliseerde web."
+#~ msgstr "PhotoPrism® is een AI-gestuurde foto-app voor het gedecentraliseerde web."
 
 #~ msgid "Uploader"
 #~ msgstr "Uploader"
@@ -4609,12 +4375,8 @@ msgstr "Archief"
 #~ msgid "Downloads"
 #~ msgstr "Downloads"
 
-#~ msgid ""
-#~ "Download only original media files, without any automatically generated "
-#~ "sidecar files."
-#~ msgstr ""
-#~ "Download alleen originele mediabestanden, zonder automatisch gegenereerde "
-#~ "zijwaartse bestanden."
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Download alleen originele mediabestanden, zonder automatisch gegenereerde zijwaartse bestanden."
 
 #~ msgid "Web Login "
 #~ msgstr "Web Login "
@@ -4623,8 +4385,7 @@ msgstr "Archief"
 #~ msgstr "Opties"
 
 #~ msgid "Don't use ImageMagick to convert or modify images."
-#~ msgstr ""
-#~ "Gebruik ImageMagick niet om afbeeldingen te converteren of te wijzigen."
+#~ msgstr "Gebruik ImageMagick niet om afbeeldingen te converteren of te wijzigen."
 
 #~ msgid "Don't transcode videos with FFmpeg."
 #~ msgstr "Transcodeer geen video's met FFmpeg."
@@ -4641,50 +4402,20 @@ msgstr "Archief"
 #~ msgid "Don't use RawTherapee to convert RAW files."
 #~ msgstr "Gebruik RawTherapee niet om RAW-bestanden te converteren."
 
-#~ msgid ""
-#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr ""
-#~ "Word vandaag nog sponsor, steun onze missie en geniet van onze "
-#~ "ledenvoordelen!"
+#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr "Word vandaag nog sponsor, steun onze missie en geniet van onze ledenvoordelen!"
 
-#~ msgid ""
-#~ "Our team decides this on an ongoing basis depending on the support effort "
-#~ "required, server and licensing costs, and whether the features are "
-#~ "generally needed by everyone or mainly requested by organizations and "
-#~ "advanced users. As this allows us to make more features available to the "
-#~ "public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Ons team evalueert dit op een continue basis, afhankelijk van de "
-#~ "ondersteuningsinspanning die de functies vereisen, de kosten voor ons, en "
-#~ "of ze in het algemeen door iedereen nodig zijn of vooral gevraagd worden "
-#~ "door organisaties en gevorderde gebruikers. Omdat we zo meer functies aan "
-#~ "het publiek kunnen aanbieden, moedigen we alle gebruikers aan om onze "
-#~ "missie te steunen."
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Ons team evalueert dit op een continue basis, afhankelijk van de ondersteuningsinspanning die de functies vereisen, de kosten voor ons, en of ze in het algemeen door iedereen nodig zijn of vooral gevraagd worden door organisaties en gevorderde gebruikers. Omdat we zo meer functies aan het publiek kunnen aanbieden, moedigen we alle gebruikers aan om onze missie te steunen."
 
-#~ msgid ""
-#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
-#~ "of a team working full time to provide you with updates, documentation, "
-#~ "and support. It is your decision whether you want to sign up to enjoy "
-#~ "additional benefits."
-#~ msgstr ""
-#~ "PhotoPrism wordt voor 100% zelf gefinancierd. Vrijwillige donaties dekken "
-#~ "niet de kosten van een team dat fulltime werkt om u te voorzien van "
-#~ "updates, documentatie en ondersteuning. Het is uw beslissing of u zich "
-#~ "wilt aanmelden om van extra voordelen te genieten."
+#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "PhotoPrism wordt voor 100% zelf gefinancierd. Vrijwillige donaties dekken niet de kosten van een team dat fulltime werkt om u te voorzien van updates, documentatie en ondersteuning. Het is uw beslissing of u zich wilt aanmelden om van extra voordelen te genieten."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Moet vrije software niet vrij van kosten zijn?"
 
-#~ msgid ""
-#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
-#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
-#~ "the French or Spanish word for “free” as in freedom, to show they do not "
-#~ "mean the software is gratis."
-#~ msgstr ""
-#~ "Denk aan \"vrije software\" als in \"vrije spraak\", niet als in \"gratis "
-#~ "bier\". De Free Software Foundation noemt het soms \"libre software,\" "
-#~ "het Franse of Spaanse woord voor \"vrij\" zoals in vrijheid, om aan te "
-#~ "geven dat ze niet bedoelen dat de software gratis is."
+#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
+#~ msgstr "Denk aan \"vrije software\" als in \"vrije spraak\", niet als in \"gratis bier\". De Free Software Foundation noemt het soms \"libre software,\" het Franse of Spaanse woord voor \"vrij\" zoals in vrijheid, om aan te geven dat ze niet bedoelen dat de software gratis is."
 
 #~ msgid "Moonlight"
 #~ msgstr "Maanlicht"
@@ -4698,19 +4429,11 @@ msgstr "Archief"
 #~ msgid "Sign Up"
 #~ msgstr "Aanmelden"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Sign "
-#~ "Up\" to upgrade on our website:"
-#~ msgstr ""
-#~ "Om te upgraden kunt u een activeringscode invoeren of op onze website "
-#~ "klikken op \"Aanmelden\" om te upgraden:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
+#~ msgstr "Om te upgraden kunt u een activeringscode invoeren of op onze website klikken op \"Aanmelden\" om te upgraden:"
 
-#~ msgid ""
-#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
-#~ "Now\" to sign up on our website:"
-#~ msgstr ""
-#~ "Om te upgraden kunt u een activeringscode invoeren of op onze website "
-#~ "klikken op \"Aanmelden\" om te upgraden:"
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
+#~ msgstr "Om te upgraden kunt u een activeringscode invoeren of op onze website klikken op \"Aanmelden\" om te upgraden:"
 
 #~ msgid "Sign up"
 #~ msgstr "Aanmelden"
@@ -4718,26 +4441,11 @@ msgstr "Archief"
 #~ msgid "Compare Features"
 #~ msgstr "Functies vergelijken"
 
-#~ msgid ""
-#~ "Our team evaluates this on an ongoing basis, depending on the support "
-#~ "effort features and config options cause or have caused in the past, and "
-#~ "whether they are generally needed by everyone or mainly requested by "
-#~ "organizations and advanced users. As this allows us to make more features "
-#~ "available to the public, we encourage all users to support our mission."
-#~ msgstr ""
-#~ "Ons team evalueert dit voortdurend, afhankelijk van de "
-#~ "ondersteuningsinspanning die functies en configuratieopties veroorzaken "
-#~ "of in het verleden hebben veroorzaakt, en of ze algemeen door iedereen "
-#~ "nodig zijn of vooral door organisaties en gevorderde gebruikers worden "
-#~ "gevraagd. Omdat we zo meer functies beschikbaar kunnen maken voor het "
-#~ "publiek, moedigen we alle gebruikers aan om onze missie te steunen."
+#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
+#~ msgstr "Ons team evalueert dit voortdurend, afhankelijk van de ondersteuningsinspanning die functies en configuratieopties veroorzaken of in het verleden hebben veroorzaakt, en of ze algemeen door iedereen nodig zijn of vooral door organisaties en gevorderde gebruikers worden gevraagd. Omdat we zo meer functies beschikbaar kunnen maken voor het publiek, moedigen we alle gebruikers aan om onze missie te steunen."
 
-#~ msgid ""
-#~ "Also, please leave a star on GitHub if you like this project. It provides "
-#~ "additional motivation to keep going."
-#~ msgstr ""
-#~ "Laat ook alsjeblieft een ster achter op GitHub als je dit project leuk "
-#~ "vindt. Het geeft extra motivatie om door te gaan."
+#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+#~ msgstr "Laat ook alsjeblieft een ster achter op GitHub als je dit project leuk vindt. Het geeft extra motivatie om door te gaan."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Sponsor worden"
@@ -4745,35 +4453,17 @@ msgstr "Archief"
 #~ msgid "I'm a sponsor"
 #~ msgstr "Ik ben een sponsor"
 
-#~ msgid ""
-#~ "Sponsors get access to additional features, receive direct technical "
-#~ "support via email, and can join our private chat room on matrix.org."
-#~ msgstr ""
-#~ "Sponsors krijgen toegang tot extra functies, krijgen directe technische "
-#~ "ondersteuning via e-mail, en kunnen deelnemen aan onze privé chatroom op "
-#~ "matrix.org."
+#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+#~ msgstr "Sponsors krijgen toegang tot extra functies, krijgen directe technische ondersteuning via e-mail, en kunnen deelnemen aan onze privé chatroom op matrix.org."
 
-#~ msgid ""
-#~ "This currently is a sponsor feature to thank everyone who supports the "
-#~ "development of this application."
-#~ msgstr ""
-#~ "Dit is een vroegtijdige toegang om dank te zeggen aan onze sponsors en "
-#~ "medewerkers."
+#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgstr "Dit is een vroegtijdige toegang om dank te zeggen aan onze sponsors en medewerkers."
 
-#~ msgid ""
-#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
-#~ "Sponsors."
-#~ msgstr ""
-#~ "We zullen je laten weten hoe je het kan inschakelen als je je aanmeldt op "
-#~ "Patreon of GitHub Sponsors."
+#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
+#~ msgstr "We zullen je laten weten hoe je het kan inschakelen als je je aanmeldt op Patreon of GitHub Sponsors."
 
-#~ msgid ""
-#~ "Your continued support helps us provide regular updates and services like "
-#~ "world maps."
-#~ msgstr ""
-#~ "Uw voortdurende steun helpt ons de bedrijfskosten te financieren, "
-#~ "diensten als satellietkaarten te leveren en nieuwe functies te "
-#~ "ontwikkelen."
+#~ msgid "Your continued support helps us provide regular updates and services like world maps."
+#~ msgstr "Uw voortdurende steun helpt ons de bedrijfskosten te financieren, diensten als satellietkaarten te leveren en nieuwe functies te ontwikkelen."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -4837,12 +4527,8 @@ msgstr "Archief"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "Fout tijdens importeren geüploade bestanden"
 
-#~ msgid ""
-#~ "Note: Updating the password will not revoke access from already "
-#~ "authenticated users."
-#~ msgstr ""
-#~ "Opmerking: Het updaten van het wachtwoord zal de toegang van reeds "
-#~ "geauthenticeerde gebruikers niet herroepen."
+#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgstr "Opmerking: Het updaten van het wachtwoord zal de toegang van reeds geauthenticeerde gebruikers niet herroepen."
 
 #~ msgid "Play"
 #~ msgstr "Afspelen"
@@ -4856,13 +4542,8 @@ msgstr "Archief"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "Toon Bibliotheek in het navigatiemenu."
 
-#~ msgid ""
-#~ "The roadmap shows what tasks are in progress, what needs testing, and "
-#~ "which feature requests are going to be implemented next."
-#~ msgstr ""
-#~ "De routekaart laat zien welke taken in uitvoering zijn, wat er getest "
-#~ "moet worden, en welke functieverzoeken als volgende zullen worden "
-#~ "geïmplementeerd."
+#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
+#~ msgstr "De routekaart laat zien welke taken in uitvoering zijn, wat er getest moet worden, en welke functieverzoeken als volgende zullen worden geïmplementeerd."
 
 #~ msgid "Your message has been sent"
 #~ msgstr "Uw bericht is verzonden"
@@ -4945,48 +4626,29 @@ msgstr "Archief"
 #~ msgid "Spanish"
 #~ msgstr "Spaans"
 
-#~ msgid ""
-#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
-#~ "GitHub Sponsors."
-#~ msgstr ""
-#~ "Als u geniet van het gebruik van PhotoPrism, overweeg dan om ons te "
-#~ "steunen op Patreon of GitHub Sponsors."
+#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
+#~ msgstr "Als u geniet van het gebruik van PhotoPrism, overweeg dan om ons te steunen op Patreon of GitHub Sponsors."
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
-#~ msgstr ""
-#~ "Laat het ons weten als we een idee ten onrechte als ongefinancierd "
-#~ "bestempelen."
+#~ msgstr "Laat het ons weten als we een idee ten onrechte als ongefinancierd bestempelen."
 
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 #~ msgstr "PhotoPrism® is een geregistreerd handelsmerk van Michael Mayer."
 
-#~ msgid ""
-#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
-#~ "will be prioritized."
-#~ msgstr ""
-#~ "Aanvragen die door zilveren en gouden sponsors worden gesteund, krijgen "
-#~ "een gouden label en worden met voorrang behandeld."
+#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
+#~ msgstr "Aanvragen die door zilveren en gouden sponsors worden gesteund, krijgen een gouden label en worden met voorrang behandeld."
 
 #~ msgid "Thank you very much!"
 #~ msgstr "Dank je wel"
 
 #~ msgid "This open-source project is made possible thanks to our sponsors."
-#~ msgstr ""
-#~ "Dit open-source project wordt mogelijk gemaakt dankzij onze sponsors."
+#~ msgstr "Dit open-source project wordt mogelijk gemaakt dankzij onze sponsors."
 
 #~ msgid "Trademarks"
 #~ msgstr "Handelsmerken"
 
-#~ msgid ""
-#~ "You may use it as required to describe our software, run your own server, "
-#~ "for educational purposes, but not for offering commercial goods, "
-#~ "products, or services without prior written permission. In other words, "
-#~ "please ask."
-#~ msgstr ""
-#~ "U mag het gebruiken zoals vereist om onze software te beschrijven, uw "
-#~ "eigen server te draaien, voor educatieve doeleinden, maar niet om "
-#~ "commerciële goederen, producten of diensten aan te bieden zonder "
-#~ "voorafgaande schriftelijke toestemming. Met andere woorden, vraag ernaar."
+#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
+#~ msgstr "U mag het gebruiken zoals vereist om onze software te beschrijven, uw eigen server te draaien, voor educatieve doeleinden, maar niet om commerciële goederen, producten of diensten aan te bieden zonder voorafgaande schriftelijke toestemming. Met andere woorden, vraag ernaar."
 
 #~ msgid "%{n} results"
 #~ msgstr "%{n} resultaten"
@@ -5000,11 +4662,8 @@ msgstr "Archief"
 #~ msgid "Couldn't find recently edited"
 #~ msgstr "Kon niet vinden onlangs bewerkt"
 
-#~ msgid ""
-#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
-#~ msgstr ""
-#~ "Schakelt gelijktijdige conversie van RAW-bestanden uit om Darktable-"
-#~ "voorinstellingen toe te passen."
+#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgstr "Schakelt gelijktijdige conversie van RAW-bestanden uit om Darktable-voorinstellingen toe te passen."
 
 #~ msgid "Let PhotoPrism create albums from past events."
 #~ msgstr "Laat PhotoPrism albums maken van gebeurtenissen uit het verleden."
@@ -5015,11 +4674,8 @@ msgstr "Archief"
 #~ msgid "Not implemented yet"
 #~ msgstr "Nog niet geïmplementeerd"
 
-#~ msgid ""
-#~ "Note that you can as well manage and re-index your originals manually."
-#~ msgstr ""
-#~ "Merk op dat u uw originelen ook handmatig kunt beheren en opnieuw kunt "
-#~ "indexeren."
+#~ msgid "Note that you can as well manage and re-index your originals manually."
+#~ msgstr "Merk op dat u uw originelen ook handmatig kunt beheren en opnieuw kunt indexeren."
 
 #~ msgid "One result"
 #~ msgstr "Eén resultaat"
@@ -5109,14 +4765,10 @@ msgstr "Archief"
 #~ msgstr "Verhaal vlag geschakeld"
 
 #~ msgid "Try again using a related or otherwise similar term."
-#~ msgstr ""
-#~ "Probeer opnieuw met een gerelateerd of ander vergelijkbaar trefwoord."
+#~ msgstr "Probeer opnieuw met een gerelateerd of ander vergelijkbaar trefwoord."
 
-#~ msgid ""
-#~ "Try using other terms and search options such as category, country and "
-#~ "camera."
-#~ msgstr ""
-#~ "Probeer andere trefwoorden of zoekopties zoals categorie, land en camera."
+#~ msgid "Try using other terms and search options such as category, country and camera."
+#~ msgstr "Probeer andere trefwoorden of zoekopties zoals categorie, land en camera."
 
 #~ msgid "Vibrant"
 #~ msgstr "Levendig"
@@ -5125,10 +4777,8 @@ msgstr "Archief"
 #~ msgstr "Week"
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG "
-#~ "yet or there are\n"
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
-#~ "Hun formaat wordt mogelijk niet ondersteund, ze zijn nog niet "
-#~ "geconverteerd naar JPEG of er zijn\n"
+#~ "Hun formaat wordt mogelijk niet ondersteund, ze zijn nog niet geconverteerd naar JPEG of er zijn\n"
 #~ "            duplicaten."

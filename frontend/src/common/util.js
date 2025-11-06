@@ -49,6 +49,7 @@ export const tokenLength = 7;
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
+  // formatBytes returns a human-readable size string for a byte count.
   static formatBytes(b) {
     if (!b) {
       return "0 KB";
@@ -69,6 +70,7 @@ export default class $util {
     return Math.ceil(b / 1024) + " KB";
   }
 
+  // gigaBytes converts bytes to the nearest whole number of gigabytes.
   static gigaBytes(b) {
     if (!b) {
       return 0;
@@ -81,6 +83,7 @@ export default class $util {
     return Math.round(b / 1073741824);
   }
 
+  // formatDate renders an ISO-8601 string using the configured display format.
   static formatDate(s, format, zone) {
     if (!s || !s.length) {
       return s;
@@ -133,6 +136,7 @@ export default class $util {
     return DateTime.fromISO(s, { zone }).toLocaleString(options);
   }
 
+  // formatDuration formats a duration expressed in nanoseconds as h:mm:ss.
   static formatDuration(d) {
     let u = d;
 
@@ -180,6 +184,7 @@ export default class $util {
     return result.join(":");
   }
 
+  // formatSeconds turns a number of seconds into m:ss text.
   static formatSeconds(time) {
     if (!time || time < 0) {
       return "0:00";
@@ -191,6 +196,7 @@ export default class $util {
     return `${min.toString()}:${sec.toString().padStart(2, "0")}`;
   }
 
+  // formatRemainingSeconds returns the remaining playback time in m:ss.
   static formatRemainingSeconds(time, duration) {
     if (!duration || (time && time >= duration - 0.00001)) {
       return "0:00";
@@ -201,6 +207,7 @@ export default class $util {
     return this.formatSeconds(Math.ceil(duration - Math.floor(time)));
   }
 
+  // formatNs converts nanoseconds to a localized millisecond string.
   static formatNs(d) {
     if (!d || Number.isNaN(d)) {
       return "";
@@ -211,10 +218,12 @@ export default class $util {
     return `${ms} ms`;
   }
 
+  // formatFPS formats a floating frames-per-second value.
   static formatFPS(fps) {
     return `${fps.toFixed(1)} FPS`;
   }
 
+  // arabicToRoman converts decimal numbers to Roman numerals.
   static arabicToRoman(number) {
     let roman = "";
     const romanNumList = {
@@ -249,6 +258,7 @@ export default class $util {
     return roman;
   }
 
+  // truncate shortens a string and appends an ellipsis when it exceeds length.
   static truncate(str, length, ending) {
     if (length == null) {
       length = 100;
@@ -263,6 +273,7 @@ export default class $util {
     }
   }
 
+  // sanitizeHtml removes unsafe markup using the shared sanitizer.
   static sanitizeHtml(html) {
     if (!html) {
       return "";
@@ -271,7 +282,21 @@ export default class $util {
     return sanitizeHtml(html);
   }
 
-  static openUrl(externalUrl) {
+  // openUrl opens a URL in a new tab if possible.
+  static openUrl(url) {
+    if (!url) {
+      return;
+    }
+
+    const newWindow = window.open(url, "_blank");
+
+    if (newWindow) {
+      newWindow.focus();
+    }
+  }
+
+  // openExternalUrl opens a URL with noopener/noreferrer safeguards.
+  static openExternalUrl(externalUrl) {
     if (!externalUrl) {
       return;
     }
@@ -283,6 +308,7 @@ export default class $util {
     }
   }
 
+  // encodeHTML escapes HTML and links plain URLs.
   static encodeHTML(text) {
     const linkRegex = /(https?:\/\/)[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&;/=]*)/g;
 
@@ -320,16 +346,19 @@ export default class $util {
     return text;
   }
 
+  // resetTimer restarts the internal duration stopwatch.
   static resetTimer() {
     start = new Date();
   }
 
+  // logTime logs elapsed time since the last reset under the given label.
   static logTime(label) {
     const now = new Date();
     console.log(`${label}: ${now.getTime() - start.getTime()}ms`);
     start = now;
   }
 
+  // capitalize uppercases the first letter of every word in a string.
   static capitalize(s) {
     if (!s || s === "") {
       return "";
@@ -338,6 +367,7 @@ export default class $util {
     return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
   }
 
+  // ucFirst uppercases the first character of a string.
   static ucFirst(s) {
     if (!s || s === "") {
       return "";
@@ -346,10 +376,7 @@ export default class $util {
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
-  // Generates a random token that makes some effort to be relatively
-  // unique each time. This isn't suitable for use in
-  // security-critical locations where predictability or collisions
-  // would cause a serious problem.
+  // generateToken returns a short random identifier for non-critical use.
   static generateToken() {
     let result = "";
     for (let i = 0; i < tokenLength; i++) {
@@ -358,6 +385,7 @@ export default class $util {
     return result;
   }
 
+  // hasTouch reports whether the device supports touch input.
   static hasTouch() {
     if (!navigator.maxTouchPoints) {
       return false;
@@ -366,6 +394,7 @@ export default class $util {
     return navigator.maxTouchPoints > 0;
   }
 
+  // isMobile performs a basic user-agent and capability check for mobile devices.
   static isMobile() {
     return (
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
@@ -373,10 +402,12 @@ export default class $util {
     );
   }
 
+  // isHttps returns true when the current page is served over HTTPS.
   static isHttps() {
     return window.location.protocol === "https:";
   }
 
+  // fileType maps a file extension or codec to a readable label.
   static fileType(value) {
     if (!value || typeof value !== "string") {
       return "";
@@ -472,6 +503,7 @@ export default class $util {
     }
   }
 
+  // formatCamera builds a camera display name from metadata fallbacks.
   static formatCamera(camera, cameraID, cameraMake, cameraModel, long) {
     if (camera) {
       if (!long && camera.Model.length > 7) {
@@ -503,6 +535,7 @@ export default class $util {
     return "";
   }
 
+  // formatCodec normalizes codec identifiers to short labels.
   static formatCodec(codec) {
     if (!codec) {
       return "";
@@ -547,6 +580,7 @@ export default class $util {
     }
   }
 
+  // codecName expands codec identifiers to descriptive names.
   static codecName(value) {
     if (!value || typeof value !== "string") {
       return "";
@@ -715,7 +749,7 @@ export default class $util {
     }
   }
 
-  // Returns the translated source name string to be displayed in the user interface.
+  // sourceName returns the localized label for a metadata source.
   static sourceName(src, defaultValue) {
     switch (src) {
       case null:
@@ -767,8 +801,7 @@ export default class $util {
     }
   }
 
-  // Returns the best matching thumbnail based on the provided list of available images,
-  // as well as the viewport width and height.
+  // thumb selects the best matching thumbnail for the current viewport.
   static thumb(thumbs, viewportWidth, viewportHeight) {
     const sizes = $config.values.thumbs;
 
@@ -798,8 +831,7 @@ export default class $util {
     return Object.assign({}, fallback, thumbs[fallback.size]);
   }
 
-  // Returns the approximate best thumbnail size based on the maximum image dimensions,
-  // viewport width, and viewport height.
+  // thumbSize returns the most suitable thumbnail size identifier for the viewport.
   static thumbSize(viewportWidth, viewportHeight) {
     const sizes = $config.values.thumbs;
 
@@ -820,6 +852,7 @@ export default class $util {
     return "fit_720";
   }
 
+  // videoFormat chooses the preferred download format for the supplied codec info.
   static videoFormat(codec, mime) {
     if ((!codec && !mime) || mime?.startsWith('video/mp4; codecs="avc')) {
       return media.FormatAvc;
@@ -850,6 +883,7 @@ export default class $util {
     return media.FormatAvc;
   }
 
+  // videoFormatUrl builds the signed video URL for a specific format.
   static videoFormatUrl(hash, format) {
     if (!hash) {
       return "";
@@ -862,10 +896,12 @@ export default class $util {
     return `${$config.videoUri}/videos/${hash}/${$config.previewToken}/${format}`;
   }
 
+  // videoUrl resolves the best playable video URL for given codec hints.
   static videoUrl(hash, codec, mime) {
     return this.videoFormatUrl(hash, this.videoFormat(codec, mime));
   }
 
+  // videoContentType returns the HTTP content type matching the chosen video format.
   static videoContentType(codec, mime) {
     switch (this.videoFormat(codec, mime)) {
       case media.FormatAvc:
@@ -893,6 +929,7 @@ export default class $util {
     }
   }
 
+  // copyText copies text (and optional extras) to the clipboard.
   static copyText(text) {
     if (!text) {
       if (debug) {
@@ -912,6 +949,7 @@ export default class $util {
     return this.writeToClipboard(text);
   }
 
+  // writeToClipboard writes the provided string using the Clipboard API or shows errors.
   static writeToClipboard(text) {
     if (window.navigator?.clipboard && window.navigator.clipboard instanceof EventTarget) {
       window.navigator.clipboard

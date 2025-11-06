@@ -796,7 +796,7 @@
               <v-icon icon="mdi-wifi-off" color="warning" size="21"></v-icon>
             </div>
             <div v-if="!isMini" class="text-start text-body-2">
-              {{ $gettext(`No server connection`) }}
+              {{ $gettext(`Lost server connection`) }}
             </div>
           </div>
           <div v-else-if="!isMini && featUsage" class="nav-info usage-info clickable" @click.stop="showUsageInfo">
@@ -992,6 +992,7 @@ export default {
     }
 
     const canManagePhotos = this.$config.allow("photos", "manage");
+    const canSeeUsage = this.$session.isAdmin() || (canManagePhotos && this.$config.feature("files"));
     const isDemo = this.$config.get("demo");
     const isPro = this.$config.isPro();
     const isPublic = this.$config.get("public");
@@ -1020,7 +1021,7 @@ export default {
       featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
       featFeedback: !hasScope && tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
       featFiles: this.$config.feature("files"),
-      featUsage: canManagePhotos && this.$config.feature("files") && this.$config.values?.usage?.filesTotal,
+      featUsage: canSeeUsage && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,
       isMini: localStorage.getItem("navigation.mode") !== "false" || isRestricted,
       isDemo: isDemo,
@@ -1152,7 +1153,7 @@ export default {
     },
     showLegalInfo() {
       if (this.config.legalUrl) {
-        this.$util.openUrl(this.config.legalUrl);
+        this.$util.openExternalUrl(this.config.legalUrl);
       } else {
         this.$router.push({ name: "about" });
       }

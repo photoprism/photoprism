@@ -9,6 +9,7 @@ import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
 import PhotoEdit from "../page-model/photo-edit";
+import Notifies from "../page-model/notifications";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
@@ -21,6 +22,7 @@ const photoviewer = new PhotoViewer();
 const page = new Page();
 const albumdialog = new AlbumDialog();
 const photoedit = new PhotoEdit();
+const notifies = new Notifies();
 
 test.meta("testID", "albums-001").meta({ type: "short", mode: "public" })(
   "Common: Create/delete album on /albums",
@@ -102,53 +104,57 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })(
   }
 );
 
-test.meta("testID", "albums-003").meta({ type: "short", mode: "public" })("Common: Update album details", async (t) => {
-  await menu.openPage("albums");
-  await toolbar.search("Holiday");
-  const AlbumUid = await album.getNthAlbumUid("all", 0);
+test.meta("testID", "albums-003").meta({ type: "short", mode: "public" })(
+  "Common: Update album details",
+  async (t) => {
+    await menu.openPage("albums");
+    await toolbar.search("Holiday");
+    const AlbumUid = await album.getNthAlbumUid("all", 0);
 
-  await t.expect(page.cardTitle.nth(0).innerText).contains("Holiday");
+    await t.expect(page.cardTitle.nth(0).innerText).contains("Holiday");
 
-  await t.click(page.cardTitle.nth(0)).typeText(albumdialog.title, "Animals", { replace: true });
+    await t.click(page.cardTitle.nth(0)).typeText(albumdialog.title, "Animals", { replace: true });
 
-  await t.expect(albumdialog.description.value).eql("").expect(albumdialog.category.value).eql("");
+    await t.expect(albumdialog.description.value).eql("").expect(albumdialog.category.value).eql("");
 
-  await t
-    .typeText(albumdialog.description, "All my animals")
-    .typeText(albumdialog.category, "Pets")
-    .pressKey("enter")
-    .click(albumdialog.dialogSave);
+    await t
+      .typeText(albumdialog.description, "All my animals")
+      .typeText(albumdialog.category, "Pets")
+      .pressKey("enter")
+      .click(albumdialog.dialogSave);
 
-  await t.expect(page.cardTitle.nth(0).innerText).contains("Animals");
+    await t.expect(page.cardTitle.nth(0).innerText).contains("Animals");
 
-  await album.openAlbumWithUid(AlbumUid);
-  await toolbar.triggerToolbarAction("edit");
-  await t.typeText(albumdialog.title, "Holiday", { replace: true });
+    await album.openAlbumWithUid(AlbumUid);
+    await toolbar.triggerToolbarAction("edit");
+    await t.typeText(albumdialog.title, "Holiday", { replace: true });
 
-  await t.expect(albumdialog.description.value).eql("All my animals").expect(albumdialog.category.value).eql("Pets");
+    await t.expect(albumdialog.description.value).eql("All my animals").expect(albumdialog.category.value).eql("Pets");
 
-  await t
-    .click(albumdialog.description)
-    .pressKey("ctrl+a delete")
-    .pressKey("enter")
-    .click(albumdialog.category)
-    .pressKey("ctrl+a delete")
-    .pressKey("enter")
-    .click(albumdialog.dialogSave);
-  await menu.openPage("albums");
+    await t.click(albumdialog.description).pressKey("ctrl+a delete");
+    await t
+      .click(albumdialog.category)
+      .click(albumdialog.category)
+      .pressKey("ctrl+a delete")
+      .click(Selector("form.form-album-edit i.mdi-bookmark"));
+    await t.expect(albumdialog.category.value).eql("");
+    await t.click(albumdialog.dialogSave);
+    await menu.openPage("albums");
 
-  await t
-    .expect(Selector("div").withText("Holiday").visible)
-    .ok()
-    .expect(Selector("div").withText("Animals").exists)
-    .notOk();
-});
+    await t
+      .expect(Selector("div").withText("Holiday").visible)
+      .ok()
+      .expect(Selector("div").withText("Animals").exists)
+      .notOk();
+  }
+);
 
 test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
   "Common: Add/Remove Photos to/from multiple albums",
   async (t) => {
     // Get initial counts for both Holiday and Christmas albums
     await menu.openPage("albums");
+    await notifies.waitForPhotosToLoad(2000);
     await toolbar.search("Holiday");
     const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
     await album.openAlbumWithUid(HolidayAlbumUid);
@@ -276,7 +282,7 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
 );
 
 test.meta("testID", "albums-004-duplicate").meta({ type: "short", mode: "public" })(
-  "Album duplication when selecting from dropdown then typing same name",
+  "Common: Album duplication when selecting from dropdown then typing same name",
   async (t) => {
     await menu.openPage("browse");
     await toolbar.search("photo:true");

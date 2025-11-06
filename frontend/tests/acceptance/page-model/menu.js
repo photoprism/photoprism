@@ -1,18 +1,28 @@
 import { Selector, t } from "testcafe";
 
+const showLogs = process.env.SHOW_LOGS == "true";
+
 export default class Page {
   constructor() {
     this.navDrawer = Selector(".v-navigation-drawer");
+    this.navActive = Selector(".v-navigation-drawer--active");
+    this.navInRail = Selector(".v-navigation-drawer--rail");
     this.expandButton = Selector("div.nav-expand i");
     this.expandButtonContainer = Selector("div.nav-expand");
   }
 
   async openNav() {
-    if (await this.expandButton.visible) {
-      await t.click(this.expandButton);
-    } else if (await this.expandButtonContainer.visible) {
-      await t.click(this.expandButton);
+    showLogs && console.time("openNav")
+    if (await this.navActive.visible) { // Make sure that the nav has been rendered
+      if (await this.navInRail.exists) { // fail fast looking for a minimized nav
+        if (await this.expandButton.exists) {
+          await t.click(this.expandButton);
+        } else if (await this.expandButtonContainer.exists) {
+          await t.click(this.expandButton);
+        }
+      }
     }
+    showLogs && console.timeEnd("openNav")
   }
 
   async openPage(page) {

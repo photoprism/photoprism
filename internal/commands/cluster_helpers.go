@@ -28,7 +28,7 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 
 	payload := cluster.RegisterRequest{
 		NodeName:     nodeName,
-		NodeRole:     cluster.RoleInstance,
+		NodeRole:     cluster.RoleApp,
 		RotateSecret: true,
 	}
 	b, _ := json.Marshal(payload)

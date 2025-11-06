@@ -20,6 +20,13 @@ import (
 var swaggerJSON []byte
 
 // GetDocs registers the Swagger API documentation endpoints.
+//
+//	@Summary	serves embedded Swagger documentation (debug builds only)
+//	@Id			GetDocs
+//	@Tags		Debug
+//	@Produce	json
+//	@Success	200	{object}	gin.H	"Swagger JSON"
+//	@Router		/swagger.json [get]
 func GetDocs(router *gin.RouterGroup) {
 	// Get global configuration.
 	conf := get.Config()

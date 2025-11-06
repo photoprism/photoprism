@@ -15,7 +15,7 @@ import (
 
 func TestQuoteIdent_Valid(t *testing.T) {
 	cases := []string{
-		"photoprism_db",
+		"cluster_db",
 		"my.db-1_2",
 		"a",
 		"z9-._",
@@ -54,9 +54,9 @@ func TestQuoteString_RejectsNUL(t *testing.T) {
 }
 
 func TestQuoteAccount(t *testing.T) {
-	got, err := quoteAccount("%", "photoprism_user")
+	got, err := quoteAccount("%", "cluster_user")
 	assert.NoError(t, err)
-	assert.Equal(t, "'photoprism_user'@'%'", got)
+	assert.Equal(t, "'cluster_user'@'%'", got)
 }
 
 func TestQuoteAccount_Errors(t *testing.T) {

@@ -35,6 +35,7 @@
           'is-zoomable': isZoomable,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
+          'is-video': model?.Type === 'video',
           'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"

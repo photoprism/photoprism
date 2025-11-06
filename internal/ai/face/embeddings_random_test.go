@@ -15,6 +15,14 @@ func TestRandomDist(t *testing.T) {
 }
 
 func TestRandomEmbeddings(t *testing.T) {
+	skipChildren := SkipChildren
+	ignoreBackground := IgnoreBackground
+	t.Cleanup(func() {
+		SkipChildren = skipChildren
+		IgnoreBackground = ignoreBackground
+	})
+	SkipChildren = true
+	IgnoreBackground = true
 	t.Run("Regular", func(t *testing.T) {
 		e := RandomEmbeddings(2, RegularFace)
 		for i := range e {

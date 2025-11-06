@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -77,18 +78,62 @@ func (Session) TableName() string {
 }
 
 // NewSession creates a new session with the expiration and idle time specified in seconds (-1 for infinite).
-func NewSession(expiresIn, timeout int64) (m *Session) {
-	m = &Session{}
+func NewSession(expiresIn, timeout int64) (sess *Session) {
+	sess = &Session{}
 
-	m.Regenerate()
+	sess.Regenerate()
 
 	// Set session expiration time in seconds (-1 for infinite).
-	m.SetExpiresIn(expiresIn)
+	sess.SetExpiresIn(expiresIn)
 
 	// Set session idle time in seconds (-1 for infinite).
-	m.SetTimeout(timeout)
+	sess.SetTimeout(timeout)
 
-	return m
+	return sess
+}
+
+// NewSessionFromToken creates a transient access-token session backed by the caller's bearer token.
+// It copies scope, client metadata, and request context so service-key and API token flows can reuse
+// the existing authorization path without persisting state.
+func NewSessionFromToken(c *gin.Context, token, scope, refId string) *Session {
+	if token == "" {
+		return nil
+	}
+
+	// "vision-api"
+	if !rnd.IsRefID(refId) {
+		refId = rnd.AuthTokenID("key")
+	}
+
+	// Create new session
+	sess := &Session{
+		Status: http.StatusOK,
+		RefID:  refId,
+	}
+
+	// Determine token string.
+	sess.SetAuthToken(token)
+
+	// Set scope/claims metadata.
+	sess.SetScope(scope)
+	sess.SetGrantType(authn.GrantToken)
+	sess.SetMethod(authn.MethodDefault)
+	sess.SetProvider(authn.ProviderAccessToken)
+	sess.SetClientIP(header.ClientIP(c))
+	sess.SetUserAgent(header.ClientUserAgent(c))
+
+	// Derive timestamps from JWT claims when available.
+	now := time.Now().UTC()
+
+	sess.CreatedAt = now
+	sess.UpdatedAt = now
+	sess.LastActive = now.Unix()
+
+	// Expires in 60 seconds.
+	sess.SetExpiresIn(60)
+	sess.SetTimeout(60)
+
+	return sess
 }
 
 // SessionStatusUnauthorized returns a session with status unauthorized (401).
@@ -122,12 +167,17 @@ func FindSessionByRefID(refId string) *Session {
 	return m
 }
 
-// AuthToken returns the secret client authentication token.
+// AuthToken returns the session's bearer token. Stored sessions read this value from
+// the database/cache, while transient sessions (for example, portal JWTs) mirror the
+// bearer presented in the current request so audit logs and diagnostics can report the
+// correct token.
 func (m *Session) AuthToken() string {
 	return m.authToken
 }
 
-// SetAuthToken sets a custom authentication token.
+// SetAuthToken assigns the bearer token and derives the session ID from it. Always
+// pass the exact token presented by the caller (JWT, API key, etc.) so follow-up
+// actions reference the same value.
 func (m *Session) SetAuthToken(authToken string) *Session {
 	m.authToken = authToken
 	m.ID = rnd.SessionID(authToken)
@@ -276,17 +326,25 @@ func (m *Session) GetClient() *Client {
 		return &Client{}
 	} else if m.client != nil {
 		return m.client
-	} else if c := FindClientByUID(m.ClientUID); c != nil {
+	}
+
+	// Get client ID.
+	uid := m.ClientUID
+
+	if c := FindClientByUID(uid); c != nil {
 		m.SetClient(c)
 		return m.client
 	}
 
+	// Get client role.
+	role := m.clientRole(false)
+
 	return &Client{
 		UserUID:    m.UserUID,
 		UserName:   m.UserName,
-		ClientUID:  m.ClientUID,
+		ClientUID:  uid,
 		ClientName: m.GetClientName(),
-		ClientRole: m.GetClientRole().String(),
+		ClientRole: role.String(),
 		AuthScope:  m.Scope(),
 		AuthMethod: m.AuthMethod,
 	}
@@ -299,13 +357,7 @@ func (m *Session) GetClientName() string {
 
 // GetClientRole returns the client ACL role.
 func (m *Session) GetClientRole() acl.Role {
-	if m.HasClient() {
-		return m.GetClient().AclRole()
-	} else if m.IsClient() {
-		return acl.RoleClient
-	}
-
-	return acl.RoleNone
+	return m.clientRole(true)
 }
 
 // GetClientInfo returns the client identifier string.
@@ -336,6 +388,41 @@ func (m *Session) NoClient() bool {
 // IsClient checks if this session authenticates an API client.
 func (m *Session) IsClient() bool {
 	return authn.Provider(m.AuthProvider).IsClient()
+}
+
+// clientRole resolves the client role for this session. When resolve is true it
+// may perform a one-time lookup via FindClientByUID; callers that already
+// depend on GetClientRole must pass resolve=false to avoid the recursive loop
+// that previously caused stack overflows between GetClient() and GetClientRole().
+func (m *Session) clientRole(resolve bool) acl.Role {
+	if m == nil {
+		return acl.RoleNone
+	}
+
+	if c := m.client; c != nil {
+		return c.AclRole()
+	}
+
+	if !resolve || m.ClientUID == "" {
+		// Skip lookup to avoid recursive loop.
+	} else if c := FindClientByUID(m.ClientUID); c != nil {
+		m.SetClient(c)
+		return c.AclRole()
+	}
+
+	if m.IsClient() {
+		if authn.MethodJWT.NotEqual(m.AuthMethod) {
+			// Do nothing.
+		} else if role, _, hasRole := strings.Cut(m.AuthIssuer, ":"); !hasRole {
+			// Do nothing.
+		} else if aclRole, roleFound := acl.ClientRoles[role]; roleFound {
+			return aclRole
+		}
+
+		return acl.RoleClient
+	}
+
+	return acl.RoleNone
 }
 
 // GetUser returns the related user entity.
@@ -888,12 +975,18 @@ func (m *Session) UpdateLastActive(save bool) *Session {
 
 // Invalid checks if the session does not belong to a registered user or a visitor with shares.
 func (m *Session) Invalid() bool {
+	if m == nil {
+		return true
+	}
+
 	return !m.Valid()
 }
 
 // Valid checks whether the session belongs to a registered user or a visitor with shares.
 func (m *Session) Valid() bool {
-	if m.IsClient() {
+	if m == nil {
+		return false
+	} else if m.IsClient() {
 		return true
 	}
 

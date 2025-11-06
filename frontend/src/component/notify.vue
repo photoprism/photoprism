@@ -46,6 +46,7 @@ export default {
         color: "transparent",
         text: "",
         delay: this.defaultDelay,
+        timer: 0,
       },
       lastText: "",
       lastId: 1,
@@ -127,6 +128,7 @@ export default {
 
       this.lastId++;
       this.lastText = text;
+      let timer = 0;
 
       const m = {
         id: this.lastId,
@@ -134,6 +136,7 @@ export default {
         icon,
         text,
         delay,
+        timer,
       };
 
       this.messages.push(m);
@@ -144,6 +147,9 @@ export default {
     },
     showNext() {
       const message = this.messages.shift();
+      if (this.message.timer > 0) {
+        clearTimeout(this.message.timer);
+      };
 
       if (message) {
         this.message = message;
@@ -166,14 +172,16 @@ export default {
 
         this.visible = true;
 
-        setTimeout(() => {
+        this.message.timer = setTimeout(() => {
           this.lastText = "";
+          this.message.timer = 0;
           this.showNext();
         }, this.message.delay);
       } else {
         this.lastText = "";
         this.visible = false;
         this.message.text = "";
+        this.message.timer = 0;
       }
     },
   },

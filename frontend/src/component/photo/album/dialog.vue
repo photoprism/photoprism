@@ -18,6 +18,7 @@
           <v-combobox
             ref="input"
             v-model="selectedAlbums"
+            v-model:menu="albumsMenu"
             :disabled="loading"
             :loading="loading"
             hide-details
@@ -28,8 +29,10 @@
             :items="items"
             item-title="Title"
             item-value="UID"
-            :placeholder="$gettext('Select or create albums')"
             return-object
+            :placeholder="$gettext('Select or create albums')"
+            @update:menu="onAlbumsMenuUpdate"
+            @keydown.enter.stop="onAlbumsEnter"
           >
             <template #no-data>
               <v-list-item>
@@ -91,6 +94,8 @@ export default {
       albums: [],
       items: [],
       selectedAlbums: [],
+      albumsMenu: false,
+      suppressAlbumsMenuOpen: false,
       labels: {
         addToAlbum: this.$gettext("Add to album"),
         createAlbum: this.$gettext("Create album"),
@@ -213,11 +218,27 @@ export default {
         }
       });
     },
+    onAlbumsEnter() {
+      this.suppressAlbumsMenuOpen = true;
+      this.albumsMenu = false;
+      window.setTimeout(() => {
+        this.suppressAlbumsMenuOpen = false;
+      }, 250);
+    },
+    onAlbumsMenuUpdate(val) {
+      if (val && this.suppressAlbumsMenuOpen) {
+        this.albumsMenu = false;
+        return;
+      }
+      this.albumsMenu = val;
+    },
     reset() {
       this.loading = false;
       this.selectedAlbums = [];
       this.albums = [];
       this.items = [];
+      this.albumsMenu = false;
+      this.suppressAlbumsMenuOpen = false;
     },
     removeSelection(index) {
       this.selectedAlbums.splice(index, 1);

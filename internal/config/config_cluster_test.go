@@ -181,7 +181,7 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.JWTScope = "cluster vision"
 		assert.Equal(t, list.ParseAttr("cluster vision"), c.JWTAllowedScopes())
 		c.options.JWTScope = ""
-		assert.Equal(t, list.ParseAttr("cluster vision metrics"), c.JWTAllowedScopes())
+		assert.Equal(t, list.ParseAttr("config cluster vision metrics"), c.JWTAllowedScopes())
 	})
 	t.Run("Paths", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -315,6 +315,46 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, readErr)
 		assert.Equal(t, cluster.ExampleClientSecret, strings.TrimSpace(string(data)))
 	})
+	t.Run("NodeClientSecretFromFile", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		// Persist secret to node config path.
+		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.NoError(t, err)
+
+		// Simulate a fresh process reading from disk.
+		ctx2 := CliTestContext()
+		assert.NoError(t, ctx2.Set("config-path", tempCfg))
+		c2 := NewConfig(ctx2)
+		c2.options.NodeClientSecret = "" // ensure it must read the file
+		assert.Equal(t, cluster.ExampleClientSecret, c2.NodeClientSecret())
+	})
+	t.Run("NodeClientSecretEnvOverride", func(t *testing.T) {
+		secretFile := filepath.Join(t.TempDir(), "client_secret")
+		assert.NoError(t, os.WriteFile(secretFile, []byte(cluster.ExampleClientSecret), fs.ModeSecretFile))
+		t.Setenv(FlagFileVar("NODE_CLIENT_SECRET"), secretFile)
+
+		c := NewConfig(CliTestContext())
+		c.options.NodeClientSecret = ""
+		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
+	t.Run("NodeClientSecretFallbackOnWrite", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
+		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
+		assert.NoError(t, os.Chmod(secretDir, 0o500))
+
+		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.Error(t, err)
+		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
 	t.Run("JoinTokenFilePortal", func(t *testing.T) {
 		tempCfg := t.TempDir()
 		ctx := CliTestContext()
@@ -331,11 +371,26 @@ func TestConfig_Cluster(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
-		c.options.NodeRole = cluster.RoleInstance
+		c.options.NodeRole = cluster.RoleApp
 
 		expected := filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 		assert.Equal(t, expected, c.JoinTokenFile())
 		assert.Equal(t, expected, c.NodeJoinTokenFile())
+	})
+	t.Run("SaveJoinTokenFallbackOnWrite", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
+		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
+		assert.NoError(t, os.Chmod(secretDir, 0o500))
+
+		_, _, err := c.SaveJoinToken("")
+		assert.Error(t, err)
+		token := c.JoinToken()
+		assert.True(t, rnd.IsJoinToken(token, false))
 	})
 	t.Run("NodeClientSecretFile", func(t *testing.T) {
 		tempCfg := t.TempDir()
@@ -409,13 +464,13 @@ func TestConfig_Cluster(t *testing.T) {
 
 		// Default / unknown → node
 		c.options.NodeRole = ""
-		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
 		c.options.NodeRole = "unknown"
-		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
 
 		// Explicit values
-		c.options.NodeRole = string(cluster.RoleInstance)
-		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		c.options.NodeRole = string(cluster.RoleApp)
+		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
 		c.options.NodeRole = string(cluster.RolePortal)
 		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
 		c.options.NodeRole = string(cluster.RoleService)
@@ -451,6 +506,9 @@ func TestConfig_Cluster(t *testing.T) {
 		// Empty / missing should yield empty strings.
 		t.Setenv("PHOTOPRISM_NODE_CLIENT_SECRET_FILE", filepath.Join(dir, "missing"))
 		t.Setenv("PHOTOPRISM_JOIN_TOKEN_FILE", filepath.Join(dir, "missing"))
+		c.options.NodeClientSecret = ""
+		c.options.JoinToken = ""
+		c.clearJoinTokenFileCache()
 		assert.Equal(t, "", c.NodeClientSecret())
 		assert.Equal(t, "", c.JoinToken())
 	})

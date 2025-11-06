@@ -26,7 +26,7 @@ func TestClusterListNodes_Redaction(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Nodes are UUID-first; seed with a UUID v7 so the registry includes it in List().
-	n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-redact", Role: "instance", AdvertiseUrl: "http://pp-node:2342", SiteUrl: "https://photos.example.com"}}
+	n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-redact", Role: cluster.RoleApp, AdvertiseUrl: "http://pp-node:2342", SiteUrl: "https://photos.example.com"}}
 	n.Database = &cluster.NodeDatabase{Name: "pp_db", User: "pp_user"}
 	assert.NoError(t, regy.Put(n))
 
@@ -57,7 +57,7 @@ func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Seed node with internal URL and DB meta.
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-redact2", Role: "instance", AdvertiseUrl: "http://pp-node2:2342", SiteUrl: "https://photos2.example.com"}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-redact2", Role: cluster.RoleApp, AdvertiseUrl: "http://pp-node2:2342", SiteUrl: "https://photos2.example.com"}}
 	n.Database = &cluster.NodeDatabase{Name: "pp_db2", User: "pp_user2"}
 	assert.NoError(t, regy.Put(n))
 

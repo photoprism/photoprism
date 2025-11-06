@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 )
 
 // ClusterMetrics returns lightweight metrics about the cluster.
@@ -34,20 +33,10 @@ func ClusterMetrics(router *gin.RouterGroup) {
 			return
 		}
 
-		regy, err := reg.NewClientRegistryWithConfig(conf)
+		counts, err := clusterNodeCounts(conf)
 		if err != nil {
 			AbortUnexpectedError(c)
 			return
-		}
-
-		nodes, _ := regy.List()
-		counts := map[string]int{"total": len(nodes)}
-		for _, node := range nodes {
-			role := node.Role
-			if role == "" {
-				role = "unknown"
-			}
-			counts[role]++
 		}
 
 		resp := cluster.MetricsResponse{

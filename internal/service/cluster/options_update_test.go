@@ -43,8 +43,8 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 	update := cluster.OptionsUpdate{}
 	update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")
 	update.SetClusterCIDR("192.0.2.0/24")
-	update.SetDatabaseName("photoprism_cluster")
-	update.SetDatabaseUser("photoprism_user")
+	update.SetDatabaseName("cluster_database")
+	update.SetDatabaseUser("cluster_user")
 
 	written, err := clusternode.ApplyOptionsUpdate(conf, update)
 	require.NoError(t, err)
@@ -59,8 +59,8 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 	assert.Equal(t, "value", merged["Existing"])
 	assert.Equal(t, "4a47c940-d5de-41b3-88a2-eb816cc659ca", merged["ClusterUUID"])
 	assert.Equal(t, "192.0.2.0/24", merged["ClusterCIDR"])
-	assert.Equal(t, "photoprism_cluster", merged["DatabaseName"])
-	assert.Equal(t, "photoprism_user", merged["DatabaseUser"])
+	assert.Equal(t, "cluster_database", merged["DatabaseName"])
+	assert.Equal(t, "cluster_user", merged["DatabaseUser"])
 
 	// Applying an empty update should be a no-op.
 	empty := cluster.OptionsUpdate{}
