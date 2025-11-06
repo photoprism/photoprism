@@ -30,22 +30,23 @@ func ConvertSQLiteDataTypes(db *gorm.DB) (err error) {
 		log.Errorf("migrate: unable to scan query %v", err)
 	}
 
-	reVarchar := regexp.MustCompile(`VARCHAR\([0-9]+\)`)
-	reVarbinary := regexp.MustCompile(`VARBINARY\([0-9]+\)|MEDIUMBLOB`)
-	reBigint := regexp.MustCompile(` bigint`)
-	reBool := regexp.MustCompile(` bool`)
-	reFloat := regexp.MustCompile(` FLOAT`)
+	reVarchar := regexp.MustCompile(`(?i)varchar\([0-9]+\)`)
+	reVarbinary := regexp.MustCompile(`(?i)varbinary\([0-9]+\)|mediumblob`)
+	reBigint := regexp.MustCompile(`(?i) bigint`)
+	reBool := regexp.MustCompile(`(?i) bool`)
+	reFloat := regexp.MustCompile(`(?i) float`)
 	reCreate := regexp.MustCompile("(CREATE TABLE `[a-z_]+)(` )")
 	reDblQuote := regexp.MustCompile(`"([a-z_]+)"`)
 	reDEFAULTString := regexp.MustCompile(`DEFAULT '([a-z\/]*)'`)
 	reTrailingSpaces := regexp.MustCompile(`([ ]+\))`)
 
 	for _, table := range tables {
-		log.Debugf("We are working on table %s", table.TblName)
+		log.Debugf("Evaluating table %s", table.TblName)
 		var createstatement ResultSQL
 		db.Raw("SELECT sql FROM sqlite_master WHERE type = 'table' AND tbl_name = ? AND name = ?;", table.TblName, table.TblName).Scan(&createstatement)
 		//log.Debugf("%s", createstatement.Sql)
-		if strings.Contains(createstatement.Sql, "VARCHAR") || strings.Contains(createstatement.Sql, "VARBINARY") || strings.Contains(createstatement.Sql, "bigint") {
+		if strings.Contains(strings.ToLower(createstatement.Sql), "varchar") || strings.Contains(strings.ToLower(createstatement.Sql), "varbinary") || strings.Contains(strings.ToLower(createstatement.Sql), "bigint") {
+			log.Debugf("Working on table %s", table.TblName)
 			tempStatement := reDblQuote.ReplaceAll([]byte(createstatement.Sql), []byte("`${1}`"))
 			tempStatement = reDEFAULTString.ReplaceAll(tempStatement, []byte(`DEFAULT "${1}"`))
 			tempStatement = reVarchar.ReplaceAll(tempStatement, []byte("text"))
