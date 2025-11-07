@@ -324,6 +324,32 @@ func TestUser_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("LongNumericAuthID", func(t *testing.T) {
+		useruid := rnd.GenerateUID(UserUID)
+		var m = User{
+			UserUID:      useruid,
+			UserName:     "examplelong",
+			UserRole:     string(acl.RoleGuest),
+			DisplayName:  "Example Long",
+			SuperAdmin:   false,
+			CanLogin:     true,
+			AuthID:       "012345678901234567890",
+			AuthProvider: string(authn.ProviderOIDC),
+		}
+
+		if err := m.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			m.Delete()
+			UnscopedDb().Delete(m)
+		})
+
+		assert.Equal(t, "examplelong", m.Username())
+		assert.Equal(t, "examplelong", m.UserName)
+		assert.Equal(t, "012345678901234567890", m.AuthID)
+	})
 }
 
 func TestUser_UpdateUsername(t *testing.T) {
@@ -551,6 +577,14 @@ func TestFindUser(t *testing.T) {
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "oidc", m.AuthProvider)
+
+		n := FindUser(User{AuthProvider: authn.ProviderOIDC.String(), AuthID: info.Subject})
+
+		require.NotNil(t, n)
+
+		assert.NotEmpty(t, n.UserUID)
+		assert.Equal(t, "jane.doe", n.UserName)
+		assert.Equal(t, "oidc", n.AuthProvider)
 	})
 	t.Run("UserName", func(t *testing.T) {
 		m := FindUser(User{UserName: "admin"})
@@ -1821,6 +1855,38 @@ func TestUser_SetAuthID(t *testing.T) {
 		m.SetAuthID("", issuer)
 		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
+	})
+
+	t.Run("DupeAuthProviderAndID", func(t *testing.T) {
+		m := UserFixtures.Get("guest")
+		n := NewUser()
+		n.UserName = "guest2"
+		n.DisplayName = "Guest User2"
+		n.UserEmail = "guest2@example.com"
+		n.UserRole = acl.RoleGuest.String()
+		n.AuthProvider = authn.ProviderOIDC.String()
+		n.AuthMethod = authn.MethodDefault.String()
+		n.SuperAdmin = false
+		n.CanLogin = true
+		n.SetAuthID(uuid, issuer)
+		n.Save()
+
+		t.Cleanup(func() {
+			n.Delete()
+			UnscopedDb().Delete(n)
+		})
+
+		newUserUID := n.UserUID
+		m.SetAuthID(uuid, issuer)
+		assert.Equal(t, uuid, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+
+		n = FindUserByUID(newUserUID)
+		require.NotNil(t, n)
+
+		assert.Equal(t, "guest2", n.UserName)
+		assert.Equal(t, "", n.AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), n.AuthProvider)
 	})
 }
 

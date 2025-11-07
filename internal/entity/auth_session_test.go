@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -238,10 +239,11 @@ func TestSession_Create(t *testing.T) {
 		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxx")
 
 		err := s.Create()
+		require.Nil(t, err)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		t.Cleanup(func() {
+			s.Delete()
+		})
 
 		m2 := FindSessionByRefID("sessxkkcxxxx")
 		assert.Equal(t, "charles", m2.UserName)
@@ -264,18 +266,19 @@ func TestSession_Create(t *testing.T) {
 		s.SetAuthToken(authToken)
 
 		err := s.Create()
+		require.Nil(t, err)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		t.Cleanup(func() {
+			s.Delete()
+		})
 
 		m2, _ := FindSession(id)
 
 		assert.NotEqual(t, "123", m2.RefID)
 	})
 	t.Run("IdAlreadyExists", func(t *testing.T) {
-		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
-
+		m := FindSessionByRefID("sessxkkcxxxx")
+		assert.Empty(t, m)
 		s := &Session{
 			UserName:    "charles",
 			SessExpires: unix.Day * 3,
@@ -283,10 +286,53 @@ func TestSession_Create(t *testing.T) {
 			RefID:       "sessxkkcxxxx",
 		}
 
-		s.SetAuthToken(authToken)
+		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxx")
 
 		err := s.Create()
+		require.Nil(t, err)
+
+		t.Cleanup(func() {
+			s.Delete()
+		})
+
+		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
+
+		s2 := &Session{
+			UserName:    "charles",
+			SessExpires: unix.Day * 3,
+			SessTimeout: unix.Now() + unix.Week,
+			RefID:       "sessxkkcxxxx",
+		}
+
+		s2.SetAuthToken(authToken)
+
+		err = s2.Create()
 		assert.Error(t, err)
+	})
+	t.Run("LongNumericAuthID", func(t *testing.T) {
+		refID := rnd.RefID("ts")
+		m := FindSessionByRefID(refID)
+		assert.Empty(t, m)
+		s := &Session{
+			UserName:    "charles",
+			SessExpires: unix.Day * 3,
+			SessTimeout: unix.Now() + unix.Week,
+			RefID:       refID,
+			AuthID:      "012345678901234567890",
+		}
+
+		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxs")
+
+		err := s.Create()
+		require.Nil(t, err)
+
+		t.Cleanup(func() {
+			s.Delete()
+		})
+
+		m2 := FindSessionByRefID(refID)
+		assert.Equal(t, "charles", m2.UserName)
+		assert.Equal(t, "012345678901234567890", m2.AuthID)
 	})
 }
 
@@ -304,13 +350,36 @@ func TestSession_Save(t *testing.T) {
 		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxy")
 
 		err := s.Save()
-
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.Nil(t, err)
 
 		m2 := FindSessionByRefID("sessxkkcxxxy")
 		assert.Equal(t, "chris", m2.UserName)
+	})
+
+	t.Run("LongNumericAuthID", func(t *testing.T) {
+		refID := rnd.RefID("ts")
+		m := FindSessionByRefID(refID)
+		assert.Empty(t, m)
+		s := &Session{
+			UserName:    "chris",
+			SessExpires: unix.Day * 3,
+			SessTimeout: unix.Now() + unix.Week,
+			RefID:       refID,
+			AuthID:      "012345678901234567890",
+		}
+
+		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxy")
+
+		err := s.Save()
+		require.Nil(t, err)
+
+		t.Cleanup(func() {
+			s.Delete()
+		})
+
+		m2 := FindSessionByRefID(refID)
+		assert.Equal(t, "chris", m2.UserName)
+		assert.Equal(t, "012345678901234567890", m2.AuthID)
 	})
 }
 
