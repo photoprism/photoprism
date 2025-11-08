@@ -278,6 +278,7 @@ func (m *Session) Updates(values interface{}) error {
 
 // Wraps a string value in pseudo XML to force type to string
 func wrapString(s string) (r string) {
+	return s
 	r = s
 	if s != "" && !strings.HasPrefix(s, "<pp>") && !strings.HasSuffix(s, "</pp>") {
 		r = fmt.Sprintf("<pp>%s</pp>", s)
@@ -287,11 +288,13 @@ func wrapString(s string) (r string) {
 
 // Wraps the AuthID field so that SQLite will save it correctly
 func (m *Session) wrapAuthID() {
+	return
 	m.AuthID = wrapString(m.AuthID)
 }
 
 // Unwraps the AuthID field so that PhotoPrism can use it correctly
 func (m *Session) unwrapAuthID() {
+	return
 	if m.AuthID != "" && strings.HasPrefix(m.AuthID, "<pp>") && strings.HasSuffix(m.AuthID, "</pp>") {
 		m.AuthID = strings.TrimSuffix(strings.TrimPrefix(m.AuthID, "<pp>"), "</pp>")
 	}

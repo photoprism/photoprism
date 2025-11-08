@@ -384,6 +384,7 @@ func (m *User) Updates(values interface{}) error {
 
 // Wraps the AuthID field so that SQLite will save it correctly
 func (m *User) wrapAuthID() {
+	return
 	if m.AuthID != "" && !strings.HasPrefix(m.AuthID, "<pp>") && !strings.HasSuffix(m.AuthID, "</pp>") {
 		m.AuthID = fmt.Sprintf("<pp>%s</pp>", m.AuthID)
 	}
@@ -391,6 +392,7 @@ func (m *User) wrapAuthID() {
 
 // Unwraps the AuthID field so that PhotoPrism can use it correctly
 func (m *User) unwrapAuthID() {
+	return
 	if m.AuthID != "" && strings.HasPrefix(m.AuthID, "<pp>") && strings.HasSuffix(m.AuthID, "</pp>") {
 		m.AuthID = strings.TrimSuffix(strings.TrimPrefix(m.AuthID, "<pp>"), "</pp>")
 	}
