@@ -154,3 +154,253 @@ func TestDSN_ParsePostgres(t *testing.T) {
 		})
 	}
 }
+
+func TestDSN_ToString(t *testing.T) {
+	cases := []struct {
+		name string
+		in   DSN
+		want string
+	}{
+		{
+			name: "NoDriver",
+			in: DSN{
+				Name:   "test.db",
+				Server: "storage/unittest",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=5000&_foreign_keys=on",
+		},
+		{
+			name: "NoDriverWithParms",
+			in: DSN{
+				Name:   "test.db",
+				Server: "storage/unittest",
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "SQLite",
+			in: DSN{
+				Driver: DriverSQLite3,
+				Name:   "test.db",
+				Server: "storage/unittest",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=5000&_foreign_keys=on",
+		},
+		{
+			name: "SQLiteWithParms",
+			in: DSN{
+				Driver: DriverSQLite3,
+				Name:   "test.db",
+				Server: "storage/unittest",
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "SQLitefile",
+			in: DSN{
+				Driver: "sqlitefile",
+				Name:   "test.db",
+				Server: "storage/unittest",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=5000&_foreign_keys=on",
+		},
+		{
+			name: "SQLitefileWithParms",
+			in: DSN{
+				Driver: "sqlitefile",
+				Name:   "test.db",
+				Server: "storage/unittest",
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "Postgres",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
+			name: "PostgresWithParms",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
+			name: "PostgreSQL",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
+			name: "PostgreSQLWithParms",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
+			name: "MariaDB",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+		{
+			name: "MariaDBNet",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+				Net:      "tcp",
+			},
+			want: "myuser:password@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+		{
+			name: "MariaDBWithParms",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+				Params:   "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+		},
+		{
+			name: "MySQL",
+			in: DSN{
+				Driver:   DriverMySQL,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+		{
+			name: "MySQLWithParms",
+			in: DSN{
+				Driver:   DriverMySQL,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+				Params:   "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := tt.in
+
+			assert.Equal(t, tt.want, d.ToString())
+		})
+	}
+}
+
+func TestDSN_ForPSQL(t *testing.T) {
+	cases := []struct {
+		name string
+		in   DSN
+		want string
+	}{
+		{
+			name: "Postgres",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "PostgresWithParms",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "PostgreSQL",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "PostgreSQLWithParms",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "MariaDB",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@mariadb:4001/testdb",
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := tt.in
+
+			assert.Equal(t, tt.want, d.ForPSQL())
+		})
+	}
+}

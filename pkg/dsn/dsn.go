@@ -415,7 +415,7 @@ func (d *DSN) detectDriver() {
 	}
 }
 
-// ToString returns the DSN in the format that gorm expects
+// ToString returns the DSN in the format that gorm expects created from the parts, with default Params if not provided.
 func (d *DSN) ToString() string {
 	driver := d.Driver
 	if driver == "" {
@@ -431,13 +431,13 @@ func (d *DSN) ToString() string {
 		if d.Params != "" {
 			return fmt.Sprintf("%s/%s?%s", d.Server, d.Name, d.Params)
 		} else {
-			return fmt.Sprintf("%s/%s", d.Server, d.Name)
+			return fmt.Sprintf("%s/%s?%s", d.Server, d.Name, Params[DriverSQLite3])
 		}
 	case DriverPostgreSQL, DriverPostgres:
 		if d.Params != "" {
 			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name, d.Params)
 		} else {
-			return fmt.Sprintf("%s://%s:%s@%s/%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name)
+			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name, Params[DriverPostgreSQL])
 		}
 	case DriverMariaDB, DriverMySQL:
 		databaseServer := d.Server
@@ -447,9 +447,14 @@ func (d *DSN) ToString() string {
 		if d.Params != "" {
 			return fmt.Sprintf("%s:%s@%s/%s?%s", d.User, d.Password, databaseServer, d.Name, d.Params)
 		} else {
-			return fmt.Sprintf("%s:%s@%s/%s", d.User, d.Password, databaseServer, d.Name)
+			return fmt.Sprintf("%s:%s@%s/%s?%s", d.User, d.Password, databaseServer, d.Name, Params[DriverMariaDB])
 		}
 	default:
 		return ""
 	}
+}
+
+// ForPSQL returns the DSN in the format that psql expects for postgresql.
+func (d *DSN) ForPSQL() string {
+	return fmt.Sprintf("%s://%s:%s@%s/%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name)
 }
