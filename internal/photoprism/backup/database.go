@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -123,10 +124,10 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			".dump",
 		)
 	case config.Postgres:
-		dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", c.DatabaseUser(), c.DatabasePassword(), c.DatabaseHost(), c.DatabasePortString(), c.DatabaseName())
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, User: c.DatabaseUser(), Password: c.DatabasePassword(), Server: c.DatabaseServer(), Name: c.DatabaseName()}
 		cmd = exec.Command(
 			c.PostgreSQLDumpBin(),
-			"-d", dsn,
+			"-d", dbDSN.ForPSQL(),
 		)
 	default:
 		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
@@ -308,10 +309,10 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 			c.DatabaseFile(),
 		)
 	case config.Postgres:
-		dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", c.DatabaseUser(), c.DatabasePassword(), c.DatabaseHost(), c.DatabasePortString(), c.DatabaseName())
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, User: c.DatabaseUser(), Password: c.DatabasePassword(), Server: c.DatabaseServer(), Name: c.DatabaseName()}
 		cmd = exec.Command(
 			c.PostgreSQLRestoreBin(),
-			"-d", dsn,
+			"-d", dbDSN.ForPSQL(),
 			"--clean", "--create",
 		)
 
