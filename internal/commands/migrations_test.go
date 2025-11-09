@@ -104,7 +104,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("TargetPopulated", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Setup target database
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
@@ -117,7 +117,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer"}
@@ -160,7 +160,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("TargetPopulatedBatch500", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Setup target database
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
@@ -173,7 +173,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer", "-batch", "500"}
@@ -216,8 +216,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoPostgreSQL", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
-		tfDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		tfDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
@@ -237,9 +237,9 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "postgres",
-			"--transfer-dsn", tfDSN}
+			"--transfer-dsn", tfDSN.ToString()}
 		cmdArgs := []string{"migrations", "transfer", "-batch", "10"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -310,7 +310,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transfered 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(postgres.Open(tfDSN), &gorm.Config{})
+		testdb, err := gorm.Open(postgres.Open(tfDSN.ToString()), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -323,7 +323,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoSQLite", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db")
@@ -341,7 +341,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer", "-batch", "1000"}
@@ -431,7 +431,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoSQLitePopulated", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db")
@@ -452,7 +452,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer", "-force"}
@@ -542,8 +542,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("PostgreSQLtoMySQL", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
-		tfDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		tfDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_postgresql"); err != nil {
@@ -553,8 +553,7 @@ func TestMigrationCommand(t *testing.T) {
 			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
 				t.Fatal(err)
 			}
-			psqlDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d", testextras.GetDBMutexID())
-			if err = exec.Command("psql", psqlDSN, "--file="+dumpName).Run(); err != nil {
+			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -569,9 +568,9 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "postgres",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "mysql",
-			"--transfer-dsn", tfDSN}
+			"--transfer-dsn", tfDSN.ToString()}
 		cmdArgs := []string{"migrations", "transfer"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -641,7 +640,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transfered 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(mysql.Open(tfDSN), &gorm.Config{})
+		testdb, err := gorm.Open(mysql.Open(tfDSN.ToString()), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -654,7 +653,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("PostgreSQLtoSQLite", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db")
@@ -668,8 +667,7 @@ func TestMigrationCommand(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			psqlDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d", testextras.GetDBMutexID())
-			if err = exec.Command("psql", psqlDSN, "--file="+dumpName).Run(); err != nil {
+			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -679,7 +677,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "postgres",
-			"--database-dsn", dbDSN,
+			"--database-dsn", dbDSN.ToString(),
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer"}
@@ -769,7 +767,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("SQLiteToMySQL", func(t *testing.T) {
-		tfDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		tfDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
@@ -791,7 +789,7 @@ func TestMigrationCommand(t *testing.T) {
 			"--database-driver", "sqlite",
 			"--database-dsn", "/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db?_busy_timeout=5000&_foreign_keys=on",
 			"--transfer-driver", "mysql",
-			"--transfer-dsn", tfDSN}
+			"--transfer-dsn", tfDSN.ToString()}
 		cmdArgs := []string{"migrations", "transfer"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -861,7 +859,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transfered 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(mysql.Open(tfDSN), &gorm.Config{})
+		testdb, err := gorm.Open(mysql.Open(tfDSN.ToString()), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -879,7 +877,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("SQLiteToPostgreSQL", func(t *testing.T) {
-		tfDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+		tfDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
 		os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
@@ -901,7 +899,7 @@ func TestMigrationCommand(t *testing.T) {
 			"--database-driver", "sqlite",
 			"--database-dsn", "/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db?_busy_timeout=5000&_foreign_keys=on",
 			"--transfer-driver", "postgres",
-			"--transfer-dsn", tfDSN}
+			"--transfer-dsn", tfDSN.ToString()}
 		cmdArgs := []string{"migrations", "transfer"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -971,7 +969,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transfered 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(postgres.Open(tfDSN), &gorm.Config{})
+		testdb, err := gorm.Open(postgres.Open(tfDSN.ToString()), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()

@@ -2,7 +2,6 @@ package performancetest
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -21,6 +20,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -44,9 +44,9 @@ func sqliteMigration(original string, temp string, numberOfRecords int, skipSpee
 	log.SetLevel(logrus.ErrorLevel)
 
 	start := time.Now()
-	dsn := fmt.Sprintf("%v?_foreign_keys=on&_busy_timeout=5000", dumpName)
+	dbDSN := dsn.DSN{Driver: dsn.DriverSQLite3, Server: filepath.Dir(dumpName), Name: filepath.Base(dumpName)}
 
-	db, err := gorm.Open(sqlite.Open(dsn),
+	db, err := gorm.Open(sqlite.Open(dbDSN.ToString()),
 		&gorm.Config{
 			Logger: logger.New(
 				log,

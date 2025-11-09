@@ -2,7 +2,6 @@ package entity
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,6 +17,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -53,9 +53,9 @@ func TestDialectSQLite3(t *testing.T) {
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
 
-		dsn := fmt.Sprintf("%v?_foreign_keys=on&_busy_timeout=5000", dumpName)
+		dbDSN := dsn.DSN{Driver: dsn.DriverSQLite3, Server: filepath.Dir(dumpName), Name: filepath.Base(dumpName)}
 
-		db, err := gorm.Open(sqlite.Open(dsn),
+		db, err := gorm.Open(sqlite.Open(dbDSN.ToString()),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -151,9 +151,9 @@ func TestDialectSQLite3(t *testing.T) {
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
 
-		dsn := fmt.Sprintf("%v?_foreign_keys=on&_busy_timeout=5000", dumpName)
+		dbDSN := dsn.DSN{Driver: dsn.DriverSQLite3, Server: filepath.Dir(dumpName), Name: filepath.Base(dumpName)}
 
-		db, err := gorm.Open(sqlite.Open(dsn),
+		db, err := gorm.Open(sqlite.Open(dbDSN.ToString()),
 			&gorm.Config{
 				Logger: logger.New(
 					log,

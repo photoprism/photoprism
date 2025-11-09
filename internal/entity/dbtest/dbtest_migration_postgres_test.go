@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestDialectPostgreSQL(t *testing.T) {
@@ -35,7 +36,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 	defer dbtestMutex.Unlock()
 	log.Info("Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 	t.Run("ValidMigration", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
@@ -45,9 +46,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			psqlDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d", testextras.GetDBMutexID())
-
-			if err = exec.Command("psql", psqlDSN, "--file="+dumpName).Run(); err != nil {
+			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -56,7 +55,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			dbDSN),
+			dbDSN.ToString()),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -135,7 +134,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("EmptyDB", func(t *testing.T) {
-		dbDSN := fmt.Sprintf("postgresql://migrate:migrate@postgres:5432/migrate_%02d?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		// Clear Postgres source (migrate)
 		if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
@@ -146,7 +145,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			dbDSN),
+			dbDSN.ToString()),
 			&gorm.Config{
 				Logger: logger.New(
 					log,

@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -46,10 +47,10 @@ func TestDialectMysql(t *testing.T) {
 
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMySQL, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		db, err := gorm.Open(mysql.Open(
-			dbDSN),
+			dbDSN.ToString()),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -143,10 +144,10 @@ func TestDialectMysql(t *testing.T) {
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
 
-		dbDSN := fmt.Sprintf("migrate:migrate@tcp(mariadb:4001)/migrate_%02d?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", testextras.GetDBMutexID())
+		dbDSN := dsn.DSN{Driver: dsn.DriverMySQL, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		db, err := gorm.Open(mysql.Open(
-			dbDSN),
+			dbDSN.ToString()),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
