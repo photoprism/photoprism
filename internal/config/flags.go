@@ -1295,14 +1295,14 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "transfer-driver",
 			Aliases: []string{"tfr-db"},
-			Usage:   "database `DRIVER` (sqlite, mysql)",
+			Usage:   "database `DRIVER` (sqlite, mysql, postgres)",
 			Value:   "sqlite",
 			EnvVars: EnvVars("TRANSFER_DRIVER"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "transfer-dsn",
 			Aliases: []string{"tfr-dsn"},
-			Usage:   "database connection `DSN` (sqlite file, optional for mysql)",
+			Usage:   "database connection `DSN` (sqlite file, optional for mysql and postgres)",
 			EnvVars: EnvVars("TRANSFER_DSN"),
 		}}, {
 		Flag: &cli.StringFlag{
