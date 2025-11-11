@@ -1,12 +1,15 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="350"
     class="p-dialog p-file-delete-dialog"
     @keydown.esc.exact="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
-    <v-card>
+    <v-card ref="content" tabindex="-1">
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="54" color="primary">mdi-delete-outline</v-icon>
         <p class="text-subtitle-1">{{ $gettext(`Are you sure you want to permanently delete this file?`) }}</p>
@@ -35,6 +38,12 @@ export default {
     return {};
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

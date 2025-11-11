@@ -1,10 +1,13 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="350"
     class="p-dialog p-label-delete-dialog"
     @keydown.esc.exact="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
@@ -35,6 +38,12 @@ export default {
     return {};
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

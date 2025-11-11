@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-errors">
+  <div ref="page" tabindex="-1" class="p-page p-page-errors">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -19,7 +19,6 @@
           overflow
           single-line
           rounded
-          tabindex="1"
           variant="solo-filled"
           :density="density"
           validate-on="invalid-input"
@@ -46,7 +45,6 @@
         <v-btn
           v-if="!isPublic"
           :title="$gettext('Delete All')"
-          tabindex="2"
           icon="mdi-delete-sweep"
           class="action-delete action-delete-all ms-1"
           @click.stop="onDelete"
@@ -55,7 +53,6 @@
         <p-action-menu
           v-if="$vuetify.display.mdAndUp"
           :items="menuActions"
-          :tabindex="3"
           button-class="ms-1"
         ></p-action-menu>
       </v-toolbar>

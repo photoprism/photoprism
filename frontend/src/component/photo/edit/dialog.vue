@@ -12,9 +12,8 @@
     @keydown.left.exact="onKeyLeft"
     @keydown.right.exact="onKeyRight"
     @keydown.esc.stop="onClose"
-    @focusout="onFocusOut"
   >
-    <v-card ref="content" tabindex="1" :tile="$vuetify.display.smAndDown">
+    <v-card ref="content" tabindex="-1" :tile="$vuetify.display.smAndDown">
       <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">
         <v-btn icon class="action-close" @click.stop="onClose">
           <v-icon>mdi-close</v-icon>
@@ -202,20 +201,6 @@ export default {
     afterLeave() {
       this.ready = false;
       this.$view.leave(this);
-    },
-    onFocusOut(ev) {
-      if (!this.$view.isActive(this)) {
-        return;
-      }
-
-      if (ev.target && ev.target instanceof HTMLElement && this.$refs.content?.$el instanceof HTMLElement) {
-        if (
-          document.activeElement !== this.$refs.content.$el &&
-          (!ev.target.closest(".p-photo-edit-dialog") || ev.target?.disabled)
-        ) {
-          this.$refs.content?.$el.focus();
-        }
-      }
     },
     onUpdate(ev, data) {
       if (!data || !data.entities || !Array.isArray(data.entities) || this.loading || !this.model || !this.model.UID) {

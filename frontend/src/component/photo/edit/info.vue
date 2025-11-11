@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-advanced">
-    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="1" @submit.prevent>
+    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <div class="v-table__overflow">
         <v-table tile hover density="compact" class="bg-table">
           <tbody>

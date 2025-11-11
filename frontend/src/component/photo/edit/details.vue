@@ -5,7 +5,7 @@
       validate-on="invalid-input"
       class="p-form p-form-photo-details-meta"
       accept-charset="UTF-8"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent="save"
     >
       <div class="form-body">

@@ -5,6 +5,13 @@
     user-select: none;
 }
 
+#p-navigation ::-webkit-scrollbar {
+    /* Hides scrollbar in sidebar navigation to save space */
+    /* see https://css-tricks.com/custom-scrollbars-in-webkit/#aa-the-different-pieces */
+    width: 0;
+    background: transparent;
+}
+
 nav .v-list__item__title.title {
     line-height: normal !important;
 }

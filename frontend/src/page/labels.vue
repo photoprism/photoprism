@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-labels not-selectable" :class="$config.aclClasses('labels')">
+  <div ref="page" tabindex="-1" class="p-page p-page-labels not-selectable" :class="$config.aclClasses('labels')">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -19,7 +19,6 @@
           overflow
           single-line
           rounded
-          tabindex="1"
           variant="solo-filled"
           :density="density"
           validate-on="invalid-input"
@@ -43,7 +42,7 @@
           "
         ></v-text-field>
 
-        <p-action-menu :items="menuActions" :tabindex="3" button-class="ms-1"></p-action-menu>
+        <p-action-menu :items="menuActions" button-class="ms-1"></p-action-menu>
       </v-toolbar>
     </v-form>
 

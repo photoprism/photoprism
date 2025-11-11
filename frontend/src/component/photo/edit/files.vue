@@ -4,7 +4,7 @@
       <v-expansion-panel
         v-for="file in view.model.fileModels().filter((f) => !f.Missing)"
         :key="file.UID"
-        tabindex="1"
+        tabindex="0"
         style="margin-top: 1px"
         class="pa-0 elevation-0"
       >

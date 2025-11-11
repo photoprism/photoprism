@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="540"
@@ -26,7 +27,7 @@
           variant="accordion"
           density="compact"
           rounded="6"
-          tabindex="1"
+          tabindex="0"
           class="elevation-0"
         >
           <v-expansion-panel v-for="(link, index) in links" :key="link.UID" color="secondary" class="pa-0 elevation-0">

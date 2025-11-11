@@ -1,7 +1,7 @@
 <template>
   <div
     ref="page"
-    tabindex="1"
+    tabindex="-1"
     class="p-page p-page-places fill-height"
     :class="$config.aclClasses('places')"
     @keydown="onKeyDown"
@@ -31,7 +31,6 @@
           <v-text-field
             v-model.lazy.trim="filter.q"
             :placeholder="$gettext('Search')"
-            tabindex="1"
             density="compact"
             flat
             single-line

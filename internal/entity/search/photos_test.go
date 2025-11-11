@@ -3,6 +3,7 @@ package search
 import (
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 
@@ -736,6 +737,55 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 2, len(photos))
+	})
+	t.Run("FindContentCreatedBefore", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "Before:1990-04-18"
+		f.Count = 5000
+		f.Offset = 0
+		f.Merged = true
+		f.Order = "newest"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+		assert.Equal(t, time.Date(1990, 3, 2, 0, 0, 0, 0, time.UTC), photos[0].TakenAt)
+	})
+	t.Run("FindContentCreatedBefore", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "Before:1990-04-19"
+		f.Count = 5000
+		f.Offset = 0
+		f.Merged = true
+		f.Order = "newest"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 2, len(photos))
+		assert.Equal(t, time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC), photos[0].TakenAt)
+	})
+	t.Run("FindContentCreatedOnORAfter", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "After:1990-04-18"
+		f.Count = 5000
+		f.Offset = 0
+		f.Merged = true
+		f.Order = "oldest"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 45, len(photos))
+		assert.Equal(t, time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC), photos[0].TakenAt)
+
 	})
 	t.Run("SearchForDiff", func(t *testing.T) {
 		var f form.SearchPhotos

@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="500"
@@ -8,7 +9,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="1" @submit.prevent="confirm">
+    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent="confirm">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon icon="mdi-bookmark" size="28" color="primary"></v-icon>

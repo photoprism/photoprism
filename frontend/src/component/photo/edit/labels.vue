@@ -5,7 +5,7 @@
       class="p-form p-form--table p-form-photo-labels"
       validate-on="invalid-input"
       accept-charset="UTF-8"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent
     >
       <div class="form-body">

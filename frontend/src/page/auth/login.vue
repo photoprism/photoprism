@@ -13,7 +13,6 @@
           v-model="settings.ui.language"
           prepend-inner-icon="mdi-web"
           :items="options.Languages()"
-          tabindex="10"
           item-title="text"
           item-value="value"
           rounded="pill"
@@ -46,7 +45,7 @@
                         v-model="code"
                         :disabled="loading"
                         :placeholder="$gettext('Recovery Code')"
-                        tabindex="1"
+                        :autofocus="enterCode && useRecoveryCode"
                         name="code"
                         variant="solo"
                         density="comfortable"
@@ -68,7 +67,7 @@
                         :length="6"
                         :max-width="320"
                         :label="$gettext('Verification Code')"
-                        tabindex="1"
+                        :autofocus="enterCode && !useRecoveryCode"
                         variant="solo-filled"
                         base-color="surface"
                         name="one-time-code"
@@ -86,7 +85,7 @@
                         v-model="username"
                         :disabled="loading || enterCode"
                         :placeholder="$gettext('Name')"
-                        tabindex="1"
+                        :autofocus="!enterCode"
                         name="username"
                         variant="solo"
                         density="comfortable"
@@ -107,7 +106,6 @@
                         :disabled="loading"
                         :type="showPassword ? 'text' : 'password'"
                         :placeholder="$gettext('Password')"
-                        tabindex="2"
                         name="password"
                         variant="solo"
                         density="comfortable"
@@ -128,7 +126,6 @@
                       <v-btn
                         v-if="enterCode"
                         :block="$vuetify.display.xs"
-                        tabindex="7"
                         color="highlight"
                         variant="outlined"
                         class="action-cancel opacity-80"
@@ -139,7 +136,6 @@
                       <v-btn
                         v-else-if="registerUri"
                         :block="$vuetify.display.xs"
-                        tabindex="6"
                         color="highlight"
                         variant="outlined"
                         class="action-register opacity-80"
@@ -150,7 +146,6 @@
                       <v-btn
                         :disabled="loginDisabled"
                         :block="$vuetify.display.xs || !(registerUri || enterCode)"
-                        tabindex="4"
                         color="highlight"
                         variant="flat"
                         class="action-confirm"
@@ -162,7 +157,6 @@
                     </div>
                     <div
                       v-if="enterCode"
-                      tabindex="9"
                       class="auth-links text-center opacity-80"
                       :class="{ clickable: !useRecoveryCode }"
                       @click.stop.prevent="onUseRecoveryCode"
@@ -171,7 +165,7 @@
                       {{ $gettext(`Use your recovery code or contact an administrator for help.`) }}
                     </div>
                     <div v-else-if="passwordResetUri" class="auth-links text-center opacity-80">
-                      <a :href="passwordResetUri" tabindex="8" class="text-secondary">
+                      <a :href="passwordResetUri" class="text-secondary">
                         {{ $gettext(`Forgot password?`) }}
                       </a>
                     </div>
@@ -182,7 +176,6 @@
                       <div class="text-center oidc-buttons mt-6">
                         <v-btn
                           :disabled="loading"
-                          tabindex="5"
                           color="highlight"
                           variant="flat"
                           block

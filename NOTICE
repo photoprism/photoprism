@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-10-31
+Date generated: 2025-11-10
 
 ================================================================================
 
@@ -407,9 +407,37 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 
+Package: github.com/clipperhouse/stringish
+Version: v0.1.1
+License: MIT (https://github.com/clipperhouse/stringish/blob/v0.1.1/LICENSE)
+
+MIT License
+
+Copyright (c) 2025 Matt Sherman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+
 Package: github.com/clipperhouse/uax29/v2
-Version: v2.2.0
-License: MIT (https://github.com/clipperhouse/uax29/blob/v2.2.0/LICENSE)
+Version: v2.3.0
+License: MIT (https://github.com/clipperhouse/uax29/blob/v2.3.0/LICENSE)
 
 MIT License
 
@@ -1178,8 +1206,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.17.0
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.17.0/LICENSE)
+Version: v2.18.0
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.18.0/LICENSE)
 
 MIT License
 
@@ -2415,8 +2443,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20251030142647-5906ab3d21fa
-License: Apache-2.0 (https://github.com/golang/geo/blob/5906ab3d21fa/LICENSE)
+Version: v0.0.0-20251110120158-2d428c1fd7a2
+License: Apache-2.0 (https://github.com/golang/geo/blob/2d428c1fd7a2/LICENSE)
 
 
                                  Apache License
@@ -8330,8 +8358,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sync/errgroup
-Version: v0.17.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.17.0:LICENSE)
+Version: v0.18.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.18.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8364,8 +8392,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sys
-Version: v0.37.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.37.0:LICENSE)
+Version: v0.38.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.38.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

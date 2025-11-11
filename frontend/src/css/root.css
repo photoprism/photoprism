@@ -1,0 +1,114 @@
+:root {
+    --v-font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+    --v-font-family-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* HTML Body: Fonts, Color Schemes, Loading, and Scrollbar Styles */
+
+html {
+    font-size: 16px;
+}
+
+html,
+body,
+body #app {
+    /* Use the system fonts defined above for faster rendering and a native look */
+    font-family: var(--v-font-family);
+    letter-spacing: normal !important;
+    line-height: normal;
+    text-justify: inter-word;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern", "liga";
+}
+
+body {
+    color: #333333;
+    font-size: 17px;
+}
+
+[data-color-mode="light"][data-light-theme*="dark"],
+[data-color-mode="dark"][data-dark-theme*="dark"] {
+    color-scheme: dark;
+}
+
+:root,
+[data-color-mode="light"][data-light-theme*="light"],
+[data-color-mode="dark"][data-dark-theme*="light"] {
+    color-scheme: light;
+}
+
+body.dark-theme {
+    color-scheme: dark !important;
+}
+
+html.loading {
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+}
+
+html.hide-scrollbar {
+    scrollbar-width: none;
+}
+
+body.nojs::-webkit-scrollbar,
+body.hide-scrollbar::-webkit-scrollbar,
+html.hide-scrollbar ::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+    z-index: -1000;
+}
+
+body.nojs,
+body.hide-scrollbar,
+html.hide-scrollbar body {
+    -ms-overflow-style: none;
+}
+
+/* Mozilla Firefox */
+
+body.firefox.dark-theme {
+    scrollbar-color: dark !important;
+}
+
+/* Chrome, Chromium, and compatible browsers */
+
+::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+    overflow: visible;
+}
+
+::-webkit-scrollbar-button {
+    height: 0;
+    width: 0;
+}
+
+@media only screen and (min-width: 600px) {
+    ::-webkit-scrollbar {
+        height: 11px;
+        width: 11px;
+        overflow: visible;
+    }
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(var(--v-theme-secondary), 0.2);
+    border: solid transparent;
+    border-width: 0 0 0 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--v-theme-on-surface), 0.28);
+    border-style: solid;
+    border-color: rgba(var(--v-theme-secondary), 0.56);
+    border-width: 1px;
+    border-radius: 6px;
+    min-height: 28px;
+    padding: 100px 0 0;
+}

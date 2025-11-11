@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-albums not-selectable" :class="$config.aclClasses('albums')">
+  <div ref="page" tabindex="-1" class="p-page p-page-albums not-selectable" :class="$config.aclClasses('albums')">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -15,7 +15,6 @@
         <v-text-field
           :model-value="filter.q"
           :density="density"
-          tabindex="1"
           hide-details
           clearable
           overflow
@@ -49,7 +48,6 @@
         <v-btn
           v-if="canManage && staticFilter.type === 'album'"
           :title="$gettext('Add Album')"
-          tabindex="2"
           icon="mdi-plus"
           class="action-add ms-1"
           @click.prevent="create()"
@@ -58,7 +56,6 @@
         <p-action-menu
           v-if="$vuetify.display.mdAndUp"
           :items="menuActions"
-          :tabindex="3"
           button-class="ms-1"
         ></p-action-menu>
       </v-toolbar>
@@ -74,7 +71,6 @@
                     :label="$gettext('Year')"
                     :disabled="context === 'state'"
                     :menu-props="{ maxHeight: 346 }"
-                    tabindex="4"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -95,7 +91,6 @@
                     :model-value="filter.category"
                     :label="$gettext('Category')"
                     :menu-props="{ maxHeight: 346 }"
-                    tabindex="5"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -116,7 +111,6 @@
                     :model-value="filter.order"
                     :label="$gettext('Sort Order')"
                     :menu-props="{ maxHeight: 400 }"
-                    tabindex="6"
                     single-line
                     hide-details
                     variant="solo-filled"

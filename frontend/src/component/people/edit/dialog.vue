@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="500"
@@ -14,7 +15,7 @@
       validate-on="invalid-input"
       class="form-person-edit"
       accept-charset="UTF-8"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent="confirm"
     >
       <v-card>

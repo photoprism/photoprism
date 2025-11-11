@@ -93,7 +93,7 @@ type SearchPhotos struct {
 	Updated     time.Time `form:"updated" example:"updated:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content updated at or after this time"`        // Pictures updated at or after this time
 	Edited      time.Time `form:"edited" example:"edited:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content edited at or after this time"`           // Pictures edited at or after this time
 	Taken       time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds content created on the specified date"`                                                                    // Pictures taken on the specified date
-	Before      time.Time `form:"before" time_format:"2006-01-02" notes:"Finds content created on or before this date"`                                                                  // Pictures taken on or before this date"
+	Before      time.Time `form:"before" time_format:"2006-01-02" notes:"Finds content created before this date"`                                                                        // Pictures taken on or before this date"
 	After       time.Time `form:"after" time_format:"2006-01-02" notes:"Finds content created on or after this date"`                                                                    // Pictures taken on or after this date
 	Count       int       `form:"count" binding:"required" serialize:"-"`                                                                                                                // Result FILE limit
 	Offset      int       `form:"offset" serialize:"-"`                                                                                                                                  // Result FILE offset

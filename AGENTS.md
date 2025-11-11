@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** November 2, 2025
+**Last Updated:** November 11, 2025
 
 ## Purpose
 
@@ -219,6 +219,12 @@ Note: Across our public documentation, official images, and in production, the c
 - All added code and tests **must** be formatted according to our standards.
 
 > Remember to update the `**Last Updated:**` line at the top whenever you edit these guidelines or other files containing a timestamp.
+
+### Frontend Focus Management
+
+- Dialogs must follow the shared focus pattern documented in `frontend/src/common/README.md`.
+- Always expose `ref="dialog"` on `<v-dialog>` overlays, call `$view.enter/leave` in `@after-enter` / `@after-leave`, and avoid positive `tabindex` values.
+- When a dialog opens nested menus (for example, combobox suggestion lists), ensure they work with the global trap; see the README for troubleshooting tips.
 
 ## Safety & Data
 

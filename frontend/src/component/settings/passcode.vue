@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="500"
@@ -13,7 +14,7 @@
       validate-on="invalid-input"
       accept-charset="UTF-8"
       class="form-password"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent
     >
       <v-card>
@@ -40,7 +41,7 @@
                   :disabled="busy"
                   :type="showPassword ? 'text' : 'password'"
                   :placeholder="$gettext('Password')"
-                  tabindex="1"
+                  autofocus
                   name="password"
                   hide-details
                   autocorrect="off"
@@ -211,7 +212,7 @@
                   :disabled="busy"
                   :type="showPassword ? 'text' : 'password'"
                   :placeholder="$gettext('Password')"
-                  tabindex="1"
+                  autofocus
                   name="password"
                   hide-details
                   autocorrect="off"

@@ -25,8 +25,8 @@ Additional information can be found in our Developer Guide:
 
 @import url("../../node_modules/photoswipe/dist/photoswipe.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
+@import url("root.css");
 @import url("splash.css");
-@import url("body.css");
 @import url("text.css");
 @import url("lightbox.css");
 @import url("controls.css");

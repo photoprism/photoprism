@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     :max-width="900"
     :fullscreen="$vuetify.display.xs"

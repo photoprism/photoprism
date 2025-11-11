@@ -10,7 +10,7 @@
     display: block;
     text-align: left;
     font-size: 0.825rem;
-    font-family: monospace;
+    font-family: var(--v-font-family-mono);
     white-space: normal;
     color: rgb(var(--v-theme-on-surface));
     padding: 4px;
