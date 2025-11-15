@@ -58,14 +58,15 @@ func init() {
 	RegisterEngineAlias(EngineVision, EngineInfo{
 		RequestFormat:     ApiFormatVision,
 		ResponseFormat:    ApiFormatVision,
-		FileScheme:        string(scheme.Data),
+		FileScheme:        scheme.Data,
 		DefaultResolution: DefaultResolution,
 	})
 
 	RegisterEngineAlias(openai.EngineName, EngineInfo{
+		Uri:               "https://api.openai.com/v1/responses",
 		RequestFormat:     ApiFormatOpenAI,
 		ResponseFormat:    ApiFormatOpenAI,
-		FileScheme:        string(scheme.Data),
+		FileScheme:        scheme.Data,
 		DefaultResolution: openai.DefaultResolution,
 	})
 }
@@ -79,6 +80,7 @@ func RegisterEngine(format ApiFormat, engine Engine) {
 
 // EngineInfo describes metadata that can be associated with an engine alias.
 type EngineInfo struct {
+	Uri               string
 	RequestFormat     ApiFormat
 	ResponseFormat    ApiFormat
 	FileScheme        string

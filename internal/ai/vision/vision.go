@@ -25,7 +25,34 @@ Additional information can be found in our Developer Guide:
 package vision
 
 import (
+	"os"
+	"strings"
+	"sync"
+
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 var log = event.Log
+
+var ensureEnvOnce sync.Once
+
+// ensureEnv loads environment-backed credentials once so adapters can look up
+// OPENAI_API_KEY even when operators rely on OPENAI_API_KEY_FILE. Future engine
+// integrations can reuse this hook to normalise additional secrets.
+func ensureEnv() {
+	ensureEnvOnce.Do(func() {
+		if os.Getenv("OPENAI_API_KEY") != "" {
+			return
+		}
+
+		if path := strings.TrimSpace(os.Getenv("OPENAI_API_KEY_FILE")); fs.FileExistsNotEmpty(path) {
+			if data, err := os.ReadFile(path); err == nil {
+				if key := clean.Auth(string(data)); key != "" {
+					_ = os.Setenv("OPENAI_API_KEY", key)
+				}
+			}
+		}
+	})
+}

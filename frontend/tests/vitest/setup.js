@@ -26,10 +26,48 @@ const vuetify = createVuetify({
 // Configure Vue Test Utils global configuration
 config.global.mocks = {
   $gettext: (text) => text,
+  $pgettext: (_ctx, text) => text,
   $isRtl: false,
   $config: {
-    feature: (_name) => true,
+    feature: () => true,
+    get: () => false,
+    getSettings: () => ({ features: { edit: true, favorites: true, download: true, archive: true } }),
+    allow: () => true,
+    featExperimental: () => false,
+    featDevelop: () => false,
+    values: {},
+    dir: () => "ltr",
   },
+  $event: {
+    subscribe: () => "sub-id",
+    subscribeOnce: () => "sub-id-once",
+    unsubscribe: () => {},
+    publish: () => {},
+  },
+  $view: {
+    enter: () => {},
+    leave: () => {},
+    isActive: () => true,
+  },
+  $notify: { success: () => {}, error: () => {}, warn: () => {} },
+  $fullscreen: {
+    isSupported: () => true,
+    isEnabled: () => false,
+    request: () => Promise.resolve(),
+    exit: () => Promise.resolve(),
+  },
+  $clipboard: { selection: [], has: () => false, toggle: () => {} },
+  $util: {
+    hasTouch: () => false,
+    encodeHTML: (s) => s,
+    sanitizeHtml: (s) => s,
+    formatSeconds: (n) => String(n),
+    formatRemainingSeconds: () => "0",
+    videoFormat: () => "avc",
+    videoFormatUrl: () => "/v.mp4",
+    thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
+  },
+  $api: { post: vi.fn(), delete: vi.fn(), get: vi.fn() },
 };
 
 config.global.plugins = [vuetify];

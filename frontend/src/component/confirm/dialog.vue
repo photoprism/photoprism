@@ -8,7 +8,7 @@
     scrim
     max-width="360"
     class="p-dialog p-confirm-dialog"
-    @keyup.esc.exact="close"
+    @keydown.esc.exact="close"
     @keyup.enter.exact="confirm"
     @after-enter="afterEnter"
     @after-leave="afterLeave"

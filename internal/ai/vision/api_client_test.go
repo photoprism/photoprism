@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
@@ -49,7 +50,7 @@ func TestPerformApiRequestOllama(t *testing.T) {
 			var req ApiRequest
 			assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
 			assert.Equal(t, FormatJSON, req.Format)
-			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
 				Model:    "qwen2.5vl:latest",
 				Response: `{"labels":[{"name":"test","confidence":0.9,"topicality":0.8}]}`,
 			}))
@@ -72,7 +73,7 @@ func TestPerformApiRequestOllama(t *testing.T) {
 	})
 	t.Run("LabelsWithCodeFence", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
 				Model:    "gemma3:latest",
 				Response: "```json\n{\"labels\":[{\"name\":\"lingerie\",\"confidence\":0.81,\"topicality\":0.73}]}\n```\nThe model provided additional commentary.",
 			}))
@@ -95,7 +96,7 @@ func TestPerformApiRequestOllama(t *testing.T) {
 	})
 	t.Run("CaptionFallback", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
 				Model:    "qwen2.5vl:latest",
 				Response: "plain text",
 			}))

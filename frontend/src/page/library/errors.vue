@@ -111,7 +111,12 @@
       @close="dialog.delete = false"
       @confirm="onConfirmDelete"
     ></p-confirm-dialog>
-    <v-dialog :model-value="details.visible" max-width="550" class="p-dialog">
+    <v-dialog
+      :model-value="details.visible"
+      max-width="550"
+      class="p-dialog"
+      @keydown.esc.exact="details.visible = false"
+    >
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="details.err.Level === 'error'" icon="mdi-alert-circle-outline" color="error"></v-icon>

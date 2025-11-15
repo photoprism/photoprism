@@ -1,10 +1,10 @@
 # View Helper Guidelines
 
-**Last Updated:** November 11, 2025
+**Last Updated:** November 12, 2025
 
 ## Focus Management
 
-PhotoPrism maintains predictable keyboard focus across pages and dialogs by using a shared view helper:
+PhotoPrism uses a shared view helper to maintain predictable focus across pages and dialogs:
 
 - [`frontend/src/common/view.js`](https://github.com/photoprism/photoprism/blob/develop/frontend/src/common/view.js)
 
@@ -64,10 +64,12 @@ Vuetify dialogs are teleported to the overlay container, so consistent refs and 
 
    ```vue
    <v-card-actions class="action-buttons">
-     <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
+     <v-btn variant="flat" color="button"
+         class="action-cancel" @click.stop="close">
        {{ $gettext(`Cancel`) }}
      </v-btn>
-     <v-btn variant="flat" color="highlight" class="action-confirm" @click.stop="confirm">
+     <v-btn variant="flat" color="highlight"
+         class="action-confirm" @click.stop="confirm">
        {{ $gettext(`Delete`) }}
      </v-btn>
    </v-card-actions>
@@ -78,6 +80,72 @@ Vuetify dialogs are teleported to the overlay container, so consistent refs and 
 3. **Avoid per-dialog traps unless necessary**
 
    Only add local `@focusout` handlers if a dialog needs custom behaviour. If you do, always call `ev.preventDefault()` when you redirect focus so you do not fight the global handler.
+
+### Keyboard Event Handling
+
+Dialogs and page shells often react to keyboard shortcuts (Escape to close, Enter to confirm, etc.). To keep those handlers compatible with text inputs and other interactive children:
+
+- Attach listeners to the focusable container that the view helper manages – the page wrapper with `tabindex="-1"` or the dialog root (`<v-dialog ref="dialog">`).
+- Prefer `@keyup` (for example, `@keyup.enter.exact="confirm"`) so elements inside the container receive `keydown` events first and can call `event.stopPropagation()` when they need to keep the key (such as pressing Enter inside a form field).
+- **Persistent dialogs (`persistent` attribute)** must handle the Escape key with `@keydown.esc.exact="close"`. Vuetify’s built-in Escape handler plays a “rejection” shake animation when the dialog refuses to close; attaching a direct keydown listener overrides the built-in handler and suppresses the animation while still allowing inner inputs to cancel the event.
+- Combine modifiers like `.exact` and `.stop` intentionally. Use `.stop` only when the handler fully resolves the action; otherwise allow events to bubble to ancestor traps.
+- If a component must react on `keydown`, scope the listener to the specific control instead of the container, and document why the early trigger is required.
+- When emitting from reusable components, forward the native event (`close(event)`) so parents can inspect `event.defaultPrevented` or `event.key` before acting.
+
+Note: To override Vuetify’s built-in `<v-dialog>` Escape handler (and stop the “rejection” animation on persistent dialogs), attach a direct `@keydown.esc.exact="close"` listener; the global `onShortCut(ev)` hook is not sufficient on its own.
+
+Example dialog wiring:
+
+```vue
+<v-dialog
+  ref="dialog"
+  persistent
+  @keydown.esc.exact="close"
+  @keyup.enter.exact="confirm"
+>
+  <v-card ref="content" tabindex="-1">
+    <!-- dialog body -->
+  </v-card>
+</v-dialog>
+```
+
+Example page container:
+
+```vue
+<template>
+  <div class="p-page p-settings" tabindex="-1" @keyup.esc.exact="maybeClose">
+    <!-- page content -->
+  </div>
+</template>
+```
+
+Both snippets allow focused inputs to veto shortcuts by calling `event.stopPropagation()` or `event.preventDefault()` before the key reaches the container listener, keeping focus management predictable across the app.
+
+#### Global Shortcut Forwarding
+
+`common/view.js` registers a single `keydown` listener that forwards shortcut keys to the active component:
+
+```js
+// onKeyDown forwards global shortcuts (Escape, Ctrl/⌘ combos)
+// to the active component when supported.
+onKeyDown(ev) {
+  if (!this.current || !ev || !(ev instanceof KeyboardEvent) || !ev.code) {
+    return;
+  } else if (!ev.ctrlKey && !ev.metaKey && ev.code !== "Escape") {
+    return;
+  } else if (typeof this.current?.onShortCut !== "function") {
+    return;
+  }
+
+  if (this.current.onShortCut(ev)) {
+    ev.preventDefault();
+  }
+}
+```
+
+- Implement `onShortCut(ev)` on pages or dialogs when you need to react to Ctrl / ⌘ combinations or global Escape handling. The helper only forwards events where `ev.ctrlKey` or `ev.metaKey` is `true`, or the Escape key is pressed, so it cannot be repurposed for arbitrary keys.
+- Persistent dialogs that must suppress Vuetify’s rejection animation should still attach a direct `@keydown.esc.exact` handler; `onShortCut(ev)` alone does not override the built-in dialog behaviour.
+- Return `true` from `onShortCut(ev)` after handling a shortcut to signal `preventDefault()`. Return `false` to fall back to the browser’s native behaviour.
 
 ### Example: Delete Confirmation Dialog
 
@@ -90,19 +158,22 @@ Vuetify dialogs are teleported to the overlay container, so consistent refs and 
     max-width="350"
     class="p-dialog p-file-delete-dialog"
     @keydown.esc.exact="close"
+    @keyup.enter.exact="confirm"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
     <v-card ref="content" tabindex="-1">
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon icon="mdi-delete-outline" size="54" color="primary"></v-icon>
-        <p class="text-subtitle-1">{{ $gettext(`Are you sure you want to permanently delete this file?`) }}</p>
+        <p class="text-subtitle-1">{{ $gettext(`Are you sure?`) }}</p>
       </v-card-title>
       <v-card-actions class="action-buttons mt-1">
-        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
+        <v-btn variant="flat" color="button"
+               class="action-cancel" @click.stop="close">
           {{ $gettext(`Cancel`) }}
         </v-btn>
-        <v-btn color="highlight" variant="flat" class="action-confirm" @click.stop="confirm">
+        <v-btn color="highlight" variant="flat"
+               class="action-confirm" @click.stop="confirm">
           {{ $gettext(`Delete`) }}
         </v-btn>
       </v-card-actions>

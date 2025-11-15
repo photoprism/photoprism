@@ -339,7 +339,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		sess.SetAuthID(user.AuthID, provider.Issuer())
 		sess.SetUser(user)
 		sess.SetGrantType(authn.GrantAuthorizationCode)
-		sess.IdToken = tokens.IDToken
+
+		// Ensure that the ID token fits into the existing
+		// database column; otherwise, truncate it.
+		if n := len(tokens.IDToken); n > 2048 {
+			sess.IdToken = tokens.IDToken[:2048]
+		} else {
+			sess.IdToken = tokens.IDToken
+		}
 
 		// Set session expiration and timeout.
 		sess.SetExpiresIn(unix.Day)

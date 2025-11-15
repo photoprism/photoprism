@@ -48,7 +48,7 @@ func TestSearchQuery(t *testing.T) {
 func BenchmarkSearchQuery_Complex(b *testing.B) {
 	s := "Jens AND Mander and me Or Kitty WITH flowers IN the park AT noon | img% json OR BILL!\n"
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = SearchQuery(s)
 	}
 }
@@ -56,7 +56,7 @@ func BenchmarkSearchQuery_Complex(b *testing.B) {
 func BenchmarkSearchQuery_Short(b *testing.B) {
 	s := "cat and dog"
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = SearchQuery(s)
 	}
 }
@@ -65,7 +65,7 @@ func BenchmarkSearchQuery_LongNoOps(b *testing.B) {
 	// No tokens to replace, primarily tests normalization + trim.
 	s := strings.Repeat("alpha beta gamma ", 50)
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = SearchQuery(s)
 	}
 }

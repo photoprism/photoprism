@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2025-11-10
+Date generated: 2025-11-12
 
 ================================================================================
 
@@ -2443,8 +2443,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20251110120158-2d428c1fd7a2
-License: Apache-2.0 (https://github.com/golang/geo/blob/2d428c1fd7a2/LICENSE)
+Version: v0.0.0-20251111181513-e7f3a1a58fb3
+License: Apache-2.0 (https://github.com/golang/geo/blob/e7f3a1a58fb3/LICENSE)
 
 
                                  Apache License
@@ -8188,8 +8188,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/214862532bf5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.43.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.43.0:LICENSE)
+Version: v0.44.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.44.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8222,8 +8222,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/image
-Version: v0.32.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.32.0:LICENSE)
+Version: v0.33.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.33.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8256,8 +8256,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/mod/semver
-Version: v0.29.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.29.0:LICENSE)
+Version: v0.30.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.30.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8290,8 +8290,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.46.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.46.0:LICENSE)
+Version: v0.47.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.47.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8426,8 +8426,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.30.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.30.0:LICENSE)
+Version: v0.31.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.31.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

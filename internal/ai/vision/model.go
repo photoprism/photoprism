@@ -154,9 +154,11 @@ func (m *Model) EndpointKey() (key string) {
 
 	if key = m.Service.EndpointKey(); key != "" {
 		return key
-	} else {
-		return ServiceKey
 	}
+
+	ensureEnv()
+
+	return strings.TrimSpace(os.ExpandEnv(ServiceKey))
 }
 
 // EndpointFileScheme returns the endpoint API request file scheme type. Nil
@@ -348,6 +350,26 @@ func mergeOptionDefaults(target, defaults *ApiRequestOptions) {
 	if len(target.Stop) == 0 && len(defaults.Stop) > 0 {
 		target.Stop = append([]string(nil), defaults.Stop...)
 	}
+
+	if target.MaxOutputTokens <= 0 && defaults.MaxOutputTokens > 0 {
+		target.MaxOutputTokens = defaults.MaxOutputTokens
+	}
+
+	if strings.TrimSpace(target.Detail) == "" && strings.TrimSpace(defaults.Detail) != "" {
+		target.Detail = strings.TrimSpace(defaults.Detail)
+	}
+
+	if !target.ForceJson && defaults.ForceJson {
+		target.ForceJson = true
+	}
+
+	if target.SchemaVersion == "" && defaults.SchemaVersion != "" {
+		target.SchemaVersion = defaults.SchemaVersion
+	}
+
+	if target.CombineOutputs == "" && defaults.CombineOutputs != "" {
+		target.CombineOutputs = defaults.CombineOutputs
+	}
 }
 
 func normalizeOptions(opts *ApiRequestOptions) {
@@ -422,6 +444,10 @@ func (m *Model) ApplyEngineDefaults() {
 	}
 
 	if info, ok := EngineInfoFor(engine); ok {
+		if m.Service.Uri == "" {
+			m.Service.Uri = info.Uri
+		}
+
 		if m.Service.RequestFormat == "" {
 			m.Service.RequestFormat = info.RequestFormat
 		}
@@ -437,6 +463,10 @@ func (m *Model) ApplyEngineDefaults() {
 		if info.DefaultResolution > 0 && m.Resolution <= 0 {
 			m.Resolution = info.DefaultResolution
 		}
+	}
+
+	if engine == openai.EngineName && strings.TrimSpace(m.Service.Key) == "" {
+		m.Service.Key = "${OPENAI_API_KEY}"
 	}
 
 	m.Engine = engine
@@ -490,7 +520,7 @@ func (m *Model) SchemaTemplate() string {
 			}
 
 			if m.schema == "" {
-				m.schema = visionschema.Labels(m.PromptContains("nsfw"))
+				m.schema = visionschema.LabelsJson(m.PromptContains("nsfw"))
 			}
 		}
 	})

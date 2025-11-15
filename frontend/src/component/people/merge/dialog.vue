@@ -6,6 +6,8 @@
     max-width="350"
     class="p-dialog p-people-merge-dialog"
     @keydown.esc.exact="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
@@ -42,6 +44,7 @@ export default {
       default: new Subject(),
     },
   },
+  emits: ["close", "confirm"],
   data() {
     return {};
   },
@@ -58,6 +61,12 @@ export default {
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

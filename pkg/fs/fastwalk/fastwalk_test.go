@@ -233,7 +233,7 @@ var benchDir = flag.String("benchdir", runtime.GOROOT(), "The directory to scan 
 
 func BenchmarkFastWalk(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		err := fastwalk.Walk(*benchDir, func(path string, typ os.FileMode) error { return nil })
 		if err != nil {
 			b.Fatal(err)

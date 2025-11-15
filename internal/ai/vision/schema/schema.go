@@ -1,5 +1,5 @@
 /*
-Package schema defines canonical JSON schema templates shared by PhotoPrism's AI vision engines.
+Package schema defines canonical JSON and JSON Schema templates shared by PhotoPrism's AI vision engines.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 

@@ -222,16 +222,6 @@ function resolveFocusTarget(root) {
     if (sentinel instanceof HTMLElement) {
       return sentinel;
     }
-
-    if (!window.$isMobile) {
-      const focusable = el.querySelector(
-        'input:not([type="hidden"]), select, textarea, button, [tabindex]:not([tabindex="-1"])'
-      );
-
-      if (focusable instanceof HTMLElement) {
-        return focusable;
-      }
-    }
   } catch {
     // Ignore.
   }
@@ -294,17 +284,17 @@ export function findFocusElement(c) {
   if (c.$refs && c.$refs instanceof Object) {
     focusRefs.forEach((r) => {
       if (c.$refs[r]) {
-        candidates.push(c.$refs[r]);
+        const el = getHTMLElement(c.$refs[r]);
+        if (el) {
+          candidates.push(el);
+        }
       }
     });
   }
 
-  if (c.$el) {
-    candidates.push(c.$el);
-  }
-
-  if (c.$el?.parentElement) {
-    candidates.push(c.$el.parentElement);
+  const el = getHTMLElement(c);
+  if (el) {
+    candidates.push(el);
   }
 
   for (let i = 0; i < candidates.length; i++) {

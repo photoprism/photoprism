@@ -135,6 +135,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	done := make(map[string]bool)
 	offset := 0
 	updated := 0
+	processed := 0
 
 	// Make sure count is within
 	if count < 1 || count > search.MaxResults {
@@ -196,6 +197,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		if !(generateLabels || generateCaptions || detectNsfw || detectFaces) {
 			continue
 		}
+
+		processed++
 
 		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
 		file, fileErr := photoprism.NewMediaFile(fileName)
@@ -279,7 +282,18 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		}
 	}
 
-	log.Infof("vision: updated %s [%s]", english.Plural(updated, "picture", "pictures"), time.Since(start))
+	elapsed := time.Since(start)
+
+	switch {
+	case processed == 0:
+		log.Infof("vision: no pictures required processing [%s]", elapsed)
+	case updated == processed:
+		log.Infof("vision: updated %s [%s]", english.Plural(updated, "picture", "pictures"), elapsed)
+	case updated == 0:
+		log.Infof("vision: processed %s (no metadata changes detected) [%s]", english.Plural(processed, "picture", "pictures"), elapsed)
+	default:
+		log.Infof("vision: updated %s out of %s [%s]", english.Plural(updated, "picture", "pictures"), english.Plural(processed, "picture", "pictures"), elapsed)
+	}
 
 	if updated > 0 {
 		updateIndex = true

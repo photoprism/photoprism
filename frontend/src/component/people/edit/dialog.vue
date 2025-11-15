@@ -7,6 +7,7 @@
     class="dialog-person-edit"
     color="background"
     @keydown.esc.exact="close"
+    @keyup.enter.exact="confirm"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
@@ -34,7 +35,6 @@
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
-                @keyup.enter="confirm"
               ></v-text-field>
             </v-col>
             <v-col sm="4">
