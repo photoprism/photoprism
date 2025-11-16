@@ -15,9 +15,9 @@ SOFTWARE INCLUDED
 
 - [PhotoPrism latest](https://docs.photoprism.app/release-notes/), AGPL 3
 - [Docker CE latest](https://docs.docker.com/engine/release-notes/), Apache 2
-- [Traefik 3.4](https://github.com/traefik/traefik/releases), MIT
+- [Traefik 3.6](https://github.com/traefik/traefik/releases), MIT
 - [MariaDB 11](https://mariadb.com/kb/en/release-notes/), GPL 2
-- [Watchtower latest](https://github.com/containrrr/watchtower/releases), Apache 2
+- [Watchtower latest](https://github.com/nicholas-fedor/watchtower/releases), Apache 2
 
 GETTING STARTED
 ---------------------------------------

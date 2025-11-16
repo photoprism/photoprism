@@ -27,7 +27,7 @@ services:
 
   traefik:
     restart: always
-    image: traefik:v3.5
+    image: traefik:v3.6
     container_name: traefik
     ports:
       - "80:80"
@@ -50,7 +50,7 @@ services:
 
   watchtower:
     restart: always
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     container_name: watchtower
     environment:
       WATCHTOWER_CLEANUP: "true"

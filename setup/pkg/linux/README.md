@@ -114,7 +114,7 @@ After unpacking the binaries you only need a writable configuration and storage 
    sudo mkdir -p /var/lib/photoprism/{config,storage}
    sudo chown -R photoprism:photoprism /var/lib/photoprism
    ```
-3. Update `/etc/photoprism/defaults.yml` so `ConfigPath`, `StoragePath`, `OriginalsPath`, and `ImportPath` point outside the installation directory.
+3. Update `/etc/photoprism/defaults.yml` (or `.yaml`) so `ConfigPath`, `StoragePath`, `OriginalsPath`, and `ImportPath` point outside the installation directory. When the `/etc` file is missing or empty, PhotoPrism automatically loads `<config-path>/defaults.yml`, so you may edit the copy under `PHOTOPRISM_CONFIG_PATH` instead.
 4. Optionally place per-instance overrides in `<config-path>/options.yml`.
 5. Restart the PhotoPrism service (or rerun the CLI command) so the changes take effect.
 
@@ -124,13 +124,13 @@ Run `photoprism --help` in a terminal to get an [overview of the command flags a
 
 PhotoPrism reads settings in the following order (later entries override earlier ones):
 
-| Order | Source                            | Notes                                                                      |
-|-------|-----------------------------------|----------------------------------------------------------------------------|
-| 1     | Built-in defaults                 | Hard-coded, fall back when nothing else is set.                            |
-| 2     | `/etc/photoprism/defaults.yml`    | Global defaults for all users on the host.                                 |
-| 3     | Environment variables / CLI flags | Combine with service managers or wrappers.                                 |
-| 4     | `<config-path>/options.yml`       | Instance-specific overrides (per user or per deployment).                  |
-| 5     | Runtime changes in the UI         | Persisted to `options.yml`; require a restart when running outside Docker. |
+| Order | Source                            | Notes                                                                                                                                    |
+|-------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| 1     | Built-in defaults                 | Hard-coded, fall back when nothing else is set.                                                                                          |
+| 2     | `/etc/photoprism/defaults.yml`    | Global defaults for all users on the host; falls back to `<config-path>/defaults.yml` (respects `.yml` / `.yaml`) when missing or empty. |
+| 3     | Environment variables / CLI flags | Combine with service managers or wrappers.                                                                                               |
+| 4     | `<config-path>/options.yml`       | Instance-specific overrides (per user or per deployment).                                                                                |
+| 5     | Runtime changes in the UI         | Persisted to `options.yml`; require a restart when running outside Docker.                                                               |
 
 If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/directories.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not** storing media, database files, or custom configs in the installation directory itself (for example `/opt/photoprism`); use another base such as `/var/lib/photoprism` or a path under the user’s home directory.
 
@@ -138,7 +138,7 @@ All configuration changes—whether made [via UI](https://docs.photoprism.app/us
 
 ### `defaults.yml`
 
-Packages install a starter `/etc/photoprism/defaults.yml`. Adjust it with root privileges to set global defaults such as filesystem locations, database options, and network ports. When specifying strings you can use `~` as the current user’s home directory and relative paths starting with `./`:
+Packages install a starter `/etc/photoprism/defaults.yml`. Adjust it with root privileges to set global defaults such as filesystem locations, database options, and network ports. If you delete or leave that file empty, PhotoPrism automatically falls back to `<config-path>/defaults.yml`, so copying the sample there keeps the same behavior without touching `/etc`. When specifying strings you can use `~` as the current user’s home directory and relative paths starting with `./`:
 
 ```yaml
 ConfigPath: "~/.config/photoprism"

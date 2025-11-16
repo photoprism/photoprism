@@ -173,7 +173,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v3.5
+    image: traefik:v3.6
     container_name: traefik
     ports:
       - "80:80"
@@ -213,7 +213,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower
   watchtower:
     restart: always
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     container_name: watchtower
     environment:
       WATCHTOWER_CLEANUP: "true"

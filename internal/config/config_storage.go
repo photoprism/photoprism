@@ -257,17 +257,23 @@ func (c *Config) ConfigPath() string {
 // It relies on fs.ConfigFilePath so legacy `.yml` files keep working while
 // newly created instances may use `.yaml` without additional wiring.
 func (c *Config) OptionsYaml() string {
-	configPath := c.ConfigPath()
-
 	if c.options.OptionsYaml == "" {
-		return fs.ConfigFilePath(configPath, "options", fs.ExtYml)
+		return fs.ConfigFilePath(c.ConfigPath(), "options", fs.ExtYml)
 	}
 
 	return fs.Abs(c.options.OptionsYaml)
 }
 
-// DefaultsYaml returns the default options YAML filename.
+// DefaultsYaml resolves the default options YAML file. When
+// PHOTOPRISM_DEFAULTS_YAML points to a readable file we use it; otherwise we
+// fall back to `defaults.{yml,yaml}` inside the active config directory.
+// This allows instances without `/etc/photoprism/defaults.yml` to
+// load local defaults, e.g., in containerized environments.
 func (c *Config) DefaultsYaml() string {
+	if !fs.FileExistsNotEmpty(c.options.DefaultsYaml) {
+		return fs.ConfigFilePath(c.ConfigPath(), "defaults", fs.ExtYml)
+	}
+
 	return fs.Abs(c.options.DefaultsYaml)
 }
 

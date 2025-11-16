@@ -307,7 +307,7 @@ write_files:
 
         traefik:
           restart: always
-          image: traefik:v3.5
+          image: traefik:v3.6
           ports:
             - "80:80"
             - "443:443"
@@ -330,7 +330,7 @@ write_files:
 
         watchtower:
           restart: always
-          image: containrrr/watchtower
+          image: nickfedor/watchtower
           environment:
             WATCHTOWER_CLEANUP: "true"
             WATCHTOWER_POLL_INTERVAL: 7200
