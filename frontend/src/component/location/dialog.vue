@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     :max-width="900"
     :fullscreen="$vuetify.display.xs"
@@ -7,11 +8,11 @@
     scrim
     scrollable
     class="p-location-dialog"
-    @keydown.esc="close"
+    @keydown.esc.exact="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-card :tile="$vuetify.display.xs">
+    <v-card ref="content" tabindex="-1" :tile="$vuetify.display.xs">
       <v-toolbar v-if="$vuetify.display.xs" flat color="navigation" class="mb-4" density="compact">
         <v-btn icon @click.stop="close">
           <v-icon>mdi-close</v-icon>
@@ -192,6 +193,18 @@ export default {
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+      if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
+        this.fetchLocationInfo(this.currentLat, this.currentLng);
+      }
+    },
+    afterLeave() {
+      this.location = null;
+      this.locationLoading = false;
+      this.resetSearchState();
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },
@@ -204,16 +217,6 @@ export default {
           location: this.location,
         });
       }
-    },
-    afterEnter() {
-      if (this.currentLat && this.currentLng && !(this.currentLat === 0 && this.currentLng === 0)) {
-        this.fetchLocationInfo(this.currentLat, this.currentLng);
-      }
-    },
-    afterLeave() {
-      this.location = null;
-      this.locationLoading = false;
-      this.resetSearchState();
     },
     onMarkerMoved(event) {
       this.setPositionAndFetchInfo(event.lat, event.lng);

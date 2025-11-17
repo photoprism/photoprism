@@ -13,7 +13,7 @@ var DomainRegexp = regexp.MustCompile("^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\
 
 // Auth returns the sanitized authentication identifier trimmed to a maximum length of 255 characters.
 func Auth(s string) string {
-	if s == "" || len(s) > 2048 {
+	if s == "" || len(s) > 510 {
 		return ""
 	}
 

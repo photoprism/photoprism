@@ -1,6 +1,9 @@
 package vision
 
 import (
+	"os"
+	"strings"
+
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
@@ -36,7 +39,9 @@ func (m *Service) EndpointKey() string {
 		return ""
 	}
 
-	return m.Key
+	ensureEnv()
+
+	return strings.TrimSpace(os.ExpandEnv(m.Key))
 }
 
 // EndpointFileScheme returns the endpoint API file scheme type.

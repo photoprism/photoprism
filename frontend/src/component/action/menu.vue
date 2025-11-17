@@ -54,7 +54,7 @@ export default {
     },
     tabindex: {
       type: Number,
-      default: 3,
+      default: 0,
     },
     listClass: {
       type: String,

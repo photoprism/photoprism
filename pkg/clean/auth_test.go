@@ -43,6 +43,12 @@ func TestAuth(t *testing.T) {
 	t.Run("TeLessThanSGreaterThanT", func(t *testing.T) {
 		assert.Equal(t, "Test", Auth("Te<s>t"))
 	})
+	t.Run("ApiKey", func(t *testing.T) {
+		assert.Equal(t,
+			"ab-prot-keech1aqu8quamiNaecuisuem1ahg7dieph8eitohzo7hoo7pe-Chohzu4eaA-Chohzu4ea-soh7Seic8eig9joojaeshe4Ahsu8zeibooCh9ooquaaleev3poLeev0su9jei2yeich3ahsi9quar1oqueic",
+			Auth("ab-prot-keech1aqu8quamiNaecuisuem1ahg7dieph8eitohzo7hoo7pe-Chohzu4eaA-Chohzu4ea-soh7Seic8eig9joojaeshe4Ahsu8zeibooCh9ooquaaleev3poLeev0su9jei2yeich3ahsi9quar1oqueic"),
+		)
+	})
 }
 
 func TestHandle(t *testing.T) {

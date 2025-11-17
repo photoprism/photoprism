@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-album-photos" :class="$config.aclClasses('photos')">
+  <div ref="page" tabindex="-1" class="p-page p-page-album-photos" :class="$config.aclClasses('photos')">
     <p-album-toolbar
       ref="toolbar"
       :filter="filter"

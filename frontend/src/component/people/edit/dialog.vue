@@ -1,11 +1,13 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="500"
     class="dialog-person-edit"
     color="background"
     @keydown.esc.exact="close"
+    @keyup.enter.exact="confirm"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
@@ -14,7 +16,7 @@
       validate-on="invalid-input"
       class="form-person-edit"
       accept-charset="UTF-8"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent="confirm"
     >
       <v-card>
@@ -33,7 +35,6 @@
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
-                @keyup.enter="confirm"
               ></v-text-field>
             </v-col>
             <v-col sm="4">

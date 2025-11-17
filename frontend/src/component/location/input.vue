@@ -12,7 +12,7 @@
     autocorrect="off"
     autocapitalize="none"
     class="input-coordinates"
-    @keydown.enter="applyCoordinates"
+    @keydown.enter.stop="applyCoordinates"
     @update:model-value="onCoordinateInputChange"
     @paste="pastePosition"
   >

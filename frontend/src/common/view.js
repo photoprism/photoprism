@@ -188,65 +188,125 @@ const encodeRestoreKey = (key) => {
   return restoreNamespace + encodeURIComponent(key);
 };
 
+// resolveFocusTarget returns the most appropriate element inside root for initial focus.
+function resolveFocusTarget(root) {
+  if (!root) {
+    return null;
+  }
+
+  let el = getHTMLElement(root);
+
+  if (!(el instanceof HTMLElement)) {
+    return null;
+  }
+
+  if (el.hasAttribute("autofocus")) {
+    return el;
+  }
+
+  let candidate = null;
+
+  if (el.getAttribute("tabindex") === "-1") {
+    candidate = el;
+  }
+
+  try {
+    const autofocus = el.querySelector("[autofocus]");
+
+    if (autofocus instanceof HTMLElement) {
+      return autofocus;
+    }
+
+    const sentinel = el.querySelector('[tabindex="-1"]');
+
+    if (sentinel instanceof HTMLElement) {
+      return sentinel;
+    }
+  } catch {
+    // Ignore.
+  }
+
+  return candidate;
+}
+
+// getHTMLElement normalizes Vue component refs or DOM nodes to a concrete HTMLElement.
+function getHTMLElement(ref) {
+  if (!ref) {
+    return null;
+  }
+
+  if (ref instanceof HTMLElement) {
+    return ref;
+  } else if (ref.contentEl && ref.contentEl instanceof HTMLElement) {
+    return ref.contentEl;
+  } else if (ref.$el && ref.$el instanceof HTMLElement) {
+    return ref.$el;
+  }
+
+  return null;
+}
+
+// resolveFocusScope determines the container and fallback focus element for trapping focus within a component.
+function resolveFocusScope(component) {
+  if (!component || !component.$refs) {
+    return null;
+  }
+
+  const root = getHTMLElement(component.$refs?.dialog);
+
+  if (!root) {
+    return null;
+  }
+
+  const fallback = resolveFocusTarget(root);
+
+  if (fallback && root.contains(fallback)) {
+    return {
+      root,
+      fallback,
+    };
+  }
+
+  return {
+    root,
+    fallback: root,
+  };
+}
+
 // Returns the most likely focus element for the given component, or null if none exists.
 export function findFocusElement(c) {
   if (!c) {
     return null;
   }
 
-  let el, ref;
+  const candidates = [];
 
   if (c.$refs && c.$refs instanceof Object) {
     focusRefs.forEach((r) => {
-      if (c.$refs[r] && c.$refs[r] instanceof Object) {
-        if (c.$refs[r].$el instanceof HTMLElement && c.$refs[r].$el.getAttribute("tabindex") !== null) {
-          ref = c.$refs[r].$el;
-        } else if (c.$refs[r] instanceof HTMLElement && c.$refs[r].getAttribute("tabindex") !== null) {
-          ref = c.$refs[r];
+      if (c.$refs[r]) {
+        const el = getHTMLElement(c.$refs[r]);
+        if (el) {
+          candidates.push(el);
         }
       }
     });
   }
 
-  if (!ref || !(ref instanceof Object) || typeof ref.getAttribute !== "function") {
-    ref = null;
-  } else if (ref.getAttribute("tabindex") === null) {
-    ref = null;
+  const el = getHTMLElement(c);
+  if (el) {
+    candidates.push(el);
   }
 
-  if (!ref && c.$el && c.$el instanceof Object) {
-    if (c.$el instanceof HTMLElement) {
-      ref = c.$el;
-    } else if (c.$el.parentElement && c.$el.parentElement instanceof HTMLElement) {
-      ref = c.$el.parentElement;
-    }
-  }
+  for (let i = 0; i < candidates.length; i++) {
+    const target = resolveFocusTarget(candidates[i]);
 
-  if (ref) {
-    if (ref.$el && ref.$el instanceof HTMLElement) {
-      ref = ref.$el;
-    }
-
-    if (ref instanceof HTMLElement) {
-      if (ref.getAttribute("tabindex") !== null) {
-        return ref;
-      }
-
-      if (!window.$isMobile) {
-        try {
-          el = ref.querySelector('input[tabindex="1"]');
-          if (el && el instanceof HTMLElement) {
-            return el;
-          }
-        } catch {
-          // Ignore.
-        }
-      }
+    if (target) {
+      return target;
     }
   }
 
   if (c.$refs?.dialog) {
-    return document.querySelector(".v-overlay-container .v-overlay__content");
+    return getHTMLElement(c.$refs.dialog);
   }
 
   return null;
@@ -334,6 +394,7 @@ export class View {
     this.scopes = [];
     this.hideScrollbar = false;
     this.preventNavigation = false;
+    this.focusScopes = new Map();
 
     // Tracks the most recent history position and derived navigation direction so components can
     // determine whether a transition was triggered by browser back/forward buttons.
@@ -348,6 +409,10 @@ export class View {
     this._onKeyDownListener = this.onKeyDown.bind(this);
     addEventListener("keydown", this._onKeyDownListener);
 
+    // Register a single document-level focus handler, so dialogs can keep keyboard focus inside their scope.
+    this._onFocusOutListener = this.onDocumentFocusOut.bind(this);
+    document.addEventListener("focusout", this._onFocusOutListener);
+
     // Options used when preventing navigation touch gestures; keep a stable
     // object reference so add/removeEventListener calls can match on all browsers.
     this._preventNavOptions = { passive: false };
@@ -357,15 +422,22 @@ export class View {
       this._traceFocusIn = (ev) => {
         console.log("%cdocument.focusin", "color: #B2EBF2;", ev.target);
       };
-      this._traceFocusOut = (ev) => {
-        console.log("%cdocument.focusout", "color: #B2EBF2;", ev.target);
-      };
 
       document.addEventListener("focusin", this._traceFocusIn);
-      document.addEventListener("focusout", this._traceFocusOut);
     }
   }
 
+  // destroy unregisters the global listeners so the view helper can be garbage-collected safely.
+  destroy() {
+    removeEventListener("keydown", this._onKeyDownListener);
+    document.removeEventListener("focusout", this._onFocusOutListener);
+
+    if (this._traceFocusIn) {
+      document.removeEventListener("focusin", this._traceFocusIn);
+    }
+  }
+
+  // onKeyDown forwards global shortcuts (Escape, Ctrl/⌘ combos) to the active component when supported.
   onKeyDown(ev) {
     if (!this.current || !ev || !(ev instanceof KeyboardEvent) || !ev.code) {
       return;
@@ -421,6 +493,9 @@ export class View {
       this.apply(this.current);
     }
 
+    // Remove any stale focus scope once the component leaves the stack.
+    this.focusScopes.delete(c);
+
     return this.scopes.length;
   }
 
@@ -453,13 +528,16 @@ export class View {
       console.log("data:", toRaw(c?.$data));
     }
 
-    // Automatically focus the active component if its element tabindex attribute is set to "1":
+    // Automatically focus the active component based on autofocus markers or tabindex sentinels:
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
     if (focusElement) {
       setFocus(focusElement, focusSelector, false);
     } else {
       setFocus(findFocusElement(c), false, false);
     }
+
+    // Capture the most recent focusable root so we can trap focus if this component opens a dialog.
+    this.recordFocusScope(c);
 
     // Return, as it should not be necessary to apply the same state twice.
     if (this.uid === uid) {
@@ -582,6 +660,107 @@ export class View {
       console.groupEnd();
     }
     return true;
+  }
+
+  // recordFocusScope caches the DOM boundary used to keep focus inside the active component.
+  recordFocusScope(component) {
+    if (!component) {
+      return;
+    }
+
+    const scope = resolveFocusScope(component);
+
+    // Clear existing traps when we cannot resolve a focus container (e.g., simple pages).
+    if (!scope) {
+      this.focusScopes.delete(component);
+      return;
+    }
+
+    const { root } = scope;
+
+    // Ensure the focus container can receive focus, which some Vuetify overlays require explicitly.
+    if (root && !root.hasAttribute("tabindex")) {
+      root.setAttribute("tabindex", "-1");
+    }
+
+    // Remember the trapping metadata so onDocumentFocusOut can redirect focus if needed.
+    this.focusScopes.set(component, scope);
+  }
+
+  // onDocumentFocusOut re-focuses the current dialog when keyboard focus attempts to leave its scope.
+  onDocumentFocusOut(ev) {
+    if (trace) {
+      console.log("%cdocument.focusout", "color: #B2EBF2;", ev?.target);
+    }
+
+    if (!this.current || !ev || !(ev instanceof FocusEvent)) {
+      return;
+    }
+
+    const component = this.getCurrent();
+
+    if (!component) {
+      return;
+    }
+
+    // Look up the trap associated with the currently active component.
+    const scope = this.focusScopes.get(component);
+
+    if (!scope) {
+      return;
+    }
+
+    const { root, fallback } = scope;
+
+    // Drop the trap when the underlying DOM node vanished (dialog closed).
+    if (!root || !root.isConnected) {
+      this.focusScopes.delete(component);
+      return;
+    }
+
+    const next = ev.relatedTarget;
+
+    if (next instanceof HTMLElement && root.contains(next)) {
+      return;
+    }
+
+    const dialogOverlay = root.closest(".v-overlay");
+    const menuOverlayContent = next instanceof HTMLElement ? next.closest(".v-overlay__content") : null;
+
+    if (dialogOverlay && menuOverlayContent && menuOverlayContent instanceof HTMLElement) {
+      const menuOverlay = menuOverlayContent.closest(".v-overlay");
+
+      if (
+        menuOverlay &&
+        menuOverlay.classList.contains("v-menu") &&
+        menuOverlay.parentElement === dialogOverlay.parentElement &&
+        menuOverlay.style.display !== "none" &&
+        menuOverlayContent.contains(next)
+      ) {
+        // Allow focus to move into sibling menu overlays (e.g., combobox suggestions)
+        return;
+      }
+    }
+
+    ev.preventDefault();
+
+    const target =
+      (fallback && fallback.isConnected && root.contains(fallback) && fallback) ||
+      resolveFocusTarget(root) ||
+      findFocusElement(component) ||
+      root;
+
+    if (!target) {
+      return;
+    }
+
+    this.focusScopes.set(component, { root, fallback: target });
+
+    ev.preventDefault();
+
+    setTimeout(() => {
+      setFocus(target, false, false);
+    }, 0);
   }
 
   // Returns the number of views currently registered.

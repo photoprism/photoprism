@@ -28,7 +28,7 @@ func init() {
 	RegisterEngineAlias(ollama.EngineName, EngineInfo{
 		RequestFormat:     ApiFormatOllama,
 		ResponseFormat:    ApiFormatOllama,
-		FileScheme:        string(scheme.Base64),
+		FileScheme:        scheme.Base64,
 		DefaultResolution: ollama.DefaultResolution,
 	})
 
@@ -72,7 +72,7 @@ func (ollamaDefaults) SchemaTemplate(model *Model) string {
 
 	switch model.Type {
 	case ModelTypeLabels:
-		return ollama.LabelsSchema(model.PromptContains("nsfw"))
+		return ollama.SchemaLabels(model.PromptContains("nsfw"))
 	}
 
 	return ""
@@ -134,64 +134,99 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 		return nil, err
 	}
 
-	result := &ApiResponse{
+	response := &ApiResponse{
 		Id:    req.GetId(),
 		Code:  status,
 		Model: &Model{Name: ollamaResp.Model},
 		Result: ApiResult{
-			Labels: append([]LabelResult{}, ollamaResp.Result.Labels...),
-			Caption: func() *CaptionResult {
-				if ollamaResp.Result.Caption != nil {
-					copyCaption := *ollamaResp.Result.Caption
-					return &copyCaption
-				}
-				return nil
-			}(),
+			Labels:  convertOllamaLabels(ollamaResp.Result.Labels),
+			Caption: convertOllamaCaption(ollamaResp.Result.Caption),
 		},
 	}
 
-	parsedLabels := len(result.Result.Labels) > 0
+	parsedLabels := len(response.Result.Labels) > 0
 
-	if !parsedLabels && strings.TrimSpace(ollamaResp.Response) != "" && req.Format == FormatJSON {
-		if labels, parseErr := parseOllamaLabels(ollamaResp.Response); parseErr != nil {
-			log.Debugf("vision: %s (parse ollama labels)", clean.Error(parseErr))
+	// Qwen3-VL models stream their JSON payload in the "Thinking" field.
+	fallbackJSON := strings.TrimSpace(ollamaResp.Response)
+	if fallbackJSON == "" {
+		fallbackJSON = strings.TrimSpace(ollamaResp.Thinking)
+	}
+
+	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
+		if labels, parseErr := parseOllamaLabels(fallbackJSON); parseErr != nil {
+			log.Warnf("vision: %s (parse ollama labels)", clean.Error(parseErr))
 		} else if len(labels) > 0 {
-			result.Result.Labels = append(result.Result.Labels, labels...)
+			response.Result.Labels = append(response.Result.Labels, labels...)
 			parsedLabels = true
 		}
 	}
 
 	if parsedLabels {
-		filtered := result.Result.Labels[:0]
-		for i := range result.Result.Labels {
-			if result.Result.Labels[i].Confidence <= 0 {
-				result.Result.Labels[i].Confidence = ollama.LabelConfidenceDefault
+		filtered := response.Result.Labels[:0]
+		for i := range response.Result.Labels {
+			if response.Result.Labels[i].Confidence <= 0 {
+				response.Result.Labels[i].Confidence = ollama.LabelConfidenceDefault
 			}
 
-			if result.Result.Labels[i].Topicality <= 0 {
-				result.Result.Labels[i].Topicality = result.Result.Labels[i].Confidence
+			if response.Result.Labels[i].Topicality <= 0 {
+				response.Result.Labels[i].Topicality = response.Result.Labels[i].Confidence
 			}
 
 			// Apply thresholds and canonicalize the name.
-			normalizeLabelResult(&result.Result.Labels[i])
+			normalizeLabelResult(&response.Result.Labels[i])
 
-			if result.Result.Labels[i].Name == "" {
+			if response.Result.Labels[i].Name == "" {
 				continue
 			}
 
-			if result.Result.Labels[i].Source == "" {
-				result.Result.Labels[i].Source = entity.SrcOllama
+			if response.Result.Labels[i].Source == "" {
+				response.Result.Labels[i].Source = entity.SrcOllama
 			}
 
-			filtered = append(filtered, result.Result.Labels[i])
+			filtered = append(filtered, response.Result.Labels[i])
 		}
-		result.Result.Labels = filtered
+		response.Result.Labels = filtered
 	} else if caption := strings.TrimSpace(ollamaResp.Response); caption != "" {
-		result.Result.Caption = &CaptionResult{
+		response.Result.Caption = &CaptionResult{
 			Text:   caption,
 			Source: entity.SrcOllama,
 		}
 	}
 
-	return result, nil
+	return response, nil
+}
+
+func convertOllamaLabels(payload []ollama.LabelPayload) []LabelResult {
+	if len(payload) == 0 {
+		return nil
+	}
+
+	labels := make([]LabelResult, len(payload))
+
+	for i := range payload {
+		labels[i] = LabelResult{
+			Name:           payload[i].Name,
+			Source:         payload[i].Source,
+			Priority:       payload[i].Priority,
+			Confidence:     payload[i].Confidence,
+			Topicality:     payload[i].Topicality,
+			Categories:     payload[i].Categories,
+			NSFW:           payload[i].NSFW,
+			NSFWConfidence: payload[i].NSFWConfidence,
+		}
+	}
+
+	return labels
+}
+
+func convertOllamaCaption(payload *ollama.CaptionPayload) *CaptionResult {
+	if payload == nil {
+		return nil
+	}
+
+	return &CaptionResult{
+		Text:       payload.Text,
+		Source:     payload.Source,
+		Confidence: payload.Confidence,
+	}
 }
