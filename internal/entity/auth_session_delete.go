@@ -49,7 +49,7 @@ func DeleteChildSessions(s *Session) (deleted int) {
 
 	found := Sessions{}
 
-	if err := Db().Where("auth_id = ? AND auth_method = ?", wrapString(s.ID), authn.MethodSession.String()).Find(&found).Error; err != nil {
+	if err := Db().Where("auth_id = ? AND auth_method = ?", s.ID, authn.MethodSession.String()).Find(&found).Error; err != nil {
 		event.AuditErr([]string{"failed to find child sessions", status.Error(err)})
 		return deleted
 	}

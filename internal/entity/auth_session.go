@@ -50,7 +50,7 @@ type Session struct {
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthIssuer    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(264);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"` // Make sure that you wrap and unwrap if using auth_id in a query.
+	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	GrantType     string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
 	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
@@ -276,30 +276,6 @@ func (m *Session) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
-// Wraps a string value in pseudo XML to force type to string
-func wrapString(s string) (r string) {
-	return s
-	r = s
-	if s != "" && !strings.HasPrefix(s, "<pp>") && !strings.HasSuffix(s, "</pp>") {
-		r = fmt.Sprintf("<pp>%s</pp>", s)
-	}
-	return r
-}
-
-// Wraps the AuthID field so that SQLite will save it correctly
-func (m *Session) wrapAuthID() {
-	return
-	m.AuthID = wrapString(m.AuthID)
-}
-
-// Unwraps the AuthID field so that PhotoPrism can use it correctly
-func (m *Session) unwrapAuthID() {
-	return
-	if m.AuthID != "" && strings.HasPrefix(m.AuthID, "<pp>") && strings.HasSuffix(m.AuthID, "</pp>") {
-		m.AuthID = strings.TrimSuffix(strings.TrimPrefix(m.AuthID, "<pp>"), "</pp>")
-	}
-}
-
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.InvalidRefID(m.RefID) {
@@ -307,7 +283,6 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 		Log("session", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
-	m.wrapAuthID()
 	if rnd.IsSessionID(m.ID) {
 		return nil
 	}
@@ -315,36 +290,6 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 	m.Regenerate()
 
 	return scope.SetColumn("ID", m.ID)
-}
-
-// BeforeSave ensures that the AuthID will save correctly on SQLite
-func (m *Session) BeforeSave(scope *gorm.Scope) error {
-	m.wrapAuthID()
-	return nil
-}
-
-// BeforeUpdate ensures that the AuthID will save correctly on SQLite
-func (m *Session) BeforeUpdate(scope *gorm.Scope) error {
-	m.wrapAuthID()
-	return nil
-}
-
-// AfterSave ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
-func (m *Session) AfterSave(scope *gorm.Scope) error {
-	m.unwrapAuthID()
-	return nil
-}
-
-// AfterUpdate ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
-func (m *Session) AfterUpdate(scope *gorm.Scope) error {
-	m.unwrapAuthID()
-	return nil
-}
-
-// AfterFind ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
-func (m *Session) AfterFind(scope *gorm.Scope) error {
-	m.unwrapAuthID()
-	return nil
 }
 
 // SetClient sets the client of this session.

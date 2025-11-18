@@ -52,7 +52,7 @@ type User struct {
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthIssuer    string        `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string        `gorm:"type:VARBINARY(264);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"` // Make sure that you wrap and unwrap if using auth_id in a query.  See FindUser below.
+	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
@@ -148,18 +148,18 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
 	} else if authn.ProviderOIDC.Equal(find.AuthProvider) && find.AuthID != "" {
 		if find.AuthIssuer == "" {
-			stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, wrapString(find.AuthID))
+			stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 		} else {
-			stmt = stmt.Where("auth_provider = ? AND (auth_issuer = '' OR auth_issuer = ?) AND auth_id = ?", find.AuthProvider, find.AuthIssuer, wrapString(find.AuthID))
+			stmt = stmt.Where("auth_provider = ? AND (auth_issuer = '' OR auth_issuer = ?) AND auth_id = ?", find.AuthProvider, find.AuthIssuer, find.AuthID)
 		}
 	} else if find.AuthProvider != "" && find.AuthID != "" && find.UserName != "" {
-		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, wrapString(find.AuthID), find.UserName)
+		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, find.AuthID, find.UserName)
 	} else if find.UserName != "" {
 		stmt = stmt.Where("user_name = ?", find.UserName)
 	} else if find.UserEmail != "" {
 		stmt = stmt.Where("user_email = ?", find.UserEmail)
 	} else if find.AuthProvider != "" && find.AuthID != "" {
-		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, wrapString(find.AuthID))
+		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 	} else {
 		return nil
 	}
@@ -382,22 +382,6 @@ func (m *User) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
-// Wraps the AuthID field so that SQLite will save it correctly
-func (m *User) wrapAuthID() {
-	return
-	if m.AuthID != "" && !strings.HasPrefix(m.AuthID, "<pp>") && !strings.HasSuffix(m.AuthID, "</pp>") {
-		m.AuthID = fmt.Sprintf("<pp>%s</pp>", m.AuthID)
-	}
-}
-
-// Unwraps the AuthID field so that PhotoPrism can use it correctly
-func (m *User) unwrapAuthID() {
-	return
-	if m.AuthID != "" && strings.HasPrefix(m.AuthID, "<pp>") && strings.HasSuffix(m.AuthID, "</pp>") {
-		m.AuthID = strings.TrimSuffix(strings.TrimPrefix(m.AuthID, "<pp>"), "</pp>")
-	}
-}
-
 // BeforeCreate sets a random UID if needed before inserting a new row to the database.
 func (m *User) BeforeCreate(scope *gorm.Scope) error {
 	if m.UserSettings != nil {
@@ -415,44 +399,12 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 		Log("user", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
-	m.wrapAuthID()
-
 	if rnd.IsUnique(m.UserUID, UserUID) {
 		return nil
 	}
 
 	m.UserUID = rnd.GenerateUID(UserUID)
 	return scope.SetColumn("UserUID", m.UserUID)
-}
-
-// BeforeSave ensures that the AuthID will save correctly on SQLite
-func (m *User) BeforeSave(scope *gorm.Scope) error {
-	m.wrapAuthID()
-	return nil
-}
-
-// BeforeUpdate ensures that the AuthID will save correctly on SQLite
-func (m *User) BeforeUpdate(scope *gorm.Scope) error {
-	m.wrapAuthID()
-	return nil
-}
-
-// AfterSave ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
-func (m *User) AfterSave(scope *gorm.Scope) error {
-	m.unwrapAuthID()
-	return nil
-}
-
-// AfterUpdate ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
-func (m *User) AfterUpdate(scope *gorm.Scope) error {
-	m.unwrapAuthID()
-	return nil
-}
-
-// AfterFind ensures that the AuthID will not have the prefix and suffix added so that it will save correctly on SQLite
-func (m *User) AfterFind(scope *gorm.Scope) error {
-	m.unwrapAuthID()
-	return nil
 }
 
 // IsExpired checks if the user account has expired.
@@ -685,7 +637,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 	// Make sure other users do not use the same identifier.
 	if m.HasUID() && m.AuthProvider != "" {
 		if err := UnscopedDb().Model(&User{}).
-			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, wrapString(m.AuthID)).
+			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, m.AuthID).
 			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
 			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
 		}
