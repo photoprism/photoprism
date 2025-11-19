@@ -26,7 +26,7 @@ type Options struct {
 	Copyright                 string        `json:"-"`
 	PartnerID                 string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode                  string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
-	AuthSecret                string        `yaml:"AuthSecret" json:"-" flag:"auth-secret"`
+	AuthSecret                string        `yaml:"-" json:"-" flag:"auth-secret"`
 	Public                    bool          `yaml:"Public" json:"-" flag:"public"`
 	NoHub                     bool          `yaml:"-" json:"-" flag:"no-hub"`
 	AdminUser                 string        `yaml:"AdminUser" json:"-" flag:"admin-user"`

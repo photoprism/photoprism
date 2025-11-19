@@ -2,14 +2,14 @@
 
 ## Overview
 
-PhotoPrism’s runtime configuration is managed by this package. Fields are defined in [`options.go`](options.go) and then initialized with values from command-line flags, environment variables, and optional YAML files (`storage/config/*.yml`).
+PhotoPrism’s [runtime configuration](https://docs.photoprism.app/developer-guide/configuration/) is managed by this package. Fields are defined in [`options.go`](options.go) and then initialized with values from command-line flags, [environment variables](https://docs.photoprism.app/getting-started/config-options/), and [optional YAML files](https://docs.photoprism.app/getting-started/config-files/) (`storage/config/*.yml`).
 
 ## Sources and Precedence
 
 PhotoPrism loads configuration in the following order:
 
 1. **Built-in defaults** defined in this package.
-2. **`defaults.yml`** — optional system defaults. PhotoPrism first checks `/etc/photoprism/defaults.yml` (or `.yaml`). If that file is missing or empty, it automatically falls back to `storage/config/defaults.yml` (respecting `.yml` / `.yaml` as well) under `PHOTOPRISM_CONFIG_PATH`. See [`defaults.yml`](https://docs.photoprism.app/getting-started/config-files/defaults/) if you package PhotoPrism for other environments and need to override the compiled defaults.
+2. **`defaults.yml`** — optional configuration defaults. PhotoPrism first checks `/etc/photoprism/defaults.yml` (or `.yaml`). If that file is missing or empty, it automatically falls back to `storage/config/defaults.yml` (respecting `.yml` / `.yaml` as well) under `PHOTOPRISM_CONFIG_PATH`. See [`defaults.yml`](https://docs.photoprism.app/getting-started/config-files/defaults/) if you package PhotoPrism for other environments and need to override the compiled defaults.
 3. **Environment variables** prefixed with `PHOTOPRISM_…` and specified in [`flags.go`](flags.go) along with the CLI flags. This is the primary override mechanism in container environments.
 4. **`options.yml`** — user-level configuration stored under `storage/config/options.yml` (or another directory controlled by `PHOTOPRISM_CONFIG_PATH`). Values here override both defaults and environment variables, see [`options.yml`](https://docs.photoprism.app/getting-started/config-files/).
 5. **CLI flags** (for example `photoprism --cache-path=/tmp/cache`). Flags always win when a conflict exists.
