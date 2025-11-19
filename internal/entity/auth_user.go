@@ -627,10 +627,10 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 // SetAuthID sets a custom authentication identifier.
 func (m *User) SetAuthID(id, issuer string) *User {
 	// Update auth id if not empty.
-	if authID := clean.Auth(id); authID == "" {
+	if authId := clean.Auth(id); authId == "" {
 		return m
 	} else {
-		m.AuthID = authID
+		m.AuthID = authId
 		m.AuthIssuer = clean.Uri(issuer)
 	}
 
