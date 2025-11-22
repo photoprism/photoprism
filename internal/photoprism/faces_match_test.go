@@ -32,10 +32,21 @@ func TestFaces_Match(t *testing.T) {
 
 // TestBuildFaceCandidates validates that we drop non-matchable faces when building the index.
 func TestBuildFaceCandidates(t *testing.T) {
+	// Ensure IgnoreBackground is enabled for this test.
+	originalIgnoreBackground := face.IgnoreBackground
+	face.IgnoreBackground = true
+	t.Cleanup(func() {
+		face.IgnoreBackground = originalIgnoreBackground
+	})
+
 	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace))
 	require.NotNil(t, regular)
 
-	background := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.BackgroundFace))
+	// Get deterministic background embedding.
+	clone := make(face.Embedding, len(face.Background[0].Embedding))
+	copy(clone, face.Background[0].Embedding)
+	backgroundEmb := face.Embeddings{clone}
+	background := entity.NewFace("", entity.SrcAuto, backgroundEmb)
 	require.NotNil(t, background)
 
 	faces := entity.Faces{*regular, *background}
@@ -70,8 +81,8 @@ func TestSelectBestFace(t *testing.T) {
 }
 
 func TestFacesMatchRespectsVeto(t *testing.T) {
-	conf := config.TestConfig()
-	w := NewFaces(conf)
+	c := config.TestConfig()
+	w := NewFaces(c)
 
 	var marker entity.Marker
 	require.NoError(t, entity.Db().Where("marker_type = ? AND marker_invalid = 0 AND face_id <> ''", entity.MarkerFace).Take(&marker).Error)
@@ -79,14 +90,14 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	origFaceID := marker.FaceID
 	require.NotEqual(t, "", origFaceID)
 
-	var face entity.Face
-	require.NoError(t, entity.Db().Where("id = ?", origFaceID).Take(&face).Error)
+	var f entity.Face
+	require.NoError(t, entity.Db().Where("id = ?", origFaceID).Take(&f).Error)
 
 	_, err := marker.ClearFace()
 	require.NoError(t, err)
 
 	stats := make(map[*entity.Face]*faceMatchStats)
-	faces := entity.Faces{face}
+	faces := entity.Faces{f}
 
 	w.rememberVeto(marker.MarkerUID)
 	_, err = w.MatchFaces(faces, false, nil, stats)
@@ -96,8 +107,8 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	require.Equal(t, "", marker.FaceID)
 
 	// restore original assignment to keep fixtures consistent
-	dist := minMarkerDistance(face.Embedding(), marker.Embeddings())
-	_, err = marker.SetFace(&face, dist)
+	dist := minMarkerDistance(f.Embedding(), marker.Embeddings())
+	_, err = marker.SetFace(&f, dist)
 	require.NoError(t, err)
 	w.clearVeto(marker.MarkerUID)
 }

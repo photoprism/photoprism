@@ -136,6 +136,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Delete:    true,
 			Download:  true,
 			Edit:      true,
+			BatchEdit: true,
 			Estimates: true,
 			Favorites: true,
 			Files:     true,
@@ -175,6 +176,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -214,6 +216,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -254,6 +257,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
+		assert.False(t, f.BatchEdit)
 		assert.False(t, f.Private)
 		assert.False(t, f.Upload)
 		assert.False(t, f.Download)
@@ -297,6 +301,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -328,6 +333,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -358,6 +364,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -390,6 +397,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
+		assert.False(t, f.BatchEdit)
 		assert.False(t, f.Private)
 		assert.False(t, f.Upload)
 		assert.True(t, f.Download)
@@ -454,6 +462,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
+		assert.False(t, f.BatchEdit)
 		assert.False(t, f.Private)
 		assert.False(t, f.Upload)
 		assert.False(t, f.Download)
@@ -483,6 +492,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)

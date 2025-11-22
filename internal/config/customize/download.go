@@ -1,13 +1,18 @@
 package customize
 
+// DownloadName represents the naming mode used when exporting or downloading files.
 type DownloadName = string
 
 const (
-	DownloadNameFile     DownloadName = "file"
+	// DownloadNameFile keeps the original file name when downloading.
+	DownloadNameFile DownloadName = "file"
+	// DownloadNameOriginal restores the original filename from metadata when available.
 	DownloadNameOriginal DownloadName = "original"
-	DownloadNameShare    DownloadName = "share"
+	// DownloadNameShare uses the public share identifier for downloaded files.
+	DownloadNameShare DownloadName = "share"
 )
 
+// DownloadNameDefault is the default naming mode for downloads.
 var DownloadNameDefault = DownloadNameFile
 
 // DownloadSettings represents content download settings.

@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -345,7 +346,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
-			if err := os.Remove(uploadPath); err != nil {
+			if err = os.Remove(uploadPath); err != nil {
 				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
 			} else {
 				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
@@ -374,8 +375,12 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
-		for _, uid := range frm.Albums {
-			PublishAlbumEvent(StatusUpdated, uid, c)
+		// Update album YAML backups and notify clients of the changes.
+		for _, album := range opt.Albums {
+			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
+				SaveAlbumYaml(a)
+				PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			}
 		}
 
 		// Update the user interface.

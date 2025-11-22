@@ -104,7 +104,7 @@ func TestMediaFile_Resample(t *testing.T) {
 		thumbnail, err := image.Resample(thumbsPath, "xxx_500")
 
 		if err == nil {
-			t.Fatal("err should not be nil")
+			t.Fatal("err must not be nil")
 		}
 
 		assert.Equal(t, "media: invalid type xxx_500", err.Error())

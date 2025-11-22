@@ -18,7 +18,9 @@ type ImportSettings struct {
 // DefaultImportDest specifies the default import destination file path in the Originals folder.
 // The date and time placeholders are described at https://pkg.go.dev/time#Layout.
 var DefaultImportDest = "2006/01/20060102_150405_82F63B78.jpg"
-var ImportDestRegexp = regexp.MustCompile("^(?P<name>\\D*\\d{2,14}[\\-/_].*\\d{2,14}.*)(?P<checksum>[0-9a-fA-F]{8})(?P<count>\\.\\d{1,6}|\\.COUNT)?(?P<ext>\\.[0-9a-zA-Z]{2,8})$")
+
+// ImportDestRegexp matches valid destination patterns that include timestamp, checksum, and extension parts.
+var ImportDestRegexp = regexp.MustCompile(`^(?P<name>\D*\d{2,14}[-/_].*\d{2,14}.*)(?P<checksum>[0-9a-fA-F]{8})(?P<count>\.\d{1,6}|\.COUNT)?(?P<ext>\.[0-9a-zA-Z]{2,8})$`)
 
 // GetPath returns the default import source path, or a custom path if set.
 func (s *ImportSettings) GetPath() string {

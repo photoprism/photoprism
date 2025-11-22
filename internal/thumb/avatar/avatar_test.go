@@ -24,9 +24,14 @@ func TestMain(m *testing.M) {
 	c := config.NewMinimalTestConfigWithDb("avatar", tempDir)
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
-	defer c.CloseDb()
 
 	code := m.Run()
+
+	if err = c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
+	_ = os.RemoveAll(tempDir)
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

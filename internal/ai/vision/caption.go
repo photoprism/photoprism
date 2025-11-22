@@ -53,7 +53,11 @@ func captionInternal(images Files, mediaSrc media.Src) (result *CaptionResult, m
 
 			apiRequest.System = model.GetSystemPrompt()
 			apiRequest.Prompt = model.GetPrompt()
-			apiRequest.Options = model.GetOptions()
+
+			if apiRequest.Options == nil {
+				apiRequest.Options = model.GetOptions()
+			}
+
 			apiRequest.WriteLog()
 
 			if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {

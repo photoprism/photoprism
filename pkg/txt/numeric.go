@@ -18,11 +18,12 @@ func Numeric(s string) string {
 
 	// Remove invalid characters.
 	s = strings.Map(func(r rune) rune {
-		if r == sep {
+		switch {
+		case r == sep:
 			return '.'
-		} else if r == '-' {
+		case r == '-':
 			return '-'
-		} else if r < '0' || r > '9' {
+		case r < '0' || r > '9':
 			return -1
 		}
 

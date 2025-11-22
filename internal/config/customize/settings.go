@@ -3,6 +3,7 @@ package customize
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
+// RootPath defines the default root directory used for import and index settings.
 const (
 	RootPath = "/"
 )
@@ -68,36 +70,7 @@ func NewSettings(theme, language, timeZone string) *Settings {
 			Animate: 0,
 			Style:   DefaultMapsStyle,
 		},
-		Features: FeatureSettings{
-			Favorites: true,
-			Reactions: true,
-			Ratings:   true,
-			Upload:    true,
-			Download:  true,
-			Private:   true,
-			Files:     true,
-			Videos:    true,
-			Folders:   true,
-			Albums:    true,
-			Calendar:  true,
-			Moments:   true,
-			Estimates: true,
-			People:    true,
-			Labels:    true,
-			Places:    true,
-			Edit:      true,
-			Archive:   true,
-			Review:    true,
-			Share:     true,
-			Library:   true,
-			Import:    true,
-			Logs:      true,
-			Search:    true,
-			Settings:  true,
-			Services:  true,
-			Account:   true,
-			Delete:    true,
-		},
+		Features: NewFeatures(),
 		Import: ImportSettings{
 			Path: RootPath,
 			Move: false,
@@ -168,7 +141,9 @@ func (s *Settings) Load(fileName string) error {
 		return fmt.Errorf("settings file not found: %s", clean.Log(fileName))
 	}
 
-	yamlConfig, err := os.ReadFile(fileName)
+	name := filepath.Clean(fileName)
+
+	yamlConfig, err := os.ReadFile(name) // #nosec G304 -- file path is provided by the caller and validated above
 
 	if err != nil {
 		return err
@@ -197,9 +172,5 @@ func (s *Settings) Save(fileName string) error {
 
 	s.Propagate()
 
-	if err = os.WriteFile(fileName, data, fs.ModeConfigFile); err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(fileName, data, fs.ModeConfigFile)
 }

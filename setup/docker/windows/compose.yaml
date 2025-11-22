@@ -131,7 +131,7 @@ services:
   #
   # watchtower:
   #   restart: unless-stopped
-  #   image: containrrr/watchtower
+  #   image: nickfedor/watchtower
   #   environment:
   #     WATCHTOWER_CLEANUP: "true"
   #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every 2 hours

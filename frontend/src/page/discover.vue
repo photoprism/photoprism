@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-discover" tabindex="1">
+  <div class="p-page p-page-discover" tabindex="-1">
     <v-tabs
       v-model="active"
       elevation="0"

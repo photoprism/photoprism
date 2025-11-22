@@ -5,9 +5,14 @@ import (
 	"strings"
 )
 
+// UnknownStateCode is the placeholder code for unknown states.
 var UnknownStateCode = "zz"
+
+// UnknownCountryCode is the placeholder code for unknown countries.
 var UnknownCountryCode = "zz"
-var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
+
+// CountryWordsRegexp extracts country words from text.
+var CountryWordsRegexp = regexp.MustCompile(`[\p{L}]{2,}`)
 
 // AmbiguousCountries contains location keywords that also occur as popular given names.
 // They require additional context before we can safely treat them as country hints.

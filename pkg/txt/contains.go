@@ -31,7 +31,7 @@ func ContainsLetters(s string) bool {
 func ContainsASCIILetters(s string) bool {
 	for i := 0; i < len(s); i++ {
 		b := s[i]
-		if !((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z')) {
+		if (b < 'A' || b > 'Z') && (b < 'a' || b > 'z') {
 			return false
 		}
 	}
@@ -42,7 +42,7 @@ func ContainsASCIILetters(s string) bool {
 func ContainsAlnumLower(s string) bool {
 	for i := 0; i < len(s); i++ {
 		b := s[i]
-		if !((b >= '0' && b <= '9') || (b >= 'a' && b <= 'z')) {
+		if (b < '0' || b > '9') && (b < 'a' || b > 'z') {
 			return false
 		}
 	}

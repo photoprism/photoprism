@@ -38,7 +38,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 2)
+		assert.Len(t, photos, 3)
 	})
 	t.Run("Nineteen", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -64,7 +64,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 4)
+		assert.Len(t, photos, 5)
 	})
 	t.Run("Num2018WhitespacePipeWhitespaceNum2008", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -77,7 +77,7 @@ func TestPhotosFilterYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 4)
+		assert.Len(t, photos, 5)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -349,7 +349,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 2)
+		assert.Len(t, photos, 3)
 	})
 	t.Run("Nineteen", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -375,7 +375,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 4)
+		assert.Len(t, photos, 5)
 	})
 	t.Run("Num2018WhitespacePipeWhitespaceNum2008", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -388,7 +388,7 @@ func TestPhotosQueryYear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 4)
+		assert.Len(t, photos, 5)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos

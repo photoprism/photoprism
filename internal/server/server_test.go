@@ -25,13 +25,16 @@ func TestMain(m *testing.M) {
 	// Init test config.
 	c := config.TestConfig()
 	get.SetConfig(c)
-	defer c.CloseDb()
 
 	// Increase login rate limit for testing.
 	limiter.Login = limiter.NewLimit(1, 10000)
 
 	// Run unit tests.
 	code := m.Run()
+
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

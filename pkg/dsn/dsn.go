@@ -117,8 +117,7 @@ func (d *DSN) Host() string {
 
 // Port the database server port.
 func (d *DSN) Port() int {
-	switch d.Driver {
-	case DriverSQLite3:
+	if d.Driver == DriverSQLite3 {
 		return 0
 	}
 

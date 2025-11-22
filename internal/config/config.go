@@ -413,7 +413,7 @@ func (c *Config) Propagate() {
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - you may have found a bug")
+		log.Warnf("config: options must not be nil - you may have found a bug")
 		c.options = NewOptions(nil)
 	}
 

@@ -5,7 +5,7 @@
       class="p-form p-form--table p-form-photo-labels"
       validate-on="invalid-input"
       accept-charset="UTF-8"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent
     >
       <div class="form-body">
@@ -98,7 +98,10 @@
                             <v-icon color="surface-variant">mdi-magnify</v-icon>
                           </v-btn>
                           <v-btn
-                            v-else-if="label.Uncertainty < 100 && label.LabelSrc === 'manual'"
+                            v-else-if="
+                              (label.LabelSrc === 'manual' && label.Uncertainty < 100) ||
+                              (label.LabelSrc === 'batch' && label.Uncertainty === 0)
+                            "
                             icon
                             density="comfortable"
                             variant="text"

@@ -9,6 +9,9 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -69,6 +72,10 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 			return nil, parseErr
 		}
 
+		if log.IsLevelEnabled(logrus.TraceLevel) {
+			log.Tracef("vision: response %s", string(body))
+		}
+
 		return parsed, nil
 	}
 
@@ -89,12 +96,12 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	return apiResponse, nil
 }
 
-func decodeOllamaResponse(data []byte) (*ApiResponseOllama, error) {
-	resp := &ApiResponseOllama{}
+func decodeOllamaResponse(data []byte) (*ollama.Response, error) {
+	resp := &ollama.Response{}
 	dec := json.NewDecoder(bytes.NewReader(data))
 
 	for {
-		var chunk ApiResponseOllama
+		var chunk ollama.Response
 		if err := dec.Decode(&chunk); err != nil {
 			if errors.Is(err, io.EOF) {
 				break

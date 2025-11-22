@@ -4,6 +4,7 @@ import Menu from "../page-model/menu";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
+import Page from "../page-model/page";
 import Subject from "../page-model/subject";
 import PhotoEdit from "../page-model/photo-edit";
 import Notifies from "../page-model/notifications";
@@ -14,6 +15,7 @@ const menu = new Menu();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
+const page = new Page();
 const subject = new Subject();
 const photoedit = new PhotoEdit();
 const notifies = new Notifies();
@@ -65,7 +67,7 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
     await photo.triggerHoverAction("nth", 0, "select");
     await photo.triggerHoverAction("nth", 1, "select");
     await photo.triggerHoverAction("nth", 2, "select");
-    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(page.cardTitle.nth(0));
     await t.click(photoedit.peopleTab);
 
     await t.expect(photoedit.inputName.nth(0).value).contains("Jane Doe");
@@ -84,7 +86,7 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
     await subject.openSubjectWithUid(JaneUID);
     await t.eval(() => location.reload());
     await contextmenu.checkContextMenuCount("3");
-    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(page.cardTitle.nth(0));
     await t.click(photoedit.peopleTab);
 
     await t.expect(photoedit.inputName.nth(0).value).contains("Max Mu");

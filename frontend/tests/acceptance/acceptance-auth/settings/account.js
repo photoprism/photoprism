@@ -189,7 +189,7 @@ test.meta("testID", "account-006").meta({ type: "short", mode: "auth" })(
   }
 );
 
-test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })("Common: Force rate limiting", async (t) => {
+test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })("Core: Force rate limiting", async (t) => {
   let counter = 0
   do {
     if (await Selector(".p-notify--error").exists) {

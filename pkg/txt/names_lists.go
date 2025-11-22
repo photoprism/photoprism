@@ -13,13 +13,18 @@ func init() {
 
 }
 
+// IsNameSuffix marks recognized name suffix tokens.
 var IsNameSuffix map[string]bool
+
+// IsNameTitle marks recognized name title tokens.
 var IsNameTitle map[string]bool
 
+// NameSuffixes lists common suffix parts of personal names.
 var NameSuffixes = []string{"esq", "esquire", "jr", "jnr", "sr", "snr", "2", "ii", "iii", "iv",
 	"v", "clu", "chfc", "cfp", "md", "phd", "j.d.", "ll.m.", "m.d.", "d.o.", "d.c.",
 	"p.c.", "ph.d."}
 
+// NameTitles lists common title parts of personal names.
 var NameTitles = []string{"mr", "mrs", "ms", "miss", "dr", "herr", "monsieur", "hr", "frau",
 	"a v m", "admiraal", "admiral", "air cdre", "air commodore", "air marshal",
 	"air vice marshal", "alderman", "alhaji", "ambassador", "baron", "barones",

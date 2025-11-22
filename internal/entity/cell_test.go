@@ -86,7 +86,7 @@ func TestFirstOrCreateCell(t *testing.T) {
 		result := FirstOrCreateCell(loc)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 		assert.NotEmpty(t, result.ID)
 	})

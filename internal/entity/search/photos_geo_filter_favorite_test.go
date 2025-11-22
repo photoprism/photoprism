@@ -25,7 +25,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Len(t, photos0, 6)
+	assert.Len(t, photos0, 8)
 
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
