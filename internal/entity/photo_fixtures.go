@@ -3873,8 +3873,8 @@ var PhotoFixtures = PhotoMap{
 		PhotoStack: 0,
 		PhotoFaces: 0,
 	},
-	"Photo56": { //JPG
-		ID:               1000057,
+	"Photo59": { //JPG
+		ID:               1000060,
 		PhotoUID:         "ps6sg6byk7wrbk57",
 		TakenAt:          time.Date(2024, 11, 12, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2024, 11, 12, 9, 7, 18, 0, time.UTC),
