@@ -34,6 +34,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 	m.Features.Archive = s.Features.Archive && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Delete = s.Features.Delete && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Edit = s.Features.Edit && scopes.Contains(acl.ResourcePhotos.String())
+	m.Features.BatchEdit = s.Features.BatchEdit && s.Features.Edit && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Share = s.Features.Share && scopes.Contains(acl.ResourceShares.String())
 
 	// Browse, upload and download files.

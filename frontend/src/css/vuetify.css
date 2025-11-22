@@ -133,8 +133,14 @@ body > .v-overlay-container .v-overlay__scrim {
 }
 
 .v-overlay.v-dialog.v-dialog--sidepanel.v-dialog--sidepanel-wide:not(.v-dialog--fullscreen) .v-overlay__content {
-    min-width: 950px;
+    min-width: 1150px;
     width: 56vw;
+}
+
+.v-overlay.v-dialog.v-dialog--sidepanel.v-dialog--batch-edit:not(.v-dialog--fullscreen) .v-overlay__content {
+    min-width: 1240px;
+    max-width: 1600px;
+    width: 72vw;
 }
 
 .v-overlay.v-dialog > .v-overlay__content > .v-card,
@@ -401,6 +407,12 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     line-height: inherit;
 }
 
+.v-field--prepended:hover .v-field__prepend-inner .v-icon--clickable {
+    color: rgb(var(--v-theme-primary));
+}
+
+/* Tables */
+
 .v-table thead tr td,
 .v-table thead tr th,
 .v-table tfoot tr td,
@@ -536,6 +548,36 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 .v-table .v-data-table-footer .v-data-table-footer__pagination ul.v-pagination__list > li {
     margin-top: 4px;
     margin-bottom: 4px;
+}
+
+.v-table.v-table--batch-edit {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.v-table.v-table--batch-edit tr,
+.v-table.v-table--batch-edit tr th,
+.v-table.v-table--batch-edit tr td {
+    border-bottom: none !important;
+    text-align: start;
+}
+
+.v-table.v-table--batch-edit tr th {
+    overflow: visible;
+    white-space: nowrap;
+}
+
+.v-table.v-table--batch-edit tr th,
+.v-table.v-table--batch-edit tr td {
+    padding: 0 8px !important;
+}
+
+.v-table.v-table--batch-edit th.col-select {
+    width: 42px;
+}
+
+.v-table.v-table--batch-edit th.col-preview {
+    width: 58px;
 }
 
 /* Flex Grids */

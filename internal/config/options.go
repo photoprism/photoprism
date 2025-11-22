@@ -297,10 +297,8 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.BackupAlbums = true
 
 	// Initialize options with the values from the "defaults.yml" file, if it exists.
-	if defaultsYaml := ctx.String("defaults-yaml"); defaultsYaml == "" {
-		log.Tracef("config: defaults file was not specified")
-	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
-		log.Tracef("config: defaults file %s does not exist", clean.Log(c.DefaultsYaml))
+	if c.DefaultsYaml = defaultsYaml(ctx); !fs.FileExistsNotEmpty(c.DefaultsYaml) {
+		log.Tracef("config: defaults file is empty or missing")
 	} else if err := c.Load(c.DefaultsYaml); err != nil {
 		log.Warnf("config: failed loading defaults from %s (%s)", clean.Log(c.DefaultsYaml), err)
 	}

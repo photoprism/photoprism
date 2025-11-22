@@ -231,6 +231,21 @@
 
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
+                v-model="settings.features.batchEdit"
+                :disabled="busy || isDemo || !settings.features.edit"
+                class="ma-0 pa-0 input-batch-edit"
+                density="compact"
+                :label="$gettext('Batch Edit')"
+                :hint="$gettext('Edit the metadata, labels, and albums of multiple pictures at once.')"
+                prepend-icon="mdi-form-select"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
                 v-model="settings.features.archive"
                 :disabled="busy || isDemo"
                 class="ma-0 pa-0 input-archive"

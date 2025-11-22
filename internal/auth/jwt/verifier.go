@@ -165,7 +165,7 @@ func (v *Verifier) VerifyToken(ctx context.Context, tokenString string, expected
 		return nil, errors.New("jwt: missing temporal claims")
 	}
 
-	if ttl := claims.ExpiresAt.Time.Sub(claims.IssuedAt.Time); ttl > MaxTokenTTL {
+	if ttl := claims.ExpiresAt.Sub(claims.IssuedAt.Time); ttl > MaxTokenTTL {
 		return nil, errors.New("jwt: token ttl exceeds maximum")
 	}
 
@@ -255,7 +255,7 @@ func VerifyTokenWithKeys(tokenString string, expected ExpectedClaims, keys []Pub
 		return nil, errors.New("jwt: missing temporal claims")
 	}
 
-	if ttl := claims.ExpiresAt.Time.Sub(claims.IssuedAt.Time); ttl > MaxTokenTTL {
+	if ttl := claims.ExpiresAt.Sub(claims.IssuedAt.Time); ttl > MaxTokenTTL {
 		return nil, errors.New("jwt: token ttl exceeds maximum")
 	}
 

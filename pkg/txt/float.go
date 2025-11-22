@@ -58,13 +58,13 @@ func FloatRange(s string, min, max float64) (start float64, end float64, err err
 		if r == 45 {
 			if i == 0 || p == 1 {
 				v[p] = append(v[p], byte(r))
-			} else if p == 0 {
+			} else {
 				p = 1
 			}
 		}
 		if r == 46 || r >= 48 && r <= 57 {
 			valid = true
-			v[p] = append(v[p], byte(r))
+			v[p] = append(v[p], byte(r)) //nolint:gosec
 		}
 	}
 

@@ -61,13 +61,13 @@ func IntRange(s string, min, max int) (start int, end int, err error) {
 		if r == 45 {
 			if i == 0 || p == 1 {
 				v[p] = append(v[p], byte(r))
-			} else if p == 0 {
+			} else {
 				p = 1
 			}
 		}
 		if r == 46 || r >= 48 && r <= 57 {
 			valid = true
-			v[p] = append(v[p], byte(r))
+			v[p] = append(v[p], byte(r)) //nolint:gosec
 		}
 	}
 

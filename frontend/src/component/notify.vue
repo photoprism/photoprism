@@ -149,7 +149,7 @@ export default {
       const message = this.messages.shift();
       if (this.message.timer > 0) {
         clearTimeout(this.message.timer);
-      };
+      }
 
       if (message) {
         this.message = message;

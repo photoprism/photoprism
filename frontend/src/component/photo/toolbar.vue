@@ -62,12 +62,7 @@
           group
           class="ms-1"
         >
-          <v-btn
-            value="cards"
-            icon="mdi-view-column"
-            class="ps-1 action-view-cards"
-            @click="setView('cards')"
-          ></v-btn>
+          <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
           <v-btn
             v-if="listView"
             value="list"
@@ -92,11 +87,7 @@
         >
         </v-btn>
 
-        <p-action-menu
-          v-if="$vuetify.display.mdAndUp"
-          :items="menuActions"
-          button-class="ms-1"
-        ></p-action-menu>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
       </template>
       <template v-else>
         <v-spacer></v-spacer>

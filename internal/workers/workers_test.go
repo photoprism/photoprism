@@ -22,13 +22,16 @@ func TestMain(m *testing.M) {
 	fs.PurgeTestDbFiles(".", false)
 
 	c := config.TestConfig()
-	defer c.CloseDb()
 
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
 
 	// Run unit tests.
 	code := m.Run()
+
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

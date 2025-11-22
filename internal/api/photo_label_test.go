@@ -49,10 +49,13 @@ func TestRemovePhotoLabel(t *testing.T) {
 		RemovePhotoLabel(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/ps6sg6be2lvl0yh7/label/1000001")
 		assert.Equal(t, http.StatusOK, r.Code)
-		val := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000001).Uncertainty")
-		assert.Equal(t, "100", val.String())
+		uncertainty := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000001).Uncertainty")
+		src := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000001).LabelSrc")
+		name := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000001).Label.Name")
+		assert.Equal(t, "100", uncertainty.String())
+		assert.Equal(t, "manual", src.String())
+		assert.Equal(t, "Flower", name.String())
 		assert.Contains(t, r.Body.String(), "cake")
-
 	})
 	t.Run("RemoveManuallyAddedLabel", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -101,7 +104,18 @@ func TestUpdatePhotoLabel(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "Title")
 		assert.Contains(t, val.String(), "NewLabelName")
 	})
-	t.Run("PhotoNotFound", func(t *testing.T) {
+	t.Run("ReactivateRemovedLabel", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdatePhotoLabel(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0yh9/label/1000003", `{"Uncertainty": 0}`)
+		uncertainty := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000003).Uncertainty")
+		src := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000003).LabelSrc")
+		name := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000003).Label.Name")
+		assert.Equal(t, "0", uncertainty.String())
+		assert.Equal(t, "manual", src.String())
+		assert.Equal(t, "COW", name.String())
+	})
+	t.Run("photo not found", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhotoLabel(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/xxx/label/1000006", `{"Label": {"Name": "NewLabelName"}}`)

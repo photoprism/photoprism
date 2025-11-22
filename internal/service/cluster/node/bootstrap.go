@@ -298,13 +298,6 @@ func defaultNodeURL(name, domain string) string {
 	return fmt.Sprintf("https://%s.%s", name, domain)
 }
 
-// isTemporary reports whether the given error represents a temporary network
-// failure that merits another retry attempt.
-func isTemporary(err error) bool {
-	var nerr net.Error
-	return errors.As(err, &nerr) && nerr.Timeout()
-}
-
 // persistRegistration merges registration responses into options.yml and, when
 // necessary, reloads the in-memory configuration so future bootstrap steps use
 // the updated values.
@@ -425,14 +418,15 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 
 	switch {
 	case portalVersion != "":
-		if !hasAppJS {
+		switch {
+		case !hasAppJS:
 			log.Infof("theme: %s not installed yet; scheduling download", clean.Log(portalVersion))
 			needsDownload = true
-		} else if localVersion != portalVersion {
+		case localVersion != portalVersion:
 			log.Infof("theme: update detected (local %s, portal %s); scheduling download", clean.Log(localVersion), clean.Log(portalVersion))
 			needsDownload = true
 			requiresOverwrite = true
-		} else {
+		default:
 			log.Infof("theme: version %s already installed", clean.Log(localVersion))
 		}
 	case shouldProbe:
@@ -455,7 +449,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	bearer := ""
 	var tokenErr error
 	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-		if t, err := oauthAccessToken(c, portal, id, secret); err != nil {
+		if t, err := oauthAccessToken(portal, id, secret); err != nil {
 			tokenErr = err
 			log.Infof("config: portal access token request failed (%s)", clean.Error(err))
 		} else {
@@ -476,7 +470,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 		}
 		if shouldRefresh && refreshNodeCredentials(c, portal) {
 			if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-				if t, err := oauthAccessToken(c, portal, id, secret); err == nil {
+				if t, err := oauthAccessToken(portal, id, secret); err == nil {
 					bearer = t
 				} else {
 					log.Infof("config: portal access token retry failed (%s)", clean.Error(err))
@@ -512,7 +506,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 		zipName := filepath.Join(c.TempPath(), "cluster-theme.zip")
 		var out *os.File
 
-		if out, err = os.Create(zipName); err != nil {
+		if out, err = os.Create(zipName); err != nil { //nolint:gosec
 			return err
 		}
 
@@ -573,7 +567,7 @@ func activateNodeThemeIfPresent(c *config.Config) {
 }
 
 // oauthAccessToken requests an OAuth access token via client_credentials using Basic auth.
-func oauthAccessToken(c *config.Config, portal *url.URL, clientID, clientSecret string) (string, error) {
+func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, error) {
 	if portal == nil {
 		return "", fmt.Errorf("invalid portal url")
 	}
@@ -587,6 +581,7 @@ func oauthAccessToken(c *config.Config, portal *url.URL, clientID, clientSecret 
 	req, _ := http.NewRequest(http.MethodPost, tokenURL.String(), strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
+
 	// Basic auth for client credentials
 	basic := base64.StdEncoding.EncodeToString([]byte(clientID + ":" + clientSecret))
 	req.Header.Set("Authorization", "Basic "+basic)

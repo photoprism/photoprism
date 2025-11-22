@@ -72,7 +72,7 @@ func TestFirstOrCreateLens(t *testing.T) {
 		result := FirstOrCreateLens(lens)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 	})
 	t.Run("NotExistingLens", func(t *testing.T) {
@@ -81,7 +81,7 @@ func TestFirstOrCreateLens(t *testing.T) {
 		result := FirstOrCreateLens(lens)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 		assert.GreaterOrEqual(t, result.ID, uint(1))
 	})

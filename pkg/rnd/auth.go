@@ -10,11 +10,16 @@ import (
 )
 
 const (
-	SessionIdLength   = 64
-	AuthTokenLength   = 48
-	JoinTokenLength   = 24
+	// SessionIdLength is the default length of session identifiers.
+	SessionIdLength = 64
+	// AuthTokenLength is the length of auth tokens returned by AuthToken.
+	AuthTokenLength = 48
+	// JoinTokenLength is the length of cluster join tokens.
+	JoinTokenLength = 24
+	// AppPasswordLength is the length of generated app passwords.
 	AppPasswordLength = 27
-	Separator         = '-'
+	// Separator divides human-friendly token sections.
+	Separator = '-'
 )
 
 // joinTokenSeparators determines where token separators (hyphens) appear.

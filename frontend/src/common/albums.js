@@ -37,7 +37,7 @@ export function processAlbumSelection(selectedAlbums, availableAlbums) {
 
   return {
     processed,
-    changed: changed || processed.length !== selectedAlbums.length
+    changed: changed || processed.length !== selectedAlbums.length,
   };
 }
 
@@ -52,9 +52,9 @@ export function createAlbumSelectionWatcher(albumsProperty) {
         this.$nextTick(() => {
           this.selectedAlbums = processed;
         }).catch((error) => {
-          console.error('Error updating selectedAlbums:', error);
+          console.error("Error updating selectedAlbums:", error);
         });
       }
-    }
+    },
   };
 }

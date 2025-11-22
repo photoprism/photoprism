@@ -24,7 +24,15 @@ import (
 var albumMutex = sync.Mutex{}
 
 // SaveAlbumYaml saves the album metadata to a YAML backup file.
-func SaveAlbumYaml(album entity.Album) {
+func SaveAlbumYaml(album *entity.Album) {
+	if album == nil {
+		log.Debugf("api: album is nil (update yaml)")
+		return
+	} else if !album.HasID() {
+		log.Debugf("api: album has no ID (update yaml)")
+		return
+	}
+
 	conf := get.Config()
 
 	// Check if saving YAML backup files is enabled.
@@ -172,7 +180,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Update album YAML backup.
-		SaveAlbumYaml(*album)
+		SaveAlbumYaml(album)
 
 		// Add location header if newly created.
 		if code == http.StatusCreated {
@@ -251,7 +259,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Update album YAML backup.
-		SaveAlbumYaml(album)
+		SaveAlbumYaml(&album)
 
 		c.JSON(http.StatusOK, album)
 	})
@@ -315,7 +323,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 				AbortDeleteFailed(c)
 				return
 			} else {
-				SaveAlbumYaml(album)
+				SaveAlbumYaml(&album)
 			}
 		} else {
 			// Permanently delete automatically created albums.
@@ -382,7 +390,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
-		SaveAlbumYaml(album)
+		SaveAlbumYaml(&album)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -433,7 +441,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
-		SaveAlbumYaml(album)
+		SaveAlbumYaml(&album)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -510,7 +518,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(album)
+			SaveAlbumYaml(&album)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": album, "added": added})
@@ -592,7 +600,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(album)
+			SaveAlbumYaml(&album)
 
 			// Auto-approve photos that have been added to an album,
 			// see https://github.com/photoprism/photoprism/issues/4229
@@ -694,7 +702,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(album)
+			SaveAlbumYaml(&album)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": album, "photos": frm.Photos, "removed": removed})

@@ -256,7 +256,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if m.SubjUID == f.SubjUID && m.FaceID == f.ID {
 		// Update matching timestamp.
 		m.MatchedAt = TimeStamp()
-		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
+		return false, m.Updates(Values{"matched_at": m.MatchedAt})
 	}
 
 	// Remember current values for comparison.
@@ -302,7 +302,8 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Update matching timestamp.
 	m.MatchedAt = TimeStamp()
 
-	if err := m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjUID": m.SubjUID, "SubjSrc": m.SubjSrc, "MarkerReview": false, "MatchedAt": m.MatchedAt}); err != nil {
+	if err = m.Updates(Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "subj_uid": m.SubjUID,
+		"subj_src": m.SubjSrc, "marker_review": false, "matched_at": m.MatchedAt}); err != nil {
 		return false, err
 	} else if !updated {
 		return false, nil
@@ -472,20 +473,25 @@ func (m *Marker) ClearSubject(src string) error {
 	}()
 
 	// Update index & resolve collisions.
-	if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjUID": "", "SubjSrc": src}); err != nil {
+	if err := m.Updates(Values{"marker_name": "", "face_id": "", "face_dist": -1.0, "subj_uid": "", "subj_src": src}); err != nil {
 		return err
 	} else if m.face == nil {
 		m.subject = nil
 		return nil
-	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
-		return err
+	} else if resolved, colErr := m.face.ResolveCollision(m.Embeddings()); colErr != nil {
+		return colErr
 	} else if resolved {
 		log.Debugf("faces: marker %s resolved ambiguous subjects for face %s", clean.Log(m.MarkerUID), clean.Log(m.face.ID))
 	}
 
 	// Clear references.
+	m.MarkerName = ""
 	m.face = nil
+	m.FaceID = ""
+	m.FaceDist = -1.0
 	m.subject = nil
+	m.SubjUID = ""
+	m.SubjSrc = src
 
 	return nil
 }
@@ -547,14 +553,15 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove face references.
 	m.face = nil
 	m.FaceID = ""
+	m.FaceDist = -1.0
 	m.MatchedAt = TimeStamp()
 
 	// Remove subject if set automatically.
 	if m.SubjSrc == SrcAuto {
 		m.SubjUID = ""
-		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "SubjUID": "", "MatchedAt": m.MatchedAt})
+		err = m.Updates(Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "subj_uid": m.SubjUID, "matched_at": m.MatchedAt})
 	} else {
-		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
+		err = m.Updates(Values{"face_id": m.FaceID, "face_dist": -1.0, "matched_at": m.MatchedAt})
 	}
 
 	return updated, m.RefreshPhotos()
@@ -585,7 +592,7 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimeStamp()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": m.MatchedAt}).Error
 }
 
 // Top returns the top Y coordinate as float64.

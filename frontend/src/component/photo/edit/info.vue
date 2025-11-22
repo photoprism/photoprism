@@ -84,7 +84,7 @@
             </tr>
             <tr>
               <td>
-                <span>{{ $gettext(`Title`) }}</span>
+                <span>{{ $pgettext(`Photo`, `Title`) }}</span>
               </td>
               <td>
                 <div v-tooltip="sourceName(view.model?.TitleSrc, $gettext('Generated'))" class="text-flex text-break">

@@ -63,7 +63,7 @@
                 variant="outlined"
                 :placeholder="$gettext(`Search`)"
                 item-title="name"
-                item-value="id"
+                item-value="__key"
                 return-object
                 auto-select-first
                 clearable
@@ -295,38 +295,40 @@ export default {
         this.performPlaceSearch(query);
       }, 300); // 300ms delay after user stops typing
     },
-    async performPlaceSearch(query) {
+    performPlaceSearch(query) {
       if (!query || query.length < 2) {
         this.searchLoading = false;
-        return;
+        return Promise.resolve();
       }
 
-      try {
-        const response = await this.$api.get("places/search", {
+      return this.$api
+        .get("places/search", {
           params: {
             q: query,
             count: 10,
             locale: this.$config.getLanguageLocale() || "en",
           },
-        });
-
-        if (this.searchQuery === query) {
-          if (response.data && Array.isArray(response.data)) {
-            this.searchResults = response.data;
-          } else {
+        })
+        .then((response) => {
+          if (this.searchQuery === query) {
+            if (response.data && Array.isArray(response.data)) {
+              this.searchResults = this.normalizeSearchResults(response.data);
+            } else {
+              this.searchResults = [];
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Place search error:", error);
+          if (this.searchQuery === query) {
             this.searchResults = [];
           }
-        }
-      } catch (error) {
-        console.error("Place search error:", error);
-        if (this.searchQuery === query) {
-          this.searchResults = [];
-        }
-      } finally {
-        if (this.searchQuery === query) {
-          this.searchLoading = false;
-        }
-      }
+        })
+        .finally(() => {
+          if (this.searchQuery === query) {
+            this.searchLoading = false;
+          }
+        });
     },
     onPlaceSelected(place) {
       if (place && place.lat && place.lng) {
@@ -339,6 +341,20 @@ export default {
     },
     clearSearch() {
       this.resetSearchState();
+    },
+    normalizeSearchResults(results) {
+      const seen = new Map();
+
+      return results.map((item, index) => {
+        const base = item.id || `result-${index}`;
+        const occurrence = seen.get(base) || 0;
+        seen.set(base, occurrence + 1);
+
+        return {
+          ...item,
+          __key: occurrence === 0 ? base : `${base}-${occurrence}`,
+        };
+      });
     },
   },
 };

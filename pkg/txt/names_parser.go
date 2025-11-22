@@ -36,16 +36,15 @@ func (name *Name) Parse(full string) {
 
 		l := strings.ToLower(w)
 
-		if IsNameTitle[l] {
+		switch {
+		case IsNameTitle[l]:
 			name.Title = AppendName(name.Title, w)
-		} else if IsNameSuffix[l] {
+		case IsNameSuffix[l]:
 			name.Suffix = AppendName(name.Suffix, w)
-		} else if name.Given == "" {
+		case name.Given == "":
 			name.Given = w
-		} else {
+		default:
 			name.Family = AppendName(name.Family, w)
 		}
 	}
-
-	return
 }

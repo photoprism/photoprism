@@ -116,6 +116,8 @@ import Subject from "model/subject";
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PActionMenu from "component/action/menu.vue";
 
+const SUBJECT_NOT_FOUND = "subject-not-found";
+
 export default {
   name: "PTabPhotoPeople",
   components: { PConfirmDialog, PActionMenu },
@@ -242,68 +244,84 @@ export default {
         },
       ];
     },
-    async loadSubject(uid) {
-      try {
-        return await new Subject({ UID: uid }).find(uid);
-      } catch (err) {
+    loadSubject(uid) {
+      return new Subject({ UID: uid }).find(uid).catch((err) => {
         console.error("faces: failed loading subject", err);
         return null;
-      }
+      });
     },
-    async onGoToPerson(marker) {
+    onGoToPerson(marker) {
       if (!marker?.SubjUID) {
-        return;
+        return Promise.resolve();
       }
 
-      let subject = this.findPerson(marker.SubjUID);
+      const cached = this.findPerson(marker.SubjUID);
+      const subjectPromise = cached
+        ? Promise.resolve(new Subject(cached))
+        : this.loadSubject(marker.SubjUID).then((subject) => {
+            if (!subject) {
+              this.$notify.error(this.$gettext("Person not found"));
+              return null;
+            }
+            this.updatePersonList(subject);
+            return subject;
+          });
 
-      if (!subject) {
-        subject = await this.loadSubject(marker.SubjUID);
-        if (!subject) {
-          this.$notify.error(this.$gettext("Person not found"));
-          return;
-        }
-        this.updatePersonList(subject);
-      } else {
-        subject = new Subject(subject);
-      }
-
-      const route = subject.route("all");
-      const resolved = this.$router.resolve(route);
-      this.$util.openUrl(resolved.href);
+      return subjectPromise
+        .then((subject) => {
+          if (!subject) {
+            return;
+          }
+          const route = subject.route("all");
+          const resolved = this.$router.resolve(route);
+          this.$util.openUrl(resolved.href);
+        })
+        .catch((err) => {
+          if (!err || err.message !== SUBJECT_NOT_FOUND) {
+            console.error("faces: failed opening person", err);
+          }
+        });
     },
-    async onSetPersonCover(marker) {
+    onSetPersonCover(marker) {
       if (this.busy || !marker?.SubjUID || !marker?.Thumb) {
-        return;
+        return Promise.resolve();
       }
 
       this.busy = true;
       this.$notify.blockUI("busy");
 
-      try {
-        let subject = this.findPerson(marker.SubjUID);
+      const cached = this.findPerson(marker.SubjUID);
+      const subjectPromise = cached
+        ? Promise.resolve(new Subject(cached))
+        : this.loadSubject(marker.SubjUID).then((subject) => {
+            if (!subject) {
+              this.$notify.error(this.$gettext("Person not found"));
+              return null;
+            }
+            return subject;
+          });
 
-        if (subject) {
-          subject = new Subject(subject);
-        } else {
-          subject = await this.loadSubject(marker.SubjUID);
-        }
-
-        if (!subject) {
-          this.$notify.error(this.$gettext("Person not found"));
-          return;
-        }
-
-        const updated = await subject.setCover(marker.Thumb);
-        this.updatePersonList(updated);
-        this.$notify.success(this.$gettext("Person cover updated"));
-      } catch (err) {
-        console.error("faces: failed setting person cover", err);
-        this.$notify.error(this.$gettext("Could not update person cover"));
-      } finally {
-        this.$notify.unblockUI();
-        this.busy = false;
-      }
+      return subjectPromise
+        .then((subject) => {
+          if (!subject) {
+            return null;
+          }
+          return subject.setCover(marker.Thumb);
+        })
+        .then((updated) => {
+          this.updatePersonList(updated);
+          this.$notify.success(this.$gettext("Person cover updated"));
+        })
+        .catch((err) => {
+          if (err) {
+            console.error("faces: failed setting person cover", err);
+            this.$notify.error(this.$gettext("Could not update person cover"));
+          }
+        })
+        .finally(() => {
+          this.$notify.unblockUI();
+          this.busy = false;
+        });
     },
     onApprove(model) {
       if (this.busy || !model) return;

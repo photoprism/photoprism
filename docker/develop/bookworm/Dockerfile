@@ -59,7 +59,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         exiftool rawtherapee libheif-examples librsvg2-bin librav1e-dev \
         ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
         libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
-        iputils-ping dnsutils \
+        iputils-ping dnsutils binutils binutils-gold \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \

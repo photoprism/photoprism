@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
-"PO-Revision-Date: 2025-11-12 07:40+0000\n"
+"PO-Revision-Date: 2025-11-19 10:23+0000\n"
 "Last-Translator: dtsolakis <dtsola@eranet.gr>\n"
 "Language-Team: none\n"
 "Language: el\n"
@@ -108,7 +108,7 @@ msgstr "Μη διαθέσιμο στην κατάσταση \"μόνο ανάγ�
 
 #: messages.go:127
 msgid "Please log in to your account"
-msgstr "Παρακαλούμε συνδεθείτε και δοκιμάστε ξανά"
+msgstr "Συνδεθείτε στο λογαριασμό σας"
 
 #: messages.go:128
 msgid "Permission denied"
@@ -156,7 +156,7 @@ msgstr "Μη έγκυρος κωδικός πρόσβασης, δοκιμάστ�
 
 #: messages.go:139
 msgid "Feature disabled"
-msgstr "Απενεργοποιημένη δυνατότητα"
+msgstr "Απενεργοποιημένη λειτουργία"
 
 #: messages.go:140
 msgid "No labels selected"
@@ -271,7 +271,7 @@ msgstr "Ο λογαριασμός δημιουργήθηκε"
 
 #: messages.go:168
 msgid "Account saved"
-msgstr "Ο λογαριασμός αποθηκεύθηκε"
+msgstr "Ο λογαριασμός αποθηκεύτηκε"
 
 #: messages.go:169
 msgid "Account deleted"
@@ -345,7 +345,7 @@ msgstr "Το θέμα διαγράφηκε"
 
 #: messages.go:185
 msgid "Person saved"
-msgstr "Το άτομο αποθηκεύθηκε"
+msgstr "Το άτομο αποθηκεύτηκε"
 
 #: messages.go:186
 msgid "Person deleted"

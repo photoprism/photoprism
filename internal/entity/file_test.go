@@ -218,7 +218,7 @@ func TestFile_Save(t *testing.T) {
 		err := file.Save()
 
 		if err == nil {
-			t.Fatal("error should not be nil")
+			t.Fatal("error must not be nil")
 		}
 
 		if file.ID != 0 {

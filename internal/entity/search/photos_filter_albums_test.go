@@ -189,7 +189,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Equal(t, 4, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -326,7 +326,7 @@ func TestPhotosFilterAlbums(t *testing.T) {
 			t.Logf("query results: %#v", photos)
 		}
 
-		assert.Len(t, photos, 1)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -642,7 +642,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Equal(t, 4, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -779,7 +779,7 @@ func TestPhotosQueryAlbums(t *testing.T) {
 			t.Logf("query results: %#v", photos)
 		}
 
-		assert.Len(t, photos, 1)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos

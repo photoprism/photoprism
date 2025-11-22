@@ -11,17 +11,40 @@ import (
 
 // regex tester: https://regoio.herokuapp.com/
 
-var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2,}")
-var DatePathRegexp = regexp.MustCompile("\\D\\d{4}/\\d{1,2}/?\\d*")
-var DateTimeRegexp = regexp.MustCompile("\\D\\d{2,4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
-var DateWhatsAppRegexp = regexp.MustCompile("(?:IMG|VID)-(?P<year>\\d{4})(?P<month>\\d{2})(?P<day>\\d{2})-WA")
-var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
-var YearRegexp = regexp.MustCompile("\\d{4,5}")
-var IsDateRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}")
-var IsDateTimeRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}.{1,4}\\d{2}\\D?\\d{2}\\D?\\d{2}")
-var HumanDateTimeRegexp = regexp.MustCompile("((?P<day>\\d{2})|\\D{2})\\D((?P<month>\\d{2})|\\D{2})\\D((?P<year>\\d{4})|\\D{4})\\D((?P<h>\\d{2})|\\D{2})\\D((?P<m>\\d{2})|\\D{2})\\D((?P<s>\\d{2})|\\D{2})(\\.(?P<subsec>\\d+))?(?P<z>\\D)?(?P<zh>\\d{2})?\\D?(?P<zm>\\d{2})?")
+// DateRegexp matches generic date patterns in strings.
+var DateRegexp = regexp.MustCompile(`\D\d{4}[\-_]\d{2}[\-_]\d{2,}`)
+
+// DatePathRegexp matches date-like path fragments.
+var DatePathRegexp = regexp.MustCompile(`\D\d{4}/\d{1,2}/?\d*`)
+
+// DateTimeRegexp matches datetime patterns in arbitrary strings.
+var DateTimeRegexp = regexp.MustCompile(`\D\d{2,4}[\-_]\d{2}[\-_]\d{2}.{1,4}\d{2}\D\d{2}\D\d{2,}`)
+
+// DateWhatsAppRegexp matches WhatsApp media filenames.
+var DateWhatsAppRegexp = regexp.MustCompile(`(?:IMG|VID)-(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})-WA`)
+
+// DateIntRegexp matches short numeric date parts.
+var DateIntRegexp = regexp.MustCompile(`\d{1,4}`)
+
+// YearRegexp matches 4–5 digit years.
+var YearRegexp = regexp.MustCompile(`\d{4,5}`)
+
+// IsDateRegexp detects yyyy-mm-dd style strings.
+var IsDateRegexp = regexp.MustCompile(`\d{4}[\-_]?\d{2}[\-_]?\d{2}`)
+
+// IsDateTimeRegexp detects yyyy-mm-dd hh:mm:ss style strings.
+var IsDateTimeRegexp = regexp.MustCompile(`\d{4}[\-_]?\d{2}[\-_]?\d{2}.{1,4}\d{2}\D?\d{2}\D?\d{2}`)
+
+// HumanDateTimeRegexp parses human-readable timestamps.
+var HumanDateTimeRegexp = regexp.MustCompile(`((?P<day>\d{2})|\D{2})\D((?P<month>\d{2})|\D{2})\D((?P<year>\d{4})|\D{4})\D((?P<h>\d{2})|\D{2})\D((?P<m>\d{2})|\D{2})\D((?P<s>\d{2})|\D{2})(\.(?P<subsec>\d+))?(?P<z>\D)?(?P<zh>\d{2})?\D?(?P<zm>\d{2})?`)
+
+// HumanDateTimeMatch stores named capture group indexes for human datetime regex.
 var HumanDateTimeMatch = make(map[string]int)
-var ExifDateTimeRegexp = regexp.MustCompile("((?P<year>\\d{4})|\\D{4})\\D((?P<month>\\d{2})|\\D{2})\\D((?P<day>\\d{2})|\\D{2})\\D((?P<h>\\d{2})|\\D{2})\\D((?P<m>\\d{2})|\\D{2})\\D((?P<s>\\d{2})|\\D{2})(\\.(?P<subsec>\\d+))?(?P<z>\\D)?(?P<zh>\\d{2})?\\D?(?P<zm>\\d{2})?")
+
+// ExifDateTimeRegexp parses EXIF-style datetime strings.
+var ExifDateTimeRegexp = regexp.MustCompile(`((?P<year>\d{4})|\D{4})\D((?P<month>\d{2})|\D{2})\D((?P<day>\d{2})|\D{2})\D((?P<h>\d{2})|\D{2})\D((?P<m>\d{2})|\D{2})\D((?P<s>\d{2})|\D{2})(\.(?P<subsec>\d+))?(?P<z>\D)?(?P<zh>\d{2})?\D?(?P<zm>\d{2})?`)
+
+// ExifDateTimeMatch stores named capture group indexes for EXIF datetime regex.
 var ExifDateTimeMatch = make(map[string]int)
 
 // OneYear represents a duration of 365 days.
@@ -44,23 +67,37 @@ func init() {
 }
 
 var (
-	YearMin      = 1970
+	// YearMin is the minimum acceptable year.
+	YearMin = 1970
+	// YearMinShort is the minimum 2-digit year treated as 1900s.
 	YearMinShort = 90
-	YearMax      = time.Now().Add(OneYear * 3).Year()
-	YearShort    = Int(time.Now().Format("06"))
+	// YearMax is the maximum acceptable year (3 years in future).
+	YearMax = time.Now().Add(OneYear * 3).Year()
+	// YearShort is the current 2-digit year.
+	YearShort = Int(time.Now().Format("06"))
 )
 
 const (
+	// MonthMin is the minimum allowed month.
 	MonthMin = 1
+	// MonthMax is the maximum allowed month.
 	MonthMax = 12
-	DayMin   = 1
-	DayMax   = 31
-	HourMin  = 0
-	HourMax  = 24
-	MinMin   = 0
-	MinMax   = 59
-	SecMin   = 0
-	SecMax   = 59
+	// DayMin is the minimum day in a month.
+	DayMin = 1
+	// DayMax is the maximum day in a month.
+	DayMax = 31
+	// HourMin is the minimum hour in a day.
+	HourMin = 0
+	// HourMax is the maximum hour in a day.
+	HourMax = 24
+	// MinMin is the minimum minute in an hour.
+	MinMin = 0
+	// MinMax is the maximum minute in an hour.
+	MinMax = 59
+	// SecMin is the minimum second in a minute.
+	SecMin = 0
+	// SecMax is the maximum second in a minute.
+	SecMax = 59
 )
 
 // IsTime tests if the string looks like a date and/or time.
@@ -171,10 +208,11 @@ func ParseTime(s, timeZone string) (t time.Time) {
 	// Valid time zone offset found?
 	if offset := (zh*60 + zm) * 60; offset > 0 && offset <= 86400 {
 		// Offset timezone name example: UTC+03:30
-		if z == "+" {
+		switch z {
+		case "+":
 			// Positive offset relative to UTC.
 			zone = time.FixedZone(fmt.Sprintf("UTC+%02d:%02d", zh, zm), offset)
-		} else if z == "-" {
+		case "-":
 			// Negative offset relative to UTC.
 			zone = time.FixedZone(fmt.Sprintf("UTC-%02d:%02d", zh, zm), -1*offset)
 		}

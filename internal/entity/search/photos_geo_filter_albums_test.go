@@ -426,7 +426,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Equal(t, 3, len(photos))
 
 		var geo form.SearchPhotosGeo
 

@@ -14,6 +14,7 @@ const (
 )
 
 var (
+	// GrantScopeRead grants read-level permissions for scopes.
 	GrantScopeRead = Grant{
 		AccessShared:    true,
 		AccessLibrary:   true,
@@ -25,6 +26,7 @@ var (
 		ActionDownload:  true,
 		ActionSubscribe: true,
 	}
+	// GrantScopeWrite grants write-level permissions for scopes.
 	GrantScopeWrite = Grant{
 		AccessShared:    true,
 		AccessLibrary:   true,

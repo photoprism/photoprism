@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -39,28 +40,27 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	// Check authorization.
 	s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
 
-	if s.Invalid() {
-		AbortForbidden(c)
-		return nil, nil, fmt.Errorf("unauthorized")
+	if s.Abort(c) {
+		return nil, nil, errors.New("unauthorized")
 	}
 
 	// Check feature flags.
 	conf := get.Config()
 	if !conf.Settings().Features.People {
 		AbortFeatureDisabled(c)
-		return nil, nil, fmt.Errorf("feature disabled")
+		return nil, nil, errors.New("feature disabled")
 	}
 
 	// Find marker.
 	if uid := c.Param("marker_uid"); uid == "" {
 		AbortBadRequest(c)
-		return nil, nil, fmt.Errorf("bad request")
+		return nil, nil, errors.New("bad request")
 	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
 		return nil, nil, fmt.Errorf("uid %s %s", uid, err)
 	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
-		return nil, marker, fmt.Errorf("marker file missing")
+		return nil, marker, errors.New("marker file missing")
 	}
 
 	// Find file.

@@ -49,6 +49,26 @@ export const tokenLength = 7;
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
+  static normalizeLabelTitle(s) {
+    if (s === null || s === undefined) return "";
+    return String(s)
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[+_\-]+/g, " ")
+      .replace(/[^a-z0-9 ]+/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  static slugifyLabelTitle(s) {
+    if (s === null || s === undefined) return "";
+    return String(s)
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
   // formatBytes returns a human-readable size string for a byte count.
   static formatBytes(b) {
     if (!b) {

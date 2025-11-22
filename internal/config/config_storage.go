@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/urfave/cli/v2"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -264,17 +266,52 @@ func (c *Config) OptionsYaml() string {
 	return fs.Abs(c.options.OptionsYaml)
 }
 
-// DefaultsYaml resolves the default options YAML file. When
-// PHOTOPRISM_DEFAULTS_YAML points to a readable file we use it; otherwise we
-// fall back to `defaults.{yml,yaml}` inside the active config directory.
-// This allows instances without `/etc/photoprism/defaults.yml` to
-// load local defaults, e.g., in containerized environments.
-func (c *Config) DefaultsYaml() string {
-	if !fs.FileExistsNotEmpty(c.options.DefaultsYaml) {
-		return fs.ConfigFilePath(c.ConfigPath(), "defaults", fs.ExtYml)
+// configPath resolves the config path name from the CLI context.
+func configPath(ctx *cli.Context) string {
+	if dir := ctx.String("config-path"); dir != "" {
+		return fs.Abs(dir)
 	}
 
-	return fs.Abs(c.options.DefaultsYaml)
+	storagePath := ctx.String("storage-path")
+
+	if storagePath == "" {
+		return ""
+	}
+
+	storagePath = fs.Abs(storagePath)
+
+	if fs.PathExists(filepath.Join(storagePath, fs.SettingsDir)) {
+		return filepath.Join(storagePath, fs.SettingsDir)
+	}
+
+	return filepath.Join(storagePath, fs.ConfigDir)
+}
+
+// defaultsYaml resolves the defaults file from CLI/env overrides and falls back
+// to `defaults.{yml,yaml}` inside the active config directory when the override
+// is missing or unreadable.
+func defaultsYaml(ctx *cli.Context) string {
+	fileName := ctx.String("defaults-yaml")
+
+	if fileName != "" && fs.FileExistsNotEmpty(fileName) {
+		return fs.Abs(fileName)
+	}
+
+	fileName = fs.ConfigFilePath(configPath(ctx), "defaults", fs.ExtYml)
+
+	if fs.FileExistsNotEmpty(fileName) {
+		return fs.Abs(fileName)
+	}
+
+	return ""
+}
+
+// DefaultsYaml returns the defaults file path that was resolved during option
+// initialization (CLI/env override first, then config-path fallback). Callers
+// use this to locate the concrete defaults location without re-running the
+// resolution logic.
+func (c *Config) DefaultsYaml() string {
+	return c.options.DefaultsYaml
 }
 
 // HubConfigFile returns the backend API config filename, honoring either the

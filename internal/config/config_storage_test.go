@@ -9,6 +9,7 @@ import (
 
 	gc "github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -571,4 +572,32 @@ func TestConfig_SettingsYamlDefaults(t *testing.T) {
 	assert.True(t, strings.HasSuffix(name3, "testdata/etc/settings.yml"))
 	assert.NotEqual(t, c.SettingsYaml(), name1)
 	assert.NotEqual(t, c.SettingsYaml(), name3)
+}
+
+func TestDefaultsYamlResolution(t *testing.T) {
+	t.Run("ExplicitFlag", func(t *testing.T) {
+		ctx := CliTestContext()
+		file := filepath.Join(t.TempDir(), "explicit-defaults.yml")
+		require.NoError(t, os.WriteFile(file, []byte("Test: true"), fs.ModeFile))
+		require.NoError(t, ctx.Set("defaults-yaml", file))
+		got := defaultsYaml(ctx)
+		require.Equal(t, fs.Abs(file), got)
+	})
+	t.Run("ConfigFallback", func(t *testing.T) {
+		ctx := CliTestContext()
+		configDir := filepath.Join(t.TempDir(), "cfg")
+		require.NoError(t, os.MkdirAll(configDir, fs.ModeDir))
+		file := filepath.Join(configDir, "defaults.yml")
+		require.NoError(t, os.WriteFile(file, []byte("SiteUrl: https://example.com"), fs.ModeFile))
+		require.NoError(t, ctx.Set("defaults-yaml", ""))
+		require.NoError(t, ctx.Set("config-path", configDir))
+		got := defaultsYaml(ctx)
+		require.Equal(t, fs.Abs(file), got)
+	})
+	t.Run("MissingReturnsEmpty", func(t *testing.T) {
+		ctx := CliTestContext()
+		require.NoError(t, ctx.Set("defaults-yaml", filepath.Join(t.TempDir(), "missing.yml")))
+		require.NoError(t, ctx.Set("config-path", t.TempDir()))
+		require.Equal(t, "", defaultsYaml(ctx))
+	})
 }

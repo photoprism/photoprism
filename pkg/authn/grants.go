@@ -22,9 +22,9 @@ const (
 	GrantShareToken        GrantType = "share_token"
 	GrantRefreshToken      GrantType = "refresh_token"
 	GrantAuthorizationCode GrantType = "authorization_code"
-	GrantJwtBearer         GrantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
-	GrantSamlBearer        GrantType = "urn:ietf:params:oauth:grant-type:saml2-bearer"
-	GrantTokenExchange     GrantType = "urn:ietf:params:oauth:grant-type:token-exchange"
+	GrantJwtBearer         GrantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"     // #nosec G101 grant type identifier, not a secret
+	GrantSamlBearer        GrantType = "urn:ietf:params:oauth:grant-type:saml2-bearer"   // #nosec G101 grant type identifier, not a secret
+	GrantTokenExchange     GrantType = "urn:ietf:params:oauth:grant-type:token-exchange" // #nosec G101 grant type identifier, not a secret
 )
 
 // Grant casts a string to a normalized grant type.

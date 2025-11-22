@@ -98,7 +98,10 @@
                             <v-icon color="surface-variant">mdi-magnify</v-icon>
                           </v-btn>
                           <v-btn
-                            v-else-if="label.Uncertainty < 100 && label.LabelSrc === 'manual'"
+                            v-else-if="
+                              (label.LabelSrc === 'manual' && label.Uncertainty < 100) ||
+                              (label.LabelSrc === 'batch' && label.Uncertainty === 0)
+                            "
                             icon
                             density="comfortable"
                             variant="text"

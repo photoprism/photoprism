@@ -173,16 +173,16 @@ func FindPhotoLabel(photoId, labelId uint, cached bool) (*PhotoLabel, error) {
 	result := &PhotoLabel{}
 
 	if find := Db().First(result, "photo_id = ? AND label_id = ?", photoId, labelId); find.RecordNotFound() {
-		if UsePhotoLabelsCache {
+		if cached && UsePhotoLabelsCache {
 			photoLabelCache.Set(cacheKey, *result, labelCacheErrorExpiration)
 		}
 		return result, fmt.Errorf("photo-label not found")
 	} else if find.Error != nil {
-		if UsePhotoLabelsCache {
+		if cached && UsePhotoLabelsCache {
 			photoLabelCache.Set(cacheKey, *result, labelCacheErrorExpiration)
 		}
 		return result, find.Error
-	} else if UsePhotoLabelsCache {
+	} else if cached && UsePhotoLabelsCache {
 		photoLabelCache.SetDefault(cacheKey, *result)
 	}
 

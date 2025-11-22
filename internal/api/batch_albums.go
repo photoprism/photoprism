@@ -71,7 +71,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 				log.Errorf("albums: %s (delete)", deleteErr)
 			} else {
 				if conf.BackupAlbums() {
-					SaveAlbumYaml(a)
+					SaveAlbumYaml(&a)
 				}
 
 				deleted++

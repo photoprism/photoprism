@@ -34,15 +34,16 @@ func JSON(raw string) string {
 	startArr := strings.Index(trimmed, "[")
 
 	start := -1
-	if startObj >= 0 && startArr >= 0 {
+	switch {
+	case startObj >= 0 && startArr >= 0:
 		if startObj < startArr {
 			start = startObj
 		} else {
 			start = startArr
 		}
-	} else if startObj >= 0 {
+	case startObj >= 0:
 		start = startObj
-	} else if startArr >= 0 {
+	case startArr >= 0:
 		start = startArr
 	}
 
@@ -50,15 +51,16 @@ func JSON(raw string) string {
 	endArr := strings.LastIndex(trimmed, "]")
 
 	end := -1
-	if endObj >= 0 && endArr >= 0 {
+	switch {
+	case endObj >= 0 && endArr >= 0:
 		if endObj > endArr {
 			end = endObj
 		} else {
 			end = endArr
 		}
-	} else if endObj >= 0 {
+	case endObj >= 0:
 		end = endObj
-	} else if endArr >= 0 {
+	case endArr >= 0:
 		end = endArr
 	}
 

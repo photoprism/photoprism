@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** November 14, 2025
+**Last Updated:** November 21, 2025
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -10,6 +10,7 @@ Quick Start
 - Inside dev container (recommended):
   - Install deps: `make dep`
   - Build backend: `make build-go`
+  - Lint Go (golangci-lint): `make lint-go` (uses `.golangci.yml`; prints findings without failing) or run both stacks with `make lint`
   - Run server: `./photoprism start`
   - Open: http://localhost:2342/ or https://app.localssl.dev/ (Traefik required)
 - On host (manages Docker):

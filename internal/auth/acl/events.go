@@ -2,6 +2,7 @@ package acl
 
 import "sync"
 
+// EventsMutex guards concurrent updates to the Events ACL.
 var EventsMutex = &sync.Mutex{}
 
 // Events specifies granted permissions by event channel and Role.

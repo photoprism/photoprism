@@ -10,6 +10,9 @@ import PSidebarInfo from "component/sidebar/info.vue";
 import PMap from "component/map.vue";
 import PLightbox from "component/lightbox.vue";
 
+// Inputs.
+import PInputChipSelector from "component/input/chip-selector.vue";
+
 // Icons.
 import IconLivePhoto from "component/icon/live-photo.vue";
 import IconSponsor from "component/icon/sponsor.vue";
@@ -79,13 +82,15 @@ export function install(app) {
   app.component("PNotify", PNotify);
   app.component("PScroll", PScroll);
   app.component("PNavigation", PNavigation);
+  app.component("PUpdate", PUpdate);
   app.component("PLoading", PLoading);
   app.component("PLoadingBar", PLoadingBar);
   app.component("PLightboxMenu", PLightboxMenu);
   app.component("PSidebarInfo", PSidebarInfo);
   app.component("PMap", PMap);
   app.component("PLightbox", PLightbox);
-  app.component("PUpdate", PUpdate);
+
+  app.component("PInputChipSelector", PInputChipSelector);
 
   app.component("IconLivePhoto", IconLivePhoto);
   app.component("IconSponsor", IconSponsor);

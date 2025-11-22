@@ -20,7 +20,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 3)
+		assert.Len(t, photos, 4)
 	})
 	t.Run("Raw", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -59,7 +59,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 5)
+		assert.Len(t, photos, 6)
 	})
 	t.Run("RawWhitespacePipeWhitespaceVideo", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -72,7 +72,7 @@ func TestPhotosFilterType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 5)
+		assert.Len(t, photos, 6)
 	})
 	t.Run("RawOrVideo", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -351,7 +351,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 3)
+		assert.Len(t, photos, 4)
 	})
 	t.Run("Raw", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -390,7 +390,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 5)
+		assert.Len(t, photos, 6)
 	})
 	t.Run("RawWhitespacePipeWhitespaceVideo", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -403,7 +403,7 @@ func TestPhotosQueryType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 5)
+		assert.Len(t, photos, 6)
 	})
 	t.Run("RawOrVideo", func(t *testing.T) {
 		var f form.SearchPhotos

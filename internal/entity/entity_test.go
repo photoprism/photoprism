@@ -23,11 +23,11 @@ func TestMain(m *testing.M) {
 		os.Getenv("PHOTOPRISM_TEST_DRIVER"),
 		os.Getenv("PHOTOPRISM_TEST_DSN"))
 
-	defer db.Close()
-
 	code := m.Run()
 
 	// Remove temporary SQLite files after running the tests.
+	db.Close()
+
 	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)

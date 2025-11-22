@@ -1,10 +1,12 @@
-# Config Package Guide
+## PhotoPrism — Config Package
 
-## Overview
+**Last Updated:** November 21, 2025
+
+### Overview
 
 PhotoPrism’s [runtime configuration](https://docs.photoprism.app/developer-guide/configuration/) is managed by this package. Fields are defined in [`options.go`](options.go) and then initialized with values from command-line flags, [environment variables](https://docs.photoprism.app/getting-started/config-options/), and [optional YAML files](https://docs.photoprism.app/getting-started/config-files/) (`storage/config/*.yml`).
 
-## Sources and Precedence
+### Sources and Precedence
 
 PhotoPrism loads configuration in the following order:
 
@@ -18,7 +20,7 @@ The `PHOTOPRISM_CONFIG_PATH` variable controls where PhotoPrism looks for YAML f
 
 > Any change to configuration (flags, env vars, YAML files) requires a restart. The Go process reads options during startup and does not watch for changes.
 
-## Inspect Before Editing
+### Inspect Before Editing
 
 Before changing environment variables or YAML files, run `photoprism config | grep -i <flag>` to confirm the current value of a flag, such as `site-url`, or `site` to show all related values:
 
@@ -36,7 +38,7 @@ Example output:
 | site-author | @photoprism_app           |
 | site-title  | PhotoPrism                |
 
-## CLI Reference
+### CLI Reference
 
 - `photoprism help` (or `photoprism --help`) lists all subcommands and global flags.
 - `photoprism show config` (alias `photoprism config`) renders every active option along with its current value. Pass `--json`, `--md`, `--tsv`, or `--csv` to change the output format.
