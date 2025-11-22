@@ -284,7 +284,7 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		assert.NoError(t, err)
-		assert.Len(t, photos, 8)
+		assert.Len(t, photos, 9)
 	})
 	t.Run("Square", func(t *testing.T) {
 		var f form.SearchPhotos

@@ -125,7 +125,7 @@ func TestUpdatePhotoLabel(t *testing.T) {
 		name := gjson.Get(r.Body.String(), "Labels.#(LabelID==1000003).Label.Name")
 		assert.Equal(t, "0", uncertainty.String())
 		assert.Equal(t, "manual", src.String())
-		assert.Equal(t, "COW", name.String())
+		assert.Equal(t, "Kuh", name.String())
 	})
 	t.Run("photo not found", func(t *testing.T) {
 		app, router, _ := NewApiTest()

@@ -2484,7 +2484,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("label:上海", func(t *testing.T) {
@@ -2502,7 +2502,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("query: label:伤害", func(t *testing.T) {
@@ -2520,7 +2520,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("label:伤害", func(t *testing.T) {
@@ -2538,7 +2538,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("query: label:shang-hai", func(t *testing.T) {
@@ -2556,7 +2556,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("label:shang-hai", func(t *testing.T) {
@@ -2574,7 +2574,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("query: label:shang-hai or 伤害", func(t *testing.T) {
@@ -2592,7 +2592,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 	t.Run("label:shang-hai or 伤害", func(t *testing.T) {
@@ -2610,7 +2610,7 @@ func TestPhotos(t *testing.T) {
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
-			assert.Equal(t, entity.PhotoFixtures.Get("Photo56").ID, r.ID)
+			assert.Equal(t, entity.PhotoFixtures.Get("Photo59").ID, r.ID)
 		}
 	})
 }

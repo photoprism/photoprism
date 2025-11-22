@@ -134,6 +134,6 @@ func TestPhotosGeoFilterTime(t *testing.T) {
 
 		// t.Logf("After: %#v", photos)
 
-		assert.GreaterOrEqual(t, 4, len(photos))
+		assert.Len(t, photos, 5)
 	})
 }

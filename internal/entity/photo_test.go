@@ -220,7 +220,7 @@ func TestPhoto_LabelKeywordIndexing(t *testing.T) {
 
 		words := photoKeywordWords(t, photo.ID)
 		assert.Contains(t, words, "flower")
-		assert.Contains(t, words, "cake")
+		assert.Contains(t, words, "kuchen")
 		assert.NotContains(t, words, "cow") // SrcKeyword entries are skipped
 	})
 	t.Run("Optimize", func(t *testing.T) {
