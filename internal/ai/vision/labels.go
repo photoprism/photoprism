@@ -96,8 +96,10 @@ func labelsInternal(images Files, mediaSrc media.Src, labelSrc entity.Src) (resu
 				apiRequest.Prompt = prompt
 			}
 
-			if options := model.GetOptions(); options != nil {
-				apiRequest.Options = options
+			if apiRequest.Options == nil {
+				if options := model.GetOptions(); options != nil {
+					apiRequest.Options = options
+				}
 			}
 
 			apiRequest.WriteLog()

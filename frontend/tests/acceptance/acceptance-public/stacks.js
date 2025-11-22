@@ -113,7 +113,9 @@ test.meta("testID", "stacks-004").meta({ mode: "public" })("Common: Delete non p
   await t.expect(FileCount).eql(2);
 
   await t
+
     .click(photoedit.toggleExpandFile.nth(1))
+    .click(photoedit.toggleExpandFile.nth(0))
     .click(Selector(photoedit.deleteFile))
     .click(Selector(".action-confirm"));
   await notifies.waitForFileDeleted();

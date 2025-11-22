@@ -984,7 +984,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		w = append(w, txt.FilenameKeywords(filePath)...)
 		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
-		w = append(w, photoLabels.Keywords()...)
 
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 

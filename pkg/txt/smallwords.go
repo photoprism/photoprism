@@ -1,5 +1,6 @@
 package txt
 
+// SmallWords lists words that stay lowercase in title casing.
 var SmallWords = map[string]bool{
 	"a":              true, // English ↓
 	"an":             true,

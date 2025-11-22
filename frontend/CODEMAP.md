@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 13, 2025
+**Last Updated:** November 21, 2025
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -43,6 +43,12 @@ Runtime & Plugins
 - PWA: Workbox registers a service worker after config load (see `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
 - WebSocket: `src/common/websocket.js` publishes `websocket.*` events, used by `$session` for client info
 
+Lightbox Integration
+- Shared entry points live in `src/common/lightbox.js`; `$lightbox.open(options)` fires a `lightbox.open` event consumed by `component/lightbox.vue`.
+- Prefer `$lightbox.openView(this, index)` when a component or dialog already has the photos in memory. Implement `getLightboxContext(index)` on the view and return `{ models, index, context, allowEdit?, allowSelect? }` so the lightbox can build slides without requerying.
+- Set `allowEdit: false` when the caller shouldn’t expose inline editing (the edit button and `KeyE` shortcut are disabled automatically). Set `allowSelect: false` to hide the selection toggle and block the `.` shortcut so batch-edit dialogs don’t mutate the global clipboard.
+- Legacy `$lightbox.openModels(models, index, collection)` still accepts raw thumb arrays, but it cannot express the context flags—only use it when you truly don’t have a backing view.
+
 HTTP Client
 - Axios instance: `src/common/api.js`
   - Base URL: `window.__CONFIG__.apiUri` (or `/api/v1` in tests)
@@ -77,7 +83,7 @@ Testing
 Build & Tooling
 - Webpack is used for bundling; scripts in `frontend/package.json`:
   - `npm run build` (prod), `npm run build-dev` (dev), `npm run watch`
-  - Lint/format: `npm run lint`, `npm run fmt`
+  - Lint/format: `npm run lint` or `make lint-js`; repo root `make lint` runs both backend (golangci-lint via `.golangci.yml`) and frontend linters
   - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
 - Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
@@ -106,6 +112,10 @@ Common How‑Tos
   - Use `$view.saveRestoreState(key, { count, offset, scrollTop })` when unloads happen and `$view.consumeRestoreState(key)` on popstate to preload prior batches (Albums, Labels already supply examples).
   - Compute `key` from route + filter params and cap eager loads with `Rest.restoreCap(Model.batchSize())` (defaults to 10× the batch size).
   - Check `$view.wasBackwardNavigation()` when deciding whether to reuse stored state; `src/app.js` wires the router guards that keep the history direction in sync so no globals like `window.backwardsNavigationDetected` are needed.
+
+- Handle dialog shortcuts
+  - Persistent dialogs (`persistent` prop) must listen for Escape on `@keydown.esc.exact` to override Vuetify’s rejection animation; keep Enter and other actions on `@keyup` so child inputs can intercept them first.
+  - Global shortcuts go through `onShortCut(ev)` in `common/view.js`. It only forwards Escape and `ctrl`/`meta` combinations, so do not depend on it for plain character keys.
 
 Conventions & Safety
 - Avoid `v-html`; use `v-sanitize` or `$util.sanitizeHtml()` (build enforces this)

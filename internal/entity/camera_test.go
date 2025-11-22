@@ -16,7 +16,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 		result := FirstOrCreateCamera(&m)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, uint(1), m.ID)
@@ -30,7 +30,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 		result := FirstOrCreateCamera(camera)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.GreaterOrEqual(t, result.ID, uint(1))
@@ -41,7 +41,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 		result := FirstOrCreateCamera(camera)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.GreaterOrEqual(t, result.ID, uint(1))

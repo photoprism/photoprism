@@ -28,7 +28,9 @@ func TestJWTVerifierResetOnConfigChange(t *testing.T) {
 	SetConfig(tempConf)
 	t.Cleanup(func() {
 		SetConfig(orig)
-		tempConf.CloseDb()
+		if err := tempConf.CloseDb(); err != nil {
+			t.Logf("close db: %v", err)
+		}
 		orig.RegisterDb()
 	})
 

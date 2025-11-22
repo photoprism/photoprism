@@ -85,6 +85,7 @@ test.meta("testID", "folders-002").meta({ mode: "public" })("Common: Update fold
 
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit");
+  await t.click(albumdialog.category).wait(3000);
 
   await t
     .expect(albumdialog.description.value)

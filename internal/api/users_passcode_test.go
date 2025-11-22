@@ -245,7 +245,7 @@ func TestUserPasscode(t *testing.T) {
 	pcStr, err := json.Marshal(f0)
 
 	if err != nil {
-		log.Fatal(err)
+		t.Fatalf("marshal passcode: %v", err)
 	}
 
 	r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
@@ -264,7 +264,7 @@ func TestUserPasscode(t *testing.T) {
 	ConfirmUserPasscode(router)
 
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("generate totp code: %v", err)
 	}
 
 	f := form.Passcode{
@@ -276,7 +276,7 @@ func TestUserPasscode(t *testing.T) {
 	pcStr, err = json.Marshal(f)
 
 	if err != nil {
-		log.Fatal(err)
+		t.Fatalf("marshal passcode confirm: %v", err)
 	}
 
 	r = AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/confirm", string(pcStr), sessId)

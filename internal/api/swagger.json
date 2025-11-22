@@ -4542,6 +4542,12 @@
                 "prompt": {
                     "type": "string"
                 },
+                "schema": {
+                    "items": {
+                        "type": "integer"
+                    },
+                    "type": "array"
+                },
                 "stream": {
                     "type": "boolean"
                 },
@@ -4562,6 +4568,15 @@
         },
         "vision.ApiRequestOptions": {
             "properties": {
+                "combine_outputs": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "force_json": {
+                    "type": "boolean"
+                },
                 "frequency_penalty": {
                     "type": "number"
                 },
@@ -4569,6 +4584,9 @@
                     "type": "boolean"
                 },
                 "main_gpu": {
+                    "type": "integer"
+                },
+                "max_output_tokens": {
                     "type": "integer"
                 },
                 "min_p": {
@@ -4615,6 +4633,9 @@
                 },
                 "repeat_penalty": {
                     "type": "number"
+                },
+                "schema_version": {
+                    "type": "string"
                 },
                 "seed": {
                     "type": "integer"

@@ -15,13 +15,13 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 
 	c := config.TestConfig()
-	defer c.CloseDb()
 
 	// Run unit tests.
 	code := m.Run()
 
-	// Close database connection.
-	_ = c.CloseDb()
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

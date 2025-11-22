@@ -166,7 +166,7 @@ func TestIsJoinToken(t *testing.T) {
 }
 
 func BenchmarkJoinToken(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		JoinToken()
 	}
 }

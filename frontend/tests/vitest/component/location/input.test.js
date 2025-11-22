@@ -126,7 +126,7 @@ describe("PLocationInput", () => {
       // Wait for component to initialize and coordinateInput to be set
       await nextTick();
 
-      const clearButton = wrapper.find(".action-clear");
+      const clearButton = wrapper.find(".action-delete");
       expect(clearButton.exists()).toBe(true);
 
       await clearButton.trigger("click");
@@ -143,7 +143,7 @@ describe("PLocationInput", () => {
       await nextTick();
 
       // Clear coordinates first
-      const clearButton = wrapper.find(".action-clear");
+      const clearButton = wrapper.find(".action-delete");
       expect(clearButton.exists()).toBe(true);
       await clearButton.trigger("click");
       await nextTick();

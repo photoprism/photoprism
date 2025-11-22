@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** November 2, 2025
+**Last Updated:** November 21, 2025
 
 ## Purpose
 
@@ -17,6 +17,7 @@ Learn more: https://agents.md/
 - REST API: https://docs.photoprism.dev/ (Swagger), https://docs.photoprism.app/developer-guide/api/ (Docs)
 - Code Maps: [`CODEMAP.md`](CODEMAP.md) (Backend/Go), [`frontend/CODEMAP.md`](frontend/CODEMAP.md) (Frontend/JS)
 - Face Detection & Embeddings Notes: [`internal/ai/face/README.md`](internal/ai/face/README.md)
+- Vision Engine Guides: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
 
 > Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`.
 
@@ -140,6 +141,7 @@ Note: Across our public documentation, official images, and in production, the c
 - From within the Development Environment:
   - Full unit test suite: `make test` (runs backend and frontend tests)
   - Test frontend/backend: `make test-js` and `make test-go`
+  - Linting: `make lint` (all), `make lint-go` (golangci-lint with `.golangci.yml`, prints findings without failing due to `--issues-exit-code 0`), `make lint-js` (ESLint/Prettier)
   - Go packages: `go test` (all tests) or `go test -run <name>` (specific tests only)
 - Need to inspect the MariaDB data while iterating? Connect directly inside the dev shell with `mariadb -D photoprism` and run SQL without rebuilding Go code.
 - Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and use **PascalCase** for subtest names (for example, `t.Run("Success", ...)`).
@@ -219,6 +221,14 @@ Note: Across our public documentation, official images, and in production, the c
 - All added code and tests **must** be formatted according to our standards.
 
 > Remember to update the `**Last Updated:**` line at the top whenever you edit these guidelines or other files containing a timestamp.
+
+### Frontend Focus Management
+
+- Dialogs must follow the shared focus pattern documented in `frontend/src/common/README.md`.
+- Always expose `ref="dialog"` on `<v-dialog>` overlays, call `$view.enter/leave` in `@after-enter` / `@after-leave`, and avoid positive `tabindex` values.
+- Persistent dialogs (those with the `persistent` prop) must handle Escape via `@keydown.esc.exact` so Vuetify’s default rejection animation is suppressed; keep other shortcuts on `@keyup` so inner inputs can cancel them first.
+- Global shortcuts run through `onShortCut(ev)` in `common/view.js`; it only forwards Escape and `ctrl`/`meta` combinations, so do not rely on it for arbitrary keys.
+- When a dialog opens nested menus (for example, combobox suggestion lists), ensure they work with the global trap; see the README for troubleshooting tips.
 
 ## Safety & Data
 

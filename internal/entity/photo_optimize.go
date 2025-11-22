@@ -3,9 +3,6 @@ package entity
 import (
 	"errors"
 	"reflect"
-	"strings"
-
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Optimize updates picture metadata, enriching titles, keywords, and locations according to the supplied flags.
@@ -42,11 +39,6 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (up
 	if updateErr := m.GenerateTitle(labels); updateErr != nil {
 		log.Info(updateErr)
 	}
-
-	details := m.GetDetails()
-	w := txt.UniqueWords(txt.Words(details.Keywords))
-	w = append(w, labels.Keywords()...)
-	details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 	if indexErr := m.IndexKeywords(); indexErr != nil {
 		log.Errorf("photo: %s", indexErr.Error())

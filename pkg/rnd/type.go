@@ -5,20 +5,34 @@ import (
 )
 
 const (
-	TypeEmpty     Type = "empty"
-	TypeMixed     Type = "mixed"
-	TypeUUID      Type = "UUID"
-	TypeUID       Type = "UID"
-	TypeRefID     Type = "RID"
+	// TypeEmpty marks an empty identifier.
+	TypeEmpty Type = "empty"
+	// TypeMixed marks a mixed collection of identifier types.
+	TypeMixed Type = "mixed"
+	// TypeUUID identifies standard UUID strings.
+	TypeUUID Type = "UUID"
+	// TypeUID identifies PhotoPrism UID strings.
+	TypeUID Type = "UID"
+	// TypeRefID identifies reference IDs (RID).
+	TypeRefID Type = "RID"
+	// TypeSessionID identifies session IDs.
 	TypeSessionID Type = "SID"
-	TypeCrcToken  Type = "CRC"
-	TypeMD5       Type = "MD5"
-	TypeSHA1      Type = "SHA1"
-	TypeSHA224    Type = "SHA224"
-	TypeSHA256    Type = "SHA256"
-	TypeSHA384    Type = "SHA384"
-	TypeSHA512    Type = "SHA512"
-	TypeUnknown   Type = "unknown"
+	// TypeCrcToken identifies CRC tokens.
+	TypeCrcToken Type = "CRC"
+	// TypeMD5 identifies MD5 hashes.
+	TypeMD5 Type = "MD5"
+	// TypeSHA1 identifies SHA1 hashes.
+	TypeSHA1 Type = "SHA1"
+	// TypeSHA224 identifies SHA224 hashes.
+	TypeSHA224 Type = "SHA224"
+	// TypeSHA256 identifies SHA256 hashes.
+	TypeSHA256 Type = "SHA256"
+	// TypeSHA384 identifies SHA384 hashes.
+	TypeSHA384 Type = "SHA384"
+	// TypeSHA512 identifies SHA512 hashes.
+	TypeSHA512 Type = "SHA512"
+	// TypeUnknown marks identifiers that cannot be classified.
+	TypeUnknown Type = "unknown"
 )
 
 // IdType checks what kind of random ID a string contains
@@ -76,6 +90,7 @@ func (t Type) NotEqual(s string) bool {
 	return !t.Equal(s)
 }
 
+// EntityID reports whether the type represents an entity identifier.
 func (t Type) EntityID() bool {
 	switch t {
 	case TypeUID, TypeUUID, TypeRefID, TypeCrcToken, TypeSessionID:
@@ -85,10 +100,12 @@ func (t Type) EntityID() bool {
 	}
 }
 
+// SessionID reports whether the type is a session ID.
 func (t Type) SessionID() bool {
 	return t == TypeSessionID
 }
 
+// CrcToken reports whether the type is a CRC token.
 func (t Type) CrcToken() bool {
 	switch t {
 	case TypeCrcToken:
@@ -98,6 +115,7 @@ func (t Type) CrcToken() bool {
 	}
 }
 
+// Hash reports whether the type represents a hash value.
 func (t Type) Hash() bool {
 	switch t {
 	case TypeMD5:
@@ -107,10 +125,12 @@ func (t Type) Hash() bool {
 	}
 }
 
+// SHA reports whether the type is a SHA-family hash (SHA1 or SHA2).
 func (t Type) SHA() bool {
 	return t.SHA1() || t.SHA2()
 }
 
+// SHA1 reports whether the type is a SHA1 hash.
 func (t Type) SHA1() bool {
 	switch t {
 	case TypeSHA1:
@@ -120,6 +140,7 @@ func (t Type) SHA1() bool {
 	}
 }
 
+// SHA2 reports whether the type is a SHA2 family hash.
 func (t Type) SHA2() bool {
 	switch t {
 	case TypeSHA224, TypeSHA256, TypeSHA384, TypeSHA512:

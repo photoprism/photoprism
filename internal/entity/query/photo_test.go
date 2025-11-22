@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// TestPhotoByID validates photo query behavior.
 func TestPhotoByID(t *testing.T) {
 	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoByID(1000000)
@@ -25,6 +26,7 @@ func TestPhotoByID(t *testing.T) {
 	})
 }
 
+// TestPhotoByUID validates photo query behavior.
 func TestPhotoByUID(t *testing.T) {
 	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoByUID("ps6sg6be2lvl0y12")
@@ -40,6 +42,7 @@ func TestPhotoByUID(t *testing.T) {
 	})
 }
 
+// TestPreloadPhotoByUID validates photo query behavior.
 func TestPreloadPhotoByUID(t *testing.T) {
 	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoPreloadByUID("ps6sg6be2lvl0y12")
@@ -55,6 +58,51 @@ func TestPreloadPhotoByUID(t *testing.T) {
 	})
 }
 
+// TestPhotoPreloadByUIDs validates photo query behavior.
+func TestPhotoPreloadByUIDs(t *testing.T) {
+	t.Run("Multiple", func(t *testing.T) {
+		uids := []string{"ps6sg6be2lvl0y12", "ps6sg6be2lvl0y25", "ps6sg6be2lvl0y12"}
+		photos, err := PhotoPreloadByUIDs(uids)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(photos) != 2 {
+			t.Fatalf("expected two unique photos, got %d", len(photos))
+		}
+
+		photoMap := make(map[string]*entity.Photo, len(photos))
+		for _, p := range photos {
+			if p == nil {
+				continue
+			}
+			photoMap[p.PhotoUID] = p
+		}
+
+		first := photoMap["ps6sg6be2lvl0y12"]
+		if first == nil {
+			t.Fatalf("expected photo ps6sg6be2lvl0y12 to be preloaded")
+		}
+		assert.Greater(t, len(first.Files), 0)
+		assert.True(t, first.CameraID > 0)
+
+		second := photoMap["ps6sg6be2lvl0y25"]
+		if second == nil {
+			t.Fatalf("expected photo ps6sg6be2lvl0y25 to be preloaded")
+		}
+		assert.Greater(t, len(second.Labels), 0)
+	})
+
+	t.Run("Empty", func(t *testing.T) {
+		photos, err := PhotoPreloadByUIDs(nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, 0, len(photos))
+	})
+}
+
+// TestMissingPhotos validates photo query behavior.
 func TestMissingPhotos(t *testing.T) {
 	result, err := MissingPhotos(15, 0)
 
@@ -65,6 +113,7 @@ func TestMissingPhotos(t *testing.T) {
 	assert.LessOrEqual(t, 1, len(result))
 }
 
+// TestArchivedPhotos validates photo query behavior.
 func TestArchivedPhotos(t *testing.T) {
 	results, err := ArchivedPhotos(15, 0)
 
@@ -81,6 +130,7 @@ func TestArchivedPhotos(t *testing.T) {
 	}
 }
 
+// TestPhotosMetadataUpdate validates photo query behavior.
 func TestPhotosMetadataUpdate(t *testing.T) {
 	interval := entity.MetadataUpdateInterval
 	result, err := PhotosMetadataUpdate(10, 0, time.Second, interval)
@@ -92,6 +142,7 @@ func TestPhotosMetadataUpdate(t *testing.T) {
 	assert.IsType(t, entity.Photos{}, result)
 }
 
+// TestOrphanPhotos validates photo query behavior.
 func TestOrphanPhotos(t *testing.T) {
 	result, err := OrphanPhotos()
 
@@ -103,6 +154,7 @@ func TestOrphanPhotos(t *testing.T) {
 }
 
 // TODO How to verify?
+// TestFixPrimaries validates photo query behavior.
 func TestFixPrimaries(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		err := FixPrimaries()
@@ -112,6 +164,7 @@ func TestFixPrimaries(t *testing.T) {
 	})
 }
 
+// TestFlagHiddenPhotos validates photo query behavior.
 func TestFlagHiddenPhotos(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		// Set photo quality scores to -1 if files are missing.

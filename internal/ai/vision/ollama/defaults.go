@@ -1,7 +1,5 @@
 package ollama
 
-import "github.com/photoprism/photoprism/internal/ai/vision/schema"
-
 const (
 	// CaptionPrompt instructs Ollama caption models to emit a single, active-voice sentence.
 	CaptionPrompt = "Create a caption with exactly one sentence in the active voice that describes the main visual content. Begin with the main subject and clear action. Avoid text formatting, meta-language, and filler words."
@@ -22,12 +20,3 @@ const (
 	// DefaultResolution is the default thumbnail size submitted to Ollama models.
 	DefaultResolution = 720
 )
-
-// LabelsSchema returns the canonical label schema string consumed by Ollama models.
-func LabelsSchema(nsfw bool) string {
-	if nsfw {
-		return schema.LabelsNSFW
-	} else {
-		return schema.LabelsDefault
-	}
-}

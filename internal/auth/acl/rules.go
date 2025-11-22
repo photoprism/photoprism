@@ -2,6 +2,7 @@ package acl
 
 import "sync"
 
+// RulesMutex guards concurrent updates to the ACL rules.
 var RulesMutex = &sync.Mutex{}
 
 // Rules specifies granted permissions by Resource and Role.

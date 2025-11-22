@@ -691,7 +691,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("DATE(photos.taken_at) = DATE(?)", frm.Taken.UTC().Format("2006-01-02"))
 	}
 
-	// Finds pictures taken on or before this date.
+	// Finds pictures taken before this date.
 	if !frm.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", frm.Before.UTC().Format("2006-01-02"))
 	}

@@ -29,13 +29,14 @@ func ExpandYear(s string) int {
 
 	year := Int(s)
 
-	if l == 4 {
+	switch {
+	case l == 4:
 		return year
-	} else if year >= 1 && year <= YearShort {
-		year = year + 2000
-	} else if year >= YearMinShort && year < 100 {
-		year = year + 1900
-	} else {
+	case year >= 1 && year <= YearShort:
+		year += 2000
+	case year >= YearMinShort && year < 100:
+		year += 1900
+	default:
 		return -1
 	}
 

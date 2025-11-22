@@ -31,14 +31,14 @@ func TestFirstOrCreateCountry(t *testing.T) {
 		country := NewCountry("es", "spain")
 		country = FirstOrCreateCountry(country)
 		if country == nil {
-			t.Fatal("country should not be nil")
+			t.Fatal("country must not be nil")
 		}
 	})
 	t.Run("De", func(t *testing.T) {
 		country := &Country{ID: "de"}
 		r := FirstOrCreateCountry(country)
 		if r == nil {
-			t.Fatal("country should not be nil")
+			t.Fatal("country must not be nil")
 		}
 	})
 }

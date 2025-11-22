@@ -34,19 +34,21 @@ func ContainsType(ids []string) (idType Type, idPrefix byte) {
 	for _, id := range ids {
 		t, p := IdType(id)
 
-		if t == TypeUnknown {
+		switch {
+		case t == TypeUnknown:
 			return TypeUnknown, PrefixNone
-		} else if idType == TypeUnknown {
+		case idType == TypeUnknown:
 			idType = t
-		} else if idType != t {
+		case idType != t:
 			return TypeMixed, PrefixNone
 		}
 
-		if t != TypeUID {
+		switch {
+		case t != TypeUID:
 			continue
-		} else if idPrefix == PrefixNone {
+		case idPrefix == PrefixNone:
 			idPrefix = p
-		} else if idPrefix != PrefixMixed && idPrefix != p {
+		case idPrefix != PrefixMixed && idPrefix != p:
 			idPrefix = PrefixMixed
 		}
 	}

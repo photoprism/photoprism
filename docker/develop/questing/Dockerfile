@@ -60,7 +60,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
-        va-driver-all libva2 iputils-ping dnsutils libmagic-mgc \
+        va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     apt-get -qq install \
         build-essential software-properties-common pkg-config apt-utils htop \

@@ -5,7 +5,8 @@ import (
 	"regexp"
 )
 
-var PositionRegexp = regexp.MustCompile("^([-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)),\\s*([-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?))$")
+// PositionRegexp matches latitude/longitude pairs.
+var PositionRegexp = regexp.MustCompile(`^([-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)),\s*([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?))$`)
 
 // Position parses a position string into latitude and longitude, or returns and error if the position is invalid.
 func Position(s string) (lat, lng float64, err error) {

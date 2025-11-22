@@ -5,10 +5,14 @@ import (
 )
 
 const (
+	// EmptyString is a reusable empty string constant.
 	EmptyString = ""
-	Space       = " "
-	Or          = "|"
-	And         = "&"
+	// Space is a single space string.
+	Space = " "
+	// Or is the pipe operator used in queries.
+	Or = "|"
+	// And is the ampersand operator used in queries.
+	And = "&"
 )
 
 // Spaced returns the string padded with a space left and right.

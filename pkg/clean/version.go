@@ -5,7 +5,8 @@ import (
 	"regexp"
 )
 
-var VersionRegexp = regexp.MustCompile("(\\d+\\.)(\\d+\\.)(\\*|\\d+)")
+// VersionRegexp finds semantic version-like strings.
+var VersionRegexp = regexp.MustCompile(`(\d+\.)(\d+\.)(\*|\d+)`)
 
 // Version parses and returns a semantic version string.
 func Version(s string) string {
@@ -17,7 +18,7 @@ func Version(s string) string {
 	// and return it with "v" prefix if found.
 	if v := VersionRegexp.FindString(s); v != "" {
 		return fmt.Sprintf("v%s", v)
-	} else {
-		return ""
 	}
+
+	return ""
 }

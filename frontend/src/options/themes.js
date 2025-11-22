@@ -602,7 +602,7 @@ let themes = {
       "accent": "#232323",
       "card": "#242424",
       "on-card": "#fafafa",
-      "selected": "#4f4f4f",
+      "selected": "#424242",
       "on-selected": "#ffffff",
       "switch": "#6c6c6c",
       "button": "#303232",

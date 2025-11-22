@@ -2,8 +2,63 @@ import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/gettext";
 import { Info } from "luxon";
 import { $config } from "app/session";
+import countries from "./countries.json";
 import * as media from "common/media";
 import * as locales from "../locales";
+
+export const Deleted = {
+  ID: -1,
+  String: "deleted",
+  Label: () => {
+    return $gettext("deleted");
+  },
+  Placeholder: () => {
+    return "<" + $gettext("deleted") + ">";
+  },
+};
+
+export const Mixed = {
+  ID: -2,
+  String: "mixed",
+  Label: () => {
+    return $gettext("mixed");
+  },
+  Placeholder: () => {
+    return "<" + $gettext("mixed") + ">";
+  },
+};
+
+// Batch returns a copy of the supplied options array and prepends a localized
+// "mixed" placeholder when `mixed` is true so form controls can display that
+// state without mutating the original items.
+export const Batch = (items, mixed) => {
+  if (!items.length) {
+    return [];
+  }
+
+  if (mixed) {
+    let result;
+
+    if (items[0].Code) {
+      result = [{ Code: Mixed.ID, Name: Mixed.Placeholder() }];
+    } else if (items[0].ID) {
+      result = [{ ID: Mixed.ID, Name: Mixed.Placeholder() }];
+    } else if (Number.isInteger(items[0].value)) {
+      result = [{ value: Mixed.ID, text: Mixed.Placeholder() }];
+    } else {
+      result = [{ value: Mixed.String, text: Mixed.Placeholder() }];
+    }
+
+    result.unshift(...items);
+    return result;
+  }
+
+  return items;
+};
+
+export const Countries = () => {
+  return countries;
+};
 
 export const GmtOffsets = [
   { ID: "GMT", Name: "Etc/GMT" },

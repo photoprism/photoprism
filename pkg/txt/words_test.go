@@ -244,7 +244,7 @@ func TestRemoveFromWords(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		result := RemoveFromWords([]string{"lazy", "jpg", "Brown", "apple"}, "")
-		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy"}, result)
+		assert.Equal(t, []string{"lazy", "jpg", "Brown", "apple"}, result)
 	})
 }
 

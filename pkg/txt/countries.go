@@ -2,6 +2,7 @@ package txt
 
 // Generated code, do not edit.
 
+// Countries maps ISO country codes to human-readable country names.
 var Countries = map[string]string{
 	"andorra":            "ad",
 	"france":             "fr",

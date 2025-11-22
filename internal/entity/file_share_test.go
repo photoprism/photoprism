@@ -26,7 +26,7 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 		result := FirstOrCreateFileShare(fileShare)
 
 		if result == nil {
-			t.Fatal("result share should not be nil")
+			t.Fatal("result share must not be nil")
 		}
 
 		if result.FileID != fileShare.FileID {
@@ -42,7 +42,7 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 		result := FirstOrCreateFileShare(fileShare)
 
 		if result == nil {
-			t.Fatal("result share should not be nil")
+			t.Fatal("result share must not be nil")
 		}
 
 		if result.FileID != fileShare.FileID {

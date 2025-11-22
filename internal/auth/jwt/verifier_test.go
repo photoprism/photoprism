@@ -182,7 +182,7 @@ func TestIssuerClampTTL(t *testing.T) {
 		return key.PublicKey, nil
 	})
 	require.NoError(t, err)
-	ttl := parsed.ExpiresAt.Time.Sub(parsed.IssuedAt.Time)
+	ttl := parsed.ExpiresAt.Sub(parsed.IssuedAt.Time)
 	require.Equal(t, MaxTokenTTL, ttl)
 }
 

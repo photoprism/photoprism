@@ -388,7 +388,8 @@ services:
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
-    stop_grace_period: 30s
+    stop_grace_period: 20s
+    profiles: [ "all", "auth", "keycloak" ]
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"

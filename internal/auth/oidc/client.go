@@ -35,7 +35,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 		err = errors.New("issuer uri required")
 		event.AuditErr([]string{"oidc", "provider", status.Error(err)})
 		return nil, errors.New("issuer uri required")
-	} else if insecure == false && issuerUri.Scheme != "https" {
+	} else if !insecure && issuerUri.Scheme != "https" {
 		err = errors.New("issuer uri must use https")
 		event.AuditErr([]string{"oidc", "provider", status.Error(err)})
 		return nil, err

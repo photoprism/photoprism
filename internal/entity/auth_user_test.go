@@ -120,7 +120,7 @@ func TestFindLocalUser(t *testing.T) {
 		m := FindLocalUser("admin")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 1, m.ID)
@@ -146,7 +146,7 @@ func TestFindLocalUser(t *testing.T) {
 		m := FindLocalUser("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 5, m.ID)
@@ -168,7 +168,7 @@ func TestFindLocalUser(t *testing.T) {
 		m := FindLocalUser("bob")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 7, m.ID)
@@ -205,7 +205,7 @@ func TestFindUserByName(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 1, m.ID)
@@ -229,7 +229,7 @@ func TestFindUserByName(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 5, m.ID)
@@ -249,7 +249,7 @@ func TestFindUserByName(t *testing.T) {
 		m := FindUserByName("bob")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 7, m.ID)
@@ -358,7 +358,7 @@ func TestUser_SetUsername(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "admin", m.Username())
@@ -387,7 +387,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.False(t, m.InvalidPassword("photoprism"))
@@ -396,7 +396,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 		m := FindUserByName("admin")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.True(t, m.InvalidPassword("wrong-password"))
@@ -443,7 +443,7 @@ func TestFirstOrCreateUser(t *testing.T) {
 
 		result := FirstOrCreateUser(p)
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.NotEmpty(t, result.ID)
@@ -460,7 +460,7 @@ func TestFirstOrCreateUser(t *testing.T) {
 		result := FirstOrCreateUser(p)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 		assert.NotEmpty(t, result.ID)
 	})
@@ -471,7 +471,7 @@ func TestFindUser(t *testing.T) {
 		m := FindUser(User{ID: 1})
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 1, m.ID)
@@ -484,7 +484,7 @@ func TestFindUser(t *testing.T) {
 		m := FindUser(User{ID: 2, UserName: "admin"})
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 1, m.ID)
@@ -497,7 +497,7 @@ func TestFindUser(t *testing.T) {
 		m := FindUser(User{UserUID: "u000000000000002"})
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, -2, m.ID)
@@ -526,7 +526,7 @@ func TestFindUser(t *testing.T) {
 		m := FindUser(User{UserUID: u.UserUID})
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.NotEmpty(t, m.UserUID)
@@ -537,7 +537,7 @@ func TestFindUser(t *testing.T) {
 		m := FindUser(User{UserName: "admin"})
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 1, m.ID)
@@ -567,7 +567,7 @@ func TestFindUserByUID(t *testing.T) {
 		m := FindUserByUID("u000000000000002")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, -2, m.ID)
@@ -595,7 +595,7 @@ func TestFindUserByUID(t *testing.T) {
 		m := FindUserByUID("uqxetse3cy5eo9z2")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 5, m.ID)
@@ -615,7 +615,7 @@ func TestFindUserByUID(t *testing.T) {
 		m := FindUserByUID("uqxc08w3d0ej2283")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 7, m.ID)
@@ -635,7 +635,7 @@ func TestFindUserByUID(t *testing.T) {
 		m := FindUserByUID("uqxqg7i1kperxvu7")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, 8, m.ID)
@@ -656,7 +656,7 @@ func TestUser_SameUID(t *testing.T) {
 		m := FindUserByUID("uqxc08w3d0ej2283")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.True(t, m.SameUID("uqxc08w3d0ej2283"))
@@ -667,7 +667,7 @@ func TestUser_SameUID(t *testing.T) {
 		m := FindUserByUID("uqxc08w3d0ej2283")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.False(t, m.SameUID("uqxc08w3d0ej2276"))
@@ -676,7 +676,7 @@ func TestUser_SameUID(t *testing.T) {
 		m := FindUserByUID("uqxc08w3d0ej2283")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.False(t, m.SameUID("xxx"))
@@ -788,7 +788,7 @@ func TestUser_InitAccount(t *testing.T) {
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 	})
 	t.Run("AlreadyExists", func(t *testing.T) {
@@ -807,7 +807,7 @@ func TestUser_InitAccount(t *testing.T) {
 		m := FindPassword("u000000000000010")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
@@ -1230,7 +1230,7 @@ func TestUser_Form(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1251,7 +1251,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1268,7 +1268,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1285,7 +1285,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1302,7 +1302,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1319,7 +1319,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1336,7 +1336,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1361,7 +1361,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1386,7 +1386,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1411,7 +1411,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1433,7 +1433,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1455,7 +1455,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1477,7 +1477,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1501,7 +1501,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(alice)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1524,7 +1524,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(user)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "admin", m.UserRole)
@@ -1556,7 +1556,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1578,7 +1578,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()
@@ -1600,7 +1600,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		frm, err := m.Form()

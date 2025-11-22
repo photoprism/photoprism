@@ -1,5 +1,6 @@
 package txt
 
+// SpecialWords maps special tokens to their normalized replacements.
 var SpecialWords = map[string]string{
 	"av":                 "AV",
 	"av1":                "AV1",

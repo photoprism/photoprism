@@ -16,7 +16,7 @@ func TestFindPlace(t *testing.T) {
 		r := FindPlace("de:HFqPHxa2Hsol")
 
 		if r == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "de", r.PlaceCountry)
@@ -25,7 +25,7 @@ func TestFindPlace(t *testing.T) {
 		r := FindPlace("mx:VvfNBpFegSCr")
 
 		if r == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 		assert.Equal(t, "mx", r.PlaceCountry)
 	})
@@ -33,7 +33,7 @@ func TestFindPlace(t *testing.T) {
 		r := FindPlace("za:Rc1K7dTWRzBD")
 
 		if r == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "za", r.PlaceCountry)
