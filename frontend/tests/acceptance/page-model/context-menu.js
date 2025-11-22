@@ -39,10 +39,22 @@ export default class Page {
     if (action === "delete") {
       await t.click(Selector("button.action-confirm"));
     }
-    if ((action === "album") | (action === "clone")) {
-      await t.typeText(Selector(".input-album input"), albumName, { replace: true });
-      if (await Selector("div").withText(albumName).parent('div[role="option"]').visible) {
-        await t.click(Selector("div").withText(albumName).parent('div[role="option"]'));
+    if ((action === "album") || (action === "clone")) {
+      await t.click(Selector(".input-albums"));
+
+      // Handle single album name or array of album names
+      const albumNames = Array.isArray(albumName) ? albumName : [albumName];
+
+      for (const name of albumNames) {
+        if (await Selector("div").withText(name).parent('div[role="option"]').visible) {
+          // Click on the album option to select it
+          await t
+            .click(Selector("div").withText(name).parent('div[role="option"]'))
+            .click(Selector("div i.mdi-bookmark"));
+        } else {
+          await t.typeText(Selector(".input-albums input"), name).click(Selector("div i.mdi-bookmark"));
+        }
+        await t.expect(Selector("span.v-chip").withText(name).visible).ok();
       }
       await t.click(Selector("button.action-confirm"));
     }

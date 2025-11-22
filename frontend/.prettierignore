@@ -4,8 +4,12 @@ tests/screenshots/
 tests/acceptance/screenshots/
 tests/upload-files/
 *.html
+*.md
+.*
 .idea
 .codex
+.local
+.config
 .github
 .tmp
 .local

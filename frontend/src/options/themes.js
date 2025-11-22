@@ -589,7 +589,7 @@ let themes = {
     colors: {
       "background": "#191a1a",
       "on-background": "#f4f6fc",
-      "surface": "#1f1f1f",
+      "surface": "#252727",
       "on-surface": "#f6f6fa",
       "surface-bright": "#262626",
       "surface-variant": "#999999",
@@ -598,16 +598,16 @@ let themes = {
       "highlight": "#683daf",
       "secondary": "#191a1a",
       "on-secondary": "#f2f2f4",
-      "secondary-light": "#222323",
+      "secondary-light": "#1b1d1d",
       "accent": "#232323",
       "card": "#242424",
       "on-card": "#fafafa",
-      "selected": "#4f4f4f",
+      "selected": "#424242",
       "on-selected": "#ffffff",
       "switch": "#6c6c6c",
-      "button": "#303030",
+      "button": "#303232",
       "on-button": "#f4f4f5",
-      "table": "#212121",
+      "table": "#212222",
       "on-table": "#f2f2f4",
       "error": "#f87171",
       "info": "#60a5fa",
@@ -955,7 +955,14 @@ export const All = () => {
 };
 
 // Get returns a theme by name.
-export const Get = (name) => {
+export const Get = (name, preferForced = true) => {
+  if (Array.isArray(options) && preferForced) {
+    const forced = options.find((t) => t.force && t.value);
+    if (forced) {
+      name = forced.value;
+    }
+  }
+
   if (typeof themes[name] === "undefined") {
     name = options[0].value;
   }
@@ -995,6 +1002,7 @@ export const Set = (name, theme) => {
         text: theme.title ? theme.title : $gettext("Custom"),
         value: name,
         disabled: false,
+        force: true,
       },
     ];
   } else if (typeof themes[name] === "undefined") {

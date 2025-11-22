@@ -20,10 +20,7 @@ var CleanUpCommand = &cli.Command{
 }
 
 var cleanUpFlags = []cli.Flag{
-	&cli.BoolFlag{
-		Name:  "dry",
-		Usage: "performs a dry run that doesn't actually remove anything",
-	},
+	DryRunFlag("performs a dry run that doesn't actually remove anything"),
 }
 
 // cleanUpAction removes orphaned index entries, sidecar and thumbnail files.
@@ -49,7 +46,7 @@ func cleanUpAction(ctx *cli.Context) error {
 	w := get.CleanUp()
 
 	opt := photoprism.CleanUpOptions{
-		Dry: ctx.Bool("dry"),
+		Dry: ctx.Bool("dry-run"),
 	}
 
 	// Start cleanup worker.

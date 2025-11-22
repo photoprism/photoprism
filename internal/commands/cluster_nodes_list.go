@@ -7,8 +7,11 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -38,7 +41,7 @@ var ClusterNodesListCommand = &cli.Command{
 
 func clusterNodesListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			return cli.Exit(fmt.Errorf("node listing is only available on a Portal node"), 2)
 		}
 
@@ -73,6 +76,13 @@ func clusterNodesListAction(ctx *cli.Context) error {
 		// Build admin view (include internal URL and DB meta).
 		opts := reg.NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true}
 		out := reg.BuildClusterNodes(page, opts)
+
+		who := clusterAuditWho(ctx, conf)
+		event.AuditInfo(append(who,
+			string(acl.ResourceCluster),
+			"list nodes count %d",
+			status.Succeeded,
+		), len(out))
 
 		if ctx.Bool("json") {
 			b, _ := json.Marshal(out)

@@ -90,8 +90,8 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	}
 
 	// Limit sample radius to reduce false positives.
-	if m.SampleRadius > face.SampleRadius {
-		m.SampleRadius = face.SampleRadius
+	if m.SampleRadius > face.ClusterRadius {
+		m.SampleRadius = face.ClusterRadius
 	}
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
@@ -117,7 +117,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
 	m.MatchedAt = TimeStamp()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -164,7 +164,7 @@ func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 	case dist > (m.SampleRadius + face.MatchDist):
 		// Too far.
 		return false, dist
-	case m.CollisionRadius > 0.1 && dist > m.CollisionRadius:
+	case m.CollisionRadius > face.CollisionDist && dist > m.CollisionRadius:
 		// Within radius of reported collisions.
 		return false, dist
 	}
@@ -199,7 +199,8 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		m.Collisions++
 		m.CollisionRadius = dist
 		UpdateFaces.Store(true)
-		return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
+		return true, m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius,
+			"face_kind": m.FaceKind, "updated_at": m.UpdatedAt, "matched_at": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -207,7 +208,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		UpdateFaces.Store(true)
 	}
 
-	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
+	err = m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius, "matched_at": m.MatchedAt})
 
 	if err != nil {
 		return true, err
@@ -286,8 +287,8 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 
 	radius := maxDistance + face.Epsilon
 
-	if radius > face.SampleRadius {
-		radius = face.SampleRadius
+	if radius > face.ClusterRadius {
+		radius = face.ClusterRadius
 	}
 
 	if radius < 0 {
@@ -302,7 +303,7 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 	m.SampleRadius = radius
 	UpdateFaces.Store(true)
 
-	return m.Updates(Values{"Samples": m.Samples, "SampleRadius": m.SampleRadius})
+	return m.Updates(Values{"samples": m.Samples, "sample_radius": m.SampleRadius})
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.

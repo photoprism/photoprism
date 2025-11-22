@@ -10,11 +10,16 @@ import (
 )
 
 const (
-	SessionIdLength   = 64
-	AuthTokenLength   = 48
-	JoinTokenLength   = 24
+	// SessionIdLength is the default length of session identifiers.
+	SessionIdLength = 64
+	// AuthTokenLength is the length of auth tokens returned by AuthToken.
+	AuthTokenLength = 48
+	// JoinTokenLength is the length of cluster join tokens.
+	JoinTokenLength = 24
+	// AppPasswordLength is the length of generated app passwords.
 	AppPasswordLength = 27
-	Separator         = '-'
+	// Separator divides human-friendly token sections.
+	Separator = '-'
 )
 
 // joinTokenSeparators determines where token separators (hyphens) appear.
@@ -40,6 +45,15 @@ func IsAuthToken(s string) bool {
 	}
 
 	return false
+}
+
+// AuthTokenID returns a unique 14 character authentication token ID, e.g. for use in JWTs.
+func AuthTokenID(prefix string) string {
+	if len(prefix) > 8 {
+		prefix = prefix[:8]
+	}
+
+	return prefix + Base36(14-len(prefix))
 }
 
 // AppPassword generates a random, human-friendly authentication token that can also be used as
@@ -132,6 +146,11 @@ func isJoinTokenSeparatorIndex(i int) bool {
 
 // IsJoinToken checks if the string represents a join token.
 func IsJoinToken(s string, strict bool) bool {
+	// Basic mode: No token, not valid.
+	if s == "" {
+		return false
+	}
+
 	// Non-strict mode: only enforce minimum length so legacy tokens that were
 	// longer than the auto-generated format continue to work.
 	if !strict {

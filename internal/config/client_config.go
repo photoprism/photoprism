@@ -62,6 +62,7 @@ type ClientConfig struct {
 	Trace            bool                `json:"trace"`
 	Test             bool                `json:"test"`
 	Demo             bool                `json:"demo"`
+	Portal           bool                `json:"portal"`
 	Sponsor          bool                `json:"sponsor"`
 	ReadOnly         bool                `json:"readonly"`
 	UploadNSFW       bool                `json:"uploadNSFW"`
@@ -100,7 +101,7 @@ type ClientConfig struct {
 	Usage            Usage               `json:"usage"`
 	Settings         *customize.Settings `json:"settings,omitempty"`
 	ACL              acl.Grants          `json:"acl,omitempty"`
-	Ext              Map                 `json:"ext"`
+	Ext              Values              `json:"ext"`
 }
 
 // ApplyACL updates the client config values based on the ACL and Role provided.
@@ -312,6 +313,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		Public:           c.Public(),
@@ -407,6 +409,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
@@ -510,6 +513,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
@@ -626,7 +630,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Select("MAX(photo_count) AS label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
-		Where("(label_priority >= 0 OR label_favorite = 1)").
+		Where("(labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1)").
 		Take(&cfg.Count)
 
 	if hidePrivate {

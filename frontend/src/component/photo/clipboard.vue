@@ -215,6 +215,7 @@ export default {
   },
   data() {
     const features = this.$config.getSettings().features;
+    const canEdit = this.$config.allow("photos", "update") && features.edit;
 
     return {
       selection: this.$clipboard.selection,
@@ -225,7 +226,8 @@ export default {
       canShare: this.$config.allow("photos", "share") && features.share,
       canServiceUpload: this.$config.feature("services") && this.$config.allow("services", "upload"),
       canManage: this.$config.allow("photos", "manage") && features.albums,
-      canEdit: this.$config.allow("photos", "update") && features.edit,
+      canEdit: canEdit,
+      canBatchEdit: canEdit && this.$config.allow("photos", "access_all") && features.batchEdit,
       canEditAlbum: this.$config.allow("albums", "update") && features.albums,
       busy: false,
       config: this.$config.values,
@@ -326,8 +328,13 @@ export default {
       $notify.success(this.$gettext("Selection restored"));
       this.clearClipboard();
     },
-    addToAlbum(ppid) {
-      if (!ppid || !this.canManage) {
+    addToAlbum(ppidOrList) {
+      if (!ppidOrList || !this.canManage) {
+        return;
+      }
+
+      // Validate array input
+      if (Array.isArray(ppidOrList) && ppidOrList.length === 0) {
         return;
       }
 
@@ -338,9 +345,16 @@ export default {
       this.busy = true;
       this.dialog.album = false;
 
-      $api
-        .post(`albums/${ppid}/photos`, { photos: this.selection })
+      const albumUids = Array.isArray(ppidOrList) ? ppidOrList : [ppidOrList];
+      // Deduplicate album UIDs
+      const uniqueAlbumUids = [...new Set(albumUids.filter((uid) => uid))];
+      const body = { photos: this.selection };
+
+      Promise.all(uniqueAlbumUids.map((uid) => $api.post(`albums/${uid}/photos`, body)))
         .then(() => this.onAdded())
+        .catch((error) => {
+          $notify.error(this.$gettext("Some albums could not be updated"));
+        })
         .finally(() => {
           this.busy = false;
         });
@@ -412,8 +426,17 @@ export default {
       download(path, "photos.zip");
     },
     edit() {
-      // Open Edit Dialog
-      this.$event.PubSub.publish("dialog.edit", { selection: this.selection, album: this.album, index: 0 });
+      if (!this.canEdit) {
+        $notify.error(this.$gettext("Disabled"));
+        return;
+      }
+
+      // Open Edit or Batch Edit Dialog.
+      if (!this.canBatchEdit || this.selection.length === 1) {
+        this.$event.PubSub.publish("dialog.edit", { selection: this.selection, album: this.album, index: 0 });
+      } else {
+        this.$event.PubSub.publish("dialog.batchedit", { selection: this.selection, album: this.album, index: 0 });
+      }
     },
     onShared() {
       this.dialog.share = false;

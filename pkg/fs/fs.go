@@ -32,7 +32,7 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/photoprism/photoprism/pkg/service/http/safe"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 var ignoreCase bool

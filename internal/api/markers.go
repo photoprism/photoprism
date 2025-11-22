@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -38,28 +40,27 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	// Check authorization.
 	s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
 
-	if s.Invalid() {
-		AbortForbidden(c)
-		return nil, nil, fmt.Errorf("unauthorized")
+	if s.Abort(c) {
+		return nil, nil, errors.New("unauthorized")
 	}
 
 	// Check feature flags.
 	conf := get.Config()
 	if !conf.Settings().Features.People {
 		AbortFeatureDisabled(c)
-		return nil, nil, fmt.Errorf("feature disabled")
+		return nil, nil, errors.New("feature disabled")
 	}
 
 	// Find marker.
 	if uid := c.Param("marker_uid"); uid == "" {
 		AbortBadRequest(c)
-		return nil, nil, fmt.Errorf("bad request")
+		return nil, nil, errors.New("bad request")
 	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
 		return nil, nil, fmt.Errorf("uid %s %s", uid, err)
 	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
-		return nil, marker, fmt.Errorf("marker file missing")
+		return nil, marker, errors.New("marker file missing")
 	}
 
 	// Find file.
@@ -75,8 +76,10 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //
 // See internal/form/marker.go for the values required to create a new marker.
 //
-//	@Tags	Files
-//	@Router	/api/v1/markers [post]
+//	@Tags		Files
+//	@Produce	json
+//	@Success	201	{object}	entity.Marker
+//	@Router		/api/v1/markers [post]
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
@@ -164,8 +167,9 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Display success message.
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
-		// Return new marker.
-		c.JSON(http.StatusOK, marker)
+		// Return new marker with location header.
+		header.SetLocation(c, c.FullPath(), marker.MarkerUID)
+		c.JSON(http.StatusCreated, marker)
 	})
 }
 

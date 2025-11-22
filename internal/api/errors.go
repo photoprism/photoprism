@@ -16,7 +16,7 @@ import (
 //
 //	@Summary	searches the error logs and returns the results as JSON
 //	@Id			GetErrors
-//	@Tags		Errors
+//	@Tags		Logs
 //	@Produce	json
 //	@Success	200				{object}	entity.Error
 //	@Failure	401,403,429,400	{object}	i18n.Response
@@ -54,7 +54,7 @@ func GetErrors(router *gin.RouterGroup) {
 //
 //	@Summary	removes all entries from the error logs
 //	@Id			DeleteErrors
-//	@Tags		Errors
+//	@Tags		Logs
 //	@Accept		json
 //	@Produce	json
 //	@Failure	401,403,429,500	{object}	i18n.Response

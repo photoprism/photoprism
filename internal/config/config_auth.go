@@ -100,6 +100,15 @@ func (c *Config) AdminPassword() string {
 	}
 }
 
+// AdminScope returns the initial admin account scope.
+func (c *Config) AdminScope() string {
+	if c.options.AdminScope == "" {
+		return ""
+	}
+
+	return clean.Scope(c.options.AdminScope)
+}
+
 // PasswordLength returns the minimum password length in characters.
 func (c *Config) PasswordLength() int {
 	if c.Public() {

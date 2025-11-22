@@ -117,4 +117,16 @@ func TestUpdateSubject(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjectss/xxx", `{"Name": "Updated Name"}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("SetManualCover", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetSubject(router)
+		UpdateSubject(router)
+
+		const hash = "6f6cbaa6ae8ead9da7ee99ab66aca1ae7eed8d5c-0910162fd2fd"
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b2h8njw0sx", `{"Thumb":"`+hash+`","ThumbSrc":"manual"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, hash, gjson.Get(r.Body.String(), "Thumb").String())
+		assert.Equal(t, "manual", gjson.Get(r.Body.String(), "ThumbSrc").String())
+	})
 }

@@ -32,7 +32,7 @@ func TestAuthJWTCommands(t *testing.T) {
 	get.SetConfig(conf)
 	conf.RegisterDb()
 
-	require.True(t, conf.IsPortal())
+	require.True(t, conf.Portal())
 
 	manager := get.JWTManager()
 	require.NotNil(t, manager)
@@ -46,7 +46,7 @@ func TestAuthJWTCommands(t *testing.T) {
 	node := &reg.Node{}
 	node.UUID = nodeUUID
 	node.Name = "pp-node-01"
-	node.Role = string(cluster.RoleInstance)
+	node.Role = string(cluster.RoleApp)
 	require.NoError(t, registry.Put(node))
 	t.Cleanup(func() {
 		conf.Options().Edition = origEdition

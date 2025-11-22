@@ -14,6 +14,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// ProjectRoot references the project root directory for use in tests.
+var ProjectRoot = fs.Abs("../../")
+
 // Runs first when package is tested.
 func init() {
 	hub.ApplyTestConfig()
@@ -25,11 +28,14 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 
 	c := TestConfig()
-	defer c.CloseDb()
 
 	code := m.Run()
 
 	// Remove temporary SQLite files after running the tests.
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
 	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
@@ -127,8 +133,21 @@ func TestConfig_OptionsYaml(t *testing.T) {
 	t.Run("ChangePath", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
-		c.options.ConfigPath = "/go/src/github.com/photoprism/photoprism/internal/config/testdata/"
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/options.yml", c.OptionsYaml())
+		c.options.ConfigPath = ProjectRoot + "/internal/config/testdata/"
+		assert.Equal(t, ProjectRoot+"/internal/config/testdata/options.yml", c.OptionsYaml())
+	})
+	t.Run("PreferYamlExtension", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempDir := t.TempDir()
+		c.options.ConfigPath = tempDir
+		c.options.OptionsYaml = ""
+
+		yamlPath := filepath.Join(tempDir, "options"+fs.ExtYaml)
+		if err := os.WriteFile(yamlPath, []byte("foo: bar\n"), fs.ModeFile); err != nil {
+			t.Fatalf("write %s: %v", yamlPath, err)
+		}
+
+		assert.Equal(t, yamlPath, c.OptionsYaml())
 	})
 }
 
@@ -163,7 +182,7 @@ func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	c.AssertTestData(t)
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/import", c.ImportPath())
 	result := c.ImportPath()
 	assert.True(t, strings.HasPrefix(result, "/"))
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/import"))
@@ -217,14 +236,14 @@ func TestConfig_ExamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.ExamplesPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
+	assert.Equal(t, ProjectRoot+"/assets/examples", path)
 }
 
 func TestConfig_TemplatesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.TemplatesPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/templates", path)
+	assert.Equal(t, ProjectRoot+"/assets/templates", path)
 }
 
 func TestConfig_CustomTemplatesPath(t *testing.T) {
@@ -246,38 +265,55 @@ func TestConfig_StaticPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.StaticPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static", path)
+	assert.Equal(t, ProjectRoot+"/assets/static", path)
 }
 
 func TestConfig_StaticFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.StaticFile("video/404.mp4")
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/video/404.mp4", path)
+	assert.Equal(t, ProjectRoot+"/assets/static/video/404.mp4", path)
+
+	path = c.StaticFile("/img/logo.png")
+	assert.Equal(t, filepath.Join(c.StaticPath(), "img/logo.png"), path)
 }
 
-func TestConfig_BuildPath(t *testing.T) {
+func TestConfig_StaticBuildPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.BuildPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/build", path)
+	path := c.StaticBuildPath()
+	assert.Equal(t, ProjectRoot+"/assets/static/build", path)
 }
 
-func TestConfig_ImgPath(t *testing.T) {
+func TestConfig_StaticBuildFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	result := c.ImgPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", result)
+	assert.Equal(t, filepath.Join(c.StaticBuildPath(), fs.SwJsFile), c.StaticBuildFile(fs.SwJsFile))
+	assert.Equal(t, filepath.Join(c.StaticBuildPath(), "chunk/app.js"), c.StaticBuildFile("chunk/app.js"))
+}
+
+func TestConfig_StaticImgPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.StaticImgPath()
+	assert.Equal(t, ProjectRoot+"/assets/static/img", result)
+}
+
+func TestConfig_StaticImgFile(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, filepath.Join(c.StaticImgPath(), "favicon.ico"), c.StaticImgFile("favicon.ico"))
+	assert.Equal(t, filepath.Join(c.StaticImgPath(), "wallpapers/default.jpg"), c.StaticImgFile("/wallpapers/default.jpg"))
 }
 
 func TestConfig_ThemePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/theme", c.ThemePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
 	c.SetThemePath("testdata/static/img/wallpaper")
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/static/img/wallpaper", c.ThemePath())
+	assert.Equal(t, ProjectRoot+"/internal/config/testdata/static/img/wallpaper", c.ThemePath())
 	c.SetThemePath("")
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/theme", c.ThemePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
 }
 
 func TestConfig_IndexWorkers(t *testing.T) {

@@ -19,13 +19,14 @@ var UserRoles = RoleStrings{
 
 // ClientRoles maps valid API client roles.
 var ClientRoles = RoleStrings{
-	string(RoleAdmin):    RoleAdmin,
-	string(RoleInstance): RoleInstance,
-	string(RoleService):  RoleService,
-	string(RolePortal):   RolePortal,
-	string(RoleClient):   RoleClient,
-	string(RoleNone):     RoleNone,
-	RoleAliasNone:        RoleNone,
+	string(RoleAdmin):   RoleAdmin,
+	string(RoleApp):     RoleApp,
+	"instance":          RoleApp,
+	string(RoleService): RoleService,
+	string(RolePortal):  RolePortal,
+	string(RoleClient):  RoleClient,
+	string(RoleNone):    RoleNone,
+	RoleAliasNone:       RoleNone,
 }
 
 // Strings returns the roles as string slice.
@@ -34,6 +35,10 @@ func (m RoleStrings) Strings() []string {
 	includesNone := false
 
 	for r := range m {
+		if r == "instance" {
+			continue
+		}
+
 		if r == RoleAliasNone {
 			includesNone = true
 		} else if r != string(RoleNone) {

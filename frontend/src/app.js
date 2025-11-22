@@ -25,7 +25,6 @@ Additional information can be found in our Developer Guide:
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import "common/navigation";
 import $api from "common/api";
 import $notify from "common/notify";
 import { $view } from "common/view";
@@ -54,7 +53,6 @@ import * as themes from "options/themes";
 import Hls from "hls.js";
 import { createGettext, T } from "common/gettext";
 import { Locale } from "locales";
-import * as offline from "@lcdp/offline-plugin/runtime";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
@@ -200,6 +198,30 @@ $config.update().finally(() => {
     },
   });
 
+  const currentHistoryState = () => {
+    if (router.options?.history?.state) {
+      return router.options.history.state;
+    }
+
+    if (typeof window !== "undefined" && typeof window.history !== "undefined") {
+      return window.history.state;
+    }
+
+    return undefined;
+  };
+
+  router.beforeEach((to, from, next) => {
+    $view.prepareNavigation(currentHistoryState());
+    next();
+  });
+
+  router.afterEach(() => {
+    $view.commitNavigation(currentHistoryState());
+    requestAnimationFrame(() => {
+      $view.resetNavigationDirection();
+    });
+  });
+
   // Add global guards to block navigation when dialogs are open and enforce auth/settings rules.
   router.beforeEach((to) => {
     if ($view.preventNavigation) {
@@ -267,7 +289,14 @@ $config.update().finally(() => {
   app.mount("#app");
 
   // Allows the application to be installed as a PWA.
-  if ($config.baseUri === "") {
-    offline.install();
+  if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+    const scopeBase = $config.baseUri ? $config.baseUri.replace(/\/+$/, "") + "/" : "/";
+    const swUrl = `${scopeBase}sw.js`.replace(/\/\/+/g, "/");
+
+    navigator.serviceWorker
+      .register(swUrl, { scope: scopeBase })
+      .catch((err) => {
+        $log.warn("service worker: register failed", err);
+      });
   }
 });

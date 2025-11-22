@@ -30,17 +30,17 @@ CREATE TABLE `albums` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_albums_album_uid` (`album_uid`),
-  KEY `idx_albums_album_path` (`album_path`(768)),
-  KEY `idx_albums_album_title` (`album_title`),
   KEY `idx_albums_album_category` (`album_category`),
   KEY `idx_albums_album_state` (`album_state`),
+  KEY `idx_albums_ymd` (`album_day`),
+  KEY `idx_albums_published_at` (`published_at`),
+  KEY `idx_albums_album_slug` (`album_slug`),
+  KEY `idx_albums_album_title` (`album_title`),
   KEY `idx_albums_country_year_month` (`album_country`,`album_year`,`album_month`),
   KEY `idx_albums_thumb` (`thumb`),
   KEY `idx_albums_created_by` (`created_by`),
   KEY `idx_albums_deleted_at` (`deleted_at`),
-  KEY `idx_albums_album_slug` (`album_slug`),
-  KEY `idx_albums_ymd` (`album_day`),
-  KEY `idx_albums_published_at` (`published_at`),
+  KEY `idx_albums_album_path` (`album_path`(768)),
   KEY `idx_albums_album_filter` (`album_filter`(512))
 );
 CREATE TABLE `albums_users` (
@@ -49,8 +49,8 @@ CREATE TABLE `albums_users` (
   `team_uid` varbinary(42) DEFAULT NULL,
   `perm` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`uid`,`user_uid`),
-  KEY `idx_albums_users_user_uid` (`user_uid`),
-  KEY `idx_albums_users_team_uid` (`team_uid`)
+  KEY `idx_albums_users_team_uid` (`team_uid`),
+  KEY `idx_albums_users_user_uid` (`user_uid`)
 );
 CREATE TABLE `audit_logins` (
   `client_ip` varchar(64) NOT NULL,
@@ -66,10 +66,10 @@ CREATE TABLE `audit_logins` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`client_ip`,`login_name`,`login_realm`),
-  KEY `idx_audit_logins_login_name` (`login_name`),
   KEY `idx_audit_logins_failed_at` (`failed_at`),
   KEY `idx_audit_logins_banned_at` (`banned_at`),
-  KEY `idx_audit_logins_updated_at` (`updated_at`)
+  KEY `idx_audit_logins_updated_at` (`updated_at`),
+  KEY `idx_audit_logins_login_name` (`login_name`)
 );
 CREATE TABLE `audit_logs` (
   `id` int(10) unsigned NOT NULL,
@@ -79,11 +79,12 @@ CREATE TABLE `audit_logs` (
   `log_message` varbinary(2048) DEFAULT NULL,
   `log_repeated` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_audit_logs_log_time` (`log_time`),
-  KEY `idx_audit_logs_client_ip` (`client_ip`)
+  KEY `idx_audit_logs_client_ip` (`client_ip`),
+  KEY `idx_audit_logs_log_time` (`log_time`)
 );
 CREATE TABLE `auth_clients` (
   `client_uid` varbinary(42) NOT NULL,
+  `node_uuid` varbinary(64) DEFAULT '',
   `user_uid` varbinary(42) DEFAULT '',
   `user_name` varchar(200) DEFAULT NULL,
   `client_name` varchar(200) DEFAULT NULL,
@@ -97,12 +98,16 @@ CREATE TABLE `auth_clients` (
   `auth_expires` bigint(20) DEFAULT NULL,
   `auth_tokens` bigint(20) DEFAULT NULL,
   `auth_enabled` tinyint(1) DEFAULT NULL,
+  `refresh_token` varbinary(2048) DEFAULT '',
+  `id_token` varbinary(2048) DEFAULT '',
+  `data_json` varbinary(4096) DEFAULT NULL,
   `last_active` bigint(20) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`client_uid`),
   KEY `idx_auth_clients_user_uid` (`user_uid`),
-  KEY `idx_auth_clients_user_name` (`user_name`)
+  KEY `idx_auth_clients_user_name` (`user_name`),
+  KEY `idx_auth_clients_node_uuid` (`node_uuid`)
 );
 CREATE TABLE `auth_sessions` (
   `id` varbinary(2048) NOT NULL,
@@ -133,12 +138,12 @@ CREATE TABLE `auth_sessions` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_auth_sessions_client_ip` (`client_ip`),
-  KEY `idx_auth_sessions_auth_id` (`auth_id`),
   KEY `idx_auth_sessions_sess_expires` (`sess_expires`),
   KEY `idx_auth_sessions_user_uid` (`user_uid`),
   KEY `idx_auth_sessions_user_name` (`user_name`),
-  KEY `idx_auth_sessions_client_uid` (`client_uid`)
+  KEY `idx_auth_sessions_client_uid` (`client_uid`),
+  KEY `idx_auth_sessions_client_ip` (`client_ip`),
+  KEY `idx_auth_sessions_auth_id` (`auth_id`)
 );
 CREATE TABLE `auth_users` (
   `id` int(11) NOT NULL,
@@ -179,14 +184,14 @@ CREATE TABLE `auth_users` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_auth_users_user_uid` (`user_uid`),
+  KEY `idx_auth_users_user_uuid` (`user_uuid`),
   KEY `idx_auth_users_user_name` (`user_name`),
+  KEY `idx_auth_users_expires_at` (`expires_at`),
   KEY `idx_auth_users_born_at` (`born_at`),
   KEY `idx_auth_users_thumb` (`thumb`),
   KEY `idx_auth_users_deleted_at` (`deleted_at`),
-  KEY `idx_auth_users_user_uuid` (`user_uuid`),
   KEY `idx_auth_users_auth_id` (`auth_id`),
   KEY `idx_auth_users_user_email` (`user_email`),
-  KEY `idx_auth_users_expires_at` (`expires_at`),
   KEY `idx_auth_users_invite_token` (`invite_token`)
 );
 CREATE TABLE `auth_users_details` (
@@ -225,10 +230,10 @@ CREATE TABLE `auth_users_details` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`user_uid`),
-  KEY `idx_auth_users_details_subj_uid` (`subj_uid`),
-  KEY `idx_auth_users_details_place_id` (`place_id`),
   KEY `idx_auth_users_details_cell_id` (`cell_id`),
-  KEY `idx_auth_users_details_org_email` (`org_email`)
+  KEY `idx_auth_users_details_org_email` (`org_email`),
+  KEY `idx_auth_users_details_subj_uid` (`subj_uid`),
+  KEY `idx_auth_users_details_place_id` (`place_id`)
 );
 CREATE TABLE `auth_users_settings` (
   `user_uid` varbinary(42) NOT NULL,
@@ -356,6 +361,8 @@ CREATE TABLE `faces` (
   `sample_radius` double DEFAULT NULL,
   `collisions` int(11) DEFAULT NULL,
   `collision_radius` double DEFAULT NULL,
+  `merge_retry` tinyint(3) DEFAULT 0,
+  `merge_notes` varchar(255) DEFAULT '',
   `embedding_json` mediumblob DEFAULT NULL,
   `matched_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
@@ -415,19 +422,19 @@ CREATE TABLE `files` (
   `published_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uix_files_file_uid` (`file_uid`),
   UNIQUE KEY `idx_files_name_root` (`file_name`,`file_root`),
+  UNIQUE KEY `uix_files_file_uid` (`file_uid`),
   UNIQUE KEY `idx_files_search_media` (`media_id`),
   UNIQUE KEY `idx_files_search_timeline` (`time_index`),
+  KEY `idx_files_photo_id` (`photo_id`,`file_primary`),
   KEY `idx_files_photo_uid` (`photo_uid`),
+  KEY `idx_files_file_error` (`file_error`),
+  KEY `idx_files_published_at` (`published_at`),
+  KEY `idx_files_deleted_at` (`deleted_at`),
   KEY `idx_files_photo_taken_at` (`photo_taken_at`),
+  KEY `idx_files_media_utc` (`media_utc`),
   KEY `idx_files_instance_id` (`instance_id`),
   KEY `idx_files_file_hash` (`file_hash`),
-  KEY `idx_files_file_error` (`file_error`),
-  KEY `idx_files_deleted_at` (`deleted_at`),
-  KEY `idx_files_photo_id` (`photo_id`,`file_primary`),
-  KEY `idx_files_media_utc` (`media_utc`),
-  KEY `idx_files_published_at` (`published_at`),
   KEY `idx_files_missing_root` (`file_missing`,`file_root`)
 );
 CREATE TABLE `files_share` (
@@ -479,10 +486,10 @@ CREATE TABLE `folders` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`folder_uid`),
   UNIQUE KEY `idx_folders_path_root` (`path`,`root`),
+  KEY `idx_folders_deleted_at` (`deleted_at`),
   KEY `idx_folders_folder_category` (`folder_category`),
   KEY `idx_folders_country_year_month` (`folder_country`,`folder_year`,`folder_month`),
-  KEY `idx_folders_published_at` (`published_at`),
-  KEY `idx_folders_deleted_at` (`deleted_at`)
+  KEY `idx_folders_published_at` (`published_at`)
 );
 CREATE TABLE `keywords` (
   `id` int(10) unsigned NOT NULL,
@@ -497,8 +504,9 @@ CREATE TABLE `labels` (
   `label_slug` varbinary(160) DEFAULT NULL,
   `custom_slug` varbinary(160) DEFAULT NULL,
   `label_name` varchar(160) DEFAULT NULL,
-  `label_priority` int(11) DEFAULT NULL,
-  `label_favorite` tinyint(1) DEFAULT NULL,
+  `label_favorite` tinyint(1) DEFAULT 0,
+  `label_priority` int(11) DEFAULT 0,
+  `label_nsfw` tinyint(1) DEFAULT 0,
   `label_description` varchar(2048) DEFAULT NULL,
   `label_notes` varchar(1024) DEFAULT NULL,
   `photo_count` int(11) DEFAULT 1,
@@ -509,12 +517,12 @@ CREATE TABLE `labels` (
   `published_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uix_labels_label_slug` (`label_slug`),
   UNIQUE KEY `uix_labels_label_uid` (`label_uid`),
+  UNIQUE KEY `uix_labels_label_slug` (`label_slug`),
+  KEY `idx_labels_custom_slug` (`custom_slug`),
   KEY `idx_labels_thumb` (`thumb`),
   KEY `idx_labels_published_at` (`published_at`),
-  KEY `idx_labels_deleted_at` (`deleted_at`),
-  KEY `idx_labels_custom_slug` (`custom_slug`)
+  KEY `idx_labels_deleted_at` (`deleted_at`)
 );
 CREATE TABLE `lenses` (
   `id` int(10) unsigned NOT NULL,
@@ -578,11 +586,11 @@ CREATE TABLE `markers` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`marker_uid`),
+  KEY `idx_markers_thumb` (`thumb`),
+  KEY `idx_markers_matched_at` (`matched_at`),
   KEY `idx_markers_file_uid` (`file_uid`),
   KEY `idx_markers_subj_uid_src` (`subj_uid`,`subj_src`),
-  KEY `idx_markers_face_id` (`face_id`),
-  KEY `idx_markers_thumb` (`thumb`),
-  KEY `idx_markers_matched_at` (`matched_at`)
+  KEY `idx_markers_face_id` (`face_id`)
 );
 CREATE TABLE `migrations` (
   `id` varchar(16) NOT NULL,
@@ -663,25 +671,26 @@ CREATE TABLE `photos` (
   `updated_at` datetime DEFAULT NULL,
   `edited_at` datetime DEFAULT NULL,
   `published_at` datetime DEFAULT NULL,
+  `indexed_at` datetime DEFAULT NULL,
   `checked_at` datetime DEFAULT NULL,
   `estimated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_photos_photo_uid` (`photo_uid`),
+  KEY `idx_photos_deleted_at` (`deleted_at`),
+  KEY `idx_photos_path_name` (`photo_path`,`photo_name`),
+  KEY `idx_photos_cell_id` (`cell_id`),
+  KEY `idx_photos_photo_lat` (`photo_lat`),
+  KEY `idx_photos_photo_lng` (`photo_lng`),
+  KEY `idx_photos_country_year_month` (`photo_country`,`photo_year`,`photo_month`),
   KEY `idx_photos_ymd` (`photo_day`),
   KEY `idx_photos_camera_lens` (`camera_id`,`lens_id`),
   KEY `idx_photos_created_by` (`created_by`),
+  KEY `idx_photos_uuid` (`uuid`),
   KEY `idx_photos_taken_uid` (`taken_at`,`photo_uid`),
   KEY `idx_photos_place_id` (`place_id`),
-  KEY `idx_photos_cell_id` (`cell_id`),
   KEY `idx_photos_published_at` (`published_at`),
-  KEY `idx_photos_checked_at` (`checked_at`),
-  KEY `idx_photos_deleted_at` (`deleted_at`),
-  KEY `idx_photos_uuid` (`uuid`),
-  KEY `idx_photos_path_name` (`photo_path`,`photo_name`),
-  KEY `idx_photos_photo_lat` (`photo_lat`),
-  KEY `idx_photos_photo_lng` (`photo_lng`),
-  KEY `idx_photos_country_year_month` (`photo_country`,`photo_year`,`photo_month`)
+  KEY `idx_photos_checked_at` (`checked_at`)
 );
 CREATE TABLE `photos_albums` (
   `photo_uid` varbinary(42) NOT NULL,
@@ -705,6 +714,8 @@ CREATE TABLE `photos_labels` (
   `label_id` int(10) unsigned NOT NULL,
   `label_src` varbinary(8) DEFAULT NULL,
   `uncertainty` smallint(6) DEFAULT NULL,
+  `topicality` smallint(6) DEFAULT 0,
+  `nsfw` smallint(6) DEFAULT 0,
   PRIMARY KEY (`photo_id`,`label_id`),
   KEY `idx_photos_labels_label_id` (`label_id`)
 );
@@ -714,8 +725,8 @@ CREATE TABLE `photos_users` (
   `team_uid` varbinary(42) DEFAULT NULL,
   `perm` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`uid`,`user_uid`),
-  KEY `idx_photos_users_team_uid` (`team_uid`),
-  KEY `idx_photos_users_user_uid` (`user_uid`)
+  KEY `idx_photos_users_user_uid` (`user_uid`),
+  KEY `idx_photos_users_team_uid` (`team_uid`)
 );
 CREATE TABLE `places` (
   `id` varbinary(42) NOT NULL,

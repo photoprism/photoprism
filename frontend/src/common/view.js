@@ -8,6 +8,38 @@ const TouchMoveEvent = "touchmove";
 const debug = window.__CONFIG__?.debug;
 const trace = window.__CONFIG__?.trace;
 
+// Enumerates the possible navigation directions observed between Vue Router history states.
+const NavigationDirection = Object.freeze({
+  None: "none",
+  Back: "back",
+  Forward: "forward",
+  Replace: "replace",
+});
+
+// Reads the current history state if the environment exposes the history API.
+const getHistoryState = () => {
+  if (typeof window === "undefined" || typeof window.history === "undefined") {
+    return undefined;
+  }
+
+  return window.history.state;
+};
+
+// Extracts the numeric `position` field Vue Router stores inside history.state.
+const parseHistoryPosition = (state) => {
+  if (!state || typeof state !== "object") {
+    return undefined;
+  }
+
+  const numeric = Number(state.position);
+
+  if (!Number.isFinite(numeric)) {
+    return undefined;
+  }
+
+  return numeric;
+};
+
 // Returns the <html> element.
 export function getHtmlElement() {
   return document.documentElement;
@@ -120,63 +152,161 @@ const storage = {
   },
 };
 
+// Minimal sessionStorage wrapper for ephemeral navigation state.
+const sessionStore = {
+  get(key) {
+    try {
+      return sessionStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key, val) {
+    try {
+      sessionStorage.setItem(key, val);
+    } catch {
+      /* ignore */
+    }
+  },
+  remove(key) {
+    try {
+      sessionStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+  },
+};
+
+const restoreNamespace = "view.restore.";
+const restoreMaxAgeMs = 30 * 60 * 1000; // 30 minutes
+
+const encodeRestoreKey = (key) => {
+  if (!key || typeof key !== "string") {
+    return "";
+  }
+
+  return restoreNamespace + encodeURIComponent(key);
+};
+
+// resolveFocusTarget returns the most appropriate element inside root for initial focus.
+function resolveFocusTarget(root) {
+  if (!root) {
+    return null;
+  }
+
+  let el = getHTMLElement(root);
+
+  if (!(el instanceof HTMLElement)) {
+    return null;
+  }
+
+  if (el.hasAttribute("autofocus")) {
+    return el;
+  }
+
+  let candidate = null;
+
+  if (el.getAttribute("tabindex") === "-1") {
+    candidate = el;
+  }
+
+  try {
+    const autofocus = el.querySelector("[autofocus]");
+
+    if (autofocus instanceof HTMLElement) {
+      return autofocus;
+    }
+
+    const sentinel = el.querySelector('[tabindex="-1"]');
+
+    if (sentinel instanceof HTMLElement) {
+      return sentinel;
+    }
+  } catch {
+    // Ignore.
+  }
+
+  return candidate;
+}
+
+// getHTMLElement normalizes Vue component refs or DOM nodes to a concrete HTMLElement.
+function getHTMLElement(ref) {
+  if (!ref) {
+    return null;
+  }
+
+  if (ref instanceof HTMLElement) {
+    return ref;
+  } else if (ref.contentEl && ref.contentEl instanceof HTMLElement) {
+    return ref.contentEl;
+  } else if (ref.$el && ref.$el instanceof HTMLElement) {
+    return ref.$el;
+  }
+
+  return null;
+}
+
+// resolveFocusScope determines the container and fallback focus element for trapping focus within a component.
+function resolveFocusScope(component) {
+  if (!component || !component.$refs) {
+    return null;
+  }
+
+  const root = getHTMLElement(component.$refs?.dialog);
+
+  if (!root) {
+    return null;
+  }
+
+  const fallback = resolveFocusTarget(root);
+
+  if (fallback && root.contains(fallback)) {
+    return {
+      root,
+      fallback,
+    };
+  }
+
+  return {
+    root,
+    fallback: root,
+  };
+}
+
 // Returns the most likely focus element for the given component, or null if none exists.
 export function findFocusElement(c) {
   if (!c) {
     return null;
   }
 
-  let el, ref;
+  const candidates = [];
 
   if (c.$refs && c.$refs instanceof Object) {
     focusRefs.forEach((r) => {
-      if (c.$refs[r] && c.$refs[r] instanceof Object) {
-        if (c.$refs[r].$el instanceof HTMLElement && c.$refs[r].$el.getAttribute("tabindex") !== null) {
-          ref = c.$refs[r].$el;
-        } else if (c.$refs[r] instanceof HTMLElement && c.$refs[r].getAttribute("tabindex") !== null) {
-          ref = c.$refs[r];
+      if (c.$refs[r]) {
+        const el = getHTMLElement(c.$refs[r]);
+        if (el) {
+          candidates.push(el);
         }
       }
     });
   }
 
-  if (!ref || !(ref instanceof Object) || typeof ref.getAttribute !== "function") {
-    ref = null;
-  } else if (ref.getAttribute("tabindex") === null) {
-    ref = null;
+  const el = getHTMLElement(c);
+  if (el) {
+    candidates.push(el);
   }
 
-  if (!ref && c.$el && c.$el instanceof Object) {
-    if (c.$el instanceof HTMLElement) {
-      ref = c.$el;
-    } else if (c.$el.parentElement && c.$el.parentElement instanceof HTMLElement) {
-      ref = c.$el.parentElement;
-    }
-  }
+  for (let i = 0; i < candidates.length; i++) {
+    const target = resolveFocusTarget(candidates[i]);
 
-  if (ref) {
-    if (ref.$el && ref.$el instanceof HTMLElement) {
-      ref = ref.$el;
-    }
-
-    if (ref instanceof HTMLElement) {
-      if (ref.getAttribute("tabindex") !== null) {
-        return ref;
-      }
-
-      try {
-        el = ref.querySelector('input[tabindex="1"]');
-        if (el && el instanceof HTMLElement) {
-          return el;
-        }
-      } catch (_) {
-        // Ignore.
-      }
+    if (target) {
+      return target;
     }
   }
 
   if (c.$refs?.dialog) {
-    return document.querySelector(".v-overlay-container .v-overlay__content");
+    return getHTMLElement(c.$refs.dialog);
   }
 
   return null;
@@ -264,19 +394,50 @@ export class View {
     this.scopes = [];
     this.hideScrollbar = false;
     this.preventNavigation = false;
+    this.focusScopes = new Map();
 
-    addEventListener("keydown", this.onKeyDown.bind(this));
+    // Tracks the most recent history position and derived navigation direction so components can
+    // determine whether a transition was triggered by browser back/forward buttons.
+    this.navigation = {
+      currentPosition: parseHistoryPosition(getHistoryState()),
+      pendingPosition: undefined,
+      direction: NavigationDirection.None,
+      consumed: false,
+    };
+
+    // Bind keydown handler once so it can be removed if needed (avoids leaking bound fns).
+    this._onKeyDownListener = this.onKeyDown.bind(this);
+    addEventListener("keydown", this._onKeyDownListener);
+
+    // Register a single document-level focus handler, so dialogs can keep keyboard focus inside their scope.
+    this._onFocusOutListener = this.onDocumentFocusOut.bind(this);
+    document.addEventListener("focusout", this._onFocusOutListener);
+
+    // Options used when preventing navigation touch gestures; keep a stable
+    // object reference so add/removeEventListener calls can match on all browsers.
+    this._preventNavOptions = { passive: false };
 
     if (trace) {
-      document.addEventListener("focusin", (ev) => {
+      // Store trace handlers so they can be removed later if needed.
+      this._traceFocusIn = (ev) => {
         console.log("%cdocument.focusin", "color: #B2EBF2;", ev.target);
-      });
-      document.addEventListener("focusout", (ev) => {
-        console.log("%cdocument.focusout", "color: #B2EBF2;", ev.target);
-      });
+      };
+
+      document.addEventListener("focusin", this._traceFocusIn);
     }
   }
 
+  // destroy unregisters the global listeners so the view helper can be garbage-collected safely.
+  destroy() {
+    removeEventListener("keydown", this._onKeyDownListener);
+    document.removeEventListener("focusout", this._onFocusOutListener);
+
+    if (this._traceFocusIn) {
+      document.removeEventListener("focusin", this._traceFocusIn);
+    }
+  }
+
+  // onKeyDown forwards global shortcuts (Escape, Ctrl/⌘ combos) to the active component when supported.
   onKeyDown(ev) {
     if (!this.current || !ev || !(ev instanceof KeyboardEvent) || !ev.code) {
       return;
@@ -332,6 +493,9 @@ export class View {
       this.apply(this.current);
     }
 
+    // Remove any stale focus scope once the component leaves the stack.
+    this.focusScopes.delete(c);
+
     return this.scopes.length;
   }
 
@@ -364,13 +528,16 @@ export class View {
       console.log("data:", toRaw(c?.$data));
     }
 
-    // Automatically focus the active component if its element tabindex attribute is set to "1":
+    // Automatically focus the active component based on autofocus markers or tabindex sentinels:
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
     if (focusElement) {
       setFocus(focusElement, focusSelector, false);
     } else {
       setFocus(findFocusElement(c), false, false);
     }
+
+    // Capture the most recent focusable root so we can trap focus if this component opens a dialog.
+    this.recordFocusScope(c);
 
     // Return, as it should not be necessary to apply the same state twice.
     if (this.uid === uid) {
@@ -474,16 +641,16 @@ export class View {
     if (disableNavigationGestures) {
       if (!bodyEl.classList.contains("disable-navigation-gestures")) {
         bodyEl.classList.add("disable-navigation-gestures");
-        window.addEventListener(TouchStartEvent, preventNavigationTouchEvent, { passive: false });
-        window.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, { passive: false });
+        window.addEventListener(TouchStartEvent, preventNavigationTouchEvent, this._preventNavOptions);
+        window.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, this._preventNavOptions);
         if (debug) {
           console.log(`view: disabled touch navigation gestures`);
         }
       }
     } else if (bodyEl.classList.contains("disable-navigation-gestures")) {
       bodyEl.classList.remove("disable-navigation-gestures");
-      window.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, false);
-      window.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, false);
+      window.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, this._preventNavOptions);
+      window.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, this._preventNavOptions);
       if (debug) {
         console.log(`view: re-enabled touch navigation gestures`);
       }
@@ -493,6 +660,107 @@ export class View {
       console.groupEnd();
     }
     return true;
+  }
+
+  // recordFocusScope caches the DOM boundary used to keep focus inside the active component.
+  recordFocusScope(component) {
+    if (!component) {
+      return;
+    }
+
+    const scope = resolveFocusScope(component);
+
+    // Clear existing traps when we cannot resolve a focus container (e.g., simple pages).
+    if (!scope) {
+      this.focusScopes.delete(component);
+      return;
+    }
+
+    const { root } = scope;
+
+    // Ensure the focus container can receive focus, which some Vuetify overlays require explicitly.
+    if (root && !root.hasAttribute("tabindex")) {
+      root.setAttribute("tabindex", "-1");
+    }
+
+    // Remember the trapping metadata so onDocumentFocusOut can redirect focus if needed.
+    this.focusScopes.set(component, scope);
+  }
+
+  // onDocumentFocusOut re-focuses the current dialog when keyboard focus attempts to leave its scope.
+  onDocumentFocusOut(ev) {
+    if (trace) {
+      console.log("%cdocument.focusout", "color: #B2EBF2;", ev?.target);
+    }
+
+    if (!this.current || !ev || !(ev instanceof FocusEvent)) {
+      return;
+    }
+
+    const component = this.getCurrent();
+
+    if (!component) {
+      return;
+    }
+
+    // Look up the trap associated with the currently active component.
+    const scope = this.focusScopes.get(component);
+
+    if (!scope) {
+      return;
+    }
+
+    const { root, fallback } = scope;
+
+    // Drop the trap when the underlying DOM node vanished (dialog closed).
+    if (!root || !root.isConnected) {
+      this.focusScopes.delete(component);
+      return;
+    }
+
+    const next = ev.relatedTarget;
+
+    if (next instanceof HTMLElement && root.contains(next)) {
+      return;
+    }
+
+    const dialogOverlay = root.closest(".v-overlay");
+    const menuOverlayContent = next instanceof HTMLElement ? next.closest(".v-overlay__content") : null;
+
+    if (dialogOverlay && menuOverlayContent && menuOverlayContent instanceof HTMLElement) {
+      const menuOverlay = menuOverlayContent.closest(".v-overlay");
+
+      if (
+        menuOverlay &&
+        menuOverlay.classList.contains("v-menu") &&
+        menuOverlay.parentElement === dialogOverlay.parentElement &&
+        menuOverlay.style.display !== "none" &&
+        menuOverlayContent.contains(next)
+      ) {
+        // Allow focus to move into sibling menu overlays (e.g., combobox suggestions)
+        return;
+      }
+    }
+
+    ev.preventDefault();
+
+    const target =
+      (fallback && fallback.isConnected && root.contains(fallback) && fallback) ||
+      resolveFocusTarget(root) ||
+      findFocusElement(component) ||
+      root;
+
+    if (!target) {
+      return;
+    }
+
+    this.focusScopes.set(component, { root, fallback: target });
+
+    ev.preventDefault();
+
+    setTimeout(() => {
+      setFocus(target, false, false);
+    }, 0);
   }
 
   // Returns the number of views currently registered.
@@ -625,6 +893,181 @@ export class View {
     const c = this.scopes[this.scopes.length - 1];
 
     return c?.$options?.name === "App" || c?.$?.uid === 0;
+  }
+
+  // Persists batched restore data (e.g., number of items loaded, scroll offset) for the specified key.
+  saveRestoreState(key, state) {
+    if (!key || !state || typeof state !== "object") {
+      return false;
+    }
+
+    const storageKey = encodeRestoreKey(key);
+
+    if (!storageKey) {
+      return false;
+    }
+
+    const payload = { ...state };
+
+    if (!Object.prototype.hasOwnProperty.call(payload, "filterKey")) {
+      payload.filterKey = key;
+    }
+
+    payload.timestamp = Date.now();
+
+    sessionStore.set(storageKey, JSON.stringify(payload));
+
+    return true;
+  }
+
+  // Reads stored restore data without removing it. Returns undefined if none exists or the entry expired.
+  getRestoreState(key, maxAge = restoreMaxAgeMs) {
+    const storageKey = encodeRestoreKey(key);
+
+    if (!storageKey) {
+      return undefined;
+    }
+
+    const raw = sessionStore.get(storageKey);
+
+    if (!raw) {
+      return undefined;
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+
+      if (!parsed || typeof parsed !== "object") {
+        sessionStore.remove(storageKey);
+        return undefined;
+      }
+
+      const ts = Number(parsed.timestamp);
+
+      if (Number.isFinite(ts) && maxAge > 0 && Date.now() - ts > maxAge) {
+        sessionStore.remove(storageKey);
+        return undefined;
+      }
+
+      return { ...parsed };
+    } catch {
+      sessionStore.remove(storageKey);
+      return undefined;
+    }
+  }
+
+  // Reads and removes stored restore data atomically.
+  consumeRestoreState(key, maxAge = restoreMaxAgeMs) {
+    const restore = this.getRestoreState(key, maxAge);
+    const storageKey = encodeRestoreKey(key);
+
+    if (storageKey) {
+      sessionStore.remove(storageKey);
+    }
+
+    return restore;
+  }
+
+  // Removes stored restore data for the specified key.
+  clearRestoreState(key) {
+    const storageKey = encodeRestoreKey(key);
+
+    if (!storageKey) {
+      return false;
+    }
+
+    sessionStore.remove(storageKey);
+
+    return true;
+  }
+
+  // Computes the direction of the upcoming navigation using the provided history state snapshot.
+  prepareNavigation(state) {
+    const nextPos = parseHistoryPosition(state);
+
+    if (typeof nextPos !== "number") {
+      this.navigation.pendingPosition = undefined;
+      this.navigation.direction = NavigationDirection.None;
+      this.navigation.consumed = false;
+      return this.navigation.direction;
+    }
+
+    const current = typeof this.navigation.currentPosition === "number" ? this.navigation.currentPosition : nextPos;
+    let direction = NavigationDirection.Replace;
+
+    if (nextPos < current) {
+      direction = NavigationDirection.Back;
+    } else if (nextPos > current) {
+      direction = NavigationDirection.Forward;
+    }
+
+    this.navigation.pendingPosition = nextPos;
+    this.navigation.direction = direction;
+    this.navigation.consumed = false;
+
+    return direction;
+  }
+
+  // Commits the navigation after Vue Router resolves and updates the tracked history position.
+  commitNavigation(state) {
+    const nextPos = parseHistoryPosition(state);
+
+    if (typeof nextPos !== "number") {
+      this.navigation.pendingPosition = undefined;
+      return this.navigation.currentPosition;
+    }
+
+    const current = typeof this.navigation.currentPosition === "number" ? this.navigation.currentPosition : nextPos;
+
+    if (
+      this.navigation.direction !== NavigationDirection.Back &&
+      this.navigation.direction !== NavigationDirection.Forward
+    ) {
+      if (nextPos < current) {
+        this.navigation.direction = NavigationDirection.Back;
+      } else if (nextPos > current) {
+        this.navigation.direction = NavigationDirection.Forward;
+      } else {
+        this.navigation.direction = NavigationDirection.Replace;
+      }
+    }
+
+    this.navigation.currentPosition = nextPos;
+    this.navigation.pendingPosition = undefined;
+
+    return nextPos;
+  }
+
+  // Returns the last known navigation direction.
+  navigationDirection() {
+    return this.navigation.direction;
+  }
+
+  // True when the latest navigation moved backwards in the history stack and has not been consumed.
+  wasBackwardNavigation() {
+    return this.navigation.direction === NavigationDirection.Back;
+  }
+
+  // Alias retained for legacy call sites that expect a boolean guard.
+  isBackwardNavigationActive() {
+    return this.navigation.direction === NavigationDirection.Back;
+  }
+
+  // Marks the back-navigation flag as consumed so subsequent queries revert to the default flow.
+  consumeBackwardNavigation() {
+    if (this.navigation.direction === NavigationDirection.Back && !this.navigation.consumed) {
+      this.navigation.consumed = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  // Clears the cached navigation direction once components have reacted to it.
+  resetNavigationDirection(direction = NavigationDirection.None) {
+    this.navigation.direction = direction;
+    this.navigation.consumed = false;
+    this.navigation.pendingPosition = undefined;
   }
 
   // Saves the window scroll position.

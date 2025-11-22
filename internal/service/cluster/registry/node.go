@@ -8,7 +8,7 @@ import "github.com/photoprism/photoprism/internal/service/cluster"
 type Node struct {
 	cluster.Node
 	ClientSecret string `json:"-"`                   // plaintext only when newly created/rotated in-memory
-	RotatedAt    string `json:"rotatedAt,omitempty"` // secret rotation timestamp
+	RotatedAt    string `json:"RotatedAt,omitempty"` // secret rotation timestamp
 }
 
 // ensureDatabase returns a writable NodeDatabase, creating one if missing.

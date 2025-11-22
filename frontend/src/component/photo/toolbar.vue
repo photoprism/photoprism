@@ -18,7 +18,6 @@
         <v-text-field
           :model-value="filter.q"
           :density="density"
-          tabindex="1"
           hide-details
           clearable
           single-line
@@ -63,24 +62,16 @@
           group
           class="ms-1"
         >
-          <v-btn
-            value="cards"
-            tabindex="2"
-            icon="mdi-view-column"
-            class="ps-1 action-view-cards"
-            @click="setView('cards')"
-          ></v-btn>
+          <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
           <v-btn
             v-if="listView"
             value="list"
-            tabindex="2"
             icon="mdi-view-list"
             class="action-view-list"
             @click="setView('list')"
           ></v-btn>
           <v-btn
             value="mosaic"
-            tabindex="2"
             icon="mdi-view-comfy"
             class="pe-1 action-view-mosaic"
             @click="setView('mosaic')"
@@ -91,18 +82,12 @@
           v-if="canDelete && context === 'archive' && config.count.archived > 0"
           :title="$gettext('Delete All')"
           icon="mdi-delete-sweep"
-          tabindex="3"
           class="action-delete-all ms-1"
           @click.stop="deleteAll"
         >
         </v-btn>
 
-        <p-action-menu
-          v-if="$vuetify.display.mdAndUp"
-          :items="menuActions"
-          :tabindex="3"
-          button-class="ms-1"
-        ></p-action-menu>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
       </template>
       <template v-else>
         <v-spacer></v-spacer>
@@ -125,7 +110,6 @@
                   :model-value="filter.country"
                   :label="$gettext('Country')"
                   :menu-props="{ maxHeight: 346 }"
-                  tabindex="4"
                   single-line
                   hide-details
                   variant="solo-filled"
@@ -147,7 +131,6 @@
                   :model-value="filter.camera"
                   :label="$gettext('Camera')"
                   :menu-props="{ maxHeight: 346 }"
-                  tabindex="5"
                   single-line
                   hide-details
                   variant="solo-filled"
@@ -168,7 +151,6 @@
                   id="viewSelect"
                   :model-value="settings.view"
                   :label="$gettext('View')"
-                  tabindex="6"
                   single-line
                   hide-details
                   variant="solo-filled"
@@ -189,7 +171,6 @@
                   :model-value="filter.order"
                   :label="$gettext('Sort Order')"
                   :menu-props="{ maxHeight: 400 }"
-                  tabindex="7"
                   single-line
                   variant="solo-filled"
                   :density="density"
@@ -209,7 +190,6 @@
                   :model-value="filter.year"
                   :label="$gettext('Year')"
                   :menu-props="{ maxHeight: 346 }"
-                  tabindex="8"
                   single-line
                   variant="solo-filled"
                   :density="density"
@@ -229,7 +209,6 @@
                   :model-value="filter.month"
                   :label="$gettext('Month')"
                   :menu-props="{ maxHeight: 346 }"
-                  tabindex="9"
                   single-line
                   variant="solo-filled"
                   :density="density"
@@ -263,7 +242,6 @@
                   :model-value="filter.color"
                   :label="$gettext('Color')"
                   :menu-props="{ maxHeight: 346 }"
-                  tabindex="10"
                   single-line
                   hide-details
                   variant="solo-filled"
@@ -284,7 +262,6 @@
                   :model-value="filter.label"
                   :label="$gettext('Category')"
                   :menu-props="{ maxHeight: 346 }"
-                  tabindex="11"
                   single-line
                   hide-details
                   variant="solo-filled"
@@ -561,7 +538,7 @@ export default {
         const routeUrl = this.$router.resolve(route).href;
 
         if (routeUrl) {
-          window.open(routeUrl, "_blank");
+          this.$util.openUrl(routeUrl);
         }
       }
     },

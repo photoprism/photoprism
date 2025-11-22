@@ -16,7 +16,9 @@ const (
 	BuildDir        = "build"
 	CacheDir        = "cache"
 	CertificatesDir = "certificates"
+	NodeDir         = "node"
 	PortalDir       = "portal"
+	SecretsDir      = "secrets"
 	CmdDir          = "cmd"
 	ConfigDir       = "config"
 	ExamplesDir     = "examples"
@@ -37,4 +39,15 @@ const (
 	UploadDir       = "upload"
 	UsersDir        = "users"
 	ZipDir          = "zip"
+)
+
+// Common file names used across packages (sorted by name).
+const (
+	AppJsFile        = "app.js"
+	AssetsJsonFile   = "assets.json"
+	ManifestJsonFile = "manifest.json"
+	SwJsFile         = "sw.js"
+	VersionTxtFile   = "version.txt"
+	JoinTokenFile    = "join_token"
+	ClientSecretFile = "client_secret"
 )

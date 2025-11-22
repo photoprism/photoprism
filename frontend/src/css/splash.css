@@ -1,68 +1,4 @@
-/*  Inline <HTML>, <Body>, and Splash Screen Styles */
-
-html.loading {
-    overflow-y: hidden !important;
-    scrollbar-width: none;
-}
-
-html.hide-scrollbar {
-    scrollbar-width: none;
-}
-
-[data-color-mode=light][data-light-theme*=dark],
-[data-color-mode=dark][data-dark-theme*=dark] {
-    color-scheme: dark;
-}
-
-:root,
-[data-color-mode=light][data-light-theme*=light],
-[data-color-mode=dark][data-dark-theme*=light] {
-    color-scheme: light;
-}
-
-body {
-    color: #333333;
-    font-size: 17px;
-}
-
-html,
-body {
-    /* Use a system font for faster rendering and a native look */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-
-    /* Text rendering defaults. */
-    letter-spacing: normal !important;
-    line-height: normal;
-    text-justify: inter-word;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-
-    /* Support for Safari and Chrome. */
-
-    text-rendering: optimizeLegibility;
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Enable font features. */
-    font-feature-settings: 'kern', 'liga';
-}
-
-body.nojs::-webkit-scrollbar,
-body.hide-scrollbar::-webkit-scrollbar,
-html.hide-scrollbar ::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-    z-index: -1000;
-}
-
-body.nojs,
-body.hide-scrollbar,
-html.hide-scrollbar body {
-    -ms-overflow-style: none;
-}
-
-/* Loading Animation Styles */
+/* Splash Screen Styles */
 
 #busy-overlay {
     display: none;
@@ -221,12 +157,20 @@ a.logo-large {
     color: #bbbbb5;
 }
 
+.splash-warning {
+    display: block;
+    font-weight: 600;
+    color: #bbbaba;
+    margin: 0 auto;
+    max-width: 580px;
+    line-height: 1.5;
+}
+
 #noscript-info.splash-info,
 #noscript-info.splash-info a {
     font-weight: 500;
     font-size: 16px;
 }
-
 
 .splash-center,
 #busy-overlay .splash-center {
@@ -286,4 +230,3 @@ div.loading-bar {
     right: 10%;
     left: 10%;
 }
-

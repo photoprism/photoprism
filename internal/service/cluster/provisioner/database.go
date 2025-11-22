@@ -74,12 +74,14 @@ func GetDB(ctx context.Context) (*sql.DB, error) {
 	return db, nil
 }
 
+// setDB stores the shared provisioning connection under write lock.
 func setDB(db *sql.DB) {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 	dbConn = db
 }
 
+// pingWithTimeout validates liveness by issuing a ping bounded by d.
 func pingWithTimeout(ctx context.Context, db *sql.DB, d time.Duration) error {
 	c, cancel := context.WithTimeout(ctx, d)
 	defer cancel()
@@ -93,6 +95,7 @@ func pingWithTimeout(ctx context.Context, db *sql.DB, d time.Duration) error {
 // Allow only safe characters in generated identifiers (you can tighten/loosen this).
 var identRe = regexp.MustCompile(`^[a-z0-9\-_.]+$`)
 
+// quoteIdent wraps an identifier in backticks after validating its characters.
 func quoteIdent(s string) (string, error) {
 	if s == "" {
 		return "", errors.New("empty identifier")
@@ -104,6 +107,7 @@ func quoteIdent(s string) (string, error) {
 	return "`" + strings.ReplaceAll(s, "`", "``") + "`", nil
 }
 
+// quoteString escapes and quotes a string literal for SQL statements.
 func quoteString(s string) (string, error) {
 	if strings.ContainsRune(s, '\x00') {
 		return "", errors.New("string contains NUL")
@@ -112,6 +116,7 @@ func quoteString(s string) (string, error) {
 	return "'" + strings.ReplaceAll(s, "'", "''") + "'", nil
 }
 
+// quoteAccount formats a user@host identifier using SQL quoting rules.
 func quoteAccount(host, user string) (string, error) {
 	u, err := quoteString(user)
 	if err != nil {
@@ -124,7 +129,7 @@ func quoteAccount(host, user string) (string, error) {
 	return u + "@" + h, nil
 }
 
-// Exec with a timeout.
+// execTimeout executes stmt with a deadline by wrapping the call in a cancelable context.
 func execTimeout(ctx context.Context, db *sql.DB, d time.Duration, stmt string) error {
 	c, cancel := context.WithTimeout(ctx, d)
 	defer cancel()

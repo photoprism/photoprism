@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/service/http/safe"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 var (

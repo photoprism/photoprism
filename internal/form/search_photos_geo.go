@@ -25,7 +25,7 @@ type SearchPhotosGeo struct {
 	Updated     time.Time `form:"updated" example:"updated:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content updated at or after this time"`
 	Edited      time.Time `form:"edited" example:"edited:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content edited at or after this time"`
 	Taken       time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds content created on the specified date"`
-	Before      time.Time `form:"before" time_format:"2006-01-02" notes:"Finds content created on or before this date"`
+	Before      time.Time `form:"before" time_format:"2006-01-02" notes:"Finds content created before this date"`
 	After       time.Time `form:"after" time_format:"2006-01-02" notes:"Finds content created on or after this date"`
 	Favorite    string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
 	Unsorted    bool      `form:"unsorted" notes:"Finds content that is not in an album"`

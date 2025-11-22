@@ -7,10 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/internal/service/cluster/theme"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ClusterSummary returns a minimal overview of the cluster/portal.
@@ -31,7 +34,7 @@ func ClusterSummary(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}
@@ -44,14 +47,28 @@ func ClusterSummary(router *gin.RouterGroup) {
 		}
 
 		nodes, _ := regy.List()
+		themeVersion := ""
 
-		c.JSON(http.StatusOK, cluster.SummaryResponse{
+		if v, err := theme.DetectVersion(conf.PortalThemePath()); err == nil {
+			themeVersion = v
+		}
+
+		resp := cluster.SummaryResponse{
 			UUID:        conf.ClusterUUID(),
 			ClusterCIDR: conf.ClusterCIDR(),
 			Nodes:       len(nodes),
 			Database:    cluster.DatabaseInfo{Driver: conf.DatabaseDriverName(), Host: conf.DatabaseHost(), Port: conf.DatabasePort()},
+			Theme:       themeVersion,
 			Time:        time.Now().UTC().Format(time.RFC3339),
-		})
+		}
+
+		event.AuditDebug(
+			[]string{ClientIP(c), "session %s", string(acl.ResourceCluster), "get summary for cluster uuid %s", status.Succeeded},
+			s.RefID,
+			conf.ClusterUUID(),
+		)
+
+		c.JSON(http.StatusOK, resp)
 	})
 }
 
@@ -73,10 +90,12 @@ func ClusterHealth(router *gin.RouterGroup) {
 		c.Header(header.AccessControlAllowOrigin, header.Any)
 
 		// Return error if not a portal node.
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			AbortFeatureDisabled(c)
 			return
 		}
+
+		event.AuditDebug([]string{ClientIP(c), string(acl.ResourceCluster), "health check", status.Succeeded})
 
 		c.JSON(http.StatusOK, NewHealthResponse("ok"))
 	})

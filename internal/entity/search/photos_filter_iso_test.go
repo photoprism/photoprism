@@ -63,7 +63,7 @@ func TestPhotosFilterIso(t *testing.T) {
 			assert.LessOrEqual(t, 1, r.PhotoIso)
 		}
 
-		assert.Len(t, photos, 5)
+		assert.Len(t, photos, 7)
 	})
 	t.Run("Num155", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -164,7 +164,7 @@ func TestPhotosQueryIso(t *testing.T) {
 			assert.LessOrEqual(t, 1, r.PhotoIso)
 		}
 
-		assert.Len(t, photos, 5)
+		assert.Len(t, photos, 7)
 	})
 	t.Run("Num155", func(t *testing.T) {
 		var f form.SearchPhotos

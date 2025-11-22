@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -126,7 +128,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 //	@Tags		Services
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Service
+//	@Success	201				{object}	entity.Service
 //	@Failure	400,401,403,429	{object}	i18n.Response
 //	@Param		service			body		form.Service	true	"properties of the service to be created"
 //	@Router		/api/v1/services [post]
@@ -166,7 +168,9 @@ func AddService(router *gin.RouterGroup) {
 			return
 		}
 
-		c.JSON(http.StatusOK, m)
+		// Return new service with location header.
+		header.SetLocation(c, c.FullPath(), strconv.FormatUint(uint64(m.ID), 10))
+		c.JSON(http.StatusCreated, m)
 	})
 }
 

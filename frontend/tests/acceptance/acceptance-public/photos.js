@@ -347,16 +347,16 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await photo.checkPhotoVisibility(FirstVideoUid, false);
 
   await menu.openPage("browse");
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
-  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await photoedit.turnSwitchOn("scan");
-  await photoedit.turnSwitchOn("panorama");
-  await t.click(photoedit.dialogNext);
+
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
   await photoedit.turnSwitchOn("scan");
   await photoedit.turnSwitchOn("panorama");
   await t.click(photoedit.dialogClose);
-  await contextmenu.clearSelection();
+  await page.clickCardTitleOfUID(FirstVideoUid);
+  await photoedit.turnSwitchOn("scan");
+  await photoedit.turnSwitchOn("panorama");
+  await t.click(photoedit.dialogClose);
 
   await photo.checkPhotoVisibility(FirstPhotoUid, true);
   await photo.checkPhotoVisibility(FirstVideoUid, true);
@@ -371,18 +371,18 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await photo.checkPhotoVisibility(FirstPhotoUid, true);
   await photo.checkPhotoVisibility(FirstVideoUid, true);
 
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
-  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
-  await contextmenu.triggerContextMenuAction("edit", "");
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
-  await t.click(photoedit.dialogNext);
+  await t.click(photoedit.dialogClose);
+  await page.clickCardTitleOfUID(FirstVideoUid);
+
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
   await t.click(photoedit.dialogClose);
   await t.wait(9000);
 
-  await contextmenu.clearSelection();
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {

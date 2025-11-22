@@ -71,6 +71,7 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
 
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit");
+  await t.click(albumdialog.category).wait(3000);
 
   await t
     .expect(albumdialog.description.value)
@@ -114,6 +115,10 @@ test.meta("testID", "states-003").meta({ mode: "public" })(
   async (t) => {
     await menu.openPage("albums");
     const AlbumCount = await album.getAlbumCount("all");
+    await toolbar.search("Holiday");
+    const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.openAlbumWithUid(HolidayAlbumUid);
+    const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
     await menu.openPage("states");
     await toolbar.search("Canada");
     const FirstStateUid = await album.getNthAlbumUid("all", 0);
@@ -123,7 +128,7 @@ test.meta("testID", "states-003").meta({ mode: "public" })(
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
     await menu.openPage("states");
     await album.selectAlbumFromUID(FirstStateUid);
-    await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForState");
+    await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForState", "Holiday"]);
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
@@ -144,6 +149,13 @@ test.meta("testID", "states-003").meta({ mode: "public" })(
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+    await album.openAlbumWithUid(HolidayAlbumUid);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await contextmenu.triggerContextMenuAction("remove", "");
+    const PhotoCountHolidayAfterDelete = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
 
     await menu.openPage("states");
     await album.openAlbumWithUid(FirstStateUid);

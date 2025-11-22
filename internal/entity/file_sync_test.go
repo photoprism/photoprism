@@ -25,7 +25,7 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 		result := FirstOrCreateFileSync(fileSync)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		if result.FileID != fileSync.FileID {
@@ -41,7 +41,7 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 		result := FirstOrCreateFileSync(fileSync)
 
 		if result == nil {
-			t.Fatal("result share should not be nil")
+			t.Fatal("result share must not be nil")
 		}
 
 		if result.FileID != fileSync.FileID {

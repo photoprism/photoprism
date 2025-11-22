@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/urfave/cli/v2"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -203,7 +205,7 @@ func (c *Config) CreateDirectories() error {
 	}
 
 	// Create frontend build path if it doesn't exist yet.
-	if dir := c.BuildPath(); dir == "" {
+	if dir := c.StaticBuildPath(); dir == "" {
 		return notFoundError("build")
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)
@@ -253,33 +255,82 @@ func (c *Config) ConfigPath() string {
 	return fs.Abs(c.options.ConfigPath)
 }
 
-// OptionsYaml returns the config options YAML filename.
+// OptionsYaml returns the absolute path to the options configuration file.
+// It relies on fs.ConfigFilePath so legacy `.yml` files keep working while
+// newly created instances may use `.yaml` without additional wiring.
 func (c *Config) OptionsYaml() string {
-	configPath := c.ConfigPath()
-
 	if c.options.OptionsYaml == "" {
-		return filepath.Join(configPath, "options.yml")
+		return fs.ConfigFilePath(c.ConfigPath(), "options", fs.ExtYml)
 	}
 
 	return fs.Abs(c.options.OptionsYaml)
 }
 
-// DefaultsYaml returns the default options YAML filename.
+// configPath resolves the config path name from the CLI context.
+func configPath(ctx *cli.Context) string {
+	if dir := ctx.String("config-path"); dir != "" {
+		return fs.Abs(dir)
+	}
+
+	storagePath := ctx.String("storage-path")
+
+	if storagePath == "" {
+		return ""
+	}
+
+	storagePath = fs.Abs(storagePath)
+
+	if fs.PathExists(filepath.Join(storagePath, fs.SettingsDir)) {
+		return filepath.Join(storagePath, fs.SettingsDir)
+	}
+
+	return filepath.Join(storagePath, fs.ConfigDir)
+}
+
+// defaultsYaml resolves the defaults file from CLI/env overrides and falls back
+// to `defaults.{yml,yaml}` inside the active config directory when the override
+// is missing or unreadable.
+func defaultsYaml(ctx *cli.Context) string {
+	fileName := ctx.String("defaults-yaml")
+
+	if fileName != "" && fs.FileExistsNotEmpty(fileName) {
+		return fs.Abs(fileName)
+	}
+
+	fileName = fs.ConfigFilePath(configPath(ctx), "defaults", fs.ExtYml)
+
+	if fs.FileExistsNotEmpty(fileName) {
+		return fs.Abs(fileName)
+	}
+
+	return ""
+}
+
+// DefaultsYaml returns the defaults file path that was resolved during option
+// initialization (CLI/env override first, then config-path fallback). Callers
+// use this to locate the concrete defaults location without re-running the
+// resolution logic.
 func (c *Config) DefaultsYaml() string {
-	return fs.Abs(c.options.DefaultsYaml)
+	return c.options.DefaultsYaml
 }
 
-// HubConfigFile returns the backend api config file name.
+// HubConfigFile returns the backend API config filename, honoring either the
+// traditional `.yml` suffix or an existing `.yaml` variant in the config
+// directory.
 func (c *Config) HubConfigFile() string {
-	return filepath.Join(c.ConfigPath(), "hub.yml")
+	return fs.ConfigFilePath(c.ConfigPath(), "hub", fs.ExtYml)
 }
 
-// SettingsYaml returns the settings YAML filename.
+// SettingsYaml returns the path to the UI settings file. Like other helpers it
+// defers to fs.ConfigFilePath so administrators can store the file as
+// `settings.yml` or `settings.yaml`.
 func (c *Config) SettingsYaml() string {
-	return filepath.Join(c.ConfigPath(), "settings.yml")
+	return fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)
 }
 
-// SettingsYamlDefaults returns the default settings YAML filename.
+// SettingsYamlDefaults returns the defaults file that should seed new settings
+// files. When both `.yml` and `.yaml` exist, the helper mirrors
+// SettingsYaml()'s selection logic to keep behavior consistent.
 func (c *Config) SettingsYamlDefaults(settingsYml string) string {
 	if settingsYml != "" && fs.FileExists(settingsYml) {
 		// Use regular settings YAML file.
@@ -287,7 +338,7 @@ func (c *Config) SettingsYamlDefaults(settingsYml string) string {
 		// Use regular settings YAML file.
 	} else if dir := filepath.Dir(defaultsYml); dir == "" || dir == "." {
 		// Use regular settings YAML file.
-	} else if fileName := filepath.Join(dir, "settings.yml"); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
+	} else if fileName := fs.ConfigFilePath(dir, "settings", fs.ExtYml); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
 		// Use default settings YAML file.
 		return fileName
 	}

@@ -74,11 +74,7 @@ func (c *Config) DisableFaces() bool {
 
 // DisableClassification checks if image classification is disabled.
 func (c *Config) DisableClassification() bool {
-	if c.DisableTensorFlow() || c.options.DisableClassification {
-		return true
-	}
-
-	return false
+	return c.options.DisableClassification
 }
 
 // DisableFFmpeg checks if FFmpeg is disabled for video transcoding.

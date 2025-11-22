@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -83,7 +84,7 @@ func (m *Link) Redeem() *Link {
 	m.LinkViews += 1
 
 	if err := Db().Model(m).UpdateColumn("link_views", gorm.Expr("link_views + 1")).Error; err != nil {
-		event.AuditWarn([]string{"link %s", "failed to update view counter"}, clean.Log(m.RefID), err)
+		event.AuditWarn([]string{"link %s", "update views", status.Error(err)}, clean.Log(m.RefID))
 	}
 
 	return m
@@ -172,7 +173,7 @@ func (m *Link) Delete() error {
 
 	// Remove related user shares.
 	if err := UnscopedDb().Delete(UserShare{}, "link_uid = ?", m.LinkUID).Error; err != nil {
-		event.AuditErr([]string{"link %s", "failed to remove related user shares", "%s"}, clean.Log(m.RefID), err)
+		event.AuditErr([]string{"link %s", "failed to remove related user shares", status.Error(err)}, clean.Log(m.RefID))
 	}
 
 	return Db().Delete(m).Error
@@ -186,7 +187,7 @@ func DeleteShareLinks(shareUid string) error {
 
 	// Remove related user shares.
 	if err := UnscopedDb().Delete(UserShare{}, "share_uid = ?", shareUid).Error; err != nil {
-		event.AuditErr([]string{"share %s", "failed to remove related user shares", "%s"}, clean.Log(shareUid), err)
+		event.AuditErr([]string{"share %s", "failed to remove related user shares", status.Error(err)}, clean.Log(shareUid))
 	}
 
 	return Db().Delete(&Link{}, "share_uid = ?", shareUid).Error
@@ -201,7 +202,7 @@ func FindLink(linkUid string) *Link {
 	result := Link{}
 
 	if Db().Where("link_uid = ?", linkUid).First(&result).Error != nil {
-		event.AuditWarn([]string{"link %s", "not found"}, clean.Log(linkUid))
+		event.AuditWarn([]string{"link %s", status.NotFound}, clean.Log(linkUid))
 		return nil
 	}
 
@@ -232,7 +233,7 @@ func FindLinks(token, shared string) (found Links) {
 	}
 
 	if err := q.Order("modified_at DESC").Find(&found).Error; err != nil {
-		event.AuditErr([]string{"token %s", "%s"}, clean.Log(token), err)
+		event.AuditErr([]string{"token %s", status.Error(err)}, clean.Log(token))
 	}
 
 	return found

@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -16,13 +17,22 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 var albumMutex = sync.Mutex{}
 
 // SaveAlbumYaml saves the album metadata to a YAML backup file.
-func SaveAlbumYaml(album entity.Album) {
+func SaveAlbumYaml(album *entity.Album) {
+	if album == nil {
+		log.Debugf("api: album is nil (update yaml)")
+		return
+	} else if !album.HasID() {
+		log.Debugf("api: album has no ID (update yaml)")
+		return
+	}
+
 	conf := get.Config()
 
 	// Check if saving YAML backup files is enabled.
@@ -32,6 +42,31 @@ func SaveAlbumYaml(album entity.Album) {
 
 	// Write album metadata to YAML backup file.
 	_ = album.SaveBackupYaml(conf.BackupAlbumsPath())
+}
+
+// DeleteAlbumYaml removes the YAML backup file for the provided album if it exists.
+func DeleteAlbumYaml(album entity.Album) {
+	conf := get.Config()
+
+	// Nothing to remove when album backups are disabled.
+	if !conf.BackupAlbums() {
+		return
+	}
+
+	fileName, relName, err := album.YamlFileName(conf.BackupAlbumsPath())
+
+	if err != nil {
+		log.Warnf("album: %s (delete %s)", err, clean.Log(relName))
+		return
+	}
+
+	if !fs.FileExists(fileName) {
+		return
+	}
+
+	if rmErr := os.Remove(fileName); rmErr != nil {
+		log.Errorf("album: %s (delete %s)", rmErr, clean.Log(relName))
+	}
 }
 
 // GetAlbum returns album details as JSON.
@@ -81,15 +116,17 @@ func GetAlbum(router *gin.RouterGroup) {
 
 // CreateAlbum creates a new album.
 //
-//	@Summary	creates a new album
-//	@Id			CreateAlbum
-//	@Tags		Albums
-//	@Accept		json
-//	@Produce	json
-//	@Success	200					{object}	entity.Album
-//	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		album				body		form.Album	true	"properties of the album to be created (currently supports Title and Favorite)"
-//	@Router		/api/v1/albums [post]
+//	@Summary		creates a new album
+//	@Description	Posting a title that matches a soft-deleted manual album restores it (including existing photo assignments). Use DELETE with `force=true` to purge an album before recreating it from scratch.
+//	@Id				CreateAlbum
+//	@Tags			Albums
+//	@Accept			json
+//	@Produce		json
+//	@Success		200					{object}	entity.Album
+//	@Success		201					{object}	entity.Album
+//	@Failure		400,401,403,429,500	{object}	i18n.Response
+//	@Param			album				body		form.Album	true	"properties of the album to be created (currently supports Title and Favorite)"
+//	@Router			/api/v1/albums [post]
 func CreateAlbum(router *gin.RouterGroup) {
 	router.POST("/albums", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionCreate)
@@ -114,6 +151,8 @@ func CreateAlbum(router *gin.RouterGroup) {
 		album := entity.NewUserAlbum(frm.AlbumTitle, entity.AlbumManual, conf.Settings().Albums.Order.Album, s.UserUID)
 		album.AlbumFavorite = frm.AlbumFavorite
 
+		code := http.StatusOK
+
 		// Existing album?
 		if found := album.Find(); found == nil {
 			// Not found, create new album.
@@ -123,6 +162,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 				AbortUnexpectedError(c)
 				return
 			}
+			code = http.StatusCreated
 		} else {
 			// Exists, restore if necessary.
 			album = found
@@ -140,10 +180,15 @@ func CreateAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Update album YAML backup.
-		SaveAlbumYaml(*album)
+		SaveAlbumYaml(album)
+
+		// Add location header if newly created.
+		if code == http.StatusCreated {
+			header.SetLocation(c, c.FullPath(), album.AlbumUID)
+		}
 
 		// Return as JSON.
-		c.JSON(http.StatusOK, album)
+		c.JSON(code, album)
 	})
 }
 
@@ -214,7 +259,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Update album YAML backup.
-		SaveAlbumYaml(album)
+		SaveAlbumYaml(&album)
 
 		c.JSON(http.StatusOK, album)
 	})
@@ -229,6 +274,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
 //	@Param		uid					path		string	true	"Album UID"
+//	@Param		force				query		boolean	false	"Set to true to permanently delete a manual album instead of archiving it."
 //	@Router		/api/v1/albums/{uid} [delete]
 func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
@@ -258,8 +304,16 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		albumMutex.Lock()
 		defer albumMutex.Unlock()
 
+		forceDelete := false
+
+		if forceParam := c.Query("force"); forceParam != "" {
+			if parsed, parseErr := strconv.ParseBool(forceParam); parseErr == nil {
+				forceDelete = parsed
+			}
+		}
+
 		// Regular, manually created album?
-		if album.IsDefault() {
+		if album.IsDefault() && !forceDelete {
 			// Soft delete manually created albums.
 			err = album.Delete()
 
@@ -269,7 +323,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 				AbortDeleteFailed(c)
 				return
 			} else {
-				SaveAlbumYaml(album)
+				SaveAlbumYaml(&album)
 			}
 		} else {
 			// Permanently delete automatically created albums.
@@ -280,12 +334,8 @@ func DeleteAlbum(router *gin.RouterGroup) {
 				log.Errorf("album: %s (delete permanently)", err)
 				AbortDeleteFailed(c)
 				return
-			} else if fileName, relName, nameErr := album.YamlFileName(get.Config().BackupAlbumsPath()); nameErr != nil {
-				log.Warnf("album: %s (delete %s)", err, clean.Log(relName))
-			} else if !fs.FileExists(fileName) {
-				// Do nothing.
-			} else if removeErr := os.Remove(fileName); removeErr != nil {
-				log.Errorf("album: %s (delete %s)", err, clean.Log(relName))
+			} else {
+				DeleteAlbumYaml(album)
 			}
 		}
 
@@ -340,7 +390,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
-		SaveAlbumYaml(album)
+		SaveAlbumYaml(&album)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -391,7 +441,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
-		SaveAlbumYaml(album)
+		SaveAlbumYaml(&album)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -468,7 +518,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(album)
+			SaveAlbumYaml(&album)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": album, "added": added})
@@ -550,7 +600,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(album)
+			SaveAlbumYaml(&album)
 
 			// Auto-approve photos that have been added to an album,
 			// see https://github.com/photoprism/photoprism/issues/4229
@@ -652,7 +702,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
 
 			// Update album YAML backup.
-			SaveAlbumYaml(album)
+			SaveAlbumYaml(&album)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": album, "photos": frm.Photos, "removed": removed})

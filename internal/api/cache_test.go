@@ -9,13 +9,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 func TestAddVideoCacheHeader(t *testing.T) {
@@ -56,7 +58,12 @@ func TestRemoveFromAlbumCoverCache(t *testing.T) {
 	cache := get.CoverCache()
 	cache.Flush()
 
-	uid := rnd.GenerateUID(entity.AlbumUID)
+	var album entity.Album
+	if err := query.UnscopedDb().Where("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto).First(&album).Error; err != nil {
+		t.Skipf("no auto-managed manual album available: %v", err)
+	}
+
+	uid := album.AlbumUID
 
 	for thumbName := range thumb.Sizes {
 		key := CacheKey(albumCover, uid, string(thumbName))
@@ -76,6 +83,15 @@ func TestRemoveFromAlbumCoverCache(t *testing.T) {
 		t.Fatalf("write %s: %v", sharePreview, err)
 	}
 
+	origThumb := album.Thumb
+	origThumbSrc := album.ThumbSrc
+
+	t.Cleanup(func() {
+		_ = entity.UpdateAlbum(uid, entity.Values{"thumb": origThumb, "thumb_src": origThumbSrc})
+	})
+
+	require.NoError(t, entity.UpdateAlbum(uid, entity.Values{"thumb": "", "thumb_src": entity.SrcAuto}))
+
 	RemoveFromAlbumCoverCache(uid)
 
 	for thumbName := range thumb.Sizes {
@@ -86,6 +102,12 @@ func TestRemoveFromAlbumCoverCache(t *testing.T) {
 
 	_, err := os.Stat(sharePreview)
 	assert.True(t, os.IsNotExist(err))
+
+	entity.FlushAlbumCache()
+
+	refreshed, err := query.AlbumByUID(uid)
+	require.NoError(t, err)
+	assert.NotEmpty(t, refreshed.Thumb)
 }
 
 func TestRemoveFromAlbumCoverCacheInvalidUID(t *testing.T) {

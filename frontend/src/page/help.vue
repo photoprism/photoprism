@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-help" tabindex="1">
+  <div class="p-page p-page-help" tabindex="-1">
     <v-toolbar
       flat
       color="secondary"
@@ -14,6 +14,7 @@
         icon
         :href="links.troubleshooting"
         target="_blank"
+        rel="noopener"
         class="action-info mx-2"
         :title="$gettext('Learn more')"
       >

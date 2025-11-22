@@ -25,8 +25,10 @@ Additional information can be found in our Developer Guide:
 package config
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
+	"math/rand/v2"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -41,6 +43,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/klauspost/cpuid/v2"
+	gc "github.com/patrickmn/go-cache"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -64,8 +67,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var initThumbsMutex sync.Mutex
-
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
 	once      sync.Once
@@ -75,12 +76,18 @@ type Config struct {
 	db        *gorm.DB
 	dbVersion string
 	hub       *hub.Config
+	hubCancel context.CancelFunc
+	hubLock   sync.Mutex
 	token     string
 	serial    string
 	env       string
 	start     bool
 	ready     atomic.Bool
+	cache     *gc.Cache
 }
+
+// Values is a shorthand alias for map[string]interface{}.
+type Values = map[string]interface{}
 
 func init() {
 	TotalMem = memory.TotalMemory()
@@ -158,12 +165,16 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:   rnd.Base36(8),
 		env:     os.Getenv("DOCKER_ENV"),
 		start:   start,
+		cache:   gc.New(time.Minute, 10*time.Minute),
 	}
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
 			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
+		} else if c.env == EnvDevelop {
+			// Reduce the log level to minimize noise in the test logs.
+			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
 		} else {
 			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
@@ -237,9 +248,9 @@ func (c *Config) Init() error {
 	// Load settings from the "settings.yml" config file.
 	c.initSettings()
 
-	// Initialize early extensions before connecting to the database so they can
+	// Initialize boot extensions before connecting to the database so they can
 	// influence DB settings (e.g., cluster bootstrap providing MariaDB creds).
-	EarlyExt().InitEarly(c)
+	Ext(StageBoot).Boot(c)
 
 	// Connect to database.
 	if err := c.connectDb(); err != nil {
@@ -248,8 +259,8 @@ func (c *Config) Init() error {
 		c.RegisterDb()
 	}
 
-	// Initialize extensions.
-	Ext().Init(c)
+	// Initialize regular extensions.
+	Ext(StageInit).Init(c)
 
 	// Initialize thumbnail package.
 	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
@@ -307,6 +318,7 @@ func (c *Config) Propagate() {
 	// Configure computer vision package.
 	vision.SetCachePath(c.CachePath())
 	vision.SetModelsPath(c.ModelsPath())
+	vision.ServiceApi = c.VisionApi()
 	vision.ServiceUri = c.VisionUri()
 	vision.ServiceKey = c.VisionKey()
 	vision.DownloadUrl = c.DownloadUrl()
@@ -348,8 +360,13 @@ func (c *Config) Propagate() {
 	face.ClusterScoreThreshold = c.FaceClusterScore()
 	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
+	face.CollisionDist = c.FaceCollisionDist()
+	face.Epsilon = c.FaceEpsilonDist()
+	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+	face.SkipChildren = c.FaceSkipChildren()
+	face.IgnoreBackground = !c.FaceAllowBackground()
 	face.DetectionAngles = c.FaceAngles()
 	if err := face.ConfigureEngine(face.EngineSettings{
 		Name: c.FaceEngine(),
@@ -396,7 +413,7 @@ func (c *Config) Propagate() {
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - you may have found a bug")
+		log.Warnf("config: options must not be nil - you may have found a bug")
 		c.options = NewOptions(nil)
 	}
 
@@ -622,8 +639,22 @@ func (c *Config) SetLogLevel(level logrus.Level) {
 	SetLogLevel(level)
 }
 
+// stopHubTicker stops the periodic hub renewal ticker if it is running.
+func (c *Config) stopHubTicker() {
+	c.hubLock.Lock()
+	cancel := c.hubCancel
+	c.hubCancel = nil
+	c.hubLock.Unlock()
+
+	if cancel != nil {
+		cancel()
+	}
+}
+
 // Shutdown shuts down the active processes and closes the database connection.
 func (c *Config) Shutdown() {
+	c.stopHubTicker()
+
 	// App is no longer accepting requests.
 	c.ready.Store(false)
 
@@ -820,13 +851,24 @@ func (c *Config) initHub() {
 
 	c.hub.Propagate()
 
-	ticker := time.NewTicker(time.Hour * 24)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	c.hubLock.Lock()
+	c.hubCancel = cancel
+	c.hubLock.Unlock()
+
+	d := 23*time.Hour + time.Duration(float64(2*time.Hour)*rand.Float64())
+	ticker := time.NewTicker(d)
 
 	go func() {
+		defer ticker.Stop()
+
 		for {
 			select {
 			case <-ticker.C:
 				c.RenewApiKeys()
+			case <-ctx.Done():
+				return
 			}
 		}
 	}()

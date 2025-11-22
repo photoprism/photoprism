@@ -10,11 +10,11 @@ func TestDownloadCommand_HelpFlagsAndArgs(t *testing.T) {
 	}
 	// Verify new flags are present by name
 	want := map[string]bool{
-		"cookies":     false,
-		"add-header":  false,
-		"dl-method":   false,
-		"file-remux":  false,
-		"format-sort": false,
+		"cookies": false,
+		"header":  false,
+		"method":  false,
+		"remux":   false,
+		"sort":    false,
 	}
 	for _, f := range DownloadCommand.Flags {
 		name := f.Names()[0]

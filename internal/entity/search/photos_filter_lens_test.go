@@ -33,7 +33,7 @@ func TestPhotosFilterLens(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Len(t, photos, 2)
 	})
 	//TODO
 	/*t.Run("FourFifteenMmFTwoTwo", func(t *testing.T) {
@@ -313,7 +313,7 @@ func TestPhotosQueryLens(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Len(t, photos, 2)
 	})
 	//TODO
 	/*t.Run("FourFifteenMmFTwoTwo", func(t *testing.T) {

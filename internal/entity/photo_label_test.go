@@ -1,9 +1,12 @@
 package entity
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
@@ -31,7 +34,7 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 		result := FirstOrCreatePhotoLabel(&model)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		if result.PhotoID != model.PhotoID {
@@ -85,15 +88,104 @@ func TestPhotoLabel_Save(t *testing.T) {
 }
 
 func TestPhotoLabel_Update(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		photoLabel := PhotoLabel{LabelID: 555, PhotoID: 888}
-		assert.Equal(t, uint(0x22b), photoLabel.LabelID)
+	t.Run("FlushesCache", func(t *testing.T) {
+		FlushPhotoLabelCache()
+		relation := createTestPhotoLabel(t)
 
-		err := photoLabel.Update("LabelID", 8)
+		photoLabelCache.SetDefault(relation.CacheKey(), *relation)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, uint(0x8), photoLabel.LabelID)
+		require.NoError(t, relation.Update("uncertainty", relation.Uncertainty+1))
+
+		_, found := photoLabelCache.Get(relation.CacheKey())
+		assert.False(t, found)
 	})
+
+	t.Run("NilPhotoLabel", func(t *testing.T) {
+		var label *PhotoLabel
+		err := label.Update("uncertainty", 0)
+		assert.EqualError(t, err, "photo label must not be nil - you may have found a bug")
+	})
+
+	t.Run("MissingID", func(t *testing.T) {
+		label := &PhotoLabel{PhotoID: 0, LabelID: 1}
+		err := label.Update("uncertainty", 0)
+		assert.EqualError(t, err, "photo label ID must not be empty - you may have found a bug")
+	})
+}
+
+func TestPhotoLabel_Updates(t *testing.T) {
+	t.Run("FlushesCache", func(t *testing.T) {
+		FlushPhotoLabelCache()
+		relation := createTestPhotoLabel(t)
+
+		photoLabelCache.SetDefault(relation.CacheKey(), *relation)
+
+		require.NoError(t, relation.Updates(&PhotoLabel{Uncertainty: relation.Uncertainty + 1}))
+
+		_, found := photoLabelCache.Get(relation.CacheKey())
+		assert.False(t, found)
+	})
+
+	t.Run("NilPhotoLabel", func(t *testing.T) {
+		var label *PhotoLabel
+		err := label.Updates(&PhotoLabel{Uncertainty: 0})
+		assert.EqualError(t, err, "photo label must not be nil - you may have found a bug")
+	})
+
+	t.Run("MissingID", func(t *testing.T) {
+		label := &PhotoLabel{PhotoID: 0, LabelID: 1}
+		err := label.Updates(&PhotoLabel{Uncertainty: 0})
+		assert.EqualError(t, err, "photo label ID must not be empty - you may have found a bug")
+	})
+}
+
+func TestPhotoLabel_Delete(t *testing.T) {
+	FlushPhotoLabelCache()
+	relation := createTestPhotoLabel(t)
+	photoLabelCache.SetDefault(relation.CacheKey(), *relation)
+
+	require.NoError(t, relation.Delete())
+
+	_, found := photoLabelCache.Get(relation.CacheKey())
+	assert.False(t, found)
+}
+
+func TestPhotoLabel_HasID(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		var label *PhotoLabel
+		assert.False(t, label.HasID())
+	})
+
+	t.Run("Missing", func(t *testing.T) {
+		label := &PhotoLabel{PhotoID: 1}
+		assert.False(t, label.HasID())
+	})
+
+	t.Run("Complete", func(t *testing.T) {
+		label := &PhotoLabel{PhotoID: 1, LabelID: 2}
+		assert.True(t, label.HasID())
+	})
+}
+
+func TestPhotoLabel_CacheKey(t *testing.T) {
+	label := &PhotoLabel{PhotoID: 1, LabelID: 2}
+	assert.Equal(t, "1-2", label.CacheKey())
+}
+
+func createTestPhotoLabel(t *testing.T) *PhotoLabel {
+	t.Helper()
+	photo := &Photo{}
+	require.NoError(t, Db().First(photo).Error)
+	label := NewLabel(fmt.Sprintf("photo-label-test-%d", time.Now().UnixNano()), 0)
+	require.NoError(t, label.Save())
+
+	relation := NewPhotoLabel(photo.ID, label.ID, 0, SrcManual)
+	require.NoError(t, relation.Create())
+
+	t.Cleanup(func() {
+		_ = Db().Where("photo_id = ? AND label_id = ?", relation.PhotoID, relation.LabelID).Delete(&PhotoLabel{}).Error
+		_ = Db().Delete(label).Error
+	})
+
+	return relation
 }

@@ -1,5 +1,5 @@
 import { $config } from "app/session";
-import { T } from "common/gettext";
+import { $gettext, T } from "common/gettext";
 
 // Returns the id and messages of the current locale.
 export const Locale = () => {
@@ -308,4 +308,56 @@ export const Messages = ($gettext) => {
       empty: $gettext("No more"),
     },
   };
+};
+
+// Extra UI translation messages.
+export const ExtraMessages = () => {
+  $gettext("Search");
+  $gettext("Refresh");
+  $gettext("Delete");
+  $gettext("Open");
+  $gettext("Name");
+  $gettext("Username");
+  $gettext("Display Name");
+  $gettext("Version");
+  $gettext("Portal");
+  $gettext("Theme");
+  $gettext("Labels");
+  $gettext("Removed");
+  $gettext("Database");
+  $gettext("Databases");
+  $gettext("User");
+  $gettext("Users");
+  $gettext("Account");
+  $gettext("Accounts");
+  $gettext("Authentication");
+  $gettext("Web Login");
+  $gettext("Last Login");
+  $gettext("Role");
+  $gettext("Roles");
+  $gettext("Attributes");
+  $gettext("Scope");
+  $gettext("Scopes");
+  $gettext("Local");
+  $gettext("Session");
+  $gettext("Sessions");
+  $gettext("Driver");
+  $gettext("Engine");
+  $gettext("Rotated");
+  $gettext("Severity");
+  $gettext("Activity");
+  $gettext("Time");
+  $gettext("IP Address");
+  $gettext("Site URL");
+  $gettext("Message");
+  $gettext("Repeated");
+  $gettext("Application");
+  $gettext("Applications");
+  $gettext("Node");
+  $gettext("Nodes");
+  $gettext("Service");
+  $gettext("Services");
+  $gettext("Instance");
+  $gettext("Instances");
+  $gettext("Remove the selected instance from the cluster registry?");
 };

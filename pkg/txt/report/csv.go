@@ -20,7 +20,9 @@ func CsvExport(rows [][]string, cols []string, sep rune) (string, error) {
 		return "", err
 	}
 
-	err = writer.WriteAll(rows)
+	if err := writer.WriteAll(rows); err != nil {
+		return "", err
+	}
 
 	return buf.String(), nil
 }

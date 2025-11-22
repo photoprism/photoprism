@@ -1,6 +1,12 @@
 package vision
 
-import "testing"
+import (
+	"math"
+	"testing"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/pkg/txt"
+)
 
 func TestCanonicalLabelFor(t *testing.T) {
 	meta, ok := canonicalLabelFor("Sea Lion")
@@ -22,6 +28,96 @@ func TestCanonicalLabelForUnknown(t *testing.T) {
 	if _, ok := canonicalLabelFor("unknown-label-xyz"); ok {
 		t.Fatalf("expected no canonical entry")
 	}
+}
+
+func TestAddCanonicalMappingAggregatesRules(t *testing.T) {
+	original := canonicalLabels
+	canonicalLabels = make(map[string]canonicalLabel, len(classify.Rules)*2)
+	defer func() { canonicalLabels = original }()
+
+	for key, rule := range classify.Rules {
+		canonicalName := rule.Label
+		if canonicalName == "" {
+			canonicalName = key
+		}
+
+		meta := canonicalLabel{
+			Name:       txt.Title(canonicalName),
+			Priority:   rule.Priority,
+			Categories: append([]string(nil), rule.Categories...),
+			Threshold:  rule.Threshold,
+			hasRule:    true,
+		}
+
+		addCanonicalMapping(key, meta)
+		addCanonicalMapping(canonicalName, meta)
+	}
+
+	labels := []string{"dog", "cat", "car", "drinks", "flower", "vehicle", "wine", "water", "zebra", "schipperke"}
+
+	for _, label := range labels {
+		slug := txt.Slug(label)
+		meta, ok := canonicalLabels[slug]
+		if !ok {
+			t.Fatalf("expected canonical metadata for %q", label)
+		}
+
+		t.Logf("%s: %#v", label, meta)
+
+		expectedPriority, expectedThreshold, hasThreshold := expectedCanonicalStats(t, label)
+
+		if meta.Priority != expectedPriority {
+			t.Fatalf("expected priority %d for %q, got %d", expectedPriority, label, meta.Priority)
+		}
+
+		if hasThreshold {
+			if diff := math.Abs(float64(meta.Threshold - expectedThreshold)); diff > 1e-6 {
+				t.Fatalf("expected threshold %.6f for %q, got %.6f", expectedThreshold, label, meta.Threshold)
+			}
+		} else if meta.Threshold != 0 {
+			t.Fatalf("expected zero threshold for %q, got %.6f", label, meta.Threshold)
+		}
+	}
+}
+
+func expectedCanonicalStats(t *testing.T, label string) (priority int, threshold float32, hasThreshold bool) {
+	t.Helper()
+
+	slug := txt.Slug(label)
+
+	foundPriority := false
+	var maxPriority int
+	var minThreshold float32
+
+	for key, rule := range classify.Rules {
+		canonicalName := rule.Label
+		if canonicalName == "" {
+			canonicalName = key
+		}
+
+		canonicalSlug := txt.Slug(canonicalName)
+		keySlug := txt.Slug(key)
+
+		if canonicalSlug != slug && keySlug != slug {
+			continue
+		}
+
+		if !foundPriority || rule.Priority > maxPriority {
+			maxPriority = rule.Priority
+			foundPriority = true
+		}
+
+		if rule.Threshold > 0 && (!hasThreshold || rule.Threshold < minThreshold) {
+			minThreshold = rule.Threshold
+			hasThreshold = true
+		}
+	}
+
+	if !foundPriority {
+		t.Fatalf("expected to find rules for canonical label %q", label)
+	}
+
+	return maxPriority, minThreshold, hasThreshold
 }
 
 func TestNormalizeLabelResult(t *testing.T) {

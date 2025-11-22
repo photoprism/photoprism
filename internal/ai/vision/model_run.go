@@ -18,6 +18,18 @@ const (
 	RunOnIndex      RunType = "on-index"      // Run manually and on-index.
 )
 
+// ReportRunType returns a human-readable string for the run type, preserving the
+// explicit value when set or "auto" when delegation is in effect.
+func ReportRunType(when RunType) string {
+	when = ParseRunType(when)
+
+	if when == RunAuto {
+		return "auto"
+	}
+
+	return when
+}
+
 // RunTypes maps configuration strings to standard RunType model settings.
 var RunTypes = map[string]RunType{
 	RunAuto:            RunAuto,

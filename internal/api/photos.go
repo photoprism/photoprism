@@ -22,6 +22,9 @@ func SaveSidecarYaml(photo *entity.Photo) {
 	if photo == nil {
 		log.Debugf("api: photo is nil (update yaml)")
 		return
+	} else if !photo.HasID() {
+		log.Debugf("api: photo has no ID (update yaml)")
+		return
 	}
 
 	conf := get.Config()

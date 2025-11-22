@@ -8,12 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // ThumbCache describes files persisted on disk for cached thumbnails and share images.
@@ -69,8 +70,19 @@ func RemoveFromAlbumCoverCache(uid string) {
 		_ = os.Remove(sharePreview)
 	}
 
-	// Update album cover images.
-	if err := query.UpdateAlbumCovers(); err != nil {
+	album, err := query.AlbumByUID(uid)
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	// Manual covers stay untouched; we only regenerate auto-managed entries.
+	if album.ThumbSrc != entity.SrcAuto {
+		return
+	}
+
+	if err = query.UpdateAlbumCovers(album); err != nil {
 		log.Error(err)
 	}
 }

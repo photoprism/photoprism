@@ -52,7 +52,7 @@ func statusAction(ctx *cli.Context) error {
 		return err
 	}
 
-	var status string
+	var response string
 
 	if resp, reqErr := client.Do(req); reqErr != nil {
 		return fmt.Errorf("cannot connect to %s:%d", conf.HttpHost(), conf.HttpPort())
@@ -61,10 +61,10 @@ func statusAction(ctx *cli.Context) error {
 	} else if body, readErr := io.ReadAll(resp.Body); readErr != nil {
 		return readErr
 	} else {
-		status = string(body)
+		response = string(body)
 	}
 
-	message := gjson.Get(status, "status").String()
+	message := gjson.Get(response, "status").String()
 
 	if message != "" {
 		fmt.Println(message)

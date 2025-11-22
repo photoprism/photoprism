@@ -25,17 +25,21 @@ Additional information can be found in our Developer Guide:
 
 import { $gettext } from "common/gettext";
 
+// FormPropertyType enumerates supported types for form properties.
 export const FormPropertyType = Object.freeze({
   String: "string",
   Number: "number",
   Object: "object",
 });
 
+// Form encapsulates a simple key/value form definition with helpers for type-checked assignments.
 export class Form {
+  // constructor optionally accepts an initial definition.
   constructor(definition) {
     this.definition = definition;
   }
 
+  // setValues assigns values in bulk while respecting the schema.
   setValues(values) {
     const def = this.getDefinition();
 
@@ -48,6 +52,7 @@ export class Form {
     return this;
   }
 
+  // getValues returns a map of current values.
   getValues() {
     const result = {};
     const def = this.getDefinition();
@@ -59,6 +64,7 @@ export class Form {
     return result;
   }
 
+  // setValue updates a single value ensuring the type matches the definition.
   setValue(name, value) {
     const def = this.getDefinition();
 
@@ -73,6 +79,7 @@ export class Form {
     return this;
   }
 
+  // getValue fetches a single property value.
   getValue(name) {
     const def = this.getDefinition();
 
@@ -83,14 +90,17 @@ export class Form {
     }
   }
 
+  // setDefinition replaces the current form schema.
   setDefinition(definition) {
     this.definition = definition;
   }
 
+  // getDefinition returns the current schema or an empty object.
   getDefinition() {
     return this.definition ? this.definition : {};
   }
 
+  // getOptions resolves the options array for select-style fields.
   getOptions(fieldName) {
     if (
       this.definition &&
@@ -104,7 +114,9 @@ export class Form {
   }
 }
 
+// rules centralizes reusable validation helpers and Vuetify rule factories used across the UI.
 export class rules {
+  // maxLen ensures that a string does not exceed the provided maximum length.
   static maxLen(v, max) {
     if (!v || typeof v !== "string" || max <= 0) {
       return true;
@@ -113,6 +125,7 @@ export class rules {
     return v.length <= max;
   }
 
+  // minLen ensures that a string meets the minimum length.
   static minLen(v, min) {
     if (!v || typeof v !== "string" || min <= 0) {
       return true;
@@ -121,6 +134,7 @@ export class rules {
     return v.length >= min;
   }
 
+  // isLat validates latitude values in decimal degrees.
   static isLat(v) {
     if (typeof v !== "string" || v === "") {
       return true;
@@ -132,9 +146,10 @@ export class rules {
       return false;
     }
 
-    return -91 < lat < 91;
+    return lat >= -90 && lat <= 90;
   }
 
+  // isLng validates longitude values in decimal degrees.
   static isLng(v) {
     if (typeof v !== "string" || v === "") {
       return true;
@@ -146,9 +161,10 @@ export class rules {
       return false;
     }
 
-    return -181 < lng < 181;
+    return lng >= -180 && lng <= 180;
   }
 
+  // isNumber validates that a value is a parsable number or empty.
   static isNumber(v) {
     if (typeof v !== "string" || v === "") {
       return true;
@@ -157,6 +173,7 @@ export class rules {
     return !isNaN(Number(v));
   }
 
+  // isNumberRange validates numeric strings within optional inclusive bounds.
   static isNumberRange(v, min, max) {
     if (typeof v !== "string" || !v || v === "-1") {
       return true;
@@ -179,10 +196,12 @@ export class rules {
     return true;
   }
 
+  // isTime validates HH:MM:SS style times with any non-digit separator.
   static isTime(v) {
     return /^(2[0-3]|[0-1][0-9])\D[0-5][0-9]\D[0-5][0-9]$/.test(v); // 23:59:59
   }
 
+  // isEmail verifies that strings match the backend email sanitizer rules while staying lenient for empty inputs.
   static isEmail(v) {
     if (typeof v !== "string" || v === "") {
       return true;
@@ -190,9 +209,12 @@ export class rules {
       return false;
     }
 
-    return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,32})+$/.test(v);
+    return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/.test(
+      v
+    );
   }
 
+  // isUrl validates strings by length and URL parsing.
   static isUrl(v) {
     if (typeof v !== "string" || v === "") {
       return true;
@@ -208,6 +230,7 @@ export class rules {
     return true;
   }
 
+  // lat returns Vuetify rule callbacks for latitude validation.
   static lat(required) {
     if (required) {
       return [(v) => !!v || $gettext("This field is required"), (v) => this.isLat(v) || $gettext("Invalid")];
@@ -216,6 +239,7 @@ export class rules {
     }
   }
 
+  // lng returns Vuetify rule callbacks for longitude validation.
   static lng(required) {
     if (required) {
       return [(v) => !!v || $gettext("This field is required"), (v) => this.isLng(v) || $gettext("Invalid")];
@@ -224,14 +248,16 @@ export class rules {
     }
   }
 
+  // time returns Vuetify rule callbacks enforcing HH:MM:SS format.
   static time(required) {
     if (required) {
       return [(v) => !!v || $gettext("This field is required"), (v) => this.isTime(v) || $gettext("Invalid time")];
     } else {
-      return [(v) => this.isTime(v) || $gettext("Invalid time")];
+      return [(v) => !v || this.isTime(v) || $gettext("Invalid time")];
     }
   }
 
+  // email returns Vuetify rule callbacks for email validation.
   static email(required) {
     if (required) {
       return [
@@ -243,6 +269,7 @@ export class rules {
     }
   }
 
+  // url returns Vuetify rule callbacks for URL validation.
   static url(required) {
     if (required) {
       return [(v) => !!v || $gettext("This field is required"), (v) => !v || this.isUrl(v) || $gettext("Invalid URL")];
@@ -251,6 +278,7 @@ export class rules {
     }
   }
 
+  // text returns string length validators with optional localization label.
   static text(required, min, max, s) {
     if (!s) {
       s = $gettext("Text");
@@ -270,6 +298,7 @@ export class rules {
     }
   }
 
+  // number returns numeric validators with inclusive min/max checks.
   static number(required, min, max) {
     if (!min) {
       min = 0;
@@ -279,20 +308,42 @@ export class rules {
       max = 2147483647;
     }
 
+    const minValidator = (v) => {
+      if (v === "" || v === undefined || v === null) {
+        return true;
+      }
+
+      const value = Number(v);
+
+      if (isNaN(value)) {
+        return $gettext("Invalid");
+      }
+
+      return value >= min || $gettext("Invalid");
+    };
+
+    const maxValidator = (v) => {
+      if (v === "" || v === undefined || v === null) {
+        return true;
+      }
+
+      const value = Number(v);
+
+      if (isNaN(value)) {
+        return $gettext("Invalid");
+      }
+
+      return value <= max || $gettext("Invalid");
+    };
+
     if (required) {
-      return [
-        (v) => !!v || $gettext("This field is required"),
-        (v) => (this.isNumber(v) && v >= min) || $gettext("Invalid"),
-        (v) => (this.isNumber(v) && v <= max) || $gettext("Invalid"),
-      ];
+      return [(v) => !!v || $gettext("This field is required"), minValidator, maxValidator];
     } else {
-      return [
-        (v) => (this.isNumber(v) && v >= min) || $gettext("Invalid"),
-        (v) => (this.isNumber(v) && v <= max) || $gettext("Invalid"),
-      ];
+      return [minValidator, maxValidator];
     }
   }
 
+  // country validates ISO-style country codes via length checks.
   static country(required) {
     if (required) {
       return [
@@ -308,6 +359,7 @@ export class rules {
     }
   }
 
+  // day validates day-of-month values between 1 and 31.
   static day(required) {
     if (required) {
       return [
@@ -319,6 +371,7 @@ export class rules {
     }
   }
 
+  // month validates month values between 1 and 12.
   static month(required) {
     if (required) {
       return [
@@ -330,6 +383,7 @@ export class rules {
     }
   }
 
+  // year validates year values using optional bounds (defaults 1800..current year).
   static year(required, min, max) {
     if (!min) {
       min = 1800;

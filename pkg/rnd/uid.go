@@ -6,7 +6,9 @@ import (
 )
 
 const (
-	PrefixNone  = byte(0)
+	// PrefixNone indicates no UID prefix is set.
+	PrefixNone = byte(0)
+	// PrefixMixed marks a mixed set of UID prefixes.
 	PrefixMixed = byte('*')
 )
 

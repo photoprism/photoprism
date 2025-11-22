@@ -24,7 +24,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Len(t, photos0, 6)
+	assert.Len(t, photos0, 8)
 
 	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos

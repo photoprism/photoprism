@@ -10,7 +10,7 @@ func Color(s string) string {
 
 	// Remove unwanted characters.
 	s = strings.Map(func(r rune) rune {
-		if r < 48 && r > 57 && 97 < r && r > 102 && r != 35 {
+		if (r < '0' || r > '9') && (r < 'a' || r > 'f') && r != '#' {
 			return -1
 		}
 		return r

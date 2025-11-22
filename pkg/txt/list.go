@@ -22,10 +22,10 @@ func JoinAnd(values []string) string {
 	// length >= 3
 	result := ""
 	for i := 0; i < length; i++ {
-		switch {
-		case i == 0:
+		switch i {
+		case 0:
 			result = values[i]
-		case i == length-1:
+		case length - 1:
 			result += ", and " + values[i]
 		default:
 			result += ", " + values[i]

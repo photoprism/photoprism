@@ -25,6 +25,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Delete:    true,
 			Download:  true,
 			Edit:      true,
+			BatchEdit: true,
 			Estimates: true,
 			Favorites: true,
 			Files:     true,
@@ -65,6 +66,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Delete:    true,
 			Download:  true,
 			Edit:      true,
+			BatchEdit: true,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -105,6 +107,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -130,7 +133,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		result := guest.ApplyScope("settings")
+		result := guest.ApplyScope("*")
 		t.Logf("GuestSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
@@ -144,6 +147,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -169,7 +173,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		result := visitor.ApplyScope("settings")
+		result := visitor.ApplyScope("photos albums moments folders calendar places settings")
 		t.Logf("VisitorSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
@@ -183,6 +187,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Delete:    false,
 			Download:  false,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,

@@ -163,7 +163,7 @@ func TestDetectQualityFallback(t *testing.T) {
 	found := false
 
 	for _, face := range faces {
-		if face.Score < int(QualityThreshold(face.Area.Scale)) {
+		if face.Score < int(PigoQualityThreshold(face.Area.Scale)) {
 			found = true
 			break
 		}

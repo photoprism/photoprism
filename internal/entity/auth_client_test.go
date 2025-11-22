@@ -27,7 +27,7 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, m.UserUID, UserFixtures.Get("alice").UserUID)
@@ -41,7 +41,7 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("cs5gfsvbd7ejzn8m")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, m.UserUID, UserFixtures.Get("bob").UserUID)
@@ -55,7 +55,7 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Empty(t, m.UserUID)
@@ -105,7 +105,7 @@ func TestClient_User(t *testing.T) {
 		m := alice.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "alice", m.UserName)
@@ -119,7 +119,7 @@ func TestClient_User(t *testing.T) {
 		m := metrics.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Empty(t, m.UserName)
@@ -135,7 +135,7 @@ func TestClient_User(t *testing.T) {
 		m := c.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Empty(t, m.UserName)
@@ -150,7 +150,7 @@ func TestClient_User(t *testing.T) {
 		m := c.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "bob", m.UserName)
@@ -169,7 +169,7 @@ func TestClient_SetUser(t *testing.T) {
 		m := c.SetUser(u)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.NotEmpty(t, c.User().UserName)
@@ -203,7 +203,7 @@ func TestClient_Save(t *testing.T) {
 		c = FindClientByUID("cs5cpu17n6gj2aaa")
 
 		if c == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 	})
 }
@@ -409,7 +409,7 @@ func TestClient_VerifySecret(t *testing.T) {
 		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, expected.ClientUID, m.GetUID())
@@ -428,7 +428,7 @@ func TestClient_VerifySecret(t *testing.T) {
 		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, expected.ClientUID, m.GetUID())

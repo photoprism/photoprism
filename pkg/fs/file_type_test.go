@@ -171,9 +171,12 @@ func TestFileType(t *testing.T) {
 		result := FileType("")
 		assert.Equal(t, TypeUnknown, result)
 	})
-	t.Run("JPEG", func(t *testing.T) {
+	t.Run("Jpeg", func(t *testing.T) {
 		result := FileType("testdata/test.jpg")
 		assert.Equal(t, ImageJpeg, result)
+	})
+	t.Run("MpJpg", func(t *testing.T) {
+		assert.Equal(t, ImageJpeg, FileType("name.MP.jpg"))
 	})
 	t.Run("RawCRW", func(t *testing.T) {
 		result := FileType("testdata/test (jpg).crw")
@@ -184,8 +187,9 @@ func TestFileType(t *testing.T) {
 		assert.Equal(t, ImageRaw, result)
 	})
 	t.Run("Mp4", func(t *testing.T) {
-		assert.Equal(t, Type("mp4"), FileType("file.mp"))
+		assert.Equal(t, Type("mp4"), FileType("file.mp4"))
 	})
+
 }
 
 func TestIsAnimatedImage(t *testing.T) {

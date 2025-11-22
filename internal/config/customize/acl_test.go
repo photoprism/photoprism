@@ -21,6 +21,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Delete:    true,
 			Download:  true,
 			Edit:      true,
+			BatchEdit: true,
 			Estimates: true,
 			Favorites: true,
 			Files:     true,
@@ -61,6 +62,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -89,5 +91,13 @@ func TestSettings_ApplyACL(t *testing.T) {
 		r := s.ApplyACL(acl.Rules, acl.RoleVisitor)
 		t.Logf("RoleVisitor: %#v", r)
 		assert.Equal(t, expected, r.Features)
+	})
+
+	t.Run("RoleClient", func(t *testing.T) {
+		s := NewDefaultSettings()
+
+		r := s.ApplyACL(acl.Rules, acl.RoleClient)
+
+		assert.True(t, r.Features.BatchEdit)
 	})
 }

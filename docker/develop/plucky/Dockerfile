@@ -71,6 +71,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
         librsvg2-bin ghostscript gsfonts pdf2svg ps2eps libsharpyuv-dev \
+        xvfb fonts-freefont-ttf fonts-ipafont-gothic fonts-noto-color-emoji \
+        fonts-tlwg-loma-otf fonts-unifont fonts-wqy-zenhei xfonts-cyrillic \
+        fonts-ipafont-mincho fonts-tlwg-loma xfonts-base xfonts-scalable \
     && \
     ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
     ln -sf /usr/bin/batcat /usr/local/bin/bat && \

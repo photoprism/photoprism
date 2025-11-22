@@ -29,7 +29,7 @@ func TestClip(t *testing.T) {
 func BenchmarkClipRunesASCII(b *testing.B) {
 	s := strings.Repeat("abc def ghi ", 20) // ASCII
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = Clip(s, 50)
 	}
 }
@@ -37,7 +37,7 @@ func BenchmarkClipRunesASCII(b *testing.B) {
 func BenchmarkClipRunesUTF8(b *testing.B) {
 	s := strings.Repeat("Grüße 世", 20) // non-ASCII runes
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = Clip(s, 50)
 	}
 }

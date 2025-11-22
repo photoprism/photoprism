@@ -84,7 +84,13 @@
 
 .form-actions.form-actions--sticky {
     padding: 8px;
-    background: linear-gradient(0deg, rgba(var(--v-theme-background), 1), rgba(var(--v-theme-background), 0.9), rgba(var(--v-theme-background), 0.8), rgba(var(--v-theme-background), 0));
+    background: linear-gradient(
+        0deg,
+        rgba(var(--v-theme-background), 1),
+        rgba(var(--v-theme-background), 0.9),
+        rgba(var(--v-theme-background), 0.8),
+        rgba(var(--v-theme-background), 0)
+    );
     background-size: 100%;
     position: sticky;
     bottom: 0;
@@ -230,7 +236,7 @@ table td > .action-buttons {
     border-width: thin;
 }
 
-.v-menu>.v-overlay__content>.v-list.action-menu__list>.v-list-item.v-list-item--density-compact.action-menu__item {
+.v-menu > .v-overlay__content > .v-list.action-menu__list > .v-list-item.v-list-item--density-compact.action-menu__item {
     padding: 8px 10px;
     margin: 2px 0;
     user-select: none;
@@ -246,14 +252,14 @@ table td > .action-buttons {
     border-width: thin;
 }
 
-.v-menu.action-menu.action-menu--lightbox>.v-overlay__content>.v-list.action-menu__list>.v-list-item.v-list-item--density-compact.action-menu__item {
+.v-menu.action-menu.action-menu--lightbox > .v-overlay__content > .v-list.action-menu__list > .v-list-item.v-list-item--density-compact.action-menu__item {
     padding: 8px;
 }
 
 .v-menu.action-menu .action-menu__list .action-menu__shortcut {
-    margin-inline-start: .75rem;
-    opacity: .5;
-    font-size: .75rem;
+    margin-inline-start: 0.75rem;
+    opacity: 0.5;
+    font-size: 0.75rem;
     font-weight: 400;
     line-height: 1.667;
     letter-spacing: normal;
@@ -275,4 +281,3 @@ table .table-actions {
         gap: 12px;
     }
 }
-

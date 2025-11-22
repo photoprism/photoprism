@@ -1,0 +1,112 @@
+/* Chip Selector Styles */
+.chip-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chip-selector__title {
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(var(--v-theme-on-surface), 0.87);
+  margin-bottom: 8px;
+}
+
+.chip-selector__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+  align-items: flex-start;
+}
+
+.chip-selector__input-container {
+  margin-top: 8px;
+}
+
+.chip-selector__input {
+  width: 100%;
+}
+
+/* Chip Styles */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  min-height: 32px;
+  transition: all 0.2s ease;
+}
+
+.chip__content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip__icon {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Chip States */
+.chip--gray {
+  background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
+  color: rgb(var(--v-theme-on-surface));
+  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.chip--gray-light {
+  background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.55);
+  color: rgb(var(--v-theme-on-surface));
+  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.chip--green {
+    background-color: rgb(var(--v-theme-download));
+  color: rgb(var(--v-theme-on-download));
+}
+
+.chip--green-light {
+  background-color: rgba(var(--v-theme-download), 0.3);
+  color: rgb(var(--v-theme-download));
+}
+
+.chip--red {
+  background-color: rgb(var(--v-theme-error));
+  color: rgb(var(--v-theme-on-error));
+}
+
+.chip--red-light {
+  background-color: rgba(var(--v-theme-error), 0.3);
+  color: rgb(var(--v-theme-error));
+}
+
+/* Empty state */
+.chip-selector__empty {
+  padding: 16px;
+  text-align: center;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-style: italic;
+}
+
+/* Mobile optimizations */
+@media (max-width: 600px) {
+  .chip-selector__chips {
+    gap: 6px;
+  }
+  
+  .chip {
+    padding: 4px 8px;
+    font-size: 12px;
+    min-height: 28px;
+  }
+  
+  .chip__icon {
+    font-size: 14px;
+  }
+}

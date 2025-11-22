@@ -97,7 +97,7 @@ func TestBatchAlbumsDelete(t *testing.T) {
 	app, router, _ := NewApiTest()
 	CreateAlbum(router)
 	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "BatchDelete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
-	assert.Equal(t, http.StatusOK, r.Code)
+	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
 	t.Run("Success", func(t *testing.T) {

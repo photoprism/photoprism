@@ -24,13 +24,14 @@ func Duration(s string) string {
 
 	// Remove invalid characters.
 	s = strings.Map(func(r rune) rune {
-		if !skipDot && (r == ',' || r == '.') {
+		switch {
+		case !skipDot && (r == ',' || r == '.'):
 			skipDot = true
 			return '.'
-		} else if durationRunes[r] {
+		case durationRunes[r]:
 			skipDot = false
 			return r
-		} else if r < '0' || r > '9' {
+		case r < '0' || r > '9':
 			return -1
 		}
 

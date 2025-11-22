@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="580"
@@ -67,6 +68,7 @@
             style="color: inherit"
             href="https://docs.photoprism.app/user-guide/sync/webdav/"
             target="_blank"
+            rel="noopener"
           >
             {{ $gettext(`Detailed instructions can be found in our User Guide.`) }}
           </a>
@@ -91,6 +93,7 @@ export default {
       default: false,
     },
   },
+  emits: ["close"],
   data() {
     return {
       user: this.$session.getUser(),
@@ -144,7 +147,7 @@ export default {
       return baseUrl;
     },
     windowsHelp(ev) {
-      window.open("https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server", "_blank");
+      this.$util.openUrl("https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server");
       ev.preventDefault();
       ev.stopPropagation();
     },

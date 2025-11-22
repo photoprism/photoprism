@@ -12,7 +12,11 @@
     </p>
     <p>
       To resolve this issue, please ensure that WebSocket connections are not blocked by your browser, firewall, or any
-      <a target="_blank" href="https://docs.photoprism.app/getting-started/proxies/traefik/" class="text-link"
+      <a
+        target="_blank"
+        rel="noopener"
+        href="https://docs.photoprism.app/getting-started/proxies/traefik/"
+        class="text-link"
         >HTTP/HTTPS reverse proxy</a
       >
       you may be connecting through, for example:
@@ -60,8 +64,10 @@ http {
               >
               <p>
                 Please refer to the
-                <a target="_blank" href="https://nginx.org/en/docs/" class="text-link">official documentation</a> for
-                further details.
+                <a target="_blank" rel="noopener" href="https://nginx.org/en/docs/" class="text-link"
+                  >official documentation</a
+                >
+                for further details.
               </p>
             </v-card-text>
           </v-card>
@@ -85,7 +91,7 @@ example.com {
               >
               <p>
                 Please refer to the
-                <a target="_blank" href="https://caddyserver.com/v1/docs/websocket" class="text-link"
+                <a target="_blank" rel="noopener" href="https://caddyserver.com/v1/docs/websocket" class="text-link"
                   >official documentation</a
                 >
                 for further details.
@@ -112,7 +118,7 @@ example.com {
               <p>
                 In addition, Caddy 2 may automatically create and update Let's Encrypt HTTPS certificates. Please refer
                 to the
-                <a target="_blank" href="https://caddyserver.com/docs/v2-upgrade#proxy" class="text-link"
+                <a target="_blank" rel="noopener" href="https://caddyserver.com/docs/v2-upgrade#proxy" class="text-link"
                   >official documentation</a
                 >
                 for further details.
@@ -149,6 +155,7 @@ a2enmod proxy_wstunnel
                 The
                 <a
                   target="_blank"
+                  rel="noopener"
                   href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html"
                   class="text-link"
                   >official documentation</a

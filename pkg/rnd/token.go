@@ -7,8 +7,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/checksum"
 )
 
+// CharsetBase10 contains digits 0-9.
 const CharsetBase10 = checksum.CharsetBase10
+
+// CharsetBase36 contains lowercase letters and digits.
 const CharsetBase36 = checksum.CharsetBase36
+
+// CharsetBase62 contains upper/lowercase letters and digits.
 const CharsetBase62 = checksum.CharsetBase62
 
 // Base10 generates a random token containing numbers only.

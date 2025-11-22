@@ -53,6 +53,57 @@ func TestType(t *testing.T) {
 	})
 }
 
+func TestTypeUnicode(t *testing.T) {
+	tests := []struct {
+		name       string
+		input      string
+		want       string
+		maxRunes64 bool
+	}{
+		{
+			name:       "Clip",
+			input:      " 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!",
+			want:       "幸福 Hanzi are logograms developed for the writing of Chinese! Exp",
+			maxRunes64: true,
+		},
+		{
+			name:  "WhitespaceCollapsed",
+			input: "a b\tc\nd",
+			want:  "a b c d",
+		},
+		{
+			name:  "SpecialCharacters",
+			input: "a-`~/\\:|\"'?*<>{}b",
+			want:  "a-~/:b",
+		},
+		{
+			name:  "NonASCII",
+			input: "äöü",
+			want:  "äöü",
+		},
+		{
+			name:  "About",
+			input: "PhotoPrism® Pro",
+			want:  "PhotoPrism® Pro",
+		},
+		{
+			name:  "Empty",
+			input: "",
+			want:  "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := TypeUnicode(tt.input)
+			assert.Equal(t, tt.want, got)
+			if tt.maxRunes64 {
+				assert.LessOrEqual(t, len([]rune(got)), LengthType)
+			}
+		})
+	}
+}
+
 func TestTypeLower(t *testing.T) {
 	t.Run("Clip", func(t *testing.T) {
 		result := TypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
