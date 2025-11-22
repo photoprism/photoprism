@@ -51,7 +51,7 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 	jobs <- ImportJob{
 		FileName:  mediaFile.FileName(),
 		Related:   relatedFiles,
-		IndexOpt:  IndexOptionsAll(),
+		IndexOpt:  IndexOptionsAll(cfg),
 		ImportOpt: ImportOptionsCopy(cfg.ImportPath(), cfg.ImportDest()),
 		Imp:       imp,
 	}

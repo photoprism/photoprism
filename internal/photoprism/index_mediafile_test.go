@@ -23,7 +23,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 		mediaFile, err := NewMediaFile("testdata/flash.jpg")
 
 		if err != nil {
@@ -57,7 +57,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
 			t.Fatal(err)
@@ -78,7 +78,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		convert := NewConvert(cfg)
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		indexOpt := IndexOptionsAll()
+		indexOpt := IndexOptionsAll(cfg)
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4", "")
 		assert.Equal(t, IndexStatus("failed"), result.Status)

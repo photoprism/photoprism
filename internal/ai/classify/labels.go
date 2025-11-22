@@ -6,13 +6,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Labels is list of MediaFile labels.
+// Labels represents a sortable collection of Label values returned by vision
+// models, Exif metadata, or user input.
 type Labels []Label
 
-// Labels implement the sort interface to sort by priority and uncertainty.
+// Len implements sort.Interface for Labels.
+func (l Labels) Len() int { return len(l) }
 
-func (l Labels) Len() int      { return len(l) }
+// Swap implements sort.Interface for Labels.
 func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
+
+// Less implements sort.Interface for Labels. Higher-priority labels come first;
+// for equal priority the lower-uncertainty label wins. Labels with an
+// uncertainty >= 100 are considered unusable and are ordered last.
 func (l Labels) Less(i, j int) bool {
 	if l[i].Uncertainty >= 100 {
 		return false
@@ -25,7 +31,8 @@ func (l Labels) Less(i, j int) bool {
 	}
 }
 
-// AppendLabel extends append func by not appending empty label
+// AppendLabel mirrors append but discards labels with an empty name so callers
+// do not need to check for that guard condition.
 func (l Labels) AppendLabel(label Label) Labels {
 	if label.Name == "" {
 		return l
@@ -34,7 +41,9 @@ func (l Labels) AppendLabel(label Label) Labels {
 	return append(l, label)
 }
 
-// Keywords returns all keywords contained in Labels and their categories.
+// Keywords maps label names and categories to their keyword tokens (using the
+// txt.Keywords helper) while skipping low-confidence labels and those sourced
+// from plain text fields (title/caption/keyword).
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
 		if label.Uncertainty >= 100 ||
@@ -55,7 +64,58 @@ func (l Labels) Keywords() (result []string) {
 	return result
 }
 
-// Title gets the best label out a list of labels or fallback to compute a meaningful default title.
+// Count returns the number of labels that have a non-empty name and an
+// uncertainty below 100 (0% confidence cut-off).
+func (l Labels) Count() (count int) {
+	if l == nil {
+		return 0
+	}
+
+	for _, label := range l {
+		if label.Name == "" || label.Uncertainty >= 100 {
+			continue
+		}
+
+		count++
+	}
+
+	return count
+}
+
+// Names returns label names whose uncertainty is less than 100 (0% confidence
+// cut-off). The order matches the underlying slice.
+func (l Labels) Names() (s []string) {
+	if l == nil {
+		return s
+	}
+
+	s = make([]string, 0, l.Count())
+
+	for _, label := range l {
+		if label.Name == "" || label.Uncertainty >= 100 {
+			continue
+		}
+
+		s = append(s, label.Name)
+	}
+
+	return s
+}
+
+// String returns a human-readable list of label names joined with commas and an
+// "and" before the final element. When no names are available "none" is
+// returned to communicate the absence of labels.
+func (l Labels) String() string {
+	if l == nil {
+		return "none"
+	}
+
+	return txt.JoinAnd(l.Names())
+}
+
+// Title selects a suitable title from the labels slice using priority and
+// uncertainty thresholds. When titles are not available or fail the confidence
+// checks the provided fallback string is returned instead.
 func (l Labels) Title(fallback string) string {
 	fallbackRunes := len([]rune(fallback))
 
@@ -88,4 +148,23 @@ func (l Labels) Title(fallback string) string {
 	}
 
 	return fallback
+}
+
+// IsNSFW reports whether any label marks the asset as "not safe for work"
+// (NSFW). The threshold is clamped to [0,100] and checked against
+// NSFWConfidence; explicit NSFW flags always trigger a positive result.
+func (l Labels) IsNSFW(threshold int) bool {
+	if l == nil || threshold < 0 {
+		return false
+	} else if threshold > 100 {
+		threshold = 100
+	}
+
+	for _, label := range l {
+		if label.NSFW || label.NSFWConfidence >= threshold {
+			return true
+		}
+	}
+
+	return false
 }

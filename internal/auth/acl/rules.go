@@ -2,6 +2,7 @@ package acl
 
 import "sync"
 
+// RulesMutex guards concurrent updates to the ACL rules.
 var RulesMutex = &sync.Mutex{}
 
 // Rules specifies granted permissions by Resource and Role.
@@ -44,13 +45,13 @@ var Rules = ACL{
 		RoleClient: GrantFullAccess,
 	},
 	ResourcePlaces: Roles{
-		RoleAdmin:    GrantFullAccess,
-		RoleGuest:    GrantReactShared,
-		RoleVisitor:  GrantViewShared,
-		RoleInstance: GrantUseOwn,
-		RoleService:  GrantUseOwn,
-		RolePortal:   GrantUseOwn,
-		RoleClient:   GrantFullAccess,
+		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantReactShared,
+		RoleVisitor: GrantViewShared,
+		RoleApp:     GrantUseOwn,
+		RoleService: GrantUseOwn,
+		RolePortal:  GrantUseOwn,
+		RoleClient:  GrantFullAccess,
 	},
 	ResourceLabels: Roles{
 		RoleAdmin:  GrantFullAccess,
@@ -58,6 +59,7 @@ var Rules = ACL{
 	},
 	ResourceConfig: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RolePortal:  GrantFullAccess,
 		RoleClient:  GrantViewOwn,
 		RoleDefault: GrantViewOwn,
 	},
@@ -83,12 +85,12 @@ var Rules = ACL{
 		RoleGuest:  GrantUpdateOwn,
 	},
 	ResourceUsers: Roles{
-		RoleAdmin:    GrantManageOwn,
-		RoleGuest:    GrantViewUpdateOwn,
-		RoleInstance: GrantViewOwn,
-		RoleService:  GrantViewOwn,
-		RolePortal:   GrantFullAccess,
-		RoleClient:   GrantViewOwn,
+		RoleAdmin:   GrantManageOwn,
+		RoleGuest:   GrantViewUpdateOwn,
+		RoleApp:     GrantViewOwn,
+		RoleService: GrantViewOwn,
+		RolePortal:  GrantFullAccess,
+		RoleClient:  GrantViewOwn,
 	},
 	ResourceSessions: Roles{
 		RoleAdmin:   GrantManageOwn,
@@ -114,34 +116,34 @@ var Rules = ACL{
 		RoleClient: GrantPublishOwn,
 	},
 	ResourceMetrics: Roles{
-		RoleAdmin:    GrantFullAccess,
-		RoleInstance: GrantNone,
-		RoleService:  GrantViewAll,
-		RolePortal:   GrantViewAll,
-		RoleClient:   GrantViewAll,
+		RoleAdmin:   GrantFullAccess,
+		RoleApp:     GrantNone,
+		RoleService: GrantViewAll,
+		RolePortal:  GrantViewAll,
+		RoleClient:  GrantViewAll,
 	},
 	ResourceVision: Roles{
-		RoleAdmin:    GrantFullAccess,
-		RoleInstance: GrantUseOwn,
-		RoleService:  GrantUseOwn,
-		RolePortal:   GrantUseOwn,
-		RoleClient:   GrantUseOwn,
+		RoleAdmin:   GrantFullAccess,
+		RoleApp:     GrantUseOwn,
+		RoleService: GrantUseOwn,
+		RolePortal:  GrantUseOwn,
+		RoleClient:  GrantUseOwn,
 	},
 	ResourceCluster: Roles{
-		RoleAdmin:    GrantFullAccess,
-		RoleInstance: GrantSearchDownloadUpdateOwn,
-		RoleService:  GrantSearchDownloadUpdateOwn,
-		RolePortal:   GrantFullAccess,
-		RoleClient:   GrantSearchDownloadUpdateOwn,
+		RoleAdmin:   GrantFullAccess,
+		RoleApp:     GrantSearchDownloadUpdateOwn,
+		RoleService: GrantSearchDownloadUpdateOwn,
+		RolePortal:  GrantFullAccess,
+		RoleClient:  GrantSearchDownloadUpdateOwn,
 	},
 	ResourceFeedback: Roles{
 		RoleAdmin: GrantFullAccess,
 	},
 	ResourceDefault: Roles{
-		RoleAdmin:    GrantFullAccess,
-		RoleInstance: GrantNone,
-		RoleService:  GrantNone,
-		RolePortal:   GrantNone,
-		RoleClient:   GrantNone,
+		RoleAdmin:   GrantFullAccess,
+		RoleApp:     GrantNone,
+		RoleService: GrantNone,
+		RolePortal:  GrantNone,
+		RoleClient:  GrantNone,
 	},
 }

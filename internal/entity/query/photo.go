@@ -13,7 +13,7 @@ import (
 
 // PhotoByID returns a Photo based on the ID.
 func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
-	if err := UnscopedDb().Where("id = ?", photoID).
+	if err = UnscopedDb().Where("id = ?", photoID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
@@ -33,7 +33,7 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 
 // PhotoByUID returns a Photo based on the UID.
 func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
-	if err := UnscopedDb().Where("photo_uid = ?", photoUID).
+	if err = UnscopedDb().Where("photo_uid = ?", photoUID).
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
@@ -53,7 +53,45 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 
 // PhotoPreloadByUID returns a Photo based on the UID with all dependencies preloaded.
 func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
-	if err := UnscopedDb().Where("photo_uid = ?", photoUID).
+	if err = preloadPhotoAssociations(UnscopedDb().Where("photo_uid = ?", photoUID)).
+		First(&photo).Error; err != nil {
+		return photo, err
+	}
+
+	photo.PreloadMany()
+
+	return photo, nil
+}
+
+// PhotoPreloadByUIDs returns photos for the provided UIDs with supporting associations preloaded.
+// The call de-duplicates the UID list so callers can forward selection arrays directly without
+// incurring redundant queries.
+func PhotoPreloadByUIDs(photoUIDs []string) (entity.Photos, error) {
+	uids := uniqueUIDs(photoUIDs)
+	photos := entity.Photos{}
+
+	if len(uids) == 0 {
+		return photos, nil
+	}
+
+	if err := preloadPhotoAssociations(UnscopedDb().Where("photo_uid IN (?)", uids)).
+		Find(&photos).Error; err != nil {
+		return photos, err
+	}
+
+	for _, photo := range photos {
+		if photo == nil {
+			continue
+		}
+		photo.PreloadMany()
+	}
+
+	return photos, nil
+}
+
+// preloadPhotoAssociations applies the eager-load scope that keeps PhotoPreload helpers consistent.
+func preloadPhotoAssociations(db *gorm.DB) *gorm.DB {
+	return db.
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
@@ -63,14 +101,30 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
-		Preload("Cell.Place").
-		First(&photo).Error; err != nil {
-		return photo, err
+		Preload("Cell.Place")
+}
+
+// uniqueUIDs normalizes and de-duplicates selection lists so callers can reuse them as-is.
+func uniqueUIDs(uids []string) []string {
+	if len(uids) == 0 {
+		return nil
 	}
 
-	photo.PreloadMany()
+	result := make([]string, 0, len(uids))
+	seen := make(map[string]struct{}, len(uids))
 
-	return photo, nil
+	for _, uid := range uids {
+		if uid == "" {
+			continue
+		}
+		if _, ok := seen[uid]; ok {
+			continue
+		}
+		seen[uid] = struct{}{}
+		result = append(result, uid)
+	}
+
+	return result
 }
 
 // MissingPhotos returns photo entities without existing files.

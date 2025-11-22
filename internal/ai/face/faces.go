@@ -26,6 +26,17 @@ func (faces Faces) Count() int {
 	return len(faces)
 }
 
+// MaxScale returns the largest face scale in pixels.
+func (faces Faces) MaxScale() (max int) {
+	for _, f := range faces {
+		if f.Area.Scale > max {
+			max = f.Area.Scale
+		}
+	}
+
+	return max
+}
+
 // Uncertainty returns the max face detection uncertainty in percent.
 func (faces Faces) Uncertainty() int {
 	if len(faces) < 1 {

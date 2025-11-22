@@ -135,4 +135,16 @@ var DialectSQLite3 = Migrations{
 		Stage:      "main",
 		Statements: []string{"UPDATE photos SET time_zone = 'Local' WHERE time_zone = '' OR time_zone IS NULL;"},
 	},
+	{
+		ID:         "20251005-000001",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"UPDATE labels SET label_nsfw = 0 WHERE label_nsfw IS NULL;", "UPDATE photos_labels SET nsfw = 0 WHERE nsfw IS NULL;", "UPDATE photos_labels SET topicality = 0 WHERE topicality IS NULL;"},
+	},
+	{
+		ID:         "20251007-000001",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;"},
+	},
 }

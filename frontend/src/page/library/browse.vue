@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-files">
+  <div ref="page" tabindex="-1" class="p-page p-page-files">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -18,7 +18,7 @@
           </router-link>
         </v-toolbar-title>
 
-        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" tabindex="1" class="action-reload" @click.stop="refresh">
+        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh">
         </v-btn>
       </v-toolbar>
     </v-form>
@@ -380,6 +380,10 @@ export default {
       this.lastId = "";
     },
     updateQuery() {
+      if (this.loading) {
+        return false;
+      }
+
       this.filter.q = this.filter.q.trim();
 
       const query = {
@@ -395,10 +399,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {

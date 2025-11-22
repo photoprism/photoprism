@@ -192,7 +192,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				indexJobs <- photoprism.IndexJob{
 					FileName: mf.FileName(),
 					Related:  related,
-					IndexOpt: photoprism.IndexOptionsAll(),
+					IndexOpt: photoprism.IndexOptionsAll(w.conf),
 					Ind:      get.Index(),
 				}
 			} else {
@@ -200,7 +200,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				importJobs <- photoprism.ImportJob{
 					FileName:  mf.FileName(),
 					Related:   related,
-					IndexOpt:  photoprism.IndexOptionsAll(),
+					IndexOpt:  photoprism.IndexOptionsAll(w.conf),
 					ImportOpt: photoprism.ImportOptionsMove(baseDir, w.conf.ImportDest()),
 					Imp:       get.Import(),
 				}

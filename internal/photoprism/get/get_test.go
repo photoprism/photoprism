@@ -13,13 +13,19 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(tempDir)
 	c := config.NewMinimalTestConfigWithDb("test", tempDir)
 
 	SetConfig(c)
-	defer c.CloseDb()
 
 	code := m.Run()
+
+	if err = c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
+	if err = os.RemoveAll(tempDir); err != nil {
+		log.Errorf("remove temp dir: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

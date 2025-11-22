@@ -22,6 +22,7 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
 set -e
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 echo "Installing Darktable for ${DESTARCH^^}..."

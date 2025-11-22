@@ -5,25 +5,25 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Report returns global config values as a table for reporting.
 func (c *Config) Report() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
-	var dbKey string
-
-	if c.DatabaseDriver() == SQLite3 {
-		dbKey = "database-dsn"
-	} else {
-		dbKey = "database-name"
-	}
+	reportDatabaseDSN := c.ReportDatabaseDSN()
+	faceEngine := c.FaceEngine()
 
 	rows = [][]string{
 		// Authentication.
 		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
 		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
+		{"admin-scope", c.AdminScope()},
 		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
 		{"password-reset-uri", c.PasswordResetUri()},
 		{"register-uri", c.RegisterUri()},
@@ -78,8 +78,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"assets-path", c.AssetsPath()},
 		{"models-path", c.ModelsPath()},
 		{"static-path", c.StaticPath()},
-		{"build-path", c.BuildPath()},
-		{"img-path", c.ImgPath()},
+		{"static-build-path", c.StaticBuildPath()},
+		{"static-img-path", c.StaticImgPath()},
 		{"templates-path", c.TemplatesPath()},
 
 		// Sidecar Files.
@@ -193,7 +193,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwt-scope", c.JWTAllowedScopes().String()},
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
 		{"advertise-url", c.AdvertiseUrl()},
+	}...)
 
+	rows = append(rows, [][]string{
 		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},
 		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
@@ -216,15 +218,36 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
+	}...)
 
-		// Database.
-		{"database-driver", c.DatabaseDriver()},
-		{dbKey, c.DatabaseName()},
-		{"database-server", c.DatabaseServer()},
-		{"database-host", c.DatabaseHost()},
-		{"database-port", c.DatabasePortString()},
-		{"database-user", c.DatabaseUser()},
-		{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+	// Primary Database, Cluster Provision, and ProxySQL Credentials.
+	if reportDatabaseDSN {
+		rows = append(rows, [][]string{
+			{"database-driver", c.DatabaseDriver()},
+			{"database-dsn", dsn.Mask(c.DatabaseDSN())},
+		}...)
+	} else {
+		rows = append(rows, [][]string{
+			{"database-driver", c.DatabaseDriver()},
+			{"database-name", c.DatabaseName()},
+			{"database-server", c.DatabaseServer()},
+			{"database-host", c.DatabaseHost()},
+			{"database-port", c.DatabasePortString()},
+			{"database-user", c.DatabaseUser()},
+			{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+		}...)
+	}
+
+	if c.Portal() {
+		rows = append(rows, [][]string{
+			{"database-provision-driver", c.options.DatabaseProvisionDriver},
+			{"database-provision-prefix", c.DatabaseProvisionPrefix()},
+			{"database-provision-dsn", dsn.Mask(c.options.DatabaseProvisionDSN)},
+			{"database-provision-proxy-dsn", dsn.Mask(c.options.DatabaseProvisionProxyDSN)},
+		}...)
+	}
+
+	rows = append(rows, [][]string{
 		{"database-timeout", fmt.Sprintf("%d", c.DatabaseTimeout())},
 		{"database-conns", fmt.Sprintf("%d", c.DatabaseConns())},
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},
@@ -270,7 +293,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jpeg-size", fmt.Sprintf("%d", c.JpegSize())},
 		{"png-size", fmt.Sprintf("%d", c.PngSize())},
 
-		// Computer Vision.
+		// Computer Vision & Facial Recognition.
 		{"vision-yaml", c.VisionYaml()},
 		{"vision-api", fmt.Sprintf("%t", c.VisionApi())},
 		{"vision-uri", c.VisionUri()},
@@ -281,17 +304,43 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
+		{"face-engine", faceEngine},
+		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
+	}...)
 
-		// Facial Recognition.
-		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-		{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
+	if faceEngine == face.EngineONNX {
+		rows = append(rows, [][]string{
+			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+		}...)
+	} else if faceEngine == face.EnginePigo {
+		rows = append(rows, [][]string{
+			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
+		}...)
+	} else {
+		rows = append(rows, [][]string{
+			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
+		}...)
+	}
+
+	rows = append(rows, [][]string{
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
 		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
 		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
 		{"face-cluster-dist", fmt.Sprintf("%f", c.FaceClusterDist())},
+		{"face-cluster-radius", fmt.Sprintf("%f", c.FaceClusterRadius())},
+		{"face-collision-dist", fmt.Sprintf("%f", c.FaceCollisionDist())},
+		{"face-epsilon-dist", fmt.Sprintf("%f", c.FaceEpsilonDist())},
 		{"face-match-dist", fmt.Sprintf("%f", c.FaceMatchDist())},
+		{"face-skip-children", fmt.Sprintf("%t", c.FaceSkipChildren())},
+		{"face-allow-background", fmt.Sprintf("%t", c.FaceAllowBackground())},
 
 		// Daemon Mode.
 		{"pid-filename", c.PIDFilename()},

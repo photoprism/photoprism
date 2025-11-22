@@ -8,8 +8,8 @@ type Kind int
 
 const (
 	RegularFace Kind = iota + 1
-	KidsFace
-	IgnoredFace
+	ChildrenFace
+	BackgroundFace
 	AmbiguousFace
 )
 
@@ -35,10 +35,10 @@ func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 		switch k {
 		case RegularFace:
 			result[i] = RandomEmbedding()
-		case KidsFace:
-			result[i] = RandomKidsEmbedding()
-		case IgnoredFace:
-			result[i] = RandomIgnoredEmbedding()
+		case ChildrenFace:
+			result[i] = RandomChildrenEmbedding()
+		case BackgroundFace:
+			result[i] = RandomBackgroundEmbedding()
 		}
 
 	}
@@ -67,13 +67,17 @@ func RandomEmbedding() (result Embedding) {
 	return result
 }
 
-// RandomKidsEmbedding returns a random kids embedding for testing.
-func RandomKidsEmbedding() (result Embedding) {
+// RandomChildrenEmbedding returns a random children embedding for testing.
+func RandomChildrenEmbedding() (result Embedding) {
 	result = make(Embedding, 512)
 
+	if len(Children) == 0 {
+		return result
+	}
+
 	d := 0.1 / 512.0
-	n := 1 + rand.IntN(len(KidsEmbeddings)-1)
-	e := KidsEmbeddings[n]
+	n := rand.IntN(len(Children))
+	e := Children[n].Embedding
 
 	for i := range result {
 		result[i] = RandomFloat64(e[i], d)
@@ -84,13 +88,17 @@ func RandomKidsEmbedding() (result Embedding) {
 	return result
 }
 
-// RandomIgnoredEmbedding returns a random ignored embedding for testing.
-func RandomIgnoredEmbedding() (result Embedding) {
+// RandomBackgroundEmbedding returns a random background embedding for testing.
+func RandomBackgroundEmbedding() (result Embedding) {
 	result = make(Embedding, 512)
 
+	if len(Background) == 0 {
+		return result
+	}
+
 	d := 0.1 / 512.0
-	n := 1 + rand.IntN(len(IgnoredEmbeddings)-1)
-	e := IgnoredEmbeddings[n]
+	n := rand.IntN(len(Background))
+	e := Background[n].Embedding
 
 	for i := range result {
 		result[i] = RandomFloat64(e[i], d)

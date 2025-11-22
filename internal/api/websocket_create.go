@@ -11,6 +11,13 @@ import (
 )
 
 // WebSocket registers the /ws endpoint for establishing websocket connections.
+//
+//	@Summary	opens a WebSocket connection for real-time events
+//	@Id			WebSocket
+//	@Tags		WebSocket
+//	@Success	101	{string}	string	"Switching Protocols"
+//	@Failure	403	{string}	string	"Forbidden"
+//	@Router		/ws [get]
 func WebSocket(router *gin.RouterGroup) {
 	if router == nil {
 		return

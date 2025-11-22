@@ -10,11 +10,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 func TestPostVisionFace(t *testing.T) {
-	t.Run("Face", func(t *testing.T) {
+	t.Run("GenerateFaceEmbeddings", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PostVisionFace(router)
 

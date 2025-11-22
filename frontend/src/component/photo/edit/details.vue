@@ -5,7 +5,7 @@
       validate-on="invalid-input"
       class="p-form p-form-photo-details-meta"
       accept-charset="UTF-8"
-      tabindex="1"
+      tabindex="-1"
       @submit.prevent="save"
     >
       <div class="form-body">
@@ -51,7 +51,7 @@
           </v-row>
           <v-row dense>
             <v-col cols="4" lg="2">
-              <v-combobox
+              <v-autocomplete
                 :model-value="view.model.Day > 0 ? view.model.Day : null"
                 :disabled="disabled"
                 :error="invalidDate"
@@ -70,10 +70,10 @@
                 class="input-day"
                 @update:model-value="setDay"
               >
-              </v-combobox>
+              </v-autocomplete>
             </v-col>
             <v-col cols="4" lg="2">
-              <v-combobox
+              <v-autocomplete
                 :model-value="view.model.Month > 0 ? view.model.Month : null"
                 :disabled="disabled"
                 :error="invalidDate"
@@ -91,10 +91,10 @@
                 class="input-month"
                 @update:model-value="setMonth"
               >
-              </v-combobox>
+              </v-autocomplete>
             </v-col>
             <v-col cols="4" lg="2">
-              <v-combobox
+              <v-autocomplete
                 :model-value="view.model.Year > 0 ? view.model.Year : null"
                 :disabled="disabled"
                 :error="invalidDate"
@@ -112,7 +112,7 @@
                 class="input-year"
                 @update:model-value="setYear"
               >
-              </v-combobox>
+              </v-autocomplete>
             </v-col>
             <v-col cols="6" lg="2">
               <v-text-field
@@ -397,18 +397,26 @@
       </div>
       <div v-if="!disabled" class="form-actions form-actions--sticky">
         <div class="action-buttons">
-          <v-btn color="button" variant="flat" class="action-close" @click.stop="close">
-            {{ $gettext(`Close`) }}
+          <v-btn
+            color="button"
+            variant="flat"
+            :aria-label="view.model?.wasChanged() ? $gettext('Discard changes and close') : $gettext('Close')"
+            class="action-discard action-close"
+            @click.stop="close"
+          >
+            <span v-if="view.model?.wasChanged()">{{ $gettext(`Discard`) }}</span>
+            <span v-else>{{ $gettext(`Close`) }}</span>
           </v-btn>
           <v-btn
             color="highlight"
             variant="flat"
             :disabled="!view.model?.wasChanged() && !inReview"
-            class="action-apply action-approve"
+            :aria-label="inReview ? $gettext(`Approve and save changes`) : $gettext('Save changes')"
+            class="action-save action-apply action-approve"
             @click.stop="save(false)"
           >
             <span v-if="inReview">{{ $gettext(`Approve`) }}</span>
-            <span v-else>{{ $gettext(`Apply`) }}</span>
+            <span v-else>{{ $gettext(`Save`) }}</span>
           </v-btn>
         </div>
       </div>
@@ -490,34 +498,76 @@ export default {
     setDay(v) {
       if (Number.isInteger(v?.value)) {
         this.view.model.Day = v?.value;
+        this.clampDayToValidRange();
         this.syncTime();
       } else if (!v) {
+        // Day set to unknown -> set Year to unknown and update TakenAtLocal day to 01
         this.view.model.Day = -1;
+        this.view.model.Year = -1;
+        this.updateModel();
       } else if (this.rules.isNumberRange(v, 1, 31)) {
         this.view.model.Day = Number(v);
+        this.clampDayToValidRange();
         this.syncTime();
       }
     },
     setMonth(v) {
       if (Number.isInteger(v?.value)) {
         this.view.model.Month = v?.value;
+        this.clampDayToValidRange();
         this.syncTime();
       } else if (!v) {
+        // Month set to unknown -> set Year to unknown
         this.view.model.Month = -1;
+        this.view.model.Year = -1;
+        this.syncTime();
       } else if (this.rules.isNumberRange(v, 1, 12)) {
         this.view.model.Month = Number(v);
+        this.clampDayToValidRange();
         this.syncTime();
       }
     },
     setYear(v) {
       if (Number.isInteger(v?.value)) {
         this.view.model.Year = v?.value;
+        this.clampDayToValidRange();
         this.syncTime();
       } else if (!v) {
+        // Year set to unknown
         this.view.model.Year = -1;
+        this.syncTime();
       } else if (this.rules.isNumberRange(v, 1000, Number(new Date().getUTCFullYear()))) {
         this.view.model.Year = Number(v);
+        this.clampDayToValidRange();
         this.syncTime();
+      }
+    },
+    // Returns the effective year used for validation: explicit year or from TakenAtLocal if unknown
+    effectiveYear() {
+      if (this.view?.model?.Year && this.view.model.Year > 0) return this.view.model.Year;
+      const y = this.view?.model?.TakenAtLocal
+        ? parseInt(this.view.model.TakenAtLocal.substring(0, 4))
+        : new Date().getUTCFullYear();
+      return isNaN(y) ? new Date().getUTCFullYear() : y;
+    },
+    // Returns the effective month used for validation: explicit month or from TakenAtLocal if unknown
+    effectiveMonth() {
+      if (this.view?.model?.Month && this.view.model.Month > 0) return this.view.model.Month;
+      const m = this.view?.model?.TakenAtLocal
+        ? parseInt(this.view.model.TakenAtLocal.substring(5, 7))
+        : new Date().getUTCMonth() + 1;
+      return isNaN(m) ? new Date().getUTCMonth() + 1 : m;
+    },
+    // Clamp day to the maximum valid day of the current effective month/year
+    clampDayToValidRange() {
+      const day = this.view?.model?.Day || 0;
+      if (day <= 0) return; // Unknown day stays unknown
+      const y = this.effectiveYear();
+      const m = this.effectiveMonth();
+      // JS Date trick: day 0 of next month yields last day of current month
+      const maxDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
+      if (day > maxDay) {
+        this.view.model.Day = maxDay;
       }
     },
     setTime() {

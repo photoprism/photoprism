@@ -10,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -58,6 +59,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	photo := entity.NewUserPhoto(o.Stack, userUID)
 	metaData := meta.NewData()
 	labels := classify.Labels{}
+	isNSFW := false
 	stripSequence := Config().Settings().StackSequences() && o.Stack
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
@@ -341,7 +343,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
-	} else if ind.findFaces && file.FilePrimary {
+	} else if o.DetectFaces && file.FilePrimary {
+		// Run face detection on primary files when enabled for this indexing run.
 		if markers := file.Markers(); markers != nil {
 			// Detect faces.
 			faces := ind.Faces(m, markers.DetectedFaceCount())
@@ -351,12 +354,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.AddFaces(faces)
 			}
 
-			// Any new markers?
-			if file.UnsavedMarkers() {
-				// Add matching labels.
-				extraLabels = append(extraLabels, file.Markers().Labels()...)
-			} else if o.FacesOnly {
-				// Skip when indexing faces only.
+			// Skip when indexing faces only and no new markers were found.
+			if !file.UnsavedMarkers() && o.FacesOnly {
 				result.Status = IndexSkipped
 				return result
 			}
@@ -814,19 +813,25 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if file.FilePrimary {
 		primaryFile = file
 
-		// Classify images with TensorFlow?
-		if ind.findLabels {
-			labels = ind.Labels(m, entity.SrcAuto)
+		// Classify images with TensorFlow if the run enables automatic labels.
+		if o.GenerateLabels {
+			labels = m.GenerateLabels(entity.SrcAuto)
 
 			// Append labels from other sources such as face detection.
 			if len(extraLabels) > 0 {
 				labels = append(labels, extraLabels...)
 			}
+
+			isNSFW = labels.IsNSFW(vision.Config.Thresholds.GetNSFW())
 		}
 
 		// Decouple NSFW detection from label generation.
-		if !photoExists && ind.detectNsfw {
-			photo.PhotoPrivate = ind.IsNsfw(m)
+		if !photoExists {
+			if isNSFW {
+				photo.PhotoPrivate = true
+			} else if o.DetectNsfw {
+				photo.PhotoPrivate = m.DetectNSFW()
+			}
 		}
 
 		// Read metadata from embedded Exif and JSON sidecar file, if exists.
@@ -979,7 +984,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		w = append(w, txt.FilenameKeywords(filePath)...)
 		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
-		w = append(w, photoLabels.Keywords()...)
 
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 

@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -22,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -67,7 +69,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		// Abort if there is not enough free storage to upload new files.
 		if conf.FilesQuotaReached() {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "insufficient storage"}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}
@@ -199,7 +201,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			containsNSFW := false
 
 			for _, filename := range uploads {
-				labels, nsfwErr := vision.Nsfw([]string{filename}, media.SrcLocal)
+				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
 
 				if nsfwErr != nil {
 					log.Debug(nsfwErr)
@@ -344,7 +346,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
-			if err := os.Remove(uploadPath); err != nil {
+			if err = os.Remove(uploadPath); err != nil {
 				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
 			} else {
 				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
@@ -373,8 +375,12 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
-		for _, uid := range frm.Albums {
-			PublishAlbumEvent(StatusUpdated, uid, c)
+		// Update album YAML backups and notify clients of the changes.
+		for _, album := range opt.Albums {
+			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
+				SaveAlbumYaml(a)
+				PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			}
 		}
 
 		// Update the user interface.

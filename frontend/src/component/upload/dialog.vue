@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     :fullscreen="$vuetify.display.mdAndDown"
     scrim
@@ -9,9 +10,8 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
     @keydown.esc.exact="onClose"
-    @focusout="onFocusOut"
   >
-    <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="1" @submit.prevent="onSubmit">
+    <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="-1" @submit.prevent="onSubmit">
       <input ref="upload" type="file" multiple :accept="accept" class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
         <v-toolbar
@@ -51,17 +51,20 @@
               <div class="form-controls">
                 <v-combobox
                   v-model="selectedAlbums"
+                  v-model:menu="albumsMenu"
                   :disabled="busy || loading || total > 0 || filesQuotaReached"
                   hide-details
                   chips
                   closable-chips
+                  return-object
                   multiple
                   class="input-albums"
                   :items="albums"
                   item-title="Title"
                   item-value="UID"
-                  :placeholder="$gettext('Select or create an album')"
-                  return-object
+                  :placeholder="$gettext('Select or create albums')"
+                  @update:menu="onAlbumsMenuUpdate"
+                  @keydown.enter.stop="onAlbumsEnter"
                 >
                   <template #no-data>
                     <v-list-item>
@@ -134,6 +137,7 @@
 import $api from "common/api";
 import $notify from "common/notify";
 import Album from "model/album";
+import { createAlbumSelectionWatcher } from "common/albums";
 import { Duration } from "luxon";
 
 export default {
@@ -155,6 +159,8 @@ export default {
       accept: this.$config.get("uploadAllow"),
       albums: [],
       selectedAlbums: [],
+      albumsMenu: false,
+      suppressAlbumsMenuOpen: false,
       selected: [],
       uploads: [],
       busy: false,
@@ -206,6 +212,7 @@ export default {
         this.reset();
       }
     },
+    selectedAlbums: createAlbumSelectionWatcher("albums"),
   },
   methods: {
     afterEnter() {
@@ -213,20 +220,6 @@ export default {
     },
     afterLeave() {
       this.$view.leave(this);
-    },
-    onFocusOut(ev) {
-      if (!this.$view.isActive(this)) {
-        return;
-      }
-
-      if (ev.target && ev.target instanceof HTMLElement && this.$refs.form?.$el instanceof HTMLElement) {
-        if (
-          document.activeElement !== this.$refs.form.$el &&
-          (!ev.target.closest(".p-upload-dialog") || ev.target?.disabled)
-        ) {
-          this.$refs.form?.$el.focus();
-        }
-      }
     },
     removeSelection(index) {
       this.selectedAlbums.splice(index, 1);
@@ -236,6 +229,20 @@ export default {
     },
     onLoaded() {
       this.loading = false;
+    },
+    onAlbumsEnter() {
+      this.suppressAlbumsMenuOpen = true;
+      this.albumsMenu = false;
+      window.setTimeout(() => {
+        this.suppressAlbumsMenuOpen = false;
+      }, 250);
+    },
+    onAlbumsMenuUpdate(val) {
+      if (val && this.suppressAlbumsMenuOpen) {
+        this.albumsMenu = false;
+        return;
+      }
+      this.albumsMenu = val;
     },
     load(q) {
       if (this.loading) {
@@ -294,6 +301,8 @@ export default {
       this.remainingTime = -1;
       this.eta = "";
       this.token = "";
+      this.albumsMenu = false;
+      this.suppressAlbumsMenuOpen = false;
     },
     onUploadDialog() {
       this.$refs.upload.click();
@@ -393,9 +402,14 @@ export default {
             addToAlbums.push(a);
           } else if (a instanceof Album && a.UID) {
             addToAlbums.push(a.UID);
+          } else if (typeof a === "object" && a?.UID) {
+            addToAlbums.push(a.UID);
           }
         });
       }
+
+      // Deduplicate album UIDs
+      addToAlbums = [...new Set(addToAlbums)];
 
       async function performUpload(ctx) {
         for (let i = 0; i < ctx.selected.length; i++) {

@@ -31,6 +31,7 @@ else
   SYSTEM_ARCH=$(uname -m)
 fi
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 S6_OVERLAY_ARCH=${BUILD_ARCH:-$SYSTEM_ARCH}

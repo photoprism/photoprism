@@ -15,7 +15,7 @@ fi
 DESTDIR=$(realpath "${1:-/usr/local}")
 
 # In addition, you can specify a custom version to be installed as the second argument.
-LIBHEIF_VERSION=${2:-v1.19.7}
+LIBHEIF_VERSION=${2:-v1.20.2}
 
 # Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
@@ -45,6 +45,7 @@ case $DESTARCH in
     ;;
 esac
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 # Abort if not executed as root.

@@ -1,34 +1,12 @@
-/*
-
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
-
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
-
-Feel free to send an email to hello@photoprism.app if you have questions,
-want to support our work, or just want to say hello.
-
-Additional information can be found in our Developer Guide:
-<https://docs.photoprism.app/developer-guide/>
-
-*/
-
 import $api from "common/api";
 import { Form } from "common/form";
 import Model from "model.js";
 import Link from "link.js";
 import { $gettext } from "common/gettext";
 
+export const BatchRestoreMultiplier = 10;
+
+// Rest is the abstract base for models backed by RESTful API resources.
 export class Rest extends Model {
   getId() {
     if (this.UID) {
@@ -185,6 +163,29 @@ export class Rest extends Model {
 
   static limit() {
     return 100000;
+  }
+
+  static restoreCap(batchSize, multiplier = BatchRestoreMultiplier) {
+    let size = Number(batchSize);
+
+    if (!Number.isFinite(size) || size <= 0) {
+      size = Number(this.batchSize ? this.batchSize() : 0);
+    }
+
+    if (!Number.isFinite(size) || size <= 0) {
+      return 0;
+    }
+
+    const factor = Number(multiplier);
+    const effectiveMultiplier = Number.isFinite(factor) && factor > 0 ? factor : BatchRestoreMultiplier;
+    const cap = size * effectiveMultiplier;
+    const limit = this.limit ? Number(this.limit()) : cap;
+
+    if (Number.isFinite(limit) && limit > 0) {
+      return Math.min(cap, limit);
+    }
+
+    return cap;
   }
 
   static search(params) {

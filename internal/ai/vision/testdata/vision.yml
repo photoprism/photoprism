@@ -76,3 +76,4 @@ Models:
     ResponseFormat: ollama
 Thresholds:
   Confidence: 10
+  NSFW: 75

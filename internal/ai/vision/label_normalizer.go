@@ -40,21 +40,58 @@ func normalizeLabelResult(result *LabelResult) {
 		return
 	}
 
+	// Get canonical label name and metadata,
 	name, meta := resolveLabelName(result.Name)
+
+	// Use canonical name from rules.
 	if name != "" {
 		result.Name = name
 	}
 
-	threshold := meta.Threshold
-	if threshold <= 0 {
-		threshold = float32(Config.Thresholds.Confidence) / 100
+	// Apply Confidence threshold if configured and the label has a Confidence score.
+	if result.Confidence > 0 || meta.Threshold == 1 {
+		// Cap Confidence at 100%.
+		if result.Confidence > 1 {
+			result.Confidence = 1
+		}
+
+		// Get Confidence threshold from label rules.
+		threshold := meta.Threshold
+
+		// Get global Confidence threshold, if label has no rule,
+		if threshold <= 0 {
+			threshold = Config.Thresholds.GetConfidenceFloat32()
+		}
+
+		// Compare Confidence threshold.
+		if threshold > 0 && result.Confidence < threshold {
+			result.Name = ""
+			result.Categories = nil
+			result.Priority = 0
+			return
+		}
+	} else if result.Confidence < 0 {
+		// Confidence cannot be negative.
+		result.Confidence = 0
 	}
 
-	if threshold > 0 && result.Confidence < threshold {
-		result.Name = ""
-		result.Categories = nil
-		result.Priority = 0
-		return
+	// Apply Topicality threshold if it is configured and the label has a Topicality score.
+	if result.Topicality > 0 || Config.Thresholds.Topicality == 100 {
+		// Cap Topicality at 100%.
+		if result.Topicality > 1 {
+			result.Topicality = 1
+		}
+
+		// Compare Topicality threshold.
+		if t := Config.Thresholds.GetTopicalityFloat32(); t > 0 && result.Topicality < t {
+			result.Name = ""
+			result.Categories = nil
+			result.Priority = 0
+			return
+		}
+	} else if result.Topicality < 0 {
+		// Topicality cannot be negative.
+		result.Topicality = 0
 	}
 
 	if len(meta.Categories) > 0 {
@@ -67,6 +104,20 @@ func normalizeLabelResult(result *LabelResult) {
 
 	if result.Priority == 0 {
 		result.Priority = PriorityFromTopicality(result.Topicality)
+	}
+
+	// NSFWConfidence cannot be less than 0%, or more than 100%.
+	if result.NSFWConfidence < 0 {
+		result.NSFWConfidence = 0
+	} else if result.NSFWConfidence > 1 {
+		result.NSFWConfidence = 1
+		result.NSFW = true
+	}
+
+	// Set NSFWConfidence to 100% if result.NSFW
+	// is set without a numeric score.
+	if result.NSFW && result.NSFWConfidence <= 0 {
+		result.NSFWConfidence = 1
 	}
 }
 
@@ -257,36 +308,41 @@ func addCanonicalMapping(name string, meta canonicalLabel) {
 		return
 	}
 
+	// Update existing canonical label.
 	if existing, ok := canonicalLabels[slug]; ok {
-		if existing.Name == "" {
+		if existing.Name == "" || meta.Name != "" && len(meta.Name) < len(existing.Name) {
 			existing.Name = meta.Name
 		}
 
-		if existing.Priority == 0 {
+		if meta.Priority != 0 && (existing.Priority == 0 || meta.Priority > existing.Priority) {
 			existing.Priority = meta.Priority
 		}
 
 		existing.Categories = mergeCategories(existing.Categories, meta.Categories)
-		if meta.Threshold > existing.Threshold {
+
+		if meta.Threshold > 0 && (existing.Threshold <= 0 || meta.Threshold < existing.Threshold) {
 			existing.Threshold = meta.Threshold
 		}
+
 		existing.hasRule = existing.hasRule || meta.hasRule
 		canonicalLabels[slug] = existing
 		return
 	}
 
+	// Create new canonical label.
 	canonicalLabels[slug] = canonicalLabel{
 		Name:       meta.Name,
 		Priority:   meta.Priority,
-		Categories: append([]string(nil), meta.Categories...),
+		Categories: mergeCategories(nil, meta.Categories),
 		Threshold:  meta.Threshold,
+		hasRule:    meta.hasRule,
 	}
 }
 
 // mergeCategories keeps categories unique by comparing slugs case-insensitively.
 func mergeCategories(existing, additional []string) []string {
-	if len(additional) == 0 {
-		return existing
+	if len(existing) == 0 && len(additional) == 0 {
+		return nil
 	}
 
 	seen := make(map[string]struct{}, len(existing)+len(additional))
@@ -301,7 +357,13 @@ func mergeCategories(existing, additional []string) []string {
 			continue
 		}
 		seen[slug] = struct{}{}
-		merged = append(merged, c)
+
+		normalized := txt.Title(c)
+		if normalized == "" {
+			continue
+		}
+
+		merged = append(merged, normalized)
 	}
 
 	for _, c := range additional {
@@ -313,7 +375,17 @@ func mergeCategories(existing, additional []string) []string {
 			continue
 		}
 		seen[slug] = struct{}{}
-		merged = append(merged, txt.Title(c))
+
+		normalized := txt.Title(c)
+		if normalized == "" {
+			continue
+		}
+
+		merged = append(merged, normalized)
+	}
+
+	if len(merged) == 0 {
+		return nil
 	}
 
 	return merged

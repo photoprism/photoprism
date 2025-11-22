@@ -17,9 +17,9 @@ var (
 
 func initVisionSources() {
 	visionSourcesOnce.Do(func() {
-		namesSet := make(map[string]struct{}, len(entity.VisionSrcNames))
+		namesSet := make(map[string]struct{}, len(entity.SrcVisionCommands))
 
-		for alias := range entity.VisionSrcNames {
+		for alias := range entity.SrcVisionCommands {
 			normalized := strings.TrimSpace(alias)
 
 			if normalized == "" {
@@ -45,7 +45,7 @@ func sanitizeVisionSource(raw string) (entity.Src, error) {
 		return entity.SrcAuto, nil
 	}
 
-	if src, ok := entity.VisionSrcNames[value]; ok {
+	if src, ok := entity.SrcVisionCommands[value]; ok {
 		return src, nil
 	}
 

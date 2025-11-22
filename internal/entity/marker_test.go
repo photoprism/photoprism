@@ -160,7 +160,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 		}
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		if m.MarkerUID == "" || m.FileUID == "" {
@@ -181,7 +181,7 @@ func TestMarker_Updates(t *testing.T) {
 		assert.Equal(t, SrcImage, m.MarkerSrc)
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
-		if err := m.Updates(Marker{MarkerSrc: SrcMeta}); err != nil {
+		if err = m.Updates(Marker{MarkerSrc: SrcMeta}); err != nil {
 			t.Fatal(err)
 		}
 

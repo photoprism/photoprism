@@ -1,12 +1,15 @@
 package query
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFaces(t *testing.T) {
@@ -227,6 +230,61 @@ func TestMergeFaces(t *testing.T) {
 		assert.EqualError(t, err, "faces: two or more clusters required for merging")
 		assert.Nil(t, result)
 	})
+}
+
+func TestMergeFacesRetainedClusters(t *testing.T) {
+	subjUID := rnd.GenerateUID('j')
+
+	embeddingA := face.RandomEmbeddings(1, face.RegularFace)
+	embeddingB := face.RandomEmbeddings(1, face.RegularFace)
+
+	faceA := entity.NewFace(subjUID, entity.SrcManual, embeddingA)
+	require.NoError(t, faceA.Create())
+
+	faceB := entity.NewFace(subjUID, entity.SrcManual, embeddingB)
+	require.NoError(t, faceB.Create())
+
+	// Create markers that deliberately fail to match the merged embedding.
+	neutralEmbedding := face.Embeddings{face.NullEmbedding}
+	neutralJSON := neutralEmbedding.JSON()
+
+	markers := []*entity.Marker{
+		{
+			FileUID:        rnd.GenerateUID('f'),
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcManual,
+			FaceID:         faceA.ID,
+			EmbeddingsJSON: neutralJSON,
+		},
+		{
+			FileUID:        rnd.GenerateUID('f'),
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcManual,
+			FaceID:         faceB.ID,
+			EmbeddingsJSON: neutralJSON,
+		},
+	}
+
+	for _, marker := range markers {
+		require.NoError(t, entity.Db().Create(marker).Error)
+	}
+
+	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
+	require.Error(t, err)
+	require.True(t, errors.Is(err, ErrRetainedManualClusters))
+
+	var updated entity.Face
+	require.NoError(t, entity.Db().Where("id = ?", faceA.ID).First(&updated).Error)
+	require.NotZero(t, updated.MergeRetry)
+	require.NotEmpty(t, updated.MergeNotes)
+
+	resetCount, err := ResetFaceMergeRetry(subjUID)
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, resetCount, 1)
+
+	require.NoError(t, entity.Db().Where("id = ?", faceA.ID).First(&updated).Error)
+	require.Zero(t, updated.MergeRetry)
+	require.Empty(t, updated.MergeNotes)
 }
 
 func TestResolveFaceCollisions(t *testing.T) {

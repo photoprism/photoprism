@@ -12,21 +12,20 @@ sizes=(16 20 29 32 40 48 50 55 56 60 64 72 76 80 100 114 120 128 144 152 160 167
 
 if [[ -z $2 ]]; then
   # Check if source file exists.
-  if [ -f "assets/static/icons/$1.svg" ]; then
-    echo "Creating icons from assets/static/icons/$1.svg..."
+  if [ -f "assets/static/icons/${1}.svg" ]; then
+    echo "Creating icons from assets/static/icons/${1}.svg..."
   else
-    echo "assets/static/icons/$1.svg not found"
+    echo "assets/static/icons/${1}.svg not found"
     exit 1
   fi
 
   # Create dest folder.
-  mkdir -p "assets/static/icons/$1"
+  mkdir -p "assets/static/icons/${1}"
 
   # Create icons in all sizes.
-  for i in "${sizes[@]}"
-  do
-   rsvg-convert -a -w $i -h $i "assets/static/icons/$1.svg" > "assets/static/icons/$1/$i.png"
-   echo "assets/static/icons/$1/$i.png"
+  for i in "${sizes[@]}"; do
+    rsvg-convert -a -w "$i" -h "$i" "assets/static/icons/${1}.svg" > "assets/static/icons/${1}/$i.png"
+    echo "assets/static/icons/${1}/$i.png"
   done
 else
   # Check if source file exists.
@@ -41,10 +40,9 @@ else
   mkdir -p "$2"
 
   # Create icons in all sizes.
-  for i in "${sizes[@]}"
-  do
-   rsvg-convert -a -w $i -h $i $1 > "$2/$i.png"
-   echo "$2/$i.png"
+  for i in "${sizes[@]}"; do
+    rsvg-convert -a -w "$i" -h "$i" "$1" > "$2/$i.png"
+    echo "$2/$i.png"
   done
 fi
 

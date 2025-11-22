@@ -28,7 +28,7 @@ func TestClusterEndpoints(t *testing.T) {
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
 
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: "instance", UUID: rnd.UUIDv7()}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
 
 	n2 := &reg.Node{Node: cluster.Node{Name: "pp-node-02", Role: "service", UUID: rnd.UUIDv7()}}
@@ -47,7 +47,7 @@ func TestClusterEndpoints(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, r.Code)
 
 	// Patch (manage requires Auth; our Auth() in tests allows admin; skip strict role checks here)
-	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"advertiseUrl":"http://n1:2342"}`)
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"AdvertiseUrl":"http://n1:2342"}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 
 	// Pagination: count=1 returns exactly one
@@ -91,7 +91,7 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
 
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-99", Role: "instance", UUID: rnd.UUIDv7()}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-99", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
 
 	n, err = regy.FindByName("pp-node-99")

@@ -582,6 +582,61 @@ let themes = {
       "hover-opacity": 0.05,
     },
   },
+  thinking: {
+    title: "Thinking",
+    name: "thinking",
+    dark: true,
+    colors: {
+      "background": "#191a1a",
+      "on-background": "#f4f6fc",
+      "surface": "#252727",
+      "on-surface": "#f6f6fa",
+      "surface-bright": "#262626",
+      "surface-variant": "#999999",
+      "on-surface-variant": "#1f2121",
+      "primary": "#906fe9",
+      "highlight": "#683daf",
+      "secondary": "#191a1a",
+      "on-secondary": "#f2f2f4",
+      "secondary-light": "#1b1d1d",
+      "accent": "#232323",
+      "card": "#242424",
+      "on-card": "#fafafa",
+      "selected": "#424242",
+      "on-selected": "#ffffff",
+      "switch": "#6c6c6c",
+      "button": "#303232",
+      "on-button": "#f4f4f5",
+      "table": "#212222",
+      "on-table": "#f2f2f4",
+      "error": "#f87171",
+      "info": "#60a5fa",
+      "success": "#10b981",
+      "warning": "#fbbf24",
+      "on-warning": "#ffffff",
+      "favorite": "#facc15",
+      "remove": "#f87171",
+      "restore": "#45b8e6",
+      "album": "#8d71e6",
+      "on-album": "#ffffff",
+      "download": "#34c6dc",
+      "private": "#47b4e7",
+      "edit": "#7f8df0",
+      "share": "#a586f2",
+      "love": "#fb7185",
+      "terminal": "#111415",
+      "navigation": "#191a1a",
+      "navigation-home": "#191a1a",
+    },
+    variables: {
+      "border-color": "#383838",
+      "border-opacity": 0.18,
+      "disabled-opacity": 0.58,
+      "hover-opacity": 0.045,
+      "focus-opacity": 0.06,
+      "fill-opacity": 0,
+    },
+  },
   vanta: {
     title: "Vanta",
     name: "vanta",
@@ -851,6 +906,11 @@ let options = [
     disabled: false,
   },
   {
+    text: "Thinking",
+    value: "thinking",
+    disabled: false,
+  },
+  {
     text: "Vanta",
     value: "vanta",
     disabled: false,
@@ -895,7 +955,14 @@ export const All = () => {
 };
 
 // Get returns a theme by name.
-export const Get = (name) => {
+export const Get = (name, preferForced = true) => {
+  if (Array.isArray(options) && preferForced) {
+    const forced = options.find((t) => t.force && t.value);
+    if (forced) {
+      name = forced.value;
+    }
+  }
+
   if (typeof themes[name] === "undefined") {
     name = options[0].value;
   }
@@ -935,6 +1002,7 @@ export const Set = (name, theme) => {
         text: theme.title ? theme.title : $gettext("Custom"),
         value: name,
         disabled: false,
+        force: true,
       },
     ];
   } else if (typeof themes[name] === "undefined") {

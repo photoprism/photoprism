@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-albums not-selectable" :class="$config.aclClasses('albums')">
+  <div ref="page" tabindex="-1" class="p-page p-page-albums not-selectable" :class="$config.aclClasses('albums')">
     <v-form
       ref="form"
       validate-on="invalid-input"
@@ -15,7 +15,6 @@
         <v-text-field
           :model-value="filter.q"
           :density="density"
-          tabindex="1"
           hide-details
           clearable
           overflow
@@ -49,7 +48,6 @@
         <v-btn
           v-if="canManage && staticFilter.type === 'album'"
           :title="$gettext('Add Album')"
-          tabindex="2"
           icon="mdi-plus"
           class="action-add ms-1"
           @click.prevent="create()"
@@ -58,7 +56,6 @@
         <p-action-menu
           v-if="$vuetify.display.mdAndUp"
           :items="menuActions"
-          :tabindex="3"
           button-class="ms-1"
         ></p-action-menu>
       </v-toolbar>
@@ -74,7 +71,6 @@
                     :label="$gettext('Year')"
                     :disabled="context === 'state'"
                     :menu-props="{ maxHeight: 346 }"
-                    tabindex="4"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -95,7 +91,6 @@
                     :model-value="filter.category"
                     :label="$gettext('Category')"
                     :menu-props="{ maxHeight: 346 }"
-                    tabindex="5"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -116,7 +111,6 @@
                     :model-value="filter.order"
                     :label="$gettext('Sort Order')"
                     :menu-props="{ maxHeight: 400 }"
-                    tabindex="6"
                     single-line
                     hide-details
                     variant="solo-filled"
@@ -452,6 +446,11 @@ export default {
         edit: false,
       },
       model: new Album(false),
+      restoreKey: "",
+      restoreConsumed: false,
+      restoreTargetCount: 0,
+      restorePending: 0,
+      restoring: false,
       all: {
         years: [{ value: "", text: this.$gettext("All Years") }],
       },
@@ -506,10 +505,12 @@ export default {
       this.filter.order = this.sortOrder();
       this.filter.reverse = this.sortReverse();
 
+      this.initRestoreState();
       this.search();
     },
   },
   created() {
+    this.initRestoreState();
     this.search();
 
     this.subscriptions.push(this.$event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
@@ -520,7 +521,15 @@ export default {
   mounted() {
     this.$view.enter(this, this.$refs?.page);
   },
+  activated() {
+    this.initRestoreState();
+
+    if (this.restoring && this.restorePending > 0) {
+      this.ensureRestoreTarget();
+    }
+  },
   beforeUnmount() {
+    this.persistRestoreState();
     for (let i = 0; i < this.subscriptions.length; i++) {
       this.$event.unsubscribe(this.subscriptions[i]);
     }
@@ -633,17 +642,143 @@ export default {
       return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("albums.offset"));
+      if (this.restoring && this.restoreTargetCount > 0) {
+        const cap = Album.restoreCap(this.batchSize);
+        const desired = Math.max(this.batchSize, this.restoreTargetCount);
+        const buffered = desired + this.batchSize;
 
-      if (this.offset > 0 || !offset) {
+        if (cap > 0) {
+          return Math.min(cap, buffered);
+        }
+
+        return buffered;
+      }
+
+      const storedOffset = parseInt(window.localStorage.getItem("albums.offset"));
+
+      if (this.offset > 0 || !Number.isFinite(storedOffset) || storedOffset <= 0) {
         return this.batchSize;
       }
 
-      return offset + this.batchSize;
+      const cap = Album.restoreCap(this.batchSize);
+      const total = storedOffset + this.batchSize;
+
+      if (cap > 0) {
+        return Math.min(cap, total);
+      }
+
+      return total;
     },
     setOffset(offset) {
-      this.offset = offset;
-      window.localStorage.setItem("albums.offset", offset);
+      const value = Number.isFinite(Number(offset)) ? Number(offset) : 0;
+      this.offset = value;
+      window.localStorage.setItem("albums.offset", value);
+    },
+    buildRestoreKey() {
+      const staticFilter = JSON.stringify(this.staticFilter) || "";
+      const filter = JSON.stringify(this.filter) || "";
+      const parts = [this.$route?.name || "", this.view || "", staticFilter, filter];
+
+      return parts.join("|");
+    },
+    initRestoreState() {
+      this.restoreKey = this.buildRestoreKey();
+
+      if (!this.$view.wasBackwardNavigation()) {
+        this.restoreConsumed = false;
+        this.resetRestoreState();
+        return;
+      }
+
+      if (this.restoreConsumed) {
+        this.restoring = this.restorePending > 0;
+        return;
+      }
+
+      const state = this.$view.consumeRestoreState(this.restoreKey);
+      this.restoreConsumed = true;
+
+      if (!state || typeof state !== "object") {
+        this.resetRestoreState();
+        return;
+      }
+
+      const cap = Album.restoreCap(this.batchSize);
+      const count = Number(state.count);
+      const offset = Number(state.offset);
+
+      this.restoreTargetCount = Math.max(0, Number.isFinite(count) ? count : 0);
+
+      if (cap > 0 && this.restoreTargetCount > 0) {
+        this.restoreTargetCount = Math.min(cap, this.restoreTargetCount);
+      }
+
+      this.restorePending = this.restoreTargetCount;
+      this.restoring = this.restorePending > 0;
+
+      if (Number.isFinite(offset) && offset >= 0) {
+        this.setOffset(offset);
+      }
+    },
+    resetRestoreState() {
+      this.restoreTargetCount = 0;
+      this.restorePending = 0;
+      this.restoring = false;
+    },
+    finishRestore() {
+      if (this.restorePending > 0) {
+        return;
+      }
+
+      this.restorePending = 0;
+      this.restoring = false;
+
+      window.setTimeout(() => {
+        if (!this.$view.wasBackwardNavigation()) {
+          this.restoreConsumed = false;
+        }
+      }, 0);
+    },
+    ensureRestoreTarget() {
+      if (this.restorePending <= 0) {
+        this.finishRestore();
+        return;
+      }
+
+      if (this.scrollDisabled || this.$view.isHidden(this)) {
+        this.finishRestore();
+        return;
+      }
+
+      this.$nextTick(() => {
+        if (this.restorePending > 0) {
+          this.loadMore(true);
+        }
+      });
+    },
+    persistRestoreState() {
+      const key = this.buildRestoreKey();
+
+      if (!key) {
+        return false;
+      }
+
+      const hasResults = Array.isArray(this.results) && this.results.length > 0;
+
+      if (!hasResults) {
+        this.$view.clearRestoreState(key);
+        return false;
+      }
+
+      const scrollTop = window.scrollY ?? window.pageYOffset ?? 0;
+      const offset = Number.isFinite(this.offset) && this.offset > 0 ? this.offset : this.results.length;
+
+      return this.$view.saveRestoreState(key, {
+        filterKey: key,
+        count: this.results.length,
+        offset: offset,
+        scrollTop: Math.max(0, Math.round(scrollTop)),
+      });
     },
     share(album) {
       if (!album || !this.canShare) {
@@ -798,14 +933,40 @@ export default {
         }
       }
     },
-    loadMore() {
-      if (this.scrollDisabled) return;
+    loadMore(force = false) {
+      const restoring = this.restorePending > 0;
+
+      if (!force && (this.scrollDisabled || this.$view.isHidden(this))) {
+        return;
+      }
 
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
-      const offset = this.dirty ? 0 : this.offset;
+      let count;
+      let offset;
+
+      if (this.dirty) {
+        count = (this.page + 2) * this.batchSize;
+        offset = 0;
+        this.resetRestoreState();
+      } else if (restoring) {
+        const cap = Album.restoreCap(this.batchSize);
+        const buffer = Math.min(this.batchSize, this.restorePending);
+        count = Math.min(cap, this.restorePending + buffer);
+        offset = this.results.length;
+      } else {
+        count = this.batchSize;
+        offset = this.offset;
+      }
+
+      if (!Number.isFinite(count) || count <= 0) {
+        count = this.batchSize;
+      }
+
+      if (!Number.isFinite(offset) || offset < 0) {
+        offset = 0;
+      }
 
       const params = {
         count: count,
@@ -818,22 +979,28 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
+      if (offset === 0 && this.dirty) {
+        this.results = [];
+      }
+
+      let shouldEnsureRestore = false;
+
       Album.search(params)
         .then((resp) => {
-          this.results = this.dirty ? resp.models : this.results.concat(resp.models);
+          this.results = this.dirty || offset === 0 ? resp.models : this.results.concat(resp.models);
 
           this.scrollDisabled = resp.count < resp.limit;
 
-          if (this.scrollDisabled) {
-            this.setOffset(resp.offset);
+          const nextOffset = resp.offset + resp.limit;
+          this.setOffset(Number.isFinite(nextOffset) ? nextOffset : this.results.length);
 
+          if (this.scrollDisabled) {
             if (this.results.length > 1) {
               this.$notify.info(
                 this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), { n: this.results.length })
               );
             }
           } else {
-            this.setOffset(resp.offset + resp.limit);
             this.page++;
 
             this.$nextTick(() => {
@@ -842,6 +1009,18 @@ export default {
               }
             });
           }
+
+          if (restoring) {
+            this.restorePending = Math.max(0, this.restoreTargetCount - this.results.length);
+            this.restoring = this.restorePending > 0;
+            shouldEnsureRestore = this.restoring && !this.scrollDisabled;
+
+            if (!this.restoring) {
+              this.finishRestore();
+            }
+          }
+
+          this.$nextTick(() => this.persistRestoreState());
         })
         .catch(() => {
           this.scrollDisabled = false;
@@ -850,6 +1029,12 @@ export default {
           this.dirty = false;
           this.loading = false;
           this.listen = true;
+
+          if (shouldEnsureRestore) {
+            this.ensureRestoreTarget();
+          } else if (!this.restoring) {
+            this.finishRestore();
+          }
         });
     },
     updateSettings(props) {
@@ -893,7 +1078,9 @@ export default {
     updateQuery(props) {
       this.updateFilter(props);
 
-      if (this.loading) return;
+      if (this.loading) {
+        return false;
+      }
 
       const query = {
         view: this.settings.view,
@@ -908,10 +1095,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {
@@ -929,6 +1118,8 @@ export default {
     },
     reset() {
       this.results = [];
+      this.resetRestoreState();
+      this.$view.clearRestoreState(this.buildRestoreKey());
     },
     search() {
       /**
@@ -936,14 +1127,17 @@ export default {
        * back-navigation. We therefore reset the remembered scroll-position
        * in any other scenario
        */
-      if (!window.backwardsNavigationDetected) {
+      const restoring = this.restoring && this.restoreTargetCount > 0;
+
+      if (!restoring && !this.$view.wasBackwardNavigation()) {
         this.setOffset(0);
+        this.resetRestoreState();
       }
 
       this.scrollDisabled = true;
 
       // Don't query the same data more than once
-      if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
+      if (!restoring && JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
         // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
@@ -957,6 +1151,8 @@ export default {
 
       const params = this.searchParams();
 
+      let shouldEnsureRestore = false;
+
       Album.search(params)
         .then((resp) => {
           // Hide search toolbar expansion panel when matching albums were found.
@@ -964,10 +1160,12 @@ export default {
             this.hideExpansionPanel();
           }
 
-          this.offset = resp.limit;
           this.results = resp.models;
 
           this.scrollDisabled = resp.count < resp.limit;
+
+          const nextOffset = resp.offset + resp.limit;
+          this.setOffset(Number.isFinite(nextOffset) ? nextOffset : this.results.length);
 
           if (this.scrollDisabled) {
             if (!this.results.length) {
@@ -987,6 +1185,20 @@ export default {
               }
             });
           }
+
+          if (restoring) {
+            this.restorePending = Math.max(0, this.restoreTargetCount - this.results.length);
+            this.restoring = this.restorePending > 0;
+            shouldEnsureRestore = this.restoring && !this.scrollDisabled;
+
+            if (!this.restoring) {
+              this.finishRestore();
+            }
+          } else {
+            this.finishRestore();
+          }
+
+          this.$nextTick(() => this.persistRestoreState());
         })
         .catch(() => {
           this.reset();
@@ -995,6 +1207,10 @@ export default {
           this.dirty = false;
           this.loading = false;
           this.listen = true;
+
+          if (shouldEnsureRestore) {
+            this.ensureRestoreTarget();
+          }
         });
     },
     refresh(props) {
@@ -1005,6 +1221,8 @@ export default {
       if (this.loading || !this.listen) {
         return;
       }
+
+      this.resetRestoreState();
 
       // Make sure enough results are loaded to maintain the scroll position.
       if (this.page > 2) {

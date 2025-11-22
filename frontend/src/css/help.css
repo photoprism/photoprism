@@ -16,7 +16,7 @@
 
 .p-help a.text-link {
     text-decoration: none;
-    color: rgb(var(--v-theme-primary, #9E7BEA)) !important;
+    color: rgb(var(--v-theme-primary, #9e7bea)) !important;
 }
 
 .p-help a.text-link:hover {

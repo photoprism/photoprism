@@ -8,6 +8,7 @@ type FeatureSettings struct {
 	Delete    bool `json:"delete" yaml:"Delete"`
 	Download  bool `json:"download" yaml:"Download"`
 	Edit      bool `json:"edit" yaml:"Edit"`
+	BatchEdit bool `json:"batchEdit" yaml:"BatchEdit"`
 	Estimates bool `json:"estimates" yaml:"Estimates"`
 	Favorites bool `json:"favorites" yaml:"Favorites"`
 	Files     bool `json:"files" yaml:"Files"`

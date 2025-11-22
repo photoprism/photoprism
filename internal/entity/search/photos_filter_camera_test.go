@@ -20,7 +20,7 @@ func TestPhotosFilterCamera(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Len(t, photos, 2)
 	})
 	t.Run("Apple", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -33,7 +33,7 @@ func TestPhotosFilterCamera(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 2)
+		assert.Len(t, photos, 3)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -286,7 +286,7 @@ func TestPhotosQueryCamera(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 1)
+		assert.Len(t, photos, 2)
 	})
 	t.Run("Apple", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -299,7 +299,7 @@ func TestPhotosQueryCamera(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 2)
+		assert.Len(t, photos, 3)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos

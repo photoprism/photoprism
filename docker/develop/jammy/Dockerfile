@@ -59,7 +59,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         xz-utils exiftool sqlite3 postgresql-client tzdata gpg make zip unzip wget curl rsync \
         imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
         libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
-        va-driver-all libva2 iputils-ping dnsutils libmagic-mgc \
+        va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     apt-get -qq install \
         build-essential software-properties-common pkg-config apt-utils \
@@ -76,6 +76,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
     /scripts/install-libheif.sh && \

@@ -72,13 +72,13 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 
 		for _, cluster := range results {
 			if f := entity.NewFace("", entity.SrcAuto, cluster); f == nil {
-				log.Errorf("faces: face should not be nil - you may have found a bug")
+				log.Errorf("faces: face must not be nil - you may have found a bug")
 			} else if f.SkipMatching() {
 				log.Infof("faces: skipped cluster %s, embedding not distinct enough", f.ID)
-			} else if err := f.Create(); err == nil {
+			} else if err = f.Create(); err == nil {
 				added = append(added, *f)
 				log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
-			} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Now()}); err != nil {
+			} else if err = f.Updates(entity.Values{"updated_at": entity.Now()}); err != nil {
 				log.Errorf("faces: %s", err)
 			} else {
 				log.Debugf("faces: updated cluster %s", f.ID)

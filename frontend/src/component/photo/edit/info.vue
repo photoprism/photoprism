@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-advanced">
-    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="1" @submit.prevent>
+    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <div class="v-table__overflow">
         <v-table tile hover density="compact" class="bg-table">
           <tbody>
@@ -84,7 +84,7 @@
             </tr>
             <tr>
               <td>
-                <span>{{ $gettext(`Title`) }}</span>
+                <span>{{ $pgettext(`Photo`, `Title`) }}</span>
               </td>
               <td>
                 <div v-tooltip="sourceName(view.model?.TitleSrc, $gettext('Generated'))" class="text-flex text-break">
@@ -116,7 +116,13 @@
                 {{ $gettext(`Albums`) }}
               </td>
               <td class="text-break">
-                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="text-primary text-link" target="_blank"
+                <a
+                  v-for="(a, i) in albums"
+                  :key="i"
+                  :href="a.url"
+                  class="text-primary text-link"
+                  target="_blank"
+                  rel="noopener"
                   ><span v-if="i > 0">, </span>{{ a.title }}</a
                 >
               </td>
@@ -325,7 +331,7 @@
 <script>
 import { DateTime } from "luxon";
 import * as options from "options/options";
-import { $gettext, T } from "common/gettext";
+import { $gettext } from "common/gettext";
 import * as formats from "options/formats";
 
 export default {

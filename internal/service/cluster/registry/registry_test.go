@@ -40,7 +40,7 @@ func TestClientRegistry_GetAndDelete(t *testing.T) {
 	}
 
 	// Create node
-	n := &Node{Node: cluster.Node{Name: "pp-del", Role: "instance", UUID: rnd.UUIDv7()}}
+	n := &Node{Node: cluster.Node{Name: "pp-del", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, r.Put(n))
 	assert.NotEmpty(t, n.ClientID)
 	assert.True(t, rnd.IsUID(n.ClientID, entity.ClientUID))
@@ -75,7 +75,7 @@ func TestClientRegistry_ListOrderByUpdatedAtDesc(t *testing.T) {
 
 	r, _ := NewClientRegistryWithConfig(c)
 
-	a := &Node{Node: cluster.Node{Name: "pp-a", Role: "instance", UUID: rnd.UUIDv7()}}
+	a := &Node{Node: cluster.Node{Name: "pp-a", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
 	b := &Node{Node: cluster.Node{Name: "pp-b", Role: "service", UUID: rnd.UUIDv7()}}
 	assert.NoError(t, r.Put(a))
 	// Ensure distinct UpdatedAt values (DBs often have second precision)
@@ -103,7 +103,7 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 		Node: cluster.Node{
 			ClientID:     "cs5gfen1bgxz7s9i",
 			Name:         "pp-node",
-			Role:         "instance",
+			Role:         cluster.RoleApp,
 			SiteUrl:      "https://photos.example.com",
 			AdvertiseUrl: "http://node:2342",
 			Labels:       map[string]string{"env": "prod"},
@@ -164,7 +164,7 @@ func TestToNode_Mapping(t *testing.T) {
 	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-map", t.TempDir())
 	defer c.CloseDb()
 
-	m := entity.NewClient().SetName("pp-map").SetRole("instance")
+	m := entity.NewClient().SetName("pp-map").SetRole(cluster.RoleApp)
 	m.NodeUUID = rnd.UUIDv7()
 	m.ClientURL = "http://pp-map:2342"
 	data := m.GetData()
@@ -177,7 +177,7 @@ func TestToNode_Mapping(t *testing.T) {
 	n := toNode(m)
 	if assert.NotNil(t, n) {
 		assert.Equal(t, "pp-map", n.Name)
-		assert.Equal(t, "instance", n.Role)
+		assert.Equal(t, cluster.RoleApp, n.Role)
 		assert.Equal(t, "http://pp-map:2342", n.AdvertiseUrl)
 		assert.Equal(t, "gold", n.Labels["tier"])
 		assert.Equal(t, "https://photos.example.com", n.SiteUrl)
@@ -198,7 +198,7 @@ func TestClientRegistry_GetClusterNodeByUUID(t *testing.T) {
 	r, _ := NewClientRegistryWithConfig(c)
 	// Insert a node with NodeUUID
 	nu := rnd.UUIDv7()
-	n := &Node{Node: cluster.Node{Name: "pp-getuuid", Role: "instance", UUID: nu}}
+	n := &Node{Node: cluster.Node{Name: "pp-getuuid", Role: cluster.RoleApp, UUID: nu}}
 	assert.NoError(t, r.Put(n))
 
 	// Fetch DTO by NodeUUID
@@ -216,7 +216,7 @@ func TestClientRegistry_FindByName_NormalizesDNSLabel(t *testing.T) {
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Create canonical node name
-	n := &Node{Node: cluster.Node{Name: "my-node-prod", Role: "instance"}}
+	n := &Node{Node: cluster.Node{Name: "my-node-prod", Role: cluster.RoleApp}}
 	assert.NoError(t, r.Put(n))
 	// Lookup using mixed separators and case
 	got, err := r.FindByName("My.Node/Prod")

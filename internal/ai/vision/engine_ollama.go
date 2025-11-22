@@ -2,13 +2,12 @@ package vision
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 type ollamaDefaults struct{}
@@ -29,7 +28,7 @@ func init() {
 	RegisterEngineAlias(ollama.EngineName, EngineInfo{
 		RequestFormat:     ApiFormatOllama,
 		ResponseFormat:    ApiFormatOllama,
-		FileScheme:        string(scheme.Base64),
+		FileScheme:        scheme.Base64,
 		DefaultResolution: ollama.DefaultResolution,
 	})
 
@@ -37,6 +36,7 @@ func init() {
 	CaptionModel.ApplyEngineDefaults()
 }
 
+// SystemPrompt returns the Ollama system prompt for the specified model type.
 func (ollamaDefaults) SystemPrompt(model *Model) string {
 	if model == nil || model.Type != ModelTypeLabels {
 		return ""
@@ -44,6 +44,7 @@ func (ollamaDefaults) SystemPrompt(model *Model) string {
 	return ollama.LabelSystem
 }
 
+// UserPrompt returns the Ollama user prompt for the specified model type.
 func (ollamaDefaults) UserPrompt(model *Model) string {
 	if model == nil {
 		return ""
@@ -53,12 +54,17 @@ func (ollamaDefaults) UserPrompt(model *Model) string {
 	case ModelTypeCaption:
 		return ollama.CaptionPrompt
 	case ModelTypeLabels:
-		return ollama.LabelPrompt
+		if DetectNSFWLabels {
+			return ollama.LabelPromptNSFW
+		} else {
+			return ollama.LabelPromptDefault
+		}
 	default:
 		return ""
 	}
 }
 
+// SchemaTemplate returns the Ollama JSON schema template.
 func (ollamaDefaults) SchemaTemplate(model *Model) string {
 	if model == nil {
 		return ""
@@ -66,12 +72,13 @@ func (ollamaDefaults) SchemaTemplate(model *Model) string {
 
 	switch model.Type {
 	case ModelTypeLabels:
-		return ollama.LabelsSchema()
+		return ollama.SchemaLabels(model.PromptContains("nsfw"))
 	}
 
 	return ""
 }
 
+// Options returns the Ollama service request options.
 func (ollamaDefaults) Options(model *Model) *ApiRequestOptions {
 	if model == nil {
 		return nil
@@ -93,6 +100,7 @@ func (ollamaDefaults) Options(model *Model) *ApiRequestOptions {
 	}
 }
 
+// Build builds the Ollama service request.
 func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files) (*ApiRequest, error) {
 	if model == nil {
 		return nil, ErrInvalidModel
@@ -118,68 +126,107 @@ func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files) (*Api
 	return req, nil
 }
 
+// Parse processes the Ollama service response.
 func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
 	ollamaResp, err := decodeOllamaResponse(raw)
+
 	if err != nil {
 		return nil, err
 	}
 
-	result := &ApiResponse{
+	response := &ApiResponse{
 		Id:    req.GetId(),
 		Code:  status,
 		Model: &Model{Name: ollamaResp.Model},
 		Result: ApiResult{
-			Labels: append([]LabelResult{}, ollamaResp.Result.Labels...),
-			Caption: func() *CaptionResult {
-				if ollamaResp.Result.Caption != nil {
-					copyCaption := *ollamaResp.Result.Caption
-					return &copyCaption
-				}
-				return nil
-			}(),
+			Labels:  convertOllamaLabels(ollamaResp.Result.Labels),
+			Caption: convertOllamaCaption(ollamaResp.Result.Caption),
 		},
 	}
 
-	parsedLabels := len(result.Result.Labels) > 0
+	parsedLabels := len(response.Result.Labels) > 0
 
-	if !parsedLabels && strings.TrimSpace(ollamaResp.Response) != "" && req.Format == FormatJSON {
-		if labels, parseErr := parseOllamaLabels(ollamaResp.Response); parseErr != nil {
-			log.Debugf("vision: %s (parse ollama labels)", clean.Error(parseErr))
+	// Qwen3-VL models stream their JSON payload in the "Thinking" field.
+	fallbackJSON := strings.TrimSpace(ollamaResp.Response)
+	if fallbackJSON == "" {
+		fallbackJSON = strings.TrimSpace(ollamaResp.Thinking)
+	}
+
+	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
+		if labels, parseErr := parseOllamaLabels(fallbackJSON); parseErr != nil {
+			log.Warnf("vision: %s (parse ollama labels)", clean.Error(parseErr))
 		} else if len(labels) > 0 {
-			result.Result.Labels = append(result.Result.Labels, labels...)
+			response.Result.Labels = append(response.Result.Labels, labels...)
 			parsedLabels = true
 		}
 	}
 
 	if parsedLabels {
-		filtered := result.Result.Labels[:0]
-		for i := range result.Result.Labels {
-			if result.Result.Labels[i].Confidence <= 0 {
-				result.Result.Labels[i].Confidence = ollama.DefaultLabelConfidence
+		filtered := response.Result.Labels[:0]
+		for i := range response.Result.Labels {
+			if response.Result.Labels[i].Confidence <= 0 {
+				response.Result.Labels[i].Confidence = ollama.LabelConfidenceDefault
 			}
-			if result.Result.Labels[i].Topicality <= 0 {
-				result.Result.Labels[i].Topicality = result.Result.Labels[i].Confidence
+
+			if response.Result.Labels[i].Topicality <= 0 {
+				response.Result.Labels[i].Topicality = response.Result.Labels[i].Confidence
 			}
-			normalizeLabelResult(&result.Result.Labels[i])
-			if result.Result.Labels[i].Name == "" {
+
+			// Apply thresholds and canonicalize the name.
+			normalizeLabelResult(&response.Result.Labels[i])
+
+			if response.Result.Labels[i].Name == "" {
 				continue
 			}
-			if result.Result.Labels[i].Source == "" {
-				result.Result.Labels[i].Source = entity.SrcOllama
+
+			if response.Result.Labels[i].Source == "" {
+				response.Result.Labels[i].Source = entity.SrcOllama
 			}
-			filtered = append(filtered, result.Result.Labels[i])
+
+			filtered = append(filtered, response.Result.Labels[i])
 		}
-		result.Result.Labels = filtered
-	} else {
-		if caption := strings.TrimSpace(ollamaResp.Response); caption != "" {
-			result.Result.Caption = &CaptionResult{
-				Text:   caption,
-				Source: entity.SrcOllama,
-			}
+		response.Result.Labels = filtered
+	} else if caption := strings.TrimSpace(ollamaResp.Response); caption != "" {
+		response.Result.Caption = &CaptionResult{
+			Text:   caption,
+			Source: entity.SrcOllama,
 		}
 	}
 
-	return result, nil
+	return response, nil
 }
 
-var ErrInvalidModel = fmt.Errorf("vision: invalid model")
+func convertOllamaLabels(payload []ollama.LabelPayload) []LabelResult {
+	if len(payload) == 0 {
+		return nil
+	}
+
+	labels := make([]LabelResult, len(payload))
+
+	for i := range payload {
+		labels[i] = LabelResult{
+			Name:           payload[i].Name,
+			Source:         payload[i].Source,
+			Priority:       payload[i].Priority,
+			Confidence:     payload[i].Confidence,
+			Topicality:     payload[i].Topicality,
+			Categories:     payload[i].Categories,
+			NSFW:           payload[i].NSFW,
+			NSFWConfidence: payload[i].NSFWConfidence,
+		}
+	}
+
+	return labels
+}
+
+func convertOllamaCaption(payload *ollama.CaptionPayload) *CaptionResult {
+	if payload == nil {
+		return nil
+	}
+
+	return &CaptionResult{
+		Text:       payload.Text,
+		Source:     payload.Source,
+		Confidence: payload.Confidence,
+	}
+}

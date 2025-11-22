@@ -15,7 +15,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Photo represents a photo search result.
+// Photo represents a photo search result row joined with its primary file and
+// related metadata that we surface in the UI and API responses.
 type Photo struct {
 	ID               uint          `json:"-" select:"photos.id"`
 	CompositeID      string        `json:"ID" select:"files.photo_id AS composite_id"`
@@ -132,7 +133,17 @@ func (m *Photo) GetUID() string {
 	return m.PhotoUID
 }
 
-// Approve approves the photo if it is in review.
+// String returns the id or name as string for logging purposes.
+func (m *Photo) String() string {
+	if m == nil {
+		return "Photo<nil>"
+	}
+
+	return entity.PhotoLogString(m.PhotoPath, m.PhotoName, m.OriginalName, m.PhotoUID, m.ID)
+}
+
+// Approve promotes the photo to quality level 3 and clears review flags if it
+// currently sits in review state.
 func (m *Photo) Approve() error {
 	if !m.HasID() {
 		return fmt.Errorf("photo has no id")
@@ -172,7 +183,7 @@ func (m *Photo) Approve() error {
 	return nil
 }
 
-// Restore removes the photo from the archive (reverses soft delete).
+// Restore removes the photo from the archive by clearing the soft-delete flag.
 func (m *Photo) Restore() error {
 	if !m.HasID() {
 		return fmt.Errorf("photo has no id")
@@ -202,7 +213,8 @@ func (m *Photo) IsPlayable() bool {
 	}
 }
 
-// MediaInfo returns the media file hash and codec depending on the media type.
+// MediaInfo returns the best available media hash, codec, mime type, and
+// dimensions for the photo based on its media type and merged files.
 func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, height int) {
 	switch m.PhotoType {
 	case entity.MediaVideo, entity.MediaLive:
@@ -247,7 +259,8 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 	return m.FileHash, "", m.FileMime, m.FileWidth, m.FileHeight
 }
 
-// ShareBase returns a meaningful file name for sharing.
+// ShareBase returns a deterministic, human friendly file name stem for sharing
+// downloads generated from the photo's timestamp and title.
 func (m *Photo) ShareBase(seq int) string {
 	var name string
 
@@ -266,9 +279,12 @@ func (m *Photo) ShareBase(seq int) string {
 	return fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
 }
 
+// PhotoResults represents a list of photo search results that can be post
+// processed (for example merged by file).
 type PhotoResults []Photo
 
-// Photos returns the result as a slice of Photo.
+// Photos returns the results as a slice of the generic PhotoInterface type so
+// callers can interact with shared entity helpers.
 func (m PhotoResults) Photos() []entity.PhotoInterface {
 	result := make([]entity.PhotoInterface, len(m))
 
@@ -279,7 +295,7 @@ func (m PhotoResults) Photos() []entity.PhotoInterface {
 	return result
 }
 
-// UIDs returns a slice of photo UIDs.
+// UIDs returns the photo UIDs for all results in order.
 func (m PhotoResults) UIDs() []string {
 	result := make([]string, len(m))
 
@@ -290,7 +306,8 @@ func (m PhotoResults) UIDs() []string {
 	return result
 }
 
-// Merge consecutive file results that belong to the same photo.
+// Merge collapses consecutive rows that reference the same photo into a single
+// item with an aggregated Files slice.
 func (m PhotoResults) Merge() (merged PhotoResults, count int, err error) {
 	count = len(m)
 	merged = make(PhotoResults, 0, count)

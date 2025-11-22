@@ -20,7 +20,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 3)
+		assert.Len(t, photos, 4)
 	})
 	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -46,7 +46,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 8)
+		assert.Len(t, photos, 9)
 	})
 	t.Run("TwelveWhitespacePipeWhitespaceOne", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -59,7 +59,7 @@ func TestPhotosFilterMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 8)
+		assert.Len(t, photos, 9)
 	})
 	var f0 form.SearchPhotos
 
@@ -317,7 +317,7 @@ func TestPhotosQueryMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 3)
+		assert.Len(t, photos, 4)
 	})
 	t.Run("One", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -343,7 +343,7 @@ func TestPhotosQueryMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 8)
+		assert.Len(t, photos, 9)
 	})
 	t.Run("TwelveWhitespacePipeWhitespaceOne", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -356,7 +356,7 @@ func TestPhotosQueryMonth(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 8)
+		assert.Len(t, photos, 9)
 	})
 	var f0 form.SearchPhotos
 

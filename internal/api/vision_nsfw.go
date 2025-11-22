@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // PostVisionNsfw checks the specified images for inappropriate content.
@@ -54,7 +54,7 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 		}
 
 		// Run inference to check the specified images for inappropriate content.
-		results, err := vision.Nsfw(request.Images, media.SrcRemote)
+		results, err := vision.DetectNSFW(request.Images, media.SrcRemote)
 
 		if err != nil {
 			log.Errorf("vision: %s (run nsfw)", err)

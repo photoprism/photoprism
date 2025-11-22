@@ -6,9 +6,12 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -24,7 +27,7 @@ var ClusterNodesShowCommand = &cli.Command{
 
 func clusterNodesShowAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if !conf.IsPortal() {
+		if !conf.Portal() {
 			return cli.Exit(fmt.Errorf("node show is only available on a Portal node"), 2)
 		}
 
@@ -56,6 +59,13 @@ func clusterNodesShowAction(ctx *cli.Context) error {
 
 		opts := reg.NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true}
 		dto := reg.BuildClusterNode(*n, opts)
+
+		who := clusterAuditWho(ctx, conf)
+		event.AuditInfo(append(who,
+			string(acl.ResourceCluster),
+			"show node", "%s",
+			status.Succeeded,
+		), clean.Log(dto.UUID))
 
 		if ctx.Bool("json") {
 			b, _ := json.Marshal(dto)

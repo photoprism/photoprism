@@ -54,7 +54,7 @@ func DlName(name string) string {
 		return ""
 	}
 
-	name = strings.Replace(name, "...", "…", -1)
+	name = strings.ReplaceAll(name, "...", "…")
 
 	var prev rune
 

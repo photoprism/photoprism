@@ -8,27 +8,47 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const (
 	// Name prefix for generated DB objects.
 	// Final pattern without slugs (UUID-based):
-	//   database: photoprism_d<hmac11>
-	//   username: photoprism_u<hmac11>
-	prefix     = "photoprism_"
+	//   database: cluster_d<hmac11>
+	//   username: cluster_u<hmac11>
 	dbSuffix   = 11
 	userSuffix = 11
 	// Budgets: keep user conservative for MySQL compatibility; MariaDB allows more.
 	userMax = 32
 	dbMax   = 64
+	// prefixMax ensures usernames remain within the MySQL identifier limit.
+	prefixMax = cluster.DatabaseProvisionPrefixMaxLen
 )
+
+// DatabasePrefix stores the default identifier prefix for provisioned databases and users.
+// Portal deployments override this value during initialization based on configuration.
+var DatabasePrefix = cluster.DefaultDatabaseProvisionPrefix
 
 // GenerateCredentials computes deterministic database name and user for a node under the given portal
 // plus a random password. Naming is stable for a given (clusterUUID, nodeUUID) pair and changes
 // if the cluster UUID or node UUID changes.
 func GenerateCredentials(conf *config.Config, nodeUUID, nodeName string) (dbName, dbUser, dbPass string) {
 	clusterUUID := conf.ClusterUUID()
+
+	prefix := DatabasePrefix
+	if conf != nil {
+		if p := conf.DatabaseProvisionPrefix(); p != "" {
+			prefix = p
+		}
+	}
+	if prefix == "" {
+		prefix = cluster.DefaultDatabaseProvisionPrefix
+	}
+	if len(prefix) > prefixMax {
+		prefix = prefix[:prefixMax]
+	}
 
 	// Compute base32 (no padding) HMAC suffixes scoped by cluster UUID and node UUID.
 	sName := hmacBase32("db-name:"+clusterUUID, nodeUUID)
@@ -47,9 +67,9 @@ func GenerateCredentials(conf *config.Config, nodeUUID, nodeName string) (dbName
 func BuildDSN(driver, host string, port int, user, pass, name string) string {
 	d := strings.ToLower(driver)
 	switch d {
-	case config.MySQL, config.MariaDB:
-		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
-			user, pass, host, port, name,
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
+		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
+			user, pass, host, port, name, dsn.Params[dsn.DriverMySQL],
 		)
 	default:
 		log.Warnf("provisioner: unsupported driver %q, falling back to mysql DSN format", driver)

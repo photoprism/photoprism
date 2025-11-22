@@ -15,7 +15,8 @@ func FilterModels(models []string, when RunType, allow func(ModelType, RunType) 
 	filtered := make([]string, 0, len(models))
 
 	for _, name := range models {
-		modelType := ModelType(strings.TrimSpace(name))
+		modelType := strings.TrimSpace(name)
+
 		if modelType == "" {
 			continue
 		}

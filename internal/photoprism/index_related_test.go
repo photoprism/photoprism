@@ -59,7 +59,7 @@ func TestIndexRelated(t *testing.T) {
 
 		convert := NewConvert(cfg)
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		opt := IndexOptionsAll()
+		opt := IndexOptionsAll(cfg)
 
 		result := IndexRelated(related, ind, opt)
 
@@ -122,7 +122,7 @@ func TestIndexRelated(t *testing.T) {
 
 		convert := NewConvert(cfg)
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-		opt := IndexOptionsAll()
+		opt := IndexOptionsAll(cfg)
 
 		result := IndexRelated(related, ind, opt)
 

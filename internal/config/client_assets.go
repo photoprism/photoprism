@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // ClientAssets holds hashed frontend asset filenames emitted by the build pipeline.
@@ -135,11 +137,11 @@ func (a *ClientAssets) readFile(fileName string) string {
 
 // ClientAssets returns the frontend build assets.
 func (c *Config) ClientAssets() *ClientAssets {
-	result := NewClientAssets(c.BuildPath(), c.StaticUri())
+	result := NewClientAssets(c.StaticBuildPath(), c.StaticUri())
 
-	if err := result.Load("assets.json"); err != nil {
+	if err := result.Load(fs.AssetsJsonFile); err != nil {
 		log.Debugf("frontend: %s", err)
-		log.Errorf("frontend: cannot read assets.json")
+		log.Errorf("frontend: cannot read %s", fs.AssetsJsonFile)
 	}
 
 	return result
@@ -147,5 +149,5 @@ func (c *Config) ClientAssets() *ClientAssets {
 
 // ClientManifestUri returns the frontend manifest.json URI.
 func (c *Config) ClientManifestUri() string {
-	return fmt.Sprintf("%s?%x", c.BaseUri("/manifest.json"), c.VersionChecksum())
+	return fmt.Sprintf("%s?%x", c.BaseUri("/"+fs.ManifestJsonFile), c.VersionChecksum())
 }

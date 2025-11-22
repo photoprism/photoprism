@@ -4,13 +4,12 @@
       <v-toolbar density="compact" class="page-toolbar" color="secondary-light">
         <v-spacer></v-spacer>
 
-        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" tabindex="2" class="action-reload" @click.stop="refresh">
+        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh">
         </v-btn>
 
         <v-btn
           v-if="!filter.hidden"
           :title="$gettext('Show hidden')"
-          tabindex="3"
           icon="mdi-eye"
           class="action-show-hidden"
           @click.stop="onShowHidden"
@@ -18,7 +17,6 @@
         </v-btn>
         <v-btn
           v-else
-          tabindex="3"
           :title="$gettext('Exclude hidden')"
           icon="mdi-eye-off"
           class="action-exclude-hidden"
@@ -85,8 +83,8 @@
                   single-line
                   density="comfortable"
                   class="input-name pa-0 ma-0"
-                  @blur="onSetName(m, false)"
-                  @keyup.enter="onSetName(m, false)"
+                  @blur="(ev) => onSetName(m, ev)"
+                  @keyup.enter="(ev) => onSetName(m, ev)"
                 ></v-text-field>
                 <v-combobox
                   v-else
@@ -95,9 +93,9 @@
                   item-title="Name"
                   item-value="Name"
                   :readonly="readonly"
+                  :menu-props="menuProps"
                   return-object
                   hide-no-data
-                  :menu-props="menuProps"
                   hide-details
                   single-line
                   open-on-clear
@@ -105,10 +103,10 @@
                   prepend-inner-icon="mdi-account-plus"
                   autocomplete="off"
                   density="comfortable"
-                  class="input-name pa-0 ma-0"
-                  @blur="onSetName(m, true)"
+                  class="input-name pa-0 ma-0 text-selectable"
                   @update:model-value="(person) => onSetPerson(m, person)"
-                  @keyup.enter.native="onSetName(m, false)"
+                  @blur="(ev) => onSetName(m, ev)"
+                  @keyup.enter="(ev) => onSetName(m, ev)"
                 >
                 </v-combobox>
               </v-card-actions>
@@ -155,6 +153,7 @@ export default {
     },
     active: Boolean,
   },
+  emits: ["updateFaceCount"],
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
@@ -193,11 +192,21 @@ export default {
         text: this.$gettext("Add person?"),
       },
       menuProps: {
-        closeOnClick: false,
-        closeOnContentClick: true,
         openOnClick: false,
+        openOnFocus: true,
+        closeOnBack: true,
+        closeOnContentClick: true,
+        disableInitialFocus: true,
+        persistent: false,
+        scrim: true,
+        openDelay: 0,
+        closeDelay: 0,
+        opacity: 0,
         density: "compact",
         maxHeight: 300,
+        locationStrategy: "connected",
+        scrollStrategy: "reposition",
+        origin: "auto",
       },
       textRule: (v) => {
         if (!v || !v.length) {
@@ -496,6 +505,10 @@ export default {
         });
     },
     updateQuery() {
+      if (this.loading || !this.active) {
+        return false;
+      }
+
       this.filter.q = this.filter.q.trim();
 
       const query = {
@@ -511,10 +524,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {
@@ -637,8 +652,13 @@ export default {
 
       return true;
     },
-    onSetName(model, confirm) {
+    onSetName(model, ev) {
       if (this.busy || !model) {
+        return;
+      }
+
+      // If there's a pending confirmation for a different face, don't process new input
+      if (this.confirm.visible && this.confirm.model && this.confirm.model.ID !== model.ID) {
         return;
       }
 
@@ -668,10 +688,12 @@ export default {
       model.Name = name;
       model.SubjUID = "";
 
-      if (confirm && model.wasChanged()) {
-        this.confirm.visible = true;
-      } else {
-        this.onConfirmRename();
+      if (model.Name) {
+        if (ev && ev.key === "Enter" && !ev.isComposing && !ev.repeat) {
+          this.setName(model, model.Name);
+        } else {
+          this.confirm.visible = true;
+        }
       }
     },
     onConfirmRename() {
@@ -687,6 +709,10 @@ export default {
       }
     },
     onCancelRename() {
+      if (this.confirm && this.confirm.model) {
+        this.confirm.model.Name = "";
+        this.confirm.model.SubjUID = "";
+      }
       this.confirm.visible = false;
     },
     setName(model, newName) {

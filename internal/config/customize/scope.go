@@ -1,8 +1,6 @@
 package customize
 
 import (
-	"strings"
-
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/list"
 )
@@ -13,11 +11,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 		return s
 	}
 
-	scopes := list.ParseAttr(strings.ToLower(scope))
-
-	if scopes.Contains(acl.ResourceSettings.String()) {
-		return s
-	}
+	scopes := acl.ScopeAttr(scope)
 
 	m := *s
 
@@ -40,6 +34,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 	m.Features.Archive = s.Features.Archive && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Delete = s.Features.Delete && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Edit = s.Features.Edit && scopes.Contains(acl.ResourcePhotos.String())
+	m.Features.BatchEdit = s.Features.BatchEdit && s.Features.Edit && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Share = s.Features.Share && scopes.Contains(acl.ResourceShares.String())
 
 	// Browse, upload and download files.

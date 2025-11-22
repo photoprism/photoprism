@@ -19,8 +19,8 @@ func SetCaptionFunc(fn func(Files, media.Src) (*CaptionResult, *Model, error)) {
 	captionFunc = fn
 }
 
-// Caption returns generated captions for the specified images.
-func Caption(images Files, mediaSrc media.Src) (*CaptionResult, *Model, error) {
+// GenerateCaption returns generated captions for the specified images.
+func GenerateCaption(images Files, mediaSrc media.Src) (*CaptionResult, *Model, error) {
 	return captionFunc(images, mediaSrc)
 }
 
@@ -53,7 +53,11 @@ func captionInternal(images Files, mediaSrc media.Src) (result *CaptionResult, m
 
 			apiRequest.System = model.GetSystemPrompt()
 			apiRequest.Prompt = model.GetPrompt()
-			apiRequest.Options = model.GetOptions()
+
+			if apiRequest.Options == nil {
+				apiRequest.Options = model.GetOptions()
+			}
+
 			apiRequest.WriteLog()
 
 			if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {

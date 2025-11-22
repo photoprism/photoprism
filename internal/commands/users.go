@@ -76,11 +76,7 @@ var UserFlags = []cli.Flag{
 		Usage: UserAuthIDUsage,
 		Value: "",
 	},
-	&cli.BoolFlag{
-		Name:    "superadmin",
-		Aliases: []string{"s"},
-		Usage:   UserAdminUsage,
-	},
+	SuperAdminFlag(UserAdminUsage),
 	&cli.BoolFlag{
 		Name:    "no-login",
 		Aliases: []string{"l"},

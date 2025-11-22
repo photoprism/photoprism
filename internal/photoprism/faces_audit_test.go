@@ -19,7 +19,7 @@ func TestFaces_Audit(t *testing.T) {
 
 		m := NewFaces(c)
 
-		err := m.Audit(true)
+		err := m.Audit(true, "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -30,11 +30,18 @@ func TestFaces_Audit(t *testing.T) {
 
 		m := NewFaces(c)
 
-		err := m.Audit(false)
+		err := m.Audit(false, "")
 
 		if err != nil {
 			t.Fatal(err)
 		}
+	})
+	t.Run("SubjectFilter", func(t *testing.T) {
+		c := config.TestConfig()
+
+		m := NewFaces(c)
+
+		require.NoError(t, m.Audit(false, "jr0ncy131y7igds8"))
 	})
 }
 
@@ -83,7 +90,7 @@ func TestFaces_AuditNormalizesEmbeddings(t *testing.T) {
 	hashNorm := sha1.Sum(normalizeEmbeddingCopy(raw).JSON())
 	expectedID := base32.StdEncoding.EncodeToString(hashNorm[:])
 
-	require.NoError(t, m.Audit(true))
+	require.NoError(t, m.Audit(true, ""))
 
 	var updated entity.Face
 	require.NoError(t, entity.Db().Where("id = ?", expectedID).First(&updated).Error)

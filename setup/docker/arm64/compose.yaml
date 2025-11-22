@@ -215,7 +215,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower
   ## activate via "COMPOSE_PROFILES=update docker compose up -d"
   watchtower:
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     restart: unless-stopped
     ## Only starts this service if the "update" profile is specified::
     ## docker compose --profile update up -d

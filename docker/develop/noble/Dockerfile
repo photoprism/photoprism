@@ -57,7 +57,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
-        iputils-ping dnsutils \
+        iputils-ping dnsutils binutils binutils-gold \
     && \
     apt-get -qq install \
         software-properties-common pkg-config apt-utils ripgrep fd-find bat eza \
@@ -73,6 +73,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \

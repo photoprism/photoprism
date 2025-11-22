@@ -112,15 +112,23 @@ test.meta("testID", "calendar-004").meta({ type: "short", mode: "public" })(
   async (t) => {
     await menu.openPage("albums");
     const AlbumCount = await album.getAlbumCount("all");
+    await toolbar.search("Holiday");
+    const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.openAlbumWithUid(HolidayAlbumUid);
+    const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
     await menu.openPage("calendar");
     const SecondCalendarUid = await album.getNthAlbumUid("all", 1);
     await album.openAlbumWithUid(SecondCalendarUid);
     const PhotoCountInCalendar = await photo.getPhotoCount("all");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    const ThirdPhotoUid = await photo.getNthPhotoUid("image", 2);
+    const FourthPhotoUid = await photo.getNthPhotoUid("image", 3);
+    const FifthPhotoUid = await photo.getNthPhotoUid("image", 4);
+
     await menu.openPage("calendar");
     await album.selectAlbumFromUID(SecondCalendarUid);
-    await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForCalendar");
+    await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForCalendar", "Holiday"]);
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
@@ -145,6 +153,18 @@ test.meta("testID", "calendar-004").meta({ type: "short", mode: "public" })(
     }
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+
+    await album.openAlbumWithUid(HolidayAlbumUid);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await photo.selectPhotoFromUID(ThirdPhotoUid);
+    await photo.selectPhotoFromUID(FourthPhotoUid);
+    await photo.selectPhotoFromUID(FifthPhotoUid);
+    await contextmenu.triggerContextMenuAction("remove", "");
+    const PhotoCountHolidayAfterDelete = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
+
     await menu.openPage("calendar");
     await album.openAlbumWithUid(SecondCalendarUid);
     await photo.checkPhotoVisibility(FirstPhotoUid, true);

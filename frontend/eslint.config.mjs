@@ -76,7 +76,8 @@ export default defineConfig([
       },
     },
     rules: {
-      "indent": ["error", 2, { SwitchCase: 1 }],
+      // Defer indentation to Prettier so we don't get conflicting expectations.
+      "indent": "off",
       "linebreak-style": ["error", "unix"],
       "quotes": [
         "off",

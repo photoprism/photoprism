@@ -7,9 +7,13 @@ import (
 	"github.com/gosimple/slug"
 )
 
+// SlugCharset defines the allowed characters for encoded slugs.
 const SlugCharset = "abcdefghijklmnopqrstuvwxyz123456"
+
+// SlugEncoded is the prefix character indicating an encoded slug.
 const SlugEncoded = '_'
 
+// SlugEncoding defines default encoding for slug generation.
 var SlugEncoding = base32.NewEncoding(SlugCharset).WithPadding(base32.NoPadding)
 
 // Slug converts a string to a valid slug with a max length of 80 runes.

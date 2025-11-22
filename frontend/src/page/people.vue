@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-people" :class="$config.aclClasses('people')">
+  <div ref="page" tabindex="-1" class="p-page p-page-people" :class="$config.aclClasses('people')">
     <v-tabs
       v-model="active"
       elevation="0"

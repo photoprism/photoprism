@@ -12,7 +12,10 @@
 
 .v-main > .p-page .p-page__navigation,
 .v-main > .p-page .p-page__navigation .toolbar-expansion-panel .v-card {
-    box-shadow: 0 2px 1px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 1px 1px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 3px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+    box-shadow:
+        0 2px 1px -1px var(--v-shadow-key-umbra-opacity, #0003),
+        0 1px 1px 0 var(--v-shadow-key-penumbra-opacity, #00000024),
+        0 1px 3px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
 }
 
 .v-main > .p-page .p-page__loading {
@@ -72,7 +75,7 @@
     padding: 10px 14px 12px 14px;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
-    font-size: .75rem;
+    font-size: 0.75rem;
     line-height: normal !important;
     letter-spacing: normal !important;
     margin-bottom: 2px;
@@ -84,7 +87,7 @@
 
 @media only screen and (min-width: 960px) {
     .toolbar-details-panel {
-        font-size: .875rem;
+        font-size: 0.875rem;
         line-height: normal !important;
         letter-spacing: normal !important;
         padding: 12px 16px 14px 16px;

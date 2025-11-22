@@ -30,6 +30,7 @@ var VisionRunCommand = &cli.Command{
 			Aliases: []string{"f"},
 			Usage:   "replaces existing data if the model supports it and the source priority is equal or higher",
 		},
+		DryRunFlag("preview the run without executing any models"),
 	},
 	Action: visionRunAction,
 }
@@ -45,10 +46,21 @@ func visionRunAction(ctx *cli.Context) error {
 			return cli.Exit(err.Error(), 1)
 		}
 
+		models := vision.ParseModelTypes(ctx.String("models"))
+
+		if ctx.Bool("dry-run") {
+			modelList := strings.Join(models, ",")
+			if modelList == "" {
+				modelList = "(none)"
+			}
+			log.Infof("dry-run: vision run would execute models [%s] with filter=%q (count=%d, source=%s, force=%v)", modelList, filter, ctx.Int("count"), string(source), ctx.Bool("force"))
+			return nil
+		}
+
 		return worker.Start(
 			filter,
 			ctx.Int("count"),
-			vision.ParseModelTypes(ctx.String("models")),
+			models,
 			string(source),
 			ctx.Bool("force"),
 			vision.RunManual,

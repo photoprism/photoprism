@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // PostVisionCaption returns a suitable caption for an image.
@@ -53,7 +53,7 @@ func PostVisionCaption(router *gin.RouterGroup) {
 		}
 
 		// Run inference to generate a caption.
-		result, model, err := vision.Caption(request.Images, media.SrcRemote)
+		result, model, err := vision.GenerateCaption(request.Images, media.SrcRemote)
 
 		if err != nil {
 			log.Errorf("vision: %s (caption)", err)

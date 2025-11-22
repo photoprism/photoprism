@@ -8,7 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 func TestNewApiRequest(t *testing.T) {
@@ -49,7 +50,7 @@ func TestPerformApiRequestOllama(t *testing.T) {
 			var req ApiRequest
 			assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
 			assert.Equal(t, FormatJSON, req.Format)
-			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
 				Model:    "qwen2.5vl:latest",
 				Response: `{"labels":[{"name":"test","confidence":0.9,"topicality":0.8}]}`,
 			}))
@@ -70,9 +71,32 @@ func TestPerformApiRequestOllama(t *testing.T) {
 		assert.Equal(t, "Test", resp.Result.Labels[0].Name)
 		assert.Nil(t, resp.Result.Caption)
 	})
+	t.Run("LabelsWithCodeFence", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
+				Model:    "gemma3:latest",
+				Response: "```json\n{\"labels\":[{\"name\":\"lingerie\",\"confidence\":0.81,\"topicality\":0.73}]}\n```\nThe model provided additional commentary.",
+			}))
+		}))
+		defer server.Close()
+
+		apiRequest := &ApiRequest{
+			Id:             "fenced",
+			Model:          "gemma3:latest",
+			Format:         FormatJSON,
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		if assert.Len(t, resp.Result.Labels, 1) {
+			assert.Equal(t, "Lingerie", resp.Result.Labels[0].Name)
+		}
+	})
 	t.Run("CaptionFallback", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			assert.NoError(t, json.NewEncoder(w).Encode(ApiResponseOllama{
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
 				Model:    "qwen2.5vl:latest",
 				Response: "plain text",
 			}))

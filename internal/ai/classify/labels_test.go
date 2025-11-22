@@ -89,6 +89,100 @@ func TestLabels_Keywords(t *testing.T) {
 	})
 }
 
+func TestLabels_Names(t *testing.T) {
+	t.Run("FiltersEmptyAndUncertain", func(t *testing.T) {
+		labels := Labels{
+			{Name: "cat", Uncertainty: 20},
+			{Name: "", Uncertainty: 10},
+			{Name: "dog", Uncertainty: 100},
+			{Name: "bird", Uncertainty: 99},
+		}
+
+		assert.Equal(t, []string{"cat", "bird"}, labels.Names())
+	})
+
+	t.Run("NilLabels", func(t *testing.T) {
+		var labels Labels
+		assert.Nil(t, labels.Names())
+	})
+}
+
+func TestLabels_Count(t *testing.T) {
+	t.Run("CountsEligible", func(t *testing.T) {
+		labels := Labels{
+			{Name: "cat", Uncertainty: 20},
+			{Name: "", Uncertainty: 10},
+			{Name: "dog", Uncertainty: 100},
+			{Name: "bird", Uncertainty: 99},
+		}
+
+		assert.Equal(t, 2, labels.Count())
+	})
+
+	t.Run("NilLabels", func(t *testing.T) {
+		var labels Labels
+		assert.Equal(t, 0, labels.Count())
+	})
+}
+
+func TestLabels_String(t *testing.T) {
+	t.Run("JoinWithAnd", func(t *testing.T) {
+		labels := Labels{{Name: "cat"}, {Name: "dog"}, {Name: "bird"}}
+		assert.Equal(t, "cat, dog, and bird", labels.String())
+	})
+
+	t.Run("NoneForNil", func(t *testing.T) {
+		var labels Labels
+		assert.Equal(t, "none", labels.String())
+	})
+}
+
+func TestLabels_IsNSFW(t *testing.T) {
+	cases := []struct {
+		name      string
+		labels    Labels
+		threshold int
+		expected  bool
+	}{
+		{
+			name:      "ExplicitFlag",
+			threshold: 80,
+			labels:    Labels{{Name: "cat", NSFW: true}},
+			expected:  true,
+		},
+		{
+			name:      "ConfidenceAboveThreshold",
+			threshold: 80,
+			labels:    Labels{{Name: "cat", NSFWConfidence: 85}},
+			expected:  true,
+		},
+		{
+			name:      "ThresholdClamped",
+			threshold: 150,
+			labels:    Labels{{Name: "cat", NSFWConfidence: 90}},
+			expected:  false,
+		},
+		{
+			name:      "BelowThreshold",
+			threshold: 80,
+			labels:    Labels{{Name: "cat", NSFWConfidence: 40}},
+			expected:  false,
+		},
+		{
+			name:      "NegativeThreshold",
+			threshold: -10,
+			labels:    Labels{{Name: "cat", NSFWConfidence: 100}},
+			expected:  false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, tc.labels.IsNSFW(tc.threshold))
+		})
+	}
+}
+
 func TestLabel_Sort(t *testing.T) {
 	labels := Labels{
 		{Name: "label 0", Source: "location", Uncertainty: 100, Priority: 10},

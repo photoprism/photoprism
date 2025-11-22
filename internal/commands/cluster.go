@@ -20,6 +20,7 @@ var ClusterCommands = &cli.Command{
 		ClusterHealthCommand,
 		ClusterNodesCommands,
 		ClusterRegisterCommand,
+		ClusterJoinTokenCommand,
 		ClusterThemePullCommand,
 	},
 }

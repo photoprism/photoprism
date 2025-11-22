@@ -23,7 +23,7 @@ func Error(err error) string {
 			switch r {
 			case '`', '"':
 				return '\''
-			case '\\', '$', '<', '>', '{', '}':
+			case '%', '\\', '$', '<', '>', '{', '}':
 				return '?'
 			default:
 				return r

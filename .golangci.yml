@@ -1,0 +1,74 @@
+version: "2"
+
+linters:
+  default: standard
+
+  # Extra linters that are usually worth the cost even on a big codebase.
+  enable:
+    - revive
+    - gosec
+    - gocritic   # good generic bug/quality suggestions
+    - misspell   # catch obvious spelling mistakes in identifiers/comments
+
+  # Linters that tend to fight with established code style or structure:
+  disable:
+    - funlen
+    - gocyclo
+    - wsl
+    - lll        # don't enforce a strict max line length
+    - mnd        # don't go after every "magic number"
+    - depguard   # only useful once you define strict dependency rules
+    - gomodguard
+    - ineffassign
+    - errcheck
+
+  settings:
+    revive:
+      # Only enable the revive rules you actually care about.
+      rules:
+        - name: blank-imports
+        - name: error-strings
+        - name: error-return
+        - name: error-naming
+        - name: exported
+        - name: if-return
+        - name: var-naming
+          severity: warning
+          disabled: false
+          exclude: [""]
+          arguments:
+            - ["ID", "Id", "id", "UID", "Uid", "uid", "URI", "Uri", "uri", "URL", "Url", "url"] # AllowList
+            - [] # DenyList
+            - - skip-initialism-name-checks: true
+                upper-case-const: true
+                skip-package-name-checks: true
+        - name: var-declaration
+        - name: increment-decrement
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+
+    misspell:
+      # Correct spellings using locale preferences for US or UK.
+      # Setting locale to US will correct the British spelling of 'colour' to 'color'.
+      # Default is to use a neutral variety of English.
+      locale: US
+      # Typos to ignore.
+      # Should be in lower case.
+      # Default: []
+      ignore-rules:
+        - nolint
+        - gosec
+      # Extra word corrections.
+      # `typo` and `correction` should only contain letters.
+      # The words are case-insensitive.
+      # Default: []
+      extra-words:
+        - typo: "Photoprism"
+          correction: "PhotoPrism"
+      # Mode of the analysis:
+      # - default: checks all the file content.
+      # - restricted: checks only comments.
+      # Default: ""
+      mode: restricted

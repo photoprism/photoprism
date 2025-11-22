@@ -88,7 +88,12 @@ func TestFace_ResolveCollision(t *testing.T) {
 		assert.Less(t, m.CollisionRadius, 1.272)
 	})
 	t.Run("SubjectIdEmpty", func(t *testing.T) {
-		m := NewFace("", SrcAuto, face.KidsEmbeddings)
+		childrenEmbeddings := make(face.Embeddings, len(face.Children))
+		for i := range face.Children {
+			childrenEmbeddings[i] = face.Children[i].Embedding
+		}
+
+		m := NewFace("", SrcAuto, childrenEmbeddings)
 		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
 			t.Fatal(err)
 		} else {
@@ -188,7 +193,7 @@ func TestFace_SetEmbeddings(t *testing.T) {
 
 		require.NoError(t, m.SetEmbeddings(embeddings))
 		require.Equal(t, 2, m.Samples)
-		assert.InDelta(t, 0.35, m.SampleRadius, 1e-9)
+		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
 }
 

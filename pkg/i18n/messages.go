@@ -26,6 +26,7 @@ const (
 	ErrReadOnly
 	ErrUnauthorized
 	ErrForbidden
+	ErrPaymentRequired
 	ErrOffensiveUpload
 	ErrUploadFailed
 	ErrNoItemsSelected
@@ -125,6 +126,7 @@ var Messages = MessageMap{
 	ErrReadOnly:            gettext("Not available in read-only mode"),
 	ErrUnauthorized:        gettext("Please log in to your account"),
 	ErrForbidden:           gettext("Permission denied"),
+	ErrPaymentRequired:     gettext("Payment required"),
 	ErrOffensiveUpload:     gettext("Upload might be offensive"),
 	ErrUploadFailed:        gettext("Upload failed"),
 	ErrNoItemsSelected:     gettext("No items selected"),

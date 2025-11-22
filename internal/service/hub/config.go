@@ -22,7 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 type Status string
@@ -161,8 +161,9 @@ func (c *Config) DecodeSession(cached bool) (Session, error) {
 	}
 
 	hash := sha256.New()
-	if _, err := hash.Write([]byte(c.Secret)); err != nil {
-		return result, err
+
+	if _, hashErr := hash.Write([]byte(c.Secret)); hashErr != nil {
+		return result, hashErr
 	}
 
 	var b []byte
@@ -182,8 +183,8 @@ func (c *Config) DecodeSession(cached bool) (Session, error) {
 
 	plaintext = bytes.Trim(plaintext, "\x00")
 
-	if err := json.Unmarshal(plaintext, &result); err != nil {
-		return result, err
+	if jsonErr := json.Unmarshal(plaintext, &result); jsonErr != nil {
+		return result, jsonErr
 	}
 
 	// Cache session.
@@ -221,17 +222,23 @@ func (c *Config) ReSync(token string) (err error) {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 60 * time.Second}
 
-	endpointUrl := ServiceURL
-	method := http.MethodPost
+	endpointUrl := GetServiceURL(c.Key)
 
+	// Return if no endpoint URL is set.
+	if endpointUrl == "" {
+		log.Debugf("config: unable to obtain key for maps and places (service disabled)")
+		return nil
+	}
+
+	var method string
 	var req *http.Request
 
-	if c.Key != "" {
-		endpointUrl = fmt.Sprintf(ServiceURL+"/%s", c.Key)
-		method = http.MethodPut
-		log.Tracef("config: requesting updated keys for maps and places")
+	if c.Key == "" {
+		method = http.MethodPost
+		log.Tracef("config: requesting new key for maps and places")
 	} else {
-		log.Tracef("config: requesting new api keys for maps and places")
+		method = http.MethodPut
+		log.Tracef("config: requesting key for maps and places")
 	}
 
 	// Create JSON request.
@@ -268,7 +275,7 @@ func (c *Config) ReSync(token string) (err error) {
 	if err != nil {
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("fetching api key from %s failed (error %d)", ApiHost(), r.StatusCode)
+		err = fmt.Errorf("failed to request key from %s (error %d)", GetServiceHost(), r.StatusCode)
 		return err
 	}
 

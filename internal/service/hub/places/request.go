@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // GetRequest fetches the cell ID data from the service URL.

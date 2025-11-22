@@ -75,6 +75,9 @@ func TestStripExt(t *testing.T) {
 		result := StripExt("/testdata/Test copy 3.foo")
 		assert.Equal(t, "/testdata/Test copy 3", result)
 	})
+	t.Run("MpJpg", func(t *testing.T) {
+		assert.Equal(t, "name.MP", StripExt("name.MP.jpg"))
+	})
 }
 
 func TestStripKnownExt(t *testing.T) {

@@ -34,6 +34,7 @@ import People from "page/people.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
 import Admin from "page/admin.vue";
+import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
@@ -107,6 +108,26 @@ export default [
       if ($session.loginRequired()) {
         next({ name: loginRoute });
       } else if ($config.deny("users", "access_all")) {
+        next({ name: $session.getDefaultRoute() });
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    name: "cluster",
+    path: "/cluster/:pathMatch(.*)*",
+    component: Cluster,
+    meta: {
+      title: $gettext("Cluster"),
+      requiresAuth: true,
+      settings: false,
+      background: "background",
+    },
+    beforeEnter: (to, from, next) => {
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
+      } else if ($config.deny("cluster", "access_all")) {
         next({ name: $session.getDefaultRoute() });
       } else {
         next();
@@ -277,7 +298,7 @@ export default [
     path: "/private",
     component: Photos,
     meta: { title: $gettext("Private"), requiresAuth: true },
-    props: { staticFilter: { private: "true" } },
+    props: { staticFilter: { private: "true", public: "" } },
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next({ name: loginRoute });
@@ -296,7 +317,7 @@ export default [
       title: $pgettext("Noun", "Archive"),
       requiresAuth: true,
     },
-    props: { staticFilter: { archived: "true" } },
+    props: { staticFilter: { archived: "true", public: "" } },
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next({ name: loginRoute });

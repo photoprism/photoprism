@@ -1,0 +1,20 @@
+UI:
+  Scrollbar: true
+  Zoom: false
+  Theme: custom
+  Language: en
+  TimeZone: Europe/Berlin
+  StartPage: default
+Albums:
+  Download:
+    Name: share
+    Disabled: false
+    Originals: true
+    MediaRaw: false
+    MediaSidecar: false
+  Order:
+    Album: oldest
+    Folder: added
+    Moment: oldest
+    State: newest
+    Month: oldest

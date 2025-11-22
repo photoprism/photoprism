@@ -146,7 +146,7 @@ func TestRunDownload_FileMethod_WithFormatSort(t *testing.T) {
 		FileRemux:  "skip",
 		FormatSort: "res,fps,size",
 	}, []string{"https://example.com/video"}); err != nil {
-		t.Fatalf("runDownload failed with custom format-sort: %v", err)
+		t.Fatalf("runDownload failed with custom sort: %v", err)
 	}
 
 	t.Cleanup(func() {

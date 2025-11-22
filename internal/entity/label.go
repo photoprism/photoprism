@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -37,8 +38,9 @@ type Label struct {
 	LabelSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
 	CustomSlug       string     `gorm:"type:VARBINARY(160);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
-	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelFavorite    bool       `gorm:"default:0;" json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelPriority    int        `gorm:"default:0;" json:"Priority" yaml:"Priority,omitempty"`
+	LabelNSFW        bool       `gorm:"column:label_nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
 	LabelDescription string     `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
 	LabelNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
 	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
@@ -205,7 +207,26 @@ func (m *Label) Skip() bool {
 
 // Update a label property in the database.
 func (m *Label) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	if m == nil {
+		return errors.New("label must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("label ID must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).Update(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *Label) Updates(values interface{}) error {
+	if values == nil {
+		return nil
+	} else if m == nil {
+		return errors.New("label must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("label ID must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // isASCII checks if there are any runes that exceed the ASCII codeset.

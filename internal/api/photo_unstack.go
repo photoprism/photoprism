@@ -183,7 +183,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		ind := get.Index()
 
 		// Index unstacked files.
-		if res := ind.FileName(unstackFile.FileName(), photoprism.IndexOptionsSingle()); res.Failed() {
+		if res := ind.FileName(unstackFile.FileName(), photoprism.IndexOptionsSingle(conf)); res.Failed() {
 			log.Errorf("photo: %s (unstack %s)", res.Err, clean.Log(baseName))
 			AbortSaveFailed(c)
 			return
@@ -197,7 +197,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Re-index existing photo stack.
-		if res := ind.FileName(photoprism.FileName(stackPrimary.FileRoot, stackPrimary.FileName), photoprism.IndexOptionsSingle()); res.Failed() {
+		if res := ind.FileName(photoprism.FileName(stackPrimary.FileRoot, stackPrimary.FileName), photoprism.IndexOptionsSingle(conf)); res.Failed() {
 			log.Errorf("photo: %s (unstack %s)", res.Err, clean.Log(baseName))
 			AbortSaveFailed(c)
 			return

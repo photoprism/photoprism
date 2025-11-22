@@ -74,6 +74,7 @@ Thumbs.db
 .heartbeat
 .idea
 .codex
+.config
 .local
 *~
 .goutputstream*
@@ -82,3 +83,4 @@ Thumbs.db
 .swp
 .glide
 /tmp/
+/internal/tmp/

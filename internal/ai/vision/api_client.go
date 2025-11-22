@@ -8,10 +8,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
+	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // PerformApiRequest performs a Vision API request and returns the result.
@@ -70,6 +72,10 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 			return nil, parseErr
 		}
 
+		if log.IsLevelEnabled(logrus.TraceLevel) {
+			log.Tracef("vision: response %s", string(body))
+		}
+
 		return parsed, nil
 	}
 
@@ -90,12 +96,12 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	return apiResponse, nil
 }
 
-func decodeOllamaResponse(data []byte) (*ApiResponseOllama, error) {
-	resp := &ApiResponseOllama{}
+func decodeOllamaResponse(data []byte) (*ollama.Response, error) {
+	resp := &ollama.Response{}
 	dec := json.NewDecoder(bytes.NewReader(data))
 
 	for {
-		var chunk ApiResponseOllama
+		var chunk ollama.Response
 		if err := dec.Decode(&chunk); err != nil {
 			if errors.Is(err, io.EOF) {
 				break
@@ -110,8 +116,8 @@ func decodeOllamaResponse(data []byte) (*ApiResponseOllama, error) {
 }
 
 func parseOllamaLabels(raw string) ([]LabelResult, error) {
-	raw = strings.TrimSpace(raw)
-	if raw == "" {
+	cleaned := clean.JSON(raw)
+	if cleaned == "" {
 		return nil, nil
 	}
 
@@ -119,7 +125,7 @@ func parseOllamaLabels(raw string) ([]LabelResult, error) {
 		Labels []LabelResult `json:"labels"`
 	}
 
-	if err := json.Unmarshal([]byte(raw), &payload); err != nil {
+	if err := json.Unmarshal([]byte(cleaned), &payload); err != nil {
 		return nil, err
 	}
 

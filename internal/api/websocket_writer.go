@@ -13,6 +13,43 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+// WebsocketTopics lists the event topics that are forwarded to connected websocket clients.
+// Extensions may append additional topics during package initialization so they are subscribed
+// as soon as the server starts accepting websocket connections.
+var WebsocketTopics = []string{
+	"user.*.*.*",
+	"session.*.*.*",
+	"log.fatal",
+	"log.error",
+	"log.warning",
+	"log.warn",
+	"log.info",
+	"notify.*",
+	"index.*",
+	"upload.*",
+	"import.*",
+	"config.*",
+	"count.*",
+	"photos.*",
+	"cameras.*",
+	"lenses.*",
+	"countries.*",
+	"albums.*",
+	"labels.*",
+	"subjects.*",
+	"people.*",
+	"sync.*",
+}
+
+// AppendWebsocketTopics adds the provided topics to the global websocket topic list.
+func AppendWebsocketTopics(topics ...string) {
+	if len(topics) == 0 {
+		return
+	}
+
+	WebsocketTopics = append(WebsocketTopics, topics...)
+}
+
 // wsSendMessage sends a message to the WebSocket client.
 func wsSendMessage(topic string, data interface{}, ws *websocket.Conn, writeMutex *sync.Mutex) {
 	if topic == "" || ws == nil || writeMutex == nil {
@@ -34,30 +71,8 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	pingTicker := time.NewTicker(15 * time.Second)
 
 	// Subscribe to events.
-	e := event.Subscribe(
-		"user.*.*.*",
-		"session.*.*.*",
-		"log.fatal",
-		"log.error",
-		"log.warning",
-		"log.warn",
-		"log.info",
-		"notify.*",
-		"index.*",
-		"upload.*",
-		"import.*",
-		"config.*",
-		"count.*",
-		"photos.*",
-		"cameras.*",
-		"lenses.*",
-		"countries.*",
-		"albums.*",
-		"labels.*",
-		"subjects.*",
-		"people.*",
-		"sync.*",
-	)
+	topics := append([]string(nil), WebsocketTopics...)
+	e := event.Subscribe(topics...)
 
 	defer func() {
 		pingTicker.Stop()
@@ -104,6 +119,11 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 
 			// Send the message only to authorized recipients.
 			switch len(ch) {
+			case 3:
+				// Handle audit and other three-part topics (e.g. audit.log.info).
+				if res := acl.Resource(ch[0]); acl.Events.AllowAll(res, user.AclRole(), wsSubscribePerms) {
+					wsSendMessage(ev, msg.Fields, ws, writeMutex)
+				}
 			case 2:
 				// Send to everyone who is allowed to subscribe.
 				if res := acl.Resource(ch[0]); acl.Events.AllowAll(res, user.AclRole(), wsSubscribePerms) {

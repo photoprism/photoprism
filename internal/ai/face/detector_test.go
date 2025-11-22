@@ -14,6 +14,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
+var benchmarkFacesCount int
+
 func TestDetect(t *testing.T) {
 	expected := map[string]int{
 		"1.jpg":  1,
@@ -152,12 +154,28 @@ func TestDetectLandmarkCounts(t *testing.T) {
 	}
 }
 
-var benchmarkFacesCount int
+func TestDetectQualityFallback(t *testing.T) {
+	t.SkipNow()
+	faces, err := Detect("testdata/<no public test image available>.jpg", false, 20)
+	require.NoError(t, err)
+	require.NotEmpty(t, faces)
+
+	found := false
+
+	for _, face := range faces {
+		if face.Score < int(PigoQualityThreshold(face.Area.Scale)) {
+			found = true
+			break
+		}
+	}
+
+	require.Truef(t, found, "expected at least one face below the quality threshold, got %+v", faces)
+}
 
 func BenchmarkDetectorFacesLandmarks(b *testing.B) {
 	const sample = "testdata/18.jpg"
 
-	d := &Detector{
+	d := &pigoDetector{
 		minSize:       20,
 		shiftFactor:   0.1,
 		scaleFactor:   1.1,

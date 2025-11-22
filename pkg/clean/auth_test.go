@@ -43,6 +43,12 @@ func TestAuth(t *testing.T) {
 	t.Run("TeLessThanSGreaterThanT", func(t *testing.T) {
 		assert.Equal(t, "Test", Auth("Te<s>t"))
 	})
+	t.Run("ApiKey", func(t *testing.T) {
+		assert.Equal(t,
+			"ab-prot-keech1aqu8quamiNaecuisuem1ahg7dieph8eitohzo7hoo7pe-Chohzu4eaA-Chohzu4ea-soh7Seic8eig9joojaeshe4Ahsu8zeibooCh9ooquaaleev3poLeev0su9jei2yeich3ahsi9quar1oqueic",
+			Auth("ab-prot-keech1aqu8quamiNaecuisuem1ahg7dieph8eitohzo7hoo7pe-Chohzu4eaA-Chohzu4ea-soh7Seic8eig9joojaeshe4Ahsu8zeibooCh9ooquaaleev3poLeev0su9jei2yeich3ahsi9quar1oqueic"),
+		)
+	})
 }
 
 func TestHandle(t *testing.T) {
@@ -100,14 +106,34 @@ func TestUsername(t *testing.T) {
 }
 
 func TestEmail(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		assert.Equal(t, "hello@photoprism.app", Email("hello@photoprism.app"))
-	})
-	t.Run("Whitespace", func(t *testing.T) {
-		assert.Equal(t, "hello@photoprism.app", Email(" hello@photoprism.app "))
+	t.Run("ValidExamples", func(t *testing.T) {
+		valid := []string{
+			"user@example.com",
+			"user+news@example.com",
+			"user.name@sub-domain.example",
+			"user_name@example.co.uk",
+			"user@localhost",
+			" User@Example.COM ",
+		}
+
+		for _, addr := range valid {
+			assert.Equal(t, strings.ToLower(strings.TrimSpace(addr)), Email(addr), addr)
+		}
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Equal(t, "", Email(" hello-photoprism "))
+		invalid := []string{
+			"userexample.com",
+			"user@@example.com",
+			"user@",
+			"@example.com",
+			"user example@example.com",
+			"user@-example.com",
+			"user@example..com",
+		}
+
+		for _, addr := range invalid {
+			assert.Equal(t, "", Email(addr), addr)
+		}
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Email(""))

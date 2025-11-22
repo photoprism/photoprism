@@ -115,14 +115,28 @@ export default {
       this.clearSelection();
       this.expanded = false;
     },
-    addToAlbum(ppid) {
-      if (!this.canAddAlbums) {
+    addToAlbum(ppidOrList) {
+      if (!this.canAddAlbums || !ppidOrList) {
+        return;
+      }
+
+      // Validate array input
+      if (Array.isArray(ppidOrList) && ppidOrList.length === 0) {
         return;
       }
 
       this.dialog.album = false;
 
-      $api.post(`albums/${ppid}/photos`, { labels: this.selection }).then(() => this.onAdded());
+      const albumUids = Array.isArray(ppidOrList) ? ppidOrList : [ppidOrList];
+      // Deduplicate album UIDs
+      const uniqueAlbumUids = [...new Set(albumUids.filter((uid) => uid))];
+      const body = { labels: this.selection };
+
+      Promise.all(uniqueAlbumUids.map((uid) => $api.post(`albums/${uid}/photos`, body)))
+        .then(() => this.onAdded())
+        .catch((error) => {
+          $notify.error(this.$gettext("Some albums could not be updated"));
+        });
     },
     onAdded() {
       this.clearClipboard();
