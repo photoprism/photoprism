@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/photoprism/photoprism/internal/event"
+import (
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/log/status"
+)
 
 // AlbumUser maps an album to a user or team and stores the associated permissions.
 type AlbumUser struct {
@@ -44,7 +47,7 @@ func FirstOrCreateAlbumUser(m *AlbumUser) *AlbumUser {
 	if err := Db().Where("uid = ?", m.UID).First(&found).Error; err == nil {
 		return &found
 	} else if err = m.Create(); err != nil {
-		event.AuditErr([]string{"album %s", "failed to set owner and permissions", "%s"}, m.UID, err)
+		event.AuditErr([]string{"album %s", "failed to set owner and permissions", status.Error(err)}, m.UID)
 		return nil
 	}
 

@@ -14,7 +14,7 @@
             <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
           </v-btn>
           <v-toolbar-title class="nav-toolbar-title">
-            <span :class="{ clickable: auth }" @click.stop.prevent="toggleDrawer">{{ page.title }}</span>
+            <span :class="{ clickable: auth }" @click.stop.prevent.self="toggleDrawer">{{ page.title }}</span>
           </v-toolbar-title>
           <v-btn
             icon="mdi-dots-vertical"
@@ -62,12 +62,11 @@
               width="100%"
               density="compact"
               tabindex="-1"
-              @click.capture="toggleDrawer"
             >
-              <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
+              <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="onHome">
                 <template #prepend>
                   <div class="v-avatar bg-transparent nav-logo">
-                    <a :href="siteUrl" tabindex="-1" @click.stop.prevent="goHome">
+                    <a :href="siteUrl" tabindex="-1" @click.stop.prevent="onHome">
                       <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
                     </a>
                   </div>
@@ -797,7 +796,7 @@
               <v-icon icon="mdi-wifi-off" color="warning" size="21"></v-icon>
             </div>
             <div v-if="!isMini" class="text-start text-body-2">
-              {{ $gettext(`No server connection`) }}
+              {{ $gettext(`Lost server connection`) }}
             </div>
           </div>
           <div v-else-if="!isMini && featUsage" class="nav-info usage-info clickable" @click.stop="showUsageInfo">
@@ -953,7 +952,7 @@
             </router-link>
           </div>
           <div class="menu-action nav-manual">
-            <a :href="links.docs" target="_blank">
+            <a :href="links.docs" target="_blank" rel="noopener">
               <v-icon>mdi-book-open-page-variant</v-icon>
               {{ $gettext(`User Guide`) }}
             </a>
@@ -966,7 +965,7 @@
             </router-link>
           </div>
           <div v-if="config.legalUrl" class="menu-action nav-legal">
-            <a :href="config.legalUrl" target="_blank">
+            <a :href="config.legalUrl" target="_blank" rel="noopener">
               <v-icon>mdi-information</v-icon>
               {{ $gettext(`Legal Information`) }}
             </a>
@@ -993,12 +992,14 @@ export default {
     }
 
     const canManagePhotos = this.$config.allow("photos", "manage");
+    const canSeeUsage = this.$session.isAdmin() || (canManagePhotos && this.$config.feature("files"));
     const isDemo = this.$config.get("demo");
-    const isPro = !!this.$config.values?.ext["pro"];
+    const isPro = this.$config.isPro();
     const isPublic = this.$config.get("public");
     const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
     const isSuperAdmin = this.$session.isSuperAdmin();
+    const hasScope = this.$session.hasScope();
     const tier = this.$config.getTier();
 
     return {
@@ -1018,9 +1019,9 @@ export default {
       drawer: null,
       featUpgrade: tier < 6 && isSuperAdmin && !isPublic && !isDemo,
       featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
-      featFeedback: tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
+      featFeedback: !hasScope && tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
       featFiles: this.$config.feature("files"),
-      featUsage: canManagePhotos && this.$config.feature("files") && this.$config.values?.usage?.filesTotal,
+      featUsage: canSeeUsage && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,
       isMini: localStorage.getItem("navigation.mode") !== "false" || isRestricted,
       isDemo: isDemo,
@@ -1092,7 +1093,12 @@ export default {
     openUpload() {
       this.$event.publish("dialog.upload");
     },
-    goHome() {
+    onHome(ev) {
+      if (this.$vuetify.display.smAndDown) {
+        this.toggleDrawer(ev);
+        return;
+      }
+
       if (this.$route.name !== "home") {
         this.$router.push({ name: "home" });
       }
@@ -1110,8 +1116,9 @@ export default {
       }
     },
     toggleDrawer(ev) {
-      ev?.preventDefault();
-      ev?.stopPropagation();
+      if (!ev || ev.target === undefined) {
+        return;
+      }
 
       if (this.$vuetify.display.smAndDown) {
         if (this.drawer) {
@@ -1146,7 +1153,7 @@ export default {
     },
     showLegalInfo() {
       if (this.config.legalUrl) {
-        window.open(this.config.legalUrl, "_blank").focus();
+        this.$util.openExternalUrl(this.config.legalUrl);
       } else {
         this.$router.push({ name: "about" });
       }

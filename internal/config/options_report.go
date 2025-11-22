@@ -8,8 +8,8 @@ import (
 )
 
 // Report returns global config values as a table for reporting.
-func (c Options) Report() (rows [][]string, cols []string) {
-	v := reflect.ValueOf(c)
+func (o Options) Report() (rows [][]string, cols []string) {
+	v := reflect.ValueOf(o)
 
 	cols = []string{"Name", "Type", "CLI Flag"}
 	rows = make([][]string, 0, v.NumField())

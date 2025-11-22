@@ -11,8 +11,8 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 //go:embed embed/video.mp4
@@ -80,6 +80,11 @@ var AbortNotFound = func(c *gin.Context) {
 // AbortUnauthorized aborts with status code 401.
 func AbortUnauthorized(c *gin.Context) {
 	Abort(c, http.StatusUnauthorized, i18n.ErrUnauthorized)
+}
+
+// AbortPaymentRequired aborts with status code 402.
+func AbortPaymentRequired(c *gin.Context) {
+	Abort(c, http.StatusPaymentRequired, i18n.ErrPaymentRequired)
 }
 
 // AbortForbidden aborts with status code 403.

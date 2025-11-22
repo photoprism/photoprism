@@ -28,6 +28,7 @@ export class User extends RestModel {
       Email: "",
       BackupEmail: "",
       Role: "",
+      Scope: "",
       Attr: "",
       SuperAdmin: false,
       CanLogin: false,
@@ -198,6 +199,18 @@ export class User extends RestModel {
     return $api
       .options(this.getEntityResource() + "/profile")
       .then((response) => Promise.resolve(new Form(response.data)));
+  }
+
+  hasScope() {
+    return Boolean(this.Scope) && this.Scope !== "*";
+  }
+
+  getScope() {
+    if (this.hasScope()) {
+      return this.Scope;
+    }
+
+    return "*";
   }
 
   isRemote() {

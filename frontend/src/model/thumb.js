@@ -215,13 +215,13 @@ export class Thumb extends Model {
   }
 
   static fromPhoto(photo) {
-    if (!photo || !photo.Hash) {
+    if (!photo || (!photo.Hash && !photo.Files?.length)) {
       return this.notFound();
     }
 
     let file, width, height, hash, codec, mime;
 
-    if (photo.Files && photo.Files.length) {
+    if (photo.Files?.length) {
       file = photo.originalFile();
     }
 

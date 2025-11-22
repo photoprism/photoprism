@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -41,7 +42,7 @@ func SearchAlbums(router *gin.RouterGroup) {
 
 		// Abort if request params are invalid.
 		if err = c.MustBindWith(&frm, binding.Form); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", "form invalid", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", "form invalid", status.Error(err)}, s.RefID)
 			AbortBadRequest(c, err)
 			return
 		}
@@ -58,7 +59,7 @@ func SearchAlbums(router *gin.RouterGroup) {
 
 		// Ok?
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", "%s"}, s.RefID, err)
+			event.AuditWarn([]string{ClientIP(c), "session %s", "albums", "search", status.Error(err)}, s.RefID)
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}

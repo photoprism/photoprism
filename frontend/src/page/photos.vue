@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-photos not-selectable" :class="$config.aclClasses('photos')">
+  <div ref="page" tabindex="-1" class="p-page p-page-photos not-selectable" :class="$config.aclClasses('photos')">
     <p-photo-toolbar
       ref="toolbar"
       :context="context"
@@ -418,7 +418,7 @@ export default {
       } else {
         const routeUrl = this.$router.resolve({ name: "all", query: { q: "taken:" + takenDate } }).href;
         if (routeUrl) {
-          window.open(routeUrl, "_blank");
+          this.$util.openUrl(routeUrl);
         }
       }
     },
@@ -668,7 +668,7 @@ export default {
        * back-navigation. We therefore reset the remembered scroll-position
        * in any other scenario
        */
-      if (!window.backwardsNavigationDetected) {
+      if (!this.$view.wasBackwardNavigation()) {
         this.setOffset(0);
       }
       this.scrollDisabled = true;

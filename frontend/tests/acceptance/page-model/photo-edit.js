@@ -15,7 +15,7 @@ export default class Page {
 
     this.locationAction = Selector(".input-coordinates i.action-map", { timeout: 15000 });
     this.locationSearch = Selector("div.p-location-dialog .v-autocomplete", { timeout: 15000 });
-    this.locationClear = Selector(".input-coordinates i.action-clear", { timeout: 15000 });
+    this.locationClear = Selector(".input-coordinates i.action-delete", { timeout: 15000 });
     this.locationUndo = Selector("div.p-location-dialog .input-coordinates i.action-undo", { timeout: 15000 });
     this.locationInput = Selector("div.p-location-dialog .input-coordinates input", { timeout: 15000 });
     this.locationConfirm = Selector("div.p-location-dialog button.action-confirm", { timeout: 15000 });
@@ -44,9 +44,9 @@ export default class Page {
     this.month = Selector(".input-month input", { timeout: 15000 });
     this.year = Selector(".input-year input", { timeout: 15000 });
     this.timezone = Selector(".input-timezone input", { timeout: 15000 });
-    this.dayValue = Selector(".input-day .v-combobox__selection", { timeout: 15000 });
-    this.monthValue = Selector(".input-month .v-combobox__selection", { timeout: 15000 });
-    this.yearValue = Selector(".input-year .v-combobox__selection", { timeout: 15000 });
+    this.dayValue = Selector(".input-day .v-autocomplete__selection", { timeout: 15000 });
+    this.monthValue = Selector(".input-month .v-autocomplete__selection", { timeout: 15000 });
+    this.yearValue = Selector(".input-year .v-autocomplete__selection", { timeout: 15000 });
     this.timezoneValue = Selector(".input-timezone .v-autocomplete__selection", { timeout: 15000 });
     this.altitude = Selector(".input-altitude input", { timeout: 15000 });
     this.countryValue = Selector(".input-country .v-autocomplete__selection", { timeout: 15000 });
@@ -67,7 +67,12 @@ export default class Page {
     this.lensValue = Selector(".input-lens .v-select__selection-text", { timeout: 15000 });
 
     this.rejectName = Selector("i.mdi-eject", { timeout: 15000 });
+    this.faceActionMenuButton = Selector(".p-faces .p-action-menu .action-menu__btn", { timeout: 15000 });
     this.removeMarker = Selector("button.input-reject", { timeout: 15000 });
+    this.goToPersonAction = Selector(".v-list-item.action-go-to-person, .action-go-to-person", { timeout: 15000 });
+    this.setPersonCoverAction = Selector(".v-list-item.action-set-person-cover, .action-set-person-cover", {
+      timeout: 15000,
+    });
     this.undoRemoveMarker = Selector("button.action-undo", { timeout: 15000 });
     this.inputName = Selector("div.input-name input", { timeout: 15000 });
 
@@ -81,7 +86,7 @@ export default class Page {
 
     this.downloadFile = Selector("button.action-download", { timeout: 15000 });
     this.unstackFile = Selector(".action-unstack", { timeout: 15000 });
-    this.deleteFile = Selector(".action-delete", { timeout: 15000 });
+    this.deleteFile = Selector("div.p-tab-photo-files .action-delete", { timeout: 15000 });
     this.makeFilePrimary = Selector(".action-primary", { timeout: 15000 });
     this.toggleExpandFile = Selector("button.v-expansion-panel-title", { timeout: 15000 });
 
@@ -154,6 +159,24 @@ export default class Page {
   async getFileCount() {
     const FileCount = await Selector("div.v-expansion-panel", { timeout: 5000 }).count;
     return FileCount;
+  }
+
+  async openFaceMenu(index = 0) {
+    await t.click(this.faceActionMenuButton.nth(index));
+  }
+
+  async removeFace(index = 0) {
+    await t.click(this.removeMarker.nth(0));
+  }
+
+  async goToPerson(index = 0) {
+    await this.openFaceMenu(index);
+    await t.click(this.goToPersonAction.nth(0));
+  }
+
+  async setPersonCover(index = 0) {
+    await this.openFaceMenu(index);
+    await t.click(this.setPersonCoverAction.nth(0));
   }
 
   async turnSwitchOff(type) {

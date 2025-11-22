@@ -22,6 +22,6 @@ func TestClusterMetrics_EmptyCounts(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.Code)
 
 	body := resp.Body.String()
-	assert.Equal(t, "192.0.2.0/24", gjson.Get(body, "clusterCidr").String())
-	assert.Equal(t, int64(0), gjson.Get(body, "nodes.total").Int())
+	assert.Equal(t, "192.0.2.0/24", gjson.Get(body, "ClusterCIDR").String())
+	assert.Equal(t, int64(0), gjson.Get(body, "Nodes.total").Int())
 }

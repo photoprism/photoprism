@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestConfig_CdnUrl(t *testing.T) {

@@ -46,7 +46,7 @@ func makeLargeText(distinct, repeats int) string {
 func BenchmarkWords_Large(b *testing.B) {
 	s := makeLargeText(200, 200) // ~40k tokens mixed
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = Words(s)
 	}
 }
@@ -54,7 +54,7 @@ func BenchmarkWords_Large(b *testing.B) {
 func BenchmarkUniqueKeywords_Large(b *testing.B) {
 	s := makeLargeText(200, 200)
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = UniqueKeywords(s)
 	}
 }
@@ -62,7 +62,7 @@ func BenchmarkUniqueKeywords_Large(b *testing.B) {
 func BenchmarkUniqueKeywords_ManyDup(b *testing.B) {
 	s := makeLargeText(20, 2000) // many repeats, few distinct
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = UniqueKeywords(s)
 	}
 }

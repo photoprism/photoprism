@@ -1,12 +1,12 @@
 package tensorflow
 
-import "math/rand"
+import "math/rand/v2"
 
 func randomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	result := make([]byte, length)
 	for i := range result {
-		result[i] = charset[rand.Intn(len(charset))]
+		result[i] = charset[rand.IntN(len(charset))]
 	}
 	return string(result)
 }

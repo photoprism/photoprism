@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -77,7 +78,10 @@ func TestCreateService(t *testing.T) {
 "SyncPath": "", "SyncInterval": 3, "SyncUpload": false, "SyncDownload": false, "SyncFilenames": false, "SyncRaw": false}`)
 		val := gjson.Get(r.Body.String(), "AccOwner")
 		assert.Equal(t, "Test", val.String())
-		assert.Equal(t, http.StatusOK, r.Code)
+		id := gjson.Get(r.Body.String(), "ID").Int()
+		assert.NotZero(t, id)
+		assert.Equal(t, fmt.Sprintf("/api/v1/services/%d", id), r.Header().Get("Location"))
+		assert.Equal(t, http.StatusCreated, r.Code)
 	})
 }
 
@@ -93,7 +97,7 @@ func TestUpdateService(t *testing.T) {
 	assert.Equal(t, int64(5), val2.Int())
 	val3 := gjson.Get(r.Body.String(), "AccName")
 	assert.Equal(t, "Dummy-Webdav", val3.String())
-	assert.Equal(t, http.StatusOK, r.Code)
+	assert.Equal(t, http.StatusCreated, r.Code)
 	id := gjson.Get(r.Body.String(), "ID").String()
 
 	t.Run("Success", func(t *testing.T) {
@@ -132,8 +136,10 @@ func TestDeleteService(t *testing.T) {
 	r := PerformRequestWithBody(app, "POST", "/api/v1/services", `{"AccName": "DeleteTest", "AccOwner": "TestDelete", "AccUrl": "http://dummy-webdav/", "AccType": "webdav",
 "AccKey": "123", "AccUser": "admin", "AccPass": "photoprism", "AccError": "", "AccShare": false, "AccSync": false, "RetryLimit": 3, "SharePath": "", "ShareSize": "", "ShareExpires": 0,
 "SyncPath": "", "SyncInterval": 5, "SyncUpload": false, "SyncDownload": false, "SyncFilenames": false, "SyncRaw": false}`)
-	assert.Equal(t, http.StatusOK, r.Code)
+	assert.Equal(t, http.StatusCreated, r.Code)
 	id := gjson.Get(r.Body.String(), "ID").String()
+	assert.NotEmpty(t, id)
+	assert.Equal(t, "/api/v1/services/"+id, r.Header().Get("Location"))
 
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()

@@ -18,7 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // ClusterThemePullCommand downloads the Portal theme and installs it.
@@ -45,12 +45,20 @@ var ClusterThemePullCommand = &cli.Command{
 
 func clusterThemePullAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		portalURL := strings.TrimRight(ctx.String("portal-url"), "/")
+		portalURL := ""
+		if ctx.IsSet("portal-url") && ctx.String("portal-url") != "" {
+			portalURL = strings.TrimRight(ctx.String("portal-url"), "/")
+		}
 		if portalURL == "" {
 			portalURL = strings.TrimRight(conf.PortalUrl(), "/")
 		}
 		if portalURL == "" {
 			portalURL = strings.TrimRight(os.Getenv(config.EnvVar("portal-url")), "/")
+		}
+		if portalURL == "" {
+			if domain := strings.TrimSpace(conf.ClusterDomain()); domain != "" {
+				portalURL = fmt.Sprintf("https://portal.%s", domain)
+			}
 		}
 		if portalURL == "" {
 			return fmt.Errorf("portal-url not configured; set --portal-url or PHOTOPRISM_PORTAL_URL")
@@ -204,50 +212,63 @@ func obtainOAuthToken(portalURL, clientID, clientSecret string) (string, error) 
 
 	client := &http.Client{Timeout: cluster.BootstrapRegisterTimeout}
 	resp, err := client.Do(req)
+
 	if err != nil {
 		return "", err
 	}
+
 	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("%s", resp.Status)
 	}
+
 	var tok struct {
 		AccessToken string `json:"access_token"`
 		TokenType   string `json:"token_type"`
 		Scope       string `json:"scope"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&tok); err != nil {
+
+	if err = json.NewDecoder(resp.Body).Decode(&tok); err != nil {
 		return "", err
 	}
+
 	if tok.AccessToken == "" {
 		return "", fmt.Errorf("empty access_token")
 	}
+
 	return tok.AccessToken, nil
 }
 
 func dirNonEmpty(dir string) (bool, error) {
 	entries, err := os.ReadDir(dir)
+
 	if err != nil {
 		return false, err
 	}
+
 	for range entries {
 		// Ignore typical dotfiles? Keep it simple: any entry counts
 		return true, nil
 	}
+
 	return false, nil
 }
 
 func removeDirContents(dir string) error {
 	entries, err := os.ReadDir(dir)
+
 	if err != nil {
 		return err
 	}
+
 	for _, e := range entries {
 		p := filepath.Join(dir, e.Name())
 		if err := os.RemoveAll(p); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -264,46 +285,55 @@ func unzipSafe(zipPath, dest string) error {
 		if name == "." || name == ".." || strings.HasPrefix(name, "../") || strings.Contains(name, ":") {
 			continue
 		}
+
 		// Disallow absolute and Windows drive paths
 		if filepath.IsAbs(name) {
 			continue
 		}
+
 		target := filepath.Join(dest, name)
 		// Ensure path stays within dest
 		if !strings.HasPrefix(target+string(os.PathSeparator), dest+string(os.PathSeparator)) && target != dest {
 			continue
 		}
+
 		// Skip entries that look like hidden files or directories
 		base := filepath.Base(name)
 		if fs.FileNameHidden(base) {
 			continue
 		}
+
 		if f.FileInfo().IsDir() {
 			if err := fs.MkdirAll(target); err != nil {
 				return err
 			}
 			continue
 		}
+
 		// Ensure parent exists
-		if err := fs.MkdirAll(filepath.Dir(target)); err != nil {
+		if err = fs.MkdirAll(filepath.Dir(target)); err != nil {
 			return err
 		}
+
 		// Open for read
 		rc, err := f.Open()
 		if err != nil {
 			return err
 		}
+
 		// Create/truncate target
 		out, err := os.OpenFile(target, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, f.Mode())
 		if err != nil {
 			rc.Close()
 			return err
 		}
+
 		if _, err := io.Copy(out, rc); err != nil {
 			out.Close()
 			rc.Close()
 			return err
 		}
+
 		out.Close()
 		rc.Close()
 	}

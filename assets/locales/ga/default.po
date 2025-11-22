@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-11 19:22+0000\n"
-"PO-Revision-Date: 2025-03-11 19:36+0000\n"
+"POT-Creation-Date: 2025-10-17 17:32+0000\n"
+"PO-Revision-Date: 2025-10-22 08:25+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
 "translate@weblate.org>\n"
 "Language-Team: none\n"
@@ -18,398 +18,402 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :"
 "(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
-#: messages.go:103
+#: messages.go:104
 msgid "Something went wrong, try again"
 msgstr "Chuaigh rud éigin mícheart, bain triail eile as"
 
-#: messages.go:104
+#: messages.go:105
 msgid "Unable to do that"
 msgstr "Ní féidir é sin a dhéanamh"
 
-#: messages.go:105
+#: messages.go:106
 msgid "Changes could not be saved"
 msgstr "Níorbh fhéidir na hathruithe a shábháil"
 
-#: messages.go:106
+#: messages.go:107
 msgid "Could not be deleted"
 msgstr "Níorbh fhéidir a scriosadh"
 
-#: messages.go:107
+#: messages.go:108
 #, c-format
 msgid "%s already exists"
 msgstr "%s ann cheana"
 
-#: messages.go:108
+#: messages.go:109
 msgid "Not found"
 msgstr "Ní bhfuarthas"
 
-#: messages.go:109
+#: messages.go:110
 msgid "File not found"
 msgstr "Comhad gan aimsiú"
 
-#: messages.go:110
+#: messages.go:111
 msgid "File too large"
 msgstr "Comhad ró-mhór"
 
-#: messages.go:111
+#: messages.go:112
 msgid "Unsupported"
 msgstr "Gan tacaíocht"
 
-#: messages.go:112
+#: messages.go:113
 msgid "Unsupported type"
 msgstr "Cineál nach dtacaítear leis"
 
-#: messages.go:113
+#: messages.go:114
 msgid "Unsupported format"
 msgstr "Formáid nach dtacaítear léi"
 
-#: messages.go:114
+#: messages.go:115
 msgid "Originals folder is empty"
 msgstr "Tá fillteán bunghnéithe folamh"
 
-#: messages.go:115
+#: messages.go:116
 msgid "Selection not found"
 msgstr "Níor aimsíodh an rogha"
 
-#: messages.go:116
+#: messages.go:117
 msgid "Entity not found"
 msgstr "Aonán gan aimsiú"
 
-#: messages.go:117
+#: messages.go:118
 msgid "Account not found"
 msgstr "Cuntas gan aimsiú"
 
-#: messages.go:118
+#: messages.go:119
 msgid "User not found"
 msgstr "Úsáideoir gan aimsiú"
 
-#: messages.go:119
+#: messages.go:120
 msgid "Label not found"
 msgstr "Níor aimsíodh an lipéad"
 
-#: messages.go:120
+#: messages.go:121
 msgid "Album not found"
 msgstr "Albam gan aimsiú"
 
-#: messages.go:121
+#: messages.go:122
 msgid "Subject not found"
 msgstr "Ní bhfuarthas an t-ábhar"
 
-#: messages.go:122
+#: messages.go:123
 msgid "Person not found"
 msgstr "Ní bhfuarthas an duine"
 
-#: messages.go:123
+#: messages.go:124
 msgid "Face not found"
 msgstr "Aghaidh gan aimsiú"
 
-#: messages.go:124
+#: messages.go:125
 msgid "Not available in public mode"
 msgstr "Níl sé ar fáil i mód poiblí"
 
-#: messages.go:125
+#: messages.go:126
 msgid "Not available in read-only mode"
 msgstr "Níl sé ar fáil i mód inléite amháin"
 
-#: messages.go:126
+#: messages.go:127
 msgid "Please log in to your account"
 msgstr "Logáil isteach i do chuntas le do thoil"
 
-#: messages.go:127
+#: messages.go:128
 msgid "Permission denied"
 msgstr "Cead diúltaithe"
 
-#: messages.go:128
+#: messages.go:129
+msgid "Payment required"
+msgstr "Íocaíocht ag teastáil"
+
+#: messages.go:130
 msgid "Upload might be offensive"
 msgstr "D'fhéadfadh uaslódáil a bheith maslach"
 
-#: messages.go:129
+#: messages.go:131
 msgid "Upload failed"
 msgstr "Theip ar an uaslódáil"
 
-#: messages.go:130
+#: messages.go:132
 msgid "No items selected"
 msgstr "Níl aon mhír roghnaithe"
 
-#: messages.go:131
+#: messages.go:133
 msgid "Failed creating file, please check permissions"
 msgstr "Theip ar chruthú an chomhaid, seiceáil na ceadanna"
 
-#: messages.go:132
+#: messages.go:134
 msgid "Failed creating folder, please check permissions"
 msgstr "Theip ar chruthú fillteán, seiceáil na ceadanna"
 
-#: messages.go:133
+#: messages.go:135
 msgid "Could not connect, please try again"
 msgstr "Níorbh fhéidir ceangal a dhéanamh, bain triail eile as"
 
-#: messages.go:134
+#: messages.go:136
 msgid "Enter verification code"
 msgstr "Cuir isteach cód fíorúcháin"
 
-#: messages.go:135
+#: messages.go:137
 msgid "Invalid verification code, please try again"
 msgstr "Cód fíoraithe neamhbhailí, bain triail eile as"
 
-#: messages.go:136
+#: messages.go:138
 msgid "Invalid password, please try again"
 msgstr "Pasfhocal neamhbhailí, bain triail eile as"
 
-#: messages.go:137
+#: messages.go:139
 msgid "Feature disabled"
 msgstr "Gné díchumasaithe"
 
-#: messages.go:138
+#: messages.go:140
 msgid "No labels selected"
 msgstr "Níor roghnaíodh aon lipéid"
 
-#: messages.go:139
+#: messages.go:141
 msgid "No albums selected"
 msgstr "Níor roghnaíodh aon albam"
 
-#: messages.go:140
+#: messages.go:142
 msgid "No files available for download"
 msgstr "Níl aon chomhaid ar fáil le híoslódáil"
 
-#: messages.go:141
+#: messages.go:143
 msgid "Failed to create zip file"
 msgstr "Theip ar chruthú an chomhaid zip"
 
-#: messages.go:142
+#: messages.go:144
 msgid "Invalid credentials"
 msgstr "Dintiúir neamhbhailí"
 
-#: messages.go:143
+#: messages.go:145
 msgid "Invalid link"
 msgstr "Nasc neamhbhailí"
 
-#: messages.go:144
+#: messages.go:146
 msgid "Invalid name"
 msgstr "Ainm neamhbhailí"
 
-#: messages.go:145
+#: messages.go:147
 msgid "Busy, please try again later"
 msgstr "Gnóthach, bain triail eile as ar ball"
 
-#: messages.go:146
+#: messages.go:148
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Is é %s an t-eatramh múscail, ach caithfidh sé a bheith 1h nó níos lú"
 
-#: messages.go:147
+#: messages.go:149
 msgid "Your account could not be connected"
 msgstr "Níorbh fhéidir do chuntas a nascadh"
 
-#: messages.go:148
+#: messages.go:150
 msgid "Too many requests"
 msgstr "An iomarca iarratas"
 
-#: messages.go:149
+#: messages.go:151
 msgid "Insufficient storage"
 msgstr "Stóráil neamhleor"
 
-#: messages.go:150
+#: messages.go:152
 msgid "Quota exceeded"
 msgstr "Sáraíodh an cuóta"
 
-#: messages.go:153
+#: messages.go:155
 msgid "Changes successfully saved"
 msgstr "Sábháladh na hathruithe"
 
-#: messages.go:154
+#: messages.go:156
 msgid "Album created"
 msgstr "Albam cruthaithe"
 
-#: messages.go:155
+#: messages.go:157
 msgid "Album saved"
 msgstr "Sábháilte albam"
 
-#: messages.go:156
+#: messages.go:158
 #, c-format
 msgid "Album %s deleted"
 msgstr "Albam %s scriosta"
 
-#: messages.go:157
+#: messages.go:159
 msgid "Album contents cloned"
 msgstr "Clónáilte ábhar albam"
 
-#: messages.go:158
+#: messages.go:160
 msgid "File removed from stack"
 msgstr "Baineadh an comhad den chruach"
 
-#: messages.go:159
+#: messages.go:161
 msgid "File deleted"
 msgstr "Scriosadh an comhad"
 
-#: messages.go:160
+#: messages.go:162
 #, c-format
 msgid "Selection added to %s"
 msgstr "Cuireadh an rogha le %s"
 
-#: messages.go:161
+#: messages.go:163
 #, c-format
 msgid "One entry added to %s"
 msgstr "Cuireadh iontráil amháin le %s"
 
-#: messages.go:162
+#: messages.go:164
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d iontráil curtha le %s"
 
-#: messages.go:163
+#: messages.go:165
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Baineadh iontráil amháin de %s"
 
-#: messages.go:164
+#: messages.go:166
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d iontráil bainte de %s"
 
-#: messages.go:165
+#: messages.go:167
 msgid "Account created"
 msgstr "Cuntas cruthaithe"
 
-#: messages.go:166
+#: messages.go:168
 msgid "Account saved"
 msgstr "Cuntas sábháilte"
 
-#: messages.go:167
+#: messages.go:169
 msgid "Account deleted"
 msgstr "Scriosadh an cuntas"
 
-#: messages.go:168
+#: messages.go:170
 msgid "Settings saved"
 msgstr "Socruithe sábháilte"
 
-#: messages.go:169
+#: messages.go:171
 msgid "Password changed"
 msgstr "Athraíodh an pasfhocal"
 
-#: messages.go:170
+#: messages.go:172
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Iompórtáil críochnaithe i %d s"
 
-#: messages.go:171
+#: messages.go:173
 msgid "Import canceled"
 msgstr "Cealaíodh an iompórtáil"
 
-#: messages.go:172
+#: messages.go:174
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Innéacsú curtha i gcrích in %d s"
 
-#: messages.go:173
+#: messages.go:175
 msgid "Indexing originals..."
 msgstr "Buntéacs á innéacsú..."
 
-#: messages.go:174
+#: messages.go:176
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Comhaid á innéacsú in %s"
 
-#: messages.go:175
+#: messages.go:177
 msgid "Indexing canceled"
 msgstr "Innéacsú cealaithe"
 
-#: messages.go:176
+#: messages.go:178
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Baineadh %d comhaid agus %d grianghraif"
 
-#: messages.go:177
+#: messages.go:179
 #, c-format
 msgid "Moving files from %s"
 msgstr "Comhaid á mbogadh ó %s"
 
-#: messages.go:178
+#: messages.go:180
 #, c-format
 msgid "Copying files from %s"
 msgstr "Comhaid á gcóipeáil ó %s"
 
-#: messages.go:179
+#: messages.go:181
 msgid "Labels deleted"
 msgstr "Scriosadh na lipéid"
 
-#: messages.go:180
+#: messages.go:182
 msgid "Label saved"
 msgstr "Lipéad sábháilte"
 
-#: messages.go:181
+#: messages.go:183
 msgid "Subject saved"
 msgstr "Ábhar sábháilte"
 
-#: messages.go:182
+#: messages.go:184
 msgid "Subject deleted"
 msgstr "Scriosadh an t-ábhar"
 
-#: messages.go:183
+#: messages.go:185
 msgid "Person saved"
 msgstr "Sábháladh an duine"
 
-#: messages.go:184
+#: messages.go:186
 msgid "Person deleted"
 msgstr "Scriosadh an duine"
 
-#: messages.go:185
+#: messages.go:187
 msgid "File uploaded"
 msgstr "Comhad uaslódáilte"
 
-#: messages.go:186
+#: messages.go:188
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d comhaid uaslódáilte i %d s"
 
-#: messages.go:187
+#: messages.go:189
 msgid "Processing upload..."
 msgstr "Uaslódáil á phróiseáil..."
 
-#: messages.go:188
+#: messages.go:190
 msgid "Upload has been processed"
 msgstr "Próiseáladh an t-uaslódáil"
 
-#: messages.go:189
+#: messages.go:191
 msgid "Selection approved"
 msgstr "Faomhadh an roghnúcháin"
 
-#: messages.go:190
+#: messages.go:192
 msgid "Selection archived"
 msgstr "Roghnaithe sa chartlann"
 
-#: messages.go:191
+#: messages.go:193
 msgid "Selection restored"
 msgstr "Athchóiríodh an roghnúchán"
 
-#: messages.go:192
+#: messages.go:194
 msgid "Selection marked as private"
 msgstr "Roghnú marcáilte mar phríobháideach"
 
-#: messages.go:193
+#: messages.go:195
 msgid "Albums deleted"
 msgstr "Albaim scriosta"
 
-#: messages.go:194
+#: messages.go:196
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip cruthaithe i %d s"
 
-#: messages.go:195
+#: messages.go:197
 msgid "Permanently deleted"
 msgstr "Scriosta go buan"
 
-#: messages.go:196
+#: messages.go:198
 #, c-format
 msgid "%s has been restored"
 msgstr "%s athchóirithe"
 
-#: messages.go:197
+#: messages.go:199
 msgid "Successfully verified"
 msgstr "D'éirigh leis a fhíorú"
 
-#: messages.go:198
+#: messages.go:200
 msgid "Successfully activated"
 msgstr "Cuireadh i ngníomh go rathúil"
 

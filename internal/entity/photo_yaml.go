@@ -104,7 +104,7 @@ func (m *Photo) SaveSidecarYaml(originalsPath, sidecarPath string) error {
 		log.Warnf("photo: %s (%s %s)", err, action, clean.Log(relName))
 		return err
 	} else {
-		log.Infof("photo: %sd sidecar file %s", action, clean.Log(relName))
+		log.Debugf("photo: %sd sidecar file %s", action, clean.Log(relName))
 	}
 
 	return nil

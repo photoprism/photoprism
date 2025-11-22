@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -12,7 +13,7 @@ var photoDetailsMutex = sync.Mutex{}
 
 // Details stores denormalized photo metadata to speed up search and filtering.
 type Details struct {
-	PhotoID      uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
+	PhotoID      uint      `gorm:"primary_key;auto_increment:false" json:"PhotoID" yaml:"-"`
 	Keywords     string    `gorm:"type:VARCHAR(2048);" json:"Keywords" yaml:"Keywords"`
 	KeywordsSrc  string    `gorm:"type:VARBINARY(8);" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
 	Notes        string    `gorm:"type:VARCHAR(2048);" json:"Notes" yaml:"Notes,omitempty"`
@@ -27,8 +28,8 @@ type Details struct {
 	LicenseSrc   string    `gorm:"type:VARBINARY(8);" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
 	Software     string    `gorm:"type:VARCHAR(1024);" json:"Software" yaml:"Software,omitempty"`
 	SoftwareSrc  string    `gorm:"type:VARBINARY(8);" json:"SoftwareSrc" yaml:"SoftwareSrc,omitempty"`
-	CreatedAt    time.Time `yaml:"-"`
-	UpdatedAt    time.Time `yaml:"-"`
+	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -60,6 +61,30 @@ func (m *Details) Save() error {
 	}
 
 	return UnscopedDb().Save(m).Error
+}
+
+// Update a column in the database.
+func (m *Details) Update(attr string, value interface{}) error {
+	if m == nil {
+		return errors.New("photo details must not be nil - you may have found a bug")
+	} else if m.PhotoID < 1 {
+		return errors.New("photo ID in details must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *Details) Updates(values interface{}) error {
+	if values == nil {
+		return nil
+	} else if m == nil {
+		return errors.New("photo details must not be nil - you may have found a bug")
+	} else if m.PhotoID < 1 {
+		return errors.New("photo ID in details must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // FirstOrCreateDetails returns the existing row, inserts a new row or nil in case of errors.

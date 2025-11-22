@@ -1,7 +1,10 @@
 package vision
 
 import (
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
+	"os"
+	"strings"
+
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 // Service represents a remote computer vision service configuration.
@@ -36,7 +39,9 @@ func (m *Service) EndpointKey() string {
 		return ""
 	}
 
-	return m.Key
+	ensureEnv()
+
+	return strings.TrimSpace(os.ExpandEnv(m.Key))
 }
 
 // EndpointFileScheme returns the endpoint API file scheme type.

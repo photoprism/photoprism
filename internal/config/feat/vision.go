@@ -4,5 +4,5 @@ package feat
 var (
 	VisionModelGenerate = false // controls exposure of the generate endpoint and CLI commands
 	VisionModelMarkers  = false // gates marker generation/return until downstream UI and reconciliation paths are ready
-	VisionServiceOpenAI = false // controls whether users are able to configure OpenAI as a vision service engine
+	VisionServiceOpenAI = true  // controls whether users are able to configure OpenAI as a vision service engine
 )

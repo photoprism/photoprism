@@ -82,7 +82,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 		result := FirstOrCreateSubject(m)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "Create Me", m.SubjName)
@@ -93,7 +93,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 		result := FirstOrCreateSubject(m)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "John Doe", m.SubjName)

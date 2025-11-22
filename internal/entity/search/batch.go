@@ -93,11 +93,12 @@ var BatchCols = SelectString(BatchResult{}, SelectCols(BatchResult{}, []string{"
 func BatchPhotos(uids []string, sess *entity.Session) (results PhotoResults, count int, err error) {
 	frm := form.SearchPhotos{
 		UID:     strings.Join(uids, txt.Or),
+		Quality: 0,     // Don't filter by quality.
+		Review:  false, // Don't limit search to photos in review.
+		Details: true,  // Include values from details table.
+		Merged:  true,  // Group files by photo.
 		Count:   MaxResults,
 		Offset:  0,
-		Face:    "",
-		Merged:  true,
-		Details: true,
 	}
 
 	return searchPhotos(frm, sess, BatchCols)

@@ -11,9 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 // Model uses TensorFlow to label drawing, hentai, neutral, porn and sexy images.

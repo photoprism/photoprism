@@ -38,7 +38,10 @@
     color: rgba(var(--v-theme-on-surface), 1);
     background-color: rgba(var(--v-theme-surface), 0.32);
     backdrop-filter: blur(6px);
-    box-shadow: 0 2px 1px -1px var(--v-shadow-key-umbra-opacity, #0003), 0 1px 1px 0 var(--v-shadow-key-penumbra-opacity, #00000024), 0 1px 3px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
+    box-shadow:
+        0 2px 1px -1px var(--v-shadow-key-umbra-opacity, #0003),
+        0 1px 1px 0 var(--v-shadow-key-penumbra-opacity, #00000024),
+        0 1px 3px 0 var(--v-shadow-key-ambient-opacity, #0000001f) !important;
     padding: 10px 16px;
     pointer-events: auto;
     border-radius: 9999px;

@@ -197,6 +197,16 @@ describe("model/user", () => {
     expect(result).toBe("Max Last");
   });
 
+  it("should manage scope helpers", () => {
+    const unrestricted = new User({ Scope: "*" });
+    expect(unrestricted.hasScope()).toBe(false);
+    expect(unrestricted.getScope()).toBe("*");
+
+    const restricted = new User({ Scope: "photos:view" });
+    expect(restricted.hasScope()).toBe(true);
+    expect(restricted.getScope()).toBe("photos:view");
+  });
+
   it("should get id", () => {
     const values = {
       ID: 5,

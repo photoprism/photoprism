@@ -10,7 +10,7 @@ func Token(s string) string {
 	// Fast path: check if all bytes are allowed ASCII.
 	for i := 0; i < len(s); i++ {
 		b := s[i]
-		if !((b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || b == '-' || b == '_' || b == ':') {
+		if (b < '0' || b > '9') && (b < 'a' || b > 'z') && (b < 'A' || b > 'Z') && b != '-' && b != '_' && b != ':' {
 			// Slow path: filter into a new byte slice.
 			dst := make([]byte, 0, len(s))
 			for j := 0; j < len(s); j++ {

@@ -444,7 +444,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	// Update subject record.
 	if err := m.SetName(name); err != nil {
 		return m, err
-	} else if err = m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
+	} else if err = m.Updates(Values{"subj_name": m.SubjName, "subj_slug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
 		SubjNames.Set(m.SubjUID, m.SubjName)

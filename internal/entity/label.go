@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -201,7 +202,26 @@ func (m *Label) Skip() bool {
 
 // Update a label property in the database.
 func (m *Label) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	if m == nil {
+		return errors.New("label must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("label ID must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).Update(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *Label) Updates(values interface{}) error {
+	if values == nil {
+		return nil
+	} else if m == nil {
+		return errors.New("label must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("label ID must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // FirstOrCreateLabel reuses an existing label matched by slug/custom slug or creates and returns a new one; nil signals lookup/create failure.

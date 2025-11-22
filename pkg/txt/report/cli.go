@@ -4,6 +4,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// CliFormat resolves the report format from CLI flags, defaulting to the fallback format.
 func CliFormat(ctx *cli.Context) Format {
 	switch {
 	case ctx.Bool("json"):
@@ -41,6 +42,7 @@ func CliFormatStrict(ctx *cli.Context) (Format, error) {
 	return CliFormat(ctx), nil
 }
 
+// CliFlags registers common format selection flags.
 var CliFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:    "json",

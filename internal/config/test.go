@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	gc "github.com/patrickmn/go-cache"
 	"github.com/urfave/cli/v2"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -22,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -120,28 +122,28 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
-	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
-	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+	testDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	testDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
 
 	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
-		driver = SQLite3
+	if testDriver == "test" || testDriver == "sqlite" || testDriver == "" || testDsn == "" {
+		testDriver = dsn.DriverSQLite3
 	}
 
 	// Set default database DSN.
-	if driver == SQLite3 {
-		if dsn == "" && dbName != "" {
-			if dsn = fmt.Sprintf(".%s.db", clean.TypeLower(dbName)); !fs.FileExists(dsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(dsn))
-			} else if err := os.Remove(dsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dsn), err)
+	if testDriver == dsn.DriverSQLite3 {
+		if testDsn == "" && dbName != "" {
+			if testDsn = fmt.Sprintf(".%s.db", clean.TypeLower(dbName)); !fs.FileExists(testDsn) {
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
+			} else if err := os.Remove(testDsn); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
 			}
-		} else if dsn == "" || dsn == SQLiteTestDB {
-			dsn = SQLiteTestDB
-			if !fs.FileExists(dsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(dsn))
-			} else if err := os.Remove(dsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dsn), err)
+		} else if testDsn == "" || testDsn == dsn.SQLiteTestDB {
+			testDsn = dsn.SQLiteTestDB
+			if !fs.FileExists(testDsn) {
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
+			} else if err := os.Remove(testDsn); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
 			}
 		}
 	}
@@ -176,9 +178,11 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 		TempPath:        filepath.Join(dataPath, "temp"),
 		BackupRetain:    DefaultBackupRetain,
 		BackupSchedule:  DefaultBackupSchedule,
-		DatabaseDriver:  driver,
-		DatabaseDSN:     dsn,
+		DatabaseDriver:  testDriver,
+		DatabaseDSN:     testDsn,
 		AdminPassword:   "photoprism",
+		ClusterCIDR:     "",
+		JWTScope:        DefaultJWTAllowedScopes,
 		OriginalsLimit:  66,
 		ResolutionLimit: 33,
 		VisionApi:       true,
@@ -293,6 +297,7 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 	c := &Config{
 		options: opts,
 		token:   rnd.Base36(8),
+		cache:   gc.New(time.Second, time.Minute),
 	}
 
 	if !createDirs {
@@ -318,6 +323,7 @@ func NewTestConfig(dbName string) *Config {
 		cliCtx:  CliTestContext(),
 		options: NewTestOptions(dbName),
 		token:   rnd.Base36(8),
+		cache:   gc.New(time.Second, time.Minute),
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
@@ -326,7 +332,9 @@ func NewTestConfig(dbName string) *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	if err := s.Save(filepath.Join(c.ConfigPath(), "settings.yml")); err != nil {
+	// Save settings next to the test config path, reusing any existing
+	// `.yaml`/`.yml` variant so the tests mirror production behavior.
+	if err := s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 
@@ -351,7 +359,10 @@ func NewTestConfig(dbName string) *Config {
 
 // NewTestErrorConfig returns an invalid test config.
 func NewTestErrorConfig() *Config {
-	c := &Config{options: NewTestOptionsError()}
+	c := &Config{
+		options: NewTestOptionsError(),
+		cache:   gc.New(time.Second, time.Minute),
+	}
 
 	return c
 }
@@ -365,7 +376,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
 	app.EnableBashCompletion = true
 	app.Flags = Flags.Cli()
-	app.Metadata = Map{
+	app.Metadata = Values{
 		"Name":    "PhotoPrism",
 		"About":   "PhotoPrism®",
 		"Edition": "ce",
@@ -399,6 +410,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("import-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("temp-path", config.OriginalsPath, "doc")
+	globalSet.String("defaults-yaml", config.DefaultsYaml, "doc")
 	globalSet.String("cluster-uuid", config.ClusterUUID, "doc")
 	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.Int("backup-retain", config.BackupRetain, "doc")
@@ -435,6 +447,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("import-path", config.ImportPath))
 	LogErr(c.Set("cache-path", config.CachePath))
 	LogErr(c.Set("temp-path", config.TempPath))
+	LogErr(c.Set("defaults-yaml", config.DefaultsYaml))
 	LogErr(c.Set("backup-path", config.BackupPath))
 	LogErr(c.Set("backup-retain", strconv.Itoa(config.BackupRetain)))
 	LogErr(c.Set("backup-schedule", config.BackupSchedule))

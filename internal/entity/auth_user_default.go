@@ -4,6 +4,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Role defaults referenced when creating built-in users.
@@ -97,7 +98,7 @@ func CreateDefaultUsers() {
 
 		// Add initial admin account.
 		if err := Admin.Create(); err != nil {
-			event.AuditErr([]string{"user", "failed to create", "%s"}, err)
+			event.AuditErr([]string{"user", "failed to create", status.Error(err)})
 		}
 	}
 

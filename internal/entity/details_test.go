@@ -13,7 +13,7 @@ func TestFirstOrCreateDetails(t *testing.T) {
 		details = FirstOrCreateDetails(details)
 
 		if details == nil {
-			t.Fatal("details should not be nil")
+			t.Fatal("details must not be nil")
 		}
 	})
 	t.Run("ExistingDetails", func(t *testing.T) {
@@ -21,7 +21,7 @@ func TestFirstOrCreateDetails(t *testing.T) {
 		details = FirstOrCreateDetails(details)
 
 		if details == nil {
-			t.Fatal("details should not be nil")
+			t.Fatal("details must not be nil")
 		}
 	})
 	t.Run("Error", func(t *testing.T) {

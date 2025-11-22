@@ -1,6 +1,6 @@
 ## Face Detection and Embedding Guidelines
 
-**Last Updated:** October 7, 2025
+**Last Updated:** October 10, 2025
 
 ### Overview
 
@@ -19,10 +19,10 @@ Key changes:
 
 PhotoPrism now supports two interchangeable detection engines:
 
-- **Pigo** (default) — CPU-only cascade classifier, retains historical behaviour.
-- **ONNX SCRFD 0.5g** — optional ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The ONNX engine consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). The engine is enabled automatically when `FACE_ENGINE=auto` and the bundled SCRFD model is present (the prebuilt runtime targets glibc ≥ 2.27 on x86_64/arm64). Operators can switch at runtime via `photoprism --face-engine=<auto|pigo|onnx>` or `photoprism faces reset --engine=<auto|pigo|onnx>` for a full re-index.
+- **Pigo** — CPU-only cascade classifier, retains historical behaviour.
+- **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The ONNX engine consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). The engine is enabled automatically when `FACE_ENGINE=auto` and the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present (the prebuilt runtime targets glibc ≥ 2.27 on x86_64/arm64). Operators can switch at runtime via `photoprism --face-engine=<auto|pigo|onnx>` or `photoprism faces reset --engine=<auto|pigo|onnx>` for a full re-index.
 
-Runtime selection lives in `Config.FaceEngine()`; `auto` resolves to ONNX when the SCRFD assets are available, otherwise Pigo. `Config.FaceEngineRunType()` mirrors the vision run-type semantics: ONNX defaults to asynchronous `on-demand` mode when only a single inference thread is configured so the indexer remains responsive.
+Runtime selection lives in `Config.FaceEngine()`; `auto` resolves to ONNX when the SCRFD assets are available, otherwise Pigo. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` if no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
 
 #### Angle Sweep
 
@@ -56,10 +56,20 @@ All embeddings, regardless of origin, are normalized to unit length (‖x‖₂�
 - Static datasets (children/background samples) and random generators now normalize their entries after perturbation.
 - `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors.
 - `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) now reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
-- Face clusters update their sample statistics (`Samples`, `SampleRadius`) from the latest matches via `Face.UpdateMatchStats`, avoiding stale radii during optimize loops.
+- Face clusters update their sample statistics (`Samples`, `ClusterRadius`) from the latest matches via `Face.UpdateMatchStats`, avoiding stale radii during optimize loops. The radius is capped at **0.42** so automatic matches accept new embeddings up to `ClusterRadius + MatchDist` (≈0.88) away from the centroid.
+- Child and background embeddings remain opt-in for automated matching. Set `PHOTOPRISM_FACE_MATCH_CHILDREN=true` (or the `FaceMatchChildren` option) to include children, and `PHOTOPRISM_FACE_MATCH_BACKGROUND=true` to include background samples; both default to `false` so operators explicitly choose when these categories participate.
 - Cluster materialisation now pre-sizes buffers; `BenchmarkClusterMaterialize` reports ~14.8 µs/op with 64 allocations (≈56 KB) versus the legacy ~29.8 µs/op with 384 allocations (≈105 KB).
 
-This guarantees that Euclidean distance comparisons are equivalent to cosine comparisons, aligning our thresholds with FaceNet literature.
+This guarantees that Euclidean distance comparisons are equivalent to cosine comparisons, aligning our thresholds with [FaceNet](https://maucher.pages.mi.hdm-stuttgart.de/orbook/face/faceRecognition.html) literature.
+
+#### Face Kind Reference
+
+| Kind             | Value | Source                                     | Matching Behavior                               | Notes                                                                                                   |
+|------------------|:-----:|--------------------------------------------|-------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `RegularFace`    |   1   | Default embedding classification           | Eligible for matching and clustering            | Produced when embeddings are distinct and not flagged as child/background.                              |
+| `ChildrenFace`   |   2   | `Embedding.IsChild()` vs. curated samples  | Excluded from matching (`SkipMatching = true`)  | Helps avoid unreliable matches on juvenile faces; clusters are retained but not auto-assigned.          |
+| `BackgroundFace` |   3   | `Embedding.IsBackground()` heuristics      | Excluded from matching and clustering           | Used for non-face artifacts and background detections; prevents noise from entering optimization runs.  |
+| `AmbiguousFace`  |   4   | `entity.Face.ResolveCollision()` heuristic | Excluded from matching and manual merge retries | Assigned when two subjects collide at very low distance (< 0.02); face remains until collision cleared. |
 
 ### Manual Cluster Merging & Retained Markers
 
@@ -76,6 +86,14 @@ This is informational—the optimiser skips that merge and progresses. To reduce
 - Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case it is safe to ignore the warning.
 
 No automatic data cleanup runs in this scenario, so operators remain in control of manual edits.
+
+Additional safeguards were introduced in October 2025 so stubborn clusters are only retried a limited number of times:
+
+- Every manual cluster now stores a retry counter (`faces.merge_retry`) and optional note (`merge_notes`). The optimiser skips clusters once the retry count reaches `MergeMaxRetry` (default **1**). The limit may be raised or disabled with the environment variable `PHOTOPRISM_FACE_MERGE_MAX_RETRY` (`0` = unlimited retries).
+- Warnings surface only when the retry counter is incremented. Subsequent optimise runs log at debug level until counters are reset.
+- `photoprism faces optimize --retry` clears retry counters before running the optimiser, allowing administrators to reprocess clusters after manual cleanup.
+- `photoprism faces audit --subject=<uid>` focuses the audit report on a specific person and prints retry counts, sample statistics, and outstanding clusters so operators know which photos still need attention.
+- The warning text now includes the retry count and cluster IDs.
 
 #### Midpoint Computation
 
@@ -103,11 +121,15 @@ No automatic data cleanup runs in this scenario, so operators remain in control 
 | Setting                  | Default                      | Description                                                                                     |
 |--------------------------|------------------------------|-------------------------------------------------------------------------------------------------|
 | `FACE_ENGINE`            | `auto`                       | Detection engine (`auto`, `pigo`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
-| `FACE_ENGINE_RUN`        | `auto`                       | Run schedule (`auto`, `on-demand`, `on-index`, ...). `auto` is stored as an empty string.       |
 | `FACE_ENGINE_THREADS`    | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads; ignored by Pigo.                                                        |
 | `FACE_ANGLE`             | `-0.3,0,0.3`                 | Detection angles (radians) swept by Pigo.                                                       |
 | `FACE_SCORE`             | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                                |
 | `FACE_OVERLAP`           | `42`                         | Maximum allowed IoU when deduplicating markers.                                                 |
+
+Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
+When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.
+
+> Additional merge tuning: set `PHOTOPRISM_FACE_MERGE_MAX_RETRY` to control how often manual clusters are retried (default 1, `0` = unlimited). See the optimiser notes above.
 
 ### Benchmark Reference
 

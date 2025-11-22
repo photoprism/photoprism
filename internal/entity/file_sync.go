@@ -15,18 +15,18 @@ const (
 
 // FileSync tracks the synchronization status for a file on an external service.
 type FileSync struct {
-	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
-	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
-	FileID     uint   `gorm:"index;"`
-	RemoteDate time.Time
-	RemoteSize int64
-	Status     string `gorm:"type:VARBINARY(16);"`
-	Error      string `gorm:"type:VARBINARY(512);"`
-	Errors     int
-	File       *File
-	Account    *Service
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	RemoteName string    `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	ServiceID  uint      `gorm:"primary_key;auto_increment:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
+	FileID     uint      `gorm:"index;" json:"FileID" yaml:"FileID,omitempty"`
+	RemoteDate time.Time `json:"RemoteDate,omitempty" yaml:"RemoteDate,omitempty"`
+	RemoteSize int64     `json:"RemoteSize,omitempty" yaml:"RemoteSize,omitempty"`
+	Status     string    `gorm:"type:VARBINARY(16);" json:"Status" yaml:"Status,omitempty"`
+	Error      string    `gorm:"type:VARBINARY(512);" json:"Error,omitempty" yaml:"Error,omitempty"`
+	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
+	File       *File     `json:"File,omitempty" yaml:"-"`
+	Account    *Service  `json:"Account,omitempty" yaml:"-"`
+	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
+	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }
 
 // TableName returns the entity table name.

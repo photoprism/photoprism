@@ -3,30 +3,30 @@
     ref="dialog"
     :model-value="visible"
     :scrollable="false"
+    :transition="false"
+    :close-delay="0"
+    :open-delay="0"
     fullscreen
     scrim
     persistent
     tiled
     theme="lightbox"
-    class="p-dialog p-lightbox v-dialog--lightbox"
+    class="p-dialog p-lightbox v-dialog--lightbox no-transition"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
-    @focusout="onFocusOut"
     @keydown.space.exact="onKeyDown"
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
+    @keydown.esc.exact.stop="close"
+    @click.capture="captureDialogClick"
+    @pointerdown.capture="captureDialogPointerDown"
   >
-    <div class="p-lightbox__underlay"></div>
-    <div
-      ref="container"
-      class="p-lightbox__container"
-      @click.capture="onContainerClick"
-      @pointerdown.capture="onContainerPointerDown"
-    >
+    <div class="p-lightbox__underlay no-transition"></div>
+    <div ref="container" class="p-lightbox__container no-transition">
       <div
         ref="content"
-        tabindex="1"
-        class="p-lightbox__content"
+        tabindex="-1"
+        class="p-lightbox__content no-transition"
         :class="{
           'sidebar-visible': info,
           'slideshow-active': slideshow.active,
@@ -34,15 +34,16 @@
           'is-zoomable': isZoomable,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
+          'is-video': model?.Type === 'video',
           'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"
       >
-        <div ref="lightbox" tabindex="2" class="p-lightbox__pswp"></div>
+        <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
         <div
           v-show="video.controls && controlsShown !== 0"
           ref="controls"
-          tabindex="3"
+          tabindex="-1"
           class="p-lightbox__controls"
           @click.stop.prevent
         >
@@ -122,6 +123,27 @@ import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
 
+const VIDEO_EVENT_TYPES = [
+  "loadstart",
+  "loadedmetadata",
+  "loadeddata",
+  "progress",
+  "stalled",
+  "abort",
+  "error",
+  "play",
+  "playing",
+  "pause",
+  "waiting",
+  "ended",
+  "seeked",
+  "seeking",
+  "timeupdate",
+  "durationchange",
+];
+
+const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
+
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PSidebarInfo from "component/sidebar/info.vue";
 
@@ -139,6 +161,7 @@ export default {
       trace,
       visible: false,
       busy: false,
+      closing: false,
       info: localStorage.getItem("lightbox.info") === "true",
       menuElement: null,
       menuBgColor: "#252525",
@@ -170,6 +193,8 @@ export default {
       model: new Thumb(), // Current slide.
       models: [], // Slide models.
       index: 0, // Current slide index in models.
+      contextAllowsEdit: true,
+      contextAllowsSelect: true,
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
       video: {
@@ -198,13 +223,22 @@ export default {
         waitAfterVideo: 2500,
         next: -1,
       },
+      touchStartListener: (ev) => this.onTouchStartOnce(ev),
+      mouseMoveListener: (ev) => this.onMouseMoveOnce(ev),
+      lightboxPointerListener: (ev) => this.onLightboxPointerEvent(ev),
+      videoEventListener: (ev) => this.onVideoEvent(ev),
+      videoRemoteListener: (ev) => this.onVideoRemote(ev),
+      videoAvailabilityListener: (castable) => {
+        if (typeof this.video === "object") {
+          this.video.castable = castable;
+        }
+      },
     };
   },
   created() {
-    // this.subscriptions["lightbox.change"] = this.$event.subscribe("lightbox.change", this.onChange);
-    this.subscriptions["lightbox.open"] = this.$event.subscribe("lightbox.open", this.openLightbox.bind(this));
-    this.subscriptions["lightbox.pause"] = this.$event.subscribe("lightbox.pause", this.pauseLightbox.bind(this));
-    this.subscriptions["lightbox.close"] = this.$event.subscribe("lightbox.close", this.onClose.bind(this));
+    this.subscriptions.push(this.$event.subscribe("lightbox.open", this.openLightbox.bind(this)));
+    this.subscriptions.push(this.$event.subscribe("lightbox.pause", this.pauseLightbox.bind(this)));
+    this.subscriptions.push(this.$event.subscribe("lightbox.close", this.onClose.bind(this)));
   },
   beforeUnmount() {
     // Exit fullscreen mode if enabled, has no effect otherwise.
@@ -256,6 +290,7 @@ export default {
     showDialog() {
       this.$view.enter(this, this.$refs?.content);
       this.busy = true;
+      this.closing = false;
       this.visible = true;
       this.wasFullscreen = $fullscreen.isEnabled();
       this.info = localStorage.getItem("lightbox.info") === "true";
@@ -277,6 +312,7 @@ export default {
       }
 
       this.busy = false;
+      this.closing = false;
 
       // Publish event to be consumed by other components.
       this.$event.publish("lightbox.closed");
@@ -291,33 +327,10 @@ export default {
       // Publish enter event.
       this.visible = false;
       this.busy = false;
+      this.closing = false;
       this.$view.leave(this);
       this.$event.publish("lightbox.leave");
       this.$emit("leave");
-    },
-    // Traps the focus inside the lightbox dialog.
-    onFocusOut(ev) {
-      if (this.debug) {
-        this.log(`dialog.${ev.type}`, ev);
-      }
-
-      if (!this.$view.isActive(this)) {
-        return;
-      }
-
-      // Keep content element focused.
-      if (this.$refs.content && this.$refs.content instanceof HTMLElement) {
-        if (
-          (ev.target &&
-            ev.target instanceof HTMLElement &&
-            (!ev.target.closest(".v-dialog--lightbox") || ev.target?.tabIndex < 0 || ev.target.disabled)) ||
-          (ev.relatedTarget &&
-            ev.relatedTarget instanceof HTMLElement &&
-            (!ev.relatedTarget.closest(".v-dialog--lightbox") || ev.relatedTarget.tabIndex < 0))
-        ) {
-          this.focusContent(ev);
-        }
-      }
     },
     focusContent(ev) {
       if (
@@ -402,11 +415,25 @@ export default {
         errorMsg: this.$gettext("Error"),
       };
     },
+    // Updates lightbox permissions and capabilities (e.g., batch edit disables selecting and editing).
+    applyContext(ctx = {}) {
+      this.contextAllowsSelect = ctx?.allowSelect !== false;
+      this.contextAllowsEdit = ctx?.allowEdit !== false;
+
+      this.canEdit = this.$config.allow("photos", "update") && this.$config.feature("edit");
+      this.canLike = this.$config.allow("photos", "manage") && this.$config.feature("favorites");
+      this.canDownload = this.$config.allow("photos", "download") && this.$config.feature("download");
+      this.canArchive = this.$config.allow("photos", "delete") && this.$config.feature("archive");
+      this.canManageAlbums = this.$config.allow("albums", "manage");
+    },
     // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
     showThumbs(models, index = 0, ctx = {}) {
       if (this.isBusy("show thumbs")) {
         return Promise.reject();
       }
+
+      // Update permissions and capabilities.
+      this.applyContext(ctx);
 
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
@@ -421,7 +448,8 @@ export default {
             this.busy = false;
           })
           .catch(() => {
-            this.hideDialog();
+            this.busy = false;
+            this.close();
           });
       });
 
@@ -435,7 +463,29 @@ export default {
         return Promise.reject();
       }
 
-      if (view.loading || !view.listen || view.lightbox.loading || !view.results[index]) {
+      if (view && typeof view.getLightboxContext === "function") {
+        const ctx = view.getLightboxContext(index);
+
+        if (!ctx || !Array.isArray(ctx.models) || ctx.models.length === 0) {
+          return Promise.reject();
+        }
+
+        const targetIndex = this.normalizeIndex(
+          typeof ctx.index === "number" ? ctx.index : typeof index === "number" ? index : 0,
+          ctx.models.length
+        );
+
+        return this.showThumbs(ctx.models, targetIndex, ctx);
+      }
+
+      if (
+        !view ||
+        view.loading ||
+        !view.listen ||
+        view.lightbox?.loading ||
+        !Array.isArray(view.results) ||
+        !view.results[index]
+      ) {
         return Promise.reject();
       }
 
@@ -513,6 +563,28 @@ export default {
           // Unblock.
           view.lightbox.loading = false;
         });
+    },
+    // Keeps the requested slide index within the available bounds before opening the lightbox.
+    normalizeIndex(idx, length) {
+      let target = Number.isFinite(idx) ? idx : 0;
+
+      if (target < 0) {
+        target = 0;
+      }
+
+      const maxIndex = Math.max(length - 1, 0);
+
+      if (target > maxIndex) {
+        target = maxIndex;
+      }
+
+      return target;
+    },
+    shouldShowEditButton() {
+      return this.canEdit && this.contextAllowsEdit;
+    },
+    shouldShowSelectionToggle() {
+      return this.contextAllowsSelect;
     },
     getNumItems() {
       return this.models.length;
@@ -593,7 +665,7 @@ export default {
           mediaElement.classList.add(`pswp__media--${content.data.model.Type}`);
 
           // Create and append video player.
-          mediaElement.appendChild(this.createVideoElement(content.data, false, false, false));
+          mediaElement.appendChild(this.createVideoElement(content, false, false, false));
 
           // Create and append cover image.
           if (content.data.msrc) {
@@ -617,8 +689,22 @@ export default {
         }
       }
     },
+    onContentDestroy(ev) {
+      if (typeof ev?.content?.data?.events === "object") {
+        const data = ev.content.data;
+
+        if (this.debug) {
+          this.log(`content.destroy`, data);
+        }
+
+        // Remove video event listeners.
+        data.events?.abort();
+        data.events = null;
+      }
+    },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
-    createVideoElement(data, autoplay = false, loop = false, mute = false) {
+    createVideoElement(content, autoplay = false, loop = false, mute = false) {
+      const data = content.data;
       const model = data.model;
       const format = data.format;
       const posterSrc = data.msrc;
@@ -640,32 +726,27 @@ export default {
       // Set HTMLMediaElement properties.
       video.className = "pswp__video";
       video.poster = posterSrc;
-      video.autoplay = autoplay;
-      video.loop = loop && !slideshow;
-      video.muted = mute || this.muted;
+      video.autoplay = Boolean(autoplay);
+      video.loop = Boolean(loop && !slideshow);
+      video.muted = Boolean(mute || this.muted);
       video.preload = preload;
+      video.setAttribute("playsinline", ""); // iOS requires attribute
       video.playsInline = true;
       video.disableRemotePlayback = false;
       video.controls = false;
       video.dir = document.dir ? document.dir : this.$config.dir(this.$isRtl);
 
-      // Attach video event handler.
-      video.addEventListener("loadstart", (ev) => this.onVideo(ev));
-      video.addEventListener("loadedmetadata", (ev) => this.onVideo(ev));
-      video.addEventListener("loadeddata", (ev) => this.onVideo(ev));
-      video.addEventListener("progress", (ev) => this.onVideo(ev));
-      video.addEventListener("stalled", (ev) => this.onVideo(ev));
-      video.addEventListener("abort", (ev) => this.onVideo(ev));
-      video.addEventListener("error", (ev) => this.onVideo(ev));
-      video.addEventListener("play", (ev) => this.onVideo(ev));
-      video.addEventListener("playing", (ev) => this.onVideo(ev));
-      video.addEventListener("pause", (ev) => this.onVideo(ev));
-      video.addEventListener("waiting", (ev) => this.onVideo(ev));
-      video.addEventListener("ended", (ev) => this.onVideo(ev));
-      video.addEventListener("seeked", (ev) => this.onVideo(ev));
-      video.addEventListener("seeking", (ev) => this.onVideo(ev));
-      video.addEventListener("timeupdate", (ev) => this.onVideo(ev));
-      video.addEventListener("durationchange", (ev) => this.onVideo(ev));
+      // Create AbortController instance to clean up the event handlers.
+      const ctrl = new AbortController();
+
+      // Abort any existing controller.
+      data.events?.abort();
+      data.events = ctrl;
+
+      // Attach video event handlers.
+      VIDEO_EVENT_TYPES.forEach((ev) => {
+        video.addEventListener(ev, this.videoEventListener, { signal: ctrl.signal });
+      });
 
       // Create and append video source elements, depending on file format support.
       if (
@@ -685,22 +766,40 @@ export default {
         video.appendChild(avcSource);
       }
 
-      if (video.remote && video.remote instanceof RemotePlayback) {
+      // If we set preload programmatically, kick Safari to honor it.
+      if (preload !== "none") {
+        try {
+          video.load();
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.load", { err });
+          }
+        }
+      }
+
+      // Check if remote playback is supported by this browser.
+      if (this.featExperimental && video.remote && video.remote instanceof RemotePlayback) {
         if (!this.video.castable) {
-          video.remote.watchAvailability((castable) => {
-            this.video.castable = castable;
-          });
+          const cancel = () => {
+            video.remote
+              .cancelWatchAvailability?.(this.videoAvailabilityListener)
+              .catch(this.trace ? this.log : () => {});
+          };
+
+          ctrl.signal.addEventListener("abort", cancel, { once: true });
+          video.remote.watchAvailability(this.videoAvailabilityListener).catch(this.trace ? this.log : () => {});
         }
 
-        video.addEventListener("connect", (ev) => this.onVideoRemote(ev));
-        video.addEventListener("connecting", (ev) => this.onVideoRemote(ev));
-        video.addEventListener("disconnect", (ev) => this.onVideoRemote(ev));
+        // Attach video remote event handlers.
+        VIDEO_REMOTE_EVENT_TYPES.forEach((ev) => {
+          video.addEventListener(ev, this.videoRemoteListener, { signal: ctrl.signal });
+        });
       }
 
       // Return HTMLMediaElement.
       return video;
     },
-    onVideo(ev) {
+    onVideoEvent(ev) {
       const { video, data } = this.getContent();
 
       if (!video || !data) {
@@ -750,7 +849,7 @@ export default {
             this.$notify.error(err.message);
         }
       } else {
-        this.log(err);
+        this.log("video.remote", { err });
       }
     },
     onVideoRemote(ev) {
@@ -777,31 +876,35 @@ export default {
         this.resetVideo();
       }
 
-      const isPlaying =
+      let isPlaying =
         video.readyState && !video.paused && !video.ended && !video.waiting && (!video.error || video.error.code === 0);
 
       if (ev && ev.type) {
         switch (ev.type) {
           case "playing":
             // Automatically hide the lightbox controls after a video has started playing.
-            this.video.waiting = false;
             this.hideControlsWithDelay(this.playControlHideDelay);
-            video.parentElement.classList.add("is-playing");
-            video.parentElement.classList.remove("is-waiting");
+            this.video.waiting = false;
+            isPlaying = true;
             break;
           case "ended":
           case "pause":
+            this.video.waiting = false;
             video.parentElement.classList.remove("is-playing");
+            video.parentElement.classList.remove("is-waiting");
             break;
           case "abort":
           case "error":
+            this.video.waiting = false;
             video.parentElement.classList.add("is-broken");
             video.parentElement.classList.remove("is-playing");
+            video.parentElement.classList.remove("is-waiting");
             break;
           case "timeupdate":
           case "loadeddata":
           case "loadedmetadata":
             this.video.waiting = false;
+            video.parentElement.classList.remove("is-waiting");
             break;
           case "waiting":
             this.video.waiting = true;
@@ -843,7 +946,7 @@ export default {
       // https://developer.mozilla.org/de/docs/Web/API/HTMLMediaElement/error
       if (video.error && video.error instanceof MediaError && video.error.code > 0) {
         if (this.debug) {
-          this.log(video.error.message);
+          this.log("video.error", video.error);
         }
 
         switch (video.error.code) {
@@ -888,9 +991,15 @@ export default {
         this.video.seekable = false;
       }
 
-      this.video.playing = isPlaying;
       this.video.paused = video.paused;
       this.video.ended = video.ended;
+      this.video.playing = isPlaying;
+
+      if (this.video.playing) {
+        video.parentElement.classList.add("is-playing");
+        video.parentElement.classList.remove("is-waiting");
+        video.parentElement.classList.remove("is-broken");
+      }
     },
     resetVideo(showControls = false) {
       this.video = {
@@ -907,6 +1016,7 @@ export default {
         playing: false,
         paused: false,
         ended: false,
+        castable: this.video.castable,
         casting: false,
         remote: "",
       };
@@ -979,23 +1089,35 @@ export default {
       // Register animation event handlers to prevent user actions during animations,
       // see https://photoswipe.com/events/#opening-or-closing-transition-events.
       this.lightbox.on("openingAnimationStart", () => {
+        if (this.debug) {
+          this.log("start opening animation");
+        }
         this.busy = true;
       });
       this.lightbox.on("openingAnimationEnd", () => {
         this.busy = false;
+        if (this.debug) {
+          this.log("end opening animation");
+        }
       });
       this.lightbox.on("closingAnimationStart", () => {
+        if (this.debug) {
+          this.log("start closing animation");
+        }
         this.busy = true;
       });
       this.lightbox.on("closingAnimationEnd", () => {
         this.busy = false;
+        if (this.debug) {
+          this.log("end closing animation");
+        }
       });
 
       // Add a custom pointer event handler to prevent the default
       // action when events are triggered on an HTMLMediaElement.
-      this.lightbox.on("pointerUp", this.onLightboxPointerEvent.bind(this));
-      this.lightbox.on("pointerDown", this.onLightboxPointerEvent.bind(this));
-      this.lightbox.on("pointerMove", this.onLightboxPointerEvent.bind(this));
+      this.lightbox.on("pointerUp", this.lightboxPointerListener);
+      this.lightbox.on("pointerDown", this.lightboxPointerListener);
+      // this.lightbox.on("pointerMove", this.lightboxPointerListener);
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -1025,7 +1147,7 @@ export default {
       this.lightbox.on("contentLoad", this.onContentLoad.bind(this));
       // this.lightbox.on("contentResize", this.onContentResize.bind(this));
       // this.lightbox.on("contentRemove", this.onContentRemove.bind(this));
-      // this.lightbox.on("contentDestroy", this.onContentDestroy.bind(this));
+      this.lightbox.on("contentDestroy", this.onContentDestroy.bind(this));
 
       // Pauses videos, animations, and live photos when slide content becomes active (can be default prevented),
       // see https://photoswipe.com/events/#slide-content-events.
@@ -1104,6 +1226,7 @@ export default {
 
       // Show first image.
       this.lightbox.loadAndOpen(this.index);
+      this.busy = false;
 
       return Promise.resolve();
     },
@@ -1133,9 +1256,11 @@ export default {
           },
           onClick: (ev) =>
             this.onControlClick(ev, () => {
-              if (lightbox && lightbox.pswp) {
-                lightbox.pswp.close();
+              if (this.debug) {
+                this.log("pswp.ui.close", ev);
               }
+
+              this.close();
             }),
         });
 
@@ -1228,23 +1353,25 @@ export default {
         }
 
         // Add selection toggle control.
-        lightbox.pswp.ui.registerElement({
-          name: "select-toggle",
-          className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
-          title: this.$gettext("Select"),
-          ariaLabel: this.$gettext("Select"),
-          order: 10,
-          isButton: true,
-          html: {
-            isCustomSVG: true,
-            inner: `<use class="pswp__icn-shadow pswp__icn-select-on" xlink:href="#pswp__icn-select-on"></use><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" id="pswp__icn-select-on" class="pswp__icn-select-on" /><use class="pswp__icn-shadow pswp__icn-select-off" xlink:href="#pswp__icn-select-off"></use><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" id="pswp__icn-select-off" class="pswp__icn-select-off" />`,
-            size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
-          },
-          onClick: (ev) => this.onControlClick(ev, this.toggleSelect),
-        });
+        if (this.shouldShowSelectionToggle()) {
+          lightbox.pswp.ui.registerElement({
+            name: "select-toggle",
+            className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
+            title: this.$gettext("Select"),
+            ariaLabel: this.$gettext("Select"),
+            order: 10,
+            isButton: true,
+            html: {
+              isCustomSVG: true,
+              inner: `<use class="pswp__icn-shadow pswp__icn-select-on" xlink:href="#pswp__icn-select-on"></use><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" id="pswp__icn-select-on" class="pswp__icn-select-on" /><use class="pswp__icn-shadow pswp__icn-select-off" xlink:href="#pswp__icn-select-off"></use><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" id="pswp__icn-select-off" class="pswp__icn-select-off" />`,
+              size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
+            },
+            onClick: (ev) => this.onControlClick(ev, this.toggleSelect),
+          });
+        }
 
         // Add edit button control if user has permission to use it.
-        if (this.canEdit) {
+        if (this.shouldShowEditButton()) {
           lightbox.pswp.ui.registerElement({
             name: "edit-button",
             className: "pswp__button--edit-button pswp__button--mdi hidden-shared-only", // Sets the icon style/size in lightbox.css.
@@ -1325,6 +1452,7 @@ export default {
           visible:
             this.canArchive &&
             this.context !== "hidden" &&
+            this.context !== "batch-edit" &&
             ((this.context !== "archive" && !this.model?.Archived) || this.model?.Archived === false),
           click: () => {
             this.onArchive();
@@ -1339,6 +1467,7 @@ export default {
           visible:
             this.canArchive &&
             this.context !== "hidden" &&
+            this.context !== "batch-edit" &&
             (this.model?.Archived || (this.context === "archive" && this.model?.Archived !== false)),
           click: () => {
             this.onRestore();
@@ -1364,22 +1493,28 @@ export default {
     onHideMenu() {
       this.menuVisible = false;
     },
-    closeLightbox() {
-      if (this.isBusy("close lightbox")) {
-        return Promise.reject();
-      }
-
-      const pswp = this.pswp();
-
-      if (pswp) {
-        this.busy = true;
+    close() {
+      if (this.closing) {
         return new Promise((resolve) => {
           this.$event.subscribeOnce("lightbox.leave", resolve);
-          this.destroyLightbox();
         });
       }
 
-      return this.hideDialog();
+      this.closing = true;
+
+      if (this.lightbox) {
+        return new Promise((resolve) => {
+          this.$event.subscribeOnce("lightbox.leave", resolve);
+          setTimeout(() => {
+            this.destroyLightbox();
+          }, 150);
+        });
+      }
+
+      return new Promise((resolve) => {
+        this.$event.subscribeOnce("lightbox.leave", resolve);
+        this.hideDialog();
+      });
     },
     onLightboxOpened() {
       this.addEventListeners();
@@ -1391,20 +1526,23 @@ export default {
     },
     // Destroys the PhotoSwipe lightbox instance after use, see onClose().
     destroyLightbox() {
-      if (this.lightbox) {
-        this.lightbox.destroy();
-        this.$event.publish("lightbox.destroy");
-        return;
-      }
+      this.$nextTick(() => {
+        if (this.lightbox) {
+          this.lightbox.destroy();
+          return;
+        }
 
-      this.hideDialog();
+        this.hideDialog();
+      });
     },
     onLightboxDestroyed() {
       // Remove lightbox reference.
       this.lightbox = null;
 
       // Hide lightbox and sidebar.
-      this.hideDialog();
+      this.$nextTick(() => {
+        this.hideDialog();
+      });
     },
     // Returns the picture (model) caption as sanitized HTML, if any.
     formatCaption(model) {
@@ -1453,11 +1591,14 @@ export default {
 
       this.clearTimeouts();
       this.removeEventListeners();
+      this.closing = true;
     },
     // Resets the component state after closing the lightbox.
     onReset() {
       this.resetControls();
       this.resetModels();
+      this.contextAllowsEdit = true;
+      this.contextAllowsSelect = true;
     },
     // Resets the state of the lightbox controls.
     resetControls() {
@@ -1516,19 +1657,98 @@ export default {
         return;
       }
 
+      if (this.debug) {
+        this.log(`background.${ev?.type}`, { ev });
+      }
+
       if (this.controlsVisible()) {
-        this.closeLightbox();
+        this.close();
       } else {
         this.showControls();
       }
     },
-    // Called when the lightbox receives a pointer move, down or up event.
-    onLightboxPointerEvent(ev) {
-      if (ev && ev.originalEvent.target.closest(".pswp__dynamic-caption")) {
+    // Returns the type of control if the event originates
+    // from a PhotoSwipe UI control, like the close button.
+    pswpControl(ev) {
+      if (!ev) {
+        return false;
+      }
+
+      let target;
+
+      if (ev.originalEvent?.target) {
+        target = ev.originalEvent.target;
+      } else if (ev.target) {
+        target = ev.target;
+      } else {
+        return false;
+      }
+
+      if (typeof target.closest === "function") {
+        if (target.closest(".pswp__button--close-button")) {
+          if (this.debug) {
+            this.log(`${ev?.type} on close`, { ev });
+          }
+
+          return "close";
+        }
+
+        if (target.closest(".pswp__button")) {
+          if (this.debug) {
+            this.log(`${ev?.type} on button`, { ev });
+          }
+
+          return "button";
+        }
+
+        if (target.closest(".pswp__top-bar")) {
+          if (this.debug) {
+            this.log(`${ev?.type} on top-bar`, { ev });
+          }
+
+          return "top-bar";
+        }
+      }
+
+      return false;
+    },
+    // Called when the lightbox receives a pointer down or up event.
+    // Move events are ignored for now.
+    onLightboxPointerEvent(ev, action) {
+      if (!ev || !ev.originalEvent?.target) {
+        return;
+      }
+
+      const target = ev.originalEvent.target;
+
+      if (this.debug) {
+        this.log(`pointer.${ev.type}`, { ev, target, action });
+      }
+
+      // Close the lightbox when the user clicks the close button if it is visible.
+      const pswpControl = this.pswpControl(ev);
+      if (pswpControl === "close") {
+        if (this.controlsVisible()) {
+          ev.preventDefault();
+          this.close();
+        }
+        return;
+      }
+
+      if (target.closest(".pswp__dynamic-caption")) {
         ev.preventDefault();
       }
     },
+    // Handle user clicks on a control. Does not reliably work for the close button.
     onControlClick(ev, action) {
+      if (!ev) {
+        return;
+      }
+
+      if (this.debug) {
+        this.log(`control.${ev.type}`, { ev, action });
+      }
+
       if (ev && ev.cancelable) {
         ev.stopPropagation();
         ev.preventDefault();
@@ -1547,29 +1767,38 @@ export default {
 
       return false;
     },
-    onContainerClick(ev) {
+    // Capture click events on the dialog component.
+    captureDialogClick(ev) {
       if (!ev) {
         return;
       }
 
+      if (this.debug) {
+        this.log(`dialog.capture.${ev.type}`, { ev, target: ev.target });
+      }
+
+      // Reveal the controls when the user clicks or touches the top of the screen,
+      // where they are located when visible.
       if (ev.y <= 128) {
-        // Reveal controls when user clicks/touches the top of the screen.
         if (!this.controlsVisible()) {
           ev.stopPropagation();
           ev.preventDefault();
           this.clearIdleTimeout();
-          this.showLightboxControls();
-          this.hideControlsWithDelay(this.defaultControlHideDelay);
+          this.showControls();
         }
       } else if (ev.target instanceof HTMLMediaElement) {
         ev.stopPropagation();
         ev.preventDefault();
       }
     },
-    // Called when a pointer down (click, touch) event is captured by the lightbox container.
-    onContainerPointerDown(ev) {
+    // Capture pointer down events on the dialog component.
+    captureDialogPointerDown(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`dialog.capture.${ev.type}`, { ev, target: ev.target });
       }
 
       // Handle the click and touch events on custom content.
@@ -1606,10 +1835,14 @@ export default {
         this.toggleVideo();
       }
     },
-    // Called when the user clicks on an image slide in the lightbox.
+    // Handle user clicks on an image slide in the lightbox.
     onContentClick(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`content.${ev.type}`, { ev, target: ev.target, originalTarget: ev.originalEvent?.target });
       }
 
       if (this.slideshow.active) {
@@ -1624,10 +1857,14 @@ export default {
         pswp.currSlide.toggleZoom();
       }
     },
-    // Called when the user taps on an image slide in the lightbox.
+    // Handle user taps on an image slide in the lightbox.
     onContentTap(ev) {
       if (!ev) {
         return;
+      }
+
+      if (this.debug) {
+        this.log(`content.${ev.type}`, { ev, target: ev.target, originalTarget: ev.originalEvent?.target });
       }
 
       if (ev.target instanceof HTMLMediaElement) {
@@ -1672,6 +1909,9 @@ export default {
     },
     // Toggles the selection of the current picture in the global photo clipboard.
     toggleSelect() {
+      if (!this.contextAllowsSelect) {
+        return;
+      }
       this.$clipboard.toggle(this.model);
     },
     // Returns the active HTMLMediaElement element in the lightbox, if any.
@@ -1713,9 +1953,12 @@ export default {
       if (!video.paused) {
         try {
           video.pause();
-        } catch (e) {
-          this.log(e);
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.pause", { err });
+          }
         }
+        video.parentElement?.classList.remove("is-playing");
       }
     },
     // Starts playback on the specified video element, if any.
@@ -1730,24 +1973,39 @@ export default {
 
       if (video.preload === "none") {
         video.preload = "auto";
+        try {
+          video.load();
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.load", { err });
+          }
+        }
       }
 
       video.loop = loop && !this.slideshow.active;
       video.muted = this.muted;
 
+      if (this.muted) {
+        video.setAttribute("muted", "");
+      } else {
+        video.removeAttribute("muted");
+      }
+
       if (video.paused || video.ended) {
         try {
-          // Calling pause() before a play promise has been resolved may result in an error,
-          // see https://developer.chrome.com/blog/play-request-was-interrupted.
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.catch((err) => {
-              if (this.trace && err && err.message) {
-                this.log(err.message);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(async () => {
+              const playPromise = video.play();
+              if (playPromise !== undefined) {
+                playPromise.catch((err) => {
+                  if (this.trace && err && err.message) {
+                    this.log("video.play", { err });
+                  }
+                });
               }
             });
-          }
-        } catch (_) {
+          });
+        } catch {
           // Ignore.
         }
       }
@@ -1760,14 +2018,17 @@ export default {
 
       switch (ev.code) {
         case "Escape":
-          this.closeLightbox();
+          this.close();
           return true;
         case "Period":
+          if (!this.contextAllowsSelect) {
+            return false;
+          }
           this.onShowMenu();
           this.toggleSelect();
           return true;
         case "KeyA":
-          if (this.canArchive && this.context !== "hidden") {
+          if (this.canArchive && this.context !== "hidden" && this.context !== "batch-edit") {
             if (this.model.Archived || (this.context === "archive" && this.model?.Archived !== false)) {
               this.onRestore();
             } else {
@@ -1781,7 +2042,7 @@ export default {
           }
           return true;
         case "KeyE":
-          if (this.canEdit) {
+          if (this.canEdit && this.contextAllowsEdit) {
             this.onEdit();
           }
           return true;
@@ -1951,10 +2212,13 @@ export default {
       if (!video.paused) {
         try {
           video.pause();
-          this.showControls();
-        } catch (e) {
-          this.log(e);
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.pause", { err });
+          }
         }
+        video.parentElement?.classList.remove("is-playing");
+        this.showControls();
       }
     },
     // Mutes/unmutes the sound for videos.
@@ -1970,6 +2234,12 @@ export default {
       }
 
       video.muted = this.muted;
+
+      if (this.muted) {
+        video.setAttribute("muted", "");
+      } else {
+        video.removeAttribute("muted");
+      }
     },
     // Starts/stops a slideshow so that the next slide opens automatically at regular intervals.
     toggleSlideshow() {
@@ -2178,7 +2448,7 @@ export default {
       let album = null;
 
       // Close lightbox and open edit dialog when closed.
-      this.closeLightbox().then(() => {
+      this.close().then(() => {
         this.$event.publish("dialog.edit", { selection, album, index });
       });
     },
@@ -2310,13 +2580,13 @@ export default {
     },
     // Removes any touch and mouse event handlers.
     removeEventListeners() {
-      document.removeEventListener("touchstart", this.onTouchStartOnce.bind(this), { once: true });
-      document.removeEventListener("mousemove", this.onMouseMoveOnce.bind(this), { once: true });
+      document.removeEventListener("touchstart", this.touchStartListener, false);
+      document.removeEventListener("mousemove", this.mouseMoveListener, false);
     },
     // Attaches touch and mouse event handlers to automatically hide controls.
     addEventListeners() {
-      document.addEventListener("touchstart", this.onTouchStartOnce.bind(this), { once: true });
-      document.addEventListener("mousemove", this.onMouseMoveOnce.bind(this), { once: true });
+      document.addEventListener("touchstart", this.touchStartListener, { once: true });
+      document.addEventListener("mousemove", this.mouseMoveListener, { once: true });
     },
     startTimer() {
       if (this.hasTouch) {
@@ -2325,7 +2595,7 @@ export default {
 
       this.hideControlsWithDelay(this.defaultControlHideDelay);
 
-      document.addEventListener("mousemove", this.onMouseMoveOnce.bind(this), { once: true });
+      document.addEventListener("mousemove", this.mouseMoveListener, { once: true });
     },
     clearTimeouts() {
       this.clearIdleTimeout();
@@ -2475,7 +2745,7 @@ export default {
         data.loading = true;
 
         // Attach an onload event handler to swap the thumbnail when the new image is loaded.
-        image.addEventListener("load", (ev) => {
+        const onImageLoad = (ev) => {
           if (!ev || !ev.target) {
             return;
           }
@@ -2484,7 +2754,7 @@ export default {
           data.loading = false;
 
           if (this.trace) {
-            this.log(`image.${ev.type}`, [ev, ev.target]);
+            this.log(`image.${ev.type}`, { ev, target: ev.target });
           }
 
           // Abort if image URL is empty or the current slide is undefined.
@@ -2516,12 +2786,14 @@ export default {
           data.width = thumb.w;
           data.height = thumb.h;
           data.loading = false;
-        });
+        };
+
+        image.addEventListener("load", onImageLoad, { once: true });
 
         // Set thumbnail src to load the new image.
         image.src = thumb.src;
       } catch (err) {
-        this.log(`failed to load image size ${thumb.size}`, err);
+        this.log(`failed to load image size ${thumb.size}`, { err });
         data.loading = false;
       }
     },

@@ -3,6 +3,7 @@ import testcafeconfig from "../../testcafeconfig.json";
 import Menu from "../page-model/menu";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
+import Page from "../page-model/page";
 import Photo from "../page-model/photo";
 import PhotoEdit from "../page-model/photo-edit";
 import Album from "../page-model/album";
@@ -14,6 +15,7 @@ fixture`Test photos archive and private functionalities`.page`${testcafeconfig.u
 const menu = new Menu();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
+const page = new Page();
 const photo = new Photo();
 const photoedit = new PhotoEdit();
 const album = new Album();
@@ -48,11 +50,10 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     await photo.triggerListViewActions("uid", SecondPhotoUid, "private");
     await photo.triggerListViewActions("uid", SecondVideoUid, "private");*/
     await t.click(toolbar.cardsViewAction);
-    await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");
-    await photo.triggerHoverAction("uid", ThirdVideoUid, "select");
-    await contextmenu.triggerContextMenuAction("edit", "");
+    await page.clickCardTitleOfUID(ThirdPhotoUid);
     await photoedit.turnSwitchOn("private");
-    await t.click(photoedit.dialogNext);
+    await t.click(photoedit.dialogClose);
+    await page.clickCardTitleOfUID(ThirdVideoUid);
     await photoedit.turnSwitchOn("private");
     await t.click(photoedit.dialogClose);
     if (t.browser.platform === "mobile") {
@@ -60,7 +61,6 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     } else {
       await toolbar.triggerToolbarAction("refresh");
     }
-
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
     // await photo.checkPhotoVisibility(SecondPhotoUid, false);
     await photo.checkPhotoVisibility(ThirdPhotoUid, false);
@@ -87,7 +87,6 @@ test.meta("testID", "photos-archive-private-001").meta({ type: "short", mode: "p
     //await photo.checkPhotoVisibility(SecondVideoUid, true);
     await photo.checkPhotoVisibility(ThirdVideoUid, true);
 
-    await contextmenu.clearSelection();
     await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
     //await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
     await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");

@@ -48,7 +48,14 @@ var uncachedIconSvg []byte
 
 // GetSvg returns SVG placeholder symbols.
 //
-// GET /api/v1/svg/*
+//	@Summary	returns SVG placeholder symbols for UI fallbacks
+//	@Id			GetSvg
+//	@Tags		Assets
+//	@Produce	image/svg+xml
+//	@Param		icon	path		string	true	"SVG icon name"	Enums(user,face,camera,photo,raw,file,video,label,portrait,folder,album,broken,uncached)
+//	@Success	200		{string}	string	"SVG icon"
+//	@Failure	404		{object}	gin.H	"Icon not found"
+//	@Router		/api/v1/svg/{icon} [get]
 func GetSvg(router *gin.RouterGroup) {
 	router.GET("/svg/user", func(c *gin.Context) {
 		c.Data(http.StatusOK, "image/svg+xml", userIconSvg)

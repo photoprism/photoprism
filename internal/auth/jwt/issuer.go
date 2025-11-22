@@ -10,6 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// PrefixTokenID prefixes JWT token IDs to make them distinguishable.
+const PrefixTokenID = "jwt"
+
 var (
 	// DefaultTokenTTL is the default lifetime for issued tokens.
 	DefaultTokenTTL = 300 * time.Second
@@ -91,7 +94,7 @@ func (i *Issuer) Issue(spec ClaimsSpec) (string, error) {
 			IssuedAt:  gojwt.NewNumericDate(issuedAt),
 			NotBefore: gojwt.NewNumericDate(issuedAt),
 			ExpiresAt: gojwt.NewNumericDate(expiresAt),
-			ID:        rnd.GenerateUID(rnd.PrefixMixed),
+			ID:        rnd.AuthTokenID(PrefixTokenID),
 		},
 	}
 

@@ -1,7 +1,7 @@
 import { Selector, t } from "testcafe";
-import Toolbar from "./toolbar";
+import Notifies from "../page-model/notifications";
 
-const toolbar = new Toolbar();
+const notifies = new Notifies();
 
 export default class Page {
   constructor() {}
@@ -18,8 +18,8 @@ export default class Page {
     }
   }
 
-  async getPhotoCount(type) {
-    await t.wait(7000);
+  async getPhotoCount(type, delay = 7000) {
+    await notifies.waitForPhotosToLoad(delay, true)
     if (type === "all") {
       const PhotoCount = await Selector("div.is-photo", { timeout: 2000 }).count;
       return PhotoCount;

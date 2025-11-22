@@ -25,8 +25,8 @@ func TestFileExtensions_Known(t *testing.T) {
 	t.Run("CR5", func(t *testing.T) {
 		assert.False(t, Extensions.Known("testdata/test (jpg).CR5"))
 	})
-	t.Run("Mp", func(t *testing.T) {
-		assert.True(t, Extensions.Known("file.mp"))
+	t.Run("Mp4", func(t *testing.T) {
+		assert.True(t, Extensions.Known("file.mp4"))
 	})
 	t.Run("Mxf", func(t *testing.T) {
 		assert.True(t, Extensions.Known("file.mxf"))

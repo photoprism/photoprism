@@ -10,11 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// VisionYaml returns the vision config YAML filename.
-//
-// TODO: Call fs.YamlFilePath to use ".yaml" extension for new YAML files, unless a .yml" file already exists.
-//
-//	return fs.YamlFilePath("vision", c.ConfigPath(), c.options.VisionYaml)
+// VisionYaml returns the path to the computer-vision configuration file,
+// preferring an explicit override and otherwise letting fs.ConfigFilePath pick
+// the right `.yml`/`.yaml` variant in the config directory.
 func (c *Config) VisionYaml() string {
 	if c == nil {
 		return ""
@@ -23,7 +21,7 @@ func (c *Config) VisionYaml() string {
 	if c.options.VisionYaml != "" {
 		return fs.Abs(c.options.VisionYaml)
 	} else {
-		return filepath.Join(c.ConfigPath(), "vision.yml")
+		return fs.ConfigFilePath(c.ConfigPath(), "vision", fs.ExtYml)
 	}
 }
 
@@ -45,9 +43,15 @@ func (c *Config) VisionFilter() string {
 	return strings.TrimSpace(c.options.VisionFilter)
 }
 
-// VisionModelShouldRun checks when the specified model type should run.
+// VisionModelShouldRun reports whether the configured vision model of the
+// specified type should execute in a given scheduling context. Face detection
+// delegates to FaceEngineShouldRun so detection and embedding stay aligned.
 func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) bool {
 	if c == nil {
+		return false
+	}
+
+	if t == vision.ModelTypeFace && c.DisableFaces() {
 		return false
 	}
 
@@ -61,6 +65,10 @@ func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) b
 
 	if vision.Config == nil {
 		return false
+	}
+
+	if t == vision.ModelTypeFace {
+		return c.FaceEngineShouldRun(when)
 	}
 
 	return vision.Config.ShouldRun(t, when)

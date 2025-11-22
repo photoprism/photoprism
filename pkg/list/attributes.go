@@ -3,6 +3,8 @@ package list
 import (
 	"sort"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // Attr represents a list of key-value attributes.
@@ -84,7 +86,7 @@ func (list Attr) Sort() Attr {
 func (list Attr) Contains(s string) bool {
 	attr := list.Find(s)
 
-	if attr.Key == "" || attr.Value == False {
+	if attr.Key == "" || attr.Value == enum.False {
 		return false
 	}
 
@@ -120,14 +122,14 @@ func (list Attr) Find(s string) (a KeyValue) {
 	} else {
 		for i := range list {
 			if strings.EqualFold(attr.Key, list[i].Key) {
-				if attr.Value == True && list[i].Value == False {
+				if attr.Value == enum.True && list[i].Value == enum.False {
 					return KeyValue{Key: "", Value: ""}
 				} else if attr.Value == list[i].Value {
 					return *list[i]
 				} else if list[i].Value == Any {
 					a = *list[i]
 				}
-			} else if list[i].Key == Any && attr.Value != False {
+			} else if list[i].Key == Any && attr.Value != enum.False {
 				a = *list[i]
 			}
 		}

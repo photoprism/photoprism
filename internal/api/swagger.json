@@ -42,6 +42,7 @@
                 "",
                 "cli",
                 "implicit",
+                "token",
                 "session",
                 "password",
                 "client_credentials",
@@ -57,6 +58,7 @@
                 "GrantUndefined",
                 "GrantCLI",
                 "GrantImplicit",
+                "GrantToken",
                 "GrantSession",
                 "GrantPassword",
                 "GrantClientCredentials",
@@ -312,13 +314,13 @@
         },
         "cluster.DatabaseInfo": {
             "properties": {
-                "driver": {
+                "Driver": {
                     "type": "string"
                 },
-                "host": {
+                "Host": {
                     "type": "string"
                 },
-                "port": {
+                "Port": {
                     "type": "integer"
                 }
             },
@@ -326,19 +328,19 @@
         },
         "cluster.MetricsResponse": {
             "properties": {
-                "clusterCidr": {
+                "ClusterCIDR": {
                     "type": "string"
                 },
-                "nodes": {
+                "Nodes": {
                     "additionalProperties": {
                         "type": "integer"
                     },
                     "type": "object"
                 },
-                "time": {
+                "Time": {
                     "type": "string"
                 },
-                "uuid": {
+                "UUID": {
                     "type": "string"
                 }
             },
@@ -346,40 +348,49 @@
         },
         "cluster.Node": {
             "properties": {
-                "advertiseUrl": {
+                "AdvertiseUrl": {
                     "type": "string"
                 },
-                "clientId": {
+                "AppName": {
                     "type": "string"
                 },
-                "createdAt": {
+                "AppVersion": {
                     "type": "string"
                 },
-                "database": {
+                "ClientID": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Database": {
                     "$ref": "#/definitions/cluster.NodeDatabase"
                 },
-                "labels": {
+                "Labels": {
                     "additionalProperties": {
                         "type": "string"
                     },
                     "type": "object"
                 },
-                "name": {
+                "Name": {
                     "description": "NodeName",
                     "type": "string"
                 },
-                "role": {
+                "Role": {
                     "description": "NodeRole",
                     "type": "string"
                 },
-                "siteUrl": {
+                "SiteUrl": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "Theme": {
                     "type": "string"
                 },
-                "uuid": {
+                "UUID": {
                     "description": "NodeUUID",
+                    "type": "string"
+                },
+                "UpdatedAt": {
                     "type": "string"
                 }
             },
@@ -387,16 +398,16 @@
         },
         "cluster.NodeDatabase": {
             "properties": {
-                "driver": {
+                "Driver": {
                     "type": "string"
                 },
-                "name": {
+                "Name": {
                     "type": "string"
                 },
-                "rotatedAt": {
+                "RotatedAt": {
                     "type": "string"
                 },
-                "user": {
+                "User": {
                     "type": "string"
                 }
             },
@@ -404,28 +415,28 @@
         },
         "cluster.RegisterDatabase": {
             "properties": {
-                "driver": {
+                "DSN": {
                     "type": "string"
                 },
-                "dsn": {
+                "Driver": {
                     "type": "string"
                 },
-                "host": {
+                "Host": {
                     "type": "string"
                 },
-                "name": {
+                "Name": {
                     "type": "string"
                 },
-                "password": {
+                "Password": {
                     "type": "string"
                 },
-                "port": {
+                "Port": {
                     "type": "integer"
                 },
-                "rotatedAt": {
+                "RotatedAt": {
                     "type": "string"
                 },
-                "user": {
+                "User": {
                     "type": "string"
                 }
             },
@@ -433,28 +444,31 @@
         },
         "cluster.RegisterResponse": {
             "properties": {
-                "alreadyProvisioned": {
+                "AlreadyProvisioned": {
                     "type": "boolean"
                 },
-                "alreadyRegistered": {
+                "AlreadyRegistered": {
                     "type": "boolean"
                 },
-                "clusterCidr": {
+                "ClusterCIDR": {
                     "type": "string"
                 },
-                "database": {
+                "Database": {
                     "$ref": "#/definitions/cluster.RegisterDatabase"
                 },
-                "jwksUrl": {
+                "JWKSUrl": {
                     "type": "string"
                 },
-                "node": {
+                "Node": {
                     "$ref": "#/definitions/cluster.Node"
                 },
-                "secrets": {
+                "Secrets": {
                     "$ref": "#/definitions/cluster.RegisterSecrets"
                 },
-                "uuid": {
+                "Theme": {
+                    "type": "string"
+                },
+                "UUID": {
                     "description": "ClusterUUID",
                     "type": "string"
                 }
@@ -463,10 +477,10 @@
         },
         "cluster.RegisterSecrets": {
             "properties": {
-                "clientSecret": {
+                "ClientSecret": {
                     "type": "string"
                 },
-                "rotatedAt": {
+                "RotatedAt": {
                     "type": "string"
                 }
             },
@@ -474,7 +488,7 @@
         },
         "cluster.StatusResponse": {
             "properties": {
-                "status": {
+                "Status": {
                     "type": "string"
                 }
             },
@@ -482,19 +496,22 @@
         },
         "cluster.SummaryResponse": {
             "properties": {
-                "clusterCidr": {
+                "ClusterCIDR": {
                     "type": "string"
                 },
-                "database": {
+                "Database": {
                     "$ref": "#/definitions/cluster.DatabaseInfo"
                 },
-                "nodes": {
+                "Nodes": {
                     "type": "integer"
                 },
-                "time": {
+                "Theme": {
                     "type": "string"
                 },
-                "uuid": {
+                "Time": {
+                    "type": "string"
+                },
+                "UUID": {
                     "description": "ClusterUUID",
                     "type": "string"
                 }
@@ -1255,6 +1272,9 @@
                 "CopyrightSrc": {
                     "type": "string"
                 },
+                "CreatedAt": {
+                    "type": "string"
+                },
                 "Keywords": {
                     "type": "string"
                 },
@@ -1273,6 +1293,9 @@
                 "NotesSrc": {
                     "type": "string"
                 },
+                "PhotoID": {
+                    "type": "integer"
+                },
                 "Software": {
                     "type": "string"
                 },
@@ -1285,13 +1308,7 @@
                 "SubjectSrc": {
                     "type": "string"
                 },
-                "createdAt": {
-                    "type": "string"
-                },
-                "photoID": {
-                    "type": "integer"
-                },
-                "updatedAt": {
+                "UpdatedAt": {
                     "type": "string"
                 }
             },
@@ -1827,10 +1844,16 @@
                 "CellID": {
                     "type": "string"
                 },
+                "CheckedAt": {
+                    "type": "string"
+                },
                 "Color": {
                     "type": "integer"
                 },
                 "Country": {
+                    "type": "string"
+                },
+                "CreatedAt": {
                     "type": "string"
                 },
                 "CreatedBy": {
@@ -1838,6 +1861,9 @@
                 },
                 "Day": {
                     "type": "integer"
+                },
+                "DeletedAt": {
+                    "type": "string"
                 },
                 "Description": {
                     "type": "string"
@@ -1853,6 +1879,9 @@
                 },
                 "Duration": {
                     "$ref": "#/definitions/time.Duration"
+                },
+                "EditedAt": {
+                    "type": "string"
                 },
                 "EstimatedAt": {
                     "type": "string"
@@ -1871,6 +1900,9 @@
                 },
                 "FocalLength": {
                     "type": "integer"
+                },
+                "IndexedAt": {
+                    "type": "string"
                 },
                 "Iso": {
                     "type": "integer"
@@ -1956,20 +1988,11 @@
                 "UID": {
                     "type": "string"
                 },
+                "UpdatedAt": {
+                    "type": "string"
+                },
                 "Year": {
                     "type": "integer"
-                },
-                "checkedAt": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "editedAt": {
-                    "type": "string"
                 },
                 "files": {
                     "items": {
@@ -1985,9 +2008,6 @@
                         "$ref": "#/definitions/entity.PhotoLabel"
                     },
                     "type": "array"
-                },
-                "updatedAt": {
-                    "type": "string"
                 }
             },
             "type": "object"
@@ -2338,6 +2358,9 @@
                     "type": "string"
                 },
                 "Role": {
+                    "type": "string"
+                },
+                "Scope": {
                     "type": "string"
                 },
                 "Settings": {
@@ -3258,6 +3281,9 @@
                     "type": "string"
                 },
                 "Role": {
+                    "type": "string"
+                },
+                "Scope": {
                     "type": "string"
                 },
                 "SuperAdmin": {
@@ -4516,6 +4542,12 @@
                 "prompt": {
                     "type": "string"
                 },
+                "schema": {
+                    "items": {
+                        "type": "integer"
+                    },
+                    "type": "array"
+                },
                 "stream": {
                     "type": "boolean"
                 },
@@ -4536,6 +4568,15 @@
         },
         "vision.ApiRequestOptions": {
             "properties": {
+                "combine_outputs": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "force_json": {
+                    "type": "boolean"
+                },
                 "frequency_penalty": {
                     "type": "number"
                 },
@@ -4543,6 +4584,9 @@
                     "type": "boolean"
                 },
                 "main_gpu": {
+                    "type": "integer"
+                },
+                "max_output_tokens": {
                     "type": "integer"
                 },
                 "min_p": {
@@ -4589,6 +4633,9 @@
                 },
                 "repeat_penalty": {
                     "type": "number"
+                },
+                "schema_version": {
+                    "type": "string"
                 },
                 "seed": {
                     "type": "integer"
@@ -4968,6 +5015,7 @@
                 "consumes": [
                     "application/json"
                 ],
+                "description": "Posting a title that matches a soft-deleted manual album restores it (including existing photo assignments). Use DELETE with `force=true` to purge an album before recreating it from scratch.",
                 "operationId": "CreateAlbum",
                 "parameters": [
                     {
@@ -4986,6 +5034,12 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Album"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/entity.Album"
                         }
@@ -5040,6 +5094,12 @@
                         "name": "uid",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "description": "Set to true to permanently delete a manual album instead of archiving it.",
+                        "in": "query",
+                        "name": "force",
+                        "type": "boolean"
                     }
                 ],
                 "produces": [
@@ -6634,7 +6694,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (nodeName required; optional: nodeRole, labels, advertiseUrl, siteUrl; to authorize UUID/name changes include clientId+clientSecret; rotation: rotateDatabase, rotateSecret)",
+                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -6690,7 +6750,7 @@
                         }
                     }
                 },
-                "summary": "registers a node, provisions DB credentials, and issues clientSecret",
+                "summary": "registers a node, provisions DB credentials, and issues ClientSecret",
                 "tags": [
                     "Cluster"
                 ]
@@ -6813,7 +6873,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to update (role, labels, advertiseUrl, siteUrl)",
+                        "description": "properties to update (Role, Labels, AdvertiseUrl, SiteUrl)",
                         "in": "body",
                         "name": "node",
                         "required": true,
@@ -7193,7 +7253,7 @@
                 },
                 "summary": "removes all entries from the error logs",
                 "tags": [
-                    "Errors"
+                    "Logs"
                 ]
             },
             "get": {
@@ -7260,7 +7320,7 @@
                 },
                 "summary": "searches the error logs and returns the results as JSON",
                 "tags": [
-                    "Errors"
+                    "Logs"
                 ]
             }
         },
@@ -7529,7 +7589,7 @@
                 },
                 "summary": "allows members to submit a feedback message to the PhotoPrism team",
                 "tags": [
-                    "Admin"
+                    "Internal"
                 ]
             }
         },
@@ -7832,6 +7892,50 @@
                 ]
             }
         },
+        "/api/v1/import": {
+            "delete": {
+                "operationId": "CancelImport",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "cancels the active import job",
+                "tags": [
+                    "Library"
+                ]
+            }
+        },
         "/api/v1/import/": {
             "post": {
                 "consumes": [
@@ -7885,6 +7989,48 @@
             }
         },
         "/api/v1/index": {
+            "delete": {
+                "operationId": "CancelIndexing",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "cancels the active indexing job",
+                "tags": [
+                    "Library"
+                ]
+            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -8257,7 +8403,17 @@
         },
         "/api/v1/markers": {
             "post": {
-                "responses": {},
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Marker"
+                        }
+                    }
+                },
                 "tags": [
                     "Files"
                 ]
@@ -8397,7 +8553,7 @@
             "get": {
                 "operationId": "GetMetrics",
                 "produces": [
-                    "text/event-stream"
+                    "text/plain"
                 ],
                 "responses": {
                     "200": {
@@ -8603,6 +8759,26 @@
                     }
                 },
                 "summary": "create an OAuth2 access token",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/oauth/userinfo": {
+            "get": {
+                "operationId": "OAuthUserinfo",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2 userinfo endpoint (not implemented)",
                 "tags": [
                     "Authentication"
                 ]
@@ -9924,7 +10100,7 @@
                 },
                 "summary": "allows authorized admins to restart the server",
                 "tags": [
-                    "Admin"
+                    "Internal"
                 ]
             }
         },
@@ -10005,8 +10181,8 @@
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/entity.Service"
                         }
@@ -11187,6 +11363,56 @@
                 ]
             }
         },
+        "/api/v1/svg/{icon}": {
+            "get": {
+                "operationId": "GetSvg",
+                "parameters": [
+                    {
+                        "description": "SVG icon name",
+                        "enum": [
+                            "user",
+                            "face",
+                            "camera",
+                            "photo",
+                            "raw",
+                            "file",
+                            "video",
+                            "label",
+                            "portrait",
+                            "folder",
+                            "album",
+                            "broken",
+                            "uncached"
+                        ],
+                        "in": "path",
+                        "name": "icon",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "image/svg+xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SVG icon",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Icon not found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                },
+                "summary": "returns SVG placeholder symbols for UI fallbacks",
+                "tags": [
+                    "Assets"
+                ]
+            }
+        },
         "/api/v1/t/{thumb}/{token}/{size}": {
             "get": {
                 "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
@@ -11432,8 +11658,8 @@
                     "application/json"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/entity.Passcode"
                         }
@@ -12331,6 +12557,168 @@
                 "summary": "returns CORS headers with an empty response body",
                 "tags": [
                     "CORS"
+                ]
+            }
+        },
+        "/s/{token}": {
+            "get": {
+                "operationId": "ShareToken",
+                "parameters": [
+                    {
+                        "description": "Share token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rendered HTML page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "302": {
+                        "description": "Redirect to the base site when the token is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "creates a session using the specified share token and renders the generic sharing bootstrap page",
+                "tags": [
+                    "Sharing"
+                ]
+            }
+        },
+        "/s/{token}/{shared}": {
+            "get": {
+                "operationId": "ShareTokenShared",
+                "parameters": [
+                    {
+                        "description": "Share token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Shared resource UID",
+                        "in": "path",
+                        "name": "shared",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rendered HTML page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "302": {
+                        "description": "Redirect to the base site when the token is invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "creates a session with the specified share token and redirects to the shared content",
+                "tags": [
+                    "Sharing"
+                ]
+            }
+        },
+        "/s/{token}/{shared}/preview": {
+            "get": {
+                "operationId": "SharePreview",
+                "parameters": [
+                    {
+                        "description": "Share token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Shared resource UID",
+                        "in": "path",
+                        "name": "shared",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Preview image",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "302": {
+                        "description": "Redirect to the default preview page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "returns a share preview image when the token is valid",
+                "tags": [
+                    "Sharing"
+                ]
+            }
+        },
+        "/swagger.json": {
+            "get": {
+                "operationId": "GetDocs",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Swagger JSON",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                },
+                "summary": "serves embedded Swagger documentation (debug builds only)",
+                "tags": [
+                    "Debug"
+                ]
+            }
+        },
+        "/ws": {
+            "get": {
+                "operationId": "WebSocket",
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "opens a WebSocket connection for real-time events",
+                "tags": [
+                    "WebSocket"
                 ]
             }
         }

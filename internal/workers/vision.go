@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -57,7 +58,11 @@ func (w *Vision) StartScheduled() {
 
 // scheduledModels returns the model types that should run for scheduled jobs.
 func (w *Vision) scheduledModels() []string {
-	models := make([]string, 0, 3)
+	if w.conf == nil {
+		return nil
+	}
+
+	models := make([]string, 0, 4)
 
 	if w.conf.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnSchedule) {
 		models = append(models, vision.ModelTypeLabels)
@@ -103,10 +108,6 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	defer mutex.VisionWorker.Stop()
 
 	models = vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
-		if mt == vision.ModelTypeFace {
-			return w.conf.FaceEngineShouldRun(when)
-		}
-
 		return w.conf.VisionModelShouldRun(mt, when)
 	})
 
@@ -134,6 +135,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	done := make(map[string]bool)
 	offset := 0
 	updated := 0
+	processed := 0
 
 	// Make sure count is within
 	if count < 1 || count > search.MaxResults {
@@ -152,7 +154,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	// Find photos without captions when only
 	// captions are updated without force flag.
 	if !updateLabels && !updateNsfw && !force {
-		frm.Caption = txt.False
+		frm.Caption = enum.False
 	}
 
 	photos, _, queryErr := search.Photos(frm)
@@ -195,6 +197,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		if !(generateLabels || generateCaptions || detectNsfw || detectFaces) {
 			continue
 		}
+
+		processed++
 
 		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
 		file, fileErr := photoprism.NewMediaFile(fileName)
@@ -278,7 +282,18 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		}
 	}
 
-	log.Infof("vision: updated %s [%s]", english.Plural(updated, "picture", "pictures"), time.Since(start))
+	elapsed := time.Since(start)
+
+	switch {
+	case processed == 0:
+		log.Infof("vision: no pictures required processing [%s]", elapsed)
+	case updated == processed:
+		log.Infof("vision: updated %s [%s]", english.Plural(updated, "picture", "pictures"), elapsed)
+	case updated == 0:
+		log.Infof("vision: processed %s (no metadata changes detected) [%s]", english.Plural(processed, "picture", "pictures"), elapsed)
+	default:
+		log.Infof("vision: updated %s out of %s [%s]", english.Plural(updated, "picture", "pictures"), english.Plural(processed, "picture", "pictures"), elapsed)
+	}
 
 	if updated > 0 {
 		updateIndex = true

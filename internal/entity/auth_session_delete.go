@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
@@ -49,13 +50,13 @@ func DeleteChildSessions(s *Session) (deleted int) {
 	found := Sessions{}
 
 	if err := Db().Where("auth_id = ? AND auth_method = ?", s.ID, authn.MethodSession.String()).Find(&found).Error; err != nil {
-		event.AuditErr([]string{"failed to find child sessions", "%s"}, err)
+		event.AuditErr([]string{"failed to find child sessions", status.Error(err)})
 		return deleted
 	}
 
 	for _, sess := range found {
 		if err := sess.Delete(); err != nil {
-			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete child session %s", "%s"}, s.RefID, sess.RefID, err)
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete child session %s", status.Error(err)}, s.RefID, sess.RefID)
 		} else {
 			deleted++
 		}
@@ -95,13 +96,13 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 	found := Sessions{}
 
 	if err := q.Find(&found).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
+		event.AuditErr([]string{"failed to fetch client sessions", status.Error(err)})
 		return deleted
 	}
 
 	for _, sess := range found {
 		if err := sess.Delete(); err != nil {
-			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", status.Error(err)}, sess.RefID)
 		} else {
 			deleted++
 		}
@@ -115,13 +116,13 @@ func DeleteExpiredSessions() (deleted int) {
 	found := Sessions{}
 
 	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", unix.Now()).Find(&found).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch expired sessions", "%s"}, err)
+		event.AuditErr([]string{"failed to fetch expired sessions", status.Error(err)})
 		return deleted
 	}
 
 	for _, sess := range found {
 		if err := sess.Delete(); err != nil {
-			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", status.Error(err)}, sess.RefID)
 		} else {
 			deleted++
 		}

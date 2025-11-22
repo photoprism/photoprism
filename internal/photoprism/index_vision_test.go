@@ -83,7 +83,7 @@ func TestIndexLabelsSource(t *testing.T) {
 
 	t.Run("AutoUsesModelSource", func(t *testing.T) {
 		var captured string
-		vision.SetLabelsFunc(func(files vision.Files, mediaSrc media.Src, src string) (classify.Labels, error) {
+		vision.SetLabelsFunc(func(files vision.Files, mediaSrc media.Src, src entity.Src) (classify.Labels, error) {
 			captured = src
 			return classify.Labels{{Name: "stub", Source: src, Uncertainty: 0}}, nil
 		})
@@ -96,7 +96,7 @@ func TestIndexLabelsSource(t *testing.T) {
 
 	t.Run("CustomSource", func(t *testing.T) {
 		var captured string
-		vision.SetLabelsFunc(func(files vision.Files, mediaSrc media.Src, src string) (classify.Labels, error) {
+		vision.SetLabelsFunc(func(files vision.Files, mediaSrc media.Src, src entity.Src) (classify.Labels, error) {
 			captured = src
 			return classify.Labels{{Name: "stub", Source: src, Uncertainty: 0}}, nil
 		})

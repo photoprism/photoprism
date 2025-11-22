@@ -93,7 +93,7 @@ func TestConfig_DisableClassification(t *testing.T) {
 	assert.True(t, c.DisableClassification())
 	c.options.DisableClassification = false
 	c.options.DisableTensorFlow = true
-	assert.True(t, c.DisableClassification())
+	assert.False(t, c.DisableClassification())
 	c.options.DisableTensorFlow = false
 	assert.False(t, c.DisableClassification())
 }

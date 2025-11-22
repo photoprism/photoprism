@@ -189,7 +189,7 @@ func resetIndexDb(c *config.Config) {
 	if c.AdminPassword() == "" {
 		log.Warnf("password required to reset admin account")
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
 	}
 
 	log.Infof("completed in %s", time.Since(start))

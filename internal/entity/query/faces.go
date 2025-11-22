@@ -281,7 +281,7 @@ func ResetFaceMergeRetry(subjUID string) (int, error) {
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	}
 
-	res := stmt.UpdateColumns(entity.Values{"MergeRetry": 0, "MergeNotes": ""})
+	res := stmt.UpdateColumns(entity.Values{"merge_retry": 0, "merge_notes": ""})
 
 	if res.Error != nil {
 		return 0, res.Error

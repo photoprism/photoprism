@@ -3,6 +3,8 @@ package list
 import (
 	"fmt"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // KeyValue represents a key-value attribute.
@@ -77,7 +79,7 @@ func (f *KeyValue) Parse(s string) *KeyValue {
 	if f.Key == Any {
 		return f
 	} else if v = Value(v); v == "" {
-		f.Value = True
+		f.Value = enum.True
 		return f
 	}
 
@@ -101,7 +103,7 @@ func (f *KeyValue) String() string {
 		return Any
 	}
 
-	if Bool[strings.ToLower(f.Value)] == True {
+	if Bool[strings.ToLower(f.Value)] == enum.True {
 		return f.Key
 	}
 

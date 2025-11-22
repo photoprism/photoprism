@@ -133,6 +133,21 @@ Mock.onPost("api/v1/session").reply(
     access_token: "999900000000000000000000000000000000000000000000",
     token_type: "Bearer",
     provider: "test",
+    scope: "photos:view",
+    data: { token: "123token" },
+    user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
+  },
+  mockHeaders
+);
+
+Mock.onGet("api/v1/session").reply(
+  200,
+  {
+    session_id: "5aa770f2a1ef431628d9f17bdf82a0d16865e99d4a1ddd9356e1aabfe6464683",
+    access_token: "999900000000000000000000000000000000000000000000",
+    token_type: "Bearer",
+    provider: "test",
+    scope: "photos:view",
     data: { token: "123token" },
     user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
   },

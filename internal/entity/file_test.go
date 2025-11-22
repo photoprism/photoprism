@@ -10,10 +10,10 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media/colors"
 	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 func TestFile_RegenerateIndex(t *testing.T) {
@@ -218,7 +218,7 @@ func TestFile_Save(t *testing.T) {
 		err := file.Save()
 
 		if err == nil {
-			t.Fatal("error should not be nil")
+			t.Fatal("error must not be nil")
 		}
 
 		if file.ID != 0 {

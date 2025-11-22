@@ -21,10 +21,10 @@ func TestClientRegistry_RotateSecretByUUID_LatestRow(t *testing.T) {
 	uuid := rnd.UUIDv7()
 
 	// Create two entries for same NodeUUID; c2 will be latest
-	n1 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-a", Role: "instance"}}
+	n1 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-a", Role: cluster.RoleApp}}
 	assert.NoError(t, r.Put(n1))
 	time.Sleep(1100 * time.Millisecond)
-	n2 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-b", Role: "instance"}}
+	n2 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-b", Role: cluster.RoleApp}}
 	assert.NoError(t, r.Put(n2))
 
 	// Rotate by UUID

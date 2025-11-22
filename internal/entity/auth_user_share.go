@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -120,7 +121,7 @@ func FindUserShares(userUid string) UserShares {
 
 	// Find matching record.
 	if err := UnscopedDb().Find(&found, "user_uid = ? AND (expires_at IS NULL OR expires_at > ?)", userUid, Now()).Error; err != nil {
-		event.AuditWarn([]string{"user %s", "find shares", "%s"}, clean.Log(userUid), err)
+		event.AuditWarn([]string{"user %s", "find shares", status.Error(err)}, clean.Log(userUid))
 		return nil
 	}
 

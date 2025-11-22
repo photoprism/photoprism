@@ -143,12 +143,12 @@ func (c *Config) SiteFavicon() string {
 			return c.options.SiteFavicon
 		} else if fileName := filepath.Join(c.ThemePath(), strings.TrimPrefix(c.options.SiteFavicon, ThemeUri)); fs.FileExistsNotEmpty(fileName) {
 			return fileName
-		} else if fileName = filepath.Join(c.ImgPath(), c.options.SiteFavicon); fs.FileExistsNotEmpty(fileName) {
+		} else if fileName = c.StaticImgFile(c.options.SiteFavicon); fs.FileExistsNotEmpty(fileName) {
 			return fileName
 		}
 	}
 
-	return filepath.Join(c.ImgPath(), "favicon.ico")
+	return c.StaticImgFile("favicon.ico")
 }
 
 // SitePreview returns the site preview image URL for sharing.

@@ -8,7 +8,7 @@ import (
 
 func TestPath(t *testing.T) {
 	t.Run("ValidPath", func(t *testing.T) {
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism", Path("/go/src/github.com/photoprism/photoprism"))
+		assert.Equal(t, ProjectRoot, Path(ProjectRoot))
 	})
 	t.Run("ValidFile", func(t *testing.T) {
 		assert.Equal(t, "filename.TXT", Path("filename.TXT"))

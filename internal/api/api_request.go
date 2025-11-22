@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/pkg/service/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // ClientIP returns the client IP address from the request context or a placeholder if it is unknown.

@@ -8,8 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/header"
 )
 
 // GetSession returns session data for the current or specified session.

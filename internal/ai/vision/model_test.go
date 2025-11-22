@@ -1,13 +1,17 @@
 package vision
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 func TestModelGetOptionsDefaultsOllamaLabels(t *testing.T) {
@@ -108,6 +112,85 @@ func TestModelApplyEngineDefaultsSetsResolution(t *testing.T) {
 	}
 }
 
+func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
+	t.Run("OpenAIEngine", func(t *testing.T) {
+		model := &Model{
+			Type:   ModelTypeCaption,
+			Engine: openai.EngineName,
+		}
+
+		model.ApplyEngineDefaults()
+
+		assert.Equal(t, "https://api.openai.com/v1/responses", model.Service.Uri)
+		assert.Equal(t, ApiFormatOpenAI, model.Service.RequestFormat)
+		assert.Equal(t, ApiFormatOpenAI, model.Service.ResponseFormat)
+		assert.Equal(t, scheme.Data, model.Service.FileScheme)
+	})
+	t.Run("PreserveExistingService", func(t *testing.T) {
+		model := &Model{
+			Type:   ModelTypeCaption,
+			Engine: openai.EngineName,
+			Service: Service{
+				Uri:           "https://custom.example",
+				FileScheme:    scheme.Base64,
+				RequestFormat: ApiFormatOpenAI,
+			},
+		}
+
+		model.ApplyEngineDefaults()
+
+		assert.Equal(t, "https://custom.example", model.Service.Uri)
+		assert.Equal(t, scheme.Base64, model.Service.FileScheme)
+	})
+}
+
+func TestModelEndpointKeyOpenAIFallbacks(t *testing.T) {
+	t.Run("EnvFile", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "openai.key")
+		if err := os.WriteFile(path, []byte("from-file\n"), 0o600); err != nil {
+			t.Fatalf("write key file: %v", err)
+		}
+
+		t.Setenv("OPENAI_API_KEY", "")
+		t.Setenv("OPENAI_API_KEY_FILE", path)
+
+		model := &Model{Type: ModelTypeCaption, Engine: openai.EngineName}
+		model.ApplyEngineDefaults()
+
+		if got := model.EndpointKey(); got != "from-file" {
+			t.Fatalf("expected file key, got %q", got)
+		}
+	})
+	t.Run("CustomPlaceholder", func(t *testing.T) {
+		t.Setenv("OPENAI_API_KEY", "env-secret")
+
+		model := &Model{Type: ModelTypeCaption, Engine: openai.EngineName}
+		model.ApplyEngineDefaults()
+		if got := model.EndpointKey(); got != "env-secret" {
+			t.Fatalf("expected env secret, got %q", got)
+		}
+
+		model.Service.Key = "${CUSTOM_KEY}"
+		t.Setenv("CUSTOM_KEY", "custom-secret")
+		if got := model.EndpointKey(); got != "custom-secret" {
+			t.Fatalf("expected custom secret, got %q", got)
+		}
+	})
+	t.Run("GlobalFallback", func(t *testing.T) {
+		prev := ServiceKey
+		ServiceKey = "${GLOBAL_KEY}"
+		defer func() { ServiceKey = prev }()
+
+		t.Setenv("GLOBAL_KEY", "global-secret")
+
+		model := &Model{}
+		if got := model.EndpointKey(); got != "global-secret" {
+			t.Fatalf("expected global secret, got %q", got)
+		}
+	})
+}
+
 func TestModelGetSource(t *testing.T) {
 	t.Run("NilModel", func(t *testing.T) {
 		var model *Model
@@ -115,21 +198,18 @@ func TestModelGetSource(t *testing.T) {
 			t.Fatalf("expected SrcAuto for nil model, got %s", src)
 		}
 	})
-
 	t.Run("EngineAlias", func(t *testing.T) {
 		model := &Model{Engine: ollama.EngineName}
 		if src := model.GetSource(); src != entity.SrcOllama {
 			t.Fatalf("expected SrcOllama, got %s", src)
 		}
 	})
-
 	t.Run("RequestFormat", func(t *testing.T) {
 		model := &Model{Service: Service{RequestFormat: ApiFormatOpenAI}}
 		if src := model.GetSource(); src != entity.SrcOpenAI {
 			t.Fatalf("expected SrcOpenAI, got %s", src)
 		}
 	})
-
 	t.Run("DefaultImage", func(t *testing.T) {
 		model := &Model{}
 		if src := model.GetSource(); src != entity.SrcImage {

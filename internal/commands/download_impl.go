@@ -17,9 +17,9 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/service/http/scheme"
 )
 
 const pipeSortingFormat = "lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id"
@@ -30,6 +30,7 @@ type DownloadOpts struct {
 	Cookies            string
 	CookiesFromBrowser string
 	AddHeaders         []string
+	Impersonate        string
 	Method             string // pipe|file
 	FileRemux          string // always|auto|skip
 	FormatSort         string
@@ -75,17 +76,31 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	}
 
 	sortingFormat := strings.TrimSpace(opts.FormatSort)
+
 	if sortingFormat == "" && method == "pipe" {
 		sortingFormat = pipeSortingFormat
 	}
+
 	fileRemux := strings.ToLower(strings.TrimSpace(opts.FileRemux))
+
 	if fileRemux == "" {
 		fileRemux = "auto"
 	}
+
 	switch fileRemux {
 	case "always", "auto", "skip":
 	default:
 		return fmt.Errorf("invalid file remux policy: %s", fileRemux)
+	}
+
+	impersonate := strings.TrimSpace(opts.Impersonate)
+	if impersonate == "" {
+		impersonate = "firefox"
+	}
+	if strings.EqualFold(impersonate, "none") {
+		impersonate = ""
+	} else {
+		impersonate = strings.ToLower(impersonate)
 	}
 
 	// Process inputs sequentially
@@ -125,12 +140,16 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			mt = media.Video
 			log.Infof("downloading %s from %s", mt, clean.Log(u.String()))
 			opt := dl.Options{
-				MergeOutputFormat:  fs.VideoMp4.String(),
-				RemuxVideo:         fs.VideoMp4.String(),
 				SortingFormat:      sortingFormat,
 				Cookies:            opts.Cookies,
 				CookiesFromBrowser: opts.CookiesFromBrowser,
 				AddHeaders:         opts.AddHeaders,
+				Impersonate:        impersonate,
+			}
+			ytRemux := method != "pipe"
+			if ytRemux {
+				opt.MergeOutputFormat = fs.VideoMp4.String()
+				opt.RemuxVideo = fs.VideoMp4.String()
 			}
 			result, err := dl.NewMetadata(context.Background(), u.String(), opt)
 			if err != nil {
@@ -143,9 +162,11 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			}
 
 			// Best-effort creation time for file method when not remuxing locally.
-			if created := dl.CreatedFromInfo(result.Info); !created.IsZero() {
-				// Apply via yt-dlp ffmpeg post-processor so creation_time exists even without our remux.
-				result.Options.FFmpegPostArgs = "-metadata creation_time=" + created.UTC().Format(time.RFC3339)
+			if ytRemux {
+				if created := dl.CreatedFromInfo(result.Info); !created.IsZero() {
+					// Apply via yt-dlp ffmpeg post-processor so creation_time exists even without our remux.
+					result.Options.FFmpegPostArgs = "-metadata creation_time=" + created.UTC().Format(time.RFC3339)
+				}
 			}
 			if dlName := clean.DlName(result.Info.Title); dlName != "" {
 				downloadFile = dlName + fs.ExtMp4
@@ -155,15 +176,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			downloadFilePath := filepath.Join(downloadPath, downloadFile)
 
 			if method == "pipe" {
-				downloadResult, err := result.DownloadWithOptions(context.Background(), dl.DownloadOptions{
-					Filter:            "best",
-					DownloadAudioOnly: false,
-					EmbedMetadata:     true,
-					EmbedSubs:         false,
-					ForceOverwrites:   false,
-					DisableCaching:    false,
-					PlaylistIndex:     1,
-				})
+				downloadResult, err := dl.Download(context.Background(), u.String(), opt, "best")
 				if err != nil {
 					log.Errorf("download failed: %v", err)
 					failures++

@@ -15,15 +15,16 @@ const (
 	GrantUndefined         GrantType = ""
 	GrantCLI               GrantType = "cli"
 	GrantImplicit          GrantType = "implicit"
+	GrantToken             GrantType = "token"
 	GrantSession           GrantType = "session"
 	GrantPassword          GrantType = "password"
 	GrantClientCredentials GrantType = "client_credentials"
 	GrantShareToken        GrantType = "share_token"
 	GrantRefreshToken      GrantType = "refresh_token"
 	GrantAuthorizationCode GrantType = "authorization_code"
-	GrantJwtBearer         GrantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"
-	GrantSamlBearer        GrantType = "urn:ietf:params:oauth:grant-type:saml2-bearer"
-	GrantTokenExchange     GrantType = "urn:ietf:params:oauth:grant-type:token-exchange"
+	GrantJwtBearer         GrantType = "urn:ietf:params:oauth:grant-type:jwt-bearer"     // #nosec G101 grant type identifier, not a secret
+	GrantSamlBearer        GrantType = "urn:ietf:params:oauth:grant-type:saml2-bearer"   // #nosec G101 grant type identifier, not a secret
+	GrantTokenExchange     GrantType = "urn:ietf:params:oauth:grant-type:token-exchange" // #nosec G101 grant type identifier, not a secret
 )
 
 // Grant casts a string to a normalized grant type.
@@ -36,6 +37,8 @@ func Grant(s string) GrantType {
 		return GrantCLI
 	case "implicit":
 		return GrantImplicit
+	case "token":
+		return GrantToken
 	case "session":
 		return GrantSession
 	case "password", "passwd", "pass":
@@ -66,6 +69,8 @@ func (t GrantType) Pretty() string {
 		return "CLI"
 	case GrantImplicit:
 		return "Implicit"
+	case GrantToken:
+		return "Token"
 	case GrantSession:
 		return "Session"
 	case GrantPassword:

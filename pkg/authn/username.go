@@ -10,9 +10,13 @@ import (
 )
 
 var (
-	ErrEmpty    = errors.New("empty")
-	ErrTooLong  = errors.New("too long")
-	ErrInvalid  = errors.New("invalid")
+	// ErrEmpty indicates the username was not provided.
+	ErrEmpty = errors.New("empty")
+	// ErrTooLong indicates the username exceeds the allowed length.
+	ErrTooLong = errors.New("too long")
+	// ErrInvalid indicates the username failed basic validation.
+	ErrInvalid = errors.New("invalid")
+	// ErrReserved indicates the username is reserved for system use.
 	ErrReserved = errors.New("reserved")
 )
 
