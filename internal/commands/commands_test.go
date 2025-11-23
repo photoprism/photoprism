@@ -21,7 +21,12 @@ import (
 // "config: database not connected" during test runs, consider moving shutdown
 // behavior behind an interface or gating it for tests.
 
+// TestMain executes testMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) int {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()
@@ -35,8 +40,18 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
+	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	defer c.CleanupTestFolder()
+	defer func() {
+		if err := c.CloseDb(); err != nil {
+			log.Errorf("close db: %v", err)
+		}
+		// Remove temporary SQLite files after running the tests.
+		fs.PurgeTestDbFiles(".", false)
+	}()
+
 	get.SetConfig(c)
 
 	// Keep DB connection open for the duration of this package's tests to
@@ -48,19 +63,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// Run unit tests.
-	code := m.Run()
-
-	if err = c.CloseDb(); err != nil {
-		log.Errorf("close db: %v", err)
-	}
-
-	_ = os.RemoveAll(tempDir)
-
-	// Remove temporary SQLite files after running the tests.
-	fs.PurgeTestDbFiles(".", false)
-
-	os.RemoveAll(tempDir) // os.Exit prevents defer from executing.
-	os.Exit(code)
+	return m.Run()
 }
 
 // NewTestContext creates a new CLI test context with the flags and arguments provided.

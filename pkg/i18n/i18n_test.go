@@ -8,12 +8,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestMain executes testMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) int {
 	gotext.Configure(localeDir, string(locale), "default")
 
-	code := m.Run()
-
-	os.Exit(code)
+	return m.Run()
 }
 
 func TestMsg(t *testing.T) {

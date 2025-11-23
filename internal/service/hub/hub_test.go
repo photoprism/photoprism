@@ -13,15 +13,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestMain executes testMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) int {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
 	ApplyTestConfig()
 
-	code := m.Run()
-
-	os.Exit(code)
+	return m.Run()
 }
 
 // Token returns a random token with length of up to 10 characters.

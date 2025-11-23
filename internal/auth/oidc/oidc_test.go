@@ -9,14 +9,17 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+// TestMain executes testMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) int {
 	// Init test logger.
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
 	// Run unit tests.
-	code := m.Run()
-
-	os.Exit(code)
+	return m.Run()
 }
