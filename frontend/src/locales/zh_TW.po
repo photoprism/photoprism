@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-19 10:56+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
@@ -1100,7 +1100,7 @@ msgstr "尺寸"
 
 #: src/page/settings/advanced.vue:117
 msgid "Disable all face detection and recognition features."
-msgstr ""
+msgstr "關閉所有臉部偵測和辨識功能。"
 
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
@@ -1116,7 +1116,7 @@ msgstr "停用 ExifTool"
 
 #: src/page/settings/advanced.vue:116
 msgid "Disable Faces"
-msgstr ""
+msgstr "禁用臉部"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."

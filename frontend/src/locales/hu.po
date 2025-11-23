@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-19 10:56+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -1099,7 +1099,7 @@ msgstr "Méretek"
 
 #: src/page/settings/advanced.vue:117
 msgid "Disable all face detection and recognition features."
-msgstr ""
+msgstr "Tiltja le az összes arcfelismerő és arcfelismerő funkciót."
 
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
@@ -1115,7 +1115,7 @@ msgstr "Az ExifTool letiltása"
 
 #: src/page/settings/advanced.vue:116
 msgid "Disable Faces"
-msgstr ""
+msgstr "Arcok letiltása"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-19 12:54+0000\n"
+"PO-Revision-Date: 2025-11-23 13:04+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -1100,7 +1100,7 @@ msgstr "Auflösung"
 
 #: src/page/settings/advanced.vue:117
 msgid "Disable all face detection and recognition features."
-msgstr ""
+msgstr "Alle Funktionen zur Gesichtserkennung und -identifizierung deaktivieren."
 
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
@@ -1116,7 +1116,7 @@ msgstr "ExifTool deaktivieren"
 
 #: src/page/settings/advanced.vue:116
 msgid "Disable Faces"
-msgstr ""
+msgstr "Gesichtserkennung deaktivieren"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-19 10:56+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -1099,7 +1099,7 @@ msgstr "Wymiary"
 
 #: src/page/settings/advanced.vue:117
 msgid "Disable all face detection and recognition features."
-msgstr ""
+msgstr "Wyłącz wszystkie funkcje wykrywania i rozpoznawania twarzy."
 
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
@@ -1115,7 +1115,7 @@ msgstr "Wyłącz ExifTool"
 
 #: src/page/settings/advanced.vue:116
 msgid "Disable Faces"
-msgstr ""
+msgstr "Wyłącz twarze"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."
