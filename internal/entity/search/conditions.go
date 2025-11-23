@@ -14,7 +14,7 @@ import (
 // expressions. It strips operators that we don't expect to persist in the
 // statement and lets callers provide their own surrounding wildcards.
 func Like(s string) string {
-	return strings.Trim(clean.SqlString(s, Db().Dialect().GetName()), " |&*%")
+	return strings.Trim(clean.SQLString(s, Db().Dialect().GetName()), " |&*%")
 }
 
 // LikeAny builds OR-chained LIKE predicates for a text column. The input string

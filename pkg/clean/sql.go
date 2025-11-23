@@ -2,8 +2,8 @@ package clean
 
 import "github.com/photoprism/photoprism/pkg/enum"
 
-// SqlSpecial checks if the byte must be escaped/omitted in SQL.
-func SqlSpecial(b byte, dialect string) (special bool, omit bool) {
+// SQLSpecial checks if the byte must be escaped/omitted in SQL.
+func SQLSpecial(b byte, dialect string) (special bool, omit bool) {
 	if b < 32 {
 		return true, true
 	}
@@ -25,11 +25,11 @@ func SqlSpecial(b byte, dialect string) (special bool, omit bool) {
 	}
 }
 
-// SqlString escapes a string for use in an SQL query.
-func SqlString(s string, dialect string) string {
+// SQLString escapes a string for use in an SQL query.
+func SQLString(s string, dialect string) string {
 	var i int
 	for i = 0; i < len(s); i++ {
-		if found, _ := SqlSpecial(s[i], dialect); found {
+		if found, _ := SQLSpecial(s[i], dialect); found {
 			break
 		}
 	}
@@ -46,7 +46,7 @@ func SqlString(s string, dialect string) string {
 	j := i
 
 	for ; i < len(s); i++ {
-		if special, omit := SqlSpecial(s[i], dialect); omit {
+		if special, omit := SQLSpecial(s[i], dialect); omit {
 			// Omit control characters.
 			continue
 		} else if special {
