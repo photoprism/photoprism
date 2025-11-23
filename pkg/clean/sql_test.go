@@ -83,20 +83,20 @@ func TestSqlString(t *testing.T) {
 	})
 }
 
-func TestSqlClean(t *testing.T) {
+func TestSQLClean(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, "", SqlString(""))
+		assert.Equal(t, "", SQLClean(""))
 	})
 	t.Run("Special", func(t *testing.T) {
 		s := "' \" \t \n %_''" // Single Quote, Space, Double Qoute, Space, Tab, Space, New Line, Space, Percent, Underline, Single Quote, Single Quote
 		exp := "' \"   %_''"   // Single Quote, Space, Double Qoute, Space,      Space,           Space, Percent, Underline, Single Quote, Single Quote
-		result := SqlClean(s)
+		result := SQLClean(s)
 		assert.Equal(t, exp, result)
 	})
 	t.Run("Alnum", func(t *testing.T) {
-		assert.Equal(t, "123ABCabc", SqlString("123ABCabc"))
+		assert.Equal(t, "123ABCabc", SQLClean("123ABCabc"))
 	})
 	t.Run("Unicode", func(t *testing.T) {
-		assert.Equal(t, "Clean《MeUp✀☒ちュس", SqlString("Clean《MeUp✀☒ちュس"))
+		assert.Equal(t, "Clean《MeUp✀☒ちュس", SQLClean("Clean《MeUp✀☒ちュس"))
 	})
 }

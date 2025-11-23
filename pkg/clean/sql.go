@@ -52,8 +52,8 @@ func SqlString(s string) string {
 	return string(b[:j])
 }
 
-// SqlClean removes bytes from a string that are determined as requiring omitting
-func SqlClean(s string) string {
+// SQLClean removes bytes from a string that are determined as requiring omitting
+func SQLClean(s string) string {
 	var i int
 	for i = range len(s) {
 		if _, found := SqlSpecial(s[i]); found {
