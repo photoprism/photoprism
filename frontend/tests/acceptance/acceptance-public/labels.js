@@ -243,8 +243,10 @@ test.meta("testID", "labels-006").meta({ mode: "public"})("Common: Test homophon
       .click(Selector(photoedit.addLabel))
       .click(photoedit.detailsTab);
 
-  const PhotoKeywordsAfterEdit = await photoedit.keywords.value;
-  await t.expect(PhotoKeywordsAfterEdit).contains("上海").expect(PhotoKeywordsAfterEdit).contains("伤害");
+  await t.click(photoedit.labelsTab);
+  await t.expect(Selector('.text-start').withText("上海").visible).ok();
+  await t.expect(Selector('.text-start').withText("伤害").visible).ok();
+
   await t.click(photoedit.dialogClose);
 
   await menu.openPage("labels");
@@ -254,8 +256,9 @@ test.meta("testID", "labels-006").meta({ mode: "public"})("Common: Test homophon
   await label.openLabelWithUid(LabelTest1);
   const LabelPhotoTest1 = await photo.getNthPhotoUid("image", 0);
   await page.clickCardTitleOfUID(LabelPhotoTest1);
-  const PhotoKeywordsAfterView1 = await photoedit.keywords.value;
-  await t.expect(PhotoKeywordsAfterView1).contains("上海").expect(PhotoKeywordsAfterView1).contains("伤害");
+  await t.click(photoedit.labelsTab);
+  await t.expect(Selector('.text-start').withText("上海").visible).ok();
+  await t.expect(Selector('.text-start').withText("伤害").visible).ok();
   await t.click(photoedit.dialogClose);
 
   await menu.openPage("labels");
@@ -265,8 +268,9 @@ test.meta("testID", "labels-006").meta({ mode: "public"})("Common: Test homophon
   await label.openLabelWithUid(LabelTest2);
   const LabelPhotoTest2 = await photo.getNthPhotoUid("image", 0);
   await page.clickCardTitleOfUID(LabelPhotoTest2);
-  const PhotoKeywordsAfterView2 = await photoedit.keywords.value;
-  await t.expect(PhotoKeywordsAfterView2).contains("上海").expect(PhotoKeywordsAfterView2).contains("伤害");
+  await t.click(photoedit.labelsTab);
+  await t.expect(Selector('.text-start').withText("上海").visible).ok();
+  await t.expect(Selector('.text-start').withText("伤害").visible).ok();
   await t.click(photoedit.dialogClose);
     
 });
