@@ -289,10 +289,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		var categories []entity.Category
 		var labelIds []uint
 
-		if labels, labelErr := entity.FindLabels(frm.Label, txt.Or, false); len(labels) == 0 || labelErr != nil {
-			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
-			return PhotoResults{}, 0, nil
-		} else {
+		if labels, labelErr := entity.FindLabels(frm.Label, txt.Or, false); len(labels) != 0 && labelErr == nil {
 			for _, l := range labels {
 				labelIds = append(labelIds, l.ID)
 				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
@@ -305,6 +302,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
 				Group("photos.id, files.id")
+		} else {
+			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
+			return PhotoResults{}, 0, nil
 		}
 	}
 

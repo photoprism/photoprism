@@ -211,10 +211,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		var categories []entity.Category
 		var labelIds []uint
 
-		if labels, labelsErr := entity.FindLabels(frm.Label, txt.Or, false); len(labels) == 0 || labelsErr != nil {
-			log.Debugf("search: label %s not found with error %+v", txt.LogParamLower(frm.Label), labelsErr)
-			return GeoResults{}, nil
-		} else {
+		if labels, labelsErr := entity.FindLabels(frm.Label, txt.Or, false); len(labels) != 0 && labelsErr == nil {
 			for _, l := range labels {
 				labelIds = append(labelIds, l.ID)
 
@@ -228,6 +225,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
 				Group("photos.id, files.id")
+		} else {
+			log.Debugf("search: label %s not found with error %+v", txt.LogParamLower(frm.Label), labelsErr)
+			return GeoResults{}, nil
 		}
 	}
 
