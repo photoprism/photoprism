@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-11-24 13:41+0000\n"
+"Last-Translator: dtsolakis <dtsola@eranet.gr>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1075,7 +1075,7 @@ msgstr "ΔΙαγραφή ορφανών καταχωρήσεων ευρετηρ�
 
 #: src/options/options.js:13 src/options/options.js:16
 msgid "deleted"
-msgstr "deleted"
+msgstr "διαγράφηκε"
 
 #: src/component/album/edit/dialog.vue:57
 #: src/component/photo/batch-edit.vue:199 src/page/albums.vue:285
