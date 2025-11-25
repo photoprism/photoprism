@@ -22,8 +22,8 @@ func IsDomain(d string) bool {
 	if IsLocalSuffix(d) {
 		return false
 	}
-	parts := strings.Split(d, ".")
-	for _, p := range parts {
+	parts := strings.SplitSeq(d, ".")
+	for p := range parts {
 		if !IsLabel(p) {
 			return false
 		}
