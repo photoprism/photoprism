@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-26 11:08+0000\n"
+"PO-Revision-Date: 2025-11-26 11:11+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -398,7 +398,7 @@ msgstr "Erlaube die Bearbeitung von Metadaten, Beschriftungen und Alben für meh
 
 #: src/page/settings/general.vue:194
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr "Kopieren oder Verschieben von Dateien aus dem Import- in den Originale-Ordner zulassen."
+msgstr "Erlaube das Kopieren oder Verschieben von Dateien aus dem Import- in den Originale-Ordner."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
