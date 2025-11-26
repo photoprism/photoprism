@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-26 11:11+0000\n"
+"PO-Revision-Date: 2025-11-26 11:13+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -394,7 +394,7 @@ msgstr "Erlaube die Bearbeitung von Metadaten wie Titel, Beschreibung, Datum und
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr "Erlaube die Bearbeitung von Metadaten, Beschriftungen und Alben für mehrere Bilder gleichzeitig."
+msgstr "Erlaube die Bearbeitung von Metadaten, Kategorien und Alben für mehrere Bilder gleichzeitig."
 
 #: src/page/settings/general.vue:194
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
