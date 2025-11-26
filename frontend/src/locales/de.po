@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-26 11:17+0000\n"
+"PO-Revision-Date: 2025-11-26 11:22+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -1144,7 +1144,7 @@ msgstr "Deaktiviert interaktive Weltkarten und Reverse Geocoding."
 
 #: src/page/settings/advanced.vue:132
 msgid "Disable Places"
-msgstr "Karten deaktivieren"
+msgstr "Orte deaktivieren"
 
 #: src/page/settings/advanced.vue:378
 msgid "Disable RawTherapee"
@@ -3244,7 +3244,7 @@ msgstr "Den Bereich „Dateien“ anzeigen, um die Medienbibliothek indexieren u
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr "Zeige interaktive Karten, um Bilder basierend auf ihrem Standort zu finden und anzusehen."
+msgstr "Interaktive Weltkarten aktivieren, um Bilder basierend auf ihrem Standort zu finden und anzusehen."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"
