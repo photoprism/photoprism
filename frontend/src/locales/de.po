@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-26 11:13+0000\n"
+"PO-Revision-Date: 2025-11-26 11:17+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -386,11 +386,11 @@ msgstr "Alle Jahre"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr "Erlaube die Konfiguration und Nutzung von verbundenen Apps und Diensten für Fern-Uploads und Synchronisierung."
+msgstr "Konfiguration und Nutzung verbundener Apps und Dienste für Remote-Uploads und Synchronisierung zulassen."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr "Erlaube die Bearbeitung von Metadaten wie Titel, Beschreibung, Datum und Ort."
+msgstr "Erlaube die Bearbeitung von Bild-Metadaten wie Titel, Beschreibung, Datum und Ort."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
@@ -406,7 +406,7 @@ msgstr "Erlaube das dauerhafte Löschen von Dateien, um Speicherplatz freizugebe
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr "Erlaube den Nutzern, Fotos und Videos zu archivieren, damit sie versteckt werden, ohne gelöscht zu werden."
+msgstr "Benutzern ermöglichen, Bilder und Videos zu archivieren, sodass sie ausgeblendet, aber nicht dauerhaft gelöscht werden."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
@@ -414,7 +414,7 @@ msgstr "Erlaube es den Nutzern, Links zu erstellen und zu teilen, und ermöglich
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr "Erlaube den Nutzern, neue Fotos und Videos über das Webinterface hochzuladen."
+msgstr "Benutzern das Hochladen neuer Bilder und Videos über die Weboberfläche ermöglichen."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
