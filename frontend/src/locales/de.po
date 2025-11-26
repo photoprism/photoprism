@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-26 10:49+0000\n"
+"PO-Revision-Date: 2025-11-26 11:08+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -397,9 +397,8 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Erlaube die Bearbeitung von Metadaten, Beschriftungen und Alben für mehrere Bilder gleichzeitig."
 
 #: src/page/settings/general.vue:194
-#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr "Aktiviere das Importwerkzeug, um Dateien aus dem Importordner in die Originale zu kopieren oder zu verschieben."
+msgstr "Kopieren oder Verschieben von Dateien aus dem Import- in den Originale-Ordner zulassen."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1690,9 +1689,8 @@ msgid "Hide"
 msgstr "Verbergen"
 
 #: src/page/settings/general.vue:148
-#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr "Blende private Elemente aus den globalen Ansichten aus, aber lass sie im Bereich \"Privat\" zugänglich."
+msgstr "Private Inhalte in den globalen Ansichten ausblenden, während sie im Bereich „Privat“ weiterhin zugänglich bleiben."
 
 #: src/options/options.js:381
 msgid "High"
@@ -2663,7 +2661,7 @@ msgstr "Bitte kopiere das folgende, zufällig generierte App-Passwort und bewahr
 
 #: src/component/upload/dialog.vue:101
 msgid "Please do not upload any private, unlawful or offensive pictures. "
-msgstr "Bitte lade keine privaten, illegalen oder anstößigen Bilder hoch."
+msgstr "Bitte lade keine privaten, illegalen oder anstößigen Bilder hoch. "
 
 #: src/component/upload/dialog.vue:104
 msgid "Please don't upload photos containing offensive content."
