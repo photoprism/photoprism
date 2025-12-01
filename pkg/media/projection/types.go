@@ -1,13 +1,20 @@
 package projection
 
 const (
-	Unknown                     Type = ""
-	Equirectangular             Type = "equirectangular"
-	Cubestrip                   Type = "cubestrip"
-	Cylindrical                 Type = "cylindrical"
-	TransverseCylindrical       Type = "transverse-cylindrical"
+	// Unknown projection.
+	Unknown Type = ""
+	// Equirectangular projection type.
+	Equirectangular Type = "equirectangular"
+	// Cubestrip projection type.
+	Cubestrip Type = "cubestrip"
+	// Cylindrical projection type.
+	Cylindrical Type = "cylindrical"
+	// TransverseCylindrical projection type.
+	TransverseCylindrical Type = "transverse-cylindrical"
+	// PseudocylindricalCompromise projection type.
 	PseudocylindricalCompromise Type = "pseudocylindrical-compromise"
-	Other                       Type = "other"
+	// Other projection type.
+	Other Type = "other"
 )
 
 // Types maps identifiers to known types.

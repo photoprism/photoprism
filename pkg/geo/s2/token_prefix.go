@@ -4,6 +4,7 @@ import (
 	"strings"
 )
 
+// TokenPrefix is the optional prefix for S2 tokens.
 var TokenPrefix = "s2:"
 
 // NormalizeToken removes the prefix from a token and converts all characters to lower case.

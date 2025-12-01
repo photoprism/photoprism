@@ -24,11 +24,12 @@ func TestGetModelTagsInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(info) != 1 {
+	switch {
+	case len(info) != 1:
 		t.Fatalf("Expected 1 info but got %d", len(info))
-	} else if len(info[0].Tags) != 1 {
+	case len(info[0].Tags) != 1:
 		t.Fatalf("Expected 1 tag, but got %d", len(info[0].Tags))
-	} else if info[0].Tags[0] != "photoprism" {
+	case info[0].Tags[0] != "photoprism":
 		t.Fatalf("Expected tag photoprism, but have %s", info[0].Tags[0])
 	}
 }

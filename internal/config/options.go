@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -46,6 +45,9 @@ type Options struct {
 	OIDCRedirect              bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
 	OIDCRegister              bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
 	OIDCUsername              string        `yaml:"OIDCUsername" json:"-" flag:"oidc-username"`
+	OIDCGroupClaim            string        `yaml:"OIDCGroupClaim" json:"-" flag:"oidc-group-claim" tags:"pro"`
+	OIDCGroup                 []string      `yaml:"OIDCGroup" json:"-" flag:"oidc-group" tags:"pro"`
+	OIDCGroupRole             []string      `yaml:"OIDCGroupRole" json:"-" flag:"oidc-group-role" tags:"pro"`
 	OIDCDomain                string        `yaml:"-" json:"-" flag:"oidc-domain" tags:"pro"`
 	OIDCRole                  string        `yaml:"-" json:"-" flag:"oidc-role" tags:"pro"`
 	OIDCWebDAV                bool          `yaml:"OIDCWebDAV" json:"-" flag:"oidc-webdav"`
@@ -303,10 +305,8 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.BackupAlbums = true
 
 	// Initialize options with the values from the "defaults.yml" file, if it exists.
-	if defaultsYaml := ctx.String("defaults-yaml"); defaultsYaml == "" {
-		log.Tracef("config: defaults file was not specified")
-	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
-		log.Tracef("config: defaults file %s does not exist", clean.Log(c.DefaultsYaml))
+	if c.DefaultsYaml = defaultsYaml(ctx); !fs.FileExistsNotEmpty(c.DefaultsYaml) {
+		log.Tracef("config: defaults file is empty or missing")
 	} else if err := c.Load(c.DefaultsYaml); err != nil {
 		log.Warnf("config: failed loading defaults from %s (%s)", clean.Log(c.DefaultsYaml), err)
 	}
@@ -341,10 +341,10 @@ func (o *Options) Load(fileName string) error {
 	}
 
 	if !fs.FileExists(fileName) {
-		return errors.New(fmt.Sprintf("%s not found", fileName))
+		return fmt.Errorf("%s not found", fileName)
 	}
 
-	yamlConfig, err := os.ReadFile(fileName)
+	yamlConfig, err := os.ReadFile(fileName) //nolint:gosec // configuration file path provided by user/config
 
 	if err != nil {
 		return err

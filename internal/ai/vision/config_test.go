@@ -32,48 +32,179 @@ func TestOptions(t *testing.T) {
 	_ = os.RemoveAll(configPath)
 }
 
-func TestConfigValues_LoadDefaultModelWithCustomRun(t *testing.T) {
-	originalRun := NasnetModel.Run
-	t.Cleanup(func() {
-		NasnetModel.Run = originalRun
+func TestConfigValues_Load(t *testing.T) {
+	t.Run("DefaultModelWithCustomRun", func(t *testing.T) {
+		originalRun := NasnetModel.Run
+		t.Cleanup(func() {
+			NasnetModel.Run = originalRun
+		})
+
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
+
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Default: true\n  Run: on-demand\n"), fs.ModeConfigFile)
+		assert.NoError(t, err)
+
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		assert.NoError(t, err)
+
+		assert.Equal(t, RunOnDemand, cfg.RunType(ModelTypeLabels))
+		assert.True(t, cfg.ShouldRun(ModelTypeLabels, RunOnSchedule))
+		assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunOnIndex))
 	})
+	t.Run("AddsMissingDefaults", func(t *testing.T) {
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
 
-	tempDir := t.TempDir()
-	configFile := filepath.Join(tempDir, "vision.yml")
+		configYml := "Models:\n- Type: caption\n  Name: custom-caption\n"
 
-	err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Default: true\n  Run: on-demand\n"), fs.ModeConfigFile)
-	assert.NoError(t, err)
+		err := os.WriteFile(configFile, []byte(configYml), fs.ModeConfigFile)
+		assert.NoError(t, err)
 
-	cfg := NewConfig()
-	err = cfg.Load(configFile)
-	assert.NoError(t, err)
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		assert.NoError(t, err)
 
-	assert.Equal(t, RunOnDemand, cfg.RunType(ModelTypeLabels))
-	assert.True(t, cfg.ShouldRun(ModelTypeLabels, RunOnSchedule))
-	assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunOnIndex))
+		assert.Len(t, cfg.Models, len(DefaultModels))
+
+		if labels := cfg.Model(ModelTypeLabels); assert.NotNil(t, labels) {
+			assert.Equal(t, NasnetModel.Name, labels.Name)
+		}
+
+		if caption := cfg.Model(ModelTypeCaption); assert.NotNil(t, caption) {
+			assert.Equal(t, "custom-caption", caption.Name)
+		}
+	})
+	t.Run("AddsDefaultsWhenModelsMissing", func(t *testing.T) {
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
+
+		// Empty config should be populated with all default models.
+		err := os.WriteFile(configFile, []byte(""), fs.ModeConfigFile)
+		assert.NoError(t, err)
+
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		assert.NoError(t, err)
+
+		assert.Len(t, cfg.Models, len(DefaultModels))
+		assert.True(t, cfg.IsDefault(ModelTypeLabels))
+		assert.True(t, cfg.IsDefault(ModelTypeNsfw))
+		assert.True(t, cfg.IsDefault(ModelTypeFace))
+	})
+	t.Run("DefaultModelDisabled", func(t *testing.T) {
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
+
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Default: true\n  Disabled: true\n"), fs.ModeConfigFile)
+		assert.NoError(t, err)
+
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		assert.NoError(t, err)
+
+		if m := cfg.Model(ModelTypeLabels); m != nil {
+			t.Fatalf("expected disabled default model to be ignored, got %v", m)
+		}
+
+		assert.Equal(t, RunNever, cfg.RunType(ModelTypeLabels))
+		assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunManual))
+	})
+	t.Run("MissingThresholdsUsesDefaults", func(t *testing.T) {
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
+
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n"), fs.ModeConfigFile)
+		assert.NoError(t, err)
+
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		assert.NoError(t, err)
+
+		assert.Equal(t, DefaultThresholds, cfg.Thresholds)
+	})
 }
 
-func TestConfigValues_LoadDefaultModelDisabled(t *testing.T) {
-	tempDir := t.TempDir()
-	configFile := filepath.Join(tempDir, "vision.yml")
+func TestConfigValues_applyDefaultModels(t *testing.T) {
+	t.Run("ReplacesPlaceholderAndKeepsOverrides", func(t *testing.T) {
+		cfg := &ConfigValues{
+			Models: Models{
+				{
+					Type:     ModelTypeLabels,
+					Default:  true,
+					Run:      RunOnDemand,
+					Disabled: true,
+				},
+			},
+		}
 
-	err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Default: true\n  Disabled: true\n"), fs.ModeConfigFile)
-	assert.NoError(t, err)
+		cfg.applyDefaultModels()
 
-	cfg := NewConfig()
-	err = cfg.Load(configFile)
-	assert.NoError(t, err)
+		if got := cfg.Models[0]; got.Name != NasnetModel.Name {
+			t.Fatalf("expected placeholder to become nasnet, got %s", got.Name)
+		} else if got.Run != RunOnDemand {
+			t.Fatalf("expected Run to be preserved, got %s", got.Run)
+		} else if !got.Disabled {
+			t.Fatalf("expected Disabled to be preserved")
+		}
+	})
+	t.Run("IgnoresNonDefaultEntries", func(t *testing.T) {
+		original := &Model{Type: ModelTypeLabels, Name: "custom", Default: false}
+		cfg := &ConfigValues{Models: Models{original}}
 
-	if m := cfg.Model(ModelTypeLabels); m != nil {
-		t.Fatalf("expected disabled default model to be ignored, got %v", m)
-	}
+		cfg.applyDefaultModels()
 
-	assert.Equal(t, RunNever, cfg.RunType(ModelTypeLabels))
-	assert.False(t, cfg.ShouldRun(ModelTypeLabels, RunManual))
+		if cfg.Models[0] != original {
+			t.Fatalf("expected non-default model to remain unchanged")
+		}
+	})
+}
+
+func TestConfigValues_ensureDefaultModels(t *testing.T) {
+	t.Run("AppendsMissingDefaults", func(t *testing.T) {
+		cfg := &ConfigValues{Models: Models{}}
+
+		cfg.ensureDefaultModels()
+
+		if len(cfg.Models) != len(DefaultModels) {
+			t.Fatalf("expected %d models, got %d", len(DefaultModels), len(cfg.Models))
+		}
+	})
+	t.Run("SkipsTypesAlreadyPresent", func(t *testing.T) {
+		custom := &Model{Type: ModelTypeLabels, Name: "custom"}
+		cfg := &ConfigValues{Models: Models{custom}}
+
+		cfg.ensureDefaultModels()
+
+		if len(cfg.Models) != len(DefaultModels) {
+			t.Fatalf("expected defaults minus duplicate type, got %d", len(cfg.Models))
+		}
+
+		if cfg.Models[0] != custom && cfg.Models[len(cfg.Models)-1] != custom {
+			t.Fatalf("expected existing custom model to remain")
+		}
+	})
+	t.Run("TreatsDisabledCustomAsPresent", func(t *testing.T) {
+		custom := &Model{Type: ModelTypeNsfw, Name: "custom", Disabled: true}
+		cfg := &ConfigValues{Models: Models{custom}}
+
+		cfg.ensureDefaultModels()
+
+		countType := 0
+		for _, m := range cfg.Models {
+			if m.Type == ModelTypeNsfw {
+				countType++
+			}
+		}
+		if countType != 1 {
+			t.Fatalf("expected no additional nsfw default when custom exists, got %d entries", countType)
+		}
+	})
 }
 
 func TestConfigModelPrefersLastEnabled(t *testing.T) {
-	defaultModel := *NasnetModel
+	defaultModel := *NasnetModel //nolint:govet // copy for test to avoid mutating shared model
 	defaultModel.Disabled = false
 	defaultModel.Name = "nasnet-default"
 
@@ -154,7 +285,6 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 			t.Fatalf("expected false when no model configured")
 		}
 	})
-
 	t.Run("DefaultAutoModel", func(t *testing.T) {
 		cfg := &ConfigValues{Models: Models{NasnetModel.Clone()}}
 		assertConfigShouldRun(t, cfg, RunManual, true)
@@ -164,7 +294,6 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunNewlyIndexed, false)
 		assertConfigShouldRun(t, cfg, RunNever, false)
 	})
-
 	t.Run("CustomOverridesDefault", func(t *testing.T) {
 		defaultModel := NasnetModel.Clone()
 		custom := &Model{Type: ModelTypeLabels, Name: "custom"}
@@ -174,7 +303,6 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunOnIndex, false)
 		assertConfigShouldRun(t, cfg, RunNewlyIndexed, true)
 	})
-
 	t.Run("DisabledCustomFallsBack", func(t *testing.T) {
 		defaultModel := NasnetModel.Clone()
 		custom := &Model{Type: ModelTypeLabels, Name: "custom", Disabled: true}
@@ -184,7 +312,6 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunOnIndex, true)
 		assertConfigShouldRun(t, cfg, RunNewlyIndexed, false)
 	})
-
 	t.Run("ManualOnly", func(t *testing.T) {
 		model := &Model{Type: ModelTypeLabels, Run: RunManual}
 		cfg := &ConfigValues{Models: Models{model}}

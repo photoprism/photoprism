@@ -1,12 +1,7 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-3">
-      <v-alert
-        color="surface-variant"
-        :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'"
-        class="no-results"
-        variant="outlined"
-      >
+      <v-alert color="surface-variant" :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'" class="no-results" variant="outlined">
         <div v-if="filter.order === 'edited'" class="font-weight-bold">
           {{ $gettext(`No recently edited pictures`) }}
         </div>
@@ -16,17 +11,9 @@
         <div class="mt-2">
           {{ $gettext(`Try again using other filters or keywords.`) }}
           <template v-if="!isSharedView">
-            {{
-              $gettext(
-                `In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`
-              )
-            }}
+            {{ $gettext(`In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`) }}
             <template v-if="$config.feature('review')">
-              {{
-                $gettext(
-                  `Non-photographic and low-quality images require a review before they appear in search results.`
-                )
-              }}
+              {{ $gettext(`Non-photographic and low-quality images require a review before they appear in search results.`) }}
             </template>
           </template>
         </div>
@@ -110,16 +97,10 @@
                   </span>
                 </td>
                 <td class="meta-data hidden-sm-and-down text-start col-md">
-                  <span class="text-truncate clickable" @click.stop.prevent="editPhoto(index)">
-                    {{ m.CameraMake }} {{ m.CameraModel }}
-                  </span>
+                  <span class="text-truncate clickable" @click.stop.prevent="editPhoto(index)"> {{ m.CameraMake }} {{ m.CameraModel }} </span>
                 </td>
                 <td class="meta-data hidden-md-and-down text-start col-lg">
-                  <span
-                    v-if="m.Country !== 'zz' && showLocation"
-                    class="text-truncate clickable"
-                    @click.stop.prevent="openLocation(index)"
-                  >
+                  <span v-if="m.Country !== 'zz' && showLocation" class="text-truncate clickable" @click.stop.prevent="openLocation(index)">
                     {{ m.locationInfo() }}
                   </span>
                   <span v-else class="text-truncate">
@@ -133,14 +114,7 @@
                     </template>
 
                     <template v-else>
-                      <v-btn
-                        icon
-                        density="comfortable"
-                        variant="text"
-                        :ripple="false"
-                        class="input-favorite"
-                        @click.stop.prevent="m.toggleLike()"
-                      >
+                      <v-btn icon density="comfortable" variant="text" :ripple="false" class="input-favorite" @click.stop.prevent="m.toggleLike()">
                         <v-icon v-if="m.Favorite" icon="mdi-star" color="favorite" class="favorite-on"></v-icon>
                         <v-icon v-else icon="mdi-star-outline" color="surface" class="favorite-off"></v-icon>
                       </v-btn>
@@ -212,9 +186,7 @@ export default {
     m += " " + this.$gettext("Try again using other filters or keywords.");
 
     if (!this.isSharedView && this.$config.feature("review")) {
-      m +=
-        " " +
-        this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
+      m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
     const settings = this.$config.getSettings();
     const showTitles = settings.search.showTitles;

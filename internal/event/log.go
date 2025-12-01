@@ -15,6 +15,8 @@ var TextFormatter = &logrus.TextFormatter{
 
 // Log is the global default logger.
 var Log Logger
+
+// LogBuffer captures the last log message (primarily for tests).
 var LogBuffer Buffer
 
 // Hook represents a log event hook.

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -60,6 +61,30 @@ func (m *Details) Save() error {
 	}
 
 	return UnscopedDb().Save(m).Error
+}
+
+// Update a column in the database.
+func (m *Details) Update(attr string, value interface{}) error {
+	if m == nil {
+		return errors.New("photo details must not be nil - you may have found a bug")
+	} else if m.PhotoID < 1 {
+		return errors.New("photo ID in details must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *Details) Updates(values interface{}) error {
+	if values == nil {
+		return nil
+	} else if m == nil {
+		return errors.New("photo details must not be nil - you may have found a bug")
+	} else if m.PhotoID < 1 {
+		return errors.New("photo ID in details must not be empty - you may have found a bug")
+	}
+
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // FirstOrCreateDetails returns the existing row, inserts a new row or nil in case of errors.

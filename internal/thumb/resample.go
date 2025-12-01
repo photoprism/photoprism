@@ -12,15 +12,16 @@ func Resample(img image.Image, width, height int, opts ...ResampleOption) image.
 
 	method, filter, _ := ResampleOptions(opts...)
 
-	if method == ResampleFit {
+	switch method {
+	case ResampleFit:
 		resImg = imaging.Fit(img, width, height, filter.Imaging())
-	} else if method == ResampleFillCenter {
+	case ResampleFillCenter:
 		resImg = imaging.Fill(img, width, height, imaging.Center, filter.Imaging())
-	} else if method == ResampleFillTopLeft {
+	case ResampleFillTopLeft:
 		resImg = imaging.Fill(img, width, height, imaging.TopLeft, filter.Imaging())
-	} else if method == ResampleFillBottomRight {
+	case ResampleFillBottomRight:
 		resImg = imaging.Fill(img, width, height, imaging.BottomRight, filter.Imaging())
-	} else if method == ResampleResize {
+	case ResampleResize:
 		resImg = imaging.Resize(img, width, height, filter.Imaging())
 	}
 

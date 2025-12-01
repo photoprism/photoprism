@@ -10,6 +10,7 @@ var (
 	VisionWorker = Activity{}
 	FacesWorker  = Activity{}
 	UpdatePeople = Activity{}
+	BatchEdit    = Activity{}
 	ErrorWorker  = Activity{}
 )
 
@@ -23,11 +24,19 @@ func CancelAll() {
 	VisionWorker.Cancel()
 	FacesWorker.Cancel()
 	UpdatePeople.Cancel()
+	BatchEdit.Cancel()
 	ErrorWorker.Cancel()
 }
 
 // WorkersRunning checks if a worker is currently running.
 // ErrorWorker is excluded from checking as it's started on startup and stopped on shutdown.
 func WorkersRunning() bool {
-	return IndexWorker.Running() || SyncWorker.Running() || BackupWorker.Running() || ShareWorker.Running() || MetaWorker.Running() || VisionWorker.Running() || FacesWorker.Running()
+	return IndexWorker.Running() ||
+		SyncWorker.Running() ||
+		BackupWorker.Running() ||
+		ShareWorker.Running() ||
+		MetaWorker.Running() ||
+		VisionWorker.Running() ||
+		FacesWorker.Running() ||
+		BatchEdit.Running()
 }

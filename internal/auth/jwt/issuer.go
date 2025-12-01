@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// PrefixTokenID prefixes JWT token IDs to make them distinguishable.
 const PrefixTokenID = "jwt"
 
 var (

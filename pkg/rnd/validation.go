@@ -62,7 +62,7 @@ func SanitizeUUID(s string) string {
 		return ""
 	}
 
-	s = strings.Replace(strings.TrimSpace(s), "\"", "", -1)
+	s = strings.ReplaceAll(strings.TrimSpace(s), "\"", "")
 
 	if start := strings.LastIndex(s, ":"); start != -1 {
 		s = s[start+1:]

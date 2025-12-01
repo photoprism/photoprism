@@ -32,14 +32,12 @@ func TestMediaFile_Heic(t *testing.T) {
 		convert := NewConvert(conf)
 
 		// Create JPEG image.
-		jpeg, err := convert.ToImage(img, false)
-
-		if err != nil {
+		if _, err = convert.ToImage(img, false); err != nil {
 			t.Fatal(err)
 		}
 
 		// Replace JPEG image.
-		jpeg, err = convert.ToImage(img, true)
+		jpeg, err := convert.ToImage(img, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -56,8 +54,8 @@ func TestMediaFile_Heic(t *testing.T) {
 		assert.Nil(t, err)
 
 		assert.Equal(t, "", jpegInfo.DocumentID)
-		assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", jpegInfo.TakenAt.String())
-		assert.Equal(t, "2018-09-10 12:16:13 +0000 UTC", jpegInfo.TakenAtLocal.String())
+		assert.Equal(t, "2018-09-10 03:16:13.023 +0000 UTC", jpegInfo.TakenAt.String())
+		assert.Equal(t, "2018-09-10 12:16:13.023 +0000 UTC", jpegInfo.TakenAtLocal.String())
 		// KNOWN ISSUE: Orientation 6 would be correct instead (or the image should already be rotated),
 		// see https://github.com/strukturag/libheif/issues/227#issuecomment-1532842570
 		assert.Equal(t, 1, jpegInfo.Orientation)
@@ -97,14 +95,12 @@ func TestMediaFile_Heic(t *testing.T) {
 		convert := NewConvert(c)
 
 		// Create JPEG image.
-		jpeg, err := convert.ToImage(img, false)
-
-		if err != nil {
+		if _, err = convert.ToImage(img, false); err != nil {
 			t.Fatal(err)
 		}
 
 		// Replace JPEG image.
-		jpeg, err = convert.ToImage(img, true)
+		jpeg, err := convert.ToImage(img, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,8 +115,8 @@ func TestMediaFile_Heic(t *testing.T) {
 		assert.Nil(t, err)
 
 		assert.Equal(t, "", jpegInfo.DocumentID)
-		assert.Equal(t, "2023-10-31 10:44:43 +0000 UTC", jpegInfo.TakenAt.String())
-		assert.Equal(t, "2023-10-31 11:44:43 +0000 UTC", jpegInfo.TakenAtLocal.String())
+		assert.Equal(t, "2023-10-31 10:44:43.432 +0000 UTC", jpegInfo.TakenAt.String())
+		assert.Equal(t, "2023-10-31 11:44:43.432 +0000 UTC", jpegInfo.TakenAtLocal.String())
 		assert.Equal(t, 1, jpegInfo.Orientation)
 		assert.Equal(t, "iPhone 15 Pro", jpegInfo.CameraModel)
 		assert.Equal(t, "Apple", jpegInfo.CameraMake)

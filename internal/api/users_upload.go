@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -116,13 +117,14 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			fileType := fs.FileType(baseName)
 
 			// Reject unsupported files and files with extensions that aren't allowed.
-			if fileType == fs.TypeUnknown {
+			switch {
+			case fileType == fs.TypeUnknown:
 				log.Errorf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
 				continue
-			} else if allowedExt.Excludes(fileType.DefaultExt()) {
+			case allowedExt.Excludes(fileType.DefaultExt()):
 				log.Errorf("upload: rejected %s because its extension is not allowed", clean.Log(baseName))
 				continue
-			} else if fileSizeLimit > 0 && file.Size > fileSizeLimit {
+			case fileSizeLimit > 0 && file.Size > fileSizeLimit:
 				log.Errorf("upload: rejected %s because its size exceeds the file size limit", clean.Log(baseName))
 				continue
 			}
@@ -202,13 +204,14 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			for _, filename := range uploads {
 				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
 
-				if nsfwErr != nil {
+				switch {
+				case nsfwErr != nil:
 					log.Debug(nsfwErr)
 					continue
-				} else if len(labels) < 1 {
+				case len(labels) < 1:
 					log.Errorf("nsfw: model returned no result")
 					continue
-				} else if labels[0].IsSafe() {
+				case labels[0].IsSafe():
 					continue
 				}
 
@@ -345,7 +348,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
-			if err := os.Remove(uploadPath); err != nil {
+			if err = os.Remove(uploadPath); err != nil {
 				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
 			} else {
 				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
@@ -374,8 +377,12 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
-		for _, uid := range frm.Albums {
-			PublishAlbumEvent(StatusUpdated, uid, c)
+		// Update album YAML backups and notify clients of the changes.
+		for _, album := range opt.Albums {
+			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
+				SaveAlbumYaml(a)
+				PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			}
 		}
 
 		// Update the user interface.

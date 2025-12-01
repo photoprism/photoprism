@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** November 14, 2025
+**Last Updated:** November 22, 2025
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -10,6 +10,7 @@ Quick Start
 - Inside dev container (recommended):
   - Install deps: `make dep`
   - Build backend: `make build-go`
+  - Lint Go (golangci-lint): `make lint-go` (uses `.golangci.yml`; prints findings without failing) or run both stacks with `make lint`
   - Run server: `./photoprism start`
   - Open: http://localhost:2342/ or https://app.localssl.dev/ (Traefik required)
 - On host (manages Docker):
@@ -39,8 +40,8 @@ High-Level Package Map (Go)
 - `internal/workers` — background schedulers (index, vision, sync, meta, backup)
 - `internal/auth` — ACL, sessions, OIDC
 - `internal/service` — cluster/portal, maps, hub, webdav
-- `internal/event` — logging, pub/sub, audit; canonical outcome tokens live in `pkg/log/status` (use helpers like `status.Error(err)` when the sanitized message should be the outcome)
-- `internal/ffmpeg`, `internal/thumb`, `internal/meta`, `internal/form`, `internal/mutex` — media, thumbs, metadata, forms, coordination
+- `internal/event` — logging, pub/sub, audit; canonical outcome tokens live in `pkg/log/status` (use helpers like `status.Error(err)` when the sanitized message should be the outcome). Docs: `internal/event/README.md`.
+- `internal/ffmpeg`, `internal/thumb`, `internal/meta`, `internal/form`, `internal/mutex` — media, thumbs, metadata, forms, coordination. Docs: `internal/ffmpeg/README.md`, `internal/meta/README.md`.
 - `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/clean`, `pkg/enum`, `pkg/fs`, `pkg/txt`, `pkg/http/header`
 
 Templates & Static Assets
@@ -80,6 +81,10 @@ Configuration & Flags
   - ACL/mode aware: Values are filtered by user/session and may differ for public vs. authenticated users.
   - Don’t expose secrets: Treat it as client-visible; avoid sensitive data. To add fields, extend client values via `config.Register` rather than exposing Options directly.
   - Refresh cadence: The web UI (non‑mobile) also polls for updates every 10 minutes via `$config.update()` in `frontend/src/app.js`, complementing the websocket push.
+- OIDC Groups (Pro-Only)
+  - Config options (tagged `pro`, flags hidden in CE): `oidc-group-claim` (default `groups`), `oidc-group` (required membership list), `oidc-group-role` (mapping `GROUP=ROLE`).
+  - Parsing/helpers: `internal/auth/oidc/groups.go` normalizes IDs, detects Entra `_claim_names` overage, maps groups→roles, and enforces required membership in `internal/api/oidc_redirect.go`.
+  - Overage: if `_claim_names.groups` is present and no groups are returned, login fails when required groups are configured; Graph fetch is not implemented yet.
 
 Database & Migrations
 - Driver: GORM v1 (`github.com/jinzhu/gorm`). No `WithContext`. Use `db.Raw(stmt).Scan(&nop)` for raw SQL.

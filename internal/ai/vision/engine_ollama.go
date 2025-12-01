@@ -70,8 +70,7 @@ func (ollamaDefaults) SchemaTemplate(model *Model) string {
 		return ""
 	}
 
-	switch model.Type {
-	case ModelTypeLabels:
+	if model.Type == ModelTypeLabels {
 		return ollama.SchemaLabels(model.PromptContains("nsfw"))
 	}
 
@@ -118,9 +117,9 @@ func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files) (*Api
 	}
 
 	if model.Service.RequestFormat == ApiFormatOllama {
-		req.Model, _, _ = model.Model()
+		req.Model, _, _ = model.GetModel()
 	} else {
-		_, req.Model, req.Version = model.Model()
+		_, req.Model, req.Version = model.GetModel()
 	}
 
 	return req, nil

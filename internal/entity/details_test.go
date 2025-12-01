@@ -16,7 +16,7 @@ func TestDetails_FirstOrCreateDetails(t *testing.T) {
 		details = FirstOrCreateDetails(details)
 
 		if details == nil {
-			t.Fatal("details should not be nil")
+			t.Fatal("details must not be nil")
 		} else {
 			UnscopedDb().Delete(details)
 		}
@@ -27,7 +27,7 @@ func TestDetails_FirstOrCreateDetails(t *testing.T) {
 		details = FirstOrCreateDetails(details)
 
 		if details == nil {
-			t.Fatal("details should not be nil")
+			t.Fatal("details must not be nil")
 		}
 	})
 	t.Run("Error", func(t *testing.T) {

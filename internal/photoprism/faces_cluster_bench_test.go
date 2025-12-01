@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 )
 
-// BenchmarkClusterMaterialize compares pre-sized versus legacy cluster materialisation.
+// BenchmarkClusterMaterialize compares pre-sized versus legacy cluster materialization.
 func BenchmarkClusterMaterialize(b *testing.B) {
 	const (
 		clusterCount         = 64

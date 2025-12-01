@@ -48,6 +48,7 @@ func ensureEnv() {
 		}
 
 		if path := strings.TrimSpace(os.Getenv("OPENAI_API_KEY_FILE")); fs.FileExistsNotEmpty(path) {
+			// #nosec G304 path provided via env
 			if data, err := os.ReadFile(path); err == nil {
 				if key := clean.Auth(string(data)); key != "" {
 					_ = os.Setenv("OPENAI_API_KEY", key)

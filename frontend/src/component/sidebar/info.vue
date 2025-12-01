@@ -1,17 +1,13 @@
 <template>
   <div class="p-sidebar-info metadata">
     <v-toolbar density="comfortable" color="navigation">
-      <v-btn
-        :icon="$isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right'"
-        :title="$gettext('Close')"
-        @click.stop="close()"
-      ></v-btn>
-      <v-toolbar-title>{{ $gettext("Information") }}</v-toolbar-title>
+      <v-btn :icon="$isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" :title="$gettext('Close')" @click.stop="close()"></v-btn>
+      <v-toolbar-title>{{ $gettext(`Information`) }}</v-toolbar-title>
     </v-toolbar>
     <div v-if="model.UID">
       <v-list nav slim tile density="compact" class="metadata__list mt-2">
         <v-list-item v-if="model.Title" class="metadata__item">
-          <div v-tooltip="$gettext('Title')" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
+          <div v-tooltip="$pgettext(`Photo`, `Title`)" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
           <!-- v-text-field
         :model-value="modelValue.Title"
         :placeholder="$gettext('Add a title')"
@@ -36,29 +32,18 @@
       ></v-textarea -->
         </v-list-item>
         <v-divider v-if="model.Title || model.Caption" class="my-4"></v-divider>
-        <v-list-item
-          v-tooltip="$gettext('Taken')"
-          :title="formatTime(model)"
-          prepend-icon="mdi-calendar"
-          class="metadata__item"
-        >
+        <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <!-- template #append>
             <v-icon icon="mdi-pencil" size="20"></v-icon>
           </template -->
         </v-list-item>
 
-        <v-list-item
-          v-tooltip="$gettext('Size')"
-          :title="model.getTypeInfo()"
-          :prepend-icon="model.getTypeIcon()"
-          class="metadata__item"
-        >
-        </v-list-item>
+        <v-list-item v-tooltip="$gettext(`Size`)" :title="model.getTypeInfo()" :prepend-icon="model.getTypeIcon()" class="metadata__item"> </v-list-item>
 
         <template v-if="model.Lat && model.Lng">
           <v-divider class="my-4"></v-divider>
           <v-list-item
-            v-tooltip="$gettext('Location')"
+            v-tooltip="$gettext(`Location`)"
             prepend-icon="mdi-map-marker"
             :title="model.getLatLng()"
             class="clickable metadata__item"

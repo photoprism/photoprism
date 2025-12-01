@@ -5,9 +5,9 @@ import (
 	"os"
 )
 
-type jsonImporter struct {
-}
+type jsonImporter struct{}
 
+// JsonImporter returns an Importer that reads vectors from JSON files.
 func JsonImporter() Importer {
 	return &jsonImporter{}
 }
@@ -17,7 +17,7 @@ func (i *jsonImporter) Import(file string, start, end int) ([][]float64, error) 
 		return [][]float64{}, errInvalidRange
 	}
 
-	f, err := os.ReadFile(file)
+	f, err := os.ReadFile(file) //nolint:gosec // caller controls path
 	if err != nil {
 		return [][]float64{}, err
 	}

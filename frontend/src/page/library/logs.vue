@@ -3,15 +3,8 @@
     <v-row class="d-flex align-stretch">
       <v-col cols="12" class="grow pa-2 bg-terminal elevation-0 p-logs" style="overflow: auto">
         <div v-if="logs.length === 0" class="p-log-empty flex-grow-1">{{ $gettext(`Nothing to see here yet.`) }}</div>
-        <div
-          v-for="log in logs"
-          :key="log.id"
-          class="p-log-message text-selectable text-break"
-          :class="'p-log-' + log.level"
-        >
-          <span :title="utcTime(log.time) + ' UTC'" class="cursor-help p-log-message__time">{{
-            localTime(log.time)
-          }}</span>
+        <div v-for="log in logs" :key="log.id" class="p-log-message text-selectable text-break" :class="'p-log-' + log.level">
+          <span :title="utcTime(log.time) + ' UTC'" class="cursor-help p-log-message__time">{{ localTime(log.time) }}</span>
           {{ formatLevel(log.level) }}
           <span class="p-log-message__text">{{ log.message }}</span>
         </div>

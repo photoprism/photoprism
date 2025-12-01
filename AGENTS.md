@@ -1,6 +1,6 @@
-# PhotoPrism® Repository Guidelines
+# PhotoPrism® — Repository Guidelines
 
-**Last Updated:** November 14, 2025
+**Last Updated:** November 25, 2025
 
 ## Purpose
 
@@ -16,32 +16,44 @@ Learn more: https://agents.md/
 - Security: https://github.com/photoprism/photoprism/blob/develop/SECURITY.md
 - REST API: https://docs.photoprism.dev/ (Swagger), https://docs.photoprism.app/developer-guide/api/ (Docs)
 - Code Maps: [`CODEMAP.md`](CODEMAP.md) (Backend/Go), [`frontend/CODEMAP.md`](frontend/CODEMAP.md) (Frontend/JS)
-- Face Detection & Embeddings Notes: [`internal/ai/face/README.md`](internal/ai/face/README.md)
-- Vision Engine Guides: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
+- Packages: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`, e.g. [`internal/photoprism/README.md`](internal/photoprism/README.md), [`internal/photoprism/batch/README.md`](internal/photoprism/batch/README.md), [`internal/config/README.md`](internal/config/README.md), [`internal/server/README.md`](internal/server/README.md), [`internal/api/README.md`](internal/api/README.md), [`internal/thumb/README.md`](internal/thumb/README.md), [`internal/ffmpeg/README.md`](internal/ffmpeg/README.md), and [`frontend/src/common/README.md`](frontend/src/common/README.md).
+- Face Detection & Embeddings: [`internal/ai/face/README.md`](internal/ai/face/README.md)
+- Vision Config & Engines: [`internal/ai/vision/README.md`](internal/ai/vision/README.md), [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
 
 > Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`.
 
-### Specifications (Versioning & Usage)
+### Specifications, Versioning, & Writing Style
 
-- In the main repo, `specs/` appears ignored because it is managed as a nested Git repository; change into `specs/` before staging or committing spec updates.
-- Availability: The `specs/` repository is private and is not guaranteed to be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths. When `specs/` is available, run its tools directly (e.g., `bash specs/scripts/lint-status.sh`).
-- If available, always use the latest spec version for a topic (highest `-vN`), as linked from `specs/README.md`.
-- Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
-- Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
-- Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
-- Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
-- Regenerate NOTICE files with `make notice` when dependencies change. Do not edit `NOTICE` or `frontend/NOTICE` manually.
+- In the main repo, `specs/` and other directories may appear to be ignored because they are nested Git repositories; if so, change directories before staging or committing updates.
+- Availability: The `specs/` repository is private and is not guaranteed to be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths. When `specs/` is available, you MAY run its tools manually (e.g., `bash specs/scripts/lint-status.sh`), but the main repo must remain buildable without `specs/`.
+  - If available, always use the latest spec version for a topic (highest `-vN`), as linked from `specs/README.md`.
+  - Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
+  - Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
+  - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
+  - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
+- Regenerate `NOTICE` files with `make notice` when dependencies change (e.g., updates to `go.mod`, `go.sum`, `package-lock.json`, or other lockfiles). Do not edit `NOTICE` or `frontend/NOTICE` manually.
+- When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 
-**Style note:** Document headings must use Title Case (capitalize words ≥4 letters in AP-style) across Markdown files to keep generated navigation and changelogs consistent.
+> Document headings must use **Title Case** (in APA or AP style) across Markdown files to keep generated navigation and changelogs consistent. Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
 
-**CLI note:** When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
+## Safety & Data
+
+- If `git status` shows unexpected changes, assume a human might be editing; if you think you caused them, ask for permission before using reset commands like `git checkout` or `git reset`.
+- Do not run `git config` (global or repo-level); changing Git configuration is prohibited for agents.
+- Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures for acceptance tests.
+- Never commit secrets, local configurations, or cache files. Use environment variables or a local `.env`.
+- Ensure `.env`, `.config`, `.local`, `.codex`, and `.gocache` are ignored in `.gitignore` and `.dockerignore`.
+- Prefer using existing caches, workers, and batching strategies referenced in code and `Makefile`.
+- Consider memory/CPU impact of changes; only suggest benchmarks or profiling when justified.
+
+> If anything in this file conflicts with the `Makefile` or Sources of Truth, **ask** for clarification before proceeding.
 
 ## Project Structure & Languages
 
 - Backend: Go (`internal/`, `pkg/`, `cmd/`) + MariaDB/SQLite
   - Package boundaries: Code in `pkg/*` MUST NOT import from `internal/*`.
   - If you need access to config/entity/DB, put new code in a package under `internal/` instead of `pkg/`.
-  - GORM field naming: When adding struct fields that include uppercase abbreviations (e.g., `LabelNSFW`), set an explicit `gorm:"column:<name>"` tag so column names stay consistent (`label_nsfw` instead of `label_n_s_f_w`).
+- GORM field naming: When adding struct fields that include uppercase abbreviations (e.g., `LabelNSFW`, `UserID`, `URLHash`), set an explicit `gorm:"column:<name>"` tag so column names stay consistent (`label_nsfw`, `user_id`, `url_hash` instead of split-letter variants).
 - Frontend: Vue 3 + Vuetify 3 (`frontend/`)
 - Docker/compose for dev/CI; Traefik is used for local TLS (`*.localssl.dev`)
 
@@ -64,16 +76,15 @@ Agents MAY run either:
 
 Agents SHOULD detect the runtime and choose commands accordingly:
 
-- **Inside container if** one of the following is true:
-  - File exists: `/.dockerenv`
-  - Project path equals (or is a direct child of): `/go/src/github.com/photoprism/photoprism`
+- **Inside container if** `/.dockerenv` exists (authoritative signal).
+- Path hint: when the project path is `/go/src/github.com/photoprism/photoprism` *and* `/.dockerenv` is absent, assume you are on the host with a bind mount; treat it as host mode and prefer host-side Docker commands.
 
 #### Examples
 
 Bash:
 
 ```bash
-if [ -f "/.dockerenv" ] || [ -d "/go/src/github.com/photoprism/photoprism/.git" ]; then
+if [ -f "/.dockerenv" ]; then
   echo "container"
 else
   echo "host"
@@ -85,8 +96,7 @@ Node.js:
 ```js
 const fs = require("fs");
 const inContainer = fs.existsSync("/.dockerenv");
-const inDevPath = fs.existsSync("/go/src/github.com/photoprism/photoprism/.git");
-console.log(inContainer || inDevPath ? "container" : "host");
+console.log(inContainer ? "container" : "host");
 ```
 
 ### Agent installation and invocation
@@ -132,15 +142,35 @@ console.log(inContainer || inDevPath ? "container" : "host");
       - Only if Traefik is running and the dev compose labels are active
       - Labels for `*.localssl.dev` are defined in the dev compose files, e.g. https://github.com/photoprism/photoprism/blob/develop/compose.yaml
   - Admin Login: Local compose files set `PHOTOPRISM_ADMIN_USER=admin` and `PHOTOPRISM_ADMIN_PASSWORD=photoprism`; if the credentials differ, inspect `compose.yaml` (or the active environment) for these variables before logging in.
-  - Do not use the Docker CLI inside the container; starting/stopping services requires host Docker access.
+  - Do not use the Docker CLI inside the container; starting/stopping services requires host Docker access. If you need to manage compose while inside the dev container, switch to host mode (or ask a human) instead of running `docker compose` there.
 
 Note: Across our public documentation, official images, and in production, the command-line interface (CLI) name is `photoprism`. Other PhotoPrism binary names are only used in development builds for side-by-side comparisons of the Community Edition (CE) with PhotoPrism Plus (`photoprism-plus`) and PhotoPrism Pro (`photoprism-pro`).
+
+### Operating Systems & Architectures
+
+- Our guides and command examples generally assume the use of a Linux/Unix shell on a 64-bit AMD64 or ARM64 system.
+- For Windows-specifics, see the Developer Guide FAQ: https://docs.photoprism.app/developer-guide/faq/#can-your-development-environment-be-used-under-windows
+
+## Code Style & Lint
+
+- Go: run `make fmt-go swag-fmt` to reformat the backend code + Swagger annotations (see `Makefile` for additional targets)
+  - Run `make lint-go` (golangci-lint) after Go changes; prefer `golangci-lint run ./internal/<pkg>/...` for focused edits.
+  - Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period.
+  - All newly added functions, including unexported helpers, must have a concise doc comment that explains their behavior.
+  - For short examples inside comments, indent code rather than using backticks; godoc treats indented blocks as preformatted.
+- Branding: Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
+- Every Go package must contain a `<package>.go` file in its root (for example, `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment explaining its purpose.
+- JS/Vue: use the lint/format scripts in `frontend/package.json` (ESLint + Prettier)
+- All added code and tests **must** be formatted according to our standards.
+
+> Remember to update the `**Last Updated:**` line at the top whenever you edit these guidelines or other files containing a timestamp.
 
 ## Tests
 
 - From within the Development Environment:
   - Full unit test suite: `make test` (runs backend and frontend tests)
   - Test frontend/backend: `make test-js` and `make test-go`
+  - Linting: `make lint` (all), `make lint-go` (golangci-lint with `.golangci.yml`, prints findings without failing due to `--issues-exit-code 0`), `make lint-js` (ESLint/Prettier)
   - Go packages: `go test` (all tests) or `go test -run <name>` (specific tests only)
 - Need to inspect the MariaDB data while iterating? Connect directly inside the dev shell with `mariadb -D photoprism` and run SQL without rebuilding Go code.
 - Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and use **PascalCase** for subtest names (for example, `t.Run("Success", ...)`).
@@ -208,19 +238,6 @@ Note: Across our public documentation, official images, and in production, the c
   - `config.NewTestConfig("<pkg>")` defaults to SQLite with a per‑suite DSN like `.<pkg>.db`. Don’t assert an empty DSN for SQLite.
   - Clean up any per‑suite SQLite files in tests with `t.Cleanup(func(){ _ = os.Remove(dsn) })` if you capture the DSN.
 
-## Code Style & Lint
-
-- Go: run `make fmt-go swag-fmt` to reformat the backend code + Swagger annotations (see `Makefile` for additional targets)
-  - Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period.
-  - All newly added functions, including unexported helpers, must have a concise doc comment that explains their behavior.
-  - For short examples inside comments, indent code rather than using backticks; godoc treats indented blocks as preformatted.
-- Branding: Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
-- Every Go package must contain a `<package>.go` file in its root (for example, `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment explaining its purpose.
-- JS/Vue: use the lint/format scripts in `frontend/package.json` (ESLint + Prettier)
-- All added code and tests **must** be formatted according to our standards.
-
-> Remember to update the `**Last Updated:**` line at the top whenever you edit these guidelines or other files containing a timestamp.
-
 ### Frontend Focus Management
 
 - Dialogs must follow the shared focus pattern documented in `frontend/src/common/README.md`.
@@ -228,15 +245,6 @@ Note: Across our public documentation, official images, and in production, the c
 - Persistent dialogs (those with the `persistent` prop) must handle Escape via `@keydown.esc.exact` so Vuetify’s default rejection animation is suppressed; keep other shortcuts on `@keyup` so inner inputs can cancel them first.
 - Global shortcuts run through `onShortCut(ev)` in `common/view.js`; it only forwards Escape and `ctrl`/`meta` combinations, so do not rely on it for arbitrary keys.
 - When a dialog opens nested menus (for example, combobox suggestion lists), ensure they work with the global trap; see the README for troubleshooting tips.
-
-## Safety & Data
-
-- Never commit secrets, local configurations, or cache files. Use environment variables or a local `.env`.
-  - Ensure `.env` and `.local` are ignored in `.gitignore` and `.dockerignore`.
-- Prefer using existing caches, workers, and batching strategies referenced in code and `Makefile`. Consider memory/CPU impact; suggest benchmarks or profiling only when justified.
-- Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures when running acceptance tests.
-
-> If anything in this file conflicts with the `Makefile` or the Developer Guide, the `Makefile` and the documentation win. When unsure, **ask** for clarification before proceeding.
 
 ### Filesystem Permissions & io/fs Aliasing (Go)
 
@@ -276,9 +284,6 @@ Note: Across our public documentation, official images, and in production, the c
   - Absolute/volume paths rejected (Windows-specific backslash path covered on Windows).
   - `..` traversal skipped; `__MACOSX` skipped.
   - Per-file and total size limits enforced; directory entries created; nested paths extracted safely.
-
-- Examples assume a Linux/Unix shell. For Windows specifics, see the Developer Guide FAQ:
-  https://docs.photoprism.app/developer-guide/faq/#can-your-development-environment-be-used-under-windows
 
 ### HTTP Download — Security Checklist
 

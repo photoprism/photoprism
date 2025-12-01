@@ -43,24 +43,32 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 
 // Updates mutates multiple columns in the database and clears cached copies.
 func (m *PhotoLabel) Updates(values interface{}) error {
+	if m == nil {
+		return errors.New("photo label must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("photo label ID must not be empty - you may have found a bug")
+	}
+
 	if err := UnscopedDb().Model(m).UpdateColumns(values).Error; err != nil {
 		return err
 	}
+
 	FlushCachedPhotoLabel(m)
 	return nil
 }
 
 // Update mutates a single column in the database and clears cached copies.
 func (m *PhotoLabel) Update(attr string, value interface{}) error {
+	if m == nil {
+		return errors.New("photo label must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("photo label ID must not be empty - you may have found a bug")
+	}
+
 	if err := UnscopedDb().Model(m).UpdateColumn(attr, value).Error; err != nil {
 		return err
 	}
-	FlushCachedPhotoLabel(m)
-	return nil
-}
 
-// AfterUpdate flushes the label cache after a relation change.
-func (m *PhotoLabel) AfterUpdate(tx *gorm.DB) (err error) {
 	FlushCachedPhotoLabel(m)
 	return nil
 }
@@ -93,6 +101,7 @@ func (m *PhotoLabel) Save() error {
 
 // Create inserts a new row into the database without touching cache state.
 func (m *PhotoLabel) Create() error {
+	FlushCachedPhotoLabel(m)
 	return Db().Create(m).Error
 }
 
@@ -100,6 +109,12 @@ func (m *PhotoLabel) Create() error {
 func (m *PhotoLabel) AfterCreate(tx *gorm.DB) (err error) {
 	FlushCachedPhotoLabel(m)
 	return nil
+}
+
+// AfterUpdate flushes the label cache after a relation change.
+func (m *PhotoLabel) AfterUpdate(tx *gorm.DB) (err error) {
+	FlushCachedPhotoLabel(m)
+	return
 }
 
 // Delete removes the label reference and clears the cache.

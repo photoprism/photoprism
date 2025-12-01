@@ -168,7 +168,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if img, imgErr := f.PreviewImage(); imgErr != nil {
 				log.Error(imgErr)
-			} else if limitErr, _ := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+			} else if _, limitErr := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 				log.Errorf("import: %s", limitErr)
 				continue
 			} else if thumbsErr := img.GenerateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
@@ -193,10 +193,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 				main := related.Main
 
 				// Enforce file size and resolution limits.
-				if limitErr, _ := main.ExceedsBytes(o.ByteLimit); limitErr != nil {
+				if _, limitErr := main.ExceedsBytes(o.ByteLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 					continue
-				} else if limitErr, _ = main.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				} else if _, limitErr = main.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 					continue
 				}
@@ -235,9 +235,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				done[file.FileName()] = true
 
 				// Show warning if sidecar file exceeds size or resolution limit.
-				if limitErr, _ := file.ExceedsBytes(o.ByteLimit); limitErr != nil {
+				if _, limitErr := file.ExceedsBytes(o.ByteLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
-				} else if limitErr, _ = file.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				} else if _, limitErr = file.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 				}
 

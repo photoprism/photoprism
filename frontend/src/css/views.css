@@ -22,6 +22,11 @@
     user-select: none !important;
 }
 
+/* Make thumbnails in batch edit dialog show pointer cursor */
+.edit-batch .preview {
+    cursor: pointer !important;
+}
+
 .search-results.list-view .p-photo-select,
 .search-results.list-view .p-photo-play {
     margin-left: auto;
@@ -291,9 +296,30 @@
     padding: 1px 0 1px 4px;
 }
 
-.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview {
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview,
+.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.result .preview,
+.edit-batch.list-view .v-table>table>tbody>tr>td.result .preview {
     width: 50px;
     height: 50px;
+}
+
+.edit-batch .v-expansion-panel-text__wrapper {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.edit-batch .v-expansion-panel-text__wrapper tr {
+    height: 50px;
+}
+
+.edit-batch .edit-batch__file-name {
+    line-break: anywhere;
+}
+
+.p-photo-batch-edit .scroll-col {
+    height: 100%;
+    overflow-y: auto;
+    padding: 8px;
 }
 
 .list-view tbody td button {
@@ -865,7 +891,8 @@
 }
 
 .search-results.list-view .input-select,
-.search-results.list-view .input-open {
+.search-results.list-view .input-open,
+.edit-batch.list-view .input-open {
     margin-left: auto;
     margin-right: auto;
     left: 0;

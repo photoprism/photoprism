@@ -8,6 +8,7 @@ import "vuetify/styles";
 
 import clientConfig from "./config";
 import { $config } from "app/session";
+import { mockGettext, mockPgettext } from "./helpers/gettext";
 
 $config.setValues(clientConfig);
 
@@ -23,10 +24,22 @@ const vuetify = createVuetify({
   },
 });
 
+// Polyfill ResizeObserver in jsdom environment for Vuetify components
+if (typeof global.ResizeObserver === "undefined") {
+  global.ResizeObserver = class ResizeObserver {
+    constructor(callback) {
+      this.callback = callback;
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
+
 // Configure Vue Test Utils global configuration
 config.global.mocks = {
-  $gettext: (text) => text,
-  $pgettext: (_ctx, text) => text,
+  $gettext: mockGettext,
+  $pgettext: mockPgettext,
   $isRtl: false,
   $config: {
     feature: () => true,

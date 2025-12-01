@@ -29,15 +29,15 @@ func TestMain(m *testing.M) {
 	dsn.SetDSNToEnv(dsname)
 
 	c := config.TestConfig()
-	defer c.CloseDb()
 
 	// Run unit tests.
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-	// Close database connection.
-	_ = c.CloseDb()
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

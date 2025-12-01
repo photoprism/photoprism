@@ -163,7 +163,7 @@ func (m *Manager) loadKeys() error {
 		}
 
 		keyPath := filepath.Join(dir, name)
-		b, err := os.ReadFile(keyPath)
+		b, err := os.ReadFile(keyPath) // #nosec G304 path is derived from trusted directory entries
 		if err != nil {
 			return err
 		}
@@ -280,9 +280,5 @@ func (m *Manager) persistKey(k *Key) error {
 	if err != nil {
 		return err
 	}
-	if err := os.WriteFile(pubPath, pubJSON, fs.ModeFile); err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(pubPath, pubJSON, fs.ModeFile)
 }

@@ -2,13 +2,14 @@ package list
 
 // Add adds a string to the list if it does not exist yet.
 func Add(list []string, s string) []string {
-	if s == "" {
+	switch {
+	case s == "":
 		return list
-	} else if len(list) == 0 {
+	case len(list) == 0:
 		return []string{s}
-	} else if Contains(list, s) {
+	case Contains(list, s):
 		return list
+	default:
+		return append(list, s)
 	}
-
-	return append(list, s)
 }

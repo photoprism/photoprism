@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -75,6 +77,16 @@ func TestReadUrl(t *testing.T) {
 		_, err := ReadUrl("file:///this/does/not/exist", []string{"file"})
 		assert.Error(t, err)
 	})
+	t.Run("FileSchemeValidPng", func(t *testing.T) {
+		tmp := t.TempDir()
+		fn := filepath.Join(tmp, "pic.png")
+		payload := append([]byte{0x89, 'P', 'N', 'G', '\r', '\n', 0x1A, '\n'}, bytes.Repeat([]byte{0}, 16)...)
+		assert.NoError(t, os.WriteFile(fn, payload, 0o600))
+
+		data, err := ReadUrl("file://"+fn, []string{"file"})
+		assert.NoError(t, err)
+		assert.Equal(t, payload, data)
+	})
 }
 
 func TestDataUrl_LargeBinary(t *testing.T) {
@@ -117,7 +129,8 @@ func TestDataUrl_WebpDetection(t *testing.T) {
 	// Minimal RIFF/WEBP container header
 	// RIFF <size=26> WEBP VP8  + padding
 	riff := []byte{'R', 'I', 'F', 'F', 26, 0, 0, 0, 'W', 'E', 'B', 'P', 'V', 'P', '8', ' '}
-	buf := append(riff, bytes.Repeat([]byte{0}, 32)...)
+	riff = append(riff, bytes.Repeat([]byte{0}, 32)...)
+	buf := riff
 	s := DataUrl(bytes.NewReader(buf))
 	assert.True(t, strings.HasPrefix(s, "data:image/webp;base64,"))
 }

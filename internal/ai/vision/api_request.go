@@ -21,9 +21,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Files holds a list of input file paths or URLs for vision requests.
 type Files = []string
 
 const (
+	// FormatJSON indicates JSON payloads.
 	FormatJSON = "json"
 
 	logDataPreviewLength   = 16
@@ -80,6 +82,8 @@ type ApiRequest struct {
 	Suffix         string             `form:"suffix" yaml:"Suffix,omitempty" json:"suffix"`
 	Format         string             `form:"format" yaml:"Format,omitempty" json:"format,omitempty"`
 	Url            string             `form:"url" yaml:"Url,omitempty" json:"url,omitempty"`
+	Org            string             `form:"org" yaml:"Org,omitempty" json:"org,omitempty"`
+	Project        string             `form:"project" yaml:"Project,omitempty" json:"project,omitempty"`
 	Options        *ApiRequestOptions `form:"options" yaml:"Options,omitempty" json:"options,omitempty"`
 	Context        *ApiRequestContext `form:"context" yaml:"Context,omitempty" json:"context,omitempty"`
 	Stream         bool               `form:"stream" yaml:"Stream,omitempty" json:"stream"`

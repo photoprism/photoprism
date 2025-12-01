@@ -14,14 +14,17 @@ type SearchUsers struct {
 	Reverse bool   `form:"reverse" serialize:"-"`
 }
 
+// GetQuery returns the current search query string.
 func (f *SearchUsers) GetQuery() string {
 	return f.Query
 }
 
+// SetQuery stores the raw query string.
 func (f *SearchUsers) SetQuery(q string) {
 	f.Query = q
 }
 
+// ParseQueryString deserializes the query string into form fields.
 func (f *SearchUsers) ParseQueryString() error {
 	return ParseQueryString(f)
 }

@@ -92,7 +92,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 	}
 
 	if result == nil {
-		t.Fatal("result should not be nil")
+		t.Fatal("result must not be nil")
 	}
 
 	if folder.FolderTitle != "Originals" {
@@ -106,7 +106,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 	found := FindFolder(RootOriginals, RootPath)
 
 	if found == nil {
-		t.Fatal("found should not be nil")
+		t.Fatal("found must not be nil")
 	}
 
 	if found.FolderTitle != "Originals" {

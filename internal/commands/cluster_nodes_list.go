@@ -56,7 +56,7 @@ func clusterNodesListAction(ctx *cli.Context) error {
 		}
 
 		// Pagination identical to API defaults.
-		count := int(ctx.Uint("count"))
+		count := int(ctx.Uint("count")) //nolint:gosec // CLI flag bounded by validation
 		if count <= 0 || count > 1000 {
 			count = 100
 		}

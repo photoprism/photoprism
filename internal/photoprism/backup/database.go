@@ -77,7 +77,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	case config.MySQL, config.MariaDB:
 		// Connect via Unix Domain Socket?
 		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
-			cmd = exec.Command(
+			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
 				c.MariadbDumpBin(),
 				"--protocol", "socket",
 				"-S", socketName,
@@ -89,7 +89,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
 			log.Infof("backup: server supports zero-configuration ssl")
 
-			cmd = exec.Command(
+			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
 				c.MariadbDumpBin(),
 				"--protocol", "tcp",
 				"-h", c.DatabaseHost(),
@@ -102,7 +102,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
 			log.Infof("backup: zero-configuration ssl not supported by the server")
 
-			cmd = exec.Command(
+			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
 				c.MariadbDumpBin(),
 				"--protocol", "tcp",
 				"--skip-ssl",
@@ -118,7 +118,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
 		}
 
-		cmd = exec.Command(
+		cmd = exec.Command( // #nosec G204 sqlite dump uses configured binary and db path
 			c.SqliteBin(),
 			c.DatabaseFile(),
 			".dump",
@@ -138,6 +138,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	if toStdOut {
 		log.Infof("backup: sending database backup to stdout")
 		f = os.Stdout
+		// #nosec G304 backup path validated by configuration
 	} else if f, err = os.OpenFile(fileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeBackupFile); err != nil {
 		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
 	} else {
@@ -246,11 +247,12 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		Select("COUNT(*) AS photos").
 		Take(&counts)
 
-	if counts.Photos == 0 {
-		// Do nothing;
-	} else if !force {
+	switch {
+	case counts.Photos == 0:
+		// No existing data to guard against.
+	case !force:
 		return fmt.Errorf("found an existing index with %d pictures, backup not restored", counts.Photos)
-	} else {
+	default:
 		log.Warnf("restore: existing index with %d pictures will be replaced", counts.Photos)
 	}
 
@@ -262,7 +264,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	case config.MySQL, config.MariaDB:
 		// Connect via Unix Domain Socket?
 		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
-			cmd = exec.Command(
+			cmd = exec.Command( // #nosec G204 database connection parameters from config
 				c.MariadbBin(),
 				"--protocol", "socket",
 				"-S", socketName,
@@ -275,7 +277,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
 			log.Infof("restore: server supports zero-configuration ssl")
 
-			cmd = exec.Command(
+			cmd = exec.Command( // #nosec G204 database connection parameters from config
 				c.MariadbBin(),
 				"--protocol", "tcp",
 				"-h", c.DatabaseHost(),
@@ -289,7 +291,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
 			log.Infof("restore: zero-configuration ssl not supported by the server")
 
-			cmd = exec.Command(
+			cmd = exec.Command( // #nosec G204 database connection parameters from config
 				c.MariadbBin(),
 				"--protocol", "tcp",
 				"--skip-ssl",
@@ -304,7 +306,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	case config.SQLite3:
 		log.Infoln("restore: dropping existing sqlite database tables")
 		tables.Drop(c.Db())
-		cmd = exec.Command(
+		cmd = exec.Command( // #nosec G204 sqlite restore uses configured binary and db path
 			c.SqliteBin(),
 			c.DatabaseFile(),
 		)
@@ -325,6 +327,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	if fromStdIn {
 		log.Infof("restore: restoring database backup from stdin")
 		f = os.Stdin
+		// #nosec G304 backup path validated by configuration
 	} else if f, err = os.OpenFile(fileName, os.O_RDONLY, 0); err != nil {
 		return fmt.Errorf("failed to open %s: %s", clean.Log(fileName), err)
 	} else {
@@ -339,7 +342,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	stdin, err = cmd.StdinPipe()
 
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("restore: failed to create stdin pipe: %w", err)
 	}
 
 	go func() {

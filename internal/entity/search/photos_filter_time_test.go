@@ -124,7 +124,7 @@ func TestPhotosFilterTime(t *testing.T) {
 
 		// t.Logf("Before: %#v", photos)
 
-		assert.GreaterOrEqual(t, 47, len(photos))
+		assert.GreaterOrEqual(t, 48, len(photos))
 	})
 	t.Run("After", func(t *testing.T) {
 		var f form.SearchPhotos

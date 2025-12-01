@@ -3,14 +3,14 @@ package thumb
 import (
 	"fmt"
 	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
+	_ "image/gif"  // register GIF decoder for config reads
+	_ "image/jpeg" // register JPEG decoder for config reads
+	_ "image/png"  // register PNG decoder for config reads
 	"os"
 	"runtime/debug"
 
-	_ "golang.org/x/image/bmp"
-	_ "golang.org/x/image/webp"
+	_ "golang.org/x/image/bmp"  // register BMP decoder for config reads
+	_ "golang.org/x/image/webp" // register WEBP decoder for config reads
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -29,7 +29,7 @@ func FileInfo(fileName string) (info image.Config, err error) {
 		return info, err
 	}
 
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // fileName is resolved path provided by caller; reading images is expected
 
 	if err != nil || file == nil {
 		return info, err

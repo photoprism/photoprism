@@ -38,7 +38,7 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 	seed := map[string]any{"Existing": "value"}
 	b, err := yaml.Marshal(seed)
 	require.NoError(t, err)
-	require.NoError(t, os.WriteFile(conf.OptionsYaml(), b, 0o644))
+	require.NoError(t, os.WriteFile(conf.OptionsYaml(), b, 0o600))
 
 	update := cluster.OptionsUpdate{}
 	update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")

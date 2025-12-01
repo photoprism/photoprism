@@ -40,22 +40,11 @@
         }"
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
-        <div
-          v-show="video.controls && controlsShown !== 0"
-          ref="controls"
-          tabindex="-1"
-          class="p-lightbox__controls"
-          @click.stop.prevent
-        >
+        <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
             <v-icon v-else-if="video.seeking || video.waiting" icon="mdi-loading" class="animate-loading"></v-icon>
-            <v-icon
-              v-else-if="video.playing"
-              icon="mdi-pause"
-              class="clickable"
-              @pointerdown.stop.prevent="toggleVideo"
-            ></v-icon>
+            <v-icon v-else-if="video.playing" icon="mdi-pause" class="clickable" @pointerdown.stop.prevent="toggleVideo"></v-icon>
             <v-icon v-else icon="mdi-play" class="clickable" @pointerdown.stop.prevent="toggleVideo"></v-icon>
           </div>
           <div class="video-control video-control--time text-body-2">
@@ -80,19 +69,8 @@
             {{ $util.formatRemainingSeconds(video.time, video.duration) }}
           </div>
           <div v-if="featExperimental && video.castable" class="video-control video-control--cast">
-            <v-icon
-              v-if="video.casting"
-              icon="mdi-cast-connected"
-              class="clickable"
-              @pointerdown.stop.prevent="toggleVideoRemote"
-            ></v-icon>
-            <v-icon
-              v-else
-              icon="mdi-cast"
-              :disabled="video.remote === 'connecting'"
-              class="clickable"
-              @pointerdown.stop.prevent="toggleVideoRemote"
-            ></v-icon>
+            <v-icon v-if="video.casting" icon="mdi-cast-connected" class="clickable" @pointerdown.stop.prevent="toggleVideoRemote"></v-icon>
+            <v-icon v-else icon="mdi-cast" :disabled="video.remote === 'connecting'" class="clickable" @pointerdown.stop.prevent="toggleVideoRemote"></v-icon>
           </div>
         </div>
       </div>
@@ -122,6 +100,7 @@ import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
+import * as contexts from "options/contexts";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -189,10 +168,12 @@ export default {
       selection: this.$clipboard.selection,
       config: this.$config.values,
       collection: null,
-      context: "",
+      context: contexts.Default,
       model: new Thumb(), // Current slide.
       models: [], // Slide models.
       index: 0, // Current slide index in models.
+      contextAllowsEdit: true,
+      contextAllowsSelect: true,
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
       video: {
@@ -331,11 +312,7 @@ export default {
       this.$emit("leave");
     },
     focusContent(ev) {
-      if (
-        this.$refs.content &&
-        this.$refs.content instanceof HTMLElement &&
-        document.activeElement !== this.$refs.content
-      ) {
+      if (this.$refs.content && this.$refs.content instanceof HTMLElement && document.activeElement !== this.$refs.content) {
         this.$refs.content.focus();
 
         if (this.debug && ev) {
@@ -413,11 +390,25 @@ export default {
         errorMsg: this.$gettext("Error"),
       };
     },
+    // Updates lightbox permissions and capabilities (e.g., batch edit disables selecting and editing).
+    applyContext(ctx = {}) {
+      this.contextAllowsSelect = ctx?.allowSelect !== false;
+      this.contextAllowsEdit = ctx?.allowEdit !== false;
+
+      this.canEdit = this.$config.allow("photos", "update") && this.$config.feature("edit");
+      this.canLike = this.$config.allow("photos", "manage") && this.$config.feature("favorites");
+      this.canDownload = this.$config.allow("photos", "download") && this.$config.feature("download");
+      this.canArchive = this.$config.allow("photos", "delete") && this.$config.feature("archive");
+      this.canManageAlbums = this.$config.allow("albums", "manage");
+    },
     // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
     showThumbs(models, index = 0, ctx = {}) {
       if (this.isBusy("show thumbs")) {
         return Promise.reject();
       }
+
+      // Update permissions and capabilities.
+      this.applyContext(ctx);
 
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
@@ -447,7 +438,19 @@ export default {
         return Promise.reject();
       }
 
-      if (view.loading || !view.listen || view.lightbox.loading || !view.results[index]) {
+      if (view && typeof view.getLightboxContext === "function") {
+        const ctx = view.getLightboxContext(index);
+
+        if (!ctx || !Array.isArray(ctx.models) || ctx.models.length === 0) {
+          return Promise.reject();
+        }
+
+        const targetIndex = this.normalizeIndex(typeof ctx.index === "number" ? ctx.index : typeof index === "number" ? index : 0, ctx.models.length);
+
+        return this.showThumbs(ctx.models, targetIndex, ctx);
+      }
+
+      if (!view || view.loading || !view.listen || view.lightbox?.loading || !Array.isArray(view.results) || !view.results[index]) {
         return Promise.reject();
       }
 
@@ -526,6 +529,28 @@ export default {
           view.lightbox.loading = false;
         });
     },
+    // Keeps the requested slide index within the available bounds before opening the lightbox.
+    normalizeIndex(idx, length) {
+      let target = Number.isFinite(idx) ? idx : 0;
+
+      if (target < 0) {
+        target = 0;
+      }
+
+      const maxIndex = Math.max(length - 1, 0);
+
+      if (target > maxIndex) {
+        target = maxIndex;
+      }
+
+      return target;
+    },
+    shouldShowEditButton() {
+      return this.canEdit && this.contextAllowsEdit;
+    },
+    shouldShowSelectionToggle() {
+      return this.contextAllowsSelect;
+    },
     getNumItems() {
       return this.models.length;
     },
@@ -557,9 +582,7 @@ export default {
          */
 
         // Check the duration so that short videos can be looped, unless a slideshow is playing.
-        const isShort = model?.Duration
-          ? model.Duration > 0 && model.Duration <= this.shortVideoDuration * 1000000000
-          : false;
+        const isShort = model?.Duration ? model.Duration > 0 && model.Duration <= this.shortVideoDuration * 1000000000 : false;
 
         // Set the slide data needed to render and play the video.
         const video = {
@@ -689,12 +712,7 @@ export default {
       });
 
       // Create and append video source elements, depending on file format support.
-      if (
-        format !== media.FormatAvc &&
-        model?.Mime &&
-        model.Mime !== media.ContentTypeMp4AvcMain &&
-        video.canPlayType(model.Mime)
-      ) {
+      if (format !== media.FormatAvc && model?.Mime && model.Mime !== media.ContentTypeMp4AvcMain && video.canPlayType(model.Mime)) {
         const nativeSource = document.createElement("source");
         nativeSource.type = model.Mime;
         nativeSource.src = this.$util.videoFormatUrl(model.Hash, format);
@@ -721,9 +739,7 @@ export default {
       if (this.featExperimental && video.remote && video.remote instanceof RemotePlayback) {
         if (!this.video.castable) {
           const cancel = () => {
-            video.remote
-              .cancelWatchAvailability?.(this.videoAvailabilityListener)
-              .catch(this.trace ? this.log : () => {});
+            video.remote.cancelWatchAvailability?.(this.videoAvailabilityListener).catch(this.trace ? this.log : () => {});
           };
 
           ctrl.signal.addEventListener("abort", cancel, { once: true });
@@ -816,8 +832,7 @@ export default {
         this.resetVideo();
       }
 
-      let isPlaying =
-        video.readyState && !video.paused && !video.ended && !video.waiting && (!video.error || video.error.code === 0);
+      let isPlaying = video.readyState && !video.paused && !video.ended && !video.waiting && (!video.error || video.error.code === 0);
 
       if (ev && ev.type) {
         switch (ev.type) {
@@ -867,20 +882,14 @@ export default {
       this.video.src = video.src;
 
       // Loop short videos of 5 seconds or less, even if the server does not know the duration.
-      if (
-        !data.loop &&
-        video.duration &&
-        video.duration <= this.shortVideoDuration &&
-        data.model?.Type !== media.Live
-      ) {
+      if (!data.loop && video.duration && video.duration <= this.shortVideoDuration && data.model?.Type !== media.Live) {
         data.loop = true;
         video.loop = data.loop && !this.slideshow.active;
       }
 
       // Do not display video controls if a slideshow is running,
       // or the video belongs to an animation or live photo.
-      this.video.controls =
-        !this.slideshow.active && data.model?.Type !== media.Animated && data.model?.Type !== media.Live;
+      this.video.controls = !this.slideshow.active && data.model?.Type !== media.Animated && data.model?.Type !== media.Live;
 
       // Get video playback error, if any:
       // https://developer.mozilla.org/de/docs/Web/API/HTMLMediaElement/error
@@ -1293,23 +1302,25 @@ export default {
         }
 
         // Add selection toggle control.
-        lightbox.pswp.ui.registerElement({
-          name: "select-toggle",
-          className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
-          title: this.$gettext("Select"),
-          ariaLabel: this.$gettext("Select"),
-          order: 10,
-          isButton: true,
-          html: {
-            isCustomSVG: true,
-            inner: `<use class="pswp__icn-shadow pswp__icn-select-on" xlink:href="#pswp__icn-select-on"></use><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" id="pswp__icn-select-on" class="pswp__icn-select-on" /><use class="pswp__icn-shadow pswp__icn-select-off" xlink:href="#pswp__icn-select-off"></use><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" id="pswp__icn-select-off" class="pswp__icn-select-off" />`,
-            size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
-          },
-          onClick: (ev) => this.onControlClick(ev, this.toggleSelect),
-        });
+        if (this.shouldShowSelectionToggle()) {
+          lightbox.pswp.ui.registerElement({
+            name: "select-toggle",
+            className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
+            title: this.$gettext("Select"),
+            ariaLabel: this.$gettext("Select"),
+            order: 10,
+            isButton: true,
+            html: {
+              isCustomSVG: true,
+              inner: `<use class="pswp__icn-shadow pswp__icn-select-on" xlink:href="#pswp__icn-select-on"></use><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" id="pswp__icn-select-on" class="pswp__icn-select-on" /><use class="pswp__icn-shadow pswp__icn-select-off" xlink:href="#pswp__icn-select-off"></use><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" id="pswp__icn-select-off" class="pswp__icn-select-off" />`,
+              size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
+            },
+            onClick: (ev) => this.onControlClick(ev, this.toggleSelect),
+          });
+        }
 
         // Add edit button control if user has permission to use it.
-        if (this.canEdit) {
+        if (this.shouldShowEditButton()) {
           lightbox.pswp.ui.registerElement({
             name: "edit-button",
             className: "pswp__button--edit-button pswp__button--mdi hidden-shared-only", // Sets the icon style/size in lightbox.css.
@@ -1356,12 +1367,7 @@ export default {
           icon: "mdi-image-album",
           text: this.$gettext("Set as Album Cover"),
           disabled: !this.model,
-          visible:
-            this.canManageAlbums &&
-            this.collection &&
-            this.collection instanceof Collection &&
-            !this.model?.Removed &&
-            !this.model?.Archived,
+          visible: this.canManageAlbums && this.collection && this.collection instanceof Collection && !this.model?.Removed && !this.model?.Archived,
           click: () => {
             this.onSetCollectionCover();
           },
@@ -1389,8 +1395,9 @@ export default {
           disabled: !this.model,
           visible:
             this.canArchive &&
-            this.context !== "hidden" &&
-            ((this.context !== "archive" && !this.model?.Archived) || this.model?.Archived === false),
+            this.context !== contexts.Hidden &&
+            this.context !== contexts.BatchEdit &&
+            ((this.context !== contexts.Archive && !this.model?.Archived) || this.model?.Archived === false),
           click: () => {
             this.onArchive();
           },
@@ -1403,8 +1410,9 @@ export default {
           disabled: !this.model,
           visible:
             this.canArchive &&
-            this.context !== "hidden" &&
-            (this.model?.Archived || (this.context === "archive" && this.model?.Archived !== false)),
+            this.context !== contexts.Hidden &&
+            this.context !== contexts.BatchEdit &&
+            (this.model?.Archived || (this.context === contexts.Archive && this.model?.Archived !== false)),
           click: () => {
             this.onRestore();
           },
@@ -1533,6 +1541,8 @@ export default {
     onReset() {
       this.resetControls();
       this.resetModels();
+      this.contextAllowsEdit = true;
+      this.contextAllowsSelect = true;
     },
     // Resets the state of the lightbox controls.
     resetControls() {
@@ -1541,7 +1551,7 @@ export default {
     // Reset the lightbox models and index.
     resetModels() {
       this.collection = null;
-      this.context = "";
+      this.context = contexts.Default;
       this.model = new Thumb();
       this.models = [];
       this.index = 0;
@@ -1738,8 +1748,7 @@ export default {
       // Handle the click and touch events on custom content.
       if (
         ev.target instanceof HTMLMediaElement ||
-        (ev.target instanceof HTMLElement &&
-          (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
+        (ev.target instanceof HTMLElement && (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
       ) {
         // Always stop slideshow after user interaction with the content.
         if (this.slideshow.active) {
@@ -1843,6 +1852,9 @@ export default {
     },
     // Toggles the selection of the current picture in the global photo clipboard.
     toggleSelect() {
+      if (!this.contextAllowsSelect) {
+        return;
+      }
       this.$clipboard.toggle(this.model);
     },
     // Returns the active HTMLMediaElement element in the lightbox, if any.
@@ -1952,12 +1964,15 @@ export default {
           this.close();
           return true;
         case "Period":
+          if (!this.contextAllowsSelect) {
+            return false;
+          }
           this.onShowMenu();
           this.toggleSelect();
           return true;
         case "KeyA":
-          if (this.canArchive && this.context !== "hidden") {
-            if (this.model.Archived || (this.context === "archive" && this.model?.Archived !== false)) {
+          if (this.canArchive && this.context !== contexts.Hidden && this.context !== contexts.BatchEdit) {
+            if (this.model.Archived || (this.context === contexts.Archive && this.model?.Archived !== false)) {
               this.onRestore();
             } else {
               this.onArchive();
@@ -1970,7 +1985,7 @@ export default {
           }
           return true;
         case "KeyE":
-          if (this.canEdit) {
+          if (this.canEdit && this.contextAllowsEdit) {
             this.onEdit();
           }
           return true;
@@ -2002,10 +2017,7 @@ export default {
         return;
       }
 
-      if (
-        this.info &&
-        (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)
-      ) {
+      if (this.info && (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)) {
         return;
       }
 

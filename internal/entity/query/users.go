@@ -19,7 +19,7 @@ func RegisteredUsers() (result entity.Users) {
 }
 
 // CountUsers returns the number of users based on the specified filter options.
-func CountUsers(registered, active bool, roles, excludeRoles []string) (count int) {
+func CountUsers(registered, active bool, includeRoles, excludeRoles []string) (count int) {
 	if !Db().Migrator().HasTable("auth_users") {
 		return 0
 	}
@@ -35,8 +35,8 @@ func CountUsers(registered, active bool, roles, excludeRoles []string) (count in
 		stmt = stmt.Where("(can_login = TRUE OR webdav = TRUE) AND user_name <> ''")
 	}
 
-	if len(roles) > 0 {
-		stmt = stmt.Where("user_role IN (?)", roles)
+	if len(includeRoles) > 0 {
+		stmt = stmt.Where("user_role IN (?)", includeRoles)
 	} else if len(excludeRoles) > 0 {
 		stmt = stmt.Where("user_role NOT IN (?)", excludeRoles)
 	}

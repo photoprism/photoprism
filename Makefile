@@ -117,7 +117,7 @@ show-rev:
 show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
-fmt: fmt-js fmt-go swag-fmt
+fmt: fmt-js fmt-go fmt-swag
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
@@ -416,20 +416,20 @@ test-js:
 	(cd frontend && npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)
@@ -482,10 +482,10 @@ reset-sqlite:
 	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.test.*' \) -delete
 run-test-short:
 	$(info Running short Go tests in parallel mode...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...
 run-test-go:
 	$(info Running all Go tests...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 run-test-hub:
 	$(info Running all Go tests with hub requests...)
 	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
@@ -521,16 +521,16 @@ run-test-photoprism:
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/photoprism/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 test-verbose:
 	$(info Running all Go tests in verbose mode...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m -v ./pkg/... ./internal/...
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
 test-race:
 	$(info Running all Go tests with race detection in verbose mode...)
-	$(GOTEST) -tags="slow,develop" -race -timeout 60m -v ./pkg/... ./internal/...
+	$(GOTEST) -tags="slow,develop" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
 test-coverage:
 	$(info Running all Go tests with code coverage report...)
-	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
+	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
 git-pull:
@@ -769,18 +769,18 @@ docker-preview-oracular:
 	docker pull --platform=arm64 photoprism/develop:oracular
 	docker pull --platform=arm64 photoprism/develop:oracular-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /oracular
-docker-preview-questing:
-	docker pull --platform=amd64 photoprism/develop:questing
-	docker pull --platform=amd64 photoprism/develop:questing-slim
-	docker pull --platform=arm64 photoprism/develop:questing
-	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /questing "-t photoprism/photoprism:preview -t photoprism/photoprism:ubuntu"
 docker-preview-plucky:
 	docker pull --platform=amd64 photoprism/develop:plucky
 	docker pull --platform=amd64 photoprism/develop:plucky-slim
 	docker pull --platform=arm64 photoprism/develop:plucky
 	docker pull --platform=arm64 photoprism/develop:plucky-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /plucky
+docker-preview-questing:
+	docker pull --platform=amd64 photoprism/develop:questing
+	docker pull --platform=amd64 photoprism/develop:questing-slim
+	docker pull --platform=arm64 photoprism/develop:questing
+	docker pull --platform=arm64 photoprism/develop:questing-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /questing
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
@@ -851,18 +851,18 @@ docker-release-oracular:
 	docker pull --platform=arm64 photoprism/develop:oracular
 	docker pull --platform=arm64 photoprism/develop:oracular-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /oracular
-docker-release-questing:
-	docker pull --platform=amd64 photoprism/develop:questing
-	docker pull --platform=amd64 photoprism/develop:questing-slim
-	docker pull --platform=arm64 photoprism/develop:questing
-	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /questing "-t photoprism/photoprism:latest -t photoprism/photoprism:ubuntu"
 docker-release-plucky:
 	docker pull --platform=amd64 photoprism/develop:plucky
 	docker pull --platform=amd64 photoprism/develop:plucky-slim
 	docker pull --platform=arm64 photoprism/develop:plucky
 	docker pull --platform=arm64 photoprism/develop:plucky-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /plucky
+docker-release-questing:
+	docker pull --platform=amd64 photoprism/develop:questing
+	docker pull --platform=amd64 photoprism/develop:questing-slim
+	docker pull --platform=arm64 photoprism/develop:questing
+	docker pull --platform=arm64 photoprism/develop:questing-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /questing
 start-traefik:
 	$(DOCKER_COMPOSE) up -d --wait traefik
 stop-traefik:
@@ -1035,14 +1035,20 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./setup/docker/cloud && packer build digitalocean.json)
+lint: lint-js lint-go
 lint-js:
-	(cd frontend &&	npm run lint)
+	$(info Linting JS code...)
+	$(MAKE) -C frontend lint
+lint-go:
+	$(info Linting Go code...)
+	golangci-lint run --issues-exit-code 0 ./pkg/... ./internal/... ./.../internal/...
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:
-	go fmt ./pkg/... ./internal/... ./cmd/...
+	go fmt ./pkg/... ./internal/... ./cmd/... ./.../internal/...
 	gofmt -w -s pkg internal cmd
 	goimports -w -local "github.com/photoprism" pkg internal cmd
+fmt-swag: swag-fmt
 tidy:
 	go mod tidy
 users:

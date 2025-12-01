@@ -86,11 +86,12 @@ func OAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
-		if frm.ClientID != "" {
+		switch {
+		case frm.ClientID != "":
 			actor = fmt.Sprintf("client %s", clean.Log(frm.ClientID))
-		} else if frm.Username != "" {
+		case frm.Username != "":
 			actor = fmt.Sprintf("user %s", clean.Log(frm.Username))
-		} else if frm.GrantType == authn.GrantPassword {
+		case frm.GrantType == authn.GrantPassword:
 			actor = "unknown user"
 		}
 
@@ -150,17 +151,18 @@ func OAuthToken(router *gin.RouterGroup) {
 
 				authUser, authProvider, authMethod, authErr := entity.Auth(loginForm, nil, c)
 
-				if authProvider.IsClient() {
+				switch {
+				case authProvider.IsClient():
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Denied})
 					AbortInvalidCredentials(c)
 					return
-				} else if authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired) {
+				case authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired):
 					// Ok.
-				} else if authErr != nil {
+				case authErr != nil:
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(authErr)})
 					AbortInvalidCredentials(c)
 					return
-				} else if !authUser.Equal(s.GetUser()) {
+				case !authUser.Equal(s.GetUser()):
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrUserDoesNotMatch.Error()})
 					AbortInvalidCredentials(c)
 					return

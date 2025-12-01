@@ -65,6 +65,10 @@ func (m *Photo) UpdateQuality() error {
 
 	m.PhotoQuality = m.QualityScore()
 
+	if !m.HasID() {
+		return nil
+	}
+
 	return m.Update("PhotoQuality", m.PhotoQuality)
 }
 

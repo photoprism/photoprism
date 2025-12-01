@@ -53,7 +53,6 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(tempDir)
 	savedPath = tempDir
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
@@ -73,6 +72,12 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	if err = c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
+	_ = os.RemoveAll(tempDir)
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

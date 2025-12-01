@@ -5,9 +5,12 @@ package video
 type Profile = string
 
 const (
+	// ProfileBaseline indicates H.264 Baseline profile.
 	ProfileBaseline Profile = "Baseline"
-	ProfileMain     Profile = "Main"
-	ProfileHigh     Profile = "High"
+	// ProfileMain indicates H.264 Main profile.
+	ProfileMain Profile = "Main"
+	// ProfileHigh indicates H.264 High profile.
+	ProfileHigh Profile = "High"
 )
 
 // CodecProfile represents a codec subtype with its standardized ID,

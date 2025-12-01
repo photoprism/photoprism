@@ -199,7 +199,7 @@ func (c *Config) RobotsTxt() ([]byte, error) {
 	} else if fileName := filepath.Join(c.ConfigPath(), "robots.txt"); !fs.FileExists(fileName) {
 		// Do not allow indexing if config/robots.txt does not exist.
 		return robotsTxt, nil
-	} else if robots, robotsErr := os.ReadFile(fileName); robotsErr != nil {
+	} else if robots, robotsErr := os.ReadFile(fileName); robotsErr != nil { //nolint:gosec // robots file path derived from config directory
 		// Log error and do not allow indexing if config/robots.txt cannot be read.
 		log.Debugf("config: failed to read robots.txt file (%s)", clean.Error(robotsErr))
 		return robotsTxt, robotsErr

@@ -94,7 +94,7 @@ func RemoveOrphanSubjects() (removed int64, err error) {
 func CreateMarkerSubjects() (affected int64, err error) {
 	var markers entity.Markers
 
-	if err := Db().
+	if err = Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
 		Where("marker_invalid = FALSE AND marker_type = ?", entity.MarkerFace).
 		Order("marker_name").
@@ -121,14 +121,16 @@ func CreateMarkerSubjects() (affected int64, err error) {
 		}
 
 		name = m.MarkerName
+		m.SubjUID = subj.SubjUID
+		m.MarkerReview = false
 
-		if err := m.Updates(entity.Values{"SubjUID": subj.SubjUID, "MarkerReview": false}); err != nil {
+		if err = m.Updates(entity.Values{"subj_uid": m.SubjUID, "marker_review": m.MarkerReview}); err != nil {
 			return affected, err
 		}
 
 		if m.FaceID == "" {
 			continue
-		} else if err := Db().Model(&entity.Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).Update("SubjUID", subj.SubjUID).Error; err != nil {
+		} else if err = Db().Model(&entity.Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).Update("subj_uid", m.SubjUID).Error; err != nil {
 			return affected, err
 		}
 	}

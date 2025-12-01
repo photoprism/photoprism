@@ -1,3 +1,4 @@
+//nolint:revive,staticcheck,gocritic,gosec // clustering algorithms keep legacy style and use math/rand intentionally
 package alg
 
 import (
@@ -35,7 +36,7 @@ type kmeansClusterer struct {
 	d [][]float64
 }
 
-// Implementation of k-means++ algorithm with online learning
+// KMeans implements the k-means++ clustering algorithm with online learning support.
 func KMeans(iterations, clusters int, distance DistFunc) (HardClusterer, error) {
 	if iterations < 1 {
 		return nil, errZeroIterations
@@ -122,11 +123,9 @@ func (c *kmeansClusterer) Guesses() []int {
 }
 
 func (c *kmeansClusterer) Predict(p []float64) int {
-	var (
-		l int
-		d float64
-		m float64 = c.distance(p, c.m[0])
-	)
+	l := 0
+	m := c.distance(p, c.m[0])
+	var d float64
 
 	for i := 1; i < c.number; i++ {
 		if d = c.distance(p, c.m[i]); d < m {
@@ -141,11 +140,9 @@ func (c *kmeansClusterer) Predict(p []float64) int {
 func (c *kmeansClusterer) Online(observations chan []float64, done chan struct{}) chan *HCEvent {
 	c.mu.Lock()
 
-	var (
-		r    chan *HCEvent = make(chan *HCEvent)
-		l, f int           = len(c.m), len(c.m[0])
-		h    float64       = 1 - c.alpha
-	)
+	r := make(chan *HCEvent)
+	l, f := len(c.m), len(c.m[0])
+	h := 1 - c.alpha
 
 	c.b = make([]int, c.number)
 
@@ -160,7 +157,7 @@ func (c *kmeansClusterer) Online(observations chan []float64, done chan struct{}
 				var (
 					k int
 					n float64
-					m float64 = math.Pow(c.distance(o, c.m[0]), 2)
+					m = math.Pow(c.distance(o, c.m[0]), 2)
 				)
 
 				for i := 1; i < l; i++ {
@@ -226,7 +223,7 @@ func (c *kmeansClusterer) initializeMeansWithData() {
 		d          []float64 = make([]float64, len(c.d))
 	)
 
-	c.m[0] = c.d[rand.IntN(len(c.d)-1)]
+	c.m[0] = c.d[rand.IntN(len(c.d)-1)] //nolint:gosec // pseudo-random seeding is acceptable for clustering
 
 	for i := 1; i < c.number; i++ {
 		s = 0
@@ -240,11 +237,11 @@ func (c *kmeansClusterer) initializeMeansWithData() {
 				}
 			}
 
-			d[j] = math.Pow(l, 2)
+			d[j] = l * l
 			s += d[j]
 		}
 
-		t = rand.Float64() * s
+		t = rand.Float64() * s //nolint:gosec // pseudo-random weighting is acceptable for clustering
 		k = 0
 		for s = d[0]; s < t; s += d[k] {
 			k++

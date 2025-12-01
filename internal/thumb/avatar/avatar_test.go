@@ -34,18 +34,22 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("avatar", tempDir)
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
-	defer c.CloseDb()
 
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	if err = c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
+	_ = os.RemoveAll(tempDir)
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

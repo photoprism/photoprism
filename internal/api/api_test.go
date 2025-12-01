@@ -46,7 +46,6 @@ func TestMain(m *testing.M) {
 	// Init test config.
 	c := config.TestConfig()
 	get.SetConfig(c)
-	defer c.CloseDb()
 
 	// Increase login rate limit for testing.
 	limiter.Login = limiter.NewLimit(1, 10000)
@@ -57,6 +56,10 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
@@ -70,10 +73,6 @@ type CloseableResponseRecorder struct {
 
 func (r *CloseableResponseRecorder) CloseNotify() <-chan bool {
 	return r.closeCh
-}
-
-func (r *CloseableResponseRecorder) closeClient() {
-	r.closeCh <- true
 }
 
 // NewApiTest returns new API test helper.

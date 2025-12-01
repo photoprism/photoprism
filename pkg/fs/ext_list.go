@@ -67,10 +67,8 @@ func (b ExtList) Set(extensions string) {
 		return
 	}
 
-	ext := strings.Split(extensions, ",")
-
-	for i := range ext {
-		b.Add(ext[i])
+	for ext := range strings.SplitSeq(extensions, ",") {
+		b.Add(ext)
 	}
 }
 

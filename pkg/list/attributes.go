@@ -45,9 +45,8 @@ func (list Attr) Strings() []string {
 
 		if s == "" {
 			continue
-		} else if i == 0 {
-			// Skip check.
-		} else if result[i-1] == s {
+		}
+		if i > 0 && result[i-1] == s {
 			continue
 		}
 
@@ -68,13 +67,14 @@ func (list Attr) Strings() []string {
 // Sort sorts the attributes by key.
 func (list Attr) Sort() Attr {
 	sort.Slice(list, func(i, j int) bool {
-		if list[i].Key == list[j].Key {
+		switch {
+		case list[i].Key == list[j].Key:
 			return list[i].Value < list[j].Value
-		} else if list[i].Key == Any {
+		case list[i].Key == Any:
 			return false
-		} else if list[j].Key == Any {
+		case list[j].Key == Any:
 			return true
-		} else {
+		default:
 			return list[i].Key < list[j].Key
 		}
 	})
@@ -122,11 +122,12 @@ func (list Attr) Find(s string) (a KeyValue) {
 	} else {
 		for i := range list {
 			if strings.EqualFold(attr.Key, list[i].Key) {
-				if attr.Value == enum.True && list[i].Value == enum.False {
+				switch {
+				case attr.Value == enum.True && list[i].Value == enum.False:
 					return KeyValue{Key: "", Value: ""}
-				} else if attr.Value == list[i].Value {
+				case attr.Value == list[i].Value:
 					return *list[i]
-				} else if list[i].Value == Any {
+				case list[i].Value == Any:
 					a = *list[i]
 				}
 			} else if list[i].Key == Any && attr.Value != enum.False {

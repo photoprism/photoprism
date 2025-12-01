@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -51,29 +53,39 @@ func getIDInValuesOrZero(values any) (result any) {
 	return 0
 }
 
-// Updates multiple columns in the database.
+// Update modifies a single column on an already persisted keyword and relies on
+// the standard GORM callback to evict the cached instance afterwards.
+func (m *Keyword) Update(attr string, value interface{}) error {
+	if m == nil {
+		return errors.New("keyword must not be nil - you may have found a bug")
+	} else if !m.HasID() {
+		return errors.New("keyword ID must not be empty - you may have found a bug")
+	}
+
+	// Omit FlushCachedKeyword() because this should automatically trigger the AfterUpdate() hook.
+	return UnscopedDb().Model(m).Update(attr, value).Error
+}
+
+// Updates applies a set of column changes to an existing keyword while keeping
+// the cache consistent via the AfterUpdate hook.
 func (m *Keyword) Updates(values interface{}) error {
-	if m.ID == 0 {
+	if values == nil {
+		return nil
+	} else if m == nil {
+		return errors.New("keyword must not be nil - you may have found a bug")
+	} else if !m.HasID() {
 		id := getIDInValuesOrZero(values)
 		if id != uint(0x0) {
 			return UnscopedDb().Model(m).
 				Where("id = ?", id).
 				UpdateColumns(values).Error
 		} else {
-			return errors.New("id value required but not provided")
+			return errors.New("keyword ID must not be empty - you may have found a bug")
 		}
-	} else {
-		return UnscopedDb().Model(m).UpdateColumns(values).Error
 	}
-}
 
-// Update a column in the database.
-func (m *Keyword) Update(attr string, value interface{}) error {
-	if m.ID == 0 {
-		return errors.New("id value required but not provided")
-	} else {
-		return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
-	}
+	// Omit FlushCachedKeyword() because this should automatically trigger the AfterUpdate() hook.
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
@@ -89,16 +101,41 @@ func (m *Keyword) Create() error {
 	return Db().Create(m).Error
 }
 
+// AfterUpdate flushes the cache when the entity is updated.
+func (m *Keyword) AfterUpdate(tx *gorm.DB) (err error) {
+	FlushCachedKeyword(m)
+	return
+}
+
+// AfterDelete flushes the cache when the entity is deleted.
+func (m *Keyword) AfterDelete(tx *gorm.DB) (err error) {
+	FlushCachedKeyword(m)
+	return
+}
+
+// AfterCreate flushes the cache when the entity is created.
+func (m *Keyword) AfterCreate(scope *gorm.Scope) error {
+	FlushCachedKeyword(m)
+	return nil
+}
+
+// HasID reports whether the keyword has already been persisted and assigned
+// a primary key so callers can skip duplicate writes or lookups.
+func (m *Keyword) HasID() bool {
+	if m == nil {
+		return false
+	}
+	return m.ID > 0
+}
+
 // FirstOrCreateKeyword returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateKeyword(m *Keyword) *Keyword {
-	result := Keyword{}
-
-	if err := Db().Where("keyword = ?", m.Keyword).First(&result).Error; err == nil {
-		return &result
+	if result, err := FindKeyword(m.Keyword, true); err == nil {
+		return result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("keyword = ?", m.Keyword).First(&result).Error; err == nil {
-		return &result
+	} else if result, err = FindKeyword(m.Keyword, false); err == nil {
+		return result
 	} else {
 		log.Errorf("keyword: %s (find or create %s)", createErr, m.Keyword)
 	}

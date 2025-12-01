@@ -114,6 +114,12 @@ export default class Page {
     showLogs && console.timeEnd("waitForPhotosToLoad")
   }
 
+  async waitForAlbumsToLoad(delay, close = true){
+    showLogs && console.time("waitForAlbumsToLoad")
+    await this.waitForSpecficEvent(/(album|albums) found/, delay, close);
+    showLogs && console.timeEnd("waitForAlbumsToLoad")
+  }
+
   async waitForSearchToFinish(delay, close = true){
     showLogs && console.time("waitForSearchToFinish")
     await this.waitForSpecficEvent(/(found|contain|empty)/, delay, close);

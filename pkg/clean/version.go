@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-var VersionRegexp = regexp.MustCompile("(\\d+\\.)(\\d+\\.)(\\*|\\d+)")
+// VersionRegexp finds semantic version-like strings.
+var VersionRegexp = regexp.MustCompile(`(\d+\.)(\d+\.)(\*|\d+)`)
 var PostgreSQLVersionRegexp = regexp.MustCompile("PostgreSQL \\d+\\.\\d+(\\.\\d)?")
 
 // Version parses and returns a semantic version string.
@@ -26,4 +27,6 @@ func Version(s string) string {
 			return ""
 		}
 	}
+
+	return ""
 }

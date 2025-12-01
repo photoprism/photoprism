@@ -49,6 +49,26 @@ export const tokenLength = 7;
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
+  static normalizeLabelTitle(s) {
+    if (s === null || s === undefined) return "";
+    return String(s)
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[+_\-]+/g, " ")
+      .replace(/[^a-z0-9 ]+/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  static slugifyLabelTitle(s) {
+    if (s === null || s === undefined) return "";
+    return String(s)
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
   // formatBytes returns a human-readable size string for a byte count.
   static formatBytes(b) {
     if (!b) {
@@ -333,12 +353,7 @@ export default class $util {
     }
 
     // Escape HTML control characters.
-    text = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&apos;");
+    text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 
     // Make URLs clickable.
     text = text.replace(linkRegex, linkFunc);

@@ -13,15 +13,7 @@
         offset="12"
       >
         <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon
-            size="52"
-            color="highlight"
-            variant="elevated"
-            density="comfortable"
-            class="action-menu opacity-95 ma-5"
-          >
+          <v-btn v-bind="props" icon size="52" color="highlight" variant="elevated" density="comfortable" class="action-menu opacity-95 ma-5">
             <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
@@ -47,21 +39,10 @@
           class="action-album"
           @click.stop="dialog.album = true"
         ></v-btn>
-        <v-btn
-          key="action-close"
-          icon="mdi-close"
-          color="grey-darken-2"
-          density="comfortable"
-          class="action-clear"
-          @click.stop="clearClipboard()"
-        ></v-btn>
+        <v-btn key="action-close" icon="mdi-close" color="grey-darken-2" density="comfortable" class="action-clear" @click.stop="clearClipboard()"></v-btn>
       </v-speed-dial>
     </div>
-    <p-photo-album-dialog
-      :visible="dialog.album"
-      @close="dialog.album = false"
-      @confirm="addToAlbum"
-    ></p-photo-album-dialog>
+    <p-photo-album-dialog :visible="dialog.album" @close="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
   </div>
 </template>
 <script>

@@ -29,7 +29,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 ### Architecture & Request Flow
 
 1. **Model Selection** — `Config.Model(ModelType)` returns the top-most enabled entry. When `Engine: ollama`, `ApplyEngineDefaults()` fills in the request/response format, base64 file scheme, and a 720 px resolution unless overridden.  
-2. **Request Build** — `ollamaBuilder.Build` wraps thumbnails with `NewApiRequestOllama`, which encodes them as base64 strings. `Model.Model()` resolves the exact Ollama tag (`gemma3:4b`, `qwen2.5vl:7b`, etc.).  
+2. **Request Build** — `ollamaBuilder.Build` wraps thumbnails with `NewApiRequestOllama`, which encodes them as base64 strings. `Model.GetModel()` resolves the exact Ollama tag (`gemma3:4b`, `qwen2.5vl:7b`, etc.).  
 3. **Transport** — `PerformApiRequest` uses a single HTTP POST (default timeout 10 min). Authentication is optional; provide `Service.Key` if you proxy through an API gateway.  
 4. **Parsing** — `ollamaParser.Parse` converts payloads into `ApiResponse`. It normalizes confidences (`LabelConfidenceDefault = 0.5` when missing), copies NSFW scores, and canonicalizes label names via `normalizeLabelResult`.  
 5. **Persistence** — `entity.SrcOllama` is stamped on labels/captions so UI badges and audits reflect the new source.

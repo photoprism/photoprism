@@ -236,12 +236,12 @@ describe("common/form", () => {
     it("validates text length with labels", () => {
       const requiredText = rules.text(true, 2, 4, "Name");
       expect(requiredText[0]("")).toBe("This field is required");
-      expect(requiredText[1]("a")).toBe("%{s} is too short");
-      expect(requiredText[2]("abcde")).toBe("%{s} is too long");
+      expect(requiredText[1]("a")).toBe("Name is too short");
+      expect(requiredText[2]("abcde")).toBe("Name is too long");
       expect(requiredText[1]("abc")).toBe(true);
       const optionalText = rules.text(false, 2, 4, "Name");
-      expect(optionalText[0]("a")).toBe("%{s} is too short");
-      expect(optionalText[1]("abcde")).toBe("%{s} is too long");
+      expect(optionalText[0]("a")).toBe("Name is too short");
+      expect(optionalText[1]("abcde")).toBe("Name is too long");
       expect(optionalText[0]("abc")).toBe(true);
     });
 

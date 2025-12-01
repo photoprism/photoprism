@@ -285,7 +285,7 @@ func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 	// Set verified timestamp if nil.
 	if valid && m.VerifiedAt == nil {
 		m.VerifiedAt = TimeStamp()
-		err = m.Updates(Values{"VerifiedAt": m.VerifiedAt})
+		err = m.Updates(Values{"verified_at": m.VerifiedAt})
 	}
 
 	// Return result.
@@ -304,7 +304,7 @@ func (m *Passcode) Activate() (err error) {
 		return authn.ErrPasscodeAlreadyActivated
 	} else {
 		m.ActivatedAt = TimeStamp()
-		err = m.Updates(Values{"ActivatedAt": m.ActivatedAt})
+		err = m.Updates(Values{"activated_at": m.ActivatedAt})
 	}
 
 	return err

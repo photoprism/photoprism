@@ -139,7 +139,8 @@ func NormalizeUtcOffset(s string) string {
 func UtcOffset(utc, local time.Time, offset string) string {
 	if offset = NormalizeUtcOffset(offset); offset != "" {
 		return offset
-	} else if utc.IsZero() || local == utc {
+	}
+	if utc.IsZero() || local.Equal(utc) {
 		return ""
 	}
 

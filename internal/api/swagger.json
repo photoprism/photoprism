@@ -880,6 +880,9 @@
                 "archive": {
                     "type": "boolean"
                 },
+                "batchEdit": {
+                    "type": "boolean"
+                },
                 "calendar": {
                     "type": "boolean"
                 },
@@ -4539,6 +4542,12 @@
                 "options": {
                     "$ref": "#/definitions/vision.ApiRequestOptions"
                 },
+                "org": {
+                    "type": "string"
+                },
+                "project": {
+                    "type": "string"
+                },
                 "prompt": {
                     "type": "string"
                 },
@@ -4794,6 +4803,9 @@
                 "format": {
                     "type": "string"
                 },
+                "model": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -4872,26 +4884,6 @@
                 "on-index"
             ],
             "type": "string",
-            "x-enum-comments": {
-                "RunAlways": "Run manually, on-schedule, on-demand, and on-index.",
-                "RunAuto": "Automatically decide when to run based on model type and configuration.",
-                "RunManual": "Only run manually e.g. with the \"vision run\" command.",
-                "RunNever": "Never run the model.",
-                "RunNewlyIndexed": "Run manually amd for newly-indexed pictures.",
-                "RunOnDemand": "Run manually, for newly-indexed pictures, and on configured schedule.",
-                "RunOnIndex": "Run manually and on-index.",
-                "RunOnSchedule": "Run manually and on-schedule."
-            },
-            "x-enum-descriptions": [
-                "Automatically decide when to run based on model type and configuration.",
-                "Never run the model.",
-                "Only run manually e.g. with the \"vision run\" command.",
-                "Run manually, on-schedule, on-demand, and on-index.",
-                "Run manually amd for newly-indexed pictures.",
-                "Run manually, for newly-indexed pictures, and on configured schedule.",
-                "Run manually and on-schedule.",
-                "Run manually and on-index."
-            ],
             "x-enum-varnames": [
                 "RunAuto",
                 "RunNever",
@@ -4912,6 +4904,18 @@
                     "type": "string"
                 },
                 "method": {
+                    "type": "string"
+                },
+                "model": {
+                    "description": "Optional endpoint-specific model override.",
+                    "type": "string"
+                },
+                "org": {
+                    "description": "Optional organization header (e.g. OpenAI).",
+                    "type": "string"
+                },
+                "project": {
+                    "description": "Optional project header (e.g. OpenAI).",
                     "type": "string"
                 },
                 "requestFormat": {

@@ -11,6 +11,8 @@ import (
 type GrantType string
 
 // Standard authentication grant types.
+//
+//nolint:gosec // grant type identifiers are not secrets
 const (
 	GrantUndefined         GrantType = ""
 	GrantCLI               GrantType = "cli"

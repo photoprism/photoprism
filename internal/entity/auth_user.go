@@ -496,7 +496,7 @@ func (m *User) CanUpload() bool {
 	}
 }
 
-// DefaultBasePath returns the default base path of the user based on the user name.
+// DefaultBasePath returns the default base path of the user based on the username.
 func (m *User) DefaultBasePath() string {
 	if s := m.Handle(); s == "" {
 		return ""
@@ -847,7 +847,7 @@ func (m *User) NoScope() bool {
 // UpdateScope updates optional user account scope.
 func (m *User) UpdateScope(scope string) error {
 	m.UserScope = clean.Scope(scope)
-	return m.Updates(Values{"UserScope": m.UserScope})
+	return m.Updates(Values{"user_scope": m.UserScope})
 }
 
 // Attr returns optional user account attributes as sanitized string.
@@ -859,7 +859,7 @@ func (m *User) Attr() string {
 // UpdateAttr updates optional user account attributes.
 func (m *User) UpdateAttr(attr string) error {
 	m.UserAttr = clean.Attr(attr)
-	return m.Updates(Values{"UserAttr": m.UserAttr})
+	return m.Updates(Values{"user_attr": m.UserAttr})
 }
 
 // IsRegistered checks if this user has a registered account with a valid ID, username, and role.
@@ -1226,7 +1226,7 @@ func (m *User) RegenerateTokens() error {
 
 	m.GenerateTokens(true)
 
-	return m.Updates(Values{"PreviewToken": m.PreviewToken, "DownloadToken": m.DownloadToken})
+	return m.Updates(Values{"preview_token": m.PreviewToken, "download_token": m.DownloadToken})
 }
 
 // RefreshShares updates the list of shares.
@@ -1249,7 +1249,7 @@ func (m *User) HasShares() bool {
 	return !m.NoShares()
 }
 
-// HasShare if a uid was shared with the user.
+// HasShare if an uid was shared with the user.
 func (m *User) HasShare(uid string) bool {
 	if m.NotRegistered() || m.NoShares() {
 		return false
@@ -1491,5 +1491,5 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	m.Thumb = thumb
 	m.ThumbSrc = thumbSrc
 
-	return m.Updates(Values{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
+	return m.Updates(Values{"thumb": m.Thumb, "thumb_src": m.ThumbSrc})
 }

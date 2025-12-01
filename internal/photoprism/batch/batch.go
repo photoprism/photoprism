@@ -1,5 +1,8 @@
 /*
-Package batch provides batch editing forms, types and validation.
+Package batch coordinates PhotoPrism’s multi-photo edit workflow by defining
+the PhotosForm schema, helper types for expressing add/remove actions, and the
+validation / persistence helpers (ApplyAlbums, ApplyLabels, SavePhotos, etc.)
+that the API layer uses to safely mutate selections of photos at once.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
@@ -23,3 +26,9 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package batch
+
+import (
+	"github.com/photoprism/photoprism/internal/event"
+)
+
+var log = event.Log

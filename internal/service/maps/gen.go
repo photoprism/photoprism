@@ -1,5 +1,4 @@
 //go:build ignore
-// +build ignore
 
 // This generates countries.go by running "go generate"
 package main
@@ -55,6 +54,7 @@ package maps
 
 // Generated code, do not edit.
 
+// CountryNames maps ISO country codes to localized names.
 var CountryNames = map[string]string{
 {{- range .Countries }}
 	{{ printf "%q" .Code }}: {{ printf "%q" .Name }},

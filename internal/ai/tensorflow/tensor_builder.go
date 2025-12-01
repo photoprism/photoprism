@@ -7,6 +7,7 @@ import (
 	tf "github.com/wamuir/graft/tensorflow"
 )
 
+// ImageTensorBuilder incrementally constructs an image tensor in BHWC or BCHW order.
 type ImageTensorBuilder struct {
 	data       []float32
 	shape      []ShapeComponent
@@ -29,6 +30,7 @@ func shapeLen(c ShapeComponent, res int) int {
 	}
 }
 
+// NewImageTensorBuilder creates a builder for the given photo input definition.
 func NewImageTensorBuilder(input *PhotoInput) (*ImageTensorBuilder, error) {
 
 	if len(input.Shape) != 4 {
@@ -62,6 +64,7 @@ func NewImageTensorBuilder(input *PhotoInput) (*ImageTensorBuilder, error) {
 	}, nil
 }
 
+// Set assigns the normalized RGB values for the pixel at (x,y).
 func (t *ImageTensorBuilder) Set(x, y int, r, g, b float32) {
 	t.data[t.flatIndex(x, y, t.rIndex)] = r
 	t.data[t.flatIndex(x, y, t.gIndex)] = g
@@ -93,6 +96,7 @@ func (t *ImageTensorBuilder) flatIndex(x, y, c int) int {
 	return idx
 }
 
+// BuildTensor materializes the underlying data into a TensorFlow tensor.
 func (t *ImageTensorBuilder) BuildTensor() (*tf.Tensor, error) {
 
 	arr := make([][][][]float32, shapeLen(t.shape[0], t.resolution))

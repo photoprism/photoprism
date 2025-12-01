@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	// MimeTypeUnknown represents an unknown mime type.
 	MimeTypeUnknown = ""
 )
 

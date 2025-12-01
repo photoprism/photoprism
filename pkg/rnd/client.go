@@ -1,6 +1,7 @@
 package rnd
 
 const (
+	// ClientSecretLength defines the length of generated client secrets.
 	ClientSecretLength = 32
 )
 

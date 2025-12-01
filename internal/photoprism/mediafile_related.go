@@ -83,27 +83,26 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 
 		// Set main file.
-		if result.Main == nil && f.IsPreviewImage() {
+		switch {
+		case result.Main == nil && f.IsPreviewImage():
 			result.Main = f
-		} else if f.IsRaw() {
+		case f.IsRaw():
 			result.Main = f
-		} else if f.IsVector() {
+		case f.IsVector():
 			result.Main = f
-		} else if f.IsDocument() {
+		case f.IsDocument():
 			result.Main = f
-		} else if f.IsHeic() {
+		case f.IsHeic():
 			isHeic = true
 			result.Main = f
-		} else if f.IsHeif() {
+		case f.IsHeif():
 			result.Main = f
-		} else if f.IsImage() && !f.IsPreviewImage() && !f.IsThumb() {
+		case f.IsImage() && !f.IsPreviewImage() && !f.IsThumb():
 			result.Main = f
-		} else if f.IsVideo() && !isHeic {
+		case f.IsVideo() && !isHeic:
 			result.Main = f
-		} else if result.Main != nil && f.IsPreviewImage() {
-			if result.Main.IsPreviewImage() && len(result.Main.FileName()) > len(f.FileName()) {
-				result.Main = f
-			}
+		case result.Main != nil && f.IsPreviewImage() && result.Main.IsPreviewImage() && len(result.Main.FileName()) > len(f.FileName()):
+			result.Main = f
 		}
 
 		result.Files = append(result.Files, f)

@@ -31,7 +31,7 @@ func FromRequest(hash, area string, size Size, thumbPath string) (fileName strin
 	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area, fs.ExtJpeg)
 	cropName := filepath.Join(filepath.Dir(thumbName), cropBase)
 
-	imageBuffer, err := os.ReadFile(thumbName)
+	imageBuffer, err := os.ReadFile(thumbName) //nolint:gosec // thumbName resolved from validated cache path
 
 	if err != nil {
 		return "", err

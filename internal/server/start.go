@@ -41,7 +41,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Set web server mode.
 	if conf.HttpMode() != "" {
 		gin.SetMode(conf.HttpMode())
-	} else if conf.Debug() == false {
+	} else if !conf.Debug() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -154,7 +154,7 @@ func Start(ctx context.Context, conf *config.Config) {
 
 		// Check if the Unix socket already exists and delete it if the force flag is set.
 		if fs.SocketExists(unixSocket.Path) {
-			if txt.Bool(unixSocket.Query().Get("force")) == false {
+			if !txt.Bool(unixSocket.Query().Get("force")) {
 				Fail("server: %s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
 				return
 			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil {
@@ -278,7 +278,15 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 	var g errgroup.Group
 
 	g.Go(func() error {
-		return http.ListenAndServe(fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()), m.HTTPHandler(http.HandlerFunc(redirect)))
+		redirectSrv := &http.Server{
+			Addr:              fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
+			Handler:           m.HTTPHandler(http.HandlerFunc(redirect)),
+			ReadHeaderTimeout: time.Minute,
+			ReadTimeout:       5 * time.Second,
+			WriteTimeout:      10 * time.Second,
+		}
+
+		return redirectSrv.ListenAndServe()
 	})
 
 	g.Go(func() error {

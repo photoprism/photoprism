@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// nolint:unused // kept for potential platform-specific filesystem filtering
 func findMounts(mounts []Mount, path string) ([]Mount, error) {
 	var err error
 	path, err = filepath.Abs(path)

@@ -36,7 +36,6 @@ func TestMain(m *testing.M) {
 	dsn.SetDSNToEnv(dsname)
 
 	c := config.TestConfig()
-	defer c.CloseDb()
 
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
@@ -47,6 +46,10 @@ func TestMain(m *testing.M) {
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)

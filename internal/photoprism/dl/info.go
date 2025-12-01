@@ -59,8 +59,8 @@ type Info struct {
 	ChapterNumber float64 `json:"chapter_number"` // Number of the chapter the video belongs to
 	ChapterID     string  `json:"chapter_id"`     // Id of the chapter the video belongs to
 
-	// Available for the video that is an episode of some series or programme:
-	Series        string  `json:"series"`         // Title of the series or programme the video episode belongs to
+	// Available for the video that is an episode of some series or program:
+	Series        string  `json:"series"`         // Title of the series or program the video episode belongs to
 	Season        string  `json:"season"`         // Title of the season the video episode belongs to
 	SeasonNumber  float64 `json:"season_number"`  // Number of the season the video episode belongs to
 	SeasonID      string  `json:"season_id"`      // Id of the season the video episode belongs to
@@ -171,12 +171,12 @@ func infoFromURL(
 
 		if options.PlaylistStart > 0 {
 			cmd.Args = append(cmd.Args,
-				"--playlist-start", strconv.Itoa(int(options.PlaylistStart)),
+				"--playlist-start", strconv.FormatUint(uint64(options.PlaylistStart), 10),
 			)
 		}
 		if options.PlaylistEnd > 0 {
 			cmd.Args = append(cmd.Args,
-				"--playlist-end", strconv.Itoa(int(options.PlaylistEnd)),
+				"--playlist-end", strconv.FormatUint(uint64(options.PlaylistEnd), 10),
 			)
 		}
 		if options.FlatPlaylist {
@@ -258,17 +258,21 @@ func infoFromURL(
 
 	get := func(url string) (*http.Response, error) {
 		c := http.DefaultClient
+
 		if options.HttpClient != nil {
 			c = options.HttpClient
 		}
 
-		r, err := http.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			return nil, err
+		r, httpErr := http.NewRequest(http.MethodGet, url, nil)
+
+		if httpErr != nil {
+			return nil, httpErr
 		}
+
 		for k, v := range info.HTTPHeaders {
 			r.Header.Set(k, v)
 		}
+
 		return c.Do(r)
 	}
 
@@ -276,7 +280,7 @@ func infoFromURL(
 		resp, respErr := get(info.Thumbnail)
 		if respErr == nil {
 			buf, _ := io.ReadAll(resp.Body)
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			info.ThumbnailBytes = buf
 		}
 	}
@@ -293,7 +297,7 @@ func infoFromURL(
 				resp, respErr := get(subtitle.URL)
 				if respErr == nil {
 					buf, _ := io.ReadAll(resp.Body)
-					resp.Body.Close()
+					_ = resp.Body.Close()
 					subtitles[i].Bytes = buf
 				}
 			}
@@ -326,6 +330,19 @@ func infoFromURL(
 			}
 		}
 		info.Entries = filteredEntries
+	}
+
+	playlistResponse := info.Type == "playlist" || info.Type == "multi_video"
+	playlistRequested := options.Type == TypePlaylist || options.Type == TypeChannel
+
+	if (playlistRequested || playlistResponse) && len(info.Entries) == 0 {
+		missingErr := ErrPlaylistEmpty
+		if errMessage != "" {
+			missingErr = fmt.Errorf("%w: %s", ErrPlaylistEmpty, errMessage)
+		} else if cmdErr != nil {
+			missingErr = fmt.Errorf("%w: %s", ErrPlaylistEmpty, cmdErr)
+		}
+		return Info{}, nil, missingErr
 	}
 
 	return info, stdoutBuf.Bytes(), nil

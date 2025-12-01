@@ -19,16 +19,19 @@ func ApplyOptionsUpdate(conf *config.Config, update cluster.OptionsUpdate) (bool
 	}
 
 	fileName := conf.OptionsYaml()
+
 	if err := fs.MkdirAll(filepath.Dir(fileName)); err != nil {
 		return false, err
 	}
 
 	var existing map[string]any
+
 	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
+		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec
 			_ = yaml.Unmarshal(b, &existing)
 		}
 	}
+
 	if existing == nil {
 		existing = make(map[string]any)
 	}
@@ -38,11 +41,12 @@ func ApplyOptionsUpdate(conf *config.Config, update cluster.OptionsUpdate) (bool
 	})
 
 	b, err := yaml.Marshal(existing)
+
 	if err != nil {
 		return false, err
 	}
 
-	if err := os.WriteFile(fileName, b, fs.ModeFile); err != nil {
+	if err = os.WriteFile(fileName, b, fs.ModeFile); err != nil {
 		return false, err
 	}
 

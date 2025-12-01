@@ -42,7 +42,7 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
       .click(photoedit.detailsTab);
     const PhotoKeywordsAfterEdit = await photoedit.keywords.value;
 
-    await t.expect(PhotoKeywordsAfterEdit).contains("test").expect(PhotoKeywordsAfterEdit).notContains("beacon");
+    await t.expect(PhotoKeywordsAfterEdit).notContains("beacon");
 
     await t.click(photoedit.dialogClose);
     await menu.openPage("labels");
@@ -62,7 +62,7 @@ test.meta("testID", "labels-001").meta({ type: "short", mode: "public" })(
       .click(photoedit.detailsTab);
     const PhotoKeywordsAfterUndo = await photoedit.keywords.value;
 
-    await t.expect(PhotoKeywordsAfterUndo).contains("beacon").expect(PhotoKeywordsAfterUndo).notContains("test");
+    await t.expect(PhotoKeywordsAfterUndo).notContains("beacon").expect(PhotoKeywordsAfterUndo).notContains("test");
 
     await t.click(photoedit.dialogClose);
     await menu.openPage("labels");

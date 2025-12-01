@@ -27,16 +27,18 @@ const ThemeUri = "/_theme"
 // DefaultIndexSchedule defines the default indexing schedule in cron format.
 const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
 
-// DefaultAutoIndexDelay and DefaultAutoImportDelay set the default safety delay duration
-// before starting to index/import in the background.
+// DefaultAutoIndexDelay sets the default delay (in seconds) before background indexing starts.
 const DefaultAutoIndexDelay = 300 // 5 Minutes
+// DefaultAutoImportDelay sets the default delay (in seconds) before background imports start (-1 disables).
 const DefaultAutoImportDelay = -1 // Disabled
 
-// MinWakeupInterval and MaxWakeupInterval limit the interval duration
-// in which the background worker can be invoked.
-const MinWakeupInterval = time.Minute             // 1 Minute
-const MaxWakeupInterval = time.Hour * 24          // 1 Day
+// MinWakeupInterval is the minimum allowed interval for the background worker.
+const MinWakeupInterval = time.Minute // 1 Minute
+// MaxWakeupInterval is the maximum allowed interval for the background worker.
+const MaxWakeupInterval = time.Hour * 24 // 1 Day
+// DefaultWakeupIntervalSeconds is the default worker interval in seconds.
 const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
+// DefaultWakeupInterval is the default worker interval as a duration.
 const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
 
 // MegaByte defines a megabyte in bytes.

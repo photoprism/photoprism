@@ -29,7 +29,7 @@ func WriteFile(fileName string, data []byte, perm os.FileMode) error {
 		}
 	}
 
-	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, perm)
+	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, perm) //nolint:gosec // caller-controlled path; intended write
 
 	if err != nil {
 		return err
@@ -68,11 +68,14 @@ func WriteFileFromReader(fileName string, reader io.Reader) (err error) {
 
 	var file *os.File
 
-	if file, err = os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, ModeFile); err != nil {
+	if file, err = os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, ModeFile); err != nil { //nolint:gosec // caller-controlled path; intended write
 		return err
 	}
 
-	_, err = io.Copy(file, reader)
+	buf := getCopyBuffer()
+	defer putCopyBuffer(buf)
+
+	_, err = io.CopyBuffer(file, reader, buf)
 
 	if closeErr := file.Close(); closeErr != nil && err == nil {
 		err = closeErr

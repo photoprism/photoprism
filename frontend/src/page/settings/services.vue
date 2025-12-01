@@ -20,29 +20,13 @@
             </button>
           </td>
           <td class="text-center">
-            <v-btn
-              icon
-              density="comfortable"
-              variant="plain"
-              :ripple="false"
-              class="action-toggle-share"
-              @click.stop.prevent="editSharing(props.item)"
-            >
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-share" @click.stop.prevent="editSharing(props.item)">
               <v-icon :icon="props.item.AccShare ? 'mdi-check' : 'mdi-cog'" color="surface-variant"></v-icon>
             </v-btn>
           </td>
           <td class="text-center">
-            <v-btn
-              icon
-              density="comfortable"
-              variant="plain"
-              :ripple="false"
-              class="action-toggle-sync"
-              @click.stop.prevent="editSync(props.item)"
-            >
-              <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError"
-                >mdi-alert
-              </v-icon>
+            <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
+              <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
               <v-icon v-else-if="props.item.AccSync" color="surface-variant">mdi-sync</v-icon>
               <v-icon v-else color="surface-variant">mdi-sync-off</v-icon>
             </v-btn>
@@ -76,11 +60,7 @@
     <div class="pa-2">
       <p class="text-caption py-1 clickable" @click.stop.prevent="webdavDialog">
         {{ $gettext(`Note:`) }}
-        {{
-          $gettext(
-            `WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. `
-          )
-        }}
+        {{ $gettext(`WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. `) }}
         {{
           $gettext(
             `This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. `
@@ -88,13 +68,7 @@
         }}
       </p>
 
-      <v-form
-        ref="form"
-        validate-on="invalid-input"
-        class="p-form-settings"
-        accept-charset="UTF-8"
-        @submit.prevent="add"
-      >
+      <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="add">
         <div class="action-buttons">
           <v-btn
             v-if="user.hasWebDAV()"
@@ -109,14 +83,7 @@
             <v-icon end>mdi-swap-horizontal</v-icon>
           </v-btn>
 
-          <v-btn
-            color="highlight"
-            class="compact"
-            :block="$vuetify.display.xs"
-            :disabled="isPublic || isDemo"
-            variant="flat"
-            @click.stop="add"
-          >
+          <v-btn color="highlight" class="compact" :block="$vuetify.display.xs" :disabled="isPublic || isDemo" variant="flat" @click.stop="add">
             {{ $gettext(`Connect`) }}
             <v-icon icon="mdi-plus" end></v-icon>
           </v-btn>
@@ -125,12 +92,7 @@
     </div>
 
     <p-service-add :visible="dialog.add" @close="close('add')" @confirm="onAdded"></p-service-add>
-    <p-service-remove
-      :visible="dialog.remove"
-      :model="model"
-      @close="close('remove')"
-      @confirm="onRemoved"
-    ></p-service-remove>
+    <p-service-remove :visible="dialog.remove" :model="model" @close="close('remove')" @confirm="onRemoved"></p-service-remove>
     <p-service-edit
       :visible="dialog.edit"
       :model="model"

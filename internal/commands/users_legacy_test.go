@@ -14,7 +14,7 @@ func TestUsersLegacyCommand(t *testing.T) {
 		output, err := RunWithTestContext(UsersLegacyCommand, []string{""})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		// remove spaces as this test will fail if there are records in the table due to dynamic sizing of headings
 		var result strings.Builder

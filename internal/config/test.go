@@ -47,7 +47,7 @@ func testDataPath(assetsPath string) string {
 
 // PkgNameRegexp normalizes database file names by stripping unsupported
 // characters from the Go package identifier supplied by tests.
-var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
+var PkgNameRegexp = regexp.MustCompile(`[^a-zA-Z\-_]+`)
 
 // NewTestOptions builds fully-populated Options suited for backend tests. It
 // creates an isolated storage directory under storage/testdata (or the
@@ -339,17 +339,17 @@ func NewTestConfig(dbName string) *Config {
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
 
 	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", err.Error())
 	}
 
 	// Save settings next to the test config path, reusing any existing
 	// `.yaml`/`.yml` variant so the tests mirror production behavior.
 	if err := s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", err.Error())
 	}
 
 	if err := c.Init(); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", err.Error())
 	}
 
 	if err := c.InitializeTestData(); err != nil {
@@ -420,6 +420,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("import-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("temp-path", config.OriginalsPath, "doc")
+	globalSet.String("defaults-yaml", config.DefaultsYaml, "doc")
 	globalSet.String("cluster-uuid", config.ClusterUUID, "doc")
 	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.Int("backup-retain", config.BackupRetain, "doc")
@@ -456,6 +457,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("import-path", config.ImportPath))
 	LogErr(c.Set("cache-path", config.CachePath))
 	LogErr(c.Set("temp-path", config.TempPath))
+	LogErr(c.Set("defaults-yaml", config.DefaultsYaml))
 	LogErr(c.Set("backup-path", config.BackupPath))
 	LogErr(c.Set("backup-retain", strconv.Itoa(config.BackupRetain)))
 	LogErr(c.Set("backup-schedule", config.BackupSchedule))

@@ -35,8 +35,6 @@ func TestMain(m *testing.M) {
 		driver,
 		dsn)
 
-	defer db.Close()
-
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
 	code = testextras.ValidateDBErrors(db.Db(), log, beforeTimestamp, code)
@@ -44,6 +42,8 @@ func TestMain(m *testing.M) {
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
 	// Remove temporary SQLite files after running the tests.
+	db.Close()
+
 	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)

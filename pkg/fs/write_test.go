@@ -131,7 +131,7 @@ func TestWriteFileFromReader(t *testing.T) {
 		assert.NoError(t, writeErr)
 		assert.True(t, unixTime >= time.Now().Unix())
 
-		fileReader, readerErr := os.Open(filePath1)
+		fileReader, readerErr := os.Open(filePath1) //nolint:gosec // test helper reads temp file
 		assert.NoError(t, readerErr)
 
 		fileErr := WriteFileFromReader(filePath2, fileReader)
@@ -174,7 +174,7 @@ func TestCacheFileFromReader(t *testing.T) {
 		assert.NoError(t, writeErr)
 		assert.True(t, unixTime >= time.Now().Unix())
 
-		fileReader, readerErr := os.Open(filePath1)
+		fileReader, readerErr := os.Open(filePath1) //nolint:gosec // test helper reads temp file
 		assert.NoError(t, readerErr)
 
 		cacheFile, cacheErr := CacheFileFromReader(filePath2, fileReader)
@@ -210,7 +210,7 @@ func TestWriteFile_Truncates(t *testing.T) {
 	p := filepath.Join(dir, "f.txt")
 	assert.NoError(t, os.WriteFile(p, []byte("LONGDATA"), ModeFile))
 	assert.NoError(t, WriteFile(p, []byte("short"), ModeFile))
-	b, err := os.ReadFile(p)
+	b, err := os.ReadFile(p) //nolint:gosec // test helper reads temp file
 	assert.NoError(t, err)
 	assert.Equal(t, "short", string(b))
 }

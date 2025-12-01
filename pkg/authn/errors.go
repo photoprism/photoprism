@@ -81,7 +81,7 @@ var (
 	ErrInvalidPassword     = errors.New("invalid password")
 	ErrPasswordRequired    = errors.New("password required")
 	ErrPasswordTooShort    = errors.New("password is too short")
-	ErrPasswordTooLong     = errors.New(fmt.Sprintf("password must have less than %d characters", txt.ClipPassword))
+	ErrPasswordTooLong     = fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
 	ErrPasswordsDoNotMatch = errors.New("passwords do not match")
 )
 

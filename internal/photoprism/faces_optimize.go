@@ -22,7 +22,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 }
 
 // OptimizeFor optimizes the face lookup table for the given subject UID (or all when empty).
-func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err error) {
+func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
 		return result, fmt.Errorf("face recognition is disabled")
 	}
@@ -35,14 +35,14 @@ func (w *Faces) OptimizeFor(subj_uid string) (result FacesOptimizeResult, err er
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
-		if faces, err = query.ManuallyAddedFaces(false, false, subj_uid); err != nil {
+		if faces, err = query.ManuallyAddedFaces(false, false, subjUID); err != nil {
 			return result, err
 		} else if n = len(faces) - 1; n < 1 {
 			// Need at least 2 faces to optimize.
 			break
 		}
 
-		log.Debugf("faces: optimize for %s itr %d n %d", subj_uid, i, n)
+		log.Debugf("faces: optimize for %s itr %d n %d", subjUID, i, n)
 
 		// Find and merge matching faces.
 		for j := 0; j <= n; j++ {

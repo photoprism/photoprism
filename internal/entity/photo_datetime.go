@@ -150,7 +150,7 @@ func (m *Photo) UpdateDateFields() {
 		m.PhotoYear = UnknownYear
 		m.PhotoMonth = UnknownMonth
 		m.PhotoDay = UnknownDay
-	} else if m.TakenSrc != SrcManual {
+	} else if m.TakenSrc != SrcManual && m.TakenSrc != SrcBatch {
 		m.PhotoYear = m.TakenAtLocal.Year()
 		m.PhotoMonth = int(m.TakenAtLocal.Month())
 		m.PhotoDay = m.TakenAtLocal.Day()

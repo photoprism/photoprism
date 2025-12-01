@@ -25,6 +25,7 @@ func parseCommaSeparatedValues(values string) FilterValues {
 }
 
 // validateGroups validates the parsed group maps.
+// nolint:unused // reserved for future validation hooks
 func validateGroups(m FilterValues) error {
 	for k := range m {
 		found := slices.Contains(groups, k)

@@ -15,12 +15,21 @@ export default class Page {
 
     this.locationAction = Selector(".input-coordinates i.action-map", { timeout: 15000 });
     this.locationSearch = Selector("div.p-location-dialog .v-autocomplete", { timeout: 15000 });
-    this.locationClear = Selector(".input-coordinates i.action-clear", { timeout: 15000 });
+    this.locationClear = Selector(".input-coordinates i.action-delete", { timeout: 15000 });
     this.locationUndo = Selector("div.p-location-dialog .input-coordinates i.action-undo", { timeout: 15000 });
     this.locationInput = Selector("div.p-location-dialog .input-coordinates input", { timeout: 15000 });
     this.locationConfirm = Selector("div.p-location-dialog button.action-confirm", { timeout: 15000 });
     this.locationCancel = Selector("div.p-location-dialog button.action-cancel", { timeout: 15000 });
     this.locationMarker = Selector("div.maplibregl-marker", { timeout: 15000 });
+
+    this.batchDialog = Selector("div.v-dialog--batch-edit");
+    this.batchDialogTitle = Selector("div.v-dialog--batch-edit div.v-toolbar-title");
+    this.batchDialogPreview = Selector("div.v-dialog--batch-edit div.preview");
+    this.batchDialogCloseAction = Selector("div.v-dialog--batch-edit div.action-buttons button.action-close");
+    this.batchDialogApplyAction = Selector("div.v-dialog--batch-edit div.action-buttons button.action-approve");
+    this.batchDialogToolbarCloseAction = Selector("div.v-dialog--batch-edit header.v-toolbar button.action-close");
+    this.batchToggleAllCheckbox = Selector("div.v-dialog--batch-edit .toggle-all div.v-selection-control__input");
+    this.batchToggleSelectCheckbox = Selector("div.v-dialog--batch-edit .toggle-select div.v-selection-control__input");
 
     this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", {
       timeout: 15000,
@@ -44,9 +53,9 @@ export default class Page {
     this.month = Selector(".input-month input", { timeout: 15000 });
     this.year = Selector(".input-year input", { timeout: 15000 });
     this.timezone = Selector(".input-timezone input", { timeout: 15000 });
-    this.dayValue = Selector(".input-day .v-combobox__selection", { timeout: 15000 });
-    this.monthValue = Selector(".input-month .v-combobox__selection", { timeout: 15000 });
-    this.yearValue = Selector(".input-year .v-combobox__selection", { timeout: 15000 });
+    this.dayValue = Selector(".input-day .v-autocomplete__selection", { timeout: 15000 });
+    this.monthValue = Selector(".input-month .v-autocomplete__selection", { timeout: 15000 });
+    this.yearValue = Selector(".input-year .v-autocomplete__selection", { timeout: 15000 });
     this.timezoneValue = Selector(".input-timezone .v-autocomplete__selection", { timeout: 15000 });
     this.altitude = Selector(".input-altitude input", { timeout: 15000 });
     this.countryValue = Selector(".input-country .v-autocomplete__selection", { timeout: 15000 });
@@ -86,7 +95,7 @@ export default class Page {
 
     this.downloadFile = Selector("button.action-download", { timeout: 15000 });
     this.unstackFile = Selector(".action-unstack", { timeout: 15000 });
-    this.deleteFile = Selector(".action-delete", { timeout: 15000 });
+    this.deleteFile = Selector("div.p-tab-photo-files .action-delete", { timeout: 15000 });
     this.makeFilePrimary = Selector(".action-primary", { timeout: 15000 });
     this.toggleExpandFile = Selector("button.v-expansion-panel-title", { timeout: 15000 });
 

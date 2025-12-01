@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/process"
 )
@@ -32,8 +31,7 @@ func StopServer(router *gin.RouterGroup) {
 			return
 		}
 
-		var options *config.Options
-		options = conf.Options()
+		options := conf.Options()
 
 		// Trigger restart.
 		//

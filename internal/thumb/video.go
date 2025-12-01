@@ -14,15 +14,13 @@ var VideoSizes = SizeList{
 
 // VideoSize returns the largest video size type for the given width limit.
 func VideoSize(limit int) Size {
-	if limit < 0 {
-		// Return maximum size.
-		return Sizes[Fit7680]
-	} else if limit == 0 {
-		// Return default size.
-		return Sizes[Fit4096]
-	} else if limit <= 720 {
-		// Return minimum size.
-		return Sizes[Fit720]
+	switch {
+	case limit < 0:
+		return Sizes[Fit7680] // maximum
+	case limit == 0:
+		return Sizes[Fit4096] // default
+	case limit <= 720:
+		return Sizes[Fit720] // minimum
 	}
 
 	// Find match.

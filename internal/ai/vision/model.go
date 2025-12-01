@@ -34,6 +34,7 @@ var (
 type Model struct {
 	Type          ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
 	Default       bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
+	Model         string                `yaml:"Model,omitempty" json:"model,omitempty"`
 	Name          string                `yaml:"Name,omitempty" json:"name,omitempty"`
 	Version       string                `yaml:"Version,omitempty" json:"version,omitempty"`
 	Engine        ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
@@ -59,43 +60,55 @@ type Model struct {
 // Models represents a set of computer vision models.
 type Models []*Model
 
-// Model returns the parsed and normalized identifier, name, and version
-// strings. Nil receivers return empty values so callers can destructure the
-// tuple without additional nil checks.
-func (m *Model) Model() (model, name, version string) {
+// GetModel returns the normalized model identifier, name, and version strings
+// used in service requests. Callers can always destructure the tuple because
+// nil receivers return empty values.
+func (m *Model) GetModel() (model, name, version string) {
 	if m == nil {
 		return "", "", ""
 	}
 
-	// Return empty identifier string if no name was set.
-	if m.Name == "" {
-		return "", "", clean.TypeLowerDash(m.Version)
-	}
-
-	// Normalize model name.
+	// Normalise the configured values.
 	name = clean.TypeLower(m.Name)
-
-	// Split name to check if it contains the version.
-	s := strings.SplitN(name, ":", 2)
-
-	// Return if name contains both model name and version.
-	if len(s) == 2 && s[0] != "" && s[1] != "" {
-		return name, s[0], s[1]
-	}
-
-	// Normalize model version.
 	version = clean.TypeLowerDash(m.Version)
 
-	// Default to "latest" if no specific version was set.
+	// Build a base name from the highest-priority override:
+	// 1) Service-specific override (expanded for env vars)
+	// 2) Model-specific override
+	// 3) Declarative model name
+	serviceModel := m.Service.GetModel()
+	switch {
+	case serviceModel != "":
+		name = serviceModel
+	case strings.TrimSpace(m.Model) != "":
+		name = clean.TypeLower(m.Model)
+	}
+
+	// Return if no model is configured.
+	if name == "" {
+		return "", "", ""
+	}
+
+	// Split "name:version" strings so callers can access versioned models
+	// without repeating parsing logic at each call site.
+	if parts := strings.SplitN(name, ":", 2); len(parts) == 2 && parts[0] != "" && parts[1] != "" {
+		name = parts[0]
+		version = parts[1]
+	}
+
+	// Default to "latest" for non-OpenAI engines when no version was set.
 	if version == "" {
 		version = VersionLatest
 	}
 
-	// Create model identifier from model name and version.
-	model = strings.Join([]string{s[0], version}, ":")
-
-	// Return normalized model identifier, name, and version.
-	return model, name, version
+	switch m.Engine {
+	case openai.EngineName:
+		return name, name, ""
+	case ollama.EngineName:
+		return strings.Join([]string{name, version}, ":"), name, version
+	default:
+		return name, name, version
+	}
 }
 
 // IsDefault reports whether the model refers to one of the built-in defaults.
@@ -142,6 +155,19 @@ func (m *Model) Endpoint() (uri, method string) {
 		return "", ""
 	} else {
 		return fmt.Sprintf("%s/%s", ServiceUri, serviceType), ServiceMethod
+	}
+}
+
+// ApplyService updates the ApiRequest with service-specific
+// values when configured.
+func (m *Model) ApplyService(apiRequest *ApiRequest) {
+	if m == nil || apiRequest == nil {
+		return
+	}
+
+	if m.Engine == openai.EngineName {
+		apiRequest.Org = m.Service.EndpointOrg()
+		apiRequest.Project = m.Service.EndpointProject()
 	}
 }
 
@@ -347,6 +373,10 @@ func mergeOptionDefaults(target, defaults *ApiRequestOptions) {
 		target.TopP = defaults.TopP
 	}
 
+	if target.Temperature <= 0 && defaults.Temperature > 0 {
+		target.Temperature = defaults.Temperature
+	}
+
 	if len(target.Stop) == 0 && len(defaults.Stop) > 0 {
 		target.Stop = append([]string(nil), defaults.Stop...)
 	}
@@ -377,9 +407,7 @@ func normalizeOptions(opts *ApiRequestOptions) {
 		return
 	}
 
-	if opts.Temperature <= 0 {
-		opts.Temperature = DefaultTemperature
-	} else if opts.Temperature > MaxTemperature {
+	if opts.Temperature > MaxTemperature {
 		opts.Temperature = MaxTemperature
 	}
 }
@@ -420,7 +448,7 @@ func (m *Model) EngineName() string {
 		case ApiFormatVision, "":
 			return EngineVision
 		default:
-			return strings.ToLower(string(format))
+			return strings.ToLower(format)
 		}
 	}
 
@@ -488,6 +516,7 @@ func (m *Model) SchemaTemplate() string {
 				if path == "" {
 					path = envFile
 				}
+				// #nosec G304 path comes from validated config/env
 				if data, err := os.ReadFile(path); err != nil {
 					log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(path), err)
 				} else {
@@ -505,6 +534,7 @@ func (m *Model) SchemaTemplate() string {
 			if path == "" {
 				path = m.SchemaFile
 			}
+			// #nosec G304 schema file path provided via config
 			if data, err := os.ReadFile(path); err != nil {
 				log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(path), err)
 			} else {
@@ -757,6 +787,6 @@ func (m *Model) Clone() *Model {
 		return nil
 	}
 
-	c := *m
+	c := *m //nolint:govet // Model contains sync.Once; shallow copy used for reporting
 	return &c
 }

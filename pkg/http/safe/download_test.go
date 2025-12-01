@@ -21,7 +21,7 @@ func TestSafeDownload_OK(t *testing.T) {
 	if err := Download(dest, ts.URL, &Options{Timeout: 5 * time.Second, MaxSizeBytes: 1024, AllowPrivate: true}); err != nil {
 		t.Fatal(err)
 	}
-	b, err := os.ReadFile(dest)
+	b, err := os.ReadFile(dest) //nolint:gosec // test reads temp file
 	if err != nil || string(b) != "hello" {
 		t.Fatalf("unexpected content: %v %q", err, string(b))
 	}

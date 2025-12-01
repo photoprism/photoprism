@@ -98,12 +98,13 @@ func (r LabelResult) ToClassify(labelSrc string) classify.Label {
 		uncertainty = int(math.RoundToEven(float64(100 - r.Confidence*100)))
 	}
 
-	// Default to "image" of no source name is provided.
-	if labelSrc != entity.SrcAuto {
+	// Default to "image" if no source name is provided.
+	switch {
+	case labelSrc != entity.SrcAuto:
 		labelSrc = clean.ShortTypeLower(labelSrc)
-	} else if r.Source != "" {
+	case r.Source != "":
 		labelSrc = clean.ShortTypeLower(r.Source)
-	} else {
+	default:
 		labelSrc = entity.SrcImage
 	}
 

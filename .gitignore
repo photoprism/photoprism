@@ -27,7 +27,7 @@
 __pycache__
 venv
 .venv
-.env
+.env*
 .tmp
 .nv
 .eslintcache

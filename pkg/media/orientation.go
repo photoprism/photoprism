@@ -7,7 +7,9 @@ import "strings"
 type Orientation = string
 
 const (
-	KeepOrientation  Orientation = "keep"
+	// KeepOrientation preserves existing orientation metadata.
+	KeepOrientation Orientation = "keep"
+	// ResetOrientation strips orientation metadata.
 	ResetOrientation Orientation = "reset"
 )
 

@@ -1,12 +1,6 @@
 <template>
   <div class="p-tab p-settings-general py-2">
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="p-form-settings"
-      accept-charset="UTF-8"
-      @submit.prevent="onChange"
-    >
+    <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-2 text-subtitle-2">
           {{ $gettext(`User Interface`) }}
@@ -78,14 +72,14 @@
       <v-card v-if="!isPortal && !hasScope && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
           <v-row align="start" dense>
-            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+            <v-col v-if="!config.disable.faces" cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.people"
                 :disabled="busy"
                 class="ma-0 pa-0 input-people"
                 density="compact"
                 :label="$gettext('People')"
-                :hint="$gettext('Recognize faces so people can be assigned and found.')"
+                :hint="$gettext('Enable face recognition and the People view to easily find people you know.')"
                 prepend-icon="mdi-account"
                 persistent-hint
                 @update:model-value="onChange"
@@ -100,7 +94,7 @@
                 class="ma-0 pa-0 input-calendar"
                 density="compact"
                 :label="$gettext('Calendar')"
-                :hint="$gettext('Browse and share your pictures organized into monthly albums.')"
+                :hint="$gettext('Show the Calendar view to browse the library by year and month.')"
                 prepend-icon="mdi-calendar"
                 persistent-hint
                 @update:model-value="onChange"
@@ -115,7 +109,7 @@
                 class="ma-0 pa-0 input-moments"
                 density="compact"
                 :label="$gettext('Moments')"
-                :hint="$gettext('Generate albums of special moments, journeys, and places.')"
+                :hint="$gettext('Show smart albums that group pictures by occasion, trip, or location.')"
                 prepend-icon="mdi-filmstrip-box"
                 persistent-hint
                 @update:model-value="onChange"
@@ -130,7 +124,7 @@
                 class="ma-0 pa-0 input-labels"
                 density="compact"
                 :label="$gettext('Labels')"
-                :hint="$gettext('Browse and edit image classification labels.')"
+                :hint="$gettext('Show the Labels section to view and manage AI-generated labels.')"
                 prepend-icon="mdi-label"
                 persistent-hint
                 @update:model-value="onChange"
@@ -144,9 +138,7 @@
                 class="ma-0 pa-0 input-private"
                 density="compact"
                 :label="$gettext('Private')"
-                :hint="
-                  $gettext('Exclude content marked as private from search results, shared albums, labels, and places.')
-                "
+                :hint="$gettext('Hide private content from global views while keeping it accessible in the Private section.')"
                 prepend-icon="mdi-lock"
                 persistent-hint
                 @update:model-value="onChange"
@@ -161,7 +153,7 @@
                 class="ma-0 pa-0 input-upload"
                 density="compact"
                 :label="$gettext('Upload')"
-                :hint="$gettext('Add files to your library via Web Upload.')"
+                :hint="$gettext('Allow users to upload new photos and videos through the web interface.')"
                 prepend-icon="mdi-cloud-upload"
                 persistent-hint
                 @update:model-value="onChange"
@@ -176,7 +168,7 @@
                 class="ma-0 pa-0 input-download"
                 density="compact"
                 :label="$gettext('Download')"
-                :hint="$gettext('Download single files and zip archives.')"
+                :hint="$gettext('Enable downloading of original and sidecar files from the web interface.')"
                 prepend-icon="mdi-download"
                 persistent-hint
                 @update:model-value="onChange"
@@ -191,23 +183,8 @@
                 class="ma-0 pa-0 input-import"
                 density="compact"
                 :label="$gettext('Import')"
-                :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
+                :hint="$gettext('Allow files to be copied or moved from the Import to the Originals folder.')"
                 prepend-icon="mdi-folder-plus"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.share"
-                :disabled="busy"
-                class="ma-0 pa-0 input-share"
-                density="compact"
-                :label="$gettext('Share')"
-                :hint="$gettext('Upload to WebDAV and share links with friends.')"
-                prepend-icon="mdi-share-variant"
                 persistent-hint
                 @update:model-value="onChange"
               >
@@ -221,8 +198,53 @@
                 class="ma-0 pa-0 input-edit"
                 density="compact"
                 :label="$gettext('Edit')"
-                :hint="$gettext('Change photo titles, locations, and other metadata.')"
+                :hint="$gettext('Allow editing of metadata such as title, description, date, and location.')"
                 prepend-icon="mdi-pencil"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.batchEdit"
+                :disabled="busy || isDemo || !settings.features.edit"
+                class="ma-0 pa-0 input-batch-edit"
+                density="compact"
+                :label="$gettext('Batch Edit')"
+                :hint="$gettext('Allow editing the metadata, labels, and albums of multiple pictures at once.')"
+                prepend-icon="mdi-form-select"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.share"
+                :disabled="busy"
+                class="ma-0 pa-0 input-share"
+                density="compact"
+                :label="$gettext('Share')"
+                :hint="$gettext('Allow users to create and share links, and enable sharing with connected services.')"
+                prepend-icon="mdi-share-variant"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.services"
+                :disabled="busy"
+                class="ma-0 pa-0 input-services"
+                density="compact"
+                :label="$gettext('Services')"
+                :hint="$gettext('Allow configuration and use of connected apps and services for remote uploads and sync.')"
+                prepend-icon="mdi-sync"
                 persistent-hint
                 @update:model-value="onChange"
               >
@@ -236,7 +258,7 @@
                 class="ma-0 pa-0 input-archive"
                 density="compact"
                 :label="$pgettext('Noun', 'Archive')"
-                :hint="$gettext('Hide photos that have been moved to archive.')"
+                :hint="$gettext('Allow users to archive photos and videos so they are hidden without being deleted.')"
                 prepend-icon="mdi-package-down"
                 persistent-hint
                 @update:model-value="onChange"
@@ -251,26 +273,11 @@
                 class="ma-0 pa-0 input-delete"
                 density="compact"
                 :label="$gettext('Delete')"
-                :hint="$gettext('Permanently remove files to free up storage.')"
+                :hint="$gettext('Allow files to be permanently deleted to free up storage space.')"
                 prepend-icon="mdi-delete"
                 persistent-hint
                 @update:model-value="onChange"
               ></v-checkbox>
-            </v-col>
-
-            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.services"
-                :disabled="busy"
-                class="ma-0 pa-0 input-services"
-                density="compact"
-                :label="$gettext('Services')"
-                :hint="$gettext('Share your pictures with other apps and services.')"
-                prepend-icon="mdi-sync"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
             </v-col>
 
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
@@ -280,7 +287,7 @@
                 class="ma-0 pa-0 input-library"
                 density="compact"
                 :label="$gettext('Library')"
-                :hint="$gettext('Index and import files through the user interface.')"
+                :hint="$gettext('Show the Library section to index, manage, and monitor the media library.')"
                 prepend-icon="mdi-film"
                 persistent-hint
                 @update:model-value="onChange"
@@ -295,7 +302,7 @@
                 class="ma-0 pa-0 input-files"
                 density="compact"
                 :label="$gettext('Originals')"
-                :hint="$gettext('Browse indexed files and folders in Library.')"
+                :hint="$gettext('Enable the file browser to navigate the Originals folder structure.')"
                 prepend-icon="mdi-file-tree"
                 persistent-hint
                 @update:model-value="onChange"
@@ -310,7 +317,7 @@
                 class="ma-0 pa-0 input-logs"
                 density="compact"
                 :label="$gettext('Logs')"
-                :hint="$gettext('Show server logs in Library.')"
+                :hint="$gettext('Show logs in the web interface to monitor activity and troubleshoot problems.')"
                 prepend-icon="mdi-playlist-check"
                 persistent-hint
                 @update:model-value="onChange"
@@ -325,7 +332,7 @@
                 class="ma-0 pa-0 input-account"
                 density="compact"
                 :label="$gettext('Account')"
-                :hint="$gettext('Change personal profile and security settings.')"
+                :hint="$gettext('Show the Account page so users can manage their profile and security settings.')"
                 prepend-icon="mdi-shield-account-variant"
                 persistent-hint
                 @update:model-value="onChange"
@@ -340,7 +347,7 @@
                 class="ma-0 pa-0 input-places"
                 density="compact"
                 :label="$gettext('Places')"
-                :hint="$gettext('Search and display photos on a map.')"
+                :hint="$gettext('Show the Places view with interactive maps so you can browse photos by location.')"
                 prepend-icon="mdi-map-marker"
                 persistent-hint
                 @update:model-value="onChange"
@@ -435,9 +442,7 @@ export default {
   },
   created() {
     this.load();
-    this.subscriptions.push(
-      this.$event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings))
-    );
+    this.subscriptions.push(this.$event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings)));
   },
   beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {

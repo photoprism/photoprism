@@ -9,23 +9,23 @@ import (
 )
 
 func TestPhotosQueryPortrait(t *testing.T) {
-	var f0 form.SearchPhotos
-
-	f0.Query = "portrait:true"
-	f0.Merged = true
+	portraitSearchForm := &form.SearchPhotos{
+		Query:  "portrait:true",
+		Merged: true,
+	}
 
 	// Parse query string and filter.
-	if err := f0.ParseQueryString(); err != nil {
+	if err := portraitSearchForm.ParseQueryString(); err != nil {
 		t.Fatal(err)
 	}
 
-	photos0, _, err := Photos(f0)
+	portraits, _, findErr := Photos(*portraitSearchForm)
 
-	if err != nil {
-		t.Fatal(err)
+	if findErr != nil {
+		t.Fatal(findErr)
 	}
 
-	assert.GreaterOrEqual(t, len(photos0), 39)
+	assert.GreaterOrEqual(t, len(portraits), 39)
 
 	t.Run("FalseGreaterThanYes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -35,19 +35,19 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
+
 		f.Query = "portrait:false"
 		f.Merged = true
 
-		photos2, _, err2 := Photos(f)
+		allPhotos, _, err2 := Photos(f)
 
 		if err2 != nil {
 			t.Fatal(err2)
 		}
-		assert.Greater(t, len(photos2), len(photos))
+
+		assert.Greater(t, len(allPhotos), len(photos))
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -57,10 +57,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -70,10 +68,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -83,10 +79,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -96,11 +90,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -113,7 +104,7 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, len(photos0))
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -123,11 +114,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -140,7 +128,7 @@ func TestPhotosQueryPortrait(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, len(photos0))
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -151,11 +139,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -165,11 +150,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -179,11 +161,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -193,11 +172,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -207,11 +183,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -221,11 +194,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -235,11 +205,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -249,11 +216,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -263,11 +227,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -277,11 +238,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -291,11 +249,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("AndSearch", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -305,11 +260,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -319,11 +271,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, len(photos0))
+		assert.NoError(t, err)
+		assert.Len(t, portraits, len(photos))
 	})
 	t.Run("Landscape", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -333,11 +282,8 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, 8)
+		assert.NoError(t, err)
+		assert.Equal(t, 8, len(photos))
 	})
 	t.Run("Square", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -347,10 +293,7 @@ func TestPhotosQueryPortrait(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Len(t, photos, 1)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(photos))
 	})
 }

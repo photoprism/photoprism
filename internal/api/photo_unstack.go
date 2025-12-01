@@ -47,15 +47,16 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		if file.FilePrimary {
+		switch {
+		case file.FilePrimary:
 			log.Errorf("photo: cannot unstack primary file")
 			AbortBadRequest(c)
 			return
-		} else if file.FileSidecar {
+		case file.FileSidecar:
 			log.Errorf("photo: cannot unstack sidecar files")
 			AbortBadRequest(c)
 			return
-		} else if file.FileRoot != entity.RootOriginals {
+		case file.FileRoot != entity.RootOriginals:
 			log.Errorf("photo: only originals can be unstacked")
 			AbortBadRequest(c)
 			return
@@ -91,15 +92,16 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 		related, err := unstackFile.RelatedFiles(false)
 
-		if err != nil {
+		switch {
+		case err != nil:
 			log.Errorf("photo: %s (unstack %s)", err, clean.Log(baseName))
 			AbortEntityNotFound(c)
 			return
-		} else if related.Len() == 0 {
+		case related.Len() == 0:
 			log.Errorf("photo: found no files for %s (unstack)", clean.Log(baseName))
 			AbortEntityNotFound(c)
 			return
-		} else if related.Main == nil {
+		case related.Main == nil:
 			log.Errorf("photo: found no main media file for %s (unstack)", clean.Log(baseName))
 			AbortEntityNotFound(c)
 			return

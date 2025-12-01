@@ -1,0 +1,34 @@
+ignoreGeneratedHeader = false
+severity = "warning"
+confidence = 0.8
+errorCode = 0
+warningCode = 0
+
+[rule.blank-imports]
+[rule.context-as-argument]
+[rule.context-keys-type]
+[rule.dot-imports]
+[rule.error-return]
+[rule.error-strings]
+[rule.error-naming]
+[rule.exported]
+[rule.increment-decrement]
+[rule.var-naming]
+arguments = [
+    ["ID", "Id", "id", "UID", "Uid", "uid", "URI", "Uri", "uri", "URL", "Url", "url"],
+    [],
+    [{ skip-initialism-name-checks = true, upper-case-const = true, skip-package-name-checks = true }]
+]
+[rule.var-declaration]
+[rule.package-comments]
+[rule.range]
+[rule.receiver-naming]
+[rule.time-naming]
+[rule.unexported-return]
+[rule.indent-error-flow]
+[rule.errorf]
+[rule.empty-block]
+[rule.superfluous-else]
+[rule.unused-parameter]
+[rule.unreachable-code]
+[rule.redefines-builtin-id]
