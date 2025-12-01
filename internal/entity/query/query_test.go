@@ -62,6 +62,13 @@ func TestDbDialect(t *testing.T) {
 		}
 		assert.Equal(t, MySQL, DbDialect())
 	})
+
+	t.Run("Postgres", func(t *testing.T) {
+		if DbDialect() != Postgres {
+			t.SkipNow()
+		}
+		assert.Equal(t, Postgres, DbDialect())
+	})
 }
 
 func TestBatchSize(t *testing.T) {
