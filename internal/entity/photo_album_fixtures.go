@@ -281,8 +281,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo56"),
-		Album:     AlbumFixtures.Pointer("holiday-2030"),
 	},
 	"30": {
 		PhotoUID:  "pqkm36fjqvset8uy",
@@ -292,8 +290,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo56"),
-		Album:     AlbumFixtures.Pointer("&ilikefood"),
 	},
 	"31": {
 		PhotoUID:  "pqkm36fjqvset9uy",
@@ -303,8 +299,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo57"),
-		Album:     AlbumFixtures.Pointer("holiday-2030"),
 	},
 	"32": {
 		PhotoUID:  "pqkm36fjqvset9uy",
@@ -314,8 +308,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo57"),
-		Album:     AlbumFixtures.Pointer("&ilikefood"),
 	},
 	"33": {
 		PhotoUID:  "pqkm36fjqvset9uz",
@@ -325,8 +317,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo58"),
-		Album:     AlbumFixtures.Pointer("&ilikefood"),
 	},
 	"34": {
 		PhotoUID:  "pqkm36fjqvset9uz",
@@ -336,8 +326,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo58"),
-		Album:     AlbumFixtures.Pointer("christmas-2030"),
 	},
 }
 

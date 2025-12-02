@@ -3094,7 +3094,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2023, 11, 12, 9, 7, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"IMG_57.jpg": {
 		ID:              1000076,
@@ -3136,7 +3136,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2023, 11, 12, 9, 8, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"VID_58.mp4.jpg": {
 		ID:              1000077,
@@ -3178,7 +3178,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2018, 12, 01, 9, 8, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"VID_58.mp4": {
 		ID:              1000078,
@@ -3220,7 +3220,7 @@ var FileFixtures = FileMap{
 		CreatedIn:       935962,
 		UpdatedAt:       time.Date(2018, 12, 01, 9, 8, 18, 0, time.UTC),
 		UpdatedIn:       935962,
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"vision-reset-cli.jpg": {
 		ID:              2999500,

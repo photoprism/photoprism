@@ -1230,10 +1230,10 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 		}
 	}
 
-	m.DeletedAt = TimeStamp()
+	m.DeletedAt = gorm.DeletedAt{Time: *TimeStamp(), Valid: true}
 	m.PhotoQuality = -1
 
-	return files, m.Updates(Values{"deleted_at": *m.DeletedAt, "photo_quality": m.PhotoQuality})
+	return files, m.Updates(Values{"deleted_at": m.DeletedAt, "photo_quality": m.PhotoQuality})
 }
 
 // DeletePermanently permanently removes a photo from the index.

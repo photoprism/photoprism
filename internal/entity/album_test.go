@@ -229,11 +229,11 @@ func TestAddPhotoToUserAlbumsConcurrentCreate(t *testing.T) {
 		t.Fatalf("expected a single album, got %d", len(albums))
 	}
 
-	var relationCount int
+	var relationCount int64
 	if err := Db().Table(PhotoAlbum{}.TableName()).Where("album_uid = ?", albums[0].AlbumUID).Count(&relationCount).Error; err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(photos), relationCount)
+	assert.Equal(t, len(photos), int(relationCount))
 }
 
 // TestNewAlbum exercises the related album behavior.

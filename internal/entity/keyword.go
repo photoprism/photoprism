@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -114,7 +114,7 @@ func (m *Keyword) AfterDelete(tx *gorm.DB) (err error) {
 }
 
 // AfterCreate flushes the cache when the entity is created.
-func (m *Keyword) AfterCreate(scope *gorm.Scope) error {
+func (m *Keyword) AfterCreate(tx *gorm.DB) error {
 	FlushCachedKeyword(m)
 	return nil
 }

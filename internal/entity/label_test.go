@@ -142,7 +142,7 @@ func TestLabel_Skip(t *testing.T) {
 	t.Run("Deleted", func(t *testing.T) {
 		label := createTestLabel(t, "skip-deleted")
 		now := time.Now()
-		label.DeletedAt = &now
+		label.DeletedAt = gorm.DeletedAt{Time: now, Valid: true}
 		assert.True(t, label.Skip())
 	})
 	t.Run("Active", func(t *testing.T) {

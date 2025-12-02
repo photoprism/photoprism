@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // PhotoKeyword represents the many-to-many relation between Photo and Keyword.
@@ -31,7 +31,7 @@ func (m *PhotoKeyword) Create() error {
 }
 
 // AfterCreate flushes the keyword cache once a relation has been persisted.
-func (m *PhotoKeyword) AfterCreate(scope *gorm.Scope) error {
+func (m *PhotoKeyword) AfterCreate(tx *gorm.DB) error {
 	FlushCachedPhotoKeyword(m)
 	return nil
 }
