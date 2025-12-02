@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -21,13 +22,27 @@ func TestPhotosFilterLabel(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, photos, 3)
-		if len(photos) > 0 {
-			assert.Equal(t, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").ID, photos[0].ID)
-			assert.Equal(t, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").CameraID, photos[0].CameraID)
-			assert.Equal(t, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").CellID, photos[0].CellID)
-			assert.Equal(t, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").LensID, photos[0].LensID)
-			assert.Equal(t, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").PhotoCaption, photos[0].PhotoCaption)
+		require.Len(t, photos, 3)
+
+		for i := range len(photos) {
+			fixture := ""
+			switch photos[i].ID {
+			case entity.PhotoFixtures.Pointer("19800101_000002_D640C559").ID:
+				fixture = "19800101_000002_D640C559"
+			case entity.PhotoFixtures.Pointer("Photo56").ID:
+				fixture = "Photo56"
+			case entity.PhotoFixtures.Pointer("Photo57").ID:
+				fixture = "Photo57"
+			default:
+				assert.Len(t, photos, 0)
+				t.Logf("Unable to match id in expected photos %d against %d %d %d", photos[i].ID, entity.PhotoFixtures.Pointer("19800101_000002_D640C559").ID, entity.PhotoFixtures.Pointer("Photo56").ID, entity.PhotoFixtures.Pointer("Photo57").ID)
+				t.Fail()
+			}
+			assert.Equal(t, entity.PhotoFixtures.Pointer(fixture).ID, photos[i].ID)
+			assert.Equal(t, entity.PhotoFixtures.Pointer(fixture).CameraID, photos[i].CameraID)
+			assert.Equal(t, entity.PhotoFixtures.Pointer(fixture).CellID, photos[i].CellID)
+			assert.Equal(t, entity.PhotoFixtures.Pointer(fixture).LensID, photos[i].LensID)
+			assert.Equal(t, entity.PhotoFixtures.Pointer(fixture).PhotoCaption, photos[i].PhotoCaption)
 		}
 	})
 	t.Run("Cake", func(t *testing.T) {

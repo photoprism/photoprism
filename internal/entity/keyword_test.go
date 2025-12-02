@@ -95,7 +95,7 @@ func TestKeyword_Updates(t *testing.T) {
 
 		if err != nil {
 			assert.Error(t, err)
-			assert.ErrorContains(t, err, "id value required but not provided")
+			assert.ErrorContains(t, err, "keyword ID must not be empty - you may have found a bug")
 		} else {
 			assert.Fail(t, "error was expected but not set")
 		}
@@ -128,7 +128,7 @@ func TestKeyword_Update(t *testing.T) {
 
 		err := keyword.Update("Keyword", "new-name")
 		assert.Error(t, err)
-		assert.ErrorContains(t, err, "id value required but not provided")
+		assert.ErrorContains(t, err, "keyword ID must not be empty - you may have found a bug")
 	})
 }
 

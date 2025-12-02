@@ -119,10 +119,8 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 		PhotoID:   1000045,
 		KeywordID: 10000018,
 	},
-	"30": {
-		PhotoID:   1000045,
-		KeywordID: 10000018,
-	},
+	/*	"30": { // Duplicate of 29.
+		}, */
 	"31": {
 		PhotoID:   1000036,
 		KeywordID: 10000015,
@@ -130,6 +128,46 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 	"32": {
 		PhotoID:   1000036,
 		KeywordID: 1000001,
+	},
+	"33": {
+		PhotoID:   1000059,
+		KeywordID: 1000000,
+	},
+	"34": {
+		PhotoID:   1000059,
+		KeywordID: 1000002,
+	},
+	"35": {
+		PhotoID:   1000057,
+		KeywordID: 1000000,
+	},
+	"36": {
+		PhotoID:   1000057,
+		KeywordID: 1000001,
+	},
+	"37": {
+		PhotoID:   1000052,
+		KeywordID: 10000025,
+	},
+	"38": {
+		PhotoID:   1000058,
+		KeywordID: 1000000,
+	},
+	"39": {
+		PhotoID:   1000058,
+		KeywordID: 1000001,
+	},
+	"40": {
+		PhotoID:   1000050,
+		KeywordID: 10000025,
+	},
+	"41": {
+		PhotoID:   1000004,
+		KeywordID: 1000002,
+	},
+	"42": {
+		PhotoID:   1000051,
+		KeywordID: 10000025,
 	},
 }
 

@@ -88,7 +88,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(61), count)
+		assert.Equal(t, int64(75), count) // Count instances of LabelFixtures.PhotoLabel in photo_fixtures.go
 	})
 
 	t.Run("PhotoCounts", func(t *testing.T) {
@@ -98,7 +98,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(59), count)
+		assert.Equal(t, int64(62), count) // Count instances of \tID: (regex search) in photo_fixtures.go
 	})
 
 	t.Run("AlbumCounts", func(t *testing.T) {
@@ -138,7 +138,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(28), count)
+		assert.Equal(t, int64(34), count) // Count instances of PhotoUID: in photo_album_fixtures.go
 	})
 
 	t.Run("FolderCounts", func(t *testing.T) {
@@ -158,7 +158,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(72), count)
+		assert.Equal(t, int64(76), count) // Count instances of \tID: (regex) in file_fixtures.go and subtract 1 for the fixture without a photoid.
 	})
 
 	t.Run("KeywordCounts", func(t *testing.T) {
@@ -178,7 +178,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(35), count)
+		assert.Equal(t, int64(41), count) // hard to derive from code if people add entries via photo_fixtures.go
 	})
 
 	t.Run("CategoryCounts", func(t *testing.T) {
@@ -308,6 +308,6 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(57), count)
+		assert.Equal(t, int64(60), count) // Count instances of Details: in photo_fixtures.go
 	})
 }
