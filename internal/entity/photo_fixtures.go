@@ -3793,7 +3793,7 @@ var PhotoFixtures = PhotoMap{
 			KeywordFixtures.Get("flower"),
 		},
 		Albums: []Album{
-			AlbumFixtures.Get("christmas-2030"),
+			AlbumFixtures.Get("christmas2030"),
 			AlbumFixtures.Get("&ilikefood"),
 		},
 		Files: []File{},
