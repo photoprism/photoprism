@@ -3,6 +3,7 @@ package batch
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -333,7 +334,8 @@ func restorePhoto(t *testing.T, photoUID string, values entity.Values) {
 			delete(values, k)
 		}
 	}
-	if err := entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", photoUID).Updates(values).Error; err != nil {
+	// The TakenAt and TakenAtLocal are there to prevent the Photo.BeforeSave from adding these as required update fields and breaking in Postgres.
+	if err := entity.Db().Model(&entity.Photo{TakenAt: time.Now(), TakenAtLocal: time.Now()}).Where("photo_uid = ?", photoUID).Updates(values).Error; err != nil {
 		t.Fatalf("failed to restore photo %s: %v", photoUID, err)
 	}
 	if len(detailUpdates) > 0 {
