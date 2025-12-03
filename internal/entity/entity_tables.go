@@ -12,13 +12,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// TableMap holds the table name and the definition
 type TableMap struct {
 	TableName       string
 	TableDefinition interface{}
 }
 
+// Tables is the map to allow ordered table setup/teardown
 type Tables map[int]TableMap
 
+// Entities is the list of tables in the order that they must be processed for setup/teardown
 var Entities = Tables{
 	10:   {migrate.Migration{}.TableName(), &migrate.Migration{}},
 	20:   {migrate.Version{}.TableName(), &migrate.Version{}},
@@ -61,51 +64,6 @@ var Entities = Tables{
 	6000: {Link{}.TableName(), &Link{}},
 }
 
-//type Tables map[string]interface{}
-
-// Entities contains database entities and their table names.
-/*
-var Entities = Tables{
-	migrate.Migration{}.TableName(): &migrate.Migration{},
-	migrate.Version{}.TableName():   &migrate.Version{},
-	Error{}.TableName():             &Error{},
-	Password{}.TableName():          &Password{},
-	Passcode{}.TableName():          &Passcode{},
-	User{}.TableName():              &User{},
-	UserDetails{}.TableName():       &UserDetails{},
-	UserSettings{}.TableName():      &UserSettings{},
-	Session{}.TableName():           &Session{},
-	Client{}.TableName():            &Client{},
-	Service{}.TableName():           &Service{},
-	Folder{}.TableName():            &Folder{},
-	Duplicate{}.TableName():         &Duplicate{},
-	File{}.TableName():              &File{},
-	FileShare{}.TableName():         &FileShare{},
-	FileSync{}.TableName():          &FileSync{},
-	Photo{}.TableName():             &Photo{},
-	PhotoUser{}.TableName():         &PhotoUser{},
-	Details{}.TableName():           &Details{},
-	Place{}.TableName():             &Place{},
-	Cell{}.TableName():              &Cell{},
-	Camera{}.TableName():            &Camera{},
-	Lens{}.TableName():              &Lens{},
-	Country{}.TableName():           &Country{},
-	Album{}.TableName():             &Album{},
-	AlbumUser{}.TableName():         &AlbumUser{},
-	PhotoAlbum{}.TableName():        &PhotoAlbum{},
-	Label{}.TableName():             &Label{},
-	Category{}.TableName():          &Category{},
-	PhotoLabel{}.TableName():        &PhotoLabel{},
-	Keyword{}.TableName():           &Keyword{},
-	PhotoKeyword{}.TableName():      &PhotoKeyword{},
-	Link{}.TableName():              &Link{},
-	Subject{}.TableName():           &Subject{},
-	Face{}.TableName():              &Face{},
-	Marker{}.TableName():            &Marker{},
-	Reaction{}.TableName():          &Reaction{},
-	UserShare{}.TableName():         &UserShare{},
-} */
-
 // WaitForMigration waits for the database migration to be successful and returns an error otherwise.
 func (list Tables) WaitForMigration(db *gorm.DB) error {
 	type RowCount struct {
@@ -116,12 +74,12 @@ func (list Tables) WaitForMigration(db *gorm.DB) error {
 	for _, tables := range list {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
-			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", tables.TableName)).Scan(&count).Error; err == nil {
-				log.Tracef("migrate: %s migrated", clean.Log(tables.TableName))
-				break
-			} else {
+			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", tables.TableName)).Scan(&count).Error; err != nil {
 				log.Tracef("migrate: waiting for %s migration (%s)", clean.Log(tables.TableName), err.Error())
 				time.Sleep(100 * time.Millisecond)
+			} else {
+				log.Tracef("migrate: %s migrated", clean.Log(tables.TableName))
+				break
 			}
 
 			if i == attempts {
@@ -133,25 +91,69 @@ func (list Tables) WaitForMigration(db *gorm.DB) error {
 	return nil
 }
 
-// Reset the ID increment to 1
-func resetIDToOne(tableName string) {
+// Reset the ID increment to Current Max
+func resetIDToMax(tableName string, db *gorm.DB) (err error) {
 	sqlCommand := ""
-	if UnscopedDb().Dialector.Name() == MySQL {
-		sqlCommand = fmt.Sprintf("ALTER TABLE `%v` AUTO_INCREMENT = 1", tableName)
-	} else if UnscopedDb().Dialector.Name() == Postgres {
-		if tableName == "auth_users" {
-			sqlCommand = fmt.Sprintf("ALTER SEQUENCE %v_id_seq RESTART WITH 100", tableName)
-		} else {
-			sqlCommand = fmt.Sprintf("ALTER SEQUENCE %v_id_seq RESTART WITH 1", tableName)
+
+	var maxid int64
+	// The following lists all tables that have an ID column that needs to be reset.
+	switch tableName {
+	case Album{}.TableName():
+		fallthrough
+	case User{}.TableName():
+		fallthrough
+	case Camera{}.TableName():
+		fallthrough
+	case Error{}.TableName():
+		fallthrough
+	case File{}.TableName():
+		fallthrough
+	case Keyword{}.TableName():
+		fallthrough
+	case Label{}.TableName():
+		fallthrough
+	case Lens{}.TableName():
+		fallthrough
+	case Photo{}.TableName():
+		fallthrough
+	case Service{}.TableName():
+		fallthrough
+	case migrate.Version{}.TableName():
+		switch DbDialect() {
+		case MySQL:
+			sqlCommand = fmt.Sprintf("ALTER TABLE `%v` AUTO_INCREMENT = 1", tableName)
+		case Postgres:
+			if err := db.Table(tableName).Select("COALESCE(MAX(id), 0) as MaxID").Row().Scan(&maxid); err != nil {
+				return fmt.Errorf("resetIDToMax: unable to get max id from %s with %+v", tableName, err)
+			}
+			sqlCommand = fmt.Sprintf("ALTER SEQUENCE %v_id_seq RESTART WITH %d", tableName, maxid+1)
+		case SQLite3:
+			if err := db.Table(tableName).Select("COALESCE(MAX(id), 0) as MaxID").Row().Scan(&maxid); err != nil {
+				return fmt.Errorf("resetIDToMax: unable to get max id from %s with %+v", tableName, err)
+			}
+			sqlCommand = fmt.Sprintf("UPDATE SQLITE_SEQUENCE SET SEQ=%d WHERE NAME='%v'", maxid, tableName)
+		default:
+			log.Warnf("resetIDToMax: Unsupported database dialect %s", DbDialect())
+			return nil
 		}
-	} else if UnscopedDb().Dialector.Name() == SQLite3 {
-		sqlCommand = fmt.Sprintf("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='%v'", tableName)
-	} else {
-		return
+		if res := db.Unscoped().Exec(sqlCommand); res.Error != nil {
+			return fmt.Errorf("resetIDToMax: failed with %+v", res.Error)
+		}
+	default:
+		return nil
 	}
-	if res := UnscopedDb().Exec(sqlCommand); res.Error != nil {
-		log.Errorf("Reset Auto Increment failed with %v", res.Error)
+
+	return nil
+}
+
+// ResetSequences resets the auto increment sequence for ID columns to the next valid number
+func (list Tables) ResetSequences(db *gorm.DB) (err error) {
+	for _, entity := range list {
+		if err = resetIDToMax(entity.TableName, db); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 // Truncate removes all data from tables without dropping them.
@@ -168,170 +170,150 @@ func (list Tables) Truncate(db *gorm.DB) {
 
 	// Delete tables based on referential integrity.
 	log.Info("migrate: truncate Details")
-	if res := UnscopedDb().Where("1=1").Delete(&Details{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Details{}); res.Error != nil {
 		log.Errorf("Delete of Details failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate FileShare")
-	if res := UnscopedDb().Where("1=1").Delete(&FileShare{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&FileShare{}); res.Error != nil {
 		log.Errorf("Delete of FileShare failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate FileSync")
-	if res := UnscopedDb().Where("1=1").Delete(&FileSync{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&FileSync{}); res.Error != nil {
 		log.Errorf("Delete of FileSync failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate File")
-	if res := UnscopedDb().Where("1=1").Delete(&File{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&File{}); res.Error != nil {
 		log.Errorf("Delete of Files failed with %v", res.Error)
 	}
-	resetIDToOne(File{}.TableName())
 	log.Info("migrate: truncate PhotoKeyword")
-	if res := UnscopedDb().Where("1=1").Delete(&PhotoKeyword{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&PhotoKeyword{}); res.Error != nil {
 		log.Errorf("Delete of PhotoKeyword failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate PhotoLabel")
-	if res := UnscopedDb().Where("1=1").Delete(&PhotoLabel{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&PhotoLabel{}); res.Error != nil {
 		log.Errorf("Delete of PhotoLabel failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate PhotoAlbum")
-	if res := UnscopedDb().Where("1=1").Delete(&PhotoAlbum{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&PhotoAlbum{}); res.Error != nil {
 		log.Errorf("Delete of PhotoAlbum failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Photo")
-	if res := UnscopedDb().Where("1=1").Delete(&Photo{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Photo{}); res.Error != nil {
 		log.Errorf("Delete of Photo failed with %v", res.Error)
 	}
-	resetIDToOne(Photo{}.TableName())
 	log.Info("migrate: truncate Error")
-	if res := UnscopedDb().Where("1=1").Delete(&Error{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Error{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Error{}.TableName())
 	log.Info("migrate: truncate Password")
-	if res := UnscopedDb().Where("1=1").Delete(&Password{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Password{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Passcode")
-	if res := UnscopedDb().Where("1=1").Delete(&Passcode{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Passcode{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate UserDetails")
-	if res := UnscopedDb().Where("1=1").Delete(&UserDetails{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&UserDetails{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate UserSettings")
-	if res := UnscopedDb().Where("1=1").Delete(&UserSettings{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&UserSettings{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate UserShare")
-	if res := UnscopedDb().Where("1=1").Delete(&UserShare{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&UserShare{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate User")
-	if res := UnscopedDb().Where("1=1").Delete(&User{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&User{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(User{}.TableName())
 	log.Info("migrate: truncate Session")
-	if res := UnscopedDb().Where("1=1").Delete(&Session{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Session{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Client")
-	if res := UnscopedDb().Where("1=1").Delete(&Client{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Client{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Service")
-	if res := UnscopedDb().Where("1=1").Delete(&Service{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Service{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Service{}.TableName())
 	log.Info("migrate: truncate Folder")
-	if res := UnscopedDb().Where("1=1").Delete(&Folder{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Folder{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Duplicate")
-	if res := UnscopedDb().Where("1=1").Delete(&Duplicate{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Duplicate{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate PhotoUser")
-	if res := UnscopedDb().Where("1=1").Delete(&PhotoUser{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&PhotoUser{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Cell")
-	if res := UnscopedDb().Where("1=1").Delete(&Cell{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Cell{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Place")
-	if res := UnscopedDb().Where("1=1").Delete(&Place{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Place{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Camera")
-	if res := UnscopedDb().Where("1=1").Delete(&Camera{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Camera{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Camera{}.TableName())
 	log.Info("migrate: truncate Lens")
-	if res := UnscopedDb().Where("1=1").Delete(&Lens{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Lens{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Lens{}.TableName())
 	log.Info("migrate: truncate Country")
-	if res := UnscopedDb().Where("1=1").Delete(&Country{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Country{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate AlbumUser")
-	if res := UnscopedDb().Where("1=1").Delete(&AlbumUser{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&AlbumUser{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Albums")
-	if res := UnscopedDb().Where("1=1").Delete(&Albums{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Albums{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Album{}.TableName())
 	log.Info("migrate: truncate Category")
-	if res := UnscopedDb().Where("1=1").Delete(&Category{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Category{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Label")
-	if res := UnscopedDb().Where("1=1").Delete(&Labels{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Labels{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Label{}.TableName())
 	log.Info("migrate: truncate Keyword")
-	if res := UnscopedDb().Where("1=1").Delete(&Keyword{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Keyword{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-	resetIDToOne(Keyword{}.TableName())
 	log.Info("migrate: truncate Link")
-	if res := UnscopedDb().Where("1=1").Delete(&Link{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Link{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Subjects")
-	if res := UnscopedDb().Where("1=1").Delete(&Subjects{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Subjects{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Face")
-	if res := UnscopedDb().Where("1=1").Delete(&Face{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Face{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Marker")
-	if res := UnscopedDb().Where("1=1").Delete(&Marker{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Marker{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	log.Info("migrate: truncate Reaction")
-	if res := UnscopedDb().Where("1=1").Delete(&Reaction{}); res.Error != nil {
+	if res := db.Unscoped().Where("1=1").Delete(&Reaction{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
-
-	/*
-		for name = range list {
-			if err := db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
-				// log.Debugf("entity: removed all data from %s", name)
-				break
-			} else if err.Error() != "record not found" {
-				log.Debugf("migrate: %s in %s", err, clean.Log(name))
-			}
-		}
-	*/
+	list.ResetSequences(db)
 }
 
 // Migrate migrates all database tables of registered entities.
@@ -390,19 +372,6 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		if err != nil {
 			log.Error("migrate: could not setup join table for Label - Categories: ", err)
 		}
-
-		/*
-			ifaces := make([]interface{}, len(list))
-			idx := 0
-			for _, value := range list {
-				ifaces[idx] = value
-				idx++
-			}
-			log.Debugf("migrate: auto-migrating %d entity tables", len(ifaces))
-			err = db.AutoMigrate(ifaces...)
-			if err != nil {
-				log.Error("migrate: auto-migration of entities failed: ", err)
-			}*/
 
 		var entity interface{}
 		orderedList := make([]int, len(list))

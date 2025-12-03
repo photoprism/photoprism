@@ -35,4 +35,10 @@ func CreateTestFixtures() {
 	CreatePasscodeFixtures()
 	CreatePasswordFixtures()
 	CreateUserShareFixtures()
+
+	if err := Entities.ResetSequences(Db()); err != nil {
+		log.Error(err)
+		panic(err)
+	}
+
 }
