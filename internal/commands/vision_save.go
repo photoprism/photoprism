@@ -23,7 +23,7 @@ var visionSaveFlags = []cli.Flag{
 // VisionSaveCommand writes the model configuration to vision.yml.
 var VisionSaveCommand = &cli.Command{
 	Name:   "save",
-	Usage:  "Saves the current model configuration to the vision.yml file",
+	Usage:  "Create a vision.yml file with the default configuration, if it doesn't exist yet",
 	Flags:  visionSaveFlags,
 	Action: visionSaveAction,
 }
