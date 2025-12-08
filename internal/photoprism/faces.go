@@ -3,6 +3,7 @@ package photoprism
 import (
 	"fmt"
 	"runtime/debug"
+	"sync"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -15,16 +16,69 @@ import (
 
 // Faces represents a worker for face clustering and matching.
 type Faces struct {
-	conf *config.Config
+	conf      *config.Config
+	vetoMu    sync.Mutex
+	vetoCache map[string]time.Time
 }
+
+const faceVetoTTL = 30 * time.Minute
 
 // NewFaces returns a new Faces worker.
 func NewFaces(conf *config.Config) *Faces {
 	instance := &Faces{
-		conf: conf,
+		conf:      conf,
+		vetoCache: make(map[string]time.Time),
 	}
 
 	return instance
+}
+
+// rememberVeto marks a marker as vetoed until the TTL expires.
+func (w *Faces) rememberVeto(markerUID string) {
+	if markerUID == "" {
+		return
+	}
+
+	w.vetoMu.Lock()
+	defer w.vetoMu.Unlock()
+
+	w.pruneVetoLocked(time.Now())
+	w.vetoCache[markerUID] = time.Now().Add(faceVetoTTL)
+}
+
+// clearVeto removes a marker UID from the veto cache.
+func (w *Faces) clearVeto(markerUID string) {
+	if markerUID == "" {
+		return
+	}
+
+	w.vetoMu.Lock()
+	delete(w.vetoCache, markerUID)
+	w.vetoMu.Unlock()
+}
+
+// vetoed checks whether a marker UID is currently vetoed.
+func (w *Faces) vetoed(markerUID string) bool {
+	if markerUID == "" {
+		return false
+	}
+
+	w.vetoMu.Lock()
+	defer w.vetoMu.Unlock()
+
+	w.pruneVetoLocked(time.Now())
+
+	_, ok := w.vetoCache[markerUID]
+	return ok
+}
+
+// pruneVetoLocked removes expired veto entries; caller must hold vetoMu.
+func (w *Faces) pruneVetoLocked(now time.Time) {
+	for uid, expires := range w.vetoCache {
+		if expires.Before(now) {
+			delete(w.vetoCache, uid)
+		}
+	}
 }
 
 // StartDefault starts face clustering and matching with default options.

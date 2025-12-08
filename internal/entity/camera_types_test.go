@@ -41,7 +41,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("iPhone", func(t *testing.T) {
+	t.Run("IPhone", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPhone)
 		assert.Equal(t, CameraTypePhone, camera.CameraType)
 		assert.Equal(t, MakeApple+" "+ModelIPhone, camera.CameraName)
@@ -50,7 +50,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("iPad", func(t *testing.T) {
+	t.Run("IPad", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPad)
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeApple+" "+ModelIPad, camera.CameraName)
@@ -59,7 +59,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("iPadAir", func(t *testing.T) {
+	t.Run("IPadAir", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPadAir)
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeApple, camera.CameraMake)
@@ -67,7 +67,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("iPadPro", func(t *testing.T) {
+	t.Run("IPadPro", func(t *testing.T) {
 		camera := NewCamera(MakeApple, ModelIPadPro)
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeApple, camera.CameraMake)
@@ -227,7 +227,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.True(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("ILCE-7M3K", func(t *testing.T) {
+	t.Run("IlceSevenMThreeK", func(t *testing.T) {
 		camera := NewCamera(MakeSony, "ILCE-7M3K")
 		assert.Equal(t, CameraTypeBody, camera.CameraType)
 		assert.Equal(t, MakeSony, camera.CameraMake)
@@ -243,7 +243,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.True(t, camera.Mobile())
 	})
-	t.Run("ZV-1M2", func(t *testing.T) {
+	t.Run("ZvOneMTwo", func(t *testing.T) {
 		camera := NewCamera(MakeSony, "ZV-1M2")
 		assert.Equal(t, CameraTypeCompact, camera.CameraType)
 		assert.Equal(t, MakeSony, camera.CameraMake)
@@ -251,7 +251,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.False(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("MatePadPro12.2", func(t *testing.T) {
+	t.Run("MatePadProTwelveTwo", func(t *testing.T) {
 		camera := NewCamera(MakeHuawei, "MatePad pro 12.2")
 		assert.Equal(t, CameraTypeTablet, camera.CameraType)
 		assert.Equal(t, MakeHuawei, camera.CameraMake)
@@ -307,7 +307,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.True(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("Epson Perfection", func(t *testing.T) {
+	t.Run("EpsonPerfection", func(t *testing.T) {
 		camera := NewCamera("EPSON", "Perfection V800/V850")
 		assert.Equal(t, CameraTypeScanner, camera.CameraType)
 		assert.Equal(t, "EPSON", camera.CameraMake)
@@ -315,7 +315,7 @@ func TestCamera_CameraType(t *testing.T) {
 		assert.True(t, camera.Scanner())
 		assert.False(t, camera.Mobile())
 	})
-	t.Run("Epson FastFoto", func(t *testing.T) {
+	t.Run("EpsonFastFoto", func(t *testing.T) {
 		camera := NewCamera("EPSON", "FastFoto FF-680W")
 		assert.Equal(t, CameraTypeScanner, camera.CameraType)
 		assert.Equal(t, "EPSON", camera.CameraMake)

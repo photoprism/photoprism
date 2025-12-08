@@ -10,8 +10,17 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// ProjectRoot references the project root directory for use in tests.
+var ProjectRoot = fs.Abs("../../")
+
+// Runs first when package is tested.
+func init() {
+	hub.ApplyTestConfig()
+}
 
 func TestMain(m *testing.M) {
 	_ = os.Setenv("PHOTOPRISM_TEST", "true")
@@ -19,9 +28,15 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 
 	c := TestConfig()
-	defer c.CloseDb()
 
 	code := m.Run()
+
+	// Remove temporary SQLite files after running the tests.
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }
@@ -115,12 +130,24 @@ func TestConfig_OptionsYaml(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
 	})
-
 	t.Run("ChangePath", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Contains(t, c.OptionsYaml(), "options.yml")
-		c.options.ConfigPath = "/go/src/github.com/photoprism/photoprism/internal/config/testdata/"
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/testdata/options.yml", c.OptionsYaml())
+		c.options.ConfigPath = ProjectRoot + "/internal/config/testdata/"
+		assert.Equal(t, ProjectRoot+"/internal/config/testdata/options.yml", c.OptionsYaml())
+	})
+	t.Run("PreferYamlExtension", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempDir := t.TempDir()
+		c.options.ConfigPath = tempDir
+		c.options.OptionsYaml = ""
+
+		yamlPath := filepath.Join(tempDir, "options"+fs.ExtYaml)
+		if err := os.WriteFile(yamlPath, []byte("foo: bar\n"), fs.ModeFile); err != nil {
+			t.Fatalf("write %s: %v", yamlPath, err)
+		}
+
+		assert.Equal(t, yamlPath, c.OptionsYaml())
 	})
 }
 
@@ -153,10 +180,19 @@ func TestConfig_OriginalsPath(t *testing.T) {
 
 func TestConfig_ImportPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.AssertTestData(t)
 
+	assert.Equal(t, ProjectRoot+"/storage/testdata/import", c.ImportPath())
 	result := c.ImportPath()
 	assert.True(t, strings.HasPrefix(result, "/"))
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/import"))
+
+	c.options.ImportPath = ""
+	if s := c.ImportPath(); s != "" && s != "/photoprism/import" {
+		t.Errorf("unexpected import path: %s", s)
+	}
+
+	c.options.ImportPath = result
 }
 
 func TestConfig_CachePath(t *testing.T) {
@@ -187,18 +223,6 @@ func TestConfig_ThumbCachePath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(c.ThumbCachePath(), "storage/testdata/cache/thumbnails"))
 }
 
-func TestConfig_AssetsPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.True(t, strings.HasSuffix(c.AssetsPath(), "/assets"))
-}
-
-func TestConfig_CustomAssetsPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.CustomAssetsPath())
-}
-
 func TestConfig_AdminUser(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -212,14 +236,14 @@ func TestConfig_ExamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.ExamplesPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
+	assert.Equal(t, ProjectRoot+"/assets/examples", path)
 }
 
 func TestConfig_TemplatesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.TemplatesPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/templates", path)
+	assert.Equal(t, ProjectRoot+"/assets/templates", path)
 }
 
 func TestConfig_CustomTemplatesPath(t *testing.T) {
@@ -241,35 +265,55 @@ func TestConfig_StaticPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.StaticPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static", path)
+	assert.Equal(t, ProjectRoot+"/assets/static", path)
 }
 
 func TestConfig_StaticFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.StaticFile("video/404.mp4")
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/video/404.mp4", path)
+	assert.Equal(t, ProjectRoot+"/assets/static/video/404.mp4", path)
+
+	path = c.StaticFile("/img/logo.png")
+	assert.Equal(t, filepath.Join(c.StaticPath(), "img/logo.png"), path)
 }
 
-func TestConfig_BuildPath(t *testing.T) {
+func TestConfig_StaticBuildPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.BuildPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/build", path)
+	path := c.StaticBuildPath()
+	assert.Equal(t, ProjectRoot+"/assets/static/build", path)
 }
 
-func TestConfig_ImgPath(t *testing.T) {
+func TestConfig_StaticBuildFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ImgPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
+	assert.Equal(t, filepath.Join(c.StaticBuildPath(), fs.SwJsFile), c.StaticBuildFile(fs.SwJsFile))
+	assert.Equal(t, filepath.Join(c.StaticBuildPath(), "chunk/app.js"), c.StaticBuildFile("chunk/app.js"))
+}
+
+func TestConfig_StaticImgPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.StaticImgPath()
+	assert.Equal(t, ProjectRoot+"/assets/static/img", result)
+}
+
+func TestConfig_StaticImgFile(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, filepath.Join(c.StaticImgPath(), "favicon.ico"), c.StaticImgFile("favicon.ico"))
+	assert.Equal(t, filepath.Join(c.StaticImgPath(), "wallpapers/default.jpg"), c.StaticImgFile("/wallpapers/default.jpg"))
 }
 
 func TestConfig_ThemePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ThemePath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config/theme", path)
+	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
+	c.SetThemePath("testdata/static/img/wallpaper")
+	assert.Equal(t, ProjectRoot+"/internal/config/testdata/static/img/wallpaper", c.ThemePath())
+	c.SetThemePath("")
+	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
 }
 
 func TestConfig_IndexWorkers(t *testing.T) {
@@ -291,7 +335,7 @@ func TestConfig_WakeupInterval(t *testing.T) {
 
 	c.options.WakeupInterval = 45
 
-	assert.Equal(t, "1m0s", c.WakeupInterval().String())
+	assert.Equal(t, "45s", c.WakeupInterval().String())
 
 	c.options.WakeupInterval = 0
 
@@ -314,14 +358,6 @@ func TestConfig_AutoIndex(t *testing.T) {
 func TestConfig_AutoImport(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 2*time.Hour, c.AutoImport())
-}
-
-func TestConfig_GeoApi(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "places", c.GeoApi())
-	c.options.DisablePlaces = true
-	assert.Equal(t, "", c.GeoApi())
 }
 
 func TestConfig_OriginalsLimit(t *testing.T) {

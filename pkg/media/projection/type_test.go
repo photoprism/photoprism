@@ -35,3 +35,8 @@ func TestType_NotEqual(t *testing.T) {
 		assert.True(t, Cylindrical.NotEqual(Unknown.String()))
 	})
 }
+
+func TestType_UnknownMethod(t *testing.T) {
+	assert.True(t, Unknown.Unknown())
+	assert.False(t, Equirectangular.Unknown())
+}

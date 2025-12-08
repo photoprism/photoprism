@@ -3,7 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -20,9 +20,15 @@ import (
 
 // DeleteSession deletes an existing client session (logout).
 //
-// DELETE /api/v1/session
-// DELETE /api/v1/session/:id
-// DELETE /api/v1/sessions/:id
+//	@Summary	delete a session (logout)
+//	@Tags		Authentication
+//	@Produce	json
+//	@Param		id				path		string	false	"session id or ref id"
+//	@Success	200				{object}	gin.H
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/session [delete]
+//	@Router		/api/v1/session/{id} [delete]
+//	@Router		/api/v1/sessions/{id} [delete]
 func DeleteSession(router *gin.RouterGroup) {
 	deleteSessionHandler := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
@@ -51,27 +57,27 @@ func DeleteSession(router *gin.RouterGroup) {
 
 		// Only admins may delete other sessions by ref id.
 		if rnd.IsRefID(id) {
-			if !acl.Rules.AllowAll(acl.ResourceSessions, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
-				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", authn.Denied}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			if !acl.Rules.AllowAll(acl.ResourceSessions, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", status.Denied}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 				Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 				return
 			}
 
-			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", authn.Granted}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", status.Granted}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 
 			if s = entity.FindSessionByRefID(id); s == nil {
 				Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 				return
 			}
 		} else if id != "" && s.ID != id {
-			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
 
 		// Delete session cache and database record.
 		if err := s.Delete(); err != nil {
-			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", "%s"}, s.RefID, s.UserRole(), err)
+			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", status.Error(err)}, s.RefID, s.GetUserRole())
 		} else {
 			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, s.RefID)
 		}

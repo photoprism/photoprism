@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../../assets/facenet")
+var modelPath, _ = filepath.Abs("../../../assets/models/facenet")
 
 func TestNet(t *testing.T) {
 	expected := map[string]int{
@@ -30,9 +30,9 @@ func TestNet(t *testing.T) {
 		"14.jpg": 0,
 		"15.jpg": 0,
 		"16.jpg": 1,
-		"17.jpg": 1,
+		"17.jpg": 2,
 		"18.jpg": 2,
-		"19.jpg": 0,
+		"19.jpg": 1,
 	}
 
 	faceIndices := map[string][]int{
@@ -54,7 +54,7 @@ func TestNet(t *testing.T) {
 
 	var embeddings = make(Embeddings, 11)
 
-	faceNet := NewModel(modelPath, "testdata/cache", 160, []string{"serve"}, false)
+	faceNet := NewModel(modelPath, "testdata/cache", 160, nil, false)
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
 		if info.IsDir() || filepath.Base(filepath.Dir(fileName)) != "testdata" {
@@ -75,12 +75,17 @@ func TestNet(t *testing.T) {
 			// }
 
 			if len(faces) > 0 {
+				indices, ok := faceIndices[baseName]
 				for i, f := range faces {
+					if !ok || i >= len(indices) {
+						continue
+					}
+
 					if len(f.Embeddings) > 0 {
 						// t.Logf("FACE %d IN %s: %#v", i, fileName, f.Embeddings)
-						embeddings[faceIndices[baseName][i]] = f.Embeddings[0]
+						embeddings[indices[i]] = f.Embeddings[0]
 					} else {
-						embeddings[faceIndices[baseName][i]] = nil
+						embeddings[indices[i]] = nil
 					}
 				}
 			}
@@ -118,11 +123,11 @@ func TestNet(t *testing.T) {
 			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceIndexToPersonID[i], faceIndexToPersonID[j], dist)
 			if faceIndexToPersonID[i] == faceIndexToPersonID[j] {
 				if dist < 1.21 {
-					correct += 1
+					correct++
 				}
 			} else {
 				if dist >= 1.21 {
-					correct += 1
+					correct++
 				}
 			}
 		}

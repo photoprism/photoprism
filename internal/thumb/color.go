@@ -2,6 +2,7 @@ package thumb
 
 import "github.com/photoprism/photoprism/pkg/clean"
 
+// ColorSpace represents a thumbnail color profile preference.
 type ColorSpace = string
 
 // Supported thumbnail color profile settings.
@@ -11,9 +12,6 @@ const (
 	ColorSRGB     ColorSpace = "srgb"
 	ColorPreserve ColorSpace = "preserve"
 )
-
-// Color sets the standard color profile for thumbnails.
-var Color = ColorAuto
 
 // ParseColor returns a ColorSpace based on the config value string and image library.
 func ParseColor(name string, lib Lib) ColorSpace {

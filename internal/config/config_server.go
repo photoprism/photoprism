@@ -9,18 +9,25 @@ import (
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 const (
-	HttpModeProd  = "release"
+	// HttpModeProd selects Gin's release mode.
+	HttpModeProd = "release"
+	// HttpModeDebug selects Gin's debug mode.
 	HttpModeDebug = "debug"
 )
 
 // DetachServer checks if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
 	return c.options.DetachServer
+}
+
+// TrustedPlatform returns the trusted platform client IP address header name.
+func (c *Config) TrustedPlatform() string {
+	return c.options.TrustedPlatform
 }
 
 // TrustedProxy returns the ranges from which reverse proxy headers can be trusted as comma-separated list.
@@ -31,6 +38,16 @@ func (c *Config) TrustedProxy() string {
 // TrustedProxies returns proxy server ranges from which reverse proxy headers can be trusted.
 func (c *Config) TrustedProxies() []string {
 	return c.options.TrustedProxies
+}
+
+// ProxyClientHeader returns the proxy client IP address header names as comma-separated list.
+func (c *Config) ProxyClientHeader() string {
+	return strings.Join(c.options.ProxyClientHeaders, ", ")
+}
+
+// ProxyClientHeaders returns the proxy client IP address header names, if any.
+func (c *Config) ProxyClientHeaders() []string {
+	return c.options.ProxyClientHeaders
 }
 
 // ProxyProtoHeader returns the proxy protocol header names.
@@ -49,7 +66,7 @@ func (c *Config) ProxyProtoHeaders() map[string]string {
 	h := make(map[string]string, p+1)
 
 	if p == 0 {
-		h[header.ForwardedProto] = scheme.Https
+		h[header.XForwardedProto] = scheme.Https
 		return h
 	}
 
@@ -183,14 +200,14 @@ func (c *Config) HttpSocket() *url.URL {
 
 // TemplatesPath returns the server templates path.
 func (c *Config) TemplatesPath() string {
-	return filepath.Join(c.AssetsPath(), "templates")
+	return filepath.Join(c.AssetsPath(), fs.TemplatesDir)
 }
 
 // CustomTemplatesPath returns the path to custom templates.
 func (c *Config) CustomTemplatesPath() string {
 	if dir := c.CustomAssetsPath(); dir == "" {
 		return ""
-	} else if dir = filepath.Join(dir, "templates"); fs.PathExists(dir) {
+	} else if dir = filepath.Join(dir, fs.TemplatesDir); fs.PathExists(dir) {
 		return dir
 	}
 
@@ -222,9 +239,7 @@ func (c *Config) TemplateFiles() []string {
 			continue
 		}
 
-		for _, tmplName := range matches {
-			results = append(results, tmplName)
-		}
+		results = append(results, matches...)
 	}
 
 	return results
@@ -254,25 +269,56 @@ func (c *Config) TemplateName() string {
 
 // StaticPath returns the static assets' path.
 func (c *Config) StaticPath() string {
-	return filepath.Join(c.AssetsPath(), "static")
+	return filepath.Join(c.AssetsPath(), fs.StaticDir)
 }
 
-// StaticFile returns the path to a static file.
+// StaticFile joins the static assets directory with the given path (leading
+// slashes are preserved inside the static tree) and returns an absolute file
+// system location.
 func (c *Config) StaticFile(fileName string) string {
-	return filepath.Join(c.AssetsPath(), "static", fileName)
+	return filepath.Join(c.AssetsPath(), fs.StaticDir, fileName)
 }
 
-// BuildPath returns the static build path.
-func (c *Config) BuildPath() string {
-	return filepath.Join(c.StaticPath(), "build")
+// StaticBuildPath returns the static build path.
+func (c *Config) StaticBuildPath() string {
+	return filepath.Join(c.StaticPath(), fs.BuildDir)
 }
 
-// ImgPath returns the path to static image files.
-func (c *Config) ImgPath() string {
-	return filepath.Join(c.StaticPath(), "img")
+// StaticBuildFile joins the static build directory with the given path (leading
+// slashes are preserved inside the build tree) and returns an absolute file system
+// location (e.g. hashed bundles or sw.js).
+func (c *Config) StaticBuildFile(fileName string) string {
+	return filepath.Join(c.StaticBuildPath(), fileName)
+}
+
+// StaticImgPath returns the path to static image files.
+func (c *Config) StaticImgPath() string {
+	return filepath.Join(c.StaticPath(), fs.ImgDir)
+}
+
+// StaticImgFile joins the static image directory with the given path (leading
+// slashes are preserved inside the image tree) and returns an absolute file system
+// location (e.g. icons or wallpapers).
+func (c *Config) StaticImgFile(fileName string) string {
+	return filepath.Join(c.StaticImgPath(), fileName)
 }
 
 // ThemePath returns the path to static theme files.
 func (c *Config) ThemePath() string {
-	return filepath.Join(c.ConfigPath(), "theme")
+	if c.options.CustomThemePath != "" {
+		return c.options.CustomThemePath
+	}
+
+	return filepath.Join(c.ConfigPath(), fs.ThemeDir)
+}
+
+// SetThemePath sets a custom theme files path.
+func (c *Config) SetThemePath(dir string) *Config {
+	if dir != "" {
+		dir = fs.Abs(dir)
+	}
+
+	c.options.CustomThemePath = dir
+
+	return c
 }

@@ -21,6 +21,7 @@ type Moment struct {
 	PhotoCount int    `json:"PhotoCount"`
 }
 
+// MomentLabels groups raw label slugs into friendly category headings for the Moments view.
 var MomentLabels = map[string]string{
 	"park":             "Parks & Gardens",
 	"botanical-garden": "Parks & Gardens",

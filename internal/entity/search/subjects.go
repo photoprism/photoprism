@@ -34,15 +34,15 @@ func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 	// Set sort order.
 	switch frm.Order {
 	case "name":
-		s = s.Order("subj_name")
+		s = s.Order(OrderExpr("subj_name ASC", frm.Reverse))
 	case "count":
-		s = s.Order("file_count DESC")
+		s = s.Order(OrderExpr("file_count DESC", frm.Reverse))
 	case "added":
-		s = s.Order(fmt.Sprintf("%s.created_at DESC", subjTable))
+		s = s.Order(OrderExpr(fmt.Sprintf("%s.created_at DESC", subjTable), frm.Reverse))
 	case "relevance":
-		s = s.Order("subj_favorite DESC, photo_count DESC")
+		s = s.Order(OrderExpr("subj_favorite DESC, photo_count DESC", frm.Reverse))
 	default:
-		s = s.Order("subj_favorite DESC, subj_name")
+		s = s.Order(OrderExpr("subj_favorite DESC, subj_name ASC", frm.Reverse))
 	}
 
 	if frm.UID != "" {

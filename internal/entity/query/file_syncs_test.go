@@ -20,7 +20,7 @@ func TestFileSyncs(t *testing.T) {
 			assert.IsType(t, entity.FileSync{}, r)
 		}
 	})
-	t.Run("search for all file syncs", func(t *testing.T) {
+	t.Run("SearchForAllFileSyncs", func(t *testing.T) {
 		r, err := FileSyncs(0, "", 10)
 		if err != nil {
 			t.Fatal(err)

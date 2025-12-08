@@ -1,0 +1,114 @@
+{
+  "id": "resp_0fa91dfb69b7d644006916ea0b72ac819f84ff3152a38dfcdb",
+  "object": "response",
+  "created_at": 1763109387,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "error": null,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 1024,
+  "max_tool_calls": null,
+  "model": "gpt-5-mini-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0fa91dfb69b7d644006916ea0c3450819f8a13396bf377f474",
+      "type": "reasoning",
+      "summary": []
+    },
+    {
+      "id": "msg_0fa91dfb69b7d644006916ea0d2dfc819faf52b11334fc10a4",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "{\"labels\":[{\"name\":\"flower\",\"confidence\":0.99,\"topicality\":0.99},{\"name\":\"bee\",\"confidence\":0.95,\"topicality\":0.95},{\"name\":\"petal\",\"confidence\":0.92,\"topicality\":0.88},{\"name\":\"pollen\",\"confidence\":0.85,\"topicality\":0.8},{\"name\":\"insect\",\"confidence\":0.9,\"topicality\":0.85},{\"name\":\"red\",\"confidence\":0.88,\"topicality\":0.6},{\"name\":\"close-up\",\"confidence\":0.86,\"topicality\":0.7},{\"name\":\"nature\",\"confidence\":0.8,\"topicality\":0.5}]}"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "low",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "json_schema",
+      "description": null,
+      "name": "photoprism_vision_labels_v1",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "topicality": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "name",
+                "confidence",
+                "topicality"
+              ],
+              "additionalProperties": false
+            },
+            "default": []
+          }
+        },
+        "required": [
+          "labels"
+        ],
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 724,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 169,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 893
+  },
+  "user": null,
+  "metadata": {}
+}

@@ -8,14 +8,19 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
 // OAuthUserinfo should return information about the authenticated user,
 // see https://github.com/photoprism/photoprism/issues/4369.
 //
-// GET /api/v1/oauth/userinfo
+//	@Summary	OAuth2 userinfo endpoint (not implemented)
+//	@Id			OAuthUserinfo
+//	@Tags		Authentication
+//	@Produce	json
+//	@Failure	405	{object}	i18n.Response
+//	@Router		/api/v1/oauth/userinfo [get]
 func OAuthUserinfo(router *gin.RouterGroup) {
 	router.GET("/oauth/userinfo", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

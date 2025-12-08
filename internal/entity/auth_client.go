@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -14,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -24,29 +26,36 @@ const (
 	ClientUID = byte('c')
 )
 
-// Clients represents a list of client applications.
+// Clients is a convenience alias for slices of Client.
 type Clients []Client
 
-// Client represents a client application.
+// Client represents an OAuth/OpenID client registered with PhotoPrism.
 type Client struct {
-	ClientUID    string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
-	UserUID      string    `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName     string    `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user         *User     `gorm:"-" yaml:"-"`
-	ClientName   string    `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
-	ClientRole   string    `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
-	ClientType   string    `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
-	ClientURL    string    `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL  string    `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
-	AuthProvider string    `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string    `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthScope    string    `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
-	AuthExpires  int64     `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
-	AuthTokens   int64     `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
-	AuthEnabled  bool      `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
-	LastActive   int64     `json:"LastActive" yaml:"LastActive,omitempty"`
-	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
-	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
+	ClientUID    string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
+	NodeUUID     string          `gorm:"type:VARBINARY(64);index;default:'';" json:"NodeUUID,omitempty" yaml:"NodeUUID,omitempty"`
+	UserUID      string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user         *User           `gorm:"-" yaml:"-"`
+	AppName      string          `gorm:"size:64;" json:"AppName" yaml:"AppName,omitempty"`
+	AppVersion   string          `gorm:"size:64;" json:"AppVersion" yaml:"AppVersion,omitempty"`
+	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
+	ClientType   string          `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
+	ClientURL    string          `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
+	CallbackURL  string          `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
+	AuthProvider string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64           `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64           `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool            `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
+	RefreshToken string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
+	IdToken      string          `gorm:"type:VARBINARY(2048);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	DataJSON     json.RawMessage `gorm:"type:VARBINARY(4096);" json:"-" yaml:"Data,omitempty"`
+	data         *ClientData     `gorm:"-" yaml:"-"`
+	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
+	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -54,7 +63,7 @@ func (Client) TableName() string {
 	return "auth_clients"
 }
 
-// NewClient returns a new client application instance.
+// NewClient returns a new client application instance with default ACL role and authentication settings.
 func NewClient() *Client {
 	return &Client{
 		UserUID:      "",
@@ -86,7 +95,9 @@ func (m *Client) BeforeCreate(scope *gorm.Scope) error {
 
 // FindClientByUID returns the matching client or nil if it was not found.
 func FindClientByUID(uid string) *Client {
-	if rnd.InvalidUID(uid, ClientUID) {
+	if uid == "" {
+		return nil
+	} else if rnd.InvalidUID(uid, ClientUID) {
 		return nil
 	}
 
@@ -98,6 +109,36 @@ func FindClientByUID(uid string) *Client {
 	}
 
 	return m
+}
+
+// FindClientByNodeUUID returns the client with the given NodeUUID or nil if not found.
+func FindClientByNodeUUID(nodeUUID string) *Client {
+	if nodeUUID == "" {
+		return nil
+	}
+
+	m := &Client{}
+
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").First(m).Error; err != nil {
+		return nil
+	}
+
+	return m
+}
+
+// FindClientsByNodeUUID returns all client rows matching the given NodeUUID ordered by UpdatedAt descending.
+func FindClientsByNodeUUID(nodeUUID string) []Client {
+	if nodeUUID == "" {
+		return nil
+	}
+
+	var list []Client
+
+	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").Find(&list).Error; err != nil {
+		return nil
+	}
+
+	return list
 }
 
 // GetUID returns the client uid string.
@@ -154,8 +195,13 @@ func (m *Client) SetName(s string) *Client {
 
 // SetRole sets the client role specified as string.
 func (m *Client) SetRole(role string) *Client {
-	if role != "" {
-		m.ClientRole = acl.ClientRoles[clean.Role(role)].String()
+	r := clean.Role(role)
+
+	// Map known roles (includes aliases like "none" or empty); fall back to client if unknown.
+	if mapped, ok := acl.ClientRoles[r]; ok {
+		m.ClientRole = mapped.String()
+	} else {
+		m.ClientRole = acl.RoleClient.String()
 	}
 
 	return m
@@ -442,7 +488,7 @@ func (m *Client) UpdateLastActive(save bool) *Client {
 	if !save {
 		return m
 	} else if err := Db().Model(m).UpdateColumn("last_active", m.LastActive).Error; err != nil {
-		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", "%s"}, m.ClientUID, err)
+		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", status.Error(err)}, m.ClientUID)
 	}
 
 	return m
@@ -540,6 +586,7 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 
 	// Set values from form.
 	m.SetName(frm.Name())
+	m.SetRole(frm.Role())
 	m.SetProvider(frm.Provider())
 	m.SetMethod(frm.Method())
 	m.SetScope(frm.Scope())

@@ -3,6 +3,8 @@ package list
 import (
 	"sort"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 // Attr represents a list of key-value attributes.
@@ -43,9 +45,8 @@ func (list Attr) Strings() []string {
 
 		if s == "" {
 			continue
-		} else if i == 0 {
-			// Skip check.
-		} else if result[i-1] == s {
+		}
+		if i > 0 && result[i-1] == s {
 			continue
 		}
 
@@ -66,13 +67,14 @@ func (list Attr) Strings() []string {
 // Sort sorts the attributes by key.
 func (list Attr) Sort() Attr {
 	sort.Slice(list, func(i, j int) bool {
-		if list[i].Key == list[j].Key {
+		switch {
+		case list[i].Key == list[j].Key:
 			return list[i].Value < list[j].Value
-		} else if list[i].Key == All {
+		case list[i].Key == Any:
 			return false
-		} else if list[j].Key == All {
+		case list[j].Key == Any:
 			return true
-		} else {
+		default:
 			return list[i].Key < list[j].Key
 		}
 	})
@@ -84,7 +86,7 @@ func (list Attr) Sort() Attr {
 func (list Attr) Contains(s string) bool {
 	attr := list.Find(s)
 
-	if attr.Key == "" || attr.Value == False {
+	if attr.Key == "" || attr.Value == enum.False {
 		return false
 	}
 
@@ -95,37 +97,40 @@ func (list Attr) Contains(s string) bool {
 func (list Attr) Find(s string) (a KeyValue) {
 	if len(list) == 0 || s == "" {
 		return a
-	} else if s == All {
-		return KeyValue{Key: All, Value: ""}
+	} else if s == Any {
+		return KeyValue{Key: Any, Value: ""}
 	}
 
 	attr := ParseKeyValue(s)
 
-	// Return nil if key is invalid or all.
-	if attr.Key == "" {
+	// Return if key is invalid.
+	if attr == nil {
+		return a
+	} else if attr.Key == "" {
 		return a
 	}
 
 	// Find and return first match.
-	if attr.Value == "" || attr.Value == All {
+	if attr.Value == "" || attr.Value == Any {
 		for i := range list {
 			if strings.EqualFold(attr.Key, list[i].Key) {
 				return *list[i]
-			} else if list[i].Key == All {
+			} else if list[i].Key == Any {
 				a = *list[i]
 			}
 		}
 	} else {
 		for i := range list {
 			if strings.EqualFold(attr.Key, list[i].Key) {
-				if attr.Value == True && list[i].Value == False {
+				switch {
+				case attr.Value == enum.True && list[i].Value == enum.False:
 					return KeyValue{Key: "", Value: ""}
-				} else if attr.Value == list[i].Value {
+				case attr.Value == list[i].Value:
 					return *list[i]
-				} else if list[i].Value == All {
+				case list[i].Value == Any:
 					a = *list[i]
 				}
-			} else if list[i].Key == All && attr.Value != False {
+			} else if list[i].Key == Any && attr.Value != enum.False {
 				a = *list[i]
 			}
 		}

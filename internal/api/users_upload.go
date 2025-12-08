@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -22,13 +23,24 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// UploadUserFiles adds files to the user upload folder, from where they can be moved and indexed.
+// UploadUserFiles adds files to the user's upload folder from where they can be processed and indexed.
 //
-//	@Tags	Users, Files
-//	@Router /users/{uid}/upload/{token} [post]
+//	@Summary	upload files to a user's upload folder
+//	@Id			UploadUserFiles
+//	@Tags		Users, Files
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		uid						path		string	true	"user uid"
+//	@Param		token					path		string	true	"upload token"
+//	@Param		files					formData	file	true	"one or more files to upload (repeat the field for multiple files)"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,413,429,507	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/upload/{token} [post]
 func UploadUserFiles(router *gin.RouterGroup) {
 	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
 		conf := get.Config()
@@ -49,7 +61,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		uid := clean.UID(c.Param("uid"))
 
 		// Users may only upload files for their own account.
-		if s.User().UserUID != uid {
+		if s.GetUser().UserUID != uid {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "user does not match"}, s.RefID)
 			AbortForbidden(c)
 			return
@@ -57,7 +69,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		// Abort if there is not enough free storage to upload new files.
 		if conf.FilesQuotaReached() {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "insufficient storage"}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}
@@ -105,13 +117,14 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			fileType := fs.FileType(baseName)
 
 			// Reject unsupported files and files with extensions that aren't allowed.
-			if fileType == fs.TypeUnknown {
+			switch {
+			case fileType == fs.TypeUnknown:
 				log.Errorf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
 				continue
-			} else if allowedExt.Excludes(fileType.DefaultExt()) {
+			case allowedExt.Excludes(fileType.DefaultExt()):
 				log.Errorf("upload: rejected %s because its extension is not allowed", clean.Log(baseName))
 				continue
-			} else if fileSizeLimit > 0 && file.Size > fileSizeLimit {
+			case fileSizeLimit > 0 && file.Size > fileSizeLimit:
 				log.Errorf("upload: rejected %s because its size exceeds the file size limit", clean.Log(baseName))
 				continue
 			}
@@ -189,15 +202,16 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			containsNSFW := false
 
 			for _, filename := range uploads {
-				labels, nsfwErr := vision.Nsfw([]string{filename}, media.SrcLocal)
+				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
 
-				if nsfwErr != nil {
+				switch {
+				case nsfwErr != nil:
 					log.Debug(nsfwErr)
 					continue
-				} else if len(labels) < 1 {
+				case len(labels) < 1:
 					log.Errorf("nsfw: model returned no result")
 					continue
-				} else if labels[0].IsSafe() {
+				case labels[0].IsSafe():
 					continue
 				}
 
@@ -252,9 +266,19 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 	}
 }
 
-// ProcessUserUpload triggers processing once all files have been uploaded.
+// ProcessUserUpload triggers processing and import of previously uploaded files.
 //
-// PUT /users/:uid/upload/:token
+//	@Summary	process previously uploaded files for a user
+//	@Id			ProcessUserUpload
+//	@Tags		Users, Files
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid						path		string				true	"user uid"
+//	@Param		token					path		string				true	"upload token"
+//	@Param		options					body		form.UploadOptions	true	"processing options"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/upload/{token} [put]
 func ProcessUserUpload(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/upload/:token", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
@@ -264,7 +288,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		}
 
 		// Users may only upload their own files.
-		if s.User().UserUID != clean.UID(c.Param("uid")) {
+		if s.GetUser().UserUID != clean.UID(c.Param("uid")) {
 			AbortForbidden(c)
 			return
 		}
@@ -282,7 +306,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -299,7 +323,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Get destination folder.
 		var destFolder string
-		if destFolder = s.User().GetUploadPath(); destFolder == "" {
+		if destFolder = s.GetUser().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 
@@ -309,8 +333,8 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(frm.Albums, " and ")))
+			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			log.Debugf("upload: adding files to album %s", clean.Log(txt.JoinAnd(frm.Albums)))
 			opt.Albums = frm.Albums
 		}
 
@@ -324,7 +348,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
-			if err := os.Remove(uploadPath); err != nil {
+			if err = os.Remove(uploadPath); err != nil {
 				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
 			} else {
 				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
@@ -353,8 +377,12 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
-		for _, uid := range frm.Albums {
-			PublishAlbumEvent(StatusUpdated, uid, c)
+		// Update album YAML backups and notify clients of the changes.
+		for _, album := range opt.Albums {
+			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
+				SaveAlbumYaml(a)
+				PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+			}
 		}
 
 		// Update the user interface.

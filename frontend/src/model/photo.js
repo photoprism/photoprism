@@ -1,28 +1,3 @@
-/*
-
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
-
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
-
-Feel free to send an email to hello@photoprism.app if you have questions,
-want to support our work, or just want to say hello.
-
-Additional information can be found in our Developer Guide:
-<https://docs.photoprism.app/developer-guide/>
-
-*/
-
 import memoizeOne from "memoize-one";
 import RestModel from "model/rest";
 import File from "model/file";
@@ -47,6 +22,7 @@ export const TimeZoneLocal = "Local";
 
 export let BatchSize = 156;
 
+// Photo models core metadata for images and videos shown in the UI.
 export class Photo extends RestModel {
   constructor(values) {
     super(values);
@@ -160,14 +136,7 @@ export class Photo extends RestModel {
   }
 
   classes() {
-    return this.generateClasses(
-      this.isPlayable(),
-      PhotoClipboard.has(this),
-      this.Portrait,
-      this.Favorite,
-      this.Private,
-      this.isStack()
-    );
+    return this.generateClasses(this.isPlayable(), PhotoClipboard.has(this), this.Portrait, this.Favorite, this.Private, this.isStack());
   }
 
   generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, isStack) => {
@@ -188,8 +157,10 @@ export class Photo extends RestModel {
       return new Date().getDate().toString().padStart(2, "0");
     }
 
-    if (!this.Day || this.Day <= 0) {
+    if (!this.Day) {
       return this.TakenAtLocal.substring(8, 10);
+    } else if (this.Day <= 0) {
+      return "01";
     }
 
     return this.Day.toString().padStart(2, "0");
@@ -582,9 +553,7 @@ export class Photo extends RestModel {
         file = files.find((f) => f.MediaType === media.Image && f.Root === "/");
         break;
       case media.Live:
-        file = files.find(
-          (f) => (f.MediaType === media.Video || f.MediaType === media.Live || f.Video) && f.Root === "/"
-        );
+        file = files.find((f) => (f.MediaType === media.Video || f.MediaType === media.Live || f.Video) && f.Root === "/");
         break;
       case media.Video:
         file = files.find((f) => (f.MediaType === media.Video || f.Video) && f.Root === "/");
@@ -636,9 +605,7 @@ export class Photo extends RestModel {
       }
 
       // Use first JPEG or PNG file hash, if exists.
-      file = files.find(
-        (f) => (f.FileType === media.FormatJpeg || f.FileType === media.FormatPng) && !f.Missing && f.Hash
-      );
+      file = files.find((f) => (f.FileType === media.FormatJpeg || f.FileType === media.FormatPng) && !f.Missing && f.Hash);
       if (file) {
         return file.Hash;
       }
@@ -704,13 +671,7 @@ export class Photo extends RestModel {
   // Returns the thumbnail URL of the primary file,
   // or otherwise the best matching non-sidecar file.
   thumbnailUrl(size) {
-    return this.generateThumbnailUrl(
-      this.fileHash(),
-      $config.staticUri,
-      $config.contentUri,
-      $config.previewToken,
-      size
-    );
+    return this.generateThumbnailUrl(this.fileHash(), $config.staticUri, $config.contentUri, $config.previewToken, size);
   }
 
   generateThumbnailUrl = memoizeOne((fileHash, staticUri, contentUri, previewToken, size) => {
@@ -917,9 +878,7 @@ export class Photo extends RestModel {
       return this;
     }
 
-    return this.Files.find(
-      (f) => f.MediaType === media.Document || f.MediaType === media.Vector || f.FileType === media.FormatSVG
-    );
+    return this.Files.find((f) => f.MediaType === media.Document || f.MediaType === media.Vector || f.FileType === media.FormatSVG);
   }
 
   getVectorInfo = () => {
@@ -1001,14 +960,7 @@ export class Photo extends RestModel {
 
   // Example: Apple iPhone 12 Pro Max, DNG, 4032 × 3024, 32.9 MB
   getCameraInfo = () => {
-    return this.generateCameraInfo(
-      this.Camera,
-      this.CameraID,
-      this.CameraMake,
-      this.CameraModel,
-      this.Iso,
-      this.Exposure
-    );
+    return this.generateCameraInfo(this.Camera, this.CameraID, this.CameraMake, this.CameraModel, this.Iso, this.Exposure);
   };
 
   generateCameraInfo = memoizeOne((camera, cameraId, cameraMake, cameraModel, iso, exposure) => {
@@ -1056,15 +1008,7 @@ export class Photo extends RestModel {
 
   // Example: iPhone 12 Pro Max 5.1mm ƒ/1.6, 26mm, ISO32, 1/4525
   getLensInfo = () => {
-    return this.generateLensInfo(
-      this.Lens,
-      this.LensID,
-      this.LensMake,
-      this.LensModel,
-      this.CameraModel,
-      this.FNumber,
-      this.FocalLength
-    );
+    return this.generateLensInfo(this.Lens, this.LensID, this.LensMake, this.LensModel, this.CameraModel, this.FNumber, this.FocalLength);
   };
 
   generateLensInfo = memoizeOne((lens, lensId, lensMake, lensModel, cameraModel, fNumber, focalLength) => {
@@ -1137,21 +1081,15 @@ export class Photo extends RestModel {
   }
 
   setPrimaryFile(fileUID) {
-    return $api
-      .post(`${this.getEntityResource()}/files/${fileUID}/primary`)
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   unstackFile(fileUID) {
-    return $api
-      .post(`${this.getEntityResource()}/files/${fileUID}/unstack`)
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   deleteFile(fileUID) {
-    return $api
-      .delete(`${this.getEntityResource()}/files/${fileUID}`)
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   changeFileOrientation(file) {
@@ -1169,9 +1107,7 @@ export class Photo extends RestModel {
     }
 
     // Change file orientation.
-    return $api
-      .put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values)
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   like() {
@@ -1185,21 +1121,15 @@ export class Photo extends RestModel {
   }
 
   addLabel(name) {
-    return $api
-      .post(this.getEntityResource() + "/label", { Name: name, Priority: 10 })
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.post(this.getEntityResource() + "/label", { Name: name, Priority: 10 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   activateLabel(id) {
-    return $api
-      .put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 })
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   renameLabel(id, name) {
-    return $api
-      .put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } })
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   removeLabel(id) {

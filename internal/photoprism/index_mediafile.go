@@ -10,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -17,19 +18,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
-// MediaFile indexes a single media file.
+// MediaFile indexes a single media file on behalf of the default owner.
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID string) (result IndexResult) {
 	return ind.UserMediaFile(m, o, originalName, photoUID, entity.OwnerUnknown)
 }
 
-// UserMediaFile indexes a single media file owned by a user.
+// UserMediaFile indexes a single media file for the provided owner, performing duplicate detection,
+// metadata extraction, and database updates before returning an IndexResult describing the outcome.
 func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, photoUID, userUID string) (result IndexResult) {
 	if m == nil {
 		result.Status = IndexFailed
@@ -58,6 +59,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	photo := entity.NewUserPhoto(o.Stack, userUID)
 	metaData := meta.NewData()
 	labels := classify.Labels{}
+	isNSFW := false
 	stripSequence := Config().Settings().StackSequences() && o.Stack
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
@@ -134,7 +136,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
-	if !fileExists && photoUID != "" {
+	switch {
+	case !fileExists && photoUID != "":
 		// Find existing photo by UID.
 		photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID)
 
@@ -147,7 +150,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			result.Err = fmt.Errorf("index: failed indexing %s, unknown photo uid %s (%s)", logName, photoUID, photoQuery.Error)
 			return result
 		}
-	} else if !fileExists {
+	case !fileExists:
 		// Find existing photo by matching path and name.
 		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
 			// Skip next query.
@@ -182,19 +185,20 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				}
 			}
 		}
-	} else if fileExists {
+	case fileExists:
 		// Find photo by the id or uid assigned to the file.
-		if file.PhotoID > 0 {
+		switch {
+		case file.PhotoID > 0:
 			photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
-		} else if rnd.IsUID(file.PhotoUID, entity.PhotoUID) {
+		case rnd.IsUID(file.PhotoUID, entity.PhotoUID):
 			photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", file.PhotoUID)
-		} else {
+		default:
 			// Should never happen.
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: file %s has no photo id or uid assigned - you may have found a bug, please report", logName)
 			return result
 		}
-	} else {
+	default:
 		// Should never happen.
 		result.Status = IndexFailed
 		result.Err = fmt.Errorf("index: unexpectedly failed indexing %s - you may have found a bug, please report", logName)
@@ -213,13 +217,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 
 		// Detect and report file changes.
-		if fileRenamed {
+		switch {
+		case fileRenamed:
 			fileChanged = true
 			log.Debugf("index: %s was renamed", clean.Log(m.BaseName()))
-		} else if file.Changed(fileSize, modTime) {
+		case file.Changed(fileSize, modTime):
 			fileChanged = true
 			log.Debugf("index: %s was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", clean.Log(m.BaseName()), fileSize, file.FileSize, modTime.Unix(), file.ModTime)
-		} else if file.Missing() {
+		case file.Missing():
 			fileChanged = true
 			log.Debugf("index: %s was missing", clean.Log(m.BaseName()))
 		}
@@ -341,7 +346,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
-	} else if ind.findFaces && file.FilePrimary {
+	} else if o.DetectFaces && file.FilePrimary {
+		// Run face detection on primary files when enabled for this indexing run.
 		if markers := file.Markers(); markers != nil {
 			// Detect faces.
 			faces := ind.Faces(m, markers.DetectedFaceCount())
@@ -351,12 +357,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.AddFaces(faces)
 			}
 
-			// Any new markers?
-			if file.UnsavedMarkers() {
-				// Add matching labels.
-				extraLabels = append(extraLabels, file.Markers().Labels()...)
-			} else if o.FacesOnly {
-				// Skip when indexing faces only.
+			// Skip when indexing faces only and no new markers were found.
+			if !file.UnsavedMarkers() && o.FacesOnly {
 				result.Status = IndexSkipped
 				return result
 			}
@@ -368,11 +370,20 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	}
 
+	// Reset photo metadata if this is a forced rescan.
+	if o.Rescan && photoUID == "" {
+		// Reset video duration.
+		photo.ResetDuration()
+
+		// Reset media type.
+		photo.ResetMediaType(entity.SrcFile)
+	}
+
 	// Reset file perceptive diff and chroma percent.
 	file.FileDiff = -1
 	file.FileChroma = -1
 	file.FileVideo = m.IsVideo()
-	file.MediaType = m.Media().String()
+	file.MediaType = m.MediaType().String()
 
 	// Handle file types.
 	switch {
@@ -433,12 +444,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				// Change file and photo type to "live" if the file has a video embedded.
 				file.FileVideo = true
 				file.MediaType = entity.MediaLive
-				if photo.TypeSrc == entity.SrcAuto {
-					photo.PhotoType = entity.MediaLive
-				}
-			} else if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaLive {
-				// Image does not include a compatible video.
-				photo.PhotoType = entity.MediaImage
+
+				// Set photo media type to "live".
+				photo.SetMediaType(media.Live, entity.SrcFile)
 			}
 
 			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
@@ -459,9 +467,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// Change the photo type to animated if it is an animated PNG.
-		if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaImage && m.IsAnimatedImage() {
-			photo.PhotoType = entity.MediaAnimated
+		// If the file contains multiple images for an animation,
+		// change the media type to "animated".
+		if photo.HasMediaType(media.Image) && m.IsAnimatedImage() {
+			photo.SetMediaType(media.Animated, entity.SrcAuto)
+		} else if photo.PhotoType == "" {
+			photo.SetMediaType(media.Image, entity.SrcAuto)
 		}
 	case m.IsXMP():
 		if data, dataErr := meta.XMP(m.FileName()); dataErr == nil {
@@ -554,12 +565,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				// Change file and photo type to "live" if the file has a video embedded.
 				file.FileVideo = true
 				file.MediaType = entity.MediaLive
-				if photo.TypeSrc == entity.SrcAuto {
-					photo.PhotoType = entity.MediaLive
-				}
-			} else if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaLive {
-				// HEIC does not include a compatible video.
-				photo.PhotoType = entity.MediaImage
+
+				// If the file also contains a video, set photo media type to "live".
+				photo.SetMediaType(media.Live, entity.SrcFile)
+			} else {
+				// If the file does not contain a video, set the media type to "image".
+				photo.SetMediaType(media.Image, entity.SrcAuto)
 			}
 
 			// Set photo resolution based on the largest media file.
@@ -572,16 +583,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
-		// Update photo type if an image and not manually modified.
-		if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaImage {
-			if m.IsAnimatedImage() {
-				photo.PhotoType = entity.MediaAnimated
-			} else if m.IsRaw() {
-				photo.PhotoType = entity.MediaRaw
-			} else if m.IsLive() {
-				photo.PhotoType = entity.MediaLive
-			} else if m.IsVector() {
-				photo.PhotoType = entity.MediaVector
+		// If the media type is still set to "image" and has not been
+		// manually modified, then check and update it as needed.
+		if photo.HasMediaType(media.Image) {
+			switch {
+			case m.IsAnimatedImage():
+				photo.SetMediaType(media.Animated, entity.SrcAuto)
+			case m.IsRaw():
+				photo.SetMediaType(media.Raw, entity.SrcAuto)
+			case m.IsLive(photo.PhotoDuration):
+				photo.SetMediaType(media.Live, entity.SrcAuto)
+			case m.IsVector():
+				photo.SetMediaType(media.Vector, entity.SrcAuto)
 			}
 		}
 	case m.IsVector():
@@ -637,10 +650,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// Update photo type if not manually modified.
-		if photo.TypeSrc == entity.SrcAuto {
-			photo.PhotoType = entity.MediaVector
-		}
+		// Set photo media type to "vector".
+		photo.SetMediaType(media.Vector, entity.SrcAuto)
 	case m.IsDocument():
 		if data := m.MetaData(); data.Error == nil {
 			photo.SetTitle(data.Title, entity.SrcMeta)
@@ -691,10 +702,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// Update photo type if not manually modified.
-		if photo.TypeSrc == entity.SrcAuto {
-			photo.PhotoType = entity.MediaDocument
-		}
+		// Set photo media type to "document".
+		photo.SetMediaType(media.Document, entity.SrcAuto)
 	case m.IsVideo():
 		if data := m.MetaData(); data.Error == nil {
 			photo.SetTitle(data.Title, entity.SrcMeta)
@@ -759,13 +768,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
-		if photo.TypeSrc == entity.SrcAuto {
-			// Update photo type only if not manually modified.
-			if file.FileDuration == 0 || file.FileDuration > video.LiveDuration {
-				photo.PhotoType = entity.MediaVideo
-			} else {
-				photo.PhotoType = entity.MediaLive
-			}
+		// Set the media type to "live" instead of "video" if the video duration
+		// is less than 3.1 seconds and a JPEG or HEIC image exists.
+		if photo.PhotoDuration > 0 && m.IsLive(photo.PhotoDuration) {
+			photo.SetMediaType(media.Live, entity.SrcAuto)
+		} else {
+			photo.SetMediaType(media.Video, entity.SrcAuto)
 		}
 
 		// Set the video dimensions from the primary image if it could not be determined from the video metadata.
@@ -809,17 +817,24 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if file.FilePrimary {
 		primaryFile = file
 
-		// Classify images with TensorFlow?
-		if ind.findLabels {
-			labels = ind.Labels(m)
+		// Classify images with TensorFlow if the run enables automatic labels.
+		if o.GenerateLabels {
+			labels = m.GenerateLabels(entity.SrcAuto)
 
 			// Append labels from other sources such as face detection.
 			if len(extraLabels) > 0 {
 				labels = append(labels, extraLabels...)
 			}
 
-			if !photoExists && Config().Settings().Features.Private && Config().DetectNSFW() {
-				photo.PhotoPrivate = ind.IsNsfw(m)
+			isNSFW = labels.IsNSFW(vision.Config.Thresholds.GetNSFW())
+		}
+
+		// Decouple NSFW detection from label generation.
+		if !photoExists {
+			if isNSFW {
+				photo.PhotoPrivate = true
+			} else if o.DetectNsfw {
+				photo.PhotoPrivate = m.DetectNSFW()
 			}
 		}
 
@@ -910,27 +925,28 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			})
 		}
 
-		if photo.PhotoType == entity.MediaAnimated {
+		switch photo.MediaType() {
+		case media.Animated:
 			event.Publish("count.animated", event.Data{
 				"count": 1,
 			})
-		} else if photo.PhotoType == entity.MediaLive {
+		case media.Live:
 			event.Publish("count.live", event.Data{
 				"count": 1,
 			})
-		} else if photo.PhotoType == entity.MediaAudio {
+		case media.Audio:
 			event.Publish("count.audio", event.Data{
 				"count": 1,
 			})
-		} else if photo.PhotoType == entity.MediaVideo {
+		case media.Video:
 			event.Publish("count.videos", event.Data{
 				"count": 1,
 			})
-		} else if photo.PhotoType == entity.MediaDocument {
+		case media.Document:
 			event.Publish("count.documents", event.Data{
 				"count": 1,
 			})
-		} else {
+		default:
 			event.Publish("count.photos", event.Data{
 				"count": 1,
 			})
@@ -961,18 +977,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
-		if photo.OriginalName == "" {
+		switch {
+		case photo.OriginalName == "":
 			// Do nothing.
-		} else if fs.IsGenerated(photo.OriginalName) {
+		case fs.IsGenerated(photo.OriginalName):
 			w = append(w, txt.FilenameKeywords(filepath.Dir(photo.OriginalName))...)
-		} else {
+		default:
 			w = append(w, txt.FilenameKeywords(photo.OriginalName)...)
 		}
 
 		w = append(w, txt.FilenameKeywords(filePath)...)
 		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
-		w = append(w, photoLabels.Keywords()...)
 
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
@@ -1038,7 +1054,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// Update related video files so they are properly grouped with the primary image in search results.
-	if (photo.PhotoType == entity.MediaVideo || photo.PhotoType == entity.MediaLive) && file.FilePrimary {
+	if photo.HasMediaType(media.Video, media.Live) && file.FilePrimary {
 		if updateErr := file.UpdateVideoInfos(); updateErr != nil {
 			log.Errorf("index: %s in %s (update video infos)", updateErr, logName)
 		}
@@ -1061,14 +1077,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Do nothing.
 	} else if original, merged, err := photo.Merge(Config().Settings().StackMeta(), Config().Settings().StackUUID()); err != nil {
 		log.Errorf("index: %s in %s (merge)", err.Error(), logName)
-	} else if len(merged) == 1 && original.ID == photo.ID {
-		log.Infof("index: merged one existing photo with %s", logName)
-	} else if len(merged) > 1 && original.ID == photo.ID {
-		log.Infof("index: merged %d existing photos with %s", len(merged), logName)
-	} else if len(merged) > 0 && original.ID != photo.ID {
-		log.Infof("index: merged %s with existing photo id %d", logName, original.ID)
-		result.Status = IndexStacked
-		return result
+	} else {
+		switch {
+		case len(merged) == 1 && original.ID == photo.ID:
+			log.Infof("index: merged one existing photo with %s", logName)
+		case len(merged) > 1 && original.ID == photo.ID:
+			log.Infof("index: merged %d existing photos with %s", len(merged), logName)
+		case len(merged) > 0 && original.ID != photo.ID:
+			log.Infof("index: merged %s with existing photo id %d", logName, original.ID)
+			result.Status = IndexStacked
+			return result
+		}
 	}
 
 	// Create backup of picture metadata in sidecar YAML file.

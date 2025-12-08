@@ -10,6 +10,8 @@ import (
 // so the output can be pasted into the docs.
 func RenderFormat(rows [][]string, cols []string, format Format) (string, error) {
 	switch format {
+	case JSON:
+		return JSONExport(rows, cols)
 	case CSV:
 		return Render(rows, cols, Options{Format: CSV})
 	case TSV:
@@ -27,6 +29,8 @@ func RenderFormat(rows [][]string, cols []string, format Format) (string, error)
 // so the output can be pasted into the docs.
 func Render(rows [][]string, cols []string, opt Options) (string, error) {
 	switch opt.Format {
+	case JSON:
+		return JSONExport(rows, cols)
 	case CSV:
 		return CsvExport(rows, cols, ';')
 	case TSV:

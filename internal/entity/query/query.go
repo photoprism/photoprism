@@ -33,6 +33,7 @@ import (
 
 var log = event.Log
 
+// Supported database dialect identifiers.
 const (
 	MySQL   = "mysql"
 	SQLite3 = "sqlite3"

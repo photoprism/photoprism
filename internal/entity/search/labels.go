@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -25,6 +26,13 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		Where("labels.photo_count > 0").
 		Group("labels.id")
 
+	// Filter private labels.
+	if frm.Public {
+		s = s.Where("labels.label_nsfw = 0")
+	} else if frm.NSFW {
+		s = s.Where("labels.label_nsfw = 1")
+	}
+
 	// Limit result count.
 	if frm.Count > 0 && frm.Count <= MaxResults {
 		s = s.Limit(frm.Count).Offset(frm.Offset)
@@ -34,10 +42,12 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 
 	// Set sort order.
 	switch frm.Order {
-	case "slug":
-		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
+	case sortby.Slug:
+		s = s.Order("custom_slug ASC, labels.photo_count DESC")
+	case sortby.Count:
+		s = s.Order("labels.photo_count DESC, custom_slug ASC")
 	default:
-		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
+		s = s.Order("labels.label_favorite DESC, labels.label_priority DESC, labels.photo_count DESC, custom_slug ASC")
 	}
 
 	if frm.UID != "" {
@@ -81,8 +91,8 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		s = s.Where("labels.label_favorite = 1")
 	}
 
-	if !frm.All {
-		s = s.Where("labels.label_priority >= 0 OR labels.label_favorite = 1")
+	if frm.Query == "" && !frm.All {
+		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1")
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

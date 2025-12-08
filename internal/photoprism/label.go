@@ -44,6 +44,7 @@ func (l Labels) Less(i, j int) bool {
 	}
 }
 
+// AppendLabel adds a label if it has a name and returns the extended slice.
 func (l Labels) AppendLabel(label Label) Labels {
 	if label.Name == "" {
 		return l
@@ -52,6 +53,7 @@ func (l Labels) AppendLabel(label Label) Labels {
 	return append(l, label)
 }
 
+// Keywords flattens label names and categories into keyword tokens.
 func (l Labels) Keywords() (result []string) {
 	for _, label := range l {
 		result = append(result, txt.Keywords(label.Name)...)
@@ -64,6 +66,7 @@ func (l Labels) Keywords() (result []string) {
 	return result
 }
 
+// Title picks the best label name as title, using fallback when confidence is low.
 func (l Labels) Title(fallback string) string {
 	fallbackRunes := len([]rune(fallback))
 
@@ -81,18 +84,19 @@ func (l Labels) Title(fallback string) string {
 	// Get best label (at the top)
 	label := l[0]
 
-	// Get second best label in case the first has high uncertainty
+	// Get second-best label in case the first has high uncertainty
 	if len(l) > 1 && l[0].Uncertainty > 60 && l[1].Uncertainty <= 60 {
 		label = l[1]
 	}
 
-	if fallback != "" && label.Priority < 0 {
+	switch {
+	case fallback != "" && label.Priority < 0:
 		return fallback
-	} else if fallback != "" && label.Priority == 0 && label.Uncertainty > 50 {
+	case fallback != "" && label.Priority == 0 && label.Uncertainty > 50:
 		return fallback
-	} else if label.Priority >= -1 && label.Uncertainty <= 60 {
+	case label.Priority >= -1 && label.Uncertainty <= 60:
 		return label.Name
+	default:
+		return fallback
 	}
-
-	return fallback
 }

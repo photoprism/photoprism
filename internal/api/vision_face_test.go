@@ -10,11 +10,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 func TestPostVisionFace(t *testing.T) {
-	t.Run("Face", func(t *testing.T) {
+	t.Run("GenerateFaceEmbeddings", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PostVisionFace(router)
 
@@ -164,10 +164,6 @@ func TestPostVisionFace(t *testing.T) {
 			t.Fatal(apiErr)
 		} else if apiErr = json.Unmarshal(apiJson, apiResponse); apiErr != nil {
 			t.Fatal(apiErr)
-		}
-
-		if apiResponse == nil {
-			t.Fatal("api response expected")
 		}
 
 		// t.Logf("error: %s", apiResponse.Err())

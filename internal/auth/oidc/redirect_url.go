@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// RedirectURL returns the redirect URL for authentication via OIDC based on the specified site URL.
+// RedirectURL builds the OIDC redirect callback from the provided site URL.
 func RedirectURL(siteUrl string) (string, error) {
 	if siteUrl == "" {
 		return "", errors.New("site url required")

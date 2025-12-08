@@ -31,7 +31,7 @@ func TestLevelUnmarshalText(t *testing.T) {
 			assert.Equal(t, level, u)
 		})
 	}
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		assert.Error(t, u.UnmarshalText([]byte("invalid")))
 	})
 }

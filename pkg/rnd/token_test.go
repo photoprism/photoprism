@@ -7,7 +7,7 @@ import (
 )
 
 func TestBase10(t *testing.T) {
-	t.Run("10", func(t *testing.T) {
+	t.Run("Ten", func(t *testing.T) {
 		s := Base10(10)
 		t.Logf("Base10 (10 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -21,7 +21,7 @@ func TestBase10(t *testing.T) {
 			assert.NotEmpty(t, s)
 		}
 	})
-	t.Run("23", func(t *testing.T) {
+	t.Run("Num23", func(t *testing.T) {
 		s := Base10(23)
 		t.Logf("Base10 (23 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -32,7 +32,7 @@ func TestBase10(t *testing.T) {
 }
 
 func TestBase36(t *testing.T) {
-	t.Run("10", func(t *testing.T) {
+	t.Run("Ten", func(t *testing.T) {
 		s := Base36(10)
 		t.Logf("Base36 (10 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -46,7 +46,7 @@ func TestBase36(t *testing.T) {
 			assert.NotEmpty(t, s)
 		}
 	})
-	t.Run("23", func(t *testing.T) {
+	t.Run("Num23", func(t *testing.T) {
 		s := Base36(23)
 		t.Logf("Base36 (23 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -57,14 +57,14 @@ func TestBase36(t *testing.T) {
 }
 
 func TestBase62(t *testing.T) {
-	t.Run("10", func(t *testing.T) {
+	t.Run("Ten", func(t *testing.T) {
 		for n := 0; n < 10; n++ {
 			s := Base62(10)
 			t.Logf("Base62 %d: %s", n, s)
 			assert.NotEmpty(t, s)
 		}
 	})
-	t.Run("23", func(t *testing.T) {
+	t.Run("Num23", func(t *testing.T) {
 		s := Base62(23)
 		t.Logf("Base62 (23 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -72,7 +72,7 @@ func TestBase62(t *testing.T) {
 		assert.True(t, InvalidRefID(s))
 		assert.Equal(t, 23, len(s))
 	})
-	t.Run("32", func(t *testing.T) {
+	t.Run("Num32", func(t *testing.T) {
 		for n := 0; n < 10; n++ {
 			s := Base62(32)
 			t.Logf("Base62 (32 chars) %d: %s", n, s)
@@ -85,7 +85,7 @@ func TestBase62(t *testing.T) {
 }
 
 func TestCharset(t *testing.T) {
-	t.Run("23", func(t *testing.T) {
+	t.Run("Num23", func(t *testing.T) {
 		s := Charset(23, CharsetBase62)
 		t.Logf("CharsetBase62 (23 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -93,12 +93,12 @@ func TestCharset(t *testing.T) {
 		assert.True(t, InvalidRefID(s))
 		assert.Equal(t, 23, len(s))
 	})
-	t.Run("0", func(t *testing.T) {
+	t.Run("Zero", func(t *testing.T) {
 		s := Charset(0, CharsetBase62)
 		t.Logf("CharsetBase62 (23 chars): %s", s)
 		assert.Empty(t, s)
 	})
-	t.Run("5000", func(t *testing.T) {
+	t.Run("Num5000", func(t *testing.T) {
 		s := Charset(5000, CharsetBase62)
 		t.Logf("CharsetBase62 (23 chars): %s", s)
 		assert.NotEmpty(t, s)
@@ -127,13 +127,13 @@ func TestRandomToken(t *testing.T) {
 }
 
 func BenchmarkGenerateToken4(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Base36(4)
 	}
 }
 
 func BenchmarkGenerateToken3(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		Base36(3)
 	}
 }

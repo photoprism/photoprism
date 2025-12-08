@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-album-photos" :class="$config.aclClasses('photos')">
+  <div ref="page" tabindex="-1" class="p-page p-page-album-photos" :class="$config.aclClasses('photos')">
     <p-album-toolbar
       ref="toolbar"
       :filter="filter"
@@ -15,19 +15,13 @@
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
-      <p-scroll
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      >
-      </p-scroll>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"> </p-scroll>
 
-      <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
+      <p-photo-clipboard :refresh="refresh" :album="model" :context="contexts.Album"></p-photo-clipboard>
 
       <p-photo-view-mosaic
         v-if="settings.view === 'mosaic'"
-        context="album"
+        :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
         :filter="filter"
@@ -38,7 +32,7 @@
       ></p-photo-view-mosaic>
       <p-photo-view-list
         v-else-if="settings.view === 'list'"
-        context="album"
+        :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
         :filter="filter"
@@ -51,7 +45,7 @@
       ></p-photo-view-list>
       <p-photo-view-cards
         v-else
-        context="album"
+        :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
         :filter="filter"
@@ -70,6 +64,7 @@
 import { Photo } from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
+import * as contexts from "options/contexts";
 import PAlbumToolbar from "component/album/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
@@ -114,6 +109,7 @@ export default {
       hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
       canSearchPlaces: this.$config.allow("places", "search") && this.$config.feature("places"),
       canAccessLibrary: this.$config.allow("photos", "access_library"),
+      contexts,
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -262,9 +258,12 @@ export default {
 
       return "cards";
     },
-    getSortOrder() {
+    sortOrder() {
       const query = this.$route.query;
       return query["order"] ? query["order"] : this.model?.Order;
+    },
+    sortReverse() {
+      return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
     },
     openDate(index) {
       if (!this.canEdit) {
@@ -325,7 +324,7 @@ export default {
 
       if (showMerged) {
         this.$lightbox.openModels(Thumb.fromFiles([selected]), 0, this.model);
-      } else if (this.getSortOrder() === "random") {
+      } else if (this.sortOrder() === "random") {
         this.$lightbox.openModels(Thumb.fromPhotos(this.results), index, this.model);
       } else {
         this.$lightbox.openView(this, index);
@@ -353,7 +352,8 @@ export default {
         offset: offset,
         s: this.uid,
         merged: true,
-        order: this.getSortOrder(),
+        order: this.sortOrder(),
+        reverse: this.sortReverse(),
       };
 
       Object.assign(params, this.lastFilter);
@@ -374,9 +374,7 @@ export default {
             this.offset = offset;
             if (this.results.length > 1) {
               if (!this.lightbox.open) {
-                this.$notify.info(
-                  this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
-                );
+                this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length }));
               }
             }
           } else if (this.results.length >= Photo.limit()) {
@@ -447,7 +445,7 @@ export default {
       this.updateFilter(props);
 
       if (this.loading) {
-        return;
+        return false;
       }
 
       const query = {
@@ -463,10 +461,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {
@@ -474,7 +474,8 @@ export default {
         offset: this.offset,
         s: this.uid,
         merged: true,
-        order: this.getSortOrder(),
+        order: this.sortOrder(),
+        reverse: this.sortReverse(),
       };
 
       Object.assign(params, this.filter);
@@ -564,9 +565,7 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One picture found"));
             } else {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length }));
             }
           } else {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));

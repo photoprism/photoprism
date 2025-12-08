@@ -13,6 +13,7 @@ func initThumbCache() {
 	services.ThumbCache = gc.New(time.Hour*24, 10*time.Minute)
 }
 
+// ThumbCache returns the thumbnail cache used by the UI.
 func ThumbCache() *gc.Cache {
 	onceThumbCache.Do(initThumbCache)
 

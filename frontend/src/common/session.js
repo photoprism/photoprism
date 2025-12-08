@@ -46,6 +46,7 @@ export default class Session {
     this.config = config;
     this.provider = "";
     this.user = new User(false);
+    this.scope = "";
     this.data = null;
 
     // Set session storage.
@@ -88,10 +89,7 @@ export default class Session {
     }
 
     // Restore authentication from session storage.
-    if (
-      this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) &&
-      this.applyId(this.storage.getItem(this.storageKey + ".id"))
-    ) {
+    if (this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) && this.applyId(this.storage.getItem(this.storageKey + ".id"))) {
       const dataJson = this.storage.getItem(this.storageKey + ".data");
       if (dataJson && dataJson !== "undefined") {
         this.data = JSON.parse(dataJson);
@@ -105,6 +103,11 @@ export default class Session {
       const provider = this.storage.getItem(this.storageKey + ".provider");
       if (provider !== null && provider !== "undefined") {
         this.provider = provider;
+      }
+
+      const scope = this.storage.getItem(this.storageKey + ".scope");
+      if (scope !== null && scope !== "undefined") {
+        this.scope = scope;
       }
     }
 
@@ -219,11 +222,13 @@ export default class Session {
     this.id = null;
     this.authToken = null;
     this.provider = "";
+    this.scope = "";
 
     // "session.id" is the SHA256 hash of the auth token.
     this.storage.removeItem(this.storageKey + ".id");
     this.storage.removeItem(this.storageKey + ".token");
     this.storage.removeItem(this.storageKey + ".provider");
+    this.storage.removeItem(this.storageKey + ".scope");
 
     // Remove previously used data e.g. "session_id"
     // is deprecated in favor of "session.token".
@@ -292,6 +297,10 @@ export default class Session {
       this.setUser(resp.data.user);
     }
 
+    if (resp.data.scope) {
+      this.setScope(resp.data.scope);
+    }
+
     if (resp.data.data) {
       this.setData(resp.data.data);
     }
@@ -338,6 +347,23 @@ export default class Session {
 
   getUser() {
     return this.user;
+  }
+
+  setScope(scope) {
+    this.scope = scope;
+    this.storage.setItem(this.storageKey + ".scope", scope);
+  }
+
+  hasScope() {
+    return Boolean(this.scope) && this.scope !== "*";
+  }
+
+  getScope() {
+    if (this.hasScope()) {
+      return this.scope;
+    }
+
+    return "*";
   }
 
   getUserUID() {

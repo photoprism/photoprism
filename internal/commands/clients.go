@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -13,8 +15,7 @@ const (
 	ClientIdUsage          = "static client `UID` for test purposes"
 	ClientSecretUsage      = "static client `SECRET` for test purposes"
 	ClientNameUsage        = "`CLIENT` name to help identify the application"
-	ClientRoleUsage        = "client authorization `ROLE`"
-	ClientAuthScope        = "client authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)"
+	ClientAuthScope        = "client authorization `SCOPE` as space-separated resources, or '*' for full access"
 	ClientAuthProvider     = "client authentication `PROVIDER`"
 	ClientAuthMethod       = "client authentication `METHOD`"
 	ClientAuthExpires      = "access token `LIFETIME` in seconds, after which a new token must be requested"
@@ -22,7 +23,12 @@ const (
 	ClientRegenerateSecret = "set a new randomly generated client secret"
 	ClientEnable           = "enable client authentication if disabled"
 	ClientDisable          = "disable client authentication"
-	ClientSecretInfo       = "\nPLEASE WRITE DOWN THE %s CLIENT SECRET, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n"
+	ClientSecretInfo       = "\nPLEASE WRITE DOWN THE %s CLIENT SECRET, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:" //nolint:gosec // informational message only
+)
+
+var (
+	// ClientRoleUsage describes allowed client roles for CLI help.
+	ClientRoleUsage = fmt.Sprintf("client authorization `ROLE`, e.g. %s", acl.ClientRoles.CliUsageString())
 )
 
 // ClientsCommands configures the client application subcommands.
@@ -58,11 +64,7 @@ var ClientAddFlags = []cli.Flag{
 		Usage:   ClientRoleUsage,
 		Value:   acl.RoleClient.String(),
 	},
-	&cli.StringFlag{
-		Name:    "scope",
-		Aliases: []string{"s"},
-		Usage:   ClientAuthScope,
-	},
+	ScopeFlag(ClientAuthScope),
 	&cli.StringFlag{
 		Name:    "provider",
 		Aliases: []string{"p"},
@@ -109,11 +111,7 @@ var ClientModFlags = []cli.Flag{
 		Usage:   ClientRoleUsage,
 		Value:   acl.RoleClient.String(),
 	},
-	&cli.StringFlag{
-		Name:    "scope",
-		Aliases: []string{"s"},
-		Usage:   ClientAuthScope,
-	},
+	ScopeFlag(ClientAuthScope),
 	&cli.StringFlag{
 		Name:    "provider",
 		Aliases: []string{"p"},

@@ -18,18 +18,24 @@
 *.dll
 *.so
 *.dylib
+*.tmp
+*.img
+*.img.xz
+*.img.gz
 /*.zip
 /coverage.*
 __pycache__
 venv
 .venv
-.env
+.env*
 .tmp
 .nv
 .eslintcache
+.gocache
 /pro
 /plus
 /tmp/
+/internal/tmp/
 /test/
 *-lock.json
 /node_modules
@@ -55,6 +61,9 @@ frontend/coverage/
 /assets/static/maps/
 /assets/*net
 /assets/vision
+/specs/
+/docs/
+/bin/
 
 # Files created automatically by editors and/or operating systems:
 .DS_Store
@@ -65,8 +74,14 @@ frontend/coverage/
 ehthumbs.db
 Thumbs.db
 .heartbeat
-.idea
 .glide
+.idea
+.codex
+.config
+.local
+.project
+.vscode
+*.tmproj
 *~
 .goutputstream*
 .c9revisions

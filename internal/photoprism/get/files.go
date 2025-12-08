@@ -12,6 +12,7 @@ func initFiles() {
 	services.Files = photoprism.NewFiles()
 }
 
+// Files returns the shared indexed-files cache instance.
 func Files() *photoprism.Files {
 	onceFiles.Do(initFiles)
 

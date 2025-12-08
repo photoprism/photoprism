@@ -8,19 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// ThumbCache describes files persisted on disk for cached thumbnails and share images.
 type ThumbCache struct {
 	FileName  string
 	ShareName string
 }
 
+// ByteCache wraps in-memory cached byte slices for fast responses.
 type ByteCache struct {
 	Data []byte
 }
@@ -67,9 +70,35 @@ func RemoveFromAlbumCoverCache(uid string) {
 		_ = os.Remove(sharePreview)
 	}
 
-	// Update album cover images.
-	if err := query.UpdateAlbumCovers(); err != nil {
+	album, err := query.AlbumByUID(uid)
+
+	if err != nil {
 		log.Error(err)
+		return
+	}
+
+	// Manual covers stay untouched; we only regenerate auto-managed entries.
+	if album.ThumbSrc != entity.SrcAuto {
+		return
+	}
+
+	if err = query.UpdateAlbumCovers(album); err != nil {
+		log.Error(err)
+	}
+}
+
+// RemoveFromLabelCoverCache removes covers by label UID e.g. after updates.
+func RemoveFromLabelCoverCache(uid string) {
+	if !rnd.IsAlnum(uid) {
+		return
+	}
+
+	cache := get.CoverCache()
+
+	for thumbName := range thumb.Sizes {
+		cacheKey := CacheKey(labelCover, uid, string(thumbName))
+		cache.Delete(cacheKey)
+		log.Debugf("removed %s from cache", cacheKey)
 	}
 }
 

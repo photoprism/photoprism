@@ -12,6 +12,7 @@ services:
       - "2344:2342" # HTTP port (host:container)
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
       - "traefik.http.services.preview.loadbalancer.server.port=2342"
       - "traefik.http.routers.preview.entrypoints=websecure"
       - "traefik.http.routers.preview.rule=Host(`preview.localssl.dev`)"
@@ -50,6 +51,8 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # disables all features depending on TensorFlow
       PHOTOPRISM_DETECT_NSFW: "false"         # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"         # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_UPLOAD_ALLOW: ""             # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
+      PHOTOPRISM_UPLOAD_ARCHIVES: "true"      # allows upload of zip archives (will be extracted before import)
       PHOTOPRISM_RAW_PRESETS: "false"         # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_THUMB_FILTER: "lanczos"      # resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
@@ -63,7 +66,7 @@ services:
       - "./storage:/photoprism/storage"
       - "./storage/originals:/photoprism/originals"
 
-## Join shared "photoprism-develop" network
+## Join shared "photoprism" network
 networks:
   default:
     name: photoprism

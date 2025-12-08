@@ -1,61 +1,52 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/hub/places"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ReverseGeocodeResponse represents the response structure for the reverse geocode API.
-type ReverseGeocodeResponse struct {
-	Formatted string `json:"formatted"`
-	Street    string `json:"street"`
-}
-
-// PhotoPrismPlacesResponse represents the response from the PhotoPrism Places API
-type PhotoPrismPlacesResponse struct {
-	Street string `json:"street"`
-	Place  struct {
-		Label    string `json:"label"`
-		District string `json:"district"`
-		City     string `json:"city"`
-		State    string `json:"state"`
-		Country  string `json:"country"`
-	} `json:"place"`
-}
-
-// GetPlacesReverse performs a reverse geocoding lookup using PhotoPrism Places API.
+// GetPlacesReverse returns location details for the specified coordinates.
 //
 // GET /api/v1/places/reverse?lat=12.444526469291622&lng=-69.94435584903263
 //
-//	@Summary	Reverse geocodes coordinates to a place name
+//	@Summary	returns location details for the specified coordinates
 //	@Id			GetPlacesReverse
-//	@Tags		Maps
+//	@Tags		Places
 //	@Produce	json
-//	@Param		lat	query		string	true	"Latitude"
-//	@Param		lng	query		string	true	"Longitude"
-//	@Success	200	{object}	ReverseGeocodeResponse
-//	@Failure	400	{object}	gin.H	"Missing latitude or longitude"
-//	@Failure	401	{object}	i18n.Response
-//	@Failure	500	{object}	gin.H	"Geocoding service error"
+//	@Param		lat		query		string	true	"Latitude"
+//	@Param		lng		query		string	true	"Longitude"
+//	@Param		locale	query		string	false	"Locale"
+//	@Success	200		{object}	places.Location
+//	@Failure	400		{object}	gin.H	"Missing latitude or longitude"
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	500		{object}	gin.H	"Geocoding service error"
 //	@Router		/api/v1/places/reverse [get]
 func GetPlacesReverse(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
-		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView})
+		// Allow request if user is allowed to search places.
+		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.ActionUse})
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}
 
-		// Parse latitude and longitude
+		// Abort if geocoding is disabled.
+		conf := get.Config()
+
+		if conf.DisablePlaces() {
+			AbortFeatureDisabled(c)
+			return
+		}
+
+		// Get latitude, longitude, and locale from query parameters.
 		var lat, lng string
 
 		if lat = txt.Numeric(c.Query("lat")); lat == "" {
@@ -72,52 +63,20 @@ func GetPlacesReverse(router *gin.RouterGroup) {
 			return
 		}
 
-		// Log request
-		event.AuditInfo([]string{ClientIP(c), "session %s", "reverse geocoding", "lat %s, lng %s"}, s.RefID, lat, lng)
+		locale := clean.WebLocale(c.Query("locale"), conf.PlacesLocale())
 
-		// Create HTTP client with timeout
-		client := &http.Client{Timeout: 30 * time.Second}
+		// Perform service request.
+		result, err := places.LatLng(txt.Float64(lat), txt.Float64(lng), locale)
 
-		// Create PhotoPrism Places API request
-		url := fmt.Sprintf("https://places.photoprism.app/v1/reverse?lat=%s&lng=%s", lat, lng)
-		req, err := http.NewRequest("GET", url, nil)
+		// Return error if request was not successful.
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "reverse geocoding", "error creating request: %s"}, s.RefID, err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create geocoding request"})
+			log.Errorf("places: failed to resolve location at lat %s, lng %s", lat, lng)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 			return
 		}
 
-		// Execute request
-		resp, err := client.Do(req)
-		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "reverse geocoding", "request failed: %s"}, s.RefID, err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Geocoding service unavailable"})
-			return
-		}
-		defer resp.Body.Close()
-
-		// Check status code
-		if resp.StatusCode != http.StatusOK {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "reverse geocoding", "status code %d"}, s.RefID, resp.StatusCode)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Geocoding service returned status code %d", resp.StatusCode)})
-			return
-		}
-
-		// Parse response
-		var placesResponse PhotoPrismPlacesResponse
-		if err = json.NewDecoder(resp.Body).Decode(&placesResponse); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "reverse geocoding", "decode failed: %s"}, s.RefID, err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode geocoding response"})
-			return
-		}
-
-		// Prepare response
-		geocodeResponse := ReverseGeocodeResponse{
-			Formatted: placesResponse.Place.Label,
-			Street:    placesResponse.Street,
-		}
-
-		c.JSON(http.StatusOK, geocodeResponse)
+		// Return location details.
+		c.JSON(http.StatusOK, result)
 	}
 
 	router.GET("/places/reverse", handler)

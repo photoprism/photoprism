@@ -10,8 +10,10 @@ var (
 	onlyMp      = ""
 )
 
+// FilterValues holds a set of filter strings.
 type FilterValues map[string]struct{}
 
+// NewFilterValues converts strings or comma-separated lists into a FilterValues set.
 func NewFilterValues(s ...string) FilterValues {
 	if len(s) == 0 {
 		return make(FilterValues)

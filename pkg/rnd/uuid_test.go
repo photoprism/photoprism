@@ -15,7 +15,7 @@ func TestUUID(t *testing.T) {
 }
 
 func BenchmarkUUID(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		UUID()
 	}
 }

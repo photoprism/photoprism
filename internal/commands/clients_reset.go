@@ -17,12 +17,12 @@ var ClientsResetCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "trace",
 			Aliases: []string{"t"},
-			Usage:   "show trace logs for debugging",
+			Usage:   "shows trace logs for debugging",
 		},
 		&cli.BoolFlag{
 			Name:    "yes",
 			Aliases: []string{"y"},
-			Usage:   "assume \"yes\" and run non-interactively",
+			Usage:   "runs the command non-interactively",
 		},
 	},
 	Action: clientsResetAction,
@@ -31,7 +31,7 @@ var ClientsResetCommand = &cli.Command{
 // clientsResetAction removes all registered client applications.
 func clientsResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := ctx.Bool("yes")
+		confirmed := RunNonInteractively(ctx.Bool("yes"))
 
 		// Show prompt?
 		if !confirmed {

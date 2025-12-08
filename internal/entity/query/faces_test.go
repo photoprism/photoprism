@@ -1,12 +1,15 @@
 package query
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFaces(t *testing.T) {
@@ -23,7 +26,6 @@ func TestFaces(t *testing.T) {
 			assert.IsType(t, entity.Face{}, val)
 		}
 	})
-
 	t.Run("Hidden", func(t *testing.T) {
 		results, err := Faces(false, false, true, false)
 
@@ -33,7 +35,6 @@ func TestFaces(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(results), 1)
 	})
-
 	t.Run("Ignored", func(t *testing.T) {
 		results, err := Faces(false, false, true, true)
 
@@ -43,7 +44,6 @@ func TestFaces(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(results), 1)
 	})
-
 	t.Run("Unmatched", func(t *testing.T) {
 		results, err := Faces(false, true, false, false)
 
@@ -82,7 +82,7 @@ func TestManuallyAddedFaces(t *testing.T) {
 
 		assert.Empty(t, results)
 	})
-	t.Run("Specific Subject", func(t *testing.T) {
+	t.Run("SpecificSubject", func(t *testing.T) {
 		results, err := ManuallyAddedFaces(false, false, "foobar")
 
 		if err != nil {
@@ -140,16 +140,16 @@ func TestRemoveAnonymousFaceClusters(t *testing.T) {
 }
 
 func TestCountNewFaceMarkers(t *testing.T) {
-	t.Run("all", func(t *testing.T) {
+	t.Run("All", func(t *testing.T) {
 		assert.GreaterOrEqual(t, CountNewFaceMarkers(0, 0), 1)
 	})
-	t.Run("score 10", func(t *testing.T) {
+	t.Run("ScoreTen", func(t *testing.T) {
 		assert.GreaterOrEqual(t, CountNewFaceMarkers(0, 10), 1)
 	})
-	t.Run("size 160", func(t *testing.T) {
+	t.Run("SizeNum160", func(t *testing.T) {
 		assert.GreaterOrEqual(t, CountNewFaceMarkers(160, 0), 1)
 	})
-	t.Run("score 50 and size 160", func(t *testing.T) {
+	t.Run("ScoreNum50AndSizeNum160", func(t *testing.T) {
 		assert.GreaterOrEqual(t, CountNewFaceMarkers(160, 50), 1)
 	})
 }
@@ -189,11 +189,11 @@ func TestMergeFaces(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "5LH5E35ZGUMF5AYLM42BIZH4DGQHJDAV", result.ID)
+		assert.Equal(t, "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O", result.ID)
 		assert.Equal(t, entity.SrcManual, result.FaceSrc)
 		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjUID)
 		assert.Equal(t, 2, result.Samples)
-		assert.Equal(t, 0.03948165743305488, result.SampleRadius)
+		assert.InDelta(t, 0.040200777224183845, result.SampleRadius, 1e-9)
 		assert.Equal(t, 0, result.Collisions)
 		assert.Equal(t, float64(0), result.CollisionRadius)
 
@@ -225,11 +225,66 @@ func TestMergeFaces(t *testing.T) {
 		assert.Nil(t, result)
 	})
 	t.Run("OneSubject", func(t *testing.T) {
-		result, err := MergeFaces(entity.Faces{entity.Face{ID: "5LH5E35ZGUMF5AYLM42BIZH4DGQHJDAV"}}, false)
+		result, err := MergeFaces(entity.Faces{entity.Face{ID: "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O"}}, false)
 
 		assert.EqualError(t, err, "faces: two or more clusters required for merging")
 		assert.Nil(t, result)
 	})
+}
+
+func TestMergeFacesRetainedClusters(t *testing.T) {
+	subjUID := rnd.GenerateUID('j')
+
+	embeddingA := face.RandomEmbeddings(1, face.RegularFace)
+	embeddingB := face.RandomEmbeddings(1, face.RegularFace)
+
+	faceA := entity.NewFace(subjUID, entity.SrcManual, embeddingA)
+	require.NoError(t, faceA.Create())
+
+	faceB := entity.NewFace(subjUID, entity.SrcManual, embeddingB)
+	require.NoError(t, faceB.Create())
+
+	// Create markers that deliberately fail to match the merged embedding.
+	neutralEmbedding := face.Embeddings{face.NullEmbedding}
+	neutralJSON := neutralEmbedding.JSON()
+
+	markers := []*entity.Marker{
+		{
+			FileUID:        rnd.GenerateUID('f'),
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcManual,
+			FaceID:         faceA.ID,
+			EmbeddingsJSON: neutralJSON,
+		},
+		{
+			FileUID:        rnd.GenerateUID('f'),
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcManual,
+			FaceID:         faceB.ID,
+			EmbeddingsJSON: neutralJSON,
+		},
+	}
+
+	for _, marker := range markers {
+		require.NoError(t, entity.Db().Create(marker).Error)
+	}
+
+	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
+	require.Error(t, err)
+	require.True(t, errors.Is(err, ErrRetainedManualClusters))
+
+	var updated entity.Face
+	require.NoError(t, entity.Db().Where("id = ?", faceA.ID).First(&updated).Error)
+	require.NotZero(t, updated.MergeRetry)
+	require.NotEmpty(t, updated.MergeNotes)
+
+	resetCount, err := ResetFaceMergeRetry(subjUID)
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, resetCount, 1)
+
+	require.NoError(t, entity.Db().Where("id = ?", faceA.ID).First(&updated).Error)
+	require.Zero(t, updated.MergeRetry)
+	require.Empty(t, updated.MergeNotes)
 }
 
 func TestResolveFaceCollisions(t *testing.T) {

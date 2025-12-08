@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="500"
@@ -8,7 +9,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="1" @submit.prevent>
+    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <v-card>
         <v-card-title v-if="scope === 'sharing'" class="d-flex justify-space-between align-center ga-3">
           <h6 class="text-h6">
@@ -151,21 +152,10 @@
           </v-row>
           <v-row v-else dense>
             <v-col cols="12">
-              <v-text-field
-                v-model="model.AccName"
-                autofocus
-                autocomplete="off"
-                :label="$gettext('Name')"
-                placeholder=""
-              ></v-text-field>
+              <v-text-field v-model="model.AccName" autofocus autocomplete="off" :label="$gettext('Name')" placeholder=""></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="model.AccURL"
-                autocomplete="off"
-                :label="$gettext('Service URL')"
-                placeholder="https://www.example.com/"
-              ></v-text-field>
+              <v-text-field v-model="model.AccURL" autocomplete="off" :label="$gettext('Service URL')" placeholder="https://www.example.com/"></v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field v-model="model.AccUser" autocomplete="off" :label="$gettext('Username')"></v-text-field>

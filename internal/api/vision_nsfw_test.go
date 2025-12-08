@@ -10,7 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 func TestPostVisionNsfw(t *testing.T) {
@@ -130,10 +130,6 @@ func TestPostVisionNsfw(t *testing.T) {
 			t.Fatal(apiErr)
 		} else if apiErr = json.Unmarshal(apiJson, apiResponse); apiErr != nil {
 			t.Fatal(apiErr)
-		}
-
-		if apiResponse == nil {
-			t.Fatal("api response expected")
 		}
 
 		// t.Logf("error: %s", apiResponse.Err())

@@ -1,42 +1,106 @@
 package vision
 
 import (
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/internal/ai/tensorflow"
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 )
 
 // Default computer vision model configuration.
 var (
 	NasnetModel = &Model{
 		Type:       ModelTypeLabels,
-		Name:       "NASNet",
-		Version:    "Mobile",
+		Default:    true,
+		Name:       "nasnet",
+		Version:    VersionMobile,
 		Resolution: 224,
-		Tags:       []string{"photoprism"},
+		TensorFlow: &tensorflow.ModelInfo{
+			TFVersion: "1.12.0",
+			Tags:      []string{"photoprism"},
+			Input: &tensorflow.PhotoInput{
+				Name:              "input_1",
+				Height:            224,
+				Width:             224,
+				ResizeOperation:   tensorflow.CenterCrop,
+				ColorChannelOrder: tensorflow.RGB,
+				Shape:             tensorflow.DefaultPhotoInputShape(),
+				Intervals: []tensorflow.Interval{
+					{
+						Start: -1.0,
+						End:   1.0,
+					},
+				},
+				OutputIndex: 0,
+			},
+			Output: &tensorflow.ModelOutput{
+				Name:          "predictions/Softmax",
+				NumOutputs:    1000,
+				OutputIndex:   0,
+				OutputsLogits: false,
+			},
+		},
 	}
 	NsfwModel = &Model{
 		Type:       ModelTypeNsfw,
-		Name:       "Nsfw",
-		Version:    "",
+		Default:    true,
+		Name:       "nsfw",
+		Version:    VersionLatest,
 		Resolution: 224,
-		Tags:       []string{"serve"},
+		TensorFlow: &tensorflow.ModelInfo{
+			TFVersion: "1.12.0",
+			Tags:      []string{"serve"},
+			Input: &tensorflow.PhotoInput{
+				Name:        "input_tensor",
+				Height:      224,
+				Width:       224,
+				OutputIndex: 0,
+				Shape:       tensorflow.DefaultPhotoInputShape(),
+			},
+			Output: &tensorflow.ModelOutput{
+				Name:          "nsfw_cls_model/final_prediction",
+				NumOutputs:    5,
+				OutputIndex:   0,
+				OutputsLogits: false,
+			},
+		},
 	}
 	FacenetModel = &Model{
 		Type:       ModelTypeFace,
-		Name:       "FaceNet",
-		Version:    "",
+		Default:    true,
+		Name:       "facenet",
+		Version:    VersionLatest,
 		Resolution: 160,
-		Tags:       []string{"serve"},
-	}
-	CaptionModel = &Model{
-		Type:       ModelTypeCaption,
-		Resolution: 224,
-		Service: Service{
-			Uri:            "http://photoprism-vision:5000/api/v1/vision/caption",
-			FileScheme:     scheme.Https,
-			RequestFormat:  ApiFormatUrl,
-			ResponseFormat: ApiFormatVision,
+		TensorFlow: &tensorflow.ModelInfo{
+			TFVersion: "1.7.1",
+			Tags:      []string{"serve"},
+			Input: &tensorflow.PhotoInput{
+				Name:        "input",
+				Height:      160,
+				Width:       160,
+				Shape:       tensorflow.DefaultPhotoInputShape(),
+				OutputIndex: 0,
+			},
+			Output: &tensorflow.ModelOutput{
+				Name:          "embeddings",
+				NumOutputs:    512,
+				OutputIndex:   0,
+				OutputsLogits: false,
+			},
 		},
 	}
-	DefaultModels     = Models{NasnetModel, NsfwModel, FacenetModel, CaptionModel}
-	DefaultThresholds = Thresholds{Confidence: 10}
+	CaptionModel = &Model{
+		Type:   ModelTypeCaption,
+		Engine: ollama.EngineName,
+		Run:    RunManual,
+	}
+	DefaultModels = Models{
+		NasnetModel,
+		NsfwModel,
+		FacenetModel,
+		CaptionModel,
+	}
+	DefaultThresholds = Thresholds{
+		Confidence: 10, // 0-100%
+		Topicality: 0,  // 0-100%
+		NSFW:       75, // 1-100%
+	}
 )

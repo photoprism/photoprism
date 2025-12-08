@@ -25,7 +25,7 @@ func TestDeleteSession(t *testing.T) {
 		r2, _ := sessionCache.Get(id)
 		assert.Empty(t, r2)
 	})
-	t.Run("invalidID", func(t *testing.T) {
+	t.Run("InvalidId", func(t *testing.T) {
 		m := &Session{ID: "123-invalid", DownloadToken: "download123", PreviewToken: "preview123"}
 		CacheSession(m, time.Hour)
 

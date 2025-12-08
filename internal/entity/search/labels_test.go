@@ -6,11 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestLabels(t *testing.T) {
-	t.Run("search with query", func(t *testing.T) {
+	t.Run("SearchWithQuery", func(t *testing.T) {
 		query := form.NewLabelSearch("q:C")
 		query.Count = 1005
 		query.Order = "slug"
@@ -38,8 +39,7 @@ func TestLabels(t *testing.T) {
 			}
 		}
 	})
-
-	t.Run("search for cow", func(t *testing.T) {
+	t.Run("SearchForCow", func(t *testing.T) {
 		query := form.NewLabelSearch("Q:cow")
 		query.Count = 1005
 		query.Order = "slug"
@@ -67,7 +67,7 @@ func TestLabels(t *testing.T) {
 			}
 		}
 	})
-	t.Run("search for favorites", func(t *testing.T) {
+	t.Run("SearchForFavorites", func(t *testing.T) {
 		query := form.NewLabelSearch("Favorite:true")
 		query.Count = 15
 		result, err := Labels(query)
@@ -93,8 +93,59 @@ func TestLabels(t *testing.T) {
 			}
 		}
 	})
+	t.Run("OrderCount", func(t *testing.T) {
+		query := form.NewLabelSearch("")
+		query.All = true
+		query.Order = sortby.Count
+		result, err := Labels(query)
 
-	t.Run("search with empty query", func(t *testing.T) {
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(result) < 2 {
+			t.Fatalf("expected multiple labels")
+		}
+
+		if result[0].PhotoCount < result[1].PhotoCount {
+			t.Fatalf("expected descending photo count")
+		}
+	})
+	t.Run("OrderSlug", func(t *testing.T) {
+		query := form.NewLabelSearch("")
+		query.All = true
+		query.Order = sortby.Slug
+		result, err := Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(result) < 2 {
+			t.Fatalf("expected multiple labels")
+		}
+
+		if result[0].CustomSlug > result[1].CustomSlug {
+			t.Fatalf("expected slug ascending")
+		}
+	})
+	t.Run("DefaultFilterExcludesLowPriority", func(t *testing.T) {
+		query := form.NewLabelSearch("")
+		result, err := Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, label := range result {
+			if !label.LabelFavorite {
+				if label.LabelPriority < 0 || label.PhotoCount <= 1 {
+					t.Fatalf("label %s should have been filtered", label.LabelSlug)
+				}
+			}
+		}
+	})
+	t.Run("SearchWithEmptyQuery", func(t *testing.T) {
 		query := form.NewLabelSearch("")
 		result, err := Labels(query)
 
@@ -105,16 +156,14 @@ func TestLabels(t *testing.T) {
 		t.Log(result)
 		assert.LessOrEqual(t, 3, len(result))
 	})
-
-	t.Run("search with invalid query string", func(t *testing.T) {
+	t.Run("SearchWithInvalidQueryString", func(t *testing.T) {
 		query := form.NewLabelSearch("xxx:bla")
 		result, err := Labels(query)
 
 		assert.Error(t, err, "unknown filter")
 		assert.Empty(t, result)
 	})
-
-	t.Run("search for ID", func(t *testing.T) {
+	t.Run("SearchForId", func(t *testing.T) {
 		f := form.SearchLabels{
 			Query:    "",
 			UID:      "ls6sg6b1wowuy3c4",
@@ -135,8 +184,7 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, "cake", result[0].LabelSlug)
 	})
-
-	t.Run("search for label landscape", func(t *testing.T) {
+	t.Run("SearchForLabelLandscape", func(t *testing.T) {
 		f := form.SearchLabels{
 			Query: "landscape",
 		}

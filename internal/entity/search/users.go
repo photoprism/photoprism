@@ -60,21 +60,21 @@ func Users(frm form.SearchUsers) (result entity.Users, err error) {
 
 	switch sortOrder {
 	case sortby.Name:
-		sortOrder = "user_name, id"
+		sortOrder = OrderExpr("user_name ASC, id ASC", frm.Reverse)
 	case sortby.DisplayName:
-		sortOrder = "display_name, id"
+		sortOrder = OrderExpr("display_name ASC, id ASC", frm.Reverse)
 	case sortby.Login, sortby.LoginAt:
-		sortOrder = "login_at DESC, id"
+		sortOrder = OrderExpr("login_at DESC, id ASC", frm.Reverse)
 	case sortby.Created, sortby.CreatedAt:
-		sortOrder = "created_at ASC, id"
+		sortOrder = OrderExpr("created_at ASC, id ASC", frm.Reverse)
 	case sortby.Updated, sortby.UpdatedAt:
-		sortOrder = "updated_at DESC, id"
+		sortOrder = OrderExpr("updated_at DESC, id ASC", frm.Reverse)
 	case sortby.Deleted, sortby.DeletedAt:
-		sortOrder = "deleted_at DESC, created_at DESC, id"
+		sortOrder = OrderExpr("deleted_at DESC, created_at DESC, id ASC", frm.Reverse)
 	case sortby.Email:
-		sortOrder = "user_email, id"
+		sortOrder = OrderExpr("user_email ASC, id ASC", frm.Reverse)
 	default:
-		sortOrder = "user_name, id"
+		sortOrder = OrderExpr("user_name ASC, id ASC", frm.Reverse)
 	}
 
 	if limit > 0 {

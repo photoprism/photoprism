@@ -21,12 +21,13 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	done := make(map[string]bool)
 	result = IndexMain(&related, ind, o)
 
-	if result.Failed() {
+	switch {
+	case result.Failed():
 		return result
-	} else if !result.Success() {
+	case !result.Success():
 		// Skip related files if indexing was not completely successful.
 		return result
-	} else if result.Stacked() && related.Len() > 1 {
+	case result.Stacked() && related.Len() > 1:
 		// Show info if main file was stacked and has additional related files.
 		log.Infof("index: %s has %s", related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
 	}
@@ -58,9 +59,9 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		}
 
 		// Show warning if sidecar file exceeds size or resolution limit.
-		if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+		if _, limitErr := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
 			log.Warnf("index: %s", limitErr)
-		} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+		} else if _, limitErr = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 			log.Warnf("index: %s", limitErr)
 		}
 
@@ -71,20 +72,20 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-			// Skip with warning if preview image could not be created.
+			// Try to create a preview image; if this fails, log and continue without failing the whole group.
 			if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
-				result.Err = fmt.Errorf("index: failed to create preview image for %s (%s)", clean.Log(f.RootRelName()), clean.Error(imgErr))
-				result.Status = IndexFailed
+				log.Warnf("index: could not create preview image for %s (%s)", clean.Log(f.RootRelName()), imgErr)
+				// Continue indexing other related files without changing the overall success status.
 				continue
 			} else if img == nil {
 				log.Debugf("index: skipped creating preview image for %s", clean.Log(f.RootRelName()))
 			} else {
 				log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
-				// Skip with warning if thumbs could not be creared.
+				// Skip with warning if thumbs could not be created.
 				if thumbsErr := img.GenerateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
-					result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
-					result.Status = IndexFailed
+					log.Warnf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
+					// Continue indexing; preview image exists and other related files may still succeed.
 					continue
 				}
 

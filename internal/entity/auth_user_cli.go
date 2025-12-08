@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// SetValuesFromCli updates the entity values from a CLI context and validates them.
+// SetValuesFromCli updates user fields based on CLI flags and invalidates sessions after privilege changes.
 func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	frm := form.NewUserFromCli(ctx)
 
@@ -72,6 +72,12 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		privilegeLevelChange = true
 	}
 
+	// Authorization scope.
+	if ctx.IsSet("scope") {
+		m.UserScope = frm.Scope()
+		privilegeLevelChange = true
+	}
+
 	// Originals base folder.
 	if ctx.IsSet("base-path") {
 		m.SetBasePath(frm.BasePath)
@@ -102,7 +108,7 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	return nil
 }
 
-// RestoreFromCli restored the account from a CLI context.
+// RestoreFromCli restores a deleted account from CLI input and optionally sets a new password.
 func (m *User) RestoreFromCli(ctx *cli.Context, newPassword string) (err error) {
 	m.DeletedAt = nil
 

@@ -25,21 +25,25 @@ Additional information can be found in our Developer Guide:
 package config
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
+	"math/rand/v2"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/dustin/go-humanize"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"  // register mysql dialect
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // register sqlite dialect
 	"github.com/klauspost/cpuid/v2"
+	gc "github.com/patrickmn/go-cache"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -60,24 +64,29 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var initThumbsMutex sync.Mutex
-
-// Config holds database, cache and all parameters of photoprism
+// Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	once      sync.Once
 	cliCtx    *cli.Context
 	options   *Options
 	settings  *customize.Settings
 	db        *gorm.DB
 	dbVersion string
 	hub       *hub.Config
+	hubCancel context.CancelFunc
+	hubLock   sync.Mutex
 	token     string
 	serial    string
 	env       string
 	start     bool
+	ready     atomic.Bool
+	cache     *gc.Cache
 }
+
+// Values is a shorthand alias for map[string]interface{}.
+type Values = map[string]interface{}
 
 func init() {
 	TotalMem = memory.TotalMemory()
@@ -86,6 +95,11 @@ func init() {
 	if Env(EnvUnsafe) {
 		// Disable features with high memory requirements?
 		LowMem = TotalMem < MinMem
+	}
+
+	// Disable entity cache if requested.
+	if txt.Bool(os.Getenv(EnvVar("disable-photolabelcache"))) {
+		entity.UsePhotoLabelsCache = false
 	}
 
 	initThumbs()
@@ -120,19 +134,20 @@ func initLogger() {
 			FullTimestamp: true,
 		})
 
-		if Env(EnvProd) {
+		switch {
+		case Env(EnvProd):
 			SetLogLevel(logrus.WarnLevel)
-		} else if Env(EnvTrace) {
+		case Env(EnvTrace):
 			SetLogLevel(logrus.TraceLevel)
-		} else if Env(EnvDebug) {
+		case Env(EnvDebug):
 			SetLogLevel(logrus.DebugLevel)
-		} else {
+		default:
 			SetLogLevel(logrus.InfoLevel)
 		}
 	})
 }
 
-// NewConfig initialises a new configuration file
+// NewConfig builds a Config from CLI context defaults and loads options.yml overrides if present.
 func NewConfig(ctx *cli.Context) *Config {
 	start := false
 
@@ -150,12 +165,16 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:   rnd.Base36(8),
 		env:     os.Getenv("DOCKER_ENV"),
 		start:   start,
+		cache:   gc.New(time.Minute, 10*time.Minute),
 	}
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
 			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
+		} else if c.env == EnvDevelop {
+			// Reduce the log level to minimize noise in the test logs.
+			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
 		} else {
 			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
@@ -164,7 +183,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	return c
 }
 
-// Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
+// Init creates directories, parses additional config files, opens the database connection, and initializes dependent subsystems.
 func (c *Config) Init() error {
 	start := time.Now()
 
@@ -220,7 +239,7 @@ func (c *Config) Init() error {
 	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
-			InsecureSkipVerify: c.HttpsProxyInsecure(),
+			InsecureSkipVerify: c.HttpsProxyInsecure(), //nolint:gosec // proxy settings are user-configurable and opt-in
 		}
 
 		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
@@ -229,6 +248,10 @@ func (c *Config) Init() error {
 	// Load settings from the "settings.yml" config file.
 	c.initSettings()
 
+	// Initialize boot extensions before connecting to the database so they can
+	// influence DB settings (e.g., cluster bootstrap providing MariaDB creds).
+	Ext(StageBoot).Boot(c)
+
 	// Connect to database.
 	if err := c.connectDb(); err != nil {
 		return err
@@ -236,8 +259,8 @@ func (c *Config) Init() error {
 		c.RegisterDb()
 	}
 
-	// Initialize extensions.
-	Ext().Init(c)
+	// Initialize regular extensions.
+	Ext(StageInit).Init(c)
 
 	// Initialize thumbnail package.
 	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
@@ -260,8 +283,14 @@ func (c *Config) Init() error {
 
 	// Show log message.
 	log.Debugf("config: successfully initialized [%s]", time.Since(start))
+	c.ready.Store(true)
 
 	return nil
+}
+
+// IsReady checks if the application has been successfully initialized.
+func (c *Config) IsReady() bool {
+	return c.ready.Load()
 }
 
 // Propagate updates config options in other packages as needed.
@@ -277,6 +306,8 @@ func (c *Config) Propagate() {
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
+	thumb.ExamplesPath = c.ExamplesPath()
+	thumb.IccProfilesPath = c.IccProfilesPath()
 	initThumbs()
 
 	// Configure video download package.
@@ -285,13 +316,13 @@ func (c *Config) Propagate() {
 	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
-	vision.AssetsPath = c.AssetsPath()
-	vision.FaceNetModelPath = c.FaceNetModelPath()
-	vision.NsfwModelPath = c.NSFWModelPath()
-	vision.CachePath = c.CachePath()
+	vision.SetCachePath(c.CachePath())
+	vision.SetModelsPath(c.ModelsPath())
+	vision.ServiceApi = c.VisionApi()
 	vision.ServiceUri = c.VisionUri()
 	vision.ServiceKey = c.VisionKey()
 	vision.DownloadUrl = c.DownloadUrl()
+	vision.DetectNSFWLabels = c.DetectNSFW() && c.Experimental()
 
 	// Set allowed path in download package.
 	download.AllowedPaths = []string{
@@ -306,6 +337,7 @@ func (c *Config) Propagate() {
 
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
+	places.DefaultLocale = c.PlacesLocale()
 	entity.GeoApi = c.GeoApi()
 
 	// Set session cache duration.
@@ -328,8 +360,23 @@ func (c *Config) Propagate() {
 	face.ClusterScoreThreshold = c.FaceClusterScore()
 	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
+	face.CollisionDist = c.FaceCollisionDist()
+	face.Epsilon = c.FaceEpsilonDist()
+	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+	face.SkipChildren = c.FaceSkipChildren()
+	face.IgnoreBackground = !c.FaceAllowBackground()
+	face.DetectionAngles = c.FaceAngles()
+	if err := face.ConfigureEngine(face.EngineSettings{
+		Name: c.FaceEngine(),
+		ONNX: face.ONNXOptions{
+			ModelPath: c.FaceEngineModelPath(),
+			Threads:   c.FaceEngineThreads(),
+		},
+	}); err != nil {
+		log.Warnf("faces: %s (configure engine)", err)
+	}
 
 	// Set default theme and locale.
 	customize.DefaultTheme = c.DefaultTheme()
@@ -366,7 +413,7 @@ func (c *Config) Propagate() {
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - you may have found a bug")
+		log.Warnf("config: options must not be nil - you may have found a bug")
 		c.options = NewOptions(nil)
 	}
 
@@ -407,7 +454,7 @@ func (c *Config) readSerial() string {
 	backupName := c.BackupPath(serialName)
 
 	if fs.FileExists(storageName) {
-		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
+		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 { //nolint:gosec // path is computed from config storage
 			return string(data)
 		} else {
 			log.Tracef("config: could not read %s (%s)", clean.Log(storageName), err)
@@ -415,7 +462,7 @@ func (c *Config) readSerial() string {
 	}
 
 	if fs.FileExists(backupName) {
-		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
+		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 { //nolint:gosec // backup file path is generated internally
 			return string(data)
 		} else {
 			log.Tracef("config: could not read %s (%s)", clean.Log(backupName), err)
@@ -592,8 +639,25 @@ func (c *Config) SetLogLevel(level logrus.Level) {
 	SetLogLevel(level)
 }
 
+// stopHubTicker stops the periodic hub renewal ticker if it is running.
+func (c *Config) stopHubTicker() {
+	c.hubLock.Lock()
+	cancel := c.hubCancel
+	c.hubCancel = nil
+	c.hubLock.Unlock()
+
+	if cancel != nil {
+		cancel()
+	}
+}
+
 // Shutdown shuts down the active processes and closes the database connection.
 func (c *Config) Shutdown() {
+	c.stopHubTicker()
+
+	// App is no longer accepting requests.
+	c.ready.Store(false)
+
 	// Send cancel signal to all workers.
 	mutex.CancelAll()
 
@@ -649,7 +713,7 @@ func (c *Config) IndexSchedule() string {
 }
 
 // WakeupInterval returns the duration between background worker runs
-// required for face recognition and index maintenance(1-86400s).
+// required for face recognition and index maintenance (1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval <= 0 {
 		if c.Unsafe() {
@@ -665,7 +729,7 @@ func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval < MinWakeupInterval/time.Second {
 		return MinWakeupInterval
 	} else if c.options.WakeupInterval < MinWakeupInterval {
-		c.options.WakeupInterval = c.options.WakeupInterval * time.Second
+		c.options.WakeupInterval *= time.Second
 	}
 
 	// Do not run less than once per day.
@@ -698,15 +762,6 @@ func (c *Config) AutoImport() time.Duration {
 	return time.Duration(c.options.AutoImport) * time.Second
 }
 
-// GeoApi returns the preferred geocoding api (places, or none).
-func (c *Config) GeoApi() string {
-	if c.options.DisablePlaces {
-		return ""
-	}
-
-	return "places"
-}
-
 // OriginalsLimit returns the maximum size of originals in MB.
 func (c *Config) OriginalsLimit() int {
 	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
@@ -731,11 +786,12 @@ func (c *Config) ResolutionLimit() int {
 
 	// Disabling or increasing the limit is at your own risk.
 	// Only sponsors receive support in case of problems.
-	if result == 0 {
+	switch {
+	case result == 0:
 		return DefaultResolutionLimit
-	} else if result < 0 {
+	case result < 0:
 		return -1
-	} else if result > 900 {
+	case result > 900:
 		result = 900
 	}
 
@@ -767,7 +823,7 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
 	} else if err = c.hub.Save(); err != nil {
-		log.Warnf("config: failed to save api keys for maps and places (%s)", err)
+		log.Warnf("config: failed to save API keys for maps and places (%s)", err)
 		return i18n.Error(i18n.ErrSaveFailed)
 	} else {
 		c.hub.Propagate()
@@ -796,13 +852,24 @@ func (c *Config) initHub() {
 
 	c.hub.Propagate()
 
-	ticker := time.NewTicker(time.Hour * 24)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	c.hubLock.Lock()
+	c.hubCancel = cancel
+	c.hubLock.Unlock()
+
+	d := 23*time.Hour + time.Duration(float64(2*time.Hour)*rand.Float64()) //nolint:gosec // jitter for scheduling only, crypto not required
+	ticker := time.NewTicker(d)
 
 	go func() {
+		defer ticker.Stop()
+
 		for {
 			select {
 			case <-ticker.C:
 				c.RenewApiKeys()
+			case <-ctx.Done():
+				return
 			}
 		}
 	}()

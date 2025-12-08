@@ -10,7 +10,7 @@ services:
       - mariadb
       - dummy-webdav
       - dummy-oidc
-    stop_grace_period: 10s
+    stop_grace_period: 15s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -32,6 +32,7 @@ services:
       - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
@@ -57,6 +58,9 @@ services:
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
       PHOTOPRISM_USAGE_INFO: "true"
       PHOTOPRISM_FILES_QUOTA: "100"
+      ## Customization:
+      PHOTOPRISM_DEFAULT_LOCALE: "en"                      # default user interface language, e.g. "en" or "de"
+      PHOTOPRISM_PLACES_LOCALE: "local"                    # location details language, e.g. "local", "en", or "de"
       ## OpenID Connect (pre-configured for local tests):
       ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
@@ -115,26 +119,29 @@ services:
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
+      PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
       PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
       PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
-      TF_CPP_MIN_LOG_LEVEL: 1                        # show TensorFlow log messages for development
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
-      # PHOTOPRISM_FFMPEG_BITRATE: "60"              # video bitrate limit in Mbps (default: 60)
+      # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https yt-dlp"
-    ## Share hardware devices with FFmpeg and TensorFlow (optional):
+      PHOTOPRISM_INIT: "https"
+      ## Computer Vision API (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
+      PHOTOPRISM_VISION_API: "true"                  # server: enables service API endpoints under /api/v1/vision (requires access token)
+      PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
+      PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
+      ## External dependencies and tools:
+      TF_CPP_MIN_LOG_LEVEL: 1
+      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
+      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
+    ## Shared devices for video hardware transcoding (optional):
     # devices:
-    #  - "/dev/dri:/dev/dri"                         # Intel QSV (Broadwell and later) or VAAPI (Haswell and earlier)
-    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia CUDA
-    #  - "/dev/nvidiactl:/dev/nvidiactl"
-    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
-    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
-    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
-    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding
     #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
@@ -147,6 +154,7 @@ services:
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
     image: mariadb:11
+    stop_grace_period: 10s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
@@ -172,7 +180,8 @@ services:
   ## Web UI: https://qdrant.localssl.dev/dashboard
   qdrant:
     image: qdrant/qdrant:latest
-    profiles: ["all", "qdrant"]
+    profiles: [ "all", "qdrant" ]
+    stop_grace_period: 10s
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
@@ -192,17 +201,99 @@ services:
       - 6334
       - 6335
     volumes:
-      - ./.qdrant.yaml:/qdrant/config/production.yaml
-      - ./storage/qdrant:/qdrant/storage
+      - "./.qdrant.yaml:/qdrant/config/production.yaml"
+      - "./storage/services/qdrant:/qdrant/storage"
+
+  ## Ollama Large-Language Model Runner
+  ## run "ollama pull [name]:[version]" to download a vision model
+  ## listed at <https://ollama.com/search?c=vision>, for example:
+  ## docker compose exec ollama ollama pull gemma3:latest
+  ollama:
+    image: ollama/ollama:latest
+    stop_grace_period: 10s
+    ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
+    ## docker compose --profile ollama up -d
+    profiles: [ "all", "ollama", "vision" ]
+    ## Insecurely exposes the Ollama service on port 11434
+    ## without authentication (for private networks only):
+    # ports:
+    #  - "11434:11434"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
+      - "traefik.http.services.ollama.loadbalancer.server.port=11434"
+      - "traefik.http.routers.ollama.rule=Host(`ollama.localssl.dev`)"
+      - "traefik.http.routers.ollama.entrypoints=websecure"
+      - "traefik.http.routers.ollama.tls=true"
+    environment:
+      ## Ollama Configuration Options:
+      OLLAMA_HOST: "0.0.0.0:11434"
+      OLLAMA_MODELS: "/root/.ollama"   # model storage path (see volumes section below)
+      OLLAMA_MAX_QUEUE: "100"          # maximum number of queued requests
+      OLLAMA_NUM_PARALLEL: "1"         # maximum number of parallel requests
+      OLLAMA_MAX_LOADED_MODELS: "1"    # maximum number of loaded models per GPU
+      OLLAMA_LOAD_TIMEOUT: "5m"        # maximum time for loading models (default "5m")
+      OLLAMA_KEEP_ALIVE: "5m"          # duration that models stay loaded in memory (default "5m")
+      OLLAMA_CONTEXT_LENGTH: "4096"    # maximum input context length
+      OLLAMA_MULTIUSER_CACHE: "false"  # optimize prompt caching for multi-user scenarios
+      OLLAMA_NOPRUNE: "false"          # disables pruning of model blobs at startup
+      OLLAMA_NOHISTORY: "true"         # disables readline history
+      OLLAMA_FLASH_ATTENTION: "false"  # enables the experimental flash attention feature
+      OLLAMA_KV_CACHE_TYPE: "f16"      # cache quantization (f16, q8_0, or q4_0)
+      OLLAMA_SCHED_SPREAD: "false"     # allows scheduling models across all GPUs.
+      OLLAMA_NEW_ENGINE: "true"        # enables the new Ollama engine
+      # OLLAMA_DEBUG: "true"             # shows additional debug information
+      # OLLAMA_INTEL_GPU: "true"         # enables experimental Intel GPU detection
+      ## NVIDIA GPU Hardware Acceleration (optional):
+      # NVIDIA_VISIBLE_DEVICES: "all"
+      # NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+    volumes:
+      - "./storage/services/ollama:/root/.ollama"
+    ## NVIDIA GPU Hardware Acceleration (optional):
+    # deploy:
+    #  resources:
+    #    reservations:
+    #      devices:
+    #        - driver: "nvidia"
+    #          capabilities: [ gpu ]
+    #          count: "all"
+
+  ## Open WebUI, a Web Interface for Ollama
+  ## see https://github.com/open-webui/open-webui
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    stop_grace_period: 10s
+    ## Only starts this service if the "all", "ollama", "open-webui", or "vision" profile is specified::
+    ## docker compose --profile ollama up -d
+    profiles: [ "all", "ollama", "open-webui", "vision" ]
+    ## Exposes Open WebUI at http://localhost:8080 (use https://chat.localssl.dev/ to access it through Traefik):
+    ports:
+      - "127.0.0.1:8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
+      - "traefik.http.services.open-webui.loadbalancer.server.port=8080"
+      - "traefik.http.routers.open-webui.rule=Host(`chat.localssl.dev`) || Host(`open-webui.localssl.dev`) || Host(`ollama-ui.localssl.dev`)"
+      - "traefik.http.routers.open-webui.entrypoints=websecure"
+      - "traefik.http.routers.open-webui.tls=true"
+    environment:
+      WEBUI_URL: "https://chat.localssl.dev"
+      # WEBUI_SECRET_KEY: ""
+      OLLAMA_BASE_URL: "http://ollama:11434"
+      ANONYMIZED_TELEMETRY: "false"   # disable Chroma telemetry
+      HF_HUB_DISABLE_TELEMETRY: "1"   # disable Hugging Face telemetry
+      # HUGGING_FACE_HUB_TOKEN: ""      # see https://huggingface.co/docs/hub/en/security-tokens
+    volumes:
+      - "./storage/services/open-webui:/app/backend/data"
 
   ## PhotoPrism® Computer Vision API
-  ## See: https://github.com/photoprism/photoprism-vision
+  ## see https://github.com/photoprism/photoprism-vision
   photoprism-vision:
     image: photoprism/vision:latest
-    entrypoint: [ "/app/venv/bin/flask" ]
-    command: [ "--app", "app", "run", "--debug", "--host", "0.0.0.0" ]
-    profiles: ["all", "vision"]
-    stop_grace_period: 5s
+    stop_grace_period: 15s
+    ## Only starts this service if the "all" or "vision" profile is specified::
+    ## docker compose --profile vision up -d
+    profiles: [ "all", "vision" ]
     working_dir: "/app"
     links:
       - "traefik:localssl.dev"
@@ -222,12 +313,16 @@ services:
       - 5000
     environment:
       TF_CPP_MIN_LOG_LEVEL: 2
+      ## Ollama client configuration (for the service, see below):
+      OLLAMA_ENABLED: "true"
+      OLLAMA_HOST: "http://ollama:11434"
 
   ## Traefik v3 (Reverse Proxy)
   ## includes "*.localssl.dev" SSL certificate for test environments
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
     image: photoprism/traefik:latest
+    stop_grace_period: 15s
     security_opt:
       - no-new-privileges:true
     ports:
@@ -240,7 +335,8 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:240627
+    image: photoprism/dummy-webdav:251124
+    stop_grace_period: 10s
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
@@ -256,7 +352,8 @@ services:
 
   ## Dummy OIDC Identity Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:240627
+    image: photoprism/dummy-oidc:251124
+    stop_grace_period: 5s
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
@@ -271,6 +368,7 @@ services:
   ## Docs: https://glauth.github.io/docs/
   dummy-ldap:
     image: glauth/glauth-plugins:latest
+    stop_grace_period: 5s
     ports:
       - "127.0.0.1:389:389"
     labels:
@@ -290,6 +388,8 @@ services:
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
+    stop_grace_period: 10s
+    profiles: [ "all", "auth", "keycloak" ]
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
@@ -321,7 +421,8 @@ services:
   ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
-    profiles: ["all", "auth", "prometheus"]
+    stop_grace_period: 10s
+    profiles: [ "all", "auth", "prometheus" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
@@ -341,7 +442,7 @@ volumes:
   mariadb:
     driver: local
 
-## Create shared "photoprism-develop" network for connecting with services in other compose.yaml files
+## Create shared "photoprism" network for connecting with services in other compose.yaml files
 networks:
   default:
     name: photoprism

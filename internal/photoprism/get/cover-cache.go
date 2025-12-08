@@ -13,6 +13,7 @@ func initCoverCache() {
 	services.CoverCache = gc.New(time.Hour, 10*time.Minute)
 }
 
+// CoverCache returns the shared album cover cache instance.
 func CoverCache() *gc.Cache {
 	onceCoverCache.Do(initCoverCache)
 

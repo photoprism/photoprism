@@ -9,13 +9,19 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
-// OIDCLogin redirects a browser to the login page of the configured OpenID Connect provider, if any.
+// OIDCLogin redirects a browser to the login page of the configured OpenID Connect provider.
 //
-// GET /api/v1/oidc/login
+//	@Summary	start OpenID Connect login (browser redirect)
+//	@Id			OIDCLogin
+//	@Tags		Authentication
+//	@Produce	html
+//	@Success	307			{string}	string	"redirect to provider login page"
+//	@Failure	401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/oidc/login [get]
 func OIDCLogin(router *gin.RouterGroup) {
 	router.GET("/oidc/login", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
@@ -45,8 +51,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 		}
 
 		// Check request rate limit.
-		var r *limiter.Request
-		r = limiter.Login.Request(clientIp)
+		r := limiter.Login.Request(clientIp)
 
 		// Abort if failure rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
@@ -67,6 +72,6 @@ func OIDCLogin(router *gin.RouterGroup) {
 		r.Success()
 
 		// Handle OIDC login request.
-		provider.AuthCodeUrlHandler(c)
+		provider.AuthURLHandler(c)
 	})
 }

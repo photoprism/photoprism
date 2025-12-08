@@ -211,7 +211,7 @@ func TestPng(t *testing.T) {
 				t.Fatal(err)
 			}
 		})
-		t.Run("invalid orientation", func(t *testing.T) {
+		t.Run("InvalidOrientation", func(t *testing.T) {
 			src := "testdata/example." + ext
 			dst := "testdata/example." + ext + fs.ExtPng
 
@@ -235,7 +235,7 @@ func TestPng(t *testing.T) {
 		})
 	}
 
-	t.Run("foo", func(t *testing.T) {
+	t.Run("Foo", func(t *testing.T) {
 		src := "testdata/example.foo"
 		dst := "testdata/example.foo.png"
 

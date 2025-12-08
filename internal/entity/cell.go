@@ -13,7 +13,7 @@ import (
 
 var cellMutex = sync.Mutex{}
 
-// Cell represents an S2 cell with metadata and reference to a place.
+// Cell represents an S2 cell with reverse-geocoded metadata and a linked place.
 type Cell struct {
 	ID           string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	CellName     string    `gorm:"type:VARCHAR(200);" json:"Name" yaml:"Name,omitempty"`

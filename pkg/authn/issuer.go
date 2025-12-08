@@ -6,6 +6,7 @@ import "github.com/photoprism/photoprism/pkg/clean"
 type IssuerUri = string
 
 const (
+	// IssuerDefault represents the empty issuer URI.
 	IssuerDefault IssuerUri = ""
 )
 

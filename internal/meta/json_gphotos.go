@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
+// GPhoto represents the photo-level fields exported by Google Photos JSON sidecars.
 type GPhoto struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -19,18 +20,22 @@ type GPhoto struct {
 	UpdatedAt   GTime  `json:"modificationTime"`
 }
 
+// GetTitle returns the sanitized Google Photos title.
 func (m GPhoto) GetTitle() string {
 	return SanitizeTitle(m.Title)
 }
 
+// GetCaption returns the sanitized Google Photos description.
 func (m GPhoto) GetCaption() string {
 	return SanitizeCaption(m.Description)
 }
 
+// GMeta wraps album metadata embedded in Google Photos sidecars.
 type GMeta struct {
 	Album GAlbum `json:"albumData"`
 }
 
+// GAlbum contains album-level information from Google Photos exports.
 type GAlbum struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -40,29 +45,35 @@ type GAlbum struct {
 	Geo         GGeo   `json:"geoData"`
 }
 
+// Exists reports whether the album entry has meaningful data.
 func (m GAlbum) Exists() bool {
 	return m.Title != ""
 }
 
+// GGeo holds geolocation data provided by Google Photos.
 type GGeo struct {
 	Lat      float64 `json:"latitude"`
 	Lng      float64 `json:"longitude"`
 	Altitude float64 `json:"altitude"`
 }
 
+// Exists reports whether the geolocation entry has usable coordinates.
 func (m GGeo) Exists() bool {
 	return m.Lat != 0.0 && m.Lng != 0.0
 }
 
+// GTime stores Unix timestamps used in Google Photos metadata.
 type GTime struct {
 	Unix      int64  `json:"timestamp,string"`
 	Formatted string `json:"formatted"`
 }
 
+// Exists reports whether the timestamp is set.
 func (m GTime) Exists() bool {
 	return m.Unix > 0
 }
 
+// Time returns the timestamp as a UTC time.Time.
 func (m GTime) Time() time.Time {
 	return time.Unix(m.Unix, 0).UTC()
 }

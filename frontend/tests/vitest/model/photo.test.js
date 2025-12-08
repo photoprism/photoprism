@@ -163,6 +163,17 @@ describe("model/photo", () => {
     const photo2 = new Photo(values2);
     const result2 = photo2.localDayString();
     expect(result2).toBe("08");
+    const values3 = {
+      ID: 5,
+      Title: "Crazy Cat",
+      TakenAtLocal: "2012-07-08T14:45:39Z",
+      TakenAt: "2012-07-08T14:45:39Z",
+      TimeZone: "UTC",
+      Day: -1,
+    };
+    const photo3 = new Photo(values3);
+    const result3 = photo3.localDayString();
+    expect(result3).toBe("01");
   });
 
   it("should get local month string", () => {
@@ -1629,9 +1640,7 @@ describe("model/photo", () => {
     const photoJpeg = new Photo({ UID: "jpegPhoto", Type: media.Image, Files: jpegFiles });
     expect(photoJpeg.originalFile().UID).toBe("jpeg_2");
 
-    const singleFile = [
-      { UID: "single_jpg", Name: "single.jpg", FileType: media.FormatJpeg, Root: "/", Primary: true },
-    ];
+    const singleFile = [{ UID: "single_jpg", Name: "single.jpg", FileType: media.FormatJpeg, Root: "/", Primary: true }];
     const photoSingle = new Photo({ UID: "singlePhoto", Type: media.Image, Files: singleFile });
     expect(photoSingle.originalFile().UID).toBe("single_jpg");
 

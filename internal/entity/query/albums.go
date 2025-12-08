@@ -83,7 +83,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 		// Automatically hide empty months.
 		switch a.AlbumType {
 		case entity.AlbumMonth, entity.AlbumState:
-			if err := a.Delete(); err != nil {
+			if err = a.Delete(); err != nil {
 				log.Errorf("%s: %s (hide)", a.AlbumType, err)
 			} else {
 				log.Infof("%s: %s hidden", a.AlbumType, clean.Log(a.AlbumTitle))

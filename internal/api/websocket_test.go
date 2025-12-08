@@ -14,7 +14,6 @@ func TestWebsocket(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/ws")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
 	t.Run("NoRouter", func(t *testing.T) {
 		app, _, _ := NewApiTest()
 		WebSocket(nil)

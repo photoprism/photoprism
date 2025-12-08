@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -15,8 +16,8 @@ import (
 // VisionListCommand configures the command name, flags, and action.
 var VisionListCommand = &cli.Command{
 	Name:   "ls",
-	Usage:  "Lists configured computer vision models",
-	Flags:  append(report.CliFlags),
+	Usage:  "Lists the configured computer vision models",
+	Flags:  report.CliFlags,
 	Action: visionListAction,
 }
 
@@ -25,7 +26,17 @@ func visionListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"Type", "Name", "Version", "Resolution", "Uri", "Tags", "Disabled"}
+		cols := []string{
+			"Model",
+			"Type",
+			"Engine",
+			"Endpoint",
+			"Format",
+			"Resolution",
+			"Options",
+			"Schedule",
+			"Status",
+		}
 
 		// Show log message.
 		log.Infof("found %s", english.Plural(len(vision.Config.Models), "model", "models"))
@@ -38,15 +49,58 @@ func visionListAction(ctx *cli.Context) error {
 
 		// Display report.
 		for i, model := range vision.Config.Models {
-			modelUri, _ := model.Endpoint()
+			modelUri, modelMethod := model.Endpoint()
+			tags := ""
+
+			name, _, _ := model.GetModel()
+
+			if model.TensorFlow != nil && model.TensorFlow.Tags != nil {
+				tags = strings.Join(model.TensorFlow.Tags, ", ")
+			}
+
+			var options []byte
+			if o := model.GetOptions(); o != nil {
+				options, _ = json.Marshal(*o)
+			}
+
+			var format string
+
+			if modelUri != "" && modelMethod != "" {
+				if f := model.EndpointRequestFormat(); f != "" {
+					format = f
+				}
+			}
+
+			if responseFormat := model.GetFormat(); responseFormat != "" {
+				if format != "" {
+					format = fmt.Sprintf("%s:%s", format, responseFormat)
+				} else {
+					format = responseFormat
+				}
+			}
+
+			if format == "" && model.Default {
+				format = "default"
+			}
+
+			var run string
+
+			if run = model.RunType(); run == "" {
+				run = "auto"
+			}
+
+			engine := model.EngineName()
+
 			rows[i] = []string{
+				name,
 				model.Type,
-				model.Name,
-				model.Version,
+				engine,
+				fmt.Sprintf("%s %s", modelMethod, modelUri),
+				format,
 				fmt.Sprintf("%d", model.Resolution),
-				modelUri,
-				strings.Join(model.Tags, ", "),
-				report.Bool(model.Disabled, report.Yes, report.No),
+				report.Bool(model.TensorFlow != nil, fmt.Sprintf(`{"tags":"%s"}`, tags), string(options)),
+				run,
+				report.Bool(model.Disabled, report.Disabled, report.Enabled),
 			}
 		}
 

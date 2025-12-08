@@ -21,21 +21,19 @@ func TestGpsToLng(t *testing.T) {
 }
 
 func TestGpsToLatLng(t *testing.T) {
-	t.Run("valid string", func(t *testing.T) {
+	t.Run("ValidString", func(t *testing.T) {
 		lat, lng := GpsToLatLng("51 deg 15' 17.47\" N, 7 deg 23' 22.09\" E")
 		expLat, expLng := 51.254852, 7.389470
 
 		assert.InEpsilon(t, lat, expLat, 0.1)
 		assert.InEpsilon(t, lng, expLng, 0.1)
 	})
-
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		lat, lng := GpsToLatLng("")
 		assert.Equal(t, float64(0), lat)
 		assert.Equal(t, float64(0), lng)
 	})
-
-	t.Run("invalid string", func(t *testing.T) {
+	t.Run("InvalidString", func(t *testing.T) {
 		lat, lng := GpsToLatLng("abc bdf")
 		assert.Equal(t, float64(0), lat)
 		assert.Equal(t, float64(0), lng)
@@ -43,34 +41,30 @@ func TestGpsToLatLng(t *testing.T) {
 }
 
 func TestGpsToDecimal(t *testing.T) {
-	t.Run("valid string", func(t *testing.T) {
+	t.Run("ValidString", func(t *testing.T) {
 		r := GpsToDecimal("51 deg 15' 17.47\" N")
 		assert.InEpsilon(t, 51.25485277777778, r, 0.01)
 	})
-
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		r := GpsToDecimal("")
 		assert.Equal(t, float64(0), r)
 	})
-
-	t.Run("invalid string", func(t *testing.T) {
+	t.Run("InvalidString", func(t *testing.T) {
 		r := GpsToDecimal("abc")
 		assert.Equal(t, float64(0), r)
 	})
 }
 
 func TestGpsCoord(t *testing.T) {
-	t.Run("valid string", func(t *testing.T) {
+	t.Run("ValidString", func(t *testing.T) {
 		r := ParseFloat("51")
 		assert.Equal(t, float64(51), r)
 	})
-
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		r := ParseFloat("")
 		assert.Equal(t, float64(0), r)
 	})
-
-	t.Run("invalid string", func(t *testing.T) {
+	t.Run("InvalidString", func(t *testing.T) {
 		r := ParseFloat("abc")
 		assert.Equal(t, float64(0), r)
 	})

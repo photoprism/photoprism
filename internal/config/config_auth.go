@@ -14,7 +14,9 @@ import (
 )
 
 const (
+	// AuthModePublic disables authentication and runs the app in public mode.
 	AuthModePublic = "public"
+	// AuthModePasswd enables password-based authentication (default).
 	AuthModePasswd = "password"
 )
 
@@ -63,6 +65,11 @@ func (c *Config) AuthMode() string {
 	}
 }
 
+// AuthSecret returns the key for signing authentication tokens, if specified.
+func (c *Config) AuthSecret() string {
+	return c.options.AuthSecret
+}
+
 // Public checks if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
 	return c.AuthMode() == AuthModePublic
@@ -87,7 +94,7 @@ func (c *Config) AdminPassword() string {
 	} else if fileName := FlagFilePath("ADMIN_PASSWORD"); fileName == "" {
 		// No password set, this is not an error.
 		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path is derived from config directory
 		log.Warnf("config: failed to read admin password from %s (%s)", fileName, err)
 		return ""
 	} else {
@@ -95,13 +102,23 @@ func (c *Config) AdminPassword() string {
 	}
 }
 
+// AdminScope returns the initial admin account scope.
+func (c *Config) AdminScope() string {
+	if c.options.AdminScope == "" {
+		return ""
+	}
+
+	return clean.Scope(c.options.AdminScope)
+}
+
 // PasswordLength returns the minimum password length in characters.
 func (c *Config) PasswordLength() int {
-	if c.Public() {
+	switch {
+	case c.Public():
 		return 0
-	} else if c.options.PasswordLength < 1 {
+	case c.options.PasswordLength < 1:
 		return entity.PasswordLengthDefault
-	} else if c.options.PasswordLength > txt.ClipPassword {
+	case c.options.PasswordLength > txt.ClipPassword:
 		return txt.ClipPassword
 	}
 
@@ -180,11 +197,12 @@ func (c *Config) SessionTimeout() int64 {
 
 // SessionCache returns the default session cache duration in seconds.
 func (c *Config) SessionCache() int64 {
-	if c.options.SessionCache == 0 {
+	switch {
+	case c.options.SessionCache == 0:
 		return DefaultSessionCache
-	} else if c.options.SessionCache < 60 {
+	case c.options.SessionCache < 60:
 		return 60
-	} else if c.options.SessionCache > 3600 {
+	case c.options.SessionCache > 3600:
 		return 3600
 	}
 

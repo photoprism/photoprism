@@ -12,10 +12,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// Shares handles link share
+// ShareToken creates a session using the specified share token and renders the generic sharing bootstrap page.
 //
-// GET /s/:token/...
-func Shares(router *gin.RouterGroup) {
+//	@Summary	creates a session using the specified share token and renders the generic sharing bootstrap page
+//	@Id			ShareToken
+//	@Tags		Sharing
+//	@Produce	text/html
+//	@Param		token	path		string	true	"Share token"
+//	@Success	200		{string}	string	"Rendered HTML page"
+//	@Failure	302		{string}	string	"Redirect to the base site when the token is invalid"
+//	@Router		/s/{token} [get]
+func ShareToken(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
 		conf := get.Config()
 
@@ -29,12 +36,25 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		clientConfig := conf.ClientShare()
-		clientConfig.SiteUrl = clientConfig.SiteUrl + path.Join("s", token)
+		clientConfig.SiteUrl += path.Join("s", token)
 
 		uri := conf.LibraryUri("/albums")
 		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
+}
 
+// ShareTokenShared creates a session with the specified share token and redirects to the shared content.
+//
+//	@Summary	creates a session with the specified share token and redirects to the shared content
+//	@Id			ShareTokenShared
+//	@Tags		Sharing
+//	@Produce	text/html
+//	@Param		token	path		string	true	"Share token"
+//	@Param		shared	path		string	true	"Shared resource UID"
+//	@Success	200		{string}	string	"Rendered HTML page"
+//	@Failure	302		{string}	string	"Redirect to the base site when the token is invalid"
+//	@Router		/s/{token}/{shared} [get]
+func ShareTokenShared(router *gin.RouterGroup) {
 	router.GET("/:token/:shared", func(c *gin.Context) {
 		conf := get.Config()
 
@@ -51,7 +71,7 @@ func Shares(router *gin.RouterGroup) {
 
 		uid := links[0].ShareUID
 		clientConfig := conf.ClientShare()
-		clientConfig.SiteUrl = clientConfig.SiteUrl + path.Join("s", token, uid)
+		clientConfig.SiteUrl += path.Join("s", token, uid)
 		clientConfig.SitePreview = clientConfig.SiteUrl + "/preview"
 
 		if a, err := query.AlbumByUID(uid); err == nil {

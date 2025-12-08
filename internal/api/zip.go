@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -25,8 +24,13 @@ import (
 
 // ZipCreate creates a zip file archive for download.
 //
-//	@Tags	Download
-//	@Router	/api/v1/zip [post]
+//	@Summary	creates a zip file archive for download
+//	@Id			ZipCreate
+//	@Tags		Download
+//	@Produce	json
+//	@Failure	400,403,404	{object}	i18n.Response
+//	@Success	200			{file}		application/zip
+//	@Router		/api/v1/zip [post]
 func ZipCreate(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionDownload)
@@ -47,7 +51,7 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -78,10 +82,11 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Configure file names.
 		dlName := DownloadName(c)
-		zipPath := path.Join(conf.TempPath(), "zip")
+		// Build filesystem paths using filepath for OS compatibility.
+		zipPath := filepath.Join(conf.TempPath(), fs.ZipDir)
 		zipToken := rnd.Base36(8)
 		zipBaseName := fmt.Sprintf("photoprism-download-%s-%s.zip", time.Now().Format("20060102-150405"), zipToken)
-		zipFileName := path.Join(zipPath, zipBaseName)
+		zipFileName := filepath.Join(zipPath, zipBaseName)
 
 		// Create temp directory.
 		if err = os.MkdirAll(zipPath, 0700); err != nil {
@@ -91,18 +96,14 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Create new zip file.
 		var newZipFile *os.File
+		// #nosec G304 zip name derived from request
 		if newZipFile, err = os.Create(zipFileName); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
-		} else {
-			defer newZipFile.Close()
 		}
 
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
-		defer func(w *zip.Writer) {
-			logErr("zip", w.Close())
-		}(zipWriter)
 
 		var aliases = make(map[string]int)
 
@@ -124,7 +125,7 @@ func ZipCreate(router *gin.RouterGroup) {
 				alias = file.DownloadName(dlName, seq)
 			}
 
-			aliases[key] += 1
+			aliases[key]++
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
@@ -140,6 +141,18 @@ func ZipCreate(router *gin.RouterGroup) {
 			}
 		}
 
+		// Ensure all data is flushed to disk before responding to the client
+		// to avoid rare races where the follow-up GET happens before the
+		// zip writer/file have been fully closed.
+		if cerr := zipWriter.Close(); cerr != nil {
+			Error(c, http.StatusInternalServerError, cerr, i18n.ErrZipFailed)
+			return
+		}
+		if ferr := newZipFile.Close(); ferr != nil {
+			Error(c, http.StatusInternalServerError, ferr, i18n.ErrZipFailed)
+			return
+		}
+
 		elapsed := int(time.Since(start).Seconds())
 
 		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
@@ -148,9 +161,16 @@ func ZipCreate(router *gin.RouterGroup) {
 	})
 }
 
-// ZipDownload downloads a zip file archive.
+// ZipDownload returns a zip file archive after it has been created.
 //
-// GET /api/v1/zip/:filename
+//	@Summary	returns a zip file archive after it has been created
+//	@Id			ZipDownload
+//	@Tags		Download
+//	@Produce	application/zip
+//	@Failure	403,404,500	{object}	i18n.Response
+//	@Success	200			{file}		application/zip
+//	@Param		filename	path		string	true	"zip archive filename returned by the POST /api/v1/zip endpoint"
+//	@Router		/api/v1/zip/{filename} [get]
 func ZipDownload(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
@@ -160,8 +180,8 @@ func ZipDownload(router *gin.RouterGroup) {
 
 		conf := get.Config()
 		zipBaseName := clean.FileName(filepath.Base(c.Param("filename")))
-		zipPath := path.Join(conf.TempPath(), "zip")
-		zipFileName := path.Join(zipPath, zipBaseName)
+		zipPath := filepath.Join(conf.TempPath(), fs.ZipDir)
+		zipFileName := filepath.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
 			log.Errorf("download: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))

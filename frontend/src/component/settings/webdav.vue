@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="580"
@@ -62,12 +63,7 @@
 
       <v-card-text class="pt-3 text-body-2">
         <v-alert color="surface-variant" icon="mdi-information" class="pa-2" variant="outlined">
-          <a
-            class="text-link"
-            style="color: inherit"
-            href="https://docs.photoprism.app/user-guide/sync/webdav/"
-            target="_blank"
-          >
+          <a class="text-link" style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank" rel="noopener">
             {{ $gettext(`Detailed instructions can be found in our User Guide.`) }}
           </a>
         </v-alert>
@@ -91,6 +87,7 @@ export default {
       default: false,
     },
   },
+  emits: ["close"],
   data() {
     return {
       user: this.$session.getUser(),
@@ -144,7 +141,7 @@ export default {
       return baseUrl;
     },
     windowsHelp(ev) {
-      window.open("https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server", "_blank");
+      this.$util.openUrl("https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server");
       ev.preventDefault();
       ev.stopPropagation();
     },

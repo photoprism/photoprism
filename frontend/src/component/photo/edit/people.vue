@@ -1,24 +1,7 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <div class="pa-2 p-faces">
-      <transition name="slide-y-transition" appear>
-        <PPhotoFaceEditor
-          v-if="showManualEditing"
-          :uid="uid"
-          :primary-file="primaryFile"
-          :initial-markers="markers"
-          @close="closeManualEditing"
-          @markers-updated="onMarkersUpdated"
-        />
-      </transition>
-
-      <v-alert
-        v-if="markers.length === 0"
-        color="surface-variant"
-        icon="mdi-lightbulb-outline"
-        class="no-results ma-2 opacity-70"
-        variant="outlined"
-      >
+      <v-alert v-if="markers.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
         <div class="font-weight-bold">
           {{ $gettext(`No people found`) }}
         </div>
@@ -29,8 +12,8 @@
       </v-alert>
       <div v-else class="v-row search-results face-results cards-view d-flex">
         <div v-for="m in markers" :key="m.UID" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 d-flex">
-          <v-card :data-id="m.UID" :class="m.classes()" class="result not-selectable flex-grow-1" tabindex="1">
-            <v-img :src="getMarkerThumbnailUrl(m)" aspect-ratio="1" class="card">
+          <v-card :data-id="m.UID" :class="m.classes()" class="result not-selectable flex-grow-1" tabindex="0">
+            <v-img :src="m.thumbnailUrl('tile_320')" aspect-ratio="1" class="card">
               <v-btn
                 v-if="!m.SubjUID && !m.Invalid"
                 :ripple="false"
@@ -44,6 +27,9 @@
               >
                 <v-icon class="action-reject">mdi-close</v-icon>
               </v-btn>
+              <div v-else-if="hasFaceMenu(m)" class="face-actions" data-testid="face-actions">
+                <p-action-menu :items="() => getFaceActions(m)" button-class="input-menu" list-class="opacity-85"></p-action-menu>
+              </div>
             </v-img>
             <v-card-actions class="meta pa-0">
               <v-btn
@@ -83,30 +69,24 @@
                 item-title="Name"
                 item-value="Name"
                 :disabled="busy"
+                :menu-props="menuProps"
                 return-object
                 hide-no-data
-                :menu-props="menuProps"
                 hide-details
                 single-line
                 open-on-clear
                 append-icon=""
                 prepend-inner-icon="mdi-account-plus"
                 density="comfortable"
-                class="input-name pa-0 ma-0"
-                @blur="onSetName(m)"
+                class="input-name pa-0 ma-0 text-selectable"
                 @update:model-value="(person) => onSetPerson(m, person)"
-                @keyup.enter="onSetName(m)"
+                @blur="(ev) => onSetName(m, ev)"
+                @keyup.enter="(ev) => onSetName(m, ev)"
               >
               </v-combobox>
             </v-card-actions>
           </v-card>
         </div>
-      </div>
-
-      <div v-if="!showManualEditing" class="d-flex justify-start mt-4">
-        <v-btn color="primary" variant="outlined" @click="showManualEditing = true">
-          {{ $gettext("Edit Face Markers") }}
-        </v-btn>
       </div>
     </div>
     <p-confirm-dialog
@@ -122,12 +102,15 @@
 
 <script>
 import Marker from "model/marker";
+import Subject from "model/subject";
 import PConfirmDialog from "component/confirm/dialog.vue";
-import PPhotoFaceEditor from "./face-editor.vue";
+import PActionMenu from "component/action/menu.vue";
+
+const SUBJECT_NOT_FOUND = "subject-not-found";
 
 export default {
   name: "PTabPhotoPeople",
-  components: { PConfirmDialog, PPhotoFaceEditor },
+  components: { PConfirmDialog, PActionMenu },
   props: {
     uid: {
       type: String,
@@ -138,23 +121,32 @@ export default {
     const view = this.$view.getData();
     return {
       view,
-      markers: [],
+      markers: view.model.getMarkers(true),
       busy: false,
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
-      showManualEditing: false,
       confirm: {
         visible: false,
         model: new Marker(),
         text: this.$gettext("Add person?"),
       },
       menuProps: {
-        closeOnClick: false,
-        closeOnContentClick: true,
         openOnClick: false,
+        openOnFocus: true,
+        closeOnBack: true,
+        closeOnContentClick: true,
+        disableInitialFocus: true,
+        persistent: false,
+        scrim: true,
+        openDelay: 0,
+        closeDelay: 0,
+        opacity: 0,
         density: "compact",
         maxHeight: 300,
+        locationStrategy: "connected",
+        scrollStrategy: "reposition",
+        origin: "auto",
       },
       textRule: (v) => {
         if (!v || !v.length) {
@@ -165,35 +157,16 @@ export default {
       },
     };
   },
-  computed: {
-    primaryFile() {
-      if (!this.view.model || !this.view.model.Files || this.view.model.Files.length === 0) {
-        return null;
-      }
-      return this.view.model.Files.find((f) => f.Primary);
-    },
-  },
   watch: {
     uid: function () {
       this.refresh();
     },
   },
-  mounted() {
-    this.markers = this.view.model.getMarkers(true).map((markerData) => new Marker(markerData));
-  },
   methods: {
-    getMarkerThumbnailUrl(marker) {
-      if (marker.thumbWithTimestamp) {
-        return marker.thumbWithTimestamp;
-      }
-      return marker.thumbnailUrl("tile_320");
-    },
     refresh() {
-      this.markers = this.view.model.getMarkers(true).map((markerData) => new Marker(markerData));
-    },
-
-    onMarkersUpdated(updatedMarkers) {
-      this.markers = updatedMarkers;
+      if (this.view.model) {
+        this.markers = this.view.model.getMarkers(true);
+      }
     },
     onReject(model) {
       if (this.busy || !model) return;
@@ -205,6 +178,140 @@ export default {
         this.$notify.unblockUI();
         this.busy = false;
       });
+    },
+    findPerson(uid) {
+      const people = this.$config?.values?.people;
+
+      if (!uid || !Array.isArray(people)) {
+        return null;
+      }
+
+      return people.find((person) => person.UID === uid) || null;
+    },
+    updatePersonList(subject) {
+      if (!subject) {
+        return;
+      }
+
+      const people = this.$config?.values?.people;
+
+      if (!Array.isArray(people)) {
+        return;
+      }
+
+      const data = subject.getValues();
+      const index = people.findIndex((person) => person.UID === subject.UID);
+      if (index >= 0) {
+        people[index] = Object.assign({}, people[index], data);
+      } else {
+        people.push(data);
+      }
+    },
+    hasFaceMenu(marker) {
+      return this.getFaceActions(marker).some((action) => action.visible);
+    },
+    getFaceActions(marker) {
+      const assigned = !!marker?.SubjUID;
+      const invalid = !!marker?.Invalid;
+      const disabled = this.busy || this.disabled;
+
+      return [
+        {
+          name: "go-to-person",
+          /* icon: "mdi-account-search", */
+          text: this.$gettext("Browse Pictures"),
+          visible: assigned && !invalid,
+          disabled,
+          click: () => this.onGoToPerson(marker),
+        },
+        {
+          name: "set-person-cover",
+          /* icon: "mdi-account-check", */
+          text: this.$gettext("Set as Cover Image"),
+          visible: assigned && !invalid && !!marker?.Thumb,
+          disabled,
+          click: () => this.onSetPersonCover(marker),
+        },
+      ];
+    },
+    loadSubject(uid) {
+      return new Subject({ UID: uid }).find(uid).catch((err) => {
+        console.error("faces: failed loading subject", err);
+        return null;
+      });
+    },
+    onGoToPerson(marker) {
+      if (!marker?.SubjUID) {
+        return Promise.resolve();
+      }
+
+      const cached = this.findPerson(marker.SubjUID);
+      const subjectPromise = cached
+        ? Promise.resolve(new Subject(cached))
+        : this.loadSubject(marker.SubjUID).then((subject) => {
+            if (!subject) {
+              this.$notify.error(this.$gettext("Person not found"));
+              return null;
+            }
+            this.updatePersonList(subject);
+            return subject;
+          });
+
+      return subjectPromise
+        .then((subject) => {
+          if (!subject) {
+            return;
+          }
+          const route = subject.route("all");
+          const resolved = this.$router.resolve(route);
+          this.$util.openUrl(resolved.href);
+        })
+        .catch((err) => {
+          if (!err || err.message !== SUBJECT_NOT_FOUND) {
+            console.error("faces: failed opening person", err);
+          }
+        });
+    },
+    onSetPersonCover(marker) {
+      if (this.busy || !marker?.SubjUID || !marker?.Thumb) {
+        return Promise.resolve();
+      }
+
+      this.busy = true;
+      this.$notify.blockUI("busy");
+
+      const cached = this.findPerson(marker.SubjUID);
+      const subjectPromise = cached
+        ? Promise.resolve(new Subject(cached))
+        : this.loadSubject(marker.SubjUID).then((subject) => {
+            if (!subject) {
+              this.$notify.error(this.$gettext("Person not found"));
+              return null;
+            }
+            return subject;
+          });
+
+      return subjectPromise
+        .then((subject) => {
+          if (!subject) {
+            return null;
+          }
+          return subject.setCover(marker.Thumb);
+        })
+        .then((updated) => {
+          this.updatePersonList(updated);
+          this.$notify.success(this.$gettext("Person cover updated"));
+        })
+        .catch((err) => {
+          if (err) {
+            console.error("faces: failed setting person cover", err);
+            this.$notify.error(this.$gettext("Could not update person cover"));
+          }
+        })
+        .finally(() => {
+          this.$notify.unblockUI();
+          this.busy = false;
+        });
     },
     onApprove(model) {
       if (this.busy || !model) return;
@@ -233,8 +340,16 @@ export default {
 
       return true;
     },
-    onSetName(model) {
-      if (this.busy || !model) return;
+    onSetName(model, ev) {
+      if (this.busy || !model) {
+        return;
+      }
+
+      // If there's a pending confirmation for a different face, don't process new input
+      if (this.confirm.visible && this.confirm.model && this.confirm.model.UID !== model.UID) {
+        return;
+      }
+
       const name = model?.Name;
 
       if (!name) {
@@ -251,35 +366,50 @@ export default {
         if (found) {
           model.Name = found.Name;
           model.SubjUID = found.UID;
-          this.setName(model);
+          if (model.wasChanged()) {
+            this.setName(model);
+          }
           return;
         }
       }
 
       model.Name = name;
       model.SubjUID = "";
-      this.confirm.visible = true;
+
+      if (ev && ev.key === "Enter" && !ev.isComposing && !ev.repeat) {
+        this.setName(model);
+      } else {
+        this.confirm.visible = true;
+      }
     },
     onConfirmSetName() {
-      if (!this.confirm?.model?.Name) return;
+      if (!this.confirm?.model?.Name) {
+        return;
+      }
+
       this.setName(this.confirm.model);
     },
     onCancelSetName() {
+      if (this.confirm && this.confirm.model) {
+        this.confirm.model.Name = "";
+        this.confirm.model.SubjUID = "";
+      }
       this.confirm.visible = false;
     },
     setName(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
+
       this.busy = true;
       this.$notify.blockUI("busy");
+
       return model.setName().finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
         this.confirm.model = null;
         this.confirm.visible = false;
       });
-    },
-    closeManualEditing() {
-      this.showManualEditing = false;
     },
   },
 };

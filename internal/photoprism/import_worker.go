@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// ImportJob describes a media import task pulled from the worker queue.
 type ImportJob struct {
 	FileName  string
 	Related   RelatedFiles
@@ -18,6 +19,7 @@ type ImportJob struct {
 	Imp       *Import
 }
 
+// ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName string
@@ -92,16 +94,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				if opt.Move {
-					if moveErr := f.Move(destFileName); moveErr != nil {
+					if moveErr := f.Move(destFileName, false); moveErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", clean.Error(moveErr))
-						log.Warnf("import: failed moving file to %s, is another import running at the same time?", logRelName)
+						log.Error(moveErr)
+						log.Warnf("import: could not move file to %s, is another import running?", logRelName)
 					}
 				} else {
-					if copyErr := f.Copy(destFileName); copyErr != nil {
+					if copyErr := f.Copy(destFileName, false); copyErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", clean.Error(copyErr))
-						log.Warnf("import: failed copying file to %s, is another import running at the same time?", logRelName)
+						log.Error(copyErr)
+						log.Warnf("import: could not copy file to %s, is another import running?", logRelName)
 					}
 				}
 			} else {
@@ -114,6 +116,17 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if albumErr := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
 					log.Warn(albumErr)
+				}
+
+				// Remember the original filename for duplicates so that indexing can still persist
+				// OriginalName even when the file was not copied due to an existing identical file.
+				if fileHash := f.Hash(); fileHash != "" {
+					if existing, findErr := entity.FirstFileByHash(fileHash); findErr == nil {
+						existingPath := FileName(existing.FileRoot, existing.FileName)
+						if existingPath != "" {
+							relatedOriginalNames[existingPath] = relFileName
+						}
+					}
 				}
 
 				// Remove duplicates to save storage.
@@ -155,7 +168,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if img, imgErr := f.PreviewImage(); imgErr != nil {
 				log.Error(imgErr)
-			} else if limitErr, _ := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+			} else if _, limitErr := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 				log.Errorf("import: %s", limitErr)
 				continue
 			} else if thumbsErr := img.GenerateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
@@ -180,10 +193,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 				main := related.Main
 
 				// Enforce file size and resolution limits.
-				if limitErr, _ := main.ExceedsBytes(o.ByteLimit); limitErr != nil {
+				if _, limitErr := main.ExceedsBytes(o.ByteLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 					continue
-				} else if limitErr, _ = main.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				} else if _, limitErr = main.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 					continue
 				}
@@ -222,9 +235,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				done[file.FileName()] = true
 
 				// Show warning if sidecar file exceeds size or resolution limit.
-				if limitErr, _ := file.ExceedsBytes(o.ByteLimit); limitErr != nil {
+				if _, limitErr := file.ExceedsBytes(o.ByteLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
-				} else if limitErr, _ = file.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				} else if _, limitErr = file.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 				}
 

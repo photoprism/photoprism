@@ -7,13 +7,13 @@ import (
 )
 
 func TestLogParam(t *testing.T) {
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "'The quick brown fox.'", LogParam("The quick brown fox."))
 	})
-	t.Run("filename.txt", func(t *testing.T) {
+	t.Run("FilenameTxt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", LogParam("filename.txt"))
 	})
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		assert.Equal(t, "''", LogParam(""))
 	})
 	t.Run("Log4j", func(t *testing.T) {
@@ -25,13 +25,13 @@ func TestLogParam(t *testing.T) {
 }
 
 func TestLogParamLower(t *testing.T) {
-	t.Run("The quick brown fox.", func(t *testing.T) {
+	t.Run("TheQuickBrownFox", func(t *testing.T) {
 		assert.Equal(t, "'the quick brown fox.'", LogParamLower("The quick brown fox."))
 	})
-	t.Run("filename.txt", func(t *testing.T) {
+	t.Run("FilenameTxt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", LogParamLower("filename.TXT"))
 	})
-	t.Run("empty string", func(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
 		assert.Equal(t, "''", LogParamLower(""))
 	})
 	t.Run("Log4j", func(t *testing.T) {

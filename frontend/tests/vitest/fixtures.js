@@ -133,6 +133,21 @@ Mock.onPost("api/v1/session").reply(
     access_token: "999900000000000000000000000000000000000000000000",
     token_type: "Bearer",
     provider: "test",
+    scope: "photos:view",
+    data: { token: "123token" },
+    user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
+  },
+  mockHeaders
+);
+
+Mock.onGet("api/v1/session").reply(
+  200,
+  {
+    session_id: "5aa770f2a1ef431628d9f17bdf82a0d16865e99d4a1ddd9356e1aabfe6464683",
+    access_token: "999900000000000000000000000000000000000000000000",
+    token_type: "Bearer",
+    provider: "test",
+    scope: "photos:view",
     data: { token: "123token" },
     user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
   },
@@ -324,6 +339,32 @@ Mock.onPost("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockHea
 Mock.onDelete("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onPost("api/v1/albums/5/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onDelete("api/v1/albums/5/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onPut(/^albums\/[A-Za-z0-9_-]+$/).reply((config) => {
+  const data = JSON.parse(config.data || "{}");
+  const uid = config.url.split("/").pop();
+  return [
+    200,
+    {
+      UID: uid,
+      Thumb: data.Thumb,
+      ThumbSrc: data.ThumbSrc || "manual",
+    },
+    mockHeaders,
+  ];
+});
+Mock.onPut(/^labels\/[A-Za-z0-9_-]+$/).reply((config) => {
+  const data = JSON.parse(config.data || "{}");
+  const uid = config.url.split("/").pop();
+  return [
+    200,
+    {
+      UID: uid,
+      Thumb: data.Thumb,
+      ThumbSrc: data.ThumbSrc || "manual",
+    },
+    mockHeaders,
+  ];
+});
 Mock.onGet("api/v1/config").reply(200, clientConfig, mockHeaders);
 Mock.onPut("api/v1/markers/mBC123ghytr", { Review: false, Invalid: false }).reply(
   200,

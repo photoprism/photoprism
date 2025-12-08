@@ -28,7 +28,7 @@ func TestName(t *testing.T) {
 	t.Run("Chinese", func(t *testing.T) {
 		assert.Equal(t, "陈 赵", Name(" 陈  赵"))
 	})
-	t.Run("Control Character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "William Henry Gates III", Name("William Henry Gates III"+string(rune(1))))
 	})
 	t.Run("Space", func(t *testing.T) {
@@ -82,7 +82,7 @@ func TestDlName(t *testing.T) {
 	t.Run("Chinese", func(t *testing.T) {
 		assert.Equal(t, "陈 赵", DlName(" 陈  赵"))
 	})
-	t.Run("Control Character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "William Henry Gates III", DlName("William Henry Gates III"+string(rune(1))))
 	})
 	t.Run("Space", func(t *testing.T) {

@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestClientAssets_Load(t *testing.T) {
@@ -15,7 +17,7 @@ func TestClientAssets_Load(t *testing.T) {
 		testBuildPath := "testdata/static/build"
 		a := NewClientAssets(testBuildPath, c.StaticUri())
 
-		err := a.Load("assets.json")
+		err := a.Load(fs.AssetsJsonFile)
 
 		assert.NoError(t, err)
 
@@ -32,12 +34,11 @@ func TestClientAssets_Load(t *testing.T) {
 		assert.Equal(t, "splash.test.css", a.SplashCssFile())
 		assert.NotEmpty(t, a.SplashCssFileContents())
 	})
-
 	t.Run("Error", func(t *testing.T) {
 		testBuildPath := "testdata/foo"
 		a := NewClientAssets(testBuildPath, c.StaticUri())
 
-		err := a.Load("assets.json")
+		err := a.Load(fs.AssetsJsonFile)
 
 		assert.Error(t, err)
 

@@ -1,24 +1,12 @@
 <template>
   <div class="p-tab p-tab-photo-labels">
-    <v-form
-      ref="form"
-      class="p-form p-form--table p-form-photo-labels"
-      validate-on="invalid-input"
-      accept-charset="UTF-8"
-      tabindex="1"
-      @submit.prevent
-    >
+    <v-form ref="form" class="p-form p-form--table p-form-photo-labels" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <div class="form-body">
         <div class="form-controls">
           <v-row dense align="start">
             <v-col cols="0" sm="2" class="form-thumb">
               <div>
-                <img
-                  :alt="view?.model.Title"
-                  :src="view?.model.thumbnailUrl('tile_500')"
-                  class="clickable"
-                  @click.stop.prevent.exact="openPhoto()"
-                />
+                <img :alt="view?.model.Title" :src="view?.model.thumbnailUrl('tile_500')" class="clickable" @click.stop.prevent.exact="openPhoto()" />
               </div>
             </v-col>
             <v-col cols="12" sm="10" class="d-flex flex-column ga-4">
@@ -30,38 +18,22 @@
                   <table>
                     <thead>
                       <tr>
-                        <th
-                          class="v-data-table__td v-data-table-column--align-left v-data-table__th"
-                          colspan="1"
-                          rowspan="1"
-                        >
+                        <th class="v-data-table__td v-data-table-column--align-left v-data-table__th" colspan="1" rowspan="1">
                           <div class="v-data-table-header__content">
                             <span>{{ $gettext(`Label`) }}</span>
                           </div>
                         </th>
-                        <th
-                          class="v-data-table__td v-data-table-column--align-left v-data-table__th"
-                          colspan="1"
-                          rowspan="1"
-                        >
+                        <th class="v-data-table__td v-data-table-column--align-left v-data-table__th" colspan="1" rowspan="1">
                           <div class="v-data-table-header__content">
                             <span>{{ $gettext(`Source`) }}</span>
                           </div>
                         </th>
-                        <th
-                          class="v-data-table__td v-data-table-column--align-center v-data-table__th"
-                          colspan="1"
-                          rowspan="1"
-                        >
+                        <th class="v-data-table__td v-data-table-column--align-center v-data-table__th" colspan="1" rowspan="1">
                           <div class="v-data-table-header__content">
                             <span>{{ $gettext(`Confidence`) }}</span>
                           </div>
                         </th>
-                        <th
-                          class="v-data-table__td v-data-table-column--align-center v-data-table__th"
-                          colspan="1"
-                          rowspan="1"
-                        >
+                        <th class="v-data-table__td v-data-table-column--align-center v-data-table__th" colspan="1" rowspan="1">
                           <div class="v-data-table-header__content">
                             <span>{{ $gettext(`Action`) }}</span>
                           </div>
@@ -98,7 +70,7 @@
                             <v-icon color="surface-variant">mdi-magnify</v-icon>
                           </v-btn>
                           <v-btn
-                            v-else-if="label.Uncertainty < 100 && label.LabelSrc === 'manual'"
+                            v-else-if="(label.LabelSrc === 'manual' && label.Uncertainty < 100) || (label.LabelSrc === 'batch' && label.Uncertainty === 0)"
                             icon
                             density="comfortable"
                             variant="text"
@@ -156,15 +128,7 @@
                         </td>
                         <td class="text-center">100%</td>
                         <td class="text-center">
-                          <v-btn
-                            icon
-                            density="comfortable"
-                            variant="text"
-                            :ripple="false"
-                            title="Add"
-                            class="p-photo-label-add"
-                            @click.stop.prevent="addLabel"
-                          >
+                          <v-btn icon density="comfortable" variant="text" :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
                             <v-icon color="surface-variant">mdi-plus</v-icon>
                           </v-btn>
                         </td>
@@ -192,6 +156,7 @@ export default {
       default: "",
     },
   },
+  emits: ["close"],
   data() {
     return {
       view: this.$view.getData(),
@@ -201,15 +166,30 @@ export default {
       selected: [],
       newLabel: "",
       listColumns: [
-        { title: this.$gettext("Label"), key: "", sortable: false, align: "left" },
-        { title: this.$gettext("Source"), key: "LabelSrc", sortable: false, align: "left" },
+        {
+          title: this.$gettext("Label"),
+          key: "",
+          sortable: false,
+          align: "left",
+        },
+        {
+          title: this.$gettext("Source"),
+          key: "LabelSrc",
+          sortable: false,
+          align: "left",
+        },
         {
           title: this.$gettext("Confidence"),
           key: "Uncertainty",
           sortable: false,
           align: "center",
         },
-        { title: this.$gettext("Action"), key: "", sortable: false, align: "center" },
+        {
+          title: this.$gettext("Action"),
+          key: "",
+          sortable: false,
+          align: "center",
+        },
       ],
       nameRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
@@ -217,22 +197,7 @@ export default {
   methods: {
     refresh() {},
     sourceName(s) {
-      switch (s) {
-        case "manual":
-          return this.$gettext("Manual");
-        case "title":
-          return this.$gettext("Title");
-        case "caption":
-          return this.$gettext("Caption");
-        case "subject":
-          return this.$gettext("Subject");
-        case "image":
-          return this.$gettext("Image");
-        case "location":
-          return this.$gettext("Location");
-        default:
-          return this.$util.ucFirst(s);
-      }
+      return this.$util.sourceName(s);
     },
     removeLabel(label) {
       if (!label || !this.view?.model) {

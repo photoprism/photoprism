@@ -10,11 +10,20 @@ import (
 )
 
 const (
-	SessionIdLength      = 64
-	AuthTokenLength      = 48
-	AppPasswordLength    = 27
-	AppPasswordSeparator = '-'
+	// SessionIdLength is the default length of session identifiers.
+	SessionIdLength = 64
+	// AuthTokenLength is the length of auth tokens returned by AuthToken.
+	AuthTokenLength = 48
+	// JoinTokenLength is the length of cluster join tokens.
+	JoinTokenLength = 24
+	// AppPasswordLength is the length of generated app passwords.
+	AppPasswordLength = 27
+	// Separator divides human-friendly token sections.
+	Separator = '-'
 )
+
+// joinTokenSeparators determines where token separators (hyphens) appear.
+var joinTokenSeparators = [...]int{7, 16}
 
 // AuthToken generates a random hexadecimal character token for authenticating client applications.
 //
@@ -38,6 +47,15 @@ func IsAuthToken(s string) bool {
 	return false
 }
 
+// AuthTokenID returns a unique 14 character authentication token ID, e.g. for use in JWTs.
+func AuthTokenID(prefix string) string {
+	if len(prefix) > 8 {
+		prefix = prefix[:8]
+	}
+
+	return prefix + Base36(14-len(prefix))
+}
+
 // AppPassword generates a random, human-friendly authentication token that can also be used as
 // password replacement for client applications. It is separated by 3 dashes for better readability
 // and has a total length of 27 characters.
@@ -49,7 +67,7 @@ func AppPassword() string {
 
 	for i := 0; i < AppPasswordLength; i++ {
 		if (i+1)%7 == 0 {
-			b = append(b, AppPasswordSeparator)
+			b = append(b, Separator)
 		} else if i == AppPasswordLength-1 {
 			b = append(b, checksum.Char(b))
 			return string(b)
@@ -71,7 +89,7 @@ func IsAppPassword(s string, verifyChecksum bool) bool {
 	// Check characters.
 	sep := 0
 	for _, r := range s {
-		if r == AppPasswordSeparator {
+		if r == Separator {
 			sep++
 		} else if (r < '0' || r > '9') && (r < 'A' || r > 'Z') && (r < 'a' || r > 'z') {
 			return false
@@ -87,6 +105,83 @@ func IsAppPassword(s string, verifyChecksum bool) bool {
 
 	// Verify token checksum.
 	return s[AppPasswordLength-1] == checksum.Char([]byte(s[:AppPasswordLength-1]))
+}
+
+// JoinToken generates a random, human-friendly cluster join token.
+// The token has a length of 24 characters and is separated by 2 dashes.
+//
+// Example: pGVplw8-eISgkdQN-Mep62nQ
+func JoinToken() string {
+	m := big.NewInt(int64(len(CharsetBase62)))
+	token := make([]byte, 0, JoinTokenLength)
+
+	for i := 0; i < JoinTokenLength-1; i++ {
+		if isJoinTokenSeparatorIndex(i) {
+			token = append(token, Separator)
+			continue
+		}
+
+		ch := CharsetBase62[0]
+		if r, err := rand.Int(rand.Reader, m); err == nil {
+			ch = CharsetBase62[r.Int64()]
+		}
+
+		token = append(token, ch)
+	}
+
+	token = append(token, checksum.Char(token))
+
+	return string(token)
+}
+
+func isJoinTokenSeparatorIndex(i int) bool {
+	for _, pos := range joinTokenSeparators {
+		if i == pos {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsJoinToken checks if the string represents a join token.
+func IsJoinToken(s string, strict bool) bool {
+	// Basic mode: No token, not valid.
+	if s == "" {
+		return false
+	}
+
+	// Non-strict mode: only enforce minimum length so legacy tokens that were
+	// longer than the auto-generated format continue to work.
+	if !strict {
+		return len(s) >= JoinTokenLength
+	}
+
+	// Strict validation enforces canonical formatting and checksum.
+	if len(s) != JoinTokenLength {
+		return false
+	}
+
+	sep := 0
+	for idx, r := range s {
+		if r == Separator {
+			if !isJoinTokenSeparatorIndex(idx) {
+				return false
+			}
+			sep++
+			continue
+		}
+
+		if (r < '0' || r > '9') && (r < 'A' || r > 'Z') && (r < 'a' || r > 'z') {
+			return false
+		}
+	}
+
+	if sep != len(joinTokenSeparators) {
+		return false
+	}
+
+	return s[JoinTokenLength-1] == checksum.Char([]byte(s[:JoinTokenLength-1]))
 }
 
 // IsAuthAny checks if the string represents a valid auth token or app password.

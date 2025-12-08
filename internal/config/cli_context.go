@@ -2,6 +2,7 @@ package config
 
 import (
 	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -34,7 +35,7 @@ func ApplyCliContext(c interface{}, ctx *cli.Context) error {
 				if s == "" {
 					// Omit.
 				} else if sec := txt.UInt(s); sec > 0 {
-					fieldValue.Set(reflect.ValueOf(time.Duration(sec) * time.Second))
+					fieldValue.Set(reflect.ValueOf(time.Duration(sec) * time.Second)) //nolint:gosec // txt.UInt is bounded; duration uses int64 on supported platforms
 				} else if d, err := time.ParseDuration(s); err == nil {
 					fieldValue.Set(reflect.ValueOf(d))
 				}
@@ -66,6 +67,25 @@ func ApplyCliContext(c interface{}, ctx *cli.Context) error {
 				if ctx.IsSet(tagValue) || fieldValue.Len() == 0 {
 					f := reflect.ValueOf(ctx.StringSlice(tagValue))
 					fieldValue.Set(f)
+				}
+			case []float64:
+				if ctx.IsSet(tagValue) || fieldValue.Len() == 0 {
+					var floats []float64
+
+					for _, s := range ctx.StringSlice(tagValue) {
+						if s == "" {
+							continue
+						}
+
+						if f, err := strconv.ParseFloat(s, 64); err != nil {
+							log.Warnf("cannot parse value %q for cli flag %s (%s)", s, tagValue, err)
+							continue
+						} else {
+							floats = append(floats, f)
+						}
+					}
+
+					fieldValue.Set(reflect.ValueOf(floats))
 				}
 			case bool:
 				if ctx.IsSet(tagValue) {

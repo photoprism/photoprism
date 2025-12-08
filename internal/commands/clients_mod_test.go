@@ -19,7 +19,7 @@ func TestClientsModCommand(t *testing.T) {
 		output0, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output0)
+		// t.Logf(output0)
 		assert.NoError(t, err)
 		assert.Contains(t, output0, "AuthEnabled  │ true")
 		assert.Contains(t, output0, "oauth2")
@@ -28,7 +28,7 @@ func TestClientsModCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--disable", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
@@ -36,7 +36,7 @@ func TestClientsModCommand(t *testing.T) {
 		output1, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output1)
+		// t.Logf(output1)
 		assert.NoError(t, err)
 		assert.Contains(t, output1, "AuthEnabled  │ false")
 
@@ -51,7 +51,7 @@ func TestClientsModCommand(t *testing.T) {
 		output3, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output3)
+		// t.Logf(output3)
 		assert.NoError(t, err)
 		assert.Contains(t, output3, "│ AuthEnabled  │ true ")
 	})
@@ -60,8 +60,48 @@ func TestClientsModCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--regenerate", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Client Secret")
 	})
+}
+
+func TestClientsModCommand_ModRoleScopeLimits(t *testing.T) {
+	// Modify existing fixture client "analytics" (cs7pvt5h8rw9aaqj).
+	out0, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+	assert.Contains(t, out0, "ClientRole")
+
+	// Apply changes.
+	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=portal", "--scope=audit metrics", "--expires=600", "--tokens=3", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+
+	// Verify via show.
+	out1, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+	assert.Contains(t, out1, "ClientRole   │ \"portal\"")
+	assert.Contains(t, out1, "AuthScope    │ \"audit metrics\"")
+	assert.Contains(t, out1, "AuthExpires  │ 600")
+	assert.Contains(t, out1, "AuthTokens   │ 3")
+}
+
+func TestClientsModCommand_ModRoleToNoneAndEmpty(t *testing.T) {
+	// Set to explicit none
+	_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--role=none", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+	out1, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+	// Expect empty string value for ClientRole in report output
+	assert.Contains(t, out1, "ClientRole   │ \"\"")
+
+	// Set to explicit empty string (treated as none)
+	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+	out2, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
+	assert.Contains(t, out2, "ClientRole   │ \"\"")
+
+	// Restore to client for other tests
+	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=client", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
 }

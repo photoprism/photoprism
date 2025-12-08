@@ -49,7 +49,7 @@ func UploadToService(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err = c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -74,7 +74,7 @@ func UploadToService(router *gin.RouterGroup) {
 				alias = file.ShareBase(seq)
 			}
 
-			aliases[key] += 1
+			aliases[key]++
 
 			entity.FirstOrCreateFileShare(entity.NewFileShare(file.ID, m.ID, alias))
 		}

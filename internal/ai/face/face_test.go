@@ -7,7 +7,7 @@ import (
 )
 
 func TestFace_Size(t *testing.T) {
-	t.Run("8", func(t *testing.T) {
+	t.Run("Eight", func(t *testing.T) {
 		f := Face{
 			Rows:  8,
 			Cols:  1,
@@ -27,7 +27,7 @@ func TestFace_Size(t *testing.T) {
 }
 
 func TestFace_Dim(t *testing.T) {
-	t.Run("3", func(t *testing.T) {
+	t.Run("Three", func(t *testing.T) {
 		f := Face{
 			Rows:  8,
 			Cols:  3,
@@ -44,7 +44,7 @@ func TestFace_Dim(t *testing.T) {
 		}
 		assert.Equal(t, float32(3), f.Dim())
 	})
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		f := Face{
 			Rows:  8,
 			Cols:  0,
@@ -64,7 +64,7 @@ func TestFace_Dim(t *testing.T) {
 }
 
 func TestFace_EmbeddingsJSON(t *testing.T) {
-	t.Run("no result", func(t *testing.T) {
+	t.Run("NoResult", func(t *testing.T) {
 		f := Face{
 			Rows:  8,
 			Cols:  1,

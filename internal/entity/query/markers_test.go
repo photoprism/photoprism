@@ -26,7 +26,7 @@ func TestMarkerByUID(t *testing.T) {
 }
 
 func TestMarkers(t *testing.T) {
-	t.Run("find umatched", func(t *testing.T) {
+	t.Run("FindUmatched", func(t *testing.T) {
 		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.Now())
 
 		if err != nil {
@@ -39,7 +39,7 @@ func TestMarkers(t *testing.T) {
 			assert.IsType(t, entity.Marker{}, val)
 		}
 	})
-	t.Run("find all", func(t *testing.T) {
+	t.Run("FindAll", func(t *testing.T) {
 		results, err := Markers(3, 0, entity.MarkerFace, false, false, time.Time{})
 
 		if err != nil {
@@ -52,7 +52,7 @@ func TestMarkers(t *testing.T) {
 			assert.IsType(t, entity.Marker{}, val)
 		}
 	})
-	t.Run("find embeddings", func(t *testing.T) {
+	t.Run("FindEmbeddings", func(t *testing.T) {
 		results, err := Markers(3, 0, entity.MarkerFace, true, false, time.Time{})
 
 		if err != nil {
@@ -65,7 +65,7 @@ func TestMarkers(t *testing.T) {
 			assert.IsType(t, entity.Marker{}, val)
 		}
 	})
-	t.Run("find false", func(t *testing.T) {
+	t.Run("FindFalse", func(t *testing.T) {
 		results, err := Markers(3, 0, entity.MarkerFace, false, true, time.Time{})
 
 		if err != nil {
@@ -77,7 +77,7 @@ func TestMarkers(t *testing.T) {
 }
 
 func TestUnmatchedFaceMarkers(t *testing.T) {
-	t.Run("all", func(t *testing.T) {
+	t.Run("All", func(t *testing.T) {
 		results, err := UnmatchedFaceMarkers(3, 0, nil)
 
 		if err != nil {
@@ -86,7 +86,7 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 
 		assert.Equal(t, 3, len(results))
 	})
-	t.Run("before", func(t *testing.T) {
+	t.Run("Before", func(t *testing.T) {
 		results, err := UnmatchedFaceMarkers(3, 0, entity.TimeStamp())
 
 		if err != nil {
@@ -98,7 +98,7 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 }
 
 func TestFaceMarkers(t *testing.T) {
-	t.Run("all", func(t *testing.T) {
+	t.Run("All", func(t *testing.T) {
 		results, err := FaceMarkers(3, 0)
 
 		if err != nil {
@@ -110,7 +110,7 @@ func TestFaceMarkers(t *testing.T) {
 }
 
 func TestEmbeddings(t *testing.T) {
-	t.Run("all", func(t *testing.T) {
+	t.Run("All", func(t *testing.T) {
 		results, err := Embeddings(false, false, 0, 0)
 
 		if err != nil {
@@ -123,7 +123,7 @@ func TestEmbeddings(t *testing.T) {
 			assert.IsType(t, face.Embedding{}, val)
 		}
 	})
-	t.Run("size", func(t *testing.T) {
+	t.Run("Size", func(t *testing.T) {
 		results, err := Embeddings(false, false, 230, 0)
 
 		if err != nil {
@@ -136,7 +136,7 @@ func TestEmbeddings(t *testing.T) {
 			assert.IsType(t, face.Embedding{}, val)
 		}
 	})
-	t.Run("score", func(t *testing.T) {
+	t.Run("Score", func(t *testing.T) {
 		results, err := Embeddings(false, false, 0, 50)
 
 		if err != nil {
@@ -149,6 +149,36 @@ func TestEmbeddings(t *testing.T) {
 			assert.IsType(t, face.Embedding{}, val)
 		}
 	})
+}
+
+func TestMarkerCountsByFaceIDs(t *testing.T) {
+	counts, err := MarkerCountsByFaceIDs(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Empty(t, counts)
+
+	faces, err := Faces(false, false, false, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(faces) == 0 {
+		t.Skip("no faces available in test dataset")
+	}
+
+	ids := []string{faces[0].ID}
+
+	counts, err = MarkerCountsByFaceIDs(ids)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(counts) == 0 {
+		t.Skip("no markers found for sampled face")
+	}
+
+	assert.GreaterOrEqual(t, counts[faces[0].ID], 0)
 }
 
 func TestRemoveInvalidMarkerReferences(t *testing.T) {

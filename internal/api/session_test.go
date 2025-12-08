@@ -37,9 +37,9 @@ func TestGetSessionResponse(t *testing.T) {
 		assert.Equal(t, sess.AuthToken(), result["access_token"])
 		assert.Equal(t, sess.AuthTokenType(), result["token_type"])
 		assert.Equal(t, sess.ExpiresIn(), result["expires_in"])
-		assert.Equal(t, sess.Provider().String(), result["provider"])
-		assert.Equal(t, sess.User(), result["user"])
-		assert.Equal(t, sess.Data(), result["data"])
+		assert.Equal(t, sess.GetProvider().String(), result["provider"])
+		assert.Equal(t, sess.GetUser(), result["user"])
+		assert.Equal(t, sess.GetData(), result["data"])
 		assert.Equal(t, conf, result["config"])
 	})
 	t.Run("NoAuthToken", func(t *testing.T) {
@@ -56,9 +56,9 @@ func TestGetSessionResponse(t *testing.T) {
 		assert.Nil(t, result["access_token"])
 		assert.Nil(t, result["token_type"])
 		assert.Equal(t, sess.ExpiresIn(), result["expires_in"])
-		assert.Equal(t, sess.Provider().String(), result["provider"])
-		assert.Equal(t, sess.User(), result["user"])
-		assert.Equal(t, sess.Data(), result["data"])
+		assert.Equal(t, sess.GetProvider().String(), result["provider"])
+		assert.Equal(t, sess.GetUser(), result["user"])
+		assert.Equal(t, sess.GetData(), result["data"])
 		assert.Equal(t, conf, result["config"])
 	})
 }
@@ -72,7 +72,7 @@ func TestCreateSession(t *testing.T) {
 		CreateSession(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
-		//t.Logf("Response Body: %s", r.Body.String())
+		// t.Logf("Response Body: %s", r.Body.String())
 		userName := gjson.Get(r.Body.String(), "user.Name").String()
 		assert.Equal(t, "admin", userName)
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -135,6 +135,21 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "1jxf3jfn2k"}`)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("PublicDemoForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		CreateSession(router)
+
+		origDemo := conf.Options().Demo
+		t.Cleanup(func() {
+			conf.Options().Demo = origDemo
+		})
+
+		conf.Options().Demo = true
+
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
+		assert.Equal(t, http.StatusPaymentRequired, r.Code)
+	})
 	t.Run("AdminInvalidPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -191,7 +206,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAPasscodeRequired", func(t *testing.T) {
+	t.Run("TwoFaPasscodeRequired", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -205,7 +220,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAInvalidPasscode", func(t *testing.T) {
+	t.Run("TwoFaInvalidPasscode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -220,7 +235,7 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
-	t.Run("2FAUseRecoveryCode", func(t *testing.T) {
+	t.Run("TwoFaUseRecoveryCode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -358,7 +373,7 @@ func TestDeleteSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		DeleteSession(router)
-		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"
+		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1" // #nosec G101 test token
 
 		r := PerformRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(bobToken))
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
@@ -384,7 +399,7 @@ func TestDeleteSession(t *testing.T) {
 
 		DeleteSession(router)
 		bobToken := AuthenticateUser(app, router, "bob", "Bobbob123!")
-		aliceToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
+		aliceToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0" // #nosec G101 test token
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(aliceToken), bobToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)
@@ -396,7 +411,7 @@ func TestDeleteSession(t *testing.T) {
 
 		DeleteSession(router)
 		aliceToken := AuthenticateUser(app, router, "alice", "Alice123!")
-		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"
+		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1" // #nosec G101 test token
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(bobToken), aliceToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)
@@ -408,7 +423,7 @@ func TestDeleteSession(t *testing.T) {
 
 		DeleteSession(router)
 		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
-		deleteToken := "638bffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0"
+		deleteToken := "638bffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0" // #nosec G101 test token
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(deleteToken), authToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)

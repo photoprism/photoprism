@@ -22,17 +22,25 @@ func (t Type) NotEqual(s string) bool {
 	return !t.Equal(s)
 }
 
-// Main checks if this is a known main media content format.
-func (t Type) Main() bool {
-	switch t {
-	case Animated, Audio, Document, Image, Live, Raw, Vector, Video:
-		return true
-	default:
-		return false
-	}
+// IsMain checks whether this is a main media type, which can be indexed and displayed on its own, unlike
+// e.g. archives or sidecar files that cannot be indexed or searched without a related main media file.
+func (t Type) IsMain() bool {
+	return Priority[t] >= PriorityMainMedia
 }
 
-// Unknown checks if the type is unknown.
-func (t Type) Unknown() bool {
-	return t == Unknown
+// IsArchive checks if this is an archive that might contain main
+// media files, but cannot be indexed or searched on its own.
+func (t Type) IsArchive() bool {
+	return Priority[t] == PriorityArchive
+}
+
+// IsSidecar checks if this is a media type that cannot be indexed
+// or searched on its own, i.e. only in connection with main media.
+func (t Type) IsSidecar() bool {
+	return Priority[t] <= PrioritySidecar
+}
+
+// IsUnknown checks if the media type is currently unknown.
+func (t Type) IsUnknown() bool {
+	return Priority[t] == PriorityUnknown
 }

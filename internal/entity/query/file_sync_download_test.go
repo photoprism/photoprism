@@ -13,7 +13,7 @@ func TestSetDownloadFileID(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("filename empty", func(t *testing.T) {
+	t.Run("FilenameEmpty", func(t *testing.T) {
 		err := SetDownloadFileID("", 1000000)
 		if err == nil {
 			t.Fatal()

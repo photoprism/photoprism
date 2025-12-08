@@ -102,7 +102,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	settings := imp.conf.Settings()
 	convert := settings.Index.Convert && imp.conf.SidecarWritable()
-	indexOpt := NewIndexOptions("/", true, convert, true, false, false)
+	indexOpt := NewIndexOptions("/", true, convert, true, false, false, imp.conf)
 	indexOpt.UID = opt.UID
 	indexOpt.Action = opt.Action
 	skipRaw := imp.conf.DisableRaw()

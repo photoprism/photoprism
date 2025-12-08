@@ -15,9 +15,9 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
-	defer Shutdown()
-
 	code := m.Run()
+
+	Shutdown()
 
 	// Remove generated test files and folders.
 	_ = os.RemoveAll("testdata/1")

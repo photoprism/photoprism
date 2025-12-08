@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -91,7 +93,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			cached := cacheData.(fs.FileInfos)
 
-			log.Tracef("api-v1: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			c.JSON(http.StatusOK, cached)
 			return
@@ -126,7 +128,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 //	@Tags		Services
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Service
+//	@Success	201				{object}	entity.Service
 //	@Failure	400,401,403,429	{object}	i18n.Response
 //	@Param		service			body		form.Service	true	"properties of the service to be created"
 //	@Router		/api/v1/services [post]
@@ -149,7 +151,7 @@ func AddService(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -162,12 +164,13 @@ func AddService(router *gin.RouterGroup) {
 		m, err := entity.AddService(frm)
 
 		if err != nil {
-			log.Error(err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
-		c.JSON(http.StatusOK, m)
+		// Return new service with location header.
+		header.SetLocation(c, c.FullPath(), strconv.FormatUint(uint64(m.ID), 10))
+		c.JSON(http.StatusCreated, m)
 	})
 }
 
@@ -218,8 +221,7 @@ func UpdateService(router *gin.RouterGroup) {
 
 		// 2) Update form with values from request
 		if err = c.BindJSON(&frm); err != nil {
-			log.Error(err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -280,7 +282,7 @@ func DeleteService(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := m.Delete(); err != nil {
+		if err = m.Delete(); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
 			return
 		}

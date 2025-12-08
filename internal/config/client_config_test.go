@@ -53,6 +53,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.Equal(t, true, cfg.Debug)
 		assert.Equal(t, AuthModePublic, cfg.AuthMode)
 		assert.Equal(t, false, cfg.Demo)
+		assert.Equal(t, false, cfg.Portal)
 		assert.Equal(t, true, cfg.Sponsor)
 		assert.Equal(t, false, cfg.ReadOnly)
 
@@ -82,7 +83,7 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 }
 
 func TestConfig_ClientUser(t *testing.T) {
-	c := NewTestConfig("config")
+	c := NewMinimalTestConfigWithDb("client-user", t.TempDir())
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
@@ -112,7 +113,7 @@ func TestConfig_ClientUser(t *testing.T) {
 }
 
 func TestConfig_ClientRoleConfig(t *testing.T) {
-	c := NewTestConfig("config")
+	c := NewMinimalTestConfigWithDb("client-role", t.TempDir())
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
@@ -135,6 +136,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Delete:    true,
 			Download:  true,
 			Edit:      true,
+			BatchEdit: true,
 			Estimates: true,
 			Favorites: true,
 			Files:     true,
@@ -174,6 +176,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -213,6 +216,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Delete:    false,
 			Download:  true,
 			Edit:      false,
+			BatchEdit: false,
 			Estimates: true,
 			Favorites: false,
 			Files:     false,
@@ -253,6 +257,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
+		assert.False(t, f.BatchEdit)
 		assert.False(t, f.Private)
 		assert.False(t, f.Upload)
 		assert.False(t, f.Download)
@@ -296,6 +301,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -327,6 +333,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -357,6 +364,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -389,6 +397,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
+		assert.False(t, f.BatchEdit)
 		assert.False(t, f.Private)
 		assert.False(t, f.Upload)
 		assert.True(t, f.Download)
@@ -453,6 +462,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
+		assert.False(t, f.BatchEdit)
 		assert.False(t, f.Private)
 		assert.False(t, f.Upload)
 		assert.False(t, f.Download)
@@ -482,6 +492,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
+		assert.True(t, f.BatchEdit)
 		assert.True(t, f.Private)
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
@@ -535,25 +546,25 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
 
-		assert.True(t, f.Search)
-		assert.True(t, f.Videos)
-		assert.True(t, f.Albums)
-		assert.True(t, f.Calendar)
-		assert.True(t, f.Moments)
-		assert.True(t, f.Labels)
-		assert.True(t, f.People)
+		assert.False(t, f.Search)
+		assert.False(t, f.Videos)
+		assert.False(t, f.Albums)
+		assert.False(t, f.Calendar)
+		assert.False(t, f.Moments)
+		assert.False(t, f.Labels)
+		assert.False(t, f.People)
 		assert.True(t, f.Settings)
-		assert.True(t, f.Edit)
-		assert.True(t, f.Private)
-		assert.True(t, f.Upload)
-		assert.True(t, f.Download)
+		assert.False(t, f.Edit)
+		assert.False(t, f.Private)
+		assert.False(t, f.Upload)
+		assert.False(t, f.Download)
 		assert.False(t, f.Services)
-		assert.True(t, f.Delete)
-		assert.True(t, f.Import)
-		assert.True(t, f.Library)
-		assert.True(t, f.Logs)
+		assert.False(t, f.Delete)
+		assert.False(t, f.Import)
+		assert.False(t, f.Library)
+		assert.False(t, f.Logs)
 		assert.True(t, f.Review)
-		assert.True(t, f.Share)
+		assert.False(t, f.Share)
 	})
 	t.Run("Public", func(t *testing.T) {
 		c.SetAuthMode(AuthModePublic)

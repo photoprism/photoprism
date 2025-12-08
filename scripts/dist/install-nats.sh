@@ -42,6 +42,7 @@ case $DESTARCH in
     ;;
 esac
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 # Abort if not executed as root.
@@ -58,12 +59,12 @@ VERSION=${2:-$GITHUB_LATEST}
 ARCHIVE="nats-server-${VERSION}-linux-${DESTARCH}.tar.gz"
 GITHUB_URL="https://github.com/nats-io/nats-server/releases/download/${VERSION}/${ARCHIVE}"
 
-echo "------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 echo "VERSION : ${VERSION}"
 echo "LATEST  : ${GITHUB_LATEST}"
 echo "DOWNLOAD: ${GITHUB_URL}"
 echo "DESTDIR : ${DESTDIR}"
-echo "------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 
 # Adjust the installation path because the archive does not contain a bin directory.
 DESTDIR="${DESTDIR}/bin"

@@ -20,7 +20,7 @@ var ClientsRemoveCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "force",
 			Aliases: []string{"f"},
-			Usage:   "don't ask for confirmation",
+			Usage:   "skips asking for confirmation",
 		},
 	},
 	Action: clientsRemoveAction,
@@ -40,9 +40,7 @@ func clientsRemoveAction(ctx *cli.Context) error {
 		}
 
 		// Find client record.
-		var m *entity.Client
-
-		m = entity.FindClientByUID(id)
+		m := entity.FindClientByUID(id)
 
 		if m == nil {
 			return fmt.Errorf("client %s not found", clean.Log(id))
@@ -50,7 +48,7 @@ func clientsRemoveAction(ctx *cli.Context) error {
 			return fmt.Errorf("client %s has already been deleted", clean.Log(id))
 		}
 
-		if !ctx.Bool("force") {
+		if !ctx.Bool("force") && !RunNonInteractively(false) {
 			actionPrompt := promptui.Prompt{
 				Label:     fmt.Sprintf("Delete client %s?", m.GetUID()),
 				IsConfirm: true,

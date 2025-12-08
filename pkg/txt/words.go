@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\d\\-']{1,}")
+// KeywordsRegexp extracts alphanumeric keywords from text.
+var KeywordsRegexp = regexp.MustCompile(`[\p{L}\d\-']{1,}`)
 
 // UnknownWord returns true if the string does not seem to be a real word.
 func UnknownWord(s string) bool {
@@ -59,7 +60,7 @@ func Keywords(s string) (results []string) {
 			continue
 		}
 
-		if _, ok := StopWords[w]; ok == false {
+		if _, ok := StopWords[w]; !ok {
 			results = append(results, w)
 		}
 	}
@@ -69,10 +70,11 @@ func Keywords(s string) (results []string) {
 
 // ReplaceSpaces replaces all spaces with another string.
 func ReplaceSpaces(s string, char string) string {
-	return strings.Replace(s, " ", char, -1)
+	return strings.ReplaceAll(s, " ", char)
 }
 
-var FilenameKeywordsRegexp = regexp.MustCompile("[\\p{L}]{1,}")
+// FilenameKeywordsRegexp extracts keyword fragments from filenames.
+var FilenameKeywordsRegexp = regexp.MustCompile(`[\p{L}]{1,}`)
 
 // FilenameWords returns a slice of words with at least 3 characters from a string ("ile", "france").
 func FilenameWords(s string) (results []string) {
@@ -104,7 +106,7 @@ func FilenameKeywords(s string) (results []string) {
 			continue
 		}
 
-		if _, ok := StopWords[w]; ok == false {
+		if _, ok := StopWords[w]; !ok {
 			results = append(results, w)
 		}
 	}
@@ -135,6 +137,10 @@ func UniqueWords(words []string) (results []string) {
 
 // RemoveFromWords removes words from a string slice and returns the sorted result.
 func RemoveFromWords(words []string, remove string) (results []string) {
+	if remove == "" {
+		return words
+	}
+
 	remove = strings.ToLower(remove)
 	last := ""
 
@@ -200,7 +206,23 @@ func UniqueKeywords(s string) (results []string) {
 
 // SortCaseInsensitive performs a case-insensitive slice sort.
 func SortCaseInsensitive(words []string) {
-	sort.Slice(words, func(i, j int) bool { return strings.ToLower(words[i]) < strings.ToLower(words[j]) })
+	if len(words) < 2 {
+		return
+	}
+	type kv struct {
+		lower string
+		idx   int
+	}
+	ks := make([]kv, len(words))
+	for i, w := range words {
+		ks[i] = kv{lower: strings.ToLower(w), idx: i}
+	}
+	sort.SliceStable(ks, func(i, j int) bool { return ks[i].lower < ks[j].lower })
+	tmp := make([]string, len(words))
+	for i, k := range ks {
+		tmp[i] = words[k.idx]
+	}
+	copy(words, tmp)
 }
 
 // StopwordsOnly tests if the string contains stopwords only.
@@ -218,7 +240,7 @@ func StopwordsOnly(s string) bool {
 			continue
 		}
 
-		if _, ok := StopWords[w]; ok == false {
+		if _, ok := StopWords[w]; !ok {
 			return false
 		}
 	}

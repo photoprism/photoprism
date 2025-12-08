@@ -8,7 +8,7 @@ import (
 )
 
 func TestData_AspectRatio(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
 		data := Data{
 			DocumentID:   "123",
 			InstanceID:   "456",
@@ -27,8 +27,7 @@ func TestData_AspectRatio(t *testing.T) {
 
 		assert.Equal(t, float32(0.83), data.AspectRatio())
 	})
-
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		data := Data{
 			DocumentID:   "123",
 			InstanceID:   "456",
@@ -50,7 +49,7 @@ func TestData_AspectRatio(t *testing.T) {
 }
 
 func TestData_Portrait(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		data := Data{
 			Width:  500,
 			Height: 600,
@@ -58,8 +57,7 @@ func TestData_Portrait(t *testing.T) {
 
 		assert.Equal(t, true, data.Portrait())
 	})
-
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		data := Data{
 			Width:  800,
 			Height: 600,
@@ -70,7 +68,7 @@ func TestData_Portrait(t *testing.T) {
 }
 
 func TestData_Megapixels(t *testing.T) {
-	t.Run("30 MP", func(t *testing.T) {
+	t.Run("Num30Mp", func(t *testing.T) {
 		data := Data{
 			Width:  5000,
 			Height: 6000,
@@ -81,23 +79,21 @@ func TestData_Megapixels(t *testing.T) {
 }
 
 func TestData_HasDocumentID(t *testing.T) {
-	t.Run("6ba7b810-9dad-11d1-80b4-00c04fd430c8", func(t *testing.T) {
+	t.Run("SixBa7b810NineDadElevenD1Num80B4Num00C04fd430c8", func(t *testing.T) {
 		data := Data{
 			DocumentID: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
 		}
 
 		assert.Equal(t, true, data.HasDocumentID())
 	})
-
-	t.Run("asdfg12345hjyt6", func(t *testing.T) {
+	t.Run("Asdfg12345hjyt6", func(t *testing.T) {
 		data := Data{
 			DocumentID: "asdfg12345hjyt6",
 		}
 
 		assert.Equal(t, false, data.HasDocumentID())
 	})
-
-	t.Run("asdfg12345hj", func(t *testing.T) {
+	t.Run("Asdfg12345hj", func(t *testing.T) {
 		data := Data{
 			DocumentID: "asdfg12345hj",
 		}
@@ -107,15 +103,14 @@ func TestData_HasDocumentID(t *testing.T) {
 }
 
 func TestData_HasInstanceID(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		data := Data{
 			InstanceID: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
 		}
 
 		assert.Equal(t, true, data.HasInstanceID())
 	})
-
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		data := Data{
 			InstanceID: "asdfg12345hj",
 		}
@@ -125,7 +120,7 @@ func TestData_HasInstanceID(t *testing.T) {
 }
 
 func TestData_HasTimeAndPlace(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		data := Data{
 			Lat:     1.334,
 			Lng:     4.567,
@@ -134,8 +129,7 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 
 		assert.Equal(t, true, data.HasTimeAndPlace())
 	})
-
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		data := Data{
 			Lat:     1.334,
 			Lng:     0,
@@ -144,7 +138,7 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 
 		assert.Equal(t, false, data.HasTimeAndPlace())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		data := Data{
 			Lat:     0,
 			Lng:     4.567,
@@ -153,8 +147,7 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 
 		assert.Equal(t, false, data.HasTimeAndPlace())
 	})
-
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		data := Data{
 			Lat: 1.334,
 			Lng: 4.567,
@@ -177,7 +170,7 @@ func TestData_CellID(t *testing.T) {
 }
 
 func TestData_IsHDR(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		data := Data{
 			ImageType: 3,
 			TakenAt:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
@@ -185,7 +178,7 @@ func TestData_IsHDR(t *testing.T) {
 
 		assert.True(t, data.IsHDR())
 	})
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		data := Data{
 			ImageType: 2,
 			TakenAt:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),

@@ -38,7 +38,9 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
-// Start starts the execution of background workers and scheduled tasks based on the current configuration.
+// Start launches background workers and scheduled tasks based on the current
+// configuration. It sets up the cron scheduler and the periodic metadata/share
+// workers.
 func Start(conf *config.Config) {
 	if scheduler, err := gocron.NewScheduler(gocron.WithLocation(conf.DefaultTimezone())); err != nil {
 		log.Errorf("scheduler: %s (start)", err)
@@ -51,13 +53,27 @@ func Start(conf *config.Config) {
 			log.Errorf("scheduler: %s (backup)", err)
 		}
 
-		// Schedule indexing job.
-		if err = NewJob("index", conf.IndexSchedule(), NewIndex(conf).StartScheduled); err != nil {
-			log.Errorf("scheduler: %s (index)", err)
+		// Only schedule index and vision jobs if this is not a portal.
+		if !conf.Portal() {
+			// Schedule indexing job.
+			if err = NewJob("index", conf.IndexSchedule(), NewIndex(conf).StartScheduled); err != nil {
+				log.Errorf("scheduler: %s (index)", err)
+			}
+
+			// Schedule vision job.
+			if err = NewJob("vision", conf.VisionSchedule(), NewVision(conf).StartScheduled); err != nil {
+				log.Errorf("scheduler: %s (vision)", err)
+			}
 		}
 
 		// Start the scheduler.
 		Scheduler.Start()
+	}
+
+	// Only run metadata, share & sync background workers if this is not a portal.
+	if conf.Portal() {
+		log.Infof("config: disabled metadata, share & sync background workers")
+		return
 	}
 
 	// Start the other background workers.
@@ -89,7 +105,7 @@ func Start(conf *config.Config) {
 	}()
 }
 
-// Shutdown stops the background workers and scheduled tasks.
+// Shutdown stops the background workers and shuts down the scheduler.
 func Shutdown() {
 	log.Info("shutting down workers")
 

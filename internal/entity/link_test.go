@@ -80,11 +80,11 @@ func TestLink_SetPassword(t *testing.T) {
 }
 
 func TestLink_InvalidPassword(t *testing.T) {
-	t.Run("no password", func(t *testing.T) {
+	t.Run("NoPassword", func(t *testing.T) {
 		link := Link{LinkUID: "dftjdfkvhjh", HasPassword: false}
 		assert.False(t, link.InvalidPassword("123"))
 	})
-	t.Run("invalid password", func(t *testing.T) {
+	t.Run("InvalidPassword", func(t *testing.T) {
 		link := NewLink("dhfjf", false, false)
 
 		err := link.SetPassword("123")
@@ -93,7 +93,7 @@ func TestLink_InvalidPassword(t *testing.T) {
 		}
 		assert.False(t, link.InvalidPassword("123"))
 	})
-	t.Run("valid password", func(t *testing.T) {
+	t.Run("ValidPassword", func(t *testing.T) {
 		link := NewLink("dhfjfk", false, false)
 
 		err := link.SetPassword("123kkljgfuA")
@@ -105,12 +105,12 @@ func TestLink_InvalidPassword(t *testing.T) {
 }
 
 func TestLink_Save(t *testing.T) {
-	t.Run("invalid share uid", func(t *testing.T) {
+	t.Run("InvalidShareUid", func(t *testing.T) {
 		link := NewLink("dhfjfjh", false, false)
 
 		assert.Error(t, link.Save())
 	})
-	t.Run("empty token", func(t *testing.T) {
+	t.Run("EmptyToken", func(t *testing.T) {
 		link := Link{ShareUID: "ls6sg6bffgtredft", LinkToken: ""}
 
 		assert.Error(t, link.Save())
@@ -137,11 +137,11 @@ func TestLink_Delete(t *testing.T) {
 		}
 
 	})
-	t.Run("emptyToken", func(t *testing.T) {
+	t.Run("EmptyToken", func(t *testing.T) {
 		link := Link{ShareUID: "ls6sg6bffgtredft", LinkToken: ""}
 		assert.Error(t, link.Delete())
 	})
-	t.Run("emptyUID", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		link := Link{LinkUID: "", ShareUID: "", LinkToken: "abc"}
 		assert.Error(t, link.Delete())
 	})
@@ -163,32 +163,32 @@ func TestFindLink(t *testing.T) {
 		//TODO Why does it fail?
 		//assert.Equal(t, "1jxf3jfn2k", r.LinkToken)
 	})
-	t.Run("nil", func(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
 		r := FindLink("XXX")
 		assert.Nil(t, r)
 	})
 }
 
 func TestDeleteShareLinks(t *testing.T) {
-	t.Run("emptyShareUID", func(t *testing.T) {
+	t.Run("EmptyShareUid", func(t *testing.T) {
 		assert.Error(t, DeleteShareLinks(""))
 	})
 }
 
 func TestFindLinks(t *testing.T) {
-	t.Run("findByToken", func(t *testing.T) {
+	t.Run("FindByToken", func(t *testing.T) {
 		r := FindLinks("1jxf3jfn2k", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})
-	t.Run("noTokenAndShare", func(t *testing.T) {
+	t.Run("NoTokenAndShare", func(t *testing.T) {
 		r := FindLinks("", "")
 		assert.Empty(t, r)
 	})
-	t.Run("invalidToken", func(t *testing.T) {
+	t.Run("InvalidToken", func(t *testing.T) {
 		r := FindLinks("lkjh", "")
 		assert.Empty(t, r)
 	})
-	t.Run("findBySlug", func(t *testing.T) {
+	t.Run("FindBySlug", func(t *testing.T) {
 		r := FindLinks("", "holiday-2030")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})

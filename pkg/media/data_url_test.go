@@ -1,7 +1,12 @@
 package media
 
 import (
+	"bytes"
 	"io"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -19,6 +24,12 @@ func TestDataUrl(t *testing.T) {
 	})
 }
 
+func TestDataBase64(t *testing.T) {
+	t.Run("Gopher", func(t *testing.T) {
+		assert.Equal(t, "iVBORw0KGgoAAAANSUhEUgAAAEsAAAA8CAAAAAALAhhPAAAFfUlEQVRYw62XeWwUVRzHf2+OPbo9d7tsWyiyaZti6eWGAhISoIGKECEKCAiJJkYTiUgTMYSIosYYBBIUIxoSPIINEBDi2VhwkQrVsj1ESgu9doHWdrul7ba73WNm3vOPtsseM9MdwvvrzTs+8/t95ze/33sI5BqiabU6m9En8oNjduLnAEDLUsQXFF8tQ5oxK3vmnNmDSMtrncks9Hhtt/qeWZapHb1ha3UqYSWVl2ZmpWgaXMXGohQAvmeop3bjTRtv6SgaK/Pb9/bFzUrYslbFAmHPp+3WhAYdr+7GN/YnpN46Opv55VDsJkoEpMrY/vO2BIYQ6LLvm0ThY3MzDzzeSJeeWNyTkgnIE5ePKsvKlcg/0T9QMzXalwXMlj54z4c0rh/mzEfr+FgWEz2w6uk8dkzFAgcARAgNp1ZYef8bH2AgvuStbc2/i6CiWGj98y2tw2l4FAXKkQBIf+exyRnteY83LfEwDQAYCoK+P6bxkZm/0966LxcAAILHB56kgD95PPxltuYcMtFTWw/FKkY/6Opf3GGd9ZF+Qp6mzJxzuRSractOmJrH1u8XTvWFHINNkLQLMR+XHXvfPPHw967raE1xxwtA36IMRfkAAG29/7mLuQcb2WOnsJReZGfpiHsSBX81cvMKywYZHhX5hFPtOqPGWZCXnhWGAu6lX91ElKXSalcLXu3UaOXVay57ZSe5f6Gpx7J2MXAsi7EqSp09b/MirKSyJfnfEEgeDjl8FgDAfvewP03zZ+AJ0m9aFRM8eEHBDRKjfcreDXnZdQuAxXpT2NRJ7xl3UkLBhuVGU16gZiGOgZmrSbRdqkILuL/yYoSXHHkl9KXgqNu3PB8oRg0geC5vFmLjad6mUyTKLmF3OtraWDIfACyXqmephaDABawfpi6tqqBZytfQMqOz6S09iWXhktrRaB8Xz4Yi/8gyABDm5NVe6qq/3VzPrcjELWrebVuyY2T7ar4zQyybUCtsQ5Es1FGaZVrRVQwAgHGW2ZCRZshI5bGQi7HesyE972pOSeMM0dSktlzxRdrlqb3Osa6CCS8IJoQQQgBAbTAa5l5epO34rJszibJI8rxLfGzcp1dRosutGeb2VDNgqYrwTiPNsLxXiPi3dz7LiS1WBRBDBOnqEjyy3aQb+/bLiJzz9dIkscVBBLxMfSEac7kO4Fpkngi0ruNBeSOal+u8jgOuqPz12nryMLCniEjtOOOmpt+KEIqsEdocJjYXwrh9OZqWJQyPCTo67LNS/TdxLAv6R5ZNK9npEjbYdT33gRo4o5oTqR34R+OmaSzDBWsAIPhuRcgyoteNi9gF0KzNYWVItPf2TLoXEg+7isNC7uJkgo1iQWOfRSP9NR11RtbZZ3OMG/VhL6jvx+J1m87+RCfJChAtEBQkSBX2PnSiihc/Twh3j0h7qdYQAoRVsRGmq7HU2QRbaxVGa1D6nIOqaIWRjyRZpHMQKWKpZM5feA+lzC4ZFultV8S6T0mzQGhQohi5I8iw+CsqBSxhFMuwyLgSwbghGb0AiIKkSDmGZVmJSiKihsiyOAUs70UkywooYP0bii9GdH4sfr1UNysd3fUyLLMQN+rsmo3grHl9VNJHbbwxoa47Vw5gupIqrZcjPh9R4Nye3nRDk199V+aetmvVtDRE8/+cbgAAgMIWGb3UA0MGLE9SCbWX670TDy1y98c3D27eppUjsZ6fql3jcd5rUe7+ZIlLNQny3Rd+E5Tct3WVhTM5RBCEdiEK0b6B+/ca2gYU393nFj/n1AygRQxPIUA043M42u85+z2SnssKrPl8Mx76NL3E6eXc3be7OD+H4WHbJkKI8AU8irbITQjZ+0hQcPEgId/Fn/pl9crKH02+5o2b9T/eMx7pKoskYgAAAABJRU5ErkJggg==", DataBase64(gopherPng()))
+	})
+}
+
 func TestReadUrl(t *testing.T) {
 	t.Run("Gopher", func(t *testing.T) {
 		dataUrl := "data:image/png;base64," + gopher
@@ -29,4 +40,97 @@ func TestReadUrl(t *testing.T) {
 			assert.Equal(t, expected, data)
 		}
 	})
+	t.Run("HttpServer", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("hello"))
+		}))
+		defer ts.Close()
+
+		data, err := ReadUrl(ts.URL, []string{"http", "https"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, []byte("hello"), data)
+	})
+	t.Run("InvalidEmpty", func(t *testing.T) {
+		_, err := ReadUrl("", []string{"https"})
+		assert.Error(t, err)
+	})
+	t.Run("MissingScheme", func(t *testing.T) {
+		_, err := ReadUrl("example.com/file.jpg", []string{"https"})
+		assert.Error(t, err)
+	})
+	t.Run("DisallowedScheme", func(t *testing.T) {
+		_, err := ReadUrl("http://example.com", []string{"data"})
+		assert.Error(t, err)
+	})
+	t.Run("UnsupportedScheme", func(t *testing.T) {
+		_, err := ReadUrl("ssh://host/path", []string{"ssh"})
+		assert.Error(t, err)
+	})
+	t.Run("InvalidDataUrl", func(t *testing.T) {
+		_, err := ReadUrl("data:image/png;base64,", []string{"data"})
+		assert.Error(t, err)
+	})
+	t.Run("FileSchemeInvalidPath", func(t *testing.T) {
+		// os.ReadFile will not accept a file:// URL; expect error path is exercised.
+		_, err := ReadUrl("file:///this/does/not/exist", []string{"file"})
+		assert.Error(t, err)
+	})
+	t.Run("FileSchemeValidPng", func(t *testing.T) {
+		tmp := t.TempDir()
+		fn := filepath.Join(tmp, "pic.png")
+		payload := append([]byte{0x89, 'P', 'N', 'G', '\r', '\n', 0x1A, '\n'}, bytes.Repeat([]byte{0}, 16)...)
+		assert.NoError(t, os.WriteFile(fn, payload, 0o600))
+
+		data, err := ReadUrl("file://"+fn, []string{"file"})
+		assert.NoError(t, err)
+		assert.Equal(t, payload, data)
+	})
+}
+
+func TestDataUrl_LargeBinary(t *testing.T) {
+	// 2 MiB of zeros -> expect application/octet-stream
+	big := bytes.Repeat([]byte{0}, 2*1024*1024)
+	s := DataUrl(bytes.NewReader(big))
+	if !strings.HasPrefix(s, "data:application/octet-stream;base64,") {
+		t.Fatalf("unexpected prefix: %s", s[:48])
+	}
+	enc := strings.SplitN(s, ",", 2)[1]
+	wantLen := EncodedLenBase64(len(big))
+	if len(enc) != wantLen {
+		t.Fatalf("unexpected base64 length: got=%d want=%d", len(enc), wantLen)
+	}
+}
+
+func TestDataBase64_Large(t *testing.T) {
+	big := bytes.Repeat([]byte("A"), 1*1024*1024+3)
+	b64 := DataBase64(bytes.NewReader(big))
+	wantLen := EncodedLenBase64(len(big))
+	assert.Equal(t, wantLen, len(b64))
+}
+
+func TestDataUrl_JpegDetection(t *testing.T) {
+	// Minimal JPEG-like header: FF D8 FF E0 'JFIF' ...
+	buf := append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, []byte("JFIF\x00\x01\x02\x00\x00")...)
+	buf = append(buf, bytes.Repeat([]byte{0}, 64)...)
+	s := DataUrl(bytes.NewReader(buf))
+	assert.True(t, strings.HasPrefix(s, "data:image/jpeg;base64,"))
+}
+
+func TestDataUrl_GifDetection(t *testing.T) {
+	// Minimal GIF89a header + padding
+	buf := append([]byte("GIF89a"), bytes.Repeat([]byte{0}, 32)...)
+	s := DataUrl(bytes.NewReader(buf))
+	assert.True(t, strings.HasPrefix(s, "data:image/gif;base64,"))
+}
+
+func TestDataUrl_WebpDetection(t *testing.T) {
+	// Minimal RIFF/WEBP container header
+	// RIFF <size=26> WEBP VP8  + padding
+	riff := []byte{'R', 'I', 'F', 'F', 26, 0, 0, 0, 'W', 'E', 'B', 'P', 'V', 'P', '8', ' '}
+	riff = append(riff, bytes.Repeat([]byte{0}, 32)...)
+	buf := riff
+	s := DataUrl(bytes.NewReader(buf))
+	assert.True(t, strings.HasPrefix(s, "data:image/webp;base64,"))
 }

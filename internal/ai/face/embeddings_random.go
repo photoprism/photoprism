@@ -4,12 +4,17 @@ import (
 	"math/rand/v2"
 )
 
+// Kind identifies the type of embedding.
 type Kind int
 
 const (
+	// RegularFace represents a standard face embedding.
 	RegularFace Kind = iota + 1
-	KidsFace
-	IgnoredFace
+	// ChildrenFace represents a child face embedding.
+	ChildrenFace
+	// BackgroundFace represents non-face/background embeddings.
+	BackgroundFace
+	// AmbiguousFace represents embeddings that should be treated as uncertain.
 	AmbiguousFace
 )
 
@@ -20,7 +25,7 @@ func RandomDist() float64 {
 
 // RandomFloat64 adds a random distance offset to a float64.
 func RandomFloat64(f, d float64) float64 {
-	return f + (rand.Float64()-0.5)*d
+	return f + (rand.Float64()-0.5)*d //nolint:gosec // pseudo-random is sufficient for test fixtures
 }
 
 // RandomEmbeddings returns random embeddings for testing.
@@ -35,10 +40,10 @@ func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 		switch k {
 		case RegularFace:
 			result[i] = RandomEmbedding()
-		case KidsFace:
-			result[i] = RandomKidsEmbedding()
-		case IgnoredFace:
-			result[i] = RandomIgnoredEmbedding()
+		case ChildrenFace:
+			result[i] = RandomChildrenEmbedding()
+		case BackgroundFace:
+			result[i] = RandomBackgroundEmbedding()
 		}
 
 	}
@@ -62,35 +67,49 @@ func RandomEmbedding() (result Embedding) {
 		}
 	}
 
+	normalizeEmbedding(result)
+
 	return result
 }
 
-// RandomKidsEmbedding returns a random kids embedding for testing.
-func RandomKidsEmbedding() (result Embedding) {
+// RandomChildrenEmbedding returns a random children embedding for testing.
+func RandomChildrenEmbedding() (result Embedding) {
 	result = make(Embedding, 512)
 
+	if len(Children) == 0 {
+		return result
+	}
+
 	d := 0.1 / 512.0
-	n := 1 + rand.IntN(len(KidsEmbeddings)-1)
-	e := KidsEmbeddings[n]
+	n := rand.IntN(len(Children)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
+	e := Children[n].Embedding
 
 	for i := range result {
 		result[i] = RandomFloat64(e[i], d)
 	}
 
+	normalizeEmbedding(result)
+
 	return result
 }
 
-// RandomIgnoredEmbedding returns a random ignored embedding for testing.
-func RandomIgnoredEmbedding() (result Embedding) {
+// RandomBackgroundEmbedding returns a random background embedding for testing.
+func RandomBackgroundEmbedding() (result Embedding) {
 	result = make(Embedding, 512)
 
+	if len(Background) == 0 {
+		return result
+	}
+
 	d := 0.1 / 512.0
-	n := 1 + rand.IntN(len(IgnoredEmbeddings)-1)
-	e := IgnoredEmbeddings[n]
+	n := rand.IntN(len(Background)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
+	e := Background[n].Embedding
 
 	for i := range result {
 		result[i] = RandomFloat64(e[i], d)
 	}
+
+	normalizeEmbedding(result)
 
 	return result
 }

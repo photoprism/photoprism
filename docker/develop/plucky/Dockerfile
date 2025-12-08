@@ -60,20 +60,28 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
-        va-driver-all libva2 iputils-ping dnsutils \
+        va-driver-all libva2 iputils-ping dnsutils libmagic-mgc \
     && \
     apt-get -qq install \
-        software-properties-common pkg-config apt-utils \
-        build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
-        autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
+        build-essential software-properties-common pkg-config apt-utils \
+        gcc g++ git autoconf automake cmake gettext apache2-utils davfs2 \
+        chrpath tree ripgrep fd-find bat eza git-delta shellcheck shfmt fzf xxd \
+        libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
         librsvg2-bin ghostscript gsfonts pdf2svg ps2eps libsharpyuv-dev \
+        xvfb fonts-freefont-ttf fonts-ipafont-gothic fonts-noto-color-emoji \
+        fonts-tlwg-loma-otf fonts-unifont fonts-wqy-zenhei xfonts-cyrillic \
+        fonts-ipafont-mincho fonts-tlwg-loma xfonts-base xfonts-scalable \
     && \
+    ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
+    ln -sf /usr/bin/batcat /usr/local/bin/bat && \
+    ln -sf /usr/bin/python3 /usr/local/bin/python && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
     /scripts/install-libheif.sh && \

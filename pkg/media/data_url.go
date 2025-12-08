@@ -13,8 +13,8 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 // DataUrl generates a data URL of the binary data from the specified io.Reader.
@@ -45,6 +45,18 @@ func DataUrl(r io.Reader) string {
 	return fmt.Sprintf("data:%s;base64,%s", mimeType, EncodeBase64String(data))
 }
 
+// DataBase64 generates a base64 encoded string of the binary data from the specified io.Reader.
+func DataBase64(r io.Reader) string {
+	// Read binary data.
+	data, err := io.ReadAll(r)
+
+	if err != nil || len(data) == 0 {
+		return ""
+	}
+
+	return EncodeBase64String(data)
+}
+
 // ReadUrl reads binary data from a regular file path,
 // fetches its data from a remote http or https URL,
 // or decodes a base64 data URL as created by DataUrl.
@@ -70,7 +82,7 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 	// Fetch the file data from the specified URL, depending on its scheme.
 	switch u.Scheme {
 	case scheme.Https, scheme.Http, scheme.Unix, scheme.HttpUnix:
-		resp, httpErr := http.Get(fileUrl)
+		resp, httpErr := http.Get(fileUrl) //nolint:gosec // URL already validated by caller; https/http only
 
 		if httpErr != nil {
 			return data, fmt.Errorf("invalid %s url (%s)", u.Scheme, httpErr)
@@ -88,7 +100,14 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 			return DecodeBase64String(binaryData)
 		}
 	case scheme.File:
-		if data, err = os.ReadFile(fileUrl); err != nil {
+		path := u.Path
+		if path == "" {
+			path = u.Opaque
+		}
+		if path == "" {
+			return data, fmt.Errorf("invalid %s url (empty path)", u.Scheme)
+		}
+		if data, err = os.ReadFile(path); err != nil { //nolint:gosec // file path validated earlier
 			return data, fmt.Errorf("invalid %s url (%s)", u.Scheme, err)
 		}
 	default:

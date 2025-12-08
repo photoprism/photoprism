@@ -44,7 +44,7 @@ func TestLogger_WithFields(t *testing.T) {
 }
 
 func TestLogger_WithError(t *testing.T) {
-	t.Run("Error for logger test", func(t *testing.T) {
+	t.Run("ErrorForLoggerTest", func(t *testing.T) {
 		log := NewLogger()
 		err := errors.New("Error for logger test")
 		assert.Equal(t, "Error for logger test", log.WithError(err).Message)

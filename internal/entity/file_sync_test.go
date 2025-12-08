@@ -20,12 +20,12 @@ func TestNewFileSync(t *testing.T) {
 }
 
 func TestFirstOrCreateFileSync(t *testing.T) {
-	t.Run("not yet existing", func(t *testing.T) {
+	t.Run("NotYetExisting", func(t *testing.T) {
 		fileSync := &FileSync{ServiceID: 123, FileID: 888, RemoteName: "test123"}
 		result := FirstOrCreateFileSync(fileSync)
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		if result.FileID != fileSync.FileID {
@@ -36,13 +36,12 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 			t.Errorf("ServiceID should be the same: %d %d", result.ServiceID, fileSync.ServiceID)
 		}
 	})
-
-	t.Run("existing", func(t *testing.T) {
+	t.Run("Existing", func(t *testing.T) {
 		fileSync := NewFileSync(778, "NameForRemote")
 		result := FirstOrCreateFileSync(fileSync)
 
 		if result == nil {
-			t.Fatal("result share should not be nil")
+			t.Fatal("result share must not be nil")
 		}
 
 		if result.FileID != fileSync.FileID {

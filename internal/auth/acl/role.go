@@ -17,7 +17,7 @@ func (r Role) String() string {
 
 // Pretty returns the type in an easy-to-read format.
 func (r Role) Pretty() string {
-	if r == RoleNone {
+	if r == RoleNone || r == RoleAliasNone {
 		return "None"
 	}
 

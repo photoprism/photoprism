@@ -11,7 +11,7 @@ import (
 //go:embed cascade/lps
 var efs embed.FS
 
-// FlpCascade holds the binary representation of the facial landmark points cascade files
+// FlpCascade holds the binary representation of the facial landmark points cascade files.
 type FlpCascade struct {
 	*pigo.PuplocCascade
 	error

@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-photos not-selectable" :class="$config.aclClasses('photos')">
+  <div ref="page" tabindex="-1" class="p-page p-page-photos not-selectable" :class="$config.aclClasses('photos')">
     <p-photo-toolbar
       ref="toolbar"
       :context="context"
@@ -18,13 +18,7 @@
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
-      <p-scroll
-        :hide-panel="hideExpansionPanel"
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      >
+      <p-scroll :hide-panel="hideExpansionPanel" :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading">
       </p-scroll>
 
       <p-photo-clipboard :context="context" :refresh="refresh"></p-photo-clipboard>
@@ -70,6 +64,7 @@
 <script>
 import { Photo } from "model/photo";
 import Thumb from "model/thumb";
+import * as contexts from "options/contexts";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
@@ -117,7 +112,7 @@ export default {
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
     const view = this.getViewType();
-    const order = this.getSortOrder();
+    const order = this.sortOrder();
     const filter = {
       country: country,
       camera: camera,
@@ -128,6 +123,7 @@ export default {
       month: month,
       color: color,
       order: order,
+      reverse: this.sortReverse(),
       q: q,
     };
 
@@ -217,7 +213,8 @@ export default {
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";
-      this.filter.order = this.getSortOrder();
+      this.filter.order = this.sortOrder();
+      this.filter.reverse = this.sortReverse();
 
       this.settings.view = this.getViewType();
 
@@ -339,22 +336,22 @@ export default {
     },
     getContext() {
       if (!this.staticFilter) {
-        return "photos";
+        return contexts.Photos;
       }
 
       if (this.staticFilter.review) {
-        return "review";
+        return contexts.Review;
       } else if (this.staticFilter.archived) {
-        return "archive";
+        return contexts.Archive;
       } else if (this.staticFilter.favorite) {
-        return "favorites";
+        return contexts.Favorites;
       } else if (this.staticFilter.hidden) {
-        return "hidden";
+        return contexts.Hidden;
       }
 
-      return "";
+      return contexts.Default;
     },
-    getSortOrder() {
+    sortOrder() {
       if (this.embedded) {
         return "newest";
       }
@@ -363,19 +360,19 @@ export default {
       let defaultOrder;
 
       switch (this.getContext()) {
-        case "archive":
+        case contexts.Archive:
           storageKey = "archive.order";
           defaultOrder = "archived";
           break;
-        case "favorites":
+        case contexts.Favorites:
           storageKey = "favorites.order";
           defaultOrder = "newest";
           break;
-        case "hidden":
+        case contexts.Hidden:
           storageKey = "hidden.order";
           defaultOrder = "added";
           break;
-        case "review":
+        case contexts.Review:
           storageKey = "review.order";
           defaultOrder = "added";
           break;
@@ -396,6 +393,9 @@ export default {
 
       return defaultOrder;
     },
+    sortReverse() {
+      return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
+    },
     openDate(index) {
       const photo = this.results[index];
 
@@ -413,7 +413,7 @@ export default {
       } else {
         const routeUrl = this.$router.resolve({ name: "all", query: { q: "taken:" + takenDate } }).href;
         if (routeUrl) {
-          window.open(routeUrl, "_blank");
+          this.$util.openUrl(routeUrl);
         }
       }
     },
@@ -507,9 +507,7 @@ export default {
             this.setOffset(response.offset);
             if (!this.embedded && this.results.length > 1) {
               if (!this.lightbox.open) {
-                this.$notify.info(
-                  this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
-                );
+                this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length }));
               }
             }
           } else if (this.results.length >= Photo.limit()) {
@@ -581,7 +579,7 @@ export default {
       this.updateFilter(props);
 
       if (this.loading) {
-        return;
+        return false;
       }
 
       const query = {
@@ -597,10 +595,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query });
+
+      return true;
     },
     searchParams() {
       const params = {
@@ -661,7 +661,7 @@ export default {
        * back-navigation. We therefore reset the remembered scroll-position
        * in any other scenario
        */
-      if (!window.backwardsNavigationDetected) {
+      if (!this.$view.wasBackwardNavigation()) {
         this.setOffset(0);
       }
       this.scrollDisabled = true;
@@ -702,9 +702,7 @@ export default {
             } else if (!this.embedded && this.results.length === 1) {
               this.$notify.info(this.$gettext("One picture found"));
             } else if (!this.embedded) {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), { n: this.results.length }));
             }
           } else {
             // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
@@ -775,7 +773,7 @@ export default {
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
 
-            if (this.context === "review" && values.Quality >= 3) {
+            if (this.context === contexts.Review && values.Quality >= 3) {
               this.removeResult(this.results, values.UID);
               this.removeResult(this.lightbox.results, values.UID);
               this.$clipboard.removeId(values.UID);
@@ -788,7 +786,7 @@ export default {
           this.dirty = true;
           this.complete = false;
 
-          if (this.context !== "archive") break;
+          if (this.context !== contexts.Archive) break;
 
           for (let i = 0; i < data.entities.length; i++) {
             const uid = data.entities[i];
@@ -802,7 +800,7 @@ export default {
           this.dirty = true;
           this.complete = false;
 
-          if (this.context !== "archive") {
+          if (this.context !== contexts.Archive) {
             for (let i = 0; i < data.entities.length; i++) {
               const uid = data.entities[i];
 

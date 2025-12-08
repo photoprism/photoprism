@@ -18,25 +18,27 @@ let themes = {
     title: "Default",
     name: "default",
     colors: {
-      "background": "#2c2d2f",
-      "surface": "#161718",
-      "on-surface": "#ffffff",
+      "background": "#19191a",
+      "on-background": "#f9fafb",
+      "surface": "#262628",
+      "on-surface": "#f9fafb",
       "surface-bright": "#333333",
       "surface-variant": "#7852cd",
       "on-surface-variant": "#f6f7e8",
-      "card": "#171718",
-      "selected": "#5e319b",
-      "table": "#242426", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
-      "button": "#1D1E1F",
-      "switch": "#101112",
       "primary": "#9E7BEA",
+      "secondary": "#19191a",
+      "secondary-light": "#202022",
+      "accent": "#303136",
+      "card": "#27272a",
+      "selected": "#5e319b",
       "highlight": "#5e319b",
-      "secondary": "#191A1C",
-      "secondary-light": "#1E2022",
-      "accent": "#2D2E2E",
+      "switch": "#101112",
+      "button": "#262628",
+      "table": "#202021",
+      "on-table": "#f9fafb",
       "error": "#e57373",
-      "info": "#9E7BEA",
-      "success": "#8763d5",
+      "info": "#00acc1",
+      "success": "#4db6ac",
       "warning": "#bc9714",
       "favorite": "#FFD600",
       "remove": "#da4e4c",
@@ -48,9 +50,17 @@ let themes = {
       "edit": "#2196F3",
       "share": "#3F51B5",
       "love": "#ef5350",
-      "terminal": "#4A464F",
-      "navigation": "#141417",
-      "navigation-home": "#0e0f10",
+      "terminal": "#282730",
+      "navigation": "#19191a",
+      "navigation-home": "#19191a",
+    },
+    variables: {
+      "border-color": "#363636",
+      "border-opacity": 0.46,
+      "fill-opacity": 0,
+      "hover-opacity": 0.03,
+      "disabled-opacity": 0.65,
+      "focus-opacity": 0.05,
     },
   },
 
@@ -70,7 +80,7 @@ let themes = {
       "secondary": "#111111",
       "secondary-light": "#1a1a1a",
       "table": "#242424",
-      "button": "1a1a1a",
+      "button": "#161616",
       "selected": "#64459b",
       "accent": "#090c10",
       "error": "#e57373",
@@ -92,6 +102,7 @@ let themes = {
     variables: {
       "disabled-opacity": 0.6,
       "hover-opacity": 0.03,
+      "overlay-opacity": 0.62,
     },
   },
   carbon: {
@@ -349,7 +360,7 @@ let themes = {
     title: "Mint",
     name: "mint",
     colors: {
-      "background": "#121212",
+      "background": "#181818",
       "surface": "#191919",
       "card": "#1e1e1e",
       "primary": "#2bb14c",
@@ -360,7 +371,7 @@ let themes = {
       "table": "#1a1a1a",
       "button": "#1F1F1F",
       "switch": "#ffffff",
-      "selected": "228d3c",
+      "selected": "#286c29",
       "accent": "#727272",
       "error": "#d36161",
       "info": "#0696a7",
@@ -398,7 +409,7 @@ let themes = {
       "surface-variant": "#cc0d99",
       "secondary": "#111111",
       "secondary-light": "#1a1a1a",
-      "button": "1a1a1a",
+      "button": "#1a191a",
       "table": "#302E32",
       "selected": "#a30a7a",
       "accent": "#090c10",
@@ -571,6 +582,61 @@ let themes = {
       "hover-opacity": 0.05,
     },
   },
+  thinking: {
+    title: "Thinking",
+    name: "thinking",
+    dark: true,
+    colors: {
+      "background": "#191a1a",
+      "on-background": "#f4f6fc",
+      "surface": "#252727",
+      "on-surface": "#f6f6fa",
+      "surface-bright": "#262626",
+      "surface-variant": "#999999",
+      "on-surface-variant": "#1f2121",
+      "primary": "#906fe9",
+      "highlight": "#683daf",
+      "secondary": "#191a1a",
+      "on-secondary": "#f2f2f4",
+      "secondary-light": "#1b1d1d",
+      "accent": "#232323",
+      "card": "#242424",
+      "on-card": "#fafafa",
+      "selected": "#424242",
+      "on-selected": "#ffffff",
+      "switch": "#6c6c6c",
+      "button": "#303232",
+      "on-button": "#f4f4f5",
+      "table": "#212222",
+      "on-table": "#f2f2f4",
+      "error": "#f87171",
+      "info": "#60a5fa",
+      "success": "#10b981",
+      "warning": "#fbbf24",
+      "on-warning": "#ffffff",
+      "favorite": "#facc15",
+      "remove": "#f87171",
+      "restore": "#45b8e6",
+      "album": "#8d71e6",
+      "on-album": "#ffffff",
+      "download": "#34c6dc",
+      "private": "#47b4e7",
+      "edit": "#7f8df0",
+      "share": "#a586f2",
+      "love": "#fb7185",
+      "terminal": "#111415",
+      "navigation": "#191a1a",
+      "navigation-home": "#191a1a",
+    },
+    variables: {
+      "border-color": "#383838",
+      "border-opacity": 0.18,
+      "disabled-opacity": 0.58,
+      "hover-opacity": 0.045,
+      "focus-opacity": 0.06,
+      "fill-opacity": 0,
+    },
+  },
   vanta: {
     title: "Vanta",
     name: "vanta",
@@ -660,10 +726,10 @@ let themes = {
     title: "Lightbox",
     name: "lightbox",
     colors: {
-      "background": "#141417",
-      "surface": "#141417",
+      "background": "#040709",
+      "surface": "#040709",
       "on-surface": "#ffffff",
-      "surface-bright": "#333333",
+      "surface-bright": "#141417",
       "surface-variant": "#242628",
       "on-surface-variant": "#f6f6f6",
       "card": "#171717",
@@ -691,8 +757,12 @@ let themes = {
       "share": "#3F51B5",
       "love": "#ef5350",
       "terminal": "#4A464F",
-      "navigation": "#0e0f10",
-      "navigation-home": "#0e0f10",
+      "navigation": "#040709",
+      "navigation-home": "#040709",
+    },
+    variables: {
+      "border-color": "#ffffff",
+      "border-opacity": 0.1,
     },
   },
 
@@ -836,6 +906,11 @@ let options = [
     disabled: false,
   },
   {
+    text: "Thinking",
+    value: "thinking",
+    disabled: false,
+  },
+  {
     text: "Vanta",
     value: "vanta",
     disabled: false,
@@ -880,7 +955,14 @@ export const All = () => {
 };
 
 // Get returns a theme by name.
-export const Get = (name) => {
+export const Get = (name, preferForced = true) => {
+  if (Array.isArray(options) && preferForced) {
+    const forced = options.find((t) => t.force && t.value);
+    if (forced) {
+      name = forced.value;
+    }
+  }
+
   if (typeof themes[name] === "undefined") {
     name = options[0].value;
   }
@@ -920,6 +1002,7 @@ export const Set = (name, theme) => {
         text: theme.title ? theme.title : $gettext("Custom"),
         value: name,
         disabled: false,
+        force: true,
       },
     ];
   } else if (typeof themes[name] === "undefined") {

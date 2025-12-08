@@ -1,5 +1,6 @@
 package server
 
+// Canonical HTTP and WebDAV method names reused across handlers.
 const (
 	MethodHead      = "HEAD"
 	MethodGet       = "GET"

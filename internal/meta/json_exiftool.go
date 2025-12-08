@@ -12,8 +12,8 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
 	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -21,8 +21,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-const MimeVideoMp4 = "video/mp4"
-const MimeQuicktime = "video/quicktime"
+// Common MIME types used to detect video contexts in ExifTool sidecars.
+const (
+	MimeVideoMp4  = "video/mp4"
+	MimeQuicktime = "video/quicktime"
+)
 
 // Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
@@ -235,7 +238,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	} else if mt, ok := data.json["MIMEType"]; ok && data.TakenAtLocal.IsZero() && (mt == MimeVideoMp4 || mt == MimeQuicktime) {
 		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
-		log.Debugf("metadata: default time zone for %s is UTC (%s)", logName, clean.Log(mt))
+		log.Tracef("metadata: default time zone for %s is UTC (%s)", logName, clean.Log(mt))
 		data.TimeZone = tz.UTC
 		data.TakenAt = data.TakenAt.UTC()
 		data.TakenAtLocal = time.Time{}
@@ -305,8 +308,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Add nanoseconds to the calculated UTC and local time.
 	if data.TakenAt.Nanosecond() == 0 {
 		if ns := time.Duration(data.TakenNs); ns > 0 && ns <= time.Second {
-			data.TakenAt.Truncate(time.Second).UTC().Add(ns)
-			data.TakenAtLocal.Truncate(time.Second).Add(ns)
+			data.TakenAt = data.TakenAt.Truncate(time.Second).UTC().Add(ns)
+			data.TakenAtLocal = data.TakenAtLocal.Truncate(time.Second).Add(ns)
 		}
 	}
 

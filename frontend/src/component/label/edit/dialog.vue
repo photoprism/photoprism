@@ -1,22 +1,17 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="500"
     class="p-dialog dialog-label-edit"
     color="background"
     @keydown.esc.exact="close"
+    @keyup.enter.exact="confirm"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="form-label-edit"
-      accept-charset="UTF-8"
-      tabindex="1"
-      @submit.prevent="confirm"
-    >
+    <v-form ref="form" validate-on="invalid-input" class="form-label-edit" accept-charset="UTF-8" tabindex="-1" @submit.prevent="confirm">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-label</v-icon>
@@ -33,18 +28,10 @@
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
-                @keyup.enter="confirm"
               ></v-text-field>
             </v-col>
             <v-col sm="4">
-              <v-checkbox
-                v-model="model.Favorite"
-                :disabled="disabled"
-                :label="$gettext('Favorite')"
-                density="comfortable"
-                hide-details
-              >
-              </v-checkbox>
+              <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" density="comfortable" hide-details> </v-checkbox>
             </v-col>
           </v-row>
         </v-card-text>

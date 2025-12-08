@@ -19,20 +19,25 @@ type SearchAlbums struct {
 	Count    int    `form:"count" binding:"required" serialize:"-"`
 	Offset   int    `form:"offset" serialize:"-"`
 	Order    string `form:"order" serialize:"-"`
+	Reverse  bool   `form:"reverse" serialize:"-"`
 }
 
+// GetQuery returns the current search query string.
 func (f *SearchAlbums) GetQuery() string {
 	return f.Query
 }
 
+// SetQuery stores the raw query string.
 func (f *SearchAlbums) SetQuery(q string) {
 	f.Query = q
 }
 
+// ParseQueryString deserializes the query string into form fields.
 func (f *SearchAlbums) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
+// NewAlbumSearch creates a SearchAlbums form with the provided query.
 func NewAlbumSearch(query string) SearchAlbums {
 	return SearchAlbums{Query: query}
 }

@@ -71,7 +71,7 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		// Set a default client name if no specific name has been provided.
 		if frm.AuthScope == "" {
-			frm.AuthScope = list.All
+			frm.AuthScope = list.Any
 		}
 
 		client, addErr := entity.AddClient(frm)
@@ -134,7 +134,7 @@ func clientsAddAction(ctx *cli.Context) error {
 		}
 
 		// Show client authentication credentials.
-		fmt.Printf(message)
+		fmt.Println(message)
 		result := report.Credentials("Client ID", client.ClientUID, "Client Secret", secret)
 		fmt.Printf("\n%s\n", result)
 

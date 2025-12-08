@@ -1,5 +1,4 @@
 //go:build debug
-// +build debug
 
 package server
 
@@ -8,5 +7,5 @@ import (
 )
 
 func init() {
-	registerApiDocs = api.GetDocs
+	registerAPIDocs = api.GetDocs
 }

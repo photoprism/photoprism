@@ -23,7 +23,7 @@ func TestAuthAddCommand(t *testing.T) {
 		output, err := RunWithTestContext(AuthAddCommand, []string{"add", "--scope=test", "--expires=5000", "--name=xyz"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.NotContains(t, output, "App Password")
 		assert.Contains(t, output, "Access Token")
@@ -34,7 +34,7 @@ func TestAuthAddCommand(t *testing.T) {
 		output, err := RunWithTestContext(AuthAddCommand, []string{"add", "--scope=test", "--expires=5000", "xxxxx"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.Error(t, err)
 		assert.Empty(t, output)
 
@@ -44,7 +44,7 @@ func TestAuthAddCommand(t *testing.T) {
 		output, err := RunWithTestContext(AuthAddCommand, []string{"add", "--scope=test", "--expires=5000", "alice"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})
@@ -53,7 +53,7 @@ func TestAuthAddCommand(t *testing.T) {
 		output, err := RunWithTestContext(AuthAddCommand, []string{"add", "--name=test", "--expires=5000", "alice"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})

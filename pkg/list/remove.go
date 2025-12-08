@@ -4,7 +4,7 @@ package list
 func Remove(list []string, s string) []string {
 	if len(list) == 0 || s == "" {
 		return list
-	} else if s == All {
+	} else if s == Any {
 		return []string{}
 	}
 

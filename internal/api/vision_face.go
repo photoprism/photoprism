@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
 )
 
 // PostVisionFace returns the embeddings of a face.
@@ -68,7 +68,7 @@ func PostVisionFace(router *gin.RouterGroup) {
 			if data, err := media.ReadUrl(request.Images[i], scheme.HttpsData); err != nil {
 				results[i] = face.Embeddings{}
 				log.Errorf("vision: %s (read face embedding from url)", err)
-			} else if result, faceErr := vision.Face(data); faceErr != nil {
+			} else if result, faceErr := vision.GenerateFaceEmbeddings(data); faceErr != nil {
 				results[i] = face.Embeddings{}
 				log.Errorf("vision: %s (run face embeddings)", faceErr)
 			} else {

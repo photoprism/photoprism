@@ -3,18 +3,16 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"runtime"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-// FeedbackURL is the service endpoint for submitting user feedback.
-var FeedbackURL = ServiceURL + "/%s/feedback"
 
 // Feedback represents user feedback submitted through the user interface.
 type Feedback struct {
@@ -67,27 +65,34 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 60 * time.Second}
 
-	url := fmt.Sprintf(FeedbackURL, c.Key)
+	// Get feedback endpoint URL.
+	endpointUrl := GetFeedbackServiceURL(c.Key)
+
+	// Return if no endpoint URL is set.
+	if endpointUrl == "" {
+		return errors.New("unable to send feedback (service disabled)")
+	}
+
 	method := http.MethodPost
 
 	var req *http.Request
 
-	log.Debugf("sending feedback to %s", ApiHost())
+	log.Debugf("config: sending feedback to %s", GetServiceHost())
 
-	if j, err := json.Marshal(feedback); err != nil {
-		return err
-	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
-		return err
+	if j, reqErr := json.Marshal(feedback); reqErr != nil {
+		return reqErr
+	} else if req, reqErr = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); reqErr != nil {
+		return reqErr
 	}
 
 	// Set user agent.
 	if c.UserAgent != "" {
-		req.Header.Set("User-Agent", c.UserAgent)
+		req.Header.Set(header.UserAgent, c.UserAgent)
 	} else {
-		req.Header.Set("User-Agent", "PhotoPrism/Test")
+		req.Header.Set(header.UserAgent, "PhotoPrism/Test")
 	}
 
-	req.Header.Add("Accept-Language", frm.UserLocales)
+	req.Header.Add(header.AcceptLanguage, frm.UserLocales)
 	req.Header.Add(header.ContentType, header.ContentTypeJson)
 
 	var r *http.Response
@@ -103,7 +108,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	if err != nil {
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("sending feedback to %s failed (error %d)", ApiHost(), r.StatusCode)
+		err = fmt.Errorf("request to %s failed (error %d)", GetServiceHost(), r.StatusCode)
 		return err
 	}
 

@@ -12,6 +12,7 @@ func initSession() {
 	services.Session = session.New(Config())
 }
 
+// Session returns the singleton session manager instance.
 func Session() *session.Session {
 	onceSession.Do(initSession)
 

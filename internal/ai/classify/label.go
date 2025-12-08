@@ -8,11 +8,14 @@ import (
 
 // Label represents a MediaFile label (automatically created).
 type Label struct {
-	Name        string   `json:"label"`       // Label name
-	Source      string   `json:"source"`      // Where was this label found / detected?
-	Uncertainty int      `json:"uncertainty"` // >= 0
-	Priority    int      `json:"priority"`    // >= 0
-	Categories  []string `json:"categories"`  // List of similar labels
+	Name           string   `json:"label"`       // Label name
+	Source         string   `json:"source"`      // Where was this label found / detected?
+	Uncertainty    int      `json:"uncertainty"` // >= 0
+	Topicality     int      `json:"topicality"`  // >= 0
+	NSFW           bool     `json:"nsfw,omitempty"`
+	NSFWConfidence int      `json:"nsfw_confidence,omitempty"`
+	Priority       int      `json:"priority"`   // >= 0
+	Categories     []string `json:"categories"` // List of similar labels
 }
 
 // LocationLabel returns a new location label.
@@ -50,11 +53,12 @@ func (l *Label) Title() string {
 
 // Confidence returns a matching confidence in percent.
 func (l *Label) Confidence() float32 {
-	if l.Uncertainty > 100 {
+	switch {
+	case l.Uncertainty > 100:
 		return 0
-	} else if l.Uncertainty < 0 {
+	case l.Uncertainty < 0:
 		return 1
-	} else {
+	default:
 		return 1 - float32(l.Uncertainty)/100
 	}
 }

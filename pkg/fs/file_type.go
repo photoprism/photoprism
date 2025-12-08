@@ -96,8 +96,8 @@ func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSeq
 	fileBaseLower := strings.ToLower(fileBasePrefix)
 	fileBaseUpper := strings.ToUpper(fileBasePrefix)
 
-	fileDir := filepath.Dir(fileName)
-	search := append([]string{fileDir}, dirs...)
+	filePath := filepath.Dir(fileName)
+	search := append([]string{filePath}, dirs...)
 
 	for _, ext := range FileTypes[t] {
 		lastDir := ""
@@ -109,11 +109,11 @@ func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSeq
 
 			lastDir = dir
 
-			if dir != fileDir {
+			if dir != filePath {
 				if filepath.IsAbs(dir) {
-					dir = filepath.Join(dir, RelName(fileDir, baseDir))
+					dir = filepath.Join(dir, RelName(filePath, baseDir))
 				} else {
-					dir = filepath.Join(fileDir, dir)
+					dir = filepath.Join(filePath, dir)
 				}
 			}
 
@@ -145,8 +145,8 @@ func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSeque
 	fileBaseLower := strings.ToLower(fileBasePrefix)
 	fileBaseUpper := strings.ToUpper(fileBasePrefix)
 
-	fileDir := filepath.Dir(fileName)
-	search := append([]string{fileDir}, dirs...)
+	filePath := filepath.Dir(fileName)
+	search := append([]string{filePath}, dirs...)
 
 	for _, ext := range FileTypes[t] {
 		lastDir := ""
@@ -158,11 +158,11 @@ func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSeque
 
 			lastDir = dir
 
-			if dir != fileDir {
+			if dir != filePath {
 				if filepath.IsAbs(dir) {
-					dir = filepath.Join(dir, RelName(fileDir, baseDir))
+					dir = filepath.Join(dir, RelName(filePath, baseDir))
 				} else {
-					dir = filepath.Join(fileDir, dir)
+					dir = filepath.Join(filePath, dir)
 				}
 			}
 

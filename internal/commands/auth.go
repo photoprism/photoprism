@@ -15,6 +15,7 @@ var AuthCommands = &cli.Command{
 		AuthShowCommand,
 		AuthRemoveCommand,
 		AuthResetCommand,
+		AuthJWTCommands,
 	},
 }
 

@@ -1,12 +1,8 @@
 package hub
 
 import (
-	"net/url"
 	"runtime"
 )
-
-// ServiceURL specifies the service endpoint URL.
-var ServiceURL = "https://my.photoprism.app/v1/hello"
 
 // Request represents basic environment specs for debugging.
 type Request struct {
@@ -21,7 +17,8 @@ type Request struct {
 	ApiToken      string `json:"ApiToken"`
 }
 
-// ClientOpt returns a custom request option.
+// ClientOpt hooks let tests and extensions append optional context information
+// to Hub requests; callers may replace the function to emit custom strings.
 var ClientOpt = func() string {
 	return ""
 }
@@ -39,16 +36,4 @@ func NewRequest(version, serial, env, partnerId, token string) *Request {
 		PartnerID:     partnerId,
 		ApiToken:      token,
 	}
-}
-
-// ApiHost returns the backend host name.
-func ApiHost() string {
-	u, err := url.Parse(ServiceURL)
-
-	if err != nil {
-		log.Warn(err)
-		return ""
-	}
-
-	return u.Host
 }

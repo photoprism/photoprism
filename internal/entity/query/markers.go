@@ -122,12 +122,45 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 	return result, nil
 }
 
+// MarkerCountsByFaceIDs returns a map of marker counts for the provided face IDs.
+func MarkerCountsByFaceIDs(faceIDs []string) (map[string]int, error) {
+	counts := make(map[string]int, len(faceIDs))
+
+	if len(faceIDs) == 0 {
+		return counts, nil
+	}
+
+	type row struct {
+		FaceID string
+		Count  int
+	}
+
+	var rows []row
+
+	if err := Db().
+		Model(&entity.Marker{}).
+		Select("face_id, COUNT(*) AS count").
+		Where("marker_invalid = 0").
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("face_id IN (?)", faceIDs).
+		Group("face_id").
+		Scan(&rows).Error; err != nil {
+		return counts, err
+	}
+
+	for _, r := range rows {
+		counts[r.FaceID] = r.Count
+	}
+
+	return counts, nil
+}
+
 // RemoveInvalidMarkerReferences removes face and subject references from invalid markers.
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
 	result := Db().
 		Model(&entity.Marker{}).
 		Where("marker_invalid = 1 AND (subj_uid <> '' OR face_id <> '')").
-		UpdateColumns(entity.Map{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
+		UpdateColumns(entity.Values{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return result.RowsAffected, result.Error
 }
@@ -138,7 +171,7 @@ func RemoveNonExistentMarkerFaces() (removed int64, err error) {
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
-		UpdateColumns(entity.Map{"face_id": "", "face_dist": -1.0, "matched_at": nil})
+		UpdateColumns(entity.Values{"face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return result.RowsAffected, result.Error
 }
@@ -148,7 +181,7 @@ func RemoveNonExistentMarkerSubjects() (removed int64, err error) {
 	result := Db().
 		Model(&entity.Marker{}).
 		Where(fmt.Sprintf("subj_uid <> '' AND subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Subject{}.TableName())).
-		UpdateColumns(entity.Map{"subj_uid": "", "matched_at": nil})
+		UpdateColumns(entity.Values{"subj_uid": "", "matched_at": nil})
 
 	return result.RowsAffected, result.Error
 }
@@ -214,7 +247,7 @@ func MarkersWithSubjectConflict() (results entity.Markers, err error) {
 func ResetFaceMarkerMatches() (removed int64, err error) {
 	res := Db().Model(&entity.Marker{}).
 		Where("subj_src = ? AND marker_type = ?", entity.SrcAuto, entity.MarkerFace).
-		UpdateColumns(entity.Map{"marker_name": "", "subj_uid": "", "subj_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
+		UpdateColumns(entity.Values{"marker_name": "", "subj_uid": "", "subj_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return res.RowsAffected, res.Error
 }

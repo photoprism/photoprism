@@ -104,7 +104,7 @@ func TestNameKeywords(t *testing.T) {
 		result := NameKeywords("William Henry Gates III", "Windows Guru")
 		assert.Equal(t, []string{"william", "henry", "gates", "iii", "windows", "guru"}, result)
 	})
-	t.Run("Empty arguments", func(t *testing.T) {
+	t.Run("EmptyArguments", func(t *testing.T) {
 		result := NameKeywords("", "")
 		assert.Equal(t, []string{}, result)
 	})

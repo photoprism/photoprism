@@ -10,6 +10,11 @@
     border-radius: 0;
 }
 
+.p-lightbox,
+.p-lightbox > .v-overlay__scrim {
+    transition: none !important;
+}
+
 .p-lightbox__container {
     position: absolute;
     top: 0;
@@ -124,16 +129,6 @@
     word-break: break-word;
     text-align: start;
     hyphens: auto;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .p-map {
-    display: block;
-    min-height: 259px;
-    aspect-ratio: 1;
-    width: auto;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
 }
 
 /* Media Content */
@@ -287,7 +282,7 @@
     touch-action: auto;
 }
 
-.p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__dynamic-caption {
+.p-lightbox__container > .p-lightbox__content.slideshow-active:not(.is-video) .pswp__dynamic-caption {
     opacity: 1 !important;
 }
 
@@ -295,6 +290,7 @@
     display: none !important;
 }
 
+.p-lightbox__container > .p-lightbox__content.is-video .pswp__dynamic-caption--faded,
 .p-lightbox__container > .p-lightbox__content:not(.slideshow-active) .pswp__dynamic-caption--faded {
     opacity: 0 !important;
 }
@@ -359,7 +355,11 @@
     font-size: 14px;
     text-align: start;
     color: #f3f3f3;
-    text-shadow: -1px -1px 0 #0006, 1px -1px 0 #0006, -1px 1px 0 #0006, 1px 1px 0 #0006;
+    text-shadow:
+        -1px -1px 0 #0006,
+        1px -1px 0 #0006,
+        -1px 1px 0 #0006,
+        1px 1px 0 #0006;
     line-height: normal;
     letter-spacing: normal;
     margin: 0 0 8px 0;
@@ -485,7 +485,7 @@
     margin: 0;
     padding: 20px 12px 12px 12px;
     gap: 6px;
-    background: linear-gradient(0deg, #000000BF, #00000000);
+    background: linear-gradient(0deg, #000000bf, #00000000);
 }
 
 .p-lightbox__controls .video-label,
@@ -548,7 +548,7 @@
 }
 
 .p-lightbox__container > .slideshow-active .pswp__container {
-    transition: transform .8s ease-in-out;
+    transition: transform 0.8s ease-in-out;
 }
 
 /* Fullscreen Toggle */
@@ -620,30 +620,4 @@
 
 .p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow .pswp__icn {
     display: none;
-}
-
-/* Other / Unused Styles */
-
-.pswp__taken {
-    padding: 10px;
-    line-height: 20px;
-    font-size: 14px;
-    color: #E0E0E0;
-    font-weight: 300;
-    width: auto;
-    height: 44px;
-    position: relative;
-    background: none;
-    cursor: none;
-    overflow: visible;
-    -webkit-appearance: none;
-    display: block;
-    border: 0;
-    margin: 0;
-    float: left;
-    opacity: 0.75;
-    -webkit-transition: opacity 0.2s;
-    transition: opacity 0.2s;
-    -webkit-box-shadow: none;
-    box-shadow: none;
 }

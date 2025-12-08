@@ -30,7 +30,7 @@ var PlacesCommands = &cli.Command{
 				&cli.BoolFlag{
 					Name:    "yes",
 					Aliases: []string{"y"},
-					Usage:   "assume \"yes\" and run non-interactively",
+					Usage:   "runs the command non-interactively",
 				},
 			},
 			Action: placesUpdateAction,
@@ -63,7 +63,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	if !ctx.Bool("yes") {
+	if !RunNonInteractively(ctx.Bool("yes")) {
 		confirmPrompt := promptui.Prompt{
 			Label:     "Interrupting the update may lead to inconsistent location information. Continue?",
 			IsConfirm: true,

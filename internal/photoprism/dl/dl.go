@@ -1,5 +1,31 @@
 /*
-Package dl provides media download functionality.
+Package dl provides helpers to discover media metadata and download content
+from remote sources via yt-dlp. It underpins the `photoprism dl` CLI.
+
+Two download methods are supported:
+
+ 1. Pipe method (stdout): yt-dlp streams media to stdout and PhotoPrism
+    writes it to a temporary file. After writing, PhotoPrism remuxes the
+    file with ffmpeg to ensure a valid MP4 container and to embed basic
+    metadata such as title, description, author, source URL (as comment),
+    and creation timestamp when available. This method is simple and works
+    well for sources that provide a combined A/V stream. Some sites split
+    audio and video; in those cases yt-dlp cannot always mux when piping.
+
+ 2. File method (on-disk): yt-dlp writes output files directly using
+    `--output` templates and built-in post-processors (merge/remux/metadata).
+    PhotoPrism captures the final file paths (via `--print after_move:filepath`)
+    and then optionally runs a final ffmpeg remux to normalize the container
+    and embed metadata if necessary. This method is recommended for sources
+    that deliver separate audio/video streams or require post-processing.
+
+Both methods accept the same authentication-related options and headers.
+Cookies can be supplied via a file or a browser profile, and custom headers
+(e.g. Authorization) are forwarded to yt-dlp for both metadata discovery and
+downloading. Secrets are not logged; header values are redacted in traces.
+
+The package exposes convenience constructors around yt-dlp invocation as
+well as small utilities for safer logging and remux metadata preparation.
 
 Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 

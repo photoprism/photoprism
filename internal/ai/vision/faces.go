@@ -7,8 +7,8 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
 
-// Faces detects faces in the specified image and generates embeddings from them.
-func Faces(fileName string, minSize int, cacheCrop bool, expected int) (result face.Faces, err error) {
+// DetectFaces detects faces in the specified image and generates embeddings from them.
+func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (result face.Faces, err error) {
 	if fileName == "" {
 		return result, errors.New("missing image filename")
 	}
@@ -53,12 +53,11 @@ func Faces(fileName string, minSize int, cacheCrop bool, expected int) (result f
 				return result, err
 			}
 
-			if model.Name != "" {
-				apiRequest.Model = model.Name
-			}
+			_, apiRequest.Model, apiRequest.Version = model.GetModel()
+			model.ApplyService(apiRequest)
 
-			if model.Version != "" {
-				apiRequest.Version = model.Version
+			if model.System != "" {
+				apiRequest.System = model.System
 			}
 
 			if model.Prompt != "" {

@@ -4,22 +4,47 @@ import (
 	"strings"
 )
 
-// Hex removes invalid character from a hex string and makes it lowercase.
+// Hex removes invalid characters from a hex string and lowercases A-F.
 func Hex(s string) string {
 	if s == "" || reject(s, 1024) {
 		return ""
 	}
 
-	s = strings.ToLower(strings.TrimSpace(s))
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return ""
+	}
 
-	// Remove all invalid characters.
-	s = strings.Map(func(r rune) rune {
-		if (r < '0' || r > '9') && (r < 'a' || r > 'f') {
-			return -1
+	// Scan once; lower-case A-F on the fly; drop non-hex.
+	// Allocate only if needed.
+	var out []byte
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		switch {
+		case b >= '0' && b <= '9':
+			if out != nil {
+				out = append(out, b)
+			}
+		case b >= 'a' && b <= 'f':
+			if out != nil {
+				out = append(out, b)
+			}
+		case b >= 'A' && b <= 'F':
+			if out == nil {
+				out = make([]byte, 0, len(s))
+				out = append(out, s[:i]...)
+			}
+			out = append(out, b+32) // to lower
+		default:
+			if out == nil {
+				out = make([]byte, 0, len(s))
+				out = append(out, s[:i]...)
+			}
+			// skip
 		}
-
-		return r
-	}, s)
-
-	return s
+	}
+	if out == nil {
+		return s
+	}
+	return string(out)
 }

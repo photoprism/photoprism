@@ -25,8 +25,15 @@ import (
 
 // SharePreview returns a preview image for the given share uid if the token is valid.
 //
-// GET /s/:token/:shared/preview
-// TODO: Proof of concept, needs refactoring.
+//	@Summary	returns a share preview image when the token is valid
+//	@Id			SharePreview
+//	@Tags		Sharing
+//	@Produce	image/jpeg
+//	@Param		token	path		string	true	"Share token"
+//	@Param		shared	path		string	true	"Shared resource UID"
+//	@Success	200		{file}		file	"Preview image"
+//	@Failure	302		{string}	string	"Redirect to the default preview page"
+//	@Router		/s/{token}/{shared}/preview [get]
 func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:shared/preview", func(c *gin.Context) {
 		conf := get.Config()
@@ -107,7 +114,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		size, _ := thumb.Sizes[thumb.Tile500]
+		size := thumb.Sizes[thumb.Tile500]
 
 		images := make([]image.Image, 0, len(p))
 
@@ -140,6 +147,11 @@ func SharePreview(router *gin.RouterGroup) {
 
 		// Create album preview from thumbnail images.
 		preview, err := frame.Collage(frame.Polaroid, images)
+		if err != nil {
+			log.Warnf("preview collage: %v", err)
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
 
 		// Downsize from 1600x900 to 1200x675.
 		preview = imaging.Resize(preview, 1200, 0, imaging.Lanczos)

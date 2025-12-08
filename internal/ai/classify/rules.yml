@@ -1,9 +1,27 @@
+background:
+  see: ignore
+
+ignore:
+  threshold: 1
+  priority: -3
+
+building:
+  priority: 1
+  threshold: 0.3
+
+wildlife:
+  priority: 3
+  threshold: 0.1
+
 cat:
   label: cat
   priority: 5
   threshold: 0.15
   categories:
     - animal
+
+tabby:
+  see: cat
 
 tabby cat:
   see: cat
@@ -107,6 +125,12 @@ lakeside:
 cardoon:
   label: flower
   threshold: 0.2
+
+window screen:
+  label: window
+  threshold: 0.9
+  categories:
+    - architecture
 
 window:
   label: window
@@ -234,6 +258,9 @@ bolo tie:
 brassiere:
   see: fashion
 
+seat belt:
+  see: fashion
+
 belt:
   see: fashion
 
@@ -297,6 +324,13 @@ mitten:
 
 bubble:
   see: ignore
+
+tench:
+  label: fish
+  threshold: 0.54
+  categories:
+    - water
+    - animal
 
 tench fish:
   label: fish
@@ -363,47 +397,96 @@ bird:
   categories:
     - animal
 
+brambling:
+  see: bird
+
 brambling bird:
+  see: bird
+
+goldfinch:
   see: bird
 
 goldfinch bird:
   see: bird
 
+house finch:
+  see: bird
+
 house finch bird:
+  see: bird
+
+junco:
   see: bird
 
 junco bird:
   see: bird
 
+indigo bunting:
+  see: bird
+
 indigo bunting bird:
+  see: bird
+
+robin:
   see: bird
 
 robin bird:
   see: bird
 
+bulbul:
+  see: bird
+
 bulbul bird:
+  see: bird
+
+jay:
   see: bird
 
 jay bird:
   see: bird
 
+magpie:
+  see: bird
+
 magpie bird:
+  see: bird
+
+chickadee:
   see: bird
 
 chickadee bird:
   see: bird
 
+water ouzel:
+  see: bird
+
 water ouzel bird:
+  see: bird
+
+kite:
   see: bird
 
 kite bird:
   see: bird
 
+bald eagle:
+  see: bird
+
 bald eagle bird:
+  see: bird
+
+vulture:
   see: bird
 
 vulture bird:
   see: bird
+
+great grey owl:
+  label: owl
+  threshold: 0.3
+  categories:
+    - animal
+    - bird
 
 great grey owl bird:
   label: owl
@@ -419,6 +502,9 @@ salamander:
     - animal
 
 european fire salamander:
+  see: salamander
+
+common newt:
   see: salamander
 
 common newt salamander:
@@ -554,6 +640,13 @@ alligator lizard:
     - reptile
     - animal
 
+gila monster:
+  label: lizard
+  threshold: 0.62
+  categories:
+    - reptile
+    - animal
+
 gila monster lizard:
   label: lizard
   threshold: 0.62
@@ -624,13 +717,25 @@ vine snake:
 night snake:
   see: snake
 
+boa constrictor:
+  see: snake
+
 boa constrictor snake:
+  see: snake
+
+rock python:
   see: snake
 
 rock python snake:
   see: snake
 
+indian cobra:
+  see: snake
+
 indian cobra snake:
+  see: snake
+
+green mamba:
   see: snake
 
 green mamba snake:
@@ -639,10 +744,19 @@ green mamba snake:
 sea snake:
   see: snake
 
+horned viper:
+  see: snake
+
 horned viper snake:
   see: snake
 
+diamondback:
+  see: snake
+
 diamondback snake:
+  see: snake
+
+sidewinder:
   see: snake
 
 sidewinder snake:
@@ -980,6 +1094,13 @@ dog:
   categories:
     - animal
 
+chihuahua:
+  label: dog
+  priority: 5
+  threshold: 0.29
+  categories:
+    - animal
+
 chihuahua dog:
   label: dog
   priority: 5
@@ -987,25 +1108,51 @@ chihuahua dog:
   categories:
     - animal
 
+japanese spaniel:
+  see: dog
+
 japanese spaniel dog:
   see: dog
 
 maltese dog:
   see: dog
 
+pekinese:
+  see: dog
+
 pekinese dog:
+  see: dog
+
+shih-tzu:
   see: dog
 
 shih-tzu dog:
   see: dog
 
+blenheim spaniel:
+  see: dog
+
 blenheim spaniel dog:
   see: dog
+
+papillon:
+  label: dog
+  priority: 5
+  threshold: 0.18
+  categories:
+    - animal
 
 papillon dog:
   label: dog
   priority: 5
   threshold: 0.18
+  categories:
+    - animal
+
+toy terrier:
+  label: dog
+  priority: 5
+  threshold: 0.44
   categories:
     - animal
 
@@ -1016,22 +1163,48 @@ toy terrier dog:
   categories:
     - animal
 
+rhodesian ridgeback:
+  see: dog
+
 rhodesian ridgeback dog:
+  see: dog
+
+afghan hound:
   see: dog
 
 afghan hound dog:
   see: dog
 
+basset:
+  see: dog
+
 basset dog:
+  see: dog
+
+beagle:
   see: dog
 
 beagle dog:
   see: dog
 
+bloodhound:
+  label: dog
+  priority: 5
+  threshold: 0.25
+  categories:
+    - animal
+
 bloodhound dog:
   label: dog
   priority: 5
   threshold: 0.25
+  categories:
+    - animal
+
+bluetick:
+  label: dog
+  priority: 5
+  threshold: 0.27
   categories:
     - animal
 
@@ -1042,22 +1215,48 @@ bluetick dog:
   categories:
     - animal
 
+black-and-tan coonhound:
+  see: dog
+
 black-and-tan coonhound dog:
+  see: dog
+
+walker hound:
   see: dog
 
 walker hound dog:
   see: dog
 
+english foxhound:
+  see: dog
+
 english foxhound dog:
+  see: dog
+
+redbone:
   see: dog
 
 redbone dog:
   see: dog
 
+borzoi:
+  label: dog
+  priority: 5
+  threshold: 0.48
+  categories:
+    - animal
+
 borzoi dog:
   label: dog
   priority: 5
   threshold: 0.48
+  categories:
+    - animal
+
+irish wolfhound:
+  label: dog
+  priority: 5
+  threshold: 0.24
   categories:
     - animal
 
@@ -1068,10 +1267,24 @@ irish wolfhound dog:
   categories:
     - animal
 
+italian greyhound:
+  label: dog
+  priority: 5
+  threshold: 0.41
+  categories:
+    - animal
+
 italian greyhound dog:
   label: dog
   priority: 5
   threshold: 0.41
+  categories:
+    - animal
+
+whippet:
+  label: dog
+  priority: 5
+  threshold: 0.21
   categories:
     - animal
 
@@ -1082,10 +1295,24 @@ whippet dog:
   categories:
     - animal
 
+ibizan hound:
+  label: dog
+  priority: 5
+  threshold: 0.22
+  categories:
+    - animal
+
 ibizan hound dog:
   label: dog
   priority: 5
   threshold: 0.22
+  categories:
+    - animal
+
+norwegian elkhound:
+  label: dog
+  priority: 5
+  threshold: 0.53
   categories:
     - animal
 
@@ -1096,13 +1323,30 @@ norwegian elkhound dog:
   categories:
     - animal
 
+otterhound:
+  see: dog
+
 otterhound dog:
   see: dog
+
+saluki:
+  label: dog
+  priority: 5
+  threshold: 0.12
+  categories:
+    - animal
 
 saluki dog:
   label: dog
   priority: 5
   threshold: 0.12
+  categories:
+    - animal
+
+scottish deerhound:
+  label: dog
+  priority: 5
+  threshold: 0.47
   categories:
     - animal
 
@@ -1113,10 +1357,24 @@ scottish deerhound dog:
   categories:
     - animal
 
+weimaraner:
+  label: dog
+  priority: 5
+  threshold: 0.31
+  categories:
+    - animal
+
 weimaraner dog:
   label: dog
   priority: 5
   threshold: 0.31
+  categories:
+    - animal
+
+staffordshire bullterrier:
+  label: dog
+  priority: 5
+  threshold: 0.15
   categories:
     - animal
 
@@ -1127,13 +1385,30 @@ staffordshire bullterrier dog:
   categories:
     - animal
 
+american staffordshire terrier:
+  see: dog
+
 american staffordshire terrier dog:
   see: dog
+
+bedlington terrier:
+  label: dog
+  priority: 5
+  threshold: 0.54
+  categories:
+    - animal
 
 bedlington terrier dog:
   label: dog
   priority: 5
   threshold: 0.54
+  categories:
+    - animal
+
+border terrier:
+  label: dog
+  priority: 5
+  threshold: 0.32
   categories:
     - animal
 
@@ -1144,10 +1419,24 @@ border terrier dog:
   categories:
     - animal
 
+kerry blue terrier:
+  label: dog
+  priority: 5
+  threshold: 0.35
+  categories:
+    - animal
+
 kerry blue terrier dog:
   label: dog
   priority: 5
   threshold: 0.35
+  categories:
+    - animal
+
+irish terrier:
+  label: dog
+  priority: 5
+  threshold: 0.18
   categories:
     - animal
 
@@ -1158,19 +1447,42 @@ irish terrier dog:
   categories:
     - animal
 
+norfolk terrier:
+  see: dog
+
 norfolk terrier dog:
+  see: dog
+
+norwich terrier:
   see: dog
 
 norwich terrier dog:
   see: dog
 
+yorkshire terrier:
+  see: dog
+
 yorkshire terrier dog:
   see: dog
+
+wire-haired fox terrier:
+  label: dog
+  priority: 5
+  threshold: 0.67
+  categories:
+    - animal
 
 wire-haired fox terrier dog:
   label: dog
   priority: 5
   threshold: 0.67
+  categories:
+    - animal
+
+lakeland terrier:
+  priority: 5
+  label: dog
+  threshold: 0.31
   categories:
     - animal
 
@@ -1181,8 +1493,18 @@ lakeland terrier dog:
   categories:
     - animal
 
+sealyham terrier:
+  see: dog
+
 sealyham terrier dog:
   see: dog
+
+airedale:
+  label: dog
+  priority: 5
+  threshold: 0.38
+  categories:
+    - animal
 
 airedale dog:
   label: dog
@@ -1191,8 +1513,18 @@ airedale dog:
   categories:
     - animal
 
+cairn:
+  see: dog
+
 cairn dog:
   see: dog
+
+australian terrier:
+  label: dog
+  priority: 5
+  threshold: 0.11
+  categories:
+    - animal
 
 australian terrier dog:
   label: dog
@@ -1201,13 +1533,30 @@ australian terrier dog:
   categories:
     - animal
 
+dandie dinmont:
+  see: dog
+
 dandie dinmont dog:
   see: dog
+
+boston bull:
+  label: dog
+  priority: 5
+  threshold: 0.25
+  categories:
+    - animal
 
 boston bull dog:
   label: dog
   priority: 5
   threshold: 0.25
+  categories:
+    - animal
+
+miniature schnauzer:
+  label: dog
+  priority: 5
+  threshold: 0.15
   categories:
     - animal
 
@@ -1218,11 +1567,24 @@ miniature schnauzer dog:
   categories:
     - animal
 
+giant schnauzer:
+  see: dog
+
 giant schnauzer dog:
+  see: dog
+
+standard schnauzer:
   see: dog
 
 standard schnauzer dog:
   see: dog
+
+scotch terrier:
+  label: dog
+  priority: 5
+  threshold: 0.4
+  categories:
+    - animal
 
 scotch terrier dog:
   label: dog
@@ -1231,16 +1593,36 @@ scotch terrier dog:
   categories:
     - animal
 
+tibetan terrier:
+  see: dog
+
 tibetan terrier dog:
+  see: dog
+
+silky terrier:
   see: dog
 
 silky terrier dog:
   see: dog
 
+soft-coated wheaten terrier:
+  label: dog
+  priority: 5
+  threshold: 0.12
+  categories:
+    - animal
+
 soft-coated wheaten terrier dog:
   label: dog
   priority: 5
   threshold: 0.12
+  categories:
+    - animal
+
+west highland white terrier:
+  label: dog
+  priority: 5
+  threshold: 0.43
   categories:
     - animal
 
@@ -1251,13 +1633,30 @@ west highland white terrier dog:
   categories:
     - animal
 
+lhasa:
+  see: dog
+
 lhasa dog:
   see: dog
+
+flat-coated retriever:
+  label: dog
+  priority: 5
+  threshold: 0.16
+  categories:
+    - animal
 
 flat-coated retriever dog:
   label: dog
   priority: 5
   threshold: 0.16
+  categories:
+    - animal
+
+curly-coated retriever:
+  label: dog
+  priority: 5
+  threshold: 0.17
   categories:
     - animal
 
@@ -1268,6 +1667,13 @@ curly-coated retriever dog:
   categories:
     - animal
 
+golden retriever:
+  label: dog
+  priority: 5
+  threshold: 0.13
+  categories:
+    - animal
+
 golden retriever dog:
   label: dog
   priority: 5
@@ -1275,7 +1681,21 @@ golden retriever dog:
   categories:
     - animal
 
+labrador retriever:
+  label: dog
+  priority: 5
+  threshold: 0.15
+  categories:
+    - animal
+
 labrador retriever dog:
+  label: dog
+  priority: 5
+  threshold: 0.15
+  categories:
+    - animal
+
+chesapeake bay retriever:
   label: dog
   priority: 5
   threshold: 0.15
@@ -1289,6 +1709,13 @@ chesapeake bay retriever dog:
   categories:
     - animal
 
+german short-haired pointer:
+  label: dog
+  priority: 5
+  threshold: 0.64
+  categories:
+    - animal
+
 german short-haired pointer dog:
   label: dog
   priority: 5
@@ -1296,13 +1723,33 @@ german short-haired pointer dog:
   categories:
     - animal
 
+vizsla:
+  see: dog
+
 vizsla dog:
+  see: dog
+
+english setter:
   see: dog
 
 english setter dog:
   see: dog
 
+irish setter:
+  label: dog
+  priority: 5
+  threshold: 0.18
+  categories:
+    - animal
+
 irish setter dog:
+  label: dog
+  priority: 5
+  threshold: 0.18
+  categories:
+    - animal
+
+gordon setter:
   label: dog
   priority: 5
   threshold: 0.18
@@ -1316,6 +1763,13 @@ gordon setter dog:
   categories:
     - animal
 
+brittany spaniel:
+  label: dog
+  priority: 5
+  threshold: 0.18
+  categories:
+    - animal
+
 brittany spaniel dog:
   label: dog
   priority: 5
@@ -1323,22 +1777,48 @@ brittany spaniel dog:
   categories:
     - animal
 
+clumber spaniel:
+  see: dog
+
 clumber spaniel dog:
+  see: dog
+
+english springer:
   see: dog
 
 english springer dog:
   see: dog
 
+welsh springer spaniel:
+  see: dog
+
 welsh springer spaniel dog:
+  see: dog
+
+cocker spaniel:
   see: dog
 
 cocker spaniel dog:
   see: dog
 
+sussex spaniel:
+  label: dog
+  priority: 5
+  threshold: 0.13
+  categories:
+    - animal
+
 sussex spaniel dog:
   label: dog
   priority: 5
   threshold: 0.13
+  categories:
+    - animal
+
+irish water spaniel:
+  label: dog
+  priority: 5
+  threshold: 0.66
   categories:
     - animal
 
@@ -1349,10 +1829,24 @@ irish water spaniel dog:
   categories:
     - animal
 
+kuvasz:
+  label: dog
+  priority: 5
+  threshold: 0.41
+  categories:
+    - animal
+
 kuvasz dog:
   label: dog
   priority: 5
   threshold: 0.41
+  categories:
+    - animal
+
+schipperke:
+  label: dog
+  priority: 5
+  threshold: 0.96
   categories:
     - animal
 
@@ -1363,6 +1857,13 @@ schipperke dog:
   categories:
     - animal
 
+groenendael:
+  label: dog
+  priority: 5
+  threshold: 0.56
+  categories:
+    - animal
+
 groenendael dog:
   label: dog
   priority: 5
@@ -1370,14 +1871,30 @@ groenendael dog:
   categories:
     - animal
 
+malinois:
+  see: dog
+
 malinois dog:
+  see: dog
+
+briard:
   see: dog
 
 briard dog:
   see: dog
 
+kelpie:
+  see: dog
+
 kelpie dog:
   see: dog
+
+komondor:
+  label: dog
+  priority: 5
+  threshold: 0.93
+  categories:
+    - animal
 
 komondor dog:
   label: dog
@@ -1392,13 +1909,30 @@ old english sheepdog:
 shetland sheepdog:
   see: dog
 
+collie:
+  see: dog
+
 collie dog:
   see: dog
+
+border collie:
+  label: dog
+  priority: 5
+  threshold: 0.14
+  categories:
+    - animal
 
 border collie dog:
   label: dog
   priority: 5
   threshold: 0.14
+  categories:
+    - animal
+
+bouvier des flandres:
+  label: dog
+  priority: 5
+  threshold: 0.73
   categories:
     - animal
 
@@ -1409,8 +1943,18 @@ bouvier des flandres dog:
   categories:
     - animal
 
+rottweiler:
+  see: dog
+
 rottweiler dog:
   see: dog
+
+german shepherd:
+  label: dog
+  priority: 5
+  threshold: 0.11
+  categories:
+    - animal
 
 german shepherd dog:
   label: dog
@@ -1419,7 +1963,13 @@ german shepherd dog:
   categories:
     - animal
 
+doberman:
+  see: dog
+
 doberman dog:
+  see: dog
+
+miniature pinscher:
   see: dog
 
 miniature pinscher dog:
@@ -1431,25 +1981,54 @@ greater swiss mountain dog:
 bernese mountain dog:
   see: dog
 
+appenzeller:
+  see: dog
+
 appenzeller dog:
+  see: dog
+
+entlebucher:
   see: dog
 
 entlebucher dog:
   see: dog
 
+boxer:
+  see: dog
+
 boxer dog:
+  see: dog
+
+bull mastiff:
   see: dog
 
 bull mastiff dog:
   see: dog
 
+tibetan mastiff:
+  see: dog
+
 tibetan mastiff dog:
   see: dog
+
+french bulldog:
+  label: dog
+  priority: 5
+  threshold: 0.13
+  categories:
+    - animal
 
 french bulldog dog:
   label: dog
   priority: 5
   threshold: 0.13
+  categories:
+    - animal
+
+great dane:
+  label: dog
+  priority: 5
+  threshold: 0.12
   categories:
     - animal
 
@@ -1459,6 +2038,9 @@ great dane dog:
   threshold: 0.12
   categories:
     - animal
+
+saint bernard:
+  see: dog
 
 saint bernard dog:
   see: dog
@@ -1470,10 +2052,24 @@ eskimo dog:
   categories:
     - animal
 
+malamute:
+  label: dog
+  priority: 5
+  threshold: 0.25
+  categories:
+    - animal
+
 malamute dog:
   label: dog
   priority: 5
   threshold: 0.25
+  categories:
+    - animal
+
+siberian husky:
+  label: dog
+  priority: 5
+  threshold: 0.55
   categories:
     - animal
 
@@ -1484,6 +2080,13 @@ siberian husky dog:
   categories:
     - animal
 
+dalmatian:
+  label: dog
+  priority: 5
+  threshold: 0.69
+  categories:
+    - animal
+
 dalmatian dog:
   label: dog
   priority: 5
@@ -1491,7 +2094,21 @@ dalmatian dog:
   categories:
     - animal
 
+affenpinscher:
+  label: dog
+  priority: 5
+  threshold: 0.3
+  categories:
+    - animal
+
 affenpinscher dog:
+  label: dog
+  priority: 5
+  threshold: 0.3
+  categories:
+    - animal
+
+basenji:
   label: dog
   priority: 5
   threshold: 0.3
@@ -1505,6 +2122,13 @@ basenji dog:
   categories:
     - animal
 
+pug:
+  label: dog
+  priority: 5
+  threshold: 0.13
+  categories:
+    - animal
+
 pug dog:
   label: dog
   priority: 5
@@ -1512,16 +2136,36 @@ pug dog:
   categories:
     - animal
 
+leonberg:
+  see: dog
+
 leonberg dog:
+  see: dog
+
+newfoundland:
   see: dog
 
 newfoundland dog:
   see: dog
 
+great pyrenees:
+  label: dog
+  priority: 5
+  threshold: 0.33
+  categories:
+    - animal
+
 great pyrenees dog:
   label: dog
   priority: 5
   threshold: 0.33
+  categories:
+    - animal
+
+samoyed:
+  label: dog
+  priority: 5
+  threshold: 0.38
   categories:
     - animal
 
@@ -1532,6 +2176,13 @@ samoyed dog:
   categories:
     - animal
 
+pomeranian:
+  label: dog
+  priority: 5
+  threshold: 0.16
+  categories:
+    - animal
+
 pomeranian dog:
   label: dog
   priority: 5
@@ -1539,16 +2190,36 @@ pomeranian dog:
   categories:
     - animal
 
+chow:
+  see: dog
+
 chow dog:
+  see: dog
+
+keeshond:
   see: dog
 
 keeshond dog:
   see: dog
 
+brabancon griffon:
+  label: dog
+  priority: 5
+  threshold: 0.14
+  categories:
+    - animal
+
 brabancon griffon dog:
   label: dog
   priority: 5
   threshold: 0.14
+  categories:
+    - animal
+
+pembroke:
+  label: dog
+  priority: 5
+  threshold: 0.15
   categories:
     - animal
 
@@ -1559,6 +2230,13 @@ pembroke dog:
   categories:
     - animal
 
+cardigan:
+  label: dog
+  priority: 5
+  threshold: 0.45
+  categories:
+    - animal
+
 cardigan dog:
   label: dog
   priority: 5
@@ -1566,7 +2244,21 @@ cardigan dog:
   categories:
     - animal
 
+toy poodle:
+  label: dog
+  priority: 5
+  threshold: 0.4
+  categories:
+    - animal
+
 toy poodle dog:
+  label: dog
+  priority: 5
+  threshold: 0.4
+  categories:
+    - animal
+
+miniature poodle:
   label: dog
   priority: 5
   threshold: 0.4
@@ -1580,10 +2272,24 @@ miniature poodle dog:
   categories:
     - animal
 
+standard poodle:
+  label: dog
+  priority: 5
+  threshold: 0.4
+  categories:
+    - animal
+
 standard poodle dog:
   label: dog
   priority: 5
   threshold: 0.4
+  categories:
+    - animal
+
+mexican hairless:
+  label: dog
+  priority: 5
+  threshold: 0.24
   categories:
     - animal
 
@@ -2059,6 +2765,10 @@ indri:
   categories:
     - monkey
 
+madagascar cat:
+  label: animal
+  threshold: 0.15
+
 fossa:
   label: animal
   threshold: 0.15
@@ -2117,9 +2827,23 @@ eel:
     - water
     - animal
 
+coho:
+  label: fish
+  threshold: 0.15
+  categories:
+    - water
+    - animal
+
 coho fish:
   label: fish
   threshold: 0.15
+  categories:
+    - water
+    - animal
+
+rock beauty:
+  label: fish
+  threshold: 0.83
   categories:
     - water
     - animal
@@ -2138,9 +2862,23 @@ anemone fish:
     - water
     - animal
 
+sturgeon:
+  label: fish
+  threshold: 0.39
+  categories:
+    - water
+    - animal
+
 sturgeon fish:
   label: fish
   threshold: 0.39
+  categories:
+    - water
+    - animal
+
+gar:
+  label: fish
+  threshold: 0.48
   categories:
     - water
     - animal
@@ -2200,8 +2938,6 @@ airship:
 
 wing:
   threshold: 0.29
-  categories:
-    - aircraft
 
 ambulance:
   label: vehicle
@@ -2246,6 +2982,9 @@ banjo:
 
 barbell:
   see: ignore
+
+chair:
+  priority: -2
 
 barber chair:
   see: ignore
@@ -2581,6 +3320,11 @@ scale:
 dining table:
   label: dining
   threshold: 0.5
+
+table:
+  label: dining
+  threshold: 0.5
+  priority: 1
 
 maze:
   label: landscape
@@ -3058,6 +3802,7 @@ parachute:
 car:
   label: car
   threshold: 0.3
+  priority: 1
   categories:
     - vehicle
 
@@ -3909,9 +4654,6 @@ corn:
     - food
     - dining
 
-acorn:
-  see: ignore
-
 buckeye:
   label: plant
   threshold: 0.5
@@ -3965,12 +4707,6 @@ croquet ball:
 ball:
   see: ignore
 
-baseball:
-  see: ignore
-
-basketball:
-  see: ignore
-
 golf ball:
   see: ignore
 
@@ -3984,9 +4720,6 @@ soccer ball:
   see: ignore
 
 tennis ball:
-  see: ignore
-
-volleyball:
   see: ignore
 
 spider web:
@@ -4023,9 +4756,25 @@ swing:
   label: moment
   threshold: 0.15
 
-web site:
+info:
   label: info
   threshold: 0.3
+  priority: -2
+
+website:
+  label: website
+  threshold: 0.3
+  categories:
+    - info
+
+homepage:
+  see: website
+
+home page:
+  see: website
+
+web site:
+  see: website
 
 brass:
   label: info
@@ -4093,6 +4842,7 @@ mask:
 portrait:
   label: portrait
   threshold: 0.3
+  priority: 2
   categories:
     - people
 
@@ -4185,9 +4935,6 @@ patio:
   label: building
   threshold: 0.5
 
-scoreboard:
-  see: ignore
-
 racket:
   label: outdoor
   threshold: 0.3
@@ -4226,9 +4973,6 @@ pencil box:
 pencil sharpener:
   label: office
   threshold: 0.45
-
-volcano:
-  see: ignore
 
 radio telescope:
   threshold: 0.97
@@ -4277,10 +5021,6 @@ altar:
   categories:
     - church
 
-ignore:
-  threshold: 1
-  priority: -2
-
 ashcan:
   see: ignore
 
@@ -4303,9 +5043,6 @@ hook:
   see: ignore
 
 coil:
-  see: ignore
-
-wallet:
   see: ignore
 
 handkerchief:
@@ -4358,9 +5095,6 @@ barometer:
   see: display
 
 binoculars:
-  see: ignore
-
-bow:
   see: ignore
 
 caldron:
@@ -4429,9 +5163,6 @@ joystick:
 chain:
   see: ignore
 
-chest:
-  see: ignore
-
 christmas stocking:
   see: ignore
 
@@ -4488,9 +5219,6 @@ hay:
 hip:
   label: plant
   threshold: 0.43
-
-iron:
-  see: ignore
 
 jinrikisha:
   label: people
@@ -4573,9 +5301,6 @@ toilet tissue:
   see: ignore
 
 rain barrel:
-  see: ignore
-
-barrel:
   see: ignore
 
 scuba diver:
@@ -4683,3 +5408,7 @@ memorial:
 mountains:
   label: mountain
   threshold: 0.4
+
+street:
+  threshold: 0.3
+  priority: -1

@@ -15,7 +15,7 @@ const (
 	GenderOther  = "other"
 )
 
-// UserDetails represents user profile information.
+// UserDetails stores extended profile information for a user account.
 type UserDetails struct {
 	UserUID      string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"-"`
 	SubjUID      string    `gorm:"type:VARBINARY(42);index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
@@ -58,12 +58,12 @@ func (UserDetails) TableName() string {
 	return "auth_users_details"
 }
 
-// NewUserDetails creates new user details.
+// NewUserDetails allocates an empty profile record for the user UID.
 func NewUserDetails(uid string) *UserDetails {
 	return &UserDetails{UserUID: uid}
 }
 
-// CreateUserDetails creates new user details or returns nil on error.
+// CreateUserDetails ensures a profile record exists for the user, creating one when absent.
 func CreateUserDetails(user *User) error {
 	if user == nil {
 		return fmt.Errorf("user is nil")

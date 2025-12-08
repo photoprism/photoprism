@@ -32,6 +32,15 @@ func init() {
 		Level: logrus.DebugLevel,
 	})
 
+	// SystemLog is the global system log.
+	SystemLog = &logrus.Logger{
+		Out:          os.Stderr,
+		Formatter:    TextFormatter,
+		Level:        logrus.DebugLevel,
+		ExitFunc:     func(int) {},
+		ReportCaller: false,
+	}
+
 	// Create dummy audit logger.
 	AuditLog = dummy.NewLogger()
 }

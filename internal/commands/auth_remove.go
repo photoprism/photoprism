@@ -30,12 +30,8 @@ func authRemoveAction(ctx *cli.Context) error {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
-		actionPrompt := promptui.Prompt{
-			Label:     fmt.Sprintf("Remove session %s?", clean.LogQuote(id)),
-			IsConfirm: true,
-		}
-
-		if _, err := actionPrompt.Run(); err == nil {
+		if cliMode == NONINTERACTIVE {
+			// proceed without prompt
 			if m, err := query.Session(id); err != nil {
 				return errors.New("session not found")
 			} else if err := m.Delete(); err != nil {
@@ -44,7 +40,18 @@ func authRemoveAction(ctx *cli.Context) error {
 				log.Infof("session %s has been removed", clean.LogQuote(id))
 			}
 		} else {
-			log.Infof("session %s was not removed", clean.LogQuote(id))
+			actionPrompt := promptui.Prompt{Label: fmt.Sprintf("Remove session %s?", clean.LogQuote(id)), IsConfirm: true}
+			if _, err := actionPrompt.Run(); err == nil {
+				if m, err := query.Session(id); err != nil {
+					return errors.New("session not found")
+				} else if err := m.Delete(); err != nil {
+					return err
+				} else {
+					log.Infof("session %s has been removed", clean.LogQuote(id))
+				}
+			} else {
+				log.Infof("session %s was not removed", clean.LogQuote(id))
+			}
 		}
 
 		return nil

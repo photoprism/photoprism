@@ -6,12 +6,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// ConvertJob represents a single media conversion task.
 type ConvertJob struct {
 	force   bool
 	file    *MediaFile
 	convert *Convert
 }
 
+// ConvertWorker processes ConvertJob messages serially on a worker goroutine.
 func ConvertWorker(jobs <-chan ConvertJob) {
 	convertErr := func(err error, job ConvertJob) {
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())

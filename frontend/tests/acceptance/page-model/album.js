@@ -171,7 +171,7 @@ export default class Page {
 
   async getAlbumCoverStyle(uid) {
     const selector = this.getAlbumCardPreviewSelector(uid);
-    const style = await selector.getStyleProperty('background-image');
+    const style = await selector.getStyleProperty("background-image");
     return style;
   }
 }

@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/urfave/cli/v2"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -195,15 +197,15 @@ func (c *Config) CreateDirectories() error {
 		return createError(dir, err)
 	}
 
-	// Create TensorFlow model path if it doesn't exist yet.
-	if dir := c.NasnetModelPath(); dir == "" {
-		return notFoundError("tensorflow model")
+	// Create computer vision models path if it doesn't exist yet.
+	if dir := c.ModelsPath(); dir == "" {
+		return notFoundError("models")
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)
 	}
 
 	// Create frontend build path if it doesn't exist yet.
-	if dir := c.BuildPath(); dir == "" {
+	if dir := c.StaticBuildPath(); dir == "" {
 		return notFoundError("build")
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)
@@ -237,11 +239,11 @@ func (c *Config) CreateDirectories() error {
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
 	if c.options.ConfigPath == "" {
-		if fs.PathExists(filepath.Join(c.StoragePath(), "settings")) {
-			return filepath.Join(c.StoragePath(), "settings")
+		if fs.PathExists(filepath.Join(c.StoragePath(), fs.SettingsDir)) {
+			return filepath.Join(c.StoragePath(), fs.SettingsDir)
 		}
 
-		return filepath.Join(c.StoragePath(), "config")
+		return filepath.Join(c.StoragePath(), fs.ConfigDir)
 	} else if fs.FileExists(c.options.ConfigPath) {
 		if c.options.OptionsYaml == "" {
 			c.options.OptionsYaml = c.options.ConfigPath
@@ -253,33 +255,82 @@ func (c *Config) ConfigPath() string {
 	return fs.Abs(c.options.ConfigPath)
 }
 
-// OptionsYaml returns the config options YAML filename.
+// OptionsYaml returns the absolute path to the options configuration file.
+// It relies on fs.ConfigFilePath so legacy `.yml` files keep working while
+// newly created instances may use `.yaml` without additional wiring.
 func (c *Config) OptionsYaml() string {
-	configPath := c.ConfigPath()
-
 	if c.options.OptionsYaml == "" {
-		return filepath.Join(configPath, "options.yml")
+		return fs.ConfigFilePath(c.ConfigPath(), "options", fs.ExtYml)
 	}
 
 	return fs.Abs(c.options.OptionsYaml)
 }
 
-// DefaultsYaml returns the default options YAML filename.
+// configPath resolves the config path name from the CLI context.
+func configPath(ctx *cli.Context) string {
+	if dir := ctx.String("config-path"); dir != "" {
+		return fs.Abs(dir)
+	}
+
+	storagePath := ctx.String("storage-path")
+
+	if storagePath == "" {
+		return ""
+	}
+
+	storagePath = fs.Abs(storagePath)
+
+	if fs.PathExists(filepath.Join(storagePath, fs.SettingsDir)) {
+		return filepath.Join(storagePath, fs.SettingsDir)
+	}
+
+	return filepath.Join(storagePath, fs.ConfigDir)
+}
+
+// defaultsYaml resolves the defaults file from CLI/env overrides and falls back
+// to `defaults.{yml,yaml}` inside the active config directory when the override
+// is missing or unreadable.
+func defaultsYaml(ctx *cli.Context) string {
+	fileName := ctx.String("defaults-yaml")
+
+	if fileName != "" && fs.FileExistsNotEmpty(fileName) {
+		return fs.Abs(fileName)
+	}
+
+	fileName = fs.ConfigFilePath(configPath(ctx), "defaults", fs.ExtYml)
+
+	if fs.FileExistsNotEmpty(fileName) {
+		return fs.Abs(fileName)
+	}
+
+	return ""
+}
+
+// DefaultsYaml returns the defaults file path that was resolved during option
+// initialization (CLI/env override first, then config-path fallback). Callers
+// use this to locate the concrete defaults location without re-running the
+// resolution logic.
 func (c *Config) DefaultsYaml() string {
-	return fs.Abs(c.options.DefaultsYaml)
+	return c.options.DefaultsYaml
 }
 
-// HubConfigFile returns the backend api config file name.
+// HubConfigFile returns the backend API config filename, honoring either the
+// traditional `.yml` suffix or an existing `.yaml` variant in the config
+// directory.
 func (c *Config) HubConfigFile() string {
-	return filepath.Join(c.ConfigPath(), "hub.yml")
+	return fs.ConfigFilePath(c.ConfigPath(), "hub", fs.ExtYml)
 }
 
-// SettingsYaml returns the settings YAML filename.
+// SettingsYaml returns the path to the UI settings file. Like other helpers it
+// defers to fs.ConfigFilePath so administrators can store the file as
+// `settings.yml` or `settings.yaml`.
 func (c *Config) SettingsYaml() string {
-	return filepath.Join(c.ConfigPath(), "settings.yml")
+	return fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)
 }
 
-// SettingsYamlDefaults returns the default settings YAML filename.
+// SettingsYamlDefaults returns the defaults file that should seed new settings
+// files. When both `.yml` and `.yaml` exist, the helper mirrors
+// SettingsYaml()'s selection logic to keep behavior consistent.
 func (c *Config) SettingsYamlDefaults(settingsYml string) string {
 	if settingsYml != "" && fs.FileExists(settingsYml) {
 		// Use regular settings YAML file.
@@ -287,7 +338,7 @@ func (c *Config) SettingsYamlDefaults(settingsYml string) string {
 		// Use regular settings YAML file.
 	} else if dir := filepath.Dir(defaultsYml); dir == "" || dir == "." {
 		// Use regular settings YAML file.
-	} else if fileName := filepath.Join(dir, "settings.yml"); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
+	} else if fileName := fs.ConfigFilePath(dir, "settings", fs.ExtYml); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
 		// Use default settings YAML file.
 		return fileName
 	}
@@ -357,7 +408,7 @@ func (c *Config) ImportAllow() fs.ExtList {
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.options.SidecarPath == "" {
-		c.options.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")
+		c.options.SidecarPath = filepath.Join(c.StoragePath(), fs.SidecarDir)
 	}
 
 	return c.options.SidecarPath
@@ -377,7 +428,7 @@ func (c *Config) SidecarWritable() bool {
 func (c *Config) UsersPath() string {
 	// Set default.
 	if c.options.UsersPath == "" {
-		return "users"
+		return fs.UsersDir
 	}
 
 	return clean.UserPath(c.options.UsersPath)
@@ -390,7 +441,7 @@ func (c *Config) UsersOriginalsPath() string {
 
 // UsersStoragePath returns the users storage base path.
 func (c *Config) UsersStoragePath() string {
-	return filepath.Join(c.StoragePath(), "users")
+	return filepath.Join(c.StoragePath(), fs.UsersDir)
 }
 
 // UserStoragePath returns the storage path for user assets.
@@ -414,7 +465,7 @@ func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 		return "", fmt.Errorf("invalid uid")
 	}
 
-	dir := filepath.Join(c.UserStoragePath(userUid), "upload", clean.Token(token))
+	dir := filepath.Join(c.UserStoragePath(userUid), fs.UploadDir, clean.Token(token))
 
 	if err := fs.MkdirAll(dir); err != nil {
 		return "", err
@@ -486,7 +537,7 @@ func (c *Config) tempPath() string {
 // CachePath returns the path for cache files.
 func (c *Config) CachePath() string {
 	if c.options.CachePath == "" {
-		return filepath.Join(c.StoragePath(), "cache")
+		return filepath.Join(c.StoragePath(), fs.CacheDir)
 	}
 
 	return fs.Abs(c.options.CachePath)
@@ -494,7 +545,7 @@ func (c *Config) CachePath() string {
 
 // CmdCachePath returns a path that external CLI tools can use as cache directory.
 func (c *Config) CmdCachePath() string {
-	return filepath.Join(c.CachePath(), "cmd")
+	return filepath.Join(c.CachePath(), fs.CmdDir)
 }
 
 // CmdLibPath returns the dynamic loader path that external CLI tools should use.
@@ -508,7 +559,7 @@ func (c *Config) CmdLibPath() string {
 
 // MediaCachePath returns the main media cache path.
 func (c *Config) MediaCachePath() string {
-	return filepath.Join(c.CachePath(), "media")
+	return filepath.Join(c.CachePath(), fs.MediaDir)
 }
 
 // MediaFileCachePath returns the cache subdirectory path for a given file hash.
@@ -536,17 +587,15 @@ func (c *Config) MediaFileCachePath(hash string) string {
 
 // ThumbCachePath returns the thumbnail storage path.
 func (c *Config) ThumbCachePath() string {
-	return filepath.Join(c.CachePath(), "thumbnails")
+	return filepath.Join(c.CachePath(), fs.ThumbnailsDir)
 }
 
 // StoragePath returns the path for generated files like cache and index.
 func (c *Config) StoragePath() string {
 	if c.options.StoragePath == "" {
-		const dirName = "storage"
-
 		// Default directories.
-		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, dirName))
-		storageDir := fs.Abs(dirName)
+		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, fs.StorageDir))
+		storageDir := fs.Abs(fs.StorageDir)
 
 		// Find existing directories.
 		if fs.PathWritable(originalsDir) && !c.ReadOnly() {
@@ -557,12 +606,12 @@ func (c *Config) StoragePath() string {
 
 		// Fallback to backup storage path.
 		if fs.PathWritable(c.options.BackupPath) {
-			return fs.Abs(filepath.Join(c.options.BackupPath, dirName))
+			return fs.Abs(filepath.Join(c.options.BackupPath, fs.StorageDir))
 		}
 
 		// Use .photoprism in home directory?
 		if usr, _ := user.Current(); usr.HomeDir != "" {
-			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, dirName))
+			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, fs.StorageDir))
 
 			if fs.PathWritable(p) || c.ReadOnly() {
 				return p
@@ -571,7 +620,7 @@ func (c *Config) StoragePath() string {
 
 		// Fallback directory in case nothing else works.
 		if c.ReadOnly() {
-			return fs.Abs(filepath.Join(fs.PPHiddenPathname, dirName))
+			return fs.Abs(filepath.Join(fs.PPHiddenPathname, fs.StorageDir))
 		}
 
 		// Store cache and index in "originals/.photoprism/storage".
@@ -600,11 +649,21 @@ func (c *Config) CustomAssetsPath() string {
 	return ""
 }
 
+// ProfilesPath returns the path where processing profile files are stored.
+func (c *Config) ProfilesPath() string {
+	return filepath.Join(c.AssetsPath(), fs.ProfilesDir)
+}
+
+// IccProfilesPath returns the path where ICC color profile files are stored.
+func (c *Config) IccProfilesPath() string {
+	return filepath.Join(c.AssetsPath(), "profiles/icc")
+}
+
 // CustomStaticPath returns the custom static assets' path.
 func (c *Config) CustomStaticPath() string {
 	if dir := c.CustomAssetsPath(); dir == "" {
 		return ""
-	} else if dir = filepath.Join(dir, "static"); !fs.PathExists(dir) {
+	} else if dir = filepath.Join(dir, fs.StaticDir); !fs.PathExists(dir) {
 		return ""
 	} else {
 		return dir
@@ -640,17 +699,17 @@ func (c *Config) CustomStaticAssetUri(res string) string {
 
 // LocalesPath returns the translation locales path.
 func (c *Config) LocalesPath() string {
-	return filepath.Join(c.AssetsPath(), "locales")
+	return filepath.Join(c.AssetsPath(), fs.LocalesDir)
 }
 
 // ExamplesPath returns the example files path.
 func (c *Config) ExamplesPath() string {
-	return filepath.Join(c.AssetsPath(), "examples")
+	return filepath.Join(c.AssetsPath(), fs.ExamplesDir)
 }
 
 // TestdataPath returns the test files path.
 func (c *Config) TestdataPath() string {
-	return filepath.Join(c.StoragePath(), "testdata")
+	return filepath.Join(c.StoragePath(), fs.TestdataDir)
 }
 
 // MariadbBin returns the mariadb executable file name.
@@ -670,5 +729,5 @@ func (c *Config) SqliteBin() string {
 
 // OriginalsAlbumsPath returns the optional album YAML file path inside originals.
 func (c *Config) OriginalsAlbumsPath() string {
-	return filepath.Join(c.OriginalsPath(), "albums")
+	return filepath.Join(c.OriginalsPath(), fs.AlbumsDir)
 }

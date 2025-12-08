@@ -10,7 +10,7 @@ HttpMode: release
 HttpPort: 81
 HttpPassword:
 DatabaseDriver: sqlite
-DatabaseDsn: .photoprism.db
+DatabaseDSN: .photoprism.db
 Theme: lavendel
 Language: english
 JpegQuality: 87

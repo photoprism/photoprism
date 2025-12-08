@@ -43,14 +43,14 @@ func SearchServices(router *gin.RouterGroup) {
 		err := c.MustBindWith(&frm, binding.Form)
 
 		if err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
 		result, err := search.Accounts(frm)
 
 		if err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 

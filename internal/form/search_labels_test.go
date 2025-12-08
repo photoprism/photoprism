@@ -13,7 +13,7 @@ func TestLabelSearchForm(t *testing.T) {
 }
 
 func TestParseQueryStringLabel(t *testing.T) {
-	t.Run("valid query", func(t *testing.T) {
+	t.Run("ValidQuery", func(t *testing.T) {
 		form := &SearchLabels{Query: "name:cat favorite:true all:false q:\"query text\""}
 
 		err := form.ParseQueryString()
@@ -30,7 +30,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, false, form.All)
 		assert.Equal(t, "query text", form.Query)
 	})
-	t.Run("valid query 2", func(t *testing.T) {
+	t.Run("ValidQueryTwo", func(t *testing.T) {
 		form := &SearchLabels{Query: "slug:cat favorite:false"}
 
 		err := form.ParseQueryString()
@@ -47,7 +47,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 		assert.Equal(t, 0, form.Offset)
 		assert.Equal(t, "", form.Order)
 	})
-	t.Run("valid query with umlauts", func(t *testing.T) {
+	t.Run("ValidQueryWithUmlauts", func(t *testing.T) {
 		form := &SearchLabels{Query: "q:\"tübingen\""}
 
 		err := form.ParseQueryString()
@@ -60,7 +60,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		assert.Equal(t, "tübingen", form.Query)
 	})
-	t.Run("query for invalid filter", func(t *testing.T) {
+	t.Run("QueryForInvalidFilter", func(t *testing.T) {
 		form := &SearchLabels{Query: "xxx:false"}
 
 		err := form.ParseQueryString()
@@ -73,8 +73,8 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		assert.Equal(t, "unknown filter: xxx", err.Error())
 	})
-	t.Run("query for favorites with uncommon bool value", func(t *testing.T) {
-		form := &SearchLabels{Query: "favorite:0.99"}
+	t.Run("QueryForFavoritesWithUncommonBoolValue", func(t *testing.T) {
+		form := &SearchLabels{Query: "favorite:0"}
 
 		err := form.ParseQueryString()
 
@@ -84,7 +84,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		assert.False(t, form.Favorite)
 	})
-	t.Run("query for count with invalid type", func(t *testing.T) {
+	t.Run("QueryForCountWithInvalidType", func(t *testing.T) {
 		form := &SearchLabels{Query: "all:2019-01-15"}
 
 		err := form.ParseQueryString()

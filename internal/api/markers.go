@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -38,28 +40,27 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	// Check authorization.
 	s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
 
-	if s.Invalid() {
-		AbortForbidden(c)
-		return nil, nil, fmt.Errorf("unauthorized")
+	if s.Abort(c) {
+		return nil, nil, errors.New("unauthorized")
 	}
 
 	// Check feature flags.
 	conf := get.Config()
 	if !conf.Settings().Features.People {
 		AbortFeatureDisabled(c)
-		return nil, nil, fmt.Errorf("feature disabled")
+		return nil, nil, errors.New("feature disabled")
 	}
 
 	// Find marker.
 	if uid := c.Param("marker_uid"); uid == "" {
 		AbortBadRequest(c)
-		return nil, nil, fmt.Errorf("bad request")
+		return nil, nil, errors.New("bad request")
 	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
 		return nil, nil, fmt.Errorf("uid %s %s", uid, err)
 	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
-		return nil, marker, fmt.Errorf("marker file missing")
+		return nil, marker, errors.New("marker file missing")
 	}
 
 	// Find file.
@@ -75,8 +76,10 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //
 // See internal/form/marker.go for the values required to create a new marker.
 //
-//	@Tags Files
-//	@Router	/api/v1/markers [post]
+//	@Tags		Files
+//	@Produce	json
+//	@Success	201	{object}	entity.Marker
+//	@Router		/api/v1/markers [post]
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
@@ -97,8 +100,7 @@ func CreateMarker(router *gin.RouterGroup) {
 
 		// Initialize form.
 		if err := c.BindJSON(&frm); err != nil {
-			log.Errorf("faces: %s (bind marker form)", err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -113,8 +115,7 @@ func CreateMarker(router *gin.RouterGroup) {
 
 		// Validate form values.
 		if err = frm.Validate(); err != nil {
-			log.Errorf("faces: %s (validate new marker)", err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		} else if frm.W <= 0 || frm.H <= 0 {
 			log.Errorf("faces: width and height must be greater than zero")
@@ -130,8 +131,7 @@ func CreateMarker(router *gin.RouterGroup) {
 
 		// Update marker from form values.
 		if err = marker.Create(); err != nil {
-			log.Errorf("faces: %s (create marker)", err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -167,18 +167,24 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Display success message.
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
-		// Return new marker.
-		c.JSON(http.StatusOK, marker)
+		// Return new marker with location header.
+		header.SetLocation(c, c.FullPath(), marker.MarkerUID)
+		c.JSON(http.StatusCreated, marker)
 	})
 }
 
 // UpdateMarker updates an existing file area marker to assign faces or other subjects.
 //
-// The request parameters are:
-//
-//   - marker_uid: string Marker UID as returned by the API
-//
-// PUT /api/v1/markers/:marker_uid
+//	@Summary	update a marker (face/subject region)
+//	@Id			UpdateMarker
+//	@Tags		Files
+//	@Accept		json
+//	@Produce	json
+//	@Param		marker_uid			path		string		true	"marker uid"
+//	@Param		marker				body		form.Marker	true	"marker properties"
+//	@Success	200					{object}	entity.Marker
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/markers/{marker_uid} [put]
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -210,14 +216,14 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		} else if err = c.BindJSON(&frm); err != nil {
 			log.Errorf("faces: %s (bind marker form)", err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
 		// Validate form values.
 		if err = frm.Validate(); err != nil {
 			log.Errorf("faces: %s (validate updated marker)", err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -278,15 +284,16 @@ func UpdateMarker(router *gin.RouterGroup) {
 	})
 }
 
-// ClearMarkerSubject removes an existing marker subject association.
+// ClearMarkerSubject removes the subject association from a marker.
 //
-// The request parameters are:
-//
-//   - uid: string Photo UID as returned by the API
-//   - file_uid: string File UID as returned by the API
-//   - id: int Marker ID as returned by the API
-//
-// DELETE /api/v1/markers/:marker_uid/subject
+//	@Summary	clear the subject of a marker
+//	@Id			ClearMarkerSubject
+//	@Tags		Files
+//	@Produce	json
+//	@Param		marker_uid			path		string	true	"marker uid"
+//	@Success	200					{object}	entity.Marker
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/markers/{marker_uid}/subject [delete]
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.

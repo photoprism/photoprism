@@ -4,6 +4,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Reserved token names used for configuration and public access.
 const TokenConfig = "__config__"
 const TokenPublic = "public"
 
@@ -11,7 +12,7 @@ var PreviewToken = NewStringMap(Strings{})
 var DownloadToken = NewStringMap(Strings{})
 var ValidateTokens = true
 
-// GenerateToken returns a random string token.
+// GenerateToken returns a short random token for previews or downloads.
 func GenerateToken() string {
 	return rnd.Base36(8)
 }

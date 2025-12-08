@@ -2,6 +2,7 @@ package maps
 
 // Generated code, do not edit.
 
+// CountryNames maps ISO country codes to localized names.
 var CountryNames = map[string]string{
 	"af": "Afghanistan",
 	"ax": "Åland Islands",

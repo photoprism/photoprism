@@ -147,7 +147,7 @@ func TestService_Directories(t *testing.T) {
 		assert.Contains(t, result.Abs(), "/Photos")
 
 	})
-	t.Run("no directory", func(t *testing.T) {
+	t.Run("NoDirectory", func(t *testing.T) {
 		account := Service{AccName: "DirectoriesAccount", AccOwner: "Owner", AccURL: "http://dummy-webdav/", AccType: "xxx", AccKey: "123", AccUser: "admin", AccPass: "photoprism",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
 			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}

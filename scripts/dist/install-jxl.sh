@@ -25,6 +25,7 @@ SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
 
 set -e
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 case $DESTARCH in
@@ -34,10 +35,10 @@ case $DESTARCH in
       URL="https://github.com/libjxl/libjxl/releases/download/${LIB_VERSION}/${ARCHIVE}"
       TMPDIR="/tmp/jpegxl"
 
-      echo "------------------------------------------------"
+      echo "--------------------------------------------------------------------------------"
       echo "VERSION: $LIB_VERSION"
       echo "ARCHIVE: $ARCHIVE"
-      echo "------------------------------------------------"
+      echo "--------------------------------------------------------------------------------"
 
       echo "Installing JPEG XL for ${DESTARCH^^}..."
 

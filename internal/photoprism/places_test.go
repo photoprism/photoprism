@@ -32,7 +32,6 @@ func TestPlaces(t *testing.T) {
 			t.Fatal("affected must not be negative")
 		}
 	})
-
 	t.Run("Force", func(t *testing.T) {
 		updated, err := w.Start(true)
 

@@ -7,7 +7,6 @@ AT:Austria
 AT:Hallstatt
 AT:Wörthersee
 AT:Österreich
-AT:Vienna
 AT:Wien
 AT:Salzburg
 AT:Sölden
@@ -60,7 +59,6 @@ BR:Brasil
 RU:Russia
 UA:Ukraine
 GB:United Kingdom
-GB:London
 GB:Scotland
 GB:Edinburgh
 GB:England
@@ -179,7 +177,6 @@ AU:Melbourne
 AU:Perth
 AU:Tasmania
 AU:Tasmanien
-AU:Sydney
 ZA:Capetown
 ZA:Durban
 ZA:Pretoria
@@ -205,8 +202,6 @@ US:Los Angeles
 US:Seattle
 US:Chicago
 US:Miami
-US:Dallas
-US:Houston
 US:Las Vegas
 US:Minneapolis
 US:Kansas
@@ -218,7 +213,6 @@ US:Massachusetts
 US:Connecticut
 US:New Jersey
 US:Delaware
-US:Orlando
 US:Detroit
 US:Nevada
 US:Texas
@@ -251,7 +245,6 @@ BD:Bangladesh
 BD:Dhaka
 BD:Chattogram
 BD:Khulna
-JO:Jordan
 JO:Amman
 JO:عَمَّان
 JO:Zarqa
@@ -315,7 +308,6 @@ LB:Baalbek
 LB:Baalbeck
 LB:بعلبك
 LB:Quobeiyat
-LB:Rafic Hariri
 LB:Kafarkila
 LB:Kfarkila
 LB:Kfarkela
@@ -333,7 +325,6 @@ LB:صُور
 BG:Bulgaria
 BG:Koprivshtitsa
 BG:Melnik
-BG:Sofia
 GR:Corfu
 GR:Greece
 GR:Hellas
@@ -499,8 +490,6 @@ IR:Mashhad
 IR:Persia
 YE:Yemen
 YE:اليمن
-YE:Sana'a
-YE:Sanaa
 YE:سناء
 YE:Al Hudaydah
 YE:Hodeda
@@ -518,8 +507,6 @@ TL:East Timor
 PK:Pakistan
 PK:Islamabad
 SA:Saudi Arabia
-SA:Riad
-SA:Riyadh
 SA:الرياض
 KR:South Korea
 KR:Seoul
@@ -568,7 +555,6 @@ MT:Valletta
 IT:Como
 IT:Cortina d'Ampezzo
 IT:Italy
-IT:Milan
 IT:Milano
 IT:Mailand
 IT:Neapel
@@ -578,7 +564,6 @@ IT:Florenz
 IT:Bologna
 IT:Venezia
 IT:Venedig
-IT:Venice
 IT:Italien
 IT:Sicily
 IT:Trieste
@@ -619,7 +604,6 @@ VC:Saint Vincent
 GD:Grenada
 LC:Saint Lucia
 JM:Jamaica
-TT:Trinidad
 TT:Tobago
 NZ:New Zealand
 KI:Kiribati
@@ -644,7 +628,6 @@ ES:Córdoba
 ES:Seville
 ES:Málaga
 ES:Bilbao
-ES:Valencia
 ES:España
 ES:Espana
 CA:Canada
@@ -656,7 +639,6 @@ CA:Toronto
 CA:Ottawa
 CA:Quebec
 CA:Ontario
-CA:Alberta
 IL:Israel
 IL:Israeli
 IL:Israelis
@@ -665,11 +647,9 @@ IL:Yisra'el
 IL:Yisrael
 IL:Tel Aviv
 IL:תֵּל אָבִיב-יָפוֹ
-IL:Ben Gurion
 IL:Caesarea
 IL:Netanya
 IL:קֵיסָרְיָה
-IL:Haifa
 IL:חֵיפָה
 IL:Bethlehem
 IL:بيت لحم
@@ -743,7 +723,6 @@ FR:Réunion
 FR:Strassburg
 FR:Strasbourg
 FR:Straßburg
-FR:Paris
 NL:Amsterdam
 NL:Rotterdam
 NL:Den Haag
@@ -757,7 +736,6 @@ NL:Nederland
 NL:Nederlands
 NL:Nederlanden
 NL:Holland
-TD:Chad
 BA:Bosnia
 BA:Herzegovina
 NO:Norway
@@ -779,7 +757,6 @@ PS:جنين
 PS:Al-Aqsa
 PS:المسجد
 PS:West Bank
-PS:Samaria
 PS:Judea
 PS:Nablus
 PS:Rafah

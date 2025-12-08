@@ -34,11 +34,16 @@ import (
 
 //go:generate xgettext --no-wrap --language=c --from-code=UTF-8 --output=../../assets/locales/messages.pot messages.go
 
+// Message represents a localized message identifier.
 type Message int
+
+// MessageMap maps message IDs to their localized strings.
 type MessageMap map[Message]string
 
+var noVars []interface{}
+
 func gettext(s string) string {
-	return gotext.Get(s)
+	return gotext.Get(s, noVars...)
 }
 
 // msgParams replaces message params with the actual values.
@@ -52,7 +57,7 @@ func msgParams(msg string, params ...interface{}) string {
 
 // Msg returns a translated message string.
 func Msg(id Message, params ...interface{}) string {
-	return msgParams(gotext.Get(Messages[id]), params...)
+	return msgParams(gotext.Get(Messages[id], noVars...), params...)
 }
 
 // Error returns a translated error message.

@@ -1,5 +1,5 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-settings" :class="$config.aclClasses('settings')">
+  <div ref="page" tabindex="-1" class="p-page p-page-settings" :class="$config.aclClasses('settings')">
     <v-tabs v-model="active" :height="$vuetify.display.smAndDown ? 48 : 64" class="p-page__navigation">
       <v-tab v-for="t in tabs" :id="'tab-' + t.name" :key="t.name" :class="t.class" ripple @click="changePath(t.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="t.label">{{ t.icon }}</v-icon>
@@ -49,7 +49,9 @@ export default {
   data() {
     const isDemo = this.$config.isDemo();
     const isPublic = this.$config.isPublic();
+    const isPortal = this.$config.isPortal();
     const isSuperAdmin = this.$session.isSuperAdmin();
+    const hasScope = this.$session.hasScope();
 
     const tabs = [
       {
@@ -60,6 +62,7 @@ export default {
         path: "/settings",
         icon: "mdi-television",
         public: true,
+        portal: true,
         admin: true,
         demo: true,
         show: $config.feature("settings"),
@@ -72,9 +75,10 @@ export default {
         path: "/settings/content",
         icon: "mdi-camera-iris",
         public: true,
+        portal: false,
         admin: true,
         demo: true,
-        show: $config.feature("settings"),
+        show: $config.feature("settings") && !hasScope,
       },
       {
         name: "settings_advanced",
@@ -84,6 +88,7 @@ export default {
         path: "/settings/advanced",
         icon: "mdi-wrench",
         public: false,
+        portal: true,
         admin: true,
         demo: true,
         show: $config.allow("config", "manage") && isSuperAdmin,
@@ -96,6 +101,7 @@ export default {
         path: "/settings/services",
         icon: "mdi-swap-horizontal",
         public: false,
+        portal: false,
         admin: true,
         demo: true,
         show: $config.feature("services") && $config.allow("services", "manage"),
@@ -108,13 +114,16 @@ export default {
         path: "/settings/account",
         icon: "mdi-shield-account-variant",
         public: false,
+        portal: true,
         admin: true,
         demo: true,
         show: $config.feature("account"),
       },
     ];
 
-    if (isDemo) {
+    if (isPortal) {
+      initTabs("portal", tabs);
+    } else if (isDemo) {
       initTabs("demo", tabs);
     } else if (isPublic) {
       initTabs("public", tabs);

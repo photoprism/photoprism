@@ -60,7 +60,6 @@ func TestMovement(t *testing.T) {
 		assert.InEpsilon(t, 41.873295, posMid.Lat, 0.01)
 		assert.InEpsilon(t, 67.434295, posMid.Lng, 0.01)
 	})
-
 	t.Run("PositionBefore", func(t *testing.T) {
 		timeEst := time.Date(2019, time.July, 21, 11, 56, 47, 0, time.UTC)
 
@@ -105,7 +104,6 @@ func TestMovement(t *testing.T) {
 		assert.InEpsilon(t, 48.299200, posMid.Lat, 0.001)
 		assert.InEpsilon(t, 8.929535, posMid.Lng, 0.01)
 	})
-
 	t.Run("TooFast", func(t *testing.T) {
 		timeEst := time.Date(2019, time.July, 21, 11, 56, 47, 0, time.UTC)
 
@@ -141,7 +139,6 @@ func TestMovement(t *testing.T) {
 		assert.InEpsilon(t, 48.301200, posMid.Lat, 0.01)
 		assert.InEpsilon(t, 8.928630, posMid.Lng, 0.01)
 	})
-
 	t.Run("PositionBetween", func(t *testing.T) {
 		timeEst := time.Date(2019, time.July, 21, 11, 56, 47, 0, time.UTC)
 
@@ -177,7 +174,6 @@ func TestMovement(t *testing.T) {
 		assert.InEpsilon(t, 48.299300, posMid.Lat, 0.01)
 		assert.InEpsilon(t, 8.929335, posMid.Lng, 0.01)
 	})
-
 	t.Run("NotRealistic", func(t *testing.T) {
 		timeEst := time.Date(2013, time.August, 10, 00, 05, 37, 0, time.UTC)
 

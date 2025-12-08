@@ -12,13 +12,14 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Auth checks if the credentials are valid and returns the user and authentication provider.
+// Auth validates login credentials and returns the authenticated user plus provider/method metadata.
 var Auth = func(frm form.Login, s *Session, c *gin.Context) (user *User, provider authn.ProviderType, method authn.MethodType, err error) {
 	// Get sanitized username from login form.
 	nameName := frm.CleanUsername()
@@ -39,7 +40,7 @@ var Auth = func(frm form.Login, s *Session, c *gin.Context) (user *User, provide
 	return user, provider, method, err
 }
 
-// AuthSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
+// AuthSession resolves an existing session from an app password token embedded in the login form.
 func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err error) {
 	if frm.Password == "" {
 		// Abort authentication if no token was provided.
@@ -65,10 +66,10 @@ func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err
 	sess.UpdateContext(c)
 
 	// Returns session and user if all checks have passed.
-	return sess, sess.User(), nil
+	return sess, sess.GetUser(), nil
 }
 
-// AuthLocal authenticates against the local user database with the specified username and password.
+// AuthLocal authenticates against the local user database, handling OTP and app-password flows.
 func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider authn.ProviderType, method authn.MethodType, err error) {
 	// Set defaults.
 	provider = authn.ProviderNone
@@ -140,7 +141,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 			if s != nil {
 				// Set scope, client UID, and client name to that of the parent session.
 				s.ClientUID = authSess.ClientUID
-				s.ClientName = authSess.ClientName
+				s.ClientName = authSess.GetClientName()
 				s.SetScope(authSess.Scope())
 
 				// Set provider and method to help identify the session type.
@@ -155,7 +156,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 					s.SessExpires = authSess.SessExpires
 				}
 
-				event.AuditInfo([]string{clientIp, "session %s", "login as %s", "app password", authn.Succeeded}, s.RefID, clean.LogQuote(username))
+				event.AuditInfo([]string{clientIp, "session %s", "login as %s", "app password", status.Succeeded}, s.RefID, clean.LogQuote(username))
 				event.LoginInfo(clientIp, "api", username, s.UserAgent)
 			}
 
@@ -226,7 +227,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 	}
 
 	if s != nil {
-		event.AuditInfo([]string{clientIp, "session %s", "login as %s", authn.Succeeded}, s.RefID, clean.LogQuote(username))
+		event.AuditInfo([]string{clientIp, "session %s", "login as %s", status.Succeeded}, s.RefID, clean.LogQuote(username))
 		event.LoginInfo(clientIp, "api", username, s.UserAgent)
 	}
 
@@ -267,7 +268,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 
 	// Try to redeem link share token, if provided.
 	if frm.HasShareToken() {
-		user = m.User()
+		user = m.GetUser()
 
 		// Redeem token.
 		if user.IsRegistered() {
@@ -279,7 +280,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 			} else {
 				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(frm.Token))
 			}
-		} else if data := m.Data(); data == nil {
+		} else if data := m.GetData(); data == nil {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
 		} else if shares := data.RedeemToken(frm.Token); shares == 0 {
@@ -308,7 +309,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 	}
 
 	// Unregistered visitors must use a valid share link to obtain a session.
-	if m.User().NotRegistered() && m.Data().NoShares() {
+	if m.GetUser().NotRegistered() && m.GetData().NoShares() {
 		m.Status = http.StatusUnauthorized
 		return i18n.Error(i18n.ErrInvalidCredentials)
 	}

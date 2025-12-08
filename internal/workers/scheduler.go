@@ -7,7 +7,9 @@ import (
 )
 
 var (
-	Jobs      map[string]gocron.Job
+	// Jobs keeps the scheduled background jobs keyed by name.
+	Jobs map[string]gocron.Job
+	// Scheduler is the shared job scheduler instance.
 	Scheduler gocron.Scheduler
 )
 

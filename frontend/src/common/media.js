@@ -52,6 +52,7 @@ export const FormatSVG = "svg";
 // Content type strings for common media formats, see https://tools.woolyss.com/html5-canplaytype-tester/:
 export const ContentTypeMp4 = "video/mp4";
 export const ContentTypeMp4AvcMain = ContentTypeMp4 + '; codecs="avc1.4d0028"'; // AVC High Profile Level 4
+export const ContentTypeMp4AvcHigh = ContentTypeMp4 + '; codecs="avc1.640028"'; // MPEG-4 AVC (H.264), High Level 4.0
 export const ContentTypeMp4HvcMain = ContentTypeMp4 + '; codecs="hvc1.1.6.L93.B0"';
 export const ContentTypeMp4HvcMain10 = ContentTypeMp4 + '; codecs="hvc1.2.4.L153.B0"';
 export const ContentTypeMp4HevMain = ContentTypeMp4 + '; codecs="hev1.1.6.L93.B0"';

@@ -11,20 +11,25 @@ type SearchFaces struct {
 	Count   int    `form:"count" binding:"required" serialize:"-"`
 	Offset  int    `form:"offset" serialize:"-"`
 	Order   string `form:"order" serialize:"-"`
+	Reverse bool   `form:"reverse" serialize:"-"`
 }
 
+// GetQuery returns the current search query string.
 func (f *SearchFaces) GetQuery() string {
 	return f.Query
 }
 
+// SetQuery stores the raw query string.
 func (f *SearchFaces) SetQuery(q string) {
 	f.Query = q
 }
 
+// ParseQueryString deserializes the query string into form fields.
 func (f *SearchFaces) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
+// NewFaceSearch creates a SearchFaces form with the provided query.
 func NewFaceSearch(query string) SearchFaces {
 	return SearchFaces{Query: query}
 }

@@ -18,8 +18,9 @@ import (
 // coversBusy is true when the covers are currently updating.
 var coversBusy = atomic.Bool{}
 
-// UpdateAlbumDefaultCovers updates default album cover thumbs.
-func UpdateAlbumDefaultCovers() (err error) {
+// UpdateAlbumManualCovers updates manual album cover thumbs. When albums are
+// provided, the update is limited to auto-managed entries from that list.
+func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
@@ -27,16 +28,30 @@ func UpdateAlbumDefaultCovers() (err error) {
 
 	var res *gorm.DB
 
+	if len(albums) > 0 {
+		for _, album := range albums {
+			if album.AlbumType != entity.AlbumManual || album.ThumbSrc != entity.SrcAuto || album.AlbumUID == "" {
+				continue
+			}
+
+			if err = refreshAlbumCover(album); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto)
 
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
-    	SELECT p2.album_uid, f.file_hash FROM files f, (
-        	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
-            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0 AND pa.missing = 0
-        	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+	    	SELECT p2.album_uid, f.file_hash FROM files f, (
+	        	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
+	            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0 AND pa.missing = 0
+	        	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+	        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.album_uid = albums.album_uid
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case SQLite3:
@@ -66,14 +81,29 @@ func UpdateAlbumDefaultCovers() (err error) {
 	return err
 }
 
-// UpdateAlbumFolderCovers updates folder album cover thumbs.
-func UpdateAlbumFolderCovers() (err error) {
+// UpdateAlbumFolderCovers updates folder album cover thumbs. When albums are
+// provided, the update is limited to auto-managed folders from that list.
+func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
 	var res *gorm.DB
+
+	if len(albums) > 0 {
+		for _, album := range albums {
+			if album.AlbumType != entity.AlbumFolder || album.ThumbSrc != entity.SrcAuto || album.AlbumUID == "" {
+				continue
+			}
+
+			if err = refreshAlbumCover(album); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
 
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumFolder, entity.SrcAuto)
 
@@ -114,14 +144,29 @@ func UpdateAlbumFolderCovers() (err error) {
 	return err
 }
 
-// UpdateAlbumMonthCovers updates month album cover thumbs.
-func UpdateAlbumMonthCovers() (err error) {
+// UpdateAlbumMonthCovers updates month album cover thumbs. When albums are
+// provided, the update is limited to auto-managed months from that list.
+func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
 	var res *gorm.DB
+
+	if len(albums) > 0 {
+		for _, album := range albums {
+			if album.AlbumType != entity.AlbumMonth || album.ThumbSrc != entity.SrcAuto || album.AlbumUID == "" {
+				continue
+			}
+
+			if err = refreshAlbumCover(album); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
 
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumMonth, entity.SrcAuto)
 
@@ -162,21 +207,198 @@ func UpdateAlbumMonthCovers() (err error) {
 	return err
 }
 
-// UpdateAlbumCovers updates album cover thumbs.
-func UpdateAlbumCovers() (err error) {
-	// Update Default Albums.
-	if err = UpdateAlbumDefaultCovers(); err != nil {
+// UpdateAlbumCovers updates album cover thumbs. When albums are provided, only
+// those auto-managed entries are refreshed.
+func UpdateAlbumCovers(albums ...entity.Album) (err error) {
+	if len(albums) == 0 {
+		if err = UpdateAlbumManualCovers(); err != nil {
+			return err
+		}
+
+		if err = UpdateAlbumFolderCovers(); err != nil {
+			return err
+		}
+
+		if err = UpdateAlbumMonthCovers(); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	var manualAlbums, folderAlbums, monthAlbums []entity.Album
+
+	for _, album := range albums {
+		if album.ThumbSrc != entity.SrcAuto {
+			continue
+		}
+
+		switch album.AlbumType {
+		case entity.AlbumManual:
+			manualAlbums = append(manualAlbums, album)
+		case entity.AlbumFolder:
+			folderAlbums = append(folderAlbums, album)
+		case entity.AlbumMonth:
+			monthAlbums = append(monthAlbums, album)
+		}
+	}
+
+	if len(manualAlbums) > 0 {
+		if err = UpdateAlbumManualCovers(manualAlbums...); err != nil {
+			return err
+		}
+	}
+
+	if len(folderAlbums) > 0 {
+		if err = UpdateAlbumFolderCovers(folderAlbums...); err != nil {
+			return err
+		}
+	}
+
+	if len(monthAlbums) > 0 {
+		if err = UpdateAlbumMonthCovers(monthAlbums...); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// refreshAlbumCover recomputes the cover thumb for a single album when the
+// cover is managed automatically.
+func refreshAlbumCover(album entity.Album) error {
+	if album.AlbumUID == "" {
+		return nil
+	}
+
+	var err error
+
+	switch album.AlbumType {
+	case entity.AlbumManual:
+		err = refreshManualAlbumCover(album)
+	case entity.AlbumFolder:
+		err = refreshFolderAlbumCover(album)
+	case entity.AlbumMonth:
+		err = refreshMonthAlbumCover(album)
+	default:
+		return nil
+	}
+
+	if err != nil {
+		if strings.Contains(err.Error(), "no rows") || strings.Contains(err.Error(), "no cover") {
+			return nil
+		}
+
 		return err
 	}
 
-	// Update Folder Albums.
-	if err = UpdateAlbumFolderCovers(); err != nil {
+	entity.FlushAlbumCache()
+
+	return nil
+}
+
+// refreshManualAlbumCover updates the cover for a single manual album.
+func refreshManualAlbumCover(album entity.Album) error {
+	file, err := AlbumCoverByUID(album.AlbumUID, false)
+	if err != nil {
+		if strings.Contains(err.Error(), "no cover") {
+			return nil
+		}
+
 		return err
 	}
 
-	// Update Monthly Albums.
-	if err = UpdateAlbumMonthCovers(); err != nil {
-		return err
+	if file.FileHash == "" {
+		return nil
+	}
+
+	return entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": file.FileHash})
+}
+
+// refreshFolderAlbumCover updates the cover for a single folder album.
+func refreshFolderAlbumCover(album entity.Album) error {
+	if album.AlbumPath == "" {
+		return nil
+	}
+
+	switch DbDialect() {
+	case MySQL:
+		res := Db().Exec(`UPDATE albums LEFT JOIN (
+		SELECT p2.photo_path, f.file_hash FROM files f, (
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_path = albums.album_path
+		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumPath,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumFolder,
+			entity.SrcAuto,
+		)
+
+		return res.Error
+	case SQLite3:
+		res := Db().Table(entity.Album{}.TableName()).
+			Where("album_uid = ? AND album_type = ? AND thumb_src = ?", album.AlbumUID, entity.AlbumFolder, entity.SrcAuto).
+			UpdateColumn("thumb", gorm.Expr(`(
+		SELECT f.file_hash FROM files f,(
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
+			  GROUP BY p.photo_path
+			) b
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		AND b.photo_path = albums.album_path LIMIT 1
+		)`, album.AlbumPath, media.PreviewExpr))
+
+		return res.Error
+	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
+	}
+
+	return nil
+}
+
+// refreshMonthAlbumCover updates the cover for a single month album.
+func refreshMonthAlbumCover(album entity.Album) error {
+	if album.AlbumYear == 0 && album.AlbumMonth == 0 {
+		return nil
+	}
+
+	switch DbDialect() {
+	case MySQL:
+		res := Db().Exec(`UPDATE albums LEFT JOIN (
+		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
+		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumYear,
+			album.AlbumMonth,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumMonth,
+			entity.SrcAuto,
+		)
+
+		return res.Error
+	case SQLite3:
+		res := Db().Table(entity.Album{}.TableName()).
+			Where("album_uid = ? AND album_type = ? AND thumb_src = ?", album.AlbumUID, entity.AlbumMonth, entity.SrcAuto).
+			UpdateColumn("thumb", gorm.Expr(`(
+		SELECT f.file_hash FROM files f,(
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			  GROUP BY p.photo_year, p.photo_month
+			) b
+		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1
+		)`, album.AlbumYear, album.AlbumMonth, media.PreviewExpr))
+
+		return res.Error
+	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}
 
 	return nil

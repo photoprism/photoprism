@@ -64,7 +64,6 @@ func TestGetPhoto(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "Iso")
 		assert.Equal(t, "", val.String())
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
@@ -84,14 +83,12 @@ func TestUpdatePhoto(t *testing.T) {
 		assert.Equal(t, "de", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Name": "Updated01", "Country": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
@@ -109,14 +106,12 @@ func TestGetPhotoDownload(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetPhotoDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-
 	t.Run("InvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -138,7 +133,6 @@ func TestLikePhoto(t *testing.T) {
 		val := gjson.Get(r2.Body.String(), "Favorite")
 		assert.Equal(t, "true", val.String())
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikePhoto(router)
@@ -158,7 +152,6 @@ func TestDislikePhoto(t *testing.T) {
 		val := gjson.Get(r2.Body.String(), "Favorite")
 		assert.Equal(t, "false", val.String())
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikePhoto(router)
@@ -181,7 +174,6 @@ func TestPhotoPrimary(t *testing.T) {
 		val2 := gjson.Get(r3.Body.String(), "Primary")
 		assert.Equal(t, "false", val2.String())
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoPrimary(router)
@@ -199,7 +191,6 @@ func TestGetPhotoYaml(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7/yaml")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhotoYaml(router)
@@ -222,7 +213,6 @@ func TestApprovePhoto(t *testing.T) {
 		val := gjson.Get(r2.Body.String(), "Quality")
 		assert.Equal(t, "3", val.String())
 	})
-
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		ApprovePhoto(router)

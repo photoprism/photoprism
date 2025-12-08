@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="400"
@@ -8,7 +9,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="1" @submit.prevent>
+    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-cloud</v-icon>
@@ -55,24 +56,10 @@
           <v-btn variant="flat" color="button" class="action-cancel action-close" @click.stop="close">
             {{ $gettext(`Cancel`) }}
           </v-btn>
-          <v-btn
-            v-if="noServices"
-            :disabled="!canManage || (isPublic && !isDemo)"
-            color="highlight"
-            variant="flat"
-            class="action-setup"
-            @click.stop="setup"
-          >
+          <v-btn v-if="noServices" :disabled="!canManage || (isPublic && !isDemo)" color="highlight" variant="flat" class="action-setup" @click.stop="setup">
             {{ $gettext(`Setup`) }}
           </v-btn>
-          <v-btn
-            v-else
-            :disabled="!canUpload || noServices || !service"
-            color="highlight"
-            variant="flat"
-            class="action-upload"
-            @click.stop="confirm"
-          >
+          <v-btn v-else :disabled="!canUpload || noServices || !service" color="highlight" variant="flat" class="action-upload" @click.stop="confirm">
             {{ $gettext(`Upload`) }}
           </v-btn>
         </v-card-actions>

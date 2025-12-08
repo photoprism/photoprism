@@ -27,6 +27,7 @@ package commands
 import (
 	"context"
 	"os"
+	"strings"
 	"syscall"
 
 	"github.com/sevlyar/go-daemon"
@@ -37,7 +38,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// NONINTERACTIVE is the CLI environment flag to disable prompts.
+const NONINTERACTIVE = "noninteractive"
+
 var log = event.Log
+var cliMode = strings.ToLower(os.Getenv(config.EnvVar("cli")))
+
+// RunNonInteractively checks if command should run non-interactively.
+func RunNonInteractively(confirmed bool) bool {
+	return confirmed || cliMode == NONINTERACTIVE
+}
 
 // PhotoPrism contains the photoprism CLI (sub-)commands.
 var PhotoPrism = []*cli.Command{
@@ -66,6 +76,7 @@ var PhotoPrism = []*cli.Command{
 	PasswdCommand,
 	UsersCommands,
 	ClientsCommands,
+	ClusterCommands,
 	AuthCommands,
 	ShowCommands,
 	VersionCommand,
@@ -78,7 +89,7 @@ var PhotoPrism = []*cli.Command{
 var CountFlag = &cli.UintFlag{
 	Name:    "count",
 	Aliases: []string{"n"},
-	Usage:   "`LIMIT` number of results",
+	Usage:   "maximum `NUMBER` of results",
 	Value:   100,
 }
 

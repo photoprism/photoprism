@@ -4,7 +4,7 @@ package duf
 
 import "strings"
 
-//nolint:revive,deadcode
+//nolint:revive // constants kept for reference in filesystem detection
 const (
 	// man statfs
 	ADFS_SUPER_MAGIC      = 0xadf5

@@ -13,20 +13,20 @@ const (
 	FileSyncUploaded   = "uploaded"
 )
 
-// FileSync represents a one-to-many relation between File and Account for syncing with remote services.
+// FileSync tracks the synchronization status for a file on an external service.
 type FileSync struct {
-	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
-	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
-	FileID     uint   `gorm:"index;"`
-	RemoteDate time.Time
-	RemoteSize int64
-	Status     string `gorm:"type:VARBINARY(16);"`
-	Error      string `gorm:"type:VARBINARY(512);"`
-	Errors     int
-	File       *File
-	Account    *Service
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	RemoteName string    `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	ServiceID  uint      `gorm:"primary_key;auto_increment:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
+	FileID     uint      `gorm:"index;" json:"FileID" yaml:"FileID,omitempty"`
+	RemoteDate time.Time `json:"RemoteDate,omitempty" yaml:"RemoteDate,omitempty"`
+	RemoteSize int64     `json:"RemoteSize,omitempty" yaml:"RemoteSize,omitempty"`
+	Status     string    `gorm:"type:VARBINARY(16);" json:"Status" yaml:"Status,omitempty"`
+	Error      string    `gorm:"type:VARBINARY(512);" json:"Error,omitempty" yaml:"Error,omitempty"`
+	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
+	File       *File     `json:"File,omitempty" yaml:"-"`
+	Account    *Service  `json:"Account,omitempty" yaml:"-"`
+	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
+	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }
 
 // TableName returns the entity table name.
@@ -34,7 +34,7 @@ func (FileSync) TableName() string {
 	return "files_sync"
 }
 
-// NewFileSync creates a new entity.
+// NewFileSync creates a new sync record with status preset to "new".
 func NewFileSync(accountID uint, remoteName string) *FileSync {
 	result := &FileSync{
 		ServiceID:  accountID,
@@ -45,12 +45,12 @@ func NewFileSync(accountID uint, remoteName string) *FileSync {
 	return result
 }
 
-// Updates multiple columns in the database.
+// Updates mutates multiple columns on the existing row.
 func (m *FileSync) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Update a column in the database.
+// Update mutates a single column on the existing row.
 func (m *FileSync) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

@@ -9,7 +9,8 @@ import (
 func SkipWalk(name string, isDir, isSymlink bool, done Done, ignore *IgnoreList) (skip bool, result error) {
 	isDone := done[name].Exists()
 
-	if isSymlink {
+	switch {
+	case isSymlink:
 		// Check if symlink points to a directory.
 		if link, err := os.Stat(name); err == nil && link.IsDir() {
 			// Skip directories.
@@ -22,12 +23,13 @@ func SkipWalk(name string, isDir, isSymlink bool, done Done, ignore *IgnoreList)
 			}
 
 			// Skip symlinked directories that cannot be resolved or are ignored, hidden, or already done.
-			if ignore.Ignore(name) || evalErr != nil || isDone || done[resolved].Exists() {
+			switch {
+			case ignore.Ignore(name) || evalErr != nil || isDone || done[resolved].Exists():
 				result = filepath.SkipDir
-			} else if FileExists(filepath.Join(resolved, PPStorageFilename)) {
+			case FileExists(filepath.Join(resolved, PPStorageFilename)):
 				// Skip symlinked directories that contain a .ppstorage file.
 				result = filepath.SkipDir
-			} else {
+			default:
 				// Flag the symlink target as processed.
 				done[resolved] = Found
 			}
@@ -36,7 +38,7 @@ func SkipWalk(name string, isDir, isSymlink bool, done Done, ignore *IgnoreList)
 			skip = true
 			result = filepath.SkipDir
 		}
-	} else if isDir {
+	case isDir:
 		skip = true
 
 		if _ = ignore.Path(name); ignore.Ignore(name) || isDone {
@@ -46,9 +48,11 @@ func SkipWalk(name string, isDir, isSymlink bool, done Done, ignore *IgnoreList)
 			// Skip directories that contain a .ppstorage file.
 			result = filepath.SkipDir
 		}
-	} else if ignore.Ignore(name) || isDone {
-		// Skip files that are hidden or already done.
-		skip = true
+	default:
+		if ignore.Ignore(name) || isDone {
+			// Skip files that are hidden or already done.
+			skip = true
+		}
 	}
 
 	if skip {

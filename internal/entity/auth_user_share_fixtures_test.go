@@ -13,7 +13,6 @@ func TestUserShareMap_Get(t *testing.T) {
 		assert.Equal(t, "as6sg6bxpogaaba9", r.ShareUID)
 		assert.IsType(t, UserShare{}, r)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		r := UserShareFixtures.Get("monstera")
 		assert.Equal(t, "", r.Comment)
@@ -30,7 +29,6 @@ func TestUserShareMap_Pointer(t *testing.T) {
 
 		assert.IsType(t, &UserShare{}, r)
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		r := UserShareFixtures.Pointer("monstera")
 		assert.Equal(t, "", r.Comment)

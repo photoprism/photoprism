@@ -131,13 +131,14 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 
 // RemuxCmd returns the FFmpeg command for transferring content from one container format to another without altering the original video or audio stream.
 func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err error) {
-	if srcName == "" {
+	switch {
+	case srcName == "":
 		return nil, fmt.Errorf("empty source filename")
-	} else if !fs.FileExistsNotEmpty(srcName) {
+	case !fs.FileExistsNotEmpty(srcName):
 		return nil, fmt.Errorf("source file is empty or missing")
-	} else if destName == "" {
+	case destName == "":
 		return nil, fmt.Errorf("empty destination filename")
-	} else if srcName == destName {
+	case srcName == destName:
 		return nil, fmt.Errorf("source and destination filenames must be different")
 	}
 
@@ -146,24 +147,25 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 		opt.Bin = encode.FFmpegBin
 	}
 
-	// Compose "ffmpeg" command flags:
+	// Compose "ffmpeg" command flags, see https://ffmpeg.org/ffmpeg-formats.html#Format-Options:
 	flags := []string{
 		"-hide_banner",
 		"-y",
 		"-strict", "-2",
-		"-avoid_negative_ts", "make_non_negative",
+		// The "-avoid_negative_ts" flag is commonly used for remuxing, but may cause desync (please report any issues):
+		"-avoid_negative_ts", "make_zero",
 		"-i", srcName,
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
-		"-dn", // Exclude data streams such as subtitles, timecode tracks, or camera motion data from the output file.
+		// The "-dn" flag removes data streams, such as subtitles, timecode tracks, and camera motion data:
+		"-dn",
 		"-ignore_unknown",
 		"-codec", "copy",
 		"-f", opt.Container.String(),
 	}
 
 	// Append format specific "ffmpeg" command flags.
-	switch opt.Container {
-	case fs.VideoMp4:
+	if opt.Container == fs.VideoMp4 {
 		// Ensure MP4 compatibility:
 		flags = append(flags,
 			"-movflags", opt.MovFlags,
@@ -195,6 +197,7 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 	// Set the destination file name as the last command flag.
 	flags = append(flags, destName)
 
+	// #nosec G204 -- filenames and flags are constructed internally and not user-controlled.
 	cmd = exec.Command(
 		opt.Bin,
 		flags...,

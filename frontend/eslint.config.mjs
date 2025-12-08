@@ -22,10 +22,14 @@ export default defineConfig([
     "tests/upload-files/",
     "**/*.html",
     "**/.idea",
+    "**/.codex",
+    "**/.env",
+    "**/.venv",
     "**/.github",
     "**/.tmp",
     "**/.local",
     "**/.cache",
+    "**/.gocache",
     "**/.var",
   ]),
   {
@@ -72,7 +76,8 @@ export default defineConfig([
       },
     },
     rules: {
-      "indent": ["error", 2, { SwitchCase: 1 }],
+      // Defer indentation to Prettier so we don't get conflicting expectations.
+      "indent": "off",
       "linebreak-style": ["error", "unix"],
       "quotes": [
         "off",
@@ -123,7 +128,7 @@ export default defineConfig([
       "prettier/prettier": [
         "warn",
         {
-          printWidth: 120,
+          printWidth: 160,
           semi: true,
           singleQuote: false,
           bracketSpacing: true,

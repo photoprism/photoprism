@@ -30,6 +30,7 @@ import (
 
 var log = event.Log
 
+// S is a helper alias for string slices used when composing logs and metadata.
 type S []string
 
 // logWarn logs an error as warning and keeps quiet otherwise.

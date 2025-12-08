@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 func TestParseAttr(t *testing.T) {
@@ -164,7 +166,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 1)
 		result := attr.Find("metrics")
 
-		assert.Equal(t, All, result.Key)
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, "", result.Value)
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -182,6 +184,7 @@ func TestAttr_Find(t *testing.T) {
 
 		assert.Len(t, attr, 1)
 		result := attr.Find("*")
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, All, result.Key)
 		assert.Equal(t, "", result.Value)
 	})
@@ -191,6 +194,7 @@ func TestAttr_Find(t *testing.T) {
 
 		assert.Len(t, attr, 1)
 		result := attr.Find("6VU:*")
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, All, result.Key)
 		assert.Equal(t, "", result.Value)
 	})
@@ -200,7 +204,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 7)
 		result := attr.Find("people.view")
 		assert.Equal(t, "people.view", result.Key)
-		assert.Equal(t, True, result.Value)
+		assert.Equal(t, enum.True, result.Value)
 	})
 	t.Run("ReadAll", func(t *testing.T) {
 		s := "read *"
@@ -209,7 +213,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 2)
 		result := attr.Find("read")
 		assert.Equal(t, "read", result.Key)
-		assert.Equal(t, True, result.Value)
+		assert.Equal(t, enum.True, result.Value)
 	})
 	t.Run("ReadFalse", func(t *testing.T) {
 		s := "read:false *"
@@ -218,10 +222,10 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 2)
 		result := attr.Find("read:*")
 		assert.Equal(t, "read", result.Key)
-		assert.Equal(t, False, result.Value)
+		assert.Equal(t, enum.False, result.Value)
 		result = attr.Find("read:false")
 		assert.Equal(t, "read", result.Key)
-		assert.Equal(t, False, result.Value)
+		assert.Equal(t, enum.False, result.Value)
 	})
 	t.Run("ReadOther", func(t *testing.T) {
 		s := "read:other *"
@@ -230,7 +234,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Len(t, attr, 2)
 
 		result := attr.Find("read")
-		assert.Equal(t, All, result.Key)
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, "", result.Value)
 
 		result = attr.Find("read:other")
@@ -238,7 +242,7 @@ func TestAttr_Find(t *testing.T) {
 		assert.Equal(t, "other", result.Value)
 
 		result = attr.Find("read:true")
-		assert.Equal(t, All, result.Key)
+		assert.Equal(t, Any, result.Key)
 		assert.Equal(t, "", result.Value)
 
 		result = attr.Find("read:false")

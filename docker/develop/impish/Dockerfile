@@ -52,6 +52,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       apt-utils \
+      ripgrep \
       gpg \
       gpg-agent \
       pkg-config \
@@ -105,6 +106,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-chrome.sh && \
     /scripts/install-go.sh && \

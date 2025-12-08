@@ -4,7 +4,8 @@ TODAY=$(date -u +%Y%m%d)
 
 MODEL_NAME="Facenet"
 MODEL_URL="https://dl.photoprism.app/tensorflow/facenet.zip?$TODAY"
-MODEL_PATH="assets/facenet"
+MODELS_PATH="assets/models"
+MODEL_PATH="$MODELS_PATH/facenet"
 MODEL_ZIP="/tmp/photoprism/facenet.zip"
 MODEL_HASH="0492eb1d67789108b7eefb274e26633504b059be  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
@@ -17,7 +18,7 @@ mkdir -p /tmp/photoprism
 mkdir -p storage/backup
 
 # Check for update
-if [[ -f ${MODEL_ZIP} ]] && [[ $(sha1sum ${MODEL_ZIP}) == ${MODEL_HASH} ]]; then
+if [[ -f ${MODEL_ZIP} ]] && [[ $(sha1sum ${MODEL_ZIP}) == "${MODEL_HASH}" ]]; then
   if [[ -f ${MODEL_VERSION} ]]; then
     echo "Already up to date."
     exit
@@ -40,7 +41,7 @@ if [[ -e ${MODEL_PATH} ]]; then
 fi
 
 # Unzip model
-unzip ${MODEL_ZIP} -d assets
+unzip ${MODEL_ZIP} -d "$MODELS_PATH"
 echo "$MODEL_NAME $TODAY $MODEL_HASH" > ${MODEL_VERSION}
 
 echo "Latest $MODEL_NAME installed."

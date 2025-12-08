@@ -12,6 +12,7 @@ func initImport() {
 	services.Import = photoprism.NewImport(Config(), Index(), Convert())
 }
 
+// Import returns the singleton import service instance.
 func Import() *photoprism.Import {
 	onceImport.Do(initImport)
 

@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// AuthResetDescription explains the effect of the auth reset command.
 const AuthResetDescription = "This command recreates the auth_sessions database table so that it is compatible with the current version. As a result, all users and clients must re-authenticate. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
 
 // AuthResetCommand configures the command name, flags, and action.
@@ -21,12 +22,12 @@ var AuthResetCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "trace",
 			Aliases: []string{"t"},
-			Usage:   "show trace logs for debugging",
+			Usage:   "shows trace logs for debugging",
 		},
 		&cli.BoolFlag{
 			Name:    "yes",
 			Aliases: []string{"y"},
-			Usage:   "assume \"yes\" and run non-interactively",
+			Usage:   "runs the command non-interactively",
 		},
 	},
 	Action: authResetAction,
@@ -35,7 +36,7 @@ var AuthResetCommand = &cli.Command{
 // authResetAction removes all sessions and resets the related database table to a clean state.
 func authResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := ctx.Bool("yes")
+		confirmed := RunNonInteractively(ctx.Bool("yes"))
 
 		// Show prompt?
 		if !confirmed {

@@ -2,6 +2,7 @@ package wellknown
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
@@ -37,13 +38,19 @@ type OpenIDConfiguration struct {
 
 // NewOpenIDConfiguration creates a service discovery endpoint response based on the config provided.
 func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
+	jwksPath := conf.BaseUri("/.well-known/jwks.json")
+	if jwksPath == "" {
+		jwksPath = "/.well-known/jwks.json"
+	}
+	jwksURL := strings.TrimRight(conf.SiteUrl(), "/") + jwksPath
+
 	return &OpenIDConfiguration{
 		Issuer:                                    conf.SiteUrl(),
 		AuthorizationEndpoint:                     fmt.Sprintf("%sapi/v1/oauth/authorize", conf.SiteUrl()),
 		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
 		UserinfoEndpoint:                          fmt.Sprintf("%sapi/v1/oauth/userinfo", conf.SiteUrl()),
 		RegistrationEndpoint:                      "",
-		JwksUri:                                   "",
+		JwksUri:                                   jwksURL,
 		ResponseTypesSupported:                    OAuthResponseTypes,
 		ResponseModesSupported:                    []string{},
 		GrantTypesSupported:                       OAuthGrantTypes,

@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    ref="dialog"
     :model-value="visible"
     persistent
     max-width="575"
@@ -14,9 +15,7 @@
         <h6 class="text-h6">{{ $gettext(`Support Our Mission`) }}</h6>
       </v-card-title>
       <v-card-text class="text-subtitle-2">{{
-        $gettext(
-          `Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.`
-        )
+        $gettext(`Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.`)
       }}</v-card-text>
       <v-card-text class="text-body-2">{{
         $gettext(
@@ -34,6 +33,7 @@
           v-if="isPublic || !isAdmin"
           :href="links.compare"
           target="_blank"
+          rel="noopener"
           variant="flat"
           color="highlight"
           class="text-white action-about"

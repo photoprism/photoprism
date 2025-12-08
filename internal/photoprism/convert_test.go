@@ -26,7 +26,8 @@ func TestConvert_Start(t *testing.T) {
 
 	c := config.TestConfig()
 
-	c.InitializeTestData()
+	initErr := c.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(c)
 

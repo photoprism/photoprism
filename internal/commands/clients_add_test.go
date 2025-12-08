@@ -20,3 +20,16 @@ func TestClientsAddCommand(t *testing.T) {
 		assert.Contains(t, output, "Client Secret")
 	})
 }
+
+func TestClientsAddCommand_AddWithRoleAndUser(t *testing.T) {
+	t.Run("AddClientWithRolePortalAndUserAlice", func(t *testing.T) {
+		output, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Roly Poly", "--scope=vision", "--role=portal", "alice"})
+
+		assert.NoError(t, err)
+		assert.Contains(t, output, "Roly Poly")
+		assert.Contains(t, output, "portal")
+		assert.Contains(t, output, "vision")
+		assert.Contains(t, output, "alice")
+		assert.Contains(t, output, "Client Secret")
+	})
+}

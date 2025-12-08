@@ -89,3 +89,14 @@ func TestUser_Attr(t *testing.T) {
 		assert.Equal(t, "", form.Attr())
 	})
 }
+
+func TestUser_Scope(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		form := &User{UserScope: ""}
+		assert.Equal(t, "", form.Scope())
+	})
+	t.Run("Sanitized", func(t *testing.T) {
+		form := &User{UserScope: " Photos:VIEW   "}
+		assert.Equal(t, "photos:view", form.Scope())
+	})
+}

@@ -6,8 +6,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/server/limiter"
-	"github.com/photoprism/photoprism/pkg/authn"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -48,7 +48,7 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	// Count error towards failure rate limit, emits audit event, and returns nil?
 	if sess == nil || err != nil {
 		limiter.Auth.Reserve(clientIp)
-		event.AuditErr([]string{header.ClientIP(c), "webdav", "access with invalid auth token", authn.Denied})
+		event.AuditErr([]string{header.ClientIP(c), "webdav", "access with invalid auth token", status.Denied})
 		return nil, nil, sid, false
 	}
 
@@ -56,5 +56,5 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	sess.UpdateContext(c)
 
 	// Return session and user.
-	return sess, sess.User(), sid, false
+	return sess, sess.GetUser(), sid, false
 }

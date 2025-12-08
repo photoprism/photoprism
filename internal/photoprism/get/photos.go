@@ -12,6 +12,7 @@ func initPhotos() {
 	services.Photos = photoprism.NewPhotos()
 }
 
+// Photos returns the shared map of indexed photos.
 func Photos() *photoprism.Photos {
 	oncePhotos.Do(initPhotos)
 

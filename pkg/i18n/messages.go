@@ -1,7 +1,10 @@
 package i18n
 
+// Message and Error identifiers.
 const (
+	// ErrUnexpected is returned for unexpected errors.
 	ErrUnexpected Message = iota + 1
+	// ErrBadRequest indicates malformed input.
 	ErrBadRequest
 	ErrSaveFailed
 	ErrDeleteFailed
@@ -26,6 +29,7 @@ const (
 	ErrReadOnly
 	ErrUnauthorized
 	ErrForbidden
+	ErrPaymentRequired
 	ErrOffensiveUpload
 	ErrUploadFailed
 	ErrNoItemsSelected
@@ -98,6 +102,7 @@ const (
 	MsgActivated
 )
 
+// Messages holds default English message strings.
 var Messages = MessageMap{
 	// Error messages:
 	ErrUnexpected:          gettext("Something went wrong, try again"),
@@ -125,6 +130,7 @@ var Messages = MessageMap{
 	ErrReadOnly:            gettext("Not available in read-only mode"),
 	ErrUnauthorized:        gettext("Please log in to your account"),
 	ErrForbidden:           gettext("Permission denied"),
+	ErrPaymentRequired:     gettext("Payment required"),
 	ErrOffensiveUpload:     gettext("Upload might be offensive"),
 	ErrUploadFailed:        gettext("Upload failed"),
 	ErrNoItemsSelected:     gettext("No items selected"),

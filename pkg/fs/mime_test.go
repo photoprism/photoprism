@@ -5,150 +5,161 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
-func TestMimeType(t *testing.T) {
-	t.Run("Mp4", func(t *testing.T) {
+func TestDetectMimeType(t *testing.T) {
+	t.Run("MP4", func(t *testing.T) {
 		filename := Abs("./testdata/test.mp4")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "video/mp4", mimeType)
 	})
 	t.Run("MOV", func(t *testing.T) {
 		filename := Abs("./testdata/test.mov")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "video/quicktime", mimeType)
+		assert.Equal(t, "video/quicktime", MimeType(filename))
 	})
 	t.Run("JPEG", func(t *testing.T) {
 		filename := Abs("./testdata/test.jpg")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/jpeg", mimeType)
+		assert.Equal(t, "image/jpeg", MimeType(filename))
 	})
 	t.Run("InvalidFilename", func(t *testing.T) {
 		filename := Abs("./testdata/xxx.jpg")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "", mimeType)
+		assert.Equal(t, "", MimeType(filename))
 	})
 	t.Run("EmptyFilename", func(t *testing.T) {
-		mimeType := MimeType("")
+		mimeType, _ := DetectMimeType("")
 		assert.Equal(t, "", mimeType)
+		assert.Equal(t, "", MimeType(""))
 	})
 	t.Run("AVIF", func(t *testing.T) {
 		filename := Abs("./testdata/test.avif")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/avif", mimeType)
+		assert.Equal(t, "image/avif", MimeType(filename))
 	})
 	t.Run("AVIFS", func(t *testing.T) {
 		filename := Abs("./testdata/test.avifs")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/avif-sequence", mimeType)
+		assert.Equal(t, "image/avif-sequence", MimeType(filename))
 	})
 	t.Run("HEIC", func(t *testing.T) {
 		filename := Abs("./testdata/test.heic")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/heic", mimeType)
+		assert.Equal(t, "image/heic", MimeType(filename))
 	})
 	t.Run("HEICS", func(t *testing.T) {
 		filename := Abs("./testdata/test.heics")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/heic-sequence", mimeType)
 	})
 	t.Run("DNG", func(t *testing.T) {
 		filename := Abs("./testdata/test.dng")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/dng", mimeType)
 	})
 	t.Run("SVG", func(t *testing.T) {
 		filename := Abs("./testdata/test.svg")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/svg+xml", mimeType)
+		assert.Equal(t, "image/svg+xml", MimeType(filename))
 	})
 	t.Run("AI", func(t *testing.T) {
 		filename := Abs("./testdata/test.ai")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "application/vnd.adobe.illustrator", mimeType)
+		assert.Equal(t, "application/vnd.adobe.illustrator", MimeType(filename))
 	})
 	t.Run("PS", func(t *testing.T) {
 		filename := Abs("./testdata/test.ps")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "application/postscript", mimeType)
+		assert.Equal(t, "application/postscript", MimeType(filename))
 	})
 	t.Run("EPS", func(t *testing.T) {
 		filename := Abs("./testdata/test.eps")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/eps", mimeType)
+		assert.Equal(t, "image/eps", MimeType(filename))
 	})
 }
 
 func TestBaseType(t *testing.T) {
-	t.Run("Mp4", func(t *testing.T) {
+	t.Run("MP4", func(t *testing.T) {
 		filename := Abs("./testdata/test.mp4")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "video/mp4", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "video/mp4", result)
 	})
 	t.Run("MOV", func(t *testing.T) {
 		filename := Abs("./testdata/test.mov")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "video/quicktime", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "video/quicktime", result)
 	})
 	t.Run("JPEG", func(t *testing.T) {
 		filename := Abs("./testdata/test.jpg")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/jpeg", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/jpeg", result)
 	})
 	t.Run("InvalidFilename", func(t *testing.T) {
 		filename := Abs("./testdata/xxx.jpg")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "", result)
 	})
 	t.Run("EmptyFilename", func(t *testing.T) {
-		mimeType := BaseType("")
-		assert.Equal(t, "", mimeType)
+		assert.Equal(t, "", BaseType(""))
 	})
 	t.Run("AVIF", func(t *testing.T) {
 		filename := Abs("./testdata/test.avif")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/avif", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/avif", result)
 	})
 	t.Run("AVIFS", func(t *testing.T) {
 		filename := Abs("./testdata/test.avifs")
-		mimeType := MimeType(filename)
+		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/avif-sequence", mimeType)
+		assert.Equal(t, "image/avif-sequence", BaseType(mimeType))
 	})
 	t.Run("HEIC", func(t *testing.T) {
 		filename := Abs("./testdata/test.heic")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/heic", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/heic", result)
 	})
 	t.Run("HEICS", func(t *testing.T) {
 		filename := Abs("./testdata/test.heics")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/heic-sequence", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/heic-sequence", result)
 	})
 	t.Run("DNG", func(t *testing.T) {
 		filename := Abs("./testdata/test.dng")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/dng", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/dng", result)
 	})
 	t.Run("SVG", func(t *testing.T) {
 		filename := Abs("./testdata/test.svg")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/svg+xml", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/svg+xml", result)
 	})
 	t.Run("AI", func(t *testing.T) {
 		filename := Abs("./testdata/test.ai")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "application/vnd.adobe.illustrator", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "application/vnd.adobe.illustrator", result)
 	})
 	t.Run("PS", func(t *testing.T) {
 		filename := Abs("./testdata/test.ps")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "application/postscript", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "application/postscript", result)
 	})
 	t.Run("EPS", func(t *testing.T) {
 		filename := Abs("./testdata/test.eps")
-		mimeType := BaseType(MimeType(filename))
-		assert.Equal(t, "image/eps", mimeType)
+		result := BaseType(MimeType(filename))
+		assert.Equal(t, "image/eps", result)
 	})
 }
 

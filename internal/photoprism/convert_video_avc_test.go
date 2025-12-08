@@ -13,7 +13,7 @@ import (
 )
 
 func TestConvert_ToAvc(t *testing.T) {
-	t.Run("gopher-video.mp4", func(t *testing.T) {
+	t.Run("GopherVideoMp4", func(t *testing.T) {
 		conf := config.TestConfig()
 		convert := NewConvert(conf)
 
@@ -43,8 +43,7 @@ func TestConvert_ToAvc(t *testing.T) {
 
 		_ = os.Remove(outputName)
 	})
-
-	t.Run("jpg", func(t *testing.T) {
+	t.Run("Jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 		convert := NewConvert(conf)
 
@@ -84,7 +83,6 @@ func TestConvert_AvcBitrate(t *testing.T) {
 
 		assert.Equal(t, "1M", convert.AvcBitrate(mf))
 	})
-
 	t.Run("Medium", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
@@ -101,7 +99,6 @@ func TestConvert_AvcBitrate(t *testing.T) {
 
 		assert.Equal(t, "16M", convert.AvcBitrate(mf))
 	})
-
 	t.Run("High", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
@@ -118,7 +115,6 @@ func TestConvert_AvcBitrate(t *testing.T) {
 
 		assert.Equal(t, "25M", convert.AvcBitrate(mf))
 	})
-
 	t.Run("VeryHigh", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 

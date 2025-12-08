@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMain(m *testing.M) {
@@ -18,16 +19,25 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	// Remove temporary SQLite files before running the tests.
+	fs.PurgeTestDbFiles(".", false)
+
 	// Init test config.
 	c := config.TestConfig()
 	get.SetConfig(c)
-	defer c.CloseDb()
 
 	// Increase login rate limit for testing.
 	limiter.Login = limiter.NewLimit(1, 10000)
 
 	// Run unit tests.
 	code := m.Run()
+
+	if err := c.CloseDb(); err != nil {
+		log.Errorf("close db: %v", err)
+	}
+
+	// Remove temporary SQLite files after running the tests.
+	fs.PurgeTestDbFiles(".", false)
 
 	os.Exit(code)
 }

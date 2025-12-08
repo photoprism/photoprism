@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // defaultAvcEncoder is the default FFmpeg AVC encoder if it has already been determined.
@@ -16,14 +17,21 @@ func DefaultAvcEncoder() Encoder {
 		return defaultAvcEncoder
 	}
 
+	// See: https://docs.photoprism.app/getting-started/config-options/#docker-image
+	init := os.Getenv("PHOTOPRISM_INIT")
+
+	// See: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/docker-specialized.html
+	dCap := os.Getenv("NVIDIA_DRIVER_CAPABILITIES")
+	vDev := os.Getenv("NVIDIA_VISIBLE_DEVICES")
+
+	// Check if a GPU is shared through the NVIDIA Container Toolkit.
 	switch {
-	// Default to Nvidia AVC encoder if the NVIDIA_DRIVER_CAPABILITIES variable is set and contains "video":
-	case fs.DeviceExists("/dev/nvidia0") &&
-		strings.Contains(os.Getenv("NVIDIA_DRIVER_CAPABILITIES"), "video") &&
-		!strings.Contains(os.Getenv("PHOTOPRISM_INIT"), "ffmpeg"):
+	case fs.DeviceExists("/dev/nvidia0") && !strings.Contains(init, "ffmpeg") &&
+		(dCap == "video" || dCap == "all") && (txt.IsUInt(vDev) || vDev == "all"):
+		// Enable Nvidia AVC encoder.
 		defaultAvcEncoder = NvidiaAvc
-	// Otherwise, use the standard software AVC encoder:
 	default:
+		// Use AVC software encoder.
 		defaultAvcEncoder = SoftwareAvc
 	}
 

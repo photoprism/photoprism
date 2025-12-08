@@ -1,12 +1,6 @@
 <template>
   <div class="p-tab p-settings-content py-2">
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="p-form-settings"
-      accept-charset="UTF-8"
-      @submit.prevent="onChange"
-    >
+    <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card v-if="isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-0 text-subtitle-2">
           {{ $gettext(`Index`) }}
@@ -21,11 +15,7 @@
                 density="compact"
                 color="surface-variant"
                 :label="$gettext('Quality Filter')"
-                :hint="
-                  $gettext(
-                    'Require non-photographic and low-quality images to be reviewed before they appear in search results.'
-                  )
-                "
+                :hint="$gettext('Require non-photographic and low-quality images to be reviewed before they appear in search results.')"
                 prepend-icon="mdi-eye"
                 persistent-hint
                 @update:model-value="onChange"
@@ -111,11 +101,7 @@
                 density="compact"
                 color="surface-variant"
                 :label="$gettext('Sequential Name')"
-                :hint="
-                  $gettext(
-                    'Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.'
-                  )
-                "
+                :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
                 prepend-icon="mdi-format-list-numbered-rtl"
                 persistent-hint
                 @update:model-value="onChange"
@@ -261,9 +247,7 @@ export default {
   },
   created() {
     this.load();
-    this.subscriptions.push(
-      this.$event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings))
-    );
+    this.subscriptions.push(this.$event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings)));
   },
   beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {

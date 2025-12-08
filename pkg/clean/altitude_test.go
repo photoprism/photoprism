@@ -7,7 +7,7 @@ import (
 )
 
 func TestAltitude(t *testing.T) {
-	t.Run("0", func(t *testing.T) {
+	t.Run("Zero", func(t *testing.T) {
 		assert.Equal(t, 0, Altitude(0.0))
 	})
 	t.Run("Negative", func(t *testing.T) {

@@ -12,7 +12,7 @@ func TestFindCommand(t *testing.T) {
 		output, err := RunWithTestContext(FindCommand, []string{"find", "--csv"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "File Name;Mime Type;")
 	})

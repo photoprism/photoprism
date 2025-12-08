@@ -4,9 +4,10 @@ import (
 	"time"
 )
 
+// PhotoAlbums is a helper alias for collections of PhotoAlbum relations.
 type PhotoAlbums []PhotoAlbum
 
-// PhotoAlbum represents the many_to_many relation between Photo and Album
+// PhotoAlbum represents the many-to-many relation between Photo and Album.
 type PhotoAlbum struct {
 	PhotoUID  string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false" json:"PhotoUID" yaml:"UID"`
 	AlbumUID  string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;index" json:"AlbumUID" yaml:"-"`
@@ -24,7 +25,7 @@ func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }
 
-// NewPhotoAlbum creates a new photo and album mapping with UIDs.
+// NewPhotoAlbum creates a new photo-to-album relation with the provided UIDs.
 func NewPhotoAlbum(photoUid, albumUid string) *PhotoAlbum {
 	result := &PhotoAlbum{
 		PhotoUID: photoUid,
@@ -34,17 +35,17 @@ func NewPhotoAlbum(photoUid, albumUid string) *PhotoAlbum {
 	return result
 }
 
-// Create inserts a new row to the database.
+// Create inserts a new row into the database.
 func (m *PhotoAlbum) Create() error {
 	return Db().Create(m).Error
 }
 
-// Save updates or inserts a row.
+// Save updates an existing relation or inserts a new one if needed.
 func (m *PhotoAlbum) Save() error {
 	return Db().Save(m).Error
 }
 
-// FirstOrCreatePhotoAlbum returns the existing row, inserts a new row or nil in case of errors.
+// FirstOrCreatePhotoAlbum returns the persisted relation, creating it when necessary, or nil on failure.
 func FirstOrCreatePhotoAlbum(m *PhotoAlbum) *PhotoAlbum {
 	result := PhotoAlbum{}
 

@@ -8,12 +8,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-var DomainRegexp = regexp.MustCompile("^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$")
+// EmailRegexp validates RFC 5322-like email addresses used by the app.
+var EmailRegexp = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+/=?^_` +
+	"`" + `{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$`)
+
+// DomainRegexp validates hostnames for authentication inputs.
+var DomainRegexp = regexp.MustCompile(`^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$`)
 
 // Auth returns the sanitized authentication identifier trimmed to a maximum length of 255 characters.
 func Auth(s string) string {
-	if s == "" || len(s) > 2048 {
+	if s == "" || len(s) > 510 {
 		return ""
 	}
 
@@ -101,6 +105,8 @@ func Username(s string) string {
 }
 
 // Email returns the sanitized email with trimmed whitespace and in lowercase.
+// It accepts common mailbox patterns such as plus addressing and single-label domains
+// while rejecting inputs that do not match the backend validation regex.
 func Email(s string) string {
 	// Empty or too long?
 	if s == "" || reject(s, txt.ClipEmail) {

@@ -27,22 +27,22 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 		if txt.Yes(frm.Unknown) {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND subj_uid = '' AND marker_name = '' AND marker_type = 'face' AND marker_src = 'image'
+	        WHERE face_id <> '' AND subj_uid = '' AND marker_name = '' AND marker_type = 'face'
 	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
 		} else if txt.No(frm.Unknown) {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND subj_uid <> '' AND marker_name <> '' AND marker_type = 'face' AND marker_src = 'image'
+	        WHERE face_id <> '' AND subj_uid <> '' AND marker_name <> '' AND marker_type = 'face'
 	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
 		} else {
 			s = s.Joins(`JOIN (
 	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND marker_type = 'face' AND marker_src = 'image'
-	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
+	        WHERE face_id <> '' AND marker_type = 'face' AND marker_invalid = 0
+              AND face_dist <= 0.64 AND size >= 80 AND score >= 15
 	        GROUP BY face_id) fm
 	        ON faces.id = fm.face_id`)
 		}
@@ -62,13 +62,13 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 	// Set sort order.
 	switch frm.Order {
 	case "subject":
-		s = s.Order(fmt.Sprintf("%s.subj_uid", facesTable))
+		s = s.Order(OrderExpr(fmt.Sprintf("%s.subj_uid ASC", facesTable), frm.Reverse))
 	case "added":
-		s = s.Order(fmt.Sprintf("%s.created_at DESC", facesTable))
+		s = s.Order(OrderExpr(fmt.Sprintf("%s.created_at DESC", facesTable), frm.Reverse))
 	case "samples":
-		s = s.Order(fmt.Sprintf("%s.samples DESC, %s.id", facesTable, facesTable))
+		s = s.Order(OrderExpr(fmt.Sprintf("%s.samples DESC, %s.id", facesTable, facesTable), frm.Reverse))
 	default:
-		s = s.Order(fmt.Sprintf("%s.samples DESC, %s.id", facesTable, facesTable))
+		s = s.Order(OrderExpr(fmt.Sprintf("%s.samples DESC, %s.id", facesTable, facesTable), frm.Reverse))
 	}
 
 	// Find specific IDs?

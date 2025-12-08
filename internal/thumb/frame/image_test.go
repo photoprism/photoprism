@@ -7,7 +7,7 @@ import (
 	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,12 +26,11 @@ func TestImage(t *testing.T) {
 		err = imaging.Save(out, saveName)
 
 		assert.NoError(t, err)
-		mimeType := fs.MimeType(saveName)
+		mimeType, _ := fs.DetectMimeType(saveName)
 		assert.Equal(t, header.ContentTypePng, mimeType)
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("TypeUnknown", func(t *testing.T) {
 		img, err := imaging.Open("testdata/500x500.jpg")
 		assert.NoError(t, err)
@@ -46,7 +45,7 @@ func TestImage(t *testing.T) {
 		err = imaging.Save(out, saveName)
 
 		assert.NoError(t, err)
-		mimeType := fs.MimeType(saveName)
+		mimeType, _ := fs.DetectMimeType(saveName)
 		assert.Equal(t, header.ContentTypePng, mimeType)
 
 		_ = os.Remove(saveName)

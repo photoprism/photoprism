@@ -2,6 +2,8 @@ package s2
 
 import (
 	gs2 "github.com/golang/geo/s2"
+
+	"github.com/photoprism/photoprism/pkg/geo/latlng"
 )
 
 // IsZero returns true if the coordinates are both empty.
@@ -32,7 +34,7 @@ func TokenLevel(lat, lng float64, level int) string {
 	return gs2.CellIDFromLatLng(l).Parent(level).ToToken()
 }
 
-// LatLng returns the coordinates for a S2 cell token.
+// LatLng returns the rounded coordinates for a S2 cell token.
 func LatLng(token string) (lat, lng float64) {
 	token = NormalizeToken(token)
 
@@ -48,5 +50,5 @@ func LatLng(token string) (lat, lng float64) {
 
 	l := cell.LatLng()
 
-	return l.Lat.Degrees(), l.Lng.Degrees()
+	return latlng.Round(l.Lat.Degrees()), latlng.Round(l.Lng.Degrees())
 }

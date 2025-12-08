@@ -22,15 +22,11 @@ var AuthAddFlags = []cli.Flag{
 		Aliases: []string{"n"},
 		Usage:   "`CLIENT` name to help identify the application",
 	},
-	&cli.StringFlag{
-		Name:    "scope",
-		Aliases: []string{"s"},
-		Usage:   "authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)",
-	},
+	ScopeFlag("token authorization `SCOPE` as space-separated resources, or '*' for full access"),
 	&cli.Int64Flag{
 		Name:    "expires",
 		Aliases: []string{"e"},
-		Usage:   "authentication `LIFETIME` in seconds, after which access expires (-1 to disable the limit)",
+		Usage:   "token `LIFETIME` in seconds, or -1 to disable the limit",
 		Value:   unix.Year,
 	},
 }

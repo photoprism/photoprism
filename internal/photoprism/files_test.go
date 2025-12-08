@@ -35,3 +35,22 @@ func TestFiles_Ignore(t *testing.T) {
 	assert.True(t, files.Ignore("new-file.jpg", entity.RootSidecar, time.Unix(1583460001, 2), false))
 	assert.False(t, files.Ignore("new-file.jpg", entity.RootSidecar, time.Unix(501, 0), false))
 }
+
+func TestFiles_InitReloadsAfterPartialCache(t *testing.T) {
+	files := NewFiles()
+
+	// Simulate partial cache population before initialization.
+	files.Ignore("partial.jpg", entity.RootOriginals, time.Unix(123, 0), false)
+	assert.True(t, files.Exists("partial.jpg", entity.RootOriginals))
+
+	if err := files.Init(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Init should reload from the database, replacing the ad-hoc entry.
+	assert.False(t, files.Exists("partial.jpg", entity.RootOriginals))
+	assert.True(t, files.loaded)
+
+	fixture := entity.FileFixturesExampleJPG
+	assert.True(t, files.Exists(fixture.FileName, fixture.FileRoot))
+}

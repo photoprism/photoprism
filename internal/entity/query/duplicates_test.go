@@ -15,7 +15,7 @@ func TestDuplicates(t *testing.T) {
 			t.Fatal("files must not be nil")
 		}
 	})
-	t.Run("pathname not empty", func(t *testing.T) {
+	t.Run("PathnameNotEmpty", func(t *testing.T) {
 		files, err := Duplicates(10, 0, "/holiday/sea.jpg")
 
 		if err != nil {

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // SearchPhotos finds pictures and returns them as JSON.
@@ -27,10 +28,10 @@ import (
 //	@Failure		400,401,403,404	{object}	i18n.Response
 //	@Param			count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
 //	@Param			offset			query		int		false	"file offset"				minimum(0)	maximum(100000)
-//	@Param			order			query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
+//	@Param			order			query		string	false	"sort order"				Enums(name, title, added, edited, newest, oldest, size, random, duration, relevance)
 //	@Param			merged			query		bool	false	"groups consecutive files that belong to the same photo"
 //	@Param			public			query		bool	false	"excludes private pictures"
-//	@Param			quality			query		int		true	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
+//	@Param			quality			query		int		false	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
 //	@Param			q				query		string	false	"search query"
 //	@Param			s				query		string	false	"album uid"
 //	@Param			path			query		string	false	"photo path"
@@ -48,8 +49,8 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Abort if request params are invalid.
 		if err = c.MustBindWith(&frm, binding.Form); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", "%s"}, s.RefID, err)
-			AbortBadRequest(c)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", status.Error(err)}, s.RefID)
+			AbortBadRequest(c, err)
 			return frm, s, err
 		}
 
@@ -63,7 +64,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		// Ignore private flag if feature is disabled.
 		if frm.Scope == "" &&
 			settings.Features.Review &&
-			acl.Rules.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
+			acl.Rules.Deny(acl.ResourcePhotos, s.GetUserRole(), acl.ActionManage) {
 			frm.Quality = 3
 		}
 
@@ -84,8 +85,8 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Ok?
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "search", "%s"}, s.RefID, err)
-			AbortBadRequest(c)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "search", status.Error(err)}, s.RefID)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -113,8 +114,8 @@ func SearchPhotos(router *gin.RouterGroup) {
 		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
 
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", "%s"}, s.RefID, err)
-			AbortBadRequest(c)
+			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", status.Error(err)}, s.RefID)
+			AbortBadRequest(c, err)
 			return
 		}
 

@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// UserSettings represents user preferences.
+// UserSettings stores per-user UI, indexing, and workflow preferences.
 type UserSettings struct {
 	UserUID              string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
 	UITheme              string    `gorm:"type:VARBINARY(32);column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
@@ -38,12 +38,12 @@ func (UserSettings) TableName() string {
 	return "auth_users_settings"
 }
 
-// NewUserSettings creates new user preferences.
+// NewUserSettings allocates a settings record bound to the provided user UID.
 func NewUserSettings(uid string) *UserSettings {
 	return &UserSettings{UserUID: uid}
 }
 
-// CreateUserSettings creates new user settings or returns nil on error.
+// CreateUserSettings ensures settings exist for the given user, creating them if missing.
 func CreateUserSettings(user *User) error {
 	if user == nil {
 		return fmt.Errorf("user is nil")

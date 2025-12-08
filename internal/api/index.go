@@ -52,7 +52,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -61,8 +61,8 @@ func StartIndexing(router *gin.RouterGroup) {
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		skipArchived := settings.Index.SkipArchived
 
-		indOpt := photoprism.NewIndexOptions(filepath.Clean(frm.Path), frm.Rescan, convert, true, false, skipArchived)
-		indOpt.SetUser(s.User())
+		indOpt := photoprism.NewIndexOptions(filepath.Clean(frm.Path), frm.Rescan, convert, true, false, skipArchived, conf)
+		indOpt.SetUser(s.GetUser())
 
 		if len(indOpt.Path) > 1 {
 			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
@@ -120,7 +120,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		// Delete orphaned index entries, sidecar files and thumbnails?
-		if frm.Cleanup && s.User().IsAdmin() {
+		if frm.Cleanup && s.GetUser().IsAdmin() {
 			event.Publish("index.updating", event.Data{
 				"uid":    indOpt.UID,
 				"action": indOpt.Action,
@@ -179,7 +179,13 @@ func StartIndexing(router *gin.RouterGroup) {
 
 // CancelIndexing stops indexing media files in the "originals" folder.
 //
-// DELETE /api/v1/index
+//	@Summary	cancels the active indexing job
+//	@Id			CancelIndexing
+//	@Tags		Library
+//	@Produce	json
+//	@Success	200				{object}	i18n.Response
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/index [delete]
 func CancelIndexing(router *gin.RouterGroup) {
 	router.DELETE("/index", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)

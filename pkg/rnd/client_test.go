@@ -22,7 +22,7 @@ func TestClientSecret(t *testing.T) {
 }
 
 func BenchmarkClientSecret(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		ClientSecret()
 	}
 }
@@ -42,7 +42,7 @@ func TestIsClientSecret(t *testing.T) {
 }
 
 func BenchmarkIsClientSecret(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		IsClientSecret("69be27ac5ca305b394046a83f6fda181")
 	}
 }

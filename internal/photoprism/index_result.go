@@ -1,5 +1,6 @@
 package photoprism
 
+// Indexing status strings emitted from index runs.
 const (
 	IndexUpdated   IndexStatus = "updated"
 	IndexAdded     IndexStatus = "added"
@@ -10,6 +11,7 @@ const (
 	IndexFailed    IndexStatus = "failed"
 )
 
+// IndexStatus is the unified status type returned for each indexed file.
 type IndexStatus string
 
 // IndexResult represents a media file indexing result.

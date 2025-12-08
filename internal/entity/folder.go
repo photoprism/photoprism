@@ -44,7 +44,7 @@ type Folder struct {
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	ModifiedAt        time.Time  `json:"ModifiedAt,omitempty" yaml:"-"`
 	PublishedAt       *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt         *time.Time `sql:"index" json:"-"`
+	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.

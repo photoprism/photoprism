@@ -21,16 +21,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// Index represents an indexer that indexes files in the originals directory.
+// Index coordinates filesystem scans, metadata extraction, and database updates for originals.
 type Index struct {
-	conf       *config.Config
-	convert    *Convert
-	files      *Files
-	photos     *Photos
-	lastRun    time.Time
-	lastFound  int
-	findFaces  bool
-	findLabels bool
+	conf      *config.Config
+	convert   *Convert
+	files     *Files
+	photos    *Photos
+	lastRun   time.Time
+	lastFound int
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -40,13 +38,12 @@ func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photo
 		return nil
 	}
 
+	// Create new indexer instance.
 	i := &Index{
-		conf:       conf,
-		convert:    convert,
-		files:      files,
-		photos:     photos,
-		findFaces:  !conf.DisableFaces(),
-		findLabels: !conf.DisableClassification(),
+		conf:    conf,
+		convert: convert,
+		files:   files,
+		photos:  photos,
 	}
 
 	return i
@@ -65,7 +62,9 @@ func (ind *Index) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
-// Start indexes media files in the "originals" folder.
+// Start indexes media files in the originals folder according to the provided options.
+// It streams work to worker goroutines, updates duplicate caches, and returns both
+// the set of processed paths and the number of files that were changed.
 func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -116,6 +115,13 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	defer ind.files.Done()
+
+	// Cache photo labels to reduce number of database queries.
+	if o.FacesOnly {
+		// Skip labels cache warmup if only faces are indexed.
+	} else if err := entity.CachePhotoLabels(); err != nil {
+		log.Warnf("index: %s (cache photo labels)", err)
+	}
 
 	skipRaw := ind.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
@@ -238,20 +244,25 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if found[f.FileName()].Processed() {
 					// Ignore already processed files.
 					continue
-				} else if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
-					// Flag file as found but not processed.
-					found[f.FileName()] = fs.Found
-					continue
-				} else if limitErr == nil {
-					// Add to file list.
-					files = append(files, f)
-				} else if related.Main.FileName() != f.FileName() {
-					// Sidecar file is too large, ignore.
-					log.Infof("index: %s", limitErr)
 				} else {
-					// Main file is too large, skip all.
-					log.Warnf("index: %s", limitErr)
-					skip = true
+					fileSize, limitErr := f.ExceedsBytes(o.ByteLimit)
+
+					switch {
+					case fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan):
+						// Flag file as found but not processed.
+						found[f.FileName()] = fs.Found
+						continue
+					case limitErr == nil:
+						// Add to file list.
+						files = append(files, f)
+					case related.Main.FileName() != f.FileName():
+						// Sidecar file is too large, ignore.
+						log.Infof("index: %s", limitErr)
+					default:
+						// Main file is too large, skip all.
+						log.Warnf("index: %s", limitErr)
+						skip = true
+					}
 				}
 
 				found[f.FileName()] = fs.Processed
@@ -314,6 +325,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	config.FlushUsageCache()
+	entity.FlushPhotoLabelCache()
 	runtime.GC()
 
 	ind.lastRun = entity.Now()

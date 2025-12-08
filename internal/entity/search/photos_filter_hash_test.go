@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterHash(t *testing.T) {
-	t.Run("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
+	t.Run("TwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -20,9 +20,9 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340"
@@ -33,9 +33,9 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 pipe 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340PipeTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -46,9 +46,9 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	/*t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 whitespace pipe whitespace 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	/*t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340WhitespacePipeWhitespaceTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -59,9 +59,9 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -72,9 +72,9 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
@@ -85,9 +85,9 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd34*", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd34", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Hash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd34*"
@@ -111,7 +111,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -124,7 +124,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -137,7 +137,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -150,7 +150,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -163,7 +163,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -176,7 +176,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -189,7 +189,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -203,7 +203,7 @@ func TestPhotosFilterHash(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -216,7 +216,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -229,7 +229,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -242,7 +242,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -255,7 +255,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -268,7 +268,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -282,7 +282,7 @@ func TestPhotosFilterHash(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -296,7 +296,7 @@ func TestPhotosFilterHash(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -309,7 +309,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -322,7 +322,7 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -335,12 +335,12 @@ func TestPhotosFilterHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 }
 
 func TestPhotosQueryHash(t *testing.T) {
-	t.Run("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
+	t.Run("TwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -351,9 +351,9 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340\""
@@ -364,9 +364,9 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 pipe 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340PipeTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340|2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -377,9 +377,9 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	/*t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 whitespace pipe whitespace 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	/*t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340WhitespacePipeWhitespaceTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 | 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -390,9 +390,9 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 or 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -403,9 +403,9 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 ", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd340OrTwoCad9168fa6acc5c5c2965ddf6ec465ca42fd818", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd340 OR 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818\""
@@ -416,9 +416,9 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("pcad9168fa6acc5c5c2965adf6ec465ca42fd34*", func(t *testing.T) {
+	t.Run("Pcad9168fa6acc5c5c2965adf6ec465ca42fd34", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "hash:\"pcad9168fa6acc5c5c2965adf6ec465ca42fd34*\""
@@ -442,7 +442,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -455,7 +455,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -468,7 +468,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -481,7 +481,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -494,7 +494,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -507,7 +507,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -520,7 +520,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -534,7 +534,7 @@ func TestPhotosQueryHash(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -547,7 +547,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -560,7 +560,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -573,7 +573,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -586,7 +586,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -599,7 +599,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -613,7 +613,7 @@ func TestPhotosQueryHash(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -626,7 +626,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -639,7 +639,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -652,7 +652,7 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -665,6 +665,6 @@ func TestPhotosQueryHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Len(t, photos, 0)
 	})
 }

@@ -1,5 +1,11 @@
 package acl
 
+// Any matches everything.
+const Any = "*"
+
+// RoleAliasNone is a more explicit, user-friendly alias for RoleNone.
+const RoleAliasNone = "none"
+
 // Roles that can be granted Permissions to use a Resource.
 const (
 	RoleDefault Role = "default"
@@ -8,6 +14,9 @@ const (
 	RoleViewer  Role = "viewer"
 	RoleGuest   Role = "guest"
 	RoleVisitor Role = "visitor"
+	RoleApp     Role = "app"
+	RoleService Role = "service"
+	RolePortal  Role = "portal"
 	RoleClient  Role = "client"
 	RoleNone    Role = ""
 )
@@ -65,6 +74,7 @@ const (
 	ResourceWebhooks  Resource = "webhooks"
 	ResourceMetrics   Resource = "metrics"
 	ResourceVision    Resource = "vision"
+	ResourceCluster   Resource = "cluster"
 	ResourceFeedback  Resource = "feedback"
 	ResourceDefault   Resource = "default"
 )
@@ -91,4 +101,5 @@ const (
 	ChannelPeople    Resource = "people"
 	ChannelSync      Resource = "sync"
 	ChannelInstance  Resource = "instance"
+	ChannelSystem    Resource = "system"
 )

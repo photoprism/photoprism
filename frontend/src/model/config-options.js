@@ -1,32 +1,8 @@
-/*
-
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
-
-    This program is free software: you can redistribute it and/or modify
-    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
-    <https://docs.photoprism.app/license/agpl>
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    The AGPL is supplemented by our Trademark and Brand Guidelines,
-    which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
-
-Feel free to send an email to hello@photoprism.app if you have questions,
-want to support our work, or just want to say hello.
-
-Additional information can be found in our Developer Guide:
-<https://docs.photoprism.app/developer-guide/>
-
-*/
-
 import $api from "common/api";
 import Model from "./model";
 import { $config } from "app/session";
 
+// ConfigOptions represents the editable server configuration that powers the UI toggles.
 export class ConfigOptions extends Model {
   getDefaults() {
     return {
@@ -44,6 +20,7 @@ export class ConfigOptions extends Model {
       DisableRestart: true,
       DisableWebDAV: $config.values.disable.webdav,
       DisableSettings: $config.values.disable.settings,
+      DisableFaces: $config.values.disable.faces,
       DisablePlaces: $config.values.disable.places,
       DisableBackups: $config.values.disable.backups,
       DisableTensorFlow: $config.values.disable.tensorflow,
@@ -93,9 +70,7 @@ export class ConfigOptions extends Model {
   }
 
   save() {
-    return $api
-      .post("config/options", this.getValues(true))
-      .then((response) => Promise.resolve(this.setValues(response.data)));
+    return $api.post("config/options", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
   }
 }
 

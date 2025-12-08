@@ -7,15 +7,36 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPreviewSeekOffset(t *testing.T) {
+	t.Run("Second", func(t *testing.T) {
+		assert.Equal(t, "00:00:00.000", PreviewSeekOffset(time.Second))
+	})
+	t.Run("Minute", func(t *testing.T) {
+		assert.Equal(t, "00:00:00.000", PreviewSeekOffset(time.Minute+1))
+	})
+	t.Run("FiveMinutes", func(t *testing.T) {
+		assert.Equal(t, "00:00:28.000", PreviewSeekOffset(5*time.Minute))
+	})
+	t.Run("FifteenMinutes", func(t *testing.T) {
+		assert.Equal(t, "00:00:58.000", PreviewSeekOffset(15*time.Minute))
+	})
+	t.Run("HalfHour", func(t *testing.T) {
+		assert.Equal(t, "00:00:58.000", PreviewSeekOffset(30*time.Minute))
+	})
+	t.Run("Hour", func(t *testing.T) {
+		assert.Equal(t, "00:00:58.000", PreviewSeekOffset(time.Hour))
+	})
+	t.Run("ThreeHours", func(t *testing.T) {
+		assert.Equal(t, "00:02:28.000", PreviewSeekOffset(3*time.Hour))
+	})
+}
+
 func TestPreviewTimeOffset(t *testing.T) {
 	t.Run("Second", func(t *testing.T) {
 		assert.Equal(t, "00:00:00.001", PreviewTimeOffset(time.Second))
 	})
 	t.Run("Minute", func(t *testing.T) {
-		assert.Equal(t, "00:00:03.000", PreviewTimeOffset(time.Minute))
-	})
-	t.Run("ThreeMinutes", func(t *testing.T) {
-		assert.Equal(t, "00:00:09.000", PreviewTimeOffset(3*time.Minute))
+		assert.Equal(t, "00:00:09.000", PreviewTimeOffset(time.Minute+1))
 	})
 	t.Run("FiveMinutes", func(t *testing.T) {
 		assert.Equal(t, "00:00:30.000", PreviewTimeOffset(5*time.Minute))

@@ -149,7 +149,6 @@ func TestPasscode_SetUID(t *testing.T) {
 
 		assert.False(t, passcode.InvalidUID())
 	})
-
 	t.Run("Invalid", func(t *testing.T) {
 		m := &Passcode{
 			UID:          "uqxc08w3d0ej2283",

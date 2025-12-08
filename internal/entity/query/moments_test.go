@@ -247,7 +247,7 @@ func TestMomentsCategories(t *testing.T) {
 }
 
 func TestMoment_Title(t *testing.T) {
-	t.Run("country", func(t *testing.T) {
+	t.Run("Country", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
 			Country:    "de",
@@ -259,7 +259,7 @@ func TestMoment_Title(t *testing.T) {
 
 		assert.Equal(t, "Germany", moment.Title())
 	})
-	t.Run("country name", func(t *testing.T) {
+	t.Run("CountryName", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
 			Country:    "de",
@@ -271,7 +271,7 @@ func TestMoment_Title(t *testing.T) {
 
 		assert.Equal(t, "Germany", moment.Title())
 	})
-	t.Run("country and year", func(t *testing.T) {
+	t.Run("CountryAndYear", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
 			Country:    "de",
@@ -283,7 +283,7 @@ func TestMoment_Title(t *testing.T) {
 
 		assert.Equal(t, "Germany 2010", moment.Title())
 	})
-	t.Run("country, state and year", func(t *testing.T) {
+	t.Run("CountryStateAndYear", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
 			Country:    "de",
@@ -295,7 +295,7 @@ func TestMoment_Title(t *testing.T) {
 
 		assert.Equal(t, "Pfalz / 2010", moment.Title())
 	})
-	t.Run("state, country, month and year", func(t *testing.T) {
+	t.Run("StateCountryMonthAndYear", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
 			Country:    "de",
@@ -307,7 +307,7 @@ func TestMoment_Title(t *testing.T) {
 
 		assert.Equal(t, "Pfalz / December 2010", moment.Title())
 	})
-	t.Run("month", func(t *testing.T) {
+	t.Run("Month", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
 			Country:    "",

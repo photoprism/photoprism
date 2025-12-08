@@ -80,6 +80,13 @@ func Find(pixels int) (name Name, size Size) {
 
 // Vision returns a suitable tile size for computer vision applications.
 func Vision(resolution int) (size Size) {
+	// If specifically requested, return the 720x720 fit size,
+	// which should always exist.
+	if resolution == SizeFit720.Width {
+		return SizeFit720
+	}
+
+	// Check existing tile sizes.
 	for _, size = range All {
 		if size.Height != size.Width {
 			continue
@@ -92,5 +99,7 @@ func Vision(resolution int) (size Size) {
 		}
 	}
 
+	// If no other size matches,
+	// return the default size.
 	return SizeTile224
 }

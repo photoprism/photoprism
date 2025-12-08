@@ -33,12 +33,12 @@ var backupFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:    "force",
 		Aliases: []string{"f"},
-		Usage:   "replace the index database backup file, if it exists",
+		Usage:   "replaces the index database backup file, if it exists",
 	},
 	&cli.BoolFlag{
 		Name:    "albums",
 		Aliases: []string{"a"},
-		Usage:   "create YAML files to back up album metadata (in the standard backup path if no other path is specified)",
+		Usage:   "creates YAML files to back up album metadata (in the standard backup path if no other path is specified)",
 	},
 	&cli.PathFlag{
 		Name:      "albums-path",
@@ -48,7 +48,7 @@ var backupFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:    "database",
 		Aliases: []string{"index", "i"},
-		Usage:   "create index database backup (in the backup path with the date as filename if no filename is passed, or sent to stdout if - is passed as filename)",
+		Usage:   "creates an index database backup (in the backup path with the date as filename if no filename is passed, or sent to stdout if - is passed as filename)",
 	},
 	&cli.PathFlag{
 		Name:      "database-path",
@@ -105,6 +105,8 @@ func backupAction(ctx *cli.Context) error {
 
 			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
 			fileName = filepath.Join(databasePath, backupFile)
+		} else {
+			retain = 0
 		}
 
 		if err = backup.Database(databasePath, fileName, fileName == "-", force, retain); err != nil {

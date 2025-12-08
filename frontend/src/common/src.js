@@ -1,12 +1,15 @@
 export const Auto = "";
 export const Default = "default";
+export const Batch = "batch";
 export const Manual = "manual";
 export const Estimate = "estimate";
+export const File = "file";
 export const Name = "name";
 export const Meta = "meta";
 export const Xmp = "xmp";
 export const Yaml = "yaml";
 export const Marker = "marker";
 export const Image = "image";
+export const Vision = "vision";
 export const Keyword = "keyword";
 export const Location = "location";

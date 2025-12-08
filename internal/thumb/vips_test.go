@@ -1,14 +1,11 @@
 package thumb
 
 import (
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestVips(t *testing.T) {
@@ -27,6 +24,28 @@ func TestVips(t *testing.T) {
 
 		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
+	})
+	t.Run("InteropIndexColors", func(t *testing.T) {
+		thumb := Sizes[Tile500]
+		src := "testdata/interop_index.jpg"
+		dst := "testdata/vips/1/3/3/133456789098765432_500x500_center.jpg"
+
+		assert.FileExists(t, src)
+
+		fileName, _, err := Vips(src, nil, "133456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(fileName, dst))
+		assert.Equal(t, fileName, dst)
+		assert.FileExists(t, dst)
+
+		dstimg, err := vips.LoadImageFromFile(dst, vips.NewImportParams())
+		assert.NoError(t, err)
+		assert.True(t, dstimg.HasICCProfile())
+		assert.True(t, dstimg.IsColorSpaceSupported())
 	})
 	t.Run("Left224", func(t *testing.T) {
 		thumb := SizeLeft224
@@ -195,135 +214,5 @@ func TestVipsJpegExportParams(t *testing.T) {
 		assert.False(t, result.OptimizeCoding)
 		assert.False(t, result.OvershootDeringing)
 		assert.Equal(t, JpegQualitySmall().Int(), result.Quality)
-	})
-}
-
-func TestVipsRotate(t *testing.T) {
-	if err := os.MkdirAll("testdata/vips/rotate", fs.ModeDir); err != nil {
-		t.Fatal(err)
-	}
-	t.Run("OrientationNormal", func(t *testing.T) {
-		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/0.jpg"
-
-		assert.FileExists(t, src)
-
-		// Load image from file.
-		img, err := vips.NewImageFromFile(src)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = VipsRotate(img, OrientationNormal); err != nil {
-			t.Fatal(err)
-		}
-
-		params := vips.NewJpegExportParams()
-		imageBytes, _, exportErr := img.ExportJpeg(params)
-
-		if exportErr != nil {
-			t.Fatal(exportErr)
-		}
-
-		// Write thumbnail to file.
-		if err = os.WriteFile(dst, imageBytes, fs.ModeFile); err != nil {
-			t.Fatal(exportErr)
-		}
-
-		assert.FileExists(t, dst)
-	})
-	t.Run("OrientationRotate90", func(t *testing.T) {
-		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/90.jpg"
-
-		assert.FileExists(t, src)
-
-		// Load image from file.
-		img, err := vips.NewImageFromFile(src)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = VipsRotate(img, OrientationRotate90); err != nil {
-			t.Fatal(err)
-		}
-
-		params := vips.NewJpegExportParams()
-		imageBytes, _, exportErr := img.ExportJpeg(params)
-
-		if exportErr != nil {
-			t.Fatal(exportErr)
-		}
-
-		// Write thumbnail to file.
-		if err = os.WriteFile(dst, imageBytes, fs.ModeFile); err != nil {
-			t.Fatal(exportErr)
-		}
-
-		assert.FileExists(t, dst)
-	})
-	t.Run("OrientationRotate180", func(t *testing.T) {
-		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/180.jpg"
-
-		assert.FileExists(t, src)
-
-		// Load image from file.
-		img, err := vips.NewImageFromFile(src)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = VipsRotate(img, OrientationRotate180); err != nil {
-			t.Fatal(err)
-		}
-
-		params := vips.NewJpegExportParams()
-		imageBytes, _, exportErr := img.ExportJpeg(params)
-
-		if exportErr != nil {
-			t.Fatal(exportErr)
-		}
-
-		// Write thumbnail to file.
-		if err = os.WriteFile(dst, imageBytes, fs.ModeFile); err != nil {
-			t.Fatal(exportErr)
-		}
-
-		assert.FileExists(t, dst)
-	})
-	t.Run("OrientationRotate270", func(t *testing.T) {
-		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/270.jpg"
-
-		assert.FileExists(t, src)
-
-		// Load image from file.
-		img, err := vips.NewImageFromFile(src)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = VipsRotate(img, OrientationRotate270); err != nil {
-			t.Fatal(err)
-		}
-
-		params := vips.NewJpegExportParams()
-		imageBytes, _, exportErr := img.ExportJpeg(params)
-
-		if exportErr != nil {
-			t.Fatal(exportErr)
-		}
-
-		// Write thumbnail to file.
-		if err = os.WriteFile(dst, imageBytes, fs.ModeFile); err != nil {
-			t.Fatal(exportErr)
-		}
-
-		assert.FileExists(t, dst)
 	})
 }

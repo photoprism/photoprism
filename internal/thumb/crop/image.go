@@ -154,12 +154,13 @@ func findIdealThumbFileName(hash string, width int, filePath string) (fileName s
 		// Resolve symlinks.
 		name, err := fs.Resolve(filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash)))
 
-		if err != nil || !fs.FileExists(name) {
+		switch {
+		case err != nil || !fs.FileExists(name):
 			continue
-		} else if s.Width < width {
+		case s.Width < width:
 			fileName = name
 			continue
-		} else {
+		default:
 			return name
 		}
 	}
@@ -176,7 +177,7 @@ func openIdealThumbFile(fileName, hash string, area Area, size Size) (result ima
 
 	if len(hash) != 40 || area.W <= 0 || size.Width <= 0 {
 		// Not a standard thumb name with sha1 hash prefix.
-		if imageBuffer, err := os.ReadFile(fileName); err != nil {
+		if imageBuffer, err := os.ReadFile(fileName); err != nil { //nolint:gosec // file path comes from resolved thumbnails
 			return nil, err
 		} else {
 			return imaging.Decode(bytes.NewReader(imageBuffer), imaging.AutoOrientation(true))
@@ -187,7 +188,7 @@ func openIdealThumbFile(fileName, hash string, area Area, size Size) (result ima
 		fileName = name
 	}
 
-	if imageBuffer, err := os.ReadFile(fileName); err != nil {
+	if imageBuffer, err := os.ReadFile(fileName); err != nil { //nolint:gosec // file path comes from resolved thumbnails
 		return nil, err
 	} else {
 		return imaging.Decode(bytes.NewReader(imageBuffer))

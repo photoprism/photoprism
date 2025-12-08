@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save tries to update an existing record and falls back to insert semantics, retrying on lock errors.
 func Save(m interface{}, keyNames ...string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {

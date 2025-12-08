@@ -10,18 +10,18 @@ import (
 )
 
 // Status returns the current status of schema migrations.
-func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
-	status = Migrations{}
+func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
+	result = Migrations{}
 
 	if db == nil {
-		return status, fmt.Errorf("migrate: no database connection")
+		return result, fmt.Errorf("migrate: no database connection")
 	}
 
 	// Get SQL dialect name.
 	name := db.Dialect().GetName()
 
 	if name == "" {
-		return status, fmt.Errorf("migrate: failed to determine sql dialect")
+		return result, fmt.Errorf("migrate: failed to determine sql dialect")
 	}
 
 	// Make sure a "migrations" table exists.
@@ -30,13 +30,13 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 	})
 
 	if err != nil {
-		return status, fmt.Errorf("migrate: %s (create migrations table)", err)
+		return result, fmt.Errorf("migrate: %s (create migrations table)", err)
 	}
 
 	migrations, ok := Dialects[name]
 
 	if !ok && len(migrations) == 0 {
-		return status, fmt.Errorf("migrate: no migrations found for %s", name)
+		return result, fmt.Errorf("migrate: no migrations found for %s", name)
 	}
 
 	// Find previously executed migrations.
@@ -62,12 +62,12 @@ func Status(db *gorm.DB, ids []string) (status Migrations, err error) {
 			migration.Source = done.Source
 			migration.StartedAt = done.StartedAt
 			migration.FinishedAt = done.FinishedAt
-			status = append(status, migration)
+			result = append(result, migration)
 		} else {
 			// Should not happen.
-			status = append(status, migration)
+			result = append(result, migration)
 		}
 	}
 
-	return status, nil
+	return result, nil
 }

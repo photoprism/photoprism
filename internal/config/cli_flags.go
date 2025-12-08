@@ -1,6 +1,7 @@
 package config
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -63,6 +64,11 @@ func (f CliFlags) Remove(names []string) (result CliFlags) {
 
 // Replace replaces an existing command flag by name and returns true if successful.
 func (f CliFlags) Replace(name string, replacement CliFlag) CliFlags {
+	if name = firstName(name); name == "" {
+		log.Warnf("config: invalid name provided to replace cli flag %s", clean.Log(name))
+		return f
+	}
+
 	done := false
 
 	if name = firstName(name); name != "" {
@@ -83,17 +89,20 @@ func (f CliFlags) Replace(name string, replacement CliFlag) CliFlags {
 
 // Insert inserts command flags, if possible after the flag specified by name.
 func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
+	if name = firstName(name); name == "" {
+		log.Warnf("config: invalid name provided to insert cli flag after %s", clean.Log(name))
+		return f
+	}
+
 	result = make(CliFlags, 0, len(f)+len(insert))
 	done := false
 
-	if name = firstName(name); name != "" {
-		for _, flag := range f {
-			result = append(result, flag)
+	for _, flag := range f {
+		result = append(result, flag)
 
-			if !done && flag.Name() == name {
-				result = append(result, insert...)
-				done = true
-			}
+		if !done && flag.Name() == name {
+			result = append(result, insert...)
+			done = true
 		}
 	}
 
@@ -107,18 +116,21 @@ func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 
 // InsertBefore inserts command flags, if possible before the flag specified by name.
 func (f CliFlags) InsertBefore(name string, insert []CliFlag) (result CliFlags) {
+	if name = firstName(name); name == "" {
+		log.Warnf("config: invalid name provided to insert cli flag before %s", clean.Log(name))
+		return f
+	}
+
 	result = make(CliFlags, 0, len(f)+len(insert))
 	done := false
 
-	if name = firstName(name); name != "" {
-		for _, flag := range f {
-			if !done && flag.Name() == name {
-				result = append(result, insert...)
-				done = true
-			}
-
-			result = append(result, flag)
+	for _, flag := range f {
+		if !done && flag.Name() == name {
+			result = append(result, insert...)
+			done = true
 		}
+
+		result = append(result, flag)
 	}
 
 	if !done {
@@ -135,4 +147,31 @@ func (f CliFlags) Prepend(el []CliFlag) (result CliFlags) {
 
 	result = append(result, el...)
 	return append(result, f...)
+}
+
+// SetHidden updates the hidden property of the config flags to the specified value.
+func (f CliFlags) SetHidden(hidden bool, names ...string) (result CliFlags) {
+	result = make(CliFlags, 0, len(f))
+
+	for _, flag := range f {
+		if list.Contains(names, flag.Name()) {
+			rv := reflect.ValueOf(flag.Flag)
+
+			if rv.Kind() == reflect.Ptr {
+				rv = rv.Elem()
+			}
+
+			if rv.Kind() == reflect.Struct {
+				field := rv.FieldByName("Hidden")
+
+				if field.IsValid() && field.CanSet() && field.Kind() == reflect.Bool {
+					field.SetBool(hidden)
+				}
+			}
+		}
+
+		result = append(result, flag)
+	}
+
+	return result
 }

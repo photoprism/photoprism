@@ -1,6 +1,8 @@
 package authn
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -9,10 +11,13 @@ import (
 type GrantType string
 
 // Standard authentication grant types.
+//
+//nolint:gosec // grant type identifiers are not secrets
 const (
 	GrantUndefined         GrantType = ""
 	GrantCLI               GrantType = "cli"
 	GrantImplicit          GrantType = "implicit"
+	GrantToken             GrantType = "token"
 	GrantSession           GrantType = "session"
 	GrantPassword          GrantType = "password"
 	GrantClientCredentials GrantType = "client_credentials"
@@ -34,6 +39,8 @@ func Grant(s string) GrantType {
 		return GrantCLI
 	case "implicit":
 		return GrantImplicit
+	case "token":
+		return GrantToken
 	case "session":
 		return GrantSession
 	case "password", "passwd", "pass":
@@ -64,6 +71,8 @@ func (t GrantType) Pretty() string {
 		return "CLI"
 	case GrantImplicit:
 		return "Implicit"
+	case GrantToken:
+		return "Token"
 	case GrantSession:
 		return "Session"
 	case GrantPassword:
@@ -89,6 +98,10 @@ func (t GrantType) Pretty() string {
 
 // String returns the grant type as a string.
 func (t GrantType) String() string {
+	if strings.HasPrefix(string(t), "urn:") {
+		return clean.TypeLowerDash(string(t))
+	}
+
 	return clean.TypeLowerUnderscore(string(t))
 }
 

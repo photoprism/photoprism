@@ -43,6 +43,13 @@ func TestPosixLocale(t *testing.T) {
 		assert.Equal(t, "de", PosixLocale("und", "de"))
 		assert.Equal(t, "cs", PosixLocale("cs", "und"))
 	})
+	t.Run("Local", func(t *testing.T) {
+		assert.Equal(t, "local", PosixLocale("", "local"))
+		assert.Equal(t, "Local", PosixLocale("", "Local"))
+		assert.Equal(t, "", PosixLocale("local", ""))
+		assert.Equal(t, "", PosixLocale("Local", ""))
+		assert.Equal(t, "local", PosixLocale("local", "local"))
+	})
 	t.Run("Territory", func(t *testing.T) {
 		assert.Equal(t, "cs_CZ", PosixLocale("cs_CZ", ""))
 		assert.Equal(t, "cs_CZ", PosixLocale("cs-CZ", ""))
@@ -67,6 +74,13 @@ func TestWebLocale(t *testing.T) {
 		assert.Equal(t, "", WebLocale("und", ""))
 		assert.Equal(t, "de", WebLocale("und", "de"))
 		assert.Equal(t, "cs", WebLocale("cs", "und"))
+	})
+	t.Run("Local", func(t *testing.T) {
+		assert.Equal(t, "local", WebLocale("", "local"))
+		assert.Equal(t, "Local", WebLocale("", "Local"))
+		assert.Equal(t, "", WebLocale("local", ""))
+		assert.Equal(t, "", WebLocale("Local", ""))
+		assert.Equal(t, "local", WebLocale("local", "local"))
 	})
 	t.Run("Territory", func(t *testing.T) {
 		assert.Equal(t, "cs-CZ", WebLocale("cs-CZ", ""))

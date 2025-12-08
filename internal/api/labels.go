@@ -55,7 +55,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 		// Set form values from request.
 		if frmErr = c.BindJSON(frm); frmErr != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, frmErr)
 			return
 		} else if frmErr = frm.Validate(); frmErr != nil {
 			AbortInvalidName(c)
@@ -68,6 +68,8 @@ func UpdateLabel(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		}
+
+		RemoveFromLabelCoverCache(id)
 
 		event.SuccessMsg(i18n.MsgLabelSaved)
 

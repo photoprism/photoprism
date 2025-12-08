@@ -11,31 +11,32 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
 )
 
 // Model uses TensorFlow to label drawing, hentai, neutral, porn and sexy images.
 type Model struct {
-	model      *tf.SavedModel
-	modelPath  string
-	resolution int
-	modelTags  []string
-	labels     []string
-	disabled   bool
-	mutex      sync.Mutex
+	model     *tf.SavedModel
+	modelPath string
+	labels    []string
+	meta      *tensorflow.ModelInfo
+	disabled  bool
+	mutex     sync.Mutex
 }
 
 // NewModel returns a new detector instance.
-func NewModel(modelPath string, resolution int, tags []string, disabled bool) *Model {
-	if resolution <= 0 {
-		resolution = 224
+func NewModel(modelPath string, meta *tensorflow.ModelInfo, disabled bool) *Model {
+	if meta == nil {
+		meta = new(tensorflow.ModelInfo)
 	}
-	if len(tags) == 0 {
-		tags = []string{"serve"}
+
+	return &Model{
+		modelPath: modelPath,
+		meta:      meta,
+		disabled:  disabled,
 	}
-	return &Model{modelPath: modelPath, resolution: resolution, modelTags: tags, disabled: disabled}
 }
 
 // File checks the specified JPEG file for inappropriate content.
@@ -46,7 +47,7 @@ func (m *Model) File(fileName string) (result Result, err error) {
 
 	var img []byte
 
-	if img, err = os.ReadFile(fileName); err != nil {
+	if img, err = os.ReadFile(fileName); err != nil { //nolint:gosec // fileName is provided by trusted callers; reading local test fixtures is intentional
 		return result, err
 	}
 
@@ -75,7 +76,8 @@ func (m *Model) Run(img []byte) (result Result, err error) {
 	}
 
 	// Create input tensor from image.
-	input, err := tensorflow.ImageTransform(img, fs.ImageJpeg, m.resolution)
+	input, err := tensorflow.ImageTransform(
+		img, fs.ImageJpeg, m.meta.Input.Resolution())
 
 	if err != nil {
 		return result, fmt.Errorf("%s", err)
@@ -84,10 +86,10 @@ func (m *Model) Run(img []byte) (result Result, err error) {
 	// Run inference.
 	output, err := m.model.Session.Run(
 		map[tf.Output]*tf.Tensor{
-			m.model.Graph.Operation("input_tensor").Output(0): input,
+			m.model.Graph.Operation(m.meta.Input.Name).Output(m.meta.Input.OutputIndex): input,
 		},
 		[]tf.Output{
-			m.model.Graph.Operation("nsfw_cls_model/final_prediction").Output(0),
+			m.model.Graph.Operation(m.meta.Output.Name).Output(m.meta.Output.OutputIndex),
 		},
 		nil)
 
@@ -107,7 +109,7 @@ func (m *Model) Run(img []byte) (result Result, err error) {
 	return result, nil
 }
 
-// Init initialises tensorflow models if not disabled
+// Init initializes tensorflow models if not disabled.
 func (m *Model) Init() (err error) {
 	if m.disabled {
 		return nil
@@ -129,21 +131,59 @@ func (m *Model) loadModel() error {
 
 	log.Infof("nsfw: loading %s", clean.Log(filepath.Base(m.modelPath)))
 
-	// Load saved TensorFlow model from the specified path.
-	model, err := tensorflow.SavedModel(m.modelPath, m.modelTags)
+	if len(m.meta.Tags) == 0 {
+		infos, err := tensorflow.GetModelTagsInfo(m.modelPath)
 
+		switch {
+		case err != nil:
+			log.Errorf("nsfw: could not get the model info at %s: %v", clean.Log(m.modelPath))
+		case len(infos) == 1:
+			log.Debugf("nsfw: model info: %+v", infos[0])
+			m.meta.Merge(&infos[0])
+		case len(infos) > 1:
+			log.Warnf("nsfw: found %d metagraphs... that's too many", len(infos))
+		default:
+			log.Warnf("nsfw: no metagraphs found in %s", clean.Log(m.modelPath))
+		}
+	}
+
+	// Load saved TensorFlow model from the specified path.
+	model, err := tensorflow.SavedModel(m.modelPath, m.meta.Tags)
 	if err != nil {
 		return err
 	}
 
+	if !m.meta.IsComplete() {
+		input, output, err := tensorflow.GetInputAndOutputFromSavedModel(model)
+		if err != nil {
+			log.Errorf("nsfw: could not get info from signatures: %v", err)
+			input, output, err = tensorflow.GuessInputAndOutput(model)
+			if err != nil {
+				return fmt.Errorf("nsfw: %w", err)
+			}
+		}
+
+		m.meta.Merge(&tensorflow.ModelInfo{
+			Input:  input,
+			Output: output,
+		})
+	}
+
 	m.model = model
+
+	if m.meta.Output.OutputsLogits {
+		_, err = tensorflow.AddSoftmax(m.model.Graph, m.meta)
+		if err != nil {
+			return fmt.Errorf("nsfw: could not add softmax (%s)", clean.Error(err))
+		}
+	}
 
 	return m.loadLabels(m.modelPath)
 }
 
 func (m *Model) loadLabels(modelPath string) (err error) {
-	m.labels, err = tensorflow.LoadLabels(modelPath)
-	return nil
+	m.labels, err = tensorflow.LoadLabels(modelPath, int(m.meta.Output.NumOutputs))
+	return err
 }
 
 func (m *Model) getLabels(p []float32) Result {

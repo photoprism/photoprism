@@ -43,6 +43,7 @@ case $DESTARCH in
     ;;
 esac
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 LATEST=$(curl --silent "https://api.github.com/repos/strukturag/libheif/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -56,11 +57,11 @@ mkdir -p "$DESTDIR"
 
 ARCHIVE="${CURRENT_DIR}/build/$BUILD.tar.gz"
 
-echo "------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 echo "VERSION: $LIBHEIF_VERSION"
 echo "LATEST : $LATEST"
 echo "ARCHIVE: $ARCHIVE"
-echo "------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 
 echo "Installing build dependencies..."
 

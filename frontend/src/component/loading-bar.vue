@@ -243,7 +243,7 @@ export default {
     increase(amount) {
       let o = this.progress;
 
-      if (o < 100 && typeof amount !== "number") {
+      if (o < 100 && Number.isNaN(amount)) {
         if (o >= 0 && o < 25) {
           amount = Math.random() * 3 + 3;
         } else if (o >= 25 && o < 50) {

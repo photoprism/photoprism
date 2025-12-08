@@ -3,6 +3,7 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -26,7 +27,7 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, m.UserUID, UserFixtures.Get("alice").UserUID)
@@ -40,7 +41,7 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("cs5gfsvbd7ejzn8m")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, m.UserUID, UserFixtures.Get("bob").UserUID)
@@ -54,7 +55,7 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Empty(t, m.UserUID)
@@ -104,7 +105,7 @@ func TestClient_User(t *testing.T) {
 		m := alice.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "alice", m.UserName)
@@ -118,7 +119,7 @@ func TestClient_User(t *testing.T) {
 		m := metrics.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Empty(t, m.UserName)
@@ -134,7 +135,7 @@ func TestClient_User(t *testing.T) {
 		m := c.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Empty(t, m.UserName)
@@ -149,7 +150,7 @@ func TestClient_User(t *testing.T) {
 		m := c.User()
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, "bob", m.UserName)
@@ -159,7 +160,7 @@ func TestClient_User(t *testing.T) {
 }
 
 func TestClient_SetUser(t *testing.T) {
-	t.Run("john", func(t *testing.T) {
+	t.Run("John", func(t *testing.T) {
 		c := Client{ClientName: "test"}
 		u := &User{UserUID: "uqxc08w3d0ej2111", UserName: "john"}
 
@@ -168,7 +169,7 @@ func TestClient_SetUser(t *testing.T) {
 		m := c.SetUser(u)
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.NotEmpty(t, c.User().UserName)
@@ -202,7 +203,7 @@ func TestClient_Save(t *testing.T) {
 		c = FindClientByUID("cs5cpu17n6gj2aaa")
 
 		if c == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 	})
 }
@@ -408,7 +409,7 @@ func TestClient_VerifySecret(t *testing.T) {
 		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, expected.ClientUID, m.GetUID())
@@ -427,7 +428,7 @@ func TestClient_VerifySecret(t *testing.T) {
 		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("result must not be nil")
 		}
 
 		assert.Equal(t, expected.ClientUID, m.GetUID())
@@ -617,6 +618,152 @@ func TestClient_SetFormValues(t *testing.T) {
 		assert.Equal(t, "client", c.AuthProvider)
 
 	})
+}
+
+func TestClient_SetFormValues_Role(t *testing.T) {
+	t.Run("SetValidRoleFromForm", func(t *testing.T) {
+		m := Client{ClientName: "RoleTest", ClientUID: "cs5cpu17n6gj9r01"}
+
+		// Persist once to align with other tests, though not required for SetFormValues.
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Apply role via form.
+		c := m.SetFormValues(form.Client{ClientRole: "portal"})
+
+		assert.Equal(t, "portal", c.ClientRole)
+		assert.True(t, c.HasRole(acl.RolePortal))
+		assert.False(t, c.HasRole(acl.RoleClient))
+	})
+	t.Run("InvalidRoleFromFormDefaultsToClient", func(t *testing.T) {
+		m := Client{ClientName: "InvalidRole", ClientUID: "cs5cpu17n6gj9r02"}
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Unknown role → default to client.
+		c := m.SetFormValues(form.Client{ClientRole: "superuser"})
+
+		assert.Equal(t, "client", c.ClientRole)
+		assert.True(t, c.HasRole(acl.RoleClient))
+	})
+	t.Run("ChangeRoleFromClientToAdmin", func(t *testing.T) {
+		m := NewClient()
+		m.ClientName = "ChangeRole"
+		m.ClientUID = "cs5cpu17n6gj9r03"
+
+		// Default role is "client".
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, m.HasRole(acl.RoleClient))
+
+		// Change to admin via form.
+		m.SetFormValues(form.Client{ClientRole: "admin"})
+		assert.True(t, m.HasRole(acl.RoleAdmin))
+		assert.Equal(t, "admin", m.ClientRole)
+	})
+}
+
+func TestClient_SetFormValues_AuthEnabledToggle(t *testing.T) {
+	// Start enabled; attempt to disable via form should NOT flip to false.
+	m := NewClient()
+	m.ClientName = "ToggleEnabled"
+	m.ClientUID = "cs5cpu17n6gj9r04"
+	m.AuthEnabled = true
+	if err := m.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	m.SetFormValues(form.Client{AuthEnabled: false})
+	assert.True(t, m.AuthEnabled, "SetFormValues should not disable when AuthEnabled=false")
+
+	// Now explicitly enable from false → true
+	m.AuthEnabled = false
+	m.SetFormValues(form.Client{AuthEnabled: true})
+	assert.True(t, m.AuthEnabled)
+}
+
+func TestClient_SetFormValues_SetUser(t *testing.T) {
+	t.Run("ByUID", func(t *testing.T) {
+		m := NewClient()
+		m.ClientName = "SetUserByUID"
+		m.ClientUID = "cs5cpu17n6gj9r05"
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		uid := UserFixtures.Pointer("friend").UserUID
+		c := m.SetFormValues(form.Client{UserUID: uid})
+
+		assert.Equal(t, uid, c.UserUID)
+		assert.Equal(t, uid, c.User().UserUID)
+	})
+	t.Run("ByUserName", func(t *testing.T) {
+		m := NewClient()
+		m.ClientName = "SetUserByName"
+		m.ClientUID = "cs5cpu17n6gj9r06"
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		c := m.SetFormValues(form.Client{UserName: "alice"})
+
+		assert.Equal(t, UserFixtures.Pointer("alice").UserUID, c.UserUID)
+		assert.Equal(t, "alice", c.UserName)
+		assert.Equal(t, "alice", c.User().UserName)
+	})
+	t.Run("UnknownUserNoChange", func(t *testing.T) {
+		// Seed with a known user, then attempt to change to an unknown one.
+		m := NewClient()
+		m.ClientName = "UnknownUserNoChange"
+		m.ClientUID = "cs5cpu17n6gj9r07"
+		m.SetUser(UserFixtures.Pointer("bob"))
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		prevUID := m.UserUID
+		c := m.SetFormValues(form.Client{UserUID: "u0000000000000xx", UserName: "nonexistent"})
+
+		assert.Equal(t, prevUID, c.UserUID)
+		assert.Equal(t, "bob", c.UserName)
+	})
+}
+
+func TestClient_AclRole_Resolution(t *testing.T) {
+	t.Run("EmptyIsNone", func(t *testing.T) {
+		m := &Client{ClientRole: ""}
+		assert.Equal(t, acl.RoleNone, m.AclRole())
+	})
+	t.Run("ClientIsClient", func(t *testing.T) {
+		m := &Client{ClientRole: "client"}
+		assert.Equal(t, acl.RoleClient, m.AclRole())
+	})
+}
+
+func TestClient_SetRole_AliasNoneAndCase(t *testing.T) {
+	m := &Client{}
+	m.SetRole("NoNe")
+	assert.True(t, m.HasRole(acl.RoleNone))
+
+	m.SetRole("")
+	assert.True(t, m.HasRole(acl.RoleNone))
+}
+
+func TestClient_SetFormValues_DoesNotOverrideUID(t *testing.T) {
+	m := NewClient()
+	m.ClientName = "KeepUID"
+	m.ClientUID = "cs5cpu17n6gj9r08"
+	if err := m.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Attempt to override with a different id via form; should be ignored.
+	c := m.SetFormValues(form.Client{ClientID: "cs5cpu17n6gj9zzz", ClientName: "KeepUID2"})
+	assert.Equal(t, "cs5cpu17n6gj9r08", c.ClientUID)
+	assert.Equal(t, "KeepUID2", c.ClientName)
 }
 
 func TestClient_Validate(t *testing.T) {

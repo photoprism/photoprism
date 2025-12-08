@@ -21,5 +21,5 @@ func FromName(fileName string) Type {
 
 // MainFile checks if the filename belongs to a main content type.
 func MainFile(fileName string) bool {
-	return FromName(fileName).Main()
+	return FromName(fileName).IsMain()
 }

@@ -13,12 +13,12 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestOAuthRevoke(t *testing.T) {
-	const tokenPath = "/api/v1/oauth/token"
+	const tokenPath = "/api/v1/oauth/token" // #nosec G101 test constant, not a credential
 	const revokePath = "/api/v1/oauth/revoke"
 
 	t.Run("ClientSuccessToken", func(t *testing.T) {

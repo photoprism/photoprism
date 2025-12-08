@@ -5,14 +5,15 @@
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
-if [[ -z $1 ]]; then
-  PACKAGES="postgresql-client"
+if [[ $# -eq 0 ]]; then
+  PACKAGES=("postgresql-client")
 else
-  PACKAGES=$1
+  PACKAGES=("$@")
 fi
 
 set -e
 
+# shellcheck source=/dev/null
 . /etc/os-release
 
 # Determine target architecture.
@@ -24,11 +25,11 @@ fi
 
 DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
-echo "Installing \"$PACKAGES\" distribution packages for ${DESTARCH^^}..."
+echo "Installing \"${PACKAGES[*]}\" distribution packages for ${DESTARCH^^}..."
 
 sudo apt-get update
 sudo apt-get -qy install curl gnupg postgresql-common apt-transport-https lsb-release
 sudo sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
-sudo apt-get -qq install $PACKAGES
+sudo apt-get -qq install "${PACKAGES[@]}"
 
 echo "Done."

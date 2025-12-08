@@ -2,6 +2,7 @@ package pwa
 
 import (
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -51,7 +52,7 @@ func NewManifest(c Config) (m *Manifest) {
 		StartUrl:        c.BaseUri + "library/",
 		Shortcuts:       Shortcuts(c.BaseUri),
 		Serviceworker: Serviceworker{
-			Src:      "sw.js",
+			Src:      fs.SwJsFile,
 			Scope:    c.BaseUri,
 			UseCache: true,
 		},

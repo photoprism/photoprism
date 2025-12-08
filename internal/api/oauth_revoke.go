@@ -13,15 +13,23 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// OAuthRevoke takes an access token and deletes it. A client may only delete its own tokens.
+// OAuthRevoke revokes an access token or session. A client may only revoke its own tokens.
 //
-//	@Tags	Authentication
-//	@Router	/api/v1/oauth/revoke [post]
+//	@Summary	revoke an OAuth2 access token or session
+//	@Id			OAuthRevoke
+//	@Tags		Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		request				body		form.OAuthRevokeToken	true	"revoke request"
+//	@Success	200					{object}	gin.H
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/oauth/revoke [post]
 func OAuthRevoke(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
@@ -61,21 +69,21 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			// Set log role and actor based on the session referenced in request header.
 			sUserUID = s.UserUID
 			if s.IsClient() {
-				role = s.ClientRole()
-				actor = fmt.Sprintf("client %s", clean.Log(s.ClientInfo()))
-			} else if username := s.Username(); username != "" {
-				role = s.UserRole()
+				role = s.GetClientRole()
+				actor = fmt.Sprintf("client %s", clean.Log(s.GetClientInfo()))
+			} else if username := s.GetUserName(); username != "" {
+				role = s.GetUserRole()
 				actor = fmt.Sprintf("user %s", clean.Log(username))
 			} else {
-				role = s.UserRole()
-				actor = fmt.Sprintf("unknown %s", s.UserRole().String())
+				role = s.GetUserRole()
+				actor = fmt.Sprintf("unknown %s", s.GetUserRole().String())
 			}
 		}
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
 		if err = c.ShouldBind(&frm); err != nil && authToken == "" {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
-			AbortBadRequest(c)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
+			AbortBadRequest(c, err)
 			return
 		} else if frm.Empty() {
 			frm.Token = authToken
@@ -84,7 +92,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 
 		// Validate revocation form values.
 		if err = frm.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		}
@@ -113,45 +121,46 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// If not already set, get the log role and actor from the session to be revoked.
 		if sess != nil && role == acl.RoleNone {
 			if sess.IsClient() {
-				role = sess.ClientRole()
-				actor = fmt.Sprintf("client %s", clean.Log(sess.ClientInfo()))
-			} else if username := sess.Username(); username != "" {
-				role = s.UserRole()
+				role = sess.GetClientRole()
+				actor = fmt.Sprintf("client %s", clean.Log(sess.GetClientInfo()))
+			} else if username := sess.GetUserName(); username != "" {
+				role = s.GetUserRole()
 				actor = fmt.Sprintf("user %s", clean.Log(username))
 			} else {
-				role = sess.UserRole()
-				actor = fmt.Sprintf("unknown %s", sess.UserRole().String())
+				role = sess.GetUserRole()
+				actor = fmt.Sprintf("unknown %s", sess.GetUserRole().String())
 			}
 		}
 
 		// Check revocation request and abort if invalid.
-		if err != nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err.Error())
+		switch {
+		case err != nil:
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Error(err)}, clean.Log(sess.RefID), role.String())
 			AbortInvalidCredentials(c)
 			return
-		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+		case sess == nil:
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, "", role.String())
 			AbortInvalidCredentials(c)
 			return
-		} else if sess.Abort(c) {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+		case sess.Abort(c):
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			return
-		} else if !sess.IsClient() {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+		case !sess.IsClient():
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
-		} else if sUserUID != "" && sess.UserUID != sUserUID {
+		case sUserUID != "" && sess.UserUID != sUserUID:
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.ErrUnauthorized.Error()}, clean.Log(sess.RefID), role.String())
 			AbortInvalidCredentials(c)
 			return
-		} else {
-			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Granted}, clean.Log(sess.RefID), role.String())
+		default:
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Granted}, clean.Log(sess.RefID), role.String())
 		}
 
 		// Delete session cache and database record.
 		if err = sess.Delete(); err != nil {
 			// Log error.
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err)
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Error(err)}, clean.Log(sess.RefID), role.String())
 
 			// Return JSON error.
 			c.AbortWithStatusJSON(http.StatusNotFound, i18n.NewResponse(http.StatusNotFound, i18n.ErrNotFound))

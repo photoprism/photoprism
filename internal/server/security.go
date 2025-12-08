@@ -5,7 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // Security is a middleware that adds security-related headers to the server's response.
@@ -31,6 +31,6 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 
 		// Set "X-Frame-Options" header:
 		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-		c.Header(header.FrameOptions, header.DefaultFrameOptions)
+		c.Header(header.XFrameOptions, header.DefaultFrameOptions)
 	}
 }

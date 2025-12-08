@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
+// WebDAV mount points served by the application.
 const (
 	WebDAVOriginals = "/originals"
 	WebDAVImport    = "/import"

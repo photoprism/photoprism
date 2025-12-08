@@ -19,9 +19,6 @@ const (
 	QualityMin    Quality = 70
 )
 
-// JpegQualityDefault sets the compression level of newly created JPEGs.
-var JpegQualityDefault = QualityMedium
-
 // Quality represents a JPEG image quality.
 type Quality int
 

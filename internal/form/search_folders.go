@@ -11,14 +11,17 @@ type SearchFolders struct {
 	Offset    int    `form:"offset" serialize:"-"`
 }
 
+// GetQuery returns the current search query string.
 func (f *SearchFolders) GetQuery() string {
 	return f.Query
 }
 
+// SetQuery stores the raw query string.
 func (f *SearchFolders) SetQuery(q string) {
 	f.Query = q
 }
 
+// ParseQueryString deserializes the query string into form fields.
 func (f *SearchFolders) ParseQueryString() error {
 	return ParseQueryString(f)
 }

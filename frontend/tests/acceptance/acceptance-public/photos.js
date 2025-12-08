@@ -92,9 +92,7 @@ test.meta("testID", "photos-003").meta({ type: "short", mode: "public" })(
     }
     await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
     await contextmenu.triggerContextMenuAction("edit", "");
-    await t
-      .typeText(photoedit.latitude, "9.999", { replace: true })
-      .typeText(photoedit.longitude, "9.999", { replace: true });
+    await t.typeText(photoedit.coordinates, "9.999,9.999", { replace: true });
     await t.click(photoedit.detailsApply).click(photoedit.detailsClose);
     await t.click(toolbar.cardsViewAction);
     const ApproveButtonThirdPhoto = 'div.is-photo[data-uid="' + ThirdPhotoUid + '"] button.action-approve';
@@ -169,11 +167,13 @@ test.meta("testID", "photos-004").meta({ type: "short", mode: "public" })(
 );
 
 test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Common: Edit photo/video", async (t) => {
+  await menu.openPage("browse");
   await t.click(toolbar.cardsViewAction);
+  await toolbar.search("geo:true");
   const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
   await page.clickCardTitleOfUID(FirstPhotoUid);
 
-  await t.expect(photoedit.latitude.visible).ok();
+  await t.expect(photoedit.coordinates.visible).ok();
 
   await t.click(photoedit.dialogNext);
 
@@ -184,21 +184,20 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   await photoviewer.triggerPhotoViewerAction("edit-button");
   const FirstPhotoTitle = await photoedit.title.value;
   const FirstPhotoLocalTime = await photoedit.localTime.value;
-  let FirstPhotoDay = await photoedit.day.innerText;
+  let FirstPhotoDay = await photoedit.dayValue.innerText;
   if (!FirstPhotoDay) {
     FirstPhotoDay = "Unknown";
   }
-  let FirstPhotoMonth = await photoedit.month.innerText;
+  let FirstPhotoMonth = await photoedit.monthValue.innerText;
   if (!FirstPhotoMonth) {
     FirstPhotoMonth = "Unknown";
   }
-  let FirstPhotoYear = await photoedit.year.innerText;
+  let FirstPhotoYear = await photoedit.yearValue.innerText;
   if (!FirstPhotoYear) {
     FirstPhotoYear = "Unknown";
   }
   const FirstPhotoTimezone = await photoedit.timezoneValue.innerText;
-  const FirstPhotoLatitude = await photoedit.latitude.value;
-  const FirstPhotoLongitude = await photoedit.longitude.value;
+  const FirstPhotoCoordinates = await photoedit.coordinates.value;
   const FirstPhotoAltitude = await photoedit.altitude.value;
   const FirstPhotoCountry = await photoedit.countryValue.innerText;
   const FirstPhotoCamera = await photoedit.cameraValue.innerText;
@@ -219,8 +218,6 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
     ["title", "New Photo Title"],
     ["localTime", "04:30:30"],
     ["altitude", "-1"],
-    ["latitude", "41.15333"],
-    ["longitude", "20.168331"],
     ["iso", "32"],
     ["exposure", "1/32"],
     ["fnumber", "29"],
@@ -253,8 +250,7 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
     ["title", FirstPhotoTitle],
     ["localTime", FirstPhotoLocalTime],
     ["altitude", FirstPhotoAltitude],
-    ["latitude", FirstPhotoLatitude],
-    ["longitude", FirstPhotoLongitude],
+    ["coordinates", FirstPhotoCoordinates],
     ["iso", FirstPhotoIso],
     ["exposure", FirstPhotoExposure],
     ["fnumber", FirstPhotoFnumber],
@@ -265,7 +261,6 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
     ["license", FirstPhotoLicense],
     ["description", FirstPhotoDescription],
     ["notes", FirstPhotoNotes],
-    ["keywords", FirstPhotoKeywords],
   ];
   const initialSelectValuesNoCountry = [
     ["day", FirstPhotoDay],
@@ -281,6 +276,17 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
 
   await photoedit.editFormValues(expectedInputValues, expectedSelectValuesNoCountry);
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
+  await t.typeText(Selector("div.p-tab-photo-details .input-coordinates input"), "41.15333, 20.168331", {
+    replace: true,
+  });
+  await t.expect(await photoedit.coordinates.value).eql("41.15333, 20.168331");
+
+  await t.click(photoedit.detailsApply);
+  await t.expect(await photoedit.coordinates.value).eql("41.15333, 20.168331");
+
+  await t.click(photoedit.detailsClose);
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
@@ -294,11 +300,18 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
 
   await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
-
   await photoedit.checkEditFormValues(expectedInputValues, expectedSelectValues);
-
+  await t.expect(await photoedit.coordinates.value).eql("41.15333, 20.168331");
   await photoedit.editFormValues(initialInputValues, initialSelectValuesNoCountry);
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+  await t.typeText(Selector("div.p-tab-photo-details .input-coordinates input"), FirstPhotoCoordinates, {
+    replace: true,
+  });
+  await t.click(photoedit.detailsApply);
+  await t.click(photoedit.detailsClose);
+
   await contextmenu.triggerContextMenuAction("edit", "");
+  await photoedit.checkEditFormValues(initialInputValues, initialSelectValuesNoCountry);
 
   await contextmenu.checkContextMenuCount("1");
   await contextmenu.clearSelection();
@@ -334,16 +347,16 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await photo.checkPhotoVisibility(FirstVideoUid, false);
 
   await menu.openPage("browse");
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
-  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await photoedit.turnSwitchOn("scan");
-  await photoedit.turnSwitchOn("panorama");
-  await t.click(photoedit.dialogNext);
+
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
   await photoedit.turnSwitchOn("scan");
   await photoedit.turnSwitchOn("panorama");
   await t.click(photoedit.dialogClose);
-  await contextmenu.clearSelection();
+  await page.clickCardTitleOfUID(FirstVideoUid);
+  await photoedit.turnSwitchOn("scan");
+  await photoedit.turnSwitchOn("panorama");
+  await t.click(photoedit.dialogClose);
 
   await photo.checkPhotoVisibility(FirstPhotoUid, true);
   await photo.checkPhotoVisibility(FirstVideoUid, true);
@@ -358,18 +371,18 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await photo.checkPhotoVisibility(FirstPhotoUid, true);
   await photo.checkPhotoVisibility(FirstVideoUid, true);
 
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
-  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
-  await contextmenu.triggerContextMenuAction("edit", "");
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
-  await t.click(photoedit.dialogNext);
+  await t.click(photoedit.dialogClose);
+  await page.clickCardTitleOfUID(FirstVideoUid);
+
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
   await t.click(photoedit.dialogClose);
   await t.wait(9000);
 
-  await contextmenu.clearSelection();
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
@@ -410,3 +423,65 @@ test.meta("testID", "photos-009").meta({ mode: "public" })(
     await t.expect(photoedit.timezoneValue.innerText).eql("Europe/Berlin");
   }
 );
+
+test.meta("testID", "photos-010").meta({ mode: "public" })("Common: Set location on map", async (t) => {
+  await t.click(toolbar.cardsViewAction);
+  await toolbar.search("geo:false");
+
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 3);
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+  const FirstPhotoTimezone = await photoedit.timezoneValue.innerText;
+  const FirstPhotoCoordinates = await photoedit.coordinates.value;
+  const FirstPhotoAltitude = await photoedit.altitude.value;
+  const FirstPhotoCountry = await photoedit.countryValue.innerText;
+
+  await t.expect(photoedit.altitude.value).eql(FirstPhotoAltitude);
+  await t.expect(photoedit.coordinates.value).eql(FirstPhotoCoordinates);
+  await t.expect(photoedit.timezoneValue.innerText).eql(FirstPhotoTimezone);
+  await t.expect(photoedit.countryValue.innerText).eql(FirstPhotoCountry);
+  await t.click(photoedit.locationAction);
+  const CoordinatesBefore = await photoedit.locationInput.value;
+  await t.expect(CoordinatesBefore).eql("");
+  await t.expect(photoedit.locationMarker.visible).notOk();
+
+  //search
+  await t.typeText(photoedit.locationSearch, "Brandenburger Tor Berlin").wait(5000).pressKey("enter");
+  const Coordinates = await photoedit.locationInput.value;
+  await t.expect(Coordinates).eql("52.5162546, 13.3777166");
+  await t.expect(photoedit.locationMarker.visible).ok();
+
+  await t.click(photoedit.locationClear);
+
+  const CoordinatesAfterClear = await photoedit.locationInput.value;
+  await t.expect(CoordinatesAfterClear).eql("");
+  await t.expect(photoedit.locationMarker.visible).notOk();
+
+  await t.click(photoedit.locationUndo);
+
+  const CoordinatesAfterUndo = await photoedit.locationInput.value;
+  await t.expect(CoordinatesAfterUndo).eql("52.5162546, 13.3777166");
+  await t.expect(photoedit.locationMarker.visible).ok();
+  await t.click(photoedit.locationConfirm).wait(10000);
+
+  await t.expect(photoedit.altitude.value).eql("0");
+  await t.expect(photoedit.coordinates.value).eql("52.5162546, 13.3777166");
+  await t.expect(photoedit.countryValue.innerText).eql("Germany");
+  await t.click(photoedit.detailsApply);
+  await t.click(photoedit.detailsClose);
+  await page.clickCardTitleOfUID(FirstPhotoUid);
+
+  await t.expect(photoedit.timezoneValue.innerText).eql("Europe/Berlin");
+  await t.expect(photoedit.altitude.value).eql("0");
+  await t.expect(photoedit.coordinates.value).eql("52.5162546, 13.3777166");
+  await t.expect(photoedit.countryValue.innerText).eql("Germany");
+
+  //click on map
+  await t.click(photoedit.locationAction);
+  const CoordinatesBeforeChange = await photoedit.locationInput.value;
+  await t.expect(CoordinatesBeforeChange).eql("52.5162546, 13.3777166");
+  await t.click(Selector("div.maplibregl-map"), { offsetX: 4, offsetY: 4 });
+  const CoordinatesAfterChange = await photoedit.locationInput.value;
+  await t.expect(CoordinatesAfterChange).eql("52.534636098259455, 13.332140504419073");
+  await t.click(photoedit.locationCancel).wait(10000);
+  await t.expect(photoedit.coordinates.value).eql("52.5162546, 13.3777166");
+});

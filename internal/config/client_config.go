@@ -13,8 +13,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// ClientType identifies which flavor of client (public/share/user) a configuration describes.
 type ClientType string
 
+// Available client configuration types.
 const (
 	ClientPublic ClientType = "public"
 	ClientShare  ClientType = "share"
@@ -60,6 +62,7 @@ type ClientConfig struct {
 	Trace            bool                `json:"trace"`
 	Test             bool                `json:"test"`
 	Demo             bool                `json:"demo"`
+	Portal           bool                `json:"portal"`
 	Sponsor          bool                `json:"sponsor"`
 	ReadOnly         bool                `json:"readonly"`
 	UploadNSFW       bool                `json:"uploadNSFW"`
@@ -98,7 +101,7 @@ type ClientConfig struct {
 	Usage            Usage               `json:"usage"`
 	Settings         *customize.Settings `json:"settings,omitempty"`
 	ACL              acl.Grants          `json:"acl,omitempty"`
-	Ext              Map                 `json:"ext"`
+	Ext              Values              `json:"ext"`
 }
 
 // ApplyACL updates the client config values based on the ACL and Role provided.
@@ -179,14 +182,17 @@ type ClientCounts struct {
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
 
+// CategoryLabels enumerates label metadata exposed to the client for navigation buckets.
 type CategoryLabels []CategoryLabel
 
+// CategoryLabel contains the slug and name for a single label entry surfaced to the client.
 type CategoryLabel struct {
 	LabelUID   string `json:"UID"`
 	CustomSlug string `json:"Slug"`
 	LabelName  string `json:"Name"`
 }
 
+// ClientPosition reports the map position of the currently focused photo in the UI.
 type ClientPosition struct {
 	PhotoUID string    `json:"uid"`
 	CellID   string    `json:"cid"`
@@ -307,6 +313,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		Public:           c.Public(),
@@ -402,6 +409,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
@@ -505,6 +513,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Trace:            c.Trace(),
 		Test:             c.Test(),
 		Demo:             c.Demo(),
+		Portal:           c.Portal(),
 		Sponsor:          c.Sponsor(),
 		ReadOnly:         c.ReadOnly(),
 		UploadNSFW:       c.UploadNSFW(),
@@ -613,7 +622,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 
 	// Exclude pictures in review from total count.
 	if c.Settings().Features.Review {
-		cfg.Count.All = cfg.Count.All - cfg.Count.Review
+		cfg.Count.All -= cfg.Count.Review
 	}
 
 	c.Db().
@@ -621,7 +630,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Select("MAX(photo_count) AS label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
-		Where("(label_priority >= 0 OR label_favorite = 1)").
+		Where("(labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1)").
 		Take(&cfg.Count)
 
 	if hidePrivate {
@@ -733,15 +742,16 @@ func (c *Config) ClientRole(role acl.Role) *ClientConfig {
 
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
-	if sess.NoUser() && sess.IsClient() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.ClientRole())
+	switch {
+	case sess.NoUser() && sess.IsClient():
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetClientRole())
 		cfg.Settings = c.SessionSettings(sess)
-	} else if sess.User().IsVisitor() {
+	case sess.GetUser().IsVisitor():
 		cfg = c.ClientShare()
-	} else if sess.User().IsRegistered() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.UserRole())
+	case sess.GetUser().IsRegistered():
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetUserRole())
 		cfg.Settings = c.SessionSettings(sess)
-	} else {
+	default:
 		cfg = c.ClientPublic()
 	}
 

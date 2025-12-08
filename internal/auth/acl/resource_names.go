@@ -27,6 +27,7 @@ var ResourceNames = []Resource{
 	ResourceWebhooks,
 	ResourceMetrics,
 	ResourceVision,
+	ResourceCluster,
 	ResourceFeedback,
 	ResourceDefault,
 }

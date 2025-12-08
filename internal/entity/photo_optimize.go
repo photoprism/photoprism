@@ -3,17 +3,15 @@ package entity
 import (
 	"errors"
 	"reflect"
-	"strings"
-
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Optimize the picture metadata based on the specified parameters.
+// Optimize updates picture metadata, enriching titles, keywords, and locations according to the supplied flags.
 func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (updated bool, merged Photos, err error) {
 	if !m.HasID() {
 		return false, merged, errors.New("photo: cannot maintain, id is empty")
 	}
 
+	// Keep a snapshot so we can detect whether anything changed.
 	current := *m
 
 	if m.HasLatLng() && !m.HasLocation() {
@@ -42,11 +40,6 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (up
 		log.Info(updateErr)
 	}
 
-	details := m.GetDetails()
-	w := txt.UniqueWords(txt.Words(details.Keywords))
-	w = append(w, labels.Keywords()...)
-	details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
-
 	if indexErr := m.IndexKeywords(); indexErr != nil {
 		log.Errorf("photo: %s", indexErr.Error())
 	}
@@ -55,11 +48,18 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimateLocation, force bool) (up
 
 	checked := Now()
 
+	// Skip persistence when nothing changed besides the indexing timestamps.
 	if reflect.DeepEqual(*m, current) {
-		return false, merged, m.Update("CheckedAt", &checked)
+		return false, merged, m.Updates(Values{
+			"IndexedAt": m.Indexed(),
+			"CheckedAt": &checked},
+		)
 	}
 
+	// Ensure IndexedAt remains set even when CheckedAt gets refreshed.
+	m.IndexedAt = m.Indexed()
 	m.CheckedAt = &checked
 
+	// Persist the updated metadata to the database.
 	return true, merged, m.Save()
 }

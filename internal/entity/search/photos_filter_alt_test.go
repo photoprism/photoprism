@@ -9,7 +9,7 @@ import (
 )
 
 func TestPhotosFilterAlt(t *testing.T) {
-	t.Run("-10", func(t *testing.T) {
+	t.Run("Ten", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Alt = "-10"
@@ -25,9 +25,9 @@ func TestPhotosFilterAlt(t *testing.T) {
 			assert.GreaterOrEqual(t, -10, r.PhotoAltitude)
 			assert.LessOrEqual(t, -10, r.PhotoAltitude)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("-100--5", func(t *testing.T) {
+	t.Run("Num100Five", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Alt = "-100--5"
@@ -44,9 +44,9 @@ func TestPhotosFilterAlt(t *testing.T) {
 			assert.LessOrEqual(t, -100, r.PhotoAltitude)
 		}
 
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("200-500", func(t *testing.T) {
+	t.Run("Num200Num500", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Alt = "200-500"
@@ -63,9 +63,9 @@ func TestPhotosFilterAlt(t *testing.T) {
 			assert.LessOrEqual(t, 200, r.PhotoAltitude)
 		}
 
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("200", func(t *testing.T) {
+	t.Run("Num200", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Alt = "200"
@@ -77,9 +77,9 @@ func TestPhotosFilterAlt(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Alt = "%gold"
@@ -95,7 +95,7 @@ func TestPhotosFilterAlt(t *testing.T) {
 }
 
 func TestPhotosQueryAlt(t *testing.T) {
-	t.Run("-10", func(t *testing.T) {
+	t.Run("Ten", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "alt:\"-10\""
@@ -112,9 +112,9 @@ func TestPhotosQueryAlt(t *testing.T) {
 			assert.LessOrEqual(t, -10, r.PhotoAltitude)
 		}
 
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("-100--5", func(t *testing.T) {
+	t.Run("Num100Five", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "alt:\"-100--5\""
@@ -131,9 +131,9 @@ func TestPhotosQueryAlt(t *testing.T) {
 			assert.LessOrEqual(t, -100, r.PhotoAltitude)
 		}
 
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("200-500", func(t *testing.T) {
+	t.Run("Num200Num500", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "alt:\"200-500\""
@@ -150,9 +150,9 @@ func TestPhotosQueryAlt(t *testing.T) {
 			assert.LessOrEqual(t, 200, r.PhotoAltitude)
 		}
 
-		assert.Equal(t, len(photos), 2)
+		assert.Len(t, photos, 2)
 	})
-	t.Run("200", func(t *testing.T) {
+	t.Run("Num200", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "alt:\"200\""
@@ -163,9 +163,9 @@ func TestPhotosQueryAlt(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Len(t, photos, 1)
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "alt:\"%gold\""

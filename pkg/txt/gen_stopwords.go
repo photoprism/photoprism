@@ -1,5 +1,4 @@
 //go:build ignore
-// +build ignore
 
 // This generates stopwords.go by running "go generate"
 package main

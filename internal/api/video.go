@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -94,10 +94,10 @@ func GetVideo(router *gin.RouterGroup) {
 
 		// Get video bitrate, codec, and file type.
 		videoFileType := f.Type()
-		videoCodec := f.FileCodec
 		videoBitrate := f.Bitrate()
 		videoFileName := photoprism.FileName(f.FileRoot, f.FileName)
 		videoContentType := f.ContentType()
+		var videoCodec string
 
 		// If the file has a hybrid photo/video format, try to find and send the embedded video data.
 		if f.MediaType == entity.MediaLive {
@@ -201,7 +201,5 @@ func GetVideo(router *gin.RouterGroup) {
 		} else {
 			c.File(videoFileName)
 		}
-
-		return
 	})
 }

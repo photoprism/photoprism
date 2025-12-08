@@ -8,12 +8,8 @@
       :tab="edit.tab"
       @close="closeEditDialog"
     ></p-photo-edit-dialog>
-    <p-upload-dialog
-      :visible="upload.visible"
-      :data="upload.data"
-      @close="closeUploadDialog"
-      @confirm="closeUploadDialog"
-    ></p-upload-dialog>
+    <p-photo-batch-edit :visible="batchEdit.visible" :selection="batchEdit.selection" @close="closeBatchEdit"></p-photo-batch-edit>
+    <p-upload-dialog :visible="upload.visible" :data="upload.data" @close="closeUploadDialog" @confirm="closeUploadDialog"></p-upload-dialog>
     <p-update :visible="update.visible" @close="closeUpdateDialog"></p-update>
     <p-lightbox @enter="onLightboxEnter" @leave="onLightboxLeave"></p-lightbox>
   </div>
@@ -22,6 +18,7 @@
 import Album from "model/album";
 
 import PPhotoEditDialog from "component/photo/edit/dialog.vue";
+import PPhotoBatchEdit from "component/photo/batch-edit.vue";
 import PUploadDialog from "component/upload/dialog.vue";
 import PUpdate from "component/update.vue";
 import PLightbox from "component/lightbox.vue";
@@ -30,6 +27,7 @@ export default {
   name: "PDialogs",
   components: {
     PPhotoEditDialog,
+    PPhotoBatchEdit,
     PUploadDialog,
     PUpdate,
     PLightbox,
@@ -42,6 +40,10 @@ export default {
         selection: [],
         index: 0,
         tab: "",
+      },
+      batchEdit: {
+        visible: false,
+        selection: [],
       },
       upload: {
         visible: false,
@@ -57,10 +59,17 @@ export default {
     };
   },
   created() {
-    // Opens the photo edit dialog.
+    // Opens the photo edit dialog (when 1 image is selected).
     this.subscriptions.push(
       this.$event.subscribe("dialog.edit", (ev, data) => {
         this.onEdit(data);
+      })
+    );
+
+    // Opens the photo edit dialog (when more than 1 image are selected).
+    this.subscriptions.push(
+      this.$event.subscribe("dialog.batchedit", (ev, data) => {
+        this.onBatchEdit(data);
       })
     );
 
@@ -104,6 +113,19 @@ export default {
     closeEditDialog() {
       if (this.edit.visible) {
         this.edit.visible = false;
+      }
+    },
+    onBatchEdit(data) {
+      if (this.batchEdit.visible || !this.hasAuth()) {
+        return;
+      }
+
+      this.batchEdit.selection = data.selection;
+      this.batchEdit.visible = true;
+    },
+    closeBatchEdit() {
+      if (this.batchEdit.visible) {
+        this.batchEdit.visible = false;
       }
     },
     onUpload(data) {

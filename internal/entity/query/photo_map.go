@@ -6,9 +6,11 @@ import (
 	"time"
 )
 
+// PhotoMap maps composite MapKey values to their photo IDs.
 type PhotoMap map[string]uint
 
-// IndexedPhotos returns a map of already indexed files with their mod time unix timestamp as value.
+// IndexedPhotos returns entity.MapKey(time, cellID) to photo ID pairs for all non-deleted photos.
+// This mirrors the format used by photoprism.Photos, enabling callers to hydrate keys without recomputing them.
 func IndexedPhotos() (result PhotoMap, err error) {
 	result = make(PhotoMap)
 
@@ -20,7 +22,7 @@ func IndexedPhotos() (result PhotoMap, err error) {
 
 	var rows []Photo
 
-	if err := UnscopedDb().Raw("SELECT id, taken_at, cell_id FROM photos WHERE deleted_at IS NULL").Scan(&rows).Error; err != nil {
+	if err = UnscopedDb().Raw("SELECT id, taken_at, cell_id FROM photos WHERE deleted_at IS NULL").Scan(&rows).Error; err != nil {
 		return result, err
 	}
 

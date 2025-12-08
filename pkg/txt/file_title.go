@@ -7,7 +7,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\d,':&+!?！]{1,}[\\-]{0,}|( [&+] )?")
+// FileTitleRegexp matches candidate words for photo titles.
+var FileTitleRegexp = regexp.MustCompile(`[\p{L}\d,':&+!?！]{1,}[\-]{0,}|( [&+] )?`)
 
 // FileTitle returns the string with the first characters of each word converted to uppercase.
 func FileTitle(s string) string {

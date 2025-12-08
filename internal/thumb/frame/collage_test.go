@@ -8,7 +8,7 @@ import (
 	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -32,12 +32,11 @@ func TestCollage(t *testing.T) {
 		err = imaging.Save(preview, saveName)
 
 		assert.NoError(t, err)
-		mimeType := fs.MimeType(saveName)
+		mimeType, _ := fs.DetectMimeType(saveName)
 		assert.Equal(t, header.ContentTypeJpeg, mimeType)
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("Two", func(t *testing.T) {
 		var images []image.Image
 
@@ -56,12 +55,11 @@ func TestCollage(t *testing.T) {
 		err = imaging.Save(preview, saveName)
 
 		assert.NoError(t, err)
-		mimeType := fs.MimeType(saveName)
+		mimeType, _ := fs.DetectMimeType(saveName)
 		assert.Equal(t, header.ContentTypeJpeg, mimeType)
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("NoImages", func(t *testing.T) {
 		var images []image.Image
 
@@ -73,12 +71,11 @@ func TestCollage(t *testing.T) {
 		err = imaging.Save(preview, saveName)
 
 		assert.NoError(t, err)
-		mimeType := fs.MimeType(saveName)
+		mimeType, _ := fs.DetectMimeType(saveName)
 		assert.Equal(t, header.ContentTypeJpeg, mimeType)
 
 		_ = os.Remove(saveName)
 	})
-
 	t.Run("UnknownCollageType", func(t *testing.T) {
 		var images []image.Image
 
@@ -100,7 +97,7 @@ func TestCollage(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		mimeType := fs.MimeType(saveName)
+		mimeType, _ := fs.DetectMimeType(saveName)
 		assert.Equal(t, header.ContentTypeJpeg, mimeType)
 
 		_ = os.Remove(saveName)

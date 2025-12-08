@@ -1,0 +1,47 @@
+name: Feature Request
+description: Suggest a new feature or enhancement.
+title: "Category: Short feature description (PLEASE CHANGE)"
+labels:
+  - idea
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Be sure to [check our roadmap](https://link.photoprism.app/roadmap) and [search GitHub for similar features](https://github.com/photoprism/photoprism/issues) before submitting a new request.
+  - type: checkboxes
+    id: request-prep
+    attributes:
+      label: Confirmation
+      description: Make sure you completed these steps before opening a new request.
+      options:
+        - label: I checked this request against the roadmap and existing issues
+          required: true
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: What Problem Does This Solve and Why Is It Valuable?
+      description: Explain the underlying problem and why solving it matters to many users.
+      placeholder: Describe the problem, why it is important, and who is affected.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: What Solution Would You Like?
+      description: Provide a clear and concise description of the feature or enhancement you propose.
+      placeholder: Outline the proposed solution or experience from the user's perspective.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What Alternatives Have You Considered?
+      description: Describe other options you explored and why they are less suitable.
+      placeholder: Mention any alternative solutions, workarounds, or related features you evaluated.
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Share relevant context, references, or screenshots that illustrate the request.
+      placeholder: Add links, references, or screenshots that help explain the request.

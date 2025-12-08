@@ -15,7 +15,7 @@ services:
       MYSQL_PASSWORD: "photoprism"
       MYSQL_ROOT_PASSWORD: "photoprism"
 
-## Join shared "photoprism-develop" network
+## Join shared "photoprism" network
 networks:
   default:
     name: photoprism

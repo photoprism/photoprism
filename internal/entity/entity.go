@@ -38,3 +38,14 @@ func Log(model, action string, err error) {
 		log.Errorf("%s: %s (%s)", model, err, action)
 	}
 }
+
+// FlushCaches flushes all in-memory entity caches.
+func FlushCaches() {
+	FlushAlbumCache()
+	FlushCameraCache()
+	FlushLensCache()
+	FlushCountryCache()
+	FlushLabelCache()
+	FlushPhotoLabelCache()
+	FlushSessionCache()
+}

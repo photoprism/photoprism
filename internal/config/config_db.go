@@ -11,33 +11,34 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"golang.org/x/mod/semver"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
 // TODO: PostgreSQL support requires upgrading GORM, so generic column data types can be used.
 const (
-	MySQL    = "mysql"
-	MariaDB  = "mariadb"
-	Postgres = "postgres"
-	SQLite3  = "sqlite3"
-)
-
-// SQLite default DSNs.
-const (
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:"
+	Auto     = "auto"
+	MySQL    = dsn.DriverMySQL
+	MariaDB  = dsn.DriverMariaDB
+	Postgres = dsn.DriverPostgres
+	SQLite3  = dsn.DriverSQLite3
 )
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
+	c.normalizeDatabaseDSN()
+
 	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
 		c.options.DatabaseDriver = MySQL
@@ -46,11 +47,11 @@ func (c *Config) DatabaseDriver() string {
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
 		c.options.DatabaseDriver = SQLite3
-		c.options.DatabaseDsn = ""
+		c.options.DatabaseDSN = ""
 	default:
 		log.Warnf("config: unsupported database driver %s, using sqlite", c.options.DatabaseDriver)
 		c.options.DatabaseDriver = SQLite3
-		c.options.DatabaseDsn = ""
+		c.options.DatabaseDSN = ""
 	}
 
 	return c.options.DatabaseDriver
@@ -99,11 +100,22 @@ func (c *Config) DatabaseSsl() bool {
 	}
 }
 
-// DatabaseDsn returns the database data source name (DSN).
-func (c *Config) DatabaseDsn() string {
-	if c.options.DatabaseDsn == "" {
+// normalizeDatabaseDSN maps the deprecated DatabaseDsn database configuration
+// value to its current counterpart, DatabaseDSN, before consumption.
+func (c *Config) normalizeDatabaseDSN() {
+	if c.options.DatabaseDSN == "" && c.options.Deprecated.DatabaseDsn != "" {
+		c.options.DatabaseDSN = c.options.Deprecated.DatabaseDsn
+		c.options.Deprecated.DatabaseDsn = ""
+		event.SystemWarn([]string{"config", "options", "DatabaseDsn has been deprecated in favor of DatabaseDSN"})
+	}
+}
+
+// DatabaseDSN returns the database data source name (DSN).
+func (c *Config) DatabaseDSN() string {
+	// Generate matching database DSN based on the configured database driver.
+	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
-		case MySQL, MariaDB:
+		case MySQL:
 			databaseServer := c.DatabaseServer()
 
 			// Connect via Unix Domain Socket?
@@ -115,47 +127,76 @@ func (c *Config) DatabaseDsn() string {
 			}
 
 			return fmt.Sprintf(
-				"%s:%s@%s/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=%ds",
+				"%s:%s@%s/%s?%s&timeout=%ds",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
 				databaseServer,
 				c.DatabaseName(),
+				dsn.Params[dsn.DriverMySQL],
 				c.DatabaseTimeout(),
 			)
 		case Postgres:
 			return fmt.Sprintf(
-				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d sslmode=disable TimeZone=UTC",
+				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d %s",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
 				c.DatabaseName(),
 				c.DatabaseHost(),
 				c.DatabasePort(),
 				c.DatabaseTimeout(),
+				dsn.Params[dsn.DriverPostgres],
 			)
 		case SQLite3:
-			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000")
+			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
 		}
 	}
 
-	return c.options.DatabaseDsn
+	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
+	if c.DatabaseDriver() == MySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
+		c.options.DatabaseDSN = fmt.Sprintf(
+			"%s?%s&timeout=%ds",
+			c.options.DatabaseDSN,
+			dsn.Params[dsn.DriverMySQL],
+			c.DatabaseTimeout())
+	}
+
+	return c.options.DatabaseDSN
 }
 
-// DatabaseFile returns the filename part of a sqlite database DSN.
-func (c *Config) DatabaseFile() string {
-	fileName, _, _ := strings.Cut(strings.TrimPrefix(c.DatabaseDsn(), "file:"), "?")
-	return fileName
+// NoDatabaseDSN checks if no manual database data source name (DSN) configuration is set.
+func (c *Config) NoDatabaseDSN() bool {
+	c.normalizeDatabaseDSN()
+
+	return c.options.DatabaseDSN == ""
 }
 
-// ParseDatabaseDsn parses the database dsn and extracts user, password, database server, and name.
-func (c *Config) ParseDatabaseDsn() {
-	if c.options.DatabaseDsn == "" || c.options.DatabaseServer != "" {
+// HasDatabaseDSN checks if a manual database data source name (DSN) configuration is set.
+func (c *Config) HasDatabaseDSN() bool {
+	return !c.NoDatabaseDSN()
+}
+
+// ReportDatabaseDSN checks if the database data source name (DSN) should be reported
+// instead of database name, server, user, and password.
+func (c *Config) ReportDatabaseDSN() bool {
+	if c.DatabaseDriver() == SQLite3 {
+		return true
+	}
+
+	return c.HasDatabaseDSN()
+}
+
+// ParseDatabaseDSN parses the database dsn and extracts user, password, database server, and name.
+func (c *Config) ParseDatabaseDSN() {
+	if c.NoDatabaseDSN() {
+		return
+	} else if c.options.DatabaseServer != "" && c.DatabaseDriver() == SQLite3 {
 		return
 	}
 
-	d := NewDSN(c.options.DatabaseDsn)
+	d := dsn.Parse(c.options.DatabaseDSN)
 
 	c.options.DatabaseName = d.Name
 	c.options.DatabaseServer = d.Server
@@ -163,9 +204,15 @@ func (c *Config) ParseDatabaseDsn() {
 	c.options.DatabasePassword = d.Password
 }
 
+// DatabaseFile returns the filename part of a sqlite database DSN.
+func (c *Config) DatabaseFile() string {
+	fileName, _, _ := strings.Cut(strings.TrimPrefix(c.DatabaseDSN(), "file:"), "?")
+	return fileName
+}
+
 // DatabaseServer the database server.
 func (c *Config) DatabaseServer() string {
-	c.ParseDatabaseDsn()
+	c.ParseDatabaseDSN()
 
 	if c.DatabaseDriver() == SQLite3 {
 		return ""
@@ -178,32 +225,26 @@ func (c *Config) DatabaseServer() string {
 
 // DatabaseHost the database server host.
 func (c *Config) DatabaseHost() string {
+	c.ParseDatabaseDSN()
+
 	if c.DatabaseDriver() == SQLite3 {
 		return ""
 	}
 
-	if s := strings.Split(c.DatabaseServer(), ":"); len(s) > 0 {
-		return s[0]
-	}
-
-	return c.options.DatabaseServer
+	d := dsn.Parse(c.DatabaseDSN())
+	return d.Host()
 }
 
 // DatabasePort the database server port.
 func (c *Config) DatabasePort() int {
-	const defaultPort = 3306
+	c.ParseDatabaseDSN()
 
-	if server := c.DatabaseServer(); server == "" {
+	if c.DatabaseDriver() == SQLite3 {
 		return 0
-	} else if s := strings.Split(server, ":"); len(s) != 2 {
-		return defaultPort
-	} else if port, err := strconv.Atoi(s[1]); err != nil {
-		return defaultPort
-	} else if port < 1 || port > 65535 {
-		return defaultPort
-	} else {
-		return port
 	}
+
+	d := dsn.Parse(c.DatabaseDSN())
+	return d.Port()
 }
 
 // DatabasePortString the database server port as string.
@@ -217,10 +258,10 @@ func (c *Config) DatabasePortString() string {
 
 // DatabaseName the database schema name.
 func (c *Config) DatabaseName() string {
-	c.ParseDatabaseDsn()
+	c.ParseDatabaseDSN()
 
 	if c.DatabaseDriver() == SQLite3 {
-		return c.DatabaseDsn()
+		return c.DatabaseDSN()
 	} else if c.options.DatabaseName == "" {
 		return "photoprism"
 	}
@@ -234,7 +275,7 @@ func (c *Config) DatabaseUser() string {
 		return ""
 	}
 
-	c.ParseDatabaseDsn()
+	c.ParseDatabaseDSN()
 
 	if c.options.DatabaseUser == "" {
 		return "photoprism"
@@ -249,7 +290,7 @@ func (c *Config) DatabasePassword() string {
 		return ""
 	}
 
-	c.ParseDatabaseDsn()
+	c.ParseDatabaseDSN()
 
 	// Try to read password from file if c.options.DatabasePassword is not set.
 	if c.options.DatabasePassword != "" {
@@ -257,12 +298,75 @@ func (c *Config) DatabasePassword() string {
 	} else if fileName := FlagFilePath("DATABASE_PASSWORD"); fileName == "" {
 		// No password set, this is not an error.
 		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from environment variable for DB password
 		log.Warnf("config: failed to read database password from %s (%s)", fileName, err)
 		return ""
 	} else {
 		return clean.Password(string(b))
 	}
+}
+
+// DatabaseProvisionPrefix returns the sanitized prefix for provisioned database names and users.
+func (c *Config) DatabaseProvisionPrefix() string {
+	prefix := strings.TrimSpace(c.options.DatabaseProvisionPrefix)
+
+	if prefix == "" {
+		return cluster.DefaultDatabaseProvisionPrefix
+	}
+
+	prefix = strings.ToLower(prefix)
+
+	cleaned := make([]rune, 0, len(prefix))
+	prevUnderscore := false
+
+	for _, r := range prefix {
+		switch {
+		case r >= 'a' && r <= 'z':
+			cleaned = append(cleaned, r)
+			prevUnderscore = false
+		case r >= '0' && r <= '9':
+			if len(cleaned) == 0 {
+				continue
+			}
+			cleaned = append(cleaned, r)
+			prevUnderscore = false
+		case r == '_' || r == '-' || r == ' ':
+			if len(cleaned) == 0 || prevUnderscore {
+				continue
+			}
+			cleaned = append(cleaned, '_')
+			prevUnderscore = true
+		default:
+			continue
+		}
+
+		if len(cleaned) >= cluster.DatabaseProvisionPrefixMaxLen {
+			break
+		}
+	}
+
+	if len(cleaned) == 0 {
+		return cluster.DefaultDatabaseProvisionPrefix
+	}
+
+	result := string(cleaned)
+	c.options.DatabaseProvisionPrefix = result
+
+	return result
+}
+
+// ShouldAutoRotateDatabase decides whether callers should request DB rotation automatically.
+// It is used by both the CLI and node bootstrap to avoid unnecessary provisioning calls.
+func (c *Config) ShouldAutoRotateDatabase() bool {
+	if c.Portal() || c.DatabaseDriver() != MySQL {
+		return false
+	}
+
+	if c.DatabaseName() == "" || c.DatabaseUser() == "" || c.DatabasePassword() == "" {
+		return true
+	}
+
+	return false
 }
 
 // DatabaseTimeout returns the TCP timeout in seconds for establishing a database connection:
@@ -341,12 +445,18 @@ func (c *Config) SetDbOptions() {
 	case Postgres:
 		// Ignore for now.
 	case SQLite3:
-		// Not required as unicode is default.
+		// Not required as Unicode is default.
 	}
 }
 
-// RegisterDb sets the database options and connection provider.
+// RegisterDb opens a database connection if needed,
+// sets the database options and connection provider.
 func (c *Config) RegisterDb() {
+	if err := c.connectDb(); err != nil {
+		log.Errorf("config: %s (register db)")
+		return
+	}
+
 	c.SetDbOptions()
 	entity.SetDbProvider(c)
 }
@@ -372,7 +482,7 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	if c.AdminPassword() == "" {
 		log.Warnf("config: %s account cannot be initialized due to missing or invalid password", clean.LogQuote(c.AdminUser()))
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
 	}
 
 	// Start recording warnings and errors after the required database table has been created.
@@ -386,7 +496,7 @@ func (c *Config) InitTestDb() {
 	if c.AdminPassword() == "" {
 		// Do nothing.
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
 	}
 
 	// Start recording warnings and errors after the required table has have been created.
@@ -395,6 +505,15 @@ func (c *Config) InitTestDb() {
 
 // checkDb checks the database server version.
 func (c *Config) checkDb(db *gorm.DB) error {
+	if txt.Bool(os.Getenv(EnvVar("DATABASE_SKIP_VERSION_CHECK"))) {
+		log.Debugf("config: skipping database version check")
+		return nil
+	}
+
+	if db == nil {
+		return fmt.Errorf("config: missing database connection")
+	}
+
 	switch c.DatabaseDriver() {
 	case MySQL:
 		type Res struct {
@@ -417,11 +536,12 @@ func (c *Config) checkDb(db *gorm.DB) error {
 
 		c.dbVersion = clean.Version(res.Value)
 
-		if c.dbVersion == "" {
+		switch {
+		case c.dbVersion == "":
 			log.Warnf("config: unknown database server version")
-		} else if !c.IsDatabaseVersion("v10.0.0") {
+		case !c.IsDatabaseVersion("v10.0.0"):
 			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
-		} else if !c.IsDatabaseVersion("v10.5.12") {
+		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
 	case SQLite3:
@@ -455,9 +575,14 @@ func (c *Config) connectDb() error {
 	mutex.Db.Lock()
 	defer mutex.Db.Unlock()
 
+	// Database connection already exists.
+	if c.db != nil {
+		return nil
+	}
+
 	// Get database driver and data source name.
 	dbDriver := c.DatabaseDriver()
-	dbDsn := c.DatabaseDsn()
+	dbDsn := c.DatabaseDSN()
 
 	if dbDriver == "" {
 		return errors.New("config: database driver not specified")
@@ -517,7 +642,7 @@ func (c *Config) connectDb() error {
 
 // ImportSQL imports a file to the currently configured database.
 func (c *Config) ImportSQL(filename string) {
-	contents, err := os.ReadFile(filename)
+	contents, err := os.ReadFile(filename) //nolint:gosec // import path is provided by trusted caller
 
 	if err != nil {
 		log.Error(err)

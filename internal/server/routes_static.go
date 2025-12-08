@@ -7,20 +7,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // registerStaticRoutes adds routes for serving static content and templates.
 func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
-	// Redirects to the login page.
-	login := func(c *gin.Context) {
-		if conf.OIDCEnabled() && conf.OIDCRedirect() {
-			c.Redirect(http.StatusTemporaryRedirect, conf.OIDCLoginUri())
-		} else {
-			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
-		}
-	}
-
 	// Control how crawlers index the site by serving a "robots.txt" file in addition
 	// to the "X-Robots-Tag" response header set in the Security middleware:
 	// https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
@@ -34,6 +26,24 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 			c.Data(http.StatusOK, header.ContentTypeText, robotsTxt)
 		}
 	})
+
+	// Return if the web user interface is disabled.
+	if conf.DisableFrontend() {
+		log.Info("frontend: disabled")
+		router.NoRoute(func(c *gin.Context) {
+			api.Abort(c, http.StatusNotFound, i18n.ErrNotFound)
+		})
+		return
+	}
+
+	// Redirects to the login page.
+	login := func(c *gin.Context) {
+		if conf.OIDCEnabled() && conf.OIDCRedirect() {
+			c.Redirect(http.StatusTemporaryRedirect, conf.OIDCLoginUri())
+		} else {
+			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
+		}
+	}
 
 	router.Any(conf.BaseUri("/"), login)
 

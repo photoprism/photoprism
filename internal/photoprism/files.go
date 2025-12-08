@@ -9,11 +9,14 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
-// Files represents a list of already indexed file names and their unix modification timestamps.
+// Files caches indexed originals keyed by root/name with their last-modified timestamps. The
+// cache is only considered hydrated after Init() loads the database snapshot; partial writes
+// before Init() must not trick callers into skipping a full reload.
 type Files struct {
-	count int
-	files query.FileMap
-	mutex sync.RWMutex
+	count  int
+	files  query.FileMap
+	loaded bool
+	mutex  sync.RWMutex
 }
 
 // NewFiles returns a new Files instance.
@@ -25,12 +28,14 @@ func NewFiles() *Files {
 	return m
 }
 
-// Init fetches the list from the database once.
+// Init loads the indexed file snapshot from the database on first use. If the cache only contains
+// ad-hoc entries (for example, uploaded files recorded before Init was called), this forces a
+// refresh so rescan=false jobs can safely skip unchanged files.
 func (m *Files) Init() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	if len(m.files) > 0 {
+	if m.loaded {
 		m.count = len(m.files)
 		return nil
 	}
@@ -46,23 +51,21 @@ func (m *Files) Init() error {
 	} else {
 		m.files = files
 		m.count = len(files)
+		m.loaded = true
 		return nil
 	}
 }
 
-// Done should be called after all files have been processed.
+// Done clears the cache and marks it stale so the next Init() call pulls a fresh database snapshot.
 func (m *Files) Done() {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	if (len(m.files) - m.count) == 0 {
-		return
-	}
-
 	m.count = 0
 	m.files = make(query.FileMap)
+	m.loaded = false
 }
 
-// Remove a file from the lookup table.
+// Remove evicts a file entry from the cache (e.g. after deletion or re-import).
 func (m *Files) Remove(fileName, fileRoot string) {
 	key := path.Join(fileRoot, fileName)
 
@@ -72,7 +75,7 @@ func (m *Files) Remove(fileName, fileRoot string) {
 	delete(m.files, key)
 }
 
-// Ignore tests of a file requires indexing, file name must be relative to the originals path.
+// Ignore determines whether a file should be skipped based on modification timestamp, updating the cache when needed.
 func (m *Files) Ignore(fileName, fileRoot string, modTime time.Time, rescan bool) bool {
 	timestamp := modTime.UTC().Truncate(time.Second).Unix()
 	key := path.Join(fileRoot, fileName)
@@ -95,7 +98,7 @@ func (m *Files) Ignore(fileName, fileRoot string, modTime time.Time, rescan bool
 	}
 }
 
-// Indexed tests of a file was already indexed without modifying the files map.
+// Indexed checks if a file has already been indexed without mutating the cache.
 func (m *Files) Indexed(fileName, fileRoot string, modTime time.Time, rescan bool) bool {
 	if rescan {
 		return false
@@ -116,7 +119,7 @@ func (m *Files) Indexed(fileName, fileRoot string, modTime time.Time, rescan boo
 	}
 }
 
-// Exists tests of a file exists.
+// Exists reports whether the given file key is present in the cache.
 func (m *Files) Exists(fileName, fileRoot string) bool {
 	key := path.Join(fileRoot, fileName)
 

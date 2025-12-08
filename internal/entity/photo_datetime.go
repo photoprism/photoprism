@@ -114,7 +114,7 @@ func (m *Photo) TimeZoneLocal() bool {
 	return tz.IsLocal(m.TimeZone)
 }
 
-// UpdateTimeZone updates the time zone.
+// UpdateTimeZone applies a new time zone when the source priority allows it and recalculates derived times.
 func (m *Photo) UpdateTimeZone(zone string) {
 	if zone == "" {
 		return
@@ -150,7 +150,7 @@ func (m *Photo) UpdateDateFields() {
 		m.PhotoYear = UnknownYear
 		m.PhotoMonth = UnknownMonth
 		m.PhotoDay = UnknownDay
-	} else if m.TakenSrc != SrcManual {
+	} else if m.TakenSrc != SrcManual && m.TakenSrc != SrcBatch {
 		m.PhotoYear = m.TakenAtLocal.Year()
 		m.PhotoMonth = int(m.TakenAtLocal.Month())
 		m.PhotoDay = m.TakenAtLocal.Day()

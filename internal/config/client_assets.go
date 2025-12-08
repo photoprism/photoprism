@@ -7,8 +7,11 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// ClientAssets holds hashed frontend asset filenames emitted by the build pipeline.
 type ClientAssets struct {
 	BuildPath                 string `json:"-"`
 	BaseUri                   string `json:"-"`
@@ -35,7 +38,7 @@ func NewClientAssets(buildPath, baseUri string) *ClientAssets {
 
 // Load loads the frontend assets from a webpack manifest file.
 func (a *ClientAssets) Load(fileName string) error {
-	jsonFile, err := os.ReadFile(filepath.Join(a.BuildPath, fileName))
+	jsonFile, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)) //nolint:gosec // path derived from configured assets directory
 
 	if err != nil {
 		return err
@@ -94,7 +97,7 @@ func (a *ClientAssets) SplashCssFile() string {
 
 // SplashCssFileContents returns the splash screen CSS file contents for embedding in HTML.
 func (a *ClientAssets) SplashCssFileContents() template.CSS {
-	return template.CSS(a.readFile(a.SplashCssFile()))
+	return template.CSS(a.readFile(a.SplashCssFile())) //nolint:gosec // assets are loaded from trusted local build output
 }
 
 // SplashJsUri returns the splash screen JS URI.
@@ -118,14 +121,14 @@ func (a *ClientAssets) SplashJsFileContents() template.JS {
 	if a.SplashJs == "" {
 		return ""
 	}
-	return template.JS(a.readFile(a.SplashJs))
+	return template.JS(a.readFile(a.SplashJs)) //nolint:gosec // assets are loaded from trusted local build output
 }
 
 // readFile reads the file contents and returns them as string.
 func (a *ClientAssets) readFile(fileName string) string {
 	if fileName == "" {
 		return ""
-	} else if css, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)); err != nil {
+	} else if css, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)); err != nil { //nolint:gosec // path derived from configured assets directory
 		return ""
 	} else {
 		return string(bytes.TrimSpace(css))
@@ -134,11 +137,11 @@ func (a *ClientAssets) readFile(fileName string) string {
 
 // ClientAssets returns the frontend build assets.
 func (c *Config) ClientAssets() *ClientAssets {
-	result := NewClientAssets(c.BuildPath(), c.StaticUri())
+	result := NewClientAssets(c.StaticBuildPath(), c.StaticUri())
 
-	if err := result.Load("assets.json"); err != nil {
+	if err := result.Load(fs.AssetsJsonFile); err != nil {
 		log.Debugf("frontend: %s", err)
-		log.Errorf("frontend: cannot read assets.json")
+		log.Errorf("frontend: cannot read %s", fs.AssetsJsonFile)
 	}
 
 	return result
@@ -146,5 +149,5 @@ func (c *Config) ClientAssets() *ClientAssets {
 
 // ClientManifestUri returns the frontend manifest.json URI.
 func (c *Config) ClientManifestUri() string {
-	return fmt.Sprintf("%s?%x", c.BaseUri("/manifest.json"), c.VersionChecksum())
+	return fmt.Sprintf("%s?%x", c.BaseUri("/"+fs.ManifestJsonFile), c.VersionChecksum())
 }

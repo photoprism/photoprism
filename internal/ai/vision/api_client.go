@@ -2,14 +2,18 @@ package vision
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // PerformApiRequest performs a Vision API request and returns the result.
@@ -31,13 +35,19 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	// Add "application/json" content type header.
 	header.SetContentType(req, header.ContentTypeJson)
 
-	// Add an authentication header if an access token is configured.
+	if reqErr != nil {
+		return apiResponse, reqErr
+	}
+
+	// Add an authentication header if an access token is provided.
 	if key != "" {
 		header.SetAuthorization(req, key)
 	}
 
-	if reqErr != nil {
-		return apiResponse, reqErr
+	// Add custom OpenAI organization and project headers.
+	if apiRequest.GetResponseFormat() == ApiFormatOpenAI {
+		header.SetOpenAIOrg(req, apiRequest.Org)
+		header.SetOpenAIProject(req, apiRequest.Project)
 	}
 
 	// Perform API request.
@@ -47,20 +57,83 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		return apiResponse, clientErr
 	}
 
+	defer func() {
+		_ = clientResp.Body.Close()
+	}()
+
+	body, apiErr := io.ReadAll(clientResp.Body)
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	format := apiRequest.GetResponseFormat()
+
+	if engine, ok := EngineFor(format); ok && engine.Parser != nil {
+		if clientResp.StatusCode >= 300 {
+			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
+		}
+
+		parsed, parseErr := engine.Parser.Parse(context.Background(), apiRequest, body, clientResp.StatusCode)
+		if parseErr != nil {
+			return nil, parseErr
+		}
+
+		if log.IsLevelEnabled(logrus.TraceLevel) {
+			log.Tracef("vision: response %s", string(body))
+		}
+
+		return parsed, nil
+	}
+
+	apiResponse = &ApiResponse{}
+
 	// Parse and return response, or an error if the request failed.
-	switch apiRequest.GetResponseFormat() {
+	switch format {
 	case ApiFormatVision:
-		apiResponse = &ApiResponse{}
-		if apiJson, apiErr := io.ReadAll(clientResp.Body); apiErr != nil {
-			return apiResponse, apiErr
-		} else if apiErr = json.Unmarshal(apiJson, apiResponse); apiErr != nil {
+		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil {
 			return apiResponse, apiErr
 		} else if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", apiJson, clientResp.StatusCode)
+			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
 		}
 	default:
-		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.responseFormat))
+		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.ResponseFormat))
 	}
 
 	return apiResponse, nil
+}
+
+func decodeOllamaResponse(data []byte) (*ollama.Response, error) {
+	resp := &ollama.Response{}
+	dec := json.NewDecoder(bytes.NewReader(data))
+
+	for {
+		var chunk ollama.Response
+		if err := dec.Decode(&chunk); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return nil, err
+		}
+
+		*resp = chunk
+	}
+
+	return resp, nil
+}
+
+func parseOllamaLabels(raw string) ([]LabelResult, error) {
+	cleaned := clean.JSON(raw)
+	if cleaned == "" {
+		return nil, nil
+	}
+
+	var payload struct {
+		Labels []LabelResult `json:"labels"`
+	}
+
+	if err := json.Unmarshal([]byte(cleaned), &payload); err != nil {
+		return nil, err
+	}
+
+	return payload.Labels, nil
 }

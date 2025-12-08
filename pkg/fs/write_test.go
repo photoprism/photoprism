@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -128,7 +129,7 @@ func TestWriteFileFromReader(t *testing.T) {
 		assert.NoError(t, writeErr)
 		assert.True(t, unixTime >= time.Now().Unix())
 
-		fileReader, readerErr := os.Open(filePath1)
+		fileReader, readerErr := os.Open(filePath1) //nolint:gosec // test helper reads temp file
 		assert.NoError(t, readerErr)
 
 		fileErr := WriteFileFromReader(filePath2, fileReader)
@@ -171,7 +172,7 @@ func TestCacheFileFromReader(t *testing.T) {
 		assert.NoError(t, writeErr)
 		assert.True(t, unixTime >= time.Now().Unix())
 
-		fileReader, readerErr := os.Open(filePath1)
+		fileReader, readerErr := os.Open(filePath1) //nolint:gosec // test helper reads temp file
 		assert.NoError(t, readerErr)
 
 		cacheFile, cacheErr := CacheFileFromReader(filePath2, fileReader)
@@ -200,4 +201,29 @@ func TestCacheFileFromReader(t *testing.T) {
 		assert.Len(t, readLines, 1)
 		assert.Equal(t, "0", readLines[0])
 	})
+}
+
+func TestWriteFile_Truncates(t *testing.T) {
+	dir := t.TempDir()
+	p := filepath.Join(dir, "f.txt")
+	assert.NoError(t, os.WriteFile(p, []byte("LONGDATA"), ModeFile))
+	assert.NoError(t, WriteFile(p, []byte("short"), ModeFile))
+	b, err := os.ReadFile(p) //nolint:gosec // test helper reads temp file
+	assert.NoError(t, err)
+	assert.Equal(t, "short", string(b))
+}
+
+func TestWriteFile_Errors(t *testing.T) {
+	err := WriteFile("", []byte("x"), ModeFile)
+	assert.Error(t, err)
+}
+
+func TestWriteFileFromReader_Errors(t *testing.T) {
+	dir := t.TempDir()
+	p := filepath.Join(dir, "x.txt")
+
+	// nil reader
+	assert.Error(t, WriteFileFromReader(p, nil))
+	// empty filename
+	assert.Error(t, WriteFileFromReader("", bytes.NewBufferString("hi")))
 }

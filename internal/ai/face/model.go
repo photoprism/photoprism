@@ -11,6 +11,7 @@ import (
 	"github.com/disintegration/imaging"
 	tf "github.com/wamuir/graft/tensorflow"
 
+	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -18,7 +19,6 @@ import (
 // Model is a wrapper for the TensorFlow Facenet model.
 type Model struct {
 	model      *tf.SavedModel
-	modelName  string
 	modelPath  string
 	cachePath  string
 	resolution int
@@ -28,14 +28,26 @@ type Model struct {
 }
 
 // NewModel returns a new TensorFlow Facenet instance.
-func NewModel(modelPath, cachePath string, resolution int, tags []string, disabled bool) *Model {
+func NewModel(modelPath, cachePath string, resolution int, meta *tensorflow.ModelInfo, disabled bool) *Model {
 	if resolution == 0 {
 		resolution = CropSize.Width
 	}
-	if len(tags) == 0 {
-		tags = []string{"serve"}
+
+	if meta == nil {
+		meta = new(tensorflow.ModelInfo)
 	}
-	return &Model{modelPath: modelPath, cachePath: cachePath, resolution: resolution, modelTags: tags, disabled: disabled}
+
+	if len(meta.Tags) == 0 {
+		meta.Tags = []string{"serve"}
+	}
+
+	return &Model{
+		modelPath:  modelPath,
+		cachePath:  cachePath,
+		resolution: resolution,
+		modelTags:  meta.Tags,
+		disabled:   disabled,
+	}
 }
 
 // Detect runs the detection and facenet algorithms over the provided source image.
@@ -74,7 +86,7 @@ func (m *Model) Detect(fileName string, minSize int, cacheCrop bool, expected in
 	return faces, nil
 }
 
-// Init initialises tensorflow models if not disabled
+// Init initializes tensorflow models if not disabled.
 func (m *Model) Init() (err error) {
 	if m.disabled {
 		return nil
@@ -127,6 +139,10 @@ func (m *Model) Run(img image.Image) Embeddings {
 	// TODO: pre-whiten image as in facenet
 
 	trainPhaseBoolTensor, err := tf.NewTensor(false)
+	if err != nil {
+		log.Errorf("faces: failed to create phase_train tensor: %s", err)
+		return nil
+	}
 
 	output, err := m.model.Session.Run(
 		map[tf.Output]*tf.Tensor{

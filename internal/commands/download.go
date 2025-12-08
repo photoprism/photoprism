@@ -1,10 +1,10 @@
 package commands
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
-	"math"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -15,28 +15,72 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
-	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/http/scheme"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+var downloadExamples = `
+Usage examples:
+
+photoprism dl --cookies cookies.txt \
+ --header 'Authorization: Bearer <token>' \
+ --method file --remux auto -- \
+ https://example.com/a.mp4 https://example.com/b.jpg
+
+photoprism dl -a 'Authorization: Bearer <token>' \
+			 -a 'Accept: application/json' -- URL`
+
 // DownloadCommand configures the command name, flags, and action.
 var DownloadCommand = &cli.Command{
-	Name:      "download",
-	Aliases:   []string{"dl"},
-	Usage:     "Imports media from a URL",
-	ArgsUsage: "[url]",
+	Name:        "download",
+	Aliases:     []string{"dl"},
+	Usage:       "Imports media from one or more URLs",
+	Description: "Download and import media from one or more URLs.\n" + downloadExamples,
+	ArgsUsage:   "[url]...",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:    "dest",
 			Aliases: []string{"d"},
-			Usage:   "relative originals `PATH` to which the files should be imported",
+			Usage:   "relative originals `PATH` in which new files should be imported",
+		},
+		&cli.StringFlag{
+			Name:    "impersonate",
+			Aliases: []string{"i"},
+			Usage:   "impersonate browser `IDENTITY` (e.g. chrome, edge or safari; 'none' to disable)",
+			Value:   "firefox",
+		},
+		&cli.StringFlag{
+			Name:    "method",
+			Aliases: []string{"m"},
+			Value:   "pipe",
+			Usage:   "download `METHOD` when using external commands: pipe (stdio stream) or file (temporary files)",
+		},
+		&cli.StringFlag{
+			Name:    "remux",
+			Aliases: []string{"r"},
+			Value:   "auto",
+			Usage:   "remux `POLICY` for videos when using --method file: auto (skip if MP4), always, or skip",
+		},
+		&cli.StringFlag{
+			Name:    "sort",
+			Aliases: []string{"s"},
+			Usage:   "custom `FORMAT` sort expression, e.g. 'quality,res,fps,codec:avc:m4a,size,br,asr,proto,ext,hasaud,source,id'",
+		},
+		&cli.StringFlag{
+			Name:    "cookies",
+			Aliases: []string{"c"},
+			Usage:   "use Netscape-format cookies.txt `FILE` for HTTP authentication",
+		},
+		&cli.StringSliceFlag{
+			Name:    "header",
+			Aliases: []string{"a"},
+			Usage:   "add HTTP request `HEADER` in the form 'Name: Value' (repeatable)",
 		},
 	},
 	Action: downloadAction,
@@ -63,13 +107,32 @@ func downloadAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	// Get URL from first argument.
-	sourceUrl, sourceErr := url.Parse(strings.TrimSpace(ctx.Args().First()))
+	// Collect URLs: args or STDIN when no args
+	var inputURLs []string
+	if ctx.Args().Len() > 0 {
+		inputURLs = append(inputURLs, ctx.Args().Slice()...)
+	} else {
+		// If STDIN is a pipe, read URLs line by line (Phase 1: args take precedence; no --stdin merge)
+		fi, _ := os.Stdin.Stat()
+		if (fi.Mode() & os.ModeCharDevice) == 0 {
+			scanner := bufio.NewScanner(os.Stdin)
+			buf := make([]byte, 0, 64*1024)
+			scanner.Buffer(buf, 1024*1024)
+			for scanner.Scan() {
+				line := strings.TrimSpace(scanner.Text())
+				if line == "" || strings.HasPrefix(line, "#") {
+					continue
+				}
+				inputURLs = append(inputURLs, line)
+			}
+			if err := scanner.Err(); err != nil {
+				return err
+			}
+		}
+	}
 
-	if sourceErr != nil {
-		return sourceErr
-	} else if sourceUrl.Scheme != scheme.Http && sourceUrl.Scheme != scheme.Https {
-		return fmt.Errorf("invalid download URL scheme %s", clean.Log(sourceUrl.Scheme))
+	if len(inputURLs) == 0 {
+		return fmt.Errorf("no download URLs provided")
 	}
 
 	var destFolder string
@@ -81,7 +144,7 @@ func downloadAction(ctx *cli.Context) error {
 
 	var downloadPath, downloadFile string
 
-	downloadPath = filepath.Join(conf.TempPath(), "download_"+rnd.Base36(12))
+	downloadPath = filepath.Join(conf.TempPath(), fs.DownloadDir+"_"+rnd.Base36(12))
 
 	if err := fs.MkdirAll(downloadPath); err != nil {
 		return err
@@ -89,142 +152,215 @@ func downloadAction(ctx *cli.Context) error {
 
 	defer os.RemoveAll(downloadPath)
 
-	mediaType := media.FromName(sourceUrl.Path)
-	mediaExt := fs.Ext(sourceUrl.Path)
+	// Flags for yt-dlp auth and headers
+	cookies := strings.TrimSpace(ctx.String("cookies"))
 
-	switch mediaType {
-	case media.Image, media.Vector, media.Raw, media.Document, media.Audio:
-		log.Infof("downloading %s from %s", mediaType, clean.Log(sourceUrl.String()))
+	// cookiesFromBrowser := strings.TrimSpace(ctx.String("cookies-from-browser"))
+	addHeaders := ctx.StringSlice("header")
 
-		if dlName := clean.DlName(fs.BasePrefix(sourceUrl.Path, true)); dlName != "" {
-			downloadFile = dlName + mediaExt
-		} else {
-			downloadFile = time.Now().Format("20060102_150405") + mediaExt
-		}
+	impersonate := strings.ToLower(strings.TrimSpace(ctx.String("impersonate")))
 
-		downloadFilePath := filepath.Join(downloadPath, downloadFile)
+	switch impersonate {
+	case "":
+		impersonate = "firefox"
+	case "none":
+		impersonate = ""
+	}
 
-		if downloadErr := fs.Download(downloadFilePath, sourceUrl.String()); downloadErr != nil {
-			return downloadErr
-		}
+	flagMethod := ""
+
+	if ctx.IsSet("method") {
+		flagMethod = ctx.String("method")
+	}
+
+	method, _, err := resolveDownloadMethod(flagMethod)
+
+	if err != nil {
+		return err
+	}
+
+	formatSort := strings.TrimSpace(ctx.String("sort"))
+	sortingFormat := formatSort
+
+	if sortingFormat == "" && method == "pipe" {
+		sortingFormat = pipeSortingFormat
+	}
+
+	fileRemux := strings.ToLower(strings.TrimSpace(ctx.String("remux")))
+
+	if fileRemux == "" {
+		fileRemux = "auto"
+	}
+
+	switch fileRemux {
+	case "always", "auto", "skip":
 	default:
-		mediaType = media.Video
-		log.Infof("downloading %s from %s", mediaType, clean.Log(sourceUrl.String()))
+		return fmt.Errorf("invalid --remux: %s (expected 'always', 'auto', or 'skip')", fileRemux)
+	}
 
-		opt := dl.Options{
-			// The following flags currently seem to have no effect when piping the output to stdout;
-			// however, that may change in a future version of the "yt-dlp" video downloader:
-			MergeOutputFormat: fs.VideoMp4.String(),
-			RemuxVideo:        fs.VideoMp4.String(),
-			// Alternative codec sorting format to prioritize H264/AVC:
-			// vcodec:h264>av01>h265>vp9.2>vp9>h263,acodec:m4a>mp4a>aac>mp3>mp3>ac3>dts
-			SortingFormat: "lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id",
+	// Process inputs sequentially (Phase 1)
+	var failures int
+	for _, raw := range inputURLs {
+		u, perr := url.Parse(strings.TrimSpace(raw))
+		if perr != nil {
+			log.Errorf("invalid URL: %s", clean.Log(raw))
+			failures++
+			continue
+		}
+		if u.Scheme != scheme.Http && u.Scheme != scheme.Https {
+			log.Errorf("invalid URL scheme %s: %s", clean.Log(u.Scheme), clean.Log(raw))
+			failures++
+			continue
 		}
 
-		result, err := dl.NewMetadata(context.Background(), sourceUrl.String(), opt)
+		mt := media.FromName(u.Path)
+		ext := fs.Ext(u.Path)
 
-		if err != nil {
-			return err
-		}
+		switch mt {
+		case media.Image, media.Vector, media.Raw, media.Document, media.Audio:
+			log.Infof("downloading %s from %s", mt, clean.Log(u.String()))
+			if dlName := clean.DlName(fs.BasePrefix(u.Path, true)); dlName != "" {
+				downloadFile = dlName + ext
+			} else {
+				downloadFile = time.Now().Format("20060102_150405") + ext
+			}
+			downloadFilePath := filepath.Join(downloadPath, downloadFile)
+			if downloadErr := fs.Download(downloadFilePath, u.String()); downloadErr != nil {
+				log.Errorf("download failed: %v", downloadErr)
+				failures++
+				continue
+			}
+		default:
+			mt = media.Video
+			log.Infof("downloading %s from %s", mt, clean.Log(u.String()))
 
-		if dlName := clean.DlName(result.Info.Title); dlName != "" {
-			downloadFile = dlName + fs.ExtMp4
-		} else {
-			downloadFile = time.Now().Format("20060102_150405") + fs.ExtMp4
-		}
+			opt := dl.Options{
+				SortingFormat: sortingFormat,
+				Cookies:       cookies,
+				AddHeaders:    addHeaders,
+				Impersonate:   impersonate,
+			}
+			ytRemux := method != "pipe"
+			if ytRemux {
+				opt.MergeOutputFormat = fs.VideoMp4.String()
+				opt.RemuxVideo = fs.VideoMp4.String()
+			}
 
-		// Compose download file path.
-		downloadFilePath := filepath.Join(downloadPath, downloadFile)
+			result, metaErr := dl.NewMetadata(context.Background(), u.String(), opt)
 
-		// Download the first video and embed its metadata,
-		// see https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#format-selection-examples.
-		downloadResult, err := result.DownloadWithOptions(context.Background(), dl.DownloadOptions{
-			// TODO: While this may work with a future version of the "yt-dlp" video downloader,
-			//    it is currently not possible to properly download videos with separate video and
-			//    audio streams when piping the output to stdout. For now, the following Filter
-			//    will download the best combined video and audio content (see docs for details).
-			Filter: "best",
-			// Alternative filters for combining the best video and audio streams:
-			// Filter: "bestvideo*+bestaudio/best",
-			// Filter: "best/bestvideo+bestaudio",
-			DownloadAudioOnly: false,
-			EmbedMetadata:     true,
-			EmbedSubs:         false,
-			ForceOverwrites:   false,
-			DisableCaching:    false,
-			// Download the first video if multiple videos are available:
-			PlaylistIndex: 1,
-		})
+			if metaErr != nil {
+				log.Errorf("metadata failed: %v", metaErr)
+				if hint, ok := missingFormatsHint(metaErr); ok {
+					log.Info(hint)
+				}
+				failures++
+				continue
+			}
 
-		// Check if download was successful.
-		if err != nil {
-			return err
-		}
+			// Best-effort creation time for file method when not remuxing locally.
+			if ytRemux {
+				if created := dl.CreatedFromInfo(result.Info); !created.IsZero() {
+					// Apply via yt-dlp ffmpeg post-processor so creation_time exists even without our remux.
+					result.Options.FFmpegPostArgs = "-metadata creation_time=" + created.UTC().Format(time.RFC3339)
+				}
+			}
 
-		defer downloadResult.Close()
+			// Base filename for pipe method
+			if dlName := clean.DlName(result.Info.Title); dlName != "" {
+				downloadFile = dlName + fs.ExtMp4
+			} else {
+				downloadFile = time.Now().Format("20060102_150405") + fs.ExtMp4
+			}
+			downloadFilePath := filepath.Join(downloadPath, downloadFile)
 
-		file, err := os.Create(downloadFilePath)
+			if method == "pipe" {
+				// Stream to stdout
+				downloadResult, dlErr := dl.Download(context.Background(), u.String(), opt, "best")
+				if dlErr != nil {
+					log.Errorf("download failed: %v", dlErr)
+					failures++
+					continue
+				}
+				func() {
+					defer downloadResult.Close()
+					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
+					if ferr != nil {
+						log.Errorf("create file failed: %v", ferr)
+						failures++
+						return
+					}
+					defer f.Close()
+					if _, cerr := io.Copy(f, downloadResult); cerr != nil {
+						log.Errorf("write file failed: %v", cerr)
+						failures++
+						return
+					}
+					_ = f.Close()
+				}()
 
-		if err != nil {
-			return err
-		}
+				// Remux and embed metadata (pipe policy: always)
+				remuxOpt := dl.RemuxOptionsFromInfo(conf.FFmpegBin(), fs.VideoMp4, result.Info, u.String())
+				if remuxErr := ffmpeg.RemuxFile(downloadFilePath, "", remuxOpt); remuxErr != nil {
+					log.Errorf("remux failed: %v", remuxErr)
+					failures++
+					continue
+				}
+			} else {
+				// file method
+				// Deterministic output template within the session temp dir
+				outTpl := filepath.Join(downloadPath, "ppdl_%(id)s.%(ext)s")
+				files, dlErr := result.DownloadToFileWithOptions(context.Background(), dl.DownloadOptions{
+					Filter:            "best",
+					DownloadAudioOnly: false,
+					EmbedMetadata:     true,
+					EmbedSubs:         false,
+					ForceOverwrites:   false,
+					DisableCaching:    false,
+					PlaylistIndex:     1,
+					Output:            outTpl,
+				})
 
-		if _, err = io.Copy(file, downloadResult); err != nil {
-			file.Close()
-			return err
-		}
+				if dlErr != nil {
+					log.Errorf("download failed: %v", dlErr)
+					// even on error, any completed files returned will be imported
+				}
 
-		file.Close()
-
-		// TODO: The remux command flags currently don't seem to have an effect when piping the output to stdout,
-		//    so this command will manually remux the downloaded file with ffmpeg. This ensures that the file is a
-		//    valid MP4 that can be played. It also adds metadata in the same step.
-		remuxOpt := encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, false)
-
-		if title := clean.Name(result.Info.Title); title != "" {
-			remuxOpt.Title = title
-		} else if title = clean.Name(result.Info.AltTitle); title != "" {
-			remuxOpt.Title = title
-		}
-
-		if desc := strings.TrimSpace(result.Info.Description); desc != "" {
-			remuxOpt.Description = desc
-		}
-
-		if u := strings.TrimSpace(sourceUrl.String()); u != "" {
-			remuxOpt.Comment = u
-		}
-
-		if author := clean.Name(result.Info.Artist); author != "" {
-			remuxOpt.Author = author
-		} else if author = clean.Name(result.Info.AlbumArtist); author != "" {
-			remuxOpt.Author = author
-		} else if author = clean.Name(result.Info.Creator); author != "" {
-			remuxOpt.Author = author
-		} else if author = clean.Name(result.Info.License); author != "" {
-			remuxOpt.Author = author
-		}
-
-		if result.Info.Timestamp > 1 {
-			sec, dec := math.Modf(result.Info.Timestamp)
-			remuxOpt.Created = time.Unix(int64(sec), int64(dec*(1e9)))
-		}
-
-		if remuxErr := ffmpeg.RemuxFile(downloadFilePath, "", remuxOpt); remuxErr != nil {
-			return remuxErr
+				// Ensure container/metadata per remux policy for file method
+				if fileRemux != "skip" {
+					for _, fp := range files {
+						if fileRemux == "auto" && strings.EqualFold(filepath.Ext(fp), fs.ExtMp4) {
+							// Assume yt-dlp produced a valid MP4 and embedded metadata
+							continue
+						}
+						remuxOpt := dl.RemuxOptionsFromInfo(conf.FFmpegBin(), fs.VideoMp4, result.Info, u.String())
+						if remuxErr := ffmpeg.RemuxFile(fp, "", remuxOpt); remuxErr != nil {
+							log.Errorf("remux failed: %v", remuxErr)
+							failures++
+							continue
+						}
+					}
+				}
+			}
 		}
 	}
 
-	log.Infof("importing %s to %s", mediaType, clean.Log(filepath.Join(conf.OriginalsPath(), destFolder)))
-
+	// Import results once
+	log.Infof("importing downloads to %s", clean.Log(filepath.Join(conf.OriginalsPath(), destFolder)))
 	w := get.Import()
 	opt := photoprism.ImportOptionsMove(downloadPath, destFolder)
-
 	w.Start(opt)
 
 	elapsed := time.Since(start)
 
-	log.Infof("completed in %s", elapsed)
+	if failures > 0 {
+		log.Warnf("completed with %d error(s) in %s", failures, elapsed)
+	} else {
+		log.Infof("completed in %s", elapsed)
+	}
+
+	if failures > 0 {
+		return fmt.Errorf("some downloads failed: %d", failures)
+	}
 
 	return nil
 }

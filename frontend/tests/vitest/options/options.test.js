@@ -1,10 +1,9 @@
 import { describe, it, expect } from "vitest";
 import "../fixtures";
-import * as options from "../../../src/options/options";
+import * as options from "options/options";
 import {
   AccountTypes,
   Colors,
-  DefaultLocale,
   Expires,
   FallbackLocale,
   FeedbackCategories,
@@ -23,7 +22,7 @@ import {
   ThumbFilters,
   ThumbSizes,
   Timeouts,
-} from "../../../src/options/options";
+} from "options/options";
 
 describe("options/options", () => {
   it("should get timezones", () => {
@@ -66,22 +65,52 @@ describe("options/options", () => {
     expect(Languages[0].value).toBe("en");
   });
 
+  it("should get countries without mixed by default", () => {
+    const list = options.Countries();
+    expect(list.some((c) => c.Code === options.Mixed.ID)).toBe(false);
+  });
+
+  it("should use Batch helper to inject mixed entries", () => {
+    const base = [{ Code: "de", Name: "Germany" }];
+    const withMixed = options.Batch(base, true);
+
+    expect(withMixed).toHaveLength(base.length + 1);
+    expect(withMixed.at(-1)).toEqual({ Code: options.Mixed.ID, Name: options.Mixed.Placeholder() });
+    expect(withMixed[0]).toEqual(base[0]);
+
+    // ensure original array is untouched
+    expect(base).toEqual([{ Code: "de", Name: "Germany" }]);
+
+    const noMixed = options.Batch(base, false);
+    expect(noMixed).toBe(base);
+  });
+
+  it("should add mixed placeholder for numeric value lists", () => {
+    const values = [{ value: 1, text: "January" }];
+    const mixedValues = options.Batch(values, true);
+    expect(mixedValues.at(-1)).toEqual({ value: options.Mixed.ID, text: options.Mixed.Placeholder() });
+    expect(mixedValues[0]).toEqual(values[0]);
+  });
+
   it("should set default locale", () => {
-    expect(DefaultLocale).toBe("en");
+    // Assuming DefaultLocale is exported and mutable for testing purposes
+    // Initial state check might depend on test execution order, so we control it here.
+    SetDefaultLocale("en"); // Ensure starting state
+    expect(options.DefaultLocale).toBe("en");
     SetDefaultLocale("de");
-    expect(DefaultLocale).toBe("de");
-    SetDefaultLocale("en");
+    expect(options.DefaultLocale).toBe("de");
+    SetDefaultLocale("en"); // Reset for other tests
   });
 
   it("should return default when no locale is provided", () => {
     expect(FindLanguage("").value).toBe("en");
   });
 
-  it("should return default locale is smaller than 2", () => {
+  it("should return default if locale is smaller than 2", () => {
     expect(FindLanguage("d").value).toBe("en");
   });
 
-  it("should return default locale", () => {
+  it("should return default for unknown locale", () => {
     expect(FindLanguage("xx").value).toBe("en");
   });
 
@@ -146,42 +175,24 @@ describe("options/options", () => {
       upload: true,
       videos: true,
     };
-    expect(StartPages(features).length).toBe(12);
-    expect(StartPages(features)[5].value).toBe("people");
-    expect(StartPages(features)[5].props.disabled).toBe(false);
+    let pages = StartPages(features);
+    expect(pages.length).toBe(13);
+    expect(pages[5].value).toBe("people");
+    expect(pages[5].props.disabled).toBe(false);
+    expect(pages[pages.length - 1].value).toBe("settings");
+    expect(pages[pages.length - 1].props.disabled).toBe(false);
     features = {
-      account: true,
-      albums: true,
-      archive: true,
-      delete: true,
-      download: true,
-      edit: true,
-      estimates: true,
-      favorites: true,
-      files: true,
-      folders: true,
-      import: true,
-      labels: true,
-      library: true,
-      logs: true,
+      ...features, // copy previous settings
       calendar: false,
-      moments: true,
       people: false,
-      places: true,
-      private: true,
-      ratings: true,
-      reactions: true,
-      review: true,
-      search: true,
-      services: true,
-      settings: true,
-      share: true,
-      upload: true,
-      videos: true,
+      settings: false,
     };
-    expect(StartPages(features).length).toBe(12);
-    expect(StartPages(features)[5].value).toBe("people");
-    expect(StartPages(features)[5].props.disabled).toBe(true);
+    pages = StartPages(features);
+    expect(pages.length).toBe(13);
+    expect(pages[5].value).toBe("people");
+    expect(pages[5].props.disabled).toBe(true);
+    expect(pages[pages.length - 1].value).toBe("settings");
+    expect(pages[pages.length - 1].props.disabled).toBe(true);
   });
 
   it("should return animation options", () => {

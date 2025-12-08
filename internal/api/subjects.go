@@ -87,7 +87,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		} else if err = c.BindJSON(frm); err != nil {
 			log.Errorf("subject: %s (update form)", err)
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 

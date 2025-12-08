@@ -302,8 +302,8 @@ chmod 644 /etc/dir_colors
 if ! grep -q 'export SHELL=/bin/bash' /etc/skel/.bashrc; then
     echo 'export SHELL=/bin/bash' >> /etc/skel/.bashrc
 fi
+# shellcheck disable=SC2016
 if ! grep -q 'eval "$(dircolors /etc/dir_colors)"' /etc/skel/.bashrc; then
-    # shellcheck disable=SC2016
     echo 'eval "$(dircolors /etc/dir_colors)"' >> /etc/skel/.bashrc
 fi
 

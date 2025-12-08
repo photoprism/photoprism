@@ -4,27 +4,10 @@
       <v-toolbar density="compact" class="page-toolbar" color="secondary-light">
         <v-spacer></v-spacer>
 
-        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" tabindex="2" class="action-reload" @click.stop="refresh">
-        </v-btn>
+        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh"> </v-btn>
 
-        <v-btn
-          v-if="!filter.hidden"
-          :title="$gettext('Show hidden')"
-          tabindex="3"
-          icon="mdi-eye"
-          class="action-show-hidden"
-          @click.stop="onShowHidden"
-        >
-        </v-btn>
-        <v-btn
-          v-else
-          tabindex="3"
-          :title="$gettext('Exclude hidden')"
-          icon="mdi-eye-off"
-          class="action-exclude-hidden"
-          @click.stop="onExcludeHidden"
-        >
-        </v-btn>
+        <v-btn v-if="!filter.hidden" :title="$gettext('Show hidden')" icon="mdi-eye" class="action-show-hidden" @click.stop="onShowHidden"> </v-btn>
+        <v-btn v-else :title="$gettext('Exclude hidden')" icon="mdi-eye-off" class="action-exclude-hidden" @click.stop="onExcludeHidden"> </v-btn>
       </v-toolbar>
     </v-form>
 
@@ -32,12 +15,7 @@
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
-      <p-scroll
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      ></p-scroll>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <div v-if="results.length === 0" class="pa-3">
         <v-alert color="primary" icon="mdi-check-circle-outline" class="no-results" variant="outlined">
@@ -60,15 +38,7 @@
           <div v-for="m in results" :key="m.ID" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2">
             <div :data-id="m.ID" :class="m.classes()" class="result flex-grow-1 not-selectable">
               <v-img :src="m.thumbnailUrl('tile_320')" aspect-ratio="1" class="preview" @click.stop.prevent="onView(m)">
-                <v-btn
-                  :ripple="false"
-                  class="input-hidden"
-                  icon
-                  variant="text"
-                  density="comfortable"
-                  position="absolute"
-                  @click.stop.prevent="toggleHidden(m)"
-                >
+                <v-btn :ripple="false" class="input-hidden" icon variant="text" density="comfortable" position="absolute" @click.stop.prevent="toggleHidden(m)">
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>
@@ -85,8 +55,8 @@
                   single-line
                   density="comfortable"
                   class="input-name pa-0 ma-0"
-                  @blur="onSetName(m, false)"
-                  @keyup.enter="onSetName(m, false)"
+                  @blur="(ev) => onSetName(m, ev)"
+                  @keyup.enter="(ev) => onSetName(m, ev)"
                 ></v-text-field>
                 <v-combobox
                   v-else
@@ -95,9 +65,9 @@
                   item-title="Name"
                   item-value="Name"
                   :readonly="readonly"
+                  :menu-props="menuProps"
                   return-object
                   hide-no-data
-                  :menu-props="menuProps"
                   hide-details
                   single-line
                   open-on-clear
@@ -105,10 +75,10 @@
                   prepend-inner-icon="mdi-account-plus"
                   autocomplete="off"
                   density="comfortable"
-                  class="input-name pa-0 ma-0"
-                  @blur="onSetName(m, true)"
+                  class="input-name pa-0 ma-0 text-selectable"
                   @update:model-value="(person) => onSetPerson(m, person)"
-                  @keyup.enter.native="onSetName(m, false)"
+                  @blur="(ev) => onSetName(m, ev)"
+                  @keyup.enter="(ev) => onSetName(m, ev)"
                 >
                 </v-combobox>
               </v-card-actions>
@@ -155,6 +125,7 @@ export default {
     },
     active: Boolean,
   },
+  emits: ["updateFaceCount"],
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
@@ -193,11 +164,21 @@ export default {
         text: this.$gettext("Add person?"),
       },
       menuProps: {
-        closeOnClick: false,
-        closeOnContentClick: true,
         openOnClick: false,
+        openOnFocus: true,
+        closeOnBack: true,
+        closeOnContentClick: true,
+        disableInitialFocus: true,
+        persistent: false,
+        scrim: true,
+        openDelay: 0,
+        closeDelay: 0,
+        opacity: 0,
         density: "compact",
         maxHeight: 300,
+        locationStrategy: "connected",
+        scrollStrategy: "reposition",
+        origin: "auto",
       },
       textRule: (v) => {
         if (!v || !v.length) {
@@ -496,6 +477,10 @@ export default {
         });
     },
     updateQuery() {
+      if (this.loading || !this.active) {
+        return false;
+      }
+
       this.filter.q = this.filter.q.trim();
 
       const query = {
@@ -511,10 +496,12 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return;
+        return false;
       }
 
       this.$router.replace({ query: query });
+
+      return true;
     },
     searchParams() {
       const params = {
@@ -637,8 +624,13 @@ export default {
 
       return true;
     },
-    onSetName(model, confirm) {
+    onSetName(model, ev) {
       if (this.busy || !model) {
+        return;
+      }
+
+      // If there's a pending confirmation for a different face, don't process new input
+      if (this.confirm.visible && this.confirm.model && this.confirm.model.ID !== model.ID) {
         return;
       }
 
@@ -668,10 +660,12 @@ export default {
       model.Name = name;
       model.SubjUID = "";
 
-      if (confirm && model.wasChanged()) {
-        this.confirm.visible = true;
-      } else {
-        this.onConfirmRename();
+      if (model.Name) {
+        if (ev && ev.key === "Enter" && !ev.isComposing && !ev.repeat) {
+          this.setName(model, model.Name);
+        } else {
+          this.confirm.visible = true;
+        }
       }
     },
     onConfirmRename() {
@@ -687,6 +681,10 @@ export default {
       }
     },
     onCancelRename() {
+      if (this.confirm && this.confirm.model) {
+        this.confirm.model.Name = "";
+        this.confirm.model.SubjUID = "";
+      }
       this.confirm.visible = false;
     },
     setName(model, newName) {

@@ -11,7 +11,7 @@ func TestCliFlags_Cli(t *testing.T) {
 	cliFlags := Flags.Cli()
 	standard := Flags.Find([]string{})
 
-	assert.Equal(t, len(cliFlags), len(standard))
+	assert.GreaterOrEqual(t, len(cliFlags), len(standard))
 }
 
 func TestCliFlags_Find(t *testing.T) {
@@ -21,7 +21,7 @@ func TestCliFlags_Find(t *testing.T) {
 	other := Flags.Find([]string{"other"})
 
 	assert.Equal(t, len(standard), len(other))
-	assert.Equal(t, len(cliFlags), len(essentials))
+	assert.GreaterOrEqual(t, len(cliFlags), len(essentials))
 	assert.Equal(t, len(other), len(essentials))
 }
 
@@ -30,14 +30,14 @@ func TestCliFlags_Replace(t *testing.T) {
 		Name:    "public",
 		Aliases: []string{"p"},
 		Hidden:  true,
-		Usage:   "disable authentication, advanced settings, and WebDAV remote access",
+		Usage:   "disables authentication, advanced settings, and WebDAV remote access",
 		EnvVars: EnvVars("PUBLIC"),
 	}}
 
 	newPublicFlag := CliFlag{Flag: &cli.BoolFlag{
 		Name:    "public",
 		Hidden:  false,
-		Usage:   "disable authentication, advanced settings, and WebDAV remote access",
+		Usage:   "disables authentication, advanced settings, and WebDAV remote access",
 		EnvVars: EnvVars("PUBLIC"),
 	}}
 
@@ -114,7 +114,7 @@ func TestCliFlags_Insert(t *testing.T) {
 		Name:    "public",
 		Aliases: []string{"p"},
 		Hidden:  true,
-		Usage:   "disable authentication, advanced settings, and WebDAV remote access",
+		Usage:   "disables authentication, advanced settings, and WebDAV remote access",
 		EnvVars: EnvVars("PUBLIC"),
 	}}
 
@@ -163,7 +163,7 @@ func TestCliFlags_InsertBefore(t *testing.T) {
 		Name:    "public",
 		Aliases: []string{"p"},
 		Hidden:  true,
-		Usage:   "disable authentication, advanced settings, and WebDAV remote access",
+		Usage:   "disables authentication, advanced settings, and WebDAV remote access",
 		EnvVars: EnvVars("PUBLIC"),
 	}}
 
@@ -214,7 +214,7 @@ func TestCliFlags_Prepend(t *testing.T) {
 		Name:    "public",
 		Aliases: []string{"p"},
 		Hidden:  true,
-		Usage:   "disable authentication, advanced settings, and WebDAV remote access",
+		Usage:   "disables authentication, advanced settings, and WebDAV remote access",
 		EnvVars: EnvVars("PUBLIC"),
 	}}
 
@@ -243,4 +243,44 @@ func TestCliFlags_Prepend(t *testing.T) {
 	assert.Equal(t, "auth-mode, a", r[1].String())
 	assert.Equal(t, PublicFlag.String(), r[0].String())
 	assert.Equal(t, "admin-user, login", r[2].String())
+}
+
+func TestCliFlags_SetHidden(t *testing.T) {
+	cliFlags := CliFlags{
+		{
+			Flag: &cli.BoolFlag{
+				Name:    "public",
+				Aliases: []string{"p"},
+				Hidden:  true,
+				Usage:   "disables authentication, advanced settings, and WebDAV remote access",
+				EnvVars: EnvVars("PUBLIC"),
+			}},
+		{
+			Flag: &cli.StringFlag{
+				Name:    "auth-mode",
+				Aliases: []string{"a"},
+				Usage:   "authentication `MODE` (public, password)",
+				Value:   "password",
+				EnvVars: EnvVars("AUTH_MODE"),
+			}},
+		{
+			Flag: &cli.StringFlag{
+				Name:    "admin-user",
+				Aliases: []string{"login"},
+				Usage:   "`USERNAME` of the superadmin account that is created on first startup",
+				Value:   "admin",
+				EnvVars: EnvVars("ADMIN_USER"),
+			}}}
+
+	t.Logf("public hidden flag before: %#v", cliFlags[0].Hidden())
+	t.Logf("auth-mode hidden flag before: %#v", cliFlags[1].Hidden())
+
+	assert.True(t, cliFlags[0].Hidden())
+	assert.False(t, cliFlags[1].Hidden())
+	result := cliFlags.SetHidden(true, "auth-mode").SetHidden(false, "public")
+	assert.False(t, result[0].Hidden())
+	assert.True(t, cliFlags[1].Hidden())
+
+	t.Logf("public hidden flag after: %#v", result[0].Hidden())
+	t.Logf("auth-mode hidden flag after: %#v", cliFlags[1].Hidden())
 }

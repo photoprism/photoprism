@@ -241,12 +241,7 @@ export default class Config {
             .filter((m) => m.UID === values.UID)
             .forEach((m) => {
               for (let key in values) {
-                if (
-                  key !== "UID" &&
-                  values.hasOwnProperty(key) &&
-                  values[key] != null &&
-                  typeof values[key] !== "object"
-                ) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                   m[key] = values[key];
                 }
               }
@@ -583,7 +578,7 @@ export default class Config {
 
     if (!theme) {
       theme = themes.Get(name);
-      this.themeName = theme.name;
+      this.themeName = theme?.name;
     }
 
     if (this.values.settings && this.values.settings.ui) {
@@ -668,11 +663,27 @@ export default class Config {
 
   // getDefaultRoute returns the default route to use after login or in case of routing errors.
   getDefaultRoute() {
+    if (this.isPortal()) {
+      return "cluster";
+    }
+
     const albumsRoute = "albums";
     const browseRoute = "browse";
-    const defaultRoute = this.deny("photos", "access_library") ? albumsRoute : browseRoute;
+    const settingsRoute = "settings";
 
-    if (this.allow("settings", "update")) {
+    let defaultRoute;
+
+    if (this.deny("photos", "access_library") || !this.feature("search")) {
+      if (this.deny("albums", "view") || !this.feature("albums")) {
+        defaultRoute = settingsRoute;
+      } else {
+        defaultRoute = albumsRoute;
+      }
+    } else {
+      defaultRoute = browseRoute;
+    }
+
+    if (defaultRoute !== settingsRoute && this.allow("settings", "update")) {
       const features = this.getSettings()?.features;
       const startPage = this.getSettings()?.ui?.startPage;
 
@@ -700,6 +711,8 @@ export default class Config {
             return features.labels ? startPage : defaultRoute;
           case "folders":
             return features.folders ? startPage : defaultRoute;
+          case "settings":
+            return features.settings ? startPage : defaultRoute;
           default:
             return defaultRoute;
         }
@@ -818,6 +831,16 @@ export default class Config {
     return this.values && this.values.demo;
   }
 
+  // isPortal returns true if this is a cluster portal server.
+  isPortal() {
+    return this.values && this.values.portal;
+  }
+
+  // isPro returns true if this is team version.
+  isPro() {
+    return !!this.values?.ext["pro"];
+  }
+
   isSponsor() {
     if (!this.values || !this.values.sponsor) {
       return false;
@@ -908,7 +931,7 @@ export default class Config {
   }
 
   getLoginIcon() {
-    const loginTheme = themes.Get("login");
+    const loginTheme = themes.Get("login", false);
     if (loginTheme?.variables?.icon) {
       return loginTheme?.variables?.icon;
     }

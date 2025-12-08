@@ -20,6 +20,7 @@ Features:
   Delete: true
   Download: true
   Edit: true
+  BatchEdit: true
   Estimates: true
   Favorites: true
   Files: true

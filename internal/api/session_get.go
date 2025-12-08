@@ -8,15 +8,21 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// GetSession returns the session data as JSON if authentication was successful.
+// GetSession returns session data for the current or specified session.
 //
-// GET /api/v1/session
-// GET /api/v1/session/:id
-// GET /api/v1/sessions/:id
+//	@Summary	get the current session or a session by id
+//	@Tags		Authentication
+//	@Produce	json
+//	@Param		id				path		string	false	"session id"
+//	@Success	200				{object}	gin.H
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/session [get]
+//	@Router		/api/v1/session/{id} [get]
+//	@Router		/api/v1/sessions/{id} [get]
 func GetSession(router *gin.RouterGroup) {
 	getSessionHandler := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

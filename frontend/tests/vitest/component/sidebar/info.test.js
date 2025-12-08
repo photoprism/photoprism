@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import PSidebarInfo from "component/sidebar/info.vue";
+import * as contexts from "options/contexts";
 import { DateTime } from "luxon";
 
 // Mock dependencies
@@ -52,7 +53,7 @@ describe("PSidebarInfo component", () => {
     wrapper = mount(PSidebarInfo, {
       props: {
         modelValue: mockModel,
-        context: "photos",
+        context: contexts.Photos,
       },
       global: {
         stubs: {
@@ -80,7 +81,7 @@ describe("PSidebarInfo component", () => {
     expect(mockModel.getLatLng).toHaveBeenCalled();
   });
 
-  it.skip("should emit close event when close button is clicked", async () => {
+  it("should emit close event when close button is clicked", async () => {
     // Try finding close button by various selectors
     const closeButtonSelectors = [".close-button", "button[aria-label='Close']", "button[title='Close']"];
 

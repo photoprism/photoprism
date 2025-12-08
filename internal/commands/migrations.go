@@ -16,30 +16,32 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
+// MigrationsStatusCommand lists migration status.
 var MigrationsStatusCommand = &cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
 	Usage:     "Displays the status of schema migrations",
-	ArgsUsage: "[migrations...]",
+	ArgsUsage: "[migrations]...",
 	Flags:     report.CliFlags,
 	Action:    migrationsStatusAction,
 }
 
+// MigrationsRunCommand runs pending migrations.
 var MigrationsRunCommand = &cli.Command{
 	Name:      "run",
 	Aliases:   []string{"execute", "migrate"},
 	Usage:     "Executes database schema migrations",
-	ArgsUsage: "[migrations...]",
+	ArgsUsage: "[migrations]...",
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
 			Name:    "failed",
 			Aliases: []string{"f"},
-			Usage:   "run previously failed migrations",
+			Usage:   "runs previously failed migrations",
 		},
 		&cli.BoolFlag{
 			Name:    "trace",
 			Aliases: []string{"t"},
-			Usage:   "show trace logs for debugging",
+			Usage:   "shows trace logs for debugging",
 		},
 	},
 	Action: migrationsRunAction,
@@ -110,15 +112,16 @@ func migrationsStatusAction(ctx *cli.Context) error {
 			finished = "-"
 		}
 
-		if m.Error != "" {
+		switch {
+		case m.Error != "":
 			info = m.Error
-		} else if m.Finished() {
+		case m.Finished():
 			info = "OK"
-		} else if m.StartedAt.IsZero() {
+		case m.StartedAt.IsZero():
 			info = "-"
-		} else if m.Repeat(false) {
+		case m.Repeat(false):
 			info = "Repeat"
-		} else {
+		default:
 			info = "Running?"
 		}
 

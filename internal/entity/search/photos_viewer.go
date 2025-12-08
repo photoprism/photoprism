@@ -9,12 +9,15 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
-// PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
+// PhotosViewerResults searches public photos using the provided form and returns
+// them in the lightweight viewer format that powers the slideshow endpoints.
 func PhotosViewerResults(frm form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
 	return UserPhotosViewerResults(frm, nil, contentUri, apiUri, previewToken, downloadToken)
 }
 
-// UserPhotosViewerResults finds photos based on the search form and user session and returns them as viewer.Results.
+// UserPhotosViewerResults behaves like PhotosViewerResults but also applies the
+// permissions encoded in the session (for example shared albums and private
+// visibility) before returning viewer-formatted results.
 func UserPhotosViewerResults(frm form.SearchPhotos, sess *entity.Session, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
 	if results, count, err := searchPhotos(frm, sess, PhotosColsView); err != nil {
 		return viewer.Results{}, count, err
@@ -23,7 +26,9 @@ func UserPhotosViewerResults(frm form.SearchPhotos, sess *entity.Session, conten
 	}
 }
 
-// ViewerResult returns a new photo viewer result.
+// ViewerResult converts a photo search result into the DTO consumed by the
+// frontend viewer, including derived metadata such as thumbnails and download
+// URLs.
 func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
 	mediaHash, mediaCodec, mediaMime, width, height := m.MediaInfo()
 	return viewer.Result{
@@ -48,12 +53,12 @@ func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken str
 	}
 }
 
-// ViewerJSON returns the results as photo viewer JSON.
+// ViewerJSON marshals the current result set to the viewer JSON structure.
 func (m PhotoResults) ViewerJSON(contentUri, apiUri, previewToken, downloadToken string) ([]byte, error) {
 	return json.Marshal(m.ViewerResults(contentUri, apiUri, previewToken, downloadToken))
 }
 
-// ViewerResults returns the results photo viewer formatted.
+// ViewerResults maps every photo into the viewer DTO while preserving order.
 func (m PhotoResults) ViewerResults(contentUri, apiUri, previewToken, downloadToken string) (results viewer.Results) {
 	results = make(viewer.Results, 0, len(m))
 
@@ -64,7 +69,8 @@ func (m PhotoResults) ViewerResults(contentUri, apiUri, previewToken, downloadTo
 	return results
 }
 
-// ViewerResult creates a new photo viewer result.
+// ViewerResult converts a geographic search hit into the viewer DTO, reusing
+// the thumbnail and download helpers so photos and map results stay aligned.
 func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
 	return viewer.Result{
 		UID:          m.PhotoUID,
@@ -88,7 +94,7 @@ func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken 
 	}
 }
 
-// ViewerJSON returns the results as photo viewer JSON.
+// ViewerJSON marshals geo search hits to the viewer JSON structure.
 func (photos GeoResults) ViewerJSON(contentUri, apiUri, previewToken, downloadToken string) ([]byte, error) {
 	results := make(viewer.Results, 0, len(photos))
 

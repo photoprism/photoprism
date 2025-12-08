@@ -101,9 +101,9 @@ func TestAuthSession(t *testing.T) {
 		assert.NotNil(t, authUser)
 
 		assert.Equal(t, u.UserUID, s.UserUID)
-		assert.Equal(t, u.Username(), s.Username())
+		assert.Equal(t, u.Username(), s.GetUserName())
 		assert.Equal(t, authUser.UserUID, authSess.UserUID)
-		assert.Equal(t, authUser.Username(), authSess.Username())
+		assert.Equal(t, authUser.Username(), authSess.GetUserName())
 		assert.Equal(t, authUser.UserUID, authUser.UserUID)
 		assert.Equal(t, authUser.Username(), authUser.Username())
 
@@ -139,9 +139,9 @@ func TestAuthSession(t *testing.T) {
 		assert.NotNil(t, authUser)
 
 		assert.Equal(t, u.UserUID, s.UserUID)
-		assert.Equal(t, u.Username(), s.Username())
+		assert.Equal(t, u.Username(), s.GetUserName())
 		assert.Equal(t, authUser.UserUID, authSess.UserUID)
-		assert.Equal(t, authUser.Username(), authSess.Username())
+		assert.Equal(t, authUser.Username(), authSess.GetUserName())
 		assert.Equal(t, authUser.UserUID, authUser.UserUID)
 		assert.Equal(t, authUser.Username(), authUser.Username())
 
@@ -514,7 +514,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("UnknownUserWithInvalidToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
@@ -534,7 +533,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal("login should fail")
 		}
 	})
-
 	t.Run("UnknownUserWithoutToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
@@ -552,7 +550,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal("login should fail")
 		}
 	})
-
 	t.Run("KnownUserWithToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		m.SetClientIP(clientIp)
@@ -572,7 +569,6 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-
 	t.Run("KnownUserWithInvalidToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		m.SetClientIP(clientIp)

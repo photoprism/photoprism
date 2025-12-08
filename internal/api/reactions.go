@@ -39,11 +39,11 @@ func LikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		if get.Config().Develop() && acl.Rules.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionReact) {
-			logWarn("react", m.React(s.User(), react.Find("love")))
+		if get.Config().Develop() && acl.Rules.Allow(acl.ResourcePhotos, s.GetUserRole(), acl.ActionReact) {
+			logWarn("react", m.React(s.GetUser(), react.Find("love")))
 		}
 
-		if acl.Rules.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionUpdate) {
+		if acl.Rules.Allow(acl.ResourcePhotos, s.GetUserRole(), acl.ActionUpdate) {
 			err = m.SetFavorite(true)
 
 			if err != nil {
@@ -87,11 +87,11 @@ func DislikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		if get.Config().Develop() && acl.Rules.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionReact) {
-			logWarn("react", m.UnReact(s.User()))
+		if get.Config().Develop() && acl.Rules.Allow(acl.ResourcePhotos, s.GetUserRole(), acl.ActionReact) {
+			logWarn("react", m.UnReact(s.GetUser()))
 		}
 
-		if acl.Rules.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionUpdate) {
+		if acl.Rules.Allow(acl.ResourcePhotos, s.GetUserRole(), acl.ActionUpdate) {
 			err = m.SetFavorite(false)
 
 			if err != nil {

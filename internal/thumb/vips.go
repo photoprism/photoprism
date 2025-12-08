@@ -62,18 +62,25 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 
 	// Choose thumbnail crop.
 	var crop vips.Interesting
-	if method == ResampleFillTopLeft {
+	switch method {
+	case ResampleFillTopLeft:
 		crop = vips.InterestingLow
 		size = vips.SizeBoth
-	} else if method == ResampleFillBottomRight {
+	case ResampleFillBottomRight:
 		crop = vips.InterestingHigh
 		size = vips.SizeBoth
-	} else if method == ResampleFit {
+	case ResampleFit:
 		crop = vips.InterestingNone
 		size = vips.SizeDown
-	} else if method == ResampleFillCenter || method == ResampleResize {
+	case ResampleFillCenter, ResampleResize:
 		crop = vips.InterestingCentre
 		size = vips.SizeBoth
+	default:
+		// Use defaults.
+	}
+
+	if err = vipsSetIccProfileForInteropIndex(img, clean.Log(filepath.Base(imageName))); err != nil {
+		log.Debugf("vips: %s in %s (set icc profile for interop index tag)", err, clean.Log(filepath.Base(imageName)))
 	}
 
 	// Create thumbnail image.
@@ -155,44 +162,4 @@ func VipsJpegExportParams(width, height int) *vips.JpegExportParams {
 	}
 
 	return params
-}
-
-// VipsRotate rotates a vips image based on the Exif orientation.
-func VipsRotate(img *vips.ImageRef, orientation int) error {
-	var err error
-
-	switch orientation {
-	case OrientationUnspecified:
-		// Do nothing.
-	case OrientationNormal:
-		// Do nothing.
-	case OrientationFlipH:
-		err = img.Flip(vips.DirectionHorizontal)
-	case OrientationFlipV:
-		err = img.Flip(vips.DirectionVertical)
-	case OrientationRotate90:
-		// Rotate the image 90 degrees counter-clockwise.
-		err = img.Rotate(vips.Angle270)
-	case OrientationRotate180:
-		err = img.Rotate(vips.Angle180)
-	case OrientationRotate270:
-		// Rotate the image 270 degrees counter-clockwise.
-		err = img.Rotate(vips.Angle90)
-	case OrientationTranspose:
-		err = img.Flip(vips.DirectionHorizontal)
-		if err == nil {
-			// Rotate the image 90 degrees counter-clockwise.
-			err = img.Rotate(vips.Angle270)
-		}
-	case OrientationTransverse:
-		err = img.Flip(vips.DirectionVertical)
-		if err == nil {
-			// Rotate the image 90 degrees counter-clockwise.
-			err = img.Rotate(vips.Angle270)
-		}
-	default:
-		log.Debugf("vips: invalid orientation %d (rotate image)", orientation)
-	}
-
-	return err
 }

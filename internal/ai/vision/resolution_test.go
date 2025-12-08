@@ -38,6 +38,6 @@ func TestThumb(t *testing.T) {
 	})
 	t.Run("Caption", func(t *testing.T) {
 		size := Thumb(ModelTypeCaption)
-		assert.Equal(t, thumb.SizeTile224, size)
+		assert.Equal(t, thumb.SizeFit720, size)
 	})
 }

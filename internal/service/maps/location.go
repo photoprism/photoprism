@@ -1,3 +1,4 @@
+//revive:disable:exported // getters intentionally exported for use across services
 package maps
 
 import (
@@ -42,9 +43,8 @@ type LocationSource interface {
 	Source() string
 }
 
-func (l *Location) QueryApi(api string) error {
-	switch api {
-	case places.ApiName:
+func (l *Location) QueryApi(api string) error { //nolint:gocritic // single-case switch retained for future APIs
+	if api == places.ApiName {
 		return l.QueryPlaces()
 	}
 
@@ -52,7 +52,7 @@ func (l *Location) QueryApi(api string) error {
 }
 
 func (l *Location) QueryPlaces() error {
-	s, err := places.FindLocation(l.ID)
+	s, err := places.Cell(l.ID, places.DefaultLocale)
 
 	if err != nil {
 		return err

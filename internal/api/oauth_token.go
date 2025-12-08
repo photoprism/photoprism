@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
@@ -16,13 +15,21 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
-// OAuthToken creates a new access token for clients that authenticate with valid OAuth2 client credentials.
+// OAuthToken creates a new access token for clients using OAuth2 grant types.
 //
-//	@Tags	Authentication
-//	@Router	/api/v1/oauth/token [post]
+//	@Summary	create an OAuth2 access token
+//	@Id			OAuthToken
+//	@Tags		Authentication
+//	@Accept		json
+//	@Produce	json
+//	@Param		request		body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
+//	@Success	200			{object}	gin.H
+//	@Failure	400,401,429	{object}	i18n.Response
+//	@Router		/api/v1/oauth/token [post]
 func OAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
@@ -58,14 +65,14 @@ func OAuthToken(router *gin.RouterGroup) {
 			frm.ClientID = clientId
 			frm.ClientSecret = clientSecret
 		} else if err = c.ShouldBind(&frm); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
-			AbortBadRequest(c)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
+			AbortBadRequest(c, err)
 			return
 		}
 
 		// Check the credentials for completeness and the correct format.
 		if err = frm.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		}
@@ -79,11 +86,12 @@ func OAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
-		if frm.ClientID != "" {
+		switch {
+		case frm.ClientID != "":
 			actor = fmt.Sprintf("client %s", clean.Log(frm.ClientID))
-		} else if frm.Username != "" {
+		case frm.Username != "":
 			actor = fmt.Sprintf("user %s", clean.Log(frm.Username))
-		} else if frm.GrantType == authn.GrantPassword {
+		case frm.GrantType == authn.GrantPassword:
 			actor = "unknown user"
 		}
 
@@ -103,7 +111,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				AbortInvalidCredentials(c)
 				return
 			} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
-				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "method %s not supported"}, clean.LogQuote(method.String()))
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "method %s", status.Unsupported}, clean.LogQuote(method.String()))
 				AbortInvalidCredentials(c)
 				return
 			} else if client.InvalidSecret(frm.ClientSecret) {
@@ -127,33 +135,34 @@ func OAuthToken(router *gin.RouterGroup) {
 			if s == nil {
 				AbortInvalidCredentials(c)
 				return
-			} else if s.Username() == "" || s.IsClient() || !s.IsRegistered() {
+			} else if s.GetUserName() == "" || s.IsClient() || !s.IsRegistered() {
 				event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
 				AbortInvalidCredentials(c)
 				return
 			}
 
-			actor = fmt.Sprintf("user %s", clean.Log(s.Username()))
+			actor = fmt.Sprintf("user %s", clean.Log(s.GetUserName()))
 
-			if s.User().Provider().SupportsPasswordAuthentication() {
+			if s.GetUser().Provider().SupportsPasswordAuthentication() {
 				loginForm := form.Login{
-					Username: s.Username(),
+					Username: s.GetUserName(),
 					Password: frm.Password,
 				}
 
 				authUser, authProvider, authMethod, authErr := entity.Auth(loginForm, nil, c)
 
-				if authProvider.IsClient() {
-					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.Denied})
+				switch {
+				case authProvider.IsClient():
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Denied})
 					AbortInvalidCredentials(c)
 					return
-				} else if authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired) {
+				case authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired):
 					// Ok.
-				} else if authErr != nil {
-					event.AuditErr([]string{clientIp, "oauth2", actor, action, "%s"}, strings.ToLower(clean.Error(authErr)))
+				case authErr != nil:
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(authErr)})
 					AbortInvalidCredentials(c)
 					return
-				} else if !authUser.Equal(s.User()) {
+				case !authUser.Equal(s.GetUser()):
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrUserDoesNotMatch.Error()})
 					AbortInvalidCredentials(c)
 					return
@@ -164,7 +173,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				frm.GrantType = authn.GrantSession
 			}
 
-			sess = entity.NewClientSession(frm.ClientName, frm.ExpiresIn, frm.Scope, frm.GrantType, s.User())
+			sess = entity.NewClientSession(frm.ClientName, frm.ExpiresIn, frm.Scope, frm.GrantType, s.GetUser())
 
 			// Return the reserved request rate limit tokens after successful authentication.
 			r.Success()
@@ -176,7 +185,7 @@ func OAuthToken(router *gin.RouterGroup) {
 
 		// Save new session.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, err.Error()})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		} else if sess == nil {
@@ -184,7 +193,7 @@ func OAuthToken(router *gin.RouterGroup) {
 			AbortUnexpectedError(c)
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "oauth2", actor, action, authn.Created})
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, status.Created})
 		}
 
 		// Delete any existing client sessions above the configured limit.
@@ -201,7 +210,8 @@ func OAuthToken(router *gin.RouterGroup) {
 			"access_token": sess.AuthToken(),
 			"token_type":   sess.AuthTokenType(),
 			"expires_in":   sess.ExpiresIn(),
-			"client_name":  sess.ClientName,
+			"client_name":  sess.GetClientName(),
+			"client_role":  sess.GetClientRole(),
 			"scope":        sess.Scope(),
 		}
 

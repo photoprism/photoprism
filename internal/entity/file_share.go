@@ -11,18 +11,18 @@ const (
 	FileShareRemoved = "removed"
 )
 
-// FileShare represents a one-to-many relation between File and Account for pushing files to remote services.
+// FileShare represents remote-sharing state for a file and a single connected service account.
 type FileShare struct {
-	FileID     uint   `gorm:"primary_key;auto_increment:false"`
-	ServiceID  uint   `gorm:"primary_key;auto_increment:false"`
-	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
-	Status     string `gorm:"type:VARBINARY(16);"`
-	Error      string `gorm:"type:VARBINARY(512);"`
-	Errors     int
-	File       *File
-	Account    *Service
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	FileID     uint      `gorm:"primary_key;auto_increment:false" json:"FileID" yaml:"FileID,omitempty"`
+	ServiceID  uint      `gorm:"primary_key;auto_increment:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
+	RemoteName string    `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	Status     string    `gorm:"type:VARBINARY(16);" json:"Status" yaml:"Status,omitempty"`
+	Error      string    `gorm:"type:VARBINARY(512);" json:"Error,omitempty" yaml:"Error,omitempty"`
+	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
+	File       *File     `json:"File,omitempty" yaml:"-"`
+	Account    *Service  `json:"Account,omitempty" yaml:"-"`
+	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
+	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }
 
 // TableName returns the entity table name.
@@ -30,7 +30,7 @@ func (FileShare) TableName() string {
 	return "files_share"
 }
 
-// NewFileShare creates a new entity.
+// NewFileShare creates a new remote-share record with status set to "new".
 func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 	result := &FileShare{
 		FileID:     fileID,
@@ -44,12 +44,12 @@ func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 	return result
 }
 
-// Updates multiple columns in the database.
+// Updates mutates multiple columns on the existing row.
 func (m *FileShare) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Update updates a column value in the database.
+// Update mutates a single column on the existing row.
 func (m *FileShare) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

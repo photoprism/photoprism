@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -104,7 +105,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 func TestMediaFile_Colors(t *testing.T) {
 	c := config.TestConfig()
 
-	t.Run("cat_brown.jpg", func(t *testing.T) {
+	t.Run("CatBrownJpg", func(t *testing.T) {
 		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/cat_brown.jpg"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
@@ -164,7 +165,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Error(err)
 		}
 	})
-	t.Run("IMG_4120.JPG", func(t *testing.T) {
+	t.Run("ImgNum4120Jpg", func(t *testing.T) {
 		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/IMG_4120.JPG"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
@@ -180,7 +181,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Error(err)
 		}
 	})
-	t.Run("leaves_gold.jpg", func(t *testing.T) {
+	t.Run("LeavesGoldJpg", func(t *testing.T) {
 		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/leaves_gold.jpg"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
@@ -197,16 +198,23 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Error(err)
 		}
 	})
-	t.Run("Random.docx", func(t *testing.T) {
-		file, fileErr := NewMediaFile(c.ExamplesPath() + "/Random.docx")
-		p, fileErr := file.Colors(c.ThumbCachePath())
-		assert.Error(t, fileErr, "no color information: not a JPEG file")
+	t.Run("RandomDocx", func(t *testing.T) {
+		file, err := NewMediaFile(c.ExamplesPath() + "/Random.docx")
+		require.NoError(t, err)
+
+		p, colorErr := file.Colors(c.ThumbCachePath())
+		assert.Error(t, colorErr, "no color information: not a JPEG file")
 		t.Log(p)
 	})
-	t.Run("animated-earth.thm", func(t *testing.T) {
-		file, fileErr := NewMediaFile(c.ExamplesPath() + "/animated-earth.thm")
-		p, fileErr := file.Colors(c.ThumbCachePath())
-		assert.Error(t, fileErr, "no color information: not a JPEG file")
+	t.Run("AnimatedEarthThm", func(t *testing.T) {
+		file, err := NewMediaFile(c.ExamplesPath() + "/animated-earth.thm")
+		if err != nil {
+			assert.Error(t, err)
+			return
+		}
+
+		p, colorErr := file.Colors(c.ThumbCachePath())
+		assert.Error(t, colorErr, "no color information: not a JPEG file")
 		t.Log(p)
 	})
 }

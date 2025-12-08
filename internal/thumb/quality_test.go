@@ -28,13 +28,13 @@ func TestParseQuality(t *testing.T) {
 	t.Run("Min", func(t *testing.T) {
 		assert.Equal(t, QualityMin, ParseQuality("min"))
 	})
-	t.Run("bad", func(t *testing.T) {
+	t.Run("Bad", func(t *testing.T) {
 		assert.Equal(t, QualityMedium, ParseQuality("bad"))
 	})
-	t.Run("low", func(t *testing.T) {
+	t.Run("Low", func(t *testing.T) {
 		assert.Equal(t, QualityLow, ParseQuality("low"))
 	})
-	t.Run("high", func(t *testing.T) {
+	t.Run("High", func(t *testing.T) {
 		assert.Equal(t, QualityHigh, ParseQuality("high"))
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -59,43 +59,43 @@ func TestParseQuality(t *testing.T) {
 	t.Run("Ultra", func(t *testing.T) {
 		assert.Equal(t, QualityMax, ParseQuality("ultra"))
 	})
-	t.Run("0", func(t *testing.T) {
+	t.Run("Zero", func(t *testing.T) {
 		assert.Equal(t, QualityMin, ParseQuality("0"))
 	})
-	t.Run("1", func(t *testing.T) {
+	t.Run("One", func(t *testing.T) {
 		assert.Equal(t, QualityMin, ParseQuality("1"))
 	})
-	t.Run("2", func(t *testing.T) {
+	t.Run("Two", func(t *testing.T) {
 		assert.Equal(t, QualityLow, ParseQuality("2"))
 	})
-	t.Run("3", func(t *testing.T) {
+	t.Run("Three", func(t *testing.T) {
 		assert.Equal(t, QualityMedium, ParseQuality("3"))
 	})
-	t.Run("4", func(t *testing.T) {
+	t.Run("Four", func(t *testing.T) {
 		assert.Equal(t, QualityHigh, ParseQuality("4"))
 	})
-	t.Run("5", func(t *testing.T) {
+	t.Run("Five", func(t *testing.T) {
 		assert.Equal(t, QualityMax, ParseQuality("5"))
 	})
-	t.Run("6", func(t *testing.T) {
+	t.Run("Six", func(t *testing.T) {
 		assert.Equal(t, QualityMax, ParseQuality("6"))
 	})
-	t.Run("50", func(t *testing.T) {
+	t.Run("Num50", func(t *testing.T) {
 		assert.Equal(t, Quality(50), ParseQuality("50"))
 	})
-	t.Run("66", func(t *testing.T) {
+	t.Run("Num66", func(t *testing.T) {
 		assert.Equal(t, Quality(66), ParseQuality("66"))
 	})
-	t.Run("77", func(t *testing.T) {
+	t.Run("Num77", func(t *testing.T) {
 		assert.Equal(t, Quality(77), ParseQuality("77"))
 	})
-	t.Run("89", func(t *testing.T) {
+	t.Run("Num89", func(t *testing.T) {
 		assert.Equal(t, Quality(89), ParseQuality("89"))
 	})
-	t.Run("90", func(t *testing.T) {
+	t.Run("Num90", func(t *testing.T) {
 		assert.Equal(t, Quality(90), ParseQuality("90"))
 	})
-	t.Run("100", func(t *testing.T) {
+	t.Run("Num100", func(t *testing.T) {
 		assert.Equal(t, Quality(100), ParseQuality("100"))
 	})
 }

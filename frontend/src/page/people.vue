@@ -1,22 +1,7 @@
 <template>
-  <div ref="page" tabindex="1" class="p-page p-page-people" :class="$config.aclClasses('people')">
-    <v-tabs
-      v-model="active"
-      elevation="0"
-      grow
-      bg-color="secondary"
-      slider-color="surface-variant"
-      :height="$vuetify.display.smAndDown ? 48 : 64"
-      class="bg-transparent p-page__navigation"
-    >
-      <v-tab
-        v-for="t in tabs"
-        :id="'tab-' + t.name"
-        :key="t.name"
-        :class="t.class"
-        ripple
-        @click.stop.prevent="changePath(t.path)"
-      >
+  <div ref="page" tabindex="-1" class="p-page p-page-people" :class="$config.aclClasses('people')">
+    <v-tabs v-model="active" elevation="0" grow bg-color="secondary" :height="$vuetify.display.smAndDown ? 48 : 64" class="bg-transparent p-page__navigation">
+      <v-tab v-for="t in tabs" :id="'tab-' + t.name" :key="t.name" :class="t.class" ripple @click.stop.prevent="changePath(t.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="t.label">{{ t.icon }}</v-icon>
         <template v-else>
           <v-icon :size="18" start>{{ t.icon }}</v-icon>
@@ -28,12 +13,7 @@
 
     <v-tabs-window v-model="active">
       <v-tabs-window-item v-for="(t, index) in tabs" :key="t.name" eager>
-        <component
-          :is="t.component"
-          :static-filter="t.filter"
-          :active="active === index"
-          @update-face-count="onUpdateFaceCount"
-        ></component>
+        <component :is="t.component" :static-filter="t.filter" :active="active === index" @update-face-count="onUpdateFaceCount"></component>
       </v-tabs-window-item>
     </v-tabs-window>
   </div>

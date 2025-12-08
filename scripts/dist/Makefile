@@ -33,9 +33,14 @@ tensorflow-amd64-avx: install-tensorflow
 tensorflow-amd64-avx2: install-tensorflow
 install-tensorflow:
 	/scripts/install-tensorflow.sh auto
+onnxruntime: install-onnx
+install-onnx:
+	/scripts/install-onnx.sh
 tensorflow-gpu: install-tensorflow-gpu
 install-tensorflow-gpu:
 	/scripts/install-tensorflow.sh gpu
+codex:
+	/scripts/install-codex.sh
 davfs: install-davfs
 install-davfs:
 	/scripts/install-davfs.sh
@@ -44,7 +49,7 @@ install-intel-graphics: intel
 intel-graphics: intel
 install-intel:
 	@echo "Installing Intel GPU Drivers..."
-	apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen1.2 va-driver-all vainfo libva2
+	apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen1.2 va-driver-all vainfo libva2 libvpl2
 amd: update install-amd
 install-amd:
 	@echo "Installing AMD VA-API GPU Drivers..."

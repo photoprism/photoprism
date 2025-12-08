@@ -40,7 +40,7 @@ func TestOptions_SetOptionsFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/temp", c.TempPath)
 	assert.Equal(t, "1h34m9s", c.WakeupInterval.String())
 	assert.NotEmpty(t, c.DatabaseDriver)
-	assert.NotEmpty(t, c.DatabaseDsn)
+	assert.NotEmpty(t, c.DatabaseDSN)
 	assert.Equal(t, 81, c.HttpPort)
 }
 
@@ -49,6 +49,6 @@ func TestOptions_ExpandFilenames(t *testing.T) {
 	assert.Equal(t, "tmp", p.TempPath)
 	assert.Equal(t, "import", p.ImportPath)
 	p.expandFilenames()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/tmp", p.TempPath)
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/internal/config/import", p.ImportPath)
+	assert.Equal(t, ProjectRoot+"/internal/config/tmp", p.TempPath)
+	assert.Equal(t, ProjectRoot+"/internal/config/import", p.ImportPath)
 }

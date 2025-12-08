@@ -22,9 +22,8 @@ func TestNewImport(t *testing.T) {
 func TestImport_DestinationFilename(t *testing.T) {
 	cfg := config.TestConfig()
 
-	if err := cfg.InitializeTestData(); err != nil {
-		t.Fatal(err)
-	}
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 
@@ -47,7 +46,6 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 		assert.Equal(t, cfg.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.cr2", fileName)
 	})
-
 	t.Run("WithBasePath", func(t *testing.T) {
 		fileName, err := imp.DestinationFilename(rawFile, rawFile, "users/guest")
 
@@ -66,7 +64,8 @@ func TestImport_Start(t *testing.T) {
 
 	cfg := config.TestConfig()
 
-	cfg.InitializeTestData()
+	initErr := cfg.InitializeTestData()
+	assert.NoError(t, initErr)
 
 	convert := NewConvert(cfg)
 

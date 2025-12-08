@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -37,11 +38,15 @@ var (
 	DefaultOrderMonth  = sortby.Oldest
 )
 
-var albumMutex = sync.Mutex{}
+var (
+	albumGlobalLock = sync.Mutex{}
+	albumLocks      sync.Map // map[string]*sync.Mutex keyed by UID or normalized title
+)
 
+// Albums is a helper slice type for working with groups of albums.
 type Albums []Album
 
-// Album represents a photo album
+// Album represents a photo album and its metadata, including filter definitions for virtual albums.
 type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
 	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
@@ -92,7 +97,7 @@ func (Album) TableName() string {
 	return "albums"
 }
 
-// UpdateAlbum updates album attributes in the database.
+// UpdateAlbum updates album attributes directly in the database by UID.
 func UpdateAlbum(albumUID string, values interface{}) (err error) {
 	if rnd.InvalidUID(albumUID, AlbumUID) {
 		return fmt.Errorf("album: invalid uid %s", clean.Log(albumUID))
@@ -103,12 +108,12 @@ func UpdateAlbum(albumUID string, values interface{}) (err error) {
 	return nil
 }
 
-// AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
+// AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them with default ownership when required.
 func AddPhotoToAlbums(uid string, albums []string) (err error) {
 	return AddPhotoToUserAlbums(uid, albums, DefaultOrderAlbum, OwnerUnknown)
 }
 
-// AddPhotoToUserAlbums adds a photo UID to multiple albums and automatically creates them as a user if needed.
+// AddPhotoToUserAlbums adds a photo UID to multiple albums while creating any missing albums for the given user.
 func AddPhotoToUserAlbums(photoUid string, albums []string, sortOrder, userUid string) (err error) {
 	if photoUid == "" || len(albums) == 0 {
 		// Do nothing.
@@ -119,52 +124,90 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, sortOrder, userUid s
 		return fmt.Errorf("album: can not add invalid photo uid %s", clean.Log(photoUid))
 	}
 
-	albumMutex.Lock()
-	defer albumMutex.Unlock()
-
 	for _, album := range albums {
-		var albumUid string
-
 		if album == "" {
 			log.Debugf("album: cannot add photo uid %s because album id was not specified", clean.Log(photoUid))
 			continue
 		}
 
-		if rnd.IsUID(album, AlbumUID) {
-			albumUid = album
-		} else {
-			a := NewUserAlbum(album, AlbumManual, sortOrder, userUid)
-
-			if found := a.Find(); found != nil {
-				albumUid = found.AlbumUID
-			} else if err = a.Create(); err == nil {
-				albumUid = a.AlbumUID
-			} else {
-				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
-			}
+		unlock := lockAlbumKey(album)
+		if lockErr := addPhotoToAlbumLocked(photoUid, album, sortOrder, userUid); lockErr != nil {
+			err = lockErr
 		}
+		unlock()
+	}
 
-		if albumUid != "" {
-			entry := PhotoAlbum{AlbumUID: albumUid, PhotoUID: photoUid, Hidden: false}
+	return err
+}
 
-			if err = entry.Save(); err != nil {
-				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
-			}
+// lockAlbumKey acquires a per-album mutex keyed by UID or normalized title to avoid
+// serializing unrelated album updates while still preventing duplicate creation when
+// multiple goroutines target the same album concurrently.
+func lockAlbumKey(album string) func() {
+	key := strings.TrimSpace(album)
 
-			// Refresh updated timestamp.
-			err = UpdateAlbum(albumUid, Map{"updated_at": TimeStamp()})
+	if key == "" {
+		albumGlobalLock.Lock()
+		return albumGlobalLock.Unlock
+	}
+
+	if rnd.IsUID(key, AlbumUID) {
+		// keep UID as-is so existing albums share the same lock
+	} else {
+		key = strings.ToLower(key)
+	}
+
+	locker, _ := albumLocks.LoadOrStore(key, &sync.Mutex{})
+	mu := locker.(*sync.Mutex)
+	mu.Lock()
+
+	return mu.Unlock
+}
+
+// addPhotoToAlbumLocked performs the actual album lookup/creation and relation insert
+// while assuming the caller already holds the per-album mutex.
+func addPhotoToAlbumLocked(photoUid, album, sortOrder, userUid string) (err error) {
+	var albumUid string
+
+	if rnd.IsUID(album, AlbumUID) {
+		albumUid = album
+	} else {
+		a := NewUserAlbum(album, AlbumManual, sortOrder, userUid)
+
+		if found := a.Find(); found != nil {
+			albumUid = found.AlbumUID
+		} else if err = a.Create(); err == nil {
+			albumUid = a.AlbumUID
+		} else {
+			log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
+		}
+	}
+
+	if albumUid == "" {
+		return err
+	}
+
+	entry := PhotoAlbum{AlbumUID: albumUid, PhotoUID: photoUid, Hidden: false}
+
+	if err = entry.Save(); err != nil {
+		log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
+	}
+
+	if updateErr := UpdateAlbum(albumUid, Values{"updated_at": TimeStamp()}); updateErr != nil {
+		if err == nil {
+			err = updateErr
 		}
 	}
 
 	return err
 }
 
-// NewAlbum creates a new album of the given type.
+// NewAlbum creates a new album of the given type using default ownership.
 func NewAlbum(albumTitle, albumType string) *Album {
 	return NewUserAlbum(albumTitle, albumType, sortby.Oldest, OwnerUnknown)
 }
 
-// NewUserAlbum creates a new album owned by a user.
+// NewUserAlbum creates a new album owned by a user and pre-fills timestamps/order defaults.
 func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 	now := Now()
 
@@ -193,7 +236,7 @@ func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 	return result
 }
 
-// NewFolderAlbum creates a new folder album.
+// NewFolderAlbum creates a new album representing a filesystem folder.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	albumSlug := txt.Slug(albumPath)
 
@@ -218,7 +261,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	return result
 }
 
-// NewMomentsAlbum creates a new moment.
+// NewMomentsAlbum creates a new automatically generated moment album.
 func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
 		return nil
@@ -240,7 +283,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	return result
 }
 
-// NewStateAlbum creates a new moment.
+// NewStateAlbum creates an automatically generated album for a specific state or region.
 func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	albumTitle = strings.TrimSpace(albumTitle)
 	albumSlug = strings.TrimSpace(albumSlug)
@@ -265,7 +308,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	return result
 }
 
-// NewMonthAlbum creates a new month album.
+// NewMonthAlbum creates an automatically generated album for a specific month.
 func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	albumTitle = strings.TrimSpace(albumTitle)
 	albumSlug = strings.TrimSpace(albumSlug)
@@ -298,7 +341,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	return result
 }
 
-// FindMonthAlbum finds a matching month album or returns nil.
+// FindMonthAlbum returns the matching month album or nil if none exists.
 func FindMonthAlbum(year, month int) *Album {
 	m := Album{}
 
@@ -313,7 +356,7 @@ func FindMonthAlbum(year, month int) *Album {
 	return &m
 }
 
-// FindAlbumBySlug finds a matching album or returns nil.
+// FindAlbumBySlug returns the album with the given slug/type combination.
 func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	m := Album{}
 
@@ -328,7 +371,7 @@ func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	return &m
 }
 
-// FindAlbumByAttr finds an album by filters and slugs, or returns nil.
+// FindAlbumByAttr returns an album matching any of the provided slugs or filters.
 func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 	m := Album{}
 
@@ -355,7 +398,7 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 	return &m
 }
 
-// FindFolderAlbum finds a matching folder album or returns nil.
+// FindFolderAlbum looks up a folder album by its canonical path or slug.
 func FindFolderAlbum(albumPath string) *Album {
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
 	albumSlug := txt.Slug(albumPath)
@@ -374,6 +417,27 @@ func FindFolderAlbum(albumPath string) *Album {
 	}
 
 	return &m
+}
+
+// AlbumSearch creates a new Album to be used as parameter for FindAlbum.
+func AlbumSearch(albumUid, albumTitle, albumType string) Album {
+	// Set default type.
+	if albumType == "" {
+		albumType = AlbumManual
+	}
+
+	// Set default values.
+	result := Album{
+		AlbumType: albumType,
+		AlbumUID:  albumUid,
+	}
+
+	// Set album title.
+	if albumTitle != "" {
+		result.SetTitle(albumTitle)
+	}
+
+	return result
 }
 
 // FindAlbum retrieves the matching record from the database and updates the entity.
@@ -400,18 +464,18 @@ func FindAlbum(find Album) *Album {
 
 	// Search by slug and filter or title.
 	if find.AlbumType != AlbumManual {
-		if find.AlbumFilter != "" && find.AlbumSlug != UnknownSlug {
+		if find.AlbumFilter != "" && find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
 			stmt = stmt.Where("album_slug = ? OR album_filter = ?", find.AlbumSlug, find.AlbumFilter)
 		} else if find.AlbumFilter != "" {
 			stmt = stmt.Where("album_filter = ?", find.AlbumFilter)
-		} else if find.AlbumSlug != UnknownSlug {
+		} else if find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
 			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 		} else {
 			return nil
 		}
-	} else if find.AlbumTitle != "" && find.AlbumSlug != UnknownSlug {
+	} else if find.AlbumTitle != "" && find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
 		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
-	} else if find.AlbumSlug != UnknownSlug {
+	} else if find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
 		stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 	} else if find.AlbumTitle != "" {
 		stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
@@ -567,7 +631,7 @@ func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug str
 
 	// Skip location?
 	if location == "" && state == "" && (country == "" || country == "zz") {
-		return m.Updates(Map{
+		return m.Updates(Values{
 			"album_title": m.AlbumTitle,
 			"album_slug":  m.AlbumSlug,
 		})
@@ -575,7 +639,7 @@ func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug str
 
 	m.SetLocation(location, state, country)
 
-	return m.Updates(Map{
+	return m.Updates(Values{
 		"album_title":    m.AlbumTitle,
 		"album_location": m.AlbumLocation,
 		"album_state":    m.AlbumState,
@@ -626,12 +690,14 @@ func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) 
 
 	m.SetTitle(title)
 
-	return m.Updates(Map{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
+	return m.Updates(Values{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
 func (m *Album) SaveForm(f *form.Album) error {
-	if f == nil {
+	if m == nil {
+		return errors.New("album must not be nil - you may have found a bug")
+	} else if f == nil {
 		return fmt.Errorf("form is nil")
 	}
 
@@ -652,7 +718,9 @@ func (m *Album) SaveForm(f *form.Album) error {
 
 // Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
-	if !m.HasID() {
+	if m == nil {
+		return errors.New("album must not be nil - you may have found a bug")
+	} else if !m.HasID() {
 		return fmt.Errorf("album does not exist")
 	}
 
@@ -661,7 +729,9 @@ func (m *Album) Update(attr string, value interface{}) error {
 
 // Updates multiple columns in the database.
 func (m *Album) Updates(values interface{}) error {
-	if !m.HasID() {
+	if m == nil {
+		return errors.New("album must not be nil - you may have found a bug")
+	} else if !m.HasID() {
 		return fmt.Errorf("album does not exist")
 	}
 
@@ -684,7 +754,7 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 		return nil
 	}
 
-	if err := m.Updates(map[string]interface{}{
+	if err := m.Updates(Values{
 		"AlbumPath":   albumPath,
 		"AlbumFilter": albumFilter,
 		"AlbumSlug":   albumSlug,
@@ -747,7 +817,7 @@ func (m *Album) Delete() error {
 
 	now := Now()
 
-	if err := UnscopedDb().Model(m).UpdateColumns(Map{"updated_at": now, "deleted_at": now}).Error; err != nil {
+	if err := UnscopedDb().Model(m).UpdateColumns(Values{"updated_at": now, "deleted_at": now}).Error; err != nil {
 		return err
 	} else {
 		m.UpdatedAt = now
@@ -852,7 +922,7 @@ func (m *Album) AddPhotos(photos PhotosInterface) (added PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimeStamp()}); err != nil {
+	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimeStamp()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 
@@ -880,7 +950,7 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimeStamp()}); err != nil {
+	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimeStamp()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 

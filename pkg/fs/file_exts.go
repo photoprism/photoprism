@@ -15,6 +15,8 @@ var Extensions = FileExtensions{
 	ExtJpeg:     ImageJpeg,   // .jpg
 	".jpeg":     ImageJpeg,
 	".jpe":      ImageJpeg,
+	".mp.jpg":   ImageJpeg,
+	".mp.jpeg":  ImageJpeg,
 	".jif":      ImageJpeg,
 	".jfif":     ImageJpeg,
 	".jfi":      ImageJpeg,
@@ -85,8 +87,8 @@ var Extensions = FileExtensions{
 	ExtXMP:      SidecarXMP,
 	".aae":      SidecarAppleXml,
 	ExtXml:      SidecarXml,
-	ExtYaml:     SidecarYaml, // .yml
-	".yaml":     SidecarYaml,
+	ExtYaml:     SidecarYaml, // .yaml
+	".yml":      SidecarYaml,
 	ExtJson:     SidecarJson,
 	ExtTxt:      SidecarText,
 	".nfo":      SidecarInfo,
@@ -195,20 +197,12 @@ func (m FileExtensions) Types(noUppercase bool) TypesExt {
 
 	if noUppercase {
 		for ext, t := range m {
-			if _, ok := result[t]; ok {
-				result[t] = append(result[t], ext)
-			} else {
-				result[t] = []string{ext}
-			}
+			result[t] = append(result[t], ext)
 		}
 	} else {
 		for ext, t := range m {
 			extUpper := strings.ToUpper(ext)
-			if _, ok := result[t]; ok {
-				result[t] = append(result[t], ext, extUpper)
-			} else {
-				result[t] = []string{ext, extUpper}
-			}
+			result[t] = append(result[t], ext, extUpper)
 		}
 	}
 

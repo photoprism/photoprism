@@ -51,14 +51,14 @@ func TestNow(t *testing.T) {
 			t.Fatal("timestamp zone must be GMT")
 		}
 	})
-	t.Run("Etc/GMT", func(t *testing.T) {
+	t.Run("EtcGmt", func(t *testing.T) {
 		if location, err := time.LoadLocation("Etc/GMT"); err != nil {
 			t.Error(err)
 		} else if Now().In(location).Location().String() != "Etc/GMT" {
 			t.Fatal("timestamp zone must be Etc/GMT")
 		}
 	})
-	t.Run("Etc/GMT+6", func(t *testing.T) {
+	t.Run("EtcGmtSix", func(t *testing.T) {
 		if location, err := time.LoadLocation("Etc/GMT+6"); err != nil {
 			t.Error(err)
 		} else if Now().In(location).Location().String() != "Etc/GMT+6" {

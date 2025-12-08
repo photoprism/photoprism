@@ -14,12 +14,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/geo/pluscode"
 	"github.com/photoprism/photoprism/pkg/geo/s2"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -135,7 +136,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Check session permissions and apply as needed.
 	if sess != nil {
-		user := sess.User()
+		user := sess.GetUser()
 		aclRole := user.AclRole()
 
 		// Exclude private content.
@@ -156,9 +157,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
+		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
 			frm.Scope == "" && acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
-			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", authn.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
+			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden
 		}
 
@@ -180,36 +181,36 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Edited:
-		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
+		s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
 	case sortby.Updated, sortby.UpdatedAt:
-		s = s.Where("photos.updated_at > photos.created_at").Order("photos.updated_at DESC, files.media_id")
+		s = s.Where("photos.updated_at > photos.created_at").Order(OrderExpr("photos.updated_at DESC, files.media_id", frm.Reverse))
 	case sortby.Archived:
-		s = s.Order("photos.deleted_at DESC, files.media_id")
+		s = s.Order(OrderExpr("photos.deleted_at DESC, files.media_id", frm.Reverse))
 	case sortby.Relevance:
 		if frm.Label != "" {
-			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index")
+			s = s.Order(OrderExpr("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index", frm.Reverse))
 		} else {
-			s = s.Order("photos.photo_quality DESC, files.time_index")
+			s = s.Order(OrderExpr("photos.photo_quality DESC, files.time_index", frm.Reverse))
 		}
 	case sortby.Duration:
-		s = s.Order("photos.photo_duration DESC, files.time_index")
+		s = s.Order(OrderExpr("photos.photo_duration DESC, files.time_index", frm.Reverse))
 	case sortby.Size:
-		s = s.Order("files.file_size DESC, files.time_index")
+		s = s.Order(OrderExpr("files.file_size DESC, files.time_index", frm.Reverse))
 	case sortby.Newest:
-		s = s.Order("files.time_index")
+		s = s.Order(OrderExpr("files.time_index", frm.Reverse))
 	case sortby.Oldest:
-		s = s.Order("files.photo_taken_at, files.media_id")
+		s = s.Order(OrderExpr("files.photo_taken_at ASC, files.media_id", frm.Reverse))
 	case sortby.Similar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.photo_id, files.time_index")
+		s = s.Order(OrderExpr("photos.photo_color ASC, photos.cell_id ASC, files.file_diff, files.photo_id, files.time_index", frm.Reverse))
 	case sortby.Name:
-		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
+		s = s.Order(OrderExpr("photos.photo_path ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
 	case sortby.Title:
-		s = s.Order("photos.photo_title, photos.photo_name, files.time_index")
+		s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
 	case sortby.Random:
 		s = s.Order(sortby.RandomExpr(s.Dialect()))
 	case sortby.Default, sortby.Imported, sortby.Added:
-		s = s.Order("files.media_id")
+		s = s.Order(OrderExpr("files.media_id", frm.Reverse))
 	default:
 		return PhotoResults{}, 0, ErrBadSortOrder
 	}
@@ -500,17 +501,18 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
 
-		if frm.Private {
-			s = s.Where("photos.photo_private = 1")
-		} else if frm.Public {
-			s = s.Where("photos.photo_private = 0")
-		}
-
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
 		} else if frm.Quality != 0 && frm.Private == false {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
+	}
+
+	// Filter private pictures.
+	if frm.Public {
+		s = s.Where("photos.photo_private = 0")
+	} else if frm.Private {
+		s = s.Where("photos.photo_private = 1")
 	}
 
 	// Filter by camera id or name.
@@ -710,9 +712,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Filter by title.
 	if txt.NotEmpty(frm.Title) {
-		if frm.Title == txt.False {
+		if frm.Title == enum.False {
 			s = s.Where("photos.photo_title = ''")
-		} else if frm.Title == txt.True {
+		} else if frm.Title == enum.True {
 			s = s.Where("photos.photo_title <> ''")
 		} else {
 			where, values := OrLike("photos.photo_title", frm.Title)
@@ -722,9 +724,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Filter by caption.
 	if txt.NotEmpty(frm.Caption) {
-		if frm.Caption == txt.False {
+		if frm.Caption == enum.False {
 			s = s.Where("photos.photo_caption = ''")
-		} else if frm.Caption == txt.True {
+		} else if frm.Caption == enum.True {
 			s = s.Where("photos.photo_caption <> ''")
 		} else {
 			where, values := OrLike("photos.photo_caption", frm.Caption)
@@ -734,9 +736,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Filter by description.
 	if txt.NotEmpty(frm.Description) {
-		if frm.Description == txt.False {
+		if frm.Description == enum.False {
 			s = s.Where("photos.photo_title = '' AND photos.photo_caption = ''")
-		} else if frm.Description == txt.True {
+		} else if frm.Description == enum.True {
 			s = s.Where("photos.photo_title <> '' OR photos.photo_caption <> ''")
 		} else {
 			where, values := OrLikeCols([]string{"photos.photo_title", "photos.photo_caption"}, frm.Description)
@@ -801,7 +803,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("DATE(photos.taken_at) = DATE(?)", frm.Taken.UTC().Format("2006-01-02"))
 	}
 
-	// Finds pictures taken on or before this date.
+	// Finds pictures taken before this date.
 	if !frm.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", frm.Before.UTC().Format("2006-01-02"))
 	}
@@ -830,12 +832,12 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 	}
 
-	// Limit offset and count.
-	if frm.Count > 0 && frm.Count <= MaxResults {
-		s = s.Limit(frm.Count).Offset(frm.Offset)
-	} else {
-		s = s.Limit(MaxResults).Offset(frm.Offset)
+	// Search result count and offset.
+	if frm.Count <= 0 || frm.Count > MaxResults {
+		frm.Count = MaxResults
 	}
+
+	s = s.Limit(frm.Count).Offset(frm.Offset)
 
 	// Query database.
 	if err = s.Scan(&results).Error; err != nil {

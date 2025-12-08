@@ -27,19 +27,23 @@ package fs
 import (
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
 	"syscall"
+
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 var ignoreCase bool
 
 const (
+	// PathSeparator is the filesystem path separator for the current OS.
 	PathSeparator = string(filepath.Separator)
-	Home          = "~"
-	HomePath      = Home + PathSeparator
+	// Home represents the tilde shorthand for the user's home directory.
+	Home = "~"
+	// HomePath expands Home with a trailing separator.
+	HomePath = Home + PathSeparator
 )
 
 // Stat returns the os.FileInfo for the given file path, or an error if it does not exist.
@@ -67,35 +71,58 @@ func SocketExists(socketName string) bool {
 	return true
 }
 
-// FileExists returns true if specified file exists and is not a directory.
-func FileExists(fileName string) bool {
-	if fileName == "" {
+// Exists returns true if the specified file system path exists,
+// regardless of whether it is a file, directory, or link.
+func Exists(fsPath string) bool {
+	if fsPath == "" {
 		return false
 	}
 
-	info, err := os.Stat(fileName)
+	_, err := os.Stat(fsPath)
+
+	return err == nil
+}
+
+// FileExists returns true if a file exists at the specified path.
+func FileExists(filePath string) bool {
+	if filePath == "" {
+		return false
+	}
+
+	info, err := os.Stat(filePath)
 
 	return err == nil && !info.IsDir()
 }
 
 // FileExistsNotEmpty returns true if file exists, is not a directory, and not empty.
-func FileExistsNotEmpty(fileName string) bool {
-	if fileName == "" {
+func FileExistsNotEmpty(filePath string) bool {
+	if filePath == "" {
 		return false
 	}
 
-	info, err := os.Stat(fileName)
+	info, err := os.Stat(filePath)
 
 	return err == nil && !info.IsDir() && info.Size() > 0
 }
 
+// FileExistsIsEmpty returns true if the file exists, but is empty.
+func FileExistsIsEmpty(filePath string) bool {
+	if filePath == "" {
+		return false
+	}
+
+	info, err := os.Stat(filePath)
+
+	return err == nil && !info.IsDir() && info.Size() == 0
+}
+
 // FileSize returns the size of a file in bytes or -1 in case of an error.
-func FileSize(fileName string) int64 {
-	if fileName == "" {
+func FileSize(filePath string) int64 {
+	if filePath == "" {
 		return -1
 	}
 
-	info, err := os.Stat(fileName)
+	info, err := os.Stat(filePath)
 
 	if err != nil || info == nil {
 		return -1
@@ -183,45 +210,14 @@ func Abs(name string) string {
 
 // Download downloads a file from a URL.
 func Download(fileName string, url string) error {
-	if dir := filepath.Dir(fileName); dir == "" || dir == "/" || dir == "." || dir == ".." {
-		return fmt.Errorf("invalid path")
-	} else if err := MkdirAll(dir); err != nil {
-		return err
-	}
-
-	// Create the file
-	out, err := os.Create(fileName)
-	if err != nil {
-		return err
-	}
-
-	defer out.Close()
-
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	// Check server response
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", resp.Status)
-	}
-
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	// Preserve existing semantics but with safer network behavior.
+	// Allow private IPs by default to avoid breaking intended internal downloads.
+	return safe.Download(fileName, url, &safe.Options{AllowPrivate: true})
 }
 
 // DirIsEmpty returns true if a directory is empty.
 func DirIsEmpty(path string) bool {
-	f, err := os.Open(path)
+	f, err := os.Open(path) //nolint:gosec // path provided by caller; intended to access filesystem
 
 	if err != nil {
 		return false
@@ -230,10 +226,5 @@ func DirIsEmpty(path string) bool {
 	defer f.Close()
 
 	_, err = f.Readdirnames(1)
-
-	if err == io.EOF {
-		return true
-	}
-
-	return false
+	return err == io.EOF
 }

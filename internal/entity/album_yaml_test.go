@@ -11,7 +11,7 @@ import (
 )
 
 func TestAlbum_Yaml(t *testing.T) {
-	t.Run("berlin-2019", func(t *testing.T) {
+	t.Run("BerlinNum2019", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
 		if found := m.Find(); found == nil {
@@ -28,7 +28,7 @@ func TestAlbum_Yaml(t *testing.T) {
 
 		t.Logf("YAML: %s", result)
 	})
-	t.Run("christmas2030", func(t *testing.T) {
+	t.Run("Christmas2030", func(t *testing.T) {
 		m := AlbumFixtures.Get("christmas2030")
 
 		if found := m.Find(); found == nil {
@@ -201,7 +201,7 @@ func TestAlbum_SaveBackupYaml(t *testing.T) {
 }
 
 func TestAlbum_LoadFromYaml(t *testing.T) {
-	t.Run("berlin-2020", func(t *testing.T) {
+	t.Run("BerlinNum2020", func(t *testing.T) {
 		fileName := "testdata/album/as6sg6bxpoaaaaaa.yml"
 
 		m := Album{}

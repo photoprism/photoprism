@@ -8,14 +8,18 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
 )
 
-// OAuthAuthorize should gather consent and authorization from resource owners when using the
-// Authorization Code Grant flow, see https://github.com/photoprism/photoprism/issues/4368.
+// OAuthAuthorize (placeholder) for Authorization Code Grant consent.
 //
-// GET /api/v1/oauth/authorize
+//	@Summary	OAuth2 authorization endpoint (not implemented)
+//	@Id			OAuthAuthorize
+//	@Tags		Authentication
+//	@Produce	json
+//	@Failure	405	{object}	i18n.Response
+//	@Router		/api/v1/oauth/authorize [get]
 func OAuthAuthorize(router *gin.RouterGroup) {
 	router.GET("/oauth/authorize", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

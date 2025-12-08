@@ -25,17 +25,17 @@ var ResetCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "index",
 			Aliases: []string{"i"},
-			Usage:   "reset index database only",
+			Usage:   "resets only the index database ",
 		},
 		&cli.BoolFlag{
 			Name:    "trace",
 			Aliases: []string{"t"},
-			Usage:   "show trace logs for debugging",
+			Usage:   "shows trace logs for debugging",
 		},
 		&cli.BoolFlag{
 			Name:    "yes",
 			Aliases: []string{"y"},
-			Usage:   "assume \"yes\" and run non-interactively",
+			Usage:   "runs the command non-interactively",
 		},
 	},
 	Action: resetAction,
@@ -54,7 +54,7 @@ func resetAction(ctx *cli.Context) error {
 
 	defer conf.Shutdown()
 
-	if !ctx.Bool("yes") {
+	if !RunNonInteractively(ctx.Bool("yes")) {
 		log.Warnf("This will delete and recreate your index database after confirmation")
 
 		if !ctx.Bool("index") {
@@ -67,7 +67,7 @@ func resetAction(ctx *cli.Context) error {
 		log.Infoln("reset: enabled trace mode")
 	}
 
-	confirmed := ctx.Bool("yes")
+	confirmed := RunNonInteractively(ctx.Bool("yes"))
 
 	// Show prompt?
 	if !confirmed {
@@ -76,7 +76,7 @@ func resetAction(ctx *cli.Context) error {
 			IsConfirm: true,
 		}
 
-		if _, err := removeIndexPrompt.Run(); err == nil {
+		if _, err = removeIndexPrompt.Run(); err == nil {
 			confirmed = true
 		} else {
 			log.Infof("keeping index database")
@@ -94,54 +94,61 @@ func resetAction(ctx *cli.Context) error {
 	}
 
 	// Clear cache.
-	removeCachePrompt := promptui.Prompt{
-		Label:     "Clear cache incl thumbnails?",
-		IsConfirm: true,
-	}
-
-	if _, err := removeCachePrompt.Run(); err == nil {
-		resetCache(conf)
-	} else {
+	if RunNonInteractively(false) {
 		log.Infof("keeping cache files")
+	} else {
+		removeCachePrompt := promptui.Prompt{Label: "Clear cache incl thumbnails?", IsConfirm: true}
+		if _, err = removeCachePrompt.Run(); err == nil {
+			resetCache(conf)
+		} else {
+			log.Infof("keeping cache files")
+		}
 	}
 
 	// *.json sidecar files.
-	removeSidecarJsonPrompt := promptui.Prompt{
-		Label:     "Delete all *.json sidecar files?",
-		IsConfirm: true,
-	}
-
-	if _, err := removeSidecarJsonPrompt.Run(); err == nil {
-		resetSidecarJson(conf)
-	} else {
+	if RunNonInteractively(false) {
 		log.Infof("keeping *.json sidecar files")
+	} else {
+		removeSidecarJsonPrompt := promptui.Prompt{Label: "Delete all *.json sidecar files?", IsConfirm: true}
+		if _, err = removeSidecarJsonPrompt.Run(); err == nil {
+			resetSidecarJson(conf)
+		} else {
+			log.Infof("keeping *.json sidecar files")
+		}
 	}
 
 	// *.yml metadata files.
-	removeSidecarYamlPrompt := promptui.Prompt{
-		Label:     "Delete all *.yml metadata files?",
-		IsConfirm: true,
-	}
-
-	if _, err := removeSidecarYamlPrompt.Run(); err == nil {
-		resetSidecarYaml(conf)
-	} else {
+	if RunNonInteractively(false) {
 		log.Infof("keeping *.yml metadata files")
+	} else {
+		removeSidecarYamlPrompt := promptui.Prompt{Label: "Delete all *.yml metadata files?", IsConfirm: true}
+		if _, err = removeSidecarYamlPrompt.Run(); err == nil {
+			resetSidecarYaml(conf)
+		} else {
+			log.Infof("keeping *.yml metadata files")
+		}
 	}
 
 	// *.yml album files.
-	removeAlbumYamlPrompt := promptui.Prompt{
-		Label:     "Delete all *.yml album files?",
-		IsConfirm: true,
+	if !RunNonInteractively(false) {
+		removeAlbumYamlPrompt := promptui.Prompt{Label: "Delete all *.yml album files?", IsConfirm: true}
+		if _, err = removeAlbumYamlPrompt.Run(); err != nil {
+			log.Infof("keeping *.yml album files")
+			return nil
+		}
+	} else {
+		log.Infof("keeping *.yml album files")
+		return nil
 	}
 
-	if _, err := removeAlbumYamlPrompt.Run(); err == nil {
+	// If confirmed, proceed to delete album YAML files
+	{
 		start := time.Now()
 
-		matches, err := filepath.Glob(regexp.QuoteMeta(conf.BackupAlbumsPath()) + "/**/*.yml")
+		matches, globErr := filepath.Glob(regexp.QuoteMeta(conf.BackupAlbumsPath()) + "/**/*.yml")
 
-		if err != nil {
-			return err
+		if globErr != nil {
+			return globErr
 		}
 
 		if len(matches) > 0 {
@@ -161,8 +168,6 @@ func resetAction(ctx *cli.Context) error {
 		} else {
 			log.Infof("found no *.yml album files")
 		}
-	} else {
-		log.Infof("keeping *.yml album files")
 	}
 
 	return nil
@@ -184,7 +189,7 @@ func resetIndexDb(c *config.Config) {
 	if c.AdminPassword() == "" {
 		log.Warnf("password required to reset admin account")
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword())
+		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
 	}
 
 	log.Infof("completed in %s", time.Since(start))
@@ -218,6 +223,8 @@ func resetCache(c *config.Config) {
 	} else {
 		log.Infof("found no cache files")
 	}
+
+	entity.FlushCaches()
 }
 
 // resetSidecarJson removes generated *.json sidecar files.

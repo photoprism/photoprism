@@ -17,12 +17,13 @@ import (
 // FindCommand configures the command name, flags, and action.
 var FindCommand = &cli.Command{
 	Name:      "find",
-	Usage:     "Searches the index for specific files",
-	ArgsUsage: "[filter]",
+	Aliases:   []string{"search"},
+	Usage:     "Finds indexed files that match the specified search filters",
+	ArgsUsage: "[filter]...",
 	Flags: append(report.CliFlags, &cli.UintFlag{
 		Name:    "count",
 		Aliases: []string{"n"},
-		Usage:   "maximum number of search `RESULTS`",
+		Usage:   "maximum `NUMBER` of results",
 		Value:   10000,
 	}),
 	Action: findAction,
@@ -41,8 +42,10 @@ func findAction(ctx *cli.Context) error {
 
 	defer conf.Shutdown()
 
+	filter := strings.TrimSpace(strings.Join(ctx.Args().Slice(), " "))
+
 	frm := form.SearchPhotos{
-		Query:   strings.TrimSpace(ctx.Args().First()),
+		Query:   filter,
 		Primary: false,
 		Merged:  false,
 		Count:   ctx.Int("count"),
@@ -71,7 +74,11 @@ func findAction(ctx *cli.Context) error {
 	rows := make([][]string, 0, len(results))
 
 	for _, found := range results {
-		v := []string{found.FileName, found.FileMime, humanize.Bytes(uint64(found.FileSize)), found.FileHash}
+		size := found.FileSize
+		if size < 0 {
+			size = 0
+		}
+		v := []string{found.FileName, found.FileMime, humanize.Bytes(uint64(size)), found.FileHash} //nolint:gosec // size non-negative after check
 		rows = append(rows, v)
 	}
 

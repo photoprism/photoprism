@@ -2,6 +2,7 @@ package ffmpeg
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -194,4 +195,17 @@ func TestTranscodeCmd(t *testing.T) {
 
 		assert.Contains(t, r.String(), "ffmpeg -hide_banner -y -strict -2 -i VID123.mov -c:v h264_v4l2m2m -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -num_output_buffers 72 -num_capture_buffers 64 -max_muxing_queue_size 1024 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 VID123.mov.avc")
 	})
+}
+
+// Negative: missing ffmpeg binary should cause execution error.
+func TestTranscodeCmd_MissingBinary(t *testing.T) {
+	opt := encode.NewVideoOptions("/path/does/not/exist/ffmpeg", encode.SoftwareAvc, 640, encode.DefaultQuality, encode.PresetFast, "", "0:v:0", "0:a:0?")
+	srcName := fs.Abs("./testdata/25fps.vp9")
+	destName := filepath.Join(t.TempDir(), "out.mp4")
+	cmd, _, err := TranscodeCmd(srcName, destName, opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = cmd.Run()
+	assert.Error(t, err)
 }

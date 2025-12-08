@@ -9,9 +9,15 @@ import (
 
 // registerSharingRoutes adds routes for link sharing.
 func registerSharingRoutes(router *gin.Engine, conf *config.Config) {
+	// Return if the web user interface is disabled.
+	if conf.DisableFrontend() {
+		return
+	}
+
 	s := router.Group(conf.BaseUri("/s"))
 	{
-		api.Shares(s)
+		api.ShareToken(s)
+		api.ShareTokenShared(s)
 		api.SharePreview(s)
 	}
 }

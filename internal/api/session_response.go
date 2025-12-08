@@ -32,10 +32,10 @@ func GetSessionResponse(authToken string, sess *entity.Session, conf *config.Cli
 			"status":     StatusSuccess,
 			"session_id": sess.ID,
 			"expires_in": sess.ExpiresIn(),
-			"provider":   sess.Provider().String(),
+			"provider":   sess.GetProvider().String(),
 			"scope":      sess.Scope(),
-			"user":       sess.User(),
-			"data":       sess.Data(),
+			"user":       sess.GetUser(),
+			"data":       sess.GetData(),
 			"config":     conf,
 		}
 	} else {
@@ -48,10 +48,10 @@ func GetSessionResponse(authToken string, sess *entity.Session, conf *config.Cli
 			"access_token": authToken,
 			"token_type":   sess.AuthTokenType(),
 			"expires_in":   sess.ExpiresIn(),
-			"provider":     sess.Provider().String(),
+			"provider":     sess.GetProvider().String(),
 			"scope":        sess.Scope(),
-			"user":         sess.User(),
-			"data":         sess.Data(),
+			"user":         sess.GetUser(),
+			"data":         sess.GetData(),
 			"config":       conf,
 		}
 	}

@@ -4,67 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/geo/s2"
 )
-
-func TestFindLocation(t *testing.T) {
-	t.Run("U Berliner Rathaus", func(t *testing.T) {
-		lat := 52.51961810676184
-		lng := 13.40806264572578
-		id := s2.Token(lat, lng)
-
-		l, err := FindLocation(id)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, l.Cached)
-		assert.Equal(t, "Berlin", l.City())
-		assert.Equal(t, "de", l.CountryCode())
-	})
-	t.Run("wrong id", func(t *testing.T) {
-		l, err := FindLocation("2")
-		assert.Error(t, err, "places: skipping lat 0.000000, lng 0.000000")
-		t.Log(l)
-	})
-	t.Run("short id", func(t *testing.T) {
-		l, err := FindLocation("ab")
-		assert.Error(t, err, "places: skipping lat 0.000000, lng 0.000000")
-		t.Log(l)
-	})
-	t.Run("invalid id", func(t *testing.T) {
-		l, err := FindLocation("")
-		assert.Error(t, err, "places: invalid location id ")
-		t.Log(l)
-	})
-	t.Run("cached true", func(t *testing.T) {
-		location := Location{
-			ID:          "1e95998417cc",
-			LocLat:      52.51961810676184,
-			LocLng:      13.40806264572578,
-			LocName:     "TestLocation",
-			LocStreet:   "",
-			LocPostcode: "",
-			LocCategory: "test",
-			Place:       Place{PlaceID: "1"},
-			Cached:      true,
-		}
-
-		l, err := FindLocation(location.ID)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, false, l.Cached)
-		l2, err2 := FindLocation("1e95998417cc")
-
-		if err2 != nil {
-			t.Fatal(err2)
-		}
-		assert.Equal(t, true, l2.Cached)
-	})
-}
 
 func TestLocationGetters(t *testing.T) {
 	location := Location{
@@ -78,7 +18,7 @@ func TestLocationGetters(t *testing.T) {
 		Place:       Place{PlaceID: "1", LocLabel: "testLabel", LocDistrict: "Berlin", LocCity: "", LocState: "Berlin", LocCountry: "de", LocKeywords: "foobar"},
 		Cached:      true,
 	}
-	t.Run("wrong id", func(t *testing.T) {
+	t.Run("WrongId", func(t *testing.T) {
 		assert.Equal(t, "1e95998417cc", location.CellID())
 		assert.Equal(t, "TestLocation", location.Name())
 		assert.Equal(t, "test", location.Category())

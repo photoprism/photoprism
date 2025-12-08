@@ -55,6 +55,15 @@ export default {
     validateOn: "invalid-input",
     autofocus: false,
   },
+  VChip: {
+    closable: true,
+    rounded: true,
+    flat: true,
+    ripple: false,
+    variant: "flat",
+    color: "highlight",
+    density: "default",
+  },
   VAutocomplete: {
     flat: true,
     variant: "solo-filled",
@@ -74,15 +83,6 @@ export default {
     validateOn: "invalid-input",
     hideDetails: "auto",
   },
-  VChip: {
-    closable: true,
-    rounded: true,
-    flat: true,
-    ripple: false,
-    variant: "flat",
-    color: "highlight",
-    density: "default",
-  },
   VMenu: {
     origin: "auto",
     location: "bottom end",
@@ -95,6 +95,7 @@ export default {
     closeOnContentClick: true,
     persistent: false,
     scrim: false,
+    opacity: 0,
     zIndex: 1,
   },
   VSnackbar: {
@@ -155,7 +156,6 @@ export default {
     color: "on-surface",
     bgColor: "secondary",
     baseColor: "secondary",
-    sliderColor: "surface-variant",
   },
   VTable: {
     density: "comfortable",
@@ -192,6 +192,7 @@ export default {
     openDelay: 0,
     closeDelay: 0,
     attach: document.body,
+    tabindex: -1,
   },
   VOverlay: {
     transition: false,

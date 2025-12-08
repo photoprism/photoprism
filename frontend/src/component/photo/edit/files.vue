@@ -4,7 +4,7 @@
       <v-expansion-panel
         v-for="file in view.model.fileModels().filter((f) => !f.Missing)"
         :key="file.UID"
-        tabindex="1"
+        tabindex="0"
         style="margin-top: 1px"
         class="pa-0 elevation-0"
       >
@@ -60,12 +60,7 @@
                                   <v-icon icon="mdi-download" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="
-                                    features.edit &&
-                                    (file.FileType === 'jpg' || file.FileType === 'png') &&
-                                    !file.Error &&
-                                    !file.Primary
-                                  "
+                                  v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -77,9 +72,7 @@
                                   <v-icon icon="mdi-image" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="
-                                    features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'
-                                  "
+                                  v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -119,9 +112,7 @@
                           <tr>
                             <td title="Unique ID">UID</td>
                             <td class="text-break">
-                              <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(file.UID)">{{
-                                file.UID
-                              }}</span>
+                              <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(file.UID)">{{ file.UID }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.InstanceID" title="XMP">
@@ -129,11 +120,7 @@
                               {{ $gettext(`Instance ID`) }}
                             </td>
                             <td class="text-break">
-                              <span
-                                class="clickable text-uppercase"
-                                @click.stop.prevent="$util.copyText(file.InstanceID)"
-                                >{{ file.InstanceID }}</span
-                              >
+                              <span class="clickable text-uppercase" @click.stop.prevent="$util.copyText(file.InstanceID)">{{ file.InstanceID }}</span>
                             </td>
                           </tr>
                           <tr>
@@ -141,9 +128,7 @@
                               {{ $gettext(`Hash`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(file.Hash)">{{
-                                file.Hash
-                              }}</span>
+                              <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(file.Hash)">{{ file.Hash }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Name">
@@ -151,9 +136,7 @@
                               {{ $gettext(`Filename`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.Name)">{{
-                                file.Name
-                              }}</span>
+                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.Name)">{{ file.Name }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Root">
@@ -167,9 +150,7 @@
                               {{ $gettext(`Original Name`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.OriginalName)">{{
-                                file.OriginalName
-                              }}</span>
+                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.OriginalName)">{{ file.OriginalName }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.FileType">
@@ -185,9 +166,7 @@
                               {{ $gettext(`Size`) }}
                             </td>
                             <td>
-                              <span v-tooltip="Math.ceil(file?.Size / 1024).toLocaleString() + ' KB'">{{
-                                file.sizeInfo()
-                              }}</span>
+                              <span v-tooltip="Math.ceil(file?.Size / 1024).toLocaleString() + ' KB'">{{ file.sizeInfo() }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Pages">
@@ -262,7 +241,9 @@
                             <td>
                               {{ $gettext(`Projection`) }}
                             </td>
-                            <td class="text-capitalize">{{ file.Projection }}</td>
+                            <td class="text-capitalize">
+                              {{ file.Projection }}
+                            </td>
                           </tr>
                           <tr v-if="file.AspectRatio">
                             <td>
@@ -323,7 +304,9 @@
                             <td>
                               {{ $gettext(`Main Color`) }}
                             </td>
-                            <td class="text-capitalize">{{ file.MainColor }}</td>
+                            <td class="text-capitalize">
+                              {{ file.MainColor }}
+                            </td>
                           </tr>
                           <tr v-if="file?.Chroma > 0">
                             <td>
@@ -377,11 +360,7 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <p-file-delete-dialog
-      :visible="deleteFile.dialog"
-      @close="closeDeleteDialog"
-      @confirm="confirmDeleteFile"
-    ></p-file-delete-dialog>
+    <p-file-delete-dialog :visible="deleteFile.dialog" @close="closeDeleteDialog" @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
 
@@ -400,6 +379,7 @@ export default {
       default: "",
     },
   },
+  emits: ["close"],
   data() {
     return {
       view: this.$view.getData(),
@@ -413,8 +393,7 @@ export default {
       timeZone: this.$config.getTimeZone(),
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
-      canAccessPrivate:
-        this.$config.allow("photos", "access_library") && this.$config.allow("photos", "access_private"),
+      canAccessPrivate: this.$config.allow("photos", "access_library") && this.$config.allow("photos", "access_private"),
       options: options,
       busy: false,
       rtl: this.$isRtl,
@@ -426,7 +405,12 @@ export default {
           align: "center",
           class: "p-col-primary",
         },
-        { title: this.$gettext("Name"), key: "Name", sortable: false, align: "left" },
+        {
+          title: this.$gettext("Name"),
+          key: "Name",
+          sortable: false,
+          align: "left",
+        },
         {
           title: this.$gettext("Dimensions"),
           headerProps: {
@@ -443,8 +427,18 @@ export default {
           key: "Size",
           sortable: false,
         },
-        { title: this.$gettext("Type"), key: "", sortable: false, align: "left" },
-        { title: this.$gettext("Status"), key: "", sortable: false, align: "left" },
+        {
+          title: this.$gettext("Type"),
+          key: "",
+          sortable: false,
+          align: "left",
+        },
+        {
+          title: this.$gettext("Status"),
+          key: "",
+          sortable: false,
+          align: "left",
+        },
       ],
     };
   },
@@ -499,7 +493,7 @@ export default {
         const routeUrl = this.$router.resolve(route).href;
 
         if (routeUrl) {
-          window.open(routeUrl, "_blank");
+          this.$util.openUrl(routeUrl);
         }
       }
     },

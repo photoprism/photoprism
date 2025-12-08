@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccountByID(t *testing.T) {
-	t.Run("existing account", func(t *testing.T) {
+	t.Run("ExistingAccount", func(t *testing.T) {
 		r, err := AccountByID(uint(1000001))
 
 		if err != nil {
@@ -17,7 +17,7 @@ func TestAccountByID(t *testing.T) {
 		assert.Equal(t, "Test Account2", r.AccName)
 
 	})
-	t.Run("record not found", func(t *testing.T) {
+	t.Run("RecordNotFound", func(t *testing.T) {
 		r, err := AccountByID(uint(123))
 
 		if err == nil {

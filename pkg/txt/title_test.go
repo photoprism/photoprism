@@ -7,22 +7,22 @@ import (
 )
 
 func TestTitle(t *testing.T) {
-	t.Run("Cour d'Honneur", func(t *testing.T) {
+	t.Run("CourDHonneur", func(t *testing.T) {
 		assert.Equal(t, "Cour d'Honneur", Title("Cour d'Honneur"))
 	})
-	t.Run("Ducs de La Force", func(t *testing.T) {
+	t.Run("DucsDeLaForce", func(t *testing.T) {
 		assert.Equal(t, "Ducs de la Force", Title("Ducs de La Force"))
 	})
-	t.Run("ducs de la force", func(t *testing.T) {
+	t.Run("DucsDeLaForce", func(t *testing.T) {
 		assert.Equal(t, "Ducs de la Force", Title("ducs de la force"))
 	})
 	t.Run("Broglie", func(t *testing.T) {
 		assert.Equal(t, "Broglie, des Cars", Title("broglie, des cars"))
 	})
-	t.Run("Île-de-France", func(t *testing.T) {
+	t.Run("LeDeFrance", func(t *testing.T) {
 		assert.Equal(t, "Île-de-France", Title("Île-de-France"))
 	})
-	t.Run("ile-de-France", func(t *testing.T) {
+	t.Run("IleDeFrance", func(t *testing.T) {
 		assert.Equal(t, "Île-de-France", Title("ile-de-France"))
 	})
 	t.Run("BrowseYourLife", func(t *testing.T) {
@@ -44,31 +44,31 @@ func TestTitle(t *testing.T) {
 	t.Run("AirportBer", func(t *testing.T) {
 		assert.Equal(t, "Around the Terminal / Airport BER", Title("Around  the Terminal  / Airport Ber"))
 	})
-	t.Run("KwaZulu-Natal", func(t *testing.T) {
+	t.Run("KwaZuluNatal", func(t *testing.T) {
 		assert.Equal(t, "KwaZulu-Natal", Title("KwaZulu-Natal"))
 	})
-	t.Run("testAddLabel", func(t *testing.T) {
+	t.Run("TestAddLabel", func(t *testing.T) {
 		assert.Equal(t, "TestAddLabel", Title("testAddLabel"))
 	})
-	t.Run("photoprism", func(t *testing.T) {
+	t.Run("PhotoPrism", func(t *testing.T) {
 		assert.Equal(t, "PhotoPrism", Title("photoprism"))
 	})
-	t.Run("youtube", func(t *testing.T) {
+	t.Run("Youtube", func(t *testing.T) {
 		assert.Equal(t, "YouTube", Title("youtube"))
 	})
-	t.Run("interpunction-1", func(t *testing.T) {
+	t.Run("InterpunctionOne", func(t *testing.T) {
 		assert.Equal(t, "This,,, Is !a ! a Very Strange Title....", Title("this,,, is !a ! a very strange title...."))
 	})
-	t.Run("interpunction-2", func(t *testing.T) {
+	t.Run("InterpunctionTwo", func(t *testing.T) {
 		assert.Equal(t, "This Is a Not So Strange Title!", Title("This is a not so strange title!"))
 	})
-	t.Run("horse", func(t *testing.T) {
+	t.Run("Horse", func(t *testing.T) {
 		assert.Equal(t, "A Horse Is Not a Cow :-)", Title("a horse is not a cow :-)"))
 	})
 	t.Run("NewYears", func(t *testing.T) {
 		assert.Equal(t, "Boston New Year's", Title("boston new year's"))
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		assert.Empty(t, Title(""))
 	})
 	t.Run("NYC", func(t *testing.T) {

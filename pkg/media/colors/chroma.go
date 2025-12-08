@@ -23,7 +23,7 @@ func (c Chroma) Hex() string {
 
 // Uint returns the colourfulness in percent as unsigned integer.
 func (c Chroma) Uint() uint {
-	return uint(c.Percent())
+	return uint(c.Percent()) //nolint:gosec // Percent is bounded 0..100
 }
 
 // Int returns the colourfulness in percent as integer.

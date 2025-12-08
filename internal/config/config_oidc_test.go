@@ -132,6 +132,43 @@ func TestConfig_OIDCUsername(t *testing.T) {
 	assert.Equal(t, authn.OidcClaimPreferredUsername, c.OIDCUsername())
 }
 
+func TestConfig_OIDCGroupClaim(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "groups", c.OIDCGroupClaim())
+
+	c.options.OIDCGroupClaim = " roles "
+
+	assert.Equal(t, "roles", c.OIDCGroupClaim())
+}
+
+func TestConfig_OIDCGroup(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Nil(t, c.OIDCGroup())
+
+	c.options.OIDCGroup = []string{"ABC-123", "  DEF-456  ", ""}
+
+	assert.Equal(t, []string{"abc-123", "def-456"}, c.OIDCGroup())
+}
+
+func TestConfig_OIDCGroupRoles(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.OIDCGroupRole = []string{
+		"ABC-123=admin",
+		"def-456:guest",
+		"invalid",
+		"=none",
+	}
+
+	roles := c.OIDCGroupRoles()
+
+	assert.Equal(t, acl.RoleAdmin, roles["abc-123"])
+	assert.Equal(t, acl.RoleGuest, roles["def-456"])
+	assert.Len(t, roles, 2)
+}
+
 func TestConfig_OIDCDomain(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

@@ -87,7 +87,7 @@ func TestContentType(t *testing.T) {
 		result := ContentType("video/ogg; codecs=\"vorbis\"")
 		assert.Equal(t, "video/ogg", result)
 	})
-	t.Run("Ú", func(t *testing.T) {
+	t.Run("Case", func(t *testing.T) {
 		result := ContentType("Ú")
 		assert.Equal(t, "application/octet-stream", result)
 	})

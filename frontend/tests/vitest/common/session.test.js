@@ -186,6 +186,28 @@ describe("common/session", () => {
     session.deleteData();
   });
 
+  it("should manage scope state", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+
+    // Default scope is unrestricted.
+    expect(session.hasScope()).toBe(false);
+    expect(session.getScope()).toBe("*");
+
+    session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+    session.setAuthToken("234200000000000000000000000000000000000000000000");
+    session.setScope("photos:view");
+    expect(session.hasScope()).toBe(true);
+    expect(session.getScope()).toBe("photos:view");
+
+    // Scope flag should survive re-instantiation with the same storage.
+    const restoredSession = new Session(storage, $config);
+    expect(restoredSession.hasScope()).toBe(true);
+    expect(restoredSession.getScope()).toBe("photos:view");
+
+    session.deleteAuthentication();
+  });
+
   it("should test whether user is set", () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);

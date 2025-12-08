@@ -20,9 +20,6 @@ const (
 	ResampleNearest  ResampleFilter = "nearest"
 )
 
-// Filter specifies the default downscaling filter.
-var Filter = ResampleLanczos
-
 // String returns the downscaling filter name as string.
 func (a ResampleFilter) String() string {
 	return string(a)

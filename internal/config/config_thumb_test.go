@@ -48,7 +48,7 @@ func TestConfig_ThumbFilter(t *testing.T) {
 	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = "linear"
 	assert.Equal(t, thumb.ResampleLinear, c.ThumbFilter())
-	c.options.ThumbFilter = "auto"
+	c.options.ThumbFilter = Auto
 	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = ""
 	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
@@ -92,7 +92,7 @@ func TestConfig_PngSize(t *testing.T) {
 func TestConfig_ThumbLibrary(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.False(t, c.DisableVips())
-	c.options.ThumbLibrary = "auto"
+	c.options.ThumbLibrary = Auto
 	assert.Equal(t, "vips", c.ThumbLibrary())
 	c.options.DisableVips = true
 	assert.Equal(t, "imaging", c.ThumbLibrary())

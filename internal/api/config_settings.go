@@ -50,7 +50,7 @@ func GetSettings(router *gin.RouterGroup) {
 //	@Produce	json
 //	@Success	200					{object}	customize.Settings
 //	@Failure	400,401,403,404,500	{object}	i18n.Response
-//	@Param		settings			body		customize.Settings	true "user settings"
+//	@Param		settings			body		customize.Settings	true	"user settings"
 //	@Router		/api/v1/settings [post]
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
@@ -71,15 +71,22 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		var settings *customize.Settings
 
-		// Only super admins can change global config defaults.
-		if s.User().IsSuperAdmin() {
+		user := s.GetUser()
+
+		// Update user preferences without changing global defaults.
+		if user == nil {
+			AbortUnexpectedError(c)
+			return
+		}
+
+		// Only super admins without scope restrictions can change global config defaults.
+		if user.IsSuperAdmin() && s.NoScope() {
 			// Update global defaults and user preferences.
-			user := s.User()
 			settings = conf.Settings()
 
 			// Set values from request.
 			if err := c.BindJSON(settings); err != nil {
-				AbortBadRequest(c)
+				AbortBadRequest(c, err)
 				return
 			}
 
@@ -102,24 +109,16 @@ func SaveSettings(router *gin.RouterGroup) {
 			entity.FlushSessionCache()
 			UpdateClientConfig()
 		} else {
-			// Update user preferences without changing global defaults.
-			user := s.User()
-
-			if user == nil {
-				AbortUnexpectedError(c)
-				return
-			}
-
 			settings = &customize.Settings{}
 
 			// Set values from request.
 			if err := c.BindJSON(settings); err != nil {
-				AbortBadRequest(c)
+				AbortBadRequest(c, err)
 				return
 			}
 
 			// Update user preferences.
-			if acl.Rules.DenyAll(acl.ResourceSettings, s.UserRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
+			if acl.Rules.DenyAll(acl.ResourceSettings, s.GetUserRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
 				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Rules, user.AclRole())))
 				return
 			} else if err := user.Settings().Apply(settings).Save(); err != nil {

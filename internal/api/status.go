@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetStatus reports if the server is operational.
+// GetStatus responds with status code 200 if the server is operational.
 //
-//	@Summary	reports if the server is operational
+//	@Summary	responds with status code 200 if the server is operational
 //	@Id			GetStatus
-//	@Tags		Server
+//	@Tags		Debug
 //	@Produce	json
 //	@Success	200	{object}	gin.H
 //	@Router		/api/v1/status [get]

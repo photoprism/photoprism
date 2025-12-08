@@ -1,75 +1,54 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/url"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-type PlaceSearchResult struct {
-	ID        string  `json:"id"`
-	Name      string  `json:"name"`
-	Formatted string  `json:"formatted"`
-	City      string  `json:"city"`
-	Country   string  `json:"country"`
-	Latitude  float64 `json:"lat"`
-	Longitude float64 `json:"lng"`
-}
-
-type PlaceSearchResponse struct {
-	Results []PlaceSearchResult `json:"results"`
-	Count   int                 `json:"count"`
-}
-
-type PhotoPrismPlacesSearchResponse []struct {
-	ID      string  `json:"id"`
-	Name    string  `json:"name"`
-	City    string  `json:"city"`
-	Country string  `json:"country"`
-	Lat     float64 `json:"lat"`
-	Lng     float64 `json:"lng"`
-}
-
-// GetPlacesSearch performs a place search using PhotoPrism Places API.
+// GetPlacesSearch returns locations that match the specified search query.
 //
 // GET /api/v1/places/search?q=query&locale=en&count=10
 //
-//	@Summary	Search for places using text query
+//	@Summary	returns locations that match the specified search query
 //	@Id			GetPlacesSearch
-//	@Tags		Maps
+//	@Tags		Places
 //	@Produce	json
 //	@Param		q		query		string	true	"Search query"
 //	@Param		locale	query		string	false	"Locale for results (default: en)"
 //	@Param		count	query		int		false	"Maximum number of results (default: 10, max: 50)"
-//	@Success	200		{object}	PlaceSearchResponse
+//	@Success	200		{object}	places.SearchResults
 //	@Failure	400		{object}	gin.H	"Missing search query"
 //	@Failure	401		{object}	i18n.Response
 //	@Failure	500		{object}	gin.H	"Search service error"
 //	@Router		/api/v1/places/search [get]
 func GetPlacesSearch(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
-		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView})
+		// Allow request if user is allowed to search places.
+		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.ActionUse})
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
 			return
 		}
 
-		// Parse query parameters
+		// Abort if geocoding is disabled.
 		conf := get.Config()
+
+		if conf.DisablePlaces() {
+			AbortFeatureDisabled(c)
+			return
+		}
+
+		// Get the search string, locale, and result count limit from the query parameters.
 		query := clean.SearchString(c.Query("q"))
-		locale := clean.WebLocale(c.Query("locale"), conf.DefaultLocale())
+		locale := clean.WebLocale(c.Query("locale"), conf.PlacesLocale())
 		count := txt.IntVal(c.Query("count"), 1, 50, 10)
 
 		if query == "" {
@@ -77,90 +56,15 @@ func GetPlacesSearch(router *gin.RouterGroup) {
 			return
 		}
 
-		// Set default locale if not provided
-		if locale == "" {
-			locale = "en"
-		}
+		results, err := places.Search(query, locale, count)
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", "place search", "query %s, locale %s, count %d"}, s.RefID, query, locale, count)
-
-		client := &http.Client{Timeout: 30 * time.Second}
-
-		baseURL := "https://places.photoprism.app/v1/search"
-		params := url.Values{}
-		params.Add("q", query)
-		params.Add("locale", locale)
-		params.Add("count", strconv.Itoa(count))
-		requestURL := fmt.Sprintf("%s?%s", baseURL, params.Encode())
-
-		req, err := http.NewRequest("GET", requestURL, nil)
 		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "place search", "error creating request: %s"}, s.RefID, err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create search request"})
+			log.Errorf("places: failed to find locations for query %s", clean.Log(query))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 			return
 		}
 
-		// Execute request
-		resp, err := client.Do(req)
-		if err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "place search", "request failed: %s"}, s.RefID, err)
-
-			searchResponse := PlaceSearchResponse{
-				Results: []PlaceSearchResult{},
-				Count:   0,
-			}
-			c.JSON(http.StatusOK, searchResponse)
-			return
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "place search", "status code %d"}, s.RefID, resp.StatusCode)
-			// Return empty results instead of error for non-200 responses
-			searchResponse := PlaceSearchResponse{
-				Results: []PlaceSearchResult{},
-				Count:   0,
-			}
-			c.JSON(http.StatusOK, searchResponse)
-			return
-		}
-
-		// Parse response
-		var placesResponse PhotoPrismPlacesSearchResponse
-		if err = json.NewDecoder(resp.Body).Decode(&placesResponse); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "place search", "decode failed: %s"}, s.RefID, err)
-			searchResponse := PlaceSearchResponse{
-				Results: []PlaceSearchResult{},
-				Count:   0,
-			}
-			c.JSON(http.StatusOK, searchResponse)
-			return
-		}
-
-		results := make([]PlaceSearchResult, 0, len(placesResponse))
-		for _, place := range placesResponse {
-			if place.ID == "" || place.Name == "" {
-				continue
-			}
-
-			result := PlaceSearchResult{
-				ID:        place.ID,
-				Name:      place.Name,
-				Formatted: place.Name,
-				City:      place.City,
-				Country:   place.Country,
-				Latitude:  place.Lat,
-				Longitude: place.Lng,
-			}
-			results = append(results, result)
-		}
-
-		searchResponse := PlaceSearchResponse{
-			Results: results,
-			Count:   len(results),
-		}
-
-		c.JSON(http.StatusOK, searchResponse)
+		c.JSON(http.StatusOK, results)
 	}
 
 	router.GET("/places/search", handler)

@@ -11,16 +11,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../../assets/nsfw")
+var modelPath, _ = filepath.Abs("../../../assets/models/nsfw")
 
-var detector = NewModel(modelPath, 224, nil, false)
+var detector = NewModel(modelPath, nil, false)
 
 func TestIsSafe(t *testing.T) {
 	detect := func(filename string) Result {
 		result, err := detector.File(filename)
 
 		if err != nil {
-			t.Fatalf(err.Error())
+			t.Fatal(err.Error())
 		}
 
 		assert.NotNil(t, result)
@@ -84,7 +84,7 @@ func TestIsSafe(t *testing.T) {
 				assert.GreaterOrEqual(t, l.Sexy, e.Sexy)
 			}
 
-			isSafe := !(strings.Contains(basename, "porn") || strings.Contains(basename, "hentai"))
+			isSafe := !strings.Contains(basename, "porn") && !strings.Contains(basename, "hentai")
 
 			if isSafe {
 				assert.True(t, l.IsSafe())

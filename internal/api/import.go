@@ -5,7 +5,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -18,12 +17,14 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// UploadPath is the root directory underneath which user uploads are staged.
 const (
 	UploadPath = "/upload"
 )
@@ -57,7 +58,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Abort if there is not enough free storage to import new files.
 		if conf.FilesQuotaReached() {
-			event.AuditErr([]string{ClientIP(c), "session %s", "import files", "insufficient storage"}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}
@@ -68,7 +69,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Assign and validate request form values.
 		if err := c.BindJSON(&frm); err != nil {
-			AbortBadRequest(c)
+			AbortBadRequest(c, err)
 			return
 		}
 
@@ -85,9 +86,9 @@ func StartImport(router *gin.RouterGroup) {
 		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
 		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
 			srcFolder = path.Join(UploadPath, s.RefID+token)
-			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", authn.Granted}, s.RefID, clean.Log(srcFolder), s.UserRole().String())
-		} else if acl.Rules.Deny(acl.ResourceFiles, s.UserRole(), acl.ActionManage) {
-			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", authn.Denied}, s.RefID, clean.Log(srcFolder), s.UserRole().String())
+			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", status.Granted}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
+		} else if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", status.Denied}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
 			AbortForbidden(c)
 			return
 		}
@@ -100,7 +101,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Get destination folder.
 		var destFolder string
-		if destFolder = s.User().GetUploadPath(); destFolder == "" {
+		if destFolder = s.GetUser().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 
@@ -117,8 +118,8 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(frm.Albums, " and ")))
+			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			log.Debugf("import: adding files to album %s", clean.Log(txt.JoinAnd(frm.Albums)))
 			opt.Albums = frm.Albums
 		}
 
@@ -186,7 +187,13 @@ func StartImport(router *gin.RouterGroup) {
 
 // CancelImport stops the current import operation.
 //
-// DELETE /api/v1/import
+//	@Summary	cancels the active import job
+//	@Id			CancelImport
+//	@Tags		Library
+//	@Produce	json
+//	@Success	200				{object}	i18n.Response
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/import [delete]
 func CancelImport(router *gin.RouterGroup) {
 	router.DELETE("/import", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionManage)

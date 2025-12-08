@@ -53,7 +53,10 @@ func TestCreateMarker(t *testing.T) {
 			r = PerformRequestWithBody(app, "POST", u, string(b))
 		}
 
-		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, http.StatusCreated, r.Code)
+		newUID := gjson.Get(r.Body.String(), "UID").String()
+		assert.NotEmpty(t, newUID)
+		assert.Equal(t, "/api/v1/markers/"+newUID, r.Header().Get("Location"))
 	})
 	t.Run("SuccessWithName", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -95,7 +98,10 @@ func TestCreateMarker(t *testing.T) {
 			r = PerformRequestWithBody(app, "POST", u, string(b))
 		}
 
-		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, http.StatusCreated, r.Code)
+		newUID := gjson.Get(r.Body.String(), "UID").String()
+		assert.NotEmpty(t, newUID)
+		assert.Equal(t, "/api/v1/markers/"+newUID, r.Header().Get("Location"))
 	})
 	t.Run("InvalidArea", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -186,7 +192,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("bad request file and photouid not matching", func(t *testing.T) {
+	t.Run("BadRequestFileAndPhotouidNotMatching", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -195,7 +201,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("file not existing", func(t *testing.T) {
+	t.Run("FileNotExisting", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -204,7 +210,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("marker not existing", func(t *testing.T) {
+	t.Run("MarkerNotExisting", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -213,7 +219,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("empty photouid", func(t *testing.T) {
+	t.Run("EmptyPhotouid", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -222,7 +228,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
-	t.Run("update cluster with existing subject", func(t *testing.T) {
+	t.Run("UpdateClusterWithExistingSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -247,7 +253,7 @@ func TestUpdateMarker(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
 	})
-	t.Run("update cluster with existing subject 2", func(t *testing.T) {
+	t.Run("UpdateClusterWithExistingSubjectTwo", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -272,7 +278,7 @@ func TestUpdateMarker(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
 	})
-	t.Run("invalid body", func(t *testing.T) {
+	t.Run("InvalidBody", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
@@ -337,7 +343,7 @@ func TestClearMarkerSubject(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, resp.Code)
 	})
-	t.Run("non-primary file", func(t *testing.T) {
+	t.Run("NonPrimaryFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		ClearMarkerSubject(router)

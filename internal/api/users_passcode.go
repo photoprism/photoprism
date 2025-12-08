@@ -16,15 +16,24 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// CreateUserPasscode sets up a new two-factor authentication passcode.
+// CreateUserPasscode sets up a new two-factor authentication passcode for a user.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode [post]
+//	@Summary	create a new 2FA passcode for a user
+//	@Id			CreateUserPasscode
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid				path		string			true	"user uid"
+//	@Param		request			body		form.Passcode	true	"passcode setup (password required)"
+//	@Success	201				{object}	entity.Passcode
+//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode [post]
 func CreateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -74,16 +83,25 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Created}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Created}, s.RefID)
 
-		c.JSON(http.StatusOK, passcode)
+		header.SetLocation(c)
+		c.JSON(http.StatusCreated, passcode)
 	})
 }
 
-// ConfirmUserPasscode checks a new passcode and flags it as verified so that it can be activated.
+// ConfirmUserPasscode verifies a newly created passcode so that it can be activated.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode/confirm [post]
+//	@Summary	verify a new 2FA passcode
+//	@Id			ConfirmUserPasscode
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid				path		string			true	"user uid"
+//	@Param		request			body		form.Passcode	true	"verification code"
+//	@Success	200				{object}	entity.Passcode
+//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode/confirm [post]
 func ConfirmUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/confirm", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -117,7 +135,7 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		// Return the reserved request rate limit tokens after successful authentication.
 		r.Success()
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Verified}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Verified}, s.RefID)
 
 		// Clear session cache.
 		s.ClearCache()
@@ -126,10 +144,16 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 	})
 }
 
-// ActivateUserPasscode activates two-factor authentication if a passcode has been created and verified.
+// ActivateUserPasscode activates 2FA after a passcode has been created and verified.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode/activate [post]
+//	@Summary	activate 2FA with a verified passcode
+//	@Id			ActivateUserPasscode
+//	@Tags		Users
+//	@Produce	json
+//	@Param		uid				path		string	true	"user uid"
+//	@Success	200				{object}	entity.Passcode
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode/activate [post]
 func ActivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/activate", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -149,7 +173,7 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Activated}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Activated}, s.RefID)
 
 		// Invalidate any other user sessions to protect the account:
 		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
@@ -163,10 +187,18 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 	})
 }
 
-// DeactivateUserPasscode disables removes a passcode key to disable two-factor authentication.
+// DeactivateUserPasscode removes a passcode key to disable two-factor authentication.
 //
-//	@Tags	Users
-//	@Router	/api/v1/users/{uid}/passcode/deactivate [post]
+//	@Summary	deactivate 2FA and remove the passcode
+//	@Id			DeactivateUserPasscode
+//	@Tags		Users
+//	@Accept		json
+//	@Produce	json
+//	@Param		uid					path		string			true	"user uid"
+//	@Param		request				body		form.Passcode	true	"password for confirmation"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/users/{uid}/passcode/deactivate [post]
 func DeactivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/deactivate", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -204,7 +236,7 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Deactivated}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Deactivated}, s.RefID)
 
 		// Clear session cache.
 		s.ClearCache()
@@ -243,7 +275,7 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	uid := clean.UID(c.Param("uid"))
 
 	// Get user from session.
-	user := s.User()
+	user := s.GetUser()
 
 	// Regular users can only set up a passcode for their own account.
 	if user.UserUID != uid || !user.CanLogIn() {
@@ -304,20 +336,25 @@ func checkUserPasscodePassword(c *gin.Context, user *entity.User, password strin
 		}
 
 		// Check if user login credentials are valid.
-		if authUser, provider, method, authErr := entity.Auth(f, nil, c); method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired) {
+		authUser, provider, method, authErr := entity.Auth(f, nil, c)
+
+		switch {
+		case method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired):
 			return http.StatusOK, i18n.MsgVerified, nil
-		} else if authErr != nil {
+		case authErr != nil:
 			// Abort if authentication has failed otherwise.
 			return code, msg, authErr
-		} else if authUser == nil {
+		case authUser == nil:
 			// Abort if account was not found.
 			return code, msg, authn.ErrAccountNotFound
-		} else if !authUser.Equal(user) {
+		case !authUser.Equal(user):
 			// Abort if user accounts do not match.
 			return code, msg, authn.ErrUserDoesNotMatch
-		} else if !provider.SupportsPasscodeAuthentication() || method != authn.MethodDefault {
+		case !provider.SupportsPasscodeAuthentication() || method != authn.MethodDefault:
 			// Abort if e.g. an app password was provided.
 			return code, msg, authn.ErrInvalidCredentials
+		default:
+			return http.StatusOK, i18n.MsgVerified, nil
 		}
 	}
 

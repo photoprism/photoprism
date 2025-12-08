@@ -2,13 +2,7 @@
   <teleport to="body">
     <div id="notify">
       <transition name="fade-transition">
-        <div
-          v-if="visible"
-          :class="'p-notify--' + message.color"
-          class="p-notify v-snackbar"
-          role="alert"
-          @click.stop.prevent="showNext"
-        >
+        <div v-if="visible" :class="'p-notify--' + message.color" class="p-notify v-snackbar" role="alert" @click.stop.prevent="showNext">
           <div class="v-snackbar__wrapper">
             <span class="v-snackbar__underlay"></span>
             <div class="v-snackbar__content">
@@ -21,11 +15,7 @@
               <div class="p-notify__text">
                 {{ message.text }}
               </div>
-              <i
-                :class="'text-on-' + message.color"
-                class="mdi-close mdi v-icon notranslate p-notify__close"
-                aria-hidden="true"
-              ></i>
+              <i :class="'text-on-' + message.color" class="mdi-close mdi v-icon notranslate p-notify__close" aria-hidden="true"></i>
             </div>
           </div>
         </div>
@@ -46,6 +36,7 @@ export default {
         color: "transparent",
         text: "",
         delay: this.defaultDelay,
+        timer: 0,
       },
       lastText: "",
       lastId: 1,
@@ -127,6 +118,7 @@ export default {
 
       this.lastId++;
       this.lastText = text;
+      let timer = 0;
 
       const m = {
         id: this.lastId,
@@ -134,6 +126,7 @@ export default {
         icon,
         text,
         delay,
+        timer,
       };
 
       this.messages.push(m);
@@ -144,6 +137,9 @@ export default {
     },
     showNext() {
       const message = this.messages.shift();
+      if (this.message.timer > 0) {
+        clearTimeout(this.message.timer);
+      }
 
       if (message) {
         this.message = message;
@@ -166,14 +162,16 @@ export default {
 
         this.visible = true;
 
-        setTimeout(() => {
+        this.message.timer = setTimeout(() => {
           this.lastText = "";
+          this.message.timer = 0;
           this.showNext();
         }, this.message.delay);
       } else {
         this.lastText = "";
         this.visible = false;
         this.message.text = "";
+        this.message.timer = 0;
       }
     },
   },

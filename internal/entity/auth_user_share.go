@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -27,7 +28,7 @@ const (
 	SharePrefix = "share"
 )
 
-// UserShares represents shared content.
+// UserShares groups share relationships granted to a user.
 type UserShares []UserShare
 
 // UIDs returns shared UIDs.
@@ -61,7 +62,7 @@ func (m UserShares) Contains(uid string) bool {
 	return false
 }
 
-// UserShare represents content shared with a user.
+// UserShare represents a share relationship granting a user access to another entity.
 type UserShare struct {
 	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
 	ShareUID  string     `gorm:"type:VARBINARY(42);primary_key;index;" json:"ShareUID" yaml:"ShareUID"`
@@ -79,7 +80,7 @@ func (UserShare) TableName() string {
 	return "auth_users_shares"
 }
 
-// NewUserShare creates a new entity model.
+// NewUserShare constructs a share relationship with optional expiration.
 func NewUserShare(userUID, shareUid string, perm uint, expires *time.Time) *UserShare {
 	result := &UserShare{
 		UserUID:   userUID,
@@ -120,7 +121,7 @@ func FindUserShares(userUid string) UserShares {
 
 	// Find matching record.
 	if err := UnscopedDb().Find(&found, "user_uid = ? AND (expires_at IS NULL OR expires_at > ?)", userUid, Now()).Error; err != nil {
-		event.AuditWarn([]string{"user %s", "find shares", "%s"}, clean.Log(userUid), err)
+		event.AuditWarn([]string{"user %s", "find shares", status.Error(err)}, clean.Log(userUid))
 		return nil
 	}
 
@@ -159,7 +160,7 @@ func (m *UserShare) UpdateLink(link Link) error {
 	m.UpdatedAt = Now()
 	m.ExpiresAt = link.ExpiresAt()
 
-	values := Map{
+	values := Values{
 		"link_uid":   m.LinkUID,
 		"expires_at": m.ExpiresAt,
 		"comment":    m.Comment,

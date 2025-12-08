@@ -10,9 +10,32 @@ import (
 type Areas []Area
 
 // Relative returns all areas with relative coordinates.
-func (pts Areas) Relative(r Area, rows, cols float32) (result crop.Areas) {
+func (pts Areas) Relative(r Area, rows, cols float32) crop.Areas {
+	if len(pts) == 0 {
+		return nil
+	}
+
+	if rows < 1 {
+		rows = 1
+	}
+
+	if cols < 1 {
+		cols = 1
+	}
+
+	invRows := 1 / rows
+	invCols := 1 / cols
+
+	result := make(crop.Areas, 0, len(pts))
+
 	for _, p := range pts {
-		result = append(result, p.Relative(r, rows, cols))
+		result = append(result, crop.NewArea(
+			p.Name,
+			float32(p.Col-r.Col)*invCols,
+			float32(p.Row-r.Row)*invRows,
+			float32(p.Scale)*invCols,
+			float32(p.Scale)*invRows,
+		))
 	}
 
 	return result

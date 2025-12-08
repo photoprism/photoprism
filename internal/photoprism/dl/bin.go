@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 )
 
+// Cached binary discovery results.
 var (
 	YtDlpBin   = ""
 	FFmpegBin  = ""

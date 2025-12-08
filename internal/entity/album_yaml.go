@@ -68,7 +68,7 @@ func (m *Album) YamlFileName(backupPath string) (absolute, relative string, err 
 		return "", "", fmt.Errorf("album uid is empty")
 	}
 
-	relative = filepath.Join(m.AlbumType, m.AlbumUID+fs.ExtYaml)
+	relative = filepath.Join(m.AlbumType, m.AlbumUID+fs.ExtYml)
 
 	if backupPath == "" {
 		return "", relative, fmt.Errorf("backup path is empty")

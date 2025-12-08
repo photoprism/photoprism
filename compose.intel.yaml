@@ -7,7 +7,7 @@ services:
       - mariadb
       - dummy-webdav
       - dummy-oidc
-    stop_grace_period: 10s
+    stop_grace_period: 15s
     privileged: true
     security_opt:
       - seccomp:unconfined
@@ -28,6 +28,7 @@ services:
       - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=photoprism"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
@@ -49,6 +50,9 @@ services:
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
       PHOTOPRISM_USAGE_INFO: "true"
       PHOTOPRISM_FILES_QUOTA: "100"
+      ## Customization:
+      PHOTOPRISM_DEFAULT_LOCALE: "en"                      # default user interface language, e.g. "en" or "de"
+      PHOTOPRISM_PLACES_LOCALE: "local"                    # location details language, e.g. "local", "en", or
       ## OpenID Connect (pre-configured for local tests):
       ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
@@ -107,16 +111,21 @@ services:
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
+      PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
       PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
       PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
-      TF_CPP_MIN_LOG_LEVEL: 1                        # show TensorFlow log messages for development
       ## Intel Quick Sync Video (QSV) (https://docs.photoprism.app/getting-started/advanced/transcoding/#intel-quick-sync):
       PHOTOPRISM_FFMPEG_ENCODER: "intel"             # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
-      # PHOTOPRISM_FFMPEG_BITRATE: "60"              # video bitrate limit in Mbps (default: 60)
+      # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https intel tensorflow yt-dlp"
+      PHOTOPRISM_INIT: "https intel tensorflow"
+      ## External dependencies and tools:
+      TF_CPP_MIN_LOG_LEVEL: 1
+      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
+      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
     ## Share hardware devices with FFmpeg for hardware video transcoding:
     devices:
       - "/dev/dri:/dev/dri"
@@ -138,6 +147,10 @@ services:
     extends:
       file: ./compose.yaml
       service: photoprism-vision
+  ollama:
+    extends:
+      file: ./compose.yaml
+      service: ollama
   traefik:
     extends:
       file: ./compose.yaml
@@ -169,3 +182,9 @@ volumes:
     driver: local
   mariadb:
     driver: local
+
+## Create shared "photoprism" network for connecting with services in other compose.yaml files
+networks:
+  default:
+    name: photoprism
+    driver: bridge

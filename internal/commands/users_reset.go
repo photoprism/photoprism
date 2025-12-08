@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// UsersResetDescription explains the effect of the users reset command.
 const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
 
 // UsersResetCommand configures the command name, flags, and action.
@@ -20,12 +21,12 @@ var UsersResetCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "trace",
 			Aliases: []string{"t"},
-			Usage:   "show trace logs for debugging",
+			Usage:   "shows trace logs for debugging",
 		},
 		&cli.BoolFlag{
 			Name:    "yes",
 			Aliases: []string{"y"},
-			Usage:   "assume \"yes\" and run non-interactively",
+			Usage:   "runs the command non-interactively",
 		},
 	},
 	Action: usersResetAction,
@@ -34,7 +35,7 @@ var UsersResetCommand = &cli.Command{
 // usersResetAction deletes recreates the user management database tables.
 func usersResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := ctx.Bool("yes")
+		confirmed := RunNonInteractively(ctx.Bool("yes"))
 
 		// Show prompt?
 		if !confirmed {

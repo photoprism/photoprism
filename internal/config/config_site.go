@@ -143,12 +143,12 @@ func (c *Config) SiteFavicon() string {
 			return c.options.SiteFavicon
 		} else if fileName := filepath.Join(c.ThemePath(), strings.TrimPrefix(c.options.SiteFavicon, ThemeUri)); fs.FileExistsNotEmpty(fileName) {
 			return fileName
-		} else if fileName = filepath.Join(c.ImgPath(), c.options.SiteFavicon); fs.FileExistsNotEmpty(fileName) {
+		} else if fileName = c.StaticImgFile(c.options.SiteFavicon); fs.FileExistsNotEmpty(fileName) {
 			return fileName
 		}
 	}
 
-	return filepath.Join(c.ImgPath(), "favicon.ico")
+	return c.StaticImgFile("favicon.ico")
 }
 
 // SitePreview returns the site preview image URL for sharing.
@@ -165,7 +165,6 @@ func (c *Config) SitePreview() string {
 	}
 
 	return fmt.Sprintf("https://i.photoprism.app/prism?cover=64&style=centered%%20dark&caption=none&title=%s", url.QueryEscape(c.AppName()))
-
 }
 
 // LegalInfo returns the legal info text for the page footer.
@@ -200,7 +199,7 @@ func (c *Config) RobotsTxt() ([]byte, error) {
 	} else if fileName := filepath.Join(c.ConfigPath(), "robots.txt"); !fs.FileExists(fileName) {
 		// Do not allow indexing if config/robots.txt does not exist.
 		return robotsTxt, nil
-	} else if robots, robotsErr := os.ReadFile(fileName); robotsErr != nil {
+	} else if robots, robotsErr := os.ReadFile(fileName); robotsErr != nil { //nolint:gosec // robots file path derived from config directory
 		// Log error and do not allow indexing if config/robots.txt cannot be read.
 		log.Debugf("config: failed to read robots.txt file (%s)", clean.Error(robotsErr))
 		return robotsTxt, robotsErr

@@ -1,23 +1,11 @@
 <template>
   <div class="p-action-menu">
-    <v-menu
-      :model-value="visible"
-      :open-on-hover="openOnHover"
-      class="action-menu action-menu--default"
-      @update:model-value="onMenu"
-    >
+    <v-menu :model-value="visible" :open-on-hover="openOnHover" class="action-menu action-menu--default" @update:model-value="onMenu">
       <template #activator="{ props }">
-        <v-btn
-          v-bind="props"
-          density="comfortable"
-          :icon="buttonIcon"
-          :tabindex="tabindex"
-          class="action-menu__btn"
-          :class="buttonClass"
-        ></v-btn>
+        <v-btn v-bind="props" density="comfortable" :icon="buttonIcon" :tabindex="tabindex" class="action-menu__btn" :class="buttonClass"></v-btn>
       </template>
 
-      <v-list slim nav density="compact" bg-color="navigation" class="action-menu__list">
+      <v-list slim nav density="compact" bg-color="navigation" class="action-menu__list" :class="listClass">
         <template v-for="action in actions" :key="action.name">
           <v-divider v-if="action?.color === 'danger'"></v-divider>
           <v-list-item
@@ -54,7 +42,11 @@ export default {
     },
     tabindex: {
       type: Number,
-      default: 3,
+      default: 0,
+    },
+    listClass: {
+      type: String,
+      default: "",
     },
     buttonClass: {
       type: String,

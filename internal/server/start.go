@@ -16,11 +16,12 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server/process"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/http/header"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -40,16 +41,28 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Set web server mode.
 	if conf.HttpMode() != "" {
 		gin.SetMode(conf.HttpMode())
-	} else if conf.Debug() == false {
+	} else if !conf.Debug() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	// Create new router engine without standard middleware.
 	router := gin.New()
 
-	// Set proxy addresses from which headers related to the client and protocol can be trusted
-	if err := router.SetTrustedProxies(conf.TrustedProxies()); err != nil {
-		log.Warnf("server: %s", err)
+	// Set proxy from which headers related to the client and protocol can be trusted?
+	if trustedProxies := conf.TrustedProxies(); len(trustedProxies) > 0 {
+		if err := router.SetTrustedProxies(trustedProxies); err != nil {
+			log.Warnf("server: %s", err)
+		}
+
+		router.RemoteIPHeaders = conf.ProxyClientHeaders()
+	}
+
+	// Set trusted platform client IP address header name?
+	if trustedPlatform := conf.TrustedPlatform(); trustedPlatform != "" {
+		router.TrustedPlatform = trustedPlatform
+
+		// Enable support for HTTP/2 without TLS.
+		router.UseH2C = true
 	}
 
 	// Register panic recovery middleware.
@@ -88,7 +101,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	router.Use(Security(conf))
 
 	// Create REST API router group.
-	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri), APIMiddleware(conf))
 
 	// Initialize package extensions.
 	Ext().Init(router, conf)
@@ -99,12 +112,27 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Register application routes.
 	registerRoutes(router, conf)
 
-	// Register "GET /health" route so clients can perform health checks.
-	router.GET(conf.BaseUri("/health"), func(c *gin.Context) {
+	// Register standard health check endpoints to determine whether the server is running.
+	isLive := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 		c.Header(header.AccessControlAllowOrigin, header.Any)
-		c.String(http.StatusOK, "OK")
-	})
+		c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
+	}
+	router.Any(conf.BaseUri("/livez"), isLive)
+	router.Any(conf.BaseUri("/health"), isLive)
+	router.Any(conf.BaseUri("/healthz"), isLive)
+
+	// Register "/readyz" endpoint to check if the server has been successfully initialized.
+	isReady := func(c *gin.Context) {
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+		c.Header(header.AccessControlAllowOrigin, header.Any)
+		if conf.IsReady() {
+			c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
+		} else {
+			c.JSON(http.StatusServiceUnavailable, api.NewHealthResponse("service unavailable"))
+		}
+	}
+	router.Any(conf.BaseUri("/readyz"), isReady)
 
 	// Create a new HTTP server instance with no read or write timeout, except for reading the headers:
 	// https://pkg.go.dev/net/http#Server
@@ -126,7 +154,7 @@ func Start(ctx context.Context, conf *config.Config) {
 
 		// Check if the Unix socket already exists and delete it if the force flag is set.
 		if fs.SocketExists(unixSocket.Path) {
-			if txt.Bool(unixSocket.Query().Get("force")) == false {
+			if !txt.Bool(unixSocket.Query().Get("force")) {
 				Fail("server: %s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
 				return
 			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil {
@@ -250,7 +278,15 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 	var g errgroup.Group
 
 	g.Go(func() error {
-		return http.ListenAndServe(fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()), m.HTTPHandler(http.HandlerFunc(redirect)))
+		redirectSrv := &http.Server{
+			Addr:              fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
+			Handler:           m.HTTPHandler(http.HandlerFunc(redirect)),
+			ReadHeaderTimeout: time.Minute,
+			ReadTimeout:       5 * time.Second,
+			WriteTimeout:      10 * time.Second,
+		}
+
+		return redirectSrv.ListenAndServe()
 	})
 
 	g.Go(func() error {

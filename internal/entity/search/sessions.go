@@ -57,17 +57,19 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	// Sort results?
 	switch order {
 	case sortby.LastActive:
-		stmt = stmt.Order("last_active DESC, user_name, client_name, id")
+		stmt = stmt.Order(OrderExpr("last_active DESC, user_name, client_name, id", frm.Reverse))
 	case sortby.SessExpires:
-		stmt = stmt.Order("sess_expires DESC, user_name, client_name, id")
+		stmt = stmt.Order(OrderExpr("sess_expires DESC, user_name, client_name, id", frm.Reverse))
 	case sortby.ClientName:
-		stmt = stmt.Where("client_name <> '' AND client_name IS NOT NULL").Order("client_name, created_at, id")
+		stmt = stmt.
+			Where("client_name <> '' AND client_name IS NOT NULL").
+			Order(OrderExpr("client_name, created_at, id", frm.Reverse))
 	case sortby.Login, sortby.LoginAt:
-		stmt = stmt.Order("login_at DESC, user_name, client_name, id")
+		stmt = stmt.Order(OrderExpr("login_at DESC, user_name, client_name, id", frm.Reverse))
 	case sortby.Created, sortby.CreatedAt:
-		stmt = stmt.Order("created_at ASC, user_name, client_name, id")
+		stmt = stmt.Order(OrderExpr("created_at ASC, user_name, client_name, id", frm.Reverse))
 	case sortby.Updated, sortby.UpdatedAt:
-		stmt = stmt.Order("updated_at DESC, user_name, client_name, id")
+		stmt = stmt.Order(OrderExpr("updated_at DESC, user_name, client_name, id", frm.Reverse))
 	default:
 		return result, fmt.Errorf("invalid sort order %s", order)
 	}

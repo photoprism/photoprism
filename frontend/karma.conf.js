@@ -170,5 +170,5 @@ module.exports = (config) => {
   });
 
   // Set default timezone.
-  process.env.TZ = 'UTC';
+  process.env.TZ = "UTC";
 };

@@ -40,25 +40,31 @@ func TestAuth(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Auth(""))
 	})
-	t.Run("Te<s>t", func(t *testing.T) {
+	t.Run("TeLessThanSGreaterThanT", func(t *testing.T) {
 		assert.Equal(t, "Test", Auth("Te<s>t"))
+	})
+	t.Run("ApiKey", func(t *testing.T) {
+		assert.Equal(t,
+			"ab-prot-keech1aqu8quamiNaecuisuem1ahg7dieph8eitohzo7hoo7pe-Chohzu4eaA-Chohzu4ea-soh7Seic8eig9joojaeshe4Ahsu8zeibooCh9ooquaaleev3poLeev0su9jei2yeich3ahsi9quar1oqueic",
+			Auth("ab-prot-keech1aqu8quamiNaecuisuem1ahg7dieph8eitohzo7hoo7pe-Chohzu4eaA-Chohzu4ea-soh7Seic8eig9joojaeshe4Ahsu8zeibooCh9ooquaaleev3poLeev0su9jei2yeich3ahsi9quar1oqueic"),
+		)
 	})
 }
 
 func TestHandle(t *testing.T) {
-	t.Run("Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle("Admin "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle(" Admin@foo "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin.foo", Handle(" Admin foo "))
 	})
-	t.Run(" admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle(" admin "))
 	})
-	t.Run("admin/user", func(t *testing.T) {
+	t.Run("AdminUser", func(t *testing.T) {
 		assert.Equal(t, "admin.user", Handle("admin/user"))
 	})
 	t.Run("Windows", func(t *testing.T) {
@@ -67,25 +73,25 @@ func TestHandle(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Handle("  "))
 	})
-	t.Run("control character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "admin!", Handle("admin!"+string(rune(1))))
 	})
 }
 
 func TestUsername(t *testing.T) {
-	t.Run("Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Username("Admin "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin@foo", Username(" Admin@foo "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin foo", Username(" Admin foo "))
 	})
-	t.Run(" admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Username(" admin "))
 	})
-	t.Run("admin/user", func(t *testing.T) {
+	t.Run("AdminUser", func(t *testing.T) {
 		assert.Equal(t, "adminuser", Username("admin/user"))
 	})
 	t.Run("Windows", func(t *testing.T) {
@@ -94,20 +100,40 @@ func TestUsername(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Username("   "))
 	})
-	t.Run("control character", func(t *testing.T) {
+	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "admin!", Username("admin!"+string(rune(1))))
 	})
 }
 
 func TestEmail(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		assert.Equal(t, "hello@photoprism.app", Email("hello@photoprism.app"))
-	})
-	t.Run("Whitespace", func(t *testing.T) {
-		assert.Equal(t, "hello@photoprism.app", Email(" hello@photoprism.app "))
+	t.Run("ValidExamples", func(t *testing.T) {
+		valid := []string{
+			"user@example.com",
+			"user+news@example.com",
+			"user.name@sub-domain.example",
+			"user_name@example.co.uk",
+			"user@localhost",
+			" User@Example.COM ",
+		}
+
+		for _, addr := range valid {
+			assert.Equal(t, strings.ToLower(strings.TrimSpace(addr)), Email(addr), addr)
+		}
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Equal(t, "", Email(" hello-photoprism "))
+		invalid := []string{
+			"userexample.com",
+			"user@@example.com",
+			"user@",
+			"@example.com",
+			"user example@example.com",
+			"user@-example.com",
+			"user@example..com",
+		}
+
+		for _, addr := range invalid {
+			assert.Equal(t, "", Email(addr), addr)
+		}
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Email(""))
@@ -146,16 +172,16 @@ func TestDomain(t *testing.T) {
 }
 
 func TestRole(t *testing.T) {
-	t.Run("Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Role("Admin "))
 	})
-	t.Run(" Admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Role(" Admin "))
 	})
-	t.Run(" admin ", func(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "admin", Role(" admin "))
 	})
-	t.Run("adm}in", func(t *testing.T) {
+	t.Run("AdmIn", func(t *testing.T) {
 		assert.Equal(t, "admin", Role("adm}in"))
 	})
 	t.Run("Empty", func(t *testing.T) {

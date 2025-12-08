@@ -173,6 +173,7 @@ func SetFileError(fileUID, errorString string) {
 	}
 }
 
+// FileMap maps file path keys (root + name) to their stored modification timestamp.
 type FileMap map[string]int64
 
 // IndexedFiles returns a map of already indexed files with their mod time unix timestamp as value.
@@ -188,7 +189,7 @@ func IndexedFiles() (result FileMap, err error) {
 	// Query known duplicates.
 	var duplicates []File
 
-	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM duplicates").Scan(&duplicates).Error; err != nil {
+	if err = UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM duplicates").Scan(&duplicates).Error; err != nil {
 		return result, err
 	}
 
@@ -199,7 +200,7 @@ func IndexedFiles() (result FileMap, err error) {
 	// Query indexed files.
 	var files []File
 
-	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Scan(&files).Error; err != nil {
+	if err = UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Scan(&files).Error; err != nil {
 		return result, err
 	}
 
