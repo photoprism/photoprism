@@ -1,7 +1,24 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <div class="pa-2 p-faces">
-      <v-alert v-if="markers.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
+      <transition name="slide-y-transition" appear>
+        <PPhotoFaceEditor
+          v-if="showManualEditing"
+          :uid="uid"
+          :primary-file="primaryFile"
+          :initial-markers="markers"
+          @close="closeManualEditing"
+          @markers-updated="onMarkersUpdated"
+        />
+      </transition>
+
+      <v-alert
+        v-if="markers.length === 0"
+        color="surface-variant"
+        icon="mdi-lightbulb-outline"
+        class="no-results ma-2 opacity-70"
+        variant="outlined"
+      >
         <div class="font-weight-bold">
           {{ $gettext(`No people found`) }}
         </div>
@@ -88,6 +105,12 @@
           </v-card>
         </div>
       </div>
+
+      <div v-if="!showManualEditing" class="d-flex justify-start mt-4">
+        <v-btn color="primary" variant="outlined" @click="showManualEditing = true">
+          {{ $gettext("Edit Face Markers") }}
+        </v-btn>
+      </div>
     </div>
     <p-confirm-dialog
       :visible="confirm.visible"
@@ -105,12 +128,13 @@ import Marker from "model/marker";
 import Subject from "model/subject";
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PActionMenu from "component/action/menu.vue";
+import PPhotoFaceEditor from "./face-editor.vue";
 
 const SUBJECT_NOT_FOUND = "subject-not-found";
 
 export default {
   name: "PTabPhotoPeople",
-  components: { PConfirmDialog, PActionMenu },
+  components: { PConfirmDialog, PActionMenu, PPhotoFaceEditor },
   props: {
     uid: {
       type: String,
@@ -126,6 +150,7 @@ export default {
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      showManualEditing: false,
       confirm: {
         visible: false,
         model: new Marker(),
@@ -156,6 +181,14 @@ export default {
         return v.length <= this.$config.get("clip") || this.$gettext("Name too long");
       },
     };
+  },
+  computed: {
+    primaryFile() {
+      if (!this.view.model || !this.view.model.Files || this.view.model.Files.length === 0) {
+        return null;
+      }
+      return this.view.model.Files.find((f) => f.Primary) || this.view.model.Files[0];
+    },
   },
   watch: {
     uid: function () {
@@ -410,6 +443,12 @@ export default {
         this.confirm.model = null;
         this.confirm.visible = false;
       });
+    },
+    closeManualEditing() {
+      this.showManualEditing = false;
+    },
+    onMarkersUpdated(newMarkers) {
+      this.markers = newMarkers;
     },
   },
 };
